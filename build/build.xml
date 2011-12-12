@@ -1,0 +1,62 @@
+<project name="ZAP-Extensions" default="build-all" basedir=".">
+	<description>Build ZAP extensions</description>
+
+	<property name="src" location="../src" />
+	<property name="build" location="build" />
+	<property name="dist" location="zap-exts" />
+	<property name="dist.lib.dir" location="../lib" />
+	<!-- This assumes you also have the zaproxy project -->
+	<property name="zap.ext.dir" location="../../zaproxy/src/extension" />
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+
+		<!-- Create the build directory structure used by compile -->
+
+		<delete dir="${dist}" includeEmptyDirs="true" />
+		<delete dir="${build}" includeEmptyDirs="true" />
+
+		<mkdir dir="${dist}" />
+		<mkdir dir="${build}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source">
+		<echo message="Compiling the source..." />
+		<!-- Compile the java code from ${src} into ${build} -->
+		<!--javac srcdir="${src}" destdir="${build}" classpath="zap.jar"/-->
+		<javac srcdir="${src}" destdir="${build}">
+			<classpath>
+				<fileset dir="${dist.lib.dir}">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+
+	</target>
+
+	<target name="build-rightclickmsg" depends="compile" description="build the rightclickmsg extension">
+		<jar jarfile="${dist}/zap-ext-rightclickmsg.jar" update="true" compress="false">
+			<zipfileset dir="${build}" prefix="">
+				<include name="org/zaproxy/zap/extension/rightclickmsg/**"/>
+			</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/rightclickmsg/Messages*"/>
+			</zipfileset>
+		</jar>
+	</target>
+
+	<target name="deploy-rightclickmsg" depends="build-rightclickmsg" description="deploy the rightclickmsg extension">
+		<copy file="${dist}/zap-ext-rightclickmsg.jar" toDir="${zap.ext.dir}" overwrite="true" />
+	</target>
+
+	<target name="build-all" depends="compile" description="build all of the extensions">
+		<antcall target="build-rightclickmsg" />
+	</target>
+
+	<target name="deploy-all" depends="build-all" description="build all of the extensions">
+		<antcall target="deploy-rightclickmsg" />
+	</target>
+
+
+</project>
