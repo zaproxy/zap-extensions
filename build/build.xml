@@ -6,18 +6,15 @@
 	<property name="dist" location="zap-exts" />
 	<property name="dist.lib.dir" location="../lib" />
 	<!-- This assumes you also have the zaproxy project -->
-	<property name="zap.ext.dir" location="../../zaproxy/src/extension" />
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 
-	<target name="init">
-		<!-- Create the time stamp -->
-		<tstamp />
-
-		<!-- Create the build directory structure used by compile -->
-
+	<target name="clean">
 		<delete dir="${dist}" includeEmptyDirs="true" />
 		<delete dir="${build}" includeEmptyDirs="true" />
+	</target>
 
+	<target name="init">
+		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${dist}" />
 		<mkdir dir="${build}" />
 	</target>
@@ -66,7 +63,6 @@
 	</target>
 
 	<target name="deploy-passivescan" depends="build-passivescan" description="deploy the passivescan extension">
-		<!-- Passive scan rules go in the plugin directory-->
 		<copy file="${dist}/zap-ext-passivescan.jar" toDir="${zap.plugin.dir}" overwrite="true" />
 	</target>
 
@@ -83,7 +79,7 @@
 	</target>
 
 	<target name="deploy-rightclickmsg" depends="build-rightclickmsg" description="deploy the rightclickmsg extension">
-		<copy file="${dist}/zap-ext-rightclickmsg.jar" toDir="${zap.ext.dir}" overwrite="true" />
+		<copy file="${dist}/zap-ext-rightclickmsg.jar" toDir="${zap.plugin.dir}" overwrite="true" />
 	</target>
 
 	<!-- Extension: top level menu -->
@@ -99,10 +95,10 @@
 	</target>
 
 	<target name="deploy-topmenu" depends="build-topmenu" description="deploy the topmenu extension">
-		<copy file="${dist}/zap-ext-topmenu.jar" toDir="${zap.ext.dir}" overwrite="true" />
+		<copy file="${dist}/zap-ext-topmenu.jar" toDir="${zap.plugin.dir}" overwrite="true" />
 	</target>
 
-	<target name="build-all" depends="compile" description="build all of the extensions">
+	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<antcall target="build-activescan" />
 		<antcall target="build-passivescan" />
 		<antcall target="build-rightclickmsg" />
