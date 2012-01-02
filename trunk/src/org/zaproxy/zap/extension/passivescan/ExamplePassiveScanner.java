@@ -74,6 +74,7 @@ public class ExamplePassiveScanner extends PluginPassiveScanner implements Passi
 			    	alert.setDetail(
 			    		getDescription(), 
 			    		msg.getRequestHeader().getURI().toString(),
+			    		"",
 			    		"", 
 			    		"", 
 			    		getSolution(), 
