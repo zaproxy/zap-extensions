@@ -30,86 +30,103 @@
 				</fileset>
 			</classpath>
 		</javac>
-
 	</target>
 
 	<!-- Active scanner -->
-	<target name="build-activescan" depends="compile" description="build the activescan extension">
-		<jar jarfile="${dist}/zap-ext-activescan.jar" update="true" compress="false">
+	<target name="build-exampleActiveScan" depends="compile" description="build the exampleActiveScan extension">
+		<jar jarfile="${dist}/zap-ext-exampleActiveScan.jar" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/activescan/**"/>
+				<include name="org/zaproxy/zap/extension/exampleActiveScan/**"/>
 			</zipfileset>
 			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/activescan/Messages*"/>
+				<include name="org/zaproxy/zap/extension/exampleActiveScan/Messages*"/>
 			</zipfileset>
 		</jar>
 	</target>
 
-	<target name="deploy-activescan" depends="build-activescan" description="deploy the activescan extension">
+	<target name="deploy-exampleActiveScan" depends="build-exampleActiveScan" description="deploy the exampleActiveScan extension">
 		<!-- Active scan rules go in the plugin directory-->
-		<copy file="${dist}/zap-ext-activescan.jar" toDir="${zap.plugin.dir}" overwrite="true" />
+		<copy file="${dist}/zap-ext-exampleActiveScan.jar" toDir="${zap.plugin.dir}" overwrite="true" />
 	</target>
 
-	<!-- Passive scanner -->
-	<target name="build-passivescan" depends="compile" description="build the passivescan extension">
-		<jar jarfile="${dist}/zap-ext-passivescan.jar" update="true" compress="false">
+	<!-- Example Passive scanner -->
+	<target name="build-examplePassiveScan" depends="compile" description="build the examplePassiveScan extension">
+		<jar jarfile="${dist}/zap-ext-examplePassiveScan.jar" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/passivescan/**"/>
+				<include name="org/zaproxy/zap/extension/examplePassiveScan/**"/>
 			</zipfileset>
 			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/passivescan/Messages*"/>
+				<include name="org/zaproxy/zap/extension/examplePassiveScan/Messages*"/>
 			</zipfileset>
 		</jar>
 	</target>
 
-	<target name="deploy-passivescan" depends="build-passivescan" description="deploy the passivescan extension">
-		<copy file="${dist}/zap-ext-passivescan.jar" toDir="${zap.plugin.dir}" overwrite="true" />
+	<target name="deploy-examplePassiveScan" depends="build-examplePassiveScan" description="deploy the examplePassiveScan extension">
+		<copy file="${dist}/zap-ext-examplePassiveScan.jar" toDir="${zap.plugin.dir}" overwrite="true" />
 	</target>
 
-	<!-- Extension: right click message menu -->
-	<target name="build-rightclickmsg" depends="compile" description="build the rightclickmsg extension">
-		<jar jarfile="${dist}/zap-ext-rightclickmsg.jar" update="true" compress="false">
+	<!-- Example Passive scanner -->
+	<target name="build-viewStatePScan" depends="compile" description="build the viewStatePScan extension">
+		<jar jarfile="${dist}/zap-ext-viewStatePScan.jar" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/rightclickmsg/**"/>
+				<include name="org/zaproxy/zap/extension/viewStatePScan/**"/>
+			</zipfileset>
+			<!--zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/viewStatePScan/Messages*"/>
+			</zipfileset-->
+		</jar>
+	</target>
+
+	<target name="deploy-viewStatePScan" depends="build-viewStatePScan" description="deploy the viewStatePScan extension">
+		<copy file="${dist}/zap-ext-viewStatePScan.jar" toDir="${zap.plugin.dir}" overwrite="true" />
+	</target>
+
+	<!-- Extension: example right click message menu -->
+	<target name="build-exampleRightClickMsg" depends="compile" description="build the exampleRightClickMsg extension">
+		<jar jarfile="${dist}/zap-ext-exampleRightClickMsg.jar" update="true" compress="false">
+			<zipfileset dir="${build}" prefix="">
+				<include name="org/zaproxy/zap/extension/exampleRightClickMsg/**"/>
 			</zipfileset>
 			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/rightclickmsg/Messages*"/>
+				<include name="org/zaproxy/zap/extension/exampleRightClickMsg/Messages*"/>
 			</zipfileset>
 		</jar>
 	</target>
 
-	<target name="deploy-rightclickmsg" depends="build-rightclickmsg" description="deploy the rightclickmsg extension">
-		<copy file="${dist}/zap-ext-rightclickmsg.jar" toDir="${zap.plugin.dir}" overwrite="true" />
+	<target name="deploy-exampleRightClickMsg" depends="build-exampleRightClickMsg" description="deploy the exampleRightClickMsg extension">
+		<copy file="${dist}/zap-ext-exampleRightClickMsg.jar" toDir="${zap.plugin.dir}" overwrite="true" />
 	</target>
 
-	<!-- Extension: top level menu -->
-	<target name="build-topmenu" depends="compile" description="build the topmenu extension">
-		<jar jarfile="${dist}/zap-ext-topmenu.jar" update="true" compress="false">
+	<!-- Extension: example top level menu -->
+	<target name="build-exampleTopMenu" depends="compile" description="build the exampleTopMenu extension">
+		<jar jarfile="${dist}/zap-ext-exampleTopMenu.jar" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/topmenu/**"/>
+				<include name="org/zaproxy/zap/extension/exampleTopMenu/**"/>
 			</zipfileset>
 			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/topmenu/Messages*"/>
+				<include name="org/zaproxy/zap/extension/exampleTopMenu/Messages*"/>
 			</zipfileset>
 		</jar>
 	</target>
 
-	<target name="deploy-topmenu" depends="build-topmenu" description="deploy the topmenu extension">
-		<copy file="${dist}/zap-ext-topmenu.jar" toDir="${zap.plugin.dir}" overwrite="true" />
+	<target name="deploy-exampleTopMenu" depends="build-exampleTopMenu" description="deploy the exampleTopMenu extension">
+		<copy file="${dist}/zap-ext-exampleTopMenu.jar" toDir="${zap.plugin.dir}" overwrite="true" />
 	</target>
 
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
-		<antcall target="build-activescan" />
-		<antcall target="build-passivescan" />
-		<antcall target="build-rightclickmsg" />
-		<antcall target="build-topmenu" />
+		<antcall target="build-exampleActiveScan" />
+		<antcall target="build-examplePassiveScan" />
+		<antcall target="build-exampleRightClickMsg" />
+		<antcall target="build-exampleTopMenu" />
+		<antcall target="build-viewStatePScan" />
 	</target>
 
 	<target name="deploy-all" depends="build-all" description="build all of the extensions">
-		<antcall target="deploy-activescan" />
-		<antcall target="deploy-passivescan" />
-		<antcall target="deploy-rightclickmsg" />
-		<antcall target="deploy-topmenu" />
+		<antcall target="deploy-exampleActiveScan" />
+		<antcall target="deploy-examplePassiveScan" />
+		<antcall target="deploy-exampleRightClickMsg" />
+		<antcall target="deploy-exampleTopMenu" />
+		<antcall target="deploy-viewStatePScan" />
 	</target>
 
 

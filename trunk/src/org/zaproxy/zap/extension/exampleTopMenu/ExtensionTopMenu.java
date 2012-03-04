@@ -15,29 +15,31 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.rightclickmsg;
+package org.zaproxy.zap.extension.exampleTopMenu;
 
 import java.util.ResourceBundle;
+
+import javax.swing.JMenuItem;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.view.View;
 
 /*
- * An example ZAP extension which adds a right click menu item to all of the main
- * tabs which list messages. 
+ * An example ZAP extension which adds a top level menu item. 
  * 
  * This class is defines the extension.
  */
-public class ExtensionRightClickMsgMenu extends ExtensionAdaptor {
+public class ExtensionTopMenu extends ExtensionAdaptor {
 
-	private RightClickMsgMenu popupMsgMenuExample = null;
+    private JMenuItem menuExample = null;
     private ResourceBundle messages = null;
 
 	/**
      * 
      */
-    public ExtensionRightClickMsgMenu() {
+    public ExtensionTopMenu() {
         super();
  		initialize();
     }
@@ -45,7 +47,7 @@ public class ExtensionRightClickMsgMenu extends ExtensionAdaptor {
     /**
      * @param name
      */
-    public ExtensionRightClickMsgMenu(String name) {
+    public ExtensionTopMenu(String name) {
         super(name);
     }
 
@@ -55,7 +57,7 @@ public class ExtensionRightClickMsgMenu extends ExtensionAdaptor {
 	 * @return void
 	 */
 	private void initialize() {
-        this.setName("ExtensionPopupMsgMenu");
+        this.setName("ExtensionTopMenu");
         // Load extension specific language files - these are held in the extension jar
         messages = ResourceBundle.getBundle(
         		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
@@ -65,20 +67,28 @@ public class ExtensionRightClickMsgMenu extends ExtensionAdaptor {
 	    super.hook(extensionHook);
 	    
 	    if (getView() != null) {
-	    	// Register our popup menu item, as long as we're not running as a daemon
-	    	extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgMenuExample());
+	    	// Register our top menu item, as long as we're not running as a daemon
+	    	// Use one of the other methods to add to a different menu list
+	        extensionHook.getHookMenu().addToolsMenuItem(getMenuExample());
 	    }
 
 	}
 
-	private RightClickMsgMenu getPopupMsgMenuExample() {
-		if (popupMsgMenuExample  == null) {
-			popupMsgMenuExample = new RightClickMsgMenu(
-					this.getMessageString("ext.popupmsg.popup.example"));
-			popupMsgMenuExample.setExtension(this);
-		}
-		return popupMsgMenuExample;
-	}
+	private JMenuItem getMenuExample() {
+        if (menuExample == null) {
+        	menuExample = new JMenuItem();
+        	menuExample.setText(getMessageString("ext.topmenu.tools.example"));
+
+        	menuExample.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+            		// This is where you do what you want to do.
+            		// In this case we'll just show a popup message.
+            		View.getSingleton().showMessageDialog(getMessageString("ext.topmenu.msg.example"));
+                }
+            });
+        }
+        return menuExample;
+    }
 
 	public String getMessageString (String key) {
 		return messages.getString(key);
