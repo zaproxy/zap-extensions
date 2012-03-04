@@ -1,4 +1,4 @@
-package org.zaproxy.zap.extension.passivescan;
+package org.zaproxy.zap.extension.viewStatePScan;
 
 import java.util.*;
 import java.util.regex.Matcher;
