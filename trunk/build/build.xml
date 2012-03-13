@@ -64,6 +64,24 @@
 		<antcall target="build-extension"> <param name="extension" value="exampleTopMenu"/> </antcall>
 	</target>
 
+	<target name="build-highlighter" description="build the highlighter extension">
+		<antcall target="build-extension"> <param name="extension" value="highlighter"/> </antcall>
+	</target>
+
+	<target name="build-tokengen" description="build the tokengen extension">
+		<!-- Cant use build-extension as other classes needed -->
+		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
+		<jar jarfile="${dist}/zap-ext-tokengen.jar" update="true" compress="false">
+			<zipfileset dir="${build}" prefix="">
+				<include name="org/zaproxy/zap/extension/tokengen/**"/>
+				<include name="com/fasteasytrade/JRandTest/**"/>
+			</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/tokengen/Messages*"/>
+			</zipfileset>
+		</jar>
+	</target>
+
 	<target name="build-viewStatePScan" description="build the viewStatePScan extension">
 		<antcall target="build-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
 	</target>
@@ -73,6 +91,8 @@
 		<antcall target="build-examplePassiveScan"/>
 		<antcall target="build-exampleRightClickMsg"/>
 		<antcall target="build-exampleTopMenu"/>
+		<antcall target="build-highlighter"/>
+		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
 	</target>
 
@@ -92,6 +112,14 @@
 		<antcall target="deploy-extension"> <param name="extension" value="exampleTopMenu"/> </antcall>
 	</target>
 
+	<target name="deploy-highlighter" description="deploy the highlighter extension">
+		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
+	</target>
+
+	<target name="deploy-tokengen" description="deploy the tokengen extension">
+		<antcall target="deploy-extension"> <param name="extension" value="tokengen"/> </antcall>
+	</target>
+
 	<target name="deploy-viewStatePScan" description="deploy the viewStatePScan extension">
 		<antcall target="deploy-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
 	</target>
@@ -101,6 +129,8 @@
 		<antcall target="deploy-examplePassiveScan"/>
 		<antcall target="deploy-exampleRightClickMsg"/>
 		<antcall target="deploy-exampleTopMenu"/>
+		<antcall target="deploy-highlighter"/>
+		<antcall target="deploy-tokengen"/>
 		<antcall target="deploy-viewStatePScan"/>
 	</target>
 
