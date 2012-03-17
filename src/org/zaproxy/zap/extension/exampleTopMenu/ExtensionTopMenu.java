@@ -17,6 +17,8 @@
  */
 package org.zaproxy.zap.extension.exampleTopMenu;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ResourceBundle;
 
 import javax.swing.JMenuItem;
@@ -92,5 +94,23 @@ public class ExtensionTopMenu extends ExtensionAdaptor {
 
 	public String getMessageString (String key) {
 		return messages.getString(key);
+	}
+	@Override
+	public String getAuthor() {
+		return Constant.ZAP_TEAM;
+	}
+
+	@Override
+	public String getDescription() {
+		return messages.getString("ext.topmenu.desc");
+	}
+
+	@Override
+	public URL getURL() {
+		try {
+			return new URL(Constant.ZAP_EXTENSIONS_PAGE);
+		} catch (MalformedURLException e) {
+			return null;
+		}
 	}
 }

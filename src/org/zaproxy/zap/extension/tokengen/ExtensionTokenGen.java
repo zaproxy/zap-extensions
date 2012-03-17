@@ -17,6 +17,8 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -208,7 +210,6 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
 	private TokenGenPopupMenu getPopupTokenGen() {
 		if (popupTokenGenMenu  == null) {
-			//popupTokenGenMenu = new TokenGenPopupMenu(Constant.messages.getString("token.generate.popup.generate"));
 			popupTokenGenMenu = new TokenGenPopupMenu(messages.getString("token.generate.popup.generate"));
 			popupTokenGenMenu.setExtension(this);
 		}
@@ -300,6 +301,24 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	public void resumeTokenGeneration() {
 		for (TokenGenerator gen : generators) {
 			gen.setPaused(false);
+		}
+	}
+	@Override
+	public String getAuthor() {
+		return Constant.ZAP_TEAM;
+	}
+
+	@Override
+	public String getDescription() {
+		return messages.getString("token.desc");
+	}
+
+	@Override
+	public URL getURL() {
+		try {
+			return new URL(Constant.ZAP_EXTENSIONS_PAGE);
+		} catch (MalformedURLException e) {
+			return null;
 		}
 	}
 }
