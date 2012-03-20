@@ -1,6 +1,13 @@
 package org.zaproxy.zap.extension.viewStatePScan;
 
-import java.util.*;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,11 +18,9 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
-import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class ViewstateScanner extends PluginPassiveScanner implements
-		PassiveScanner {
+public class ViewstateScanner extends PluginPassiveScanner {
 	
 	
     private PassiveScanThread parent = null;
@@ -342,11 +347,17 @@ public class ViewstateScanner extends PluginPassiveScanner implements
         public Viewstate(StartTag s, boolean wasSplit) {
         	if (s != null)
         	{
-        		this.isValid = true;
         		this.isSplit = wasSplit;
         		this.base64Value = s.getAttributeValue("value");
-        		this.decodedValue = Base64.decodeToString(this.base64Value);
-        		this.setVersion();
+        		try {
+					this.decodedValue = new String(Base64.decode(this.base64Value), Charset.forName("UTF-8"));
+	        		this.isValid = true;
+	        		this.setVersion();
+	        	} catch (IllegalArgumentException e) {
+					//Incorrect Base64 value.
+				} catch (IOException e) {
+					//Incorrect Base64 value.
+				}
         	}
         }
         
@@ -355,11 +366,17 @@ public class ViewstateScanner extends PluginPassiveScanner implements
         public Viewstate(String s, boolean wasSplit) {
         	if (s != null)
         	{
-        		this.isValid = true;
         		this.isSplit = wasSplit;
         		this.base64Value = s;
-        		this.decodedValue = Base64.decodeToString(s);
-        		this.setVersion();
+        		try {
+					this.decodedValue = new String(Base64.decode(this.base64Value), Charset.forName("UTF-8"));
+					this.isValid = true;
+	        		this.setVersion();
+        		} catch (IllegalArgumentException e) {
+					//Incorrect Base64 value.
+				} catch (IOException e) {
+					//Incorrect Base64 value.
+				}
         	}
         }
 
