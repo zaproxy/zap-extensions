@@ -32,9 +32,18 @@
 		</javac>
 	</target>
 
-	<!-- Build the specified extension -->
+	<!--
+	 Build the specified extension
+	 type should be one of:
+	 	alpha
+	 	beta
+	 	release
+	 	example
+	 version should be an integer that increments on each release, starting at 1
+	 -->
+	
 	<target name="build-extension" description="build the specified extension">
-		<jar jarfile="${dist}/zap-ext-${extension}.jar" update="true" compress="false">
+		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}.jar" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/**"/>
 			</zipfileset>
@@ -44,34 +53,52 @@
 		</jar>
 	</target>
 
-	<target name="deploy-extension" description="deploy the specified extension">
-		<copy file="${dist}/zap-ext-${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" />
-	</target>
-
 	<target name="build-exampleActiveScan" description="build the exampleActiveScan extension">
-		<antcall target="build-extension"> <param name="extension" value="exampleActiveScan"/> </antcall>
+		<antcall target="build-extension"> 
+			<param name="extension" value="exampleActiveScan"/> 
+			<param name="type" value="example"/> 
+			<param name="version" value="1"/> 
+		</antcall>
 	</target>
 
 	<target name="build-examplePassiveScan" description="build the examplePassiveScan extension">
-		<antcall target="build-extension"> <param name="extension" value="examplePassiveScan"/> </antcall>
+		<antcall target="build-extension"> 
+			<param name="extension" value="examplePassiveScan"/> 
+			<param name="type" value="example"/> 
+			<param name="version" value="1"/> 
+		</antcall>
 	</target>
 
 	<target name="build-exampleRightClickMsg" description="build the exampleRightClickMsg extension">
-		<antcall target="build-extension"> <param name="extension" value="exampleRightClickMsg"/> </antcall>
+		<antcall target="build-extension"> 
+			<param name="extension" value="exampleRightClickMsg"/> 
+			<param name="type" value="example"/> 
+			<param name="version" value="1"/> 
+		</antcall>
 	</target>
 
 	<target name="build-exampleTopMenu" description="build the exampleTopMenu extension">
-		<antcall target="build-extension"> <param name="extension" value="exampleTopMenu"/> </antcall>
+		<antcall target="build-extension"> 
+			<param name="extension" value="exampleTopMenu"/> 
+			<param name="type" value="example"/> 
+			<param name="version" value="1"/> 
+		</antcall>
 	</target>
 
 	<target name="build-highlighter" description="build the highlighter extension">
-		<antcall target="build-extension"> <param name="extension" value="highlighter"/> </antcall>
+		<antcall target="build-extension"> 
+			<param name="extension" value="highlighter"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
 	</target>
 
 	<target name="build-tokengen" description="build the tokengen extension">
 		<!-- Cant use build-extension as other classes needed -->
 		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
-		<jar jarfile="${dist}/zap-ext-tokengen.jar" update="true" compress="false">
+		<property name="tokengen.type" value="alpha" />
+		<property name="tokengen.version" value="1" />
+		<jar jarfile="${dist}/zap-ext-tokengen-${tokengen.type}-${tokengen.version}.jar" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/tokengen/**"/>
 				<include name="com/fasteasytrade/JRandTest/**"/>
@@ -83,7 +110,11 @@
 	</target>
 
 	<target name="build-viewStatePScan" description="build the viewStatePScan extension">
-		<antcall target="build-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
+		<antcall target="build-extension"> 
+			<param name="extension" value="viewStatePScan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
 	</target>
 
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
@@ -94,6 +125,15 @@
 		<antcall target="build-highlighter"/>
 		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
+	</target>
+
+	<target name="deploy-extension" description="deploy the specified extension">
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+			<include name="zap-ext-${extension}-*.jar"/>
+			</fileset>
+		</copy>
+		<!--copy file="${dist}/zap-ext-${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
 	</target>
 
 	<target name="deploy-exampleActiveScan" description="deploy the exampleActiveScan extension">
