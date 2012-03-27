@@ -1,0 +1,22 @@
+This project contains extensions for the [https://code.google.com/p/zaproxy OWASP Zed Attack Proxy] (ZAP).
+
+These can be added to ZAP by simply dropping them into the ZAP 'plugins' directory and restarting ZAP - you dont need to rebuild ZAP. Note that you must be running at least the latest 1.4 release (which is currently alpha status).
+
+The following extensions are currently available:
+|| *Status* || *Name* || *Description* ||
+|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-highlighter-alpha-1.jar highlighter] || Allows you to highlight strings in the request and response tabs. || 
+|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-tokengen-alpha-1.jar tokengen] || Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection. ||
+|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-viewStatePScan-alpha-1.jar viewStatePscan] || View State passive scanner ||
+
+This project also contains example templates to help you get started when developing new ones:
+  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleActiveScan/ExampleActiveScanner.java Active Scanner rule]
+  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/examplePassiveScan/ExamplePassiveScanner.java Passive Scanner rule]
+  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleRightClickMsg/ExtensionRightClickMsgMenu.java Extension including a right click menu item]
+  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleTopMenu/ExtensionTopMenu.java Extension including a top level menu item]
+
+
+For a summary of the ways you can extend ZAP see https://code.google.com/p/zaproxy/wiki/DevExtending
+
+For some general notes on developing ZAP see the [https://code.google.com/p/zaproxy/wiki/Development wiki]
+
+If you have any questions about developing extensions for ZAP please ask them on the [http://groups.google.com/group/zaproxy-develop ZAP Developer] forum.
