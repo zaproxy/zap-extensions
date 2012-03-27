@@ -1,3 +1,4 @@
+#labels Featured
 This project contains extensions for the [https://code.google.com/p/zaproxy OWASP Zed Attack Proxy] (ZAP).
 
 These can be added to ZAP by simply dropping them into the ZAP 'plugins' directory and restarting ZAP - you dont need to rebuild ZAP. Note that you must be running at least the latest 1.4 release (which is currently alpha status).
@@ -20,3 +21,5 @@ For a summary of the ways you can extend ZAP see https://code.google.com/p/zapro
 For some general notes on developing ZAP see the [https://code.google.com/p/zaproxy/wiki/Development wiki]
 
 If you have any questions about developing extensions for ZAP please ask them on the [http://groups.google.com/group/zaproxy-develop ZAP Developer] forum.
+
+We are happy to host the source code and/or release jars for your ZAP extensions in this project - please get in touch via the [http://groups.google.com/group/zaproxy-develop ZAP Developer] forum.
