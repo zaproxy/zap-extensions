@@ -8,7 +8,7 @@ The following extensions are currently available:
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-highlighter-alpha-1.jar highlighter] || Allows you to highlight strings in the request and response tabs. || 
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-tokengen-alpha-1.jar tokengen] || Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection. ||
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-viewStatePScan-alpha-1.jar viewStatePscan] || View State passive scanner ||
-|| Beta || [http://code.google.com/p/zap-extensions/downloads/detail?name=UtlimateObsoleteFileDetection.jar ultimateObsoleteFileDetection] || Advanced Obsolete/Hidden File Detection ||
+|| Beta || [http://code.google.com/p/zap-extensions/downloads/detail?name=UtlimateObsoleteFileDetection.jar ultimateObsoleteFileDetection] || Advanced Obsolete/Hidden File Detection (Installer/Plugin/Source)||
 
 
 This project also contains example templates to help you get started when developing new ones:
