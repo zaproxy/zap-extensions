@@ -116,6 +116,14 @@
 			<param name="version" value="1"/> 
 		</antcall>
 	</target>
+	
+	<target name="build-sessionfixation" description="build the SessionFixation extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="sessionfixationscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1.0"/> 
+		</antcall>
+	</target>
 
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<antcall target="build-exampleActiveScan"/>
@@ -125,6 +133,7 @@
 		<antcall target="build-highlighter"/>
 		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
+		<antcall target="build-sessionfixation"/>
 	</target>
 
 	<target name="deploy-extension" description="deploy the specified extension">
@@ -163,6 +172,10 @@
 	<target name="deploy-viewStatePScan" description="deploy the viewStatePScan extension">
 		<antcall target="deploy-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
 	</target>
+	
+	<target name="deploy-sessionfixationscan" description="deploy the sessionfixation extension">
+		<antcall target="deploy-extension"> <param name="extension" value="sessionfixationscan"/> </antcall>
+	</target>
 
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<antcall target="deploy-exampleActiveScan"/>
@@ -172,6 +185,7 @@
 		<antcall target="deploy-highlighter"/>
 		<antcall target="deploy-tokengen"/>
 		<antcall target="deploy-viewStatePScan"/>
+		<antcall target="deploy-sessionfixationscan"/>
 	</target>
 
 </project>
