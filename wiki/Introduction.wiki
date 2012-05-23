@@ -4,12 +4,12 @@ This project contains extensions for the [https://code.google.com/p/zaproxy OWAS
 These can be added to ZAP by simply dropping them into the ZAP 'plugins' directory and restarting ZAP - you dont need to rebuild ZAP. Note that you must be running at least the latest 1.4 release (which is currently alpha status).
 
 The following extensions are currently available:
-|| *Status* || *Name* || *Description* ||
-|| Beta || [http://code.google.com/p/zap-extensions/downloads/detail?name=UtlimateObsoleteFileDetection.jar ultimateObsoleteFileDetection] || Advanced obsolete/hidden file detection (Installer/Plugin/Source)||
-|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-highlighter-alpha-1.jar highlighter] || Allows you to highlight strings in the request and response tabs. || 
-|| Alpha || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sessionfixationscan-alpha-1.1.jar SessionFixation] || Session Fixation scanner ||
-|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-tokengen-alpha-1.jar tokengen] || Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection. ||
-|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-viewStatePScan-alpha-1.jar viewStatePscan] || View State passive scanner ||
+|| *Status* || *Name* || *Author* || *Description* ||
+|| Beta || [http://code.google.com/p/zap-extensions/downloads/detail?name=UtlimateObsoleteFileDetection.jar ultimateObsoleteFileDetection] || Hacktics ASC, Ernst & Young || Advanced obsolete/hidden file detection (Installer/Plugin/Source)||
+|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-highlighter-alpha-1.jar highlighter] || ZAP Core Team || Allows you to highlight strings in the request and response tabs. || 
+|| Alpha || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sessionfixationscan-alpha-1.1.jar SessionFixation] || ZAP Core Team || Session Fixation scanner ||
+|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-tokengen-alpha-1.jar tokengen] || ZAP Core Team || Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection. ||
+|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-viewStatePScan-alpha-1.jar viewStatePscan] || || View State passive scanner ||
 
 This project also contains example templates to help you get started when developing new ones:
   * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleActiveScan/ExampleActiveScanner.java Active Scanner rule]
