@@ -121,7 +121,7 @@
 		<antcall target="build-extension"> 
 			<param name="extension" value="sessionfixationscan"/> 
 			<param name="type" value="alpha"/> 
-			<param name="version" value="3"/> 
+			<param name="version" value="4"/> 
 		</antcall>
 	</target>
 
