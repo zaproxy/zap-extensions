@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -27,11 +29,25 @@ import org.parosproxy.paros.network.HttpStatusCode;
 import net.htmlparser.jericho.*;
 
 /**
- * @author Colm O'Flaherty
  * The SessionFixation plugin identifies Session Fixation vulnerabilities with
  * - cookie fields (a more common scenario, but also more secure, even when the vulnerability occurs)
  * - url fields (less common, but also less secure when the vulnerability occurs)
  * - session ids built into the url path, and typically extracted by means of url rewriting
+ *  TODO: implement the check for form fields (POST parameters).
+ *
+ *  @author Colm O'Flaherty
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
  */
 public class SessionFixation extends AbstractAppPlugin {
 	/**
@@ -170,19 +186,19 @@ public class SessionFixation extends AbstractAppPlugin {
     		htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
     		
     		//Now add in the pseudo parameters set in the URL itself, such as in the following:
-    		//http://www.somewebsite.com/someurl;JSESSIONID=abcdefg?x=123&y=456
+    		//http://www.example.com/someurl;JSESSIONID=abcdefg?x=123&y=456
     		//as opposed to the url parameters in the following example, which are already picked up by getUrlParams() 
-    		//http://www.somewebsite.com/someurl?JSESSIONID=abcdefg&x=123&y=456
+    		//http://www.example.com/someurl?JSESSIONID=abcdefg&x=123&y=456
     		
     		//get the URL
     		URI requestUri = getBaseMsg().getRequestHeader().getURI();
-    		//convert from org.apache.commons.httpclient.URI to a java.net.URL
-    		URL requestUrl = new URL (requestUri.getScheme(), requestUri.getHost(), requestUri.getPort(), requestUri.getPath());  
+    		//convert from org.apache.commons.httpclient.URI to a String
+    		String requestUrl = new URL (requestUri.getScheme(), requestUri.getHost(), requestUri.getPort(), requestUri.getPath()).toString();  
     		
     		//suck out any pseudo url parameters from the url
-    		TreeSet<HtmlParameter> pseudoUrlParams = getPseudoUrlParameters (requestUrl.toString());
+    		Set<HtmlParameter> pseudoUrlParams = getPseudoUrlParameters (requestUrl);
     		htmlParams.addAll(pseudoUrlParams);
-    		if ( this.debugEnabled ) log.debug("Pseudo url params of URL ["+ requestUrl.toString()+ "] : ["+pseudoUrlParams+"]");
+    		if ( this.debugEnabled ) log.debug("Pseudo url params of URL ["+ requestUrl+ "] : ["+pseudoUrlParams+"]");
     		
     		////for each parameter in turn, 
     		//int counter = 0;
@@ -238,9 +254,6 @@ public class SessionFixation extends AbstractAppPlugin {
 		                //create a new URI from the absolute location returned, and interpret it as escaped
 		            	//note that the standard says that the Location returned should be absolute, but it ain't always so...
 		                URI newLocation = new URI (temp.getResponseHeader().getHeader(HttpHeader.LOCATION), true);		                
-		                //the Location field contents may not be standards compliant. Lets generate a uri to use as a workaround where a relative path was 
-		                //given instead of an absolute one
-		                URI newLocationWorkaround = new URI(temp.getRequestHeader().getURI(), temp.getResponseHeader().getHeader(HttpHeader.LOCATION), true);
 		                		                		                
 		                //and follow the forward url
 		                //need to clear the params (which would come from the initial POST, otherwise)
@@ -250,6 +263,10 @@ public class SessionFixation extends AbstractAppPlugin {
 		                try {
 							temp.getRequestHeader().setURI(newLocation);
 						} catch (Exception e) {
+							//the Location field contents may not be standards compliant. Lets generate a uri to use as a workaround where a relative path was 
+			                //given instead of an absolute one
+			                URI newLocationWorkaround = new URI(temp.getRequestHeader().getURI(), temp.getResponseHeader().getHeader(HttpHeader.LOCATION), true);
+			                
 							//try again, except this time, if it fails, don't try to handle it
 							if (this.debugEnabled) log.debug("The Location ["+ newLocation + "] specified in a redirect was not valid. Trying workaround url ["+ newLocationWorkaround + "]");
 							temp.getRequestHeader().setURI(newLocationWorkaround);
@@ -341,9 +358,6 @@ public class SessionFixation extends AbstractAppPlugin {
 		                //create a new URI from the absolute location returned, and interpret it as escaped
 		            	//note that the standard says that the Location returned should be absolute, but it ain't always so...
 		                URI newLocation = new URI (temp2.getResponseHeader().getHeader(HttpHeader.LOCATION), true);		                
-		                //the Location field contents may not be standards compliant. Lets generate a uri to use as a workaround where a relative path was 
-		                //given instead of an absolute one
-		                URI newLocationWorkaround = new URI(temp2.getRequestHeader().getURI(), temp2.getResponseHeader().getHeader(HttpHeader.LOCATION), true);
 		              		                
 		                //and follow the forward url
 		            	 //need to clear the params (which would come from the initial POST, otherwise)
@@ -354,6 +368,10 @@ public class SessionFixation extends AbstractAppPlugin {
 		                try {
 							temp2.getRequestHeader().setURI(newLocation);
 						} catch (Exception e) {
+			                //the Location field contents may not be standards compliant. Lets generate a uri to use as a workaround where a relative path was 
+			                //given instead of an absolute one
+			                URI newLocationWorkaround = new URI(temp2.getRequestHeader().getURI(), temp2.getResponseHeader().getHeader(HttpHeader.LOCATION), true);
+
 							//try again, except this time, if it fails, don't try to handle it
 							if (this.debugEnabled) log.debug("The Location ["+ newLocation + "] specified in a redirect was not valid. Trying workaround url ["+ newLocationWorkaround + "]");
 							temp2.getRequestHeader().setURI(newLocationWorkaround);
@@ -410,21 +428,21 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			//if ( log.isInfoEnabled())  {
 	        				String logMessage = getString ("sessionfixation.alert.logmessage", msg2Initial.getRequestHeader().getMethod(),  msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        				log.info(logMessage);
-	        			//}
-	        			
-	        			continue;  //jump to the next iteration of the loop (ie, the next parameter)
+	        			//}	        			
 	        		}
+
+        			continue;  //jump to the next iteration of the loop (ie, the next parameter)
         		} //end of the cookie code.
         		
         		
         		//start of the url parameter code
         		//note that this actually caters for 
         		//- actual URL parameters
-        		//- pseudo URK parameters, where the sessionid was in the path portion of the URL, in conjunction with URL re-writing
+        		//- pseudo URL parameters, where the sessionid was in the path portion of the URL, in conjunction with URL re-writing
         		if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
         			boolean isPseudoUrlParameter=false; //is this "url parameter" actually a url parameter, or was it path of the path (+url re-writing)?
         			String possibleSessionIdIssuedForUrlParam=null;
-        			//remove the named cookie parameter from the request..
+        			//remove the named url parameter from the request..
         			TreeSet <HtmlParameter> urlRequestParams = msg1Initial.getUrlParams(); //get parameters?
         			if ( ! urlRequestParams.remove(currentHtmlParameter)) {
         				isPseudoUrlParameter=true;
@@ -434,8 +452,8 @@ public class SessionFixation extends AbstractAppPlugin {
         				//and replace it with ";jsessionid=" (ie, we nullify the possible "session" parameter in the hope that a new session will be issued)
         				//then we continue as usual to see if the URL is vulnerable to a Session Fixation issue
         				
-        				String hackedUrl = requestUrl.toString().replaceAll(
-        							"([.]*;)"+ currentHtmlParameter.getName()+"=" + currentHtmlParameter.getValue()+ "([.]*)", "$1"+currentHtmlParameter.getName()+"=$2");
+        				String hackedUrl = requestUrl.replaceAll( 
+        							      ";"+ currentHtmlParameter.getName()+"=" + currentHtmlParameter.getValue(), ";"+currentHtmlParameter.getName()+"=");
         				if (this.debugEnabled) log.debug("Removing the pseudo URL parameter from ["+requestUrl+"]: ["+hackedUrl+"]");
         				//Note: the URL is not escaped. Handle it.
         				msg1Initial.getRequestHeader().setURI(new URI(hackedUrl, false));
@@ -460,8 +478,8 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		//either way, there is not much point in continuing to look at this field..
 	        		
 	        		//parse out links in HTML (assume for a moment that all the URLs are in links)
-	        		//this gives us a map of parameter value for the currrent parameter, to the number of times it was encountered in links in the HTML
-	        		TreeMap <String, Integer> parametersInHTMLURls = getParameterValueCountInHtml (msg1Initial.getResponseBody().toString(), currentHtmlParameter.getName(), isPseudoUrlParameter);
+	        		//this gives us a map of parameter value for the current parameter, to the number of times it was encountered in links in the HTML
+	        		SortedMap <String, Integer> parametersInHTMLURls = getParameterValueCountInHtml (msg1Initial.getResponseBody().toString(), currentHtmlParameter.getName(), isPseudoUrlParameter);
 	        		if (this.debugEnabled) log.debug("The count of the various values of the ["+ currentHtmlParameter.getName() + "] parameters in urls in the result of retrieving the url with a null value for parameter ["+ currentHtmlParameter.getName() + "]: "+ parametersInHTMLURls);
 	        		
 	        		if (parametersInHTMLURls.isEmpty()) { 
@@ -476,8 +494,15 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		} else if (parametersInHTMLURls.size() == 1) {
 	        			//the parameter was set to just one value in the output
 	        			//so it's quite likely to be the session id field that we have been looking for
+	        			//caveat: check it is longer than 3 chars long, to remove false positives.. 
+	        			//we assume here that a real session id will always be greater than 3 characters long
 	        			possibleSessionIdIssuedForUrlParam=parametersInHTMLURls.firstKey();
-	        			log.info("The URL parameter ["+ currentHtmlParameter.getName() + "] was set ["+ parametersInHTMLURls.get(possibleSessionIdIssuedForUrlParam)+ "] times to ["+ possibleSessionIdIssuedForUrlParam + "] in links in the response, when "+ (isPseudoUrlParameter?"pseudo/URL rewritten":"")+ " URL param ["+ currentHtmlParameter.getName() + "] was set to NULL in the request. This likely indicates it is a session id field.");
+	        			if (possibleSessionIdIssuedForUrlParam.length() > 3)
+	        				log.info("The URL parameter ["+ currentHtmlParameter.getName() + "] was set ["+ parametersInHTMLURls.get(possibleSessionIdIssuedForUrlParam)+ "] times to ["+ possibleSessionIdIssuedForUrlParam + "] in links in the response, when "+ (isPseudoUrlParameter?"pseudo/URL rewritten":"")+ " URL param ["+ currentHtmlParameter.getName() + "] was set to NULL in the request. This likely indicates it is a session id field.");
+	        			else {
+	        				if ( this.debugEnabled ) log.debug((isPseudoUrlParameter?"pseudo/URL rewritten":"")+ " URL param ["+ currentHtmlParameter.getName() + "], when set to NULL, causes 1 distinct values to be set for it in URLs in the output, but the possible session id value ["+ possibleSessionIdIssuedForUrlParam + "] is too short to be a real session id.");
+	        				continue; //to the next parameter
+	        			}
 	        		} else {
 	        			//strange scenario: setting the param to null causes multiple different values to be set for it in the output
 	        			//it could still be a session parameter, but we assume it is *not* a session id field
@@ -506,8 +531,8 @@ public class SessionFixation extends AbstractAppPlugin {
         				//id, we need to remove the ";jsessionid=<sessionid>" bit from the path
         				//and replace it with ";jsessionid=" (ie, we nullify the possible "session" parameter in the hope that a new session will be issued)
         				//then we continue as usual to see if the URL is vulnerable to a Session Fixation issue        				
-        				String hackedUrl = requestUrl.toString().replaceAll(
-        							"([.]*;)"+ currentHtmlParameter.getName()+"=" + currentHtmlParameter.getValue()+ "([.]*)", "$1"+currentHtmlParameter.getName()+"="+ possibleSessionIdIssuedForUrlParam+"$2");
+        				String hackedUrl = requestUrl.replaceAll(
+        						";"+ currentHtmlParameter.getName()+"=" + currentHtmlParameter.getValue(), ";" +currentHtmlParameter.getName()+"="+ possibleSessionIdIssuedForUrlParam);
         				if (this.debugEnabled) log.debug("Changing the pseudo URL parameter from ["+requestUrl+"]: ["+hackedUrl+"]");
         				//Note: the URL is not escaped
         				msg2Initial.getRequestHeader().setURI(new URI(hackedUrl, false));
@@ -520,7 +545,7 @@ public class SessionFixation extends AbstractAppPlugin {
         			}
 	        		
         			//resend a copy of the initial message, but with the new valid session parameter added in, to see if it is accepted
-	        		//automatically follow redirects, which are irrelevent for the purposes of testing URL parameters
+	        		//automatically follow redirects, which are irrelevant for the purposes of testing URL parameters
 	        		sendAndReceive(msg2Initial);
 	        		
 	        		//final result was non-200, no point in continuing. Bale out.
@@ -530,7 +555,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		}
 	        		
 	        		//do the analysis on the parameters in link urls in the HTML output again to see if the session id was regenerated
-	        		TreeMap <String, Integer> parametersInHTMLURls2 = getParameterValueCountInHtml (msg2Initial.getResponseBody().toString(), currentHtmlParameter.getName(), isPseudoUrlParameter);
+	        		SortedMap <String, Integer> parametersInHTMLURls2 = getParameterValueCountInHtml (msg2Initial.getResponseBody().toString(), currentHtmlParameter.getName(), isPseudoUrlParameter);
 	        		if ( this.debugEnabled ) log.debug("The count of the various values of the ["+ currentHtmlParameter.getName() + "] parameters in urls in the result of retrieving the url with a borrowed session value for parameter ["+ currentHtmlParameter.getName() + "]: "+ parametersInHTMLURls2);
 	        		
 	        		if ( parametersInHTMLURls2.size() != 1) {
@@ -568,7 +593,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		continue; //onto the next parameter
         		} //end of the url parameter code.
         			
-    		} //end of the for loop
+    		} //end of the for loop around the parameter list
 
         } catch (Exception e) {
         	//Do not try to internationalise this.. we need an error message in any event.. 
@@ -601,15 +626,15 @@ public class SessionFixation extends AbstractAppPlugin {
 	}
 	
 	/**
-	 * returns a TreeMap of the count for the various values of the parameter specified, as found in links in the HTML 
+	 * returns a SortedMap of the count for the various values of the parameter specified, as found in links in the HTML 
 	 * @param html the HTML containing links to be parsed
 	 * @param parametername the parameter to look for in links in the HTML
 	 * @param pseudoUrlParameter is the parameter contained in the url itself, and processed using URL rewriting?
 	 * @return
 	 */
-	private TreeMap <String, Integer> getParameterValueCountInHtml (String html, String parametername, boolean pseudoUrlParameter) throws Exception {
+	private SortedMap <String, Integer> getParameterValueCountInHtml (String html, String parametername, boolean pseudoUrlParameter) throws Exception {
 		TreeMap <String, Integer> parametersInHTMLURls = new TreeMap <String, Integer> ();
-		Source source=new Source ((CharSequence)html);
+		Source source=new Source (html);
 		//for now, just look at the HREF attribue in <a> tags (ie, in links in the HTML output)
 		List<Element> elementList=source.getAllElements(HTMLElementName.A);
 		for (Element element : elementList) {
@@ -620,7 +645,7 @@ public class SessionFixation extends AbstractAppPlugin {
     				//now parse out and count the value of the url parm with the name: currentHtmlParameter.getName()
     									
 					//depending on the type of url parameter, get the parameters set in the output by one of two mechanisms
-					TreeSet<HtmlParameter> urlParams = null;
+					Set<HtmlParameter> urlParams = null;
 					//it is a regular url parameter,so look at the regular url parameters in the links in the output
 					if (pseudoUrlParameter) {
 						urlParams = getPseudoUrlParameters (urlInResults);
@@ -648,7 +673,7 @@ public class SessionFixation extends AbstractAppPlugin {
     						//if (this.debugEnabled) log.debug("Found a match for the parameter ["+currentHtmlParameter.getName() +"] in a url in the results: "+urlParameter.getValue());
     						Integer parameterValueCount = parametersInHTMLURls.get(urlParameter.getValue());
     						if ( parameterValueCount == null) {
-    							parameterValueCount = new Integer (0);		        							
+    							parameterValueCount = Integer.valueOf (0);		        							
     						}
     						//increment the count for this particular value of the parameter and store it
     						parameterValueCount=parameterValueCount.intValue()+1;
@@ -664,19 +689,18 @@ public class SessionFixation extends AbstractAppPlugin {
 	
 	
 	/**
-	 * returns a TreeSet of HtmlParameters (of type url) corresponding to pseudo URL parameters in the url
+	 * returns a Set of HtmlParameters (of type url) corresponding to pseudo URL parameters in the url
 	 * @param url the url to parse for pseudo url parameters
-	 * @return a TreeSet of HtmlParameters
+	 * @return a Set of HtmlParameters
 	 */
-	TreeSet <HtmlParameter> getPseudoUrlParameters (String url)  {
+	Set <HtmlParameter> getPseudoUrlParameters (String url)  {
 		
 		TreeSet <HtmlParameter> pseudoUrlParams = new TreeSet <HtmlParameter>();
 		String [] urlBreakdown = url.split("\\?"); //do this to get rid of parameters.. we just want the path (but we can live with the scheme, host, port, etc)
-		if (urlBreakdown.length == 0 )
-			urlBreakdown[0]=url;
 		
 		String[] pseudoUrlParamNames = urlBreakdown[0].split(";");
-		for (int i = 0; i<pseudoUrlParamNames.length; i++ ) {
+		//start with the bit *after* the first ";", ie, start with i = 1
+		for (int i = 1; i<pseudoUrlParamNames.length; i++ ) {
 			//parse out the possible pseudo url parameters into x=y
 			String[] pseudoUrlParamKeyValue=pseudoUrlParamNames[i].split("=");
 			if (pseudoUrlParamKeyValue.length == 2) { //x=y should break into 2 parts.. no more, no less
