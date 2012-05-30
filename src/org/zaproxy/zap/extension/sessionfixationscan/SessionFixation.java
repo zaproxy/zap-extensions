@@ -19,6 +19,8 @@ package org.zaproxy.zap.extension.sessionfixationscan;
 
 import java.net.URL;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
@@ -31,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -298,7 +301,7 @@ public class SessionFixation extends AbstractAppPlugin {
 		        		if ( cookieBack1Temp != null  ) {
 		        			cookieBack1 = cookieBack1Temp;
 		        		}
-		        		
+		        			
 		        		//reset the "final" version of message1 to use the final response in the chain
 		        		msg1Final=temp;
 		            }
@@ -320,7 +323,156 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			if ( this.debugEnabled ) log.debug("The Cookie parameter was NOT set in the response, when cookie param ["+ currentHtmlParameter.getName() + "] was set to NULL: "+cookieBack1);
 	        			continue;
 	        		}
-	        				
+	        		
+	        		//////////////////////////////////////////////////////////////////////
+	        		//at this point, before continuing to check for Session Fixation, do some other checks on the session cookie we got back
+	        		//that might cause us to raise additional alerts (in addition to doing the main check for Session Fixation)
+	        		//////////////////////////////////////////////////////////////////////
+	        		
+	        		//Check 1: was the session cookie sent and received securely by the server? 
+	        		//If not, alert this fact
+	        		if ( (! msg1Final.getRequestHeader().getSecure()) || 
+	        			 (! cookieBack1.getFlags().contains("secure")) ) {
+        				//pass the original param value here, not the new value, since we're displaying the session id exposed in the original message
+	        			String extraInfo = getString("sessionidsentinsecurely.alert.extrainfo", currentHtmlParameter.getType(), currentHtmlParameter.getName(), currentHtmlParameter.getValue());
+	        			if (! cookieBack1.getFlags().contains("secure")) {
+	        				extraInfo += ("\n" + getString("sessionidsentinsecurely.alert.extrainfo.secureflagnotset"));
+	        			}
+	        			String attack = getString("sessionidsentinsecurely.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName());
+	        			String vulnname=getString("sessionidsentinsecurely.name");
+	        			String vulndesc=getString("sessionidsentinsecurely.desc");
+	        			String vulnsoln=getString("sessionidsentinsecurely.soln");
+	        			
+	        			//call bingo with some extra info, indicating that the alert is 
+	        			//not specific to Session Fixation, but has its own title and description (etc)
+	        			//the alert here is "Session id sent insecurely", or words to that effect.
+	        			bingo(Alert.RISK_MEDIUM, Alert.WARNING, vulnname, vulndesc, 
+	        					getBaseMsg().getRequestHeader().getURI().getURI(),
+	        					currentHtmlParameter.getName(),  attack, 
+	        					extraInfo, vulnsoln, getBaseMsg());
+	        					
+	        			//if ( log.isInfoEnabled())  {
+	        				String logMessage = getString ("sessionidsentinsecurely.alert.logmessage", 
+	        							getBaseMsg().getRequestHeader().getMethod(),  
+	        							getBaseMsg().getRequestHeader().getURI().getURI(), 
+	        							currentHtmlParameter.getType(), 
+	        							currentHtmlParameter.getName());
+	        				log.info(logMessage);
+	        			//}
+	        			//Note: do NOT continue to the next field at this point.. 
+	        			//since we still need to check for Session Fixation.
+	        		}
+	        		
+	        		//////////////////////////////////////////////////////////////////////
+	        		//Check 2: is the session cookie that was set accessible to Javascript?
+	        		//If so, alert this fact too
+	        		if ( ! cookieBack1.getFlags().contains("httponly"))  {
+        				//pass the original param value here, not the new value, since we're displaying the session id exposed in the original message
+	        			String extraInfo = getString("sessionidaccessiblebyjavascript.alert.extrainfo", currentHtmlParameter.getType(), currentHtmlParameter.getName(), currentHtmlParameter.getValue());
+	        			String attack = getString("sessionidaccessiblebyjavascript.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName());
+	        			String vulnname=getString("sessionidaccessiblebyjavascript.name");
+	        			String vulndesc=getString("sessionidaccessiblebyjavascript.desc");
+	        			String vulnsoln=getString("sessionidaccessiblebyjavascript.soln");
+	        			
+	        			//call bingo with some extra info, indicating that the alert is 
+	        			//not specific to Session Fixation, but has its own title and description (etc)
+	        			//the alert here is "Session id accessible in Javascript", or words to that effect.
+	        			bingo(Alert.RISK_MEDIUM, Alert.WARNING, vulnname, vulndesc, 
+	        					getBaseMsg().getRequestHeader().getURI().getURI(),
+	        					currentHtmlParameter.getName(),  attack, 
+	        					extraInfo, vulnsoln, getBaseMsg());
+	        					
+	        			//if ( log.isInfoEnabled())  {
+	        				String logMessage = getString ("sessionidaccessiblebyjavascript.alert.logmessage", 
+	        							getBaseMsg().getRequestHeader().getMethod(),  
+	        							getBaseMsg().getRequestHeader().getURI().getURI(), 
+	        							currentHtmlParameter.getType(), 
+	        							currentHtmlParameter.getName());
+	        				log.info(logMessage);
+	        			//}
+	        			//Note: do NOT continue to the next field at this point.. 
+	        			//since we still need to check for Session Fixation.
+	        		}
+	        		
+	        		//////////////////////////////////////////////////////////////////////
+	        		//Check 3: is the session cookie set to expire soon? when the browser session closes? never?
+	        		//the longer the session cookie is valid, the greater the risk. alert it accordingly
+	        		String cookieBack1Expiry=null;
+	        		int sessionExpiryRiskLevel;
+	        		String sessionExpiryDescription = null;
+	        		
+	        		for ( Iterator <String> i = cookieBack1.getFlags().iterator(); i.hasNext(); ) {
+	        			String cookieBack1Flag = i.next();
+	        			if ( this.debugEnabled ) log.debug("Cookie back 1 flag: "+ cookieBack1Flag);
+	        			//match in a case insensitive manner. never know what case various web servers are going to send back.
+	        			if (cookieBack1Flag.matches("(?i)expires=.*")) {
+	        				String [] cookieBack1FlagValues = cookieBack1Flag.split("=");
+	        				if ( this.debugEnabled ) log.debug("Cookie Expiry: "+ cookieBack1FlagValues[1]);
+	        				cookieBack1Expiry=cookieBack1FlagValues[1];
+	        				sessionExpiryDescription = cookieBack1FlagValues[1];
+	        			}
+	        		}
+	        		
+	        		if ( sessionExpiryDescription == null )  {
+	        			//session expires when the browser closes.. rate this as medium risk?
+	        			sessionExpiryRiskLevel = Alert.RISK_MEDIUM;
+	        			sessionExpiryDescription=getString("sessionidexpiry.browserclose");
+	        		} else {
+	        			Date now = new Date();
+		        		//convert from the (mandatory formatted) RFC1123  date format to a Date
+	        			Date cookieBack1ExpiryDate = DateUtil.parseDate(cookieBack1Expiry);
+		        		long datediffSeconds = ( cookieBack1ExpiryDate.getTime() - now.getTime()) / 1000;
+		        		long anHourSeconds = 3600;
+		        		long aDaySeconds = anHourSeconds * 24;
+		        		long aWeekSeconds = aDaySeconds * 7;
+		        		
+		        		if (datediffSeconds > aWeekSeconds )  {
+		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for more than a week!");
+		        			sessionExpiryRiskLevel = Alert.RISK_HIGH;
+		        		}
+		        		else if (datediffSeconds > aDaySeconds )  {
+		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for more than a day");
+		        			sessionExpiryRiskLevel = Alert.RISK_MEDIUM;
+		        		}
+		        		else if (datediffSeconds > anHourSeconds )  {
+		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for more than an hour");
+		        			sessionExpiryRiskLevel = Alert.RISK_LOW;
+		        		}
+		        		else {
+		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for less than an hour!");
+		        			sessionExpiryRiskLevel = Alert.RISK_INFO;
+		        		}
+	        		}
+	        		//alert it if the default session expiry risk level is more than informational
+	        		if (sessionExpiryRiskLevel > Alert.RISK_INFO) {
+	        			//pass the original param value here, not the new value
+	        			String extraInfo = getString("sessionidexpiry.alert.extrainfo", currentHtmlParameter.getType(), currentHtmlParameter.getName(), currentHtmlParameter.getValue(), sessionExpiryDescription);
+	        			String attack = getString("sessionidexpiry.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName());
+	        			String vulnname=getString("sessionidexpiry.name");
+	        			String vulndesc=getString("sessionidexpiry.desc");
+	        			String vulnsoln=getString("sessionidexpiry.soln");
+	        			
+	        			//call bingo with some extra info, indicating that the alert is 
+	        			//not specific to Session Fixation, but has its own title and description (etc)
+	        			//the alert here is "Session id accessible in Javascript", or words to that effect.
+	        			bingo(sessionExpiryRiskLevel, Alert.WARNING, vulnname, vulndesc, 
+	        					getBaseMsg().getRequestHeader().getURI().getURI(),
+	        					currentHtmlParameter.getName(),  attack, 
+	        					extraInfo, vulnsoln, getBaseMsg());
+	        					
+	        			//if ( log.isInfoEnabled())  {
+	        				String logMessage = getString ("sessionidexpiry.alert.logmessage", 
+	        							getBaseMsg().getRequestHeader().getMethod(),  
+	        							getBaseMsg().getRequestHeader().getURI().getURI(), 
+	        							currentHtmlParameter.getType(), 
+	        							currentHtmlParameter.getName(),
+	        							sessionExpiryDescription);
+	        				log.info(logMessage);
+	        			//}
+	        			//Note: do NOT continue to the next field at this point.. 
+	        			//since we still need to check for Session Fixation.
+	        		}
+		        		
 	        		////////////////////////////////////////////////////////////////////////////////////////////
 	        		/// Message 2 - processing starts here
 	        		////////////////////////////////////////////////////////////////////////////////////////////
