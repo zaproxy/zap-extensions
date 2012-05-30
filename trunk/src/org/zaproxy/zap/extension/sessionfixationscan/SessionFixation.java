@@ -1,4 +1,19 @@
 /**
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
  */
 package org.zaproxy.zap.extension.sessionfixationscan;
 
@@ -12,6 +27,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
@@ -35,19 +52,7 @@ import net.htmlparser.jericho.*;
  * - session ids built into the url path, and typically extracted by means of url rewriting
  *  TODO: implement the check for form fields (POST parameters).
  *
- *  @author Colm O'Flaherty
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ *  @author Colm O'Flaherty, Encription Ireland Ltd
  */
 public class SessionFixation extends AbstractAppPlugin {
 	/**
@@ -245,6 +250,8 @@ public class SessionFixation extends AbstractAppPlugin {
 		            while ( HttpStatusCode.isRedirection(temp.getResponseHeader().getStatusCode())) {
 		            
 		            	//Note that we need to clone the Request and the Response..
+		            	//we seem to need to track the secure flag now to make sure its set later
+		            	boolean secure1 = temp.getRequestHeader().getSecure();
 		            	temp = temp.cloneAll(); //clone the previous message
 		            	
 		            	redirectsFollowed1++;
@@ -265,13 +272,12 @@ public class SessionFixation extends AbstractAppPlugin {
 						} catch (Exception e) {
 							//the Location field contents may not be standards compliant. Lets generate a uri to use as a workaround where a relative path was 
 			                //given instead of an absolute one
-			                URI newLocationWorkaround = new URI(temp.getRequestHeader().getURI(), temp.getResponseHeader().getHeader(HttpHeader.LOCATION), true);
-			                
+			                URI newLocationWorkaround = new URI(temp.getRequestHeader().getURI(), temp.getResponseHeader().getHeader(HttpHeader.LOCATION), true);			                
 							//try again, except this time, if it fails, don't try to handle it
 							if (this.debugEnabled) log.debug("The Location ["+ newLocation + "] specified in a redirect was not valid. Trying workaround url ["+ newLocationWorkaround + "]");
 							temp.getRequestHeader().setURI(newLocationWorkaround);
 						}
-		                
+		                temp.getRequestHeader().setSecure(secure1);
 		                temp.getRequestHeader().setMethod(HttpRequestHeader.GET);
 		                temp.getRequestHeader().setContentLength(0);  //since we send a GET, the body will be 0 long
 		                if ( cookieBack1 != null) {
@@ -348,6 +354,7 @@ public class SessionFixation extends AbstractAppPlugin {
 		            while ( HttpStatusCode.isRedirection(temp2.getResponseHeader().getStatusCode())) {
 		            	
 		            	//clone the previous message
+		            	boolean secure2 = temp2.getRequestHeader().getSecure();
 		            	temp2 = temp2.cloneAll();
 		            	
 		                redirectsFollowed2++;
@@ -376,6 +383,7 @@ public class SessionFixation extends AbstractAppPlugin {
 							if (this.debugEnabled) log.debug("The Location ["+ newLocation + "] specified in a redirect was not valid. Trying workaround url ["+ newLocationWorkaround + "]");
 							temp2.getRequestHeader().setURI(newLocationWorkaround);
 						}
+		                temp2.getRequestHeader().setSecure(secure2);
 		                temp2.getRequestHeader().setMethod(HttpRequestHeader.GET);
 		                temp2.getRequestHeader().setContentLength(0);  //since we send a GET, the body will be 0 long
 		                if ( cookieBack2 != null) {
@@ -451,9 +459,10 @@ public class SessionFixation extends AbstractAppPlugin {
         				//ie, we need to remove the ";jsessionid=<sessionid>" bit from the path (assuming the current field is named 'jsessionid')
         				//and replace it with ";jsessionid=" (ie, we nullify the possible "session" parameter in the hope that a new session will be issued)
         				//then we continue as usual to see if the URL is vulnerable to a Session Fixation issue
-        				
+        				//Side note: quote the string to search for, and the replacement, so that regex special characters are treated as literals
         				String hackedUrl = requestUrl.replaceAll( 
-        							      ";"+ currentHtmlParameter.getName()+"=" + currentHtmlParameter.getValue(), ";"+currentHtmlParameter.getName()+"=");
+        							      Pattern.quote(";"+ currentHtmlParameter.getName()+"=" + currentHtmlParameter.getValue()), 
+        							      Matcher.quoteReplacement(";"+currentHtmlParameter.getName()+"="));
         				if (this.debugEnabled) log.debug("Removing the pseudo URL parameter from ["+requestUrl+"]: ["+hackedUrl+"]");
         				//Note: the URL is not escaped. Handle it.
         				msg1Initial.getRequestHeader().setURI(new URI(hackedUrl, false));
@@ -493,12 +502,49 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			continue;  //to the next parameter
 	        		} else if (parametersInHTMLURls.size() == 1) {
 	        			//the parameter was set to just one value in the output
-	        			//so it's quite likely to be the session id field that we have been looking for
-	        			//caveat: check it is longer than 3 chars long, to remove false positives.. 
+	        			//so it's quite possible it is the session id field that we have been looking for
+	        			//caveat 1: check it is longer than 3 chars long, to remove false positives.. 
 	        			//we assume here that a real session id will always be greater than 3 characters long
+	        			//caveat 2: the value we got back for the param must be different from the value we
+	        			//over-wrote with NULL (empty) in the first place, otherwise it is very unlikely to 
+	        			//be a session id field
 	        			possibleSessionIdIssuedForUrlParam=parametersInHTMLURls.firstKey();
-	        			if (possibleSessionIdIssuedForUrlParam.length() > 3)
-	        				log.info("The URL parameter ["+ currentHtmlParameter.getName() + "] was set ["+ parametersInHTMLURls.get(possibleSessionIdIssuedForUrlParam)+ "] times to ["+ possibleSessionIdIssuedForUrlParam + "] in links in the response, when "+ (isPseudoUrlParameter?"pseudo/URL rewritten":"")+ " URL param ["+ currentHtmlParameter.getName() + "] was set to NULL in the request. This likely indicates it is a session id field.");
+	        			//did we get back the same value we just nulled out in the original request? 
+	        			//if so, use this to eliminate false positives, and to optimise.
+	        			if ( possibleSessionIdIssuedForUrlParam.equals (currentHtmlParameter.getValue())) {
+	        				if ( this.debugEnabled ) log.debug((isPseudoUrlParameter?"pseudo/URL rewritten":"")+ " URL param ["+ currentHtmlParameter.getName() + "], when set to NULL, causes 1 distinct values to be set for it in URLs in the output, but the possible session id value ["+ possibleSessionIdIssuedForUrlParam + "] is the same as the value we over-wrote with NULL. 'Sorry, kid. You got the gift, but it looks like you're waiting for something'");
+	        				continue; //to the next parameter
+	        			}
+	        			if (possibleSessionIdIssuedForUrlParam.length() > 3) {
+	        				//raise an alert here on an exposed session id, even if it is not subject to a session fixation vulnerability
+	        				//log.info("The URL parameter ["+ currentHtmlParameter.getName() + "] was set ["+ parametersInHTMLURls.get(possibleSessionIdIssuedForUrlParam)+ "] times to ["+ possibleSessionIdIssuedForUrlParam + "] in links in the response, when "+ (isPseudoUrlParameter?"pseudo/URL rewritten":"")+ " URL param ["+ currentHtmlParameter.getName() + "] was set to NULL in the request. This likely indicates it is a session id field.");
+	        				
+	        				//pass the original param value here, not the new value, since we're displaying the session id exposed in the original message
+		        			String extraInfo = getString("sessionidexposedinurl.alert.extrainfo", currentHtmlParameter.getType(), currentHtmlParameter.getName(), currentHtmlParameter.getValue());
+		        			String attack = getString("sessionidexposedinurl.alert.attack", (isPseudoUrlParameter?"pseudo/URL rewritten ":"") + currentHtmlParameter.getType(), currentHtmlParameter.getName());
+		        			String vulnname=getString("sessionidexposedinurl.name");
+		        			String vulndesc=getString("sessionidexposedinurl.desc");
+		        			String vulnsoln=getString("sessionidexposedinurl.soln");
+		        			
+		        			//call bingo with some extra info, indicating that the alert is 
+		        			//not specific to Session Fixation, but has its own title and description (etc)
+		        			//the alert here is "Session id exposed in url", or words to that effect.
+		        			bingo(Alert.RISK_MEDIUM, Alert.WARNING, vulnname, vulndesc, 
+		        					getBaseMsg().getRequestHeader().getURI().getURI(),
+		        					currentHtmlParameter.getName(),  attack, 
+		        					extraInfo, vulnsoln, getBaseMsg());
+		        					
+		        			//if ( log.isInfoEnabled())  {
+		        				String logMessage = getString ("sessionidexposedinurl.alert.logmessage", 
+		        							getBaseMsg().getRequestHeader().getMethod(),  
+		        							getBaseMsg().getRequestHeader().getURI().getURI(), 
+		        							(isPseudoUrlParameter?"pseudo ":"") +currentHtmlParameter.getType(), 
+		        							currentHtmlParameter.getName());
+		        				log.info(logMessage);
+		        			//}
+		        			//Note: do NOT continue to the next field at this point.. 
+		        			//since we still need to check for Session Fixation.
+        					}
 	        			else {
 	        				if ( this.debugEnabled ) log.debug((isPseudoUrlParameter?"pseudo/URL rewritten":"")+ " URL param ["+ currentHtmlParameter.getName() + "], when set to NULL, causes 1 distinct values to be set for it in URLs in the output, but the possible session id value ["+ possibleSessionIdIssuedForUrlParam + "] is too short to be a real session id.");
 	        				continue; //to the next parameter
@@ -530,9 +576,11 @@ public class SessionFixation extends AbstractAppPlugin {
         				//we need to "rewrite" (hack) the URL path to remove the pseudo url parameter portion
         				//id, we need to remove the ";jsessionid=<sessionid>" bit from the path
         				//and replace it with ";jsessionid=" (ie, we nullify the possible "session" parameter in the hope that a new session will be issued)
-        				//then we continue as usual to see if the URL is vulnerable to a Session Fixation issue        				
+        				//then we continue as usual to see if the URL is vulnerable to a Session Fixation issue
+	        			//Side note: quote the string to search for, and the replacement, so that regex special characters are treated as literals
         				String hackedUrl = requestUrl.replaceAll(
-        						";"+ currentHtmlParameter.getName()+"=" + currentHtmlParameter.getValue(), ";" +currentHtmlParameter.getName()+"="+ possibleSessionIdIssuedForUrlParam);
+        						Pattern.quote(";"+ currentHtmlParameter.getName()+"=" + currentHtmlParameter.getValue()), 
+        						Matcher.quoteReplacement(";" +currentHtmlParameter.getName()+"="+ possibleSessionIdIssuedForUrlParam));
         				if (this.debugEnabled) log.debug("Changing the pseudo URL parameter from ["+requestUrl+"]: ["+hackedUrl+"]");
         				//Note: the URL is not escaped
         				msg2Initial.getRequestHeader().setURI(new URI(hackedUrl, false));
