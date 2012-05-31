@@ -201,7 +201,28 @@ public class SessionFixation extends AbstractAppPlugin {
     		//get the URL
     		URI requestUri = getBaseMsg().getRequestHeader().getURI();
     		//convert from org.apache.commons.httpclient.URI to a String
-    		String requestUrl = new URL (requestUri.getScheme(), requestUri.getHost(), requestUri.getPort(), requestUri.getPath()).toString();  
+    		String requestUrl= "Unknown URL";
+    		try {
+    			requestUrl = new URL (requestUri.getScheme(), requestUri.getHost(), requestUri.getPort(), requestUri.getPath()).toString();
+    			}
+    		catch (Exception e) {
+    			// no point in continuing. The URL is invalid.  This is a peculiarity in the Zap core, 
+    			// and can happen when 
+    			// - the user browsed to http://www.example.com/bodgeit and
+    			// - the user did not browse to http://www.example.com or to http://www.example.com/
+    			// so the Zap GUI displays "http://www.example.com" as a node under "Sites", 
+    			// and under that, it displays the actual urls to which the user browsed 
+    			// (http://www.example.com/bodgeit, for instance)
+    			// When the user selects the node "http://www.example.com", and tries to scan it with 
+    			// the session fixation browser, the URI that is passed is "http://www.example.com", 
+    			// which is not a valid url.
+    			// If the user actually browses to "http://www.example.com" (even without the trailing slash)
+    			// the web browser appends the trailing slash, and so Zap records the URI as 
+    			// "http://www.example.com/", which IS a valid url, and which can (and should) be scanned.
+    			
+    			log.error("Cannot convert URI ["+requestUri+"] to a URL: "+e.getMessage());
+    			return;
+    		}
     		
     		//suck out any pseudo url parameters from the url
     		Set<HtmlParameter> pseudoUrlParams = getPseudoUrlParameters (requestUrl);
