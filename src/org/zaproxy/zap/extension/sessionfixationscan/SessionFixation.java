@@ -19,7 +19,6 @@ package org.zaproxy.zap.extension.sessionfixationscan;
 
 import java.net.URL;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -214,7 +213,7 @@ public class SessionFixation extends AbstractAppPlugin {
     			// and under that, it displays the actual urls to which the user browsed 
     			// (http://www.example.com/bodgeit, for instance)
     			// When the user selects the node "http://www.example.com", and tries to scan it with 
-    			// the session fixation browser, the URI that is passed is "http://www.example.com", 
+    			// the session fixation scanner, the URI that is passed is "http://www.example.com", 
     			// which is not a valid url.
     			// If the user actually browses to "http://www.example.com" (even without the trailing slash)
     			// the web browser appends the trailing slash, and so Zap records the URI as 
