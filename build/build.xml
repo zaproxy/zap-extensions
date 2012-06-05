@@ -121,10 +121,18 @@
 		<antcall target="build-extension"> 
 			<param name="extension" value="sessionfixationscan"/> 
 			<param name="type" value="alpha"/> 
-			<param name="version" value="6"/> 
+			<param name="version" value="7"/> 
 		</antcall>
 	</target>
-
+	
+	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="csrfcountermeasuresscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+	
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<antcall target="build-exampleActiveScan"/>
 		<antcall target="build-examplePassiveScan"/>
@@ -134,6 +142,7 @@
 		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
 		<antcall target="build-sessionfixation"/>
+		<antcall target="build-csrfcountermeasures"/>
 	</target>
 
 	<target name="deploy-extension" description="deploy the specified extension">
@@ -177,6 +186,10 @@
 		<antcall target="deploy-extension"> <param name="extension" value="sessionfixationscan"/> </antcall>
 	</target>
 
+	<target name="deploy-csrfcountermeasures" description="deploy the csrfcountermeasures extension">
+		<antcall target="deploy-extension"> <param name="extension" value="csrfcountermeasuresscan"/> </antcall>
+	</target>
+
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<antcall target="deploy-exampleActiveScan"/>
 		<antcall target="deploy-examplePassiveScan"/>
@@ -186,6 +199,7 @@
 		<antcall target="deploy-tokengen"/>
 		<antcall target="deploy-viewStatePScan"/>
 		<antcall target="deploy-sessionfixationscan"/>
+		<antcall target="deploy-csrfcountermeasures"/>
 	</target>
 
 </project>
