@@ -8,6 +8,7 @@ The following extensions are currently available:
 || Beta || [http://code.google.com/p/zap-extensions/downloads/detail?name=UtlimateObsoleteFileDetection.jar ultimateObsoleteFileDetection] || Alex Ganelis & Dan Meged, [http://www.hacktics.com/ Hacktics ASC, Ernst & Young] || Advanced obsolete/hidden file detection (Installer/Plugin/Source)||
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-highlighter-alpha-1.jar highlighter] || ZAP Core Team || Allows you to highlight strings in the request and response tabs. || 
 || Alpha || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sessionfixationscan-alpha-6.jar SessionFixation] || ZAP Core Team || Session Fixation scanner ||
+|| Alpha || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-csrfcountermeasuresscan-alpha-1.jar CSRF Countermeasures Scanner] || ZAP Core Team || CSRF Countermeasures Scanner] ||
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-tokengen-alpha-1.jar tokengen] || ZAP Core Team || Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection. ||
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-viewStatePScan-alpha-1.jar viewStatePscan] || Alexandre Herzog, [http://www.csnc.ch/ Compass Security] || View State passive scanner ||
 
