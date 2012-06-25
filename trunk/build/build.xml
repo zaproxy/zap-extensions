@@ -41,6 +41,14 @@
 	 	example
 	 version should be an integer that increments on each release, starting at 1
 	 -->
+
+	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="csrfcountermeasuresscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
 	
 	<target name="build-extension" description="build the specified extension">
 		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}.jar" update="true" compress="false">
@@ -93,6 +101,22 @@
 		</antcall>
 	</target>
 
+	<target name="build-scripts" description="build the scripts extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="scripts"/> 
+			<param name="type" value="beta"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+
+	<target name="build-sessionfixation" description="build the SessionFixation extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="sessionfixationscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="6"/> 
+		</antcall>
+	</target>
+
 	<target name="build-tokengen" description="build the tokengen extension">
 		<!-- Cant use build-extension as other classes needed -->
 		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
@@ -117,32 +141,18 @@
 		</antcall>
 	</target>
 	
-	<target name="build-sessionfixation" description="build the SessionFixation extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="sessionfixationscan"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="7"/> 
-		</antcall>
-	</target>
-	
-	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="csrfcountermeasuresscan"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
-		</antcall>
-	</target>
-	
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
+		<!-- Keep in alphabetical order ;) -->
+		<antcall target="build-csrfcountermeasures"/>
 		<antcall target="build-exampleActiveScan"/>
 		<antcall target="build-examplePassiveScan"/>
 		<antcall target="build-exampleRightClickMsg"/>
 		<antcall target="build-exampleTopMenu"/>
 		<antcall target="build-highlighter"/>
+		<antcall target="build-scripts"/>
+		<antcall target="build-sessionfixation"/>
 		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
-		<antcall target="build-sessionfixation"/>
-		<antcall target="build-csrfcountermeasures"/>
 	</target>
 
 	<target name="deploy-extension" description="deploy the specified extension">
@@ -152,6 +162,10 @@
 			</fileset>
 		</copy>
 		<!--copy file="${dist}/zap-ext-${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
+	</target>
+
+	<target name="deploy-csrfcountermeasures" description="deploy the csrfcountermeasures extension">
+		<antcall target="deploy-extension"> <param name="extension" value="csrfcountermeasuresscan"/> </antcall>
 	</target>
 
 	<target name="deploy-exampleActiveScan" description="deploy the exampleActiveScan extension">
@@ -174,6 +188,14 @@
 		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
 	</target>
 
+	<target name="deploy-scripts" description="deploy the scripts extension">
+		<antcall target="deploy-extension"> <param name="extension" value="scripts"/> </antcall>
+	</target>
+
+	<target name="deploy-sessionfixationscan" description="deploy the sessionfixation extension">
+		<antcall target="deploy-extension"> <param name="extension" value="sessionfixationscan"/> </antcall>
+	</target>
+
 	<target name="deploy-tokengen" description="deploy the tokengen extension">
 		<antcall target="deploy-extension"> <param name="extension" value="tokengen"/> </antcall>
 	</target>
@@ -182,24 +204,18 @@
 		<antcall target="deploy-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
 	</target>
 	
-	<target name="deploy-sessionfixationscan" description="deploy the sessionfixation extension">
-		<antcall target="deploy-extension"> <param name="extension" value="sessionfixationscan"/> </antcall>
-	</target>
-
-	<target name="deploy-csrfcountermeasures" description="deploy the csrfcountermeasures extension">
-		<antcall target="deploy-extension"> <param name="extension" value="csrfcountermeasuresscan"/> </antcall>
-	</target>
-
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
+		<!-- Keep in alphabetical order ;) -->
+		<antcall target="deploy-csrfcountermeasures"/>
 		<antcall target="deploy-exampleActiveScan"/>
 		<antcall target="deploy-examplePassiveScan"/>
 		<antcall target="deploy-exampleRightClickMsg"/>
 		<antcall target="deploy-exampleTopMenu"/>
 		<antcall target="deploy-highlighter"/>
+		<antcall target="deploy-scripts"/>
+		<antcall target="deploy-sessionfixationscan"/>
 		<antcall target="deploy-tokengen"/>
 		<antcall target="deploy-viewStatePScan"/>
-		<antcall target="deploy-sessionfixationscan"/>
-		<antcall target="deploy-csrfcountermeasures"/>
 	</target>
 
 </project>
