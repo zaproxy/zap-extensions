@@ -105,7 +105,7 @@
 		<antcall target="build-extension"> 
 			<param name="extension" value="scripts"/> 
 			<param name="type" value="beta"/> 
-			<param name="version" value="1"/> 
+			<param name="version" value="3"/> 
 		</antcall>
 	</target>
 
