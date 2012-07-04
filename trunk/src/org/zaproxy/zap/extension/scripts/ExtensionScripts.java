@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
@@ -127,7 +128,19 @@ public class ExtensionScripts extends ExtensionAdaptor {
 				throw new ScriptException("Failed to find script engine: " + name);
 			}
 
-			engine.getContext().setWriter(writer);
+			Writer writerContext = writer;
+			if ("ECMAScript".equalsIgnoreCase(name)) {
+				// Hack to overcome the issue
+				// http://bugs.sun.com/view_bug.do?bug_id=6759414 that prevents the
+				// use of the JavaScript functions print/println when the writer is
+				// not a PrintWriter
+				if (!(writer instanceof PrintWriter)) {
+					writerContext = new PrintWriter(writer);
+				}
+			}
+		    engine.getContext().setWriter(writerContext);
+
+		 
 
 			engine.eval(script);
 			
