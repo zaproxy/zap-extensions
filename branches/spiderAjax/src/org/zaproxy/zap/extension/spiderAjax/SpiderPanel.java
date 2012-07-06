@@ -24,6 +24,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.InputEvent;
 import javax.swing.*;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
@@ -41,7 +42,7 @@ public class SpiderPanel extends ScanPanel implements ScanListenner {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final String PANEL_NAME = "ajax";
+	public static final String PANEL_NAME = "spider";
 	private SpiderThread runnable = null;
 
 	private JSplitPane splitPane = null;
@@ -70,9 +71,10 @@ public class SpiderPanel extends ScanPanel implements ScanListenner {
 	 */
 	public SpiderPanel(ExtensionAjax extension,
 			ProxyParam proxyParam) {
-		super(PANEL_NAME, new ImageIcon(extension.getClass().getResource(
-				"/resource/icon/16/spiderAjax.png")), extension, proxyParam);
+		super(PANEL_NAME, new ImageIcon(extension.getClass().getClassLoader().getResource("org/zaproxy/zap/extension/spiderAjax/16.png")), extension, proxyParam);
 		this.extension = extension;
+        this.setIcon(new ImageIcon(getClass().getClassLoader().getResource("org/zaproxy/zap/extension/spiderAjax/16.png")));
+
 	}
 
 	@Override

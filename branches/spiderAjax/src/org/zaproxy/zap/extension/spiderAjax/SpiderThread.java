@@ -29,7 +29,6 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 	private static final int MAX_STATES = 100;
 	private static final boolean RAND_INPUT_FORMS = true;
 	private static final int MAX_DEPTH = 100;
-	private static final BrowserType BROWSER = BrowserType.firefox;
 
 	private String url = null;
 	private ExtensionAjax extension = null;
@@ -102,17 +101,20 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 
 	/**
 	 * 
-	 * @return the crawljax configuration (thread conf+spec+proxy conf)
+	 * @return the crawljax configuration (thread conf+spec+proxy conf+plugins)
 	 */
 	public CrawljaxConfiguration getCrawConf() {
 		if (crawlConf == null) {
 			crawlConf = new CrawljaxConfiguration();
 			crawlConf.setThreadConfiguration(this.getThreadConf());
-			crawlConf.setBrowser(BROWSER);
+			crawlConf.setBrowser(this.extension.getProxy().getBrowser());
 			crawlConf.setCrawlSpecification(this.getCrawSpec());
 			this.port = this.extension.getProxy().getProxyPort();
 			this.host = this.extension.getProxy().getProxyHost();
 			crawlConf.setProxyConfiguration(this.getProxyConf());
+			
+			//we add the plugins
+			crawlConf.addPlugin(new test2(this.extension, this));
 		}
 		return crawlConf;
 	}
@@ -137,6 +139,13 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 						"../innerpages/2_2.php");
 				crawler.dontClick("a").withText("Logout");
 			}
+			for(String excl:this.extension.getModel().getSession().getExcludeFromSpiderRegexs()){
+
+			}
+			//crawler.dontClick("*").withAttribute("href", "http://aopcgr.uab.es:10001/wivet/");
+			//crawler.dontClick("").withAttribute("href", "http://aopcgr.uab.es:10001/wivet/");
+			//crawler.dontClick("a").withAttribute("href", "http://aopcgr.uab.es:10001/wivet/");
+			
 		}
 		return crawler;
 	}
@@ -160,7 +169,6 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 
 		// testing crawljax plugins
 		// crawljaxConfiguration.addPlugin(new test(true));
-		// crawljaxConfiguration.addPlugin(new test2());
 
 		try {
 			crawljax = new CrawljaxController(getCrawConf());

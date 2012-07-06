@@ -3,13 +3,14 @@ package org.zaproxy.zap.extension.spiderAjax;
 import org.parosproxy.paros.control.Proxy;
 import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.model.Model;
+import com.crawljax.browser.EmbeddedBrowser.BrowserType;
 
 public class ProxyAjax {
 	private ProxyParam proxyParam = null;
 	private Proxy proxy = null;
 	private Model modProxy = null;
 	private boolean megaScan = false;
-
+	private BrowserType browser = null;
 	// default config for the new ajax proxy
 	private int proxyPort = 8081;
 	private String proxyHost = "localhost";
@@ -20,6 +21,7 @@ public class ProxyAjax {
 	public ProxyAjax() {
 		this.proxy = new Proxy(getProxyModel());
 		this.proxy.startServer();
+		this.browser = BrowserType.firefox;
 	}
 
 	/**
@@ -110,6 +112,13 @@ public class ProxyAjax {
 		// TODO fix the new IP bug
 		// proxyParam.setProxyIp(this.getProxyHost());
 		return proxyParam;
+	}
+	
+	public BrowserType getBrowser(){
+		return this.browser;
+	}
+	public void setBrowser(BrowserType b){
+		this.browser=b;
 	}
 
 }
