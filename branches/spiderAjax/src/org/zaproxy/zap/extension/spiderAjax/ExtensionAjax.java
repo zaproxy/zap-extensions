@@ -7,6 +7,9 @@ package org.zaproxy.zap.extension.spiderAjax;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -29,7 +32,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private OptionsAjaxSpider optionsAjaxSpider = null;
 	private List<String> excludeList = null;
 	private ProxyAjax proxy = null;
-
+	private ResourceBundle messages=ResourceBundle.getBundle(
+            this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
 	/**
 	 * initializes the extension
 	 */
@@ -100,7 +104,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	private PopupMenuSpider getPopupMenuSpider() {
 		if (popupMenuSpider == null) {
-			popupMenuSpider = new PopupMenuSpider();
+			popupMenuSpider = new PopupMenuSpider(this);
 			popupMenuSpider.setExtension(this);
 		}
 		return popupMenuSpider;
@@ -108,8 +112,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
 	private PopupMenuSpiderSite getPopupMenuSpiderSite() {
 		if (popupMenuSpiderSite == null) {
-			popupMenuSpiderSite = new PopupMenuSpiderSite(Constant.messages
-					.getString("ajax.site.popup"), this);
+			popupMenuSpiderSite = new PopupMenuSpiderSite(this.getString("ajax.site.popup"), this);
 			// popupMenuSpider.setExtensionSite(this);
 		}
 		return popupMenuSpiderSite;
@@ -142,6 +145,19 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	public List<String> getExcludeList() {
 		return excludeList;
 	}
+	
+	/**
+	 * 
+	 * @param key
+	 * @return
+	 */
+    public String getString(String key) {
+        try {
+            return messages.getString(key);
+        } catch (MissingResourceException e) {
+            return '!' + key + '!';
+        }
+    }
 
 	@Override
 	public String getAuthor() {
@@ -150,7 +166,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
 	@Override
 	public String getDescription() {
-		return Constant.messages.getString("ajax.desc");
+		return this.getString("ajax.desc");
 	}
 
 	@Override
