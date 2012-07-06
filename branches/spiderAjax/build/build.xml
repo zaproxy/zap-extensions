@@ -49,6 +49,7 @@
 			</zipfileset>
 			<zipfileset dir="${src}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
+				<include name="org/zaproxy/zap/extension/${extension}/*.png"/>
 			</zipfileset>
 		</jar>
 	</target>
