@@ -1,6 +1,7 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.Component;
+import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import org.parosproxy.paros.Constant;
@@ -13,19 +14,22 @@ public class PopupMenuSpider extends ExtensionPopupMenuItem {
 	private ExtensionAjax extension = null;
 	private JTree treeSite = null;
 
-	/**
+	/** 
      * 
      */
-	public PopupMenuSpider() {
+	public PopupMenuSpider(ExtensionAjax extension) {
 		super();
+		this.extension=extension;
 		initialize();
 	}
 
 	/**
 	 * @param label
 	 */
-	public PopupMenuSpider(String label) {
+	public PopupMenuSpider(String label,ExtensionAjax extension) {
 		super(label);
+		this.extension=extension;
+
 	}
 
 	@Override
@@ -50,7 +54,7 @@ public class PopupMenuSpider extends ExtensionPopupMenuItem {
 	 */
 	private void initialize() {
 		 this.setText(Constant.messages.getString("ajax.site.popup"));
-	        this.setIcon(new ImageIcon(PopupMenuSpider.class.getResource("/resource/icon/16/spiderAjax.png")));
+	        this.setIcon(new ImageIcon(getClass().getClassLoader().getResource("org/zaproxy/zap/extension/spiderAjax/16.png")));
 
 	        this.addActionListener(new java.awt.event.ActionListener() { 
 
