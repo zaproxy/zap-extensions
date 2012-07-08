@@ -44,7 +44,12 @@ public class test2 implements PreStateCrawlingPlugin {
         		guessedUrl = candidateUrl;
         		URL u;
 				try {
+					//System.out.println(currentUrl+" "+candidateUrl);
+					if(!candidateUrl.toLowerCase().contains("javascript") && (candidateUrl.contains(".")|| candidateUrl.contains("/")) ){
 					u = new URL(new URL(currentUrl), candidateUrl);
+					} else{
+						u = new URL(currentUrl);
+					}
 	        		guessedUrl = u.toString();
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
