@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -214,10 +215,13 @@ public class SessionFixation extends AbstractAppPlugin {
     			// (http://www.example.com/bodgeit, for instance)
     			// When the user selects the node "http://www.example.com", and tries to scan it with 
     			// the session fixation scanner, the URI that is passed is "http://www.example.com", 
-    			// which is not a valid url.
+    			// which is *not* a valid url.
     			// If the user actually browses to "http://www.example.com" (even without the trailing slash)
     			// the web browser appends the trailing slash, and so Zap records the URI as 
     			// "http://www.example.com/", which IS a valid url, and which can (and should) be scanned.
+    			//
+    			// In short.. if this happens, we do not want to scan the URL anyway 
+    			// (because the user never browsed to it), so just do nothing instead.
     			
     			log.error("Cannot convert URI ["+requestUri+"] to a URL: "+e.getMessage());
     			return;
@@ -266,6 +270,8 @@ public class SessionFixation extends AbstractAppPlugin {
 		       
 		            msg1Final=msg1Initial;
 		            HtmlParameter cookieBack1 = getResponseCookie (msg1Initial, currentHtmlParameter.getName());
+		            long cookieBack1TimeReceived = System.currentTimeMillis();  //in ms.  when was the cookie received? Important if it has a Max-Age directive
+		            Date cookieBack1ExpiryDate=null;
 		            
 		            HttpMessage temp = msg1Initial;
 		            
@@ -320,6 +326,7 @@ public class SessionFixation extends AbstractAppPlugin {
 		                HtmlParameter cookieBack1Temp = getResponseCookie (temp, currentHtmlParameter.getName());
 		        		if ( cookieBack1Temp != null  ) {
 		        			cookieBack1 = cookieBack1Temp;
+		        			cookieBack1TimeReceived=System.currentTimeMillis(); //in ms.  record when we got the cookie.. in case it has a Max-Age directive
 		        		}
 		        			
 		        		//reset the "final" version of message1 to use the final response in the chain
@@ -421,52 +428,89 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		int sessionExpiryRiskLevel;
 	        		String sessionExpiryDescription = null;
 	        		
+	        		//check for the Expires header
 	        		for ( Iterator <String> i = cookieBack1.getFlags().iterator(); i.hasNext(); ) {
 	        			String cookieBack1Flag = i.next();
-	        			if ( this.debugEnabled ) log.debug("Cookie back 1 flag: "+ cookieBack1Flag);
+	        			//if ( this.debugEnabled ) log.debug("Cookie back 1 flag (checking for Expires): "+ cookieBack1Flag);
 	        			//match in a case insensitive manner. never know what case various web servers are going to send back.
-	        			if (cookieBack1Flag.matches("(?i)expires=.*")) {
+	        			//if (cookieBack1Flag.matches("(?i)expires=.*")) {
+	        			if ( cookieBack1Flag.toLowerCase(Locale.ENGLISH).startsWith("expires=")) {
 	        				String [] cookieBack1FlagValues = cookieBack1Flag.split("=");
-	        				if ( this.debugEnabled ) log.debug("Cookie Expiry: "+ cookieBack1FlagValues[1]);
-	        				cookieBack1Expiry=cookieBack1FlagValues[1];
-	        				sessionExpiryDescription = cookieBack1FlagValues[1];
+	        				if (cookieBack1FlagValues.length > 1) { 
+		        				if ( this.debugEnabled ) log.debug("Cookie Expiry: "+ cookieBack1FlagValues[1]);
+		        				cookieBack1Expiry=cookieBack1FlagValues[1];  //the Date String
+		        				sessionExpiryDescription = cookieBack1FlagValues[1];  //the Date String
+		        				cookieBack1ExpiryDate = DateUtil.parseDate(cookieBack1Expiry);	//the actual Date	    
+	        				}
 	        			}
 	        		}
 	        		
-	        		if ( sessionExpiryDescription == null )  {
+	        		//also check for the Max-Age header, which overrides the Expires header.
+	        		//WARNING: this Directive is reported to be ignored by IE, so if both Expires and Max-Age are present
+	        		//and we report based on the Max-Age value, but the user is using IE, then the results reported 
+	        		//by us here may be different from those actually experienced by the user! (we use Max-Age, IE uses Expires)
+	        		for ( Iterator <String> i = cookieBack1.getFlags().iterator(); i.hasNext(); ) {
+	        			String cookieBack1Flag = i.next();
+	        			//if ( this.debugEnabled ) log.debug("Cookie back 1 flag (checking for Max-Age): "+ cookieBack1Flag);
+	        			//match in a case insensitive manner. never know what case various web servers are going to send back.
+	        			if ( cookieBack1Flag.toLowerCase(Locale.ENGLISH).startsWith("max-age=")) {
+	        				String [] cookieBack1FlagValues = cookieBack1Flag.split("=");
+	        				if (cookieBack1FlagValues.length > 1) {
+	        					//now the Max-Age value is the number of seconds relative to the time the browser received the cookie
+	        					//(as stored in cookieBack1TimeReceived)
+		        				if ( this.debugEnabled ) log.debug("Cookie Max Age: "+ cookieBack1FlagValues[1]);
+		        				long cookie1DropDeadMS = cookieBack1TimeReceived + (Long.parseLong(cookieBack1FlagValues[1])*1000);
+		        				
+		        				cookieBack1ExpiryDate = new Date (cookie1DropDeadMS);  //the actual Date the cookie expires (by Max-Age)
+		        				cookieBack1Expiry = DateUtil.formatDate(cookieBack1ExpiryDate, DateUtil.PATTERN_RFC1123);
+		        				sessionExpiryDescription = cookieBack1Expiry;  //needs to the Date String
+	        				}
+	        			}
+	        		}
+	        		String sessionExpiryRiskDescription = null;
+	        		//check the Expiry/Max-Age details garnered (if any)
+	        		if ( cookieBack1ExpiryDate == null )  {
 	        			//session expires when the browser closes.. rate this as medium risk?
 	        			sessionExpiryRiskLevel = Alert.RISK_MEDIUM;
 	        			sessionExpiryDescription=getString("sessionidexpiry.browserclose");
 	        		} else {
-	        			Date now = new Date();
-		        		//convert from the (mandatory formatted) RFC1123  date format to a Date
-	        			Date cookieBack1ExpiryDate = DateUtil.parseDate(cookieBack1Expiry);
-		        		long datediffSeconds = ( cookieBack1ExpiryDate.getTime() - now.getTime()) / 1000;
+	        			long datediffSeconds = ( cookieBack1ExpiryDate.getTime() - cookieBack1TimeReceived) / 1000;
 		        		long anHourSeconds = 3600;
 		        		long aDaySeconds = anHourSeconds * 24;
 		        		long aWeekSeconds = aDaySeconds * 7;
 		        		
-		        		if (datediffSeconds > aWeekSeconds )  {
+		        		if ( datediffSeconds < 0 ) { 
+		        			if ( this.debugEnabled ) log.debug("The session cookie has expired already");
+		        			sessionExpiryRiskDescription = "sessionidexpiry.timeexpired";
+		        			sessionExpiryRiskLevel = Alert.RISK_INFO;  // no risk.. the cookie has expired already 
+		        		}
+		        		else if (datediffSeconds > aWeekSeconds )  {
 		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for more than a week!");
+		        			sessionExpiryRiskDescription="sessionidexpiry.timemorethanoneweek";
 		        			sessionExpiryRiskLevel = Alert.RISK_HIGH;
 		        		}
 		        		else if (datediffSeconds > aDaySeconds )  {
 		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for more than a day");
+		        			sessionExpiryRiskDescription="sessionidexpiry.timemorethanoneday";
 		        			sessionExpiryRiskLevel = Alert.RISK_MEDIUM;
 		        		}
 		        		else if (datediffSeconds > anHourSeconds )  {
 		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for more than an hour");
+		        			sessionExpiryRiskDescription="sessionidexpiry.timemorethanonehour";
 		        			sessionExpiryRiskLevel = Alert.RISK_LOW;
 		        		}
 		        		else {
 		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for less than an hour!");
+		        			sessionExpiryRiskDescription="sessionidexpiry.timelessthanonehour";
 		        			sessionExpiryRiskLevel = Alert.RISK_INFO;
 		        		}
 	        		}
 	        		//alert it if the default session expiry risk level is more than informational
 	        		if (sessionExpiryRiskLevel > Alert.RISK_INFO) {
 	        			//pass the original param value here, not the new value
-	        			String extraInfo = getString("sessionidexpiry.alert.extrainfo", currentHtmlParameter.getType(), currentHtmlParameter.getName(), currentHtmlParameter.getValue(), sessionExpiryDescription);
+	        			String timeDescription= getString(sessionExpiryRiskDescription);
+	        			String cookieReceivedTime = cookieBack1Expiry = DateUtil.formatDate( new Date (cookieBack1TimeReceived), DateUtil.PATTERN_RFC1123);
+	        			String extraInfo = getString("sessionidexpiry.alert.extrainfo", currentHtmlParameter.getType(), currentHtmlParameter.getName(), currentHtmlParameter.getValue(), sessionExpiryDescription, timeDescription, cookieReceivedTime);
 	        			String attack = getString("sessionidexpiry.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        			String vulnname=getString("sessionidexpiry.name");
 	        			String vulndesc=getString("sessionidexpiry.desc");
@@ -474,7 +518,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			
 	        			//call bingo with some extra info, indicating that the alert is 
 	        			//not specific to Session Fixation, but has its own title and description (etc)
-	        			//the alert here is "Session id accessible in Javascript", or words to that effect.
+	        			//the alert here is "Session Id Expiry Time is excessive", or words to that effect.
 	        			bingo(sessionExpiryRiskLevel, Alert.WARNING, vulnname, vulndesc, 
 	        					getBaseMsg().getRequestHeader().getURI().getURI(),
 	        					currentHtmlParameter.getName(),  attack, 
