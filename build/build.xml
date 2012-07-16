@@ -101,6 +101,14 @@
 		</antcall>
 	</target>
 
+	<target name="build-ldapinjection" description="build the LDAPInjection extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="ldapinjectionscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+
 	<target name="build-scripts" description="build the scripts extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="scripts"/> 
@@ -149,6 +157,7 @@
 		<antcall target="build-exampleRightClickMsg"/>
 		<antcall target="build-exampleTopMenu"/>
 		<antcall target="build-highlighter"/>
+		<antcall target="build-ldapinjection"/>
 		<antcall target="build-scripts"/>
 		<antcall target="build-sessionfixation"/>
 		<antcall target="build-tokengen"/>
@@ -188,6 +197,10 @@
 		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
 	</target>
 
+	<target name="deploy-ldapinjectionscan" description="deploy the ldapinjection extension">
+		<antcall target="deploy-extension"> <param name="extension" value="ldapinjectionscan"/> </antcall>
+	</target>
+	
 	<target name="deploy-scripts" description="deploy the scripts extension">
 		<antcall target="deploy-extension"> <param name="extension" value="scripts"/> </antcall>
 	</target>
@@ -212,6 +225,7 @@
 		<antcall target="deploy-exampleRightClickMsg"/>
 		<antcall target="deploy-exampleTopMenu"/>
 		<antcall target="deploy-highlighter"/>
+		<antcall target="deploy-ldapinjectionscan"/>
 		<antcall target="deploy-scripts"/>
 		<antcall target="deploy-sessionfixationscan"/>
 		<antcall target="deploy-tokengen"/>
