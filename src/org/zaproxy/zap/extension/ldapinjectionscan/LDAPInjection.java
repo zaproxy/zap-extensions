@@ -231,7 +231,7 @@ public class LDAPInjection extends AbstractAppPlugin {
 					String [] errorMessages = errorMessageFlat.split(":");
 					for (String errorMessage : errorMessages) {  //for each error message for the given LDAP implemention
 						//compile it into a pattern
-						log.error("Compiling pattern for ["+errorMessage + "]" );
+						//log.error("Compiling pattern for ["+errorMessage + "]" );
 						Pattern errorPhpSearchPattern = Pattern.compile(errorMessage);
 						//if the pattern was found in the new response, but not in the original response (for the unmodified request)
 						//and the new response was OK (200), then we have a match.. LDAP injection!
