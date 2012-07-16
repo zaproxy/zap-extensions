@@ -37,7 +37,7 @@ import org.parosproxy.paros.network.HttpStatusCode;
 
 /**
  * The LDAPInjection plugin identifies LDAP injection vulnerabilities with
- * GET, POST, and cookie parameters, as well as Headers (TODO!).
+ * GET, POST, and cookie parameters, as well as Headers.
  *
  *  @author Colm O'Flaherty, Encription Ireland Ltd
  */
@@ -158,7 +158,6 @@ public class LDAPInjection extends AbstractAppPlugin {
     @Override
     public void init() {
     	//DEBUG: turn on for debugging
-    	//TODO: turn this off
     	//log.setLevel(org.apache.log4j.Level.DEBUG);
     	//this.debugEnabled = true;
 
@@ -168,21 +167,38 @@ public class LDAPInjection extends AbstractAppPlugin {
 
     /**
      * scans all POST, GET, Cookie params, and header fields for LDAP injection vulnerabilities. 
-     * Requires min one extra request for each parameter (cookie, URL, POST param)
+     * Requires min one extra request for each parameter (cookie, URL, POST param), and one request
+     * for each header value specified
      */
 	@Override
 	public void scan() {
 		
 		try {
-			//TODO: get the header fields and directives as well
-			
         	//find all params set in the request (GET(URL)/POST(FORM)/Cookie)    		
         	TreeSet<HtmlParameter> htmlParams = new TreeSet<HtmlParameter> (); 
     		htmlParams.addAll(getBaseMsg().getRequestHeader().getCookieParams());  //request cookies only. no response cookies
     		htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
     		htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
     		
-    		////for each parameter in turn, 
+    		//get the full list of headers for the original request
+    		String headersString = getBaseMsg().getRequestHeader().getHeadersAsString();
+    		String [] headers = headersString.split(CRLF);
+    		
+    		//see if the headers are vulnerable to LDAP injection
+    		for (String header: headers) {
+    			String [] headervalues= header.split(":",2); 
+    			if (headervalues.length > 1) {
+    				HttpMessage msg1Initial = getNewMsg();
+    				if ( this.debugEnabled ) log.debug("Scanning URL ["+ msg1Initial.getRequestHeader().getMethod()+ "] ["+ msg1Initial.getRequestHeader().getURI() + "], header field ["+  headervalues[0]+ "] with value ["+headervalues[1]+"] for LDAP Injection");
+    				msg1Initial.getRequestHeader().setHeader(headervalues[0], errorAttack);
+    				
+    				//send it, and see what happens :)
+    				sendAndReceive(msg1Initial);
+    				checkResultsForAlert(msg1Initial, "header", headervalues[0]);
+    			}
+    		}
+    		
+    		//for each parameter in turn, see if they are vulnerable to LDAP injection
     		for (Iterator<HtmlParameter> iter = htmlParams.iterator(); iter.hasNext(); ) {    			
             	HttpMessage msg1Initial = getNewMsg();            	            	
     			HtmlParameter currentHtmlParameter = iter.next();
@@ -217,60 +233,7 @@ public class LDAPInjection extends AbstractAppPlugin {
 
 				//send it, and see what happens :)
 				sendAndReceive(msg1Initial);
-				
-				//compare the request response with each of the known error messages, for each of the known LDAP implementations.
-				//in order to minimise false positives, only consider a match for the error message in the response
-				//if the string also did NOT occur in the original (unmodified) response
-								
-				//TODO: move some of this code to the the static constructor.. once it works :) 
-				String ldapImplementationsFlat = getString("ldapinjection.knownimplementations");
-				String [] ldapImplementations = ldapImplementationsFlat.split(":");
-				for (String ldapImplementation : ldapImplementations) {  //for each LDAP implementation
-					//for each known LDAP implementation
-					String errorMessageFlat = getString("ldapinjection."+ldapImplementation+".errormessages");
-					String [] errorMessages = errorMessageFlat.split(":");
-					for (String errorMessage : errorMessages) {  //for each error message for the given LDAP implemention
-						//compile it into a pattern
-						//log.error("Compiling pattern for ["+errorMessage + "]" );
-						Pattern errorPhpSearchPattern = Pattern.compile(errorMessage);
-						//if the pattern was found in the new response, but not in the original response (for the unmodified request)
-						//and the new response was OK (200), then we have a match.. LDAP injection!
-						if ( msg1Initial.getResponseHeader().getStatusCode() == HttpStatusCode.OK && 
-		        				responseMatches (msg1Initial, errorPhpSearchPattern) &&
-		        				! responseMatches (getBaseMsg(), errorPhpSearchPattern) ) {
-		    				//response code is ok, and the HTML matches one of the known PHP LDAP errors.
-		    				//so raise the error, and move on to the next parameter
-		    				String extraInfo = getString("ldapinjection.alert.extrainfo", 
-		        						currentHtmlParameter.getType(), 
-		        						currentHtmlParameter.getName(),
-		        						getBaseMsg().getRequestHeader().getMethod(),  
-		    							getBaseMsg().getRequestHeader().getURI().getURI(),
-		    							errorAttack, ldapImplementation, errorPhpSearchPattern);
-		
-		        			String attack = getString("ldapinjection.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName(), errorAttack);
-		        			String vulnname=getString("ldapinjection.name");
-		        			String vulndesc=getString("ldapinjection.desc");
-		        			String vulnsoln=getString("ldapinjection.soln");
-		        			
-		        			bingo(Alert.RISK_HIGH, Alert.WARNING, vulnname, vulndesc, 
-		        					getBaseMsg().getRequestHeader().getURI().getURI(),
-		        					currentHtmlParameter.getName(),  attack, 
-		        					extraInfo, vulnsoln, getBaseMsg());
-		        					
-		        			//and log it
-		    				String logMessage = getString ("ldapinjection.alert.logmessage", 
-		    							getBaseMsg().getRequestHeader().getMethod(),  
-		    							getBaseMsg().getRequestHeader().getURI().getURI(), 
-		    							currentHtmlParameter.getType(), 
-		    							currentHtmlParameter.getName(), 
-		    							errorAttack, ldapImplementation, errorPhpSearchPattern);
-		    				log.info(logMessage);
-		    				
-		    				continue; // to the next parameter (to infinity and beyond!)
-		        		}
-					} //for each error message for the given LDAP implemention
-				} //for each LDAP implementation
-
+				checkResultsForAlert(msg1Initial, currentHtmlParameter.getType().toString(), currentHtmlParameter.getName());
         			
     		} //end of the for loop around the parameter list
 
@@ -290,6 +253,62 @@ public class LDAPInjection extends AbstractAppPlugin {
 	protected boolean responseMatches (HttpMessage msg, Pattern pattern) {
 		Matcher matcher = pattern.matcher(msg.getResponseBody().toString());
 		return matcher.find();
+	}
+	
+	private boolean checkResultsForAlert(HttpMessage message, String parameterType, String parameterName)
+	throws Exception
+	{
+		//compare the request response with each of the known error messages, for each of the known LDAP implementations.
+		//in order to minimise false positives, only consider a match for the error message in the response
+		//if the string also did NOT occur in the original (unmodified) response
+		
+		String ldapImplementationsFlat = getString("ldapinjection.knownimplementations");
+		String [] ldapImplementations = ldapImplementationsFlat.split(":");
+		for (String ldapImplementation : ldapImplementations) {  //for each LDAP implementation
+			//for each known LDAP implementation
+			String errorMessageFlat = getString("ldapinjection."+ldapImplementation+".errormessages");
+			String [] errorMessages = errorMessageFlat.split(":");
+			for (String errorMessage : errorMessages) {  //for each error message for the given LDAP implemention
+				//compile it into a pattern
+				Pattern errorPattern = Pattern.compile(errorMessage);
+				//if the pattern was found in the new response, but not in the original response (for the unmodified request)
+				//and the new response was OK (200), then we have a match.. LDAP injection!
+				if ( message.getResponseHeader().getStatusCode() == HttpStatusCode.OK && 
+        				responseMatches (message, errorPattern) &&
+        				! responseMatches (getBaseMsg(), errorPattern) ) {
+    				//response code is ok, and the HTML matches one of the known LDAP errors.
+    				//so raise the error, and move on to the next parameter
+    				String extraInfo = getString("ldapinjection.alert.extrainfo", 
+    							parameterType, 
+        						parameterName,
+        						getBaseMsg().getRequestHeader().getMethod(),  
+    							getBaseMsg().getRequestHeader().getURI().getURI(),
+    							errorAttack, ldapImplementation, errorPattern);
+
+        			String attack = getString("ldapinjection.alert.attack", parameterType, parameterName, errorAttack);
+        			String vulnname=getString("ldapinjection.name");
+        			String vulndesc=getString("ldapinjection.desc");
+        			String vulnsoln=getString("ldapinjection.soln");
+        			
+        			bingo(Alert.RISK_HIGH, Alert.WARNING, vulnname, vulndesc, 
+        					getBaseMsg().getRequestHeader().getURI().getURI(),
+        					parameterName,  attack, 
+        					extraInfo, vulnsoln, getBaseMsg());
+        					
+        			//and log it
+    				String logMessage = getString ("ldapinjection.alert.logmessage", 
+    							getBaseMsg().getRequestHeader().getMethod(),  
+    							getBaseMsg().getRequestHeader().getURI().getURI(), 
+    							parameterType, 
+    							parameterName, 
+    							errorAttack, ldapImplementation, errorPattern);
+    				log.info(logMessage);
+    				
+    				return true;  //threw an alert
+        		}
+			} //for each error message for the given LDAP implemention
+		} //for each LDAP implementation
+	return false;  //did not throw an alert
 	}
 	
 }
