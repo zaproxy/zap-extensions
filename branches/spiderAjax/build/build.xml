@@ -49,11 +49,23 @@
 			</zipfileset>
 			<zipfileset dir="${src}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
-				<include name="org/zaproxy/zap/extension/${extension}/*.png"/>
 			</zipfileset>
 		</jar>
 	</target>
-
+	<target name="build-extension2" description="build the specified extension">
+		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}.jar" update="true" compress="false">
+			<zipfileset dir="${build}" prefix="">
+				<include name="org/zaproxy/zap/extension/${extension}/**" />
+			</zipfileset>
+		</jar>
+		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}-deps.jar" update="true" compress="false">
+			<zipgroupfileset dir="../src/org/zaproxy/zap/extension/${extension}/lib/" includes="*.jar" />
+	<zipfileset dir="${src}" prefix="">
+		<include name="org/zaproxy/zap/extension/${extension}/Messages*" />
+		<include name="org/zaproxy/zap/extension/${extension}/*.png" />
+	</zipfileset>
+		</jar>
+	</target>
 	<target name="build-exampleActiveScan" description="build the exampleActiveScan extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="exampleActiveScan"/> 
@@ -134,10 +146,10 @@
 		</antcall>
 	</target>
 	<target name="build-spiderAjax" description="build the spiderAjax extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="spiderAjax"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
+		<antcall target="build-extension2">
+			<param name="extension" value="spiderAjax"/>
+			<param name="type" value="alpha"/>
+			<param name="version" value="1"/>
 		</antcall>
 	</target>
 	
