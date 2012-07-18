@@ -3,8 +3,6 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
- * Copyright 2010 psiinon@gmail.com
- * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -19,44 +17,426 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
-import java.awt.EventQueue;
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 import java.awt.event.InputEvent;
+import java.util.Enumeration;
+import java.util.Vector;
 import javax.swing.*;
-
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
-import org.parosproxy.paros.core.proxy.ProxyParam;
+import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.extension.history.HistoryFilter;
+import org.parosproxy.paros.extension.history.LogPanel;
+import org.parosproxy.paros.extension.history.LogPanelCellRenderer;
+import org.parosproxy.paros.model.HistoryList;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.spiderAjax.SpiderPanel;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
 import org.zaproxy.zap.model.GenericScanner;
-import org.zaproxy.zap.model.ScanListenner;
 import org.zaproxy.zap.utils.ZapTextArea;
-import org.zaproxy.zap.view.ScanPanel;
 
-public class SpiderPanel extends ScanPanel implements ScanListenner {
 
+public class SpiderPanel extends AbstractPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
-
-	public static final String PANEL_NAME = "spider";
+	private static final Logger logger = Logger.getLogger(LogPanel.class);
+	private javax.swing.JScrollPane scrollLog = null;
+	private javax.swing.JList listLog = null;
+	private javax.swing.JPanel historyPanel = null;
+	private javax.swing.JToolBar panelToolbar = null;
+	private JLabel filterStatus = null;
+	private HttpPanel requestPanel = null;
+	private HttpPanel responsePanel = null;
+    private ExtensionAjax extension = null;
 	private SpiderThread runnable = null;
-
-	private JSplitPane splitPane = null;
-	private JPanel leftPanel = null;
-	private JPanel rightPanel = null;
-	private JLabel jLabel = null;
 	private static ZapTextArea txtURIFound = null;
-	private JScrollPane jScrollPane = null;
-	private JLabel jLabel1 = null;
-	private static ZapTextArea txtURISkip = null;
-	private JScrollPane jScrollPane1 = null;
-	private ExtensionAjax extension = null;
-	private static Logger log = Logger.getLogger(SpiderPanel.class);
+	private HistoryList list = null;
 
+	/**
+	 * This is the default constructor
+	 */
+	public SpiderPanel(ExtensionAjax e) {
+		super();
+		this.extension = e;
+		initialize();
+	}
+	
+	/**
+	 * This method initializes this
+	 * 
+	 * @return void
+	 */
+	private  void initialize() {
+		this.setLayout(new BorderLayout());
+	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
+	    	this.setSize(600, 200);
+	    }
+		this.add(getHistoryPanel(), java.awt.BorderLayout.CENTER);
+		this.list = new HistoryList();
+	}
+    
+    
+	/**
+	 * This method initializes scrollLog	
+	 * 	
+	 * @return javax.swing.JScrollPane	
+	 */    
+	private javax.swing.JScrollPane getScrollLog() {
+		if (scrollLog == null) {
+			scrollLog = new javax.swing.JScrollPane();
+			scrollLog.setViewportView(getListLog());
+			scrollLog.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			scrollLog.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			scrollLog.setPreferredSize(new java.awt.Dimension(800,200));
+			scrollLog.setName("scrollLog");
+		}
+		return scrollLog;
+	}
+
+	private javax.swing.JPanel getHistoryPanel() {
+		if (historyPanel == null) {
+			
+			historyPanel = new javax.swing.JPanel();
+			historyPanel.setLayout(new java.awt.GridBagLayout());
+			historyPanel.setName("Spider AJAX Panel");
+			
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+
+			gridBagConstraints1.gridx = 0;
+			gridBagConstraints1.gridy = 0;
+			gridBagConstraints1.weightx = 1.0D;
+			gridBagConstraints1.insets = new java.awt.Insets(2,2,2,2);
+			gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gridBagConstraints1.anchor = java.awt.GridBagConstraints.NORTHWEST;
+			
+			gridBagConstraints2.gridx = 0;
+			gridBagConstraints2.gridy = 1;
+			gridBagConstraints2.weightx = 1.0;
+			gridBagConstraints2.weighty = 1.0;
+			gridBagConstraints2.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints2.fill = java.awt.GridBagConstraints.BOTH;
+			gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
+			
+			historyPanel.add(this.getPanelToolbar(), gridBagConstraints1);
+			historyPanel.add(getScrollLog(), gridBagConstraints2);
+		}
+		return historyPanel;
+	}
+
+
+	public HistoryList getHistList(){
+		return this.list;
+	}
+	
+	public void addHistoryUrl(HistoryReference r, HttpMessage msg){
+			if(isNewUrl(r, msg)){
+				this.getHistList().addElement(r);
+			}
+		}
+	
+	public boolean isNewUrl(HistoryReference r, HttpMessage msg){
+		Enumeration<?> e = this.getHistList().elements();
+		while (e.hasMoreElements()) {
+			if (e.nextElement().toString().contains(msg.getRequestHeader().getURI().toString())) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private javax.swing.JToolBar getPanelToolbar() {
+		if (panelToolbar == null) {
+			
+			panelToolbar = new javax.swing.JToolBar();
+			panelToolbar.setLayout(new java.awt.GridBagLayout());
+			panelToolbar.setEnabled(true);
+			panelToolbar.setFloatable(false);
+			panelToolbar.setRollover(true);
+			panelToolbar.setPreferredSize(new java.awt.Dimension(800,30));
+			panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			panelToolbar.setName("Spider AJAX Toolbar");
+			
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsX = new GridBagConstraints();
+
+			gridBagConstraints1.gridx = 0;
+			gridBagConstraints1.gridy = 0;
+			gridBagConstraints1.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints1.anchor = java.awt.GridBagConstraints.WEST;
+			
+			// TODO this shouldnt push the filter button off the lhs
+			gridBagConstraints2.gridx = 1;
+			gridBagConstraints2.gridy = 0;
+			gridBagConstraints2.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints2.anchor = java.awt.GridBagConstraints.WEST;
+
+			gridBagConstraints3.gridx = 2;
+			gridBagConstraints3.gridy = 0;
+			gridBagConstraints3.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints3.anchor = java.awt.GridBagConstraints.WEST;
+
+			gridBagConstraints4.gridx = 3;
+			gridBagConstraints4.gridy = 0;
+			gridBagConstraints4.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints4.anchor = java.awt.GridBagConstraints.WEST;
+
+			gridBagConstraints5.gridx = 4;
+			gridBagConstraints5.gridy = 0;
+			gridBagConstraints5.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints5.anchor = java.awt.GridBagConstraints.WEST;
+
+			gridBagConstraintsX.gridx = 5;
+			gridBagConstraintsX.gridy = 0;
+			gridBagConstraintsX.weightx = 1.0;
+			gridBagConstraintsX.weighty = 1.0;
+			gridBagConstraintsX.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraintsX.anchor = java.awt.GridBagConstraints.EAST;
+			gridBagConstraintsX.fill = java.awt.GridBagConstraints.HORIZONTAL;
+
+			filterStatus = new JLabel(this.extension.getString("ajax.panel.subtitle"));
+			JLabel t1 = new JLabel();
+
+			//panelToolbar.add(getFilterButton(), gridBagConstraints1);
+			panelToolbar.add(filterStatus, gridBagConstraints2);
+			/*
+			panelToolbar.add(getBtnSearch(), gridBagConstraints3);
+			panelToolbar.add(getBtnNext(), gridBagConstraints4);
+			panelToolbar.add(getBtnPrev(), gridBagConstraints5);
+			*/
+			panelToolbar.add(t1, gridBagConstraintsX);
+		}
+		return panelToolbar;
+	}
+
+	
+
+	/**
+	 * This method initializes listLog	
+	 *	
+	 * @return javax.swing.JList	
+	 */    
+	public javax.swing.JList getListLog() {
+		if (listLog == null) {
+			listLog = new javax.swing.JList();
+			listLog.setDoubleBuffered(true);
+            listLog.setCellRenderer(getLogPanelCellRenderer());
+			listLog.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+			listLog.setName("ListLog");
+			listLog.setFont(new java.awt.Font("Default", java.awt.Font.PLAIN, 12));
+			listLog.setFixedCellHeight(16);	// Significantly speeds up rendering
+			listLog.addMouseListener(new java.awt.event.MouseAdapter() { 
+				@Override
+				public void mousePressed(java.awt.event.MouseEvent e) {
+					mouseClicked(e);
+				}
+					
+				@Override
+				public void mouseReleased(java.awt.event.MouseEvent e) {
+					mouseClicked(e);
+				}
+				
+				@Override
+				public void mouseClicked(java.awt.event.MouseEvent e) {
+					// right mouse button action
+					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0 || e.isPopupTrigger()) {
+				    	
+						// ZAP: Select history list item on right click
+					    int Idx = listLog.locationToIndex( e.getPoint() );
+					    if ( Idx >= 0 ) {
+					    	Rectangle Rect = listLog.getCellBounds( Idx, Idx );
+					    	Idx = Rect.contains( e.getPoint().x, e.getPoint().y ) ? Idx : -1;
+					    }
+					    if ( Idx < 0 || !listLog.getSelectionModel().isSelectedIndex( Idx ) ) {
+					    	listLog.getSelectionModel().clearSelection();
+					    	if ( Idx >= 0 ) {
+					    		listLog.getSelectionModel().setSelectionInterval( Idx, Idx );
+					    	}
+					    }
+
+				        View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
+				        return;
+				    }	
+				    
+				    if ((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0 && e.getClickCount() > 1) {  // double click
+						requestPanel.setTabFocus();
+						return;
+				    }
+				}
+			});
+			
+			listLog.addListSelectionListener(new javax.swing.event.ListSelectionListener() { 
+
+				@Override
+				public void valueChanged(javax.swing.event.ListSelectionEvent e) {
+					// ZAP: Changed to only display the message when there are no more selection changes.
+					if (!e.getValueIsAdjusting()) {
+					    if (listLog.getSelectedValue() == null) {
+					        return;
+					    }
+	                    
+						final HistoryReference historyRef = (HistoryReference) listLog.getSelectedValue();
+	
+	                    readAndDisplay(historyRef);
+					}
+
+				}
+
+
+			});
+
+		}
+		return listLog;
+	}   
+    private Vector<HistoryReference> displayQueue = new Vector<HistoryReference>();
+    private Thread thread = null;
+    private LogPanelCellRenderer logPanelCellRenderer = null;
+    
+    protected void display(final HistoryReference historyRef) {
+    	this.readAndDisplay(historyRef);
+    	for (int i = 0; i < listLog.getModel().getSize(); i++) {
+    		// Bit nasty, but its the only way I've found...
+    		if (((HistoryReference)listLog.getModel().getElementAt(i)).getHistoryId() == historyRef.getHistoryId()) {
+    			listLog.setSelectedIndex(i);
+    			listLog.ensureIndexIsVisible(i);
+    			break;
+    			/* Doesnt work - the records are not always in order
+    		} else if (((HistoryReference)listLog.getModel().getElementAt(i)).getHistoryId() > historyRef.getHistoryId()) {
+    			break;
+    			*/
+    		}
+    	}
+    }
+
+    public void clearDisplayQueue() {
+    	synchronized(displayQueue) {
+    		displayQueue.clear();
+    	}
+    }
+    
+    private void readAndDisplay(final HistoryReference historyRef) {
+
+        synchronized(displayQueue) {
+
+            if (displayQueue.size() > 0) {
+                displayQueue.clear();
+            }
+            
+            displayQueue.add(historyRef);
+
+        }
+        
+        if (thread != null && thread.isAlive()) {
+            return;
+        }
+        
+        thread = new Thread(this);
+
+        thread.setPriority(Thread.NORM_PRIORITY);
+        thread.start();
+    }
+    
+    
+    public void setDisplayPanel(HttpPanel requestPanel, HttpPanel responsePanel) {
+        this.requestPanel = requestPanel;
+        this.responsePanel = responsePanel;
+
+    }
+  /*  
+    private void displayMessage(HttpMessage msg) {
+        
+        if (msg.getRequestHeader().isEmpty()) {
+            requestPanel.clearView(true);
+        } else {
+            requestPanel.setMessage(msg);
+        }
+        
+        if (msg.getResponseHeader().isEmpty()) {
+            responsePanel.clearView(false);
+        } else {
+            responsePanel.setMessage(msg, true);
+        }
+    }*/
+
+    @Override
+    public void run() {
+    	/*   HistoryReference ref = null;
+        int count = 0;
+        
+        do {
+            synchronized(displayQueue) {
+                count = displayQueue.size();
+                if (count == 0) {
+                    break;
+                }
+                
+                ref = displayQueue.get(0);
+                displayQueue.remove(0);
+            }
+            
+           try {
+                final HistoryReference finalRef = ref;
+                final HttpMessage msg = ref.getHttpMessage();
+                EventQueue.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayMessage(msg);
+                        listLog.requestFocus();
+
+                    }
+                });
+                
+            } catch (Exception e) {
+                // ZAP: Added logging.
+                logger.error(e.getMessage(), e);
+            }
+            // wait some time to allow another selection event to be triggered
+            try {
+                Thread.sleep(200);
+            } catch (Exception e) {}
+        } while (true);
+        */
+            
+        
+    }
+    
+
+    /**
+     * This method initializes logPanelCellRenderer	
+     * 	
+     * @return org.parosproxy.paros.extension.history.LogPanelCellRenderer	
+     */
+    private LogPanelCellRenderer getLogPanelCellRenderer() {
+        if (logPanelCellRenderer == null) {
+            logPanelCellRenderer = new LogPanelCellRenderer();
+    	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
+    	    	logPanelCellRenderer.setSize(new java.awt.Dimension(328,21));
+    	    }
+            logPanelCellRenderer.setBackground(java.awt.Color.white);
+            logPanelCellRenderer.setFont(new java.awt.Font("MS Sans Serif", java.awt.Font.PLAIN, 12));
+        }
+        return logPanelCellRenderer;
+    }
+
+    public void setFilterStatus (HistoryFilter filter) {
+    	filterStatus.setText(filter.toShortString());
+    	filterStatus.setToolTipText(filter.toLongString());
+    }
+
+    public GenericScanner newScanThread(String site, AbstractParam params) {
+		new Thread(this.runnable = new SpiderThread(site, this.extension)).start();
+		return (GenericScanner) null;
+	}
 	public void scanSite(SiteNode n, boolean b) {
 		try {
 			this.extension.run(n.getHierarchicNodeName());
@@ -64,284 +444,8 @@ public class SpiderPanel extends ScanPanel implements ScanListenner {
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * @param proxyParam
-	 * 
-	 */
-	public SpiderPanel(ExtensionAjax extension,
-			ProxyParam proxyParam) {
-		super(PANEL_NAME, new ImageIcon(extension.getClass().getClassLoader().getResource("org/zaproxy/zap/extension/spiderAjax/16.png")), extension, proxyParam);
-		this.extension = extension;
-        this.setIcon(new ImageIcon(getClass().getClassLoader().getResource("org/zaproxy/zap/extension/spiderAjax/16.png")));
-
-	}
-
-	@Override
-	protected GenericScanner newScanThread(String site, AbstractParam params) {
-		new Thread(this.runnable = new SpiderThread(site, this.extension)).start();
-		return (GenericScanner) null;
-	}
-
-	@Override
-	protected void startScan() {
-		this.clear();
-		// Only allow one spider at a time, due to the way it uses the db
-		this.getSiteSelect().setEnabled(false);
-		//super.startScan();
-	}
-
-	@Override
-	protected void siteSelected(String site) {
-		// Only allow one spider at a time, due to the way it uses the db
-		if (this.getSiteSelect().isEnabled()) {
-			//super.siteSelected(site);
-		}
-	}
-
-	@Override
-	public void scanFinshed(String host) {
-		super.scanFinshed(host);
-		// Only allow one spider at a time, due to the way it uses the db
-		this.getSiteSelect().setEnabled(true);
-	}
-
-	@Override
-	public boolean isScanning(SiteNode node, boolean incPort) {
-		// Only allow one spider at a time, due to the way it uses the db
-		return !this.getSiteSelect().isEnabled();
-	}
-
-	@Override
-	protected void switchView(String site) {
-		// Cant switch views in this version
-	}
-
-	/**
-	 * This method initializes splitPane
-	 * 
-	 * @return javax.swing.JSplitPane
-	 */
-	@Override
-	protected JSplitPane getWorkPanel() {
-		if (splitPane == null) {
-			splitPane = new JSplitPane();
-			splitPane.setName("splitPane2");
-			splitPane.setDividerSize(3);
-			// splitPane.setDividerLocation(120);
-			splitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-			splitPane.setTopComponent(getLeftPanel());
-			splitPane.setBottomComponent(getRightPanel());
-			splitPane.setResizeWeight(0.5D);
-		}
-		return splitPane;
-	}
-
-	/**
-	 * This method initializes leftPanel
-	 * 
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getLeftPanel() {
-		if (leftPanel == null) {
-			jLabel = new JLabel();
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			leftPanel = new JPanel();
-			leftPanel.setLayout(new GridBagLayout());
-			jLabel.setText(Constant.messages.getString("ajax.label.inScope"));
-			gridBagConstraints1.gridx = 0;
-			gridBagConstraints1.gridy = 0;
-			gridBagConstraints1.insets = new java.awt.Insets(2, 2, 2, 2);
-			gridBagConstraints1.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints1.weightx = 1.0D;
-			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.gridy = 1;
-			gridBagConstraints2.weightx = 1.0;
-			gridBagConstraints2.weighty = 1.0;
-			gridBagConstraints2.fill = java.awt.GridBagConstraints.BOTH;
-			gridBagConstraints2.insets = new java.awt.Insets(0, 2, 0, 2);
-			gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints2.ipady = 24;
-			leftPanel.add(jLabel, gridBagConstraints1);
-			leftPanel.add(getJScrollPane(), gridBagConstraints2);
-		}
-		return leftPanel;
-	}
-
-	/**
-	 * This method initializes rightPanel
-	 * 
-	 * @return javax.swing.JPanel
-	 */
-	private JPanel getRightPanel() {
-		if (rightPanel == null) {
-			jLabel1 = new JLabel();
-			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			rightPanel = new JPanel();
-			rightPanel.setLayout(new GridBagLayout());
-			jLabel1.setText(Constant.messages
-					.getString("ajax.label.outOfScope"));
-			gridBagConstraints3.gridx = 0;
-			gridBagConstraints3.gridy = 0;
-			gridBagConstraints3.insets = new java.awt.Insets(2, 2, 2, 2);
-			gridBagConstraints3.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints3.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints3.weightx = 1.0D;
-			gridBagConstraints4.gridx = 0;
-			gridBagConstraints4.gridy = 1;
-			gridBagConstraints4.weightx = 1.0;
-			gridBagConstraints4.weighty = 1.0;
-			gridBagConstraints4.fill = java.awt.GridBagConstraints.BOTH;
-			gridBagConstraints4.insets = new java.awt.Insets(0, 2, 0, 2);
-			gridBagConstraints4.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints4.ipady = 24;
-			rightPanel.add(jLabel1, gridBagConstraints3);
-			rightPanel.add(getJScrollPane1(), gridBagConstraints4);
-		}
-		return rightPanel;
-	}
-
-	/**
-	 * This method initializes txtURISkip
-	 * 
-	 * @return javax.swing.ZapTextArea
-	 */
-	ZapTextArea getTxtURIFound() {
-		if (txtURIFound == null) {
-			txtURIFound = new ZapTextArea();
-			txtURIFound.setFont(new java.awt.Font("Dialog",
-					java.awt.Font.PLAIN, 11));
-			txtURIFound.setEditable(false);
-			txtURIFound.setLineWrap(true);
-			txtURIFound.addMouseListener(new java.awt.event.MouseAdapter() {
-				public void mousePressed(java.awt.event.MouseEvent e) {
-					mouseClicked(e);
-				}
-
-				public void mouseReleased(java.awt.event.MouseEvent e) {
-					mouseClicked(e);
-				}
-
-				public void mouseClicked(java.awt.event.MouseEvent e) {
-					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0
-							|| e.isPopupTrigger()) { // right mouse button
-						View.getSingleton().getPopupMenu().show(
-								e.getComponent(), e.getX(), e.getY());
-					}
-				}
-
-			});
-		}
-		return txtURIFound;
-	}
-
-	/**
-	 * This method initializes jScrollPane
-	 * 
-	 * @return javax.swing.JScrollPane
-	 */
-	private JScrollPane getJScrollPane() {
-		if (jScrollPane == null) {
-			jScrollPane = new JScrollPane();
-			jScrollPane.setViewportView(getTxtURIFound());
-			jScrollPane.setFont(new java.awt.Font("Dialog",
-					java.awt.Font.PLAIN, 11));
-			jScrollPane
-					.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		}
-		return jScrollPane;
-	}
-
-	/**
-	 * This method initializes txtURISkip
-	 * 
-	 * @return javax.swing.ZapTextArea
-	 */
-	ZapTextArea getTxtURISkip() {
-		if (txtURISkip == null) {
-			txtURISkip = new ZapTextArea();
-			txtURISkip.setEditable(false);
-			txtURISkip.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN,
-					11));
-			txtURISkip.setLineWrap(true);
-			txtURISkip.addMouseListener(new java.awt.event.MouseAdapter() {
-				public void mousePressed(java.awt.event.MouseEvent e) {
-					mouseClicked(e);
-				}
-
-				public void mouseReleased(java.awt.event.MouseEvent e) {
-					mouseClicked(e);
-				}
-
-				public void mouseClicked(java.awt.event.MouseEvent e) {
-					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0
-							|| e.isPopupTrigger()) { // right mouse button
-						View.getSingleton().getPopupMenu().show(
-								e.getComponent(), e.getX(), e.getY());
-					}
-				}
-			});
-		}
-		return txtURISkip;
-	}
-
-	/**
-	 * This method initializes jScrollPane1
-	 * 
-	 * @return javax.swing.JScrollPane
-	 */
-	private JScrollPane getJScrollPane1() {
-		if (jScrollPane1 == null) {
-			jScrollPane1 = new JScrollPane();
-			jScrollPane1.setViewportView(getTxtURISkip());
-			jScrollPane1
-					.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		}
-		return jScrollPane1;
-	}
-
-	void appendFound(final String s) {
-		if (EventQueue.isDispatchThread()) {
-			getTxtURIFound().append(s);
-			return;
-		}
-		try {
-			EventQueue.invokeAndWait(new Runnable() {
-				public void run() {
-					getTxtURIFound().append(s);
-				}
-			});
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-
-	}
-
-	void appendFoundButSkip(final String s) {
-		if (EventQueue.isDispatchThread()) {
-			getTxtURISkip().append(s);
-			return;
-		}
-		try {
-			EventQueue.invokeAndWait(new Runnable() {
-				public void run() {
-					getTxtURISkip().append(s);
-				}
-			});
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-		}
-	}
-
-	void clear() {
-		getTxtURIFound().setText("");
-		getTxtURISkip().setText("");
-	}
-
 }
+
 
 
 

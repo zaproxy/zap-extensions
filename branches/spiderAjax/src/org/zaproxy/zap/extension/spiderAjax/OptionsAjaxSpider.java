@@ -1,3 +1,20 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ * 
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ */
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.CardLayout;
@@ -7,7 +24,6 @@ import java.awt.Insets;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.AbstractParamPanel;
@@ -40,6 +56,162 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 
  		initialize();
    }
+    
+	/**
+	 * This method initializes this
+	 * 
+	 * @return void
+	 */
+	private void initialize() {
+        this.setLayout(new CardLayout());
+        this.setName(this.extension.getString("ajax.proxy.local.title"));
+	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
+	    	this.setSize(391, 320);
+	    }
+        this.add(getPanelProxy(), getPanelProxy().getName()); 
+	}
+	
+    /**
+	 * This method initializes txtProxyIp	
+	 * 	
+	 * @return org.zaproxy.zap.utils.ZapTextField	
+	 */    
+	private ZapTextField getTxtProxyIp() {
+		if (txtProxyIp == null) {
+			txtProxyIp = new ZapTextField("");
+		}
+		return txtProxyIp;
+	}
+	
+	/**
+	 * This method initializes spinnerProxyPort	
+	 * 	
+	 * @return ZapPortNumberSpinner
+	 */    
+	private ZapPortNumberSpinner getSpinnerProxyPort() {
+		if (spinnerProxyPort == null) {
+			// ZAP: Do not allow invalid port numbers
+			spinnerProxyPort = new ZapPortNumberSpinner(8081);
+		}
+		return spinnerProxyPort;
+	}
+	
+
+	/**
+	 * 
+	 * @return
+	 */
+	private JCheckBox getClickAllElems() {
+			if (ClickAllElems == null) {
+				ClickAllElems = new JCheckBox();
+				ClickAllElems.setText(this.extension.getString("ajax.proxy.local.label.allElems"));
+			}
+			return ClickAllElems;
+		}
+
+	/**
+	 * 
+	 * @return the firefox checkbox
+	 */
+	private JCheckBox getFirefox() {
+		if (firefox == null) {
+			firefox = new JCheckBox();
+			firefox.setText(this.extension.getString("ajax.proxy.local.label.firefox"));
+		}
+		return firefox;
+	}
+	
+	/**
+	 * 
+	 * @return the chrome checkbox
+	 */
+	private JCheckBox getChrome() {
+		if (chrome == null) {
+			chrome = new JCheckBox();
+			chrome.setText(this.extension.getString("ajax.proxy.local.label.chrome"));
+		}
+		return chrome;
+	}
+	
+	/**
+	 * 
+	 * @return the IE checkbox
+	 */
+	private JCheckBox getIE() {
+		if (ie == null) {
+			ie = new JCheckBox();
+			ie.setText(this.extension.getString("ajax.proxy.local.label.ie"));
+		}
+		return ie;
+	}
+	
+	/**
+	 * 
+	 */
+	@Override
+	public void initParam(Object obj) {
+	    
+	    // set Local Proxy parameters
+	    txtProxyIp.setText(this.extension.getProxy().getProxyHost());
+	    txtProxyIp.discardAllEdits();
+	    spinnerProxyPort.setValue(this.extension.getProxy().getProxyPort());
+	    
+	    //set the browser type
+	    if(this.extension.getProxy().getBrowser() == BrowserType.firefox){
+	    	this.getFirefox().setSelected(true);
+		    this.getChrome().setSelected(false);
+	    } else if (this.extension.getProxy().getBrowser() == BrowserType.chrome){
+		    this.getChrome().setSelected(true);
+	    	this.getFirefox().setSelected(false);
+	    }
+	}
+	
+	/**
+	 * This method validates the parameters before saving them.
+	 */
+	@Override
+	public void validateParam(Object obj) throws Exception {
+		
+		//if both or none are selected we use firefox
+		if(getFirefox().isSelected() && getChrome().isSelected() && getIE().isSelected()){
+			getChrome().setSelected(false);
+			getIE().setSelected(false);
+			getFirefox().setSelected(true);
+		} else if(!getFirefox().isSelected() && !getChrome().isSelected()&& !getIE().isSelected()){
+			getChrome().setSelected(false);
+			getIE().setSelected(false);
+			getFirefox().setSelected(true);	
+		} else if (!getFirefox().isSelected() && getChrome().isSelected()&& !getIE().isSelected()){
+			if(!this.extension.getProxy().isChromeAvail()){
+				getChrome().setSelected(false);
+				getIE().setSelected(false);
+				getFirefox().setSelected(true);	
+				this.extension.showBreakAddDialog();
+			}
+		}
+	}
+
+	
+	/**
+	 * this methos sets megascan and the browser type
+	 */
+	@Override
+	public void saveParam(Object obj) throws Exception  {; 
+	    this.extension.getProxy().setMegaScan(getClickAllElems().isSelected());
+		this.extension.getProxy().setProxyHost(txtProxyIp.getText());
+		this.extension.getProxy().setProxyPort(spinnerProxyPort.getValue());
+		if(getFirefox().isSelected()){
+			this.extension.getProxy().setBrowser(BrowserType.firefox);
+		}
+		if(getChrome().isSelected()){
+			this.extension.getProxy().setBrowser(BrowserType.chrome);
+		}
+		if(getIE().isSelected()){
+			this.extension.getProxy().setBrowser(BrowserType.ie);
+		}
+	}
+
+
     
 	/**
 	 * This method initializes panelAjaxProxy
@@ -212,128 +384,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		return panelProxy;
 	}
 
-	/**
-	 * This method initializes txtProxyIp	
-	 * 	
-	 * @return org.zaproxy.zap.utils.ZapTextField	
-	 */    
-	private ZapTextField getTxtProxyIp() {
-		if (txtProxyIp == null) {
-			txtProxyIp = new ZapTextField("");
-		}
-		return txtProxyIp;
-	}
-
-
 	
-	/**
-	 * This method initializes spinnerProxyPort	
-	 * 	
-	 * @return ZapPortNumberSpinner
-	 */    
-	private ZapPortNumberSpinner getSpinnerProxyPort() {
-		if (spinnerProxyPort == null) {
-			// ZAP: Do not allow invalid port numbers
-			spinnerProxyPort = new ZapPortNumberSpinner(8081);
-		}
-		return spinnerProxyPort;
-	}
-	
-	/**
-	 * This method initializes this
-	 * 
-	 * @return void
-	 */
-	private void initialize() {
-        this.setLayout(new CardLayout());
-        this.setName(this.extension.getString("ajax.proxy.local.title"));
-	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
-	    	this.setSize(391, 320);
-	    }
-        this.add(getPanelProxy(), getPanelProxy().getName()); 
-	}
-	
-	@Override
-	public void initParam(Object obj) {
-	    
-	    // set Local Proxy parameters
-	    txtProxyIp.setText(this.extension.getProxy().getProxyHost());
-	    txtProxyIp.discardAllEdits();
-	    spinnerProxyPort.setValue(this.extension.getProxy().getProxyPort());
-	    
-	    //set the browser type
-	    if(this.extension.getProxy().getBrowser() == BrowserType.firefox){
-	    	this.getFirefox().setSelected(true);
-		    this.getChrome().setSelected(false);
-	    } else if (this.extension.getProxy().getBrowser() == BrowserType.chrome){
-		    this.getChrome().setSelected(true);
-	    	this.getFirefox().setSelected(false);
-	    }
-	}
-	
-	@Override
-	public void validateParam(Object obj) throws Exception {
-		
-		//if both or none are selected we use firefox
-		if(getFirefox().isSelected() && getChrome().isSelected() && getIE().isSelected()){
-			getChrome().setSelected(false);
-			getIE().setSelected(false);
-			getFirefox().setSelected(true);
-		} else if(!getFirefox().isSelected() && !getChrome().isSelected()&& !getIE().isSelected()){
-			getChrome().setSelected(false);
-			getIE().setSelected(false);
-			getFirefox().setSelected(true);	
-		}
-	}
-
-	
-	@Override
-	public void saveParam(Object obj) throws Exception  {; 
-	    this.extension.getProxy().setMegaScan(getClickAllElems().isSelected());
-		this.extension.getProxy().setProxyHost(txtProxyIp.getText());
-		this.extension.getProxy().setProxyPort(spinnerProxyPort.getValue());
-		if(getFirefox().isSelected()){
-			this.extension.getProxy().setBrowser(BrowserType.firefox);
-		}
-		if(getChrome().isSelected()){
-			this.extension.getProxy().setBrowser(BrowserType.chrome);
-		}
-		if(getIE().isSelected()){
-			this.extension.getProxy().setBrowser(BrowserType.ie);
-		}
-	}
-
-
-
-	private JCheckBox getClickAllElems() {
-			if (ClickAllElems == null) {
-				ClickAllElems = new JCheckBox();
-				ClickAllElems.setText(this.extension.getString("ajax.proxy.local.label.allElems"));
-			}
-			return ClickAllElems;
-		}
-
-	private JCheckBox getFirefox() {
-		if (firefox == null) {
-			firefox = new JCheckBox();
-			firefox.setText(this.extension.getString("ajax.proxy.local.label.firefox"));
-		}
-		return firefox;
-	}
-	private JCheckBox getChrome() {
-		if (chrome == null) {
-			chrome = new JCheckBox();
-			chrome.setText(this.extension.getString("ajax.proxy.local.label.chrome"));
-		}
-		return chrome;
-	}
-	private JCheckBox getIE() {
-		if (ie == null) {
-			ie = new JCheckBox();
-			ie.setText(this.extension.getString("ajax.proxy.local.label.ie"));
-		}
-		return ie;
-	}
 	
 	
 

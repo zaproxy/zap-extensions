@@ -1,30 +1,43 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ * 
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ */
 package org.zaproxy.zap.extension.spiderAjax;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.ListModel;
-import com.crawljax.browser.EmbeddedBrowser.BrowserType;
+
+import java.util.regex.Pattern;
 import com.crawljax.core.CrawljaxController;
 import com.crawljax.core.CrawljaxException;
 import com.crawljax.core.configuration.CrawlSpecification;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.ProxyConfiguration;
 import com.crawljax.core.configuration.ThreadConfiguration;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.proxy.ProxyListener;
-import org.parosproxy.paros.extension.history.ProxyListenerLog;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteMap;
-import org.zaproxy.zap.model.ScanListenner;
-import org.zaproxy.zap.model.ScanThread;
 
-public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
-
-	public static final int PROXY_LISTENER_ORDER = ProxyListenerLog.PROXY_LISTENER_ORDER + 1;
+public class SpiderThread implements Runnable, ProxyListener {
 
 	// crawljax config
 	private static final int NUM_BROWSERS = 1;
-	private static final int NUM_THREADS = 1;
+	private static final int NUM_THREADS = 2;
 	private static final boolean BROWSER_BOOTING = true;
 	private static final int MAX_STATES = 100;
 	private static final boolean RAND_INPUT_FORMS = true;
@@ -39,6 +52,7 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 	private CrawljaxController crawljax = null;
 	private CrawlSpecification crawler = null;
 	private ProxyConfiguration proxyConf = null;
+	private static final Logger logger = Logger.getLogger(SpiderThread.class);
 
 	SpiderThread(String url, ExtensionAjax extension) {
 		this.url = url;
@@ -46,34 +60,38 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 		initialize();
 	}
 
+	
 	/**
-	 * This method refreshes de proxy
-	 * 
+	 * This method refreshes the proxy
 	 * @return void
 	 */
 	private void initialize() {
 		this.extension.getProxy().updateProxyConf();
 		this.extension.getProxy().getProxy().addProxyListener(this);
+	    this.extension.getSpiderPanel().getListLog().setModel(this.extension.getSpiderPanel().getHistList());
+		if (this.extension.getExcludeList() != null) {
+			this.extension.getProxy().getProxy();//.setExcludeList(this.extension.getExcludeList());
+		}
 	}
 
-	/**
-	 * 
+	
+	/** 
 	 * @return the port to be used by crawljax
 	 */
 	public int getPort() {
 		return this.port;
 	}
 
+	
 	/**
-	 * 
 	 * @return the host to be used in the proxy config
 	 */
 	public String getHost() {
 		return this.host;
 	}
 
+	
 	/**
-	 * 
 	 * @return the proxy configuration of crawljax
 	 */
 	public ProxyConfiguration getProxyConf() {
@@ -85,8 +103,8 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 		return proxyConf;
 	}
 
+	
 	/**
-	 * 
 	 * @return the thread configuration for crawljax
 	 */
 	public ThreadConfiguration getThreadConf() {
@@ -100,7 +118,6 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 	}
 
 	/**
-	 * 
 	 * @return the crawljax configuration (thread conf+spec+proxy conf+plugins)
 	 */
 	public CrawljaxConfiguration getCrawConf() {
@@ -112,15 +129,14 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 			this.port = this.extension.getProxy().getProxyPort();
 			this.host = this.extension.getProxy().getProxyHost();
 			crawlConf.setProxyConfiguration(this.getProxyConf());
-			
-			//we add the plugins
-			crawlConf.addPlugin(new test2(this.extension, this));
+
+			// we add the plugins
+			crawlConf.addPlugin(new SpiderFilter(this.extension, this));
 		}
 		return crawlConf;
 	}
 
 	/**
-	 * 
 	 * @return the new crawljax specification
 	 */
 	public CrawlSpecification getCrawSpec() {
@@ -134,18 +150,10 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 			} else {
 				crawler.clickDefaultElements();
 			}
-			if (url.contains("wivet")) {
-				crawler.dontClick("a").withAttribute("href",
-						"../innerpages/2_2.php");
-				crawler.dontClick("a").withText("Logout");
+			//TODO: fix this in crawljax
+			if (url.toLowerCase().contains("wivet")) {
+				crawler.dontClick("a").withAttribute("href","../innerpages/2_2.php");
 			}
-			for(String excl:this.extension.getModel().getSession().getExcludeFromSpiderRegexs()){
-
-			}
-			//crawler.dontClick("*").withAttribute("href", "http://aopcgr.uab.es:10001/wivet/");
-			//crawler.dontClick("").withAttribute("href", "http://aopcgr.uab.es:10001/wivet/");
-			//crawler.dontClick("a").withAttribute("href", "http://aopcgr.uab.es:10001/wivet/");
-			
 		}
 		return crawler;
 	}
@@ -153,84 +161,64 @@ public class SpiderThread implements Runnable, ProxyListener, ScanListenner {
 	@Override
 	public void run() {
 
-		// to use ACT instead of crawljax
-
-		/*
-		 * CrawlRequest request = new CrawlRequest(url);
-		 * request.setBrowserType(BrowserType.firefox);
-		 * request.addClickElement() request.setMaxDepth(0);
-		 * request.setMaxDuration(0); request.setMaxStates(0);
-		 * request.setClickDefaults(true); request.setCrawlFrames(true);
-		 * request.setRandomInput(true); request.setCrawlOnce(true);
-		 * request.isTestInvariants(); request.setUseProxy(true);
-		 * request.setProxyUrl("localhost"); request.setProxyPort(8080);
-		 * CrawlerRunnable run = new CrawlerRunnable(request); run.run();
-		 */
-
 		// testing crawljax plugins
 		// crawljaxConfiguration.addPlugin(new test(true));
 
 		try {
 			crawljax = new CrawljaxController(getCrawConf());
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+        } catch (ConfigurationException e) {
+			logger.error(e);
+        } catch (Exception e) {
+			logger.error(e);
 		}
 		try {
 			crawljax.run();
+			
 		} catch (CrawljaxException e) {
-			e.printStackTrace();
+			logger.error(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
-
 	}
-
+	
 	@Override
 	public boolean onHttpRequestSend(HttpMessage msg) {
-		String site = msg.getRequestHeader().getHostName();
-		if (msg.getRequestHeader().getHostPort() > 0
-				&& msg.getRequestHeader().getHostPort() != 80) {
-			site += ":" + msg.getRequestHeader().getHostPort();
-		}
-		this.extension.getSpiderPanel().addSite(site, true);
 		return true;
 	}
 
+	
 	@Override
 	public boolean onHttpResponseReceive(HttpMessage msg) {
 		SiteMap siteTree = extension.getModel().getSession().getSiteTree();
-		// this.extension.getProxy();
 		HistoryReference historyRef = null;
+
 		try {
-			historyRef = new HistoryReference(
-					extension.getModel().getSession(),
-					HistoryReference.TYPE_SPIDERAJAX, msg);
-			siteTree.addPath(historyRef, msg);
-		} catch (Exception e) {
-		}
-		// this.extension.getModel().addSessionListener(this));
-		if (extension.getView() != null) {
-			if (!msg.getRequestHeader().getURI().toString().contains(this.url)) {
-				extension.getSpiderPanel().appendFoundButSkip(
-						msg.getRequestHeader().getURI().toString() + "\n");
-			} else {
-				extension.getSpiderPanel().appendFound(
-						msg.getRequestHeader().getURI().toString() + "\n");
+			//we check if it has to be put in the sites tree or is already there
+			historyRef = new HistoryReference(extension.getModel().getSession(),HistoryReference.TYPE_SPIDERAJAX, msg);
+			boolean ignore =false;
+			for (String pa : this.extension.getModel().getSession().getExcludeFromScanRegexs()) {
+				Pattern p = Pattern.compile(pa, Pattern.CASE_INSENSITIVE);
+				if (p.matcher(msg.getRequestHeader().getURI().toString()).matches()) {
+					ignore=true;
+				}
 			}
+			if(!ignore){
+				siteTree.addPath(historyRef, msg);
+			}
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		try {
+		this.extension.getSpiderPanel().addHistoryUrl(historyRef, msg);
+		} catch (Exception e){
+			logger.error(e);
 		}
 		return true;
-	}
-
-	@Override
-	public void scanFinshed(String arg0) {
-	}
-
-	@Override
-	public void scanProgress(String site, int progress, int maximum) {
 	}
 
 	@Override
 	public int getProxyListenerOrder() {
-		return PROXY_LISTENER_ORDER;
+		return 0;
 	}
 }
