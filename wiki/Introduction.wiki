@@ -7,6 +7,7 @@ The following extensions are currently available:
 || *Status* || *Name* || *Author* || *Description* ||
 || Beta || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-scripts-beta-3.jar scriptConsole] || ZAP Core Team || Provides dynamic access to internal ZAP data structures ([https://code.google.com/p/zaproxy/wiki/ScriptConsole more info]) ||
 || Beta || [https://code.google.com/p/zap-extensions/downloads/detail?name=UtlimateObsoleteFileDetection.jar ultimateObsoleteFileDetection] || Alex Ganelis & Dan Meged, [http://www.hacktics.com/ Hacktics ASC, Ernst & Young] || Advanced obsolete/hidden file detection (Installer/Plugin/Source)||
+|| Beta || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-report-beta-1.jar report] || Leandro Ferrari, [http://www.talsoft.com.ar/ TalSoft SRL] || Report generator of alerts. ||
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-highlighter-alpha-1.jar highlighter] || ZAP Core Team || Allows you to highlight strings in the request and response tabs. || 
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-ldapinjectionscan-alpha-1.jar LDAPInjection] || ZAP Core Team (Colm O'Flaherty) || LDAP Injection scanner ||
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sessionfixationscan-alpha-8.jar SessionFixation] || ZAP Core Team (Colm O'Flaherty) || Session Fixation scanner ||
