@@ -125,6 +125,14 @@
 		</antcall>
 	</target>
 
+	<target name="build-servletParamPollution" description="build the ServletParamPollution extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="servletParamPollution"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+
 	<target name="build-tokengen" description="build the tokengen extension">
 		<!-- Cant use build-extension as other classes needed -->
 		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
@@ -159,6 +167,7 @@
 		<antcall target="build-highlighter"/>
 		<antcall target="build-ldapinjection"/>
 		<antcall target="build-scripts"/>
+		<antcall target="build-servletParamPollution"/>
 		<antcall target="build-sessionfixation"/>
 		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
@@ -205,6 +214,10 @@
 		<antcall target="deploy-extension"> <param name="extension" value="scripts"/> </antcall>
 	</target>
 
+	<target name="deploy-servletParamPollution" description="deploy the servletParamPollution extension">
+		<antcall target="deploy-extension"> <param name="extension" value="servletParamPollution"/> </antcall>
+	</target>
+
 	<target name="deploy-sessionfixationscan" description="deploy the sessionfixation extension">
 		<antcall target="deploy-extension"> <param name="extension" value="sessionfixationscan"/> </antcall>
 	</target>
@@ -227,6 +240,7 @@
 		<antcall target="deploy-highlighter"/>
 		<antcall target="deploy-ldapinjectionscan"/>
 		<antcall target="deploy-scripts"/>
+		<antcall target="deploy-servletParamPollution"/>
 		<antcall target="deploy-sessionfixationscan"/>
 		<antcall target="deploy-tokengen"/>
 		<antcall target="deploy-viewStatePScan"/>
