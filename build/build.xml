@@ -108,7 +108,7 @@
 			<param name="version" value="1"/> 
 		</antcall>
 	</target>
-
+	
 	<target name="build-scripts" description="build the scripts extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="scripts"/> 
@@ -116,7 +116,7 @@
 			<param name="version" value="3"/> 
 		</antcall>
 	</target>
-
+	
 	<target name="build-sessionfixation" description="build the SessionFixation extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="sessionfixationscan"/> 
@@ -157,6 +157,22 @@
 		</antcall>
 	</target>
 	
+	<target name="build-report" description="build the Report ZAP extension">
+			<property name="report.extension" value="report"/> 
+			<property name="report.type" value="beta"/> 
+			<property name="report.version" value="1"/> 
+		 	<property name="lib.dir" value="itextpdf"/>
+			<jar jarfile="${dist}/zap-ext-${report.extension}-${report.type}-${report.version}.jar" update="true" compress="false">
+					<zipfileset dir="${build}" prefix="">
+						<include name="org/zaproxy/zap/extension/report/**"/>
+					</zipfileset>
+					<fileset dir="${lib.dir}" includes="**/*.*" />
+					<zipfileset dir="${src}" prefix="">
+						<include name="org/zaproxy/zap/extension/report/Messages*"/>
+					</zipfileset>
+			</jar>
+	</target>
+	
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="build-csrfcountermeasures"/>
@@ -166,11 +182,13 @@
 		<antcall target="build-exampleTopMenu"/>
 		<antcall target="build-highlighter"/>
 		<antcall target="build-ldapinjection"/>
-		<antcall target="build-scripts"/>
+		<!--<antcall target="build-scripts"/>-->
+		<antcall target="build-servletParamPollution"/>
 		<antcall target="build-servletParamPollution"/>
 		<antcall target="build-sessionfixation"/>
 		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
+		<antcall target="build-report"/>
 	</target>
 
 	<target name="deploy-extension" description="deploy the specified extension">
@@ -213,6 +231,10 @@
 	<target name="deploy-scripts" description="deploy the scripts extension">
 		<antcall target="deploy-extension"> <param name="extension" value="scripts"/> </antcall>
 	</target>
+	
+	<target name="deploy-servletParamPollution" description="deploy the servletParamPollution extension">
+		<antcall target="deploy-extension"> <param name="extension" value="servletParamPollution"/> </antcall>
+	</target>
 
 	<target name="deploy-servletParamPollution" description="deploy the servletParamPollution extension">
 		<antcall target="deploy-extension"> <param name="extension" value="servletParamPollution"/> </antcall>
@@ -230,6 +252,10 @@
 		<antcall target="deploy-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
 	</target>
 	
+	<target name="deploy-report" description="deploy the Report ZAP extension">
+			<antcall target="deploy-extension"> <param name="extension" value="report"/> </antcall>
+		</target>
+	
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-csrfcountermeasures"/>
@@ -239,11 +265,13 @@
 		<antcall target="deploy-exampleTopMenu"/>
 		<antcall target="deploy-highlighter"/>
 		<antcall target="deploy-ldapinjectionscan"/>
-		<antcall target="deploy-scripts"/>
+		<!--<antcall target="deploy-scripts"/>-->
+		<antcall target="deploy-servletParamPollution"/>
 		<antcall target="deploy-servletParamPollution"/>
 		<antcall target="deploy-sessionfixationscan"/>
 		<antcall target="deploy-tokengen"/>
 		<antcall target="deploy-viewStatePScan"/>
+		<antcall target="deploy-report"/>
 	</target>
 
 </project>
