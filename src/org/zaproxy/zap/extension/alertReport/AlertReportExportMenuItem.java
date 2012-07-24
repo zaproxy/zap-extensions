@@ -1,11 +1,13 @@
-package org.zaproxy.zap.extension.report;
+package org.zaproxy.zap.extension.alertReport;
 
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -14,23 +16,24 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
-public class ReportExportMenuItem extends ExtensionPopupMenuItem {
+public class AlertReportExportMenuItem extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
-	private ExtensionReportExport extension = null;
+	private ExtensionAlertReportExport extension = null;
 	private ExtensionAlert extAlert = null;
-	private ReportExportPDF reportExportPDF = null;
+	private AlertReportExportPDF reportExportPDF = null;
 	private JTree treeAlert = null;
 	private ResourceBundle messages = null;
+	
 
 	/**
 	 * @param label
 	 */
-	public ReportExportMenuItem(String label) {
+	public AlertReportExportMenuItem(String label) {
 		super(label);
 		initialize();
 		if (this.reportExportPDF == null)
-			this.reportExportPDF = new ReportExportPDF();
+			this.reportExportPDF = new AlertReportExportPDF();
 	
 	}
 	
@@ -73,35 +76,44 @@ public class ReportExportMenuItem extends ExtensionPopupMenuItem {
 				extAlert = (ExtensionAlert) Control.getSingleton()
 						.getExtensionLoader().getExtension("ExtensionAlert");
 				
+				
 				if (treeAlert.getLastSelectedPathComponent() != null) {
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeAlert.getLastSelectedPathComponent();
-					if (node != null && node.getUserObject() != null) {
-						Object obj = node.getUserObject();
-						if (obj instanceof Alert) {
-							Alert alert = (Alert) obj;
-	
-							List<Alert> alerts = extension.getAlertsSelected(alert);
-							if (alerts != null) {
-								if (reportExportPDF.exportAlertPDF(alerts,
-										extension.getFileName(alert),extension))
-									View.getSingleton()
-											.showMessageDialog(
-													getMessageString("alert.export.message.export.ok"));
-								else
-									View.getSingleton()
-											.showMessageDialog(
-													getMessageString("alert.export.message.export.fail"));
+					TreePath[] paths = treeAlert.getSelectionPaths();
+					List alerts = new ArrayList();
+					if (paths.length>0){
+						for (int i = 0; i < paths.length; i++) {
+							TreePath treepath = (TreePath) paths[i];
+							DefaultMutableTreeNode alertNode = (DefaultMutableTreeNode) treepath.getLastPathComponent();
+							if (alertNode != null && alertNode.getUserObject() != null) {
+								Object obj = alertNode.getUserObject();
+								if (obj instanceof Alert) {
+									Alert alert = (Alert) obj;
+									alerts.add(extension.getAlertsSelected(alert));
 								}
 							}
 						}
-		
+						// Generate report
+						if (!alerts.isEmpty()) {
+							if (reportExportPDF.exportAlertPDF(alerts,
+									extension.getFileName(),extension))
+								View.getSingleton()
+										.showMessageDialog(
+												getMessageString("alert.export.message.export.ok"));
+							else
+								View.getSingleton()
+										.showMessageDialog(
+												getMessageString("alert.export.message.export.fail"));
+							}
+						}
+						
+						}
 					}
-				}
+			
 		});
 
 	}
 
-	public void setExtension(ExtensionReportExport extension) {
+	public void setExtension(ExtensionAlertReportExport extension) {
 		this.extension = extension;
 	}
 

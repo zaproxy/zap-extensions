@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.report;
+package org.zaproxy.zap.extension.alertReport;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -53,30 +53,30 @@ import org.parosproxy.paros.view.View;
  * @author leandroferrari
  *
  */
-public class ExtensionReportExport extends ExtensionAdaptor implements SessionChangedListener  {
+public class ExtensionAlertReportExport extends ExtensionAdaptor implements SessionChangedListener  {
 
 	
-	public static final String NAME = "ExtensionReportExport";
-	private ReportExportMenuItem reportExportMsgPopupMenu = null;
-	private OptionsReportExportPanel optionsAlertExportPanel = null;
-	private ReportExportParam params;
+	public static final String NAME = "ExtensionAlertReportExports";
+	private AlertReportExportMenuItem reportExportMsgPopupMenu = null;
+	private OptionsAlertReportExportPanel optionsAlertExportPanel = null;
+	private AlertReportExportParam params;
 	private ResourceBundle messages = null;
-	private Logger logger = Logger.getLogger(ExtensionReportExport.class);
+	private Logger logger = Logger.getLogger(ExtensionAlertReportExport.class);
 
 
-	public ReportExportParam getParams() {
+	public AlertReportExportParam getParams() {
 		if (params==null)
-			params = new ReportExportParam();
+			params = new AlertReportExportParam();
 		return params;
 	}
 
-	public void setParams(ReportExportParam params) {
+	public void setParams(AlertReportExportParam params) {
 		this.params = params;
 	}
 
-	private OptionsReportExportPanel getOptionsAlertExportPanel() {
+	private OptionsAlertReportExportPanel getOptionsAlertExportPanel() {
 		if (optionsAlertExportPanel == null) {
-			optionsAlertExportPanel = new OptionsReportExportPanel();
+			optionsAlertExportPanel = new OptionsAlertReportExportPanel();
 		}
 		return optionsAlertExportPanel;
 	}
@@ -84,7 +84,7 @@ public class ExtensionReportExport extends ExtensionAdaptor implements SessionCh
 	/**
     * 
     */
-	public ExtensionReportExport() {
+	public ExtensionAlertReportExport() {
 		super();
 		initialize();
 	}
@@ -93,7 +93,7 @@ public class ExtensionReportExport extends ExtensionAdaptor implements SessionCh
 	/**
 	 * @param name
 	 */
-	public ExtensionReportExport(String name) {
+	public ExtensionAlertReportExport(String name) {
 		super(name);
 	}
 	
@@ -127,9 +127,9 @@ public class ExtensionReportExport extends ExtensionAdaptor implements SessionCh
 
 	}
 
-	private ReportExportMenuItem getAlertExportMsgPopupMenu() {
+	private AlertReportExportMenuItem getAlertExportMsgPopupMenu() {
 		if (reportExportMsgPopupMenu == null) {
-			reportExportMsgPopupMenu = new ReportExportMenuItem(
+			reportExportMsgPopupMenu = new AlertReportExportMenuItem(
 					this.getMessageString("alert.export.message.menuitem"));
 			reportExportMsgPopupMenu.setExtension(this);
 		}
@@ -166,16 +166,16 @@ public class ExtensionReportExport extends ExtensionAdaptor implements SessionCh
 	 * get Alerts from DB
 	 * @return
 	 */
-	public List<Alert> getAllAlerts() {
-        List<Alert> allAlerts = new ArrayList<Alert>();
+	public List getAllAlerts() {
+        List allAlerts = new ArrayList();
 
         TableAlert tableAlert = getModel().getDb().getTableAlert();
-        Vector<Integer> v;
+        Vector v;
         try {
             v = tableAlert.getAlertList();
 
             for (int i = 0; i < v.size(); i++) {
-                int alertId = v.get(i).intValue();
+                int alertId = ((Integer) v.get(i)).intValue();
                 RecordAlert recAlert = tableAlert.read(alertId);
                 Alert alert = new Alert(recAlert);
                 if (!allAlerts.contains(alert)) {
@@ -195,11 +195,11 @@ public class ExtensionReportExport extends ExtensionAdaptor implements SessionCh
 	 * @param alert
 	 * @return
 	 */
-	public String getFileName(Alert alert) {
+	public String getFileName() {
 	    
 	    JFileChooser chooser = new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
 	    // set filename alert
-	    File fileproposal = new File("CodeOWASP_"+ alert.getAlert().replace(" ", "_")+"_"+Alert.MSG_RISK[alert.getRisk()]+".pdf");;
+	    File fileproposal = new File("CodeOWASP_Alert_Report"+".pdf");
 	    chooser.setSelectedFile(fileproposal);
 	    chooser.setFileFilter(new FileFilter() {
 	           @Override
@@ -214,7 +214,7 @@ public class ExtensionReportExport extends ExtensionAdaptor implements SessionCh
 	           @Override
 	           public String getDescription() {
 	        	   // ZAP: Rebrand
-	               return "Extension de  PDF";
+	               return "PDF File";
 	           }
 	    });
 		File file = null;
@@ -239,11 +239,11 @@ public class ExtensionReportExport extends ExtensionAdaptor implements SessionCh
 	 * @param alertSelected
 	 * @return
 	 */
-	public List<Alert> getAlertsSelected(Alert alertSelected){
-		List<Alert> alertsAll = this.getAllAlerts();
-		List<Alert> alerts = new ArrayList<Alert>();;
+	public List getAlertsSelected(Alert alertSelected){
+		List alertsAll = this.getAllAlerts();
+		List alerts = new ArrayList();
 		for (int i = 0; i < alertsAll.size(); i++) {
-			Alert alert = alertsAll.get(i);
+			Alert alert = (Alert) alertsAll.get(i);
 			if (alertSelected.getAlert().equals(alert.getAlert()))
 				alerts.add(alert);
 		}
