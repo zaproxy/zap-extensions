@@ -1,9 +1,10 @@
-package org.zaproxy.zap.extension.report;
+package org.zaproxy.zap.extension.alertReport;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 
 import com.itextpdf.text.Anchor;
@@ -30,9 +31,10 @@ import com.itextpdf.text.pdf.PdfWriter;
  * DV-005-ImageTest2.png
  *
  */
-public class ReportExportPDF {
+public class AlertReportExportPDF {
 
-		private static ExtensionReportExport extension = null;
+		private static ExtensionAlertReportExport extension = null;
+		private static final Logger logger = Logger.getLogger(AlertReportExportPDF.class);
 		private static Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 28,
 			Font.BOLD);
 	
@@ -48,12 +50,12 @@ public class ReportExportPDF {
 				Font.NORMAL);
 		
 	
-		public ReportExportPDF() {
+		public AlertReportExportPDF() {
 			super();
 			
 		}
 
-		public boolean exportAlertPDF(java.util.List<Alert> alerts, String fileName,ExtensionReportExport extensionExport){
+		public boolean exportAlertPDF(java.util.List alerts, String fileName,ExtensionAlertReportExport extensionExport){
 			try {
 				extension = extensionExport;
 				Document document = new Document(PageSize.A4);
@@ -61,11 +63,14 @@ public class ReportExportPDF {
 				document.open();
 				addMetaData(document);
 				addTitlePage(document);
-				addContent(document,alerts);
+				for (int i = 0; i < alerts.size(); i++) {
+					java.util.List alertAux = (java.util.List) alerts.get(i);
+					addContent(document,alertAux);
+				}
 				document.close();
 				return true;
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 				return false;
 			}
 			
@@ -135,11 +140,9 @@ public class ReportExportPDF {
 					paragraph.add(image1);
 				}
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 			
 			
@@ -164,23 +167,23 @@ public class ReportExportPDF {
 			content.add(new Paragraph(Alert.MSG_RISK[alert.getReliability()]));
 			addEmptyLine(content, 1);
 			content.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.urls"), subFont));
-			//add url link and attack
-			anchor = new Anchor(alert.getUri());
-			anchor.setReference(alert.getUri());
-			content.add(anchor);
-			if (!alert.getParam().isEmpty()){	
-				content.add(new Paragraph("           "+extension.getMessageString("alert.export.message.export.pdf.parameters")+": "+alert.getParam()));
-				addEmptyLine(content, 1);
-			}
-			if (!alert.getAttack().isEmpty()){
-				content.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.attack"), subFont));
-				content.add(new Paragraph(alert.getAttack()));
-				addEmptyLine(content, 1);
-			}
+			
 			// write all url with the same pluginid
 			for (int i = 0; i < alerts.size(); i++) {
 				Alert alertAux = alerts.get(i);
-				
+				//add url link and attack
+				anchor = new Anchor((i+1)+"-" + alertAux.getUri());
+				anchor.setReference(alertAux.getUri());
+				content.add(anchor);
+				if (!alertAux.getParam().isEmpty()){	
+					content.add(new Paragraph("           "+extension.getMessageString("alert.export.message.export.pdf.parameters")+": "+alertAux.getParam()));
+					addEmptyLine(content, 1);
+				}
+				if (!alertAux.getAttack().isEmpty()){
+					content.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.attack"), subFont));
+					content.add(new Paragraph(alertAux.getAttack()));
+					addEmptyLine(content, 1);
+				}
 				//add images test
 				addEmptyLine(content, 1);
 				String images = alertAux.getOtherInfo(); 
@@ -198,16 +201,20 @@ public class ReportExportPDF {
 							String path = extension.getParams().getWorkingDirImages();
 							imageName = list[j+1];
 							//if exist an image
-							if ((imageName.contains(".png")||imageName.contains(".jpg"))&&(!path.isEmpty())){
-								addImage(content, path+"/"+imageName, 60f);
-								addEmptyLine(content, 1);
-								paragraph = new Paragraph(extension.getMessageString("alert.export.message.export.pdf.image")+": "+String.valueOf(j),	litleFont);
-								paragraph.setAlignment(Paragraph.ALIGN_CENTER);
-								content.add(paragraph);
-							}else{
-								paragraph = new Paragraph(imageName);
-								content.add(paragraph);
-								addEmptyLine(content, 1);
+							try{
+								if ((imageName.contains(".png")||imageName.contains(".jpg"))&&(!path.isEmpty())){
+									addImage(content, path+"/"+imageName, 60f);
+									addEmptyLine(content, 1);
+									paragraph = new Paragraph(extension.getMessageString("alert.export.message.export.pdf.image")+": "+String.valueOf(j),	litleFont);
+									paragraph.setAlignment(Paragraph.ALIGN_CENTER);
+									content.add(paragraph);
+								}else{
+									paragraph = new Paragraph(imageName);
+									content.add(paragraph);
+									addEmptyLine(content, 1);
+								}
+							} catch (Exception e) {
+								logger.error(e.getMessage(), e);
 							}
 							j++;
 						}

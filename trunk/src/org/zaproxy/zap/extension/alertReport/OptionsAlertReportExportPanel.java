@@ -21,7 +21,7 @@
 // ZAP: 2012/04/14 Changed the method initParam to discard all edits.
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 
-package org.zaproxy.zap.extension.report;
+package org.zaproxy.zap.extension.alertReport;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -46,7 +46,7 @@ import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.utils.ZapTextField;
 
 
-public class OptionsReportExportPanel extends AbstractParamPanel {
+public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	// ZAP: i18n	
 	private static final long serialVersionUID = 1L;
 	private JPanel editPane = null;
@@ -61,16 +61,16 @@ public class OptionsReportExportPanel extends AbstractParamPanel {
 	private JButton chooseApp = null;
 	private JButton chooseDir = null;
 	private ResourceBundle messages = null;
-	private JComboBox<String> comboLevel = null;
+	private JComboBox comboLevel = null;
 	
-    public OptionsReportExportPanel() {
+    public OptionsAlertReportExportPanel() {
         super();
  		initialize();
    }
     
-    private JComboBox<String> getComboLevel() {
+    private JComboBox getComboLevel() {
 		if (comboLevel == null) {
-			comboLevel = new JComboBox<String>();
+			comboLevel = new JComboBox();
 			comboLevel.addItem("PDF");
 			comboLevel.addItem("ODT");
 			comboLevel.addActionListener(new ActionListener() {
@@ -389,7 +389,7 @@ public class OptionsReportExportPanel extends AbstractParamPanel {
     public void saveParam(Object obj) throws Exception {
     	OptionsParam options = (OptionsParam) obj;
 		
-		ReportExportParam param = (ReportExportParam) options.getParamSet(ReportExportParam.class);
+		AlertReportExportParam param = (AlertReportExportParam) options.getParamSet(AlertReportExportParam.class);
 		if (param!=null){
 			param.setTitleReport(getEditTitleReport().getText());
 			param.setLogoFileName(getEditLogoFileName().getText());
@@ -413,7 +413,7 @@ public class OptionsReportExportPanel extends AbstractParamPanel {
 	public void initParam(Object obj) {
 		OptionsParam options = (OptionsParam) obj;
 		
-		ReportExportParam param = (ReportExportParam) options.getParamSet(ReportExportParam.class);
+		AlertReportExportParam param = (AlertReportExportParam) options.getParamSet(AlertReportExportParam.class);
 		if (param!=null){
 			getEditTitleReport().setText(param.getTitleReport());
 			getEditLogoFileName().setText(param.getLogoFileName());

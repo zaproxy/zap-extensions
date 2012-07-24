@@ -157,18 +157,18 @@
 		</antcall>
 	</target>
 	
-	<target name="build-report" description="build the Report ZAP extension">
-			<property name="report.extension" value="report"/> 
+	<target name="build-alertReport" description="build the Alert Report ZAP extension">
+			<property name="report.extension" value="alertReport"/> 
 			<property name="report.type" value="beta"/> 
-			<property name="report.version" value="1"/> 
+			<property name="report.version" value="2"/> 
 		 	<property name="lib.dir" value="itextpdf"/>
 			<jar jarfile="${dist}/zap-ext-${report.extension}-${report.type}-${report.version}.jar" update="true" compress="false">
 					<zipfileset dir="${build}" prefix="">
-						<include name="org/zaproxy/zap/extension/report/**"/>
+						<include name="org/zaproxy/zap/extension/alertReport/**"/>
 					</zipfileset>
 					<fileset dir="${lib.dir}" includes="**/*.*" />
 					<zipfileset dir="${src}" prefix="">
-						<include name="org/zaproxy/zap/extension/report/Messages*"/>
+						<include name="org/zaproxy/zap/extension/alertReport/Messages*"/>
 					</zipfileset>
 			</jar>
 	</target>
@@ -188,7 +188,7 @@
 		<antcall target="build-sessionfixation"/>
 		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
-		<antcall target="build-report"/>
+		<antcall target="build-alertReport"/>
 	</target>
 
 	<target name="deploy-extension" description="deploy the specified extension">
@@ -236,10 +236,6 @@
 		<antcall target="deploy-extension"> <param name="extension" value="servletParamPollution"/> </antcall>
 	</target>
 
-	<target name="deploy-servletParamPollution" description="deploy the servletParamPollution extension">
-		<antcall target="deploy-extension"> <param name="extension" value="servletParamPollution"/> </antcall>
-	</target>
-
 	<target name="deploy-sessionfixationscan" description="deploy the sessionfixation extension">
 		<antcall target="deploy-extension"> <param name="extension" value="sessionfixationscan"/> </antcall>
 	</target>
@@ -252,8 +248,8 @@
 		<antcall target="deploy-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
 	</target>
 	
-	<target name="deploy-report" description="deploy the Report ZAP extension">
-			<antcall target="deploy-extension"> <param name="extension" value="report"/> </antcall>
+	<target name="deploy-alertReport" description="deploy the Alert Report ZAP extension">
+			<antcall target="deploy-extension"> <param name="extension" value="alertReport"/> </antcall>
 		</target>
 	
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
@@ -271,7 +267,7 @@
 		<antcall target="deploy-sessionfixationscan"/>
 		<antcall target="deploy-tokengen"/>
 		<antcall target="deploy-viewStatePScan"/>
-		<antcall target="deploy-report"/>
+		<antcall target="deploy-alertReport"/>
 	</target>
 
 </project>

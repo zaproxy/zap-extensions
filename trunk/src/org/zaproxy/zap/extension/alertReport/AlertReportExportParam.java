@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.report;
+package org.zaproxy.zap.extension.alertReport;
 
 import org.parosproxy.paros.common.AbstractParam;
 
@@ -26,7 +26,7 @@ import org.parosproxy.paros.common.AbstractParam;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class ReportExportParam extends AbstractParam {
+public class AlertReportExportParam extends AbstractParam {
 
 	private static final String FORMAT_REPORT = "reportexport.format";
 	private static final String TITLE_REPORT = "reportexport.titleReport";
@@ -85,7 +85,7 @@ public class ReportExportParam extends AbstractParam {
 	/**
      * @param rootElementName
      */
-    public ReportExportParam() {
+    public AlertReportExportParam() {
     }
 
     @Override
