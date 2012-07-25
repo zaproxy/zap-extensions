@@ -41,7 +41,7 @@
 	 	example
 	 version should be an integer that increments on each release, starting at 1
 	 -->
-	
+
 	<target name="build-extension" description="build the specified extension">
 		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}.jar" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
@@ -60,49 +60,49 @@
 		</jar>
 		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}-deps.jar" update="true" compress="false">
 			<zipgroupfileset dir="../src/org/zaproxy/zap/extension/${extension}/lib/" includes="*.jar" />
-	<zipfileset dir="${src}" prefix="">
-		<include name="org/zaproxy/zap/extension/${extension}/Messages*" />
-		<include name="org/zaproxy/zap/extension/${extension}/*.png" />
-	</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/${extension}/Messages*" />
+				<include name="org/zaproxy/zap/extension/${extension}/*.png" />
+			</zipfileset>
 		</jar>
 	</target>
 	<target name="build-exampleActiveScan" description="build the exampleActiveScan extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="exampleActiveScan"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
+		<antcall target="build-extension">
+			<param name="extension" value="exampleActiveScan"/>
+			<param name="type" value="example"/>
+			<param name="version" value="1"/>
 		</antcall>
 	</target>
 
 	<target name="build-examplePassiveScan" description="build the examplePassiveScan extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="examplePassiveScan"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
+		<antcall target="build-extension">
+			<param name="extension" value="examplePassiveScan"/>
+			<param name="type" value="example"/>
+			<param name="version" value="1"/>
 		</antcall>
 	</target>
 
 	<target name="build-exampleRightClickMsg" description="build the exampleRightClickMsg extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="exampleRightClickMsg"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
+		<antcall target="build-extension">
+			<param name="extension" value="exampleRightClickMsg"/>
+			<param name="type" value="example"/>
+			<param name="version" value="1"/>
 		</antcall>
 	</target>
 
 	<target name="build-exampleTopMenu" description="build the exampleTopMenu extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="exampleTopMenu"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
+		<antcall target="build-extension">
+			<param name="extension" value="exampleTopMenu"/>
+			<param name="type" value="example"/>
+			<param name="version" value="1"/>
 		</antcall>
 	</target>
 
 	<target name="build-highlighter" description="build the highlighter extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="highlighter"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
+		<antcall target="build-extension">
+			<param name="extension" value="highlighter"/>
+			<param name="type" value="alpha"/>
+			<param name="version" value="1"/>
 		</antcall>
 	</target>
 
@@ -123,38 +123,167 @@
 	</target>
 
 	<target name="build-viewStatePScan" description="build the viewStatePScan extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="viewStatePScan"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
-		</antcall>
-	</target>
-	
-	<target name="build-sessionfixation" description="build the SessionFixation extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="sessionfixationscan"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="7"/> 
-		</antcall>
-	</target>
-	
-	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="csrfcountermeasuresscan"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
-		</antcall>
-	</target>
-	<target name="build-spiderAjax" description="build the spiderAjax extension">
-		<antcall target="build-extension2">
-			<param name="extension" value="spiderAjax"/>
+		<antcall target="build-extension">
+			<param name="extension" value="viewStatePScan"/>
 			<param name="type" value="alpha"/>
 			<param name="version" value="1"/>
 		</antcall>
 	</target>
-	
+
+	<target name="build-sessionfixation" description="build the SessionFixation extension">
+		<antcall target="build-extension">
+			<param name="extension" value="sessionfixationscan"/>
+			<param name="type" value="alpha"/>
+			<param name="version" value="7"/>
+		</antcall>
+	</target>
+
+	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
+		<antcall target="build-extension">
+			<param name="extension" value="csrfcountermeasuresscan"/>
+			<param name="type" value="alpha"/>
+			<param name="version" value="1"/>
+		</antcall>
+	</target>
+	<target name="build-spiderAjax" description="build the spiderAjax extension">
+		<!--<antcall target="build-extension">
+			<param name="extension" value="spiderAjax"/>
+			<param name="type" value="alpha"/>
+			<param name="version" value="1"/>
+		</antcall>
+		
+		<jar jarfile="${dist}/zap-ext-spiderAjax-alpha-1.jar" update="true" compress="false">
+					<zipfileset dir="${build}" prefix="">
+						<include name="org/zaproxy/zap/extension/spiderAjax/**"/>
+					</zipfileset>
+					<zipfileset dir="${src}" prefix="">
+						<include name="org/zaproxy/zap/extension/spiderAjax/Messages*"/>
+					</zipfileset>
+				</jar>-->
+
+		<taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="/Users/guifre/Dropbox/workspace/zap-exts/lib/jarjar-1.4.jar"/>
+		<jarjar jarfile="${dist}/zap-ext-spiderAjax-alpha-1.jar">
+			<fileset dir="${build}"/>
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/crawljax-2.1-SNAPSHOT.jar"/>
+			<rule pattern="com.crawljax.**" result="org.zaproxy.zap.extension.@1"/>
+			<rule pattern="com.fasteasytrade.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/annotations-1.3.9.jar"/>
+			<rule pattern="edu.umd.cs.findbugs.**" result="org.zaproxy.zap.extension.@1"/>
+			<rule pattern="net.jcip.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/apache-mime4j-0.6.jar"/>
+			<rule pattern="org.apache.james.mime4j.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/avalon-framework-4.1.3.jar"/>
+			<rule pattern="org.apache.avalon.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/cglib-nodep-2.1_3.jar"/>
+			<rule pattern="net.sf.cglib.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-beanutils-core-1.7.0.jar"/>
+			<rule pattern="org.apache.commons.collections.**" result="org.zaproxy.zap.extension.@1"/>
+			<rule pattern="org.apache.commons.beanutils.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-digester-1.8.jar"/>
+			<rule pattern="org.apache.commons.digester.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-discovery-0.2.jar"/>
+			<rule pattern="org.apache.commons.digester.logging.**" result="org.zaproxy.zap.extension.@1"/>
+			<rule pattern="org.apache.commons.digester.discovery.**" result="org.zaproxy.zap.extension.@1"/>
+			<rule pattern="org.apache.commons.digester.discover.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-exec-1.1.jar"/>
+			<rule pattern="org.apache.commons.exec.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-io-1.4.jar"/>
+			<rule pattern="org.apache.commons.io.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-math-1.1.jar"/>
+			<rule pattern="org.apache.commons.math.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/cssparser-0.9.5.jar"/>
+			<rule pattern="com.steadystate.css.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/guava-11.0.1.jar"/>
+			<rule pattern="com.google.common.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/hamcrest-all-1.1.jar"/>
+			<rule pattern="org.hamcrest.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/htmlunit-2.8.jar"/>
+			<rule pattern="com.gargoylesoftware.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/htmlunit-core-js-2.8.jar"/>
+			<rule pattern="net.sourceforge.**" result="org.zaproxy.zap.extension.@1"/>
+
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/httpmime-4.0.1.jar"/>
+			<rule pattern="org.apache.james.mime4j.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/jcip-annotations-1.0.jar"/>
+			<rule pattern="net.jcip.annotations.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/jgrapht-jdk1.5-0.7.3.jar"/>
+			<rule pattern="org.jgrapht.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/jna-3.2.2.jar"/>
+			<rule pattern="com.sun.jna.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/json-20080701.jar"/>
+			<rule pattern="org.json.**" result="org.zaproxy.zap.extension.@1"/>
+
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/logkit-1.0.1.jar"/>
+			<rule pattern="org.apache.log.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/nekohtml-1.9.14.jar"/>
+			<rule pattern="org.cyberneko.html.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/sac-1.3.jar"/>
+			<rule pattern="org.w3c.css.sac.**" result="org.zaproxy.zap.extension.@1"/>
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/selenium-java-2.24.1.jar" />
+			<rule pattern="amd64.**" result="org.zaproxy.zap.extension.@1" />
+			<rule pattern="org.openqa.selenium.**" result="org.zaproxy.zap.extension.@1" />
+			<rule pattern="com.thoughtworks.**" result="org.zaproxy.zap.extension.@1" />
+			<rule pattern="mac.**" result="org.zaproxy.zap.extension.@1" />
+			<rule pattern="x86.**" result="org.zaproxy.zap.extension.@1" />
+			
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/selenium-java-2.24.1-srcs.jar" />
+			<rule pattern="org.openqa.selenium.**" result="org.zaproxy.zap.extension.@1" />
+			<rule pattern="com.thoughtworks.**" result="org.zaproxy.zap.extension.@1" />
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/serializer-2.7.1.jar" />
+			<rule pattern="org.apache.xml.serializer.**" result="org.zaproxy.zap.extension.@1" />
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/servlet-api-2.3.jar" />
+			<rule pattern="javax.servlet.**" result="org.zaproxy.zap.extension.@1" />
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/xalan-2.7.1.jar" />
+			<rule pattern="java_cup.runtime.**" result="org.zaproxy.zap.extension.@1" />
+			<!--<rule pattern="org.apache.**" result="org.zaproxy.zap.extension.@1" />
+			<rule pattern="trax.**" result="org.zaproxy.zap.extension.@1" />-->
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/xercesImpl-2.9.1.jar" />
+			<rule pattern="org.w3.dom.html.**" result="org.zaproxy.zap.extension.@1" />
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/xml-apis-1.3.04.jar" />
+			<!--<rule pattern="javax.xml.**" result="org.zaproxy.zap.extension.@1" />
+			<rule pattern="org.**" result="org.zaproxy.zap.extension.@1" />-->
+
+			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/xmlunit-1.3.jar" />
+			<rule pattern="org.custommonkey.xmlunit.**" result="org.zaproxy.zap.extension.@1" />
+
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/spiderAjax/Messages*" />
+			</zipfileset>
+
+		</jarjar>
+	</target>
+
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
-		<antcall target="build-exampleActiveScan"/>
+		<antcall target="build-exampleActiveScan" />
 		<antcall target="build-examplePassiveScan"/>
 		<antcall target="build-exampleRightClickMsg"/>
 		<antcall target="build-exampleTopMenu"/>
@@ -169,49 +298,69 @@
 	<target name="deploy-extension" description="deploy the specified extension">
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-			<include name="zap-ext-${extension}-*.jar"/>
+				<include name="zap-ext-${extension}-*.jar"/>
 			</fileset>
 		</copy>
 		<!--copy file="${dist}/zap-ext-${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
 	</target>
 
 	<target name="deploy-exampleActiveScan" description="deploy the exampleActiveScan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="exampleActiveScan"/> </antcall>
+		<antcall target="deploy-extension">
+			<param name="extension" value="exampleActiveScan"/>
+		</antcall>
 	</target>
 
 	<target name="deploy-examplePassiveScan" description="deploy the examplePassiveScan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="examplePassiveScan"/> </antcall>
+		<antcall target="deploy-extension">
+			<param name="extension" value="examplePassiveScan"/>
+		</antcall>
 	</target>
 
 	<target name="deploy-exampleRightClickMsg" description="deploy the exampleRightClickMsg extension">
-		<antcall target="deploy-extension"> <param name="extension" value="exampleRightClickMsg"/> </antcall>
+		<antcall target="deploy-extension">
+			<param name="extension" value="exampleRightClickMsg"/>
+		</antcall>
 	</target>
 
 	<target name="deploy-exampleTopMenu" description="deploy the exampleTopMenu extension">
-		<antcall target="deploy-extension"> <param name="extension" value="exampleTopMenu"/> </antcall>
+		<antcall target="deploy-extension">
+			<param name="extension" value="exampleTopMenu"/>
+		</antcall>
 	</target>
 
 	<target name="deploy-highlighter" description="deploy the highlighter extension">
-		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
+		<antcall target="deploy-extension">
+			<param name="extension" value="highlighter"/>
+		</antcall>
 	</target>
 
 	<target name="deploy-tokengen" description="deploy the tokengen extension">
-		<antcall target="deploy-extension"> <param name="extension" value="tokengen"/> </antcall>
+		<antcall target="deploy-extension">
+			<param name="extension" value="tokengen"/>
+		</antcall>
 	</target>
 
 	<target name="deploy-viewStatePScan" description="deploy the viewStatePScan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
+		<antcall target="deploy-extension">
+			<param name="extension" value="viewStatePScan"/>
+		</antcall>
 	</target>
-	
+
 	<target name="deploy-sessionfixationscan" description="deploy the sessionfixation extension">
-		<antcall target="deploy-extension"> <param name="extension" value="sessionfixationscan"/> </antcall>
+		<antcall target="deploy-extension">
+			<param name="extension" value="sessionfixationscan"/>
+		</antcall>
 	</target>
 
 	<target name="deploy-csrfcountermeasures" description="deploy the csrfcountermeasures extension">
-		<antcall target="deploy-extension"> <param name="extension" value="csrfcountermeasuresscan"/> </antcall>
+		<antcall target="deploy-extension">
+			<param name="extension" value="csrfcountermeasuresscan"/>
+		</antcall>
 	</target>
 	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
-		<antcall target="deploy-extension"> <param name="extension" value="spiderAjax"/> </antcall>
+		<antcall target="deploy-extension">
+			<param name="extension" value="spiderAjax"/>
+		</antcall>
 	</target>
 
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
