@@ -194,8 +194,11 @@ public class SpiderThread implements Runnable, ProxyListener {
 		HistoryReference historyRef = null;
 
 		try {
+
+			//int ref=msg.getHistoryRef().getSiteNode().addIcon("/org/zaproxy/zap/extension/spiderAjax/10.png");
+			
 			//we check if it has to be put in the sites tree or is already there
-			historyRef = new HistoryReference(extension.getModel().getSession(),HistoryReference.TYPE_SPIDERAJAX, msg);
+			historyRef = new HistoryReference(extension.getModel().getSession(),"/resource/icon/10/spiderAjax.png", msg, true);
 			boolean ignore =false;
 			for (String pa : this.extension.getModel().getSession().getExcludeFromScanRegexs()) {
 				Pattern p = Pattern.compile(pa, Pattern.CASE_INSENSITIVE);

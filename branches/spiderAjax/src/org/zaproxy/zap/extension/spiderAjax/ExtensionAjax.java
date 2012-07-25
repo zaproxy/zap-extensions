@@ -40,7 +40,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 * initializes the extension
 	 */
 	public ExtensionAjax() {
-		super();
+		super(NAME);
 		this.messages = ResourceBundle.getBundle(this.getClass().getPackage().getName()+ ".Messages", Constant.getLocale());
 		initialize();
 	}
@@ -55,13 +55,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		return this.proxy;
 	}
 
-	/**
-	 * @param name
-	 */
-	public ExtensionAjax(String name) {
-		super(name);
-
-	}
 
 	/**
 	 * This method initializes this
@@ -69,7 +62,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setOrder(30);
 		this.setName(NAME);
 	}
 
@@ -104,7 +96,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		if (spiderPanel == null) {
 			spiderPanel = new SpiderPanel(this);
 			spiderPanel.setName(this.getString("ajax.panel.title"));
-			spiderPanel.setIcon(new ImageIcon(getClass().getClassLoader().getResource("org/zaproxy/zap/extension/spiderAjax/16.png")));
+			spiderPanel.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/spiderAjax.png")));
 			}
 		return spiderPanel;
 	}

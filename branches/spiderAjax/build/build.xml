@@ -161,124 +161,122 @@
 					</zipfileset>
 				</jar>-->
 
-		<taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="/Users/guifre/Dropbox/workspace/zap-exts/lib/jarjar-1.4.jar"/>
+		<taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${dist.lib.dir}/jarjar-1.4.jar"/>
 		<jarjar jarfile="${dist}/zap-ext-spiderAjax-alpha-1.jar">
 			<fileset dir="${build}"/>
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/crawljax-2.1-SNAPSHOT.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/crawljax-2.1-SNAPSHOT.jar"/>
 			<rule pattern="com.crawljax.**" result="org.zaproxy.zap.extension.@1"/>
 			<rule pattern="com.fasteasytrade.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/annotations-1.3.9.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/annotations-1.3.9.jar"/>
 			<rule pattern="edu.umd.cs.findbugs.**" result="org.zaproxy.zap.extension.@1"/>
 			<rule pattern="net.jcip.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/apache-mime4j-0.6.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/apache-mime4j-0.6.jar"/>
 			<rule pattern="org.apache.james.mime4j.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/avalon-framework-4.1.3.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/avalon-framework-4.1.3.jar"/>
 			<rule pattern="org.apache.avalon.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/cglib-nodep-2.1_3.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/cglib-nodep-2.1_3.jar"/>
 			<rule pattern="net.sf.cglib.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-beanutils-core-1.7.0.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/commons-beanutils-core-1.7.0.jar"/>
 			<rule pattern="org.apache.commons.collections.**" result="org.zaproxy.zap.extension.@1"/>
 			<rule pattern="org.apache.commons.beanutils.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-digester-1.8.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/commons-digester-1.8.jar"/>
 			<rule pattern="org.apache.commons.digester.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-discovery-0.2.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/commons-discovery-0.2.jar"/>
 			<rule pattern="org.apache.commons.digester.logging.**" result="org.zaproxy.zap.extension.@1"/>
 			<rule pattern="org.apache.commons.digester.discovery.**" result="org.zaproxy.zap.extension.@1"/>
 			<rule pattern="org.apache.commons.digester.discover.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-exec-1.1.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/commons-exec-1.1.jar"/>
 			<rule pattern="org.apache.commons.exec.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-io-1.4.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/commons-io-1.4.jar"/>
 			<rule pattern="org.apache.commons.io.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/commons-math-1.1.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/commons-math-1.1.jar"/>
 			<rule pattern="org.apache.commons.math.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/cssparser-0.9.5.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/cssparser-0.9.5.jar"/>
 			<rule pattern="com.steadystate.css.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/guava-11.0.1.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/guava-11.0.1.jar"/>
 			<rule pattern="com.google.common.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/hamcrest-all-1.1.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/hamcrest-all-1.1.jar"/>
 			<rule pattern="org.hamcrest.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/htmlunit-2.8.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/htmlunit-2.8.jar"/>
 			<rule pattern="com.gargoylesoftware.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/htmlunit-core-js-2.8.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/htmlunit-core-js-2.8.jar"/>
 			<rule pattern="net.sourceforge.**" result="org.zaproxy.zap.extension.@1"/>
 
-
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/httpmime-4.0.1.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/httpmime-4.0.1.jar"/>
 			<rule pattern="org.apache.james.mime4j.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/jcip-annotations-1.0.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/jcip-annotations-1.0.jar"/>
 			<rule pattern="net.jcip.annotations.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/jgrapht-jdk1.5-0.7.3.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/jgrapht-jdk1.5-0.7.3.jar"/>
 			<rule pattern="org.jgrapht.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/jna-3.2.2.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/jna-3.2.2.jar"/>
 			<rule pattern="com.sun.jna.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/json-20080701.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/json-20080701.jar"/>
 			<rule pattern="org.json.**" result="org.zaproxy.zap.extension.@1"/>
 
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/logkit-1.0.1.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/logkit-1.0.1.jar"/>
 			<rule pattern="org.apache.log.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/nekohtml-1.9.14.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/nekohtml-1.9.14.jar"/>
 			<rule pattern="org.cyberneko.html.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/sac-1.3.jar"/>
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/sac-1.3.jar"/>
 			<rule pattern="org.w3c.css.sac.**" result="org.zaproxy.zap.extension.@1"/>
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/selenium-java-2.24.1.jar" />
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/selenium-java-2.24.1.jar" />
 			<rule pattern="amd64.**" result="org.zaproxy.zap.extension.@1" />
 			<rule pattern="org.openqa.selenium.**" result="org.zaproxy.zap.extension.@1" />
 			<rule pattern="com.thoughtworks.**" result="org.zaproxy.zap.extension.@1" />
 			<rule pattern="mac.**" result="org.zaproxy.zap.extension.@1" />
 			<rule pattern="x86.**" result="org.zaproxy.zap.extension.@1" />
 			
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/selenium-java-2.24.1-srcs.jar" />
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/selenium-java-2.24.1-srcs.jar" />
 			<rule pattern="org.openqa.selenium.**" result="org.zaproxy.zap.extension.@1" />
 			<rule pattern="com.thoughtworks.**" result="org.zaproxy.zap.extension.@1" />
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/serializer-2.7.1.jar" />
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/serializer-2.7.1.jar" />
 			<rule pattern="org.apache.xml.serializer.**" result="org.zaproxy.zap.extension.@1" />
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/servlet-api-2.3.jar" />
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/servlet-api-2.3.jar" />
 			<rule pattern="javax.servlet.**" result="org.zaproxy.zap.extension.@1" />
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/xalan-2.7.1.jar" />
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/xalan-2.7.1.jar" />
 			<rule pattern="java_cup.runtime.**" result="org.zaproxy.zap.extension.@1" />
 			<!--<rule pattern="org.apache.**" result="org.zaproxy.zap.extension.@1" />
 			<rule pattern="trax.**" result="org.zaproxy.zap.extension.@1" />-->
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/xercesImpl-2.9.1.jar" />
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/xercesImpl-2.9.1.jar" />
 			<rule pattern="org.w3.dom.html.**" result="org.zaproxy.zap.extension.@1" />
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/xml-apis-1.3.04.jar" />
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/xml-apis-1.3.04.jar" />
 			<!--<rule pattern="javax.xml.**" result="org.zaproxy.zap.extension.@1" />
 			<rule pattern="org.**" result="org.zaproxy.zap.extension.@1" />-->
 
-			<zipfileset src="../src/org/zaproxy/zap/extension/spiderAjax/lib/xmlunit-1.3.jar" />
+			<zipfileset src="${src}/org/zaproxy/zap/extension/spiderAjax/lib/xmlunit-1.3.jar" />
 			<rule pattern="org.custommonkey.xmlunit.**" result="org.zaproxy.zap.extension.@1" />
 
 			<zipfileset dir="${src}" prefix="">
 				<include name="org/zaproxy/zap/extension/spiderAjax/Messages*" />
 			</zipfileset>
-
 		</jarjar>
 	</target>
 
