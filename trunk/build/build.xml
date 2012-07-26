@@ -100,7 +100,15 @@
 			<param name="version" value="1"/> 
 		</antcall>
 	</target>
-
+	
+	<target name="build-insecureauthentication" description="build the InsecureAuthentication extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="insecureauthentication"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+	
 	<target name="build-ldapinjection" description="build the LDAPInjection extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="ldapinjectionscan"/> 
@@ -181,6 +189,7 @@
 		<antcall target="build-exampleRightClickMsg"/>
 		<antcall target="build-exampleTopMenu"/>
 		<antcall target="build-highlighter"/>
+		<antcall target="build-insecureauthentication"/>
 		<antcall target="build-ldapinjection"/>
 		<!--<antcall target="build-scripts"/>-->
 		<antcall target="build-servletParamPollution"/>
@@ -223,6 +232,10 @@
 	<target name="deploy-highlighter" description="deploy the highlighter extension">
 		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
 	</target>
+	
+	<target name="deploy-insecureauthenticationscan" description="deploy the insecureauthentication extension">
+		<antcall target="deploy-extension"> <param name="extension" value="insecureauthentication"/> </antcall>
+	</target>
 
 	<target name="deploy-ldapinjectionscan" description="deploy the ldapinjection extension">
 		<antcall target="deploy-extension"> <param name="extension" value="ldapinjectionscan"/> </antcall>
@@ -260,6 +273,7 @@
 		<antcall target="deploy-exampleRightClickMsg"/>
 		<antcall target="deploy-exampleTopMenu"/>
 		<antcall target="deploy-highlighter"/>
+		<antcall target="deploy-insecureauthenticationscan"/>
 		<antcall target="deploy-ldapinjectionscan"/>
 		<!--<antcall target="deploy-scripts"/>-->
 		<antcall target="deploy-servletParamPollution"/>
