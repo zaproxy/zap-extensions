@@ -10,6 +10,7 @@ The following extensions are currently available:
 || Beta || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-alertReport-beta-2.jar alertReport] || Leandro Ferrari, [http://www.talsoft.com.ar/ TalSoft SRL] || Report generator of alerts. ||
 || Alpha || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-servletParamPollution-alpha-1.jar Parameter pollution scanner] || ZAP Core Team || Flags FORMS with no target attributes ||
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-highlighter-alpha-1.jar highlighter] || ZAP Core Team || Allows you to highlight strings in the request and response tabs. || 
+|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-insecureauthentication-alpha-1.jar InsecureAuthentication] || ZAP Core Team (Colm O'Flaherty) || Insecure Authentication passive scanner ||
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-ldapinjectionscan-alpha-1.jar LDAPInjection] || ZAP Core Team (Colm O'Flaherty) || LDAP Injection scanner ||
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sessionfixationscan-alpha-8.jar SessionFixation] || ZAP Core Team (Colm O'Flaherty) || Session Fixation scanner ||
 || Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-csrfcountermeasuresscan-alpha-1.jar CSRF Countermeasures Scanner] || ZAP Core Team || CSRF Countermeasures Scanner ||
