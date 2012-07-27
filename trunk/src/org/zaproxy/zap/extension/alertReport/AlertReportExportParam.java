@@ -31,6 +31,7 @@ public class AlertReportExportParam extends AbstractParam {
 	private static final String FORMAT_REPORT = "reportexport.format";
 	private static final String TITLE_REPORT = "reportexport.titleReport";
 	private static final String LOGO_FILE_NAME = "reportexport.logoFileName";
+	private static final String DOCUMENT_ATTACH_FILE_NAME = "reportexport.documentAttach";
 	private static final String WORKING_DIR_IMAGES = "reportexport.workingDir";
 	private static final String CUSTOMER_NAME = "reportexport.customerName";
 	private static final String CONFIDENTIAL_TEXT = "reportexport.confidentialText";
@@ -45,6 +46,7 @@ public class AlertReportExportParam extends AbstractParam {
 	public static final String DEFAULT_CONFIDENTIAL_TEXT = "This document is CONFIDENTIAL USE ONLY and for whom it is addressed. Contains information that is copyrighted by COMPANYNAME, so that its contents may not be copied, posted, disclosed or used by third parties in any way not expressly authorized by COMPANYNAME. The reception and use of this document by the recipient, explicitly implies acceptance of this Clause. In the same sense COMPANYNAME, treated as CONFIDENTIAL USE ONLY and for the data it receives and if the proposed work done before the start of them signed the corresponding Confidentiality Agreement.";
 	public static final String DEFAULT_PDF_KEYWORDS = "report alert,pentest,security";
 	public static final String DEFAULT_WORKING_DIR_IMAGES = "";
+	public static final String DEFAULT_DOCUMENT_ATTACH_FILE_NAME = "";
 	public static final String DEFAULT_LOGO_FILE_NAME = "";
 	public static final String DEFAULT_AUTHOR_NAME = "Author Name";
 	public static final String DEFAULT_COMPANY_NAME = "Company Name";
@@ -54,6 +56,7 @@ public class AlertReportExportParam extends AbstractParam {
 		
 	private String titleReport = DEFAULT_TITLE_REPORT;
 	private String logoFileName = DEFAULT_LOGO_FILE_NAME;
+	private String documentAttach = DEFAULT_DOCUMENT_ATTACH_FILE_NAME;
 	private String workingDirImages = DEFAULT_WORKING_DIR_IMAGES;
 	private String customerName = DEFAULT_CUSTOMER_NAME;
 	private String confidentialText = DEFAULT_CONFIDENTIAL_TEXT;
@@ -71,7 +74,14 @@ public class AlertReportExportParam extends AbstractParam {
 		getConfig().setProperty(COMPANY_NAME, this.companyName);
 	}
 
-	
+	public String getDocumentAttach() {
+		return documentAttach;
+	}
+
+	public void setDocumentAttach(String documentAttach) {
+		this.documentAttach = documentAttach;
+		getConfig().setProperty(DOCUMENT_ATTACH_FILE_NAME, this.documentAttach);
+	}
 	
 	public String getFormatReport() {
 		return formatReport;
@@ -100,6 +110,8 @@ public class AlertReportExportParam extends AbstractParam {
 			authorName = getConfig().getString(AUTHOR_NAME, DEFAULT_AUTHOR_NAME);
 			companyName = getConfig().getString(COMPANY_NAME, DEFAULT_COMPANY_NAME);
 			formatReport = getConfig().getString(FORMAT_REPORT, DEFAULT_FORMAT_REPORT);
+			documentAttach = getConfig().getString(DOCUMENT_ATTACH_FILE_NAME, DEFAULT_DOCUMENT_ATTACH_FILE_NAME);
+
 
 		} catch (Exception e) {}
     }

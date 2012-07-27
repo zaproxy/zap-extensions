@@ -19,17 +19,19 @@ import com.itextpdf.text.ListItem;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Section;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
- *Export Alert to PDF
+ * Export Alert to PDF report
  * Fill field 'Other Info' of the Alert to describe test
  * One line for describing the step and other line for adding an image file. For example:
  * Step URL attack
  * DV-005-ImageTest1.png
  * Step  2 URL attack
  * DV-005-ImageTest2.png
- *
+ * Then, it's fill into the report
  */
 public class AlertReportExportPDF {
 
@@ -55,18 +57,36 @@ public class AlertReportExportPDF {
 			
 		}
 
-		public boolean exportAlertPDF(java.util.List alerts, String fileName,ExtensionAlertReportExport extensionExport){
+		public boolean exportAlert(java.util.List alerts, String fileName,ExtensionAlertReportExport extensionExport){
 			try {
 				extension = extensionExport;
 				Document document = new Document(PageSize.A4);
-				PdfWriter.getInstance(document, new FileOutputStream(fileName));
+				//Document documentAdd = null;
+				PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileName));
 				document.open();
-				addMetaData(document);
-				addTitlePage(document);
+				boolean attach = false;
+				//add attach document is exist
+				if (!extension.getParams().getDocumentAttach().isEmpty()){
+					PdfReader reader = new PdfReader(extension.getParams().getDocumentAttach());
+					int n = reader.getNumberOfPages();
+					PdfImportedPage page;
+					// Go through all pages
+					for (int i = 1; i <= n; i++) {
+						page = writer.getImportedPage(reader, i);
+						Image instance = Image.getInstance(page);
+						document.add(instance);
+				}
+					attach =true;
+				}
+				if (!attach){
+					addMetaData(document);
+					addTitlePage(document);
+				}
 				for (int i = 0; i < alerts.size(); i++) {
 					java.util.List alertAux = (java.util.List) alerts.get(i);
 					addContent(document,alertAux);
 				}
+				
 				document.close();
 				return true;
 			} catch (Exception e) {
@@ -236,13 +256,39 @@ public class AlertReportExportPDF {
 			addEmptyLine(content, 1);
             document.add(content);
 			
-			
-			//add paragraph
-
+            // Start a new page
+			document.newPage();
 
 		}
 
+		/*public class ReadAndUsePdf {
+			private static String INPUTFILE = "c:/temp/FirstPdf.pdf";
+			private static String OUTPUTFILE = "c:/temp/ReadPdf.pdf";
 
+			public static void main(String[] args) throws DocumentException,
+					IOException {
+				Document document = new Document();
+
+				PdfWriter writer = PdfWriter.getInstance(document,
+						new FileOutputStream(OUTPUTFILE));
+				document.open();
+				PdfReader reader = new PdfReader(INPUTFILE);
+				int n = reader.getNumberOfPages();
+				PdfImportedPage page;
+				// Go through all pages
+				for (int i = 1; i <= n; i++) {
+					// Only page number 2 will be included
+					if (i == 2) {
+						page = writer.getImportedPage(reader, i);
+						Image instance = Image.getInstance(page);
+						document.add(instance);
+					}
+				}
+				document.close();
+
+			}
+
+		} */
 		private static void createList(Section subCatPart) {
 			List list = new List(true, false, 10);
 			list.add(new ListItem("First point"));
