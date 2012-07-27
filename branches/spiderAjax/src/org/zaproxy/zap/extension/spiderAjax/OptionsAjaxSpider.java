@@ -378,7 +378,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			panelProxy.add(jLabel5, LayoutHelper.getGBC(0, 3, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
 			panelProxy.add(getFirefox(), LayoutHelper.getGBC(0, 4, 3,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
 			panelProxy.add(getChrome(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(25,2,2,2)));
-			panelProxy.add(getIE(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(50,2,2,2)));
+			//TODO add proxy configuration compatibility in crawljax
+			//panelProxy.add(getIE(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(50,2,2,2)));
 
 		}
 		return panelProxy;

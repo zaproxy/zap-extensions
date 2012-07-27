@@ -27,8 +27,11 @@ import com.crawljax.core.CandidateElement;
 import com.crawljax.core.CrawlSession;
 import com.crawljax.core.plugin.PreStateCrawlingPlugin;
 
-
-//before crawling the new site, we check the url
+/**
+ * SpiderFilter is called before the crawling, it checks the candidates
+ * and discards those according to the excluded ones
+ *
+ */
 public class SpiderFilter implements PreStateCrawlingPlugin {
 	private static final Logger logger = Logger.getLogger(ExtensionAjax.class);
 	ArrayList<String> urls;
@@ -37,7 +40,7 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 	private SpiderThread thread;
 
 	/**
-	 * the class constructor
+	 * The class constructor
 	 * 
 	 * @param e extension
 	 * @param t threat
@@ -73,7 +76,9 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 				guessedUrl = candidateUrl;
 				URL u;
 				try {
-					// System.out.println(currentUrl+" "+candidateUrl);
+					if (logger.isDebugEnabled()) {
+						logger.debug("CurrentURL:" + currentUrl + " CandidateURL:" + candidateUrl);
+					}
 					// the candidate can be an URL or other stuff such as javascript:xx, here we determine what it is
 					if (!candidateUrl.toLowerCase().contains("javascript")
 							&& (candidateUrl.endsWith(".html")
@@ -99,14 +104,16 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 					Pattern p = Pattern.compile(excl, Pattern.CASE_INSENSITIVE);
 					if (p.matcher(guessedUrl).matches()) {
 						ignore = true;
+						if (logger.isDebugEnabled()) {
+							logger.debug("The following URL is filtered: " + excl);
+							logger.debug("Candidate Element will be removed: " + guessedUrl);
+						}
 					}
 				}
 
 			}
 			// if matched we remove the candidate
 			if (ignore) {
-				// logger.info("The following URL is filtered: " + excl);
-				// logger.info("Candidate Element removed: " + guessedUrl);
 				session.getCurrentState().getUnprocessedCandidateElements().remove(c.getElement());
 				candidates.remove(c);
 				session.getCrawlPaths().remove(c.getElement());

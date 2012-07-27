@@ -67,6 +67,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
 	/**
 	 * starts the proxy and all elements of the UI
+	 * @param extensionHook the extension
 	 */
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
@@ -74,22 +75,18 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		if (getView() != null) {
 			@SuppressWarnings("unused")
 			ExtensionHookView pv = extensionHook.getHookView();
-		    pv.addStatusPanel(getSpiderPanel());
 			getSpiderPanel().setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
-			//extensionHook.getHookView().addStatusPanel(getSpiderPanel());
-
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
-
 			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpider());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpiderSite());
 			ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spider");
-			
+			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
+
 		}
 	}
 
 	/**
-	 * creates the panel with the config of the proxy
-	 * 
+	 * Creates the panel with the config of the proxy
 	 * @return the panel
 	 */
 	protected SpiderPanel getSpiderPanel() {
@@ -103,7 +100,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
 	/**
 	 * 
-	 * @return
+	 * @return the PopupMenuAjax object
 	 */
 	private PopupMenuAjax getPopupMenuSpider() {
 		if (popupMenuSpider == null) {
@@ -113,6 +110,10 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		return popupMenuSpider;
 	}
 
+	/**
+	 * 
+	 * @return the PopupMenuAjaxSite object
+	 */
 	private PopupMenuAjaxSite getPopupMenuSpiderSite() {
 		if (popupMenuSpiderSite == null) {
 			popupMenuSpiderSite = new PopupMenuAjaxSite(this.getString("ajax.site.popup"), this);
@@ -120,6 +121,10 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		return popupMenuSpiderSite;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private OptionsAjaxSpider getOptionsSpiderPanel() {
 		if (optionsAjaxSpider == null) {
 			optionsAjaxSpider = new OptionsAjaxSpider(this);
@@ -127,27 +132,36 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		return optionsAjaxSpider;
 	}
 
+	/**
+	 *  calls the spider
+	 * @param node
+	 * @param incPort
+	 */
 	public void spiderSite(SiteNode node, boolean incPort) {
 		this.getSpiderPanel().scanSite(node, incPort);
 	}
 
-	public boolean isScanning(SiteNode node, boolean incPort) {
-		//return this.getSpiderPanel().isScanning(node, incPort);
-		return true;
-	}
 
+	/**
+	 * 
+	 * @param ignoredRegexs
+	 */
 	public void setExcludeList(List<String> ignoredRegexs) {
 		this.excludeList = ignoredRegexs;
 	}
 
+	/**
+	 * 
+	 * @return the exclude list
+	 */
 	public List<String> getExcludeList() {
 		return excludeList;
 	}
 
 	/**
 	 * 
-	 * @param key
-	 * @return
+	 * @param key to retrieve
+	 * @return the value of the key in messages
 	 */
 	public String getString(String key) {
 		try {
@@ -158,16 +172,28 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		}
 	}
 
+	/**
+	 * 	 
+	 * @return the author
+	 */
 	@Override
 	public String getAuthor() {
 		return Constant.ZAP_TEAM;
 	}
-
+	
+	/**
+	 * 
+	 * @return description of the plugin
+	 */
 	@Override
 	public String getDescription() {
 		return this.getString("ajax.desc");
 	}
-
+	
+	/**
+	 * 
+	 * @return the url of the proj
+	 */
 	@Override
 	public URL getURL() {
 		try {
@@ -177,11 +203,17 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			return null;
 		}
 	}
-
+	
+	/**
+	 * @param url the targeted url
+	 */
 	public void run(String url) {
-		GenericScanner g = this.spiderPanel.newScanThread(url, this.getProxy().getAjaxProxyParam());
+		this.spiderPanel.newScanThread(url, this.getProxy().getAjaxProxyParam());
 	}
 
+	/**
+	 * shows the chrome alert
+	 */
 	public void showBreakAddDialog() {
 		addDialog = new ChromeAlertDialog(getView().getMainFrame(), false, this);
 		addDialog.setVisible(true);

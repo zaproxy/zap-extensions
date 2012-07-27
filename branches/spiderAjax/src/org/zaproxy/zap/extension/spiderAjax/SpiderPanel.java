@@ -39,7 +39,6 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.spiderAjax.SpiderPanel;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
-import org.zaproxy.zap.model.GenericScanner;
 import org.zaproxy.zap.utils.ZapTextArea;
 
 
@@ -433,15 +432,18 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
     	filterStatus.setToolTipText(filter.toLongString());
     }
 
-    public GenericScanner newScanThread(String site, AbstractParam params) {
-		new Thread(this.runnable = new SpiderThread(site, this.extension)).start();
-		return (GenericScanner) null;
+    public void newScanThread(String site, AbstractParam params) {
+    	try {
+    		new Thread(this.runnable = new SpiderThread(site, this.extension)).start();
+    	} catch (Exception e) {
+    		logger.error(e);
+    	}
 	}
 	public void scanSite(SiteNode n, boolean b) {
 		try {
 			this.extension.run(n.getHierarchicNodeName());
 		} catch (Exception e) {
-			e.printStackTrace();
+    		logger.error(e);
 		}
 	}
 }

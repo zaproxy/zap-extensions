@@ -81,7 +81,7 @@ public class AjaxProxyParam extends ProxyParam {
 
 
 	/**
-	 * @param port
+	 * @param p
 	 */
 	public void setProxyPort(int p){
 		this.proxyPort = p;

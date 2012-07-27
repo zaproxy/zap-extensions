@@ -30,9 +30,11 @@ public class PopupMenuAjax extends ExtensionPopupMenuItem {
 	private ExtensionAjax extension = null;
 	private JTree treeSite = null;
 
-	/** 
-     * 
-     */
+
+	/**
+	 * 
+	 * @param extension
+	 */
 	public PopupMenuAjax(ExtensionAjax extension) {
 		super();
 		this.extension=extension;
@@ -82,18 +84,22 @@ public class PopupMenuAjax extends ExtensionPopupMenuItem {
 	        		    	extension.spiderSite(node, true);
 	        		    }
 	        		}
-
 	        	}
 	        });
 
 	}
+	
+	/**
+	 * 
+	 * @return if component enabled
+	 */
 	@Override
 	public boolean isEnableForComponent(Component invoker) {
 		
 		treeSite = getTree(invoker);
 		if (treeSite != null) {
 			SiteNode node = (SiteNode) treeSite.getLastSelectedPathComponent();
-			if (node != null && !node.isRoot() && !extension.isScanning(node, true)) {
+			if (node != null && !node.isRoot()) {
 				this.setEnabled(true);
 			} else {
 				this.setEnabled(false);

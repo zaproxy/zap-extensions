@@ -158,27 +158,27 @@ public class SpiderThread implements Runnable, ProxyListener {
 		return crawler;
 	}
 
+	/**
+	 * Instantiates the crawljax classes. 
+	 */
 	@Override
 	public void run() {
 
-		// testing crawljax plugins
-		// crawljaxConfiguration.addPlugin(new test(true));
-
 		try {
 			crawljax = new CrawljaxController(getCrawConf());
-			
         } catch (ConfigurationException e) {
 			logger.error(e);
         } catch (Exception e) {
 			logger.error(e);
 		}
 		try {
-			crawljax.run();
-			
+			crawljax.run();		
 		} catch (CrawljaxException e) {
-			logger.error(e);
+			//logger.error(e);
 		} catch (Exception e) {
-			logger.error(e);
+			//logger.error(e);
+		} finally {
+			crawljax.terminate(true);
 		}
 	}
 	
@@ -194,9 +194,6 @@ public class SpiderThread implements Runnable, ProxyListener {
 		HistoryReference historyRef = null;
 
 		try {
-
-			//int ref=msg.getHistoryRef().getSiteNode().addIcon("/org/zaproxy/zap/extension/spiderAjax/10.png");
-			
 			//we check if it has to be put in the sites tree or is already there
 			historyRef = new HistoryReference(extension.getModel().getSession(),"/resource/icon/10/spiderAjax.png", msg, true);
 			boolean ignore =false;
@@ -209,14 +206,10 @@ public class SpiderThread implements Runnable, ProxyListener {
 			if(!ignore){
 				siteTree.addPath(historyRef, msg);
 			}
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		try {
-		this.extension.getSpiderPanel().addHistoryUrl(historyRef, msg);
-		} catch (Exception e){
-			logger.error(e);
-		}
+			this.extension.getSpiderPanel().addHistoryUrl(historyRef, msg);
+			} catch (Exception e){
+				//logger.error(e);
+			}
 		return true;
 	}
 
