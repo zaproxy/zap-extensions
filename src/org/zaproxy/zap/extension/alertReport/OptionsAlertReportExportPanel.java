@@ -41,7 +41,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.utils.ZapTextField;
 
@@ -53,6 +52,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	private ZapTextField editTitleReport = null;
 	private ZapTextField editLogoFileName = null;
 	private ZapTextField editWorkingDir = null;
+	private ZapTextField editAttachDoc = null;
 	private ZapTextField editCustomerName= null;
 	private ZapTextArea editConfidentialText= null;
 	private ZapTextField editCompanyName = null;
@@ -60,6 +60,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	private ZapTextField editAuthorName= null;
 	private JButton chooseApp = null;
 	private JButton chooseDir = null;
+	private JButton chooseDoc = null;
 	private ResourceBundle messages = null;
 	private JComboBox comboLevel = null;
 	
@@ -77,17 +78,26 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// Set the explanation
-				    if (comboLevel.getSelectedItem().equals("ODT")){
-				    	View.getSingleton().showMessageDialog("Coming Soon!!");
-				    	comboLevel.setSelectedIndex(0);
-				    } 
+				   /* if (comboLevel.getSelectedItem().equals("PDF")){
+				    	//View.getSingleton().showMessageDialog("Coming Soon!!");
+				    	chooseDoc.setEnabled(false);
+				    } else
+				    	chooseDoc.setEnabled(true);*/
 				}});
 		}
 		return comboLevel;
 	}
 
 
-    public String getMessageString(String key) {
+    public ZapTextField getEditAttachDoc() {
+		return editAttachDoc;
+	}
+
+	public void setEditAttachDoc(ZapTextField editAttachDoc) {
+		this.editAttachDoc = editAttachDoc;
+	}
+
+	public String getMessageString(String key) {
 		return messages.getString(key);
 	}
 
@@ -263,6 +273,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	        editLogoFileName.setEditable(false);
 	        editWorkingDir = new ZapTextField();
 	        editWorkingDir.setEditable(false);
+	        editAttachDoc = new ZapTextField();
 	        
 	        chooseApp = new JButton(getMessageString("alert.export.message.export.option.label.file")); 
 			chooseApp.addActionListener(new java.awt.event.ActionListener() { 
@@ -273,7 +284,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 					{
 						@Override
 						public String getDescription() {
-							return getMessageString("alert.export.message.export.option.title");
+							return "*.png";
 						}
 						@Override
 						public boolean accept(File f) {
@@ -318,6 +329,37 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 					}
 				}
 			});
+			
+			 chooseDoc = new JButton(getMessageString("alert.export.message.export.option.label.file")); 
+			 chooseDoc.addActionListener(new java.awt.event.ActionListener() { 
+					@Override
+					public void actionPerformed(java.awt.event.ActionEvent e) {    
+				    	JFileChooser fcCommand = new JFileChooser();
+					/*	fcCommand.setFileFilter( new FileFilter()
+						{
+							@Override
+							public String getDescription() {
+								return getMessageString("alert.export.message.export.option.title.extension");
+							}
+							@Override
+							public boolean accept(File f) {
+								return f.isDirectory() || f.canExecute() ;
+							}
+						} );*/
+						if (editAttachDoc.getText() != null && editAttachDoc.getText().length() > 0) {
+							// If theres and existing file select containing directory 
+							File f = new File(editAttachDoc.getText());
+							fcCommand.setCurrentDirectory(f.getParentFile());
+						}
+						
+						int state = fcCommand.showOpenDialog( null );
+
+						if ( state == JFileChooser.APPROVE_OPTION )
+						{
+							editAttachDoc.setText(fcCommand.getSelectedFile().toString() );
+						}
+					}
+				});
 
 	        editCustomerName = new ZapTextField();
 	        
@@ -345,6 +387,11 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	        editPane.add(new JLabel(getMessageString("alert.export.message.export.option.companyname")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(editCompanyName, getGridBackConstrants(rowId++, 1, 1, true));
+	        
+	        editPane.add(new JLabel(getMessageString("alert.export.message.export.option.documentattach")), 
+	        		getGridBackConstrants(rowId, 0, 0, false));
+	        editPane.add(editAttachDoc, getGridBackConstrants(rowId++, 1, 1, false));
+	        editPane.add(chooseDoc, getGridBackConstrants(rowId-1, 2, 0, false));
 	        
 	        editPane.add(new JLabel(getMessageString("alert.export.message.export.option.logofilename")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
@@ -383,6 +430,17 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
     @Override
     public void validateParam(Object obj) throws Exception {
     	
+    	OptionsParam options = (OptionsParam) obj;
+		
+		AlertReportExportParam param = (AlertReportExportParam) options.getParamSet(AlertReportExportParam.class);
+		if (param!=null){
+			if (getComboLevel().getSelectedItem().toString().equals("PDF")&&(!getEditAttachDoc().getText().isEmpty())&&(!getEditAttachDoc().getText().contains(".pdf"))){
+				throw new Exception(getMessageString("alert.export.message.export.option.distintformat"));
+			}else
+				if (getComboLevel().getSelectedItem().toString().equals("ODT")&&(!getEditAttachDoc().getText().isEmpty())&&(!getEditAttachDoc().getText().contains(".odt"))){
+					throw new Exception(getMessageString("alert.export.message.export.option.distintformat"));
+				}
+		}
     }
     
     @Override
@@ -400,6 +458,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 			param.setAuthorName(getEditAuthorName().getText());
 			param.setCompanyName(getEditCompanyName().getText());
 			param.setFormatReport(getComboLevel().getSelectedItem().toString());
+			param.setDocumentAttach(getEditAttachDoc().getText());
 
 		}
     }
@@ -417,13 +476,17 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 		if (param!=null){
 			getEditTitleReport().setText(param.getTitleReport());
 			getEditLogoFileName().setText(param.getLogoFileName());
+			getEditAttachDoc().setText(param.getDocumentAttach());
 			getEditWorkingDir().setText(param.getWorkingDirImages());
 			getEditCustomerName().setText(param.getCustomerName());
 			getEditConfidentialText().setText(param.getConfidentialText());
 			getEditPDFKeywords().setText(param.getPdfKeywords());
 			getEditAuthorName().setText(param.getAuthorName());
 			getEditCompanyName().setText(param.getCompanyName());
-			getComboLevel().setSelectedIndex(0);
+			if (param.getFormatReport().equals("PDF"))
+				getComboLevel().setSelectedIndex(0);
+			else
+				getComboLevel().setSelectedIndex(1);
 		}
 		
 	

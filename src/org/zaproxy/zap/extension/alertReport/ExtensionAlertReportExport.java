@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.Logger;
@@ -57,8 +58,9 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
 
 	
 	public static final String NAME = "ExtensionAlertReportExports";
-	private AlertReportExportMenuItem reportExportMsgPopupMenu = null;
+	private AlertReportExportMenuItem alertReportExportMenuItem = null;
 	private OptionsAlertReportExportPanel optionsAlertExportPanel = null;
+	private JMenuItem menuItemAlertExport = null;
 	private AlertReportExportParam params;
 	private ResourceBundle messages = null;
 	private Logger logger = Logger.getLogger(ExtensionAlertReportExport.class);
@@ -103,10 +105,15 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
 	 * @return void
 	 */
 	private void initialize() {
-		this.setName("ExtensionReportExport");
-		 // Load extension specific language files - these are held in the extension jar
-        messages = ResourceBundle.getBundle(
-        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+		try{	
+			this.setName("ExtensionReportExport");
+			 // Load extension specific language files - these are held in the extension jar
+	        messages = ResourceBundle.getBundle(
+	        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+	        logger.info("loaded plugin alert report: " + this.getName()); 
+		 } catch (Exception e) {
+	         logger.error("error loaded plugin alert report: "+e.getMessage(), e);
+	     }
 	}
 	
 
@@ -123,17 +130,35 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
 			extensionHook.getHookMenu().addPopupMenuItem(getAlertExportMsgPopupMenu());
 			extensionHook.getHookView().addOptionPanel(getOptionsAlertExportPanel());
 			extensionHook.addOptionsParamSet(getParams());
+			extensionHook.getHookMenu().addReportMenuItem(getMenuItemAlertReport());
 		}
 
 	}
 
-	private AlertReportExportMenuItem getAlertExportMsgPopupMenu() {
-		if (reportExportMsgPopupMenu == null) {
-			reportExportMsgPopupMenu = new AlertReportExportMenuItem(
-					this.getMessageString("alert.export.message.menuitem"));
-			reportExportMsgPopupMenu.setExtension(this);
+	private JMenuItem getMenuItemAlertReport() {
+		if (menuItemAlertExport == null) {
+			menuItemAlertExport = new JMenuItem();
+			menuItemAlertExport.setText(this.getMessageString("alert.export.menu.report.generate"));
+			menuItemAlertExport.addActionListener(new java.awt.event.ActionListener() { 
+
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {    
+					alertReportExportMenuItem.generateAlertReport(true);
+					
+				}
+			});
+
 		}
-		return reportExportMsgPopupMenu;
+		return menuItemAlertExport;
+	}
+	
+	private AlertReportExportMenuItem getAlertExportMsgPopupMenu() {
+		if (alertReportExportMenuItem == null) {
+			alertReportExportMenuItem = new AlertReportExportMenuItem(
+					this.getMessageString("alert.export.message.menuitem"));
+			alertReportExportMenuItem.setExtension(this);
+		}
+		return alertReportExportMenuItem;
 	}
 
 	public String getMessageString(String key) {
@@ -199,22 +224,27 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
 	    
 	    JFileChooser chooser = new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
 	    // set filename alert
-	    File fileproposal = new File("CodeOWASP_Alert_Report"+".pdf");
+	    String extensionFile = ".pdf";
+	    if (this.getParams().getFormatReport().equals("ODT"))
+	    	extensionFile = ".odt";
+	    File fileproposal = new File("CodeOWASP_Alert_Report"+extensionFile);
 	    chooser.setSelectedFile(fileproposal);
 	    chooser.setFileFilter(new FileFilter() {
 	           @Override
 	           public boolean accept(File file) {
+	        	   	String extensionFile = ".pdf";
+	       	    	if (getParams().getFormatReport().equals("ODT"))
+	       	    		extensionFile = ".odt";
 	                if (file.isDirectory()) {
 	                    return true;
-	                } else if (file.isFile() && file.getName().endsWith(".pdf")) {
+	                } else if (file.isFile() && file.getName().endsWith(extensionFile)) {
 	                    return true;
 	                }
 	                return false;
 	            }
 	           @Override
 	           public String getDescription() {
-	        	   // ZAP: Rebrand
-	               return "PDF File";
+	        	   return getParams().getFormatReport()+" File";
 	           }
 	    });
 		File file = null;
@@ -226,8 +256,8 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
     			return "";
     		}
            fileName = file.getAbsolutePath();
-    		if (!fileName.endsWith(".pdf")) {
-    		    fileName += ".pdf";
+           if (!fileName.endsWith(extensionFile)) {
+    		    fileName += extensionFile;
     		}
     		
 	    }
