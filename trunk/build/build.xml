@@ -168,17 +168,28 @@
 	<target name="build-alertReport" description="build the Alert Report ZAP extension">
 			<property name="report.extension" value="alertReport"/> 
 			<property name="report.type" value="beta"/> 
-			<property name="report.version" value="2"/> 
+			<property name="report.version" value="3"/> 
 		 	<property name="lib.dir" value="itextpdf"/>
-			<jar jarfile="${dist}/zap-ext-${report.extension}-${report.type}-${report.version}.jar" update="true" compress="false">
-					<zipfileset dir="${build}" prefix="">
-						<include name="org/zaproxy/zap/extension/alertReport/**"/>
-					</zipfileset>
-					<fileset dir="${lib.dir}" includes="**/*.*" />
-					<zipfileset dir="${src}" prefix="">
-						<include name="org/zaproxy/zap/extension/alertReport/Messages*"/>
-					</zipfileset>
-			</jar>
+			<property name="lib.dir" value="itextpdf"/>
+					<property name="lib.odf1.dir" value="odfdom-java-0.8.8-incubating"/>
+				 	<property name="lib.odf2.dir" value="simple-odf-0.7-incubating"/>
+				 	<property name="lib.xslt1.dir" value="xslt-runner-1.2.1-incubating"/>
+				    <property name="lib.xst2.dir" value="xslt-runner-task-1.2.1-incubating"/>
+					<property name="lib.xerces.dir" value="xercesImpl"/>
+				    <jar jarfile="${dist}/zap-ext-${report.extension}-${report.type}-${report.version}.jar" update="true" compress="true">
+							<zipfileset dir="${build}" prefix="">
+								<include name="org/zaproxy/zap/extension/alertReport/**"/>
+							</zipfileset>
+							<fileset dir="${lib.dir}" includes="**/*.*" />
+				    	<!--<fileset dir="${lib.odf1.dir}" includes="**/*.*" />
+							<fileset dir="${lib.odf2.dir}" includes="**/*.*" />-->
+							<fileset dir="${lib.xslt1.dir}" includes="**/*.*" />
+				    		<fileset dir="${lib.xst2.dir}" includes="**/*.*" />	
+				    	<!--    <fileset dir="${lib.xerces.dir}" includes="**/*.*" />-->
+							<zipfileset dir="${src}" prefix="">
+								<include name="org/zaproxy/zap/extension/alertReport/Messages*"/>
+							</zipfileset>
+					</jar>
 	</target>
 	
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
