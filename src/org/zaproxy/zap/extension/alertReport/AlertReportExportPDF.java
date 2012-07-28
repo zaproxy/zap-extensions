@@ -74,8 +74,9 @@ public class AlertReportExportPDF {
 					for (int i = 1; i <= n; i++) {
 						page = writer.getImportedPage(reader, i);
 						Image instance = Image.getInstance(page);
+						instance.scalePercent(95f);
 						document.add(instance);
-				}
+					}
 					attach =true;
 				}
 				if (!attach){

@@ -98,9 +98,7 @@ public class AlertReportExportODT {
 		    	outputDocument = documentAdd;
 			}
 			// if add attach document
-			if (documentAdd!=null){
-				addMetaData();
-			}else{
+			if (documentAdd==null){
 				//addFooter();
 				//addHeader();
 				addMetaData();
@@ -168,12 +166,9 @@ public class AlertReportExportODT {
 		
 		Paragraph para = outputDocument.addParagraph(null);
 		
-		Image image = Image.newImage(para, new URI("file:///"
-				+ extension.getParams().getLogoFileName()));
-
-		image.setHorizontalPosition(FrameHorizontalPosition.CENTER);
-		image.setHyperlink(new URI("http://www.talsoft.com.ar"));
-
+		//add company logo
+		addImage(para, extension.getParams().getLogoFileName(), 0);
+	
 		addLines(4);
 		// Lets write a big header
 	    para = outputDocument.addParagraph(null);
