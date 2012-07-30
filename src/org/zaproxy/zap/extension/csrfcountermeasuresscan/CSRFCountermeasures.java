@@ -128,6 +128,9 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 	 * exists that does not contain a known anti-CSRF token, raise an alert.
 	 */
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		//need to do this if we are to be able to get an element's parent. Do it as early as possible in the logic 
+		source.fullSequentialParse();
+		
 		Date start = new Date();
 		
 		ExtensionAntiCSRF extAntiCSRF = 
@@ -136,7 +139,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 		if (extAntiCSRF == null) {
 			return;
 		}
-
+		
 		List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
 		List<String> tokenNames = extAntiCSRF.getAntiCsrfTokenNames();
 		boolean foundCsrfToken = false;
@@ -150,6 +153,17 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 			int i = 1;
 			
 			for (Element formElement : formElements) {
+				logger.debug("FORM ["+ formElement + "] has parent ["+ formElement.getParentElement()+"]");
+				//if the form has no parent, it is pretty likely invalid HTML (or Javascript!!!), so we will not report
+				//any alerts on it.  
+				//ie. This logic is necessary to eliminate false positives on non-HTML files.
+				if (formElement.getParentElement() == null ) {
+					logger.debug ("Skipping HTML form because it has no parent. Likely not actually HTML.");
+					foundCsrfToken=true;  //do not report a missing anti-CSRF field on this form
+					continue;
+				}
+					
+				
 				List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
 				if (sb.length() > 0) {
 					sb.append("], ");
