@@ -1,30 +1,46 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ * 
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ * 
+ * Copyright 2011 The ZAP Development team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ */
 package org.zaproxy.zap.extension.alertReport;
 
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.ResourceBundle;
+import java.util.List;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 public class AlertReportExportMenuItem extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
 	private ExtensionAlertReportExport extension = null;
-	private ExtensionAlert extAlert = null;
+	//private ExtensionAlert extAlert = null;
 	private AlertReportExportPDF reportExportPDF = null;
 	private AlertReportExportODT reportExportODT = null;
 	private JTree treeAlert = null;
-	private ResourceBundle messages = null;
+	//private ResourceBundle messages = null;
 
 	/**
 	 * @param label
@@ -32,110 +48,109 @@ public class AlertReportExportMenuItem extends ExtensionPopupMenuItem {
 	public AlertReportExportMenuItem(String label) {
 		super(label);
 		initialize();
-		if (this.reportExportPDF == null)
-			this.reportExportPDF = new AlertReportExportPDF();
-		if (this.reportExportODT == null)
-			this.reportExportODT = new AlertReportExportODT();
+		this.reportExportPDF = new AlertReportExportPDF();
+		this.reportExportODT = new AlertReportExportODT();
 
 	}
 
 	public String getMessageString(String key) {
-		return messages.getString(key);
-	}
-
-	public ExtensionAlert getExtAlert() {
-		return extAlert;
-	}
-
-	public void setExtAlert(ExtensionAlert extAlert) {
-		this.extAlert = extAlert;
+		return this.extension.getMessageString(key);
 	}
 	
 	/**
 	 * Generate alert to report
 	 */
 	public void generateAlertReport(boolean fullReport) {
-		java.util.List alerts = new ArrayList();
-		// generate full report
-		if (fullReport){
-			extAlert = (ExtensionAlert) Control.getSingleton()
-					.getExtensionLoader().getExtension("ExtensionAlert");
-			java.util.List<Alert> allAlerts = extAlert.getAllAlerts();
-			// sort alerts
-			Collections.sort(allAlerts, Collections.reverseOrder()); 
-			//join same alerts
-			for (int i = 0; i < allAlerts.size(); i++) {
-				Alert alertAllAlerts = (Alert) allAlerts.get(i);
-				alerts.add(extension.getAlertsSelected(alertAllAlerts));
-				for (int j = 0; j < allAlerts.size(); j++) {
-					Alert alertToCompare= (Alert) allAlerts.get(j);
-					if (alertAllAlerts.getAlert().equals(alertToCompare.getAlert())){
-						allAlerts.remove(j);
-						j = 0;
+		boolean result = false;
+		//choose file 
+		String filename =extension.getFileName();
+		if (!filename.isEmpty()){
+			java.util.List<List<Alert>> alerts = new ArrayList<List<Alert>>();
+			// generate full report
+			if (fullReport){
+				java.util.List<Alert> allAlerts = extension.getAllAlerts();
+				// sort alerts
+				Collections.sort(allAlerts, Collections.reverseOrder()); 
+				//join same alerts
+				for (int i = 0; i < allAlerts.size(); i++) {
+					Alert alertAllAlerts = allAlerts.get(i);
+					alerts.add(extension.getAlertsSelected(alertAllAlerts));
+					for (int j = 0; j < allAlerts.size(); j++) {
+						Alert alertToCompare= allAlerts.get(j);
+						if (alertAllAlerts.getAlert().equals(alertToCompare.getAlert())){
+							allAlerts.remove(j);
+							j = 0;
+						}
 					}
+					i = 0;
 				}
-				i = 0;
-			}
-			
-		} else {
-			if (treeAlert.getLastSelectedPathComponent() != null) {
-				TreePath[] paths = treeAlert.getSelectionPaths();
-				if (paths.length > 0) {
-					for (int i = 0; i < paths.length; i++) {
-						TreePath treepath = (TreePath) paths[i];
-						DefaultMutableTreeNode alertNode = (DefaultMutableTreeNode) treepath
-								.getLastPathComponent();
-						if (alertNode != null
-								&& alertNode.getUserObject() != null) {
-							Object obj = alertNode.getUserObject();
-							if (obj instanceof Alert) {
-								Alert alert = (Alert) obj;
-								alerts.add(extension.getAlertsSelected(alert));
+				
+			} else {
+				if (treeAlert.getLastSelectedPathComponent() != null) {
+					TreePath[] paths = treeAlert.getSelectionPaths();
+					if (paths.length > 0) {
+						extension.getAllAlerts();
+						for (int i = 0; i < paths.length; i++) {
+							TreePath treepath = paths[i];
+							DefaultMutableTreeNode alertNode = (DefaultMutableTreeNode) treepath
+									.getLastPathComponent();
+							if (alertNode != null
+									&& alertNode.getUserObject() != null) {
+								Object obj = alertNode.getUserObject();
+								if (obj instanceof Alert) {
+									Alert alert = (Alert) obj;
+									if (!checkDuplicateAlert(alerts,alert))
+										alerts.add(extension.getAlertsSelected(alert));
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-		// Generate report
-		if (!alerts.isEmpty()) {
-			boolean result = false;
-			if (extension.getParams().getFormatReport().equals("PDF"))
-				result = reportExportPDF.exportAlert(alerts, extension.getFileName(),
-						extension);
-			else
-				result = reportExportODT.exportAlert(alerts, extension.getFileName(),
-						extension);
-			if (result)
-				View.getSingleton().showMessageDialog(
-						getMessageString("alert.export.message.export.ok"));
-			else
-				View.getSingleton().showMessageDialog(
-						getMessageString("alert.export.message.export.fail"));
-
-		}
+			// Generate report
+			if (!alerts.isEmpty()) {
+				if (extension.getParams().getFormatReport().equals("PDF"))
+					result = reportExportPDF.exportAlert(alerts, filename,
+							extension);
+				else
+					result = reportExportODT.exportAlert(alerts,filename,
+							extension);
+				if (result)
+					View.getSingleton().showMessageDialog(
+							getMessageString("alert.export.message.export.ok"));
+				else
+					View.getSingleton().showMessageDialog(
+							getMessageString("alert.export.message.export.fail"));
+				}
+			}
 
 	}
-
+	/**
+	 * Check if have a Alert Duplicate select
+	 * @param alerts
+	 * @param alert
+	 * @return
+	 */
+	private boolean checkDuplicateAlert(java.util.List<List<Alert>> alerts,Alert alert){
+		boolean result = false;
+		for (int i = 0; i < alerts.size(); i++) {
+			java.util.List<Alert> listAlert = alerts.get(i);
+			if (listAlert.contains(alert))
+				return true;
+		}
+		return result;
+	}
 	/**
 	 * This method initializes this
 	 * 
 	 * @return void
 	 */
 	private void initialize() {
-		// Load extension specific language files - these are held in the
-		// extension jar
-		messages = ResourceBundle.getBundle(this.getClass().getPackage()
-				.getName()
-				+ ".Messages", Constant.getLocale());
-
-		this.setText(this.getMessageString("alert.export.message.menuitem"));
 
 		this.addActionListener(new java.awt.event.ActionListener() {
 
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				extAlert = (ExtensionAlert) Control.getSingleton()
-						.getExtensionLoader().getExtension("ExtensionAlert");
+
                 generateAlertReport(false);
 
 			}
@@ -149,18 +164,15 @@ public class AlertReportExportMenuItem extends ExtensionPopupMenuItem {
 
 	@Override
 	public boolean isEnableForComponent(Component invoker) {
-		if (invoker.getName() != null && invoker.getName().equals("treeAlert")) {
-			try {
-				JTree tree = (JTree) invoker;
-				if (tree.getLastSelectedPathComponent() != null) {
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
-							.getLastSelectedPathComponent();
-					this.treeAlert = tree;
-					if (!node.isRoot()) {
-						return true;
-					}
+		if (invoker.getName() != null && "treeAlert".equals(invoker.getName())) {
+			JTree tree = (JTree) invoker;
+			if (tree.getLastSelectedPathComponent() != null) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+						.getLastSelectedPathComponent();
+				this.treeAlert = tree;
+				if (!node.isRoot()) {
+					return true;
 				}
-			} catch (Exception e) {
 			}
 
 		}

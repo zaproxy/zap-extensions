@@ -1,32 +1,27 @@
 /*
- *
- * Paros and its related class files.
+ * Zed Attack Proxy (ZAP) and its related class files.
  * 
- * Paros is an HTTP/HTTPS proxy for assessing web application security.
- * Copyright (C) 2003-2004 Chinotec Technologies Company
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the Clarified Artistic License
- * as published by the Free Software Foundation.
+ * Copyright 2011 The ZAP Development team
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * Clarified Artistic License for more details.
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
  * 
- * You should have received a copy of the Clarified Artistic License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
  */
-// ZAP: 2012/04/14 Changed the method initParam to discard all edits.
-// ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
-
 package org.zaproxy.zap.extension.alertReport;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Insets;
 import java.io.File;
 import java.util.ResourceBundle;
 
@@ -35,10 +30,10 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.utils.ZapTextArea;
@@ -58,6 +53,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	private ZapTextField editCompanyName = null;
 	private ZapTextField editPDFKeywords = null;
 	private ZapTextField editAuthorName= null;
+	private JScrollPane scrollPaneConfidentialText = null;
 	private JButton chooseApp = null;
 	private JButton chooseDir = null;
 	private JButton chooseDoc = null;
@@ -69,21 +65,30 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
  		initialize();
    }
     
+  
+	private JScrollPane getScrollPaneConfidentialText() {
+		if (scrollPaneConfidentialText == null) {
+			scrollPaneConfidentialText = new JScrollPane();
+			scrollPaneConfidentialText.setViewportView(getEditConfidentialText());
+		}
+		return scrollPaneConfidentialText;
+	}
+    
     private JComboBox getComboLevel() {
 		if (comboLevel == null) {
 			comboLevel = new JComboBox();
 			comboLevel.addItem("PDF");
 			comboLevel.addItem("ODT");
-			comboLevel.addActionListener(new ActionListener() {
+			/*comboLevel.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// Set the explanation
-				   /* if (comboLevel.getSelectedItem().equals("PDF")){
+				    if (comboLevel.getSelectedItem().equals("PDF")){
 				    	//View.getSingleton().showMessageDialog("Coming Soon!!");
 				    	chooseDoc.setEnabled(false);
 				    } else
-				    	chooseDoc.setEnabled(true);*/
-				}});
+				    	chooseDoc.setEnabled(true);
+				}});*/
 		}
 		return comboLevel;
 	}
@@ -135,7 +140,13 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	}
 
 	public ZapTextArea getEditConfidentialText() {
-		return editConfidentialText;
+      if (editConfidentialText==null){
+        editConfidentialText = new ZapTextArea();
+        editConfidentialText.setLineWrap(true);
+        editConfidentialText.setRows(4);
+        editConfidentialText.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+      }
+	return editConfidentialText;
 	}
 
 	public void setEditConfidentialText(ZapTextArea editConfidentialText) {
@@ -183,14 +194,13 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
         GridBagConstraints gbc2 = new GridBagConstraints();
         GridBagConstraints gbc3 = new GridBagConstraints();
         GridBagConstraints gbc4 = new GridBagConstraints();
-
+      
         JLabel jLabel1 = new JLabel();
       //  JLabel jLabel2 = new JLabel();
 
         this.setLayout(new GridBagLayout());
-        if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
-        	this.setSize(409, 268);
-        }
+        this.setSize(409, 268);
+        
         this.setName(getMessageString("alert.export.message.export.option.title"));
         
         jLabel1.setText(getMessageString("alert.export.message.export.option.desc"));
@@ -222,6 +232,8 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
         gbc3.ipadx = 0;
         gbc3.insets = new java.awt.Insets(0,0,0,0);
         gbc3.anchor = GridBagConstraints.NORTHWEST;
+        gbc3.gridwidth = 2;
+        gbc3.gridheight = 4;
         
         gbc4.gridx = 0;
         gbc4.gridy = 3;
@@ -233,9 +245,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
         gbc4.anchor = GridBagConstraints.NORTHWEST;
         
         this.add(jLabel1, gbc1);
-       // this.add(getJScrollPane(), gbc2);
-        this.add(getEditPane(), gbc3);
-       // this.add(jLabel2, gbc4);
+        this.add(getEditPane(), gbc2);
 			
 	}
 	
@@ -252,21 +262,35 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 		}
 		return gbc;
 	}
-	
+    
+	private GridBagConstraints getGridBackContrantsScrollPane(int y){
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 1;
+		gbc.gridy = y;
+		gbc.weightx = 1.0;
+		gbc.weighty = 0.3;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.insets = new Insets(0,0,0,0);;
+		gbc.gridwidth = 2;
+		gbc.gridheight = 4;
+		return gbc;
+	}
 
 	
 	private JPanel getEditPane() {
 		if (editPane == null) {
 			editPane = new JPanel();
-			editPane.setBorder(
+		/*	editPane.setBorder(
 					javax.swing.BorderFactory.createTitledBorder(
 							null, "", 
 							javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, 
 							javax.swing.border.TitledBorder.DEFAULT_POSITION, 
 							new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11), 
-							java.awt.Color.black));
+							java.awt.Color.black));*/
 			editPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
 			editPane.setLayout(new GridBagLayout());
+			editPane.setAutoscrolls(true);
 			
 	        editTitleReport = new ZapTextField();
 	        editLogoFileName = new ZapTextField();
@@ -363,15 +387,12 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 
 	        editCustomerName = new ZapTextField();
 	        
-	        editConfidentialText = new ZapTextArea();
-	        editConfidentialText.setLineWrap(true);
-	        editConfidentialText.setRows(3);
-	        editConfidentialText.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+	        
 	        
 	        editCompanyName = new ZapTextField();
 	        editPDFKeywords = new ZapTextField();
 	        editAuthorName = new ZapTextField();
-	        
+	        //editConfidentialText = getEditConfidentialText();
 	    	
 	    	int rowId = 0;
 	    	
@@ -405,11 +426,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	        
 	        editPane.add(new JLabel(getMessageString("alert.export.message.export.pdf.customername")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
-	        editPane.add(editCustomerName, getGridBackConstrants(rowId++, 1, 1, true));
-	        
-	        editPane.add(new JLabel(getMessageString("alert.export.message.export.pdf.confidential")), 
-	        		getGridBackConstrants(rowId, 0, 0, false));
-	        editPane.add(editConfidentialText, getGridBackConstrants(rowId++, 1, 1, true));
+	        editPane.add(editCustomerName, getGridBackConstrants(rowId++, 1, 1, false));
 	        
 	        editPane.add(new JLabel(getMessageString("alert.export.message.export.option.authorname")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
@@ -419,8 +436,9 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(editPDFKeywords, getGridBackConstrants(rowId++, 1, 1, true));
 	        
-	        
-	        
+	        editPane.add(new JLabel(getMessageString("alert.export.message.export.pdf.confidential")), 
+	        		getGridBackConstrants(rowId, 0, 0, false));
+	        editPane.add(getScrollPaneConfidentialText(),getGridBackContrantsScrollPane(rowId++));
 	        
 	        
 		}

@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.alertReport;
 
+import java.util.ResourceBundle;
+
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
 
 /**
@@ -41,16 +44,16 @@ public class AlertReportExportParam extends AbstractParam {
 	
 	
 	
-	public static final String DEFAULT_TITLE_REPORT = "Report of alert ethical hacking";
-	public static final String DEFAULT_CUSTOMER_NAME = "Customer Name";
-	public static final String DEFAULT_CONFIDENTIAL_TEXT = "This document is CONFIDENTIAL USE ONLY and for whom it is addressed. Contains information that is copyrighted by COMPANYNAME, so that its contents may not be copied, posted, disclosed or used by third parties in any way not expressly authorized by COMPANYNAME. The reception and use of this document by the recipient, explicitly implies acceptance of this Clause. In the same sense COMPANYNAME, treated as CONFIDENTIAL USE ONLY and for the data it receives and if the proposed work done before the start of them signed the corresponding Confidentiality Agreement.";
-	public static final String DEFAULT_PDF_KEYWORDS = "report alert,pentest,security";
+	public static String DEFAULT_TITLE_REPORT = "";
+	public static String DEFAULT_CUSTOMER_NAME = "";
+	public static String DEFAULT_CONFIDENTIAL_TEXT = "";
+	public static String DEFAULT_PDF_KEYWORDS = "";
 	public static final String DEFAULT_WORKING_DIR_IMAGES = "";
 	public static final String DEFAULT_DOCUMENT_ATTACH_FILE_NAME = "";
 	public static final String DEFAULT_LOGO_FILE_NAME = "";
-	public static final String DEFAULT_AUTHOR_NAME = "Author Name";
-	public static final String DEFAULT_COMPANY_NAME = "Company Name";
-	public static final String DEFAULT_FORMAT_REPORT = "PDF";
+	public static String DEFAULT_AUTHOR_NAME = "";
+	public static String DEFAULT_COMPANY_NAME = "";
+	public static String DEFAULT_FORMAT_REPORT = "";
 
 	public static final String EMPTY_STRING = "";
 		
@@ -96,24 +99,29 @@ public class AlertReportExportParam extends AbstractParam {
      * @param rootElementName
      */
     public AlertReportExportParam() {
+    	ResourceBundle messages = ResourceBundle.getBundle(
+        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+    	this.authorName = messages.getString("alert.export.report.authorname.default");
+    	this.titleReport = messages.getString("alert.export.report.title.default");
+    	this.pdfKeywords = messages.getString("alert.export.report.keywords.default");
+    	this.customerName = messages.getString("alert.export.report.title.customername.default");
+    	this.confidentialText = messages.getString("alert.export.report.confidentialtext.default");
+    	this.companyName = messages.getString("alert.export.report.companyname.default");
+    	this.formatReport = messages.getString("alert.export.report.formatreport.default");
     }
 
     @Override
     protected void parse(){
-		try {
-			titleReport = getConfig().getString(TITLE_REPORT, DEFAULT_TITLE_REPORT);
-			logoFileName = getConfig().getString(LOGO_FILE_NAME, DEFAULT_LOGO_FILE_NAME);
-			workingDirImages = getConfig().getString(WORKING_DIR_IMAGES, DEFAULT_WORKING_DIR_IMAGES);
-			customerName = getConfig().getString(CUSTOMER_NAME, DEFAULT_CUSTOMER_NAME);
-			confidentialText = getConfig().getString(CONFIDENTIAL_TEXT, DEFAULT_CONFIDENTIAL_TEXT);
-			pdfKeywords = getConfig().getString(PDF_KEYWORDS, DEFAULT_PDF_KEYWORDS);
-			authorName = getConfig().getString(AUTHOR_NAME, DEFAULT_AUTHOR_NAME);
-			companyName = getConfig().getString(COMPANY_NAME, DEFAULT_COMPANY_NAME);
-			formatReport = getConfig().getString(FORMAT_REPORT, DEFAULT_FORMAT_REPORT);
-			documentAttach = getConfig().getString(DOCUMENT_ATTACH_FILE_NAME, DEFAULT_DOCUMENT_ATTACH_FILE_NAME);
-
-
-		} catch (Exception e) {}
+		titleReport = getConfig().getString(TITLE_REPORT, DEFAULT_TITLE_REPORT);
+		logoFileName = getConfig().getString(LOGO_FILE_NAME, DEFAULT_LOGO_FILE_NAME);
+		workingDirImages = getConfig().getString(WORKING_DIR_IMAGES, DEFAULT_WORKING_DIR_IMAGES);
+		customerName = getConfig().getString(CUSTOMER_NAME, DEFAULT_CUSTOMER_NAME);
+		confidentialText = getConfig().getString(CONFIDENTIAL_TEXT, DEFAULT_CONFIDENTIAL_TEXT);
+		pdfKeywords = getConfig().getString(PDF_KEYWORDS, DEFAULT_PDF_KEYWORDS);
+		authorName = getConfig().getString(AUTHOR_NAME, DEFAULT_AUTHOR_NAME);
+		companyName = getConfig().getString(COMPANY_NAME, DEFAULT_COMPANY_NAME);
+		formatReport = getConfig().getString(FORMAT_REPORT, DEFAULT_FORMAT_REPORT);
+		documentAttach = getConfig().getString(DOCUMENT_ATTACH_FILE_NAME, DEFAULT_DOCUMENT_ATTACH_FILE_NAME);
     }
 
    

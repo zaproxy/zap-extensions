@@ -1,3 +1,22 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ * 
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ * 
+ * Copyright 2011 The ZAP Development team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ */
 package org.zaproxy.zap.extension.alertReport;
 
 import java.io.FileOutputStream;
@@ -9,16 +28,12 @@ import org.parosproxy.paros.core.scanner.Alert;
 
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
-import com.itextpdf.text.List;
-import com.itextpdf.text.ListItem;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Section;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -35,15 +50,13 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 public class AlertReportExportPDF {
 
-		private static ExtensionAlertReportExport extension = null;
+		//private static ExtensionAlertReportExport extension = null;
 		private static final Logger logger = Logger.getLogger(AlertReportExportPDF.class);
 		private static Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 28,
 			Font.BOLD);
 	
 		private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,
 				Font.BOLD);
-		private static Font redFont = new Font(Font.FontFamily.TIMES_ROMAN, 12,
-				Font.NORMAL, BaseColor.RED);
 		private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
 				Font.BOLD);
 		private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12,
@@ -57,17 +70,16 @@ public class AlertReportExportPDF {
 			
 		}
 
-		public boolean exportAlert(java.util.List alerts, String fileName,ExtensionAlertReportExport extensionExport){
+		public boolean exportAlert(java.util.List<java.util.List<Alert>> alerts, String fileName,ExtensionAlertReportExport extensionExport){
+			Document document = new Document(PageSize.A4);
 			try {
-				extension = extensionExport;
-				Document document = new Document(PageSize.A4);
 				//Document documentAdd = null;
 				PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileName));
 				document.open();
 				boolean attach = false;
 				//add attach document is exist
-				if (!extension.getParams().getDocumentAttach().isEmpty()){
-					PdfReader reader = new PdfReader(extension.getParams().getDocumentAttach());
+				if (!extensionExport.getParams().getDocumentAttach().isEmpty()){
+					PdfReader reader = new PdfReader(extensionExport.getParams().getDocumentAttach());
 					int n = reader.getNumberOfPages();
 					PdfImportedPage page;
 					// Go through all pages
@@ -80,18 +92,19 @@ public class AlertReportExportPDF {
 					attach =true;
 				}
 				if (!attach){
-					addMetaData(document);
-					addTitlePage(document);
+					addMetaData(document,extensionExport);
+					addTitlePage(document,extensionExport);
 				}
 				for (int i = 0; i < alerts.size(); i++) {
-					java.util.List alertAux = (java.util.List) alerts.get(i);
-					addContent(document,alertAux);
+					java.util.List<Alert> alertAux = (java.util.List<Alert>) alerts.get(i);
+					addContent(document,alertAux,extensionExport);
 				}
 				
 				document.close();
 				return true;
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
+				document.close();
 				return false;
 			}
 			
@@ -100,16 +113,16 @@ public class AlertReportExportPDF {
 		// iText allows to add metadata to the PDF which can be viewed in your Adobe
 		// Reader
 		// under File -> Properties
-		private static void addMetaData(Document document) {
+		private static void addMetaData(Document document,ExtensionAlertReportExport extensionExport) {
 					
-			document.addTitle(extension.getParams().getTitleReport());
-			document.addSubject(extension.getParams().getCustomerName());
-			document.addKeywords(extension.getParams().getPdfKeywords());
-			document.addAuthor(extension.getParams().getAuthorName());
-			document.addCreator(extension.getParams().getAuthorName());
+			document.addTitle(extensionExport.getParams().getTitleReport());
+			document.addSubject(extensionExport.getParams().getCustomerName());
+			document.addKeywords(extensionExport.getParams().getPdfKeywords());
+			document.addAuthor(extensionExport.getParams().getAuthorName());
+			document.addCreator(extensionExport.getParams().getAuthorName());
 		}
 
-		private static void addTitlePage(Document document)
+		private static void addTitlePage(Document document,ExtensionAlertReportExport extensionExport)
 				throws DocumentException {
 			
 			document.addHeader("Header1", "Header2");
@@ -118,24 +131,24 @@ public class AlertReportExportPDF {
 			// We add one empty line
 			addEmptyLine(preface, 3);
 			//add logo first page
-			addImage(preface, extension.getParams().getLogoFileName(),40f);
+			addImage(preface, extensionExport.getParams().getLogoFileName(),40f);
 		
 			addEmptyLine(preface, 4);
 			// Lets write a big header
-			Paragraph paragraph = new Paragraph(extension.getParams().getTitleReport(), titleFont);
+			Paragraph paragraph = new Paragraph(extensionExport.getParams().getTitleReport(), titleFont);
 			paragraph.setAlignment(Paragraph.ALIGN_CENTER);
 			preface.add(paragraph);
 			
 			addEmptyLine(preface, 3);
-			paragraph = new Paragraph(extension.getParams().getCustomerName(),	catFont);
+			paragraph = new Paragraph(extensionExport.getParams().getCustomerName(),	catFont);
 			paragraph.setAlignment(Paragraph.ALIGN_CENTER);
 			preface.add(paragraph);
 		
 			
 			addEmptyLine(preface, 15);
 			
-			preface.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.confidential"),smallBold));
-			preface.add(new Paragraph(extension.getParams().getConfidentialText(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			preface.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.confidential"),smallBold));
+			preface.add(new Paragraph(extensionExport.getParams().getConfidentialText(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					litleFont));
 
 			document.add(preface);
@@ -169,7 +182,7 @@ public class AlertReportExportPDF {
 			
 		}
 		
-		private static void addContent(Document document,java.util.List<Alert> alerts) throws DocumentException, MalformedURLException, IOException {
+		private static void addContent(Document document,java.util.List<Alert> alerts,ExtensionAlertReportExport extensionExport) throws DocumentException {
 			
 			Alert alert = alerts.get(0);
 			
@@ -178,16 +191,16 @@ public class AlertReportExportPDF {
 			
 			Paragraph content = new Paragraph();
 			content.add(new Paragraph(alert.getAlert(), catFont));
-			content.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.description"), subFont));
+			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.description"), subFont));
 			content.add(new Paragraph(alert.getDescription()));
 			addEmptyLine(content, 1);
-			content.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.risk"), subFont));
+			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.risk"), subFont));
 			content.add(new Paragraph(Alert.MSG_RISK[alert.getRisk()]));
 			addEmptyLine(content, 1);
-			content.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.reability"), subFont));
+			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.reability"), subFont));
 			content.add(new Paragraph(Alert.MSG_RISK[alert.getReliability()]));
 			addEmptyLine(content, 1);
-			content.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.urls"), subFont));
+			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.urls"), subFont));
 			
 			// write all url with the same pluginid
 			for (int i = 0; i < alerts.size(); i++) {
@@ -197,11 +210,11 @@ public class AlertReportExportPDF {
 				anchor.setReference(alertAux.getUri());
 				content.add(anchor);
 				if (!alertAux.getParam().isEmpty()){	
-					content.add(new Paragraph("           "+extension.getMessageString("alert.export.message.export.pdf.parameters")+": "+alertAux.getParam()));
+					content.add(new Paragraph("           "+extensionExport.getMessageString("alert.export.message.export.pdf.parameters")+": "+alertAux.getParam()));
 					addEmptyLine(content, 1);
 				}
 				if (!alertAux.getAttack().isEmpty()){
-					content.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.attack"), subFont));
+					content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.attack"), subFont));
 					content.add(new Paragraph(alertAux.getAttack()));
 					addEmptyLine(content, 1);
 				}
@@ -210,23 +223,23 @@ public class AlertReportExportPDF {
 				String images = alertAux.getOtherInfo(); 
 				if (!images.isEmpty()){
 					String[] list = images.split("\n");
-					for (int j = 0; j < list.length; j++) {
-						
-						if (!((j+1)>=list.length)){
-							String step = list[j];
-							Paragraph paragraph = new Paragraph(step);
-							content.add(paragraph);
-							addEmptyLine(content, 1);
-							//add step and image
-							String imageName = "";
-							String path = extension.getParams().getWorkingDirImages();
+					for (int j = 0, lengh = list.length/2; j <= lengh; j += 2) {
+						//if (!((j+1)>=list.length)){
+						String step = list[j];
+						Paragraph paragraph = new Paragraph(step);
+						content.add(paragraph);
+						addEmptyLine(content, 1);
+						//add step and image
+						String imageName = "";
+						String path = extensionExport.getParams().getWorkingDirImages();
+						if (!list[j+1].isEmpty()){
 							imageName = list[j+1];
 							//if exist an image
 							try{
-								if ((imageName.contains(".png")||imageName.contains(".jpg"))&&(!path.isEmpty())){
+								if ((imageName.endsWith(".png")||imageName.endsWith(".jpg"))&&(!path.isEmpty())){
 									addImage(content, path+"/"+imageName, 60f);
 									addEmptyLine(content, 1);
-									paragraph = new Paragraph(extension.getMessageString("alert.export.message.export.pdf.image")+": "+String.valueOf(j),	litleFont);
+									paragraph = new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.image")+": "+Integer.toString(j),	litleFont);
 									paragraph.setAlignment(Paragraph.ALIGN_CENTER);
 									content.add(paragraph);
 								}else{
@@ -237,8 +250,9 @@ public class AlertReportExportPDF {
 							} catch (Exception e) {
 								logger.error(e.getMessage(), e);
 							}
-							j++;
 						}
+				//		j++;
+				//	}
 						
 						
 					
@@ -249,10 +263,10 @@ public class AlertReportExportPDF {
 						
 			}
 			addEmptyLine(content, 1);
-			content.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.solution"), subFont));
+			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.solution"), subFont));
 			content.add(new Paragraph(alert.getSolution()));
 			addEmptyLine(content, 1);
-			content.add(new Paragraph(extension.getMessageString("alert.export.message.export.pdf.references"), subFont));
+			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.references"), subFont));
 			content.add(new Paragraph(alert.getReference()));
 			addEmptyLine(content, 1);
             document.add(content);
@@ -290,13 +304,7 @@ public class AlertReportExportPDF {
 			}
 
 		} */
-		private static void createList(Section subCatPart) {
-			List list = new List(true, false, 10);
-			list.add(new ListItem("First point"));
-			list.add(new ListItem("Second point"));
-			list.add(new ListItem("Third point"));
-			subCatPart.add(list);
-		}
+
 
 		private static void addEmptyLine(Paragraph paragraph, int number) {
 			for (int i = 0; i < number; i++) {
