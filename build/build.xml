@@ -46,7 +46,7 @@
 		<antcall target="build-extension"> 
 			<param name="extension" value="csrfcountermeasuresscan"/> 
 			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
+			<param name="version" value="2"/> 
 		</antcall>
 	</target>
 	
