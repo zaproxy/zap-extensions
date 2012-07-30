@@ -85,7 +85,7 @@ public class SessionFixation extends AbstractAppPlugin {
      * @return the internationalised message corresponding to the key
      */
     public String getString(String key) {
-        try {
+    	try {
             return messages.getString(key);
         } catch (MissingResourceException e) {
             return '!' + key + '!';
@@ -99,7 +99,7 @@ public class SessionFixation extends AbstractAppPlugin {
      * @return the internationalised message corresponding to the key, using the parameters supplied
      */
     public String getString(String key, Object... params  ) {
-        try {
+    	try {
             return MessageFormat.format(messages.getString(key), params);
         } catch (MissingResourceException e) {
             return '!' + key + '!';
@@ -472,7 +472,8 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		if ( cookieBack1ExpiryDate == null )  {
 	        			//session expires when the browser closes.. rate this as medium risk?
 	        			sessionExpiryRiskLevel = Alert.RISK_MEDIUM;
-	        			sessionExpiryDescription=getString("sessionidexpiry.browserclose");
+	        			sessionExpiryRiskDescription="sessionidexpiry.browserclose";
+	        			sessionExpiryDescription=getString(sessionExpiryRiskDescription);
 	        		} else {
 	        			long datediffSeconds = ( cookieBack1ExpiryDate.getTime() - cookieBack1TimeReceived) / 1000;
 		        		long anHourSeconds = 3600;
@@ -508,9 +509,8 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		//alert it if the default session expiry risk level is more than informational
 	        		if (sessionExpiryRiskLevel > Alert.RISK_INFO) {
 	        			//pass the original param value here, not the new value
-	        			String timeDescription= getString(sessionExpiryRiskDescription);
 	        			String cookieReceivedTime = cookieBack1Expiry = DateUtil.formatDate( new Date (cookieBack1TimeReceived), DateUtil.PATTERN_RFC1123);
-	        			String extraInfo = getString("sessionidexpiry.alert.extrainfo", currentHtmlParameter.getType(), currentHtmlParameter.getName(), currentHtmlParameter.getValue(), sessionExpiryDescription, timeDescription, cookieReceivedTime);
+	        			String extraInfo = getString("sessionidexpiry.alert.extrainfo", currentHtmlParameter.getType(), currentHtmlParameter.getName(), currentHtmlParameter.getValue(), sessionExpiryDescription, cookieReceivedTime);
 	        			String attack = getString("sessionidexpiry.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        			String vulnname=getString("sessionidexpiry.name");
 	        			String vulndesc=getString("sessionidexpiry.desc");
