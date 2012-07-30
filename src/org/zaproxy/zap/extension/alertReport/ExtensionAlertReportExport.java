@@ -39,10 +39,8 @@ import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 
 
@@ -54,7 +52,7 @@ import org.parosproxy.paros.view.View;
  * @author leandroferrari
  *
  */
-public class ExtensionAlertReportExport extends ExtensionAdaptor implements SessionChangedListener  {
+public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 
 	
 	public static final String NAME = "ExtensionAlertReportExports";
@@ -63,17 +61,14 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
 	private JMenuItem menuItemAlertExport = null;
 	private AlertReportExportParam params;
 	private ResourceBundle messages = null;
-	private Logger logger = Logger.getLogger(ExtensionAlertReportExport.class);
+	private List<Alert> alertsDB = null;
+	private static final Logger logger = Logger.getLogger(ExtensionAlertReportExport.class);
 
-
+	
 	public AlertReportExportParam getParams() {
 		if (params==null)
 			params = new AlertReportExportParam();
 		return params;
-	}
-
-	public void setParams(AlertReportExportParam params) {
-		this.params = params;
 	}
 
 	private OptionsAlertReportExportPanel getOptionsAlertExportPanel() {
@@ -87,42 +82,15 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
     * 
     */
 	public ExtensionAlertReportExport() {
-		super();
-		initialize();
+		super(ExtensionAlertReportExport.NAME);
 	}
-
-
-	/**
-	 * @param name
-	 */
-	public ExtensionAlertReportExport(String name) {
-		super(name);
-	}
-	
-	/**
-	 * This method initializes this
-	 * 
-	 * @return void
-	 */
-	private void initialize() {
-		try{	
-			this.setName("ExtensionReportExport");
-			 // Load extension specific language files - these are held in the extension jar
-	        messages = ResourceBundle.getBundle(
-	        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
-	        logger.info("loaded plugin alert report: " + this.getName()); 
-		 } catch (Exception e) {
-	         logger.error("error loaded plugin alert report: "+e.getMessage(), e);
-	     }
-	}
-	
 
 	@Override
 	public void initView(ViewDelegate view) {
 		super.initView(view);
 	}
 
-
+	@Override
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 
@@ -134,7 +102,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
 		}
 
 	}
-
+    
 	private JMenuItem getMenuItemAlertReport() {
 		if (menuItemAlertExport == null) {
 			menuItemAlertExport = new JMenuItem();
@@ -160,8 +128,12 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
 		}
 		return alertReportExportMenuItem;
 	}
-
+   
 	public String getMessageString(String key) {
+		if (messages==null){
+			messages = ResourceBundle.getBundle(
+	        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+		}
 		return messages.getString(key);
 	}
 
@@ -191,11 +163,11 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
 	 * get Alerts from DB
 	 * @return
 	 */
-	public List getAllAlerts() {
-        List allAlerts = new ArrayList();
+	public List<Alert> getAllAlerts() {
+        List<Alert> allAlerts = new ArrayList<Alert>();
 
         TableAlert tableAlert = getModel().getDb().getTableAlert();
-        Vector v;
+        Vector<Integer> v;
         try {
             v = tableAlert.getAlertList();
 
@@ -210,6 +182,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
         }
+        alertsDB = allAlerts;
         return allAlerts;
     }
 	
@@ -269,29 +242,18 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor implements Sess
 	 * @param alertSelected
 	 * @return
 	 */
-	public List getAlertsSelected(Alert alertSelected){
-		List alertsAll = this.getAllAlerts();
-		List alerts = new ArrayList();
-		for (int i = 0; i < alertsAll.size(); i++) {
-			Alert alert = (Alert) alertsAll.get(i);
+	public List<Alert> getAlertsSelected(Alert alertSelected){
+		//check if read from db
+		if (alertsDB==null)
+			alertsDB = this.getAllAlerts();
+		List<Alert> alerts = new ArrayList<Alert>();
+		for (int i = 0; i < alertsDB.size(); i++) {
+			Alert alert = (Alert) alertsDB.get(i);
 			if (alertSelected.getAlert().equals(alert.getAlert()))
 				alerts.add(alert);
 		}
 		
 		return alerts; 
-	}
-	
-	@Override
-	public void sessionChanged(Session session) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void sessionAboutToChange(Session session) {
-		// TODO Auto-generated method stub
-		
 	}
 
 
