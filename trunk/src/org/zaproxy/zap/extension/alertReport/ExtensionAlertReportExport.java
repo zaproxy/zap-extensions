@@ -255,6 +255,12 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 		
 		return alerts; 
 	}
+	/**
+	 * Clear alertsDB in memory
+	 */
+	public void clearAlertsDB(){
+		this.alertsDB = null;
+	}
 
 
 
