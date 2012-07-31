@@ -4,18 +4,18 @@ This project contains extensions for the [https://code.google.com/p/zaproxy OWAS
 These can be added to ZAP by simply dropping them into the ZAP 'plugins' directory and restarting ZAP - you dont need to rebuild ZAP. Note that you must be running at least the latest 1.4 release.
 
 The following extensions are currently available:
-|| *Status* || *Name* || *Author* || *Description* ||
-|| Beta || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-scripts-beta-3.jar scriptConsole] || ZAP Core Team || Provides dynamic access to internal ZAP data structures ([https://code.google.com/p/zaproxy/wiki/ScriptConsole more info]) ||
-|| Beta || [https://code.google.com/p/zap-extensions/downloads/detail?name=UtlimateObsoleteFileDetection.jar ultimateObsoleteFileDetection] || Alex Ganelis & Dan Meged, [http://www.hacktics.com/ Hacktics ASC, Ernst & Young] || Advanced obsolete/hidden file detection (Installer/Plugin/Source)||
-|| Beta || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-alertReport-beta-3.jar alertReport] || Leandro Ferrari, [http://www.talsoft.com.ar/ TalSoft SRL] || Report alert generator in pdf or odt format. ||
-|| Alpha || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-servletParamPollution-alpha-1.jar Parameter pollution scanner] || ZAP Core Team || Flags FORMS with no target attributes ||
-|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-highlighter-alpha-1.jar highlighter] || ZAP Core Team || Allows you to highlight strings in the request and response tabs. || 
-|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-insecureauthentication-alpha-2.jar InsecureAuthentication] || ZAP Core Team (Colm O'Flaherty) || Insecure Authentication passive scanner ||
-|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-ldapinjectionscan-alpha-1.jar LDAPInjection] || ZAP Core Team (Colm O'Flaherty) || LDAP Injection scanner ||
-|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sessionfixationscan-alpha-8.jar SessionFixation] || ZAP Core Team (Colm O'Flaherty) || Session Fixation scanner ||
-|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-csrfcountermeasuresscan-alpha-1.jar CSRF Countermeasures Scanner] || ZAP Core Team || CSRF Countermeasures Scanner ||
-|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-tokengen-alpha-1.jar tokengen] || ZAP Core Team || Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection. ||
-|| Alpha || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-viewStatePScan-alpha-1.jar viewStatePscan] || Alexandre Herzog, [http://www.csnc.ch/ Compass Security] || View State passive scanner ||
+|| *Status* || *Ver* || *Name* || *Author* || *Description* ||
+|| Beta || 3 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-scripts-beta-3.jar scriptConsole] || ZAP Core Team || Provides dynamic access to internal ZAP data structures ([https://code.google.com/p/zaproxy/wiki/ScriptConsole more info]) ||
+|| Beta || n/a || [https://code.google.com/p/zap-extensions/downloads/detail?name=UtlimateObsoleteFileDetection.jar ultimateObsoleteFileDetection] || Alex Ganelis & Dan Meged, [http://www.hacktics.com/ Hacktics ASC, Ernst & Young] || Advanced obsolete/hidden file detection (Installer/Plugin/Source)||
+|| Beta || 3 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-alertReport-beta-3.jar alertReport] || Leandro Ferrari, [http://www.talsoft.com.ar/ TalSoft SRL] || Report alert generator in pdf or odt format. ||
+|| Alpha || 1 || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-servletParamPollution-alpha-1.jar Parameter pollution scanner] || ZAP Core Team || Flags FORMS with no target attributes ||
+|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-highlighter-alpha-1.jar highlighter] || ZAP Core Team || Allows you to highlight strings in the request and response tabs. || 
+|| Alpha || 2 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-insecureauthentication-alpha-2.jar InsecureAuthentication] || ZAP Core Team (Colm O'Flaherty) || Insecure Authentication passive scanner ||
+|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-ldapinjectionscan-alpha-1.jar LDAPInjection] || ZAP Core Team (Colm O'Flaherty) || LDAP Injection scanner ||
+|| Alpha || 8 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sessionfixationscan-alpha-8.jar SessionFixation] || ZAP Core Team (Colm O'Flaherty) || Session Fixation scanner ||
+|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-csrfcountermeasuresscan-alpha-1.jar CSRF Countermeasures Scanner] || ZAP Core Team || CSRF Countermeasures Scanner ||
+|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-tokengen-alpha-1.jar tokengen] || ZAP Core Team || Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection. ||
+|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-viewStatePScan-alpha-1.jar viewStatePscan] || Alexandre Herzog, [http://www.csnc.ch/ Compass Security] || View State passive scanner ||
 
 This project also contains example templates to help you get started when developing new ones:
   * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleActiveScan/ExampleActiveScanner.java Active Scanner rule]
