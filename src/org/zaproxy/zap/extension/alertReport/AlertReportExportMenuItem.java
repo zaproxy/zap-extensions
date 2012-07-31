@@ -122,6 +122,8 @@ public class AlertReportExportMenuItem extends ExtensionPopupMenuItem {
 					View.getSingleton().showMessageDialog(
 							getMessageString("alert.export.message.export.fail"));
 				}
+			//clear alertsDB from memory
+			extension.clearAlertsDB();
 			}
 
 	}
