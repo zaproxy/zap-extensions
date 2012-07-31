@@ -42,31 +42,21 @@ public class AlertReportExportParam extends AbstractParam {
 	private static final String AUTHOR_NAME = "reportexport.authorName";
 	private static final String COMPANY_NAME = "reportexport.companyName";
 	
-	
-	
-	public static String DEFAULT_TITLE_REPORT = "";
-	public static String DEFAULT_CUSTOMER_NAME = "";
-	public static String DEFAULT_CONFIDENTIAL_TEXT = "";
-	public static String DEFAULT_PDF_KEYWORDS = "";
 	public static final String DEFAULT_WORKING_DIR_IMAGES = "";
 	public static final String DEFAULT_DOCUMENT_ATTACH_FILE_NAME = "";
 	public static final String DEFAULT_LOGO_FILE_NAME = "";
-	public static String DEFAULT_AUTHOR_NAME = "";
-	public static String DEFAULT_COMPANY_NAME = "";
-	public static String DEFAULT_FORMAT_REPORT = "";
-
 	public static final String EMPTY_STRING = "";
 		
-	private String titleReport = DEFAULT_TITLE_REPORT;
-	private String logoFileName = DEFAULT_LOGO_FILE_NAME;
+	private String titleReport;
+	private String logoFileName;
 	private String documentAttach = DEFAULT_DOCUMENT_ATTACH_FILE_NAME;
 	private String workingDirImages = DEFAULT_WORKING_DIR_IMAGES;
-	private String customerName = DEFAULT_CUSTOMER_NAME;
-	private String confidentialText = DEFAULT_CONFIDENTIAL_TEXT;
-	private String pdfKeywords = DEFAULT_PDF_KEYWORDS;
-	private String authorName = DEFAULT_AUTHOR_NAME;
-	private String companyName = DEFAULT_COMPANY_NAME;
-	private String formatReport = DEFAULT_FORMAT_REPORT;
+	private String customerName;
+	private String confidentialText;
+	private String pdfKeywords;
+	private String authorName;
+	private String companyName;
+	private String formatReport;
 	
     public String getCompanyName() {
 		return companyName;
@@ -99,28 +89,22 @@ public class AlertReportExportParam extends AbstractParam {
      * @param rootElementName
      */
     public AlertReportExportParam() {
-    	ResourceBundle messages = ResourceBundle.getBundle(
-        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
-    	this.authorName = messages.getString("alert.export.report.authorname.default");
-    	this.titleReport = messages.getString("alert.export.report.title.default");
-    	this.pdfKeywords = messages.getString("alert.export.report.keywords.default");
-    	this.customerName = messages.getString("alert.export.report.title.customername.default");
-    	this.confidentialText = messages.getString("alert.export.report.confidentialtext.default");
-    	this.companyName = messages.getString("alert.export.report.companyname.default");
-    	this.formatReport = messages.getString("alert.export.report.formatreport.default");
+
     }
 
     @Override
     protected void parse(){
-		titleReport = getConfig().getString(TITLE_REPORT, DEFAULT_TITLE_REPORT);
+    	ResourceBundle messages = ResourceBundle.getBundle(
+        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+		titleReport = getConfig().getString(TITLE_REPORT, messages.getString("alert.export.report.title.default"));
 		logoFileName = getConfig().getString(LOGO_FILE_NAME, DEFAULT_LOGO_FILE_NAME);
 		workingDirImages = getConfig().getString(WORKING_DIR_IMAGES, DEFAULT_WORKING_DIR_IMAGES);
-		customerName = getConfig().getString(CUSTOMER_NAME, DEFAULT_CUSTOMER_NAME);
-		confidentialText = getConfig().getString(CONFIDENTIAL_TEXT, DEFAULT_CONFIDENTIAL_TEXT);
-		pdfKeywords = getConfig().getString(PDF_KEYWORDS, DEFAULT_PDF_KEYWORDS);
-		authorName = getConfig().getString(AUTHOR_NAME, DEFAULT_AUTHOR_NAME);
-		companyName = getConfig().getString(COMPANY_NAME, DEFAULT_COMPANY_NAME);
-		formatReport = getConfig().getString(FORMAT_REPORT, DEFAULT_FORMAT_REPORT);
+		customerName = getConfig().getString(CUSTOMER_NAME, messages.getString("alert.export.report.title.customername.default"));
+		confidentialText = getConfig().getString(CONFIDENTIAL_TEXT, messages.getString("alert.export.report.confidentialtext.default"));
+		pdfKeywords = getConfig().getString(PDF_KEYWORDS, messages.getString("alert.export.report.keywords.default"));
+		authorName = getConfig().getString(AUTHOR_NAME,  messages.getString("alert.export.report.authorname.default"));
+		companyName = getConfig().getString(COMPANY_NAME, messages.getString("alert.export.report.companyname.default"));
+		formatReport = getConfig().getString(FORMAT_REPORT, messages.getString("alert.export.report.formatreport.default"));
 		documentAttach = getConfig().getString(DOCUMENT_ATTACH_FILE_NAME, DEFAULT_DOCUMENT_ATTACH_FILE_NAME);
     }
 
