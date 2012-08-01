@@ -7,7 +7,7 @@
 	<property name="dist.lib.dir" location="../lib" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
-
+	
 	<target name="clean">
 		<delete dir="${dist}" includeEmptyDirs="true" />
 		<delete dir="${build}" includeEmptyDirs="true" />
@@ -42,6 +42,14 @@
 	 version should be an integer that increments on each release, starting at 1
 	 -->
 
+	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="csrfcountermeasuresscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="2"/> 
+		</antcall>
+	</target>
+	
 	<target name="build-extension" description="build the specified extension">
 		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}.jar" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
@@ -64,45 +72,93 @@
 		</jar>
 	</target>
 	<target name="build-exampleActiveScan" description="build the exampleActiveScan extension">
-		<antcall target="build-extension">
-			<param name="extension" value="exampleActiveScan" />
-			<param name="type" value="example"/>
-			<param name="version" value="1"/>
+		<antcall target="build-extension"> 
+			<param name="extension" value="exampleActiveScan"/> 
+			<param name="type" value="example"/> 
+			<param name="version" value="1"/> 
 		</antcall>
 	</target>
 
 	<target name="build-examplePassiveScan" description="build the examplePassiveScan extension">
-		<antcall target="build-extension">
-			<param name="extension" value="examplePassiveScan"/>
-			<param name="type" value="example"/>
-			<param name="version" value="1"/>
+		<antcall target="build-extension"> 
+			<param name="extension" value="examplePassiveScan"/> 
+			<param name="type" value="example"/> 
+			<param name="version" value="1"/> 
 		</antcall>
 	</target>
 
 	<target name="build-exampleRightClickMsg" description="build the exampleRightClickMsg extension">
-		<antcall target="build-extension">
-			<param name="extension" value="exampleRightClickMsg"/>
-			<param name="type" value="example"/>
-			<param name="version" value="1"/>
+		<antcall target="build-extension"> 
+			<param name="extension" value="exampleRightClickMsg"/> 
+			<param name="type" value="example"/> 
+			<param name="version" value="1"/> 
 		</antcall>
 	</target>
 
 	<target name="build-exampleTopMenu" description="build the exampleTopMenu extension">
-		<antcall target="build-extension">
-			<param name="extension" value="exampleTopMenu"/>
-			<param name="type" value="example"/>
-			<param name="version" value="1"/>
+		<antcall target="build-extension"> 
+			<param name="extension" value="exampleTopMenu"/> 
+			<param name="type" value="example"/> 
+			<param name="version" value="1"/> 
 		</antcall>
 	</target>
 
 	<target name="build-highlighter" description="build the highlighter extension">
-		<antcall target="build-extension">
-			<param name="extension" value="highlighter"/>
+		<antcall target="build-extension"> 
+			<param name="extension" value="highlighter"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+	
+	<target name="build-insecureauthentication" description="build the InsecureAuthentication extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="insecureauthentication"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="3"/> 
+		</antcall>
+	</target>
+	
+	<target name="build-ldapinjection" description="build the LDAPInjection extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="ldapinjectionscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+	
+	<target name="build-scripts" description="build the scripts extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="scripts"/> 
+			<param name="type" value="beta"/> 
+			<param name="version" value="3"/> 
+		</antcall>
+	</target>
+	
+	<target name="build-sessionfixation" description="build the SessionFixation extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="sessionfixationscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="8"/> 
+		</antcall>
+	</target>
+
+	<target name="build-servletParamPollution" description="build the ServletParamPollution extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="servletParamPollution"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+	
+	<target name="build-spiderAjax" description="build the spiderAjax extension">
+		<antcall target="build-extensionAndDeps">
+			<param name="extension" value="spiderAjax"/>
 			<param name="type" value="alpha"/>
 			<param name="version" value="1"/>
 		</antcall>
 	</target>
-
+	
 	<target name="build-tokengen" description="build the tokengen extension">
 		<!-- Cant use build-extension as other classes needed -->
 		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
@@ -120,129 +176,136 @@
 	</target>
 
 	<target name="build-viewStatePScan" description="build the viewStatePScan extension">
-		<antcall target="build-extension">
-			<param name="extension" value="viewStatePScan"/>
-			<param name="type" value="alpha"/>
-			<param name="version" value="1"/>
+		<antcall target="build-extension"> 
+			<param name="extension" value="viewStatePScan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
 		</antcall>
 	</target>
-
-	<target name="build-sessionfixation" description="build the SessionFixation extension">
-		<antcall target="build-extension">
-			<param name="extension" value="sessionfixationscan"/>
-			<param name="type" value="alpha"/>
-			<param name="version" value="7"/>
-		</antcall>
+	
+	<target name="build-alertReport" description="build the Alert Report ZAP extension">
+			<property name="report.extension" value="alertReport"/> 
+			<property name="report.type" value="beta"/> 
+			<property name="report.version" value="3"/> 
+		 	<property name="lib.dir" value="itextpdf"/>
+			<property name="jar.dir" value="jar"/>
+			<jar jarfile="${dist}/zap-ext-${report.extension}-${report.type}-${report.version}.jar" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="org/zaproxy/zap/extension/alertReport/**"/>
+					</zipfileset>
+					<fileset dir="${lib.dir}" includes="**/*.*" />
+				    <zipgroupfileset dir="jar/" includes="*.jar" />
+					<zipfileset dir="${src}" prefix="">
+						<include name="org/zaproxy/zap/extension/alertReport/Messages*"/>
+					</zipfileset>
+			</jar>
 	</target>
-
-	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
-		<antcall target="build-extension">
-			<param name="extension" value="csrfcountermeasuresscan"/>
-			<param name="type" value="alpha"/>
-			<param name="version" value="1"/>
-		</antcall>
-	</target>
-	<target name="build-spiderAjax" description="build the spiderAjax extension">
-		<antcall target="build-extensionAndDeps">
-			<param name="extension" value="spiderAjax"/>
-			<param name="type" value="alpha"/>
-			<param name="version" value="1"/>
-		</antcall>
-	</target>
-
-
+	
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
-		<antcall target="build-exampleActiveScan" />
+		<!-- Keep in alphabetical order ;) -->
+		<antcall target="build-csrfcountermeasures"/>
+		<antcall target="build-exampleActiveScan"/>
 		<antcall target="build-examplePassiveScan"/>
 		<antcall target="build-exampleRightClickMsg"/>
 		<antcall target="build-exampleTopMenu"/>
 		<antcall target="build-highlighter"/>
+		<antcall target="build-insecureauthentication"/>
+		<antcall target="build-ldapinjection"/>
+		<antcall target="build-scripts"/>
+		<antcall target="build-servletParamPollution"/>
+		<antcall target="build-sessionfixation"/>
+		<antcall target="build-spiderAjax"/>
 		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
-		<antcall target="build-sessionfixation"/>
-		<antcall target="build-csrfcountermeasures"/>
-		<antcall target="build-spiderAjax"/>
+		<!--<antcall target="build-alertReport"/>-->
 	</target>
 
 	<target name="deploy-extension" description="deploy the specified extension">
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="zap-ext-${extension}-*.jar"/>
+			<include name="zap-ext-${extension}-*.jar"/>
 			</fileset>
 		</copy>
 		<!--copy file="${dist}/zap-ext-${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
 	</target>
 
+	<target name="deploy-csrfcountermeasures" description="deploy the csrfcountermeasures extension">
+		<antcall target="deploy-extension"> <param name="extension" value="csrfcountermeasuresscan"/> </antcall>
+	</target>
+
 	<target name="deploy-exampleActiveScan" description="deploy the exampleActiveScan extension">
-		<antcall target="deploy-extension">
-			<param name="extension" value="exampleActiveScan"/>
-		</antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="exampleActiveScan"/> </antcall>
 	</target>
 
 	<target name="deploy-examplePassiveScan" description="deploy the examplePassiveScan extension">
-		<antcall target="deploy-extension">
-			<param name="extension" value="examplePassiveScan"/>
-		</antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="examplePassiveScan"/> </antcall>
 	</target>
 
 	<target name="deploy-exampleRightClickMsg" description="deploy the exampleRightClickMsg extension">
-		<antcall target="deploy-extension">
-			<param name="extension" value="exampleRightClickMsg"/>
-		</antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="exampleRightClickMsg"/> </antcall>
 	</target>
 
 	<target name="deploy-exampleTopMenu" description="deploy the exampleTopMenu extension">
-		<antcall target="deploy-extension">
-			<param name="extension" value="exampleTopMenu"/>
-		</antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="exampleTopMenu"/> </antcall>
 	</target>
 
 	<target name="deploy-highlighter" description="deploy the highlighter extension">
-		<antcall target="deploy-extension">
-			<param name="extension" value="highlighter"/>
-		</antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
+	</target>
+	
+	<target name="deploy-insecureauthenticationscan" description="deploy the insecureauthentication extension">
+		<antcall target="deploy-extension"> <param name="extension" value="insecureauthentication"/> </antcall>
 	</target>
 
-	<target name="deploy-tokengen" description="deploy the tokengen extension">
-		<antcall target="deploy-extension">
-			<param name="extension" value="tokengen"/>
-		</antcall>
+	<target name="deploy-ldapinjectionscan" description="deploy the ldapinjection extension">
+		<antcall target="deploy-extension"> <param name="extension" value="ldapinjectionscan"/> </antcall>
 	</target>
-
-	<target name="deploy-viewStatePScan" description="deploy the viewStatePScan extension">
-		<antcall target="deploy-extension">
-			<param name="extension" value="viewStatePScan"/>
-		</antcall>
+	
+	<target name="deploy-scripts" description="deploy the scripts extension">
+		<antcall target="deploy-extension"> <param name="extension" value="scripts"/> </antcall>
+	</target>
+	
+	<target name="deploy-servletParamPollution" description="deploy the servletParamPollution extension">
+		<antcall target="deploy-extension"> <param name="extension" value="servletParamPollution"/> </antcall>
 	</target>
 
 	<target name="deploy-sessionfixationscan" description="deploy the sessionfixation extension">
-		<antcall target="deploy-extension">
-			<param name="extension" value="sessionfixationscan"/>
-		</antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="sessionfixationscan"/> </antcall>
 	</target>
-
-	<target name="deploy-csrfcountermeasures" description="deploy the csrfcountermeasures extension">
-		<antcall target="deploy-extension">
-			<param name="extension" value="csrfcountermeasuresscan"/>
-		</antcall>
-	</target>
+	
 	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
-		<antcall target="deploy-extension">
-			<param name="extension" value="spiderAjax"/>
-		</antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="spiderAjax"/> </antcall>
+	</target>
+	
+	<target name="deploy-tokengen" description="deploy the tokengen extension">
+		<antcall target="deploy-extension"> <param name="extension" value="tokengen"/> </antcall>
 	</target>
 
+	<target name="deploy-viewStatePScan" description="deploy the viewStatePScan extension">
+		<antcall target="deploy-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
+	</target>
+	
+	<target name="deploy-alertReport" description="deploy the Alert Report ZAP extension">
+			<antcall target="deploy-extension"> <param name="extension" value="alertReport"/> </antcall>
+		</target>
+	
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
+		<!-- Keep in alphabetical order ;) -->
+		<antcall target="deploy-csrfcountermeasures"/>
 		<antcall target="deploy-exampleActiveScan"/>
 		<antcall target="deploy-examplePassiveScan"/>
 		<antcall target="deploy-exampleRightClickMsg"/>
 		<antcall target="deploy-exampleTopMenu"/>
 		<antcall target="deploy-highlighter"/>
+		<antcall target="deploy-insecureauthenticationscan"/>
+		<antcall target="deploy-ldapinjectionscan"/>
+		<antcall target="deploy-scripts"/>
+		<antcall target="deploy-servletParamPollution"/>
+		<antcall target="deploy-sessionfixationscan"/>
+		<antcall target="deploy-spiderAjax"/>
 		<antcall target="deploy-tokengen"/>
 		<antcall target="deploy-viewStatePScan"/>
-		<antcall target="deploy-sessionfixationscan"/>
-		<antcall target="deploy-csrfcountermeasures"/>
-		<antcall target="deploy-spiderAjax"/>
+		<antcall target="deploy-alertReport"/>
 	</target>
 
 </project>
