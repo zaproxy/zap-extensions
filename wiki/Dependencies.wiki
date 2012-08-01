@@ -31,4 +31,4 @@ This will call the build-extensionAndDeps target that is defined as follows:
      </jar>
 </target>
 }}}
-If your plugin did not have to pack dependencies, you would need to use: <code> <antcall target="build-extension"> </code> Instead of: <code><antcall target="build-extensionAndDeps"> </code>.
+If your plugin did not have to pack dependencies, you would need to use: <code> <antcall target="build-extension"> </code> Instead of: <code><antcall target="build-extensionAndDeps"> </code>
