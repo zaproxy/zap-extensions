@@ -1,0 +1,15 @@
+com.fasteasytrade.JRandTest.Algo
+com.fasteasytrade.JRandTest.GUI
+com.fasteasytrade.JRandTest.IO
+com.fasteasytrade.JRandTest.Tests
+com.fasteasytrade.JRandTest.Utils
+org.zaproxy.zap.extension.csrfcountermeasuresscan
+org.zaproxy.zap.extension.exampleActiveScan
+org.zaproxy.zap.extension.examplePassiveScan
+org.zaproxy.zap.extension.exampleRightClickMsg
+org.zaproxy.zap.extension.exampleTopMenu
+org.zaproxy.zap.extension.highlighter
+org.zaproxy.zap.extension.sessionfixationscan
+org.zaproxy.zap.extension.spiderAjax
+org.zaproxy.zap.extension.tokengen
+org.zaproxy.zap.extension.viewStatePScan

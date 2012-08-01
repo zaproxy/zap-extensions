@@ -29,18 +29,23 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private SpiderPanel spiderPanel = null;
 	private PopupMenuAjax popupMenuSpider = null;
 	private PopupMenuAjaxSite popupMenuSpiderSite = null;
+	private PopupMenuAjaxSiteInScope popupMenuInScope = null;
 	private OptionsAjaxSpider optionsAjaxSpider = null;
 	private List<String> excludeList = null;
 	private ProxyAjax proxy = null;
 	private ChromeAlertDialog addDialog = null;
+public Classload classloader = null;
 
 	private ResourceBundle messages = null;
 
 	/**
 	 * initializes the extension
+	 * @throws ClassNotFoundException 
 	 */
-	public ExtensionAjax() {
+	public ExtensionAjax() throws ClassNotFoundException {
 		super(NAME);
+		//classloader = new Classload();
+		//classloader.loadClass("EmbeddedBrowser");
 		this.messages = ResourceBundle.getBundle(this.getClass().getPackage().getName()+ ".Messages", Constant.getLocale());
 		initialize();
 	}
@@ -63,6 +68,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	private void initialize() {
 		this.setName(NAME);
+		this.setOrder(234);
 	}
 
 	/**
@@ -75,13 +81,13 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		if (getView() != null) {
 			@SuppressWarnings("unused")
 			ExtensionHookView pv = extensionHook.getHookView();
-			getSpiderPanel().setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
+			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
+			this.getSpiderPanel().setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
 			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpider());
-			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpiderSite());
-			ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spider");
-			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
-
+			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSite());
+			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSiteInScope());
+			//ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spider");
 		}
 	}
 
@@ -109,12 +115,24 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		}
 		return popupMenuSpider;
 	}
+	
+	
+	/**
+	 * 
+	 * @return the PopupMenuSpiderSiteInScope object
+	 */
+	private PopupMenuAjaxSiteInScope getPopupMenuAjaxSiteInScope() {
+		if (popupMenuInScope == null) {
+			popupMenuInScope = new PopupMenuAjaxSiteInScope(this.getString("ajax.site.popup.InScope"), this);
+		}
+		return popupMenuInScope;
+	}
 
 	/**
 	 * 
 	 * @return the PopupMenuAjaxSite object
 	 */
-	private PopupMenuAjaxSite getPopupMenuSpiderSite() {
+	private PopupMenuAjaxSite getPopupMenuAjaxSite() {
 		if (popupMenuSpiderSite == null) {
 			popupMenuSpiderSite = new PopupMenuAjaxSite(this.getString("ajax.site.popup"), this);
 		}
@@ -137,8 +155,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 * @param node
 	 * @param incPort
 	 */
-	public void spiderSite(SiteNode node, boolean incPort) {
-		this.getSpiderPanel().scanSite(node, incPort);
+	public void spiderSite(SiteNode node, boolean inScope) {
+		this.getSpiderPanel().scanSite(node, inScope);
 	}
 
 
@@ -207,8 +225,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	/**
 	 * @param url the targeted url
 	 */
-	public void run(String url) {
-		this.spiderPanel.newScanThread(url, this.getProxy().getAjaxProxyParam());
+	public void run(String url, boolean inScope) {
+		this.spiderPanel.newScanThread(url, this.getProxy().getAjaxProxyParam(), inScope);
 	}
 
 	/**

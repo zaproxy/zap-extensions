@@ -51,10 +51,8 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private javax.swing.JToolBar panelToolbar = null;
 	private JLabel filterStatus = null;
 	private HttpPanel requestPanel = null;
-	private HttpPanel responsePanel = null;
     private ExtensionAjax extension = null;
 	private SpiderThread runnable = null;
-	private static ZapTextArea txtURIFound = null;
 	private HistoryList list = null;
 
 	/**
@@ -278,135 +276,30 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 
 				@Override
 				public void valueChanged(javax.swing.event.ListSelectionEvent e) {
+					System.out.println("xungoooooo");
 					// ZAP: Changed to only display the message when there are no more selection changes.
 					if (!e.getValueIsAdjusting()) {
 					    if (listLog.getSelectedValue() == null) {
 					        return;
 					    }
-	                    
-						final HistoryReference historyRef = (HistoryReference) listLog.getSelectedValue();
-	
-	                    readAndDisplay(historyRef);
 					}
-
 				}
-
-
 			});
-
 		}
 		return listLog;
-	}   
-    private Vector<HistoryReference> displayQueue = new Vector<HistoryReference>();
-    private Thread thread = null;
+	}
+	
+	
     private LogPanelCellRenderer logPanelCellRenderer = null;
-    
-    protected void display(final HistoryReference historyRef) {
-    	this.readAndDisplay(historyRef);
-    	for (int i = 0; i < listLog.getModel().getSize(); i++) {
-    		// Bit nasty, but its the only way I've found...
-    		if (((HistoryReference)listLog.getModel().getElementAt(i)).getHistoryId() == historyRef.getHistoryId()) {
-    			listLog.setSelectedIndex(i);
-    			listLog.ensureIndexIsVisible(i);
-    			break;
-    			/* Doesnt work - the records are not always in order
-    		} else if (((HistoryReference)listLog.getModel().getElementAt(i)).getHistoryId() > historyRef.getHistoryId()) {
-    			break;
-    			*/
-    		}
-    	}
-    }
-
-    public void clearDisplayQueue() {
-    	synchronized(displayQueue) {
-    		displayQueue.clear();
-    	}
-    }
-    
-    private void readAndDisplay(final HistoryReference historyRef) {
-
-        synchronized(displayQueue) {
-
-            if (displayQueue.size() > 0) {
-                displayQueue.clear();
-            }
-            
-            displayQueue.add(historyRef);
-
-        }
-        
-        if (thread != null && thread.isAlive()) {
-            return;
-        }
-        
-        thread = new Thread(this);
-
-        thread.setPriority(Thread.NORM_PRIORITY);
-        thread.start();
-    }
-    
+ 
     
     public void setDisplayPanel(HttpPanel requestPanel, HttpPanel responsePanel) {
         this.requestPanel = requestPanel;
-        this.responsePanel = responsePanel;
-
     }
-  /*  
-    private void displayMessage(HttpMessage msg) {
-        
-        if (msg.getRequestHeader().isEmpty()) {
-            requestPanel.clearView(true);
-        } else {
-            requestPanel.setMessage(msg);
-        }
-        
-        if (msg.getResponseHeader().isEmpty()) {
-            responsePanel.clearView(false);
-        } else {
-            responsePanel.setMessage(msg, true);
-        }
-    }*/
 
     @Override
     public void run() {
-    	/*   HistoryReference ref = null;
-        int count = 0;
-        
-        do {
-            synchronized(displayQueue) {
-                count = displayQueue.size();
-                if (count == 0) {
-                    break;
-                }
-                
-                ref = displayQueue.get(0);
-                displayQueue.remove(0);
-            }
-            
-           try {
-                final HistoryReference finalRef = ref;
-                final HttpMessage msg = ref.getHttpMessage();
-                EventQueue.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        displayMessage(msg);
-                        listLog.requestFocus();
-
-                    }
-                });
-                
-            } catch (Exception e) {
-                // ZAP: Added logging.
-                logger.error(e.getMessage(), e);
-            }
-            // wait some time to allow another selection event to be triggered
-            try {
-                Thread.sleep(200);
-            } catch (Exception e) {}
-        } while (true);
-        */
-            
-        
+    	System.out.println("testttttttttttt");
     }
     
 
@@ -432,16 +325,16 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
     	filterStatus.setToolTipText(filter.toLongString());
     }
 
-    public void newScanThread(String site, AbstractParam params) {
+    public void newScanThread(String site, AbstractParam params, boolean inScope) {
     	try {
-    		new Thread(this.runnable = new SpiderThread(site, this.extension)).start();
+    		new Thread(this.runnable = new SpiderThread(site, this.extension, inScope)).start();
     	} catch (Exception e) {
     		logger.error(e);
     	}
 	}
-	public void scanSite(SiteNode n, boolean b) {
+	public void scanSite(SiteNode n, boolean inScope) {
 		try {
-			this.extension.run(n.getHierarchicNodeName());
+			this.extension.run(n.getHierarchicNodeName(), inScope);
 		} catch (Exception e) {
     		logger.error(e);
 		}

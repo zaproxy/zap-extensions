@@ -135,4 +135,10 @@ implements SessionChangedListener, /*ProxyListener, */ SiteMapListener {
 			return null;
 		}
 	}
+
+	@Override
+	public void sessionScopeChanged(Session arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

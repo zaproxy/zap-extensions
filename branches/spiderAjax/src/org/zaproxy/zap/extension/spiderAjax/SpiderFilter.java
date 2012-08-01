@@ -19,13 +19,20 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import com.crawljax.core.CandidateElement;
 import com.crawljax.core.CrawlSession;
 import com.crawljax.core.plugin.PreStateCrawlingPlugin;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 
 /**
  * SpiderFilter is called before the crawling, it checks the candidates
@@ -38,12 +45,14 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 	boolean replaceInput = false;
 	private ExtensionAjax extension;
 	private SpiderThread thread;
+	private CrawlSession sess;
+	private List<CandidateElement> cands;
 
 	/**
 	 * The class constructor
 	 * 
 	 * @param e extension
-	 * @param t threat
+	 * @param t thread
 	 */
 	public SpiderFilter(ExtensionAjax e, SpiderThread t) {
 		this.extension = e;
@@ -59,7 +68,61 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 	@Override
 	public void preStateCrawling(CrawlSession session,
 			List<CandidateElement> candidates) {
-
+		this.sess = session;
+		this.cands = candidates;
+		filterExcluded(this.sess, this.cands);
+		//if the scope is limited we filter the candidates
+		if (this.thread.isInScope()) {
+			filterScope(this.sess, this.cands);
+		}
+		session = this.sess;
+		candidates = this.cands;
+	}
+	
+	/**
+	 * 
+	 * @param session
+	 * @param candidates
+	 */
+	private void filterScope(CrawlSession session, List<CandidateElement> candidates) {
+		try {
+			for(CandidateElement cand: candidates) {
+			for (int i = 0; i < cand.getElement().getAttributes().getLength(); i++) {
+				String guessedUrl = getCandidateUrl(cand.getElement().getAttributes().item(i).getNodeValue(), session.getBrowser().getCurrentUrl());
+				URI url = new URI(guessedUrl, false);
+				HttpMessage msg = new HttpMessage(url);
+				HistoryReference historyRef = new HistoryReference(extension.getModel().getSession(), HistoryReference.TYPE_SPIDER_AJAX, msg);
+				SiteNode n = new SiteNode(this.extension.getModel().getSession().getSiteTree(), HistoryReference.TYPE_SPIDER_AJAX, "name");
+				n.setHistoryReference(historyRef);
+	            n.setIncludedInScope(this.extension.getModel().getSession().isIncludedInScope(n), true);
+	            n.setExcludedFromScope(this.extension.getModel().getSession().isExcludedFromScope(n), true);
+	            if(!n.isIncludedInScope()) {
+	            	candidates.remove(cand);
+	            	if (logger.isDebugEnabled()) {
+						logger.debug("The following URL is out of scope and will be removed: " + guessedUrl);
+					} else {
+						System.out.println("The following URL is out of scope and will be removed: " + guessedUrl);
+					}
+	            }
+			}
+		}
+		} catch (URIException e) {
+			logger.error(e);
+		} catch (HttpMalformedHeaderException e) {
+			logger.error(e);
+		} catch (SQLException e) {
+			logger.error(e);
+		}
+		this.cands = candidates;
+	}
+	
+	
+	/**
+	 * 
+	 * @param session
+	 * @param candidates
+	 */
+	private void filterExcluded(CrawlSession session, List<CandidateElement> candidates) {
 		String currentUrl = session.getBrowser().getCurrentUrl();
 
 		// for each candidate
@@ -70,34 +133,7 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 			// we find all the attributes
 			for (int i = 0; i < c.getElement().getAttributes().getLength(); i++) {
 				
-				String candidateUrl = c.getElement().getAttributes().item(i).getNodeValue();
-				String guessedUrl = null;
-				// here we try to guess the candidate URL...
-				guessedUrl = candidateUrl;
-				URL u;
-				try {
-					if (logger.isDebugEnabled()) {
-						logger.debug("CurrentURL:" + currentUrl + " CandidateURL:" + candidateUrl);
-					}
-					// the candidate can be an URL or other stuff such as javascript:xx, here we determine what it is
-					if (!candidateUrl.toLowerCase().contains("javascript")
-							&& (candidateUrl.endsWith(".html")
-									|| candidateUrl.endsWith(".asp")
-									|| candidateUrl.endsWith(".php")
-									|| candidateUrl.endsWith(".htm")
-									|| candidateUrl.endsWith(".jsp")
-									|| candidateUrl.endsWith(".aspx")
-									|| candidateUrl.endsWith(".py")
-									|| candidateUrl.endsWith(".xml")
-									|| candidateUrl.contains("/"))) {
-						u = new URL(new URL(currentUrl), candidateUrl);
-					} else {
-						u = new URL(currentUrl);
-					}
-					guessedUrl = u.toString();
-				} catch (MalformedURLException e) {
-					logger.error(e);
-				}
+				String guessedUrl = getCandidateUrl(c.getElement().getAttributes().item(i).getNodeValue(), currentUrl);
 
 				// we match the candidate URL with the ones that we do not want to crawl
 				for (String excl : this.extension.getModel().getSession().getExcludeFromSpiderRegexs()) {
@@ -107,6 +143,8 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 						if (logger.isDebugEnabled()) {
 							logger.debug("The following URL is filtered: " + excl);
 							logger.debug("Candidate Element will be removed: " + guessedUrl);
+						}else {
+							System.out.println("Candidate Element will be removed: " + guessedUrl);
 						}
 					}
 				}
@@ -120,5 +158,41 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 				session.getCurrentCrawlPath().remove(c.getElement());
 			}
 		}
+		this.cands = candidates;
+		this.sess = session;
+	}
+	
+	
+	private String getCandidateUrl(String candidateUrl, String currentUrl) {
+		String guessedUrl = null;
+		// here we try to guess the candidate URL...
+		guessedUrl = candidateUrl;
+		URL u = null;
+		try {
+			if (logger.isDebugEnabled()) {
+				logger.debug("CurrentURL:" + currentUrl + " CandidateURL:" + candidateUrl);
+			}
+			// the candidate can be an URL or other stuff such as javascript:xx, here we determine what it is
+			if (!candidateUrl.toLowerCase().contains("javascript")
+					&& (candidateUrl.endsWith(".html")
+							|| candidateUrl.endsWith(".asp")
+							|| candidateUrl.endsWith(".php")
+							|| candidateUrl.endsWith(".htm")
+							|| candidateUrl.endsWith(".jsp")
+							|| candidateUrl.endsWith(".aspx")
+							|| candidateUrl.endsWith(".py")
+							|| candidateUrl.endsWith(".xml")
+							|| candidateUrl.contains("/"))) {
+				u = new URL(new URL(currentUrl), candidateUrl);
+			} else {
+				u = new URL(currentUrl);
+			}
+			guessedUrl = u.toString();
+		} catch (MalformedURLException e) {
+			logger.error(e);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		return guessedUrl;
 	}
 }

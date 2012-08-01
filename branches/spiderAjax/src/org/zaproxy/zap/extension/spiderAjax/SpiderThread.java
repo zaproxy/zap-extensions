@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 import com.crawljax.core.CrawljaxController;
 import com.crawljax.core.CrawljaxException;
@@ -39,9 +40,9 @@ public class SpiderThread implements Runnable, ProxyListener {
 	private static final int NUM_BROWSERS = 1;
 	private static final int NUM_THREADS = 2;
 	private static final boolean BROWSER_BOOTING = true;
-	private static final int MAX_STATES = 100;
+	private static final int MAX_STATES = 20;
 	private static final boolean RAND_INPUT_FORMS = true;
-	private static final int MAX_DEPTH = 100;
+	private static final int MAX_DEPTH = 20;
 
 	private String url = null;
 	private ExtensionAjax extension = null;
@@ -52,11 +53,13 @@ public class SpiderThread implements Runnable, ProxyListener {
 	private CrawljaxController crawljax = null;
 	private CrawlSpecification crawler = null;
 	private ProxyConfiguration proxyConf = null;
+	private boolean spiderInScope;
 	private static final Logger logger = Logger.getLogger(SpiderThread.class);
 
-	SpiderThread(String url, ExtensionAjax extension) {
+	SpiderThread(String url, ExtensionAjax extension, boolean inScope) {
 		this.url = url;
 		this.extension = extension;
+		this.spiderInScope = inScope;
 		initialize();
 	}
 
@@ -69,9 +72,6 @@ public class SpiderThread implements Runnable, ProxyListener {
 		this.extension.getProxy().updateProxyConf();
 		this.extension.getProxy().getProxy().addProxyListener(this);
 	    this.extension.getSpiderPanel().getListLog().setModel(this.extension.getSpiderPanel().getHistList());
-		if (this.extension.getExcludeList() != null) {
-			this.extension.getProxy().getProxy();//.setExcludeList(this.extension.getExcludeList());
-		}
 	}
 
 	
@@ -88,6 +88,22 @@ public class SpiderThread implements Runnable, ProxyListener {
 	 */
 	public String getHost() {
 		return this.host;
+	}
+	
+	/**
+	 * 
+	 * @return whether there is a scope defined
+	 */
+	public boolean isInScope() {
+		return this.spiderInScope;
+	}
+	
+	/**
+	 * 
+	 * @return the SpiderThread object
+	 */
+	public SpiderThread getSpiderThread() {
+		return this;
 	}
 
 	
@@ -179,6 +195,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 			//logger.error(e);
 		} finally {
 			crawljax.terminate(true);
+			this.extension.getProxy().getProxy().stopServer();
 		}
 	}
 	
@@ -190,13 +207,10 @@ public class SpiderThread implements Runnable, ProxyListener {
 	
 	@Override
 	public boolean onHttpResponseReceive(HttpMessage msg) {
-		SiteMap siteTree = extension.getModel().getSession().getSiteTree();
-		HistoryReference historyRef = null;
-
-		try {
+		// we check if the scan is scope limited and if so if the node is in scope
+		if ((this.spiderInScope && msg.getHistoryRef().getSiteNode().isIncludedInScope()) || !this.spiderInScope) {
 			//we check if it has to be put in the sites tree or is already there
-			historyRef = new HistoryReference(extension.getModel().getSession(),"/resource/icon/10/spiderAjax.png", msg, true);
-			boolean ignore =false;
+			boolean ignore = false;
 			for (String pa : this.extension.getModel().getSession().getExcludeFromScanRegexs()) {
 				Pattern p = Pattern.compile(pa, Pattern.CASE_INSENSITIVE);
 				if (p.matcher(msg.getRequestHeader().getURI().toString()).matches()) {
@@ -204,12 +218,16 @@ public class SpiderThread implements Runnable, ProxyListener {
 				}
 			}
 			if(!ignore){
-				siteTree.addPath(historyRef, msg);
+				try {
+					HistoryReference historyRef = new HistoryReference(extension.getModel().getSession(), HistoryReference.TYPE_SPIDER_AJAX, msg);
+					historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
+					extension.getModel().getSession().getSiteTree().addPath(historyRef, msg);
+					this.extension.getSpiderPanel().addHistoryUrl(historyRef, msg);
+				} catch (Exception e){
+					logger.error(e);
+				}
 			}
-			this.extension.getSpiderPanel().addHistoryUrl(historyRef, msg);
-			} catch (Exception e){
-				//logger.error(e);
-			}
+		}
 		return true;
 	}
 
