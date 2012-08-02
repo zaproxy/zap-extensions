@@ -168,15 +168,13 @@
 	<target name="build-alertReport" description="build the Alert Report ZAP extension">
 			<property name="report.extension" value="alertReport"/> 
 			<property name="report.type" value="beta"/> 
-			<property name="report.version" value="3"/> 
-		 	<property name="lib.dir" value="itextpdf"/>
-			<property name="jar.dir" value="jar"/>
+			<property name="report.version" value="4"/> 
+		 	<property name="jar.dir" value="jar"/>
 			<jar jarfile="${dist}/zap-ext-${report.extension}-${report.type}-${report.version}.jar" update="true" compress="true">
 					<zipfileset dir="${build}" prefix="">
 						<include name="org/zaproxy/zap/extension/alertReport/**"/>
 					</zipfileset>
-					<fileset dir="${lib.dir}" includes="**/*.*" />
-				    <zipgroupfileset dir="jar/" includes="*.jar" />
+					<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${report.extension}/lib/" includes="*.jar" />
 					<zipfileset dir="${src}" prefix="">
 						<include name="org/zaproxy/zap/extension/alertReport/Messages*"/>
 					</zipfileset>
