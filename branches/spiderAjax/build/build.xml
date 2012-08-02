@@ -217,7 +217,7 @@
 		<antcall target="build-spiderAjax"/>
 		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
-		<!--<antcall target="build-alertReport"/>-->
+		<antcall target="build-alertReport"/>
 	</target>
 
 	<target name="deploy-extension" description="deploy the specified extension">
