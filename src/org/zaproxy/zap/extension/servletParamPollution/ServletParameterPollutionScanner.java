@@ -76,8 +76,8 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 				
 				while (iter.hasNext()) {
 					Attribute att = iter.next();
-					if (att.getName().equalsIgnoreCase("action")) {
-						// action tag present, so should be ok
+					if (att.getName().equalsIgnoreCase("action") && att.getValue().length() > 0) {
+						// action tag present (and with a value), so should be ok
 						actionFound = true;
 					}
 				}
