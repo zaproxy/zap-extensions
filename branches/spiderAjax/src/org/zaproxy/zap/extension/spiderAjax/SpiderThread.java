@@ -28,6 +28,7 @@ import com.crawljax.core.configuration.ProxyConfiguration;
 import com.crawljax.core.configuration.ThreadConfiguration;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.network.HttpMessage;
@@ -37,13 +38,12 @@ import org.parosproxy.paros.model.SiteMap;
 public class SpiderThread implements Runnable, ProxyListener {
 
 	// crawljax config
-	private static final int NUM_BROWSERS = 1;
-	private static final int NUM_THREADS = 4;
-	private static final boolean BROWSER_BOOTING = true;
+	private static final boolean BROWSER_BOOTING = false;
 	private static final int MAX_STATES = 20;
 	private static final boolean RAND_INPUT_FORMS = true;
 	private static final int MAX_DEPTH = 20;
-
+	private int numBrowsers;
+	private int numThreads;
 	private String url = null;
 	private ExtensionAjax extension = null;
 	private String host = null;
@@ -63,6 +63,9 @@ public class SpiderThread implements Runnable, ProxyListener {
 		this.spiderInScope = inScope;
 		this.running = false;
 		this.initiProxy();
+		//by default we will use 1 browser & thread
+		this.numBrowsers = this.extension.getProxy().getBrowsers();
+		this.numThreads = this.extension.getProxy().getThreads();
 	}
 
 	
@@ -107,6 +110,19 @@ public class SpiderThread implements Runnable, ProxyListener {
 	public SpiderThread getSpiderThread() {
 		return this;
 	}
+	/** 
+	 * @return the # of threads to be used by crawljax
+	 */
+	public int getNumThreads() {
+		return this.numThreads;
+	}
+	
+	/** 
+	 * @return the # of browsers to be used by crawljax
+	 */
+	public int getNumBrowsers() {
+		return this.numBrowsers;
+	}
 	
 	/**
 	 * 
@@ -138,8 +154,8 @@ public class SpiderThread implements Runnable, ProxyListener {
 		if (threConf == null) {
 			threConf = new ThreadConfiguration();
 			threConf.setBrowserBooting(BROWSER_BOOTING);
-			threConf.setNumberBrowsers(NUM_BROWSERS);
-			threConf.setNumberThreads(NUM_THREADS);
+			threConf.setNumberBrowsers(this.numBrowsers);
+			threConf.setNumberThreads(this.numThreads);
 		}
 		return threConf;
 	}
@@ -173,7 +189,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 			crawler.setDepth(MAX_DEPTH);
 			crawler.setRandomInputInForms(RAND_INPUT_FORMS);
 			if (this.extension.getProxy().getMegaScan()) {
-				crawler.clickAllElements();
+				crawler.clickMoreElements();
 			} else {
 				crawler.clickDefaultElements();
 			}
@@ -191,6 +207,13 @@ public class SpiderThread implements Runnable, ProxyListener {
 	@Override
 	public void run() {
 		this.running = true;
+		logger.info("Running crawljax targeting " + this.url );
+		Logger.getLogger("org.parosproxy.paros.core.proxy.ProxyThread").setLevel(Level.OFF);
+		Logger.getLogger("com.crawljax.browser.WebDriverBackedEmbeddedBrowser").setLevel(Level.OFF);
+		Logger.getLogger("org.openqa.selenium.remote.ErrorHandler").setLevel(Level.OFF);
+		Logger.getLogger("com.crawljax.core.state.StateVertix").setLevel(Level.OFF);
+		Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
+		Logger.getLogger("org.parosproxy.paros.network").setLevel(Level.OFF);
 		try {
 			crawljax = new CrawljaxController(getCrawConf());
         } catch (ConfigurationException e) {
@@ -208,6 +231,8 @@ public class SpiderThread implements Runnable, ProxyListener {
 			this.running = false;
 			crawljax.terminate(true);
 			this.extension.getProxy().getProxy().stopServer();
+			logger.info("Finished crawling " + this.url );
+
 		}
 	}
 	

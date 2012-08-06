@@ -31,6 +31,8 @@ public class ProxyAjax {
 	private BrowserType defaultBrowser = BrowserType.firefox;
 	private AjaxProxyParam proxyParam = null;
 	private ExtensionAjax extension;
+	private int browsers;
+	private int threads;
 	private static final Logger logger = Logger.getLogger(ProxyAjax.class);
 
 	
@@ -46,6 +48,8 @@ public class ProxyAjax {
 			this.proxy.startServer(this.getAjaxProxyParam().getProxyIp(), this.getAjaxProxyParam().getProxyPort(), false);
 		}
 		this.browser = defaultBrowser;
+		this.browsers = 1;
+		this.threads = 1;
 	}
 
 	
@@ -150,7 +154,37 @@ public class ProxyAjax {
 	public void setProxyPort(int port) {
 		this.getAjaxProxyParam().setProxyPort(port);
 	}
+	
+	/**
+	 *  Sets the num of threds to use
+	 * @param port
+	 */
+	public void setThreads(int t) {
+		this.threads = t;
+	}
+	
+	/**
+	 *  @return the num of threds to use
+	 */
+	public int getThreads() {
+		return this.threads;
+	}
 
+	/**
+	 *  Sets the num of browsers to use
+	 * @param port
+	 */
+	public void setBrowsers(int b) {
+		this.browsers = b;
+	}
+	
+	/**
+	 *  @return the num of browsers to use
+	 * 
+	 */
+	public int getBrowsers() {
+		return this.browsers;
+	}
 	
 	/**
 	 * 

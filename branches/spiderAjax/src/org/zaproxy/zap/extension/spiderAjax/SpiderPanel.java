@@ -262,8 +262,8 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 
 			//panelToolbar.add(getFilterButton(), gridBagConstraints1);
 			panelToolbar.add(filterStatus, gridBagConstraints2);
-			panelToolbar.add(getStopScanButton(), gridBagConstraints3);
-			panelToolbar.add(getStartScanButton(), gridBagConstraints1);
+			panelToolbar.add(getStopScanButton(), gridBagConstraints1);
+			//panelToolbar.add(getStartScanButton(), gridBagConstraints3);
 
 			/*
 			panelToolbar.add(getBtnSearch(), gridBagConstraints3);
@@ -335,7 +335,6 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 
 				@Override
 				public void valueChanged(javax.swing.event.ListSelectionEvent e) {
-					System.out.println("xungoooooo");
 					// ZAP: Changed to only display the message when there are no more selection changes.
 					if (!e.getValueIsAdjusting()) {
 					    if (listLog.getSelectedValue() == null) {
@@ -358,7 +357,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 
     @Override
     public void run() {
-    	System.out.println("testttttttttttt");
+    	//System.out.println("test");
     }
     
 

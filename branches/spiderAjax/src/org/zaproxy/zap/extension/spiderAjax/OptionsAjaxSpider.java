@@ -24,7 +24,10 @@ import java.awt.Insets;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.history.LogPanel;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
@@ -39,17 +42,24 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 
 	private ExtensionAjax extension=null;
 	private JPanel panelLocalProxy = null;
+	private JPanel panelCrawljax = null;
 	private JPanel panelProxy = null;  //  @jve:decl-index=0:visual-constraint="10,283"
 	private ZapTextField txtProxyIp = null;
+	private ZapTextField txtNumBro = null;
+	private ZapTextField txtNumThre = null;
     
 	// ZAP: Do not allow invalid port numbers
 	private ZapPortNumberSpinner spinnerProxyPort = null;
 	private JCheckBox ClickAllElems = null;
 	private JCheckBox firefox = null;
 	private JCheckBox chrome = null;
-	private JCheckBox  ie = null;
-	private JCheckBox  htmlunit = null;
+	private JCheckBox ie = null;
+	private JCheckBox htmlunit = null;
 	private JLabel jLabel6 = null;
+	private JLabel browsers = null;
+	private JLabel threads = null;
+	private static final Logger logger = Logger.getLogger(LogPanel.class);
+
     public OptionsAjaxSpider(ExtensionAjax extension) {
     	
         super();
@@ -72,7 +82,31 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         this.add(getPanelProxy(), getPanelProxy().getName()); 
 	}
 	
-    /**
+	/**
+	 * This method initializes txtNumBro	
+	 * 	
+	 * @return org.zaproxy.zap.utils.ZapTextField	
+	 */    
+	private ZapTextField getTxtNumBro() {
+		if (txtNumBro == null) {
+			txtNumBro = new ZapTextField("");
+		}
+		return txtNumBro;
+	}
+	
+	/**
+	 * This method initializes txtNumThre	
+	 * 	
+	 * @return org.zaproxy.zap.utils.ZapTextField	
+	 */    
+	private ZapTextField getTxtNumThre() {
+		if (txtNumThre == null) {
+			txtNumThre = new ZapTextField("");
+		}
+		return txtNumThre;
+	}
+	
+	/**
 	 * This method initializes txtProxyIp	
 	 * 	
 	 * @return org.zaproxy.zap.utils.ZapTextField	
@@ -168,14 +202,22 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    txtProxyIp.setText(this.extension.getProxy().getProxyHost());
 	    txtProxyIp.discardAllEdits();
 	    spinnerProxyPort.setValue(this.extension.getProxy().getProxyPort());
+	    txtNumBro.setText(String.valueOf(this.extension.getProxy().getBrowsers()));
+	    txtNumThre.setText(String.valueOf(this.extension.getProxy().getThreads()));
 	    
 	    //set the browser type
 	    if(this.extension.getProxy().getBrowser() == BrowserType.firefox){
 	    	this.getFirefox().setSelected(true);
 		    this.getChrome().setSelected(false);
+		    this.getHtmlunit().setSelected(false);
 	    } else if (this.extension.getProxy().getBrowser() == BrowserType.chrome){
 		    this.getChrome().setSelected(true);
 	    	this.getFirefox().setSelected(false);
+		    this.getHtmlunit().setSelected(false);
+	    }else if (this.extension.getProxy().getBrowser() == BrowserType.htmlunit){
+		    this.getChrome().setSelected(false);
+	    	this.getFirefox().setSelected(false);
+		    this.getHtmlunit().setSelected(true);
 	    }
 	}
 	
@@ -185,21 +227,41 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	@Override
 	public void validateParam(Object obj) throws Exception {
 		
-		//if both or none are selected we use firefox
-		if(getFirefox().isSelected() && getChrome().isSelected() && getHtmlunit().isSelected()){
+		//if more than one is selected or none are selected we use firefox
+		//if chrome not avail, we use firefox
+		//if non selected, we use firefox
+		if(getChrome().isSelected() && getHtmlunit().isSelected()){
 			getChrome().setSelected(false);
 			getHtmlunit().setSelected(false);
 			getFirefox().setSelected(true);
-		} else if(!getFirefox().isSelected() && !getChrome().isSelected()&& !getHtmlunit().isSelected()){
+			logger.info("Only one browser can be used, switching to the default browser.");
+		} else if(getFirefox().isSelected() && getChrome().isSelected()){
 			getChrome().setSelected(false);
 			getHtmlunit().setSelected(false);
-			getFirefox().setSelected(true);	
+			getFirefox().setSelected(true);
+			logger.info("Only one browser can be used, switching to the default browser.");
+		} else if(getFirefox().isSelected() && getHtmlunit().isSelected()){
+			getChrome().setSelected(false);
+			getHtmlunit().setSelected(false);
+			getFirefox().setSelected(true);
+			logger.info("Only one browser can be used, switching to the default browser.");
+		} else if(getHtmlunit().isSelected() && getChrome().isSelected()){
+			getChrome().setSelected(false);
+			getHtmlunit().setSelected(false);
+			getFirefox().setSelected(true);
+			logger.info("Only one browser can be used, switching to the default browser.");
+		} else if(!getFirefox().isSelected() && !getHtmlunit().isSelected() && !getChrome().isSelected()){
+			getChrome().setSelected(false);
+			getHtmlunit().setSelected(false);
+			getFirefox().setSelected(true);
+			logger.info("One browser has to be selected, switching to the default browser.");
 		} else if (!getFirefox().isSelected() && getChrome().isSelected()&& !getHtmlunit().isSelected()){
 			if(!this.extension.getProxy().isChromeAvail()){
 				getChrome().setSelected(false);
 				getHtmlunit().setSelected(false);
 				getFirefox().setSelected(true);	
-				this.extension.showBreakAddDialog();
+				logger.info("ChromeDriver is not available, switching to the default browser.");
+				this.extension.showChromeAlert();
 			}
 		}
 	}
@@ -213,6 +275,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    this.extension.getProxy().setMegaScan(getClickAllElems().isSelected());
 		this.extension.getProxy().setProxyHost(txtProxyIp.getText());
 		this.extension.getProxy().setProxyPort(spinnerProxyPort.getValue());
+		this.extension.getProxy().setBrowsers(Integer.parseInt(txtNumBro.getText()));
+		this.extension.getProxy().setThreads(Integer.parseInt(txtNumThre.getText()));
+		
 		if(getFirefox().isSelected()){
 			this.extension.getProxy().setBrowser(BrowserType.firefox);
 		}
@@ -236,15 +301,11 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			jLabel6 = new JLabel();
 			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
 			java.awt.GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-
 			java.awt.GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-
 			java.awt.GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-
 			java.awt.GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 
 			javax.swing.JLabel jLabel = new JLabel();
-
 			javax.swing.JLabel jLabel1 = new JLabel();
 			
 			panelLocalProxy = new JPanel();
@@ -285,6 +346,10 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			gridBagConstraints7.ipady = 0;
 			gridBagConstraints7.anchor = java.awt.GridBagConstraints.EAST;
 			gridBagConstraints7.insets = new java.awt.Insets(2,2,2,2);
+			
+	
+			
+			
 			jLabel1.setText(this.extension.getString("ajax.proxy.local.label.port"));
 			jLabel6.setText(this.extension.getString("ajax.proxy.local.label.browser"));
 			gridBagConstraints15.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -299,8 +364,104 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			panelLocalProxy.add(jLabel1, gridBagConstraints6);
 			panelLocalProxy.add(getSpinnerProxyPort(), gridBagConstraints7);
 			panelLocalProxy.add(jLabel6, gridBagConstraints15);
+			
 		}
 		return panelLocalProxy;
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * This method initializes panelAjaxProxy
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */    
+	private JPanel getPanelCrawljax() {
+		if (panelCrawljax == null) {
+			jLabel6 = new JLabel();
+			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
+			java.awt.GridBagConstraints gridBagConstraints72 = new GridBagConstraints();
+
+			java.awt.GridBagConstraints gridBagConstraints42 = new GridBagConstraints();
+
+			java.awt.GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			java.awt.GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
+			java.awt.GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
+			
+			javax.swing.JLabel jLabel = new JLabel();
+
+			javax.swing.JLabel jLabel1 = new JLabel();
+			
+			panelCrawljax = new JPanel();
+			panelCrawljax.setLayout(new GridBagLayout());
+			panelCrawljax.setBorder(javax.swing.BorderFactory.createTitledBorder(
+					null, this.extension.getString("ajax.proxy.crawljax.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, 
+					javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11), java.awt.Color.black));	// ZAP: i18n
+		
+			gridBagConstraints5.gridx = 1;
+			gridBagConstraints5.gridy = 0;
+			gridBagConstraints5.weightx = 0.5D;
+			gridBagConstraints5.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gridBagConstraints5.ipadx = 0;
+			gridBagConstraints5.ipady = 0;
+			gridBagConstraints5.anchor = java.awt.GridBagConstraints.EAST;
+			gridBagConstraints5.insets = new java.awt.Insets(2,2,2,2);
+			gridBagConstraints6.gridx = 0;
+			gridBagConstraints6.gridy = 1;
+			gridBagConstraints6.ipadx = 0;
+			gridBagConstraints6.ipady = 0;
+			gridBagConstraints6.anchor = java.awt.GridBagConstraints.EAST;
+			gridBagConstraints6.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gridBagConstraints6.insets = new java.awt.Insets(2,2,2,2);
+			gridBagConstraints6.weightx = 0.5D;
+			
+			gridBagConstraints7.gridx = 1;
+			gridBagConstraints7.gridy = 1;
+			gridBagConstraints7.weightx = 0.5D;
+			gridBagConstraints7.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gridBagConstraints7.ipadx = 0;
+			gridBagConstraints7.ipady = 0;
+			gridBagConstraints7.anchor = java.awt.GridBagConstraints.WEST;
+			gridBagConstraints7.insets = new java.awt.Insets(2,2,2,2);
+			java.awt.GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			gridBagConstraints4.gridx = 0;
+			gridBagConstraints4.gridy = 0;
+			gridBagConstraints4.ipadx = 0;
+			gridBagConstraints4.ipady = 0;
+			gridBagConstraints4.anchor = java.awt.GridBagConstraints.WEST;
+			gridBagConstraints4.insets = new java.awt.Insets(2,2,2,2);
+			gridBagConstraints4.weightx = 0.5D;
+			gridBagConstraints4.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			
+			
+			browsers = new JLabel();
+			threads = new JLabel();
+			
+			browsers.setText(this.extension.getString("ajax.options.label.browsers"));
+			threads.setText(this.extension.getString("ajax.options.label.threads"));
+
+			panelCrawljax.add(browsers, gridBagConstraints4);
+			panelCrawljax.add(getTxtNumBro(), gridBagConstraints5);
+			
+			panelCrawljax.add(threads, gridBagConstraints6);
+			panelCrawljax.add(getTxtNumThre(), gridBagConstraints7);
+		
+			javax.swing.JLabel jLabel5 = new JLabel();
+
+			
+			panelCrawljax.add(getClickAllElems(), LayoutHelper.getGBC(0, 2, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
+			jLabel5.setText(this.extension.getString("ajax.proxy.local.label.browsers"));
+			panelCrawljax.add(jLabel5, LayoutHelper.getGBC(0, 3, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
+			panelCrawljax.add(getFirefox(), LayoutHelper.getGBC(0, 4, 3,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
+			panelCrawljax.add(getChrome(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(25,2,2,2)));
+			panelCrawljax.add(getHtmlunit(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(50,2,2,2)));
+		
+		}
+		
+		return panelCrawljax;
 	}
 	
 	/**
@@ -321,7 +482,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			java.awt.GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
 
 			javax.swing.JLabel jLabel4 = new JLabel();
-			javax.swing.JLabel jLabel5 = new JLabel();
 
 			java.awt.GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
 
@@ -363,7 +523,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			gridBagConstraints81.anchor = java.awt.GridBagConstraints.NORTHWEST;
 			gridBagConstraints81.fill = java.awt.GridBagConstraints.HORIZONTAL;
 			gridBagConstraints81.weightx = 1.0D;
-			gridBagConstraints81.weighty = 0.0D;
+			gridBagConstraints81.weighty = 1.0D;
 			gridBagConstraints91.gridx = 0;
 			gridBagConstraints91.gridy = 2;
 			gridBagConstraints91.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -385,13 +545,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			gridBagConstraints2.insets = new java.awt.Insets(2,2,2,2);
 			gridBagConstraints2.weightx = 1.0D;
 			panelProxy.add(getPanelLocalProxy(), gridBagConstraints81);
+			panelProxy.add(getPanelCrawljax(), gridBagConstraints91);
 			panelProxy.add(jLabel4, gridBagConstraints14);
-			panelProxy.add(getClickAllElems(), LayoutHelper.getGBC(0, 2, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			jLabel5.setText(this.extension.getString("ajax.proxy.local.label.browsers"));
-			panelProxy.add(jLabel5, LayoutHelper.getGBC(0, 3, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			panelProxy.add(getFirefox(), LayoutHelper.getGBC(0, 4, 3,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			panelProxy.add(getChrome(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(25,2,2,2)));
-			panelProxy.add(getHtmlunit(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(50,2,2,2)));
 			//TODO add proxy configuration compatibility in crawljax
 			//panelProxy.add(getIE(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(50,2,2,2)));
 
@@ -405,8 +560,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 
 	@Override
 	public String getHelpIndex() {
-		// ZAP: added help index
-		return "ui.dialogs.options.localproxy";
+		//TODO: add this in the help menus
+		return "ui.dialogs.options.spiderAjax";
 	}
 	
   }  //  @jve:decl-index=0:visual-constraint="10,10"

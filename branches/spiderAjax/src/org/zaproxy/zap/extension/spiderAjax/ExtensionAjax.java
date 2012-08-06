@@ -87,7 +87,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
 			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpider());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSite());
-			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSiteInScope());
+			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSiteInScope());
 			//ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spider");
 		}
 	}
@@ -241,7 +241,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	/**
 	 * shows the chrome alert
 	 */
-	public void showBreakAddDialog() {
+	public void showChromeAlert() {
 		addDialog = new ChromeAlertDialog(getView().getMainFrame(), false, this);
 		addDialog.setVisible(true);
 	}
