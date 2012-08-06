@@ -60,7 +60,17 @@
 			</zipfileset>
 		</jar>
 	</target>
-
+	<target name="build-extensionAndDeps" description="build the specified extension and include its dependencies">
+		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}.jar" update="true" compress="false">
+			<zipfileset dir="${build}" prefix="">
+				<include name="org/zaproxy/zap/extension/${extension}/**" />
+			</zipfileset>
+			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${extension}/lib/" includes="*.jar" />
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/${extension}/Messages*" />
+			</zipfileset>
+		</jar>
+	</target>
 	<target name="build-exampleActiveScan" description="build the exampleActiveScan extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="exampleActiveScan"/> 
