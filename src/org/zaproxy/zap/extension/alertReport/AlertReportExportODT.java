@@ -324,7 +324,7 @@ public class AlertReportExportODT {
 					//add step and image
 					String imageName = "";
 					String path = extension.getParams().getWorkingDirImages();
-					if (!list[j+1].isEmpty()){
+					if (((j+1)<list.length)&&(!list[j+1].isEmpty())){
 						imageName = list[j+1];
 						//if exist an image
 						try{

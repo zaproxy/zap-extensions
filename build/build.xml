@@ -61,7 +61,7 @@
 		</jar>
 	</target>
 	<target name="build-extensionAndDeps" description="build the specified extension and include its dependencies">
-		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}.jar" update="true" compress="false">
+		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}.jar" update="true" compress="true">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/**" />
 			</zipfileset>
@@ -175,21 +175,13 @@
 		</antcall>
 	</target>
 	
-	<target name="build-alertReport" description="build the Alert Report ZAP extension">
-			<property name="report.extension" value="alertReport"/> 
-			<property name="report.type" value="beta"/> 
-			<property name="report.version" value="4"/> 
-		 	<property name="jar.dir" value="jar"/>
-			<jar jarfile="${dist}/zap-ext-${report.extension}-${report.type}-${report.version}.jar" update="true" compress="true">
-					<zipfileset dir="${build}" prefix="">
-						<include name="org/zaproxy/zap/extension/alertReport/**"/>
-					</zipfileset>
-					<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${report.extension}/lib/" includes="*.jar" />
-					<zipfileset dir="${src}" prefix="">
-						<include name="org/zaproxy/zap/extension/alertReport/Messages*"/>
-					</zipfileset>
-			</jar>
-	</target>
+    <target name="build-alertReport" description="build the alertReport extension">
+            <antcall target="build-extensionAndDeps">
+                    <param name="extension" value="alertReport"/>
+                    <param name="type" value="beta"/>
+                    <param name="version" value="4"/>
+            </antcall>
+    </target>
 	
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
