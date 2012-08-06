@@ -34,9 +34,9 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private List<String> excludeList = null;
 	private ProxyAjax proxy = null;
 	private ChromeAlertDialog addDialog = null;
-public Classload classloader = null;
-
+	private ScopeController scope = null;
 	private ResourceBundle messages = null;
+	private String mode = null;
 
 	/**
 	 * initializes the extension
@@ -44,8 +44,6 @@ public Classload classloader = null;
 	 */
 	public ExtensionAjax() throws ClassNotFoundException {
 		super(NAME);
-		//classloader = new Classload();
-		//classloader.loadClass("EmbeddedBrowser");
 		this.messages = ResourceBundle.getBundle(this.getClass().getPackage().getName()+ ".Messages", Constant.getLocale());
 		initialize();
 	}
@@ -69,6 +67,9 @@ public Classload classloader = null;
 	private void initialize() {
 		this.setName(NAME);
 		this.setOrder(234);
+		//TODO: fix the mode & scope things
+		//this.scope = new ScopeController();
+		//this.mode = this.getModel().getOptionsParam().getViewParam().getMode();
 	}
 
 	/**
@@ -91,6 +92,14 @@ public Classload classloader = null;
 		}
 	}
 
+	public void getMode() {
+		if(this.getModel().getOptionsParam().getViewParam().getMode().equals("safe")) {
+		} else if(this.getModel().getOptionsParam().getViewParam().getMode().equals("protect")) {
+					
+		} else if(this.getModel().getOptionsParam().getViewParam().getMode().equals("standard}")) {
+					
+		}
+	}
 	/**
 	 * Creates the panel with the config of the proxy
 	 * @return the panel

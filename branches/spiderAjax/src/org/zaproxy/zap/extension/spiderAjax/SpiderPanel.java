@@ -20,11 +20,15 @@ package org.zaproxy.zap.extension.spiderAjax;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.*;
+
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.history.HistoryFilter;
@@ -36,6 +40,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.bruteforce.BruteForcePanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.spiderAjax.SpiderPanel;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
@@ -54,6 +59,9 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
     private ExtensionAjax extension = null;
 	private SpiderThread runnable = null;
 	private HistoryList list = null;
+	private JButton stopScanButton;
+	private JButton startScanButton;
+	
 
 	/**
 	 * This is the default constructor
@@ -120,14 +128,58 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			gridBagConstraints2.insets = new java.awt.Insets(0,0,0,0);
 			gridBagConstraints2.fill = java.awt.GridBagConstraints.BOTH;
 			gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			
+
 			historyPanel.add(this.getPanelToolbar(), gridBagConstraints1);
 			historyPanel.add(getScrollLog(), gridBagConstraints2);
+
 		}
 		return historyPanel;
 	}
 
+	private JButton getStopScanButton() {
+		if (stopScanButton == null) {
+			stopScanButton = new JButton();
+			stopScanButton.setToolTipText(this.extension.getString("ajax.toolbar.button.stop"));
+			stopScanButton.setIcon(new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/142.png")));
+			stopScanButton.setEnabled(false);
+			stopScanButton.addActionListener(new ActionListener () {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					stopScan();
+				}
+			});
+		}
+		return stopScanButton;
+	}
+	
+	private void stopScan() {
+		this.getStartScanButton().setEnabled(true);
+		this.getStopScanButton().setEnabled(false);
+		this.runnable.stopSpider();
+	}
+	private JButton getStartScanButton() {
+		if (startScanButton == null) {
+			startScanButton = new JButton();
+			startScanButton.setToolTipText(Constant.messages.getString("bruteforce.toolbar.button.start"));
+			startScanButton.setIcon(new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/131.png")));
+			startScanButton.setEnabled(false);
+			startScanButton.addActionListener(new ActionListener () {
 
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					//TODO: iniciar aqui el thread
+				}
+
+			});
+
+		}
+		return startScanButton;
+	}
+	
+	private void startScan(String directory) {
+		this.getStartScanButton().setEnabled(false);
+		this.getStopScanButton().setEnabled(true);
+	}	
 	public HistoryList getHistList(){
 		return this.list;
 	}
@@ -166,6 +218,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			GridBagConstraints gridBagConstraintsX = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 
 			gridBagConstraints1.gridx = 0;
 			gridBagConstraints1.gridy = 0;
@@ -192,7 +245,10 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			gridBagConstraints5.gridy = 0;
 			gridBagConstraints5.insets = new java.awt.Insets(0,0,0,0);
 			gridBagConstraints5.anchor = java.awt.GridBagConstraints.WEST;
-
+			gridBagConstraints7.gridx = 6;
+			gridBagConstraints7.gridy = 0;
+			gridBagConstraints7.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints7.anchor = java.awt.GridBagConstraints.WEST;
 			gridBagConstraintsX.gridx = 5;
 			gridBagConstraintsX.gridy = 0;
 			gridBagConstraintsX.weightx = 1.0;
@@ -206,6 +262,9 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 
 			//panelToolbar.add(getFilterButton(), gridBagConstraints1);
 			panelToolbar.add(filterStatus, gridBagConstraints2);
+			panelToolbar.add(getStopScanButton(), gridBagConstraints3);
+			panelToolbar.add(getStartScanButton(), gridBagConstraints1);
+
 			/*
 			panelToolbar.add(getBtnSearch(), gridBagConstraints3);
 			panelToolbar.add(getBtnNext(), gridBagConstraints4);
@@ -326,7 +385,9 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
     }
 
     public void newScanThread(String site, AbstractParam params, boolean inScope) {
-    	try {
+		this.getStartScanButton().setEnabled(false);
+		this.getStopScanButton().setEnabled(true);
+		try {
     		new Thread(this.runnable = new SpiderThread(site, this.extension, inScope)).start();
     	} catch (Exception e) {
     		logger.error(e);

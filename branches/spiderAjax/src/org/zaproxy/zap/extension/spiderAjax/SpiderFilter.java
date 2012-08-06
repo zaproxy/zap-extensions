@@ -94,8 +94,8 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 				HistoryReference historyRef = new HistoryReference(extension.getModel().getSession(), HistoryReference.TYPE_SPIDER_AJAX, msg);
 				SiteNode n = new SiteNode(this.extension.getModel().getSession().getSiteTree(), HistoryReference.TYPE_SPIDER_AJAX, "name");
 				n.setHistoryReference(historyRef);
-	            n.setIncludedInScope(this.extension.getModel().getSession().isIncludedInScope(n), true);
-	            n.setExcludedFromScope(this.extension.getModel().getSession().isExcludedFromScope(n), true);
+	            n.setIncludedInScope(this.extension.getModel().getSession().isInScope(n), true);
+	            //n.setExcludedFromScope(this.extension.getModel().getSession().getSiteTree(), true);
 	            if(!n.isIncludedInScope()) {
 	            	candidates.remove(cand);
 	            	if (logger.isDebugEnabled()) {

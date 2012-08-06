@@ -38,7 +38,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 
 	// crawljax config
 	private static final int NUM_BROWSERS = 1;
-	private static final int NUM_THREADS = 2;
+	private static final int NUM_THREADS = 4;
 	private static final boolean BROWSER_BOOTING = true;
 	private static final int MAX_STATES = 20;
 	private static final boolean RAND_INPUT_FORMS = true;
@@ -54,13 +54,15 @@ public class SpiderThread implements Runnable, ProxyListener {
 	private CrawlSpecification crawler = null;
 	private ProxyConfiguration proxyConf = null;
 	private boolean spiderInScope;
+	private boolean running;
 	private static final Logger logger = Logger.getLogger(SpiderThread.class);
 
 	SpiderThread(String url, ExtensionAjax extension, boolean inScope) {
 		this.url = url;
 		this.extension = extension;
 		this.spiderInScope = inScope;
-		initialize();
+		this.running = false;
+		this.initiProxy();
 	}
 
 	
@@ -68,7 +70,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 	 * This method refreshes the proxy
 	 * @return void
 	 */
-	private void initialize() {
+	private void initiProxy() {
 		this.extension.getProxy().updateProxyConf();
 		this.extension.getProxy().getProxy().addProxyListener(this);
 	    this.extension.getSpiderPanel().getListLog().setModel(this.extension.getSpiderPanel().getHistList());
@@ -105,6 +107,15 @@ public class SpiderThread implements Runnable, ProxyListener {
 	public SpiderThread getSpiderThread() {
 		return this;
 	}
+	
+	/**
+	 * 
+	 * @return the SpiderThread object
+	 */
+	public boolean isRunning() {
+		return this.running;
+	}
+	
 
 	
 	/**
@@ -179,7 +190,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 	 */
 	@Override
 	public void run() {
-
+		this.running = true;
 		try {
 			crawljax = new CrawljaxController(getCrawConf());
         } catch (ConfigurationException e) {
@@ -194,6 +205,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 		} catch (Exception e) {
 			//logger.error(e);
 		} finally {
+			this.running = false;
 			crawljax.terminate(true);
 			this.extension.getProxy().getProxy().stopServer();
 		}
@@ -234,5 +246,20 @@ public class SpiderThread implements Runnable, ProxyListener {
 	@Override
 	public int getProxyListenerOrder() {
 		return 0;
+	}
+	/**
+	 * called by the buttons of the panel to stop the spider
+	 */
+	public void stopSpider() {
+		if(this.isRunning()) {
+			this.running = false;
+			try {
+			crawljax.terminate(false);
+			this.extension.getProxy().getProxy().stopServer();
+				Thread.currentThread().interrupt();
+			} catch (Exception e) {
+				logger.error(e);
+			}
+		}
 	}
 }

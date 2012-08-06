@@ -48,6 +48,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JCheckBox firefox = null;
 	private JCheckBox chrome = null;
 	private JCheckBox  ie = null;
+	private JCheckBox  htmlunit = null;
 	private JLabel jLabel6 = null;
     public OptionsAjaxSpider(ExtensionAjax extension) {
     	
@@ -147,6 +148,18 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	
 	/**
 	 * 
+	 * @return the IE checkbox
+	 */
+	private JCheckBox getHtmlunit() {
+		if (htmlunit == null) {
+			htmlunit = new JCheckBox();
+			htmlunit.setText(this.extension.getString("ajax.proxy.local.label.htmlunit"));
+		}
+		return htmlunit;
+	}
+	
+	/**
+	 * 
 	 */
 	@Override
 	public void initParam(Object obj) {
@@ -173,18 +186,18 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	public void validateParam(Object obj) throws Exception {
 		
 		//if both or none are selected we use firefox
-		if(getFirefox().isSelected() && getChrome().isSelected() && getIE().isSelected()){
+		if(getFirefox().isSelected() && getChrome().isSelected() && getHtmlunit().isSelected()){
 			getChrome().setSelected(false);
-			getIE().setSelected(false);
+			getHtmlunit().setSelected(false);
 			getFirefox().setSelected(true);
-		} else if(!getFirefox().isSelected() && !getChrome().isSelected()&& !getIE().isSelected()){
+		} else if(!getFirefox().isSelected() && !getChrome().isSelected()&& !getHtmlunit().isSelected()){
 			getChrome().setSelected(false);
-			getIE().setSelected(false);
+			getHtmlunit().setSelected(false);
 			getFirefox().setSelected(true);	
-		} else if (!getFirefox().isSelected() && getChrome().isSelected()&& !getIE().isSelected()){
+		} else if (!getFirefox().isSelected() && getChrome().isSelected()&& !getHtmlunit().isSelected()){
 			if(!this.extension.getProxy().isChromeAvail()){
 				getChrome().setSelected(false);
-				getIE().setSelected(false);
+				getHtmlunit().setSelected(false);
 				getFirefox().setSelected(true);	
 				this.extension.showBreakAddDialog();
 			}
@@ -206,8 +219,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		if(getChrome().isSelected()){
 			this.extension.getProxy().setBrowser(BrowserType.chrome);
 		}
-		if(getIE().isSelected()){
-			this.extension.getProxy().setBrowser(BrowserType.ie);
+		if(getHtmlunit().isSelected()){
+			this.extension.getProxy().setBrowser(BrowserType.htmlunit);
 		}
 	}
 
@@ -378,6 +391,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			panelProxy.add(jLabel5, LayoutHelper.getGBC(0, 3, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
 			panelProxy.add(getFirefox(), LayoutHelper.getGBC(0, 4, 3,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
 			panelProxy.add(getChrome(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(25,2,2,2)));
+			panelProxy.add(getHtmlunit(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(50,2,2,2)));
 			//TODO add proxy configuration compatibility in crawljax
 			//panelProxy.add(getIE(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(50,2,2,2)));
 
