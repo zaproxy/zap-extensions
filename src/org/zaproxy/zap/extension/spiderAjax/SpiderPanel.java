@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -30,6 +31,7 @@ import javax.swing.*;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.history.HistoryFilter;
 import org.parosproxy.paros.extension.history.LogPanel;
@@ -41,10 +43,10 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.bruteforce.BruteForcePanel;
+import org.zaproxy.zap.extension.fuzz.FuzzerPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.spiderAjax.SpiderPanel;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
-import org.zaproxy.zap.utils.ZapTextArea;
 
 
 public class SpiderPanel extends AbstractPanel implements Runnable {
@@ -56,12 +58,14 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private javax.swing.JToolBar panelToolbar = null;
 	private JLabel filterStatus = null;
 	private HttpPanel requestPanel = null;
+	private HttpPanel responsePanel = null;
     private ExtensionAjax extension = null;
 	private SpiderThread runnable = null;
 	private HistoryList list = null;
 	private JButton stopScanButton;
 	private JButton startScanButton;
-	
+	private JButton optionsButton = null;
+
 
 	/**
 	 * This is the default constructor
@@ -200,6 +204,21 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 		return true;
 	}
 	
+	private JButton getOptionsButton() {
+		if (optionsButton == null) {
+			optionsButton = new JButton();
+			optionsButton.setToolTipText(this.extension.getString("ajax.toolbar.button.options"));
+			optionsButton.setIcon(new ImageIcon(FuzzerPanel.class.getResource("/resource/icon/16/041.png")));
+			optionsButton.addActionListener(new ActionListener () {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Control.getSingleton().getMenuToolsControl().options(
+							extension.getString("ajax.proxy.local.title"));
+				}
+			});
+		}
+		return optionsButton;
+	}
 	private javax.swing.JToolBar getPanelToolbar() {
 		if (panelToolbar == null) {
 			
@@ -219,6 +238,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			GridBagConstraints gridBagConstraintsX = new GridBagConstraints();
 			GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraintsy = new GridBagConstraints();
 
 			gridBagConstraints1.gridx = 0;
 			gridBagConstraints1.gridy = 0;
@@ -256,7 +276,10 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			gridBagConstraintsX.insets = new java.awt.Insets(0,0,0,0);
 			gridBagConstraintsX.anchor = java.awt.GridBagConstraints.EAST;
 			gridBagConstraintsX.fill = java.awt.GridBagConstraints.HORIZONTAL;
-
+			gridBagConstraintsy.gridx = 21;
+			gridBagConstraintsy.gridy = 0;
+			gridBagConstraintsy.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraintsy.anchor = java.awt.GridBagConstraints.WEST;
 			filterStatus = new JLabel(this.extension.getString("ajax.panel.subtitle"));
 			JLabel t1 = new JLabel();
 
@@ -264,6 +287,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			panelToolbar.add(filterStatus, gridBagConstraints2);
 			panelToolbar.add(getStopScanButton(), gridBagConstraints1);
 			//panelToolbar.add(getStartScanButton(), gridBagConstraints3);
+			panelToolbar.add(getOptionsButton(), gridBagConstraintsy);
 
 			/*
 			panelToolbar.add(getBtnSearch(), gridBagConstraints3);
@@ -281,8 +305,8 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	 * This method initializes listLog	
 	 *	
 	 * @return javax.swing.JList	
-	 */    
-	public javax.swing.JList getListLog() {
+	 */     
+	protected javax.swing.JList getListLog() {
 		if (listLog == null) {
 			listLog = new javax.swing.JList();
 			listLog.setDoubleBuffered(true);
@@ -340,26 +364,156 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 					    if (listLog.getSelectedValue() == null) {
 					        return;
 					    }
+	                    
+						final HistoryReference historyRef = (HistoryReference) listLog.getSelectedValue();
+	
+	                    readAndDisplay(historyRef);
 					}
+
 				}
+
+
 			});
+
 		}
 		return listLog;
 	}
-	
-	
-    private LogPanelCellRenderer logPanelCellRenderer = null;
- 
+
+    
+    private Vector<HistoryReference> displayQueue = new Vector<HistoryReference>();
+    private Thread thread = null;
+    private LogPanelCellRenderer logPanelCellRenderer = null;  //  @jve:decl-index=0:visual-constraint="10,304"
+    
+    
+    
+    protected void display(final HistoryReference historyRef) {
+    	this.readAndDisplay(historyRef);
+    	for (int i = 0; i < listLog.getModel().getSize(); i++) {
+    		// Bit nasty, but its the only way I've found...
+    		if (((HistoryReference)listLog.getModel().getElementAt(i)).getHistoryId() == historyRef.getHistoryId()) {
+    			listLog.setSelectedIndex(i);
+    			listLog.ensureIndexIsVisible(i);
+    			break;
+    			/* Doesnt work - the records are not always in order
+    		} else if (((HistoryReference)listLog.getModel().getElementAt(i)).getHistoryId() > historyRef.getHistoryId()) {
+    			break;
+    			*/
+    		}
+    	}
+    }
+
+    public void clearDisplayQueue() {
+    	synchronized(displayQueue) {
+    		displayQueue.clear();
+    	}
+    }
+    
+    private void readAndDisplay(final HistoryReference historyRef) {
+
+        synchronized(displayQueue) {
+        	/*
+        	// ZAP: Disabled the platform specific browser
+            if (!ExtensionHistory.isEnableForNativePlatform() || !extension.getBrowserDialog().isVisible()) {
+                // truncate queue if browser dialog is displayed to have better response
+                if (displayQueue.size()>0) {
+                    // replace all display queue because the newest display overrides all previous one
+                    // pending to be rendered.
+                    displayQueue.clear();
+                }
+            }
+            */
+            if (displayQueue.size() > 0) {
+                displayQueue.clear();
+            }
+            
+            displayQueue.add(historyRef);
+
+        }
+        
+        if (thread != null && thread.isAlive()) {
+            return;
+        }
+        
+        thread = new Thread(this);
+
+        thread.setPriority(Thread.NORM_PRIORITY);
+        thread.start();
+    }
+    
     
     public void setDisplayPanel(HttpPanel requestPanel, HttpPanel responsePanel) {
         this.requestPanel = requestPanel;
+        this.responsePanel = responsePanel;
+
+    }
+    
+ private void displayMessage(HttpMessage msg) {
+        
+        if (msg.getRequestHeader().isEmpty()) {
+            requestPanel.clearView(true);
+        } else {
+            requestPanel.setMessage(msg);
+        }
+        
+        if (msg.getResponseHeader().isEmpty()) {
+            responsePanel.clearView(false);
+        } else {
+            responsePanel.setMessage(msg, true);
+        }
     }
 
     @Override
     public void run() {
-    	//System.out.println("test");
+    	   HistoryReference ref = null;
+           int count = 0;
+           
+           do {
+               synchronized(displayQueue) {
+                   count = displayQueue.size();
+                   if (count == 0) {
+                       break;
+                   }
+                   
+                   ref = displayQueue.get(0);
+                   displayQueue.remove(0);
+               }
+               
+               try {
+                   final HistoryReference finalRef = ref;
+                   final HttpMessage msg = ref.getHttpMessage();
+                   EventQueue.invokeAndWait(new Runnable() {
+                       @Override
+                       public void run() {
+                           displayMessage(msg);
+                           checkAndShowBrowser(finalRef, msg);
+                           listLog.requestFocus();
+
+                       }
+                   });
+                   
+               } catch (Exception e) {
+                   // ZAP: Added logging.
+                   logger.error(e.getMessage(), e);
+               }
+               
+               // wait some time to allow another selection event to be triggered
+               try {
+                   Thread.sleep(200);
+               } catch (Exception e) {}
+           } while (true);
+           
+           
+       }
+    private void checkAndShowBrowser(HistoryReference ref, HttpMessage msg) {
+    	// TODO reenable??
+    	/*
+        // ZAP: Disabled the platform specific browser
+        if (!ExtensionHistory.isEnableForNativePlatform() || !extension.getBrowserDialog().isVisible()) {
+            return;
+        }
+        extension.browserDisplay(ref, msg);
+        */
     }
-    
 
     /**
      * This method initializes logPanelCellRenderer	
@@ -392,6 +546,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
     		logger.error(e);
     	}
 	}
+    
 	public void scanSite(SiteNode n, boolean inScope) {
 		try {
 			this.extension.run(n.getHierarchicNodeName(), inScope);
