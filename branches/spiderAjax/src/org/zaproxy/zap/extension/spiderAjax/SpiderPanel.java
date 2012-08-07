@@ -184,8 +184,8 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 		return this.list;
 	}
 	
-	public void addHistoryUrl(HistoryReference r, HttpMessage msg){
-			if(isNewUrl(r, msg)){
+	public void addHistoryUrl(HistoryReference r, HttpMessage msg, String url){
+			if(isNewUrl(r, msg) && msg.getRequestHeader().getURI().toString().contains(url)){
 				this.getHistList().addElement(r);
 			}
 		}

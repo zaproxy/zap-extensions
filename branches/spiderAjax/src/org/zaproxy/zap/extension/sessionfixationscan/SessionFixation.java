@@ -53,7 +53,6 @@ import net.htmlparser.jericho.*;
  * - cookie fields (a more common scenario, but also more secure, even when the vulnerability occurs)
  * - url fields (less common, but also less secure when the vulnerability occurs)
  * - session ids built into the url path, and typically extracted by means of url rewriting
- *  TODO: implement the check for form fields (POST parameters).
  *
  *  @author Colm O'Flaherty, Encription Ireland Ltd
  */

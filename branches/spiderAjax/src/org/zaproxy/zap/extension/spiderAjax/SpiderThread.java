@@ -259,7 +259,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 					HistoryReference historyRef = new HistoryReference(extension.getModel().getSession(), HistoryReference.TYPE_SPIDER_AJAX, msg);
 					historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
 					extension.getModel().getSession().getSiteTree().addPath(historyRef, msg);
-					this.extension.getSpiderPanel().addHistoryUrl(historyRef, msg);
+					this.extension.getSpiderPanel().addHistoryUrl(historyRef, msg, this.url);
 				} catch (Exception e){
 					logger.error(e);
 				}
