@@ -151,6 +151,15 @@
 		</antcall>
 	</target>
 
+	
+	<target name="build-spiderAjax" description="build the spiderAjax extension">
+		<antcall target="build-extensionAndDeps">
+			<param name="extension" value="spiderAjax"/>
+			<param name="type" value="alpha"/>
+			<param name="version" value="1"/>
+		</antcall>
+	</target>
+	
 	<target name="build-tokengen" description="build the tokengen extension">
 		<!-- Cant use build-extension as other classes needed -->
 		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
@@ -196,6 +205,7 @@
 		<antcall target="build-scripts"/>
 		<antcall target="build-servletParamPollution"/>
 		<antcall target="build-sessionfixation"/>
+		<antcall target="build-spiderAjax"/>
 		<antcall target="build-tokengen"/>
 		<antcall target="build-viewStatePScan"/>
 		<antcall target="build-alertReport"/>
@@ -253,7 +263,11 @@
 	<target name="deploy-sessionfixationscan" description="deploy the sessionfixation extension">
 		<antcall target="deploy-extension"> <param name="extension" value="sessionfixationscan"/> </antcall>
 	</target>
-
+	
+	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
+		<antcall target="deploy-extension"> <param name="extension" value="spiderAjax"/> </antcall>
+	</target>
+	
 	<target name="deploy-tokengen" description="deploy the tokengen extension">
 		<antcall target="deploy-extension"> <param name="extension" value="tokengen"/> </antcall>
 	</target>
@@ -279,6 +293,7 @@
 		<antcall target="deploy-scripts"/>
 		<antcall target="deploy-servletParamPollution"/>
 		<antcall target="deploy-sessionfixationscan"/>
+		<antcall target="deploy-spiderAjax"/>
 		<antcall target="deploy-tokengen"/>
 		<antcall target="deploy-viewStatePScan"/>
 		<antcall target="deploy-alertReport"/>
