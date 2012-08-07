@@ -38,10 +38,10 @@ import org.parosproxy.paros.model.SiteMap;
 public class SpiderThread implements Runnable, ProxyListener {
 
 	// crawljax config
-	private static final boolean BROWSER_BOOTING = false;
-	private static final int MAX_STATES = 20;
+	private static final boolean BROWSER_BOOTING = true;
+	private static final int MAX_STATES = 500;
 	private static final boolean RAND_INPUT_FORMS = true;
-	private static final int MAX_DEPTH = 20;
+	private static final int MAX_DEPTH = 500;
 	private int numBrowsers;
 	private int numThreads;
 	private String url = null;
