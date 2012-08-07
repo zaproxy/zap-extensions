@@ -34,7 +34,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private List<String> excludeList = null;
 	private ProxyAjax proxy = null;
 	private ChromeAlertDialog addDialog = null;
-	private ScopeController scope = null;
+	//private ScopeController scope = null;
 	private ResourceBundle messages = null;
 	private String mode = null;
 
@@ -92,14 +92,14 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		}
 	}
 
-	public void getMode() {
+	/*public void getMode() {
 		if(this.getModel().getOptionsParam().getViewParam().getMode().equals("safe")) {
 		} else if(this.getModel().getOptionsParam().getViewParam().getMode().equals("protect")) {
 					
 		} else if(this.getModel().getOptionsParam().getViewParam().getMode().equals("standard}")) {
 					
 		}
-	}
+	}*/
 	/**
 	 * Creates the panel with the config of the proxy
 	 * @return the panel

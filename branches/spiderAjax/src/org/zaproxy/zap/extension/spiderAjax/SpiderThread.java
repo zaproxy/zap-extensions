@@ -245,7 +245,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 	@Override
 	public boolean onHttpResponseReceive(HttpMessage msg) {
 		// we check if the scan is scope limited and if so if the node is in scope
-		if ((this.spiderInScope && msg.getHistoryRef().getSiteNode().isIncludedInScope()) || !this.spiderInScope) {
+		//if ((this.spiderInScope && msg.getHistoryRef().getSiteNode().isIncludedInScope()) || !this.spiderInScope) {
 			//we check if it has to be put in the sites tree or is already there
 			boolean ignore = false;
 			for (String pa : this.extension.getModel().getSession().getExcludeFromScanRegexs()) {
@@ -263,7 +263,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 				} catch (Exception e){
 					logger.error(e);
 				}
-			}
+			/*}*/
 		}
 		return true;
 	}

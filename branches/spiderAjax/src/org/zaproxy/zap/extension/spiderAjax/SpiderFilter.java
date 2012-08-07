@@ -72,9 +72,9 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 		this.cands = candidates;
 		filterExcluded(this.sess, this.cands);
 		//if the scope is limited we filter the candidates
-		if (this.thread.isInScope()) {
+		/*if (this.thread.isInScope()) {
 			filterScope(this.sess, this.cands);
-		}
+		}*/
 		session = this.sess;
 		candidates = this.cands;
 	}
@@ -94,7 +94,7 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 				HistoryReference historyRef = new HistoryReference(extension.getModel().getSession(), HistoryReference.TYPE_SPIDER_AJAX, msg);
 				SiteNode n = new SiteNode(this.extension.getModel().getSession().getSiteTree(), HistoryReference.TYPE_SPIDER_AJAX, "name");
 				n.setHistoryReference(historyRef);
-	            n.setIncludedInScope(this.extension.getModel().getSession().isInScope(n), true);
+				/* n.setIncludedInScope(this.extension.getModel().getSession().isInScope(n), true);
 	            //n.setExcludedFromScope(this.extension.getModel().getSession().getSiteTree(), true);
 	            if(!n.isIncludedInScope()) {
 	            	candidates.remove(cand);
@@ -103,7 +103,7 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 					} else {
 						System.out.println("The following URL is out of scope and will be removed: " + guessedUrl);
 					}
-	            }
+	            }*/
 			}
 		}
 		} catch (URIException e) {

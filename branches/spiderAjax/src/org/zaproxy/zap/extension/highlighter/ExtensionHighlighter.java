@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
@@ -136,19 +135,4 @@ implements SessionChangedListener, /*ProxyListener, */ SiteMapListener {
 			return null;
 		}
 	}
-
-
-	@Override
-	public void sessionModeChanged(Mode arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void sessionScopeChanged(Session arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 }
