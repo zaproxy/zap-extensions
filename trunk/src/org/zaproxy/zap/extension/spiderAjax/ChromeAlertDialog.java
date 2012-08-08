@@ -26,7 +26,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.parosproxy.paros.extension.AbstractDialog;
 
-
+/**
+ * This class is used to show an alert to users who do not have
+ * installed in their system the chrome driver when they try to
+ * run the spider ajax with chrome.
+ *
+ */
 public class ChromeAlertDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;

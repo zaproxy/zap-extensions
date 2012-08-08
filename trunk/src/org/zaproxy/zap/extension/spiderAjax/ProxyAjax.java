@@ -22,6 +22,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import com.crawljax.browser.EmbeddedBrowser.BrowserType;
 
+/**
+ * This class manages the ajax spider proxy server
+ *
+ */
 public class ProxyAjax {
 	
 	private ProxyServer proxy = null;

@@ -38,10 +38,10 @@ import org.parosproxy.paros.model.SiteMap;
 public class SpiderThread implements Runnable, ProxyListener {
 
 	// crawljax config
-	private static final boolean BROWSER_BOOTING = true;
-	private static final int MAX_STATES = 500;
+	private static final boolean BROWSER_BOOTING = false;
+	private static final int MAX_STATES = 0;
 	private static final boolean RAND_INPUT_FORMS = true;
-	private static final int MAX_DEPTH = 500;
+	private static final int MAX_DEPTH = 0;
 	private int numBrowsers;
 	private int numThreads;
 	private String url = null;
@@ -57,6 +57,13 @@ public class SpiderThread implements Runnable, ProxyListener {
 	private boolean running;
 	private static final Logger logger = Logger.getLogger(SpiderThread.class);
 
+	
+	/**
+	 * 
+	 * @param url
+	 * @param extension
+	 * @param inScope
+	 */
 	SpiderThread(String url, ExtensionAjax extension, boolean inScope) {
 		this.url = url;
 		this.extension = extension;
@@ -160,6 +167,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 		return threConf;
 	}
 
+	
 	/**
 	 * @return the crawljax configuration (thread conf+spec+proxy conf+plugins)
 	 */
@@ -179,6 +187,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 		return crawlConf;
 	}
 
+	
 	/**
 	 * @return the new crawljax specification
 	 */
@@ -188,6 +197,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 			crawler.setMaximumStates(MAX_STATES);
 			crawler.setDepth(MAX_DEPTH);
 			crawler.setRandomInputInForms(RAND_INPUT_FORMS);
+			crawler.setClickOnce(true);
 			if (this.extension.getProxy().getMegaScan()) {
 				crawler.clickMoreElements();
 			} else {
@@ -201,6 +211,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 		return crawler;
 	}
 
+	
 	/**
 	 * Instantiates the crawljax classes. 
 	 */
@@ -214,6 +225,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 		Logger.getLogger("com.crawljax.core.state.StateVertix").setLevel(Level.OFF);
 		Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
 		Logger.getLogger("org.parosproxy.paros.network").setLevel(Level.OFF);
+		Logger.getLogger("org.parosproxy.paros.view.SiteMapPanel").setLevel(Level.OFF);
 		try {
 			crawljax = new CrawljaxController(getCrawConf());
         } catch (ConfigurationException e) {
@@ -236,12 +248,19 @@ public class SpiderThread implements Runnable, ProxyListener {
 		}
 	}
 	
+	
+	/**
+	 * @param msg sent
+	 */
 	@Override
 	public boolean onHttpRequestSend(HttpMessage msg) {
 		return true;
 	}
 
 	
+	/**
+	 * @param msg received
+	 */
 	@Override
 	public boolean onHttpResponseReceive(HttpMessage msg) {
 		// we check if the scan is scope limited and if so if the node is in scope
@@ -268,10 +287,15 @@ public class SpiderThread implements Runnable, ProxyListener {
 		return true;
 	}
 
+	/**
+	 * @return the proxy  listener order
+	 */
 	@Override
 	public int getProxyListenerOrder() {
 		return 0;
 	}
+	
+	
 	/**
 	 * called by the buttons of the panel to stop the spider
 	 */

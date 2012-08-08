@@ -50,16 +50,25 @@ public class PopupMenuAjax extends ExtensionPopupMenuItem {
 
 	}
 
+	/**
+	 * @return if its a submenu
+	 */
 	@Override
 	public boolean isSubMenu() {
 		return true;
 	}
 
+	/**
+	 * @return the parent menu name
+	 */
 	@Override
 	public String getParentMenuName() {
 		return Constant.messages.getString("attack.site.popup");
 	}
 
+	/**
+	 * @return the parent index
+	 */
 	@Override
 	public int getParentMenuIndex() {
 		return ATTACK_MENU_INDEX;
@@ -109,6 +118,11 @@ public class PopupMenuAjax extends ExtensionPopupMenuItem {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param invoker
+	 * @return
+	 */
 	private JTree getTree(Component invoker) {
 		if (invoker instanceof JTree) {
 			JTree tree = (JTree) invoker;
@@ -120,6 +134,10 @@ public class PopupMenuAjax extends ExtensionPopupMenuItem {
 		return null;
 	}
 
+	/**
+	 * Sets the extension object
+	 * @param extension
+	 */
 	void setExtension(ExtensionAjax extension) {
 		this.extension = extension;
 	}

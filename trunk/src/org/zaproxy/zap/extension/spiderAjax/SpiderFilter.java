@@ -162,7 +162,12 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 		this.sess = session;
 	}
 	
-	
+	/**
+	 * 
+	 * @param candidateUrl
+	 * @param currentUrl
+	 * @return
+	 */
 	private String getCandidateUrl(String candidateUrl, String currentUrl) {
 		String guessedUrl = null;
 		// here we try to guess the candidate URL...
