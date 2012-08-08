@@ -19,7 +19,10 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.proxy.ProxyParam;
-
+/**
+ * This class is used to store information regarding the ajax local proxy configuration 
+ *
+ */
 public class AjaxProxyParam extends ProxyParam {
 	private int proxyPort;
 	private String proxyIp = null;

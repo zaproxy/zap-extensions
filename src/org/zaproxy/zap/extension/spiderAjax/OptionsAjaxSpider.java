@@ -60,11 +60,13 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JLabel threads = null;
 	private static final Logger logger = Logger.getLogger(LogPanel.class);
 
+	/**
+	 * Constructor for the class
+	 * @param extension
+	 */
     public OptionsAjaxSpider(ExtensionAjax extension) {
-    	
         super();
     	this.extension=extension;
-
  		initialize();
    }
     
@@ -555,9 +557,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	}
 
 	
-	
-	
-
+	/**
+	 * @return the help file of the plugin
+	 */
 	@Override
 	public String getHelpIndex() {
 		//TODO: add this in the help menus

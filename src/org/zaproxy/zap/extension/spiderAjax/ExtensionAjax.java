@@ -85,10 +85,11 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
 			this.getSpiderPanel().setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
+			//scope control
 			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpider());
-			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSite());
 			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSiteInScope());
-			//ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spider");
+			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSite());
+			ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spider");
 		}
 	}
 

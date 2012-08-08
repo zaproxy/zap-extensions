@@ -41,6 +41,11 @@ public class PopupMenuAjaxSiteInScope extends PopupMenuSiteNode {
         this.extension=extension;
     }
     
+    
+    /**
+     * 
+     * @return
+     */
     private ExtensionAjax getExtensionSpider() {
     	if (extension == null) {
     		extension = (ExtensionAjax) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAjax.NAME);
@@ -48,28 +53,48 @@ public class PopupMenuAjaxSiteInScope extends PopupMenuSiteNode {
     	return extension;
     }
 	
+    
+    /**
+     * 
+     */
     @Override
     public boolean isSubMenu() {
     	return true;
     }
     
+    
+    /**
+     * 
+     */
     @Override
     public String getParentMenuName() {
     	return Constant.messages.getString("attack.site.popup");
     }
-
+    
+    
+    /**
+     * 
+     */
     @Override
     public int getParentMenuIndex() {
     	return ATTACK_MENU_INDEX;
     }
-
+    
+    
+    /**
+     * 
+     */
 	@Override
 	public void performAction(SiteNode node) throws Exception {
 	    if (node != null) {
 	    	extension.spiderSite(node, false);
 	    }
 	}
+    
 	
+    /**
+     * 
+     */	
 	@Override
     public boolean isEnabledForSiteNode (SiteNode node) {
 	    if (node != null && ! node.isRoot() ) {
@@ -79,6 +104,11 @@ public class PopupMenuAjaxSiteInScope extends PopupMenuSiteNode {
 	    }
         return true;
     }
+  
+	
+    /**
+     * 
+     */
 	@Override
 	public boolean isEnableForInvoker(Invoker invoker) {
 	    if (getExtensionSpider() == null) {
