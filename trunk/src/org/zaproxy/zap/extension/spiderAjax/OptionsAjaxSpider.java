@@ -77,7 +77,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	 */
 	private void initialize() {
         this.setLayout(new CardLayout());
-        this.setName(this.extension.getString("ajax.proxy.local.title"));
+        this.setName(this.extension.getString("ajax.options.title"));
 	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
 	    	this.setSize(391, 320);
 	    }
@@ -384,18 +384,10 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JPanel getPanelCrawljax() {
 		if (panelCrawljax == null) {
 			jLabel6 = new JLabel();
-			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			java.awt.GridBagConstraints gridBagConstraints72 = new GridBagConstraints();
-
-			java.awt.GridBagConstraints gridBagConstraints42 = new GridBagConstraints();
-
 			java.awt.GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			java.awt.GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			java.awt.GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
 			java.awt.GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-			
-			javax.swing.JLabel jLabel = new JLabel();
-
-			javax.swing.JLabel jLabel1 = new JLabel();
 			
 			panelCrawljax = new JPanel();
 			panelCrawljax.setLayout(new GridBagLayout());
@@ -419,7 +411,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			gridBagConstraints6.fill = java.awt.GridBagConstraints.HORIZONTAL;
 			gridBagConstraints6.insets = new java.awt.Insets(2,2,2,2);
 			gridBagConstraints6.weightx = 0.5D;
-			
 			gridBagConstraints7.gridx = 1;
 			gridBagConstraints7.gridy = 1;
 			gridBagConstraints7.weightx = 0.5D;
@@ -428,7 +419,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			gridBagConstraints7.ipady = 0;
 			gridBagConstraints7.anchor = java.awt.GridBagConstraints.WEST;
 			gridBagConstraints7.insets = new java.awt.Insets(2,2,2,2);
-			java.awt.GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			gridBagConstraints4.gridx = 0;
 			gridBagConstraints4.gridy = 0;
 			gridBagConstraints4.ipadx = 0;
@@ -475,43 +465,15 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		if (panelProxy == null) {
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			panelProxy = new JPanel();
-			java.awt.GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 
-			java.awt.GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
-
-			java.awt.GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
-
-			java.awt.GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
+			java.awt.GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints91 = new GridBagConstraints();
+			java.awt.GridBagConstraints gridBagConstraints81 = new GridBagConstraints();
 
 			javax.swing.JLabel jLabel4 = new JLabel();
 
-			java.awt.GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-
-			GridBagConstraints gridBagConstraints91 = new GridBagConstraints();
-
-			java.awt.GridBagConstraints gridBagConstraints81 = new GridBagConstraints();
-
 			panelProxy.setLayout(new GridBagLayout());
 
-			gridBagConstraints8.gridx = 0;
-			gridBagConstraints8.gridy = 0;
-			gridBagConstraints8.insets = new java.awt.Insets(2,0,2,0);
-			gridBagConstraints8.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints8.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints8.weightx = 1.0D;
-			gridBagConstraints9.gridx = 0;
-			gridBagConstraints9.gridy = 1;
-			gridBagConstraints9.weightx = 1.0;
-			gridBagConstraints9.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints9.insets = new java.awt.Insets(2,0,2,0);
-			gridBagConstraints9.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints10.gridx = 0;
-			gridBagConstraints10.gridy = 2;
-			gridBagConstraints10.insets = new java.awt.Insets(2,0,2,0);
-			gridBagConstraints10.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints10.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints1.weightx = 1.0;
-			gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
 			panelProxy.setName(Constant.messages.getString("options.proxy.local.label.local"));
 		    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
 		    	panelProxy.setSize(303, 177);
@@ -562,7 +524,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	 */
 	@Override
 	public String getHelpIndex() {
-		//TODO: add this in the help menus
 		return "ui.dialogs.options.spiderAjax";
 	}
 	
