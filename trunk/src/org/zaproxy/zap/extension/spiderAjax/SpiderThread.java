@@ -242,7 +242,6 @@ public class SpiderThread implements Runnable, ProxyListener {
 		} finally {
 			this.running = false;
 			crawljax.terminate(true);
-			this.extension.getProxy().getProxy().stopServer();
 			logger.info("Finished crawling " + this.url );
 
 		}
@@ -304,8 +303,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 			this.running = false;
 			try {
 			crawljax.terminate(false);
-			this.extension.getProxy().getProxy().stopServer();
-				Thread.currentThread().interrupt();
+			Thread.currentThread().interrupt();
 			} catch (Exception e) {
 				logger.error(e);
 			}
