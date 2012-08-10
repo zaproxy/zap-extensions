@@ -43,7 +43,11 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 
-
+/**
+ * This class creates the Spider AJAX Panel where the found URLs are displayed
+ * It has a button to stop the crawler and another one to open the options.
+ *
+ */
 public class SpiderPanel extends AbstractPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SpiderPanel.class);
@@ -74,7 +78,6 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	/**
 	 * This method initializes this
 	 * 
-	 * @return void
 	 */
 	private  void initialize() {
 		this.setLayout(new BorderLayout());
@@ -139,7 +142,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 		}
 		return historyPanel;
 	}
-
+	
 	
 	/**
 	 * 
@@ -237,13 +240,13 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private JButton getOptionsButton() {
 		if (optionsButton == null) {
 			optionsButton = new JButton();
-			optionsButton.setToolTipText(this.extension.getString("ajax.toolbar.button.options"));
+			optionsButton.setToolTipText(this.extension.getString("ajax.options.title"));
 			optionsButton.setIcon(new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/041.png")));
 			optionsButton.addActionListener(new ActionListener () {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					Control.getSingleton().getMenuToolsControl().options(
-							extension.getString("ajax.proxy.local.title"));
+							extension.getString("ajax.options.title"));
 				}
 			});
 		}

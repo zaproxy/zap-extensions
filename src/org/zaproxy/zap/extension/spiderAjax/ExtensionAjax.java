@@ -89,7 +89,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpider());
 			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSiteInScope());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSite());
-			ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spider");
+			ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spiderAjax");
 		}
 	}
 
