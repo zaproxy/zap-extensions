@@ -24,12 +24,17 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -42,6 +47,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
+import org.zaproxy.zap.view.ScanStatus;
 
 /**
  * This class creates the Spider AJAX Panel where the found URLs are displayed
@@ -53,7 +59,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private static final Logger logger = Logger.getLogger(SpiderPanel.class);
 	private javax.swing.JScrollPane scrollLog = null;
 	private javax.swing.JList listLog = null;
-	private javax.swing.JPanel historyPanel = null;
+	private javax.swing.JPanel AJAXSpiderPanel = null;
 	private javax.swing.JToolBar panelToolbar = null;
 	private JLabel filterStatus = null;
 	private HttpPanel requestPanel = null;
@@ -64,7 +70,12 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private JButton stopScanButton;
 	private JButton startScanButton;
 	private JButton optionsButton = null;
+	
+	private ScanStatus scanStatus = null;
 
+	private JLabel activeScansNameLabel = null;
+	private JLabel activeScansValueLabel = null;
+	private List<String> activeScans = new ArrayList<String>();;
 
 	/**
 	 * This is the default constructor
@@ -76,7 +87,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	}
 	
 	/**
-	 * This method initializes this
+	 * This method initializes this class and its attributes
 	 * 
 	 */
 	private  void initialize() {
@@ -84,13 +95,21 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
 	    	this.setSize(600, 200);
 	    }
-		this.add(getHistoryPanel(), java.awt.BorderLayout.CENTER);
-		this.list = new HistoryList();
+		this.add(getAJAXSpiderPanel(), java.awt.BorderLayout.CENTER);
+		this.list = new HistoryList();		
+        scanStatus = new ScanStatus(
+        				new ImageIcon(
+        					SpiderPanel.class.getResource("/resource/icon/16/spiderAjax.png")),
+        					this.extension.getString("ajax.panel.title"));
+        if (View.isInitialised()) {
+        	View.getSingleton().getMainFrame().getMainFooterPanel().addFooterToolbarRightLabel(scanStatus.getCountLabel());
+        }
+
 	}
     
     
 	/**
-	 * This method initializes scrollLog	
+	 * This method initializes the scrollLog attribute
 	 * 	
 	 * @return javax.swing.JScrollPane	
 	 */    
@@ -109,14 +128,14 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	
 	/**
 	 * 
-	 * @return
+	 * @return the AJAX Spider Panel
 	 */
-	private javax.swing.JPanel getHistoryPanel() {
-		if (historyPanel == null) {
+	private javax.swing.JPanel getAJAXSpiderPanel() {
+		if (AJAXSpiderPanel == null) {
 			
-			historyPanel = new javax.swing.JPanel();
-			historyPanel.setLayout(new java.awt.GridBagLayout());
-			historyPanel.setName("Spider AJAX Panel");
+			AJAXSpiderPanel = new javax.swing.JPanel();
+			AJAXSpiderPanel.setLayout(new java.awt.GridBagLayout());
+			AJAXSpiderPanel.setName("Spider AJAX Panel");
 			
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
@@ -136,17 +155,17 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			gridBagConstraints2.fill = java.awt.GridBagConstraints.BOTH;
 			gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
 
-			historyPanel.add(this.getPanelToolbar(), gridBagConstraints1);
-			historyPanel.add(getScrollLog(), gridBagConstraints2);
+			AJAXSpiderPanel.add(this.getPanelToolbar(), gridBagConstraints1);
+			AJAXSpiderPanel.add(getScrollLog(), gridBagConstraints2);
 
 		}
-		return historyPanel;
+		return AJAXSpiderPanel;
 	}
 	
 	
 	/**
 	 * 
-	 * @return
+	 * @return The Stop Scan Button
 	 */
 	private JButton getStopScanButton() {
 		if (stopScanButton == null) {
@@ -166,17 +185,35 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	
 	
 	/**
-	 * 
+	 * stops a specific thread
+	 * @param site
 	 */
-	private void stopScan() {
+	public void stopScan(String site) {
+		this.activeScans.remove(site);
+		this.setActiveScanLabels();
+		this.getStartScanButton().setEnabled(true);
+		if (this.activeScans.size() < 1) {
+			this.getStopScanButton().setEnabled(false);
+		}
+		this.runnable.stopSpider();
+	}
+	
+	
+	/**
+	 * Stops all threads
+	 */
+	public void stopScan() {
+		this.activeScans = new ArrayList<String>();
+		this.setActiveScanLabels();
 		this.getStartScanButton().setEnabled(true);
 		this.getStopScanButton().setEnabled(false);
 		this.runnable.stopSpider();
 	}
 	
+	
 	/**
 	 * 
-	 * @return
+	 * @return The Start Scan Button
 	 */
 	private JButton getStartScanButton() {
 		if (startScanButton == null) {
@@ -199,7 +236,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	
 	/**
 	 * 
-	 * @return
+	 * @return the History List
 	 */
 	public HistoryList getHistList(){
 		return this.list;
@@ -207,9 +244,9 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	
 	/**
 	 * 
-	 * @param r
-	 * @param msg
-	 * @param url
+	 * @param r history reference
+	 * @param msg the http message
+	 * @param url the targeted url
 	 */
 	public void addHistoryUrl(HistoryReference r, HttpMessage msg, String url){
 			if(isNewUrl(r, msg) && msg.getRequestHeader().getURI().toString().contains(url)){
@@ -219,9 +256,9 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	
 	/**
 	 * 
-	 * @param r
-	 * @param msg
-	 * @return
+	 * @param r history reference
+	 * @param msg the http message
+	 * @return if the url is new or not
 	 */
 	public boolean isNewUrl(HistoryReference r, HttpMessage msg){
 		Enumeration<?> e = this.getHistList().elements();
@@ -235,7 +272,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	
 	/**
 	 * 
-	 * @return
+	 * @return the Options Button
 	 */
 	private JButton getOptionsButton() {
 		if (optionsButton == null) {
@@ -256,7 +293,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	
 	/**
 	 * 
-	 * @return
+	 * @return the panel toolbar
 	 */
 	private javax.swing.JToolBar getPanelToolbar() {
 		if (panelToolbar == null) {
@@ -284,7 +321,6 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			gridBagConstraints1.insets = new java.awt.Insets(0,0,0,0);
 			gridBagConstraints1.anchor = java.awt.GridBagConstraints.WEST;
 			
-			// TODO this shouldnt push the filter button off the lhs
 			gridBagConstraints2.gridx = 1;
 			gridBagConstraints2.gridy = 0;
 			gridBagConstraints2.insets = new java.awt.Insets(0,0,0,0);
@@ -420,7 +456,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private LogPanelCellRenderer logPanelCellRenderer = null;
 	
 	/**
-	 * @param 
+	 * @param  the history reference to display
 	 */
 	protected void display(final HistoryReference historyRef) {
 		this.readAndDisplay(historyRef);
@@ -436,7 +472,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	
 	
 	/**
-	 * @param 
+	 * clear and displays the queue
 	 */
 	public void clearDisplayQueue() {
 		synchronized (displayQueue) {
@@ -455,23 +491,19 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			if (displayQueue.size() > 0) {
 				displayQueue.clear();
 			}
-
 			displayQueue.add(historyRef);
-
 		}
 
 		if (thread != null && thread.isAlive()) {
 			return;
 		}
-
 		thread = new Thread(this);
-
 		thread.setPriority(Thread.NORM_PRIORITY);
 		thread.start();
 	}
 
 	/**
-	 * @param 
+	 * @param
 	 */
 	public void setDisplayPanel(HttpPanel requestPanel, HttpPanel responsePanel) {
 		this.requestPanel = requestPanel;
@@ -479,8 +511,10 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 
 	}    
 
+	
 	/**
-	 * @param 
+	 * 
+	 * @param msg the httpmessage to display
 	 */
 	private void displayMessage(HttpMessage msg) {
 
@@ -559,7 +593,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 
 	/**
 	 * 
-	 * @param filter
+	 * @param filter the history filter
 	 */
 	public void setFilterStatus(HistoryFilter filter) {
 		filterStatus.setText(filter.toShortString());
@@ -569,16 +603,17 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	
 	/**
 	 * 
-	 * @param site
-	 * @param params
-	 * @param inScope
+	 * @param site the targeted site
+	 * @param params if it is in scope
+	 * @param inScope if it is in scope
 	 */
 	public void newScanThread(String site, AbstractParam params, boolean inScope) {
 		this.getStartScanButton().setEnabled(false);
 		this.getStopScanButton().setEnabled(true);
+		this.activeScans.add(site);
+		this.setActiveScanLabels();
 		try {
-			new Thread(this.runnable = new SpiderThread(site, this.extension,
-					inScope)).start();
+			new Thread(this.runnable = new SpiderThread(site, this.extension, inScope)).start();
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -586,8 +621,8 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 
 	/**
 	 * 
-	 * @param n
-	 * @param inScope
+	 * @param n the sitenode
+	 * @param inScope if it is in scope
 	 */
 	public void scanSite(SiteNode n, boolean inScope) {
 		try {
@@ -596,5 +631,58 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			logger.error(e);
 		}
 	}
+	
+	
+	/**
+	 * @return the active scans name label
+	 */
+	private JLabel getActiveScansNameLabel() {
+		if (activeScansNameLabel == null) {
+			activeScansNameLabel = new javax.swing.JLabel();
+			activeScansNameLabel.setText(Constant.messages.getString("bruteforce.toolbar.ascans.label"));
+		}
+		return activeScansNameLabel;
+	}
+	
+	
+	/**
+	 * 
+	 * @return he number of active scans
+	 */
+	private JLabel getActiveScansValueLabel() {
+		if (activeScansValueLabel == null) {
+			activeScansValueLabel = new javax.swing.JLabel();
+			activeScansValueLabel.setText(""+activeScans.size());
+		}
+		return activeScansValueLabel;
+	}
+	
+	/**
+	 * sets the number of active scans
+	 */
+	private void setActiveScanLabels() {
+		getActiveScansValueLabel().setText(""+activeScans.size());
+		StringBuilder sb = new StringBuilder();
+		Iterator <String> iter = activeScans.iterator();
+		sb.append("<html>");
+		while (iter.hasNext()) {
+			sb.append(iter.next());
+			sb.append("<br>");
+		}
+		sb.append("</html>");
+		
+		final String toolTip = sb.toString();
+		
+		getActiveScansNameLabel().setToolTipText(toolTip);
+		getActiveScansValueLabel().setToolTipText(toolTip);
+		
+		scanStatus.setScanCount(activeScans.size());
+	}
+	
+	
+	
+	
+	
+
 }
 

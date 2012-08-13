@@ -18,7 +18,6 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 import com.crawljax.core.CrawljaxController;
 import com.crawljax.core.CrawljaxException;
@@ -26,14 +25,12 @@ import com.crawljax.core.configuration.CrawlSpecification;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.ProxyConfiguration;
 import com.crawljax.core.configuration.ThreadConfiguration;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.SiteMap;
 
 public class SpiderThread implements Runnable, ProxyListener {
 
@@ -225,6 +222,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 		Logger.getLogger("com.crawljax.core.state.StateVertix").setLevel(Level.OFF);
 		Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
 		Logger.getLogger("org.parosproxy.paros.network").setLevel(Level.OFF);
+		Logger.getLogger("org.openqa.selenium.remote").setLevel(Level.OFF);
 		Logger.getLogger("org.parosproxy.paros.view.SiteMapPanel").setLevel(Level.OFF);
 		try {
 			crawljax = new CrawljaxController(getCrawConf());
@@ -240,10 +238,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 		} catch (Exception e) {
 			//logger.error(e);
 		} finally {
-			this.running = false;
-			crawljax.terminate(true);
-			logger.info("Finished crawling " + this.url );
-
+			this.stopSpider();
 		}
 	}
 	
@@ -299,14 +294,14 @@ public class SpiderThread implements Runnable, ProxyListener {
 	 * called by the buttons of the panel to stop the spider
 	 */
 	public void stopSpider() {
-		if(this.isRunning()) {
-			this.running = false;
-			try {
-			crawljax.terminate(false);
-			Thread.currentThread().interrupt();
-			} catch (Exception e) {
-				logger.error(e);
-			}
+		logger.info("Finished crawljax targeting " + this.url );
+		this.running = false;
+		try {
+		crawljax.terminate(false);
+		this.extension.getSpiderPanel().stopScan(this.url);
+		Thread.currentThread().interrupt();
+		} catch (Exception e) {
+			logger.error(e);
 		}
 	}
 }

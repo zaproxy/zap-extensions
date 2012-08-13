@@ -24,7 +24,6 @@ import java.awt.Insets;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.history.LogPanel;
@@ -43,7 +42,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private ExtensionAjax extension=null;
 	private JPanel panelLocalProxy = null;
 	private JPanel panelCrawljax = null;
-	private JPanel panelProxy = null;  //  @jve:decl-index=0:visual-constraint="10,283"
+	private JPanel panelProxy = null;
 	private ZapTextField txtProxyIp = null;
 	private ZapTextField txtNumBro = null;
 	private ZapTextField txtNumThre = null;

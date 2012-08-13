@@ -24,6 +24,8 @@ import org.parosproxy.paros.core.proxy.ProxyParam;
  *
  */
 public class AjaxProxyParam extends ProxyParam {
+	private final String DEFAULT_HOST = "localhost";
+	private final int DEFAULT_PORT = 8081;
 	private int proxyPort;
 	private String proxyIp = null;
 	private static final String PROXY_IP = "proxy.ip";
@@ -35,8 +37,8 @@ public class AjaxProxyParam extends ProxyParam {
 	 * constructor, if no IP and port specified, we set localhost:8081
 	 */
 	public AjaxProxyParam() {
-		this.proxyIp="localhost";
-		this.proxyPort=8081;
+		this.proxyIp = this.DEFAULT_HOST;
+		this.proxyPort = this.DEFAULT_PORT;
 	}
 
 	/**
@@ -45,7 +47,7 @@ public class AjaxProxyParam extends ProxyParam {
 	 */
 	public AjaxProxyParam(int port) {
 		this.proxyPort = port;
-		this.proxyIp = "localhost";
+		this.proxyIp = this.DEFAULT_HOST;
 	}
 	/**
 	 * constructor
