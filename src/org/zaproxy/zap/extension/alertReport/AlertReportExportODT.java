@@ -229,6 +229,29 @@ public class AlertReportExportODT {
 		
 		
 	}
+	/**
+	 * get content field alert from property default extension
+	 * @param pluginId
+	 * @param key
+	 * @param contentDefault
+	 * @param extensionExport
+	 * @return
+	 */
+	private static String getFieldAlertProperty(Integer pluginId, String key,String contentDefault,ExtensionAlertReportExport extensionExport){
+		String result = contentDefault;
+		try {
+			if (key.contains("risk"))
+				result = extensionExport.getMessageString("alert.export.pluginid."+key);
+			else
+				if (key.contains("reliability"))
+					result = extensionExport.getMessageString("alert.export.pluginid."+key);
+				else
+					result = extensionExport.getMessageString("alert.export.pluginid."+String.valueOf(pluginId)+"."+key);
+		} catch (Exception e) {
+			logger.error("Failed to load message alert: "+e.getMessage(), e);
+		}
+		return result;
+	}
 	
 	private static void addContent(TextDocument outputDocument,java.util.List<Alert> alerts) throws Exception {
 		outputDocument.addPageBreak();
@@ -253,7 +276,7 @@ public class AlertReportExportODT {
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 		addLines(outputDocument,1);
 		//add description
-		para = outputDocument.addParagraph(alert.getDescription());
+		para = outputDocument.addParagraph(getFieldAlertProperty(alert.getPluginId(),"description",alert.getDescription(),extension));
 		para.setFont(fontText);
 		para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
 		
@@ -265,7 +288,7 @@ public class AlertReportExportODT {
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 		addLines(outputDocument,1);
 		//add risk
-		para = outputDocument.addParagraph(Alert.MSG_RISK[alert.getRisk()]);
+		para = outputDocument.addParagraph(getFieldAlertProperty(alert.getPluginId(),"risk."+String.valueOf(alert.getRisk()),Alert.MSG_RISK[alert.getRisk()],extension));
 		para.setFont(fontText);
 		para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
 		addLines(outputDocument,1);
@@ -275,7 +298,7 @@ public class AlertReportExportODT {
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 		addLines(outputDocument,1);
 		//add reability
-		para = outputDocument.addParagraph(Alert.MSG_RISK[alert.getReliability()]);
+		para = outputDocument.addParagraph(getFieldAlertProperty(alert.getPluginId(),"reliability."+String.valueOf(alert.getReliability()),Alert.MSG_RELIABILITY[alert.getReliability()],extension));
 		para.setFont(fontText);
 		para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
 		addLines(outputDocument,1);
@@ -358,22 +381,26 @@ public class AlertReportExportODT {
 			addLines(outputDocument,1);
 					
 		}
-		addLines(outputDocument,1);
-		para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.solution"));
-		para.setFont(fontTitleBold);
-		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-		para = outputDocument.addParagraph(alert.getSolution());
-		para.setFont(fontText);
-		para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
 		
-		addLines(outputDocument,1);
-		para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.references"));
-		para.setFont(fontTitleBold);
-		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-		para = outputDocument.addParagraph(alert.getReference());
-		para.setFont(fontText);
-		para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
-		addLines(outputDocument,1);
+		if (!alert.getSolution().equals("")){
+			addLines(outputDocument,1);
+			para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.solution"));
+			para.setFont(fontTitleBold);
+			para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
+			para = outputDocument.addParagraph(getFieldAlertProperty(alert.getPluginId(),"solution",alert.getSolution(),extension));
+			para.setFont(fontText);
+			para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
+		}
+		if (!alert.getReference().equals("")){
+			addLines(outputDocument,1);
+			para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.references"));
+			para.setFont(fontTitleBold);
+			para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
+			para = outputDocument.addParagraph(alert.getReference());
+			para.setFont(fontText);
+			para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
+		}	
+			addLines(outputDocument,1);
 			
 		
 
