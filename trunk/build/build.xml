@@ -188,7 +188,7 @@
             <antcall target="build-extensionAndDeps">
                     <param name="extension" value="alertReport"/>
                     <param name="type" value="beta"/>
-                    <param name="version" value="4"/>
+                    <param name="version" value="5"/>
             </antcall>
     </target>
 	

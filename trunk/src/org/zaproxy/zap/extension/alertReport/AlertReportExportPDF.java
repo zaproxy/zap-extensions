@@ -181,6 +181,29 @@ public class AlertReportExportPDF {
 			
 			
 		}
+		/**
+		 * get content field alert from property default extension
+		 * @param pluginId
+		 * @param key
+		 * @param contentDefault
+		 * @param extensionExport
+		 * @return
+		 */
+		private static String getFieldAlertProperty(Integer pluginId, String key,String contentDefault,ExtensionAlertReportExport extensionExport){
+			String result = contentDefault;
+			try {
+				if (key.contains("risk"))
+					result = extensionExport.getMessageString("alert.export.pluginid."+key);
+				else
+					if (key.contains("reliability"))
+						result = extensionExport.getMessageString("alert.export.pluginid."+key);
+					else
+						result = extensionExport.getMessageString("alert.export.pluginid."+String.valueOf(pluginId)+"."+key);
+			} catch (Exception e) {
+				logger.error("Failed to load message alert: "+e.getMessage(), e);
+			}
+			return result;
+		}
 		
 		private static void addContent(Document document,java.util.List<Alert> alerts,ExtensionAlertReportExport extensionExport) throws DocumentException {
 			
@@ -192,13 +215,13 @@ public class AlertReportExportPDF {
 			Paragraph content = new Paragraph();
 			content.add(new Paragraph(alert.getAlert(), catFont));
 			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.description"), subFont));
-			content.add(new Paragraph(alert.getDescription()));
+			content.add(new Paragraph(getFieldAlertProperty(alert.getPluginId(),"description",alert.getDescription(),extensionExport)));
 			addEmptyLine(content, 1);
 			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.risk"), subFont));
-			content.add(new Paragraph(Alert.MSG_RISK[alert.getRisk()]));
+			content.add(new Paragraph(getFieldAlertProperty(alert.getPluginId(),"risk."+String.valueOf(alert.getRisk()),Alert.MSG_RISK[alert.getRisk()],extensionExport)));
 			addEmptyLine(content, 1);
 			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.reability"), subFont));
-			content.add(new Paragraph(Alert.MSG_RISK[alert.getReliability()]));
+			content.add(new Paragraph(getFieldAlertProperty(alert.getPluginId(),"reliability."+String.valueOf(alert.getReliability()),Alert.MSG_RELIABILITY[alert.getReliability()],extensionExport)));
 			addEmptyLine(content, 1);
 			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.urls"), subFont));
 			
@@ -262,15 +285,19 @@ public class AlertReportExportPDF {
 				addEmptyLine(content, 1);
 						
 			}
+			if (!alert.getSolution().equals("")){
+				addEmptyLine(content, 1);
+				content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.solution"), subFont));
+				content.add(new Paragraph(getFieldAlertProperty(alert.getPluginId(),"solution",alert.getSolution(),extensionExport)));
+			}
 			addEmptyLine(content, 1);
-			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.solution"), subFont));
-			content.add(new Paragraph(alert.getSolution()));
-			addEmptyLine(content, 1);
-			content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.references"), subFont));
-			content.add(new Paragraph(alert.getReference()));
-			addEmptyLine(content, 1);
-            document.add(content);
-			
+			if (!alert.getReference().equals("")){
+				content.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.references"), subFont));
+				content.add(new Paragraph(alert.getReference()));
+				addEmptyLine(content, 1);
+	            
+			}
+			document.add(content);
             // Start a new page
 			document.newPage();
 
