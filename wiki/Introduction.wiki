@@ -17,7 +17,7 @@ The following extensions are currently available:
 || Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-csrfcountermeasuresscan-alpha-1.jar CSRF Countermeasures Scanner] || ZAP Core Team || CSRF Countermeasures Scanner ||
 || Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-tokengen-alpha-1.jar tokengen] || ZAP Core Team || Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection. ||
 || Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-viewStatePScan-alpha-1.jar viewStatePscan] || Alexandre Herzog, [http://www.csnc.ch/ Compass Security] || View State passive scanner ||
-|| Alpha || 1 || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sqlinjectionscan-alpha-1.jar SQL Injection Scanners] || ZAP Core Team (Colm O'Flaherty) || SQL Injection Scanners (complete re-write), including generic and MySQL specific scanners ||
+|| Alpha || 2 || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sqlinjectionscan-alpha-2.jar SQL Injection Scanners] || ZAP Core Team (Colm O'Flaherty) || SQL Injection Scanners (complete re-write), including generic, MySQL, Hypersonic/HSQL, and Oracle specific scanners ||
 
 
 This project also contains example templates to help you get started when developing new ones:
