@@ -36,13 +36,14 @@ import org.parosproxy.paros.network.HttpMessage;
 
 
 /**
- *  
- * TODO: implement time based checks for databases other than MySQL (as separate extensions)
- * TODO: implement RDBMS specific checks (as separate extensions)
+ * TODO: implement stacked query check, since it is actually supported on more RDBMS drivers / frameworks than not (MySQL on PHP/ASP does not by default, but can).
+ *        PostgresQL and MSSQL on ASP, ASP.NET, and PHP *do* support it, for instance.  It's better to put the code here and try it for all RDBMSs as a result
+ * TODO: implement the Risk level check / do not do dangerous operations unless the level is right!
  * TODO: implement checks in Header fields (currently does Cookie values, form fields, and url parameters)
- * TODO: implement the Risk level check..
  * TODO: change the Alert Titles.
- * TODO: check the values output in the Boolean Based output.. they do not match the actuals values sent in (they are appendages)
+ * TODO: if the argument is reflected back in the HTML output, the boolean based logic will not detect an alert 
+ *        (because the HTML results of argument values "id=1" will not be the same as for "id=1 and 1=1")
+ * TODO: add "<param>*2/2" check to the Logic based ones (for integer parameter values).. if the result is the same, it might be a SQL Injection
  * 
  * The SQLInjection plugin identifies SQL Injection vulnerabilities
  * note the ordering of checks, for efficiency is : 
@@ -58,8 +59,8 @@ public class SQLInjection extends AbstractAppPlugin {
 	
 	//debug variables.. used to skip over certain logic to get to the rest quickly! 
 	//(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
-	private boolean debugDoErrorBased = true;
-	private boolean debugDoBooleanBased=true;
+	private boolean debugDoErrorBased = true;  
+	private boolean debugDoBooleanBased=true; 
 	private boolean debugDoUnionBased = true;	
 
 	/**
@@ -82,9 +83,11 @@ public class SQLInjection extends AbstractAppPlugin {
 	 */
 	private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<String, String>();
 	static {
+		//DONE: we have implemented a MySQL specific scanner. See SQLInjectionMySQL
 		SQL_ERROR_TO_DBMS.put("com.mysql.jdbc.exceptions", "MySQL");
 		SQL_ERROR_TO_DBMS.put("org.gjt.mm.mysql", "MySQL");
 
+		//TODO: implement a plugin that uses Microsoft SQL specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("com.microsoft.sqlserver.jdbc", "Microsoft SQL Server");
 		SQL_ERROR_TO_DBMS.put("com.microsoft.jdbc", "Microsoft SQL Server");
 		SQL_ERROR_TO_DBMS.put("com.inet.tds", "Microsoft SQL Server");
@@ -96,41 +99,62 @@ public class SQLInjection extends AbstractAppPlugin {
 		SQL_ERROR_TO_DBMS.put("[SQLServer 2000 Driver for JDBC]", "Microsoft SQL Server");
 		SQL_ERROR_TO_DBMS.put("net.sourceforge.jtds.jdbc", "Microsoft SQL Server"); 		//see also Sybase. could be either!
 
+		//DONE: we have implemented an Oracle specific scanner. See SQLInjectionOracle
 		SQL_ERROR_TO_DBMS.put("oracle.jdbc", "Oracle");
+		SQL_ERROR_TO_DBMS.put("SQLSTATE[HY", "Oracle");
 
+		//TODO: implement a plugin that uses DB2 specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("com.ibm.db2.jcc", "IBM DB2");
 		SQL_ERROR_TO_DBMS.put("COM.ibm.db2.jdbc", "IBM DB2");
 
+		//TODO: implement a plugin that uses Postgresql functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("org.postgresql.util.PSQLException", "Postgresql");
 		SQL_ERROR_TO_DBMS.put("org.postgresql", "Postgresql");
 
+		//TODO: implement a plugin that uses Sybase specific functionality to detect SQL Injection vulnerabilities
+		//Note: this plugin would also detect Microsoft SQL Server vulnerabilities, due to common syntax. 
 		SQL_ERROR_TO_DBMS.put("com.sybase.jdbc", "Sybase");
 		SQL_ERROR_TO_DBMS.put("com.sybase.jdbc2.jdbc", "Sybase");
 		SQL_ERROR_TO_DBMS.put("com.sybase.jdbc3.jdbc", "Sybase");
 		SQL_ERROR_TO_DBMS.put("net.sourceforge.jtds.jdbc", "Sybase");  //see also Microsoft SQL Server. could be either!
 
+		//TODO: implement a plugin that uses Informix specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("com.informix.jdbc", "Informix");
 
+		//TODO: implement a plugin that uses Firebird specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("org.firebirdsql.jdbc", "Firebird");
 
+		//TODO: implement a plugin that uses IDS Server specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("ids.sql", "IDS Server");
 
+		//TODO: implement a plugin that uses InstantDB specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("org.enhydra.instantdb.jdbc", "InstantDB");
 		SQL_ERROR_TO_DBMS.put("jdbc.idb", "InstantDB");
 
+		//TODO: implement a plugin that uses Interbase specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("interbase.interclient", "Interbase");
 
-		SQL_ERROR_TO_DBMS.put("org.hsql", "Hypersonic SQL");
+		//DONE: we have implemented a Hypersonic specific scanner. See SQLInjectionHypersonic
+		SQL_ERROR_TO_DBMS.put("org.hsql", "Hypersonic SQL");  
 		SQL_ERROR_TO_DBMS.put("hSql.", "Hypersonic SQL");
+		SQL_ERROR_TO_DBMS.put("Unexpected token , requires FROM in statement", "Hypersonic SQL");
+		SQL_ERROR_TO_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");
+		SQL_ERROR_TO_DBMS.put("Column count does not match in statement", "Hypersonic SQL");  //TODO: too generic to leave in???
+		SQL_ERROR_TO_DBMS.put("Table not found in statement", "Hypersonic SQL"); //TODO: too generic to leave in???
+		SQL_ERROR_TO_DBMS.put("Unexpected token:", "Hypersonic SQL"); //TODO: too generic to leave in???
 
+		//TODO: implement a plugin that uses Sybase SQL Anywhere specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("sybase.jdbc.sqlanywhere", "Sybase SQL Anywhere");
 
+		//TODO: implement a plugin that uses PointBase specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("com.pointbase.jdbc", "Pointbase");
 
+		//TODO: implement a plugin that uses Cloudbase specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("db2j.","Cloudscape");
 		SQL_ERROR_TO_DBMS.put("COM.cloudscape","Cloudscape");
 		SQL_ERROR_TO_DBMS.put("RmiJdbc.RJDriver","Cloudscape");
 
+		//TODO: implement a plugin that uses Ingres specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("com.ingres.jdbc", "Ingres");
 
 		SQL_ERROR_TO_DBMS.put("com.ibatis.common.jdbc", "Generic SQL RDBMS");
@@ -191,6 +215,9 @@ public class SQLInjection extends AbstractAppPlugin {
 		SQL_UNION_ERROR_TO_DBMS.put("All queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists", "Microsoft SQL Server");
 		SQL_UNION_ERROR_TO_DBMS.put("query block has incorrect number of result columns", "Oracle");
 		SQL_UNION_ERROR_TO_DBMS.put("ORA-01789", "Oracle");
+		SQL_UNION_ERROR_TO_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");  //needs a table name in a UNION query. Like Oracle?
+		SQL_UNION_ERROR_TO_DBMS.put("Column count does not match in statement", "Hypersonic SQL");
+
 		//TODO: add other specific UNION based error messages for Union here: PostgresQL, Sybase, DB2, Informix, etc
 	}
 
