@@ -38,23 +38,34 @@ import org.parosproxy.paros.network.HttpMessage;
  * TODO: implement the Risk level check / do not do dangerous operations unless the level is right!
  * TODO: implement checks in Header fields (currently does Cookie values, form fields, and url parameters)
  * TODO: change the Alert Titles.
+ * TODO: maybe implement a more specific UNION based check for Hypersonic (with table names)
  * 
- * The SQLInjectionMySQL plugin identifies MySQL specific SQL Injection vulnerabilities
- * using MySQL specific syntax.  If it doesn't use MySQL specific syntax, it belongs in the generic SQLInjection class! 
+ * The SQLInjectionHypersonic plugin identifies Hypersonic specific SQL Injection vulnerabilities
+ * using Hypersonic specific syntax.  If it doesn't use Hypersonic specific syntax, it belongs in the generic SQLInjection class! 
  * Note the ordering of checks, for efficiency is : 
  * 1) Error based (N/A)
- * 2) Boolean Based (N/A - uses standard syntax)
- * 3) UNION based (N/A - uses standard syntax)
+ * 2) Boolean Based (N/A - uses standard syntax) 
+ * 3) UNION based (TODO)
  * 4) Stacked (N/A - uses standard syntax)
- * 5) Blind/Time Based (Yes - uses specific syntax)
+ * 5) Blind/Time Based (Yes)
  * 
- * See the following for some great MySQL specific tricks which could be integrated here
- * http://www.websec.ca/kb/sql_injection#MySQL_Stacked_Queries
- * http://pentestmonkey.net/cheat-sheet/sql-injection/mysql-sql-injection-cheat-sheet
+ * See the following for some great (non-Hypersonic specific) specific tricks which could be integrated here
+ * http://www.websec.ca/kb/sql_injection
+ * http://pentestmonkey.net/cheat-sheet/sql-injection/oracle-sql-injection-cheat-sheet
+ * 
+ * Important Notes for the Hypersonic database (and useful in the code):
+ * - takes -- style comments
+ * - requires a table name in normal select statements (like Oracle: cannot just say "select 1" or "select 2" like in most RDBMSs
+ * - requires a table name in "union select" statements (like Oracle). 
+ * - allows stacked queries via JDBC driver. 
+ * - Constants in select must be in single quotes, not doubles (like Oracle).
+ * - supports UDFs in the form of Java code (very interesting!!)
+ * - 5 second delay select statement: select "java.lang.Thread.sleep"(5000) from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'
+ * - metadata select statement: select TABLE_NAME, COLUMN_NAME, TYPE_NAME, COLUMN_SIZE, DECIMAL_DIGITS, IS_NULLABLE from INFORMATION_SCHEMA.SYSTEM_COLUMNS		
  * 
  *  @author Colm O'Flaherty, Encription Ireland Ltd
  */
-public class SQLInjectionMySQL extends AbstractAppPlugin {
+public class SQLInjectionHypersonic extends AbstractAppPlugin {
 	
 	////debug variables.. used to skip over certain logic to get to the rest quickly! 
 	////(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
@@ -66,7 +77,7 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 	
 
 	/**
-	 * MySQL one-line comment
+	 * Hypersonic one-line comment
 	 */
 	public static final String SQL_ONE_LINE_COMMENT = " -- ";
 
@@ -78,14 +89,25 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 	 */
 	private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<String, String>();
 	static {
-		SQL_ERROR_TO_DBMS.put("com.mysql.jdbc.exceptions", "MySQL");
-		SQL_ERROR_TO_DBMS.put("org.gjt.mm.mysql", "MySQL");
-		//Note: only MYSQL mappings here.
+		SQL_ERROR_TO_DBMS.put("org.hsql", "Hypersonic SQL");  
+		SQL_ERROR_TO_DBMS.put("hSql.", "Hypersonic SQL");
+		SQL_ERROR_TO_DBMS.put("Unexpected token , requires FROM in statement", "Hypersonic SQL");
+		SQL_ERROR_TO_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");
+		SQL_ERROR_TO_DBMS.put("Column count does not match in statement", "Hypersonic SQL"); 
+		SQL_ERROR_TO_DBMS.put("Table not found in statement", "Hypersonic SQL"); 
+		SQL_ERROR_TO_DBMS.put("Unexpected token:", "Hypersonic SQL");
+		//Note: only Hypersonic mappings here.
 	}
-	
+
+
+	/**
+	 * the 5 second sleep function in Hypersonic SQL
+	 */
+	private static String SQL_HYPERSONIC_TIME_FUNCTION = "\"java.lang.Thread.sleep\"(5000)";
+
 	
 	/**
-	 * MySQL specific time based injection strings. each for 5 seconds
+	 * Hypersonic specific time based injection strings. each for 5 seconds
 	 */
 	
 	//issue with "+" symbols in here: 
@@ -98,20 +120,24 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 	//Issue: this technique does not close the open ' or " in the query.. so do not use it..
 	//Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these examples below (see * comment)
 	//TODO: maybe add support for ')' after the original value, before the sleeps
-	private static String[] SQL_MYSQL_TIME_REPLACEMENTS = {
-		"<<<<ORIGINALVALUE>>>> / sleep(5) ",				// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
-		"<<<<ORIGINALVALUE>>>>' / sleep(5) / '",			// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
-		"<<<<ORIGINALVALUE>>>>\" / sleep(5) / \"",			// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
-		"<<<<ORIGINALVALUE>>>> where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,	// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>>' where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,	// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>>\" where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>> and 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>>' and 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>>\" and 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>> or 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,		// MySQL >= 5.0.12. Param in WHERE clause. 
-		"<<<<ORIGINALVALUE>>>>' or 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause. 
-		"<<<<ORIGINALVALUE>>>>\" or 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.		
-	};
+	private static String[] SQL_HYPERSONIC_TIME_REPLACEMENTS = {
+		"; select "+ SQL_HYPERSONIC_TIME_FUNCTION+ " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"+ SQL_ONE_LINE_COMMENT,
+		"'; select "+ SQL_HYPERSONIC_TIME_FUNCTION+ " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"+ SQL_ONE_LINE_COMMENT,
+		"\"; select "+ SQL_HYPERSONIC_TIME_FUNCTION+ " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"+ SQL_ONE_LINE_COMMENT,
+		"); select "+ SQL_HYPERSONIC_TIME_FUNCTION+ " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"+ SQL_ONE_LINE_COMMENT,
+		SQL_HYPERSONIC_TIME_FUNCTION,	
+		"<<<<ORIGINALVALUE>>>> / "+SQL_HYPERSONIC_TIME_FUNCTION+" ",
+		"<<<<ORIGINALVALUE>>>>' / "+SQL_HYPERSONIC_TIME_FUNCTION+" / '",
+		"<<<<ORIGINALVALUE>>>>\" / "+SQL_HYPERSONIC_TIME_FUNCTION+" / \"",			
+		"<<<<ORIGINALVALUE>>>> and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		"<<<<ORIGINALVALUE>>>>' and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		"<<<<ORIGINALVALUE>>>>\" and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		"<<<<ORIGINALVALUE>>>>) and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		"<<<<ORIGINALVALUE>>>> or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		"<<<<ORIGINALVALUE>>>>' or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		"<<<<ORIGINALVALUE>>>>\" or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		"<<<<ORIGINALVALUE>>>>) or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		};
 	
 
 	/**
@@ -122,7 +148,7 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 	/**
 	 * for logging.
 	 */
-	private static Logger log = Logger.getLogger(SQLInjectionMySQL.class);
+	private static Logger log = Logger.getLogger(SQLInjectionHypersonic.class);
 
 	/**
 	 * determines if we should output Debug level logging
@@ -169,7 +195,7 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 	 */
 	@Override
 	public int getId() {
-		return 40019;
+		return 40020;
 	}
 
 	/* returns the plugin name
@@ -177,7 +203,7 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 	 */
 	@Override
 	public String getName() {
-		return getString("sqlinjection.mysql.name");
+		return getString("sqlinjection.hypersonic.name");
 	}
 
 	/* returns the plugin dependencies
@@ -235,7 +261,7 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 
 
 	/**
-	 * scans for SQL Injection vulnerabilities, using MySQL specific syntax.  If it doesn't use specifically MySQL syntax, it does not belong in here, but in SQLInjection 
+	 * scans for SQL Injection vulnerabilities, using Hypersonic specific syntax.  If it doesn't use specifically Hypersonic syntax, it does not belong in here, but in SQLInjection 
 	 */
 	@Override
 	public void scan() {
@@ -253,8 +279,7 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 			HttpMessage msgTimeBaseline = getNewMsg();
 			long originalTimeStarted = System.currentTimeMillis();
 			try {
-				sendAndReceive(msgTimeBaseline);
-			}
+				sendAndReceive(msgTimeBaseline); }
 			catch (java.net.SocketTimeoutException e) {
 				//to be expected occasionally, if the base query was one that contains some parameters exploiting time based SQL injection?
 				if ( this.debugEnabled ) log.debug("The Base Time Check timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"]");
@@ -274,11 +299,11 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 				if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], ["+ currentHtmlParameter.getType()+"] field ["+ currentHtmlParameter.getName() + "] with value ["+currentHtmlParameter.getValue()+"] for SQL Injection");    			
 				
 				//Check 3: check for time based SQL Injection
-				//MySQL specific time based SQL injection checks
+				//Hypersonic specific time based SQL injection checks
 
-				for (int timeBasedSQLindex = 0; timeBasedSQLindex < SQL_MYSQL_TIME_REPLACEMENTS.length && ! sqlInjectionFoundForUrl && debugDoTimeBased; timeBasedSQLindex ++) {
+				for (int timeBasedSQLindex = 0; timeBasedSQLindex < SQL_HYPERSONIC_TIME_REPLACEMENTS.length && ! sqlInjectionFoundForUrl && debugDoTimeBased; timeBasedSQLindex ++) {
 					HttpMessage msg3 = getNewMsg();
-					String newTimeBasedInjectionValue = SQL_MYSQL_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", currentHtmlParameter.getValue());
+					String newTimeBasedInjectionValue = SQL_HYPERSONIC_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", currentHtmlParameter.getValue());
 					
 					if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
 						TreeSet <HtmlParameter> requestParams = msg3.getUrlParams(); //get parameters
@@ -304,19 +329,17 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 					long modifiedTimeStarted = System.currentTimeMillis();
 					try {
 						sendAndReceive(msg3);
-					}
+						}
 					catch (java.net.SocketTimeoutException e) {
-						//to be expected occasionally, if the contains some parameters exploiting time based SQL injection
+						//this is to be expected, if we start sending slow queries to the database.  ignore it in this case.. and just get the time.
 						if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] on ["+currentHtmlParameter.getType()+"] field: ["+currentHtmlParameter.getName()+"]");
 					}
 					long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
 
 					if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on ["+currentHtmlParameter.getType()+"] field: ["+currentHtmlParameter.getName()+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
 
-					if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {  
+					if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
 						//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
-
-						//Likely a SQL Injection. Raise it
 						String extraInfo = getString("sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, currentHtmlParameter.getValue(), originalTimeUsed);
 						String attack = getString("sqlinjection.alert.booleanbased.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue);
 
@@ -339,7 +362,7 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 		} catch (Exception e) {
 			//Do not try to internationalise this.. we need an error message in any event.. 
 			//if it's in English, it's still better than not having it at all. 
-			log.error("An error occurred checking a url for MySQL SQL Injection vulnerabilities", e);
+			log.error("An error occurred checking a url for Hypersonic SQL Injection vulnerabilities", e);
 		}
 	}	
 }
