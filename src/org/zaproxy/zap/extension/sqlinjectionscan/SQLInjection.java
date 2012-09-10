@@ -37,7 +37,7 @@ import org.parosproxy.paros.network.HttpMessage;
 
 /**
  * TODO: implement stacked query check, since it is actually supported on more RDBMS drivers / frameworks than not (MySQL on PHP/ASP does not by default, but can).
- *        PostgresQL and MSSQL on ASP, ASP.NET, and PHP *do* support it, for instance.  It's better to put the code here and try it for all RDBMSs as a result
+ *        PostgreSQL and MSSQL on ASP, ASP.NET, and PHP *do* support it, for instance.  It's better to put the code here and try it for all RDBMSs as a result
  * TODO: implement the Risk level check / do not do dangerous operations unless the level is right!
  * TODO: implement checks in Header fields (currently does Cookie values, form fields, and url parameters)
  * TODO: change the Alert Titles.
@@ -107,9 +107,9 @@ public class SQLInjection extends AbstractAppPlugin {
 		SQL_ERROR_TO_DBMS.put("com.ibm.db2.jcc", "IBM DB2");
 		SQL_ERROR_TO_DBMS.put("COM.ibm.db2.jdbc", "IBM DB2");
 
-		//TODO: implement a plugin that uses Postgresql functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("org.postgresql.util.PSQLException", "Postgresql");
-		SQL_ERROR_TO_DBMS.put("org.postgresql", "Postgresql");
+		//DONE: we have implemented a PostgreSQL specific scanner. See SQLInjectionPostgresql
+		SQL_ERROR_TO_DBMS.put("org.postgresql.util.PSQLException", "PostgreSQL");
+		SQL_ERROR_TO_DBMS.put("org.postgresql", "PostgreSQL");
 
 		//TODO: implement a plugin that uses Sybase specific functionality to detect SQL Injection vulnerabilities
 		//Note: this plugin would also detect Microsoft SQL Server vulnerabilities, due to common syntax. 
@@ -218,7 +218,7 @@ public class SQLInjection extends AbstractAppPlugin {
 		SQL_UNION_ERROR_TO_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");  //needs a table name in a UNION query. Like Oracle?
 		SQL_UNION_ERROR_TO_DBMS.put("Column count does not match in statement", "Hypersonic SQL");
 
-		//TODO: add other specific UNION based error messages for Union here: PostgresQL, Sybase, DB2, Informix, etc
+		//TODO: add other specific UNION based error messages for Union here: PostgreSQL, Sybase, DB2, Informix, etc
 	}
 
 	/**
