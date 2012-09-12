@@ -39,8 +39,8 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 
 	private HttpSender getHttpSender() {
 		if (httpSender == null) {
-			httpSender = new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(), true);
-
+			//TODO: is HttpSender.ACTIVE_SCANNER_INITIATOR really the right option here??
+			httpSender = new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(), true, HttpSender.ACTIVE_SCANNER_INITIATOR);
 		}
 		return httpSender;
 	}
