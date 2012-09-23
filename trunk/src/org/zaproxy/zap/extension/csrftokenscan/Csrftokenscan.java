@@ -213,4 +213,10 @@ public class Csrftokenscan extends AbstractAppPlugin {
 			return '!' + key + '!';
 		}
 	}
+
+	@Override
+	public int getRisk() {
+		return Alert.RISK_HIGH;
+	}
+
 }
