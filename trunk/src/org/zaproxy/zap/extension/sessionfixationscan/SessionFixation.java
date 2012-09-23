@@ -53,6 +53,7 @@ import net.htmlparser.jericho.*;
  * - cookie fields (a more common scenario, but also more secure, even when the vulnerability occurs)
  * - url fields (less common, but also less secure when the vulnerability occurs)
  * - session ids built into the url path, and typically extracted by means of url rewriting
+ * TODO: implement a check for session fixation issues on form parameters (by checking what?? resulting form params?)
  *
  *  @author Colm O'Flaherty, Encription Ireland Ltd
  */
@@ -177,7 +178,7 @@ public class SessionFixation extends AbstractAppPlugin {
 
 
     /**
-     * scans all POST, GET, Cookie params for Session fields, and looks for SessionFixation vulnerabilities
+     * scans all GET, Cookie params for Session fields, and looks for SessionFixation vulnerabilities
      */
 	@Override
 	public void scan() {
@@ -975,4 +976,10 @@ public class SessionFixation extends AbstractAppPlugin {
 		//return them
 		return pseudoUrlParams;
 	}
+	
+	@Override
+	public int getRisk() {
+		return Alert.RISK_HIGH;
+	}
+
 }

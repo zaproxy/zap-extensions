@@ -136,4 +136,9 @@ public class ExampleActiveScanner extends AbstractAppParamPlugin {
 
 	}
 
+	@Override
+	public int getRisk() {
+		return Alert.RISK_HIGH;
+	}
+
 }

@@ -310,5 +310,10 @@ public class LDAPInjection extends AbstractAppPlugin {
 		} //for each LDAP implementation
 	return false;  //did not throw an alert
 	}
+
+	@Override
+	public int getRisk() {
+		return Alert.RISK_HIGH;
+	}
 	
 }

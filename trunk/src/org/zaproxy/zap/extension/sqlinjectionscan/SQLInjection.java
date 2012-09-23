@@ -37,32 +37,40 @@ import org.parosproxy.paros.network.HttpMessage;
 
 /**
  * TODO: implement stacked query check, since it is actually supported on more RDBMS drivers / frameworks than not (MySQL on PHP/ASP does not by default, but can).
- *        PostgreSQL and MSSQL on ASP, ASP.NET, and PHP *do* support it, for instance.  It's better to put the code here and try it for all RDBMSs as a result
- * TODO: implement the Risk level check / do not do dangerous operations unless the level is right!
+ *        PostgreSQL and MSSQL on ASP, ASP.NET, and PHP *do* support it, for instance.  It's better to put the code here and try it for all RDBMSs as a result.
+ *        Use the following variables: doStackedBased, doStackedMaxRequests, countStackedBasedRequests
  * TODO: implement checks in Header fields (currently does Cookie values, form fields, and url parameters)
  * TODO: change the Alert Titles.
  * TODO: if the argument is reflected back in the HTML output, the boolean based logic will not detect an alert 
  *        (because the HTML results of argument values "id=1" will not be the same as for "id=1 and 1=1")
  * TODO: add "<param>*2/2" check to the Logic based ones (for integer parameter values).. if the result is the same, it might be a SQL Injection
+ * TODO: implement mode checks (Mode.standard, Mode.safe, Mode.protected) for 2.* using "implements SessionChangedListener"
  * 
  * The SQLInjection plugin identifies SQL Injection vulnerabilities
  * note the ordering of checks, for efficiency is : 
  * 1) Error based
  * 2) Boolean Based
  * 3) UNION based
- * 4) Stacked (RDBMS specific, so not done here right now)
+ * 4) Stacked (TODO: implement stacked based)
  * 5) Blind/Time Based (RDBMS specific, so not done here right now)
  * 
  *  @author Colm O'Flaherty, Encription Ireland Ltd
  */
-public class SQLInjection extends AbstractAppPlugin {
+public class SQLInjection extends AbstractAppPlugin  {
 	
-	//debug variables.. used to skip over certain logic to get to the rest quickly! 
+	//what do we do at each attack strength?
 	//(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
-	private boolean debugDoErrorBased = true;  
-	private boolean debugDoBooleanBased=true; 
-	private boolean debugDoUnionBased = true;	
-
+	private boolean doErrorBased = true;  
+	private boolean doBooleanBased=true; 
+	private boolean doUnionBased = true;	
+	private boolean doStackedBased = true;  //TODO: use in the stacked based implementation
+	
+	//how many requests can we fire for each method? will be set depending on the attack strength
+	private int doErrorMaxRequests = 0;
+	private int doBooleanMaxRequests = 0;
+	private int doUnionMaxRequests = 0;
+	private int doStackedMaxRequests = 0;	//TODO: use in the stacked based implementation
+	
 	/**
 	 * generic one-line comment.  Various RDBMS Documentation suggests that this syntax works with almost every single RDBMS considered here
 	 */
@@ -73,7 +81,7 @@ public class SQLInjection extends AbstractAppPlugin {
 	 * Note that we do separate runs for each family of characters, in case one family are filtered out, the others might still
 	 * get past
 	 */
-	private static final String [] SQL_CHECK_ERR = {"'\"", ")", "(", "NULL"};
+	private static final String [] SQL_CHECK_ERR = {"'", "\"", ")", "(", "NULL", "'\""};
 
 	/**
 	 * create a map of SQL related error message fragments, and map them back to the RDBMS that they are associated with
@@ -102,6 +110,12 @@ public class SQLInjection extends AbstractAppPlugin {
 		//DONE: we have implemented an Oracle specific scanner. See SQLInjectionOracle
 		SQL_ERROR_TO_DBMS.put("oracle.jdbc", "Oracle");
 		SQL_ERROR_TO_DBMS.put("SQLSTATE[HY", "Oracle");
+		SQL_ERROR_TO_DBMS.put("ORA-00933", "Oracle");
+		SQL_ERROR_TO_DBMS.put("ORA-06512", "Oracle");  //indicates the line number of an error
+		SQL_ERROR_TO_DBMS.put("SQL command not properly ended", "Oracle");
+		SQL_ERROR_TO_DBMS.put("ORA-00942", "Oracle");  //table or view does not exist
+		SQL_ERROR_TO_DBMS.put("ORA-29257", "Oracle");  //host unknown
+		SQL_ERROR_TO_DBMS.put("ORA-00932", "Oracle");  //inconsistent datatypes
 
 		//TODO: implement a plugin that uses DB2 specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("com.ibm.db2.jcc", "IBM DB2");
@@ -329,6 +343,7 @@ public class SQLInjection extends AbstractAppPlugin {
 
 	/* initialise
 	 * @see org.parosproxy.paros.core.scanner.AbstractTest#init()
+	 * Note that this method gets called each time the scanner is called.
 	 */
 	@Override
 	public void init() {
@@ -338,6 +353,33 @@ public class SQLInjection extends AbstractAppPlugin {
 		//this.debugEnabled = true;
 
 		if ( this.debugEnabled ) log.debug("Initialising");
+		
+		//DEBUG only
+		//this.setAttackStrength(AttackStrength.LOW);		
+		
+		//set up what we are allowed to do, depending on the attack strength that was set.
+		if ( this.getAttackStrength() == AttackStrength.LOW ) {
+			doErrorBased=true; doErrorMaxRequests=2;
+			doUnionBased=false; doUnionMaxRequests=0;
+			doStackedBased=false; doStackedMaxRequests=0;
+			doBooleanBased=false; doBooleanMaxRequests=0;	
+		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
+			doErrorBased=true; doErrorMaxRequests=5;
+			doUnionBased=true; doUnionMaxRequests=5;
+			doStackedBased=true; doStackedMaxRequests=5;
+			doBooleanBased=false; doBooleanMaxRequests=0;
+		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
+			doErrorBased=true; doErrorMaxRequests=10;
+			doUnionBased=true; doUnionMaxRequests=10;
+			doStackedBased=true; doStackedMaxRequests=10;
+			doBooleanBased=true; doBooleanMaxRequests=10;
+		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
+			doErrorBased=true; doErrorMaxRequests=100;
+			doUnionBased=true; doUnionMaxRequests=100;
+			doStackedBased=true; doStackedMaxRequests=100;
+			doBooleanBased=true; doBooleanMaxRequests=100;
+		}
+
 	}
 
 
@@ -351,10 +393,6 @@ public class SQLInjection extends AbstractAppPlugin {
 		//for performance reasons.
 		boolean sqlInjectionFoundForUrl = false;
 		
-		//DEBUG only
-		//log.setLevel(org.apache.log4j.Level.DEBUG);
-		//this.debugEnabled = true;
-
 		try {
 			TreeSet<HtmlParameter> htmlParams = new TreeSet<HtmlParameter> (); 
 			htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
@@ -362,16 +400,21 @@ public class SQLInjection extends AbstractAppPlugin {
 
 			//for each parameter in turn
 			for (Iterator<HtmlParameter> iter = htmlParams.iterator(); iter.hasNext() && ! sqlInjectionFoundForUrl; ) {
+				
+				//reinitialise the count for each type of request, for each parameter.  We will be sticking to limits defined in the attach strength logic
+				int countErrorBasedRequests = 0;
+				int countBooleanBasedRequests = 0;
+				int countUnionBasedRequests = 0;
+				int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
 
 				HtmlParameter currentHtmlParameter = iter.next();
 				if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], ["+ currentHtmlParameter.getType()+"] field ["+ currentHtmlParameter.getName() + "] with value ["+currentHtmlParameter.getValue()+"] for SQL Injection");    			
 
-
-				//Check 1: Check for Error Based SQL Injection (actual error messages, or HTTP status).
-				
-
-				//for each SQL metacharacter cobination to try
-				for (int sqlErrorStringIndex = 0; sqlErrorStringIndex < SQL_CHECK_ERR.length && !sqlInjectionFoundForUrl && debugDoErrorBased; sqlErrorStringIndex++) {
+				//Check 1: Check for Error Based SQL Injection (actual error messages).
+				//for each SQL metacharacter combination to try
+				for (int sqlErrorStringIndex = 0; 
+						sqlErrorStringIndex < SQL_CHECK_ERR.length && !sqlInjectionFoundForUrl && doErrorBased && countErrorBasedRequests < doErrorMaxRequests ; 
+						sqlErrorStringIndex++) {
 
 					//new message for each value we attack with
 					HttpMessage msg1 = getNewMsg();
@@ -398,6 +441,7 @@ public class SQLInjection extends AbstractAppPlugin {
 
 					//send the message with the modified parameters
 					sendAndReceive(msg1);
+					countErrorBasedRequests++;
 
 					//now check the results against each pattern in turn, to try to identify a database, or even better: a specific database.
 					//Note: do NOT check the HTTP error code just yet, as the result could come back with one of various codes.
@@ -470,7 +514,9 @@ public class SQLInjection extends AbstractAppPlugin {
 
 				//try each of the AND syntax values in turn. 
 				//Which one is successful will depend on the column type of the table/view column into which we are injecting the SQL.
-				for (int i=0; i<SQL_LOGIC_AND.length && /*! booleanBasedSqlInjectionFoundForParam && */ ! sqlInjectionFoundForUrl && debugDoBooleanBased; i++) {
+				for (int i=0; 
+						i<SQL_LOGIC_AND.length && ! sqlInjectionFoundForUrl && doBooleanBased & countBooleanBasedRequests < doBooleanMaxRequests; 
+						i++) {
 					//needs a new message for each type of AND to be issued
 					HttpMessage msg2 = getNewMsg();
 					String sqlBooleanAndValue=currentHtmlParameter.getValue() + SQL_LOGIC_AND[i];
@@ -500,6 +546,7 @@ public class SQLInjection extends AbstractAppPlugin {
 
 					//send the AND with an additional TRUE statement tacked onto the end. Hopefully it will return the same results as the original (to find a vulnerability)
 					sendAndReceive(msg2);
+					countBooleanBasedRequests++;
 
 					//String resBodyAND = stripOff(msg2.getResponseBody().toString(), SQL_LOGIC_AND[i]);
 					String resBodyAND = msg2.getResponseBody().toString();
@@ -529,6 +576,8 @@ public class SQLInjection extends AbstractAppPlugin {
 
 
 						sendAndReceive(msg2_and_false);
+						countBooleanBasedRequests++;
+						
 						//String resBodyANDFalse = stripOff(msg2_and_false.getResponseBody().toString(), SQL_LOGIC_AND_FALSE[i]);
 						String resBodyANDFalse = msg2_and_false.getResponseBody().toString();
 
@@ -584,6 +633,8 @@ public class SQLInjection extends AbstractAppPlugin {
 							}
 
 							sendAndReceive(msg2_or_true);
+							countBooleanBasedRequests++;
+							
 							//String resBodyORTrue = stripOff(msg2_or_true.getResponseBody().toString(), orValue);
 							String resBodyORTrue = msg2_or_true.getResponseBody().toString();
 
@@ -618,6 +669,8 @@ public class SQLInjection extends AbstractAppPlugin {
 
 
 								sendAndReceive(msg2_or_true_comment);
+								countBooleanBasedRequests++;
+								
 								//and re-set the variable with the results of trying the commented OR
 								compareOrToOriginal = resBodyORTrue.compareTo(mResBodyNormal);
 							}
@@ -655,7 +708,9 @@ public class SQLInjection extends AbstractAppPlugin {
 				
 				//Check 4: UNION based
 				//for each SQL UNION combination to try
-				for (int sqlUnionStringIndex = 0; sqlUnionStringIndex <  SQL_UNION_APPENDAGES.length && !sqlInjectionFoundForUrl && debugDoUnionBased; sqlUnionStringIndex++) {
+				for (int sqlUnionStringIndex = 0; 
+						sqlUnionStringIndex <  SQL_UNION_APPENDAGES.length && !sqlInjectionFoundForUrl && doUnionBased && countUnionBasedRequests < doUnionMaxRequests; 
+						sqlUnionStringIndex++) {
 
 					//new message for each value we attack with
 					HttpMessage msg3 = getNewMsg();
@@ -682,6 +737,7 @@ public class SQLInjection extends AbstractAppPlugin {
 
 					//send the message with the modified parameters
 					sendAndReceive(msg3);
+					countUnionBasedRequests++;
 					
 					//now check the results.. look first for UNION specific error messages in the output that were not there in the original output
 					//and failing that, look for generic RDBMS specific error messages
@@ -728,7 +784,13 @@ public class SQLInjection extends AbstractAppPlugin {
 			//if it's in English, it's still better than not having it at all. 
 			log.error("An error occurred checking a url for SQL Injection vulnerabilities", e);
 		}
-	}	
+	}
+
+	@Override
+	public int getRisk() {
+		return Alert.RISK_HIGH;
+	}
+	
 }
 
 

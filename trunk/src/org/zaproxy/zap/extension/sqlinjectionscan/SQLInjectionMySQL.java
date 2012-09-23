@@ -30,12 +30,13 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 
 
 /**
- * TODO: implement the Risk level check / do not do dangerous operations unless the level is right!
+ * TODO: do not do dangerous operations unless the Mode is right!
  * TODO: implement checks in Header fields (currently does Cookie values, form fields, and url parameters)
  * TODO: change the Alert Titles.
  * 
@@ -56,13 +57,9 @@ import org.parosproxy.paros.network.HttpMessage;
  */
 public class SQLInjectionMySQL extends AbstractAppPlugin {
 	
-	////debug variables.. used to skip over certain logic to get to the rest quickly! 
-	////(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
-	//private boolean debugDoErrorBased = true;
-	//private boolean debugDoBooleanBased=true;
-	//private boolean debugDoUnionBased = true;
-	//private boolean debugDoStackedBased=true;
-	private boolean debugDoTimeBased=true;
+	private boolean doTimeBased = false;
+	
+	private int doTimeMaxRequests = 0;
 	
 
 	/**
@@ -231,6 +228,20 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 		//this.debugEnabled = true;
 
 		if ( this.debugEnabled ) log.debug("Initialising");
+		
+		//TODO: debug only
+		//this.setAttackStrength(AttackStrength.INSANE);
+		
+		//set up what we are allowed to do, depending on the attack strength that was set.
+		if ( this.getAttackStrength() == AttackStrength.LOW ) {
+			doTimeBased=true; doTimeMaxRequests=3;
+		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
+			doTimeBased=true; doTimeMaxRequests=5;
+		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
+			doTimeBased=true; doTimeMaxRequests=10;
+		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
+			doTimeBased=true; doTimeMaxRequests=100;
+		}
 	}
 
 
@@ -269,6 +280,8 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 
 			//for each parameter in turn
 			for (Iterator<HtmlParameter> iter = htmlParams.iterator(); iter.hasNext() && ! sqlInjectionFoundForUrl; ) {
+				
+				int countTimeBasedRequests = 0;		
 
 				HtmlParameter currentHtmlParameter = iter.next();
 				if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], ["+ currentHtmlParameter.getType()+"] field ["+ currentHtmlParameter.getName() + "] with value ["+currentHtmlParameter.getValue()+"] for SQL Injection");    			
@@ -276,7 +289,9 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 				//Check 3: check for time based SQL Injection
 				//MySQL specific time based SQL injection checks
 
-				for (int timeBasedSQLindex = 0; timeBasedSQLindex < SQL_MYSQL_TIME_REPLACEMENTS.length && ! sqlInjectionFoundForUrl && debugDoTimeBased; timeBasedSQLindex ++) {
+				for (int timeBasedSQLindex = 0; 
+						timeBasedSQLindex < SQL_MYSQL_TIME_REPLACEMENTS.length && ! sqlInjectionFoundForUrl && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
+						timeBasedSQLindex ++) {
 					HttpMessage msg3 = getNewMsg();
 					String newTimeBasedInjectionValue = SQL_MYSQL_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", currentHtmlParameter.getValue());
 					
@@ -304,6 +319,7 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 					long modifiedTimeStarted = System.currentTimeMillis();
 					try {
 						sendAndReceive(msg3);
+						countTimeBasedRequests++;
 					}
 					catch (java.net.SocketTimeoutException e) {
 						//to be expected occasionally, if the contains some parameters exploiting time based SQL injection
@@ -341,7 +357,13 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 			//if it's in English, it's still better than not having it at all. 
 			log.error("An error occurred checking a url for MySQL SQL Injection vulnerabilities", e);
 		}
-	}	
+	}
+	
+	@Override
+	public int getRisk() {
+		return Alert.RISK_HIGH;
+	}
+
 }
 
 
