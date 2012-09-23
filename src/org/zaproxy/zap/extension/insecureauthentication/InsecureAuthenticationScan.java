@@ -37,13 +37,12 @@ import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
-import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /*
  * passively scans requests for insecure authentication
  */
-public class InsecureAuthenticationScan extends PluginPassiveScanner implements PassiveScanner {
+public class InsecureAuthenticationScan extends PluginPassiveScanner {
 
 	/**
 	 * the Passive Scanner Thread
@@ -240,30 +239,18 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner implements 
 		return getString("insecureauthentication.name");
 	}
 
-	/* (non-Javadoc)
-	 * @see com.proofsecure.paros.core.scanner.Test#getDescription()
-	 */
 	public String getDescription() {
 		return getString("insecureauthentication.desc");
 	}
 
-	/* (non-Javadoc)
-	 * @see com.proofsecure.paros.core.scanner.Test#getCategory()
-	 */
 	public int getCategory() {
 		return Category.INFO_GATHER;  //leaking username or username + password.. therefore information gathering
 	}
 
-	/* (non-Javadoc)
-	 * @see com.proofsecure.paros.core.scanner.Test#getSolution()
-	 */
 	public String getSolution() {
 		return getString("insecureauthentication.soln");
 	}
 
-	/* (non-Javadoc)
-	 * @see com.proofsecure.paros.core.scanner.Test#getReference()
-	 */
 	public String getReference() {
 		return getString("insecureauthentication.refs");  
 	}

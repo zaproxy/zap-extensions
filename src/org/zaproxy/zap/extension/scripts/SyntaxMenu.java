@@ -51,7 +51,7 @@ public class SyntaxMenu extends ExtensionPopupMenu {
 		super(MENU_LABEL);
 
 		syntaxStylesButtonGroup = new ButtonGroup();
-		syntaxOptions = new HashMap<String, JRadioButtonMenuItem>();
+		syntaxOptions = new HashMap<>();
 
 		//Create plain syntax as all SyntaxHighlightTextArea will have this style
 		addSyntaxOption(SyntaxHighlightTextArea.PLAIN_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_NONE);

@@ -55,7 +55,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
 	private TokenParam tokenParam = null;;
 	
-	private List<TokenGenerator> generators = new ArrayList<TokenGenerator>();
+	private List<TokenGenerator> generators = new ArrayList<>();
 	private int runningGenerators = 0;
 	private CharacterFrequencyMap cfm = null; 
 	private boolean manuallyStopped = false;
@@ -82,7 +82,6 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	/**
 	 * This method initializes this
 	 * 
-	 * @return void
 	 */
 	private void initialize() {
         this.setName(NAME);
@@ -91,6 +90,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
         		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
 	}
 	
+	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
 	    
@@ -150,7 +150,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 		String response = tokenMsg.getResponseHeader().toString() + tokenMsg.getResponseBody().toString();
 		Source source = new Source(response);
 		List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
-		Vector<String> fifs = new Vector<String>();
+		Vector<String> fifs = new Vector<>();
 		
 		if (formElements != null && formElements.size() > 0) {
 			// Loop through all of the FORM tags
@@ -255,7 +255,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 		int numThreads = this.getTokenParam().getThreadPerScan();
 		this.manuallyStopped = false;
 		
-		generators = new ArrayList<TokenGenerator>();
+		generators = new ArrayList<>();
 		
 		for (int i=0; i < numThreads; i++) {
 			TokenGenerator gen = new TokenGenerator();

@@ -5,7 +5,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
 import javax.swing.ImageIcon;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -14,7 +16,6 @@ import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.history.ProxyListenerLog;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.model.GenericScanner;
 
 /**
  * Main class of the plugin, it instantiates the rest of them.
@@ -62,7 +63,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	/**
 	 * This method initializes this
 	 * 
-	 * @return void
 	 */
 	private void initialize() {
 		this.setName(NAME);
@@ -76,6 +76,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 * starts the proxy and all elements of the UI
 	 * @param extensionHook the extension
 	 */
+	@Override
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 

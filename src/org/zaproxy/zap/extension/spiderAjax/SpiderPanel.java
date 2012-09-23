@@ -29,10 +29,11 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
@@ -58,7 +59,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SpiderPanel.class);
 	private javax.swing.JScrollPane scrollLog = null;
-	private javax.swing.JList listLog = null;
+	private javax.swing.JList<HistoryReference> listLog = null;
 	private javax.swing.JPanel AJAXSpiderPanel = null;
 	private javax.swing.JToolBar panelToolbar = null;
 	private JLabel filterStatus = null;
@@ -75,7 +76,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 
 	private JLabel activeScansNameLabel = null;
 	private JLabel activeScansValueLabel = null;
-	private List<String> activeScans = new ArrayList<String>();;
+	private List<String> activeScans = new ArrayList<>();
 
 	/**
 	 * This is the default constructor
@@ -203,7 +204,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	 * Stops all threads
 	 */
 	public void stopScan() {
-		this.activeScans = new ArrayList<String>();
+		this.activeScans = new ArrayList<>();
 		this.setActiveScanLabels();
 		this.getStartScanButton().setEnabled(true);
 		this.getStopScanButton().setEnabled(false);
@@ -371,9 +372,9 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	 * 
 	 * @return javax.swing.JList
 	 */
-	protected javax.swing.JList getListLog() {
+	protected javax.swing.JList<HistoryReference> getListLog() {
 		if (listLog == null) {
-			listLog = new javax.swing.JList();
+			listLog = new javax.swing.JList<>();
 			listLog.setDoubleBuffered(true);
 			listLog.setCellRenderer(getLogPanelCellRenderer());
 			listLog.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -440,7 +441,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 							return;
 						}
 
-						final HistoryReference historyRef = (HistoryReference) listLog
+						final HistoryReference historyRef = listLog
 								.getSelectedValue();
 
 						readAndDisplay(historyRef);
@@ -451,7 +452,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 		return listLog;
 	}
 
-	private Vector<HistoryReference> displayQueue = new Vector<HistoryReference>();
+	private Vector<HistoryReference> displayQueue = new Vector<>();
 	private Thread thread = null;
 	private LogPanelCellRenderer logPanelCellRenderer = null;
 	
@@ -461,7 +462,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	protected void display(final HistoryReference historyRef) {
 		this.readAndDisplay(historyRef);
 		for (int i = 0; i < listLog.getModel().getSize(); i++) {
-			if (((HistoryReference) listLog.getModel().getElementAt(i))
+			if (listLog.getModel().getElementAt(i)
 					.getHistoryId() == historyRef.getHistoryId()) {
 				listLog.setSelectedIndex(i);
 				listLog.ensureIndexIsVisible(i);

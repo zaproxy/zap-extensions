@@ -45,7 +45,7 @@ public class CmdLineTest {
 	 */
 
 	public static Double calculateShannonEntropy(List<String> values) {
-		  Map<String, Integer> map = new HashMap<String, Integer>();
+		  Map<String, Integer> map = new HashMap<>();
 		  // count the occurrences of each value
 		  for (String sequence : values) {
 		    if (!map.containsKey(sequence)) {

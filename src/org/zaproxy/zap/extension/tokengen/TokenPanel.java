@@ -65,12 +65,12 @@ public class TokenPanel extends AbstractPanel {
 	private JToolBar panelToolbar = null;
 	private JScrollPane jScrollPane = null;
     private TokenPanelCellRenderer portPanelCellRenderer = null;
-	private DefaultListModel resultsModel  = new DefaultListModel();
+	private DefaultListModel<HttpMessage> resultsModel  = new DefaultListModel<>();
 	private JTextPane initialMessage = null;
 
 	private JButton stopScanButton = null;
 	private JToggleButton pauseScanButton = null;
-	private JList tokenResultList = null;
+	private JList<HttpMessage> tokenResultList = null;
 	private JProgressBar progressBar = null;
 	private JButton loadButton = null;
 	private JButton saveButton = null;
@@ -90,8 +90,6 @@ public class TokenPanel extends AbstractPanel {
 
 	/**
 	 * This method initializes this
-	 * 
-	 * @return void
 	 */
 	private  void initialize() {
         this.setLayout(new CardLayout());
@@ -321,7 +319,7 @@ public class TokenPanel extends AbstractPanel {
 	}
 
 	private void resetTokenResultList() {
-		resultsModel = new DefaultListModel();
+		resultsModel = new DefaultListModel<>();
 		getTokenResultList().setModel(resultsModel);
 	}
 	
@@ -338,6 +336,7 @@ public class TokenPanel extends AbstractPanel {
 		}
 		try {
 			EventQueue.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					resultsModel.addElement(msg);
 					getProgressBar().setValue(getProgressBar().getValue() + 1);
@@ -347,9 +346,9 @@ public class TokenPanel extends AbstractPanel {
 		}
 	}
 
-	private JList getTokenResultList() {
+	private JList<HttpMessage> getTokenResultList() {
 		if (tokenResultList == null) {
-			tokenResultList = new JList();
+			tokenResultList = new JList<>();
 			tokenResultList.setDoubleBuffered(true);
 			tokenResultList.setCellRenderer(getPortPanelCellRenderer());
 			tokenResultList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -359,6 +358,7 @@ public class TokenPanel extends AbstractPanel {
 			tokenResultList.setFixedCellHeight(16);	// Significantly speeds up rendering
 
 	        tokenResultList.addMouseListener(new java.awt.event.MouseAdapter() { 
+				@Override
 				public void mousePressed(java.awt.event.MouseEvent e) {    
 				    if (SwingUtilities.isRightMouseButton(e)) {
 				        View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
@@ -368,12 +368,13 @@ public class TokenPanel extends AbstractPanel {
 
 			tokenResultList.addListSelectionListener(new javax.swing.event.ListSelectionListener() { 
 
+				@Override
 				public void valueChanged(javax.swing.event.ListSelectionEvent e) {
 				    if (tokenResultList.getSelectedValue() == null) {
 				        return;
 				    }
                     
-				    displayMessage((HttpMessage) tokenResultList.getSelectedValue());
+				    displayMessage(tokenResultList.getSelectedValue());
 				}
 			});
 			
@@ -412,7 +413,7 @@ public class TokenPanel extends AbstractPanel {
 		}
     }
 
-	private ListCellRenderer getPortPanelCellRenderer() {
+	private ListCellRenderer<HttpMessage> getPortPanelCellRenderer() {
         if (portPanelCellRenderer == null) {
             portPanelCellRenderer = new TokenPanelCellRenderer();
             portPanelCellRenderer.setSize(new java.awt.Dimension(328,21));
@@ -464,7 +465,7 @@ public class TokenPanel extends AbstractPanel {
 				CharacterFrequencyMap cfm = new CharacterFrequencyMap();
 		
 				for (int i=0; i < this.resultsModel.getSize(); i++) {
-					HttpMessage msg = (HttpMessage)this.resultsModel.get(i);
+					HttpMessage msg = this.resultsModel.get(i);
 					if (msg.getNote() != null) {
 						cfm.addToken(msg.getNote());
 					}

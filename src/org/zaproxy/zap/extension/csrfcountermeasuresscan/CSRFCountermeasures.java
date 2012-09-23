@@ -18,10 +18,13 @@
 package org.zaproxy.zap.extension.csrfcountermeasuresscan;
 
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -34,8 +37,6 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
-
-import net.htmlparser.jericho.*;
 
 /**
  * The CSRFCountermeasures plugin identifies *potential* vulnerabilities with
@@ -71,7 +72,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 	/**
 	 * the logger
 	 */
-	private Logger logger = Logger.getLogger(this.getClass());
+	private static Logger logger = Logger.getLogger(CSRFCountermeasures.class);
 
     /**
      * gets the internationalised message corresponding to the key
@@ -106,10 +107,10 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 		this.parent = parent;
 	}
 
-	@Override
 	/**
 	 * does nothing. The request itself is not scanned. Only the response is scanned.
 	 */
+	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
 		// Ignore
 	}
@@ -122,16 +123,16 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 		return 40014;
 	}
 
-	@Override
 	/**
 	 * scans each form in the HTTP response for known anti-CSRF tokens. If any form 
 	 * exists that does not contain a known anti-CSRF token, raise an alert.
 	 */
+	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		//need to do this if we are to be able to get an element's parent. Do it as early as possible in the logic 
 		source.fullSequentialParse();
 		
-		Date start = new Date();
+		long start = System.currentTimeMillis();
 		
 		ExtensionAntiCSRF extAntiCSRF = 
 			(ExtensionAntiCSRF) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.NAME);
@@ -149,7 +150,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 			// Loop through all of the FORM tags
 			logger.debug("Found " + formElements.size() + " forms");
 			
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			int i = 1;
 			
 			for (Element formElement : formElements) {
@@ -229,7 +230,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 			}
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("\tScan of record " + id + " took " + ((new Date()).getTime() - start.getTime()) + " ms");
+			logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
 		}
 		
 	}
@@ -241,9 +242,6 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 		return this.getString("noanticsrftokens.name");
 	}
 	
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Test#getDescription()
-     */
     public String getDescription() {
     	if (vuln != null) {
     		return vuln.getDescription();
@@ -251,16 +249,10 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
     	return "Failed to load vulnerability description from file";
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Test#getCategory()
-     */
     public int getCategory() {
         return Category.MISC;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Test#getSolution()
-     */
     public String getSolution() {
     	if (vuln != null) {
     		return vuln.getSolution();
@@ -268,9 +260,6 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
     	return "Failed to load vulnerability solution from file";
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Test#getReference()
-     */
     public String getReference() {
     	if (vuln != null) {
     		StringBuilder sb = new StringBuilder();

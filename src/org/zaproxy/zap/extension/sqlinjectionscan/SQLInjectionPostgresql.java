@@ -30,7 +30,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -81,7 +80,7 @@ public class SQLInjectionPostgresql extends AbstractAppPlugin {
 	 * Note: these should represent actual (driver level) error messages for things like syntax error, 
 	 * otherwise we are simply guessing that the string should/might occur.
 	 */
-	private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<String, String>();
+	private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<>();
 	static {
 		SQL_ERROR_TO_DBMS.put("org.postgresql.util.PSQLException", "PostgreSQL");
 		SQL_ERROR_TO_DBMS.put("org.postgresql", "PostgreSQL");
@@ -180,66 +179,41 @@ public class SQLInjectionPostgresql extends AbstractAppPlugin {
 		}
 	}
 
-	/* 
-	 * returns the plugin id
-	 * @see org.parosproxy.paros.core.scanner.Test#getId()
-	 */
 	@Override
 	public int getId() {
 		return 40022;
 	}
 
-	/* returns the plugin name
-	 * @see org.parosproxy.paros.core.scanner.Test#getName()
-	 */
 	@Override
 	public String getName() {
 		return getString("sqlinjection.postgres.name");
 	}
 
-	/* returns the plugin dependencies
-	 * @see org.parosproxy.paros.core.scanner.Test#getDependency()
-	 */
 	@Override
 	public String[] getDependency() {        
 		return dependency;
 	}
 
-	/* returns the plugin description
-	 * @see org.parosproxy.paros.core.scanner.Test#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return getString("sqlinjection.desc");
 	}
 
-	/* returns the type of plugin
-	 * @see org.parosproxy.paros.core.scanner.Test#getCategory()
-	 */
 	@Override
 	public int getCategory() {
 		return Category.INJECTION;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.parosproxy.paros.core.scanner.Test#getSolution()
-	 */
 	@Override
 	public String getSolution() {
 		return getString("sqlinjection.soln");
 	}
 
-	/* returns references for the plugin
-	 * @see org.parosproxy.paros.core.scanner.Test#getReference()
-	 */
 	@Override
 	public String getReference() {
 		return getString("sqlinjection.refs");  
 	}
 
-	/* initialise
-	 * @see org.parosproxy.paros.core.scanner.AbstractTest#init()
-	 */
 	@Override
 	public void init() {
 		//DEBUG: turn on for debugging
@@ -293,7 +267,7 @@ public class SQLInjectionPostgresql extends AbstractAppPlugin {
 			//end of timing baseline check
 			
 			
-			TreeSet<HtmlParameter> htmlParams = new TreeSet<HtmlParameter> (); 
+			TreeSet<HtmlParameter> htmlParams = new TreeSet<> (); 
 			htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
 			htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
 

@@ -30,7 +30,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.List;
 
-import javax.script.ScriptException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -39,7 +38,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
-import javax.swing.SwingWorker;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
@@ -59,7 +57,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private ExtensionScripts extension;
 	private JPanel panelContent = null;
 	private JToolBar panelToolbar = null;
-	private JComboBox engineOptions = null;
+	private JComboBox<String> engineOptions = null;
 	private JButton runButton = null;
 	private JButton stopButton = null;
 	private JButton loadButton = null;
@@ -67,10 +65,9 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private CommandPanel commandPanel = null;
 	private OutputPanel outputPanel = null;
 
-	private SwingWorker worker = null;
 	private Thread thread = null;
 
-	private final Logger logger = Logger.getLogger(ConsolePanel.class);
+	private static final Logger logger = Logger.getLogger(ConsolePanel.class);
 
 	public ConsolePanel(ExtensionScripts extension) {
 		super();
@@ -118,9 +115,9 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		return panelToolbar;
 	}
 	
-	private JComboBox getEngineOptions() {
+	private JComboBox<String> getEngineOptions() {
 		if (this.engineOptions == null) {
-			this.engineOptions = new JComboBox();
+			this.engineOptions = new JComboBox<>();
 			List<String> engineNames = extension.getScriptingEngines();
 			for (String name : engineNames) {
 				this.engineOptions.addItem(name);
@@ -252,10 +249,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 				try {
 					extension.runScript(getEngineOptions().getSelectedItem().toString(), getCommandScript(), 
 							new OutputPanelWriter(getOutputPanel()));
-				} catch (ScriptException se) {
-					getOutputPanel().append(se);
-				} catch (Exception ie) {
-					getOutputPanel().append(ie);
+				} catch (Exception e) {
+					getOutputPanel().append(e);
 				}
 				getRunButton().setEnabled(true);
 				getLoadButton().setEnabled(true);
@@ -298,9 +293,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
     			return;
     		}
     		extension.getScriptParam().setDefaultDir(chooser.getCurrentDirectory().getAbsolutePath());
-    	    BufferedReader fr = null;
-            try {
-                fr = new BufferedReader(new FileReader(file));
+    	    try (BufferedReader fr = new BufferedReader(new FileReader(file))) {
                 getCommandPanel().clear();
                 String line;
                 while ((line = fr.readLine()) != null) {
@@ -310,12 +303,6 @@ public class ConsolePanel extends AbstractPanel implements Tab {
             } catch (Exception e1) {
             	logger.error(e1.getMessage(), e1);
                 extension.getView().showWarningDialog(Constant.messages.getString("file.load.error") + " " + file.getAbsolutePath() + ".");
-            } finally {
-        	    try {
-        	        fr.close();
-        	    } catch (Exception e2) {
-                	logger.error(e2.getMessage(), e2);
-        	    }
             }
 	    }
 	}
@@ -335,20 +322,12 @@ public class ConsolePanel extends AbstractPanel implements Tab {
     			return;
     		}
     		extension.getScriptParam().setDefaultDir(chooser.getCurrentDirectory().getAbsolutePath());
-    	    BufferedWriter fw = null;
-            try {
-                fw = new BufferedWriter(new FileWriter(file, false));
+    	    try (BufferedWriter fw = new BufferedWriter(new FileWriter(file, false))) {
                 fw.append(getCommandScript());
 
             } catch (Exception e1) {
             	logger.error(e1.getMessage(), e1);
                 extension.getView().showWarningDialog(Constant.messages.getString("file.save.error") + " " + file.getAbsolutePath() + ".");
-            } finally {
-        	    try {
-        	        fw.close();
-        	    } catch (Exception e2) {
-                	logger.error(e2.getMessage(), e2);
-        	    }
             }
 	    }
 	}

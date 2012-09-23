@@ -43,7 +43,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 
 	private PassiveScanThread parent = null;
-	private Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = Logger.getLogger(ServletParameterPollutionScanner.class);
 
 	@Override
 	public void setParent (PassiveScanThread parent) {
@@ -109,31 +109,19 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
     	return "HTTP Parameter Override";
 	}
 	
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Test#getDescription()
-     */
     public String getDescription() {
     	return "Unspecified form target: HTTP parameter override attack potentially possible.\n" +
     			"This is a known problem with Java Servlets but other platforms way also be vulnerable.";
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Test#getCategory()
-     */
     public int getCategory() {
         return Category.MISC;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Test#getSolution()
-     */
     public String getSolution() {
     	return "All forms must specify the action URL";
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Test#getReference()
-     */
     public String getReference() {
     	return "http://java.net/attachments/lists/servlet-spec/jsr340-experts/2012-06/15/OnParameterPollutionAttacks.pdf";
     }

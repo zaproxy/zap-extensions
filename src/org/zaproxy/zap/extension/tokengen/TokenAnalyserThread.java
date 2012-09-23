@@ -38,12 +38,13 @@ public class TokenAnalyserThread extends Thread {
 	public static final int NUM_TESTS = 9;		// Change manually if you add any tests!
 
 	private CharacterFrequencyMap cfm = null; 
-	private List<TokenAnalyserListenner> listenners = new ArrayList<TokenAnalyserListenner>();
+	private List<TokenAnalyserListenner> listenners = new ArrayList<>();
 	private OutputDestination outputDestination = null;
 	private boolean cancelled = false;
 
     private static Logger log = Logger.getLogger(TokenAnalyserThread.class);
 
+	@Override
 	public void run() {
 		log.debug("run");
 		
@@ -77,7 +78,7 @@ public class TokenAnalyserThread extends Thread {
 		if (cancelled) {
 			return;
 		}
-		List<String> entDetails = new ArrayList<String>();
+		List<String> entDetails = new ArrayList<>();
 		entDetails.add(ExtensionTokenGen.messages.getString("token.analyse.detail.maxentropy") + " " + maxEntropy);
 		result.setDetails(entDetails);
 		this.notifyListenners(result);

@@ -84,7 +84,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 		// TODO hacking...
 		setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
 		
-		syntaxStyles = new Vector<SyntaxStyle>();
+		syntaxStyles = new Vector<>();
 		addSyntaxStyle(PLAIN_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_NONE);
 		addSyntaxStyle(CLOJURE_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_CLOJURE);
 		addSyntaxStyle(GROOVY_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_GROOVY);
@@ -244,7 +244,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 		
 		@Override
 		protected Map<String, String> createTokenMakerKeyToClassNameMap() {
-			HashMap<String, String> map = new HashMap<String, String>();
+			HashMap<String, String> map = new HashMap<>();
 
 			String pkg = "org.fife.ui.rsyntaxtextarea.modes.";
 			map.put(SYNTAX_STYLE_NONE, pkg + "PlainTextTokenMaker");

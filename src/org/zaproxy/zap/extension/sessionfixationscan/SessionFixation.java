@@ -106,66 +106,41 @@ public class SessionFixation extends AbstractAppPlugin {
         }
     }
         
-    /* 
-     * returns the plugin id
-     * @see org.parosproxy.paros.core.scanner.Test#getId()
-     */
     @Override
     public int getId() {
         return 40013;
     }
 
-    /* returns the plugin name
-     * @see org.parosproxy.paros.core.scanner.Test#getName()
-     */
     @Override
     public String getName() {
     	return getString("sessionfixation.name");
     }
 
-    /* returns the plugin dependencies
-     * @see org.parosproxy.paros.core.scanner.Test#getDependency()
-     */
     @Override
     public String[] getDependency() {        
         return dependency;
     }
 
-    /* returns the plugin description
-     * @see org.parosproxy.paros.core.scanner.Test#getDescription()
-     */
     @Override
     public String getDescription() {
         return getString("sessionfixation.desc");
     }
 
-    /* returns the type of plugin
-     * @see org.parosproxy.paros.core.scanner.Test#getCategory()
-     */
     @Override
     public int getCategory() {
         return Category.MISC;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Test#getSolution()
-     */
     @Override
     public String getSolution() {
         return getString("sessionfixation.soln");
     }
 
-    /* returns references for the plugin
-     * @see org.parosproxy.paros.core.scanner.Test#getReference()
-     */
     @Override
     public String getReference() {
         return getString("sessionfixation.refs");  
     }
 
-    /* initialise
-     * @see org.parosproxy.paros.core.scanner.AbstractTest#init()
-     */
     @Override
     public void init() {
     	//DEBUG: turn on for debugging
@@ -188,7 +163,7 @@ public class SessionFixation extends AbstractAppPlugin {
         	//find all params set in the request (GET/POST/Cookie)
     		//Note: this will be the full set, before we delete anything.
     		
-        	TreeSet<HtmlParameter> htmlParams = new TreeSet<HtmlParameter> (); 
+        	TreeSet<HtmlParameter> htmlParams = new TreeSet<> (); 
     		htmlParams.addAll(getBaseMsg().getRequestHeader().getCookieParams());  //request cookies only. no response cookies
     		htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
     		htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
@@ -897,7 +872,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	 * @return
 	 */
 	private SortedMap <String, Integer> getParameterValueCountInHtml (String html, String parametername, boolean pseudoUrlParameter) throws Exception {
-		TreeMap <String, Integer> parametersInHTMLURls = new TreeMap <String, Integer> ();
+		TreeMap <String, Integer> parametersInHTMLURls = new TreeMap <> ();
 		Source source=new Source (html);
 		//for now, just look at the HREF attribue in <a> tags (ie, in links in the HTML output)
 		List<Element> elementList=source.getAllElements(HTMLElementName.A);
@@ -959,7 +934,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	 */
 	Set <HtmlParameter> getPseudoUrlParameters (String url)  {
 		
-		TreeSet <HtmlParameter> pseudoUrlParams = new TreeSet <HtmlParameter>();
+		TreeSet <HtmlParameter> pseudoUrlParams = new TreeSet <>();
 		String [] urlBreakdown = url.split("\\?"); //do this to get rid of parameters.. we just want the path (but we can live with the scheme, host, port, etc)
 		
 		String[] pseudoUrlParamNames = urlBreakdown[0].split(";");

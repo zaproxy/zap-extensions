@@ -56,7 +56,6 @@ public class ExtensionTopMenu extends ExtensionAdaptor {
 	/**
 	 * This method initializes this
 	 * 
-	 * @return void
 	 */
 	private void initialize() {
         this.setName("ExtensionTopMenu");
@@ -65,6 +64,7 @@ public class ExtensionTopMenu extends ExtensionAdaptor {
         		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
 	}
 	
+	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
 	    
@@ -82,6 +82,7 @@ public class ExtensionTopMenu extends ExtensionAdaptor {
         	menuExample.setText(getMessageString("ext.topmenu.tools.example"));
 
         	menuExample.addActionListener(new java.awt.event.ActionListener() {
+                @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
             		// This is where you do what you want to do.
             		// In this case we'll just show a popup message.

@@ -89,7 +89,7 @@ public class SQLInjection extends AbstractAppPlugin  {
 	 * Note: these should represent actual (driver level) error messages for things like syntax error, 
 	 * otherwise we are simply guessing that the string should/might occur.
 	 */
-	private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<String, String>();
+	private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<>();
 	static {
 		//DONE: we have implemented a MySQL specific scanner. See SQLInjectionMySQL
 		SQL_ERROR_TO_DBMS.put("com.mysql.jdbc.exceptions", "MySQL");
@@ -222,7 +222,7 @@ public class SQLInjection extends AbstractAppPlugin  {
 	/*
     SQL UNION error messages for various RDBMSs. The more, the merrier.
     */
-	private static final Map<String, String> SQL_UNION_ERROR_TO_DBMS = new LinkedHashMap<String, String>();
+	private static final Map<String, String> SQL_UNION_ERROR_TO_DBMS = new LinkedHashMap<>();
 	static {
 		SQL_UNION_ERROR_TO_DBMS.put("The used SELECT statements have a different number of columns", "MySQL");
 		SQL_UNION_ERROR_TO_DBMS.put("each UNION query must have the same number of columns", "PostgreSQL");
@@ -284,65 +284,42 @@ public class SQLInjection extends AbstractAppPlugin  {
 		}
 	}
 
-	/* 
-	 * returns the plugin id
-	 * @see org.parosproxy.paros.core.scanner.Test#getId()
-	 */
 	@Override
 	public int getId() {
 		return 40018;
 	}
 
-	/* returns the plugin name
-	 * @see org.parosproxy.paros.core.scanner.Test#getName()
-	 */
 	@Override
 	public String getName() {
 		return getString("sqlinjection.name");
 	}
 
-	/* returns the plugin dependencies
-	 * @see org.parosproxy.paros.core.scanner.Test#getDependency()
-	 */
 	@Override
 	public String[] getDependency() {        
 		return dependency;
 	}
 
-	/* returns the plugin description
-	 * @see org.parosproxy.paros.core.scanner.Test#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return getString("sqlinjection.desc");
 	}
 
-	/* returns the type of plugin
-	 * @see org.parosproxy.paros.core.scanner.Test#getCategory()
-	 */
 	@Override
 	public int getCategory() {
 		return Category.INJECTION;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.parosproxy.paros.core.scanner.Test#getSolution()
-	 */
 	@Override
 	public String getSolution() {
 		return getString("sqlinjection.soln");
 	}
 
-	/* returns references for the plugin
-	 * @see org.parosproxy.paros.core.scanner.Test#getReference()
-	 */
 	@Override
 	public String getReference() {
 		return getString("sqlinjection.refs");  
 	}
 
 	/* initialise
-	 * @see org.parosproxy.paros.core.scanner.AbstractTest#init()
 	 * Note that this method gets called each time the scanner is called.
 	 */
 	@Override
@@ -394,7 +371,7 @@ public class SQLInjection extends AbstractAppPlugin  {
 		boolean sqlInjectionFoundForUrl = false;
 		
 		try {
-			TreeSet<HtmlParameter> htmlParams = new TreeSet<HtmlParameter> (); 
+			TreeSet<HtmlParameter> htmlParams = new TreeSet<> (); 
 			htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
 			htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
 
@@ -515,7 +492,7 @@ public class SQLInjection extends AbstractAppPlugin  {
 				//try each of the AND syntax values in turn. 
 				//Which one is successful will depend on the column type of the table/view column into which we are injecting the SQL.
 				for (int i=0; 
-						i<SQL_LOGIC_AND.length && ! sqlInjectionFoundForUrl && doBooleanBased & countBooleanBasedRequests < doBooleanMaxRequests; 
+						i<SQL_LOGIC_AND.length && ! sqlInjectionFoundForUrl && doBooleanBased && countBooleanBasedRequests < doBooleanMaxRequests; 
 						i++) {
 					//needs a new message for each type of AND to be issued
 					HttpMessage msg2 = getNewMsg();

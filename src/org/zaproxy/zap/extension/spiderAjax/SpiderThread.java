@@ -20,12 +20,10 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.util.regex.Pattern;
 import com.crawljax.core.CrawljaxController;
-import com.crawljax.core.CrawljaxException;
 import com.crawljax.core.configuration.CrawlSpecification;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.ProxyConfiguration;
 import com.crawljax.core.configuration.ThreadConfiguration;
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.proxy.ProxyListener;
@@ -75,7 +73,6 @@ public class SpiderThread implements Runnable, ProxyListener {
 	
 	/**
 	 * This method refreshes the proxy
-	 * @return void
 	 */
 	private void initiProxy() {
 		this.extension.getProxy().updateProxyConf();
@@ -226,15 +223,11 @@ public class SpiderThread implements Runnable, ProxyListener {
 		Logger.getLogger("org.parosproxy.paros.view.SiteMapPanel").setLevel(Level.OFF);
 		try {
 			crawljax = new CrawljaxController(getCrawConf());
-        } catch (ConfigurationException e) {
-			logger.error(e);
         } catch (Exception e) {
 			logger.error(e);
 		}
 		try {
 			crawljax.run();		
-		} catch (CrawljaxException e) {
-			//logger.error(e);
 		} catch (Exception e) {
 			//logger.error(e);
 		} finally {

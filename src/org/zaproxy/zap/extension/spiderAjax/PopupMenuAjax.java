@@ -77,7 +77,6 @@ public class PopupMenuAjax extends ExtensionPopupMenuItem {
 	/**
 	 * This method initializes this
 	 * 
-	 * @return void
 	 */
 	private void initialize() {
 		 this.setText(this.extension.getString("ajax.site.popup"));
