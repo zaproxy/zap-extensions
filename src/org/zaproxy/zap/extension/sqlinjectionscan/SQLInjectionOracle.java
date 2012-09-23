@@ -30,12 +30,13 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 
 
 /**
- * TODO: implement the Risk level check / do not do dangerous operations unless the level is right!
+ * TODO: do not do dangerous operations unless the Mode is right!
  * TODO: implement checks in Header fields (currently does Cookie values, form fields, and url parameters)
  * TODO: change the Alert Titles.
  * TODO: maybe implement a more specific UNION based check for Oracle (with table names)
@@ -67,13 +68,12 @@ import org.parosproxy.paros.network.HttpMessage;
  */
 public class SQLInjectionOracle extends AbstractAppPlugin {
 	
-	////debug variables.. used to skip over certain logic to get to the rest quickly! 
-	////(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
-	//private boolean debugDoErrorBased = true;
-	//private boolean debugDoBooleanBased=true;
-	//private boolean debugDoUnionBased = true;
-	//private boolean debugDoStackedBased=true;
-	private boolean debugDoTimeBased=true;
+	private boolean doUnionBased = false;   //TODO: use in Union based, when we implement it
+	private boolean doTimeBased = false;
+	
+	private int doUnionMaxRequests = 0;	//TODO: use in Union based, when we implement it
+	private int doTimeMaxRequests = 0;
+
 	
 
 	/**
@@ -91,6 +91,13 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 	static {
 		SQL_ERROR_TO_DBMS.put("oracle.jdbc", "Oracle");
 		SQL_ERROR_TO_DBMS.put("SQLSTATE[HY", "Oracle");
+		SQL_ERROR_TO_DBMS.put("ORA-00933", "Oracle");
+		SQL_ERROR_TO_DBMS.put("ORA-06512", "Oracle");  //indicates the line number of an error
+		SQL_ERROR_TO_DBMS.put("SQL command not properly ended", "Oracle");
+		SQL_ERROR_TO_DBMS.put("ORA-00942", "Oracle");  //table or view does not exist
+		SQL_ERROR_TO_DBMS.put("ORA-29257", "Oracle");  //host unknown
+		SQL_ERROR_TO_DBMS.put("ORA-00932", "Oracle");  //inconsistent datatypes
+
 		//Note: only Oracle mappings here.
 		//TODO: is this all?? we need more error messages for Oracle for different languages. PHP (oci8), ASP, JSP(JDBC), etc 
 	}
@@ -249,6 +256,24 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 		//this.debugEnabled = true;
 
 		if ( this.debugEnabled ) log.debug("Initialising");
+		
+		//TODO: debug only
+		//this.setAttackStrength(AttackStrength.INSANE);
+		
+		//set up what we are allowed to do, depending on the attack strength that was set.
+		if ( this.getAttackStrength() == AttackStrength.LOW ) {
+			doTimeBased=true; doTimeMaxRequests=3;
+			doUnionBased=true; doUnionMaxRequests=3;
+		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
+			doTimeBased=true; doTimeMaxRequests=5;
+			doUnionBased=true; doUnionMaxRequests=5;
+		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
+			doTimeBased=true; doTimeMaxRequests=10;
+			doUnionBased=true; doUnionMaxRequests=10;
+		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
+			doTimeBased=true; doTimeMaxRequests=100;
+			doUnionBased=true; doUnionMaxRequests=100;
+		}
 	}
 
 
@@ -286,6 +311,9 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 
 			//for each parameter in turn
 			for (Iterator<HtmlParameter> iter = htmlParams.iterator(); iter.hasNext() && ! sqlInjectionFoundForUrl; ) {
+				
+				int countUnionBasedRequests = 0;
+				int countTimeBasedRequests = 0;	
 
 				HtmlParameter currentHtmlParameter = iter.next();
 				if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], ["+ currentHtmlParameter.getType()+"] field ["+ currentHtmlParameter.getName() + "] with value ["+currentHtmlParameter.getValue()+"] for SQL Injection");    			
@@ -293,7 +321,9 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 				//Check 3: check for time based SQL Injection
 				//Oracle specific time based SQL injection checks
 
-				for (int timeBasedSQLindex = 0; timeBasedSQLindex < SQL_ORACLE_TIME_REPLACEMENTS.length && ! sqlInjectionFoundForUrl && debugDoTimeBased; timeBasedSQLindex ++) {
+				for (int timeBasedSQLindex = 0; 
+						timeBasedSQLindex < SQL_ORACLE_TIME_REPLACEMENTS.length && ! sqlInjectionFoundForUrl && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
+						timeBasedSQLindex ++) {
 					HttpMessage msg3 = getNewMsg();
 					String newTimeBasedInjectionValue = SQL_ORACLE_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", currentHtmlParameter.getValue());
 					
@@ -321,6 +351,7 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 					long modifiedTimeStarted = System.currentTimeMillis();
 					try {
 						sendAndReceive(msg3);
+						countTimeBasedRequests++;
 						}
 					catch (java.net.SocketTimeoutException e) {
 						//this is to be expected, if we start sending slow queries to the database.  ignore it in this case.. and just get the time.
@@ -356,7 +387,13 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 			//if it's in English, it's still better than not having it at all. 
 			log.error("An error occurred checking a url for Oracle SQL Injection vulnerabilities", e);
 		}
-	}	
+	}
+
+	@Override
+	public int getRisk() {
+		return Alert.RISK_HIGH;
+	}
+
 }
 
 
