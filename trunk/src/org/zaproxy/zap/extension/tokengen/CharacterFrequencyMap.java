@@ -43,8 +43,8 @@ public class CharacterFrequencyMap {
 	private static String DEC_CHRS = "-.0123456789";
 	private static String HEX_CHRS = "0123456789ABCDEFabcdef";
 	
-	private List<String> tokens = new ArrayList<String>();
-	private Map<Character, Integer> map = new HashMap<Character, Integer>();
+	private List<String> tokens = new ArrayList<>();
+	private Map<Character, Integer> map = new HashMap<>();
 	private char lowestChar = Character.MAX_VALUE;
 	private char highestChar = Character.MIN_VALUE;
 	private boolean allDec = true;
@@ -53,8 +53,8 @@ public class CharacterFrequencyMap {
 	private boolean exceededLong = false;
 	private int minLength = Integer.MAX_VALUE;
 	private int maxLength = 0;
-	private Map <Integer, Set<Character>> charsPerPosn = new HashMap<Integer, Set<Character>>();
-	private Set<Character> allChrs = new HashSet<Character>();
+	private Map <Integer, Set<Character>> charsPerPosn = new HashMap<>();
+	private Set<Character> allChrs = new HashSet<>();
 
 	public void addToken (String token) {
 		tokens.add(token);
@@ -129,15 +129,15 @@ public class CharacterFrequencyMap {
 	public TokenAnalysisTestResult checkCharacterUniformity() {
 		TokenAnalysisTestResult result = new TokenAnalysisTestResult(TokenAnalysisTestResult.Type.CHR_UNIFORMITY);
 		Result res = Result.PASS;
-		List<String> details = new ArrayList<String>();
-		List<String> issues = new ArrayList<String>();
+		List<String> details = new ArrayList<>();
+		List<String> issues = new ArrayList<>();
 		int mid = (size() / numberOfChars());
 		int mdev = mdev(numberOfChars());
 		int min = mid - mdev;
 		int max = mid + mdev;
 		
 		for (int i = 0; i < maxLength; i++) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("Col ");
 			sb.append(i);
 			for (char c : allChrs) {
@@ -197,12 +197,12 @@ public class CharacterFrequencyMap {
 	public TokenAnalysisTestResult checkCharacterTransitions() {
 		TokenAnalysisTestResult result = new TokenAnalysisTestResult(TokenAnalysisTestResult.Type.CHR_TRANSITIONS);
 		Result res = Result.PASS;
-		List<String> details = new ArrayList<String>();
-		List<String> issues = new ArrayList<String>();
+		List<String> details = new ArrayList<>();
+		List<String> issues = new ArrayList<>();
 		
 		for (int i = 0; i < maxLength; i++) {
 			// Loop through token places 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("Col ");
 			sb.append(i);
 
@@ -335,20 +335,20 @@ public class CharacterFrequencyMap {
 	}
 
 	public void save(File file) throws IOException {
-		BufferedWriter out = new BufferedWriter(new FileWriter(file));
-		for (String token : tokens) {
-			out.write(token + "\n");
+		try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
+			for (String token : tokens) {
+				out.write(token + "\n");
+			}
 		}
-		out.close();
 	}
 	
 	public void load(File file) throws IOException {
-		BufferedReader in = new BufferedReader(new FileReader(file));
-		String line;
-		while ((line = in.readLine()) != null) {
-			this.addToken(line.trim());
+		try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+			String line;
+			while ((line = in.readLine()) != null) {
+				this.addToken(line.trim());
+			}
 		}
-		in.close();
 	}
 	
 	public int size() {

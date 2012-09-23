@@ -46,9 +46,9 @@ public class GenerateTokensDialog extends AbstractDialog {
 	private static final long serialVersionUID = 1L;
 	private JPanel jPanel = null;
 	
-	private JComboBox numTokens = null;
-	private JComboBox paramType = null;
-	private JComboBox paramName = null;
+	private JComboBox<Integer> numTokens = null;
+	private JComboBox<String> paramType = null;
+	private JComboBox<String> paramName = null;
 	private JButton cancelButton = null;
 	private JButton startButton = null;
 
@@ -56,9 +56,9 @@ public class GenerateTokensDialog extends AbstractDialog {
 	private HttpMessage httpMessage = null;
 	private TokenGenerator generator = null;
 	
-	private Vector<String> cookieParams = new Vector<String>();
-	private Vector<String> formParams = new Vector<String>();
-	private Vector<String> urlParams = new Vector<String>();
+	private Vector<String> cookieParams = new Vector<>();
+	private Vector<String> formParams = new Vector<>();
+	private Vector<String> urlParams = new Vector<>();
 	
     private static Logger log = Logger.getLogger(GenerateTokensDialog.class);
 
@@ -73,7 +73,6 @@ public class GenerateTokensDialog extends AbstractDialog {
 	/**
 	 * This method initializes this
 	 * 
-	 * @return void
 	 */
 	private void initialize() {
         this.setContentPane(getJTabbed());
@@ -171,9 +170,9 @@ public class GenerateTokensDialog extends AbstractDialog {
 	}
 	*/
 	
-	private JComboBox getNumTokensField() {
+	private JComboBox<Integer> getNumTokensField() {
 		if (numTokens == null) {
-			numTokens = new JComboBox();
+			numTokens = new JComboBox<>();
 			numTokens.addItem(10000);
 			numTokens.addItem(20000);
 			numTokens.addItem(30000);
@@ -192,14 +191,14 @@ public class GenerateTokensDialog extends AbstractDialog {
 	public void setMessage(HttpMessage httpMessage) {
 		this.httpMessage = httpMessage;
 		
-		cookieParams = new Vector<String>();
+		cookieParams = new Vector<>();
 		TreeSet<HtmlParameter> params = httpMessage.getCookieParams();
 		Iterator<HtmlParameter> cIter = params.iterator();
 		while (cIter.hasNext()) {
 			cookieParams.add(cIter.next().getName());
 		}
 		
-		urlParams = new Vector<String>();
+		urlParams = new Vector<>();
 		params = httpMessage.getUrlParams();
 		Iterator<HtmlParameter> uIter = params.iterator();
 		while (uIter.hasNext()) {
@@ -224,9 +223,9 @@ public class GenerateTokensDialog extends AbstractDialog {
 		}
 	}
 
-	private JComboBox getParamType() {
+	private JComboBox<String> getParamType() {
 		if (paramType == null) {
-			paramType = new JComboBox(PARAM_TYPES);
+			paramType = new JComboBox<>(PARAM_TYPES);
 			paramType.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -254,9 +253,9 @@ public class GenerateTokensDialog extends AbstractDialog {
 		return paramType;
 	}
 
-	private JComboBox getParamName() {
+	private JComboBox<String> getParamName() {
 		if (paramName == null) {
-			paramName = new JComboBox();
+			paramName = new JComboBox<>();
 		}
 		return paramName;
 	}

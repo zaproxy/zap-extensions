@@ -63,7 +63,6 @@ public class ChromeAlertDialog extends AbstractDialog {
 	/**
 	 * This method initializes this
 	 * 
-	 * @return void
 	 */
 	private void initialize() {
 		this.setTitle(this.extension.getString("ajax.chrome.alert.title"));

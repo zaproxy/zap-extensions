@@ -1,26 +1,16 @@
 package org.zaproxy.zap.extension.highlighter;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import org.parosproxy.paros.extension.AbstractPanel;
 
 /*
@@ -44,7 +34,7 @@ public class HighlighterPanel extends AbstractPanel implements ActionListener {
 	
 	private void init() {
 		highlighter = HighlighterManager.getInstance();
-		panelList = new LinkedList<HighlightEntryLineUi>();
+		panelList = new LinkedList<>();
 
 		initUi();
 	}
@@ -124,7 +114,7 @@ public class HighlighterPanel extends AbstractPanel implements ActionListener {
 		// Line >0: Content
 		int n=1;
 		LinkedList<HighlightSearchEntry> newEntrys = highlighter.getHighlights();
-		panelList = new LinkedList<HighlightEntryLineUi>();
+		panelList = new LinkedList<>();
 		
 		for(HighlightSearchEntry entry: newEntrys) {
 			HighlightEntryLineUi panelLine = new HighlightEntryLineUi(userGridPanel, n++, entry);
@@ -138,7 +128,7 @@ public class HighlighterPanel extends AbstractPanel implements ActionListener {
 	}
 	
 	private void applyAll() {
-		LinkedList<HighlightSearchEntry> entrys = new LinkedList<HighlightSearchEntry>();
+		LinkedList<HighlightSearchEntry> entrys = new LinkedList<>();
 		
 		// Save all UI elements
 		for(HighlightEntryLineUi panelLine: panelList) {

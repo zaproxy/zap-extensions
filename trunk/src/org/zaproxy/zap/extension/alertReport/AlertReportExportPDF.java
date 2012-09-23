@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.alertReport;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 
@@ -96,7 +94,7 @@ public class AlertReportExportPDF {
 					addTitlePage(document,extensionExport);
 				}
 				for (int i = 0; i < alerts.size(); i++) {
-					java.util.List<Alert> alertAux = (java.util.List<Alert>) alerts.get(i);
+					java.util.List<Alert> alertAux = alerts.get(i);
 					addContent(document,alertAux,extensionExport);
 				}
 				
@@ -148,7 +146,7 @@ public class AlertReportExportPDF {
 			addEmptyLine(preface, 15);
 			
 			preface.add(new Paragraph(extensionExport.getMessageString("alert.export.message.export.pdf.confidential"),smallBold));
-			preface.add(new Paragraph(extensionExport.getParams().getConfidentialText(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			preface.add(new Paragraph(extensionExport.getParams().getConfidentialText(), 
 					litleFont));
 
 			document.add(preface);
@@ -173,8 +171,6 @@ public class AlertReportExportPDF {
 					image1.setAlignment(Image.ALIGN_CENTER);
 					paragraph.add(image1);
 				}
-			} catch (MalformedURLException e) {
-				logger.error(e.getMessage(), e);
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}

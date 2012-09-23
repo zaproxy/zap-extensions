@@ -37,10 +37,12 @@ public class ExampleActiveScanner extends AbstractAppParamPlugin {
 
     private static Logger log = Logger.getLogger(ExampleActiveScanner.class);
 	
+    @Override
     public int getId() {
         return 20010;
     }
 
+    @Override
     public String getName() {
 		// Strip off the "Example Active Scanner: " part if implementing a real one ;)
     	if (vuln != null) {
@@ -49,16 +51,12 @@ public class ExampleActiveScanner extends AbstractAppParamPlugin {
     	return "Example Active Scanner: Denial of Service";
     }
 
-    /* (non-Javadoc)
-     * @see com.proofsecure.paros.core.scanner.Test#getDependency()
-     */
+    @Override
     public String[] getDependency() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see com.proofsecure.paros.core.scanner.Test#getDescription()
-     */
+    @Override
     public String getDescription() {
     	if (vuln != null) {
     		return vuln.getDescription();
@@ -66,16 +64,12 @@ public class ExampleActiveScanner extends AbstractAppParamPlugin {
     	return "Failed to load vulnerability description from file";
     }
 
-    /* (non-Javadoc)
-     * @see com.proofsecure.paros.core.scanner.Test#getCategory()
-     */
+    @Override
     public int getCategory() {
         return Category.MISC;
     }
 
-    /* (non-Javadoc)
-     * @see com.proofsecure.paros.core.scanner.Test#getSolution()
-     */
+    @Override
     public String getSolution() {
     	if (vuln != null) {
     		return vuln.getSolution();
@@ -83,12 +77,10 @@ public class ExampleActiveScanner extends AbstractAppParamPlugin {
     	return "Failed to load vulnerability solution from file";
     }
 
-    /* (non-Javadoc)
-     * @see com.proofsecure.paros.core.scanner.Test#getReference()
-     */
+    @Override
     public String getReference() {
     	if (vuln != null) {
-    		StringBuffer sb = new StringBuffer();
+    		StringBuilder sb = new StringBuilder();
     		for (String ref : vuln.getReferences()) {
     			if (sb.length() > 0) {
     				sb.append("\n");
@@ -100,9 +92,7 @@ public class ExampleActiveScanner extends AbstractAppParamPlugin {
     	return "Failed to load vulnerability reference from file";
     }
 
-    /* (non-Javadoc)
-     * @see com.proofsecure.paros.core.scanner.AbstractTest#init()
-     */
+    @Override
     public void init() {
 
     }
@@ -112,6 +102,7 @@ public class ExampleActiveScanner extends AbstractAppParamPlugin {
      * This method is called by the active scanner for each GET and POST parameter for every page 
      * @see org.parosproxy.paros.core.scanner.AbstractAppParamPlugin#scan(org.parosproxy.paros.network.HttpMessage, java.lang.String, java.lang.String)
      */
+    @Override
     public void scan(HttpMessage msg, String param, String value) {
 		try {
 			// This is where you change the 'good' request to attack the application

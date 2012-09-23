@@ -64,6 +64,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	/**
 	 * @return the Id of the plugin
 	 */
+	@Override
 	public int getId() {
 		return 20012;
 	}
@@ -71,6 +72,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	/**
 	 * @return the name of the plugin
 	 */
+	@Override
 	public String getName() {
 		return "Anti CSRF tokens scanner";
 	}
@@ -78,6 +80,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	/**
 	 * @return dependencies of the plugin (none)
 	 */
+	@Override
 	public String[] getDependency() {
 		return null;
 	}
@@ -85,6 +88,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	/**
 	 * @return the description of the vulnerability
 	 */
+	@Override
 	public String getDescription() {
 		if (vuln != null) {
 			return vuln.getDescription();
@@ -95,6 +99,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	/**
 	 * @return the category of the vulnerability (Server side).
 	 */
+	@Override
 	public int getCategory() {
 		return Category.SERVER;
 	}
@@ -102,6 +107,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	/**
 	 * @return The solution of the vulnerability
 	 */
+	@Override
 	public String getSolution() {
 		if (vuln != null) {
 			return vuln.getSolution();
@@ -112,9 +118,10 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	/**
 	 * @return Reference for more information about the vulnerability
 	 */
+	@Override
 	public String getReference() {
 		if (vuln != null) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for (String ref : vuln.getReferences()) {
 				if (sb.length() > 0) {
 					sb.append("\n");
@@ -129,6 +136,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	/**
 	 * 
 	 */
+	@Override
 	public void init() {
 
 	}
@@ -141,7 +149,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	public void scan() {
 
 		boolean vuln = false;
-		Map<String, String> tagsMap = new HashMap<String, String>();
+		Map<String, String> tagsMap = new HashMap<>();
 		Source s;
 		try {		
 			// We parse the HTML of the response

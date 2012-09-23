@@ -95,66 +95,41 @@ public class LDAPInjection extends AbstractAppPlugin {
         }
     }
         
-    /* 
-     * returns the plugin id
-     * @see org.parosproxy.paros.core.scanner.Test#getId()
-     */
     @Override
     public int getId() {
         return 40015;
     }
 
-    /* returns the plugin name
-     * @see org.parosproxy.paros.core.scanner.Test#getName()
-     */
     @Override
     public String getName() {
     	return getString("ldapinjection.name");
     }
 
-    /* returns the plugin dependencies
-     * @see org.parosproxy.paros.core.scanner.Test#getDependency()
-     */
     @Override
     public String[] getDependency() {        
         return dependency;
     }
 
-    /* returns the plugin description
-     * @see org.parosproxy.paros.core.scanner.Test#getDescription()
-     */
     @Override
     public String getDescription() {
         return getString("ldapinjection.desc");
     }
 
-    /* returns the type of plugin
-     * @see org.parosproxy.paros.core.scanner.Test#getCategory()
-     */
     @Override
     public int getCategory() {
         return Category.INJECTION;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Test#getSolution()
-     */
     @Override
     public String getSolution() {
         return getString("ldapinjection.soln");
     }
 
-    /* returns references for the plugin
-     * @see org.parosproxy.paros.core.scanner.Test#getReference()
-     */
     @Override
     public String getReference() {
         return getString("ldapinjection.refs");  
     }
 
-    /* initialise
-     * @see org.parosproxy.paros.core.scanner.AbstractTest#init()
-     */
     @Override
     public void init() {
     	//DEBUG: turn on for debugging
@@ -175,7 +150,7 @@ public class LDAPInjection extends AbstractAppPlugin {
 		
 		try {
         	//find all params set in the request (GET(URL)/POST(FORM)/Cookie)    		
-        	TreeSet<HtmlParameter> htmlParams = new TreeSet<HtmlParameter> (); 
+        	TreeSet<HtmlParameter> htmlParams = new TreeSet<> (); 
     		htmlParams.addAll(getBaseMsg().getRequestHeader().getCookieParams());  //request cookies only. no response cookies
     		htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
     		htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params

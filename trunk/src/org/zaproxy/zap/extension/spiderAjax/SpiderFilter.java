@@ -17,7 +17,6 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -106,11 +105,7 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 	            }*/
 			}
 		}
-		} catch (URIException e) {
-			logger.error(e);
-		} catch (HttpMalformedHeaderException e) {
-			logger.error(e);
-		} catch (SQLException e) {
+		} catch (URIException | HttpMalformedHeaderException |SQLException e) {
 			logger.error(e);
 		}
 		this.cands = candidates;
@@ -193,8 +188,6 @@ public class SpiderFilter implements PreStateCrawlingPlugin {
 				u = new URL(currentUrl);
 			}
 			guessedUrl = u.toString();
-		} catch (MalformedURLException e) {
-			logger.error(e);
 		} catch (Exception e) {
 			logger.error(e);
 		}

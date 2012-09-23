@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
@@ -69,8 +68,6 @@ public class ExtensionScripts extends ExtensionAdaptor {
 
 	/**
 	 * This method initializes this
-	 * 
-	 * @return void
 	 */
 	private void initialize() {
         this.setName(NAME);
@@ -102,7 +99,7 @@ public class ExtensionScripts extends ExtensionAdaptor {
 	}
 	
 	public List<String> getScriptingEngines() {
-		List <String> engineNames = new ArrayList<String>();
+		List <String> engineNames = new ArrayList<>();
 		List<ScriptEngineFactory> engines = mgr.getEngineFactories();
 		for (ScriptEngineFactory engine : engines) {
 			engineNames.add(engine.getLanguageName() + LANG_ENGINE_SEP + engine.getEngineName());
@@ -128,19 +125,7 @@ public class ExtensionScripts extends ExtensionAdaptor {
 				throw new ScriptException("Failed to find script engine: " + name);
 			}
 
-			Writer writerContext = writer;
-			if ("ECMAScript".equalsIgnoreCase(name)) {
-				// Hack to overcome the issue
-				// http://bugs.sun.com/view_bug.do?bug_id=6759414 that prevents the
-				// use of the JavaScript functions print/println when the writer is
-				// not a PrintWriter
-				if (!(writer instanceof PrintWriter)) {
-					writerContext = new PrintWriter(writer);
-				}
-			}
-		    engine.getContext().setWriter(writerContext);
-
-		 
+		    engine.getContext().setWriter(writer);
 
 			engine.eval(script);
 			
@@ -185,6 +170,7 @@ public class ExtensionScripts extends ExtensionAdaptor {
         	menuConsoleLink.setText(getMessageString("scripts.topmenu.tools.consoleLink"));
 
         	menuConsoleLink.addActionListener(new java.awt.event.ActionListener() {
+                @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
             		// Open the Script Console wiki page using the default browser
                 	DesktopUtils.openUrlInBrowser(SCRIPT_CONSOLE_HOME_PAGE);

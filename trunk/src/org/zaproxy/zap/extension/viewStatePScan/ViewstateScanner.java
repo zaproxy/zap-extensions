@@ -187,7 +187,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
                 result.add(st);
 
         // Creating a key:StartTag map based on the previous results
-        Map<String, StartTag> stMap = new TreeMap<String, StartTag>();
+        Map<String, StartTag> stMap = new TreeMap<>();
         for (StartTag st : result) {
         	// TODO: fix exception occuring here (st == null?)
             String name = (st.getAttributeValue("id") == null) ? st.getAttributeValue("name") : st.getAttributeValue("id");
@@ -223,7 +223,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
     private class ViewstateAnalyzerResult {
     	
     	private ViewstateAnalyzerPattern pattern;
-    	private Set<String> resultExtract = new HashSet<String>();
+    	private Set<String> resultExtract = new HashSet<>();
     	
     	public ViewstateAnalyzerResult(ViewstateAnalyzerPattern vap) {
     		this.pattern = vap;
@@ -289,7 +289,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
 
     	public static List<ViewstateAnalyzerResult> getSearchResults(Viewstate v, ViewstateScanner s)
     	{
-    		List<ViewstateAnalyzerResult> result = new ArrayList<ViewstateAnalyzerResult>();
+    		List<ViewstateAnalyzerResult> result = new ArrayList<>();
     		
     		for (ViewstateAnalyzerPattern vap : ViewstateAnalyzerPattern.values())
     		{
@@ -353,9 +353,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
 					this.decodedValue = new String(Base64.decode(this.base64Value), Charset.forName("UTF-8"));
 	        		this.isValid = true;
 	        		this.setVersion();
-	        	} catch (IllegalArgumentException e) {
-					//Incorrect Base64 value.
-				} catch (IOException e) {
+	        	} catch (IllegalArgumentException | IOException e) {
 					//Incorrect Base64 value.
 				}
         	}
@@ -372,9 +370,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
 					this.decodedValue = new String(Base64.decode(this.base64Value), Charset.forName("UTF-8"));
 					this.isValid = true;
 	        		this.setVersion();
-        		} catch (IllegalArgumentException e) {
-					//Incorrect Base64 value.
-				} catch (IOException e) {
+        		} catch (IllegalArgumentException | IOException e) {
 					//Incorrect Base64 value.
 				}
         	}

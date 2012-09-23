@@ -77,8 +77,6 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
 	/**
 	 * This method initializes this
-	 * 
-	 * @return void
 	 */
 	private void initialize() {
         this.setContentPane(getJPanel());
@@ -228,11 +226,10 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 	    		}
                 Model.getSingleton().getOptionsParam().setUserDirectory(chooser.getCurrentDirectory());
                 
-                FileWriter fstream = new FileWriter(file);
-                BufferedWriter out = new BufferedWriter(fstream);
-                out.write(getErrorsArea().getText());
-                out.write(getDetailsArea().getText());
-                out.close();
+                try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
+                    out.write(getErrorsArea().getText());
+                    out.write(getDetailsArea().getText());
+                }
 				
 			} catch (Exception e) {
 				View.getSingleton().showWarningDialog(ExtensionTokenGen.messages.getString("token.analyse.save.error"));
@@ -313,10 +310,12 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 			detailsArea.setName("DetailsArea");
 			detailsArea.addMouseListener(new java.awt.event.MouseAdapter() { 
 
+				@Override
 				public void mousePressed(java.awt.event.MouseEvent e) {
 					mouseAction(e);
 				}
 					
+				@Override
 				public void mouseReleased(java.awt.event.MouseEvent e) {
 					mouseAction(e);
 				}
@@ -342,10 +341,12 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 			errorsArea.setName("ErrorsArea");
 			errorsArea.addMouseListener(new java.awt.event.MouseAdapter() { 
 
+				@Override
 				public void mousePressed(java.awt.event.MouseEvent e) {
 					mouseAction(e);
 				}
 					
+				@Override
 				public void mouseReleased(java.awt.event.MouseEvent e) {
 					mouseAction(e);
 				}

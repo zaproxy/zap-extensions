@@ -29,7 +29,7 @@ import javax.swing.ListCellRenderer;
 
 import org.parosproxy.paros.network.HttpMessage;
 
-public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer {
+public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer<HttpMessage> {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel txtId = null;
@@ -53,8 +53,6 @@ public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer {
 
     /**
      * This method initializes this
-     * 
-     * @return void
      */
     private void initialize() {
         GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
@@ -223,9 +221,8 @@ public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer {
         this.add(txtToken, gridBagConstraints7);
     }
 
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        
-        HttpMessage msg = (HttpMessage) value;
+    @Override
+    public Component getListCellRendererComponent(JList<? extends HttpMessage> list, HttpMessage msg, int index, boolean isSelected, boolean cellHasFocus) {
         
         txtMethod.setText(msg.getRequestHeader().getMethod());
         txtURI.setText(msg.getRequestHeader().getURI().toString());

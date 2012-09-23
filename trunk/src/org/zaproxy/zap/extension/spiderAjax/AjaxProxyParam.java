@@ -73,6 +73,7 @@ public class AjaxProxyParam extends ProxyParam {
 	/**
 	 * @return the port of the parameter
 	 */
+	@Override
 	public int getProxyPort(){
 		return this.proxyPort;
 	}
@@ -80,6 +81,7 @@ public class AjaxProxyParam extends ProxyParam {
 	/**
 	 * @return the IP of the parameter
 	 */
+	@Override
 	public String getProxyIp(){
 		return this.proxyIp;
 	}
@@ -88,6 +90,7 @@ public class AjaxProxyParam extends ProxyParam {
 	/**
 	 * @param p
 	 */
+	@Override
 	public void setProxyPort(int p){
 		this.proxyPort = p;
 	}
@@ -95,6 +98,7 @@ public class AjaxProxyParam extends ProxyParam {
 	/**
 	 * @param ip
 	 */
+	@Override
 	public void setProxyIp(String ip){
 		this.proxyIp = ip;
 	}

@@ -39,7 +39,7 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
 									ExtensionTokenGen.messages.getString("token.analyse.table.result"), 
 									ExtensionTokenGen.messages.getString("token.analyse.table.desc")};
 
-    private List<TokenAnalysisTestResult> results = new ArrayList<TokenAnalysisTestResult>();
+    private List<TokenAnalysisTestResult> results = new ArrayList<>();
     
     public TokenAnalysisResultsTableModel() {
     }
@@ -49,8 +49,8 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
     	this.fireTableRowsInserted(results.size()-1, results.size()-1);
     }
     
-    @SuppressWarnings("unchecked")
-	public Class getColumnClass(int c) {
+	@Override
+	public Class<?> getColumnClass(int c) {
         if (c == 1) {
             return ImageIcon.class;
         }
@@ -58,10 +58,12 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
         
     }
     
+    @Override
     public String getColumnName(int col) {
         return columnNames[col];
     }
     
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         if (columnIndex == 1) {
             return true;
@@ -69,6 +71,7 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
         return false;
     }
     
+    @Override
     public int getColumnCount() {
         return columnNames.length;
     }
@@ -76,6 +79,7 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
     /* (non-Javadoc)
      * @see javax.swing.table.TableModel#getRowCount()
      */
+    @Override
     public int getRowCount() {
     	if (results == null) {
     		return 0;
@@ -86,6 +90,7 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
     /* (non-Javadoc)
      * @see javax.swing.table.TableModel#getValueAt(int, int)
      */
+    @Override
     public Object getValueAt(int row, int col) {
     	TokenAnalysisTestResult result = results.get(row);
         Object value = null;

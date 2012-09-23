@@ -5,7 +5,6 @@ import java.util.LinkedList;
 
 import org.parosproxy.paros.common.AbstractParam;
 import org.zaproxy.zap.extension.highlighter.HighlightSearchEntry;
-import org.zaproxy.zap.extension.highlighter.HighlighterManager;
 import org.zaproxy.zap.extension.search.SearchMatch;
 
 public class OptionsHighlight extends AbstractParam {
@@ -27,7 +26,7 @@ public class OptionsHighlight extends AbstractParam {
 		
 		Integer n = 0;
 		
-		highlights = new LinkedList<HighlightSearchEntry>();
+		highlights = new LinkedList<>();
 		
 		while(true) {
 			token = getConfig().getString(HIGHLIGHT_TOKEN + n);

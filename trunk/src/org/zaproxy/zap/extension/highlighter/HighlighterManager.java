@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.Observable;
 
-import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.search.SearchMatch;
 
 /*
@@ -25,12 +24,12 @@ public class HighlighterManager extends Observable {
 	private LinkedList<HighlightSearchEntry> highlights;
 	
 	public HighlighterManager() {
-		highlights = new LinkedList<HighlightSearchEntry>();
+		highlights = new LinkedList<>();
 		//readConfigFile();
 	}
 	
 	public void reinitHighlights(LinkedList<HighlightSearchEntry> list) {
-		this.highlights = (LinkedList<HighlightSearchEntry>) list.clone();
+		this.highlights = new LinkedList<>(list);
 		
 		setChanged();
 		notifyObservers(null);
@@ -74,6 +73,6 @@ public class HighlighterManager extends Observable {
 	
 	// TODO: sux
 	public LinkedList<HighlightSearchEntry> getHighlights() {
-		return (LinkedList<HighlightSearchEntry>) highlights.clone();
+		return new LinkedList<>(highlights);
 	}
 }

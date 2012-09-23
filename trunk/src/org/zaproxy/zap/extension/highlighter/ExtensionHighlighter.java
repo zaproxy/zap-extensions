@@ -11,9 +11,7 @@ import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.extension.params.ParamsAPI;
 import org.zaproxy.zap.view.SiteMapListener;
 
 /*
@@ -43,6 +41,7 @@ implements SessionChangedListener, /*ProxyListener, */ SiteMapListener {
 		
 	}
 
+	@Override
 	public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         extensionHook.addSessionListener(this);

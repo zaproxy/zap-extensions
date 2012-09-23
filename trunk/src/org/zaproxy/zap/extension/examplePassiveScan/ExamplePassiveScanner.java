@@ -17,7 +17,6 @@
  */
 package org.zaproxy.zap.extension.examplePassiveScan;
 
-import java.util.Date;
 import java.util.Random;
 
 import net.htmlparser.jericho.Source;
@@ -27,7 +26,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
-import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -35,12 +33,12 @@ import org.zaproxy.zap.model.Vulnerability;
 /*
  * An example passive scanner.
  */
-public class ExamplePassiveScanner extends PluginPassiveScanner implements PassiveScanner {
+public class ExamplePassiveScanner extends PluginPassiveScanner {
 
 	// wasc_10 is Denial of Service - well, its just an example ;)
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
 	private PassiveScanThread parent = null;
-	private Logger logger = Logger.getLogger(this.getClass());
+	private static Logger logger = Logger.getLogger(ExamplePassiveScanner.class);
 	
 	private Random rnd = new Random();
 
@@ -60,7 +58,7 @@ public class ExamplePassiveScanner extends PluginPassiveScanner implements Passi
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		Date start = new Date();
+		long start = System.currentTimeMillis();
 		
 		// This is where you detect potential vulnerabilities.
 		// You can examine the msg or source but should not change anything
@@ -85,7 +83,7 @@ public class ExamplePassiveScanner extends PluginPassiveScanner implements Passi
 		}
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("\tScan of record " + id + " took " + ((new Date()).getTime() - start.getTime()) + " ms");
+			logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
 		}
 		
 	}
@@ -99,9 +97,6 @@ public class ExamplePassiveScanner extends PluginPassiveScanner implements Passi
     	return "Example Passive Scanner: Denial of Service";
 	}
 	
-    /* (non-Javadoc)
-     * @see com.proofsecure.paros.core.scanner.Test#getDescription()
-     */
     public String getDescription() {
     	if (vuln != null) {
     		return vuln.getDescription();
@@ -109,16 +104,10 @@ public class ExamplePassiveScanner extends PluginPassiveScanner implements Passi
     	return "Failed to load vulnerability description from file";
     }
 
-    /* (non-Javadoc)
-     * @see com.proofsecure.paros.core.scanner.Test#getCategory()
-     */
     public int getCategory() {
         return Category.MISC;
     }
 
-    /* (non-Javadoc)
-     * @see com.proofsecure.paros.core.scanner.Test#getSolution()
-     */
     public String getSolution() {
     	if (vuln != null) {
     		return vuln.getSolution();
@@ -126,12 +115,9 @@ public class ExamplePassiveScanner extends PluginPassiveScanner implements Passi
     	return "Failed to load vulnerability solution from file";
     }
 
-    /* (non-Javadoc)
-     * @see com.proofsecure.paros.core.scanner.Test#getReference()
-     */
     public String getReference() {
     	if (vuln != null) {
-    		StringBuffer sb = new StringBuffer();
+    		StringBuilder sb = new StringBuilder();
     		for (String ref : vuln.getReferences()) {
     			if (sb.length() > 0) {
     				sb.append("\n");

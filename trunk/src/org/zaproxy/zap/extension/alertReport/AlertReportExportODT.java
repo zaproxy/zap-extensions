@@ -98,7 +98,7 @@ public class AlertReportExportODT {
 				addTitlePage(outputDocument);
 			}
 			for (int i = 0; i < alerts.size(); i++) {
-				java.util.List<Alert> alertAux = (java.util.List<Alert>) alerts.get(i);
+				java.util.List<Alert> alertAux = alerts.get(i);
 				addContent(outputDocument,alertAux);
 			}
 			saveOutputDocument(outputDocument,fileName);

@@ -54,7 +54,6 @@ public class ExtensionRightClickMsgMenu extends ExtensionAdaptor {
 	/**
 	 * This method initializes this
 	 * 
-	 * @return void
 	 */
 	private void initialize() {
         this.setName("ExtensionPopupMsgMenu");
@@ -63,6 +62,7 @@ public class ExtensionRightClickMsgMenu extends ExtensionAdaptor {
         		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
 	}
 	
+	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
 	    
