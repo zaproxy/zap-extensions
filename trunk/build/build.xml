@@ -120,6 +120,14 @@
 		</antcall>
 	</target>
 	
+	<target name="build-httpParameterPollution" description="build the httpParameterPollution extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="httpParameterPollution"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+	
 	<target name="build-insecureauthentication" description="build the InsecureAuthentication extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="insecureauthentication"/> 
@@ -210,6 +218,7 @@
 		<antcall target="build-exampleRightClickMsg"/>
 		<antcall target="build-exampleTopMenu"/>
 		<antcall target="build-highlighter"/>
+		<antcall target="build-httpParameterPollution"/>
 		<antcall target="build-insecureauthentication"/>
 		<antcall target="build-ldapinjection"/>
 		<antcall target="build-scripts"/>
@@ -258,6 +267,10 @@
 		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
 	</target>
 	
+	<target name="deploy-httpParameterPollution" description="deploy the httpParameterPollution extension">
+			<antcall target="deploy-extension"> <param name="extension" value="httpParameterPollution"/> </antcall>
+	</target>
+	
 	<target name="deploy-insecureauthenticationscan" description="deploy the insecureauthentication extension">
 		<antcall target="deploy-extension"> <param name="extension" value="insecureauthentication"/> </antcall>
 	</target>
@@ -303,6 +316,7 @@
 		<antcall target="deploy-exampleRightClickMsg"/>
 		<antcall target="deploy-exampleTopMenu"/>
 		<antcall target="deploy-highlighter"/>
+		<antcall target="deploy-httpParameterPollution"/>
 		<antcall target="deploy-insecureauthenticationscan"/>
 		<antcall target="deploy-ldapinjectionscan"/>
 		<antcall target="deploy-scripts"/>
