@@ -166,7 +166,7 @@ public class HPP extends AbstractAppPlugin {
 						
 						// If vulnerable, generates the alert
 						if (!vulnLinks.isEmpty()) {
-							this.GenerateReport(vulnLinks);
+							this.generateReport(vulnLinks);
 						}
 					}
 				}
@@ -188,15 +188,29 @@ public class HPP extends AbstractAppPlugin {
 	 * @return filled list of the vulnerable links in the page
 	 */
 	public List<String> findPayload(Source s, List<Element> inputTags, List<String> vulnLinks) {
-		//TODO: we should consider other tags besides <a>
+		//TODO: we should consider other tags besides <a href=> and <form action=>
+		// checks the <a> tags
 		List<Element> links = s.getAllElements(HTMLElementName.A);
 		for (Element link : links) {
 			for (Element tag : inputTags) {
 				Map<String, List<String>> map = getUrlParameters(link.getAttributeValue("href"));
 				if (map.get(tag.getAttributeValue("name")) != null) {
 					if (map.get(tag.getAttributeValue("name")).contains(this.payload)) {
-						log.debug("Found Vulnerable Parameter with the injected payload: " + tag.getAttributeValue("name")+ ", "+ map.get(tag.getAttributeValue("name")));
-						vulnLinks.add(tag.getAttributeValue("name")+ ", "+ map.get(tag.getAttributeValue("name")));
+						log.debug("Found Vulnerable Parameter in a link with the injected payload: " + tag.getAttributeValue("name") + ", " + map.get(tag.getAttributeValue("name")));
+						vulnLinks.add(tag.getAttributeValue("name") + ", " + map.get(tag.getAttributeValue("name")));
+					}
+				}
+			}
+		}
+		// checks the <form> tags
+		links = s.getAllElements(HTMLElementName.FORM);
+		for (Element link : links) {
+			for (Element tag : inputTags) {
+				Map<String, List<String>> map = getUrlParameters(link.getAttributeValue("action"));
+				if (map.get(tag.getAttributeValue("name")) != null) {
+					if (map.get(tag.getAttributeValue("name")).contains(this.payload)) {
+						log.debug("Found Vulnerable Parameter in a form with the injected payload: " + tag.getAttributeValue("name") + ", " + map.get(tag.getAttributeValue("name")));
+						vulnLinks.add(tag.getAttributeValue("name") + ", " + map.get(tag.getAttributeValue("name")));
 					}
 				}
 			}
@@ -276,7 +290,7 @@ public class HPP extends AbstractAppPlugin {
 	 * 
 	 * @param vulnLinks list of the vulnerable links in the page
 	 */
-	public void GenerateReport( List<String> vulnLinks) {
+	public void generateReport( List<String> vulnLinks) {
 		String vulnParams = "";
 		for(String s : vulnLinks) {
 			vulnParams = vulnParams + ", " + s;
