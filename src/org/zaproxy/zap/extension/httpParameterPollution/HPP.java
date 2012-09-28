@@ -316,5 +316,12 @@ public class HPP extends AbstractAppPlugin {
 			return '!' + key + '!';
 		}
 	}
+
+
+	@Override
+	public int getRisk() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }
