@@ -440,7 +440,7 @@ public class SQLInjection extends AbstractAppPlugin  {
 
 							//raise the alert
 							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Error Based - " + errorPatternRDBMS, getDescription(), 
-									"", //url
+									getBaseMsg().getRequestHeader().getURI().getURI(), //url
 									"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
 									extraInfo, getSolution(), msg1);
 
@@ -569,7 +569,7 @@ public class SQLInjection extends AbstractAppPlugin  {
 
 							//raise the alert
 							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Boolean Based", getDescription(), 
-									"", //url
+									getBaseMsg().getRequestHeader().getURI().getURI(), //url
 									"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
 									extraInfo, getSolution(), msg2);
 
@@ -664,7 +664,7 @@ public class SQLInjection extends AbstractAppPlugin  {
 
 								//raise the alert
 								bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Boolean Based", getDescription(), 
-										"", //url
+										getBaseMsg().getRequestHeader().getURI().getURI(), //url
 										"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
 										extraInfo, getSolution(), msg2);
 
@@ -737,7 +737,7 @@ public class SQLInjection extends AbstractAppPlugin  {
 
 							//raise the alert
 							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - UNION Based - " + errorPatternRDBMS, getDescription(), 
-									"", //url
+									getBaseMsg().getRequestHeader().getURI().getURI(), //url
 									"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
 									extraInfo, getSolution(), msg3);
 
