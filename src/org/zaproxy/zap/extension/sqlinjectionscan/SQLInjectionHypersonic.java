@@ -342,7 +342,7 @@ public class SQLInjectionHypersonic extends AbstractAppPlugin {
 
 						//raise the alert
 						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Time Based", getDescription(), 
-								"", //url
+								getBaseMsg().getRequestHeader().getURI().getURI(), //url
 								"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
 								extraInfo, getSolution(), msg3);
 
