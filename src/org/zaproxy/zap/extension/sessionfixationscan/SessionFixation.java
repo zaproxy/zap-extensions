@@ -36,6 +36,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.util.DateUtil;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -46,6 +47,8 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.zap.extension.auth.ExtensionAuth;
+
 import net.htmlparser.jericho.*;
 
 /**
@@ -160,11 +163,34 @@ public class SessionFixation extends AbstractAppPlugin {
 		
 		//TODO: scan the POST (form) params for session id fields.
         try {
+        	boolean loginUrl = false;
+        	
+        	//are we dealing with the login url? Will be important later
+        	try {
+        		ExtensionAuth extAuth = (ExtensionAuth) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAuth.NAME);
+        		URI loginUri = extAuth.getApi().getLoginRequest().getRequestHeader().getURI();
+        		URI requestUri = getBaseMsg().getRequestHeader().getURI();
+        		if (	requestUri.getScheme().equals(loginUri.getScheme()) && 
+        				requestUri.getHost().equals(loginUri.getHost()) &&
+        				requestUri.getPort() == loginUri.getPort() &&
+        				requestUri.getPath().equals(loginUri.getPath()) ) {
+        			//we got this far.. only the method (GET/POST), user details, query params, fragment, and POST params 
+        			//are possibly different from the login page.
+        			loginUrl = true;
+        		}
+        	}
+        	catch (Exception e) {
+        		log.error("For the Session Fixation scanner to actually do anything, a Login Page *must* be set!");
+        	}
+        	
+        	//For now (from Zap 2.0), the Session Fixation scanner will only run for logon pages
+        	if (loginUrl == false) return;
+
         	//find all params set in the request (GET/POST/Cookie)
     		//Note: this will be the full set, before we delete anything.
     		
-        	TreeSet<HtmlParameter> htmlParams = new TreeSet<> (); 
-    		htmlParams.addAll(getBaseMsg().getRequestHeader().getCookieParams());  //request cookies only. no response cookies
+        	TreeSet<HtmlParameter> htmlParams = new TreeSet<> ();
+        	htmlParams.addAll(getBaseMsg().getRequestHeader().getCookieParams());  //request cookies only. no response cookies
     		htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
     		htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
     		
@@ -340,6 +366,18 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			if (! cookieBack1.getFlags().contains("secure")) {
 	        				extraInfo += ("\n" + getString("sessionidsentinsecurely.alert.extrainfo.secureflagnotset"));
 	        			}
+
+	        			//and figure out the risk, depending on whether it is a login page	        
+	        			int risk = Alert.RISK_LOW;
+	        			if (loginUrl) {
+	        				extraInfo += ("\n" + getString("sessionidsentinsecurely.alert.extrainfo.loginpage"));
+	        				//login page, so higher risk
+	        				risk = Alert.RISK_MEDIUM;
+	        			} else {
+	        				//not a login page.. lower risk
+	        				risk = Alert.RISK_LOW;
+	        			}
+
 	        			String attack = getString("sessionidsentinsecurely.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        			String vulnname=getString("sessionidsentinsecurely.name");
 	        			String vulndesc=getString("sessionidsentinsecurely.desc");
@@ -348,7 +386,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			//call bingo with some extra info, indicating that the alert is 
 	        			//not specific to Session Fixation, but has its own title and description (etc)
 	        			//the alert here is "Session id sent insecurely", or words to that effect.
-	        			bingo(Alert.RISK_MEDIUM, Alert.WARNING, vulnname, vulndesc, 
+	        			bingo(risk, Alert.WARNING, vulnname, vulndesc, 
 	        					getBaseMsg().getRequestHeader().getURI().getURI(),
 	        					currentHtmlParameter.getName(),  attack, 
 	        					extraInfo, vulnsoln, getBaseMsg());
@@ -375,11 +413,22 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			String vulnname=getString("sessionidaccessiblebyjavascript.name");
 	        			String vulndesc=getString("sessionidaccessiblebyjavascript.desc");
 	        			String vulnsoln=getString("sessionidaccessiblebyjavascript.soln");
+
+	        			//and figure out the risk, depending on whether it is a login page	        
+	        			int risk = Alert.RISK_LOW;
+	        			if (loginUrl) {
+	        				extraInfo += ("\n" + getString("sessionidaccessiblebyjavascript.alert.extrainfo.loginpage"));
+	        				//login page, so higher risk
+	        				risk = Alert.RISK_MEDIUM;
+	        			} else {
+	        				//not a login page.. lower risk
+	        				risk = Alert.RISK_LOW;
+	        			}
 	        			
 	        			//call bingo with some extra info, indicating that the alert is 
 	        			//not specific to Session Fixation, but has its own title and description (etc)
 	        			//the alert here is "Session id accessible in Javascript", or words to that effect.
-	        			bingo(Alert.RISK_MEDIUM, Alert.WARNING, vulnname, vulndesc, 
+	        			bingo(risk, Alert.WARNING, vulnname, vulndesc, 
 	        					getBaseMsg().getRequestHeader().getURI().getURI(),
 	        					currentHtmlParameter.getName(),  attack, 
 	        					extraInfo, vulnsoln, getBaseMsg());
@@ -444,6 +493,9 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		}
 	        		String sessionExpiryRiskDescription = null;
 	        		//check the Expiry/Max-Age details garnered (if any)
+	        		
+        			//and figure out the risk, depending on whether it is a login page
+	        		//and how long the session will live before expiring
 	        		if ( cookieBack1ExpiryDate == null )  {
 	        			//session expires when the browser closes.. rate this as medium risk?
 	        			sessionExpiryRiskLevel = Alert.RISK_MEDIUM;
@@ -481,6 +533,12 @@ public class SessionFixation extends AbstractAppPlugin {
 		        			sessionExpiryRiskLevel = Alert.RISK_INFO;
 		        		}
 	        		}
+	        		
+	        		if (! loginUrl) {
+	        			//decrement the risk if it's not a login page
+	        			sessionExpiryRiskLevel--;
+	        		}
+	        		
 	        		//alert it if the default session expiry risk level is more than informational
 	        		if (sessionExpiryRiskLevel > Alert.RISK_INFO) {
 	        			//pass the original param value here, not the new value
@@ -490,6 +548,9 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			String vulnname=getString("sessionidexpiry.name");
 	        			String vulndesc=getString("sessionidexpiry.desc");
 	        			String vulnsoln=getString("sessionidexpiry.soln");
+	        			if (loginUrl) {
+	        				extraInfo += ("\n" + getString("sessionidexpiry.alert.extrainfo.loginpage"));
+	        			}	        			
 	        			
 	        			//call bingo with some extra info, indicating that the alert is 
 	        			//not specific to Session Fixation, but has its own title and description (etc)
@@ -613,17 +674,27 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		//and what we've been waiting for.. do we get a *different* cookie being set in the response of message 2??
 	        		//or do we get a new cookie back at all?
 	        		//No cookie back => the borrowed cookie was accepted. Not ideal
-	        		//Cookie back, but same as the one we sent in => the borrowed cookie was accepted. Not ideal
-	        		        		
+	        		//Cookie back, but same as the one we sent in => the borrowed cookie was accepted. Not ideal	        			        		
 	        		if ( (cookieBack2== null) || cookieBack2.getValue().equals(cookieBack1.getValue())) {
 	        			//no cookie back, when a borrowed cookie is in use.. suspicious!
 	        			
 	        			//use the cookie extrainfo message, which is specific to the case of cookies
 	        			//pretty much everything else is generic to all types of Session Fixation vulnerabilities
 	        			String extraInfo = getString("sessionfixation.alert.cookie.extrainfo", currentHtmlParameter.getName(), cookieBack1.getValue(), (cookieBack2== null?"NULL": cookieBack2.getValue()));
-	        			String attack = getString("sessionfixation.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName());        			
+	        			String attack = getString("sessionfixation.alert.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        			
-	        			bingo(Alert.RISK_MEDIUM, Alert.WARNING, msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, msg2Initial);
+	        			//and figure out the risk, depending on whether it is a login page	        
+	        			int risk = Alert.RISK_LOW;
+	        			if (loginUrl) {
+	        				extraInfo += ("\n" + getString("sessionfixation.alert.cookie.extrainfo.loginpage"));
+	        				//login page, so higher risk
+	        				risk = Alert.RISK_MEDIUM;
+	        			} else {
+	        				//not a login page.. lower risk
+	        				risk = Alert.RISK_LOW;
+	        			}
+	        			
+	        			bingo(risk, Alert.WARNING, msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, msg2Initial);
 	        			//if ( log.isInfoEnabled())  {
 	        				String logMessage = getString ("sessionfixation.alert.logmessage", msg2Initial.getRequestHeader().getMethod(),  msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        				log.info(logMessage);
@@ -716,6 +787,10 @@ public class SessionFixation extends AbstractAppPlugin {
 		        			String vulnname=getString("sessionidexposedinurl.name");
 		        			String vulndesc=getString("sessionidexposedinurl.desc");
 		        			String vulnsoln=getString("sessionidexposedinurl.soln");
+		        			
+		        			if (loginUrl) {
+		        				extraInfo += ("\n" + getString("sessionidexposedinurl.alert.extrainfo.loginpage"));
+		        			}
 		        			
 		        			//call bingo with some extra info, indicating that the alert is 
 		        			//not specific to Session Fixation, but has its own title and description (etc)
@@ -811,9 +886,19 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			//use the url param extrainfo message, which is specific to the case of url parameters and url re-writing Session Fixation issue
 	        			//pretty much everything else is generic to all types of Session Fixation vulnerabilities
 	        			String extraInfo = getString("sessionfixation.alert.url.extrainfo", currentHtmlParameter.getName(), possibleSessionIdIssuedForUrlParam, possibleSessionIdIssuedForUrlParam2);
-	        			String attack = getString("sessionfixation.alert.attack", (isPseudoUrlParameter?"pseudo/URL rewritten ":"") + currentHtmlParameter.getType(), currentHtmlParameter.getName());        			
+	        			String attack = getString("sessionfixation.alert.attack", (isPseudoUrlParameter?"pseudo/URL rewritten ":"") + currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        			
-	        			bingo(Alert.RISK_MEDIUM, Alert.WARNING, getBaseMsg().getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, getBaseMsg());
+	        			int risk = Alert.RISK_LOW;		        			
+	        			if (loginUrl) {
+	        				extraInfo += ("\n" + getString("sessionfixation.alert.url.extrainfo.loginpage"));
+	        				//login page, so higher risk
+	        				risk = Alert.RISK_MEDIUM;
+	        			} else {
+	        				//not a login page.. lower risk
+	        				risk = Alert.RISK_LOW;
+	        			}
+	        			
+	        			bingo(risk, Alert.WARNING, getBaseMsg().getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, getBaseMsg());
 	        			//if ( log.isInfoEnabled())  {
 	        				String logMessage = getString ("sessionfixation.alert.logmessage", getBaseMsg().getRequestHeader().getMethod(),  getBaseMsg().getRequestHeader().getURI().getURI(), (isPseudoUrlParameter?"pseudo ":"") +currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        				log.info(logMessage);
