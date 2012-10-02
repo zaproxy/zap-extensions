@@ -68,6 +68,10 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	public int getId() {
 		return 20012;
 	}
+	@Override
+    public Level getLevel(boolean incDefault) {
+		return Level.HIGH;
+	}
 
 	/**
 	 * @return the name of the plugin
@@ -174,6 +178,11 @@ public class Csrftokenscan extends AbstractAppPlugin {
 				HttpMessage newMsg = getNewMsg();
 				newMsg.setCookieParams(new TreeSet<HtmlParameter>());
 				sendAndReceive(newMsg);
+				
+				//System.out.println(newMsg.getRequestHeader().getURI());
+				//System.out.println(getBaseMsg().getRequestHeader().getURI());
+				//System.out.println(getBaseMsg().getRequestHeader().getHeader(getBaseMsg().getRequestHeader().LOCATION));
+
 	
 				// We parse the HTML of the response
 				s = new Source(new StringReader(newMsg.getResponseBody().toString()));
@@ -182,13 +191,14 @@ public class Csrftokenscan extends AbstractAppPlugin {
 				// We store the hidden input fields in a hash map.
 				for (Element element2 : iElements) {
 					if (element2.getAttributeValue("type").toLowerCase().equals("hidden")) {
-						
-						// If the values of the tags changed they are an anti-csrf token
-					/*	if (!tagsMap.get(element2.getAttributeValue("name"))
-								.equals(element2.getAttributeValue("value"))) {*/
-						if (this.isRandom(tagsMap.get(element2.getAttributeValue("name")),
-								element2.getAttributeValue("value"))) {
-						log.debug("Found Anti-CSRF token: "
+
+						// If the values of the tags changed and are random enough: they are an anti-csrf token
+						if (!tagsMap.get(element2.getAttributeValue("name"))
+								.equals(element2.getAttributeValue("value"))
+								&& this.isRandom(tagsMap.get(element2
+										.getAttributeValue("name")), element2
+										.getAttributeValue("value"))) {
+							log.debug("Found Anti-CSRF token: "
 									+ element2.getAttributeValue("name") + ", "
 									+ element2.getAttributeValue("value"));
 							vuln = false;
