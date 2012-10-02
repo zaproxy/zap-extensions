@@ -47,7 +47,7 @@ public class HPP extends AbstractAppPlugin {
 
 	private static Logger log = Logger.getLogger(HPP.class);
 	private ResourceBundle messages = ResourceBundle.getBundle(this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
-	private final String payload = "%26zap%3Dzaproxy";
+	private final String INJECTION_PAYLOAD = "%26zap%3Dzaproxy";
 
 	
 	/**
@@ -195,7 +195,7 @@ public class HPP extends AbstractAppPlugin {
 			for (Element tag : inputTags) {
 				Map<String, List<String>> map = getUrlParameters(link.getAttributeValue("href"));
 				if (map.get(tag.getAttributeValue("name")) != null) {
-					if (map.get(tag.getAttributeValue("name")).contains(this.payload)) {
+					if (map.get(tag.getAttributeValue("name")).contains(this.INJECTION_PAYLOAD)) {
 						log.debug("Found Vulnerable Parameter in a link with the injected payload: " + tag.getAttributeValue("name") + ", " + map.get(tag.getAttributeValue("name")));
 						vulnLinks.add(tag.getAttributeValue("name") + ", " + map.get(tag.getAttributeValue("name")));
 					}
@@ -208,7 +208,7 @@ public class HPP extends AbstractAppPlugin {
 			for (Element tag : inputTags) {
 				Map<String, List<String>> map = getUrlParameters(link.getAttributeValue("action"));
 				if (map.get(tag.getAttributeValue("name")) != null) {
-					if (map.get(tag.getAttributeValue("name")).contains(this.payload)) {
+					if (map.get(tag.getAttributeValue("name")).contains(this.INJECTION_PAYLOAD)) {
 						log.debug("Found Vulnerable Parameter in a form with the injected payload: " + tag.getAttributeValue("name") + ", " + map.get(tag.getAttributeValue("name")));
 						vulnLinks.add(tag.getAttributeValue("name") + ", " + map.get(tag.getAttributeValue("name")));
 					}
@@ -232,21 +232,21 @@ public class HPP extends AbstractAppPlugin {
 
 		for (HtmlParameter p : getBaseMsg().getFormParams()) {
 			if (p.getName() != null && p.getValue() != null) {
-				tags.add(new HtmlParameter(HtmlParameter.Type.url, p.getName(), p.getValue() + this.payload));
+				tags.add(new HtmlParameter(HtmlParameter.Type.url, p.getName(), p.getValue() + this.INJECTION_PAYLOAD));
 				log.debug("The following form parameters have been found:");
 				log.debug("Input Tag: " + p.getName() + ", " + p.getValue());
 			}
 		}
 		for (HtmlParameter p : getBaseMsg().getUrlParams()) {
 			if (p.getName() != null && p.getValue() != null) {
-				tags.add(new HtmlParameter(HtmlParameter.Type.url, p.getName(), p.getValue() + this.payload));
+				tags.add(new HtmlParameter(HtmlParameter.Type.url, p.getName(), p.getValue() + this.INJECTION_PAYLOAD));
 				log.debug("The following url parameters have been found:");
 				log.debug("Input Tag: " + p.getName() + ", " + p.getValue());
 			}
 		}
 		for (Element element : inputTags) {
 			if (element.getAttributeValue("name") != null && element.getAttributeValue("value") != null) {
-				tags.add(new HtmlParameter(HtmlParameter.Type.url, element.getAttributeValue("name"), element.getAttributeValue("value")+ this.payload));
+				tags.add(new HtmlParameter(HtmlParameter.Type.url, element.getAttributeValue("name"), element.getAttributeValue("value")+ this.INJECTION_PAYLOAD));
 				log.debug("The following input parameters have been found:");
 				log.debug("Input Tag: " + element.getAttributeValue("name") + ", " + element.getAttributeValue("value"));
 			}
