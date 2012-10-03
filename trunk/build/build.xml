@@ -201,6 +201,14 @@
 		</jar>
 	</target>
 
+	<target name="build-usernameenumeration" description="build the Username Enumeration scanner">
+		<antcall target="build-extension"> 
+			<param name="extension" value="usernameenumerationscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+
 	<target name="build-viewStatePScan" description="build the viewStatePScan extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="viewStatePScan"/> 
@@ -236,6 +244,7 @@
 		<antcall target="build-spiderAjax"/>
 		<antcall target="build-sqlinjection"/>
 		<antcall target="build-tokengen"/>
+		<antcall target="build-usernameenumeration"/>
 		<antcall target="build-viewStatePScan"/>		
 	</target>
 
@@ -312,6 +321,10 @@
 		<antcall target="deploy-extension"> <param name="extension" value="tokengen"/> </antcall>
 	</target>
 
+	<target name="deploy-usernameenumerationscan" description="deploy the username enumeration extension">
+		<antcall target="deploy-extension"> <param name="extension" value="usernameenumerationscan"/> </antcall>
+	</target>
+
 	<target name="deploy-viewStatePScan" description="deploy the viewStatePScan extension">
 		<antcall target="deploy-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
 	</target>
@@ -339,7 +352,8 @@
 		<antcall target="deploy-spiderAjax"/>
 		<antcall target="deploy-sqlinjectionscan"/>
 		<antcall target="deploy-tokengen"/>
-		<antcall target="deploy-viewStatePScan"/>	
+		<antcall target="deploy-usernameenumerationscan"/>
+		<antcall target="deploy-viewStatePScan"/>
 	</target>
 
 </project>
