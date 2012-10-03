@@ -178,33 +178,31 @@ public class Csrftokenscan extends AbstractAppPlugin {
 				HttpMessage newMsg = getNewMsg();
 				newMsg.setCookieParams(new TreeSet<HtmlParameter>());
 				sendAndReceive(newMsg);
-				
-				//System.out.println(newMsg.getRequestHeader().getURI());
-				//System.out.println(getBaseMsg().getRequestHeader().getURI());
-				//System.out.println(getBaseMsg().getRequestHeader().getHeader(getBaseMsg().getRequestHeader().LOCATION));
 
+				// Check if the page requires authentication
+				if (this.isStatusOk(getBaseMsg(),newMsg)) {
+					// We parse the HTML of the response
+					s = new Source(new StringReader(newMsg.getResponseBody().toString()));
+					iElements = s.getAllElements(HTMLElementName.INPUT);
+		
+					// We store the hidden input fields in a hash map.
+					for (Element element2 : iElements) {
+						if (element2.getAttributeValue("type").toLowerCase().equals("hidden")) {
 	
-				// We parse the HTML of the response
-				s = new Source(new StringReader(newMsg.getResponseBody().toString()));
-				iElements = s.getAllElements(HTMLElementName.INPUT);
-	
-				// We store the hidden input fields in a hash map.
-				for (Element element2 : iElements) {
-					if (element2.getAttributeValue("type").toLowerCase().equals("hidden")) {
-
-						// If the values of the tags changed and are random enough: they are an anti-csrf token
-						if (!tagsMap.get(element2.getAttributeValue("name"))
-								.equals(element2.getAttributeValue("value"))
-								&& this.isRandom(tagsMap.get(element2
-										.getAttributeValue("name")), element2
-										.getAttributeValue("value"))) {
-							log.debug("Found Anti-CSRF token: "
-									+ element2.getAttributeValue("name") + ", "
-									+ element2.getAttributeValue("value"));
-							vuln = false;
+							// If the values of the tags changed and are random enough: they are an anti-csrf token
+							if (!tagsMap.get(element2.getAttributeValue("name"))
+									.equals(element2.getAttributeValue("value"))
+									&& this.isRandom(tagsMap.get(element2
+											.getAttributeValue("name")), element2
+											.getAttributeValue("value"))) {
+								log.debug("Found Anti-CSRF token: "
+										+ element2.getAttributeValue("name") + ", "
+										+ element2.getAttributeValue("value"));
+								vuln = false;
+							}
 						}
 					}
-				}
+			}
 				// If vulnerable, generates the alert
 				if (vuln) {
 					String desc = this.getString("noanticsrftokens.desc");
@@ -221,6 +219,22 @@ public class Csrftokenscan extends AbstractAppPlugin {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param m1 first httpmessage
+	 * @param m2 second httpmessage
+	 * @return if the second request were successful
+	 */
+	private boolean isStatusOk(HttpMessage m1, HttpMessage m2) {
+		/* if the status code of the response is the same in both of the requests 
+		 * or the new one is not a 3XX we are good */
+		if (m1.getResponseHeader().getStatusCode() == m2.getResponseHeader().getStatusCode() ||
+				!String.valueOf(m2.getResponseHeader().getStatusCode()).startsWith("3")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	/**
 	 * 
