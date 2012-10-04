@@ -168,7 +168,7 @@ public class SessionFixation extends AbstractAppPlugin {
         	//are we dealing with the login url? Will be important later
         	try {
         		ExtensionAuth extAuth = (ExtensionAuth) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAuth.NAME);
-        		URI loginUri = extAuth.getApi().getLoginRequest().getRequestHeader().getURI();
+        		URI loginUri = extAuth.getApi().getLoginRequest(1).getRequestHeader().getURI();
         		URI requestUri = getBaseMsg().getRequestHeader().getURI();
         		if (	requestUri.getScheme().equals(loginUri.getScheme()) && 
         				requestUri.getHost().equals(loginUri.getHost()) &&
