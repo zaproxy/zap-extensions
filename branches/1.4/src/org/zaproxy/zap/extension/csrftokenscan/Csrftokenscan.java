@@ -28,6 +28,8 @@ import java.util.TreeSet;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -94,10 +96,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	 */
 	@Override
 	public String getDescription() {
-		if (vuln != null) {
-			return vuln.getDescription();
-		}
-		return "Failed to load vulnerability description from file";
+		return this.getString("noanticsrftokens.desc");
 	}
 
 	/**
@@ -113,28 +112,15 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	 */
 	@Override
 	public String getSolution() {
-		if (vuln != null) {
-			return vuln.getSolution();
-		}
-		return "Failed to load vulnerability solution from file";
+		return this.getString("noanticsrftokens.alert.sol");
 	}
-
+	
 	/**
 	 * @return Reference for more information about the vulnerability
 	 */
 	@Override
 	public String getReference() {
-		if (vuln != null) {
-			StringBuilder sb = new StringBuilder();
-			for (String ref : vuln.getReferences()) {
-				if (sb.length() > 0) {
-					sb.append("\n");
-				}
-				sb.append(ref);
-			}
-			return sb.toString();
-		}
-		return "Failed to load vulnerability reference from file";
+		return this.getString("noanticsrftokens.alert.extrainfo");
 	}
 
 	/**
@@ -194,7 +180,8 @@ public class Csrftokenscan extends AbstractAppPlugin {
 									.equals(element2.getAttributeValue("value"))
 									&& this.isRandom(tagsMap.get(element2
 											.getAttributeValue("name")), element2
-											.getAttributeValue("value"))) {
+											.getAttributeValue("value")) &&
+											!isSessionId(getBaseMsg(), element2.getAttributeValue("value"))) {
 								log.debug("Found Anti-CSRF token: "
 										+ element2.getAttributeValue("name") + ", "
 										+ element2.getAttributeValue("value"));
@@ -205,13 +192,11 @@ public class Csrftokenscan extends AbstractAppPlugin {
 			}
 				// If vulnerable, generates the alert
 				if (vuln) {
-					String desc = this.getString("noanticsrftokens.desc");
-					String attack = this.getString("noanticsrftokens.alert.attack");
-					String extraInfo = this.getString("noanticsrftokens.alert.extrainfo");
-					bingo(Alert.RISK_HIGH, Alert.WARNING, attack, desc,
-							getBaseMsg().getRequestHeader().getURI().getURI(),
-							getReference(), attack, extraInfo, getSolution(),
-							getBaseMsg());
+					String params ="";
+					for (Element element2 : iElements) {
+						params=params + "[" + element2.getAttributeValue("name") + ":" + element2.getAttributeValue("value")+"], ";
+					}
+					this.generateReport(params);
 				}
 			}
 		} catch (IOException e) {
@@ -235,6 +220,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 			return false;
 		}
 	}
+	
 	
 	/**
 	 * 
@@ -276,6 +262,34 @@ public class Csrftokenscan extends AbstractAppPlugin {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param m the initial HttpMessage
+	 * @param s the potential anti-csrf token
+	 * @return if s is the session id
+	 */
+	private boolean isSessionId(HttpMessage m, String s) {
+		if(m.getCookieParamsAsString().contains(s)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param vulnLinks list of the vulnerable links in the page
+	 */
+	public void generateReport( String params) {
+
+		log.debug("Page vulnerable to CSRF attacks");
+		String attack = this.getString("noanticsrftokens.name");
+		try {
+			bingo(Alert.RISK_HIGH, Alert.WARNING, attack, this.getDescription(), getBaseMsg().getRequestHeader().getURI().getURI(), params, attack, "Affected parameters: "+params, this.getSolution(), this.getBaseMsg());
+		} catch (URIException e) {
+			log.error(e);
+		}
+	}
 	
 	/**
 	 * 

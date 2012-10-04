@@ -95,6 +95,14 @@ public class HPP extends AbstractAppPlugin {
 
 	
 	/**
+	 * @return the level of the logging
+	 */
+	@Override
+    public Level getLevel(boolean incDefault) {
+		return Level.HIGH;
+	}
+	
+	/**
 	 * @return the category of the vulnerability (INJECTION).
 	 */
 	@Override
