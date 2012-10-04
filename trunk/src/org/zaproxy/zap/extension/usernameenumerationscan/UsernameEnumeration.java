@@ -20,10 +20,11 @@ package org.zaproxy.zap.extension.usernameenumerationscan;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.MissingResourceException;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
+
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -75,6 +76,11 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 	private static final int UP          = 1;
 	private static final int LEFT        = 2;
 	private static final int UP_AND_LEFT = 3;
+
+	/**
+	 * The characters used to generate the random username.
+	 */
+	private static final char[] RANDOM_USERNAME_CHARS = "abcdefghijklmnopqrstuvwyxz".toCharArray();
 
 
 	/**
@@ -172,7 +178,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 			//are we dealing with the login url? 
 			try {
 				ExtensionAuth extAuth = (ExtensionAuth) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAuth.NAME);
-				URI loginUri = extAuth.getApi().getLoginRequest().getRequestHeader().getURI();
+				URI loginUri = extAuth.getApi().getLoginRequest(1).getRequestHeader().getURI();
 				URI requestUri = getBaseMsg().getRequestHeader().getURI();
 				if (	requestUri.getScheme().equals(loginUri.getScheme()) && 
 						requestUri.getHost().equals(loginUri.getHost()) &&
@@ -210,12 +216,12 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 			//1) Request the original URL n times. (The original URL is assumed to have a valid username, if not a valid password). Store the results in A[].
 			//make sure to manually handle all redirects, and cookies that may be set in response.
 			//allocate enough space for the responses
-			StringBuffer baseResponses[] = new StringBuffer [numberOfRequests];
+			StringBuilder baseResponses[] = new StringBuilder [numberOfRequests];
 
 			for (int i = 0; i < numberOfRequests; i++) {
 
 				//initialise the storage for this iteration
-				baseResponses[i]= new StringBuffer();
+				baseResponses[i]= new StringBuilder(250);
 
 				HttpMessage msgCpy = getNewMsg();  //clone the request, but not the response
 
@@ -254,7 +260,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 					}
 					msgRedirect.getRequestHeader().setMethod(HttpRequestHeader.GET); //it's always a GET for a redirect
 					msgRedirect.getRequestHeader().setContentLength(0);  //since we send a GET, the body will be 0 long
-					if ( cookies != null) {
+					if ( cookies.size() > 0) {
 						//if a previous request sent back a cookie that has not since been invalidated, we need to set that cookie when following redirects, as a browser would
 						msgRedirect.getRequestHeader().setCookieParams(cookies);
 
@@ -275,12 +281,12 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 						for (Iterator <HtmlParameter> knownCookiesIterator = cookies.iterator(); knownCookiesIterator.hasNext();) {
 							HtmlParameter knownCookie = knownCookiesIterator.next();
 							if (cookieJustSet.getName().equals(knownCookie.getName())) {
-								cookies.remove(knownCookie);
+								knownCookiesIterator.remove();
 								break; //out of the loop for known cookies, back to the next cookie set in the response 
 							}
-							//we can now safely add the cookie that was just set into cookies, knowing it does not clash with anything else in there.
-							cookies.add(cookieJustSet);
 						} //end of loop for cookies we already know about
+						//we can now safely add the cookie that was just set into cookies, knowing it does not clash with anything else in there.
+						cookies.add(cookieJustSet);
 					} //end of for loop for cookies just set in the redirect
 
 					msgCpy=msgRedirect;  //store the last redirect message into the MsgCpy, as we will be using it's output in a moment..
@@ -335,11 +341,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 				//4) Change the current parameter (which we assume is the username parameter) to an invalid username (randomly), and request the URL n times. Store the results in B[].
 
 				//get a random user name the same length as the original!
-				StringBuffer invalidUsername=new StringBuffer("");
-				for (int i=0; i< currentHtmlParameter.getValue().length(); i++) {
-					Random r = new Random();
-					invalidUsername.append((char)(r.nextInt(26) + 'a'));
-				}
+				String invalidUsername = RandomStringUtils.random(currentHtmlParameter.getValue().length(), RANDOM_USERNAME_CHARS);
 				if ( this.debugEnabled ) log.debug("The invalid username chosen was ["+invalidUsername+"]");
 
 				TreeSet <HtmlParameter> requestParams = null;
@@ -362,7 +364,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 					msgModifiedParam.setFormParams(requestParams);
 				}
 
-				StringBuffer incorrectUserResponses[] = new StringBuffer [numberOfRequests];
+				StringBuilder incorrectUserResponses[] = new StringBuilder [numberOfRequests];
 
 				if ( this.debugEnabled ) log.debug("About to loop for "+numberOfRequests + " iterations with an incorrect user of the same length");
 
@@ -370,7 +372,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 				for (int i = 0; i < numberOfRequests && continueForParameter; i++) {
 
 					//initialise the storage for this iteration
-					incorrectUserResponses[i]= new StringBuffer();
+					incorrectUserResponses[i]= new StringBuilder(250);
 
 					HttpMessage msgCpy = msgModifiedParam;  //use the message we already set up, with the modified parameter value
 
@@ -409,7 +411,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 						}
 						msgRedirect.getRequestHeader().setMethod(HttpRequestHeader.GET); //it's always a GET for a redirect
 						msgRedirect.getRequestHeader().setContentLength(0);  //since we send a GET, the body will be 0 long
-						if ( cookies != null) {
+						if ( cookies.size() > 0) {
 							//if a previous request sent back a cookie that has not since been invalidated, we need to set that cookie when following redirects, as a browser would
 							msgRedirect.getRequestHeader().setCookieParams(cookies);
 						}
@@ -428,12 +430,12 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 							for (Iterator <HtmlParameter> knownCookiesIterator = cookies.iterator(); knownCookiesIterator.hasNext();) {
 								HtmlParameter knownCookie = knownCookiesIterator.next();
 								if (cookieJustSet.getName().equals(knownCookie.getName())) {
-									cookies.remove(knownCookie);
+									knownCookiesIterator.remove();
 									break; //out of the loop for known cookies, back to the next cookie set in the response 
 								}
-								//we can now safely add the cookie that was just set into cookies, knowing it does not clash with anything else in there.
-								cookies.add(cookieJustSet);
 							} //end of loop for cookies we already know about
+							//we can now safely add the cookie that was just set into cookies, knowing it does not clash with anything else in there.
+							cookies.add(cookieJustSet);
 						} //end of for loop for cookies just set in the redirect
 
 						msgCpy=msgRedirect;  //store the last redirect message into the MsgCpy, as we will be using it's output in a moment..
