@@ -63,6 +63,8 @@ public class AlertReportExportODT {
 	// fonts
 	private static org.odftoolkit.simple.style.Font fontText = new org.odftoolkit.simple.style.Font(
 			"Arial", StyleTypeDefinitions.FontStyle.REGULAR, 12, Color.BLACK);
+	private static org.odftoolkit.simple.style.Font fontTextBold = new org.odftoolkit.simple.style.Font(
+			"Arial", StyleTypeDefinitions.FontStyle.BOLD, 12, Color.BLACK);
 	private static org.odftoolkit.simple.style.Font fontTitleTextReport = new org.odftoolkit.simple.style.Font(
 			"Arial", StyleTypeDefinitions.FontStyle.BOLD, 28, Color.BLACK);
 	private static org.odftoolkit.simple.style.Font fontSmallBold = new org.odftoolkit.simple.style.Font(
@@ -314,8 +316,12 @@ public class AlertReportExportODT {
 			para = outputDocument.addParagraph((i+1)+"-" + alertAux.getUri());
 			para.setFont(fontText);
 			para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-			para.applyHyperlink(new URI(alertAux.getUri()));
-			
+			// insert URI it is posible
+			try{
+				para.applyHyperlink(new URI(alertAux.getUri()));
+			} catch (URISyntaxException e) {
+				para = outputDocument.addParagraph(alertAux.getUri());
+			}
 			if (!alertAux.getParam().isEmpty()){	
 				para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.parameters")+": "+alertAux.getParam());
 				para.setFont(fontText);
@@ -324,7 +330,7 @@ public class AlertReportExportODT {
 			}
 			if (!alertAux.getAttack().isEmpty()){
 				para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.attack"));
-				para.setFont(fontTitleBold);
+				para.setFont(fontTextBold);
 				para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 				para = outputDocument.addParagraph(alertAux.getAttack());
 				para.setFont(fontText);
@@ -376,6 +382,7 @@ public class AlertReportExportODT {
 					
 				
 				}
+				outputDocument.addPageBreak();
 			}
 			
 			addLines(outputDocument,1);
@@ -383,6 +390,7 @@ public class AlertReportExportODT {
 		}
 		
 		if (!alert.getSolution().equals("")){
+			outputDocument.addPageBreak();
 			addLines(outputDocument,1);
 			para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.solution"));
 			para.setFont(fontTitleBold);
