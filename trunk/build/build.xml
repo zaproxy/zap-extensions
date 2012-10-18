@@ -136,6 +136,14 @@
 		</antcall>
 	</target>
 	
+    <target name="build-jsfviewstatepscan" description="build the jsfviewstatepscan extension">
+            <antcall target="build-extension">
+                    <param name="extension" value="jsfviewstatepscan"/>
+                    <param name="type" value="alpha"/>
+                    <param name="version" value="1"/>
+            </antcall>
+    </target>		
+	
 	<target name="build-ldapinjection" description="build the LDAPInjection extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="ldapinjectionscan"/> 
@@ -237,6 +245,7 @@
 		<antcall target="build-highlighter"/>
 		<antcall target="build-httpParameterPollution"/>
 		<antcall target="build-insecureauthentication"/>
+		<antcall target="build-jsfviewstatepscan"/>
 		<antcall target="build-ldapinjection"/>
 		<antcall target="build-scripts"/>
 		<antcall target="build-servletParamPollution"/>
@@ -292,6 +301,10 @@
 	<target name="deploy-insecureauthenticationscan" description="deploy the insecureauthentication extension">
 		<antcall target="deploy-extension"> <param name="extension" value="insecureauthentication"/> </antcall>
 	</target>
+	
+	<target name="deploy-jsfviewstatepscan" description="deploy the jsfviewstatepscan extension">
+		<antcall target="deploy-extension"> <param name="extension" value="jsfviewstatepscan"/> </antcall>
+	</target>	
 
 	<target name="deploy-ldapinjectionscan" description="deploy the ldapinjection extension">
 		<antcall target="deploy-extension"> <param name="extension" value="ldapinjectionscan"/> </antcall>
@@ -345,6 +358,7 @@
 		<antcall target="deploy-highlighter"/>
 		<antcall target="deploy-httpParameterPollution"/>
 		<antcall target="deploy-insecureauthenticationscan"/>
+		<antcall target="deploy-jsfviewstatepscan"/>
 		<antcall target="deploy-ldapinjectionscan"/>
 		<antcall target="deploy-scripts"/>
 		<antcall target="deploy-servletParamPollution"/>
