@@ -44,10 +44,8 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
-import org.zaproxy.zap.extension.search.SearchMatch;
 import org.zaproxy.zap.view.ScanStatus;
 /**
  *
@@ -65,18 +63,19 @@ public class TokenPanel extends AbstractPanel {
 	private JToolBar panelToolbar = null;
 	private JScrollPane jScrollPane = null;
     private TokenPanelCellRenderer portPanelCellRenderer = null;
-	private DefaultListModel<HttpMessage> resultsModel  = new DefaultListModel<>();
+	private DefaultListModel<MessageSummary> resultsModel  = new DefaultListModel<MessageSummary>();
 	private JTextPane initialMessage = null;
 
 	private JButton stopScanButton = null;
 	private JToggleButton pauseScanButton = null;
-	private JList<HttpMessage> tokenResultList = null;
+	private JList<MessageSummary> tokenResultList = null;
 	private JProgressBar progressBar = null;
 	private JButton loadButton = null;
 	private JButton saveButton = null;
 
-	private HttpPanel requestPanel = null;
-	private HttpPanel responsePanel = null;
+	// Disabled
+	//private HttpPanel requestPanel = null;
+	//private HttpPanel responsePanel = null;
 
 	private ScanStatus scanStatus = null;
 
@@ -327,7 +326,7 @@ public class TokenPanel extends AbstractPanel {
 		return this.resultsModel.getSize();
 	}
 	
-	protected void addTokenResult(final HttpMessage msg) {
+	protected void addTokenResult(final MessageSummary msg) {
 		
 		if (EventQueue.isDispatchThread()) {
 			resultsModel.addElement(msg);
@@ -346,7 +345,7 @@ public class TokenPanel extends AbstractPanel {
 		}
 	}
 
-	private JList<HttpMessage> getTokenResultList() {
+	private JList<MessageSummary> getTokenResultList() {
 		if (tokenResultList == null) {
 			tokenResultList = new JList<>();
 			tokenResultList.setDoubleBuffered(true);
@@ -366,6 +365,9 @@ public class TokenPanel extends AbstractPanel {
 				}
 			});
 
+	        // Disabled - we would either have to cache all the messages (which is expensive in memory)
+	        // or store all the messages in the db, which is slow
+	        /*
 			tokenResultList.addListSelectionListener(new javax.swing.event.ListSelectionListener() { 
 
 				@Override
@@ -377,12 +379,14 @@ public class TokenPanel extends AbstractPanel {
 				    displayMessage(tokenResultList.getSelectedValue());
 				}
 			});
+			*/
 			
 			resetTokenResultList();
 		}
 		return tokenResultList;
 	}
 
+	/*
     private void displayMessage(HttpMessage msg) {
 		try {
 			requestPanel.setMessage(msg);
@@ -412,8 +416,9 @@ public class TokenPanel extends AbstractPanel {
 			log.error("Failed to access message ", e);
 		}
     }
+    */
 
-	private ListCellRenderer<HttpMessage> getPortPanelCellRenderer() {
+	private ListCellRenderer<MessageSummary> getPortPanelCellRenderer() {
         if (portPanelCellRenderer == null) {
             portPanelCellRenderer = new TokenPanelCellRenderer();
             portPanelCellRenderer.setSize(new java.awt.Dimension(328,21));
@@ -465,9 +470,9 @@ public class TokenPanel extends AbstractPanel {
 				CharacterFrequencyMap cfm = new CharacterFrequencyMap();
 		
 				for (int i=0; i < this.resultsModel.getSize(); i++) {
-					HttpMessage msg = this.resultsModel.get(i);
-					if (msg.getNote() != null) {
-						cfm.addToken(msg.getNote());
+					MessageSummary msg = this.resultsModel.get(i);
+					if (msg.getToken() != null) {
+						cfm.addToken(msg.getToken());
 					}
 				}
 				
@@ -529,8 +534,8 @@ public class TokenPanel extends AbstractPanel {
 	}
 
     public void setDisplayPanel(HttpPanel requestPanel, HttpPanel responsePanel) {
-        this.requestPanel = requestPanel;
-        this.responsePanel = responsePanel;
+        //this.requestPanel = requestPanel;
+        //this.responsePanel = responsePanel;
 
     }
 

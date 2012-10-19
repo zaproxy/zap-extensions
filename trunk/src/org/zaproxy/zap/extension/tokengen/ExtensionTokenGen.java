@@ -205,7 +205,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 			msg.setNote(token);
 		}
 		
-		this.getTokenPanel().addTokenResult(msg);
+		this.getTokenPanel().addTokenResult(new MessageSummary(msg));
 	}
 
 	private TokenGenPopupMenu getPopupTokenGen() {
