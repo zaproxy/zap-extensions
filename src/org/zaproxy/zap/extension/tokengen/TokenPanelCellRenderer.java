@@ -27,8 +27,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
-import org.parosproxy.paros.network.HttpMessage;
-
 public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer<MessageSummary> {
 
 	private static final long serialVersionUID = 1L;
