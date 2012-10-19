@@ -29,7 +29,7 @@ import javax.swing.ListCellRenderer;
 
 import org.parosproxy.paros.network.HttpMessage;
 
-public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer<HttpMessage> {
+public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer<MessageSummary> {
 
 	private static final long serialVersionUID = 1L;
 	private JLabel txtId = null;
@@ -222,15 +222,15 @@ public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer<H
     }
 
     @Override
-    public Component getListCellRendererComponent(JList<? extends HttpMessage> list, HttpMessage msg, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<? extends MessageSummary> list, MessageSummary msg, int index, boolean isSelected, boolean cellHasFocus) {
         
-        txtMethod.setText(msg.getRequestHeader().getMethod());
-        txtURI.setText(msg.getRequestHeader().getURI().toString());
-        txtStatus.setText(Integer.toString(msg.getResponseHeader().getStatusCode()));
-        txtReason.setText(msg.getResponseHeader().getReasonPhrase());
+        txtMethod.setText(msg.getMethod());
+        txtURI.setText(msg.getUriString());
+        txtStatus.setText(msg.getStatusCodeStr());
+        txtReason.setText(msg.getReasonPhrase());
         txtRTT.setText(msg.getTimeElapsedMillis()+"ms");
-        txtSize.setText(""+msg.getResponseBody().toString().length());
-        txtToken.setText(msg.getNote());	// The note is used for the generated token
+        txtSize.setText(msg.getLengthStr());
+        txtToken.setText(msg.getToken());	// The note is used for the generated token
         
         if (isSelected) {
             txtId.setBackground(list.getSelectionBackground());
