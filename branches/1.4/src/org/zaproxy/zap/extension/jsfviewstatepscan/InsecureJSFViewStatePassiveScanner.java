@@ -17,37 +17,28 @@
  */
 package org.zaproxy.zap.extension.jsfviewstatepscan;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.MissingResourceException;
-import java.util.Random;
 import java.util.ResourceBundle;
-import java.util.zip.GZIPInputStream;
 
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * A port from a Watcher passive scanner (http://websecuritytool.codeplex.com/)
- * rule
- * <tt>CasabaSecurity.Web.Watcher.Checks.CheckPasvJavaServerFacesViewState</tt>
+ * rule {@code CasabaSecurity.Web.Watcher.Checks.CheckPasvJavaServerFacesViewState}
  * <p>
- * All the
+ * The following class description has been taken from the corresponding Watcher rule:
  * <p>
  * 
  * <pre>
@@ -71,12 +62,7 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 
-	// wasc_10 is Denial of Service - well, its just an example ;)
-	private static Vulnerability vuln = Vulnerabilities
-			.getVulnerability("wasc_10");
 	private PassiveScanThread parent = null;
-	private static Logger logger = Logger
-			.getLogger(InsecureJSFViewStatePassiveScanner.class);
 
 	/**
 	 * contains the internationalisation (i18n) messages. Must be statically
@@ -96,8 +82,6 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		// You can also detect potential vulnerabilities here, with the same
-		// caveats as below.
 	}
 
 	private int getId() {
@@ -108,10 +92,10 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		if (msg.getResponseBody().length() > 0
 				&& msg.getResponseHeader().isText()) {
-			List<Element> sourceElements = source
+			List<Element> inputElements = source
 					.getAllElements(HTMLElementName.INPUT);
-			if (sourceElements != null) {
-				for (Element sourceElement : sourceElements) {
+			if (inputElements != null) {
+				for (Element inputElement : inputElements) {
 
 					// Find ones where id="javax.faces.ViewState"
 					//
@@ -122,26 +106,26 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 					// jsf_tree_64
 					// jsf_viewid
 					// jsf_state
-					String src = sourceElement.getAttributeValue("id");
-					if (src != null
-							&& src.toLowerCase()
-									.equals("javax.faces.viewstate")) {
+					String inputElementId = inputElement.getAttributeValue("id");
+					if ("javax.faces.viewstate".equalsIgnoreCase(inputElementId)) {
 						// Get the ViewState value
-						String val = sourceElement.getAttributeValue("value");
+						String inputElementValue = inputElement.getAttributeValue("value");
 						// Server-side ViewState usually comes down as an ID
 						// value like
 						// _id16683
 						// Ignoring these for now. Underscore is not a valid
 						// Base64 character
 						// so it's safe to ignore this.
-						if (val != null && val.startsWith("_")) {
+						if (inputElementValue == null || inputElementValue.startsWith("_")) {
 							return;
 						}
 
 						// If the ViewState is not secured cryptographic
 						// protections then raise an alert.
-							raiseAlert(msg, id, src);
-							if (!isViewStateSecure(src, msg.getRequestBody().getCharset())) {
+						if (!isViewStateSecure(inputElementValue, msg.getRequestBody().getCharset())) {
+							raiseAlert(msg, id, inputElementValue);
+							// -The scanner may stop now as an issue was already found.
+							return;
 						}
 					}
 				}
@@ -155,7 +139,7 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 	 * @param viewState view state string
 	 * @param charset viewState string encoding
 	 * @return {@code true} if {@code viewState} is cryptographically secure, 
-	 * and {@code false} otherwise (there might be false positives and false
+	 * {@code false} otherwise (there might be false positives and false
 	 * negatives)
 	 */
 	private boolean isViewStateSecure(String viewState, String charset) {
@@ -178,7 +162,8 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 
 		byte[] viewStateDecodeBytes;
 		try {
-			viewStateDecodeBytes = Base64.decode(viewState, Base64.GZIP);
+			// The content is automatically uncompressed if it was compressed (with GZIP).
+			viewStateDecodeBytes = Base64.decode(viewState, Base64.NO_OPTIONS);
 		} catch (IOException e) {
 			// ViewState might be unencoded which is theoretically possible.
 			return isRawViewStateSecure(viewState);
@@ -186,36 +171,7 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 		
 		String viewStateDecoded = new String(viewStateDecodeBytes);
 
-		// First attempt to treat the decoded ViewState as an uncompressed
-		// string.
-		if (!isRawViewStateSecure(viewStateDecoded)) {
-			// ViewState is insecure
-			return false;
-		}
-
-		// If the above didn't return, then continue on trying to GZIP deflate
-		// the byte array.
-		try {
-			GZIPInputStream decompress = new GZIPInputStream(
-					new ByteArrayInputStream(viewStateDecoded.getBytes()));
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			byte[] buf = new byte[4096];
-			int len;
-			while ((len = decompress.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-
-			// /////////////////////////////
-			// Step 3
-			// Try to determine if ViewState is encrypted or contains clear text
-			// strings.
-
-
-			return isRawViewStateSecure(out.toString());
-		} catch (IOException ex) {
-		}
-
-		return true;
+		return isRawViewStateSecure(viewStateDecoded);
 	}
 
 	private boolean isRawViewStateSecure(String viewState) {
@@ -241,9 +197,9 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 		alert.setDetail(
 				getDescription(),
 				msg.getRequestHeader().getURI().toString(),
+				"",
+				"",
 				getString(MESSAGE_PREFIX + "extrainfo", viewState),
-				"",
-				"",
 				getSolution(),
 				getReference(),
 				msg);
@@ -258,10 +214,6 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 
 	private String getDescription() {
 		return getString(MESSAGE_PREFIX + "desc");
-	}
-
-	private int getCategory() {
-		return Category.MISC;
 	}
 
 	private String getSolution() {
