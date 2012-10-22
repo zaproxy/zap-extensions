@@ -162,7 +162,7 @@
 	<target name="build-scripts" description="build the scripts extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="scripts"/> 
-			<param name="type" value="beta"/> 
+			<param name="type" value="weekly"/> 
 			<param name="version" value="3"/> 
 		</antcall>
 	</target>
@@ -187,7 +187,7 @@
 	<target name="build-spiderAjax" description="build the spiderAjax extension">
 		<antcall target="build-extensionAndDeps">
 			<param name="extension" value="spiderAjax"/>
-			<param name="type" value="beta"/>
+			<param name="type" value="weekly"/>
 			<param name="version" value="1"/>
 		</antcall>
 	</target>
@@ -204,7 +204,7 @@
 		<!-- Cant use build-extension as other classes needed -->
 		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
 		<property name="tokengen.type" value="beta" />
-		<property name="tokengen.version" value="1" />
+		<property name="tokengen.version" value="2" />
 		<jar jarfile="${dist}/zap-ext-tokengen-${tokengen.type}-${tokengen.version}.jar" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/tokengen/**"/>
