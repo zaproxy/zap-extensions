@@ -27,8 +27,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
-import org.parosproxy.paros.network.HttpMessage;
-
 public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer {
 
 	private static final long serialVersionUID = 1L;
@@ -53,8 +51,6 @@ public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer {
 
     /**
      * This method initializes this
-     * 
-     * @return void
      */
     private void initialize() {
         GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
@@ -223,17 +219,18 @@ public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer {
         this.add(txtToken, gridBagConstraints7);
     }
 
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         
-        HttpMessage msg = (HttpMessage) value;
-        
-        txtMethod.setText(msg.getRequestHeader().getMethod());
-        txtURI.setText(msg.getRequestHeader().getURI().toString());
-        txtStatus.setText(Integer.toString(msg.getResponseHeader().getStatusCode()));
-        txtReason.setText(msg.getResponseHeader().getReasonPhrase());
+    	MessageSummary msg = (MessageSummary) value;
+    	
+        txtMethod.setText(msg.getMethod());
+        txtURI.setText(msg.getUriString());
+        txtStatus.setText(msg.getStatusCodeStr());
+        txtReason.setText(msg.getReasonPhrase());
         txtRTT.setText(msg.getTimeElapsedMillis()+"ms");
-        txtSize.setText(""+msg.getResponseBody().toString().length());
-        txtToken.setText(msg.getNote());	// The note is used for the generated token
+        txtSize.setText(msg.getLengthStr());
+        txtToken.setText(msg.getToken());	// The note is used for the generated token
         
         if (isSelected) {
             txtId.setBackground(list.getSelectionBackground());
@@ -280,5 +277,4 @@ public class TokenPanelCellRenderer extends JPanel implements ListCellRenderer {
         return this;
         
     }
-
 }

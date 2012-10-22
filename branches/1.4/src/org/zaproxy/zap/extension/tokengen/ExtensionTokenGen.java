@@ -82,7 +82,6 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	/**
 	 * This method initializes this
 	 * 
-	 * @return void
 	 */
 	private void initialize() {
         this.setName(NAME);
@@ -91,6 +90,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
         		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
 	}
 	
+	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
 	    
@@ -205,7 +205,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 			msg.setNote(token);
 		}
 		
-		this.getTokenPanel().addTokenResult(msg);
+		this.getTokenPanel().addTokenResult(new MessageSummary(msg));
 	}
 
 	private TokenGenPopupMenu getPopupTokenGen() {
