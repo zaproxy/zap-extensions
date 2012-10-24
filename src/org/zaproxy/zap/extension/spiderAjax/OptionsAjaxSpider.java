@@ -57,7 +57,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JLabel jLabel6 = null;
 	private JLabel browsers = null;
 	private JLabel threads = null;
-	private static final Logger logger = Logger.getLogger(LogPanel.class);
+	private static final Logger logger = Logger.getLogger(OptionsAjaxSpider.class);
 
 	/**
 	 * Constructor for the class
