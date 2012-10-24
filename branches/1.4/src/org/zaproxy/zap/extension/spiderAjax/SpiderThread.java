@@ -297,8 +297,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 		logger.info("Finished crawljax targeting " + this.url );
 		this.running = false;
 		try {
-		crawljax.terminate(false);
-		Thread.currentThread().interrupt();
+			crawljax.terminate(false);
 		} catch (Exception e) {
 			logger.error(e);
 		}
