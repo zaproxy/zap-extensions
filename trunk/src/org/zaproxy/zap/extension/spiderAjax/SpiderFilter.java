@@ -39,7 +39,7 @@ import org.apache.commons.httpclient.URIException;
  *
  */
 public class SpiderFilter implements PreStateCrawlingPlugin {
-	private static final Logger logger = Logger.getLogger(ExtensionAjax.class);
+	private static final Logger logger = Logger.getLogger(SpiderFilter.class);
 	ArrayList<String> urls;
 	boolean replaceInput = false;
 	private ExtensionAjax extension;

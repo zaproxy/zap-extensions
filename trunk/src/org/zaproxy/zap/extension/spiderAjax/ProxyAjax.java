@@ -48,9 +48,7 @@ public class ProxyAjax {
 		extension = e;
 		this.getProxy();
 		this.proxy.setProxyParam(getAjaxProxyParam());
-		if(!this.proxy.isAnyProxyThreadRunning()){
-			this.proxy.startServer(this.getAjaxProxyParam().getProxyIp(), this.getAjaxProxyParam().getProxyPort(), false);
-		}
+		this.proxy.startServer(this.getAjaxProxyParam().getProxyIp(), this.getAjaxProxyParam().getProxyPort(), false);
 		this.browser = defaultBrowser;
 		this.browsers = 1;
 		this.threads = 1;
@@ -74,18 +72,6 @@ public class ProxyAjax {
 	}
 
 	
-	/**
-	 * stops the sever, updates the config and starts it again
-	 */
-	public void updateProxyConf() {
-		if(this.proxy.isAnyProxyThreadRunning()){
-			this.proxy.stopServer();
-		}
-		this.proxy.startServer(this.getProxyHost(), this.getProxyPort(), false);
-		if(this.extension.getExcludeList()!=null){
-			this.proxy.setExcludeList(this.extension.getExcludeList());
-		}
-	}
 
 
 	/**
