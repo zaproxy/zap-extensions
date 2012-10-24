@@ -72,7 +72,20 @@ public class ProxyAjax {
 	}
 
 	
-
+	/**
+	 * stops the sever, updates the config and starts it again
+	 */
+	public void updateProxyConf() {
+		// XXX Consider to remove the following two statements as the method
+		// ProxyServer.startServer already stops the server (if it was running).
+		if(this.proxy.isAnyProxyThreadRunning()){
+			this.proxy.stopServer();
+		}
+		this.proxy.startServer(this.getProxyHost(), this.getProxyPort(), false);
+		if(this.extension.getExcludeList()!=null){
+			this.proxy.setExcludeList(this.extension.getExcludeList());
+		}
+	}
 
 	/**
 	 * stops the new ajax proxy

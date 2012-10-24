@@ -75,6 +75,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 	 * This method refreshes the proxy
 	 */
 	private void initiProxy() {
+		this.extension.getProxy().updateProxyConf();
 		this.extension.getProxy().getProxy().addProxyListener(this);
 	    this.extension.getSpiderPanel().getListLog().setModel(this.extension.getSpiderPanel().getHistList());
 	}
