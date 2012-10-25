@@ -76,15 +76,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 	 */
 	private ResourceBundle messages = ResourceBundle.getBundle(
 			this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
-
-	/** 
-	 * These are LCS "constants" which indicate a direction in the backtracking array.
-	 */
-	private static final int NEITHER     = 0;
-	private static final int UP          = 1;
-	private static final int LEFT        = 2;
-	private static final int UP_AND_LEFT = 3;
-
+	
 	/**
 	 * The characters used to generate the random username.
 	 */
