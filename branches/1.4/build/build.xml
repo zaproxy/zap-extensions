@@ -42,6 +42,14 @@
 	 	example
 	 version should be an integer that increments on each release, starting at 1
 	 -->
+	
+	<target name="build-charsetmismatchpscan" description="build the Charset Mismatch extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="charsetmismatchpscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>		
 
 	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
 		<antcall target="build-extension"> 
@@ -219,6 +227,7 @@
 	
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
+		<antcall target="build-charsetmismatchpscan"/>
 		<antcall target="build-csrfcountermeasures"/>
 		<antcall target="build-csrftokenscan"/>
 		<antcall target="build-exampleActiveScan"/>
@@ -248,6 +257,10 @@
 		<!--copy file="${dist}/zap-ext-${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
 	</target>
 
+	<target name="deploy-charsetmismatchpscan" description="deploy the Charset Mismatch extension">
+		<antcall target="deploy-extension"> <param name="extension" value="charsetmismatchpscan"/> </antcall>
+	</target>
+	
 	<target name="deploy-csrfcountermeasures" description="deploy the csrfcountermeasures extension">
 		<antcall target="deploy-extension"> <param name="extension" value="csrfcountermeasuresscan"/> </antcall>
 	</target>
@@ -322,6 +335,7 @@
 	
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
+		<antcall target="deploy-charsetmismatchpscan"/>
 		<antcall target="deploy-csrfcountermeasures"/>
 		<antcall target="deploy-csrftokenscan"/>
 		<antcall target="deploy-exampleActiveScan"/>
