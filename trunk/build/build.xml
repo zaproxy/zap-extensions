@@ -53,7 +53,7 @@
 	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="csrfcountermeasuresscan"/> 
-			<param name="type" value="alpha"/> 
+			<param name="type" value="weekly"/> 
 			<param name="version" value="2"/> 
 		</antcall>
 	</target>
@@ -138,7 +138,7 @@
 	<target name="build-insecureauthentication" description="build the InsecureAuthentication extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="insecureauthentication"/> 
-			<param name="type" value="alpha"/> 
+			<param name="type" value="weekly"/> 
 			<param name="version" value="3"/> 
 		</antcall>
 	</target>
@@ -154,7 +154,7 @@
 	<target name="build-ldapinjection" description="build the LDAPInjection extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="ldapinjectionscan"/> 
-			<param name="type" value="alpha"/> 
+			<param name="type" value="weekly"/> 
 			<param name="version" value="1"/> 
 		</antcall>
 	</target>
@@ -170,7 +170,7 @@
 	<target name="build-sessionfixation" description="build the SessionFixation extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="sessionfixationscan"/> 
-			<param name="type" value="alpha"/> 
+			<param name="type" value="weekly"/> 
 			<param name="version" value="8"/> 
 		</antcall>
 	</target>
@@ -195,7 +195,7 @@
 	<target name="build-sqlinjection" description="build the SQL Injection extensions">
 		<antcall target="build-extension"> 
 			<param name="extension" value="sqlinjectionscan"/> 
-			<param name="type" value="alpha"/> 
+			<param name="type" value="weekly"/> 
 			<param name="version" value="3"/> 
 		</antcall>
 	</target>
@@ -219,7 +219,7 @@
 	<target name="build-usernameenumeration" description="build the Username Enumeration scanner">
 		<antcall target="build-extension"> 
 			<param name="extension" value="usernameenumerationscan"/> 
-			<param name="type" value="alpha"/> 
+			<param name="type" value="weekly"/> 
 			<param name="version" value="3"/> 
 		</antcall>
 	</target>
