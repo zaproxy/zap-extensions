@@ -176,7 +176,7 @@ public class CharsetMismatchPassiveScanner extends PluginPassiveScanner {
 		Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.SUSPICIOUS,
 				getName());
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), extraInfo, getExploitMessage(), "",
+				.getURI().toString(), "content-type", getExploitMessage(), extraInfo,
 				getSolutionMessage(), getReferenceMessage(), msg);
 
 		parent.raiseAlert(id, alert);
