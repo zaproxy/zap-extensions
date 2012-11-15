@@ -38,9 +38,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 /**
  * A port from a Watcher passive scanner (http://websecuritytool.codeplex.com/)
  * rule {@code CasabaSecurity.Web.Watcher.Checks.CheckPasvCharsetMismatch}
- * 
- * http://websecuritytool.codeplex.com/SourceControl/changeset/view/17f2e3ded58f
- * #Watcher%20Check%20Library%2fCheck.Pasv.Charset.Mismatch.cs
  */
 public class CharsetMismatchPassiveScanner extends PluginPassiveScanner {
 
