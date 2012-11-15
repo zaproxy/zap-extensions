@@ -49,6 +49,14 @@
 			<param name="type" value="alpha"/> 
 			<param name="version" value="1"/> 
 		</antcall>
+	</target>	
+	
+	<target name="build-cookielooselyscopedpscan" description="build the Cookie Loosely Scoped extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="cookielooselyscopedpscan"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
 	</target>		
 
 	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
@@ -228,6 +236,7 @@
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="build-charsetmismatchpscan"/>
+		<antcall target="build-cookielooselyscopedpscan"/>
 		<antcall target="build-csrfcountermeasures"/>
 		<antcall target="build-csrftokenscan"/>
 		<antcall target="build-exampleActiveScan"/>
@@ -258,6 +267,10 @@
 	</target>
 
 	<target name="deploy-charsetmismatchpscan" description="deploy the Charset Mismatch extension">
+		<antcall target="deploy-extension"> <param name="extension" value="charsetmismatchpscan"/> </antcall>
+	</target>
+	
+	<target name="deploy-cookielooselyscopedpscan" description="deploy the Cookie Loosely Scoped extension">
 		<antcall target="deploy-extension"> <param name="extension" value="charsetmismatchpscan"/> </antcall>
 	</target>
 	
@@ -336,6 +349,7 @@
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-charsetmismatchpscan"/>
+		<antcall target="deploy-cookielooselyscopedpscan"/>
 		<antcall target="deploy-csrfcountermeasures"/>
 		<antcall target="deploy-csrftokenscan"/>
 		<antcall target="deploy-exampleActiveScan"/>
