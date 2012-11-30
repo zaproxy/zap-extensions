@@ -159,6 +159,14 @@
 		</antcall>
 	</target>
 	
+	<target name="build-quickstart" description="build the quick start extension">
+		<antcall target="build-extension"> 
+			<param name="extension" value="quickstart"/> 
+			<param name="type" value="alpha"/> 
+			<param name="version" value="1"/> 
+		</antcall>
+	</target>
+	
 	<target name="build-scripts" description="build the scripts extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="scripts"/> 
@@ -254,6 +262,7 @@
 		<antcall target="build-insecureauthentication"/>
 		<antcall target="build-jsfviewstatepscan"/>
 		<antcall target="build-ldapinjection"/>
+		<antcall target="build-quickstart"/>
 		<antcall target="build-scripts"/>
 		<antcall target="build-servletParamPollution"/>
 		<antcall target="build-sessionfixation"/>
@@ -315,6 +324,10 @@
 
 	<target name="deploy-ldapinjectionscan" description="deploy the ldapinjection extension">
 		<antcall target="deploy-extension"> <param name="extension" value="ldapinjectionscan"/> </antcall>
+	</target>
+	
+	<target name="deploy-quickstart" description="deploy the quick start extension">
+		<antcall target="deploy-extension"> <param name="extension" value="quickstart"/> </antcall>
 	</target>
 	
 	<target name="deploy-scripts" description="deploy the scripts extension">
