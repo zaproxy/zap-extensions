@@ -92,7 +92,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor {
 
 	@Override
 	public String getDescription() {
-		return getMessageString("scripts.desc");
+		return getMessageString("quickstart.desc");
 	}
 
 	@Override
