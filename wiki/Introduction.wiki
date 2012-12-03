@@ -7,8 +7,11 @@ The following extensions are currently available for the latest 1.4 release:
 || *Status* || *Ver* || *Name* || *Author* || *Description* ||
 || Beta || 3 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-scripts-beta-3.jar scriptConsole] || ZAP Core Team || Provides dynamic access to internal ZAP data structures ([https://code.google.com/p/zaproxy/wiki/ScriptConsole more info]) ||
 || Beta || n/a || [https://code.google.com/p/zap-extensions/downloads/detail?name=UtlimateObsoleteFileDetection.jar ultimateObsoleteFileDetection] || Alex Ganelis & Dan Meged, [http://www.hacktics.com/ Hacktics ASC, Ernst & Young] || Advanced obsolete/hidden file detection (Installer/Plugin/Source)||
+|| Beta || 1.0.1 || [http://code.google.com/p/diviner/ Diviner] || Shay Chen & Eran Tamari, [http://www.hacktics.com/ Hacktics ASC, Ernst & Young] || Predicts the structure of server memory, source code and indirect attack sequences ||
 || Beta || 6 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-alertReport-beta-6.jar alertReport] || Leandro Ferrari, [http://www.talsoft.com.ar/ TalSoft SRL] || Report alert generator in pdf or odt format. ||
 || Beta || 2 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-tokengen-beta-2.jar tokengen] || ZAP Core Team || Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection. ||
+
+
 || Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-spiderAjax-alpha-1.jar Ajax Spider] || ZAP Core Team || Ajax Spider - full integration with [http://crawljax.com/ Crawljax] ||
 || Alpha || 1 || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-servletParamPollution-alpha-1.jar HTTP Parameter Pollution (HPP) Passive Scanner] || ZAP Core Team || Flags FORMS with no target attributes ||
 || Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-httpParameterPollution-alpha-1.jar HTTP Parameter Pollution (HPP) Active Scanner] || ZAP Core Team ||  Injects HTTP malicious payloads in forms and links to identify HPP issues|| 
