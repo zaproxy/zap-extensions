@@ -162,8 +162,8 @@
 	<target name="build-quickstart" description="build the quick start extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="quickstart"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
+			<param name="type" value="weekly"/> 
+			<param name="version" value="2"/> 
 		</antcall>
 	</target>
 	
