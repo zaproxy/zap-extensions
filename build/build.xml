@@ -6,6 +6,7 @@
 	<property name="build" location="build" />
 	<property name="dist" location="zap-exts" />
 	<property name="dist.lib.dir" location="../lib" />
+	<property name="versions.file" location="${dist}/ZapVersions.xml" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 	
@@ -50,11 +51,29 @@
 	 version should be an integer that increments on each release, starting at 1
 	 -->
 
+	<target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
+		<length file="${dist}/${file}" property="length" />
+		<echo file="${versions.file}" append="true">
+	&lt;addon>${extension}&lt;/addon>
+	&lt;addon_${extension}>
+		&lt;name>${name}&lt;/name>
+		&lt;version>${version}&lt;/version>
+		&lt;file>${file}&lt;/file>
+		&lt;status>${type}&lt;/status>
+		&lt;changes>${changes}&lt;/changes>
+		&lt;url>https://zap-extensions.googlecode.com/files/${file}&lt;/url>
+		&lt;size>${length}&lt;/size>
+	&lt;/addon_${extension}>
+</echo>
+	</target>
+	
 	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="csrfcountermeasuresscan"/> 
 			<param name="type" value="weekly"/> 
 			<param name="version" value="2"/> 
+			<param name="name" value="CSRF Countermeasures Scanner"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
@@ -63,11 +82,14 @@
 			<param name="extension" value="csrftokenscan"/> 
 			<param name="type" value="alpha"/> 
 			<param name="version" value="1"/> 
+			<param name="name" value="CSRF Token Scan"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
 	<target name="build-extension" description="build the specified extension">
-		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}.jar" update="true" compress="false">
+		<property name="file" value="${extension}-${type}-${version}.zap" />
+		<jar jarfile="${dist}/${file}" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/**"/>
 			</zipfileset>
@@ -75,9 +97,22 @@
 				<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
 			</zipfileset>
 		</jar>
+		<condition property="addon-example">
+			<equals arg1="${type}" arg2="example"/>
+		</condition>
+		<antcall target="append-to-versions-file"> 
+			<param name="extension" value="${extension}"/> 
+			<param name="type" value="${type}"/> 
+			<param name="version" value="${version}"/> 
+			<param name="name" value="${name}"/> 
+			<param name="changes" value="${changes}"/> 
+			<param name="file" value="${file}"/> 
+		</antcall>
 	</target>
+	
 	<target name="build-extensionAndDeps" description="build the specified extension and include its dependencies">
-		<jar jarfile="${dist}/zap-ext-${extension}-${type}-${version}.jar" update="true" compress="true">
+		<property name="file" value="${extension}-${type}-${version}.zap" />
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/**" />
 			</zipfileset>
@@ -86,12 +121,26 @@
 				<include name="org/zaproxy/zap/extension/${extension}/Messages*" />
 			</zipfileset>
 		</jar>
+		<condition property="addon-example">
+			<equals arg1="${type}" arg2="example"/>
+		</condition>
+		<antcall target="append-to-versions-file"> 
+			<param name="extension" value="${extension}"/> 
+			<param name="type" value="${type}"/> 
+			<param name="version" value="${version}"/> 
+			<param name="name" value="${name}"/> 
+			<param name="changes" value="${changes}"/> 
+			<param name="file" value="${file}"/> 
+		</antcall>
 	</target>
+	
 	<target name="build-exampleActiveScan" description="build the exampleActiveScan extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="exampleActiveScan"/> 
 			<param name="type" value="example"/> 
 			<param name="version" value="1"/> 
+			<param name="name" value="Example active scan rule"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 
@@ -100,6 +149,8 @@
 			<param name="extension" value="examplePassiveScan"/> 
 			<param name="type" value="example"/> 
 			<param name="version" value="1"/> 
+			<param name="name" value="Example passive scan rule"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 
@@ -108,6 +159,8 @@
 			<param name="extension" value="exampleRightClickMsg"/> 
 			<param name="type" value="example"/> 
 			<param name="version" value="1"/> 
+			<param name="name" value="Example extension demonstrating right-click message menu"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 
@@ -116,6 +169,8 @@
 			<param name="extension" value="exampleTopMenu"/> 
 			<param name="type" value="example"/> 
 			<param name="version" value="1"/> 
+			<param name="name" value="Example extension demonstrating to top level menu"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 
@@ -124,6 +179,8 @@
 			<param name="extension" value="highlighter"/> 
 			<param name="type" value="alpha"/> 
 			<param name="version" value="1"/> 
+			<param name="name" value="Highlighter"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
@@ -132,6 +189,8 @@
 			<param name="extension" value="httpParameterPollution"/> 
 			<param name="type" value="alpha"/> 
 			<param name="version" value="1"/> 
+			<param name="name" value="HTTP Parameter Pollution Scanner"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
@@ -140,15 +199,19 @@
 			<param name="extension" value="insecureauthentication"/> 
 			<param name="type" value="weekly"/> 
 			<param name="version" value="3"/> 
+			<param name="name" value="Insecure Authentication plugin - detects the existence and usage of insecure authentication methods"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
     <target name="build-jsfviewstatepscan" description="build the jsfviewstatepscan extension">
-            <antcall target="build-extension">
-                    <param name="extension" value="jsfviewstatepscan"/>
-                    <param name="type" value="alpha"/>
-                    <param name="version" value="1"/>
-            </antcall>
+        <antcall target="build-extension">
+            <param name="extension" value="jsfviewstatepscan"/>
+            <param name="type" value="alpha"/>
+            <param name="version" value="1"/>
+			<param name="name" value="JSF Viewstate Passive Scanner"/> 
+			<param name="changes" value=""/> 
+        </antcall>
     </target>		
 	
 	<target name="build-ldapinjection" description="build the LDAPInjection extension">
@@ -156,6 +219,8 @@
 			<param name="extension" value="ldapinjectionscan"/> 
 			<param name="type" value="weekly"/> 
 			<param name="version" value="1"/> 
+			<param name="name" value="LDAP Injection Scanner"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
@@ -164,6 +229,8 @@
 			<param name="extension" value="quickstart"/> 
 			<param name="type" value="weekly"/> 
 			<param name="version" value="2"/> 
+			<param name="name" value="Quick start tab"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
@@ -172,6 +239,8 @@
 			<param name="extension" value="scripts"/> 
 			<param name="type" value="weekly"/> 
 			<param name="version" value="3"/> 
+			<param name="name" value="The Script Console - dynamic access to internal ZAP data structures"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
@@ -180,6 +249,8 @@
 			<param name="extension" value="sessionfixationscan"/> 
 			<param name="type" value="weekly"/> 
 			<param name="version" value="8"/> 
+			<param name="name" value="Session Fixation Scanner"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 
@@ -188,6 +259,8 @@
 			<param name="extension" value="servletParamPollution"/> 
 			<param name="type" value="alpha"/> 
 			<param name="version" value="1"/> 
+			<param name="name" value="Parameter Pollution Scanner"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 
@@ -197,6 +270,8 @@
 			<param name="extension" value="spiderAjax"/>
 			<param name="type" value="weekly"/>
 			<param name="version" value="1"/>
+			<param name="name" value="AJAX Spider"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
@@ -205,6 +280,8 @@
 			<param name="extension" value="sqlinjectionscan"/> 
 			<param name="type" value="weekly"/> 
 			<param name="version" value="3"/> 
+			<param name="name" value="SQL Injection scanners (generic, MySQL, Hypersonic SQL/HSQL, Oracle, PostgreSQL)"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
@@ -213,7 +290,8 @@
 		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
 		<property name="tokengen.type" value="beta" />
 		<property name="tokengen.version" value="2" />
-		<jar jarfile="${dist}/zap-ext-tokengen-${tokengen.type}-${tokengen.version}.jar" update="true" compress="false">
+		<property name="file" value="tokengen-${tokengen.type}-${tokengen.version}.zap" />
+		<jar jarfile="${dist}/${file}" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/tokengen/**"/>
 				<include name="com/fasteasytrade/JRandTest/**"/>
@@ -222,6 +300,14 @@
 				<include name="org/zaproxy/zap/extension/tokengen/Messages*"/>
 			</zipfileset>
 		</jar>
+		<antcall target="append-to-versions-file"> 
+			<param name="extension" value="tokengen"/> 
+			<param name="type" value="${tokengen.type}"/> 
+			<param name="version" value="${tokengen.version}"/> 
+			<param name="name" value="Token Generator and Analyzer"/> 
+			<param name="changes" value=""/> 
+			<param name="file" value="${file}"/> 
+		</antcall>
 	</target>
 
 	<target name="build-usernameenumeration" description="build the Username Enumeration scanner">
@@ -229,6 +315,8 @@
 			<param name="extension" value="usernameenumerationscan"/> 
 			<param name="type" value="weekly"/> 
 			<param name="version" value="3"/> 
+			<param name="name" value="Username Enumeration Scanner"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 
@@ -237,18 +325,26 @@
 			<param name="extension" value="viewStatePScan"/> 
 			<param name="type" value="alpha"/> 
 			<param name="version" value="1"/> 
+			<param name="name" value="View State passive scanner"/> 
+			<param name="changes" value=""/> 
 		</antcall>
 	</target>
 	
     <target name="build-alertReport" description="build the alertReport extension">
-            <antcall target="build-extensionAndDeps">
-                    <param name="extension" value="alertReport"/>
-                    <param name="type" value="beta"/>
-                    <param name="version" value="6"/>
-            </antcall>
+        <antcall target="build-extensionAndDeps">
+            <param name="extension" value="alertReport"/>
+            <param name="type" value="beta"/>
+            <param name="version" value="6"/>
+			<param name="name" value="Report alert generator in pdf or odt format."/> 
+			<param name="changes" value=""/> 
+        </antcall>
     </target>
 	
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
+		<delete file="${versions.file}"/>
+		
+		<echo file="${versions.file}" append="true">&lt;ZAP></echo>
+		
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="build-alertReport"/>
 		<antcall target="build-csrfcountermeasures"/>
@@ -271,15 +367,18 @@
 		<antcall target="build-tokengen"/>
 		<antcall target="build-usernameenumeration"/>
 		<antcall target="build-viewStatePScan"/>		
+
+		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
+
 	</target>
 
 	<target name="deploy-extension" description="deploy the specified extension">
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-			<include name="zap-ext-${extension}-*.jar"/>
+			<include name="${extension}-*.zap"/>
 			</fileset>
 		</copy>
-		<!--copy file="${dist}/zap-ext-${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
+		<!--copy file="${dist}/${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
 	</target>
 
 	<target name="deploy-csrfcountermeasures" description="deploy the csrfcountermeasures extension">
@@ -397,11 +496,12 @@
 		<!-- Clear out previous plugins -->
 		<delete includeEmptyDirs="true">
 			<fileset dir="${zap.plugin.dir}" includes="*.jar" />
+			<fileset dir="${zap.plugin.dir}" includes="*.zap" />
 		</delete>
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="*-weekly-*.jar"/>
-				<include name="*-release-*.jar"/>
+				<include name="*-weekly-*.zap"/>
+				<include name="*-release-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
