@@ -37,6 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
@@ -86,12 +87,12 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		 *    +----------------------+----------------------+----------------------+----------------------+----------------------+
 		 */
 
-		panelContent.add(new JLabel(ExtensionQuickStart.getMessageString("quickstart.panel.topmsg")), 
+		panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.topmsg")), 
 				LayoutHelper.getGBC(0, 0, 4, 1.0D, new Insets(5,5,5,5)));
 		panelContent.add(new JLabel(new ImageIcon(SearchPanel.class.getResource("/resource/zap128x128.png"))),
 				LayoutHelper.getGBC(4, 0, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
 	
-		panelContent.add(new JLabel(ExtensionQuickStart.getMessageString("quickstart.label.url")), 
+		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.url")), 
 				LayoutHelper.getGBC(0, 1, 1, 0.0D, new Insets(5,5,5,5)));
 	
 		panelContent.add(this.getUrlField(), LayoutHelper.getGBC(1, 1, 3, 0.25D));
@@ -100,16 +101,16 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		panelContent.add(this.getStopButton(), LayoutHelper.getGBC(2, 2, 1, 0.0D));
 		panelContent.add(new JLabel(""), LayoutHelper.getGBC(3, 2, 1, 0.75D, 0.0D));	// Padding to right of buttons
 		
-		progressLabel = new JLabel(ExtensionQuickStart.getMessageString("quickstart.progress." + AttackThread.Progress.notstarted.name()));
-		panelContent.add(new JLabel(ExtensionQuickStart.getMessageString("quickstart.label.progress")), 
+		progressLabel = new JLabel(Constant.messages.getString("quickstart.progress." + AttackThread.Progress.notstarted.name()));
+		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.progress")), 
 				LayoutHelper.getGBC(0, 3, 1, 0.0D, new Insets(5,5,5,5)));
 		panelContent.add(this.progressLabel, LayoutHelper.getGBC(1, 3, 3, 0.0D));
 
-		panelContent.add(new JLabel(ExtensionQuickStart.getMessageString("quickstart.panel.bottommsg")), 
+		panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.bottommsg")), 
 				LayoutHelper.getGBC(0, 4, 5, 1.0D, new Insets(5,5,5,5)));
 		panelContent.add(new JLabel(""), LayoutHelper.getGBC(0, 5, 4, 1.D, 1.0D));	// Padding at bottom
 
-		panelContent.add(new JLabel(ExtensionQuickStart.getMessageString("quickstart.label.show")), 
+		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.show")), 
 				LayoutHelper.getGBC(0, 6, 1, 0.0D, new Insets(5,5,5,5)));
 		panelContent.add(this.getShowOnStart(), LayoutHelper.getGBC(1, 6, 1, 0.0D));
 
@@ -126,9 +127,9 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	private JButton getAttackButton() {
 		if (attackButton == null) {
 			attackButton = new JButton();
-			attackButton.setText(ExtensionQuickStart.getMessageString("quickstart.button.label.attack"));
+			attackButton.setText(Constant.messages.getString("quickstart.button.label.attack"));
 			attackButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/147.png")));	// 'lightning' icon
-			attackButton.setToolTipText(ExtensionQuickStart.getMessageString("quickstart.button.tooltip.attack"));
+			attackButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.attack"));
 
 			attackButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
@@ -143,9 +144,9 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	private JButton getStopButton() {
 		if (stopButton == null) {
 			stopButton = new JButton();
-			stopButton.setText(ExtensionQuickStart.getMessageString("quickstart.button.label.stop"));
+			stopButton.setText(Constant.messages.getString("quickstart.button.label.stop"));
 			stopButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/142.png")));	// 'stop' icon
-			stopButton.setToolTipText(ExtensionQuickStart.getMessageString("quickstart.button.tooltip.stop"));
+			stopButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.stop"));
 			stopButton.setEnabled(false);
 
 			stopButton.addActionListener(new java.awt.event.ActionListener() { 
@@ -163,7 +164,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		try {
 			url = new URL(this.getUrlField().getText());
 		} catch (Exception e) {
-			extension.getView().showWarningDialog(ExtensionQuickStart.getMessageString("quickstart.url.warning.invalid"));
+			extension.getView().showWarningDialog(Constant.messages.getString("quickstart.url.warning.invalid"));
 			return;
 		}
 		getAttackButton().setEnabled(false);
@@ -179,7 +180,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	}
 
 	protected void notifyProgress(AttackThread.Progress progress) {
-		progressLabel.setText(ExtensionQuickStart.getMessageString("quickstart.progress." + progress.name()));
+		progressLabel.setText(Constant.messages.getString("quickstart.progress." + progress.name()));
 		switch (progress) {
 		case complete:
 			getAttackButton().setEnabled(true);
@@ -206,7 +207,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 			showOnStart.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if (extension.getView().showConfirmDialog(ExtensionQuickStart.getMessageString("quickstart.start.remove")) 
+					if (extension.getView().showConfirmDialog(Constant.messages.getString("quickstart.start.remove")) 
 							!= JOptionPane.OK_OPTION) {
 						showOnStart.setSelected(true);
 						return;

@@ -26,7 +26,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
@@ -52,8 +51,6 @@ public class ExtensionScripts extends ExtensionAdaptor {
 	private ScriptParam scriptParam = null;
 	private JMenuItem menuConsoleLink = null;
 	
-    private static ResourceBundle messages = null;
-
     public ExtensionScripts() {
         super();
  		initialize();
@@ -72,9 +69,6 @@ public class ExtensionScripts extends ExtensionAdaptor {
 	private void initialize() {
         this.setName(NAME);
         this.setOrder(60);
-        // Load extension specific language files - these are held in the extension jar
-        messages = ResourceBundle.getBundle(
-        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
 	}
 	
 	@Override
@@ -93,7 +87,7 @@ public class ExtensionScripts extends ExtensionAdaptor {
 	private ConsolePanel getConsolePanel() {
 		if (consolePanel == null) {
 			consolePanel = new ConsolePanel(this);
-		    consolePanel.setName(ExtensionScripts.getMessageString("scripts.panel.title"));
+		    consolePanel.setName(Constant.messages.getString("scripts.panel.title"));
 		}
 		return consolePanel;
 	}
@@ -152,7 +146,7 @@ public class ExtensionScripts extends ExtensionAdaptor {
 
 	@Override
 	public String getDescription() {
-		return getMessageString("scripts.desc");
+		return Constant.messages.getString("scripts.desc");
 	}
 
 	@Override
@@ -167,7 +161,7 @@ public class ExtensionScripts extends ExtensionAdaptor {
 	private JMenuItem getMenuConsoleLink() {
         if (menuConsoleLink == null) {
         	menuConsoleLink = new JMenuItem();
-        	menuConsoleLink.setText(getMessageString("scripts.topmenu.tools.consoleLink"));
+        	menuConsoleLink.setText(Constant.messages.getString("scripts.topmenu.tools.consoleLink"));
 
         	menuConsoleLink.addActionListener(new java.awt.event.ActionListener() {
                 @Override
@@ -179,12 +173,4 @@ public class ExtensionScripts extends ExtensionAdaptor {
         }
         return menuConsoleLink;
 	}
-
-	public static String getMessageString (String key) {
-		if (messages == null) {
-			return null;
-		}
-		return messages.getString(key);
-	}
-
 }

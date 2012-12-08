@@ -171,9 +171,9 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private JButton getRunButton() {
 		if (runButton == null) {
 			runButton = new JButton();
-			runButton.setText(ExtensionScripts.getMessageString("scripts.toolbar.label.run"));
+			runButton.setText(Constant.messages.getString("scripts.toolbar.label.run"));
 			runButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/131.png")));	// 'play' icon
-			runButton.setToolTipText(ExtensionScripts.getMessageString("scripts.toolbar.tooltip.run"));
+			runButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.run"));
 
 			runButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
@@ -189,7 +189,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		if (stopButton == null) {
 			stopButton = new JButton();
 			stopButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/142.png")));	// 'stop' icon
-			stopButton.setToolTipText(ExtensionScripts.getMessageString("scripts.toolbar.tooltip.stop"));
+			stopButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.stop"));
 			stopButton.setEnabled(false);
 
 			stopButton.addActionListener(new java.awt.event.ActionListener() { 
@@ -206,7 +206,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		if (loadButton == null) {
 			loadButton = new JButton();
 			loadButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/047.png")));	// 'open folder' icon
-			loadButton.setToolTipText(ExtensionScripts.getMessageString("scripts.toolbar.tooltip.load"));
+			loadButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.load"));
 
 			loadButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
@@ -222,7 +222,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		if (saveButton == null) {
 			saveButton = new JButton();
 			saveButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/096.png")));	// 'diskette' icon
-			saveButton.setToolTipText(ExtensionScripts.getMessageString("scripts.toolbar.tooltip.save"));
+			saveButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.save"));
 
 			saveButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
@@ -261,6 +261,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		thread.start();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void stopScript() {
 		if (thread != null && thread.isAlive()) {
 			thread.interrupt();
@@ -342,7 +343,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private OutputPanel getOutputPanel() {
 		if (outputPanel == null) {
 			outputPanel = new OutputPanel();
-			outputPanel.append(ExtensionScripts.getMessageString("scripts.welcome"));
+			outputPanel.append(Constant.messages.getString("scripts.welcome"));
 		}
 		return outputPanel;
 	}
