@@ -39,8 +39,6 @@ public class ExtensionQuickStart extends ExtensionAdaptor {
 	private QuickStartPanel quickStartPanel = null;
 	private AttackThread attackThread = null;
 	
-    private static ResourceBundle messages = null;
-
     public ExtensionQuickStart() {
         super();
  		initialize();
@@ -59,9 +57,6 @@ public class ExtensionQuickStart extends ExtensionAdaptor {
 	private void initialize() {
         this.setName(NAME);
         //this.setOrder(0);
-        // Load extension specific language files - these are held in the extension jar
-        messages = ResourceBundle.getBundle(
-        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
 	}
 	
 	@Override
@@ -77,7 +72,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor {
 	private QuickStartPanel getQuickStartPanel() {
 		if (quickStartPanel == null) {
 			quickStartPanel = new QuickStartPanel(this);
-		    quickStartPanel.setName(ExtensionQuickStart.getMessageString("quickstart.panel.title"));
+		    quickStartPanel.setName(Constant.messages.getString("quickstart.panel.title"));
 		    // Force it to be the first one
 			quickStartPanel.setTabIndex(0);
 		}
@@ -92,7 +87,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor {
 
 	@Override
 	public String getDescription() {
-		return getMessageString("quickstart.desc");
+		return Constant.messages.getString("quickstart.desc");
 	}
 
 	@Override
@@ -102,13 +97,6 @@ public class ExtensionQuickStart extends ExtensionAdaptor {
 		} catch (MalformedURLException e) {
 			return null;
 		}
-	}
-	
-	public static String getMessageString (String key) {
-		if (messages == null) {
-			return null;
-		}
-		return messages.getString(key);
 	}
 	
 	public void attack (URL url) {

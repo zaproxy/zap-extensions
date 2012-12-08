@@ -67,6 +67,16 @@
 </echo>
 	</target>
 	
+	<target name="build-ascanrules" description="build the Active scanner rules">
+		<antcall target="build-extension"> 
+			<param name="extension" value="ascanrules"/> 
+			<param name="type" value="release"/> 
+			<param name="version" value="1"/> 
+			<param name="name" value="Active scanner rules"/> 
+			<param name="changes" value=""/> 
+		</antcall>
+	</target>
+
 	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="csrfcountermeasuresscan"/> 
@@ -224,6 +234,16 @@
 		</antcall>
 	</target>
 	
+	<target name="build-pscanrules" description="build the Passive scanner rules">
+		<antcall target="build-extension"> 
+			<param name="extension" value="pscanrules"/> 
+			<param name="type" value="release"/> 
+			<param name="version" value="1"/> 
+			<param name="name" value="Passive scanner rules"/> 
+			<param name="changes" value=""/> 
+		</antcall>
+	</target>
+	
 	<target name="build-quickstart" description="build the quick start extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="quickstart"/> 
@@ -347,6 +367,7 @@
 		
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="build-alertReport"/>
+		<antcall target="build-ascanrules"/>
 		<antcall target="build-csrfcountermeasures"/>
 		<antcall target="build-csrftokenscan"/>
 		<antcall target="build-exampleActiveScan"/>
@@ -358,6 +379,7 @@
 		<antcall target="build-insecureauthentication"/>
 		<antcall target="build-jsfviewstatepscan"/>
 		<antcall target="build-ldapinjection"/>
+		<antcall target="build-pscanrules"/>
 		<antcall target="build-quickstart"/>
 		<antcall target="build-scripts"/>
 		<antcall target="build-servletParamPollution"/>
@@ -381,6 +403,10 @@
 		<!--copy file="${dist}/${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
 	</target>
 
+	<target name="deploy-ascanrules" description="deploy the active scan rules">
+		<antcall target="deploy-extension"> <param name="extension" value="ascanrules"/> </antcall>
+	</target>
+	
 	<target name="deploy-csrfcountermeasures" description="deploy the csrfcountermeasures extension">
 		<antcall target="deploy-extension"> <param name="extension" value="csrfcountermeasuresscan"/> </antcall>
 	</target>
@@ -423,6 +449,10 @@
 
 	<target name="deploy-ldapinjectionscan" description="deploy the ldapinjection extension">
 		<antcall target="deploy-extension"> <param name="extension" value="ldapinjectionscan"/> </antcall>
+	</target>
+	
+	<target name="deploy-pscanrules" description="deploy the passive scan rules">
+		<antcall target="deploy-extension"> <param name="extension" value="pscanrules"/> </antcall>
 	</target>
 	
 	<target name="deploy-quickstart" description="deploy the quick start extension">
@@ -468,6 +498,7 @@
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-alertReport"/>
+		<antcall target="deploy-ascanrules"/>
 		<antcall target="deploy-csrfcountermeasures"/>
 		<antcall target="deploy-csrftokenscan"/>
 		<antcall target="deploy-exampleActiveScan"/>
@@ -479,6 +510,7 @@
 		<antcall target="deploy-insecureauthenticationscan"/>
 		<antcall target="deploy-jsfviewstatepscan"/>
 		<antcall target="deploy-ldapinjectionscan"/>
+		<antcall target="deploy-pscanrules"/>
 		<antcall target="deploy-scripts"/>
 		<antcall target="deploy-servletParamPollution"/>
 		<antcall target="deploy-sessionfixationscan"/>

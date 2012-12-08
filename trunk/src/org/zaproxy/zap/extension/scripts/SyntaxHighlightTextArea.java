@@ -42,13 +42,13 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 
 	private static final long serialVersionUID = -9082089105656842054L;
 
-	public static final String PLAIN_SYNTAX_LABEL = ExtensionScripts.getMessageString("scripts.syntaxtext.syntax.plain");
-	public static final String CLOJURE_SYNTAX_LABEL = ExtensionScripts.getMessageString("scripts.syntaxtext.syntax.clojure");
-	public static final String GROOVY_SYNTAX_LABEL = ExtensionScripts.getMessageString("scripts.syntaxtext.syntax.groovy");
-	public static final String JAVASCRIPT_SYNTAX_LABEL = ExtensionScripts.getMessageString("scripts.syntaxtext.syntax.javascript");
-	public static final String PYTHON_SYNTAX_LABEL = ExtensionScripts.getMessageString("scripts.syntaxtext.syntax.python");
-	public static final String RUBY_SYNTAX_LABEL = ExtensionScripts.getMessageString("scripts.syntaxtext.syntax.ruby");
-	public static final String SCALA_SYNTAX_LABEL = ExtensionScripts.getMessageString("scripts.syntaxtext.syntax.scala");
+	public static final String PLAIN_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.plain");
+	public static final String CLOJURE_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.clojure");
+	public static final String GROOVY_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.groovy");
+	public static final String JAVASCRIPT_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.javascript");
+	public static final String PYTHON_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.python");
+	public static final String RUBY_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.ruby");
+	public static final String SCALA_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.scala");
 
 	private static final String ANTI_ALIASING = "aa";
 	private static final String SHOW_LINE_NUMBERS = "linenumbers";
