@@ -21,7 +21,7 @@ The following extensions are currently available for the latest 1.4 release:
 || Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-viewStatePScan-alpha-1.jar viewStatePscan] || Alexandre Herzog, [http://www.csnc.ch/ Compass Security] || View State passive scanner ||
 || Alpha || 3 || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sqlinjectionscan-alpha-3.jar SQL Injection Scanners] || ZAP Core Team (Colm O'Flaherty) || SQL Injection Scanners (complete re-write), including generic, MySQL, Hypersonic/HSQL, Oracle, and now PostgreSQL specific scanners ||
 
-If you are using the latest ZAP Weekly Release then you can browse and download addons from within ZAP by clicking on this button in the toolbar:
+If you are using the latest ZAP [http://code.google.com/p/zaproxy/wiki/WeeklyReleases Weekly Release] then you can browse and download addons from within ZAP by clicking on this button in the toolbar:
 
 https://zap-extensions.googlecode.com/svn/wiki/zap-screenshot-browse-addons.png
 
