@@ -244,26 +244,6 @@
 		</antcall>
 	</target>
 	
-	<target name="build-quickstart" description="build the quick start extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="quickstart"/> 
-			<param name="type" value="weekly"/> 
-			<param name="version" value="2"/> 
-			<param name="name" value="Quick start tab"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-	<target name="build-scripts" description="build the scripts extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="scripts"/> 
-			<param name="type" value="weekly"/> 
-			<param name="version" value="3"/> 
-			<param name="name" value="The Script Console - dynamic access to internal ZAP data structures"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
 	<target name="build-sessionfixation" description="build the SessionFixation extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="sessionfixationscan"/> 
@@ -305,31 +285,6 @@
 		</antcall>
 	</target>
 	
-	<target name="build-tokengen" description="build the tokengen extension">
-		<!-- Cant use build-extension as other classes needed -->
-		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
-		<property name="tokengen.type" value="beta" />
-		<property name="tokengen.version" value="2" />
-		<property name="file" value="tokengen-${tokengen.type}-${tokengen.version}.zap" />
-		<jar jarfile="${dist}/${file}" update="true" compress="false">
-			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/tokengen/**"/>
-				<include name="com/fasteasytrade/JRandTest/**"/>
-			</zipfileset>
-			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/tokengen/Messages*"/>
-			</zipfileset>
-		</jar>
-		<antcall target="append-to-versions-file"> 
-			<param name="extension" value="tokengen"/> 
-			<param name="type" value="${tokengen.type}"/> 
-			<param name="version" value="${tokengen.version}"/> 
-			<param name="name" value="Token Generator and Analyzer"/> 
-			<param name="changes" value=""/> 
-			<param name="file" value="${file}"/> 
-		</antcall>
-	</target>
-
 	<target name="build-usernameenumeration" description="build the Username Enumeration scanner">
 		<antcall target="build-extension"> 
 			<param name="extension" value="usernameenumerationscan"/> 
@@ -350,23 +305,12 @@
 		</antcall>
 	</target>
 	
-    <target name="build-alertReport" description="build the alertReport extension">
-        <antcall target="build-extensionAndDeps">
-            <param name="extension" value="alertReport"/>
-            <param name="type" value="beta"/>
-            <param name="version" value="6"/>
-			<param name="name" value="Report alert generator in pdf or odt format."/> 
-			<param name="changes" value=""/> 
-        </antcall>
-    </target>
-	
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 		
 		<echo file="${versions.file}" append="true">&lt;ZAP></echo>
 		
 		<!-- Keep in alphabetical order ;) -->
-		<antcall target="build-alertReport"/>
 		<antcall target="build-ascanrules"/>
 		<antcall target="build-csrfcountermeasures"/>
 		<antcall target="build-csrftokenscan"/>
@@ -380,13 +324,10 @@
 		<antcall target="build-jsfviewstatepscan"/>
 		<antcall target="build-ldapinjection"/>
 		<antcall target="build-pscanrules"/>
-		<antcall target="build-quickstart"/>
-		<antcall target="build-scripts"/>
 		<antcall target="build-servletParamPollution"/>
 		<antcall target="build-sessionfixation"/>
 		<antcall target="build-spiderAjax"/>
 		<antcall target="build-sqlinjection"/>
-		<antcall target="build-tokengen"/>
 		<antcall target="build-usernameenumeration"/>
 		<antcall target="build-viewStatePScan"/>		
 
@@ -455,14 +396,6 @@
 		<antcall target="deploy-extension"> <param name="extension" value="pscanrules"/> </antcall>
 	</target>
 	
-	<target name="deploy-quickstart" description="deploy the quick start extension">
-		<antcall target="deploy-extension"> <param name="extension" value="quickstart"/> </antcall>
-	</target>
-	
-	<target name="deploy-scripts" description="deploy the scripts extension">
-		<antcall target="deploy-extension"> <param name="extension" value="scripts"/> </antcall>
-	</target>
-	
 	<target name="deploy-servletParamPollution" description="deploy the servletParamPollution extension">
 		<antcall target="deploy-extension"> <param name="extension" value="servletParamPollution"/> </antcall>
 	</target>
@@ -479,10 +412,6 @@
 		<antcall target="deploy-extension"> <param name="extension" value="sqlinjectionscan"/> </antcall>
 	</target>
 	
-	<target name="deploy-tokengen" description="deploy the tokengen extension">
-		<antcall target="deploy-extension"> <param name="extension" value="tokengen"/> </antcall>
-	</target>
-
 	<target name="deploy-usernameenumerationscan" description="deploy the username enumeration extension">
 		<antcall target="deploy-extension"> <param name="extension" value="usernameenumerationscan"/> </antcall>
 	</target>
@@ -491,13 +420,8 @@
 		<antcall target="deploy-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
 	</target>
 	
-	<target name="deploy-alertReport" description="deploy the Alert Report ZAP extension">
-			<antcall target="deploy-extension"> <param name="extension" value="alertReport"/> </antcall>
-		</target>
-	
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
-		<antcall target="deploy-alertReport"/>
 		<antcall target="deploy-ascanrules"/>
 		<antcall target="deploy-csrfcountermeasures"/>
 		<antcall target="deploy-csrftokenscan"/>
@@ -511,12 +435,10 @@
 		<antcall target="deploy-jsfviewstatepscan"/>
 		<antcall target="deploy-ldapinjectionscan"/>
 		<antcall target="deploy-pscanrules"/>
-		<antcall target="deploy-scripts"/>
 		<antcall target="deploy-servletParamPollution"/>
 		<antcall target="deploy-sessionfixationscan"/>
 		<antcall target="deploy-spiderAjax"/>
 		<antcall target="deploy-sqlinjectionscan"/>
-		<antcall target="deploy-tokengen"/>
 		<antcall target="deploy-usernameenumerationscan"/>
 		<antcall target="deploy-viewStatePScan"/>
 	</target>
