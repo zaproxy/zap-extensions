@@ -20,6 +20,8 @@ package org.zaproxy.zap.extension.pscanrules;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.htmlparser.jericho.Source;
 
@@ -27,14 +29,15 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
+import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 
 	private PassiveScanThread parent = null;
 	private static final String debugErrorFile = "xml/debug-error-messages.txt";
 	private static final Logger logger = Logger.getLogger(InformationDisclosureDebugErrors.class);
+	private static List<String> debugErrorMessages = null;
 	
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -68,29 +71,41 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 	}
 	
 	private String doesResponseContainsDebugErrorMessage (HttpBody body) {
-		String line = null;
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(debugErrorFile));
-			String sBody = body.toString().toLowerCase();
-			while ((line = reader.readLine()) != null) {
-				if (!line.startsWith("#") && sBody.contains(line.toLowerCase())) {
-					return line;
-				}
-			}
-		} catch (IOException e) {
-			logger.debug("Error on opening/reading debug error file. Error: " + e.getMessage());
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();			
-				}
-				catch (IOException e) {
-					logger.debug("Error on closing the file reader. Error: " + e.getMessage());
-				}
+		String sBody = body.toString().toLowerCase();
+		for (String msg: getDebugErrorMessages()) {
+			if (sBody.contains(msg.toLowerCase())) {
+				return msg;
 			}
 		}
 		return null;
+	}
+	
+	private List<String> getDebugErrorMessages() {
+		if (debugErrorMessages == null) {
+			debugErrorMessages = new ArrayList<String>();
+			String line = null;
+			BufferedReader reader = null;
+			try {
+				reader = new BufferedReader(new FileReader(debugErrorFile));
+				while ((line = reader.readLine()) != null) {
+					if (!line.startsWith("#")) {
+						debugErrorMessages.add(line);
+					}
+				}
+			} catch (IOException e) {
+				logger.debug("Error on opening/reading debug error file", e);
+			} finally {
+				if (reader != null) {
+					try {
+						reader.close();			
+					}
+					catch (IOException e) {
+						logger.debug("Error on closing the file reader", e);
+					}
+				}
+			}
+		}
+		return debugErrorMessages;
 	}
 	
 	@Override
