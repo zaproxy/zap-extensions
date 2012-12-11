@@ -184,16 +184,6 @@
 		</antcall>
 	</target>
 
-	<target name="build-highlighter" description="build the highlighter extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="highlighter"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Highlighter"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
 	<target name="build-httpParameterPollution" description="build the httpParameterPollution extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="httpParameterPollution"/> 
@@ -374,7 +364,6 @@
 		<antcall target="build-examplePassiveScan"/>
 		<antcall target="build-exampleRightClickMsg"/>
 		<antcall target="build-exampleTopMenu"/>
-		<antcall target="build-highlighter"/>
 		<antcall target="build-httpParameterPollution"/>
 		<antcall target="build-insecureauthentication"/>
 		<antcall target="build-jsfviewstatepscan"/>
@@ -431,10 +420,6 @@
 		<antcall target="deploy-extension"> <param name="extension" value="exampleTopMenu"/> </antcall>
 	</target>
 
-	<target name="deploy-highlighter" description="deploy the highlighter extension">
-		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
-	</target>
-	
 	<target name="deploy-httpParameterPollution" description="deploy the httpParameterPollution extension">
 			<antcall target="deploy-extension"> <param name="extension" value="httpParameterPollution"/> </antcall>
 	</target>
@@ -505,7 +490,6 @@
 		<antcall target="deploy-examplePassiveScan"/>
 		<antcall target="deploy-exampleRightClickMsg"/>
 		<antcall target="deploy-exampleTopMenu"/>
-		<antcall target="deploy-highlighter"/>
 		<antcall target="deploy-httpParameterPollution"/>
 		<antcall target="deploy-insecureauthenticationscan"/>
 		<antcall target="deploy-jsfviewstatepscan"/>
