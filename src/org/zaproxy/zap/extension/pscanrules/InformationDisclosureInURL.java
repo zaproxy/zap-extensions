@@ -20,6 +20,8 @@ package org.zaproxy.zap.extension.pscanrules;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.*;
 
@@ -37,6 +39,7 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 	private PassiveScanThread parent = null;
 	private static final String URLSensitiveInformationFile = "xml/URL-information-disclosure-messages.txt";
 	private static final Logger logger = Logger.getLogger(InformationDisclosureInURL.class);
+	private static List<String> infoDisclosureMessages = null;
 
 	
 	@Override
@@ -80,31 +83,41 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 	}
 	
 	private boolean doesParamNameContainsSensitiveInformation (String paramName) {
-		String line = null;
-		BufferedReader reader = null;
-		try {
-			// TODO cache this :)
-			reader = new BufferedReader(new FileReader(URLSensitiveInformationFile));
-			paramName = paramName.toLowerCase();
-			while ((line = reader.readLine()) != null) {
-				// performed the check with contains to match if we have passwordApp or whatever as we are only checking against generic strings
-				if (!line.startsWith("#") && paramName.contains(line.toLowerCase())) {
-					return true;
-				}
-			}
-		} catch (IOException e) {
-			logger.debug("Error on opening/reading URL information disclosure file. Error: " + e.getMessage());
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();			
-				}
-				catch (IOException e) {
-					logger.debug("Error on closing the file reader. Error: " + e.getMessage());
-				}
+		paramName = paramName.toLowerCase();
+		for (String msg: getInfoDisclosureMessages()) {
+			if (paramName.contains(msg.toLowerCase())) {
+				return true;
 			}
 		}
 		return false;
+	}
+
+	private List<String> getInfoDisclosureMessages() {
+		if (infoDisclosureMessages == null) {
+			infoDisclosureMessages = new ArrayList<String>();
+			String line = null;
+			BufferedReader reader = null;
+			try {
+				reader = new BufferedReader(new FileReader(URLSensitiveInformationFile));
+				while ((line = reader.readLine()) != null) {
+					if (!line.startsWith("#")) {
+						infoDisclosureMessages.add(line);
+					}
+				}
+			} catch (IOException e) {
+				logger.debug("Error on opening/reading debug error file", e);
+			} finally {
+				if (reader != null) {
+					try {
+						reader.close();			
+					}
+					catch (IOException e) {
+						logger.debug("Error on closing the file reader", e);
+					}
+				}
+			}
+		}
+		return infoDisclosureMessages;
 	}
 
 	@Override
