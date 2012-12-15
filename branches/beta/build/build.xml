@@ -67,32 +67,12 @@
 </echo>
 	</target>
 	
-	<target name="build-ascanrules" description="build the Active scanner rules">
+	<target name="build-ascanrulesBeta" description="build the Active scanner rules">
 		<antcall target="build-extension"> 
-			<param name="extension" value="ascanrules"/> 
-			<param name="type" value="release"/> 
+			<param name="extension" value="ascanrulesBeta"/> 
+			<param name="type" value="beta"/> 
 			<param name="version" value="1"/> 
-			<param name="name" value="Active scanner rules"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-csrfcountermeasures" description="build the CSRF Countermeasures extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="csrfcountermeasuresscan"/> 
-			<param name="type" value="weekly"/> 
-			<param name="version" value="2"/> 
-			<param name="name" value="CSRF Countermeasures Scanner"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-	<target name="build-csrftokenscan" description="build the CSRF Token Scan extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="csrftokenscan"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="CSRF Token Scan"/> 
+			<param name="name" value="Active scanner rules - beta"/> 
 			<param name="changes" value=""/> 
 		</antcall>
 	</target>
@@ -144,92 +124,13 @@
 		</antcall>
 	</target>
 	
-	<target name="build-exampleActiveScan" description="build the exampleActiveScan extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="exampleActiveScan"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Example active scan rule"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-examplePassiveScan" description="build the examplePassiveScan extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="examplePassiveScan"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Example passive scan rule"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-exampleRightClickMsg" description="build the exampleRightClickMsg extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="exampleRightClickMsg"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Example extension demonstrating right-click message menu"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-exampleTopMenu" description="build the exampleTopMenu extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="exampleTopMenu"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Example extension demonstrating to top level menu"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-httpParameterPollution" description="build the httpParameterPollution extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="httpParameterPollution"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="HTTP Parameter Pollution Scanner"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
 	
-	<target name="build-insecureauthentication" description="build the InsecureAuthentication extension">
+	<target name="build-pscanrulesBeta" description="build the Passive scanner rules">
 		<antcall target="build-extension"> 
-			<param name="extension" value="insecureauthentication"/> 
-			<param name="type" value="weekly"/> 
-			<param name="version" value="3"/> 
-			<param name="name" value="Insecure Authentication plugin - detects the existence and usage of insecure authentication methods"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-    <target name="build-jsfviewstatepscan" description="build the jsfviewstatepscan extension">
-        <antcall target="build-extension">
-            <param name="extension" value="jsfviewstatepscan"/>
-            <param name="type" value="alpha"/>
-            <param name="version" value="1"/>
-			<param name="name" value="JSF Viewstate Passive Scanner"/> 
-			<param name="changes" value=""/> 
-        </antcall>
-    </target>		
-	
-	<target name="build-ldapinjection" description="build the LDAPInjection extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="ldapinjectionscan"/> 
-			<param name="type" value="weekly"/> 
+			<param name="extension" value="pscanrulesBeta"/> 
+			<param name="type" value="beta"/> 
 			<param name="version" value="1"/> 
-			<param name="name" value="LDAP Injection Scanner"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-	<target name="build-pscanrules" description="build the Passive scanner rules">
-		<antcall target="build-extension"> 
-			<param name="extension" value="pscanrules"/> 
-			<param name="type" value="release"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Passive scanner rules"/> 
+			<param name="name" value="Passive scanner rules - beta"/> 
 			<param name="changes" value=""/> 
 		</antcall>
 	</target>
@@ -253,44 +154,13 @@
 			<param name="changes" value=""/> 
 		</antcall>
 	</target>
-	
-	<target name="build-sessionfixation" description="build the SessionFixation extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="sessionfixationscan"/> 
-			<param name="type" value="weekly"/> 
-			<param name="version" value="8"/> 
-			<param name="name" value="Session Fixation Scanner"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-servletParamPollution" description="build the ServletParamPollution extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="servletParamPollution"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Parameter Pollution Scanner"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	
+		
 	<target name="build-spiderAjax" description="build the spiderAjax extension">
 		<antcall target="build-extensionAndDeps">
 			<param name="extension" value="spiderAjax"/>
 			<param name="type" value="weekly"/>
 			<param name="version" value="1"/>
 			<param name="name" value="AJAX Spider"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-	<target name="build-sqlinjection" description="build the SQL Injection extensions">
-		<antcall target="build-extension"> 
-			<param name="extension" value="sqlinjectionscan"/> 
-			<param name="type" value="weekly"/> 
-			<param name="version" value="3"/> 
-			<param name="name" value="SQL Injection scanners (generic, MySQL, Hypersonic SQL/HSQL, Oracle, PostgreSQL)"/> 
 			<param name="changes" value=""/> 
 		</antcall>
 	</target>
@@ -320,26 +190,6 @@
 		</antcall>
 	</target>
 
-	<target name="build-usernameenumeration" description="build the Username Enumeration scanner">
-		<antcall target="build-extension"> 
-			<param name="extension" value="usernameenumerationscan"/> 
-			<param name="type" value="weekly"/> 
-			<param name="version" value="3"/> 
-			<param name="name" value="Username Enumeration Scanner"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-viewStatePScan" description="build the viewStatePScan extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="viewStatePScan"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="View State passive scanner"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
     <target name="build-alertReport" description="build the alertReport extension">
         <antcall target="build-extensionAndDeps">
             <param name="extension" value="alertReport"/>
@@ -357,27 +207,12 @@
 		
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="build-alertReport"/>
-		<antcall target="build-ascanrules"/>
-		<antcall target="build-csrfcountermeasures"/>
-		<antcall target="build-csrftokenscan"/>
-		<antcall target="build-exampleActiveScan"/>
-		<antcall target="build-examplePassiveScan"/>
-		<antcall target="build-exampleRightClickMsg"/>
-		<antcall target="build-exampleTopMenu"/>
-		<antcall target="build-httpParameterPollution"/>
-		<antcall target="build-insecureauthentication"/>
-		<antcall target="build-jsfviewstatepscan"/>
-		<antcall target="build-ldapinjection"/>
-		<antcall target="build-pscanrules"/>
+		<antcall target="build-ascanrulesBeta"/>
+		<antcall target="build-pscanrulesBeta"/>
 		<antcall target="build-quickstart"/>
 		<antcall target="build-scripts"/>
-		<antcall target="build-servletParamPollution"/>
-		<antcall target="build-sessionfixation"/>
 		<antcall target="build-spiderAjax"/>
-		<antcall target="build-sqlinjection"/>
 		<antcall target="build-tokengen"/>
-		<antcall target="build-usernameenumeration"/>
-		<antcall target="build-viewStatePScan"/>		
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 
@@ -393,51 +228,11 @@
 	</target>
 
 	<target name="deploy-ascanrules" description="deploy the active scan rules">
-		<antcall target="deploy-extension"> <param name="extension" value="ascanrules"/> </antcall>
-	</target>
-	
-	<target name="deploy-csrfcountermeasures" description="deploy the csrfcountermeasures extension">
-		<antcall target="deploy-extension"> <param name="extension" value="csrfcountermeasuresscan"/> </antcall>
-	</target>
-	
-	<target name="deploy-csrftokenscan" description="deploy the csrftokenscan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="csrftokenscan"/> </antcall>
-	</target>
-
-	<target name="deploy-exampleActiveScan" description="deploy the exampleActiveScan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="exampleActiveScan"/> </antcall>
-	</target>
-
-	<target name="deploy-examplePassiveScan" description="deploy the examplePassiveScan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="examplePassiveScan"/> </antcall>
-	</target>
-
-	<target name="deploy-exampleRightClickMsg" description="deploy the exampleRightClickMsg extension">
-		<antcall target="deploy-extension"> <param name="extension" value="exampleRightClickMsg"/> </antcall>
-	</target>
-
-	<target name="deploy-exampleTopMenu" description="deploy the exampleTopMenu extension">
-		<antcall target="deploy-extension"> <param name="extension" value="exampleTopMenu"/> </antcall>
-	</target>
-
-	<target name="deploy-httpParameterPollution" description="deploy the httpParameterPollution extension">
-			<antcall target="deploy-extension"> <param name="extension" value="httpParameterPollution"/> </antcall>
-	</target>
-	
-	<target name="deploy-insecureauthenticationscan" description="deploy the insecureauthentication extension">
-		<antcall target="deploy-extension"> <param name="extension" value="insecureauthentication"/> </antcall>
-	</target>
-	
-	<target name="deploy-jsfviewstatepscan" description="deploy the jsfviewstatepscan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="jsfviewstatepscan"/> </antcall>
-	</target>	
-
-	<target name="deploy-ldapinjectionscan" description="deploy the ldapinjection extension">
-		<antcall target="deploy-extension"> <param name="extension" value="ldapinjectionscan"/> </antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="ascanrulesBeta"/> </antcall>
 	</target>
 	
 	<target name="deploy-pscanrules" description="deploy the passive scan rules">
-		<antcall target="deploy-extension"> <param name="extension" value="pscanrules"/> </antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="pscanrulesBeta"/> </antcall>
 	</target>
 	
 	<target name="deploy-quickstart" description="deploy the quick start extension">
@@ -448,34 +243,14 @@
 		<antcall target="deploy-extension"> <param name="extension" value="scripts"/> </antcall>
 	</target>
 	
-	<target name="deploy-servletParamPollution" description="deploy the servletParamPollution extension">
-		<antcall target="deploy-extension"> <param name="extension" value="servletParamPollution"/> </antcall>
-	</target>
-
-	<target name="deploy-sessionfixationscan" description="deploy the sessionfixation extension">
-		<antcall target="deploy-extension"> <param name="extension" value="sessionfixationscan"/> </antcall>
-	</target>
-	
 	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
 		<antcall target="deploy-extension"> <param name="extension" value="spiderAjax"/> </antcall>
 	</target>
 
-	<target name="deploy-sqlinjectionscan" description="deploy the sqlinjection extensions">
-		<antcall target="deploy-extension"> <param name="extension" value="sqlinjectionscan"/> </antcall>
-	</target>
-	
 	<target name="deploy-tokengen" description="deploy the tokengen extension">
 		<antcall target="deploy-extension"> <param name="extension" value="tokengen"/> </antcall>
 	</target>
 
-	<target name="deploy-usernameenumerationscan" description="deploy the username enumeration extension">
-		<antcall target="deploy-extension"> <param name="extension" value="usernameenumerationscan"/> </antcall>
-	</target>
-
-	<target name="deploy-viewStatePScan" description="deploy the viewStatePScan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="viewStatePScan"/> </antcall>
-	</target>
-	
 	<target name="deploy-alertReport" description="deploy the Alert Report ZAP extension">
 			<antcall target="deploy-extension"> <param name="extension" value="alertReport"/> </antcall>
 		</target>
@@ -484,40 +259,20 @@
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-alertReport"/>
 		<antcall target="deploy-ascanrules"/>
-		<antcall target="deploy-csrfcountermeasures"/>
-		<antcall target="deploy-csrftokenscan"/>
-		<antcall target="deploy-exampleActiveScan"/>
-		<antcall target="deploy-examplePassiveScan"/>
-		<antcall target="deploy-exampleRightClickMsg"/>
-		<antcall target="deploy-exampleTopMenu"/>
-		<antcall target="deploy-httpParameterPollution"/>
-		<antcall target="deploy-insecureauthenticationscan"/>
-		<antcall target="deploy-jsfviewstatepscan"/>
-		<antcall target="deploy-ldapinjectionscan"/>
 		<antcall target="deploy-pscanrules"/>
 		<antcall target="deploy-scripts"/>
-		<antcall target="deploy-servletParamPollution"/>
-		<antcall target="deploy-sessionfixationscan"/>
 		<antcall target="deploy-spiderAjax"/>
-		<antcall target="deploy-sqlinjectionscan"/>
 		<antcall target="deploy-tokengen"/>
-		<antcall target="deploy-usernameenumerationscan"/>
-		<antcall target="deploy-viewStatePScan"/>
 	</target>
 
-	<target name="deploy-weekly" description="deploy all of the extensions with status 'weekly' or 'release'">
+	<target name="deploy-weekly" description="deploy extensions to be included in weekly releases">
 		<!-- Set to compile with debug information -->
 		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
-		<!-- Clear out previous plugins -->
-		<delete includeEmptyDirs="true">
-			<fileset dir="${zap.plugin.dir}" includes="*.jar" />
-			<fileset dir="${zap.plugin.dir}" includes="*.zap" />
-		</delete>
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="*-weekly-*.zap"/>
-				<include name="*-release-*.zap"/>
+				<include name="ascanrulesBeta-beta-*.zap"/>
+				<include name="pscanrulesBeta-beta*.zap"/>
 			</fileset>
 		</copy>
 	</target>
