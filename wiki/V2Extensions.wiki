@@ -1,0 +1,4 @@
+
+If you are using the latest ZAP [http://code.google.com/p/zaproxy/wiki/WeeklyReleases Weekly Release] then you can browse and download addons from within ZAP by clicking on this button in the toolbar:
+
+https://zap-extensions.googlecode.com/svn/wiki/zap-screenshot-browse-addons.png
