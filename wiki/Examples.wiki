@@ -1,13 +1,5 @@
-#summary One-sentence summary of this page.
-
-= Introduction =
-
-Add your content here.
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+This project contains example templates to help you get started when developing new ones:
+  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleActiveScan/ExampleActiveScanner.java Active Scanner rule]
+  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/examplePassiveScan/ExamplePassiveScanner.java Passive Scanner rule]
+  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleRightClickMsg/ExtensionRightClickMsgMenu.java Extension including a right click menu item]
+  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleTopMenu/ExtensionTopMenu.java Extension including a top level menu item]
