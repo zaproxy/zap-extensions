@@ -65,7 +65,7 @@ public class AlertReportExportMenuItem extends ExtensionPopupMenuItem {
 		//choose file 
 		String filename =extension.getFileName();
 		if (!filename.isEmpty()){
-			java.util.List<List<Alert>> alerts = new ArrayList<>();
+			java.util.List<List<Alert>> alerts = new ArrayList<List<Alert>>();
 			// generate full report
 			if (fullReport){
 				java.util.List<Alert> allAlerts = extension.getAllAlerts();
@@ -145,12 +145,12 @@ public class AlertReportExportMenuItem extends ExtensionPopupMenuItem {
 	/**
 	 * This method initializes this
 	 * 
+	 * @return void
 	 */
 	private void initialize() {
 
 		this.addActionListener(new java.awt.event.ActionListener() {
 
-			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 
                 generateAlertReport(false);
