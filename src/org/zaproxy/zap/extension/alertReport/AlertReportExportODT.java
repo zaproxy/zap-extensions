@@ -63,8 +63,6 @@ public class AlertReportExportODT {
 	// fonts
 	private static org.odftoolkit.simple.style.Font fontText = new org.odftoolkit.simple.style.Font(
 			"Arial", StyleTypeDefinitions.FontStyle.REGULAR, 12, Color.BLACK);
-	private static org.odftoolkit.simple.style.Font fontTextBold = new org.odftoolkit.simple.style.Font(
-			"Arial", StyleTypeDefinitions.FontStyle.BOLD, 12, Color.BLACK);
 	private static org.odftoolkit.simple.style.Font fontTitleTextReport = new org.odftoolkit.simple.style.Font(
 			"Arial", StyleTypeDefinitions.FontStyle.BOLD, 28, Color.BLACK);
 	private static org.odftoolkit.simple.style.Font fontSmallBold = new org.odftoolkit.simple.style.Font(
@@ -86,24 +84,26 @@ public class AlertReportExportODT {
 		}
 	}
 
-	public boolean exportAlert(java.util.List<List<Alert>> alerts, String fileName,
-			ExtensionAlertReportExport extensionExport) {
+	public boolean exportAlert(java.util.List<List<Alert>> alerts,
+			String fileName, ExtensionAlertReportExport extensionExport) {
 		try {
 			TextDocument outputDocument = null;
 			extension = extensionExport;
-			//add attach document is exist
-			if (!extension.getParams().getDocumentAttach().isEmpty()){
-				outputDocument = TextDocument.loadDocument(extension.getParams().getDocumentAttach());
-			}else{
+			// add attach document is exist
+			if (!extension.getParams().getDocumentAttach().isEmpty()) {
+				outputDocument = TextDocument.loadDocument(extension
+						.getParams().getDocumentAttach());
+			} else {
 				outputDocument = TextDocument.newTextDocument();
 				addMetaData(outputDocument);
 				addTitlePage(outputDocument);
 			}
 			for (int i = 0; i < alerts.size(); i++) {
-				java.util.List<Alert> alertAux = alerts.get(i);
-				addContent(outputDocument,alertAux);
+				java.util.List<Alert> alertAux = (java.util.List<Alert>) alerts
+						.get(i);
+				addContent(outputDocument, alertAux);
 			}
-			saveOutputDocument(outputDocument,fileName);
+			saveOutputDocument(outputDocument, fileName);
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -112,80 +112,85 @@ public class AlertReportExportODT {
 
 	}
 
-    /**
-     * Setting metadata document
-     * @param outputDocument
-     * @throws Exception
-     */
-	private static void addMetaData(TextDocument outputDocument) throws Exception {
-		  OdfFileDom metadom = outputDocument.getMetaDom();
-	      Meta metadata = new Meta(metadom);
-		  metadata.addKeyword(extension.getParams().getPdfKeywords());
-	      metadata.setCreator(extension.getParams().getAuthorName());
-	      metadata.setSubject(extension.getParams().getCustomerName());
-	      metadata.setTitle(extension.getParams().getTitleReport());
-		
+	/**
+	 * Setting metadata document
+	 * 
+	 * @param outputDocument
+	 * @throws Exception
+	 */
+	private static void addMetaData(TextDocument outputDocument)
+			throws Exception {
+		OdfFileDom metadom = outputDocument.getMetaDom();
+		Meta metadata = new Meta(metadom);
+		metadata.addKeyword(extension.getParams().getPdfKeywords());
+		metadata.setCreator(extension.getParams().getAuthorName());
+		metadata.setSubject(extension.getParams().getCustomerName());
+		metadata.setTitle(extension.getParams().getTitleReport());
+
 	}
-    /**
-     * Add lines blank to document
-     * @param outputDocument
-     * @param size
-     * @throws Exception
-     */
-	private static void addLines(TextDocument outputDocument,int size) throws Exception {
+
+	/**
+	 * Add lines blank to document
+	 * 
+	 * @param outputDocument
+	 * @param size
+	 * @throws Exception
+	 */
+	private static void addLines(TextDocument outputDocument, int size)
+			throws Exception {
 		for (int i = 0; i < size; i++) {
 			outputDocument.addParagraph(null);
 		}
 	}
 
-	/*private static void addFooter(TextDocument outputDocument){
-		Footer footer = outputDocument.getFooter();
-		
-		Table table1 = footer.addTable(1, 1);
+	/*
+	 * private static void addFooter(TextDocument outputDocument){ Footer footer
+	 * = outputDocument.getFooter();
+	 * 
+	 * Table table1 = footer.addTable(1, 1);
+	 * 
+	 * Cell cellByPosition = table1.getCellByPosition(0, 0);
+	 * 
+	 * cellByPosition.setStringValue("Footer");
+	 * cellByPosition.setHorizontalAlignment(HorizontalAlignmentType.CENTER);
+	 * cellByPosition.setFont(fontSmall); }
+	 * 
+	 * private static void addHeader(TextDocument outputDocument){ Header
+	 * docHeader = outputDocument.getHeader();
+	 * 
+	 * Table table1 = docHeader.addTable(1, 2);
+	 * 
+	 * table1.getCellByPosition(0, 0).setStringValue("header table cell");
+	 * 
+	 * //Cell cell = table1.getCellByPosition(1, 0);
+	 * 
+	 * //Image image1 = cell.setImage(new URI("file:/c:/image.jpg")); }
+	 */
+	private static void addTitlePage(TextDocument outputDocument)
+			throws Exception {
 
-		Cell cellByPosition = table1.getCellByPosition(0, 0);
+		addLines(outputDocument, 2);
 
-		cellByPosition.setStringValue("Footer");
-		cellByPosition.setHorizontalAlignment(HorizontalAlignmentType.CENTER);
-		cellByPosition.setFont(fontSmall);
-	}
-	
-	private static void addHeader(TextDocument outputDocument){
-		Header docHeader = outputDocument.getHeader();
-		
-		Table table1 = docHeader.addTable(1, 2);
-
-		table1.getCellByPosition(0, 0).setStringValue("header table cell");
-
-		//Cell cell = table1.getCellByPosition(1, 0);
-
-		//Image image1 = cell.setImage(new URI("file:/c:/image.jpg"));
-	}
-	*/
-	private static void addTitlePage(TextDocument outputDocument) throws Exception {
-
-		addLines(outputDocument,2);
-		
 		Paragraph para = outputDocument.addParagraph(null);
-		
-		//add company logo
+
+		// add company logo
 		addImage(para, extension.getParams().getLogoFileName(), 0);
-	
-		addLines(outputDocument,4);
+
+		addLines(outputDocument, 4);
 		// Lets write a big header
-	    para = outputDocument.addParagraph(null);
-		
-	    para.setTextContent(extension.getParams().getTitleReport());
-	    para.setHorizontalAlignment(HorizontalAlignmentType.CENTER);
-	    para.setFont(fontTitleTextReport);
-		
-		addLines(outputDocument,4);
+		para = outputDocument.addParagraph(null);
+
+		para.setTextContent(extension.getParams().getTitleReport());
+		para.setHorizontalAlignment(HorizontalAlignmentType.CENTER);
+		para.setFont(fontTitleTextReport);
+
+		addLines(outputDocument, 4);
 		para = outputDocument.addParagraph(null);
 		para.setTextContent(extension.getParams().getCustomerName());
 		para.setHorizontalAlignment(HorizontalAlignmentType.CENTER);
 		para.setFont(fontTitleTextReport);
 
-		addLines(outputDocument,15);
+		addLines(outputDocument, 15);
 
 		Table table = outputDocument.addTable(2, 1);
 
@@ -200,217 +205,251 @@ public class AlertReportExportODT {
 		cell1.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
 		cell1.setFont(fontSmall);
 
-		//outputDocument.addPageBreak();
+		// outputDocument.addPageBreak();
 
 	}
 
 	/**
 	 * Add image a Paragraph
+	 * 
 	 * @param paragraph
 	 * @param image
 	 * @param path
 	 * @throws BadElementException
-	 * @throws URISyntaxException 
+	 * @throws URISyntaxException
 	 */
-	private static void addImage(Paragraph paragraph, String imagePath,float scalePercent) {
+	private static void addImage(Paragraph paragraph, String imagePath,
+			float scalePercent) {
 		try {
-			if (!imagePath.isEmpty()){
-				Image image1 = Image.newImage(paragraph, new URI("file:///"	+ imagePath));
+			if (!imagePath.isEmpty()) {
+				Image image1 = Image.newImage(paragraph, new URI("file:///"
+						+ imagePath));
 				image1.setHorizontalPosition(FrameHorizontalPosition.CENTER);
 				FrameStyleHandler handler = image1.getStyleHandler();
 				handler.setAchorType(AnchorType.TO_FRAME);
-				Border border = new Border(Color.BLACK, 1, StyleTypeDefinitions.SupportedLinearMeasure.PT);
+				Border border = new Border(Color.BLACK, 1,
+						StyleTypeDefinitions.SupportedLinearMeasure.PT);
 				handler.setBorders(border, CellBordersType.ALL_FOUR);
 				handler.setHorizontalRelative(HorizontalRelative.PARAGRAPH_START_MARGIN);
 				handler.setVerticalRelative(VerticalRelative.TEXT);
-				
+
 			}
 		} catch (URISyntaxException e) {
 			logger.error(e.getMessage(), e);
 		}
-		
-		
+
 	}
+
 	/**
 	 * get content field alert from property default extension
+	 * 
 	 * @param pluginId
 	 * @param key
 	 * @param contentDefault
 	 * @param extensionExport
 	 * @return
 	 */
-	private static String getFieldAlertProperty(Integer pluginId, String key,String contentDefault,ExtensionAlertReportExport extensionExport){
+	private static String getFieldAlertProperty(Integer pluginId, String key,
+			String contentDefault, ExtensionAlertReportExport extensionExport) {
 		String result = contentDefault;
 		try {
 			if (key.contains("risk"))
-				result = extensionExport.getMessageString("alert.export.pluginid."+key);
+				result = extensionExport
+						.getMessageString("alert.export.pluginid." + key);
+			else if (key.contains("reliability"))
+				result = extensionExport
+						.getMessageString("alert.export.pluginid." + key);
 			else
-				if (key.contains("reliability"))
-					result = extensionExport.getMessageString("alert.export.pluginid."+key);
-				else
-					result = extensionExport.getMessageString("alert.export.pluginid."+String.valueOf(pluginId)+"."+key);
+				result = extensionExport
+						.getMessageString("alert.export.pluginid."
+								+ String.valueOf(pluginId) + "." + key);
 		} catch (Exception e) {
-			logger.error("Failed to load message alert: "+e.getMessage(), e);
+			logger.error("Failed to load message alert: " + e.getMessage(), e);
 		}
 		return result;
 	}
-	
-	private static void addContent(TextDocument outputDocument,java.util.List<Alert> alerts) throws Exception {
+
+	private static void addContent(TextDocument outputDocument,
+			java.util.List<Alert> alerts) throws Exception {
 		outputDocument.addPageBreak();
-		
+
 		Alert alert = alerts.get(0);
-        //Title Alert
+		// Title Alert
 		Paragraph para = outputDocument.addParagraph(null);
-		
+
 		Table table = outputDocument.addTable(1, 1);
 		Cell cell = table.getCellByPosition(0, 0);
-		Border border = new Border(Color.BLACK, 0, StyleTypeDefinitions.SupportedLinearMeasure.PT);
-	    cell.setBorders(CellBordersType.NONE, border);
+		Border border = new Border(Color.BLACK, 0,
+				StyleTypeDefinitions.SupportedLinearMeasure.PT);
+		cell.setBorders(CellBordersType.NONE, border);
 		cell.setStringValue(alert.getAlert());
 		cell.setFont(fontTitleBold);
 		String color = Color.toSixDigitHexRGB("#87cefa");
 		cell.setCellBackgroundColor(Color.valueOf(color));
-		
-		addLines(outputDocument,1);
-		//add title description
-		para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.description"));
+
+		addLines(outputDocument, 1);
+		// add title description
+		para = outputDocument
+				.addParagraph(extension
+						.getMessageString("alert.export.message.export.pdf.description"));
 		para.setFont(fontTitleBold);
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-		addLines(outputDocument,1);
-		//add description
-		para = outputDocument.addParagraph(getFieldAlertProperty(alert.getPluginId(),"description",alert.getDescription(),extension));
+		addLines(outputDocument, 1);
+		// add description
+		para = outputDocument.addParagraph(getFieldAlertProperty(
+				alert.getPluginId(), "description", alert.getDescription(),
+				extension));
 		para.setFont(fontText);
 		para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
-		
-		addLines(outputDocument,1);
-		
-		//add title risk
-		para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.risk"));
+
+		addLines(outputDocument, 1);
+
+		// add title risk
+		para = outputDocument.addParagraph(extension
+				.getMessageString("alert.export.message.export.pdf.risk"));
 		para.setFont(fontTitleBold);
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-		addLines(outputDocument,1);
-		//add risk
-		para = outputDocument.addParagraph(getFieldAlertProperty(alert.getPluginId(),"risk."+String.valueOf(alert.getRisk()),Alert.MSG_RISK[alert.getRisk()],extension));
+		addLines(outputDocument, 1);
+		// add risk
+		para = outputDocument.addParagraph(getFieldAlertProperty(
+				alert.getPluginId(), "risk." + String.valueOf(alert.getRisk()),
+				Alert.MSG_RISK[alert.getRisk()], extension));
 		para.setFont(fontText);
 		para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
-		addLines(outputDocument,1);
-		//add title reability
-		para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.reability"));
+		addLines(outputDocument, 1);
+		// add title reability
+		para = outputDocument.addParagraph(extension
+				.getMessageString("alert.export.message.export.pdf.reability"));
 		para.setFont(fontTitleBold);
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-		addLines(outputDocument,1);
-		//add reability
-		para = outputDocument.addParagraph(getFieldAlertProperty(alert.getPluginId(),"reliability."+String.valueOf(alert.getReliability()),Alert.MSG_RELIABILITY[alert.getReliability()],extension));
+		addLines(outputDocument, 1);
+		// add reability
+		para = outputDocument.addParagraph(getFieldAlertProperty(
+				alert.getPluginId(),
+				"reliability." + String.valueOf(alert.getReliability()),
+				Alert.MSG_RELIABILITY[alert.getReliability()], extension));
 		para.setFont(fontText);
 		para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
-		addLines(outputDocument,1);
-		//add title urls
-		para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.urls"));
+		addLines(outputDocument, 1);
+		// add title urls
+		para = outputDocument.addParagraph(extension
+				.getMessageString("alert.export.message.export.pdf.urls"));
 		para.setFont(fontTitleBold);
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-	
+
 		// write all url with the same pluginid
 		for (int i = 0; i < alerts.size(); i++) {
 			Alert alertAux = alerts.get(i);
-			//add url link and attack
-			para = outputDocument.addParagraph((i+1)+"-" + alertAux.getUri());
+			// add url link and attack
+			para = outputDocument.addParagraph((i + 1) + "-"
+					+ alertAux.getUri());
 			para.setFont(fontText);
 			para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-			// insert URI it is posible
-			try{
-				para.applyHyperlink(new URI(alertAux.getUri()));
-			} catch (URISyntaxException e) {
-				para = outputDocument.addParagraph(alertAux.getUri());
-			}
-			if (!alertAux.getParam().isEmpty()){	
-				para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.parameters")+": "+alertAux.getParam());
+			para.applyHyperlink(new URI(alertAux.getUri()));
+
+			if (!alertAux.getParam().isEmpty()) {
+				para = outputDocument
+						.addParagraph(extension
+								.getMessageString("alert.export.message.export.pdf.parameters")
+								+ ": " + alertAux.getParam());
 				para.setFont(fontText);
 				para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-				addLines(outputDocument,1);
+				addLines(outputDocument, 1);
 			}
-			if (!alertAux.getAttack().isEmpty()){
-				para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.attack"));
-				para.setFont(fontTextBold);
+			if (!alertAux.getAttack().isEmpty()) {
+				para = outputDocument
+						.addParagraph(extension
+								.getMessageString("alert.export.message.export.pdf.attack"));
+				para.setFont(fontTitleBold);
 				para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 				para = outputDocument.addParagraph(alertAux.getAttack());
 				para.setFont(fontText);
 				para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-				addLines(outputDocument,1);
+				addLines(outputDocument, 1);
 			}
-			//add images test
-			addLines(outputDocument,1);
-			String images = alertAux.getOtherInfo(); 
-			if (!images.isEmpty()){
+			// add images test
+			addLines(outputDocument, 1);
+			String images = alertAux.getOtherInfo();
+			if (!images.isEmpty()) {
 				String[] list = images.split("\n");
 				int imageCount = 1;
-				for (int j = 0, length = list.length/2;j <= length; j += 2) {
-					//if (!((j+1)>=list.length)){
-					String step = list[j];
-					para = outputDocument.addParagraph(step);
-					para.setFont(fontText);
-					para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
-					addLines(outputDocument,1);
-					//add step and image
-					String imageName = "";
-					String path = extension.getParams().getWorkingDirImages();
-					if (((j+1)<list.length)&&(!list[j+1].isEmpty())){
-						imageName = list[j+1];
-						//if exist an image
-						try{
-							if ((imageName.endsWith(".png")||imageName.endsWith(".jpg"))&&(!path.isEmpty())){
-								para = outputDocument.addParagraph(null);
-								para.setHorizontalAlignment(HorizontalAlignmentType.CENTER);
-								addImage(para, path+"/"+imageName, 60f);
-								addLines(outputDocument,1);
-								para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.image")+": "+Integer.toString(imageCount));
-								para.setFont(fontText);
-								para.setHorizontalAlignment(HorizontalAlignmentType.CENTER);
-								imageCount++;
-							}else{
-								para = outputDocument.addParagraph(imageName);
-								para.setFont(fontText);
-								para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
-								addLines(outputDocument,1);
+				// for (int j = 0, length = list.length/2;j <= length; j += 1) {
+				for (int j = 0; j < list.length; j++) {
+					if (!((j + 1) >= list.length)) {
+						String step = list[j];
+						para = outputDocument.addParagraph(step);
+						para.setFont(fontText);
+						para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
+						addLines(outputDocument, 1);
+						// add step and image
+						String imageName = "";
+						String path = extension.getParams()
+								.getWorkingDirImages();
+						if (((j + 1) < list.length) && (!list[j + 1].isEmpty())) {
+							imageName = list[j + 1];
+							// if exist an image
+							try {
+								if ((imageName.endsWith(".png") || imageName
+										.endsWith(".jpg")) && (!path.isEmpty())) {
+									para = outputDocument.addParagraph(null);
+									para.setHorizontalAlignment(HorizontalAlignmentType.CENTER);
+									addImage(para, path + "/" + imageName, 60f);
+									addLines(outputDocument, 1);
+									para = outputDocument
+											.addParagraph(extension
+													.getMessageString("alert.export.message.export.pdf.image")
+													+ ": "
+													+ Integer
+															.toString(imageCount));
+									para.setFont(fontText);
+									para.setHorizontalAlignment(HorizontalAlignmentType.CENTER);
+									imageCount++;
+								} else {
+									para = outputDocument
+											.addParagraph(imageName);
+									para.setFont(fontText);
+									para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
+									addLines(outputDocument, 1);
+								}
+							} catch (Exception e) {
+								logger.error(e.getMessage(), e);
 							}
-						} catch (Exception e) {
-							logger.error(e.getMessage(), e);
 						}
-	//				}
-		//			j++;
+						j++;
 					}
-					
-					
-				
+
 				}
-				outputDocument.addPageBreak();
 			}
-			
-			addLines(outputDocument,1);
-					
+
+			addLines(outputDocument, 1);
+
 		}
-		
-		if (!alert.getSolution().equals("")){
-			outputDocument.addPageBreak();
-			addLines(outputDocument,1);
-			para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.solution"));
+
+		if (!alert.getSolution().equals("")) {
+			addLines(outputDocument, 1);
+			para = outputDocument
+					.addParagraph(extension
+							.getMessageString("alert.export.message.export.pdf.solution"));
 			para.setFont(fontTitleBold);
 			para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
-			para = outputDocument.addParagraph(getFieldAlertProperty(alert.getPluginId(),"solution",alert.getSolution(),extension));
+			para = outputDocument.addParagraph(getFieldAlertProperty(
+					alert.getPluginId(), "solution", alert.getSolution(),
+					extension));
 			para.setFont(fontText);
 			para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
 		}
-		if (!alert.getReference().equals("")){
-			addLines(outputDocument,1);
-			para = outputDocument.addParagraph(extension.getMessageString("alert.export.message.export.pdf.references"));
+		if (!alert.getReference().equals("")) {
+			addLines(outputDocument, 1);
+			para = outputDocument
+					.addParagraph(extension
+							.getMessageString("alert.export.message.export.pdf.references"));
 			para.setFont(fontTitleBold);
 			para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 			para = outputDocument.addParagraph(alert.getReference());
 			para.setFont(fontText);
 			para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
-		}	
-			addLines(outputDocument,1);
-			
-		
+		}
+		addLines(outputDocument, 1);
 
 	}
 }

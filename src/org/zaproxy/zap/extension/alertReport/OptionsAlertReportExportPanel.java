@@ -58,7 +58,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	private JButton chooseDir = null;
 	private JButton chooseDoc = null;
 	private ResourceBundle messages = null;
-	private JComboBox<String> comboLevel = null;
+	private JComboBox comboLevel = null;
 	
     public OptionsAlertReportExportPanel() {
         super();
@@ -74,9 +74,9 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 		return scrollPaneConfidentialText;
 	}
     
-    private JComboBox<String> getComboLevel() {
+    private JComboBox getComboLevel() {
 		if (comboLevel == null) {
-			comboLevel = new JComboBox<>();
+			comboLevel = new JComboBox();
 			comboLevel.addItem("PDF");
 			comboLevel.addItem("ODT");
 			/*comboLevel.addActionListener(new ActionListener() {
@@ -180,6 +180,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	/**
 	 * This method initializes this
 	 * 
+	 * @return void
 	 */
 	private void initialize() {
 
