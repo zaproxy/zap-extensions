@@ -20,3 +20,14 @@ When you are happy that your code is ready for release status and follows _all_ 
 
 ===2.0 Release Extensions==
 Code in the [https://code.google.com/p/zap-extensions/source/browse/trunk trunk] has been reviewed and can be expected to be of high quality.
+
+==Notes==
+Version numbers should increase sequentially when changes are made or when the extension moves to a new branch or the trunk.
+
+You do not have to perform a release when you change the code - its up to the author to decide when their code is ready.
+
+We would not normally expect an extension to drop, eg from release to beta, but that can happen if there are problems with it.
+
+An extension should have only one release, and in any case the code will only show the most recent release.
+
+In the 'check for updates' code the version number takes precedence - so an alpha-3 release is an update to a beta-2 release.
