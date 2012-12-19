@@ -43,11 +43,6 @@
 
 	<!--
 	 Build the specified extension
-	 type should be one of:
-	 	alpha
-	 	beta
-	 	release
-	 	example
 	 version should be an integer that increments on each release, starting at 1
 	 -->
 
@@ -59,7 +54,7 @@
 		&lt;name>${name}&lt;/name>
 		&lt;version>${version}&lt;/version>
 		&lt;file>${file}&lt;/file>
-		&lt;status>${type}&lt;/status>
+		&lt;status>beta&lt;/status>
 		&lt;changes>${changes}&lt;/changes>
 		&lt;url>https://zap-extensions.googlecode.com/files/${file}&lt;/url>
 		&lt;size>${length}&lt;/size>
@@ -70,7 +65,6 @@
 	<target name="build-ascanrulesBeta" description="build the Active scanner rules">
 		<antcall target="build-extension"> 
 			<param name="extension" value="ascanrulesBeta"/> 
-			<param name="type" value="beta"/> 
 			<param name="version" value="1"/> 
 			<param name="name" value="Active scanner rules - beta"/> 
 			<param name="changes" value=""/> 
@@ -78,7 +72,7 @@
 	</target>
 	
 	<target name="build-extension" description="build the specified extension">
-		<property name="file" value="${extension}-${type}-${version}.zap" />
+		<property name="file" value="${extension}-beta-${version}.zap" />
 		<jar jarfile="${dist}/${file}" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/**"/>
@@ -87,12 +81,8 @@
 				<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
 			</zipfileset>
 		</jar>
-		<condition property="addon-example">
-			<equals arg1="${type}" arg2="example"/>
-		</condition>
 		<antcall target="append-to-versions-file"> 
 			<param name="extension" value="${extension}"/> 
-			<param name="type" value="${type}"/> 
 			<param name="version" value="${version}"/> 
 			<param name="name" value="${name}"/> 
 			<param name="changes" value="${changes}"/> 
@@ -101,7 +91,7 @@
 	</target>
 	
 	<target name="build-extensionAndDeps" description="build the specified extension and include its dependencies">
-		<property name="file" value="${extension}-${type}-${version}.zap" />
+		<property name="file" value="${extension}-beta-${version}.zap" />
 		<jar jarfile="${dist}/${file}" update="true" compress="true">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/**" />
@@ -111,12 +101,8 @@
 				<include name="org/zaproxy/zap/extension/${extension}/Messages*" />
 			</zipfileset>
 		</jar>
-		<condition property="addon-example">
-			<equals arg1="${type}" arg2="example"/>
-		</condition>
 		<antcall target="append-to-versions-file"> 
 			<param name="extension" value="${extension}"/> 
-			<param name="type" value="${type}"/> 
 			<param name="version" value="${version}"/> 
 			<param name="name" value="${name}"/> 
 			<param name="changes" value="${changes}"/> 
@@ -128,7 +114,6 @@
 	<target name="build-pscanrulesBeta" description="build the Passive scanner rules">
 		<antcall target="build-extension"> 
 			<param name="extension" value="pscanrulesBeta"/> 
-			<param name="type" value="beta"/> 
 			<param name="version" value="1"/> 
 			<param name="name" value="Passive scanner rules - beta"/> 
 			<param name="changes" value=""/> 
@@ -138,7 +123,6 @@
 	<target name="build-quickstart" description="build the quick start extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="quickstart"/> 
-			<param name="type" value="weekly"/> 
 			<param name="version" value="2"/> 
 			<param name="name" value="Quick start tab"/> 
 			<param name="changes" value=""/> 
@@ -148,7 +132,6 @@
 	<target name="build-scripts" description="build the scripts extension">
 		<antcall target="build-extension"> 
 			<param name="extension" value="scripts"/> 
-			<param name="type" value="weekly"/> 
 			<param name="version" value="3"/> 
 			<param name="name" value="The Script Console - dynamic access to internal ZAP data structures"/> 
 			<param name="changes" value=""/> 
@@ -158,7 +141,6 @@
 	<target name="build-spiderAjax" description="build the spiderAjax extension">
 		<antcall target="build-extensionAndDeps">
 			<param name="extension" value="spiderAjax"/>
-			<param name="type" value="weekly"/>
 			<param name="version" value="1"/>
 			<param name="name" value="AJAX Spider"/> 
 			<param name="changes" value=""/> 
@@ -168,9 +150,8 @@
 	<target name="build-tokengen" description="build the tokengen extension">
 		<!-- Cant use build-extension as other classes needed -->
 		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
-		<property name="tokengen.type" value="beta" />
 		<property name="tokengen.version" value="2" />
-		<property name="file" value="tokengen-${tokengen.type}-${tokengen.version}.zap" />
+		<property name="file" value="tokengen-beta-${tokengen.version}.zap" />
 		<jar jarfile="${dist}/${file}" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/tokengen/**"/>
@@ -182,7 +163,6 @@
 		</jar>
 		<antcall target="append-to-versions-file"> 
 			<param name="extension" value="tokengen"/> 
-			<param name="type" value="${tokengen.type}"/> 
 			<param name="version" value="${tokengen.version}"/> 
 			<param name="name" value="Token Generator and Analyzer"/> 
 			<param name="changes" value=""/> 
@@ -193,7 +173,6 @@
     <target name="build-alertReport" description="build the alertReport extension">
         <antcall target="build-extensionAndDeps">
             <param name="extension" value="alertReport"/>
-            <param name="type" value="beta"/>
             <param name="version" value="6"/>
 			<param name="name" value="Report alert generator in pdf or odt format."/> 
 			<param name="changes" value=""/> 
@@ -272,7 +251,10 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="ascanrulesBeta-beta-*.zap"/>
-				<include name="pscanrulesBeta-beta*.zap"/>
+				<include name="pscanrulesBeta-beta-*.zap"/>
+				<include name="quickstart-beta-*.zap"/>
+				<include name="scripts-beta-*.zap"/>
+				<include name="spiderAjax-beta-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
