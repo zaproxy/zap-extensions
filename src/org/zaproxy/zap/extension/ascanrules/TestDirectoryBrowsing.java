@@ -21,6 +21,7 @@
 // ZAP: 2012/01/02 Separate param and attack
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2012/08/01 Removed the "(non-Javadoc)" comments.
+// ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -45,13 +46,13 @@ import org.parosproxy.paros.network.HttpStatusCode;
 public class TestDirectoryBrowsing extends AbstractAppPlugin {
 
 
-	private final static Pattern patternIIS			= Pattern.compile("Parent Directory", PATTERN_PARAM);
-	private final static Pattern patternApache		= Pattern.compile("\\bDirectory Listing\\b.*(Tomcat|Apache)", PATTERN_PARAM);
+	private static final Pattern patternIIS			= Pattern.compile("Parent Directory", PATTERN_PARAM);
+	private static final Pattern patternApache		= Pattern.compile("\\bDirectory Listing\\b.*(Tomcat|Apache)", PATTERN_PARAM);
 	
 	// general match for directory
-	private final static Pattern patternGeneralDir1		= Pattern.compile("\\bDirectory\\b", PATTERN_PARAM);
-	private final static Pattern patternGeneralDir2		= Pattern.compile("[\\s<]+IMG\\s*=", PATTERN_PARAM);
-	private final static Pattern patternGeneralParent	= Pattern.compile("Parent directory", PATTERN_PARAM);
+	private static final Pattern patternGeneralDir1		= Pattern.compile("\\bDirectory\\b", PATTERN_PARAM);
+	private static final Pattern patternGeneralDir2		= Pattern.compile("[\\s<]+IMG\\s*=", PATTERN_PARAM);
+	private static final Pattern patternGeneralParent	= Pattern.compile("Parent directory", PATTERN_PARAM);
 
 
     @Override
@@ -64,8 +65,6 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
         
         return "Directory browsing";
     }
-    
-
 
     @Override
     public String[] getDependency() {
@@ -120,6 +119,7 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
 	    boolean result = false;
 	    HttpMessage msg = getNewMsg();
 	    int reliability = Alert.WARNING;
+	    StringBuilder evidence = new StringBuilder();
 	    
 	    try {
             checkIfDirectory(msg);
@@ -130,14 +130,15 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
     			return;
     		}
     		
-    		if (matchBodyPattern(msg, patternIIS, null)) {
+    		if (matchBodyPattern(msg, patternIIS, evidence)) {
     			result = true;
-    		} else if (matchBodyPattern(msg, patternApache, null)) {
+    		} else if (matchBodyPattern(msg, patternApache, evidence)) {
     			result = true;
-    		} else if (matchBodyPattern(msg, patternGeneralParent, null)) {
+    		} else if (matchBodyPattern(msg, patternGeneralParent, evidence)) {
     			result = true;
     			reliability = Alert.SUSPICIOUS;
-    		} else if (matchBodyPattern(msg, patternGeneralDir1, null)) {
+    		} else if (matchBodyPattern(msg, patternGeneralDir1, evidence)) {
+    			// Dont append the second matching pattern to the evidence as they will be in different places
     			if (matchBodyPattern(msg, patternGeneralDir2, null)) {
     				result = true;
     				reliability = Alert.SUSPICIOUS;
@@ -149,7 +150,7 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
         }
 		
 		if (result) {
-            bingo(Alert.RISK_MEDIUM, reliability, msg.getRequestHeader().getURI().toString(), "", "", "", msg);
+            bingo(Alert.RISK_MEDIUM, reliability, msg.getRequestHeader().getURI().toString(), "", evidence.toString(), "", msg);
 		}
 	}
 

@@ -22,18 +22,21 @@
 // ZAP: 2012/03/15 Changed the method scan to use the class StringBuilder 
 // instead of String.
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
+// ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field, and made into a passive scan rule
 
-package org.zaproxy.zap.extension.ascanrules;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
-import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpMessage;
+import net.htmlparser.jericho.Source;
 
-public class TestInfoPrivateAddressDisclosure extends AbstractAppPlugin {
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.pscan.PassiveScanThread;
+import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+
+public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
 
 	private static final String REGULAR_IP_OCTET = "\\b(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})";
 	private static final String REGULAR_PORTS = "\\b(6553[0-5]|65[0-5][0-2][0-9]|6[0-4][0-9]{4}|[0-5]?[0-9]{0,4})";
@@ -41,10 +44,10 @@ public class TestInfoPrivateAddressDisclosure extends AbstractAppPlugin {
 	// Private IP's including localhost
 	public static final Pattern patternPrivateIP = Pattern.compile(
 			"(10\\.(" + REGULAR_IP_OCTET + "\\.){2}" + REGULAR_IP_OCTET + "|" +
-			"172\\." + "\\b(3[01]|2[0-9]|1[6-9])\\." + REGULAR_IP_OCTET + "\\." + REGULAR_IP_OCTET + "|" +
-			"192\\.168\\." + REGULAR_IP_OCTET + "\\." + REGULAR_IP_OCTET + ")"
-			+ "(\\:"+ REGULAR_PORTS +")?"
-			, PATTERN_PARAM);
+					"172\\." + "\\b(3[01]|2[0-9]|1[6-9])\\." + REGULAR_IP_OCTET + "\\." + REGULAR_IP_OCTET + "|" +
+					"192\\.168\\." + REGULAR_IP_OCTET + "\\." + REGULAR_IP_OCTET + ")" +
+					"(\\:"+ REGULAR_PORTS +")?",
+			Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 	
 	
 			/*"(10\\." +
@@ -65,100 +68,78 @@ public class TestInfoPrivateAddressDisclosure extends AbstractAppPlugin {
 	
 	//"(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|172\\.\\d{2,2}\\.\\d{1,3}\\.\\d{1,3}|192\\.168\\.\\d{1,3}\\.\\d{1,3})", PATTERN_PARAM);
 			
+	private PassiveScanThread parent = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.parosproxy.paros.core.scanner.Plugin#getId()
-	 */
-    @Override
-    public int getId() {
+    private int getId() {
         return 00002;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getName()
-     */
     @Override
     public String getName() {
         return "Private IP disclosure";
     }
 
-
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getDependency()
-     */
-    @Override
-    public String[] getDependency() {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getDescription()
-     */
-    @Override
-    public String getDescription() {
+    private String getDescription() {
         return "A private IP such as 10.x.x.x, 172.x.x.x, 192.168.x.x has been found in the HTTP response body.  " +
         		"This information might be helpful for further attacks targeting internal systems.";        
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getCategory()
-     */
-    @Override
-    public int getCategory() {
-        return Category.INFO_GATHER;
-    }
-
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getSolution()
-     */
-    @Override
-    public String getSolution() {
+    private String getSolution() {
         return "Remove the private IP address from the HTTP response body.  For comments, use JSP/ASP comment instead " +
         		"of HTML/JavaScript comment which can be seen by client browsers.";
-        
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getReference()
-     */
-    @Override
-    public String getReference() {
+    private String getReference() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.AbstractPlugin#init()
-     */
-    @Override
-    public void init() {
+	@Override
+	public void scanHttpRequestSend(HttpMessage msg, int id) {
+		// Ignore
+	}
 
-    }
-
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#scan()
-     */
-    @Override
-    public void scan() {
+	@Override
+	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         
-        HttpMessage msg = getBaseMsg();
 		String txtBody = msg.getResponseBody().toString();
 		Matcher matcher = patternPrivateIP.matcher(txtBody);
 		StringBuilder sbTxtFound = new StringBuilder();
+		String firstOne = null;
 		
 		while (matcher.find()) {
+			if (firstOne == null) {
+				firstOne = matcher.group();
+			}
 			sbTxtFound.append(matcher.group()).append("\n");
 		}
 		
 		if (sbTxtFound.length() != 0) {
-			bingo(Alert.RISK_LOW, Alert.WARNING, null, "", "", sbTxtFound.toString(), msg);
+			Alert alert = new Alert(getId(), this.getRisk(), Alert.WARNING, this.getName()); 
+			
+			alert.setDetail(
+				this.getDescription(), 
+				msg.getRequestHeader().getURI().toString(),
+				"", 
+				firstOne,
+				sbTxtFound.toString(), 
+				this.getSolution(), 
+				this.getReference(), 
+				msg);
+			
+			parent.raiseAlert(id, alert);
 		}
 		
     }
-	@Override
-	public int getRisk() {
+
+    private int getRisk() {
 		return Alert.RISK_LOW;
 	}
+    
+	@Override
+	public void setParent(PassiveScanThread parent) {
+		this.parent = parent;
+		
+	}
+
 
 }

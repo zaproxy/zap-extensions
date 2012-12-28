@@ -21,6 +21,8 @@
 // ZAP: 2012/01/02 Separate param and attack
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2012/08/01 Removed the "(non-Javadoc)" comments.
+// ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
+
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.regex.Pattern;
@@ -98,14 +100,14 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
     @Override
     public void scan(HttpMessage msg, String param, String value) {
         
-		//String result = null;
+		StringBuilder evidence = new StringBuilder();
 
 		try {
 			setParameter(msg, param, SSI_UNIX);
             sendAndReceive(msg);
     		//result = msg.getResponseBody().toString();
-    		if (matchBodyPattern(msg, patternSSIUnix, null)) {    		    
-    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, SSI_UNIX, null, msg);
+    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {
+    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_UNIX, msg);
     			return;
     		}
 
@@ -117,8 +119,8 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 			setParameter(msg, param, SSI_UNIX2);
             sendAndReceive(msg);
     		//result = msg.getResponseBody().toString();
-    		if (matchBodyPattern(msg, patternSSIUnix, null)) {    		    
-    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, SSI_UNIX2, null, msg);
+    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {    		    
+    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_UNIX2, msg);
     			return;
     		}
 
@@ -131,8 +133,8 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 			setParameter(msg, param, SSI_WIN);
             sendAndReceive(msg);
     		//result = msg.getResponseBody().toString();
-    		if (matchBodyPattern(msg, patternSSIWin, null)) {    		    
-    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, SSI_WIN, null, msg);
+    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
+    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_WIN, msg);
     			return;
     		}
 
@@ -144,8 +146,8 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 			setParameter(msg, param, SSI_WIN2);
             sendAndReceive(msg);
     		//result = msg.getResponseBody().toString();
-    		if (matchBodyPattern(msg, patternSSIWin, null)) {    		    
-    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, SSI_WIN2, null, msg);
+    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
+    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_WIN2, msg);
     			return;
     		}
 

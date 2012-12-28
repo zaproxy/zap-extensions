@@ -71,7 +71,7 @@
 		<antcall target="build-extension"> 
 			<param name="extension" value="ascanrules"/> 
 			<param name="type" value="release"/> 
-			<param name="version" value="1"/> 
+			<param name="version" value="2"/> 
 			<param name="name" value="Active scanner rules"/> 
 			<param name="changes" value=""/> 
 		</antcall>
@@ -166,7 +166,7 @@
 		<antcall target="build-extension"> 
 			<param name="extension" value="pscanrules"/> 
 			<param name="type" value="release"/> 
-			<param name="version" value="1"/> 
+			<param name="version" value="2"/> 
 			<param name="name" value="Passive scanner rules"/> 
 			<param name="changes" value=""/> 
 		</antcall>
