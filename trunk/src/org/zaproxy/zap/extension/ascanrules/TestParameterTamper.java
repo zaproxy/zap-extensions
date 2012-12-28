@@ -22,6 +22,7 @@
 // ZAP: 2012/03/15 Changed the method checkResult to use the class StringBuilder 
 // instead of StringBuffer.
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
+// ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -206,7 +207,7 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
                 || matchBodyPattern(msg, patternErrorJet, sb)
                 || matchBodyPattern(msg, patternErrorTomcat, sb)
                 || matchBodyPattern(msg, patternErrorPHP, sb)) {
-			bingo(Alert.RISK_MEDIUM, Alert.SUSPICIOUS, "", param, attack, sb.toString(), msg);
+			bingo(Alert.RISK_MEDIUM, Alert.SUSPICIOUS, "", param, sb.toString(), attack, msg);
 
 			return true;
 		}

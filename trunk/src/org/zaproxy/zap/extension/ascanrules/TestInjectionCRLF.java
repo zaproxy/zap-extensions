@@ -20,6 +20,8 @@
  */
 // ZAP: 2012/01/02 Separate param and attack
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
+// ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
+
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.Random;
@@ -128,13 +130,10 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
     @Override
     public void scan(HttpMessage msg, String param, String value) {
 
-        String bingoQuery = null;   
-        
         // loop parameters
 
         for (int i=0; i<PARAM_LIST.length; i++) {
             msg = getNewMsg();
-            bingoQuery = setParameter(msg, param, PARAM_LIST[i]);
             try {
                 sendAndReceive(msg, false);
                 if (checkResult(msg, param, PARAM_LIST[i])) {
@@ -158,7 +157,7 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
         
         Matcher matcher = patternCookieTamper.matcher(msg.getResponseHeader().toString());
         if (matcher.find()) {
-            bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, param, attack, "", msg);
+            bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, param, matcher.group(), attack, msg);
             return true;
         }
         

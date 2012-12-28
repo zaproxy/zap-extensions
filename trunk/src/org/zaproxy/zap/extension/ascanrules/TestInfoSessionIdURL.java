@@ -20,6 +20,8 @@
  */
 // ZAP: 2012/01/02 Separate param and attack
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
+// ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
+
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.regex.Matcher;
@@ -150,7 +152,7 @@ public class TestInfoSessionIdURL extends AbstractAppPlugin {
 
 				if (kb == null || !kb.equals(sessionIdValue)) {
 				    getKb().add("sessionId/nameValue", sessionIdValue);
-					bingo(Alert.RISK_LOW, Alert.WARNING, "", "", "", sessionIdValue, base);
+					bingo(Alert.RISK_LOW, Alert.WARNING, uri, "", sessionIdValue, null, base);
 				}
 				kb = getKb().getString("sessionId/name");
 				getKb().add("sessionId/name", sessionIdName);
@@ -192,7 +194,8 @@ public class TestInfoSessionIdURL extends AbstractAppPlugin {
 				linkHostName = matcher.group(1);
 				String host = msg.getRequestHeader().getURI().getHost();
 				if (host.compareToIgnoreCase(linkHostName) != 0) {
-					bingo(risk, Alert.WARNING, alertReferer, descReferer, null, "", "", linkHostName, solutionReferer, msg);
+					bingo(risk, Alert.WARNING, alertReferer, descReferer, 
+							msg.getRequestHeader().getURI().getURI(), "", linkHostName, null, solutionReferer, msg);
 				}
 			}
 		}
