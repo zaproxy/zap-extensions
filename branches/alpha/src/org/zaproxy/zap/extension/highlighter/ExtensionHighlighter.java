@@ -13,6 +13,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.view.SiteMapListener;
+import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
 /*
  * Implements the Extension Interface for HighlighterManager and HighlighterPanel
@@ -138,13 +139,14 @@ implements SessionChangedListener, /*ProxyListener, */ SiteMapListener {
 
 	@Override
 	public void sessionModeChanged(Mode arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void sessionScopeChanged(Session arg0) {
-		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	public void onReturnNodeRendererComponent(
+			SiteMapTreeCellRenderer component, boolean leaf, SiteNode value) {
 	}
 }
