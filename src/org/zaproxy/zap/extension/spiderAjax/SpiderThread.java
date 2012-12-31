@@ -275,15 +275,6 @@ public class SpiderThread implements Runnable, ProxyListener {
 	}
 
 	/**
-	 * @return the proxy  listener order
-	 */
-	@Override
-	public int getProxyListenerOrder() {
-		return 0;
-	}
-	
-	
-	/**
 	 * called by the buttons of the panel to stop the spider
 	 */
 	public void stopSpider() {
@@ -294,5 +285,11 @@ public class SpiderThread implements Runnable, ProxyListener {
 		} catch (Exception e) {
 			logger.error(e);
 		}
+	}
+
+
+	@Override
+	public int getArrangeableListenerOrder() {
+		return 0;
 	}
 }
