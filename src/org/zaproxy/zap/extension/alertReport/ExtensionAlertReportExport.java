@@ -164,7 +164,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 	 * @return
 	 */
 	public List<Alert> getAllAlerts() {
-        List<Alert> allAlerts = new ArrayList<Alert>();
+        List<Alert> allAlerts = new ArrayList<>();
 
         TableAlert tableAlert = getModel().getDb().getTableAlert();
         Vector<Integer> v;
@@ -172,7 +172,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
             v = tableAlert.getAlertList();
 
             for (int i = 0; i < v.size(); i++) {
-                int alertId = ((Integer) v.get(i)).intValue();
+                int alertId = v.get(i).intValue();
                 RecordAlert recAlert = tableAlert.read(alertId);
                 Alert alert = new Alert(recAlert);
                 if (!allAlerts.contains(alert)) {
@@ -245,9 +245,9 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 		//check if read from db
 		if (alertsDB==null)
 			alertsDB = this.getAllAlerts();
-		List<Alert> alerts = new ArrayList<Alert>();
+		List<Alert> alerts = new ArrayList<>();
 		for (int i = 0; i < alertsDB.size(); i++) {
-			Alert alert = (Alert) alertsDB.get(i);
+			Alert alert = alertsDB.get(i);
 			if (alertSelected.getAlert().equals(alert.getAlert()))
 				alerts.add(alert);
 		}
