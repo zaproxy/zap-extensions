@@ -173,7 +173,7 @@
     <target name="build-alertReport" description="build the alertReport extension">
         <antcall target="build-extensionAndDeps">
             <param name="extension" value="alertReport"/>
-            <param name="version" value="6"/>
+            <param name="version" value="7"/>
 			<param name="name" value="Report alert generator in pdf or odt format."/> 
 			<param name="changes" value=""/> 
         </antcall>
