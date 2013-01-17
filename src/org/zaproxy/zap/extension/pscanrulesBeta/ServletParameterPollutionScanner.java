@@ -89,7 +89,7 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 					    		getDescription(), 
 					    		msg.getRequestHeader().getURI().toString(),
 					    		"", 
-					    		"", 
+					    		formElement.getFirstStartTag().toString(), // just include the first <form ..> element 
 					    		"",
 					    		getSolution(), 
 					            getReference(), 
@@ -110,8 +110,8 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 	}
 	
     public String getDescription() {
-    	return "Unspecified form target: HTTP parameter override attack potentially possible.\n" +
-    			"This is a known problem with Java Servlets but other platforms way also be vulnerable.";
+    	return "Unspecified form action: HTTP parameter override attack potentially possible.\n" +
+    			"This is a known problem with Java Servlets but other platforms may also be vulnerable.";
     }
 
     public int getCategory() {
