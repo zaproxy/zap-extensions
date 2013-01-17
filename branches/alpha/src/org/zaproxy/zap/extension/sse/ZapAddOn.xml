@@ -1,0 +1,16 @@
+<zapaddon>
+	<name>Server-Sent Events</name>
+	<version>1</version>
+	<description>Allows you to view Server-Sent Events (SSE) communication.</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes></changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.sse.ExtensionServerSentEvents</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+</zapaddon>
