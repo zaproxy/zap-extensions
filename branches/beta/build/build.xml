@@ -6,7 +6,8 @@
 	<property name="build" location="build" />
 	<property name="dist" location="zap-exts" />
 	<property name="dist.lib.dir" location="../lib" />
-	<property name="versions.file" location="${dist}/ZapVersions-beta.xml" />
+	<property name="status" value="beta" />
+	<property name="versions.file" location="${dist}/ZapVersions-${status}.xml" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 	
@@ -41,156 +42,81 @@
 		</javac>
 	</target>
 
-	<!--
-	 Build the specified extension
-	 version should be an integer that increments on each release, starting at 1
-	 -->
-
 	<target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
 		<length file="${dist}/${file}" property="length" />
+        <tstamp>
+            <format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+        </tstamp>
 		<echo file="${versions.file}" append="true">
 	&lt;addon>${extension}&lt;/addon>
 	&lt;addon_${extension}>
 		&lt;name>${name}&lt;/name>
 		&lt;version>${version}&lt;/version>
 		&lt;file>${file}&lt;/file>
-		&lt;status>beta&lt;/status>
+		&lt;status>${status}&lt;/status>
 		&lt;changes>${changes}&lt;/changes>
 		&lt;url>https://zap-extensions.googlecode.com/files/${file}&lt;/url>
 		&lt;size>${length}&lt;/size>
+		&lt;date>${yyyymmdd}&lt;/date>
 	&lt;/addon_${extension}>
 </echo>
 	</target>
 	
-	<target name="build-ascanrulesBeta" description="build the Active scanner rules">
-		<antcall target="build-extension"> 
-			<param name="extension" value="ascanrulesBeta"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Active scanner rules - beta"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-	<target name="build-extension" description="build the specified extension">
-		<property name="file" value="${extension}-beta-${version}.zap" />
-		<jar jarfile="${dist}/${file}" update="true" compress="false">
-			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/**"/>
-			</zipfileset>
-			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
-			</zipfileset>
-		</jar>
-		<antcall target="append-to-versions-file"> 
-			<param name="extension" value="${extension}"/> 
-			<param name="version" value="${version}"/> 
-			<param name="name" value="${name}"/> 
-			<param name="changes" value="${changes}"/> 
-			<param name="file" value="${file}"/> 
-		</antcall>
-	</target>
-	
-	<target name="build-extensionAndDeps" description="build the specified extension and include its dependencies">
-		<property name="file" value="${extension}-beta-${version}.zap" />
+	<target name="build-addon" description="build the specified addon">
+		
+		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+		
 		<jar jarfile="${dist}/${file}" update="true" compress="true">
 			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/**" />
-			</zipfileset>
-			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${extension}/lib/" includes="*.jar" />
-			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/Messages*" />
-			</zipfileset>
-		</jar>
-		<antcall target="append-to-versions-file"> 
-			<param name="extension" value="${extension}"/> 
-			<param name="version" value="${version}"/> 
-			<param name="name" value="${name}"/> 
-			<param name="changes" value="${changes}"/> 
-			<param name="file" value="${file}"/> 
-		</antcall>
-	</target>
-	
-	
-	<target name="build-pscanrulesBeta" description="build the Passive scanner rules">
-		<antcall target="build-extension"> 
-			<param name="extension" value="pscanrulesBeta"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Passive scanner rules - beta"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-	<target name="build-quickstart" description="build the quick start extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="quickstart"/> 
-			<param name="version" value="2"/> 
-			<param name="name" value="Quick start tab"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-	<target name="build-scripts" description="build the scripts extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="scripts"/> 
-			<param name="version" value="3"/> 
-			<param name="name" value="The Script Console - dynamic access to internal ZAP data structures"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-		
-	<target name="build-spiderAjax" description="build the spiderAjax extension">
-		<antcall target="build-extensionAndDeps">
-			<param name="extension" value="spiderAjax"/>
-			<param name="version" value="1"/>
-			<param name="name" value="AJAX Spider"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-	<target name="build-tokengen" description="build the tokengen extension">
-		<!-- Cant use build-extension as other classes needed -->
-		<!--antcall target="build-extension"> <param name="extension" value="tokengen"/> </antcall-->
-		<property name="tokengen.version" value="2" />
-		<property name="file" value="tokengen-beta-${tokengen.version}.zap" />
-		<jar jarfile="${dist}/${file}" update="true" compress="false">
-			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/tokengen/**"/>
-				<include name="com/fasteasytrade/JRandTest/**"/>
+				<include name="org/zaproxy/zap/extension/${addon}/**"/>
 			</zipfileset>
 			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/tokengen/Messages*"/>
+				<include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
 			</zipfileset>
+			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false"/>
+			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
 		</jar>
+
 		<antcall target="append-to-versions-file"> 
-			<param name="extension" value="tokengen"/> 
-			<param name="version" value="${tokengen.version}"/> 
-			<param name="name" value="Token Generator and Analyzer"/> 
-			<param name="changes" value=""/> 
+			<param name="extension" value="${addon}"/> 
+			<param name="name" value="${zapaddon.name}"/> 
+			<param name="version" value="${zapaddon.version}"/> 
+			<param name="description" value="${zapaddon.description}"/> 
+			<param name="url" value="${zapaddon.url}"/> 
+			<param name="changes" value="${zapaddon.changes}"/> 
 			<param name="file" value="${file}"/> 
 		</antcall>
 	</target>
 
-    <target name="build-alertReport" description="build the alertReport extension">
-        <antcall target="build-extensionAndDeps">
-            <param name="extension" value="alertReport"/>
-            <param name="version" value="7"/>
-			<param name="name" value="Report alert generator in pdf or odt format."/> 
-			<param name="changes" value=""/> 
-        </antcall>
-    </target>
 	
+	<target name="build-tokengen" description="build the tokengen extension">
+		<antcall target="build-addon"><param name="addon" value="tokengen"/></antcall>
+	
+		<!-- Add the extra classes needed -->
+		<property name="addon" value="tokengen" /> <!-- Set this to make cut-n-pasting safer ;) -->
+		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${build}" prefix="">
+				<include name="com/fasteasytrade/JRandTest/**"/>
+			</zipfileset>
+		</jar>
+	</target>
+
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 		
 		<echo file="${versions.file}" append="true">&lt;ZAP></echo>
 		
 		<!-- Keep in alphabetical order ;) -->
-		<antcall target="build-alertReport"/>
-		<antcall target="build-ascanrulesBeta"/>
-		<antcall target="build-pscanrulesBeta"/>
-		<antcall target="build-quickstart"/>
-		<antcall target="build-scripts"/>
-		<antcall target="build-spiderAjax"/>
+		<antcall target="build-addon"><param name="addon" value="alertReport"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="quickstart"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="scripts"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
+
 		<antcall target="build-tokengen"/>
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
@@ -250,11 +176,11 @@
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="ascanrulesBeta-beta-*.zap"/>
-				<include name="pscanrulesBeta-beta-*.zap"/>
-				<include name="quickstart-beta-*.zap"/>
-				<include name="scripts-beta-*.zap"/>
-				<include name="spiderAjax-beta-*.zap"/>
+				<include name="ascanrulesBeta-${status}-*.zap"/>
+				<include name="pscanrulesBeta-${status}-*.zap"/>
+				<include name="quickstart-${status}-*.zap"/>
+				<include name="scripts-${status}-*.zap"/>
+				<include name="spiderAjax-${status}-*.zap"/>
 			</fileset>
 		</copy>
 	</target>

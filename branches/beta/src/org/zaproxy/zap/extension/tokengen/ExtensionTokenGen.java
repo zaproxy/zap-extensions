@@ -32,6 +32,7 @@ import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -99,6 +100,20 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	    	extensionHook.getHookMenu().addPopupMenuItem(getPopupTokenGen());
 	        extensionHook.getHookView().addStatusPanel(getTokenPanel());
 	        this.getTokenPanel().setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
+	    }
+	}
+	
+    @Override
+	public boolean canUnload() {
+    	return true;
+    }
+	
+    @Override
+	public void unload() {
+    	log.debug("ExtensionTokenGen.unload()");
+	    if (getView() != null) {
+	    	Control.getSingleton().getExtensionLoader().removeStatusPanel(getTokenPanel());
+	    	Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupTokenGen());
 	    }
 	}
 

@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.quickstart;
 import java.awt.Container;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ResourceBundle;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -64,11 +63,22 @@ public class ExtensionQuickStart extends ExtensionAdaptor {
 	    super.hook(extensionHook);
 
 	    if (getView() != null) {
-	        ExtensionHookView pv = extensionHook.getHookView();
-	        pv.addWorkPanel(getQuickStartPanel());
+	        extensionHook.getHookView().addWorkPanel(getQuickStartPanel());
 	    }
 	}
+
+	@Override
+	public boolean canUnload() {
+    	return true;
+    }
 	
+    @Override
+	public void unload() {
+	    if (getView() != null) {
+	    	Control.getSingleton().getExtensionLoader().removeWorkPanel(getQuickStartPanel());
+	    }
+	}
+
 	private QuickStartPanel getQuickStartPanel() {
 		if (quickStartPanel == null) {
 			quickStartPanel = new QuickStartPanel(this);

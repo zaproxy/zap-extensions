@@ -1,0 +1,16 @@
+<zapaddon>
+	<name>Ajax Spider</name>
+	<version>2</version>
+	<description>Allows you to spider sites that make heavy use of javascript using crawljax</description>
+	<author>ZAP Dev Team</author>
+	<url>https://code.google.com/p/zaproxy/wiki/AJAXSpider_getStarted</url>
+	<changes>Updated to support new addon format</changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.spiderAjax.ExtensionAjax</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+</zapaddon>
