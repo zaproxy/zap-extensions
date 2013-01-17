@@ -1,0 +1,26 @@
+<zapaddon>
+	<name>Active scanner rules</name>
+	<version>2</version>
+	<description>The release quality Active Scanner rules</description>
+	<author>ZAP Dev Team</author>
+	<url/>
+	<changes>Updated to support new addon format</changes>
+	<dependson/>
+	<extensions>
+	</extensions>
+	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestClientBrowserCache</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestCrossSiteScriptV2</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestDirectoryBrowsing</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestExternalRedirect</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestInfoSessionIdURL</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestInjectionCRLF</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestParameterTamper</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPathTraversal</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRedirect</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestServerSideInclude</ascanrule>
+	</ascanrules>
+	<pscanrules/>
+	<filters/>
+	<files/>
+</zapaddon>
