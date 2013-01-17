@@ -6,10 +6,11 @@
 	<property name="build" location="build" />
 	<property name="dist" location="zap-exts" />
 	<property name="dist.lib.dir" location="../lib" />
-	<property name="versions.file" location="${dist}/ZapVersions-release.xml" />
+	<property name="status" value="release" />
+	<property name="versions.file" location="${dist}/ZapVersions-${status}.xml" />
 	<!-- This assumes you also have the zaproxy project -->
-	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
-	
+	<property name="zap.plugin.dir" location="../../zaproxy-api/src/plugin" />
+
 	<target name="clean">
 		<delete dir="${dist}" includeEmptyDirs="true" />
 		<delete dir="${build}" includeEmptyDirs="true" />
@@ -41,42 +42,54 @@
 		</javac>
 	</target>
 
-	<!--
-	 Build the specified extension
-	 type should be one of:
-	 	alpha
-	 	beta
-	 	release
-	 	example
-	 version should be an integer that increments on each release, starting at 1
-	 -->
-
 	<target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
 		<length file="${dist}/${file}" property="length" />
+        <tstamp>
+            <format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+        </tstamp>
 		<echo file="${versions.file}" append="true">
 	&lt;addon>${extension}&lt;/addon>
 	&lt;addon_${extension}>
 		&lt;name>${name}&lt;/name>
+		&lt;description>${description}&lt;/name>
 		&lt;version>${version}&lt;/version>
 		&lt;file>${file}&lt;/file>
-		&lt;status>release&lt;/status>
+		&lt;status>${status}&lt;/status>
 		&lt;changes>${changes}&lt;/changes>
 		&lt;url>https://zap-extensions.googlecode.com/files/${file}&lt;/url>
 		&lt;size>${length}&lt;/size>
+		&lt;date>${yyyymmdd}&lt;/date>
 	&lt;/addon_${extension}>
 </echo>
 	</target>
-	
-	<target name="build-ascanrules" description="build the Active scanner rules">
-		<antcall target="build-extension"> 
-			<param name="extension" value="ascanrules"/> 
-			<param name="type" value="release"/> 
-			<param name="version" value="2"/> 
-			<param name="name" value="Active scanner rules"/> 
-			<param name="changes" value=""/> 
+
+	<target name="build-addon" description="build the specified addon">
+		
+		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+		
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${build}" prefix="">
+				<include name="org/zaproxy/zap/extension/${addon}/**"/>
+			</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
+			</zipfileset>
+			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false"/>
+			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+		</jar>
+
+		<antcall target="append-to-versions-file"> 
+			<param name="extension" value="${addon}"/> 
+			<param name="name" value="${zapaddon.name}"/> 
+			<param name="version" value="${zapaddon.version}"/> 
+			<param name="description" value="${zapaddon.description}"/> 
+			<param name="url" value="${zapaddon.url}"/> 
+			<param name="changes" value="${zapaddon.changes}"/> 
+			<param name="file" value="${file}"/> 
 		</antcall>
 	</target>
-
+	
 	<target name="build-extension" description="build the specified extension">
 		<property name="file" value="${extension}-${type}-${version}.zap" />
 		<jar jarfile="${dist}/${file}" update="true" compress="false">
@@ -85,29 +98,6 @@
 			</zipfileset>
 			<zipfileset dir="${src}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
-			</zipfileset>
-		</jar>
-		<condition property="addon-example">
-			<equals arg1="${type}" arg2="example"/>
-		</condition>
-		<antcall target="append-to-versions-file"> 
-			<param name="extension" value="${extension}"/> 
-			<param name="version" value="${version}"/> 
-			<param name="name" value="${name}"/> 
-			<param name="changes" value="${changes}"/> 
-			<param name="file" value="${file}"/> 
-		</antcall>
-	</target>
-	
-	<target name="build-extensionAndDeps" description="build the specified extension and include its dependencies">
-		<property name="file" value="${extension}-${type}-${version}.zap" />
-		<jar jarfile="${dist}/${file}" update="true" compress="true">
-			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/**" />
-			</zipfileset>
-			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${extension}/lib/" includes="*.jar" />
-			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/Messages*" />
 			</zipfileset>
 		</jar>
 		<condition property="addon-example">
@@ -161,29 +151,38 @@
 			<param name="changes" value=""/> 
 		</antcall>
 	</target>
-
-	<target name="build-pscanrules" description="build the Passive scanner rules">
-		<antcall target="build-extension"> 
-			<param name="extension" value="pscanrules"/> 
-			<param name="type" value="release"/> 
-			<param name="version" value="2"/> 
-			<param name="name" value="Passive scanner rules"/> 
-			<param name="changes" value=""/> 
-		</antcall>
+	
+	<target name="build-fuzzdb" description="build the fuzzdb addon">
+		<antcall target="build-addon"><param name="addon" value="fuzzdb"/></antcall>
+	
+		<!-- Add the fuzzdb files in the right place -->
+		<property name="addon" value="fuzzdb" /> <!-- Set this to make cut-n-pasting safer ;) -->
+		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${src}/org/zaproxy/zap/extension/${addon}/files/" prefix="fuzzers/fuzzdb-1.09/"/>
+		</jar>
 	</target>
+
 
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 		
 		<echo file="${versions.file}" append="true">&lt;ZAP></echo>
 		
-		<!-- Keep in alphabetical order ;) -->
-		<antcall target="build-ascanrules"/>
+		<!-- 'Standard' addons (keep in alphabetical order ;) -->
+		<antcall target="build-addon"><param name="addon" value="ascanrules"/></antcall>
+		<!--antcall target="build-addon"><param name="addon" value="bruteforce"/></antcall-->
+		<antcall target="build-addon"><param name="addon" value="pscanrules"/></antcall>
+
+		<!-- 'Non-Standard' addons, ie which require additional files (keep in alphabetical order ;) -->
+		<antcall target="build-fuzzdb"/>
+		
+		<!-- Examples, which havnt been made into addons yet -->
 		<antcall target="build-exampleActiveScan"/>
 		<antcall target="build-examplePassiveScan"/>
 		<antcall target="build-exampleRightClickMsg"/>
 		<antcall target="build-exampleTopMenu"/>
-		<antcall target="build-pscanrules"/>
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 	</target>
@@ -237,8 +236,9 @@
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="ascanrules-release-*.zap"/>
-				<include name="pscanrules-release-*.zap"/>
+				<include name="ascanrules-${status}-*.zap"/>
+				<!--include name="bruteforce-${status}-*.zap"/-->
+				<include name="pscanrules-${status}-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
