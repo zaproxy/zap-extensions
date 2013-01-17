@@ -1,0 +1,25 @@
+<zapaddon>
+	<name>Passive scanner rules (beta)</name>
+	<version>1</version>
+	<description>The beta quality Passive Scanner rules</description>
+	<author>ZAP Dev Team</author>
+	<url/>
+	<changes>Updated to support new addon format</changes>
+	<dependson/>
+	<extensions>
+	</extensions>
+	<ascanrules/>
+	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.CSRFCountermeasures</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.InformationDisclosureDebugErrors</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.InformationDisclosureInURL</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.InformationDisclosureReferrerScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.InformationDisclosureSuspiciousComments</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.InsecureAuthenticationScan</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.InsecureJSFViewStatePassiveScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.ServletParameterPollutionScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.ViewstateScanner</pscanrule>
+	</pscanrules>
+	<filters/>
+	<files/>
+</zapaddon>

@@ -27,6 +27,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
@@ -110,6 +111,22 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spiderAjax");
 		}
 	}
+	
+    @Override
+	public boolean canUnload() {
+    	return true;
+    }
+	
+    @Override
+	public void unload() {
+    	logger.debug("ExtensionAjax.unload()");
+	    if (getView() != null) {
+	    	Control.getSingleton().getExtensionLoader().removeStatusPanel(getSpiderPanel());
+	    	Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupMenuAjaxSite());
+	    	Control.getSingleton().getExtensionLoader().removeOptionsPanel(getOptionsSpiderPanel());
+	    }
+	}
+
 
 	/*public void getMode() {
 		if(this.getModel().getOptionsParam().getViewParam().getMode().equals("safe")) {

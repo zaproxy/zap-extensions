@@ -34,9 +34,9 @@ import javax.script.ScriptException;
 import javax.swing.JMenuItem;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.utils.DesktopUtils;
 
@@ -78,11 +78,25 @@ public class ExtensionScripts extends ExtensionAdaptor {
 	    extensionHook.addOptionsParamSet(getScriptParam());
 	    
 	    if (getView() != null) {
-	        ExtensionHookView pv = extensionHook.getHookView();
-	        pv.addWorkPanel(getConsolePanel());
+	        extensionHook.getHookView().addWorkPanel(getConsolePanel());
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuConsoleLink());
 	    }
 	}
+	
+    @Override
+	public boolean canUnload() {
+    	return true;
+    }
+	
+    @Override
+	public void unload() {
+	    if (getView() != null) {
+	    	Control.getSingleton().getExtensionLoader().removeWorkPanel(getConsolePanel());
+	    	Control.getSingleton().getExtensionLoader().removeToolsMenuItem(getMenuConsoleLink());
+	    }
+	}
+
+
 	
 	private ConsolePanel getConsolePanel() {
 		if (consolePanel == null) {

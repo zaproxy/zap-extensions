@@ -1,0 +1,16 @@
+<zapaddon>
+	<name>Report alert generator</name>
+	<version>8</version>
+	<description>Allows you to generate reports for alerts you specify in pdf or odt format</description>
+	<author>Talsoft SRL</author>
+	<url>http://www.talsoft.com.ar</url>
+	<changes>Updated to support new addon format</changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.alertReport.ExtensionAlertReportExport</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+</zapaddon>
