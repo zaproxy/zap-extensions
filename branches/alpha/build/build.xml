@@ -6,6 +6,7 @@
 	<property name="build" location="build" />
 	<property name="dist" location="zap-exts" />
 	<property name="dist.lib.dir" location="../lib" />
+	<property name="status" value="alpha" />
 	<property name="versions.file" location="${dist}/ZapVersions.xml" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
@@ -46,22 +47,54 @@
 	 version should be an integer that increments on each release, starting at 1
 	 -->
 
-	<target name="append-to-versions-file" description="appends the extension details to the versions xml file">
+	<target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
 		<length file="${dist}/${file}" property="length" />
+        <tstamp>
+            <format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+        </tstamp>
 		<echo file="${versions.file}" append="true">
 	&lt;addon>${extension}&lt;/addon>
 	&lt;addon_${extension}>
 		&lt;name>${name}&lt;/name>
+		&lt;description>${description}&lt;/name>
 		&lt;version>${version}&lt;/version>
 		&lt;file>${file}&lt;/file>
-		&lt;status>alpha&lt;/status>
+		&lt;status>${status}&lt;/status>
 		&lt;changes>${changes}&lt;/changes>
 		&lt;url>https://zap-extensions.googlecode.com/files/${file}&lt;/url>
 		&lt;size>${length}&lt;/size>
+		&lt;date>${yyyymmdd}&lt;/date>
 	&lt;/addon_${extension}>
 </echo>
 	</target>
+
+	<target name="build-addon" description="build the specified addon">
 	
+		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+		
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${build}" prefix="">
+				<include name="org/zaproxy/zap/extension/${addon}/**"/>
+			</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
+			</zipfileset>
+			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false"/>
+			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+		</jar>
+
+		<antcall target="append-to-versions-file"> 
+			<param name="extension" value="${addon}"/> 
+			<param name="name" value="${zapaddon.name}"/> 
+			<param name="version" value="${zapaddon.version}"/> 
+			<param name="description" value="${zapaddon.description}"/> 
+			<param name="url" value="${zapaddon.url}"/> 
+			<param name="changes" value="${zapaddon.changes}"/> 
+			<param name="file" value="${file}"/> 
+		</antcall>
+	</target>
+
 	<target name="build-ascanrulesAlpha" description="build the Active scanner rules">
 		<antcall target="build-extension"> 
 			<param name="extension" value="ascanrulesAlpha"/> 
@@ -208,9 +241,12 @@
 		
 		<echo file="${versions.file}" append="true">&lt;ZAP></echo>
 		
-		<!-- Keep in alphabetical order ;) -->
+		<!-- 'Standard' addons (keep in alphabetical order ;) -->
+		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
+
+		<!-- 'Non-Standard' addons, ie which require additional files or havnt yet been converted to
+		 'proper' add-ons (keep in alphabetical order ;) -->
 		<antcall target="build-ascanrulesAlpha"/>
-		<antcall target="build-highlighter"/>
 		<antcall target="build-pscanrulesAlpha"/>
 		<antcall target="build-serverSentEvents"/>
 
