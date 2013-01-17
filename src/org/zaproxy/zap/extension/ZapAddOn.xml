@@ -1,0 +1,26 @@
+<zapaddon>
+	<name>Short text name (no HTML)</name>
+	<version></version>			<!-- Integer than increments with each (released) change -->
+	<description>Longer test description (no HTML), but not too long!</description>
+	<author>Author (no HTML)</author>
+	<url/>						<!-- Optional URL to more info, eg on the zap-extensions wiki -->
+	<changes/>					<!-- Optional, text summary of changes since the last version -->
+	<dependson>					<!-- Optional, to be used if this addon depends on other addons -->
+		<zapaddonid/>			<!-- id (and optionally version) of other addon this one depends on - can be multiple of these -->
+	</dependson>
+	<extensions>				<!-- Optional, to be used if this addon includes extensions -->
+		<extension/>			<!-- Full class name of the extension - can be multiple of these -->
+	</extensions>
+	<ascanrules>				<!-- Optional, to be used if this addon includes active scan rules -->
+		<ascanrule/>			<!-- Full class name of the active scan rule - can be multiple of these -->
+	</ascanrules>
+	<pscanrules>				<!-- Optional, to be used if this addon includes passive scan rules -->
+		<pscanrule/>			<!-- Full class name of the passive scan rule - can be multiple of these -->
+	</pscanrules>
+	<filters>					<!-- Optional, to be used if this addon includes filters -->
+		<filter/>				<!-- Full class name of the filter - can be multiple of these -->
+	</filters>
+	<files>						<!-- Optional, to be used if this addon includes raw files -->
+		<file/>					<!-- Relative file name (to this package, and the users directory) - can be multiple of these -->
+	</files>
+</zapaddon>

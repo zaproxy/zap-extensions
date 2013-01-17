@@ -1,0 +1,27 @@
+<zapaddon>
+	<name>Passive scanner rules</name>
+	<version>2</version>
+	<description>The release quality Passive Scanner rules</description>
+	<author>ZAP Dev Team</author>
+	<url/>
+	<changes>Updated to support new addon format</changes>
+	<dependson/>
+	<extensions>
+	</extensions>
+	<ascanrules/>
+	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.CacheControlScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.ContentTypeMissingScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.CookieHttpOnlyScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.CookieSecureFlagScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.CrossDomainScriptInclusionScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.HeaderXssProtectionScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.MixedContentScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.PasswordAutocompleteScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.TestInfoPrivateAddressDisclosure</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.XContentTypeOptionsScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.XFrameOptionScanner</pscanrule>
+	</pscanrules>
+	<filters/>
+	<files/>
+</zapaddon>
