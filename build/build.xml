@@ -90,6 +90,17 @@
 		</antcall>
 	</target>
 
+	<target name="build-svndigger" description="build the SVN Digger addon">
+		<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
+	
+		<!-- Add the SVN Digger files in the right place -->
+		<property name="addon" value="svndigger" /> <!-- Set this to make cut-n-pasting safer ;) -->
+		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${src}/org/zaproxy/zap/extension/${addon}/files/" prefix="dirbuster/"/>
+		</jar>
+	</target>
 	
 	<target name="build-tokengen" description="build the tokengen extension">
 		<antcall target="build-addon"><param name="addon" value="tokengen"/></antcall>
@@ -118,6 +129,7 @@
 		<antcall target="build-addon"><param name="addon" value="scripts"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
 
+		<antcall target="build-svndigger"/>
 		<antcall target="build-tokengen"/>
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
