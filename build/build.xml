@@ -9,7 +9,7 @@
 	<property name="status" value="release" />
 	<property name="versions.file" location="${dist}/ZapVersions-${status}.xml" />
 	<!-- This assumes you also have the zaproxy project -->
-	<property name="zap.plugin.dir" location="../../zaproxy-api/src/plugin" />
+	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 
 	<target name="clean">
 		<delete dir="${dist}" includeEmptyDirs="true" />
