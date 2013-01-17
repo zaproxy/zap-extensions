@@ -51,7 +51,7 @@
 	&lt;addon>${extension}&lt;/addon>
 	&lt;addon_${extension}>
 		&lt;name>${name}&lt;/name>
-		&lt;description>${description}&lt;/name>
+		&lt;description>${description}&lt;/description>
 		&lt;version>${version}&lt;/version>
 		&lt;file>${file}&lt;/file>
 		&lt;status>${status}&lt;/status>
