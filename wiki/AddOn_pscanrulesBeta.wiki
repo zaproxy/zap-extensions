@@ -9,6 +9,6 @@ The rules include:
   * Information disclosure - sensitive informations on HTTP Referrer header
   * Information disclosure - suspicious comments
   * Weak Authentication Method
-  * Insecure JSF ViewState
+  * Insecure JSF `ViewState`
   * HTTP Parameter Override
   * Viewstate scanner
