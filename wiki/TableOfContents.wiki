@@ -4,7 +4,7 @@
     * [AddOn_ascanrules Active scanner rules]
    * [AddOnsBeta Add-ons: Beta]
     * [AddOn_ascanrulesBeta Active scanner rules (beta)]
-    * [AddOn_scripts] Script Console
+    * [AddOn_scripts Script Console]
    * [AddOnsAlpha Add-ons: Alpha]
   * [Examples Examples]
   * [CodeStructure Code Structure]
