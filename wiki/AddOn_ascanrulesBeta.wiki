@@ -1,0 +1,15 @@
+= Active scanner rules (beta) =
+
+The beta quality Active Scanner rules.
+
+The rules include:
+  * Anti CSRF tokens scanner
+  * Session Fixation
+  * LDAP Injection
+  * SQL Injection
+  * SQL Injection (MySQL)
+  * SQL Injection (Hypersonic SQL)
+  * SQL Injection (Oracle)
+  * SQL Injection (PostgreSQL)
+  * HTTP Parameter Pollution scanner
+  * Possible Username Enumeration
