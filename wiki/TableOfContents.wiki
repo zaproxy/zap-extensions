@@ -1,4 +1,7 @@
   * [Introduction Introduction]
-  * [V2Extensions V2 Extensions]
+  * [V2Extensions 2.0 Add-ons]
+   * [AddOnsRelease Add-ons: Release]
+   * [AddOnsBeta Add-ons: Beta]
+   * [AddOnsAlpha Add-ons: Alpha]
   * [Examples Examples]
   * [CodeStructure Code Structure]
