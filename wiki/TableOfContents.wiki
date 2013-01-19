@@ -3,6 +3,7 @@
    * [AddOnsRelease Add-ons: Release]
     * [AddOn_ascanrules Active scanner rules]
    * [AddOnsBeta Add-ons: Beta]
+    * [AddOn_ascanrulesBeta Active scanner rules(beta)]
    * [AddOnsAlpha Add-ons: Alpha]
   * [Examples Examples]
   * [CodeStructure Code Structure]
