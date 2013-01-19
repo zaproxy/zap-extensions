@@ -5,6 +5,7 @@
     * [AddOn_pscanrules Passive scanner rules]
    * [AddOnsBeta Add-ons: Beta]
     * [AddOn_ascanrulesBeta Active scanner rules (beta)]
+    * [AddOn_pscanrulesBeta Passive scanner rules (beta)]
     * [AddOn_scripts Script Console]
    * [AddOnsAlpha Add-ons: Alpha]
   * [Examples Examples]
