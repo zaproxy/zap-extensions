@@ -1,0 +1,16 @@
+= Passive scanner rules =
+
+The release quality Passive Scanner rules.
+
+The rules include:
+  * Incomplete or no cache-control and pragma HTTPHeader set
+  * Content-Type header missing
+  * Cookie no http-only flag
+  * Cookie without secure flag
+  * Cross-domain JavaScript source file inclusion
+  * IE8's XSS protection filter not disabled
+  * Secure pages including mixed content
+  * Password Autocomplete in browser
+  * Private IP disclosure
+  * X-Content-Type-Options header missing
+  * X-Frame-Options header not set
