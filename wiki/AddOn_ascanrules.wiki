@@ -1,0 +1,15 @@
+= Active scanner rules =
+
+The release quality Active Scanner rules.
+
+The rules include:
+  * Cross Site Scripting
+  * Directory browsing
+  * External redirect
+  * CRLF injection
+  * Parameter tampering
+  * Path Traversal
+  * Secure page browser cache
+  * Server side include
+  * Session ID in URL rewrite
+  * URL Redirector Abuse
