@@ -1,7 +1,7 @@
   * [Introduction Introduction]
   * [V2Extensions 2.0 Add-ons]
    * [AddOnsRelease Add-ons: Release]
-    * [AddOn-ascanrules Active scanner rules]
+    * [AddOn_ascanrules Active scanner rules]
    * [AddOnsBeta Add-ons: Beta]
    * [AddOnsAlpha Add-ons: Alpha]
   * [Examples Examples]
