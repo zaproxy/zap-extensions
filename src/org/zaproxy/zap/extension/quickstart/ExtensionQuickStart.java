@@ -27,8 +27,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.ExtensionHookView;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
+import org.zaproxy.zap.extension.help.ExtensionHelp;
 
 public class ExtensionQuickStart extends ExtensionAdaptor {
 	
@@ -64,6 +64,8 @@ public class ExtensionQuickStart extends ExtensionAdaptor {
 
 	    if (getView() != null) {
 	        extensionHook.getHookView().addWorkPanel(getQuickStartPanel());
+	        
+	        ExtensionHelp.enableHelpKey(getQuickStartPanel(), "quickstart");
 	    }
 	}
 
