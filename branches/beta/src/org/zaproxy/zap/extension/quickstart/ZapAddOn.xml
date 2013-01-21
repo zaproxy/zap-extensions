@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>3</version>
+	<version>4</version>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated to support new addon format</changes>
+	<changes>Added context sensitive help</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.quickstart.ExtensionQuickStart</extension>
