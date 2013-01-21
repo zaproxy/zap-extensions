@@ -68,6 +68,10 @@
 		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
 		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
 		
+		<antcall target="build-addon-help"> 
+			<param name="addon" value="${addon}"/>
+		</antcall>
+
 		<jar jarfile="${dist}/${file}" update="true" compress="true">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${addon}/**"/>
@@ -75,9 +79,16 @@
 			<zipfileset dir="${src}" prefix="">
 				<include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
 			</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/${addon}/resource/**"/>
+			</zipfileset>
 			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false"/>
 			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
 		</jar>
+
+		<antcall target="cleanup-addon-help"> 
+			<param name="addon" value="${addon}"/>
+		</antcall>
 
 		<antcall target="append-to-versions-file"> 
 			<param name="extension" value="${addon}"/> 
@@ -90,6 +101,45 @@
 		</antcall>
 	</target>
 
+	<target name="build-addon-help" depends="is-help-available" if="help.available" description="generates the help file and copies it to the right place">
+	    <!--
+	    	- runs if "help" directory is present
+	    	- creates help.jar which is included in the extension-jar file
+	    	- help.jar is dynamically merged into core help pages on ZAP start
+	    -->
+		<local name="help.jar" />
+        <property name="help.jar" value="help.jar" />
+        
+        <local name="help.package" />
+	    <property name="help.package" value="org/zaproxy/zap/extension/${addon}/resource/help" />
+		
+        <local name="help.target" />
+        <property name="help.target" value="${build}/${help.package}/" />
+        
+        <!-- generate the indexes -->
+        <java classname="com.sun.java.help.search.Indexer" fork="true" dir="${src}/${help.package}">
+            <arg value="zaphelp"/>
+            <classpath>
+                <pathelement location="${dist.lib.dir}/jhall.jar" />
+            </classpath>
+        </java>
+        
+        <!-- delete the previous jar in the help directory (if present) -->
+        <delete dir="${build}/${help.package}" />
+        <mkdir dir="${build}/${help.package}" />
+
+        <!-- as files reside in resource/ they are copied later -->
+    </target>
+    
+	<target name="is-help-available">
+	    <available property="help.available" type="dir" file="${src}/org/zaproxy/zap/extension/${addon}/resource/help"/>
+	</target>
+	
+	<target name="cleanup-addon-help">
+        <!-- delete the indexes, generated previously, as they are no longer needed. -->
+        <delete dir="${src}/org/zaproxy/zap/extension/${addon}/resource/help/JavaHelpSearch" />
+	</target>
+	
 	<target name="build-svndigger" description="build the SVN Digger addon">
 		<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
 	
