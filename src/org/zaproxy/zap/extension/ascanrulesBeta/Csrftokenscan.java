@@ -190,12 +190,12 @@ public class Csrftokenscan extends AbstractAppPlugin {
 				}
 				// If vulnerable, generates the alert
 				if (vuln) {
-					String desc = Constant.messages.getString("ascanbeta.noanticsrftokens.desc");
+					// TODO attack should probably be the relevant FORM tag 
 					String attack = Constant.messages.getString("ascanbeta.noanticsrftokens.alert.attack");
 					String extraInfo = Constant.messages.getString("ascanbeta.noanticsrftokens.alert.extrainfo");
-					bingo(Alert.RISK_HIGH, Alert.WARNING, attack, desc,
-							getBaseMsg().getRequestHeader().getURI().getURI(),
-							getReference(), attack, extraInfo, getSolution(),
+					bingo(Alert.RISK_HIGH, Alert.WARNING, 
+							null,
+							attack, extraInfo, getSolution(),
 							getBaseMsg());
 				}
 			}
