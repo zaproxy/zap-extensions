@@ -20,15 +20,13 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 
 
@@ -53,7 +51,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * 
  *  @author Colm O'Flaherty, Encription Ireland Ltd
  */
-public class SQLInjection extends AbstractAppPlugin  {
+public class SQLInjection extends AbstractAppParamPlugin  {
 	
 	//what do we do at each attack strength?
 	//(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
@@ -287,11 +285,6 @@ public class SQLInjection extends AbstractAppPlugin  {
 	 */
 	@Override
 	public void init() {
-		//DEBUG: turn on for debugging
-		//TODO: turn this off
-		//log.setLevel(org.apache.log4j.Level.DEBUG);
-		//this.debugEnabled = true;
-
 		if ( this.debugEnabled ) log.debug("Initialising");
 		
 		//DEBUG only
@@ -327,397 +320,265 @@ public class SQLInjection extends AbstractAppPlugin  {
 	 * scans for SQL Injection vulnerabilities
 	 */
 	@Override
-	public void scan() {
+    public void scan(HttpMessage msg, String param, String value) {
 
 		//as soon as we find a single SQL injection on the url, skip out. Do not look for SQL injection on a subsequent parameter on the same URL
 		//for performance reasons.
 		boolean sqlInjectionFoundForUrl = false;
 		
 		try {
-			TreeSet<HtmlParameter> htmlParams = new TreeSet<> (); 
-			htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
-			htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
-
-			//for each parameter in turn
-			for (Iterator<HtmlParameter> iter = htmlParams.iterator(); iter.hasNext() && ! sqlInjectionFoundForUrl; ) {
 				
-				//reinitialise the count for each type of request, for each parameter.  We will be sticking to limits defined in the attach strength logic
-				int countErrorBasedRequests = 0;
-				int countBooleanBasedRequests = 0;
-				int countUnionBasedRequests = 0;
-				int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
+			//reinitialise the count for each type of request, for each parameter.  We will be sticking to limits defined in the attach strength logic
+			int countErrorBasedRequests = 0;
+			int countBooleanBasedRequests = 0;
+			int countUnionBasedRequests = 0;
+			int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
 
-				HtmlParameter currentHtmlParameter = iter.next();
-				if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], ["+ currentHtmlParameter.getType()+"] field ["+ currentHtmlParameter.getName() + "] with value ["+currentHtmlParameter.getValue()+"] for SQL Injection");    			
+			//Check 1: Check for Error Based SQL Injection (actual error messages).
+			//for each SQL metacharacter combination to try
+			for (int sqlErrorStringIndex = 0; 
+					sqlErrorStringIndex < SQL_CHECK_ERR.length && !sqlInjectionFoundForUrl && doErrorBased && countErrorBasedRequests < doErrorMaxRequests ; 
+					sqlErrorStringIndex++) {
 
-				//Check 1: Check for Error Based SQL Injection (actual error messages).
-				//for each SQL metacharacter combination to try
-				for (int sqlErrorStringIndex = 0; 
-						sqlErrorStringIndex < SQL_CHECK_ERR.length && !sqlInjectionFoundForUrl && doErrorBased && countErrorBasedRequests < doErrorMaxRequests ; 
-						sqlErrorStringIndex++) {
+				//new message for each value we attack with
+				HttpMessage msg1 = getNewMsg();
+				String sqlErrValue = SQL_CHECK_ERR[sqlErrorStringIndex];
+	            setParameter(msg1, param, sqlErrValue);
 
-					//new message for each value we attack with
-					HttpMessage msg1 = getNewMsg();
-					String sqlErrValue = SQL_CHECK_ERR[sqlErrorStringIndex];
+				//send the message with the modified parameters
+				sendAndReceive(msg1);
+				countErrorBasedRequests++;
 
-					if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
-						TreeSet <HtmlParameter> requestParams = msg1.getUrlParams(); //get parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlErrValue));
-						msg1.setGetParams(requestParams); //url parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.form)) {
-						TreeSet <HtmlParameter> requestParams = msg1.getFormParams(); //form parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlErrValue));
-						msg1.setFormParams(requestParams); //form parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.cookie)) {
-						TreeSet <HtmlParameter> requestParams = msg1.getCookieParams(); //cookie parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlErrValue));
-						msg1.setCookieParams(requestParams); //cookie parameters
+				//now check the results against each pattern in turn, to try to identify a database, or even better: a specific database.
+				//Note: do NOT check the HTTP error code just yet, as the result could come back with one of various codes.
+				Iterator<String> errorPatternIterator =  SQL_ERROR_TO_DBMS.keySet().iterator();
+
+				while (errorPatternIterator.hasNext() && ! sqlInjectionFoundForUrl) {
+					String errorPatternKey = errorPatternIterator.next();
+					String errorPatternRDBMS =  SQL_ERROR_TO_DBMS.get(errorPatternKey);
+
+					//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
+					Pattern errorPattern = Pattern.compile("\\Q"+errorPatternKey+"\\E", PATTERN_PARAM);
+
+					//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
+					//then we may may have a SQL Injection vulnerability
+					StringBuilder sb = new StringBuilder();
+					if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
+						//Likely a SQL Injection. Raise it
+						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPatternKey);
+
+						//raise the alert
+						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Error Based - " + errorPatternRDBMS, getDescription(), 
+								null,
+								param,  sb.toString(), 
+								extraInfo, getSolution(), msg1);
+
+						//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
+						getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/"+errorPatternRDBMS, Boolean.TRUE);
+
+						sqlInjectionFoundForUrl = true; 
+						continue; 
 					}
+				} //end of the loop to check for RDBMS specific error messages
 
-					//send the message with the modified parameters
-					sendAndReceive(msg1);
-					countErrorBasedRequests++;
-
-					//now check the results against each pattern in turn, to try to identify a database, or even better: a specific database.
-					//Note: do NOT check the HTTP error code just yet, as the result could come back with one of various codes.
-					Iterator<String> errorPatternIterator =  SQL_ERROR_TO_DBMS.keySet().iterator();
-
-					while (errorPatternIterator.hasNext() && ! sqlInjectionFoundForUrl) {
-						String errorPatternKey = errorPatternIterator.next();
-						String errorPatternRDBMS =  SQL_ERROR_TO_DBMS.get(errorPatternKey);
-
-						//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
-						Pattern errorPattern = Pattern.compile("\\Q"+errorPatternKey+"\\E", PATTERN_PARAM);
-
-						//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
-						//then we may may have a SQL Injection vulnerability
-						if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, null)) {
-							//Likely a SQL Injection. Raise it
-							String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPatternKey);
-							String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.errorbased.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlErrValue);
-
-							//raise the alert
-							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Error Based - " + errorPatternRDBMS, getDescription(), 
-									getBaseMsg().getRequestHeader().getURI().getURI(), //url
-									"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
-									extraInfo, getSolution(), msg1);
-
-							log.info("A likely Error Based SQL Injection Vulnerability has been found with ["+msg1.getRequestHeader().getMethod()+"] URL ["+msg1.getRequestHeader().getURI().getURI()+"] on "+currentHtmlParameter.getType()+" field: ["+currentHtmlParameter.getName()+"]");
-
-							//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
-							getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/"+errorPatternRDBMS, Boolean.TRUE);
-
-							sqlInjectionFoundForUrl = true; 
-							continue; 
-						}
-					} //end of the loop to check for RDBMS specific error messages
-
-				}  //for each of the SQL_CHECK_ERR values (SQL metacharacters)
+			}  //for each of the SQL_CHECK_ERR values (SQL metacharacters)
 
 
-				//Check 2: boolean based checks.
-				//the check goes like so:
-				// append " and 1 = 1" to the param.  Send the query.  Check the results. Hopefully they match the original results from the unmodified query,
-				// *suggesting* (but not yet definitely) that we have successfully modified the query, (hopefully not gotten an error message), 
-				// and have gotten the same results back, which is what you would expect if you added the constraint " and 1 = 1" to most (but not every) SQL query.
-				// So was it a fluke that we got the same results back from the modified query? Perhaps the original query returned 0 rows, so adding any number of 
-				// constraints would change nothing?  It is still a possibility!
-				// check to see if we can change the original parameter again to *restrict* the scope of the query using an AND with an always false condition (AND_ERR)
-				// (decreasing the results back to nothing), or to *broaden* the scope of the query using an OR with an always true condition (AND_OR)
-				// (increasing the results).  
-				// If we can successfully alter the results to our requirements, by one means or another, we have found a SQL Injection vulnerability.
-				//Some additional complications: assume there are 2 HTML parameters: username and password, and the SQL constructed is like so:
-				// select * from username where user = "$user" and password = "$password"
-				// and lets assume we successfully know the type of the user field, via SQL_OR_TRUE value '" OR "1"="1' (single quotes not part of the value)
-				// we still have the problem that the actual SQL executed would look like so:
-				// select * from username where user = "" OR "1"="1" and password = "whateveritis"
-				// Since the password field is still taken into account (by virtue of the AND condition on the password column), and we only inject one parameter at a time, 
-				// we are still not in control.
-				// the solution is simple: add an end-of-line comment to the field added in (in this example: the user field), so that the SQL becomes:
-				// select * from username where user = "" OR "1"="1" -- and password = "whateveritis"
-				// the result is that any additional constraints are commented out, and the last condition to have any effect is the one whose
-				// HTTP param we are manipulating.
-				// Note also that because this comment only needs to be added to the "SQL_OR_TRUE" and not to the equivalent SQL_AND_FALSE, because of the nature of the OR 
-				// and AND conditions in SQL.
-				// Corollary: If a particular RDBMS does not offer the ability to comment out the remainder of a line, we will not attempt to comment out anything in the query
-				//            and we will simply hope that the *last* constraint in the SQL query is constructed from a HTTP parameter under our control.
+			//Check 2: boolean based checks.
+			//the check goes like so:
+			// append " and 1 = 1" to the param.  Send the query.  Check the results. Hopefully they match the original results from the unmodified query,
+			// *suggesting* (but not yet definitely) that we have successfully modified the query, (hopefully not gotten an error message), 
+			// and have gotten the same results back, which is what you would expect if you added the constraint " and 1 = 1" to most (but not every) SQL query.
+			// So was it a fluke that we got the same results back from the modified query? Perhaps the original query returned 0 rows, so adding any number of 
+			// constraints would change nothing?  It is still a possibility!
+			// check to see if we can change the original parameter again to *restrict* the scope of the query using an AND with an always false condition (AND_ERR)
+			// (decreasing the results back to nothing), or to *broaden* the scope of the query using an OR with an always true condition (AND_OR)
+			// (increasing the results).  
+			// If we can successfully alter the results to our requirements, by one means or another, we have found a SQL Injection vulnerability.
+			//Some additional complications: assume there are 2 HTML parameters: username and password, and the SQL constructed is like so:
+			// select * from username where user = "$user" and password = "$password"
+			// and lets assume we successfully know the type of the user field, via SQL_OR_TRUE value '" OR "1"="1' (single quotes not part of the value)
+			// we still have the problem that the actual SQL executed would look like so:
+			// select * from username where user = "" OR "1"="1" and password = "whateveritis"
+			// Since the password field is still taken into account (by virtue of the AND condition on the password column), and we only inject one parameter at a time, 
+			// we are still not in control.
+			// the solution is simple: add an end-of-line comment to the field added in (in this example: the user field), so that the SQL becomes:
+			// select * from username where user = "" OR "1"="1" -- and password = "whateveritis"
+			// the result is that any additional constraints are commented out, and the last condition to have any effect is the one whose
+			// HTTP param we are manipulating.
+			// Note also that because this comment only needs to be added to the "SQL_OR_TRUE" and not to the equivalent SQL_AND_FALSE, because of the nature of the OR 
+			// and AND conditions in SQL.
+			// Corollary: If a particular RDBMS does not offer the ability to comment out the remainder of a line, we will not attempt to comment out anything in the query
+			//            and we will simply hope that the *last* constraint in the SQL query is constructed from a HTTP parameter under our control.
 
-				if (this.debugEnabled) log.debug("Doing Check 2, since check 1 did not match for "+ getBaseMsg().getRequestHeader().getURI());
+			if (this.debugEnabled) log.debug("Doing Check 2, since check 1 did not match for "+ getBaseMsg().getRequestHeader().getURI());
 
-				String mResBodyNormal = getBaseMsg().getResponseBody().toString();
-				//boolean booleanBasedSqlInjectionFoundForParam = false;
+			String mResBodyNormal = getBaseMsg().getResponseBody().toString();
+			//boolean booleanBasedSqlInjectionFoundForParam = false;
 
-				//try each of the AND syntax values in turn. 
-				//Which one is successful will depend on the column type of the table/view column into which we are injecting the SQL.
-				for (int i=0; 
-						i<SQL_LOGIC_AND.length && ! sqlInjectionFoundForUrl && doBooleanBased && countBooleanBasedRequests < doBooleanMaxRequests; 
-						i++) {
-					//needs a new message for each type of AND to be issued
-					HttpMessage msg2 = getNewMsg();
-					String sqlBooleanAndValue=currentHtmlParameter.getValue() + SQL_LOGIC_AND[i];
-					String sqlBooleanAndFalseValue = currentHtmlParameter.getValue() + SQL_LOGIC_AND_FALSE[i];
+			//try each of the AND syntax values in turn. 
+			//Which one is successful will depend on the column type of the table/view column into which we are injecting the SQL.
+			for (int i=0; 
+					i<SQL_LOGIC_AND.length && ! sqlInjectionFoundForUrl && doBooleanBased && 
+					countBooleanBasedRequests < doBooleanMaxRequests; 
+					i++) {
+				//needs a new message for each type of AND to be issued
+				HttpMessage msg2 = getNewMsg();
+				String sqlBooleanAndValue = value + SQL_LOGIC_AND[i];
+				String sqlBooleanAndFalseValue = value + SQL_LOGIC_AND_FALSE[i];
 
-					if (this.debugEnabled) log.debug("Check 2, part 1: Trying AND condition ["+sqlBooleanAndValue+"] for "+ getBaseMsg().getRequestHeader().getURI());
+	            setParameter(msg2, param, sqlBooleanAndValue);
 
-					if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
-						TreeSet <HtmlParameter> requestParams = msg2.getUrlParams(); //get parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlBooleanAndValue));         			
-						msg2.setGetParams(requestParams); //url parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.form)) {
-						TreeSet <HtmlParameter> requestParams = msg2.getFormParams(); //form parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlBooleanAndValue));
-						msg2.setFormParams(requestParams); //form parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.cookie)) {
-						TreeSet <HtmlParameter> requestParams = msg2.getCookieParams(); //cookie parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlBooleanAndValue));
-						msg2.setCookieParams(requestParams); //cookie parameters
-					}
+				//send the AND with an additional TRUE statement tacked onto the end. Hopefully it will return the same results as the original (to find a vulnerability)
+				sendAndReceive(msg2);
+				countBooleanBasedRequests++;
 
+				//String resBodyAND = stripOff(msg2.getResponseBody().toString(), SQL_LOGIC_AND[i]);
+				String resBodyAND = msg2.getResponseBody().toString();
+				//if the results of the "AND 1=1" match the original query, we may be onto something. 
+				if (resBodyAND.compareTo(mResBodyNormal) == 0) {
+					if (this.debugEnabled) log.debug("Check 2, AND condition ["+sqlBooleanAndValue+"] matched original results for "+ getBaseMsg().getRequestHeader().getURI());
+					//so they match. Was it a fluke? See if we get the same result by tacking on "AND 1 = 2" to the original
+					HttpMessage msg2_and_false = getNewMsg();  
 
-					//send the AND with an additional TRUE statement tacked onto the end. Hopefully it will return the same results as the original (to find a vulnerability)
-					sendAndReceive(msg2);
+		            setParameter(msg2, param, sqlBooleanAndFalseValue);
+
+					sendAndReceive(msg2_and_false);
 					countBooleanBasedRequests++;
+					
+					//String resBodyANDFalse = stripOff(msg2_and_false.getResponseBody().toString(), SQL_LOGIC_AND_FALSE[i]);
+					String resBodyANDFalse = msg2_and_false.getResponseBody().toString();
 
-					//String resBodyAND = stripOff(msg2.getResponseBody().toString(), SQL_LOGIC_AND[i]);
-					String resBodyAND = msg2.getResponseBody().toString();
-					//if the results of the "AND 1=1" match the original query, we may be onto something. 
-					if (resBodyAND.compareTo(mResBodyNormal) == 0) {
-						if (this.debugEnabled) log.debug("Check 2, AND condition ["+sqlBooleanAndValue+"] matched original results for "+ getBaseMsg().getRequestHeader().getURI());
-						//so they match. Was it a fluke? See if we get the same result by tacking on "AND 1 = 2" to the original
-						HttpMessage msg2_and_false = getNewMsg();  
-						if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
-							TreeSet <HtmlParameter> requestParams = msg2_and_false.getUrlParams(); //get parameters
-							requestParams.remove(currentHtmlParameter);
-							requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlBooleanAndFalseValue));         			
-							msg2_and_false.setGetParams(requestParams); //url parameters       		        			        			        		
-						}  //end of the URL parameter code
-						else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.form)) {
-							TreeSet <HtmlParameter> requestParams = msg2_and_false.getFormParams(); //form parameters
-							requestParams.remove(currentHtmlParameter);
-							requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlBooleanAndFalseValue));
-							msg2_and_false.setFormParams(requestParams); //form parameters       		        			        			        		
-						}  //end of the URL parameter code
-						else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.cookie)) {
-							TreeSet <HtmlParameter> requestParams = msg2_and_false.getCookieParams(); //cookie parameters
-							requestParams.remove(currentHtmlParameter);
-							requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlBooleanAndFalseValue));
-							msg2_and_false.setCookieParams(requestParams); //cookie parameters
-						}
+					// build an always false AND query.  Result should be different to prove the SQL works.
+					if (resBodyANDFalse.compareTo(mResBodyNormal) != 0) {
+						if (this.debugEnabled) log.debug("Check 2, AND FALSE condition ["+sqlBooleanAndFalseValue+"] differed from original for "+ getBaseMsg().getRequestHeader().getURI());
 
+						//it's different (suggesting that the "AND 1 = 2" appended on gave different results because it restricted the data set to nothing
+						//Likely a SQL Injection. Raise it
+						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndValue, sqlBooleanAndFalseValue);
 
-						sendAndReceive(msg2_and_false);
+						//raise the alert
+						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Boolean Based", getDescription(), 
+								null, //url
+								param,  sqlBooleanAndValue, 
+								extraInfo, getSolution(), msg2);
+
+						//TODO: do we need this?
+						//getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/and", Boolean.TRUE);
+
+						sqlInjectionFoundForUrl= true; 
+						//booleanBasedSqlInjectionFoundForParam = true;  //causes us to skip past the other entries in SQL_AND.  Only one will expose a vuln for a given param, since the database column is of only 1 type
+
+						continue; //to the next entry in SQL_AND
+					} else {
+						//the first value to try..
+						String orValue = value + SQL_LOGIC_OR_TRUE[i];
+
+						//this is where that comment comes in handy: if the RDBMS supports one-line comments, add one in to attempt to ensure that the 
+						//condition becomes one that is effectively always true, returning ALL data (or as much as possible), allowing us to pinpoint the SQL Injection
+						if (this.debugEnabled) log.debug("Check 2, AND FALSE condition ["+sqlBooleanAndFalseValue+"] SAME as original (requiring OR TRUE check) for "+ getBaseMsg().getRequestHeader().getURI());
+						HttpMessage msg2_or_true = getNewMsg();  
+			            setParameter(msg2_or_true, param, sqlBooleanAndFalseValue);
+						sendAndReceive(msg2_or_true);
 						countBooleanBasedRequests++;
 						
-						//String resBodyANDFalse = stripOff(msg2_and_false.getResponseBody().toString(), SQL_LOGIC_AND_FALSE[i]);
-						String resBodyANDFalse = msg2_and_false.getResponseBody().toString();
+						//String resBodyORTrue = stripOff(msg2_or_true.getResponseBody().toString(), orValue);
+						String resBodyORTrue = msg2_or_true.getResponseBody().toString();
 
-						// build an always false AND query.  Result should be different to prove the SQL works.
-						if (resBodyANDFalse.compareTo(mResBodyNormal) != 0) {
-							if (this.debugEnabled) log.debug("Check 2, AND FALSE condition ["+sqlBooleanAndFalseValue+"] differed from original for "+ getBaseMsg().getRequestHeader().getURI());
+						int compareOrToOriginal = resBodyORTrue.compareTo(mResBodyNormal);
 
-							//it's different (suggesting that the "AND 1 = 2" appended on gave different results because it restricted the data set to nothing
+						//if the results for the OR are the same as the original, try again with the OR statement, but this time, include a one-line comment at the end
+						//to nullify the effect of everything that follows.  This is an often necessary (depending on the nature of the original SQL statement) attempt 
+						//to see if we have the results of the page under our control by manipulating this parameter
+						if (compareOrToOriginal == 0) {
+							//need to append in the first character of the SQL_OR_TRUE to close off any open quotes before commenting out the remainder
+							orValue = value + SQL_LOGIC_OR_TRUE[i] + SQL_LOGIC_OR_TRUE[i].substring(0, 1) + SQL_ONE_LINE_COMMENT;
+
+							HttpMessage msg2_or_true_comment = getNewMsg();  
+				            setParameter(msg2_or_true_comment, param, orValue);
+							sendAndReceive(msg2_or_true_comment);
+							countBooleanBasedRequests++;
+							
+							//and re-set the variable with the results of trying the commented OR
+							compareOrToOriginal = resBodyORTrue.compareTo(mResBodyNormal);
+						}
+
+						//Note: do NOT put an else condition before this. This logic *always* needs to happen after the previous check.
+						if (compareOrToOriginal != 0) {
+
+							if (this.debugEnabled) log.debug("Check 2, OR TRUE condition ["+orValue+"] different to original for "+ getBaseMsg().getRequestHeader().getURI());
+
+							//it's different (suggesting that the "OR 1 = 1" appended on gave different results because it broadened the data set from nothing to something
 							//Likely a SQL Injection. Raise it
-							String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndValue, sqlBooleanAndFalseValue);
-							String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlBooleanAndValue);
+							String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndValue, orValue);
 
 							//raise the alert
 							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Boolean Based", getDescription(), 
-									getBaseMsg().getRequestHeader().getURI().getURI(), //url
-									"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
+									null, //url
+									param,  orValue, 
 									extraInfo, getSolution(), msg2);
 
-							log.info("A likely Boolean Based SQL Injection Vulnerability has been found with ["+msg2.getRequestHeader().getMethod()+"] URL ["+msg2.getRequestHeader().getURI().getURI()+"] on "+currentHtmlParameter.getType()+" field: ["+currentHtmlParameter.getName()+"]");
-
-							//TODO: do we need this?
-							//getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/and", Boolean.TRUE);
-
-							sqlInjectionFoundForUrl= true; 
+							sqlInjectionFoundForUrl = true; 
 							//booleanBasedSqlInjectionFoundForParam = true;  //causes us to skip past the other entries in SQL_AND.  Only one will expose a vuln for a given param, since the database column is of only 1 type
 
-							continue; //to the next entry in SQL_AND
-						} else {
-							//the first value to try..
-							String orValue = currentHtmlParameter.getValue() + SQL_LOGIC_OR_TRUE[i];
-
-							//this is where that comment comes in handy: if the RDBMS supports one-line comments, add one in to attempt to ensure that the 
-							//condition becomes one that is effectively always true, returning ALL data (or as much as possible), allowing us to pinpoint the SQL Injection
-							if (this.debugEnabled) log.debug("Check 2, AND FALSE condition ["+sqlBooleanAndFalseValue+"] SAME as original (requiring OR TRUE check) for "+ getBaseMsg().getRequestHeader().getURI());
-							HttpMessage msg2_or_true = getNewMsg();  
-							if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
-								TreeSet <HtmlParameter> requestParams = msg2_or_true.getUrlParams(); //get parameters
-								requestParams.remove(currentHtmlParameter);
-								requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), orValue));         			
-								msg2_or_true.setGetParams(requestParams); //url parameters       		        			        			        		
-							}  //end of the URL parameter code
-							else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.form)) {
-								TreeSet <HtmlParameter> requestParams = msg2_or_true.getFormParams(); //form parameters
-								requestParams.remove(currentHtmlParameter);
-								requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), orValue));
-								msg2_or_true.setFormParams(requestParams); //form parameters       		        			        			        		
-							}  //end of the URL parameter code
-							else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.cookie)) {
-								TreeSet <HtmlParameter> requestParams = msg2_or_true.getCookieParams(); //cookie parameters
-								requestParams.remove(currentHtmlParameter);
-								requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), orValue));
-								msg2_or_true.setCookieParams(requestParams); //cookie parameters
-							}
-
-							sendAndReceive(msg2_or_true);
-							countBooleanBasedRequests++;
-							
-							//String resBodyORTrue = stripOff(msg2_or_true.getResponseBody().toString(), orValue);
-							String resBodyORTrue = msg2_or_true.getResponseBody().toString();
-
-							int compareOrToOriginal = resBodyORTrue.compareTo(mResBodyNormal);
-
-							//if the results for the OR are the same as the original, try again with the OR statement, but this time, include a one-line comment at the end
-							//to nullify the effect of everything that follows.  This is an often necessary (depending on the nature of the original SQL statement) attempt 
-							//to see if we have the results of the page under our control by manipulating this parameter
-							if (compareOrToOriginal == 0) {
-								//need to append in the first character of the SQL_OR_TRUE to close off any open quotes before commenting out the remainder
-								orValue = currentHtmlParameter.getValue() + SQL_LOGIC_OR_TRUE[i] + SQL_LOGIC_OR_TRUE[i].substring(0, 1) + SQL_ONE_LINE_COMMENT;
-
-								HttpMessage msg2_or_true_comment = getNewMsg();  
-								if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
-									TreeSet <HtmlParameter> requestParams = msg2_or_true_comment.getUrlParams(); //get parameters
-									requestParams.remove(currentHtmlParameter);
-									requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), orValue));         			
-									msg2_or_true_comment.setGetParams(requestParams); //url parameters       		        			        			        		
-								}  //end of the URL parameter code
-								else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.form)) {
-									TreeSet <HtmlParameter> requestParams = msg2_or_true_comment.getFormParams(); //form parameters
-									requestParams.remove(currentHtmlParameter);
-									requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), orValue));
-									msg2_or_true_comment.setFormParams(requestParams); //form parameters       		        			        			        		
-								}  //end of the URL parameter code
-								else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.cookie)) {
-									TreeSet <HtmlParameter> requestParams = msg2_or_true_comment.getCookieParams(); //cookie parameters
-									requestParams.remove(currentHtmlParameter);
-									requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), orValue));
-									msg2_or_true_comment.setCookieParams(requestParams); //cookie parameters
-								}
-
-
-								sendAndReceive(msg2_or_true_comment);
-								countBooleanBasedRequests++;
-								
-								//and re-set the variable with the results of trying the commented OR
-								compareOrToOriginal = resBodyORTrue.compareTo(mResBodyNormal);
-							}
-
-							//Note: do NOT put an else condition before this. This logic *always* needs to happen after the previous check.
-							if (compareOrToOriginal != 0) {
-
-								if (this.debugEnabled) log.debug("Check 2, OR TRUE condition ["+orValue+"] different to original for "+ getBaseMsg().getRequestHeader().getURI());
-
-								//it's different (suggesting that the "OR 1 = 1" appended on gave different results because it broadened the data set from nothing to something
-								//Likely a SQL Injection. Raise it
-								String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndValue, orValue);
-								String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlBooleanAndValue);
-
-								//raise the alert
-								bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Boolean Based", getDescription(), 
-										getBaseMsg().getRequestHeader().getURI().getURI(), //url
-										"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
-										extraInfo, getSolution(), msg2);
-
-								log.info("A likely Boolean Based SQL Injection Vulnerability has been found with ["+msg2.getRequestHeader().getMethod()+"] URL ["+msg2.getRequestHeader().getURI().getURI()+"] on "+currentHtmlParameter.getType()+" field: ["+currentHtmlParameter.getName()+"]");
-
-								sqlInjectionFoundForUrl = true; 
-								//booleanBasedSqlInjectionFoundForParam = true;  //causes us to skip past the other entries in SQL_AND.  Only one will expose a vuln for a given param, since the database column is of only 1 type
-
-								continue;
-							}
+							continue;
 						}
-					}  //if the results of the "AND 1=1" match the original query, we may be onto something. 
-
-				}
-				//end of check 2
-				
-				//TODO: fix the numbering of the checks.. 
-				
-				//Check 4: UNION based
-				//for each SQL UNION combination to try
-				for (int sqlUnionStringIndex = 0; 
-						sqlUnionStringIndex <  SQL_UNION_APPENDAGES.length && !sqlInjectionFoundForUrl && doUnionBased && countUnionBasedRequests < doUnionMaxRequests; 
-						sqlUnionStringIndex++) {
-
-					//new message for each value we attack with
-					HttpMessage msg3 = getNewMsg();
-					String sqlUnionValue = currentHtmlParameter.getValue()+ SQL_UNION_APPENDAGES[sqlUnionStringIndex];
-
-					if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getUrlParams(); //get parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlUnionValue));
-						msg3.setGetParams(requestParams); //url parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.form)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getFormParams(); //form parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlUnionValue));
-						msg3.setFormParams(requestParams); //form parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.cookie)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getCookieParams(); //cookie parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlUnionValue));
-						msg3.setCookieParams(requestParams); //cookie parameters
 					}
+				}  //if the results of the "AND 1=1" match the original query, we may be onto something. 
 
-					//send the message with the modified parameters
-					sendAndReceive(msg3);
-					countUnionBasedRequests++;
-					
-					//now check the results.. look first for UNION specific error messages in the output that were not there in the original output
-					//and failing that, look for generic RDBMS specific error messages
-					//TODO: maybe also try looking at a differentiation based approach?? Prone to false positives though.
-					Iterator<String> errorPatternUnionIterator =  SQL_UNION_ERROR_TO_DBMS.keySet().iterator();
+			}
+			//end of check 2
+			
+			//TODO: fix the numbering of the checks.. 
+			
+			//Check 4: UNION based
+			//for each SQL UNION combination to try
+			for (int sqlUnionStringIndex = 0; 
+					sqlUnionStringIndex <  SQL_UNION_APPENDAGES.length && !sqlInjectionFoundForUrl && doUnionBased && countUnionBasedRequests < doUnionMaxRequests; 
+					sqlUnionStringIndex++) {
 
-					while (errorPatternUnionIterator.hasNext() && ! sqlInjectionFoundForUrl) {
-						String errorPatternKey = errorPatternUnionIterator.next();
-						String errorPatternRDBMS =  SQL_UNION_ERROR_TO_DBMS.get(errorPatternKey);
-
-						//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
-						Pattern errorPattern = Pattern.compile("\\Q"+errorPatternKey+"\\E", PATTERN_PARAM);
-
-						//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
-						//then we may may have a SQL Injection vulnerability
-						if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg3, errorPattern, null)) {
-							//Likely a UNION Based SQL Injection. Raise it
-							String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.unionbased.extrainfo", errorPatternRDBMS, errorPatternKey);
-							String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.unionbased.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName(), sqlUnionValue);
-
-							//raise the alert
-							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - UNION Based - " + errorPatternRDBMS, getDescription(), 
-									getBaseMsg().getRequestHeader().getURI().getURI(), //url
-									"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
-									extraInfo, getSolution(), msg3);
-
-							log.info("A likely UNION Based SQL Injection Vulnerability has been found with ["+msg3.getRequestHeader().getMethod()+"] URL ["+msg3.getRequestHeader().getURI().getURI()+"] on "+currentHtmlParameter.getType()+" field: ["+currentHtmlParameter.getName()+"]");
-
-							//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
-							getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/"+errorPatternRDBMS, Boolean.TRUE);
-
-							sqlInjectionFoundForUrl = true; 
-							continue; 
-						}
-					} //end of the loop to check for RDBMS specific UNION error messages				
-				} ////for each SQL UNION combination to try
-				//end of check 4
-
+				//new message for each value we attack with
+				HttpMessage msg3 = getNewMsg();
+				String sqlUnionValue = value+ SQL_UNION_APPENDAGES[sqlUnionStringIndex];
+	            setParameter(msg3, param, sqlUnionValue);
+				//send the message with the modified parameters
+				sendAndReceive(msg3);
+				countUnionBasedRequests++;
 				
-			} //end of the for loop around the parameter list
+				//now check the results.. look first for UNION specific error messages in the output that were not there in the original output
+				//and failing that, look for generic RDBMS specific error messages
+				//TODO: maybe also try looking at a differentiation based approach?? Prone to false positives though.
+				Iterator<String> errorPatternUnionIterator =  SQL_UNION_ERROR_TO_DBMS.keySet().iterator();
+
+				while (errorPatternUnionIterator.hasNext() && ! sqlInjectionFoundForUrl) {
+					String errorPatternKey = errorPatternUnionIterator.next();
+					String errorPatternRDBMS =  SQL_UNION_ERROR_TO_DBMS.get(errorPatternKey);
+
+					//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
+					Pattern errorPattern = Pattern.compile("\\Q"+errorPatternKey+"\\E", PATTERN_PARAM);
+
+					//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
+					//then we may may have a SQL Injection vulnerability
+					StringBuilder sb = new StringBuilder();
+					if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg3, errorPattern, sb)) {
+						//Likely a UNION Based SQL Injection. Raise it
+						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.unionbased.extrainfo", errorPatternRDBMS, errorPatternKey);
+
+						//raise the alert
+						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - UNION Based - " + errorPatternRDBMS, getDescription(), 
+								getBaseMsg().getRequestHeader().getURI().getURI(), //url
+								param,  sb.toString(), 
+								extraInfo, getSolution(), msg3);
+
+						//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
+						getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/"+errorPatternRDBMS, Boolean.TRUE);
+
+						sqlInjectionFoundForUrl = true; 
+						continue; 
+					}
+				} //end of the loop to check for RDBMS specific UNION error messages				
+			} ////for each SQL UNION combination to try
+			//end of check 4
 
 		} catch (Exception e) {
 			//Do not try to internationalise this.. we need an error message in any event.. 
