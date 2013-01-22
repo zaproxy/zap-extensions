@@ -134,6 +134,7 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
 
         for (int i=0; i<PARAM_LIST.length; i++) {
             msg = getNewMsg();
+            setParameter(msg, param, PARAM_LIST[i]);
             try {
                 sendAndReceive(msg, false);
                 if (checkResult(msg, param, PARAM_LIST[i])) {

@@ -1,0 +1,221 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.zaproxy.zap.extension.ascanrules;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.zap.model.Vulnerabilities;
+import org.zaproxy.zap.model.Vulnerability;
+
+/**
+ * 
+ * a scanner that looks for Path Traversal vulnerabilities
+ *
+ */
+public class TestRemoteFileInclude extends AbstractAppParamPlugin {
+	
+	/**
+	 * the various prefixes to try, for each of the remote file targets below
+	 */
+	private static final String [] REMOTE_FILE_TARGET_PREFIXES = {
+		"http://", "", "HTTP://", "https://", "HTTPS://", "HtTp://", "HtTpS://"
+	};
+	
+	/**
+	 * the various local file targets to look for (prefixed by the prefixes above)
+	 */
+	private static final String [] REMOTE_FILE_TARGETS = {
+		"www.google.com/",
+		"www.google.com:80/",
+		"www.google.com",
+		"www.google.com/search?q=OWASP%20ZAP",
+		"www.google.com:80/search?q=OWASP%20ZAP"
+	};
+	
+	/**
+	 * the patterns to look for, associated with the equivalent remote file targets above
+	 */
+	private static final String [] REMOTE_FILE_PATTERNS = {
+		"I'm Feeling Lucky",
+		"I'm Feeling Lucky",
+		"I'm Feeling Lucky",
+		"OWASP ZAP - Google Search", //do not use "OWASP Zed Attack Proxy", as it causes false positives!
+		"OWASP ZAP - Google Search"	 //do not use "OWASP Zed Attack Proxy", as it causes false positives!		
+	};
+	
+
+	/**
+	 * details of the vulnerability which we are attempting to find
+	 */
+    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_5");
+    
+    /**
+     * the logger object
+     */
+    private static Logger log = Logger.getLogger(TestRemoteFileInclude.class);
+
+    /**
+     * returns the plugin id 
+     */
+    @Override
+    public int getId() {
+        return 7;
+    }
+
+    /**
+     * returns the name of the plugin
+     */
+    @Override
+    public String getName() {
+    	if (vuln != null) {
+    		return vuln.getAlert();
+    	}
+        return "Remote File Inclusion";
+    }
+
+    @Override
+    public String[] getDependency() {
+        return null;
+    }
+
+    @Override
+    public String getDescription() {
+    	if (vuln != null) {
+    		return vuln.getDescription();
+    	}
+    	return "Failed to load vulnerability description from file";
+    }
+
+    @Override
+    public int getCategory() {
+        return Category.SERVER;
+    }
+
+    @Override
+    public String getSolution() {
+    	if (vuln != null) {
+    		return vuln.getSolution();
+    	}
+    	return "Failed to load vulnerability solution from file";
+    }
+
+    @Override
+    public String getReference() {
+    	if (vuln != null) {
+    		StringBuilder sb = new StringBuilder();
+    		for (String ref : vuln.getReferences()) {
+    			if (sb.length() > 0) {
+    				sb.append('\n');
+    			}
+    			sb.append(ref);
+    		}
+    		return sb.toString();
+    	}
+    	return "Failed to load vulnerability reference from file";
+    }
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void scan(HttpMessage msg, String param, String value) {
+    
+    	try {
+    		//figure out how aggressively we should test
+    		//this will be measured in the number of requests we send for each parameter
+    		//we will send approx 5 requests per parameter at AttackStrength.LOW
+    		//we will send approx 10 requests per parameter at AttackStrength.MEDIUM
+    		//we will send approx 20 requests per parameter at AttackStrength.HIGH
+    		//we will send loads (a finite number though) of requests per parameter at AttackStrength.INSANE
+    		int prefixCountRFI = 0;
+    		
+    		//DEBUG only
+    		//this.setAttackStrength(AttackStrength.INSANE);
+    		
+    		if (log.isDebugEnabled()) log.debug("Attacking at Attack Strength: "+ this.getAttackStrength());
+    		
+    		if ( this.getAttackStrength() == AttackStrength.LOW) {
+    			//Low => (5*1) + (5*0) + (5*0) = 5 requests
+    			prefixCountRFI = 0;  //do not check for remote file includes
+    		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
+    			//Medium => (5*1) + (5*1) + (5*0) = 10 requests
+    			prefixCountRFI = 1;  //check for 1 prefix on the remote file names
+    		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
+    			//High => (5*2) + (5*1) + (5*1) = 20 requests
+    			prefixCountRFI = 1;  //check for 1 prefix on the remote file names
+    			
+    		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
+    			//Insane  => as many requests as we want.. yee-haa!
+    			prefixCountRFI = REMOTE_FILE_TARGET_PREFIXES.length;  //check for all prefixes on the remote file names
+    		}
+    		
+			Matcher matcher = null;
+            msg = getNewMsg();
+
+            if (log.isDebugEnabled()) {
+				log.debug("Checking ["+getBaseMsg().getRequestHeader().getMethod() + "] [" + getBaseMsg().getRequestHeader().getURI() +
+						"], parameter ["+ param + "] for Path Traversal to remote files");
+			}
+		    
+			//for each prefix in turn
+	        for (int h=0; h < prefixCountRFI; h++) {
+	        	String prefix=REMOTE_FILE_TARGET_PREFIXES[h];
+	        	//for each target in turn
+				for (int i=0; i < REMOTE_FILE_TARGETS.length; i++) {
+					String target=REMOTE_FILE_TARGETS[i];
+					
+					//get a new copy of the original message (request only) for each parameter value to try
+					msg = getNewMsg();
+		            setParameter(msg, param, prefix+target);
+									
+		        	//send the modified request, and see what we get back
+		        	sendAndReceive(msg);
+		        	//does it match the pattern specified for that file name?
+					String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
+		            matcher = Pattern.compile(REMOTE_FILE_PATTERNS[i]).matcher(response);
+		            //if the output matches, and we get a 200
+		            if (matcher.find() && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
+		                bingo(Alert.RISK_HIGH, Alert.WARNING, 
+		                		null, param, matcher.group(), null, msg);
+		                // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact) 
+		                return;  
+		            }
+				}
+	        }
+    	}
+		catch (Exception e) {
+			log.error("Error scanning parameters for Path Traversal: "+ e.getMessage());
+			return;
+		}
+    }
+    
+	@Override
+	public int getRisk() {
+		return Alert.RISK_HIGH;
+	}
+
+}
