@@ -82,16 +82,17 @@ public class MixedContentScanner extends PluginPassiveScanner {
 					}
 				}	
 			}
-			if (list.size() > 0) {
-				StringBuffer sb = new StringBuffer();
+			final int numberOfMixedElements = list.size();
+			if (numberOfMixedElements > 0) {
+				StringBuilder sb = new StringBuilder(numberOfMixedElements * 40);
 				for (MixedContent mc : list) {
 					sb.append("tag=");
 					sb.append(mc.getTag());
-					sb.append(" ");
+					sb.append(' ');
 					sb.append(mc.getAtt());
-					sb.append("=");
+					sb.append('=');
 					sb.append(mc.getValue());
-					sb.append("\n");
+					sb.append('\n');
 				}
 
 				this.raiseAlert(msg, id, list.get(0).getValue(), sb.toString(), incScript);
