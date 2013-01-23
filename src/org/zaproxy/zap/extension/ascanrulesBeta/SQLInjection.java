@@ -441,7 +441,7 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 					//so they match. Was it a fluke? See if we get the same result by tacking on "AND 1 = 2" to the original
 					HttpMessage msg2_and_false = getNewMsg();  
 
-		            setParameter(msg2, param, sqlBooleanAndFalseValue);
+		            setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
 
 					sendAndReceive(msg2_and_false);
 					countBooleanBasedRequests++;
@@ -478,7 +478,7 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 						//condition becomes one that is effectively always true, returning ALL data (or as much as possible), allowing us to pinpoint the SQL Injection
 						if (this.debugEnabled) log.debug("Check 2, AND FALSE condition ["+sqlBooleanAndFalseValue+"] SAME as original (requiring OR TRUE check) for "+ getBaseMsg().getRequestHeader().getURI());
 						HttpMessage msg2_or_true = getNewMsg();  
-			            setParameter(msg2_or_true, param, sqlBooleanAndFalseValue);
+			            setParameter(msg2_or_true, param, orValue);
 						sendAndReceive(msg2_or_true);
 						countBooleanBasedRequests++;
 						
