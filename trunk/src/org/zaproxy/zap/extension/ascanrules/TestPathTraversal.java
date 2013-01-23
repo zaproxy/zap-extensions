@@ -44,15 +44,15 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 	private static final String [] LOCAL_FILE_TARGET_PREFIXES = {
 		"/",
 		"\\",
-		"/../../",
-		"../../../../../../../../../../../../../../../..",
-		"",
 		"/../../../../../../../../../../../../../../../../../",
-		"\\..\\..\\",
-		"..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..",
 		"\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
+		"../../../../../../../../../../../../../../../..",
+		"..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..",
+		"",
+		"\\..\\..\\",
 		"./",
 		"../",
+		"/../../",
 		"../../",
 		"/..",
 		"/../",
@@ -77,30 +77,15 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 	/**
 	 * the various (prioritised) local file targets to look for (prefixed by the prefixes above)
 	 */
-	private static final String [] LOCAL_FILE_TARGETS = {
-		"etc/passwd",
-		"etc\\passwd",
-		"Windows/system.ini",
-		"Windows\\system.ini",
-		"WEB-INF/web.xml",
-		"WEB-INF\\web.xml"
+	private static final String [][] LOCAL_FILE_TARGETS_AND_PATTERNS = {
+		{"etc/passwd",			"root:.:0:0"},		// Dot used to match 'x' or '!' (used in AIX)
+		{"Windows\\system.ini",	"\\[drivers\\]"},
+		{"WEB-INF/web.xml",		"</web-app>"},
+		{"etc\\passwd",			"root:.:0:0"},
+		{"Windows/system.ini",	"\\[drivers\\]"},
+		{"WEB-INF\\web.xml",	"</web-app>"}
 	};
 	
-	/**
-	 * the patterns to look for, associated with the equivalent local file targets above
-	 */
-	private static final String [] LOCAL_FILE_PATTERNS = {
-		// Linux / Unix
-		"root:.:0:0",		// Dot used to match 'x' or '!' (used in AIX)
-		"root:.:0:0",
-		// Windows
-		"\\[drivers\\]",
-		"\\[drivers\\]",
-		//Web App
-		"</web-app>",
-		"</web-app>"
-	};
-
 	/**
 	 * details of the vulnerability which we are attempting to find
 	 */
@@ -184,41 +169,51 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     
     	try {
     		//figure out how aggressively we should test
-    		//this will be measured in the number of requests we send for each parameter
-    		//we will send approx 5 requests per parameter at AttackStrength.LOW
-    		//we will send approx 10 requests per parameter at AttackStrength.MEDIUM
-    		//we will send approx 20 requests per parameter at AttackStrength.HIGH
-    		//we will send loads (a finite number though) of requests per parameter at AttackStrength.INSANE
-    		int prefixCountLFI = 0;
+    		
+    		// The number of prefixes to try
+    		int prefixCount = 0;
+    		// Number of prefixs on our url filename as a file to be included
     		int prefixCountOurUrl = 0;
+    		// Number of targets to try
+    		int targetCount = 0;
     		
     		//DEBUG only
     		//this.setAttackStrength(AttackStrength.INSANE);
-    		
-    		if (log.isDebugEnabled()) log.debug("Attacking at Attack Strength: "+ this.getAttackStrength());
-    		
-    		if ( this.getAttackStrength() == AttackStrength.LOW) {
-    			//Low => (5*1) + (5*0) + (5*0) = 5 requests
-    			prefixCountLFI = 1;  //check for 1 prefix on the local file names
-    			prefixCountOurUrl = 0;  //do not check for our url filename as a file to be included
-    		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
-    			//Medium => (5*1) + (5*1) + (5*0) = 10 requests
-    			prefixCountLFI = 1;  //check for 1 prefix on the local file names
-    			prefixCountOurUrl = 0;  //do not check for our url filename as a file to be included    			
-    		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
-    			//High => (5*2) + (5*1) + (5*1) = 20 requests
-    			prefixCountLFI = 2;  //check for 2 prefixes on the local file names
-    			prefixCountOurUrl = 1;  //check for 1 prefix on our url filename as a file to be included
-    			
-    		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
-    			//Insane  => as many requests as we want.. yee-haa!
-    			prefixCountLFI = LOCAL_FILE_TARGET_PREFIXES.length;  //check for all prefixes on the local file names
-    			prefixCountOurUrl = LOCAL_FILE_TARGET_PREFIXES.length;  //check for all prefixes on our url filename as a file to be included
+
+    		if (log.isDebugEnabled()) {
+    			log.debug("Attacking at Attack Strength: "+ this.getAttackStrength());
+    		}
+
+    		switch (this.getAttackStrength()) {
+    		case LOW:
+    			// This works out as a total of 7 reqs / param
+				prefixCount = 2;
+				targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.length / 2;
+				prefixCountOurUrl = 0;
+				break;
+    		case MEDIUM:
+    			// This works out as a total of 13 reqs / param
+				prefixCount = 4;
+				targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.length / 2;
+				prefixCountOurUrl = 0;
+				break;
+    		case HIGH:
+    			// This works out as a total of 26 reqs / param
+				prefixCount = 6;
+				targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.length / 2;
+				prefixCountOurUrl = 1;
+				break;
+    		case INSANE:
+    			// This works out as a total of 211(!) reqs / param
+				prefixCount = LOCAL_FILE_TARGET_PREFIXES.length;
+				targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.length;
+				prefixCountOurUrl = LOCAL_FILE_TARGET_PREFIXES.length;
+				break;
+    		default:
+    			// Default to off
     		}
     		
 			Matcher matcher = null;
-            msg = getNewMsg();
-			//HtmlParameter currentHtmlParameter = iter.next();
 			
 			if (log.isDebugEnabled()) {
 				log.debug("Checking ["+getBaseMsg().getRequestHeader().getMethod() + "] [" + 
@@ -227,13 +222,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 		    
 			//for each local prefix in turn
 			//note that depending on the AttackLevel, the number of prefixes that we will try changes.
-	        for (int h=0; h < prefixCountLFI; h++) {
+	        for (int h=0; h < prefixCount; h++) {
 	        	String prefix=LOCAL_FILE_TARGET_PREFIXES[h];
 	        	//for each target in turn
 	        	//note: regardless of the specified Attack Strength, we want to try all files name here 
 	        	//(just for a limited number of prefixes)
-				for (int i=0; i < LOCAL_FILE_TARGETS.length; i++) {
-					String target=LOCAL_FILE_TARGETS[i];
+				for (int i=0; i < targetCount; i++) {
+					String target=LOCAL_FILE_TARGETS_AND_PATTERNS[i][0];
 					
 					//get a new copy of the original message (request only) for each parameter value to try
 					msg = getNewMsg();
@@ -248,7 +243,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 		        	sendAndReceive(msg);
 		        	//does it match the pattern specified for that file name?
 					String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-		            matcher = Pattern.compile(LOCAL_FILE_PATTERNS[i]).matcher(response);
+		            matcher = Pattern.compile(LOCAL_FILE_TARGETS_AND_PATTERNS[i][1]).matcher(response);
 		            //if the output matches, and we get a 200
 		            if (matcher.find() && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
 		                bingo(Alert.RISK_HIGH, Alert.WARNING, 
@@ -322,7 +317,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             
     	}
 		catch (Exception e) {
-			log.error("Error scanning parameters for Path Traversal: "+ e.getMessage());
+			log.error("Error scanning parameters for Path Traversal: "+ e.getMessage(), e);
 			return;
 		}
     }

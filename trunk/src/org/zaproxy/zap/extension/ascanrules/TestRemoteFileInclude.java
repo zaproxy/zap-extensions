@@ -65,6 +65,15 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
 		"OWASP ZAP - Google Search"	 //do not use "OWASP Zed Attack Proxy", as it causes false positives!		
 	};
 	
+	/**
+	 * The number of requests we will send per parameter, based on the attack strength
+	 */
+	private static final int	REQ_PER_PARAM_OFF = 0;
+	private static final int	REQ_PER_PARAM_LOW = 1;
+	private static final int	REQ_PER_PARAM_MEDIUM = 2;
+	private static final int	REQ_PER_PARAM_HIGH = 4;
+	private static final int	REQ_PER_PARAM_INSANE = REMOTE_FILE_TARGET_PREFIXES.length;
+	
 
 	/**
 	 * details of the vulnerability which we are attempting to find
@@ -147,10 +156,6 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
     	try {
     		//figure out how aggressively we should test
     		//this will be measured in the number of requests we send for each parameter
-    		//we will send approx 5 requests per parameter at AttackStrength.LOW
-    		//we will send approx 10 requests per parameter at AttackStrength.MEDIUM
-    		//we will send approx 20 requests per parameter at AttackStrength.HIGH
-    		//we will send loads (a finite number though) of requests per parameter at AttackStrength.INSANE
     		int prefixCountRFI = 0;
     		
     		//DEBUG only
@@ -158,23 +163,16 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
     		
     		if (log.isDebugEnabled()) log.debug("Attacking at Attack Strength: "+ this.getAttackStrength());
     		
-    		if ( this.getAttackStrength() == AttackStrength.LOW) {
-    			//Low => (5*1) + (5*0) + (5*0) = 5 requests
-    			prefixCountRFI = 0;  //do not check for remote file includes
-    		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
-    			//Medium => (5*1) + (5*1) + (5*0) = 10 requests
-    			prefixCountRFI = 1;  //check for 1 prefix on the remote file names
-    		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
-    			//High => (5*2) + (5*1) + (5*1) = 20 requests
-    			prefixCountRFI = 1;  //check for 1 prefix on the remote file names
-    			
-    		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
-    			//Insane  => as many requests as we want.. yee-haa!
-    			prefixCountRFI = REMOTE_FILE_TARGET_PREFIXES.length;  //check for all prefixes on the remote file names
+    		 // Set number of prefixes to check on the remote file names
+    		switch (this.getAttackStrength()) {
+	    		case LOW:		prefixCountRFI = REQ_PER_PARAM_LOW; break;
+	    		case MEDIUM:	prefixCountRFI = REQ_PER_PARAM_MEDIUM; break;
+	    		case HIGH:		prefixCountRFI = REQ_PER_PARAM_HIGH; break;
+	    		case INSANE:	prefixCountRFI = REQ_PER_PARAM_INSANE; break;
+	    		default:		prefixCountRFI = REQ_PER_PARAM_OFF; break;
     		}
     		
 			Matcher matcher = null;
-            msg = getNewMsg();
 
             if (log.isDebugEnabled()) {
 				log.debug("Checking ["+getBaseMsg().getRequestHeader().getMethod() + "] [" + getBaseMsg().getRequestHeader().getURI() +
