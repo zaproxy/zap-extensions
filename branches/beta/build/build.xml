@@ -174,6 +174,7 @@
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="build-addon"><param name="addon" value="alertReport"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="portscan"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="quickstart"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="scripts"/></antcall>
@@ -197,6 +198,10 @@
 
 	<target name="deploy-ascanrules" description="deploy the active scan rules">
 		<antcall target="deploy-extension"> <param name="extension" value="ascanrulesBeta"/> </antcall>
+	</target>
+	
+	<target name="deploy-portscan" description="deploy the port scan extension">
+		<antcall target="deploy-extension"> <param name="extension" value="portscan"/> </antcall>
 	</target>
 	
 	<target name="deploy-pscanrules" description="deploy the passive scan rules">
@@ -227,6 +232,7 @@
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-alertReport"/>
 		<antcall target="deploy-ascanrules"/>
+		<antcall target="deploy-portscan"/>
 		<antcall target="deploy-pscanrules"/>
 		<antcall target="deploy-scripts"/>
 		<antcall target="deploy-spiderAjax"/>
@@ -240,6 +246,7 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="ascanrulesBeta-${status}-*.zap"/>
+				<include name="portscan-${status}-*.zap"/>
 				<include name="pscanrulesBeta-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
