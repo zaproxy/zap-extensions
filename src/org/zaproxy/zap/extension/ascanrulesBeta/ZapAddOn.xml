@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>2</version>
+	<version>3</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated to support new addon format</changes>
+	<changes>Moved SQL Injection to release</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
@@ -13,7 +13,6 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HPP</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.LDAPInjection</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SessionFixation</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjection</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionHypersonic</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionMySQL</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionOracle</ascanrule>
