@@ -43,7 +43,8 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-    	return Constant.messages.getString("scanner.plugin.xss");
+		AscanUtils.registerI18N();
+    	return Constant.messages.getString("ascanrules.rxss.name");
     }
 
     @Override
@@ -89,7 +90,6 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-
     }
     
     private List<HtmlContext> performAttack (HttpMessage msg, String param, String attack,

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -51,7 +51,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * 
  *  @author Colm O'Flaherty, Encription Ireland Ltd
  */
-public class SQLInjection extends AbstractAppParamPlugin  {
+public class TestSQLInjection extends AbstractAppParamPlugin  {
 	
 	//what do we do at each attack strength?
 	//(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
@@ -238,7 +238,7 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 	/**
 	 * for logging.
 	 */
-	private static Logger log = Logger.getLogger(SQLInjection.class);
+	private static Logger log = Logger.getLogger(TestSQLInjection.class);
 
 	/**
 	 * determines if we should output Debug level logging
@@ -252,7 +252,7 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 
 	@Override
 	public String getName() {
-		return Constant.messages.getString("ascanbeta.sqlinjection.name");
+		return Constant.messages.getString("ascanrules.sqlinjection.name");
 	}
 
 	@Override
@@ -262,7 +262,7 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 
 	@Override
 	public String getDescription() {
-		return Constant.messages.getString("ascanbeta.sqlinjection.desc");
+		return Constant.messages.getString("ascanrules.sqlinjection.desc");
 	}
 
 	@Override
@@ -272,12 +272,12 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 
 	@Override
 	public String getSolution() {
-		return Constant.messages.getString("ascanbeta.sqlinjection.soln");
+		return Constant.messages.getString("ascanrules.sqlinjection.soln");
 	}
 
 	@Override
 	public String getReference() {
-		return Constant.messages.getString("ascanbeta.sqlinjection.refs");  
+		return Constant.messages.getString("ascanrules.sqlinjection.refs");  
 	}
 
 	/* initialise
@@ -286,7 +286,8 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 	@Override
 	public void init() {
 		if ( this.debugEnabled ) log.debug("Initialising");
-		
+		AscanUtils.registerI18N();
+
 		//DEBUG only
 		//this.setAttackStrength(AttackStrength.LOW);		
 		
@@ -365,7 +366,7 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 					StringBuilder sb = new StringBuilder();
 					if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
 						//Likely a SQL Injection. Raise it
-						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPatternKey);
+						String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPatternKey);
 
 						//raise the alert
 						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Error Based - " + errorPatternRDBMS, getDescription(), 
@@ -455,7 +456,7 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 
 						//it's different (suggesting that the "AND 1 = 2" appended on gave different results because it restricted the data set to nothing
 						//Likely a SQL Injection. Raise it
-						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndValue, sqlBooleanAndFalseValue);
+						String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndValue, sqlBooleanAndFalseValue);
 
 						//raise the alert
 						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Boolean Based", getDescription(), 
@@ -510,7 +511,7 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 
 							//it's different (suggesting that the "OR 1 = 1" appended on gave different results because it broadened the data set from nothing to something
 							//Likely a SQL Injection. Raise it
-							String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndValue, orValue);
+							String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndValue, orValue);
 
 							//raise the alert
 							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Boolean Based", getDescription(), 
@@ -562,7 +563,7 @@ public class SQLInjection extends AbstractAppParamPlugin  {
 					StringBuilder sb = new StringBuilder();
 					if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg3, errorPattern, sb)) {
 						//Likely a UNION Based SQL Injection. Raise it
-						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.unionbased.extrainfo", errorPatternRDBMS, errorPatternKey);
+						String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.unionbased.extrainfo", errorPatternRDBMS, errorPatternKey);
 
 						//raise the alert
 						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - UNION Based - " + errorPatternRDBMS, getDescription(), 

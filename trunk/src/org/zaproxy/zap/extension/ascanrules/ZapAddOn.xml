@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>3</version>
+	<version>4</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated to support new addon format</changes>
+	<changes>Split out Remote File Inclusions to separate rule, moved SQL Injection from beta, added 'Reflected' to XSS test name</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
@@ -18,7 +18,9 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestParameterTamper</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPathTraversal</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRedirect</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRemoteFileInclude</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestServerSideInclude</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestSQLInjection</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
