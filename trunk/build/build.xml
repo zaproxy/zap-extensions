@@ -68,6 +68,10 @@
 		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
 		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
 		
+		<antcall target="build-extension-help"> 
+			<param name="extension" value="${addon}"/>
+		</antcall>
+		
 		<jar jarfile="${dist}/${file}" update="true" compress="true">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${addon}/**"/>
@@ -75,9 +79,16 @@
 			<zipfileset dir="${src}" prefix="">
 				<include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
 			</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/${addon}/resource/**"/>
+			</zipfileset>
 			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false"/>
 			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
 		</jar>
+		
+		<antcall target="cleanup-extension-help"> 
+			<param name="extension" value="${addon}"/>
+		</antcall>
 
 		<antcall target="append-to-versions-file"> 
 			<param name="extension" value="${addon}"/> 
@@ -92,6 +103,11 @@
 	
 	<target name="build-extension" description="build the specified extension">
 		<property name="file" value="${extension}-${type}-${version}.zap" />
+		
+		<antcall target="build-extension-help"> 
+			<param name="extension" value="${extension}"/>
+		</antcall>
+
 		<jar jarfile="${dist}/${file}" update="true" compress="false">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/**"/>
@@ -99,10 +115,19 @@
 			<zipfileset dir="${src}" prefix="">
 				<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
 			</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/${extension}/resource/**"/>
+			</zipfileset>
 		</jar>
+		
+		<antcall target="cleanup-extension-help"> 
+			<param name="extension" value="${extension}"/>
+		</antcall>
+
 		<condition property="addon-example">
 			<equals arg1="${type}" arg2="example"/>
 		</condition>
+
 		<antcall target="append-to-versions-file"> 
 			<param name="extension" value="${extension}"/> 
 			<param name="version" value="${version}"/> 
@@ -110,6 +135,45 @@
 			<param name="changes" value="${changes}"/> 
 			<param name="file" value="${file}"/> 
 		</antcall>
+	</target>
+
+	<target name="build-extension-help" depends="is-help-available" if="help.available" description="generates the help file and copies it to the right place">
+	    <!--
+	    	- runs if "help" directory is present
+	    	- creates help.jar which is included in the extension-jar file
+	    	- help.jar is dynamically merged into core help pages on ZAP start
+	    -->
+		<local name="help.jar" />
+        <property name="help.jar" value="help.jar" />
+        
+        <local name="help.package" />
+	    <property name="help.package" value="org/zaproxy/zap/extension/${extension}/resource/help" />
+		
+        <local name="help.target" />
+        <property name="help.target" value="${build}/${help.package}/" />
+        
+        <!-- generate the indexes -->
+        <java classname="com.sun.java.help.search.Indexer" fork="true" dir="${src}/${help.package}">
+            <arg value="zaphelp"/>
+            <classpath>
+                <pathelement location="${dist.lib.dir}/jhall.jar" />
+            </classpath>
+        </java>
+        
+        <!-- delete the previous jar in the help directory (if present) -->
+        <delete dir="${build}/${help.package}" />
+        <mkdir dir="${build}/${help.package}" />
+
+        <!-- as files reside in resource/ they are copied later -->
+    </target>
+    
+	<target name="is-help-available">
+	    <available property="help.available" type="dir" file="${src}/org/zaproxy/zap/extension/${extension}/resource/help"/>
+	</target>
+	
+	<target name="cleanup-extension-help">
+        <!-- delete the indexes, generated previously, as they are no longer needed. -->
+        <delete dir="${src}/org/zaproxy/zap/extension/${extension}/resource/help/JavaHelpSearch" />
 	</target>
 	
 	<target name="build-exampleActiveScan" description="build the exampleActiveScan extension">
@@ -174,6 +238,7 @@
 		<antcall target="build-addon"><param name="addon" value="ascanrules"/></antcall>
 		<!--antcall target="build-addon"><param name="addon" value="bruteforce"/></antcall-->
 		<antcall target="build-addon"><param name="addon" value="pscanrules"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="websocket"/></antcall>
 
 		<!-- 'Non-Standard' addons, ie which require additional files (keep in alphabetical order ;) -->
 		<antcall target="build-fuzzdb"/>
@@ -219,6 +284,10 @@
 	<target name="deploy-pscanrules" description="deploy the passive scan rules">
 		<antcall target="deploy-extension"> <param name="extension" value="pscanrules"/> </antcall>
 	</target>
+
+	<target name="deploy-websockets" description="deploy the WebSockets extension">
+		<antcall target="deploy-extension"> <param name="extension" value="websocket"/> </antcall>
+	</target>
 	
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
@@ -228,6 +297,7 @@
 		<antcall target="deploy-exampleRightClickMsg"/>
 		<antcall target="deploy-exampleTopMenu"/>
 		<antcall target="deploy-pscanrules"/>
+		<antcall target="deploy-websockets"/>
 	</target>
 
 	<target name="deploy-weekly" depends="build-all" description="deploy all of the extension to be included in a weekly release">
