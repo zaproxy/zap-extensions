@@ -31,9 +31,6 @@ public class TokenParam extends AbstractParam {
     public TokenParam() {
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.common.FileXML#parse()
-     */
     @Override
     protected void parse(){
         
