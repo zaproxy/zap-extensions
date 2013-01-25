@@ -30,6 +30,7 @@ import javax.swing.DefaultListModel;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -107,6 +108,31 @@ public class ExtensionPortScan extends ExtensionAdaptor
         }
         extensionHook.addOptionsParamSet(getPortScanParam());
     }
+
+	@Override
+	public boolean canUnload() {
+    	return true;
+    }
+	
+    @Override
+	public void unload() {
+	    if (getView() != null) {
+	    	Control.getSingleton().getExtensionLoader().removeStatusPanel(getPortScanPanel());
+	    	Control.getSingleton().getExtensionLoader().removeOptionsPanel(getOptionsPortScanPanel());
+	    	Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupMenuPortScan());
+	    	Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupMenuPortCopy());
+	    }
+	    Control.getSingleton().getExtensionLoader().removeOptionsParamSet(getPortScanParam());
+
+	    // TODO need to implement these in the core!
+	    /*
+	    Control.getSingleton().getExtensionLoader().removeSessionListener(this);
+	    Control.getSingleton().getExtensionLoader().removeProxyListener(this);
+	    Control.getSingleton().getExtensionLoader().removeSiteMapListner(this);
+		*/
+    
+    }
+
 
     private PortScanParam getPortScanParam() {
         if (params == null) {
