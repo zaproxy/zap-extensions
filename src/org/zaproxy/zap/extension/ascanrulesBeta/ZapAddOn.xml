@@ -4,7 +4,7 @@
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Moved SQL Injection to release</changes>
+	<changes>Moved SQL Injection to release, tweaked SQL timing rules names</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
