@@ -76,9 +76,6 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
         return columnNames.length;
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.table.TableModel#getRowCount()
-     */
     @Override
     public int getRowCount() {
     	if (results == null) {
@@ -87,9 +84,6 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
         return results.size();
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.table.TableModel#getValueAt(int, int)
-     */
     @Override
     public Object getValueAt(int row, int col) {
     	TokenAnalysisTestResult result = results.get(row);

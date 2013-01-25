@@ -50,9 +50,6 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
     	connectedProxies = new HashMap<>();
     }
     
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.extension.manualrequest.MessageSender#sendAndReceiveMessage()
-     */
     @Override
     public void handleSendMessage(Message aMessage) throws WebServiceException {
         final WebSocketMessageDTO websocketMessage = (WebSocketMessageDTO)aMessage;
@@ -83,9 +80,6 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.extension.manualrequest.MessageSender#cleanup()
-     */
     @Override
     public void cleanup() {
         

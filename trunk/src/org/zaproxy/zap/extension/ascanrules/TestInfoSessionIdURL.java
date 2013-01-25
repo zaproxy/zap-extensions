@@ -21,6 +21,7 @@
 // ZAP: 2012/01/02 Separate param and attack
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
+// ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -66,17 +67,11 @@ public class TestInfoSessionIdURL extends AbstractAppPlugin {
 			staticSessionIDASP, staticSessionIDJW, staticSessionIDWebLogic, staticSessionIDApache};
 
     
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getId()
-     */
     @Override
     public int getId() {
         return 00003;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getName()
-     */
     @Override
     public String getName() {
         return "Session ID in URL rewrite";
@@ -84,57 +79,36 @@ public class TestInfoSessionIdURL extends AbstractAppPlugin {
 
 
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getDependency()
-     */
     @Override
     public String[] getDependency() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getDescription()
-     */
     @Override
     public String getDescription() {
         return "URL rewrite is used to track user session ID.  The session ID may be disclosed in referer header.  Besides, the session ID can be stored in browser history or server logs.";
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getCategory()
-     */
     @Override
     public int getCategory() {
         return Category.INFO_GATHER;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getSolution()
-     */
     @Override
     public String getSolution() {
         return "For secure content, put session ID in cookie.  To be even more secure consider to use a combination of cookie and URL rewrite.";
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getReference()
-     */
     @Override
     public String getReference() {
         return "http://seclists.org/lists/webappsec/2002/Oct-Dec/0111.html";
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.AbstractPlugin#init()
-     */
     @Override
     public void init() {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#scan()
-     */
     @Override
     public void scan() {
         HttpMessage base = getBaseMsg();
