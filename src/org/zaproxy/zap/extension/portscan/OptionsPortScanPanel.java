@@ -243,7 +243,7 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
 
 	@Override
 	public String getHelpIndex() {
-		return "ui.dialogs.options.portscan";
+		return "addon.portscan.options";
 	}
 	
 } 

@@ -103,7 +103,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuPortScan());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuPortCopy());
 
-            ExtensionHelp.enableHelpKey(getPortScanPanel(), "ui.tabs.portscan");
+            ExtensionHelp.enableHelpKey(getPortScanPanel(), "addon.portscan.tab");
         }
         extensionHook.addOptionsParamSet(getPortScanParam());
     }
