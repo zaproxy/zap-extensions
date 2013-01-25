@@ -21,6 +21,7 @@
 // ZAP: 2012/01/02 Separate param and attack
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
+// ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -52,17 +53,11 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
     private Pattern patternCookieTamper = Pattern.compile("\\nSet-cookie: " + randomString, PATTERN_PARAM);
 
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getId()
-     */
     @Override
     public int getId() {
         return 40003;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getName()
-     */
     @Override
     public String getName() {
         return "CRLF injection";
@@ -70,17 +65,11 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
 
 
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getDependency()
-     */
     @Override
     public String[] getDependency() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getDescription()
-     */
     @Override
     public String getDescription() {
         
@@ -89,26 +78,17 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
         return msg;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getCategory()
-     */
     @Override
     public int getCategory() {
         return Category.INJECTION;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getSolution()
-     */
     @Override
     public String getSolution() {
         return "Type check the submitted parameter carefully.  Do not allow CRLF to be injected by filtering CRLF.";
         
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getReference()
-     */
     @Override
     public String getReference() {
         String msg = "<ul><li>http://www.watchfire.com/resources/HTTPResponseSplitting.pdf</li>"
@@ -119,9 +99,6 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
         return msg;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.AbstractPlugin#init()
-     */
     @Override
     public void init() {
  

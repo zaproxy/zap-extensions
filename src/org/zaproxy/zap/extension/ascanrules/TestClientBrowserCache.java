@@ -20,6 +20,7 @@
  */
 // ZAP: 2012/01/02 Separate param and attack
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
+// ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -48,49 +49,31 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 	// <meta http-equiv="Cache-Control" content="no-cache">
 	public final static Pattern patternHtmlNoCache = Pattern.compile("<META[^>]+(Pragma|\\QCache-Control\\E)[^>]+(\\QNo-cache\\E|\\QNo-store\\E)[^>]*>", PATTERN_PARAM);
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getId()
-     */
     @Override
     public int getId() {
         return 10001;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getName()
-     */
     @Override
     public String getName() {
         return "Secure page browser cache";
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getDependency()
-     */
     @Override
     public String[] getDependency() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getDescription()
-     */
     @Override
     public String getDescription() {
         return "Secure page can be cached in browser.  Cache control is not set in HTTP header nor HTML header.  Sensitive content can be recovered from browser storage.";
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getCategory()
-     */
     @Override
     public int getCategory() {
         return Category.BROWSER;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getSolution()
-     */
     @Override
     public String getSolution() {
         String msg = "The best way is to set HTTP header with: 'Pragma: No-cache' and 'Cache-control: No-cache'." + CRLF
@@ -101,9 +84,6 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
         return msg;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getReference()
-     */
     @Override
     public String getReference() {
         String msg = ". How to prevent caching in Internet Explorer - http://support.microsoft.com/default.aspx?kbid=234067" + CRLF
@@ -111,17 +91,11 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
         return msg;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.AbstractPlugin#init()
-     */
     @Override
     public void init() {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#scan()
-     */
     @Override
     public void scan() {
 

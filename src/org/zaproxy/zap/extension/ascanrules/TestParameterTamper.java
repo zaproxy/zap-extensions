@@ -23,6 +23,7 @@
 // instead of StringBuffer.
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
+// ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -66,17 +67,11 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
     private static Logger log = Logger.getLogger(TestParameterTamper.class);
 
     
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getId()
-     */
     @Override
     public int getId() {
         return 40008;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getName()
-     */
     @Override
     public String getName() {
         return "Parameter tampering";
@@ -84,17 +79,11 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
 
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getDependency()
-     */
     @Override
     public String[] getDependency() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getDescription()
-     */
     @Override
     public String getDescription() {
         
@@ -102,35 +91,23 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
         return msg;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getCategory()
-     */
     @Override
     public int getCategory() {
         return Category.INJECTION;
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getSolution()
-     */
     @Override
     public String getSolution() {
         return "Identify the cause of the error and fix it.  Do not trust client side input and enforece tight check in the server side.  Besides, catch the exception properly.  Use a generic 500 error page for internal server error.";
         
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.Plugin#getReference()
-     */
     @Override
     public String getReference() {
         return "";
         
     }
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.core.scanner.AbstractPlugin#init()
-     */
     @Override
     public void init() {
  

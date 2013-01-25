@@ -31,9 +31,6 @@ public class OptionsParamWebSocket extends AbstractParam {
 	private boolean isBreakOnPingPong;
 	private boolean isBreakOnAll;
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.common.FileXML#parse()
-     */
     @Override
     protected void parse() {
     	FileConfiguration cfg = getConfig();
