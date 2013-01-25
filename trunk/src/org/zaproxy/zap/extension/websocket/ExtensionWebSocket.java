@@ -171,6 +171,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Contains raw regex values, as they appear in the sessions dialogue.
 	 */
 	private List<String> ignoredChannelList;
+
+	private SessionExcludeFromWebSocket sessionExcludePanel;
+
+	private WebSocketFilter payloadFilter;
 	
 	public ExtensionWebSocket() {
 		super(NAME);
@@ -263,7 +267,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			hookMenu.addPopupMenuItem(new ExcludeFromWebSocketsMenuItem(this, storage.getTable()));
 
 			// setup Session Properties
-			getView().getSessionDialog().addParamPanel(new String[]{}, new SessionExcludeFromWebSocket(this), false);
+			sessionExcludePanel =  new SessionExcludeFromWebSocket(this);
+			getView().getSessionDialog().addParamPanel(new String[]{}, sessionExcludePanel, false);
 			
 			// setup Breakpoints
 			ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
@@ -283,7 +288,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			// setup replace payload filter
 			wsFilterListener = new WebSocketFilterListener();
 			addAllChannelObserver(wsFilterListener);
-			addWebSocketFilter(new FilterWebSocketPayload(this, wsPanel.getChannelsModel()));
+			payloadFilter = new FilterWebSocketPayload(this, wsPanel.getChannelsModel());
+			addWebSocketFilter(payloadFilter);
 			
 			// setup fuzzable extension
 			ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
@@ -311,7 +317,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				
 				ManualWebSocketSendEditorDialog sendDialog = createManualSendDialog(sender);
 				extManReqEdit.addManualSendEditor(sendDialog);
-				extensionHook.getHookMenu().addToolsMenuItem(sendDialog.getMenuItem());
+				hookMenu.addToolsMenuItem(sendDialog.getMenuItem());
 				
 				// add 'Resend Message' menu item to WebSocket tab context menu
 				hookMenu.addPopupMenuItem(new ResendWebSocketMessageMenuItem(createReSendDialog(sender)));
@@ -323,6 +329,50 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 					ManualHttpRequestEditorDialog httpSendEditor = (ManualHttpRequestEditorDialog) sendEditor;
 					httpSendEditor.addPersistentConnectionListener(this);
 				}
+			}
+		}
+	}
+	
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
+	
+	@Override
+	public void unload() {
+		super.unload();
+		
+		Control control = Control.getSingleton();
+		ExtensionLoader extLoader = control.getExtensionLoader();
+		
+		// clear up Session Properties
+		getView().getSessionDialog().removeParamPanel(sessionExcludePanel);
+		
+		// clear up Breakpoints
+		ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
+		if (extBreak != null) {
+			extBreak.removeBreakpointsUiManager(getBrkManager());
+		}
+		
+		// clear up fuzzable extension
+		ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
+		if (extFuzz != null) {
+			extFuzz.removeFuzzerHandler(WebSocketMessageDTO.class);
+		}
+		
+		removeWebSocketFilter(payloadFilter);
+		
+		// clear up manualrequest extension
+		ExtensionManualRequestEditor extManReqEdit = (ExtensionManualRequestEditor) extLoader
+				.getExtension(ExtensionManualRequestEditor.NAME);
+		if (extManReqEdit != null) {
+			extManReqEdit.removeManualSendEditor(WebSocketMessageDTO.class);
+			
+			// clear up persistent connection listener for http manual send editor
+			ManualRequestEditorDialog sendEditor = extManReqEdit.getManualSendEditor(HttpMessage.class);
+			if (sendEditor != null) {
+				ManualHttpRequestEditorDialog httpSendEditor = (ManualHttpRequestEditorDialog) sendEditor;
+				httpSendEditor.removePersistentConnectionListener(this);
 			}
 		}
 	}
@@ -362,6 +412,15 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			wsFilterListener.addFilter(filter);
 		} else {
 			logger.warn("Filter '" + filter.getClass().toString() + "' couldn't be added as the filter extension is not available!");
+		}
+	}
+	
+	public void removeWebSocketFilter(WebSocketFilter filter) {
+		ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
+		ExtensionFilter extFilter = (ExtensionFilter) extLoader.getExtension(ExtensionFilter.NAME);
+		if (extFilter != null) {
+			extFilter.removeFilter(filter);
+			wsFilterListener.removeFilter(filter);
 		}
 	}
 
@@ -861,7 +920,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	private void initializeWebSocketsForWorkPanel() {
 		// Add "HttpPanel" components and views.
 		HttpPanelManager manager = HttpPanelManager.getInstance();
-
+		
 		// component factory for outgoing and incoming messages with Text view
 		HttpPanelComponentFactory componentFactory = new WebSocketComponentFactory();
 		manager.addRequestComponent(componentFactory);
@@ -891,6 +950,40 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		viewSelectorFactory = new WebSocketLargePayloadDefaultViewSelectorFactory();
 		manager.addRequestDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
 		manager.addResponseDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
+	}
+	
+	private void clearupWebSocketsForWorkPanel() {
+//		HttpPanelManager manager = HttpPanelManager.getInstance();
+//		WebSocketComponentFactory.class;
+//		// component factory for outgoing and incoming messages with Text view
+//		HttpPanelComponentFactory componentFactory = new WebSocketComponentFactory();
+//		manager.removeRequestComponent(componentFactory);
+//		manager.addResponseComponent(componentFactory);
+//
+//		// use same factory for request & response,
+//		// as Hex payloads are accessed the same way
+//		HttpPanelViewFactory viewFactory = new WebSocketHexViewFactory();
+//		manager.addRequestView(WebSocketComponent.NAME, viewFactory);
+//		manager.addResponseView(WebSocketComponent.NAME, viewFactory);
+//		
+//		// add the default Hex view for binary-opcode messages
+//		HttpPanelDefaultViewSelectorFactory viewSelectorFactory = new HexDefaultViewSelectorFactory();
+//		manager.addRequestDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
+//		manager.addResponseDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
+//
+//		// replace the normal Text views with the ones that use syntax highlighting
+//		viewFactory = new SyntaxHighlightTextViewFactory();
+//		manager.addRequestView(WebSocketComponent.NAME, viewFactory);
+//		manager.addResponseView(WebSocketComponent.NAME, viewFactory);
+//
+//		// support large payloads on incoming and outgoing messages
+//		viewFactory = new WebSocketLargePayloadViewFactory();
+//		manager.addRequestView(WebSocketComponent.NAME, viewFactory);
+//		manager.addResponseView(WebSocketComponent.NAME, viewFactory);
+//		
+//		viewSelectorFactory = new WebSocketLargePayloadDefaultViewSelectorFactory();
+//		manager.addRequestDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
+//		manager.addResponseDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
 	}
 
 	/**

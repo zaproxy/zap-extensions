@@ -45,6 +45,10 @@ public class WebSocketFilterListener implements WebSocketObserver {
 		wsFilter.add(filter);
 	}
 
+	public void removeFilter(WebSocketFilter filter) {
+		wsFilter.remove(filter);
+	}
+
 	@Override
 	public int getObservingOrder() {
 		return WEBSOCKET_OBSERVING_ORDER;
