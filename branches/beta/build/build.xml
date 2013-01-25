@@ -86,6 +86,11 @@
 			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
 		</jar>
 
+		<antcall target="include-files"> 
+			<param name="addon" value="${addon}"/>
+			<param name="file" value="${file}"/>
+		</antcall>
+
 		<antcall target="cleanup-addon-help"> 
 			<param name="addon" value="${addon}"/>
 		</antcall>
@@ -99,6 +104,12 @@
 			<param name="changes" value="${zapaddon.changes}"/> 
 			<param name="file" value="${file}"/> 
 		</antcall>
+	</target>
+
+	<target name="include-files" depends="is-files-available" if="files.available"> 
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${src}/org/zaproxy/zap/extension/${addon}/files/" prefix=""/>
+		</jar>
 	</target>
 
 	<target name="build-addon-help" depends="is-help-available" if="help.available" description="generates the help file and copies it to the right place">
@@ -130,7 +141,12 @@
 
         <!-- as files reside in resource/ they are copied later -->
     </target>
-    
+
+	<target name="is-files-available">
+	    <available property="files.available" type="dir" file="${src}/org/zaproxy/zap/extension/${addon}/files"/>
+	</target>
+	
+
 	<target name="is-help-available">
 	    <available property="help.available" type="dir" file="${src}/org/zaproxy/zap/extension/${addon}/resource/help"/>
 	</target>
@@ -138,18 +154,6 @@
 	<target name="cleanup-addon-help">
         <!-- delete the indexes, generated previously, as they are no longer needed. -->
         <delete dir="${src}/org/zaproxy/zap/extension/${addon}/resource/help/JavaHelpSearch" />
-	</target>
-	
-	<target name="build-svndigger" description="build the SVN Digger addon">
-		<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
-	
-		<!-- Add the SVN Digger files in the right place -->
-		<property name="addon" value="svndigger" /> <!-- Set this to make cut-n-pasting safer ;) -->
-		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
-		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
-		<jar jarfile="${dist}/${file}" update="true" compress="true">
-			<zipfileset dir="${src}/org/zaproxy/zap/extension/${addon}/files/" prefix="dirbuster/"/>
-		</jar>
 	</target>
 	
 	<target name="build-tokengen" description="build the tokengen extension">
@@ -174,15 +178,17 @@
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="build-addon"><param name="addon" value="alertReport"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="portscan"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="quickstart"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="scripts"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
 
-		<antcall target="build-svndigger"/>
+		<!-- Special case due to dependencies - need to fix this sometime;) -->
 		<antcall target="build-tokengen"/>
-
+		
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 
 	</target>
@@ -198,6 +204,10 @@
 
 	<target name="deploy-ascanrules" description="deploy the active scan rules">
 		<antcall target="deploy-extension"> <param name="extension" value="ascanrulesBeta"/> </antcall>
+	</target>
+	
+	<target name="deploy-beanshell" description="deploy the beanshell">
+		<antcall target="deploy-extension"> <param name="extension" value="beanshell"/> </antcall>
 	</target>
 	
 	<target name="deploy-portscan" description="deploy the port scan extension">
