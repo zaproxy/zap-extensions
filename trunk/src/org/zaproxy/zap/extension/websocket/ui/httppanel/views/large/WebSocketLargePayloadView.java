@@ -24,7 +24,7 @@ import org.zaproxy.zap.extension.websocket.ui.httppanel.views.WebSocketPanelText
 
 public class WebSocketLargePayloadView extends WebSocketPanelTextView {
 
-	public static final String CONFIG_NAME = "largePayload";
+	public static final String NAME = "WebSocketLargePayloadView";
 	
 	public static final String CAPTION_NAME = Constant.messages.getString("websocket.panel.view.largepayload.name");
 	
@@ -34,12 +34,12 @@ public class WebSocketLargePayloadView extends WebSocketPanelTextView {
 	
 	@Override
 	public String getName() {
-		return CAPTION_NAME;
+		return NAME;
 	}
 	
 	@Override
-	public String getConfigName() {
-		return CONFIG_NAME;
+	public String getCaptionName() {
+		return CAPTION_NAME;
 	}
 
 	@Override
