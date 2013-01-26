@@ -375,6 +375,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				httpSendEditor.removePersistentConnectionListener(this);
 			}
 		}
+		
+		if (getView() != null) {
+			clearupWebSocketsForWorkPanel();
+		}
 	}
 
 	@Override
@@ -923,67 +927,63 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		// component factory for outgoing and incoming messages with Text view
 		HttpPanelComponentFactory componentFactory = new WebSocketComponentFactory();
-		manager.addRequestComponent(componentFactory);
-		manager.addResponseComponent(componentFactory);
+		manager.addRequestComponentFactory(componentFactory);
+		manager.addResponseComponentFactory(componentFactory);
 
 		// use same factory for request & response,
 		// as Hex payloads are accessed the same way
 		HttpPanelViewFactory viewFactory = new WebSocketHexViewFactory();
-		manager.addRequestView(WebSocketComponent.NAME, viewFactory);
-		manager.addResponseView(WebSocketComponent.NAME, viewFactory);
+		manager.addRequestViewFactory(WebSocketComponent.NAME, viewFactory);
+		manager.addResponseViewFactory(WebSocketComponent.NAME, viewFactory);
 		
 		// add the default Hex view for binary-opcode messages
 		HttpPanelDefaultViewSelectorFactory viewSelectorFactory = new HexDefaultViewSelectorFactory();
-		manager.addRequestDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
-		manager.addResponseDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
+		manager.addRequestDefaultViewSelectorFactory(WebSocketComponent.NAME, viewSelectorFactory);
+		manager.addResponseDefaultViewSelectorFactory(WebSocketComponent.NAME, viewSelectorFactory);
 
 		// replace the normal Text views with the ones that use syntax highlighting
 		viewFactory = new SyntaxHighlightTextViewFactory();
-		manager.addRequestView(WebSocketComponent.NAME, viewFactory);
-		manager.addResponseView(WebSocketComponent.NAME, viewFactory);
+		manager.addRequestViewFactory(WebSocketComponent.NAME, viewFactory);
+		manager.addResponseViewFactory(WebSocketComponent.NAME, viewFactory);
 
 		// support large payloads on incoming and outgoing messages
 		viewFactory = new WebSocketLargePayloadViewFactory();
-		manager.addRequestView(WebSocketComponent.NAME, viewFactory);
-		manager.addResponseView(WebSocketComponent.NAME, viewFactory);
+		manager.addRequestViewFactory(WebSocketComponent.NAME, viewFactory);
+		manager.addResponseViewFactory(WebSocketComponent.NAME, viewFactory);
 		
 		viewSelectorFactory = new WebSocketLargePayloadDefaultViewSelectorFactory();
-		manager.addRequestDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
-		manager.addResponseDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
+		manager.addRequestDefaultViewSelectorFactory(WebSocketComponent.NAME, viewSelectorFactory);
+		manager.addResponseDefaultViewSelectorFactory(WebSocketComponent.NAME, viewSelectorFactory);
 	}
 	
 	private void clearupWebSocketsForWorkPanel() {
-//		HttpPanelManager manager = HttpPanelManager.getInstance();
-//		WebSocketComponentFactory.class;
-//		// component factory for outgoing and incoming messages with Text view
-//		HttpPanelComponentFactory componentFactory = new WebSocketComponentFactory();
-//		manager.removeRequestComponent(componentFactory);
-//		manager.addResponseComponent(componentFactory);
-//
-//		// use same factory for request & response,
-//		// as Hex payloads are accessed the same way
-//		HttpPanelViewFactory viewFactory = new WebSocketHexViewFactory();
-//		manager.addRequestView(WebSocketComponent.NAME, viewFactory);
-//		manager.addResponseView(WebSocketComponent.NAME, viewFactory);
-//		
-//		// add the default Hex view for binary-opcode messages
-//		HttpPanelDefaultViewSelectorFactory viewSelectorFactory = new HexDefaultViewSelectorFactory();
-//		manager.addRequestDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
-//		manager.addResponseDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
-//
-//		// replace the normal Text views with the ones that use syntax highlighting
-//		viewFactory = new SyntaxHighlightTextViewFactory();
-//		manager.addRequestView(WebSocketComponent.NAME, viewFactory);
-//		manager.addResponseView(WebSocketComponent.NAME, viewFactory);
-//
-//		// support large payloads on incoming and outgoing messages
-//		viewFactory = new WebSocketLargePayloadViewFactory();
-//		manager.addRequestView(WebSocketComponent.NAME, viewFactory);
-//		manager.addResponseView(WebSocketComponent.NAME, viewFactory);
-//		
-//		viewSelectorFactory = new WebSocketLargePayloadDefaultViewSelectorFactory();
-//		manager.addRequestDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
-//		manager.addResponseDefaultView(WebSocketComponent.NAME, viewSelectorFactory);
+		HttpPanelManager manager = HttpPanelManager.getInstance();
+		
+		// component factory for outgoing and incoming messages with Text view
+		manager.removeRequestComponentFactory(WebSocketComponentFactory.NAME);
+		manager.removeRequestComponents(WebSocketComponent.NAME);
+		manager.removeResponseComponentFactory(WebSocketComponentFactory.NAME);
+		manager.removeResponseComponents(WebSocketComponent.NAME);
+
+		// use same factory for request & response,
+		// as Hex payloads are accessed the same way
+		manager.removeRequestViewFactory(WebSocketComponent.NAME, WebSocketHexViewFactory.NAME);
+		manager.removeResponseViewFactory(WebSocketComponent.NAME, WebSocketHexViewFactory.NAME);
+		
+		// remove the default Hex view for binary-opcode messages
+		manager.removeRequestDefaultViewSelectorFactory(WebSocketComponent.NAME, HexDefaultViewSelectorFactory.NAME);
+		manager.removeResponseDefaultViewSelectorFactory(WebSocketComponent.NAME, HexDefaultViewSelectorFactory.NAME);
+
+		// replace the normal Text views with the ones that use syntax highlighting
+		manager.removeRequestViewFactory(WebSocketComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
+		manager.removeResponseViewFactory(WebSocketComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
+
+		// support large payloads on incoming and outgoing messages
+		manager.removeRequestViewFactory(WebSocketComponent.NAME, WebSocketLargePayloadViewFactory.NAME);
+		manager.removeResponseViewFactory(WebSocketComponent.NAME, WebSocketLargePayloadViewFactory.NAME);
+		
+		manager.removeRequestDefaultViewSelectorFactory(WebSocketComponent.NAME, WebSocketLargePayloadDefaultViewSelectorFactory.NAME);
+		manager.removeResponseDefaultViewSelectorFactory(WebSocketComponent.NAME, WebSocketLargePayloadDefaultViewSelectorFactory.NAME);
 	}
 
 	/**
@@ -991,6 +991,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * (without syntax highlighting).
 	 */
     private static final class WebSocketComponentFactory implements HttpPanelComponentFactory {
+        
+        public static final String NAME = "WebSocketComponentFactory";
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
         
         @Override
         public HttpPanelComponentInterface getNewComponent() {
@@ -1005,6 +1012,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	
 	private static final class WebSocketHexViewFactory implements HttpPanelViewFactory {
         
+        public static final String NAME = "WebSocketHexViewFactory";
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+        
         @Override
         public HttpPanelView getNewView() {
 			return new HttpPanelHexView(new ByteWebSocketPanelViewModel(), false);
@@ -1018,9 +1032,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	
 	private static final class HexDefaultViewSelector implements HttpPanelDefaultViewSelector {
 
+        public static final String NAME = "HexDefaultViewSelector";
+        
         @Override
         public String getName() {
-            return "HexDefaultViewSelector";
+            return NAME;
         }
         
         @Override
@@ -1036,7 +1052,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 
         @Override
         public String getViewName() {
-            return HttpPanelHexView.CONFIG_NAME;
+            return HttpPanelHexView.NAME;
         }
         
         @Override
@@ -1046,6 +1062,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
     }
 
     private static final class HexDefaultViewSelectorFactory implements HttpPanelDefaultViewSelectorFactory {
+        
+        public static final String NAME = "HexDefaultViewSelectorFactory";
         
         private static HttpPanelDefaultViewSelector defaultViewSelector = null;
         
@@ -1063,6 +1081,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
         }
         
         @Override
+        public String getName() {
+            return NAME;
+        }
+        
+        @Override
         public HttpPanelDefaultViewSelector getNewDefaultViewSelector() {
             return getDefaultViewSelector();
         }
@@ -1074,6 +1097,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
     }
 	
     private static final class SyntaxHighlightTextViewFactory implements HttpPanelViewFactory {
+        
+        public static final String NAME = "SyntaxHighlightTextViewFactory";
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
         
         @Override
         public HttpPanelView getNewView() {
@@ -1088,6 +1118,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	
 	private static final class WebSocketLargePayloadViewFactory implements HttpPanelViewFactory {
 		
+		public static final String NAME = "WebSocketLargePayloadViewFactory";
+
+		@Override
+		public String getName() {
+			return NAME;
+		}
+
 		@Override
 		public HttpPanelView getNewView() {
 			return new WebSocketLargePayloadView(new WebSocketLargetPayloadViewModel());
@@ -1101,6 +1138,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	
 	private static final class WebSocketLargePayloadDefaultViewSelectorFactory implements HttpPanelDefaultViewSelectorFactory {
 		
+		public static final String NAME = "WebSocketLargePayloadDefaultViewSelectorFactory";
 		private static HttpPanelDefaultViewSelector defaultViewSelector = null;
 		
 		private HttpPanelDefaultViewSelector getDefaultViewSelector() {
@@ -1117,6 +1155,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 		
 		@Override
+		public String getName() {
+			return NAME;
+		}
+		
+		@Override
 		public HttpPanelDefaultViewSelector getNewDefaultViewSelector() {
 			return getDefaultViewSelector();
 		}
@@ -1129,9 +1172,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 
 	private static final class WebSocketLargePayloadDefaultViewSelector implements HttpPanelDefaultViewSelector {
 
+		public static final String NAME = "WebSocketLargePayloadDefaultViewSelector";
+		
 		@Override
 		public String getName() {
-			return "WebSocketLargePayloadDefaultViewSelector";
+			return NAME;
 		}
 		
 		@Override
@@ -1141,7 +1186,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 
 		@Override
 		public String getViewName() {
-			return WebSocketLargePayloadView.CONFIG_NAME;
+			return WebSocketLargePayloadView.NAME;
 		}
         
         @Override
