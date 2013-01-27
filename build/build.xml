@@ -59,6 +59,8 @@
 		&lt;url>https://zap-extensions.googlecode.com/files/${file}&lt;/url>
 		&lt;size>${length}&lt;/size>
 		&lt;date>${yyyymmdd}&lt;/date>
+		&lt;not-before-version>${not-before-version}&lt;/not-before-version>
+		&lt;not-from-version>${not-from-version}&lt;/not-from-version>
 	&lt;/addon_${extension}>
 </echo>
 	</target>
@@ -98,6 +100,8 @@
 			<param name="url" value="${zapaddon.url}"/> 
 			<param name="changes" value="${zapaddon.changes}"/> 
 			<param name="file" value="${file}"/> 
+			<param name="not-before-version" value="${zapaddon.not-before-version}"/> 
+			<param name="not-from-version" value="${zapaddon.not-from-version}"/> 
 		</antcall>
 	</target>
 	

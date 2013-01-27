@@ -1375,4 +1375,6 @@
 		<file>fuzzers/fuzzdb-1.09/wordlists-user-passwd/unix-os/unix_passwords.txt</file>
 		<file>fuzzers/fuzzdb-1.09/wordlists-user-passwd/unix-os/unix_users.txt</file>
 	</files>
+	<not-before-version/>
+	<not-from-version/>
 </zapaddon>
