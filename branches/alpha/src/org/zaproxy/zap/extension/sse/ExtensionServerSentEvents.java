@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -135,16 +136,31 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 		// setup SSE tab
 		EventStreamPanel tab = getEventStreamTab();
 		tab.setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
-		
-		extensionHook.addSessionListener(tab.getSessionListener());
-		
 		addObserver(tab);
-		
+		extensionHook.addSessionListener(tab.getSessionListener());
 		hookView.addStatusPanel(tab);
 		
 		initializeWorkPanel();
 		
         ExtensionHelp.enableHelpKey(tab, "sse.tab");
+	}
+	
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
+	
+	@Override
+	public void unload() {
+		super.unload();
+		
+		// clear up existing connections
+		for (Entry<Integer, EventStreamProxy> sseEntry : sseProxies.entrySet()) {
+			EventStreamProxy sseProxy = sseEntry.getValue();
+			sseProxy.stop();
+		}
+		
+		clearUpWorkPanel();
 	}
 
 	private EventStreamPanel getEventStreamTab() {
@@ -296,27 +312,51 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 
 		// component factory for outgoing and incoming messages with Text view
 		HttpPanelComponentFactory componentFactory = new EventStreamComponentFactory();
-		manager.addResponseComponent(componentFactory);
+		manager.addResponseComponentFactory(componentFactory);
 
 		// use same factory for request & response,
 		// as Hex payloads are accessed the same way
 		HttpPanelViewFactory viewFactory = new EventStreamHexViewFactory();
-		manager.addResponseView(EventStreamComponent.NAME, viewFactory);
+		manager.addResponseViewFactory(EventStreamComponent.NAME, viewFactory);
 		
 		// add the default Hex view for binary-opcode messages
 		HttpPanelDefaultViewSelectorFactory viewSelectorFactory = new HexDefaultViewSelectorFactory();
-		manager.addResponseDefaultView(EventStreamComponent.NAME, viewSelectorFactory);
+		manager.addResponseDefaultViewSelectorFactory(EventStreamComponent.NAME, viewSelectorFactory);
 
 		// replace the normal Text views with the ones that use syntax highlighting
 		viewFactory = new SyntaxHighlightTextViewFactory();
-		manager.addResponseView(EventStreamComponent.NAME, viewFactory);
+		manager.addResponseViewFactory(EventStreamComponent.NAME, viewFactory);
 
 		// support large payloads on incoming and outgoing messages
 		viewFactory = new EventStreamLargePayloadViewFactory();
-		manager.addResponseView(EventStreamComponent.NAME, viewFactory);
+		manager.addResponseViewFactory(EventStreamComponent.NAME, viewFactory);
 		
 		viewSelectorFactory = new EventStreamLargeEventDefaultViewSelectorFactory();
-		manager.addResponseDefaultView(EventStreamComponent.NAME, viewSelectorFactory);
+		manager.addResponseDefaultViewSelectorFactory(EventStreamComponent.NAME, viewSelectorFactory);
+	}
+	
+	private void clearUpWorkPanel() {
+		HttpPanelManager manager = HttpPanelManager.getInstance();
+		
+		// component factory for outgoing and incoming messages with Text view
+		manager.removeRequestComponentFactory(EventStreamComponentFactory.NAME);
+		manager.removeRequestComponents(EventStreamComponent.NAME);
+		manager.removeResponseComponentFactory(EventStreamComponentFactory.NAME);
+		manager.removeResponseComponents(EventStreamComponent.NAME);
+
+		// use same factory for request & response,
+		// as Hex payloads are accessed the same way
+		manager.removeResponseViewFactory(EventStreamComponent.NAME, EventStreamHexViewFactory.NAME);
+		
+		// remove the default Hex view for binary-opcode messages
+		manager.removeResponseDefaultViewSelectorFactory(EventStreamComponent.NAME, HexDefaultViewSelectorFactory.NAME);
+
+		// replace the normal Text views with the ones that use syntax highlighting
+		manager.removeResponseViewFactory(EventStreamComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
+
+		// support large payloads on incoming and outgoing messages
+		manager.removeResponseViewFactory(EventStreamComponent.NAME, EventStreamLargeEventDefaultViewSelectorFactory.NAME);
+		manager.removeResponseDefaultViewSelectorFactory(EventStreamComponent.NAME, EventStreamLargeEventDefaultViewSelectorFactory.NAME);
 	}
 
 	/**
@@ -325,7 +365,9 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 	 */
     private static final class EventStreamComponentFactory implements HttpPanelComponentFactory {
         
-        @Override
+        public static final String NAME = "EventStreamComponentFactory";
+
+		@Override
         public HttpPanelComponentInterface getNewComponent() {
             return new EventStreamComponent();
         }
@@ -334,11 +376,18 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
         public String getComponentName() {
             return EventStreamComponent.NAME;
         }
+
+		@Override
+		public String getName() {
+			return NAME;
+		}
     }
 	
 	private static final class EventStreamHexViewFactory implements HttpPanelViewFactory {
         
-        @Override
+        public static final String NAME = "EventStreamHexViewFactory";
+
+		@Override
         public HttpPanelView getNewView() {
             return new HttpPanelHexView(new ByteEventStreamPanelViewModel(), false);
         }
@@ -347,6 +396,11 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
         public Object getOptions() {
             return null;
         }
+
+		@Override
+		public String getName() {
+			return NAME;
+		}
     }
 	
 	private static final class HexDefaultViewSelector implements HttpPanelDefaultViewSelector {
@@ -369,7 +423,7 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 
         @Override
         public String getViewName() {
-            return HttpPanelHexView.CONFIG_NAME;
+            return HttpPanelHexView.NAME;
         }
         
         @Override
@@ -380,7 +434,9 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 
     private static final class HexDefaultViewSelectorFactory implements HttpPanelDefaultViewSelectorFactory {
         
-        private static HttpPanelDefaultViewSelector defaultViewSelector = null;
+        public static final String NAME = "HexDefaultViewSelectorFactory";
+        
+		private static HttpPanelDefaultViewSelector defaultViewSelector = null;
         
         private HttpPanelDefaultViewSelector getDefaultViewSelector() {
             if (defaultViewSelector == null) {
@@ -404,11 +460,18 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
         public Object getOptions() {
             return null;
         }
+
+		@Override
+		public String getName() {
+			return NAME;
+		}
     }
 	
     private static final class SyntaxHighlightTextViewFactory implements HttpPanelViewFactory {
         
-        @Override
+        public static final String NAME = "SyntaxHighlightTextViewFactory";
+
+		@Override
         public HttpPanelView getNewView() {
             return new EventStreamSyntaxHighlightTextView(new StringEventStreamPanelViewModel());
         }
@@ -417,10 +480,17 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
         public Object getOptions() {
             return null;
         }
+
+		@Override
+		public String getName() {
+			return NAME;
+		}
     }
 	
 	private static final class EventStreamLargePayloadViewFactory implements HttpPanelViewFactory {
 		
+		public static final String NAME = "EventStreamLargePayloadViewFactory";
+
 		@Override
 		public HttpPanelView getNewView() {
 			return new EventStreamLargePayloadView(new EventStreamLargetPayloadViewModel());
@@ -430,9 +500,16 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 		public Object getOptions() {
 			return null;
 		}
+
+		@Override
+		public String getName() {
+			return NAME;
+		}
 	}
 	
 	private static final class EventStreamLargeEventDefaultViewSelectorFactory implements HttpPanelDefaultViewSelectorFactory {
+		
+		public static final String NAME = "EventStreamLargeEventDefaultViewSelectorFactory";
 		
 		private static HttpPanelDefaultViewSelector defaultViewSelector = null;
 		
@@ -458,6 +535,11 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 		public Object getOptions() {
 			return null;
 		}
+
+		@Override
+		public String getName() {
+			return NAME;
+		}
 	}
 
 	private static final class EventStreamLargePayloadDefaultViewSelector implements HttpPanelDefaultViewSelector {
@@ -474,7 +556,7 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 
 		@Override
 		public String getViewName() {
-			return EventStreamLargePayloadView.CONFIG_NAME;
+			return EventStreamLargePayloadView.NAME;
 		}
         
         @Override

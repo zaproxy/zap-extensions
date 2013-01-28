@@ -24,7 +24,7 @@ import org.zaproxy.zap.extension.sse.ui.httppanel.views.EventStreamPanelTextView
 
 public class EventStreamLargePayloadView extends EventStreamPanelTextView {
 
-	public static final String CONFIG_NAME = "largePayload";
+	public static final String NAME = "largePayload";
 	
 	public static final String CAPTION_NAME = Constant.messages.getString("sse.panel.view.largepayload.name");
 	
@@ -34,12 +34,12 @@ public class EventStreamLargePayloadView extends EventStreamPanelTextView {
 	
 	@Override
 	public String getName() {
-		return CAPTION_NAME;
+		return NAME;
 	}
 	
 	@Override
-	public String getConfigName() {
-		return CONFIG_NAME;
+	public String getCaptionName() {
+		return CAPTION_NAME;
 	}
 
 	@Override
