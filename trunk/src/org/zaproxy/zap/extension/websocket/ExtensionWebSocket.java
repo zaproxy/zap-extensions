@@ -172,8 +172,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 */
 	private List<String> ignoredChannelList;
 
-	private SessionExcludeFromWebSocket sessionExcludePanel;
-
+	/**
+	 * This filter allows to change the bytes when passed through ZAP.
+	 */
 	private WebSocketFilter payloadFilter;
 	
 	public ExtensionWebSocket() {
@@ -315,7 +316,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				WebSocketPanelSender sender = new WebSocketPanelSender();
 				addAllChannelObserver(sender);
 				
-				ManualWebSocketSendEditorDialog sendDialog = createManualSendDialog(sender);
+				sendDialog = createManualSendDialog(sender);
 				extManReqEdit.addManualSendEditor(sendDialog);
 				hookMenu.addToolsMenuItem(sendDialog.getMenuItem());
 				
@@ -341,6 +342,12 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	@Override
 	public void unload() {
 		super.unload();
+		
+		// close all existing connections
+		for (Entry<Integer, WebSocketProxy> wsEntry : wsProxies.entrySet()) {
+			WebSocketProxy wsProxy = wsEntry.getValue();
+			wsProxy.shutdown();
+		}
 		
 		Control control = Control.getSingleton();
 		ExtensionLoader extLoader = control.getExtensionLoader();
@@ -895,6 +902,16 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Allows to set custom breakpoints, e.g.: for specific opcodes only.
 	 */
 	private WebSocketBreakpointsUiManagerInterface brkManager;
+	
+	/**
+	 * WebSockets can be excluded from the current session via this GUI panel.
+	 */
+	private SessionExcludeFromWebSocket sessionExcludePanel;
+	
+	/**
+	 * Send custom WebSocket messages.
+	 */
+	private ManualWebSocketSendEditorDialog sendDialog;
 
 	private WebSocketPanel getWebSocketPanel() {
 		if (panel == null) {
