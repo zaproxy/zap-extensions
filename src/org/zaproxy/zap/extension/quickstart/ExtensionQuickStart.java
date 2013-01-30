@@ -25,12 +25,15 @@ import java.net.URL;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 
-public class ExtensionQuickStart extends ExtensionAdaptor {
+public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChangedListener {
 	
 	public static final String NAME = "ExtensionQuickStart";
 	protected static final String SCRIPT_CONSOLE_HOME_PAGE = Constant.ZAP_HOMEPAGE;
@@ -67,19 +70,14 @@ public class ExtensionQuickStart extends ExtensionAdaptor {
 	        
 	        ExtensionHelp.enableHelpKey(getQuickStartPanel(), "quickstart");
 	    }
+        extensionHook.addSessionListener(this);
+
 	}
 
 	@Override
 	public boolean canUnload() {
     	return true;
     }
-	
-    @Override
-	public void unload() {
-	    if (getView() != null) {
-	    	Control.getSingleton().getExtensionLoader().removeWorkPanel(getQuickStartPanel());
-	    }
-	}
 
 	private QuickStartPanel getQuickStartPanel() {
 		if (quickStartPanel == null) {
@@ -145,6 +143,26 @@ public class ExtensionQuickStart extends ExtensionAdaptor {
 			extExt.enableExtension(NAME, showOnStart);
 		}
 		
+	}
+
+	@Override
+	public void sessionAboutToChange(Session arg0) {
+		// Ignore
+	}
+
+	@Override
+	public void sessionChanged(Session arg0) {
+		// Ignore
+	}
+
+	@Override
+	public void sessionModeChanged(Mode mode) {
+		this.getQuickStartPanel().setMode(mode);
+	}
+
+	@Override
+	public void sessionScopeChanged(Session arg0) {
+		// Ignore
 	}
 
 

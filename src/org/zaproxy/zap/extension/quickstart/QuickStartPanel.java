@@ -39,6 +39,7 @@ import javax.swing.border.EtchedBorder;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.brk.BreakPanel;
@@ -113,7 +114,13 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.show")), 
 				LayoutHelper.getGBC(0, 6, 1, 0.0D, new Insets(5,5,5,5)));
 		panelContent.add(this.getShowOnStart(), LayoutHelper.getGBC(1, 6, 1, 0.0D));
-
+		
+		this.setMode(Control.getSingleton().getMode());
+	}
+	
+	protected void setMode(Mode mode) {
+		this.getUrlField().setEditable(mode.equals(Mode.standard));
+		this.getAttackButton().setEnabled(mode.equals(Mode.standard));
 	}
 	
 	private ZapTextField getUrlField () {
