@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Fuzzdb files</name>
-	<version>1</version>
+	<version>2</version>
 	<description>Fuzzdb v1.09 files which can be used with the ZAP fuzzer</description>
 	<author>ZAP Dev Team</author>
 	<url>http://code.google.com/p/fuzzdb/</url>
-	<changes/>
+	<changes>Removed a file entry from the ZapAddOn.xml file because it doesn't exist.</changes>
 	<dependson/>
 	<extensions/>
 	<ascanrules/>
@@ -1270,7 +1270,6 @@
 		<file>fuzzers/fuzzdb-1.09/docs/misc/html-element-index/testing/objects/images/tilepattern.gif</file>
 		<file>fuzzers/fuzzdb-1.09/docs/misc/html-element-index/testing/objects/images/wrench.gif</file>
 		<file>fuzzers/fuzzdb-1.09/docs/misc/html-element-index/testing/objects/images/zenpattern.gif</file>
-		<file>fuzzers/fuzzdb-1.09/docs/misc/html-element-index/testing/objects/urlbutton.class</file>
 		<file>fuzzers/fuzzdb-1.09/docs/misc/htmlcodes.htm</file>
 		<file>fuzzers/fuzzdb-1.09/docs/misc/netcat_cheat_sheet_v1.pdf</file>
 		<file>fuzzers/fuzzdb-1.09/docs/misc/unicode-security/UTR# 36_ Unicode Security Considerations.html</file>
