@@ -67,12 +67,16 @@
 	&lt;/addon_${extension}>
 </echo>
 	</target>
-
-	<target name="build-addon" description="build the specified addon">
 	
+	<target name="build-addon" description="build the specified addon">
+		
 		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
 		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
 		
+		<antcall target="build-addon-help"> 
+			<param name="addon" value="${addon}"/>
+		</antcall>
+
 		<jar jarfile="${dist}/${file}" update="true" compress="true">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${addon}/**"/>
@@ -80,9 +84,21 @@
 			<zipfileset dir="${src}" prefix="">
 				<include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
 			</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/${addon}/resource/**"/>
+			</zipfileset>
 			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false"/>
 			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
 		</jar>
+
+		<antcall target="include-files"> 
+			<param name="addon" value="${addon}"/>
+			<param name="file" value="${file}"/>
+		</antcall>
+
+		<antcall target="cleanup-addon-help"> 
+			<param name="addon" value="${addon}"/>
+		</antcall>
 
 		<antcall target="append-to-versions-file"> 
 			<param name="extension" value="${addon}"/> 
@@ -95,80 +111,56 @@
 		</antcall>
 	</target>
 
-	<target name="build-ascanrulesAlpha" description="build the Active scanner rules">
-		<antcall target="build-extension"> 
-			<param name="extension" value="ascanrulesAlpha"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Active scanner rules - alpha"/> 
-			<param name="changes" value=""/> 
-		</antcall>
+	<target name="include-files" depends="is-files-available" if="files.available"> 
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${src}/org/zaproxy/zap/extension/${addon}/files/" prefix=""/>
+		</jar>
 	</target>
 
-	<target name="build-extension" description="build the specified extension">
-		<property name="file" value="${extension}-alpha-${version}.zap" />
+	<target name="build-addon-help" depends="is-help-available" if="help.available" description="generates the help file and copies it to the right place">
+	    <!--
+	    	- runs if "help" directory is present
+	    	- creates help.jar which is included in the extension-jar file
+	    	- help.jar is dynamically merged into core help pages on ZAP start
+	    -->
+		<local name="help.jar" />
+        <property name="help.jar" value="help.jar" />
+        
+        <local name="help.package" />
+	    <property name="help.package" value="org/zaproxy/zap/extension/${addon}/resource/help" />
 		
-		<antcall target="build-extension-help"> 
-			<param name="extension" value="${extension}"/>
-		</antcall>
-		
-		<jar jarfile="${dist}/${file}" update="true" compress="false">
-			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/**"/>
-			</zipfileset>
-			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
-			</zipfileset>
-			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/resource/**"/>
-			</zipfileset>
-		</jar>
-		
-		<antcall target="cleanup-extension-help"> 
-			<param name="extension" value="${extension}"/>
-		</antcall>
-		
-		<antcall target="append-to-versions-file"> 
-			<param name="extension" value="${extension}"/> 
-			<param name="type" value="alpha"/> 
-			<param name="version" value="${version}"/> 
-			<param name="name" value="${name}"/> 
-			<param name="changes" value="${changes}"/> 
-			<param name="file" value="${file}"/> 
-		</antcall>
+        <local name="help.target" />
+        <property name="help.target" value="${build}/${help.package}/" />
+        
+        <!-- generate the indexes -->
+        <java classname="com.sun.java.help.search.Indexer" fork="true" dir="${src}/${help.package}">
+            <arg value="zaphelp"/>
+            <classpath>
+                <pathelement location="${dist.lib.dir}/jhall.jar" />
+            </classpath>
+        </java>
+        
+        <!-- delete the previous jar in the help directory (if present) -->
+        <delete dir="${build}/${help.package}" />
+        <mkdir dir="${build}/${help.package}" />
+
+        <!-- as files reside in resource/ they are copied later -->
+    </target>
+
+	<target name="is-files-available">
+	    <available property="files.available" type="dir" file="${src}/org/zaproxy/zap/extension/${addon}/files"/>
 	</target>
 	
-	<target name="build-extensionAndDeps" description="build the specified extension and include its dependencies">
-		<property name="file" value="${extension}-alpha-${version}.zap" />
-		
-		<antcall target="build-extension-help"> 
-			<param name="extension" value="${extension}"/>
-		</antcall>
-		
-		<jar jarfile="${dist}/${file}" update="true" compress="true">
-			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/**" />
-			</zipfileset>
-			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${extension}/lib/" includes="*.jar" />
-			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/Messages*" />
-			</zipfileset>
-			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/resource/**"/>
-			</zipfileset>
-		</jar>
-		
-		<antcall target="cleanup-extension-help"> 
-			<param name="extension" value="${extension}"/>
-		</antcall>
-		
-		<antcall target="append-to-versions-file"> 
-			<param name="extension" value="${extension}"/> 
-			<param name="version" value="${version}"/> 
-			<param name="name" value="${name}"/> 
-			<param name="changes" value="${changes}"/> 
-			<param name="file" value="${file}"/> 
-		</antcall>
+
+	<target name="is-help-available">
+	    <available property="help.available" type="dir" file="${src}/org/zaproxy/zap/extension/${addon}/resource/help"/>
 	</target>
+	
+	<target name="cleanup-addon-help">
+        <!-- delete the indexes, generated previously, as they are no longer needed. -->
+        <delete dir="${src}/org/zaproxy/zap/extension/${addon}/resource/help/JavaHelpSearch" />
+	</target>
+	
 	
 	<target name="build-extension-help" depends="is-help-available" if="help.available" description="generates the help file and copies it to the right place">
 	    <!--
@@ -200,55 +192,16 @@
         <!-- as files reside in resource/ they are copied later -->
     </target>
     
-	<target name="is-help-available">
-	    <available property="help.available" type="dir" file="${src}/org/zaproxy/zap/extension/${extension}/resource/help"/>
-	</target>
-	
-	<target name="cleanup-extension-help">
-        <!-- delete the indexes, generated previously, as they are no longer needed. -->
-        <delete dir="${src}/org/zaproxy/zap/extension/${extension}/resource/help/JavaHelpSearch" />
-	</target>
-	
-	<target name="build-highlighter" description="build the highlighter extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="highlighter"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Highlighter"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-	<target name="build-pscanrulesAlpha" description="build the Passive scanner rules">
-		<antcall target="build-extension"> 
-			<param name="extension" value="pscanrulesAlpha"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Passive scanner rules - alpha"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
-	<target name="build-serverSentEvents" description="build the Server-Sent Events extension">
-		<antcall target="build-extension">
-			<param name="extension" value="sse"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Server-Sent Events"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-	
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 		
 		<echo file="${versions.file}" append="true">&lt;ZAP></echo>
 		
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
+		<!--antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall--> <!-- No rules yet-->
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
-
-		<!-- 'Non-Standard' addons, ie which require additional files or havnt yet been converted to
-		 'proper' add-ons (keep in alphabetical order ;) -->
-		<antcall target="build-ascanrulesAlpha"/>
-		<antcall target="build-pscanrulesAlpha"/>
-		<antcall target="build-serverSentEvents"/>
+		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
+		<!--antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall--> <!-- No rules yet-->
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 
