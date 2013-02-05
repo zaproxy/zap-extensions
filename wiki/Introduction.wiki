@@ -1,25 +1,13 @@
 #labels Featured
 This project contains extensions for the [https://code.google.com/p/zaproxy OWASP Zed Attack Proxy] (ZAP).
 
-These can be added to ZAP by simply dropping them into the ZAP 'plugins' directory and restarting ZAP - you dont need to rebuild ZAP. 
+If you are using the latest version of ZAP  then you can browse and download addons from within ZAP by clicking on this button in the toolbar:
 
-The following extensions are currently available for the latest 1.4 release:
-|| *Status* || *Ver* || *Name* || *Author* || *Description* ||
-|| Beta || 3 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-scripts-beta-3.jar scriptConsole] || ZAP Core Team || Provides dynamic access to internal ZAP data structures ([https://code.google.com/p/zaproxy/wiki/ScriptConsole more info]) ||
-|| Beta || n/a || [http://zap-extensions.googlecode.com/files/zap-ext-UltimateObsoleteFileDetection-binary.zip ultimateObsoleteFileDetection] || Alex Ganelis & Dan Meged, [http://www.hacktics.com/ Hacktics ASC, Ernst & Young] || Advanced obsolete/hidden file detection (Installer/Plugin/Source)||
-|| Beta || 1.0.1 || [http://code.google.com/p/diviner/ Diviner] || Shay Chen & Eran Tamari, [http://www.hacktics.com/ Hacktics ASC, Ernst & Young] || Predicts the structure of server memory, source code and indirect attack sequences ||
-|| Beta || 7 || [https://code.google.com/p/zap-extensions/downloads/detail?name=alertReport-beta-7.zap alertReport] || Leandro Ferrari, [http://www.talsoft.com.ar/ TalSoft SRL] || Report alert generator in pdf or odt format. ||
-|| Beta || 2 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-tokengen-beta-2.jar tokengen] || ZAP Core Team || Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection. ||
-|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-spiderAjax-alpha-1.jar Ajax Spider] || ZAP Core Team || Ajax Spider - full integration with [http://crawljax.com/ Crawljax] ||
-|| Alpha || 1 || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-servletParamPollution-alpha-1.jar HTTP Parameter Pollution (HPP) Passive Scanner] || ZAP Core Team || Flags FORMS with no target attributes ||
-|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-httpParameterPollution-alpha-1.jar HTTP Parameter Pollution (HPP) Active Scanner] || ZAP Core Team ||  Injects HTTP malicious payloads in forms and links to identify HPP issues|| 
-|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-highlighter-alpha-1.jar highlighter] || ZAP Core Team || Allows you to highlight strings in the request and response tabs. || 
-|| Alpha || 2 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-insecureauthentication-alpha-2.jar InsecureAuthentication] || ZAP Core Team (Colm O'Flaherty) || Insecure Authentication passive scanner ||
-|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-ldapinjectionscan-alpha-1.jar LDAPInjection] || ZAP Core Team (Colm O'Flaherty) || LDAP Injection scanner ||
-|| Alpha || 8 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sessionfixationscan-alpha-8.jar SessionFixation] || ZAP Core Team (Colm O'Flaherty) || Session Fixation scanner ||
-|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-csrfcountermeasuresscan-alpha-1.jar CSRF Countermeasures Scanner] || ZAP Core Team || CSRF Countermeasures Scanner ||
-|| Alpha || 1 || [https://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-viewStatePScan-alpha-1.jar viewStatePscan] || Alexandre Herzog, [http://www.csnc.ch/ Compass Security] || View State passive scanner ||
-|| Alpha || 3 || [http://code.google.com/p/zap-extensions/downloads/detail?name=zap-ext-sqlinjectionscan-alpha-3.jar SQL Injection Scanners] || ZAP Core Team (Colm O'Flaherty) || SQL Injection Scanners (complete re-write), including generic, MySQL, Hypersonic/HSQL, Oracle, and now PostgreSQL specific scanners ||
+https://zap-extensions.googlecode.com/svn/wiki/zap-screenshot-browse-addons.png
+
+You can also import add-ons you have downloaded manually via the "File / Load Add-on file..." menu option.
+
+This project also contains [Examples example templates] to help you get started when developing new ZAP extensions.
 
 For a summary of the ways you can extend ZAP see https://code.google.com/p/zaproxy/wiki/DevExtending
 
@@ -28,3 +16,5 @@ For some general notes on developing ZAP see the [https://code.google.com/p/zapr
 If you have any questions about developing extensions for ZAP please ask them on the [http://groups.google.com/group/zaproxy-develop ZAP Developer] forum.
 
 We are happy to host the source code and/or release jars for your ZAP extensions in this project - please get in touch via the [http://groups.google.com/group/zaproxy-develop ZAP Developer] forum.
+
+For the full list of extensions that are still available for the previous 1.4 release see the [V1Extensions wiki]
