@@ -77,7 +77,7 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
 
 	@Override
 	public String getAuthor() {
-		return "Carl Sampson <chs@chs.us>";
+		return "Carl Sampson";
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
 	@Override
 	public URL getURL() {
 		try {
-			return new URL(Constant.ZAP_HOMEPAGE);
+			return new URL("http://www.chs.us");
 		} catch (MalformedURLException e) {
 			return null;
 		}
