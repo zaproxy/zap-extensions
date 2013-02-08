@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>7</version>
+	<version>8</version>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Added support for modes</changes>
+	<changes>Added scroll pane for small resolutions and dark icon when used in dev</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.quickstart.ExtensionQuickStart</extension>
