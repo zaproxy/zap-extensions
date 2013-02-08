@@ -35,6 +35,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
 
 import org.parosproxy.paros.Constant;
@@ -53,7 +54,6 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	private static final long serialVersionUID = 1L;
 
 	private ExtensionQuickStart extension;
-	private JPanel panelContent = null;
 	private JButton attackButton = null;
 	private JButton stopButton = null;
 	private ZapTextField urlField = null;
@@ -70,8 +70,15 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		this.setIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/147.png")));	// 'lightning' icon
 		this.setLayout(new BorderLayout());
 
-		panelContent = new JPanel(new GridBagLayout());
-		this.add(panelContent, BorderLayout.CENTER);
+		JPanel panelContent = new JPanel(new GridBagLayout());
+		JScrollPane jScrollPane = new JScrollPane();
+		jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+		jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		jScrollPane.setViewportView(panelContent);
+
+		this.add(jScrollPane, BorderLayout.CENTER);
+		
+		
 		panelContent.setBackground(Color.white);
 		panelContent.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		
@@ -90,8 +97,14 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
 		panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.topmsg")), 
 				LayoutHelper.getGBC(0, 0, 4, 1.0D, new Insets(5,5,5,5)));
-		panelContent.add(new JLabel(new ImageIcon(SearchPanel.class.getResource("/resource/zap128x128.png"))),
+		if (Constant.isDevBuild()) {
+			panelContent.add(new JLabel(new ImageIcon(QuickStartPanel.class.getResource(
+					"/org/zaproxy/zap/extension/quickstart/resource/zap128x128dark.png"))),
+					LayoutHelper.getGBC(4, 0, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
+		} else {
+			panelContent.add(new JLabel(new ImageIcon(SearchPanel.class.getResource("/resource/zap128x128.png"))),
 				LayoutHelper.getGBC(4, 0, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
+		}
 	
 		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.url")), 
 				LayoutHelper.getGBC(0, 1, 1, 0.0D, new Insets(5,5,5,5)));
