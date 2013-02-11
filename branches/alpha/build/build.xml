@@ -202,7 +202,7 @@
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
 		<!--antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall--> <!-- No rules yet-->
-		<antcall target="build-addon"><param name="addon" value="treetools"/></antcall>
+		<!-- <antcall target="build-addon"><param name="addon" value="treetools"/></antcall> -->
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 
