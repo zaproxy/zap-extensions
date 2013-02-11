@@ -34,7 +34,7 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
 	
 	public static final String NAME = "TreeTools";
 	private PopupMenuTreeTools popupMenuTreeTools = null;
-	private ExtensionHook hook = null;
+	//private ExtensionHook hook = null;
 	/**
      * 
      */
@@ -61,7 +61,7 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
 	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
-	    hook = extensionHook;
+	    //hook = extensionHook;
 	    if (getView() != null) {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuTreeTools());
 	    }
