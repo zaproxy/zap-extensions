@@ -34,7 +34,7 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
 	
 	public static final String NAME = "TreeTools";
 	private PopupMenuTreeTools popupMenuTreeTools = null;
-	//private ExtensionHook hook = null;
+	//private ExtensionHook hook = null;  chs removed when going from alpha to beta
 	/**
      * 
      */
@@ -61,7 +61,7 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
 	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
-	    //hook = extensionHook;
+	    //hook = extensionHook;  chs removed when going from alpha to beta
 	    if (getView() != null) {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuTreeTools());
 	    }
@@ -100,7 +100,7 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
 	}
 	
 	public void unload() {
-		Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupMenuTreeTools());
-		//Control.getSingleton().getExtensionLoader().removeExtension(this, hook);
+		Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupMenuTreeTools());  //added when going from alpha to beta
+		//Control.getSingleton().getExtensionLoader().removeExtension(this, hook);  //removed when going from alpha to beta
 	}
 }
