@@ -351,4 +351,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	public String getCommandScript() {
 		return this.getCommandPanel().getCommandScript();
 	}
+	
+	void unload() {
+		getCommandPanel().unload();
+	}
 }

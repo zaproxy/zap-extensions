@@ -116,4 +116,8 @@ public class CommandPanel extends AbstractPanel {
 		getTxtOutput().append(str);
 	}
 	
+	void unload() {
+		getTxtOutput().unload();
+	}
+	
 }

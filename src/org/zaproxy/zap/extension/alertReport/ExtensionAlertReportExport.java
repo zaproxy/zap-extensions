@@ -34,7 +34,6 @@ import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.db.TableAlert;
@@ -108,16 +107,6 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 	public boolean canUnload() {
     	return true;
     }
-	
-    @Override
-	public void unload() {
-	    if (getView() != null) {
-	    	Control.getSingleton().getExtensionLoader().removePopupMenuItem(getAlertExportMsgPopupMenu());
-	    	Control.getSingleton().getExtensionLoader().removeOptionsPanel(getOptionsAlertExportPanel());
-	    	Control.getSingleton().getExtensionLoader().removeOptionsParamSet(getParams());
-	    	Control.getSingleton().getExtensionLoader().removeReportMenuItem(getMenuItemAlertReport());
-	    }
-	}
 
 	private JMenuItem getMenuItemAlertReport() {
 		if (menuItemAlertExport == null) {

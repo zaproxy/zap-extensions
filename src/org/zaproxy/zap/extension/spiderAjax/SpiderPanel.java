@@ -208,7 +208,9 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 		this.setActiveScanLabels();
 		this.getStartScanButton().setEnabled(true);
 		this.getStopScanButton().setEnabled(false);
-		this.runnable.stopSpider();
+		if (runnable != null) {
+			this.runnable.stopSpider();
+		}
 	}
 	
 	
@@ -680,6 +682,9 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 		scanStatus.setScanCount(activeScans.size());
 	}
 	
+	ScanStatus getScanStatus() {
+		return scanStatus;
+	}
 	
 	
 	

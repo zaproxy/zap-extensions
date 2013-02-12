@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>BeanShell Console</name>
-	<version>1</version>
+	<version>2</version>
 	<description>Provides a BeanShell Console</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First release as an add-on (previously bundled in ZAP).</changes>
+	<changes>Changed to unload some components when uninstalling.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.beanshell.ExtensionBeanShell</extension>
