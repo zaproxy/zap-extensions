@@ -34,7 +34,6 @@ import javax.script.ScriptException;
 import javax.swing.JMenuItem;
 
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
@@ -89,14 +88,15 @@ public class ExtensionScripts extends ExtensionAdaptor {
     }
 	
     @Override
-	public void unload() {
-	    if (getView() != null) {
-	    	Control.getSingleton().getExtensionLoader().removeWorkPanel(getConsolePanel());
-	    	Control.getSingleton().getExtensionLoader().removeToolsMenuItem(getMenuConsoleLink());
-	    }
-	}
-
-
+    public void unload() {
+        if (getView() != null) {
+            if (consolePanel != null) {
+                consolePanel.unload();
+            }
+        }
+        
+        super.unload();
+    }
 	
 	private ConsolePanel getConsolePanel() {
 		if (consolePanel == null) {

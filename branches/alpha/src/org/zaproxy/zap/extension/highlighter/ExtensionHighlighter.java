@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -68,13 +67,6 @@ implements SessionChangedListener, /*ProxyListener, */ SiteMapListener {
 	public boolean canUnload() {
     	return true;
     }
-	
-    @Override
-	public void unload() {
-	    if (getView() != null) {
-	    	Control.getSingleton().getExtensionLoader().removeStatusPanel(getHighlighterPanel());
-	    }
-	}
 	
     protected HighlighterPanel getHighlighterPanel() {
         if (highlighterPanel == null) {

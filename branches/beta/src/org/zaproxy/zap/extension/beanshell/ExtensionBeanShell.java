@@ -27,7 +27,6 @@ import java.net.URL;
 import javax.swing.JMenuItem;
 
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
@@ -80,8 +79,19 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
     @Override
 	public void unload() {
 	    if (getView() != null) {
-	    	Control.getSingleton().getExtensionLoader().removeToolsMenuItem(getMenuBeanShell());
+	        if (beanShellConsoleDialog != null) {
+	            // TODO Stop BeanShell threads.
+	            // Background:
+	            // bsh.util.JConsole creates a thread when it is instantiated (in BeanShellPanel) and bsh.Interpreter must be 
+	            // run on a thread (in BeanShellConsoleFrame), those threads must be stopped here, unfortunately BeanShell 
+	            // doesn't provide a way to stop the threads. The threads will stay alive until ZAP is closed.
+	            
+	            beanShellConsoleDialog.dispose();
+	            beanShellConsoleDialog = null;
+	        }
 	    }
+	    
+	    super.unload();
     }
 
 	   

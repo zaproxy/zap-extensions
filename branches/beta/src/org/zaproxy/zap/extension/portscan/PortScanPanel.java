@@ -150,4 +150,11 @@ public class PortScanPanel extends ScanPanel implements ScanListenner {
 		}
 	}
 
+	//@Override
+	protected void unload() {
+		this.reset();
+		// TODO Uncomment when available in main ZAP release (2.1.0?) or for weekly release.
+		//super.unload();
+	}
+	
 }

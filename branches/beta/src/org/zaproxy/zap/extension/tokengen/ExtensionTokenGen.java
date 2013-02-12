@@ -32,7 +32,6 @@ import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -109,13 +108,24 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     }
 	
     @Override
-	public void unload() {
-    	log.debug("ExtensionTokenGen.unload()");
-	    if (getView() != null) {
-	    	Control.getSingleton().getExtensionLoader().removeStatusPanel(getTokenPanel());
-	    	Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupTokenGen());
-	    }
-	}
+    public void unload() {
+        stopTokenGeneration();
+        
+        if (getView() != null) {
+            if (analyseTokensDialog != null) {
+                analyseTokensDialog.dispose();
+            }
+            
+            if (genTokensDialog != null) {
+                genTokensDialog.dispose();
+            }
+            
+            // TODO Uncomment when available in main ZAP release (2.1.0?) or for weekly release.
+            //getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getTokenPanel().getScanStatus().getCountLabel());
+        }
+        
+        super.unload();
+    }
 
 	private TokenPanel getTokenPanel() {
 		if (tokenPanel == null) {

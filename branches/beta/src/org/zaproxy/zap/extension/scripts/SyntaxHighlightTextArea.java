@@ -65,15 +65,15 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 	
 	private Vector<SyntaxStyle> syntaxStyles;
 	
-	private static SyntaxMenu syntaxMenu = null;
-	private static ViewMenu viewMenu = null;
-	private static TextAreaMenuItem cutAction = null;
-	private static TextAreaMenuItem copyAction = null;
-	private static TextAreaMenuItem pasteAction = null;
-	private static TextAreaMenuItem deleteAction = null;
-	private static TextAreaMenuItem undoAction = null;
-	private static TextAreaMenuItem redoAction = null;
-	private static TextAreaMenuItem selectAllAction = null;
+	private SyntaxMenu syntaxMenu = null;
+	private ViewMenu viewMenu = null;
+	private TextAreaMenuItem cutAction = null;
+	private TextAreaMenuItem copyAction = null;
+	private TextAreaMenuItem pasteAction = null;
+	private TextAreaMenuItem deleteAction = null;
+	private TextAreaMenuItem undoAction = null;
+	private TextAreaMenuItem redoAction = null;
+	private TextAreaMenuItem selectAllAction = null;
 	
 	static {
 		//Hack to set the language that is used by ZAP.
@@ -93,9 +93,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 		addSyntaxStyle(RUBY_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_RUBY);
 		addSyntaxStyle(SCALA_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_SCALA);
 		
-		if (syntaxMenu == null) {
-			initActions();
-		}
+		initActions();
 		
 		setPopupMenu(null);
 		
@@ -192,7 +190,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 		syntaxStyles.add(new SyntaxStyle(label, styleKey));
 	}
 	
-	private static synchronized void initActions() {
+	private void initActions() {
 		if (syntaxMenu == null) {
 			syntaxMenu = new SyntaxMenu();
 			viewMenu = new ViewMenu();
@@ -220,6 +218,21 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 			
 			View.getSingleton().getPopupMenu().addMenu(selectAllAction);
 		}
+	}
+	
+	void unload() {
+		View.getSingleton().getPopupMenu().removeMenu(syntaxMenu);
+		View.getSingleton().getPopupMenu().removeMenu(viewMenu);
+		
+		View.getSingleton().getPopupMenu().removeMenu(undoAction);
+		View.getSingleton().getPopupMenu().removeMenu(redoAction);
+		
+		View.getSingleton().getPopupMenu().removeMenu(cutAction);
+		View.getSingleton().getPopupMenu().removeMenu(copyAction);
+		View.getSingleton().getPopupMenu().removeMenu(pasteAction);
+		View.getSingleton().getPopupMenu().removeMenu(deleteAction);
+		
+		View.getSingleton().getPopupMenu().removeMenu(selectAllAction);
 	}
 	
 	public static class SyntaxStyle {

@@ -539,4 +539,8 @@ public class TokenPanel extends AbstractPanel {
 
     }
 
+    ScanStatus getScanStatus() {
+        return scanStatus;
+    }
+
 }
