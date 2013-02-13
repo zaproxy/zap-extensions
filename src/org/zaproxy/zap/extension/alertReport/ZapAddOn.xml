@@ -4,7 +4,7 @@
 	<description>Allows you to generate reports for alerts you specify in pdf or odt format</description>
 	<author>Talsoft SRL</author>
 	<url>http://www.talsoft.com.ar</url>
-	<changes>Changed to unload all components when uninstalling.</changes>
+	<changes>Changed to unload all components when uninstalling. Changed the messages keys prefix.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.alertReport.ExtensionAlertReportExport</extension>

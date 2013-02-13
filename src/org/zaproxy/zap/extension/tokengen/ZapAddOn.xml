@@ -4,7 +4,7 @@
 	<description>Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Changed to unload some components when uninstalling.</changes>
+	<changes>Changed to unload some components when uninstalling. Changed the messages keys prefix.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.tokengen.ExtensionTokenGen</extension>

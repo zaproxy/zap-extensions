@@ -235,7 +235,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
 	private TokenGenPopupMenu getPopupTokenGen() {
 		if (popupTokenGenMenu  == null) {
-			popupTokenGenMenu = new TokenGenPopupMenu(messages.getString("token.generate.popup.generate"));
+			popupTokenGenMenu = new TokenGenPopupMenu(messages.getString("tokengen.generate.popup.generate"));
 			popupTokenGenMenu.setExtension(this);
 		}
 		return popupTokenGenMenu;
@@ -335,7 +335,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
 	@Override
 	public String getDescription() {
-		return messages.getString("token.desc");
+		return messages.getString("tokengen.desc");
 	}
 
 	@Override

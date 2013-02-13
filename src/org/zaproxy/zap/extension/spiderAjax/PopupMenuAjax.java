@@ -79,7 +79,7 @@ public class PopupMenuAjax extends ExtensionPopupMenuItem {
 	 * 
 	 */
 	private void initialize() {
-		 this.setText(this.extension.getString("ajax.site.popup"));
+		 this.setText(this.extension.getString("spiderajax.site.popup"));
 	        this.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/spiderAjax.png")));
 
 	        this.addActionListener(new java.awt.event.ActionListener() { 

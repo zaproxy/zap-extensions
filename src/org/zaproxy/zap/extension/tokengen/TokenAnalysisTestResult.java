@@ -32,7 +32,7 @@ public class TokenAnalysisTestResult {
 	
 	public TokenAnalysisTestResult (Type type) {
 		this.type = type;
-		this.name = ExtensionTokenGen.messages.getString("token.analyse.test." + type.name().toLowerCase());
+		this.name = ExtensionTokenGen.messages.getString("tokengen.analyse.test." + type.name().toLowerCase());
 	}
 	
 	public Type getType() {

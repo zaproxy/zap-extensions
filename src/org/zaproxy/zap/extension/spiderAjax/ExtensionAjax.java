@@ -151,7 +151,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	protected SpiderPanel getSpiderPanel() {
 		if (spiderPanel == null) {
 			spiderPanel = new SpiderPanel(this);
-			spiderPanel.setName(this.getString("ajax.panel.title"));
+			spiderPanel.setName(this.getString("spiderajax.panel.title"));
 			spiderPanel.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/spiderAjax.png")));
 			}
 		return spiderPanel;
@@ -176,7 +176,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	private PopupMenuAjaxSiteInScope getPopupMenuAjaxSiteInScope() {
 		if (popupMenuInScope == null) {
-			popupMenuInScope = new PopupMenuAjaxSiteInScope(this.getString("ajax.site.popup.InScope"), this);
+			popupMenuInScope = new PopupMenuAjaxSiteInScope(this.getString("spiderajax.site.popup.InScope"), this);
 		}
 		return popupMenuInScope;
 	}
@@ -187,7 +187,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	private PopupMenuAjaxSite getPopupMenuAjaxSite() {
 		if (popupMenuSpiderSite == null) {
-			popupMenuSpiderSite = new PopupMenuAjaxSite(this.getString("ajax.site.popup"), this);
+			popupMenuSpiderSite = new PopupMenuAjaxSite(this.getString("spiderajax.site.popup"), this);
 		}
 		return popupMenuSpiderSite;
 	}
@@ -258,7 +258,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	@Override
 	public String getDescription() {
-		return this.getString("ajax.desc");
+		return this.getString("spiderajax.desc");
 	}
 	
 	/**

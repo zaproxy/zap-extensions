@@ -200,9 +200,9 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
         this.setLayout(new GridBagLayout());
         this.setSize(409, 268);
         
-        this.setName(getMessageString("alert.export.message.export.option.title"));
+        this.setName(getMessageString("alertreport.export.message.export.option.title"));
         
-        jLabel1.setText(getMessageString("alert.export.message.export.option.desc"));
+        jLabel1.setText(getMessageString("alertreport.export.message.export.option.desc"));
         jLabel1.setPreferredSize(new java.awt.Dimension(494,30));
         jLabel1.setMinimumSize(new java.awt.Dimension(494,30));
 
@@ -298,7 +298,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	        editWorkingDir.setEditable(false);
 	        editAttachDoc = new ZapTextField();
 	        
-	        chooseApp = new JButton(getMessageString("alert.export.message.export.option.label.file")); 
+	        chooseApp = new JButton(getMessageString("alertreport.export.message.export.option.label.file")); 
 			chooseApp.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e) {    
@@ -329,7 +329,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 				}
 			});
 
-	        chooseDir = new JButton(getMessageString("alert.export.message.export.option.label.dir")); 
+	        chooseDir = new JButton(getMessageString("alertreport.export.message.export.option.label.dir")); 
 			chooseDir.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e) {    
@@ -353,7 +353,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 				}
 			});
 			
-			 chooseDoc = new JButton(getMessageString("alert.export.message.export.option.label.file")); 
+			 chooseDoc = new JButton(getMessageString("alertreport.export.message.export.option.label.file")); 
 			 chooseDoc.addActionListener(new java.awt.event.ActionListener() { 
 					@Override
 					public void actionPerformed(java.awt.event.ActionEvent e) {    
@@ -362,7 +362,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 						{
 							@Override
 							public String getDescription() {
-								return getMessageString("alert.export.message.export.option.title.extension");
+								return getMessageString("alertreport.export.message.export.option.title.extension");
 							}
 							@Override
 							public boolean accept(File f) {
@@ -396,46 +396,46 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	    	int rowId = 0;
 	    	
    
-			editPane.add(new JLabel(getMessageString("alert.export.message.export.option.format")), 
+			editPane.add(new JLabel(getMessageString("alertreport.export.message.export.option.format")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(getComboLevel(), getGridBackConstrants(rowId++, 1, 1, true));
 			
-	        editPane.add(new JLabel(getMessageString("alert.export.message.export.pdf.title")), 
+	        editPane.add(new JLabel(getMessageString("alertreport.export.message.export.pdf.title")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(editTitleReport, getGridBackConstrants(rowId++, 1, 1, true));
 	        
-	        editPane.add(new JLabel(getMessageString("alert.export.message.export.option.companyname")), 
+	        editPane.add(new JLabel(getMessageString("alertreport.export.message.export.option.companyname")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(editCompanyName, getGridBackConstrants(rowId++, 1, 1, true));
 	        
-	        editPane.add(new JLabel(getMessageString("alert.export.message.export.option.documentattach")), 
+	        editPane.add(new JLabel(getMessageString("alertreport.export.message.export.option.documentattach")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(editAttachDoc, getGridBackConstrants(rowId++, 1, 1, false));
 	        editPane.add(chooseDoc, getGridBackConstrants(rowId-1, 2, 0, false));
 	        
-	        editPane.add(new JLabel(getMessageString("alert.export.message.export.option.logofilename")), 
+	        editPane.add(new JLabel(getMessageString("alertreport.export.message.export.option.logofilename")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(editLogoFileName, getGridBackConstrants(rowId++, 1, 1, false));
 	        editPane.add(chooseApp, getGridBackConstrants(rowId-1, 2, 0, false));
 	        
-	        editPane.add(new JLabel(getMessageString("alert.export.message.export.option.imagesdir")), 
+	        editPane.add(new JLabel(getMessageString("alertreport.export.message.export.option.imagesdir")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(editWorkingDir, getGridBackConstrants(rowId++, 1, 1, false));
 	        editPane.add(chooseDir, getGridBackConstrants(rowId-1, 2, 0, false));
 	        
-	        editPane.add(new JLabel(getMessageString("alert.export.message.export.pdf.customername")), 
+	        editPane.add(new JLabel(getMessageString("alertreport.export.message.export.pdf.customername")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(editCustomerName, getGridBackConstrants(rowId++, 1, 1, false));
 	        
-	        editPane.add(new JLabel(getMessageString("alert.export.message.export.option.authorname")), 
+	        editPane.add(new JLabel(getMessageString("alertreport.export.message.export.option.authorname")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(editAuthorName, getGridBackConstrants(rowId++, 1, 1, true));
 	        
-	        editPane.add(new JLabel(getMessageString("alert.export.message.export.option.pdfkeywords")), 
+	        editPane.add(new JLabel(getMessageString("alertreport.export.message.export.option.pdfkeywords")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(editPDFKeywords, getGridBackConstrants(rowId++, 1, 1, true));
 	        
-	        editPane.add(new JLabel(getMessageString("alert.export.message.export.pdf.confidential")), 
+	        editPane.add(new JLabel(getMessageString("alertreport.export.message.export.pdf.confidential")), 
 	        		getGridBackConstrants(rowId, 0, 0, false));
 	        editPane.add(getScrollPaneConfidentialText(),getGridBackContrantsScrollPane(rowId++));
 	        
@@ -452,10 +452,10 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 		AlertReportExportParam param = (AlertReportExportParam) options.getParamSet(AlertReportExportParam.class);
 		if (param!=null){
 			if (getComboLevel().getSelectedItem().toString().equals("PDF")&&(!getEditAttachDoc().getText().isEmpty())&&(!getEditAttachDoc().getText().contains(".pdf"))){
-				throw new Exception(getMessageString("alert.export.message.export.option.distintformat"));
+				throw new Exception(getMessageString("alertreport.export.message.export.option.distintformat"));
 			}else
 				if (getComboLevel().getSelectedItem().toString().equals("ODT")&&(!getEditAttachDoc().getText().isEmpty())&&(!getEditAttachDoc().getText().contains(".odt"))){
-					throw new Exception(getMessageString("alert.export.message.export.option.distintformat"));
+					throw new Exception(getMessageString("alertreport.export.message.export.option.distintformat"));
 				}
 		}
     }
