@@ -22,7 +22,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -62,8 +61,6 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	
     private static Logger log = Logger.getLogger(ExtensionTokenGen.class);
 
-    protected static ResourceBundle messages = null;
-
 	/**
      * 
      */
@@ -85,9 +82,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	 */
 	private void initialize() {
         this.setName(NAME);
-        // Load extension specific language files - these are held in the extension jar
-        messages = ResourceBundle.getBundle(
-        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+        this.setI18nPrefix("tokengen");
 	}
 	
 	@Override
@@ -235,7 +230,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
 	private TokenGenPopupMenu getPopupTokenGen() {
 		if (popupTokenGenMenu  == null) {
-			popupTokenGenMenu = new TokenGenPopupMenu(messages.getString("tokengen.generate.popup.generate"));
+			popupTokenGenMenu = new TokenGenPopupMenu(getMessages().getString("tokengen.generate.popup.generate"));
 			popupTokenGenMenu.setExtension(this);
 		}
 		return popupTokenGenMenu;
@@ -243,7 +238,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	
 	private GenerateTokensDialog getGenerateTokensDialog() {
 		if (this.genTokensDialog == null) {
-			this.genTokensDialog = new GenerateTokensDialog();
+			this.genTokensDialog = new GenerateTokensDialog(getMessages());
 			this.genTokensDialog.setExtension(this);
 		}
 		return this.genTokensDialog;
@@ -256,7 +251,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
 	private AnalyseTokensDialog getAnalyseTokensDialog() {
 		if (this.analyseTokensDialog == null) {
-			this.analyseTokensDialog = new AnalyseTokensDialog();
+			this.analyseTokensDialog = new AnalyseTokensDialog(getMessages());
 			this.analyseTokensDialog.setExtension(this);
 		}
 		return this.analyseTokensDialog;
@@ -335,7 +330,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
 	@Override
 	public String getDescription() {
-		return messages.getString("tokengen.desc");
+		return getMessages().getString("tokengen.desc");
 	}
 
 	@Override

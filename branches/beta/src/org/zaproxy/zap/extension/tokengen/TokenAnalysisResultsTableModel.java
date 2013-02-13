@@ -25,6 +25,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
+import org.parosproxy.paros.Constant;
 
 /**
  *
@@ -35,9 +36,9 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
 
 	private static final long serialVersionUID = 1L;
     private static final String[] columnNames = {
-									ExtensionTokenGen.messages.getString("tokengen.analyse.table.test"), 
-									ExtensionTokenGen.messages.getString("tokengen.analyse.table.result"), 
-									ExtensionTokenGen.messages.getString("tokengen.analyse.table.desc")};
+									Constant.messages.getString("tokengen.analyse.table.test"), 
+									Constant.messages.getString("tokengen.analyse.table.result"), 
+									Constant.messages.getString("tokengen.analyse.table.desc")};
 
     private List<TokenAnalysisTestResult> results = new ArrayList<>();
     
@@ -89,7 +90,7 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
     	TokenAnalysisTestResult result = results.get(row);
         Object value = null;
         switch (col) {
-        	case 0:	value = ExtensionTokenGen.messages.getString("tokengen.analyse.test." + result.getType().name().toLowerCase());
+        	case 0:	value = Constant.messages.getString("tokengen.analyse.test." + result.getType().name().toLowerCase());
         			break;
         	case 1: 
 		    		switch (result.getResult()) {
@@ -112,7 +113,7 @@ public class TokenAnalysisResultsTableModel extends DefaultTableModel {
         			break;
         	case 2: value = result.getSummary();
         			if (result.getSummary() == null || result.getSummary().length() == 0) {
-        				value = ExtensionTokenGen.messages.getString(
+        				value = Constant.messages.getString(
         						"tokengen.analyse.summary." + result.getResult().name().toLowerCase());
         			}
         			break;

@@ -20,8 +20,6 @@ package org.zaproxy.zap.extension.spiderAjax;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
@@ -53,7 +51,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private ProxyAjax proxy = null;
 	private ChromeAlertDialog addDialog = null;
 	//private ScopeController scope = null;
-	private ResourceBundle messages = null;
 	private String mode = null;
 
 	/**
@@ -62,7 +59,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	public ExtensionAjax() throws ClassNotFoundException {
 		super(NAME);
-		this.messages = ResourceBundle.getBundle(this.getClass().getPackage().getName()+ ".Messages", Constant.getLocale());
 		initialize();
 	}
 
@@ -83,6 +79,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	private void initialize() {
 		this.setName(NAME);
+		this.setI18nPrefix("spiderajax");
 		this.setOrder(234);
 		//TODO: fix the mode & scope things
 		//this.scope = new ScopeController();
@@ -151,7 +148,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	protected SpiderPanel getSpiderPanel() {
 		if (spiderPanel == null) {
 			spiderPanel = new SpiderPanel(this);
-			spiderPanel.setName(this.getString("spiderajax.panel.title"));
+			spiderPanel.setName(this.getMessages().getString("spiderajax.panel.title"));
 			spiderPanel.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/spiderAjax.png")));
 			}
 		return spiderPanel;
@@ -176,7 +173,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	private PopupMenuAjaxSiteInScope getPopupMenuAjaxSiteInScope() {
 		if (popupMenuInScope == null) {
-			popupMenuInScope = new PopupMenuAjaxSiteInScope(this.getString("spiderajax.site.popup.InScope"), this);
+			popupMenuInScope = new PopupMenuAjaxSiteInScope(this.getMessages().getString("spiderajax.site.popup.InScope"), this);
 		}
 		return popupMenuInScope;
 	}
@@ -187,7 +184,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	private PopupMenuAjaxSite getPopupMenuAjaxSite() {
 		if (popupMenuSpiderSite == null) {
-			popupMenuSpiderSite = new PopupMenuAjaxSite(this.getString("spiderajax.site.popup"), this);
+			popupMenuSpiderSite = new PopupMenuAjaxSite(this.getMessages().getString("spiderajax.site.popup"), this);
 		}
 		return popupMenuSpiderSite;
 	}
@@ -230,20 +227,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	}
 
 	/**
-	 * 
-	 * @param key to retrieve
-	 * @return the value of the key in messages
-	 */
-	public String getString(String key) {
-		try {
-			return messages.getString(key);
-		} catch (MissingResourceException e) {
-			logger.error(e);
-			return  key;
-		}
-	}
-
-	/**
 	 * 	 
 	 * @return the author
 	 */
@@ -258,7 +241,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	@Override
 	public String getDescription() {
-		return this.getString("spiderajax.desc");
+		return this.getMessages().getString("spiderajax.desc");
 	}
 	
 	/**

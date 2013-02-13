@@ -28,6 +28,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -67,11 +68,14 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
     private static Logger log = Logger.getLogger(AnalyseTokensDialog.class);
 
+    private ResourceBundle messages;
+    
     /**
      * @throws HeadlessException
      */
-    public AnalyseTokensDialog() throws HeadlessException {
+    public AnalyseTokensDialog(ResourceBundle messages) throws HeadlessException {
         super();
+        this.messages = messages;
         initialize();
     }
 
@@ -80,7 +84,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 	 */
 	private void initialize() {
         this.setContentPane(getJPanel());
-        this.setTitle(ExtensionTokenGen.messages.getString("tokengen.analyse.title"));
+        this.setTitle(messages.getString("tokengen.analyse.title"));
 		this.setSize(500, 450);
 	}
 	
@@ -106,9 +110,9 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 			jTabPanel3 = new JPanel();
 			jTabPanel3.setLayout(new GridBagLayout());
 
-			jTabbed.addTab(ExtensionTokenGen.messages.getString("tokengen.analyse.tab.summary"), jTabPanel1);
-			jTabbed.addTab(ExtensionTokenGen.messages.getString("tokengen.analyse.tab.errors"), jTabPanel2);
-			jTabbed.addTab(ExtensionTokenGen.messages.getString("tokengen.analyse.tab.details"), jTabPanel3);
+			jTabbed.addTab(messages.getString("tokengen.analyse.tab.summary"), jTabPanel1);
+			jTabbed.addTab(messages.getString("tokengen.analyse.tab.errors"), jTabPanel2);
+			jTabbed.addTab(messages.getString("tokengen.analyse.tab.details"), jTabPanel3);
 			
 			jTabPanel1.add(getProgressBar(), getGBC(0, 0, 1, 1.0D, 0.0D));
 			jTabPanel1.add(getTestsScrollPane(), getGBC(0, 1, 1, 1.0D, 1.0D));
@@ -158,7 +162,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
 	public void startAnalysis (CharacterFrequencyMap cfm) {
 		this.requestFocus();
-		analyserThread = new TokenAnalyserThread();
+		analyserThread = new TokenAnalyserThread(messages);
 		analyserThread.setCfm(cfm);
 		analyserThread.addListenner(this);
 		analyserThread.addOutputDestination(this.getDetailsArea());
@@ -190,7 +194,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 	private JButton getCancelButton() {
 		if (cancelButton == null) {
 			cancelButton = new JButton();
-			cancelButton.setText(ExtensionTokenGen.messages.getString("tokengen.button.cancel"));
+			cancelButton.setText(messages.getString("tokengen.button.cancel"));
 			cancelButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
@@ -204,7 +208,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 	private JButton getSaveButton() {
 		if (saveButton == null) {
 			saveButton = new JButton();
-			saveButton.setText(ExtensionTokenGen.messages.getString("tokengen.analyse.button.save"));
+			saveButton.setText(messages.getString("tokengen.analyse.button.save"));
 			saveButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
@@ -232,7 +236,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
                 }
 				
 			} catch (Exception e) {
-				View.getSingleton().showWarningDialog(ExtensionTokenGen.messages.getString("tokengen.analyse.save.error"));
+				View.getSingleton().showWarningDialog(messages.getString("tokengen.analyse.save.error"));
 	            log.error(e.getMessage(), e);
 			}
 	    }
