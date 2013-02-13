@@ -25,7 +25,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
@@ -33,7 +32,6 @@ import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.db.TableAlert;
@@ -60,7 +58,6 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 	private OptionsAlertReportExportPanel optionsAlertExportPanel = null;
 	private JMenuItem menuItemAlertExport = null;
 	private AlertReportExportParam params;
-	private ResourceBundle messages = null;
 	private List<Alert> alertsDB = null;
 	private static final Logger logger = Logger.getLogger(ExtensionAlertReportExport.class);
 
@@ -83,6 +80,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
     */
 	public ExtensionAlertReportExport() {
 		super(ExtensionAlertReportExport.NAME);
+		this.setI18nPrefix("alertreport");
 	}
 
 	@Override
@@ -111,7 +109,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 	private JMenuItem getMenuItemAlertReport() {
 		if (menuItemAlertExport == null) {
 			menuItemAlertExport = new JMenuItem();
-			menuItemAlertExport.setText(this.getMessageString("alertreport.export.menu.report.generate"));
+			menuItemAlertExport.setText(this.getMessages().getString("alertreport.export.menu.report.generate"));
 			menuItemAlertExport.addActionListener(new java.awt.event.ActionListener() { 
 
 				@Override
@@ -128,20 +126,12 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 	private AlertReportExportMenuItem getAlertExportMsgPopupMenu() {
 		if (alertReportExportMenuItem == null) {
 			alertReportExportMenuItem = new AlertReportExportMenuItem(
-					this.getMessageString("alertreport.export.message.menuitem"));
+					this.getMessages().getString("alertreport.export.message.menuitem"));
 			alertReportExportMenuItem.setExtension(this);
 		}
 		return alertReportExportMenuItem;
 	}
    
-	public String getMessageString(String key) {
-		if (messages==null){
-			messages = ResourceBundle.getBundle(
-	        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
-		}
-		return messages.getString(key);
-	}
-
 	@Override
 	public String getAuthor() {
 		return "Talsoft SRL";
@@ -149,7 +139,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 
 	@Override
 	public String getDescription() {
-		return this.getMessageString("alertreport.export.message.desc");
+		return this.getMessages().getString("alertreport.export.message.desc");
 	}
 	
     

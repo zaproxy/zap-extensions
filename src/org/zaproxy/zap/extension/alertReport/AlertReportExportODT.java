@@ -195,7 +195,7 @@ public class AlertReportExportODT {
 
 		Cell cell = table.getCellByPosition(0, 0);
 		cell.setStringValue(extension
-				.getMessageString("alertreport.export.message.export.pdf.confidential"));
+				.getMessages().getString("alertreport.export.message.export.pdf.confidential"));
 		cell.setFont(fontSmallBold);
 		String color = Color.toSixDigitHexRGB("#87cefa");
 		cell.setCellBackgroundColor(Color.valueOf(color));
@@ -254,13 +254,13 @@ public class AlertReportExportODT {
 		try {
 			if (key.contains("risk"))
 				result = extensionExport
-						.getMessageString("alertreport.export.pluginid." + key);
+						.getMessages().getString("alertreport.export.pluginid." + key);
 			else if (key.contains("reliability"))
 				result = extensionExport
-						.getMessageString("alertreport.export.pluginid." + key);
+						.getMessages().getString("alertreport.export.pluginid." + key);
 			else
 				result = extensionExport
-						.getMessageString("alertreport.export.pluginid."
+						.getMessages().getString("alertreport.export.pluginid."
 								+ String.valueOf(pluginId) + "." + key);
 		} catch (Exception e) {
 			logger.error("Failed to load message alert: " + e.getMessage(), e);
@@ -290,7 +290,7 @@ public class AlertReportExportODT {
 		// add title description
 		para = outputDocument
 				.addParagraph(extension
-						.getMessageString("alertreport.export.message.export.pdf.description"));
+						.getMessages().getString("alertreport.export.message.export.pdf.description"));
 		para.setFont(fontTitleBold);
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 		addLines(outputDocument, 1);
@@ -305,7 +305,7 @@ public class AlertReportExportODT {
 
 		// add title risk
 		para = outputDocument.addParagraph(extension
-				.getMessageString("alertreport.export.message.export.pdf.risk"));
+				.getMessages().getString("alertreport.export.message.export.pdf.risk"));
 		para.setFont(fontTitleBold);
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 		addLines(outputDocument, 1);
@@ -318,7 +318,7 @@ public class AlertReportExportODT {
 		addLines(outputDocument, 1);
 		// add title reability
 		para = outputDocument.addParagraph(extension
-				.getMessageString("alertreport.export.message.export.pdf.reability"));
+				.getMessages().getString("alertreport.export.message.export.pdf.reability"));
 		para.setFont(fontTitleBold);
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 		addLines(outputDocument, 1);
@@ -332,7 +332,7 @@ public class AlertReportExportODT {
 		addLines(outputDocument, 1);
 		// add title urls
 		para = outputDocument.addParagraph(extension
-				.getMessageString("alertreport.export.message.export.pdf.urls"));
+				.getMessages().getString("alertreport.export.message.export.pdf.urls"));
 		para.setFont(fontTitleBold);
 		para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 
@@ -349,7 +349,7 @@ public class AlertReportExportODT {
 			if (!alertAux.getParam().isEmpty()) {
 				para = outputDocument
 						.addParagraph(extension
-								.getMessageString("alertreport.export.message.export.pdf.parameters")
+								.getMessages().getString("alertreport.export.message.export.pdf.parameters")
 								+ ": " + alertAux.getParam());
 				para.setFont(fontText);
 				para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
@@ -358,7 +358,7 @@ public class AlertReportExportODT {
 			if (!alertAux.getAttack().isEmpty()) {
 				para = outputDocument
 						.addParagraph(extension
-								.getMessageString("alertreport.export.message.export.pdf.attack"));
+								.getMessages().getString("alertreport.export.message.export.pdf.attack"));
 				para.setFont(fontTitleBold);
 				para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 				para = outputDocument.addParagraph(alertAux.getAttack());
@@ -396,7 +396,7 @@ public class AlertReportExportODT {
 									addLines(outputDocument, 1);
 									para = outputDocument
 											.addParagraph(extension
-													.getMessageString("alertreport.export.message.export.pdf.image")
+													.getMessages().getString("alertreport.export.message.export.pdf.image")
 													+ ": "
 													+ Integer
 															.toString(imageCount));
@@ -428,7 +428,7 @@ public class AlertReportExportODT {
 			addLines(outputDocument, 1);
 			para = outputDocument
 					.addParagraph(extension
-							.getMessageString("alertreport.export.message.export.pdf.solution"));
+							.getMessages().getString("alertreport.export.message.export.pdf.solution"));
 			para.setFont(fontTitleBold);
 			para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 			para = outputDocument.addParagraph(getFieldAlertProperty(
@@ -441,7 +441,7 @@ public class AlertReportExportODT {
 			addLines(outputDocument, 1);
 			para = outputDocument
 					.addParagraph(extension
-							.getMessageString("alertreport.export.message.export.pdf.references"));
+							.getMessages().getString("alertreport.export.message.export.pdf.references"));
 			para.setFont(fontTitleBold);
 			para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 			para = outputDocument.addParagraph(alert.getReference());

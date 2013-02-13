@@ -65,7 +65,7 @@ public class ChromeAlertDialog extends AbstractDialog {
 	 * 
 	 */
 	private void initialize() {
-		this.setTitle(this.extension.getString("spiderajax.chrome.alert.title"));
+		this.setTitle(this.extension.getMessages().getString("spiderajax.chrome.alert.title"));
 		this.setContentPane(getJPanel());
 		this.setSize(407, 255);
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -92,7 +92,7 @@ public class ChromeAlertDialog extends AbstractDialog {
 			java.awt.GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
 
 			javax.swing.JLabel jLabel = new JLabel();
-			jLabel.setText(this.extension.getString("spiderajax.chrome.alert.msg"));
+			jLabel.setText(this.extension.getMessages().getString("spiderajax.chrome.alert.msg"));
 			java.awt.GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 
 			java.awt.GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
@@ -131,7 +131,7 @@ public class ChromeAlertDialog extends AbstractDialog {
 	private JButton getBtnCancel() {
 		if (btnCancel == null) {
 			btnCancel = new JButton();
-			btnCancel.setText(this.extension.getString("spiderajax.chrome.alert.button"));
+			btnCancel.setText(this.extension.getMessages().getString("spiderajax.chrome.alert.button"));
 			btnCancel.setMaximumSize(new java.awt.Dimension(100, 40));
 			btnCancel.setMinimumSize(new java.awt.Dimension(100, 30));
 			btnCancel.setPreferredSize(new java.awt.Dimension(120, 30));

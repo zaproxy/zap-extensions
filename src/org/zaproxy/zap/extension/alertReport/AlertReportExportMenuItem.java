@@ -52,10 +52,6 @@ public class AlertReportExportMenuItem extends ExtensionPopupMenuItem {
 		this.reportExportODT = new AlertReportExportODT();
 
 	}
-
-	public String getMessageString(String key) {
-		return this.extension.getMessageString(key);
-	}
 	
 	/**
 	 * Generate alert to report
@@ -117,10 +113,10 @@ public class AlertReportExportMenuItem extends ExtensionPopupMenuItem {
 							extension);
 				if (result)
 					View.getSingleton().showMessageDialog(
-							getMessageString("alertreport.export.message.export.ok"));
+							extension.getMessages().getString("alertreport.export.message.export.ok"));
 				else
 					View.getSingleton().showMessageDialog(
-							getMessageString("alertreport.export.message.export.fail"));
+							extension.getMessages().getString("alertreport.export.message.export.fail"));
 				}
 			//clear alertsDB from memory
 			extension.clearAlertsDB();

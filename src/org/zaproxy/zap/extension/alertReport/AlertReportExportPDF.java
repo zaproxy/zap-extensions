@@ -150,7 +150,7 @@ public class AlertReportExportPDF {
 
 		preface.add(new Paragraph(
 				extensionExport
-						.getMessageString("alertreport.export.message.export.pdf.confidential"),
+						.getMessages().getString("alertreport.export.message.export.pdf.confidential"),
 				smallBold));
 		preface.add(new Paragraph(extensionExport.getParams()
 				.getConfidentialText(), 
@@ -201,13 +201,13 @@ public class AlertReportExportPDF {
 		try {
 			if (key.contains("risk"))
 				result = extensionExport
-						.getMessageString("alertreport.export.pluginid." + key);
+						.getMessages().getString("alertreport.export.pluginid." + key);
 			else if (key.contains("reliability"))
 				result = extensionExport
-						.getMessageString("alertreport.export.pluginid." + key);
+						.getMessages().getString("alertreport.export.pluginid." + key);
 			else
 				result = extensionExport
-						.getMessageString("alertreport.export.pluginid."
+						.getMessages().getString("alertreport.export.pluginid."
 								+ String.valueOf(pluginId) + "." + key);
 		} catch (Exception e) {
 			logger.error("Failed to load message alert: " + e.getMessage(), e);
@@ -229,27 +229,27 @@ public class AlertReportExportPDF {
 		content.add(new Paragraph(alert.getAlert(), catFont));
 		content.add(new Paragraph(
 				extensionExport
-						.getMessageString("alertreport.export.message.export.pdf.description"),
+						.getMessages().getString("alertreport.export.message.export.pdf.description"),
 				subFont));
 		content.add(new Paragraph(getFieldAlertProperty(alert.getPluginId(),
 				"description", alert.getDescription(), extensionExport)));
 		addEmptyLine(content, 1);
 		content.add(new Paragraph(extensionExport
-				.getMessageString("alertreport.export.message.export.pdf.risk"),
+				.getMessages().getString("alertreport.export.message.export.pdf.risk"),
 				subFont));
 		content.add(new Paragraph(getFieldAlertProperty(alert.getPluginId(),
 				"risk." + String.valueOf(alert.getRisk()),
 				Alert.MSG_RISK[alert.getRisk()], extensionExport)));
 		addEmptyLine(content, 1);
 		content.add(new Paragraph(extensionExport
-				.getMessageString("alertreport.export.message.export.pdf.reability"),
+				.getMessages().getString("alertreport.export.message.export.pdf.reability"),
 				subFont));
 		content.add(new Paragraph(getFieldAlertProperty(alert.getPluginId(),
 				"reliability." + String.valueOf(alert.getReliability()),
 				Alert.MSG_RELIABILITY[alert.getReliability()], extensionExport)));
 		addEmptyLine(content, 1);
 		content.add(new Paragraph(extensionExport
-				.getMessageString("alertreport.export.message.export.pdf.urls"),
+				.getMessages().getString("alertreport.export.message.export.pdf.urls"),
 				subFont));
 
 		// write all url with the same pluginid
@@ -263,14 +263,14 @@ public class AlertReportExportPDF {
 				content.add(new Paragraph(
 						"           "
 								+ extensionExport
-										.getMessageString("alertreport.export.message.export.pdf.parameters")
+										.getMessages().getString("alertreport.export.message.export.pdf.parameters")
 								+ ": " + alertAux.getParam()));
 				addEmptyLine(content, 1);
 			}
 			if (!alertAux.getAttack().isEmpty()) {
 				content.add(new Paragraph(
 						extensionExport
-								.getMessageString("alertreport.export.message.export.pdf.attack"),
+								.getMessages().getString("alertreport.export.message.export.pdf.attack"),
 						subFont));
 				content.add(new Paragraph(alertAux.getAttack()));
 				addEmptyLine(content, 1);
@@ -301,7 +301,7 @@ public class AlertReportExportPDF {
 											60f);
 									addEmptyLine(content, 1);
 									paragraph = new Paragraph(
-											extensionExport.getMessageString("alertreport.export.message.export.pdf.image")
+											extensionExport.getMessages().getString("alertreport.export.message.export.pdf.image")
 													+ ": "
 													+ Integer.toString(j),
 											litleFont);
@@ -330,7 +330,7 @@ public class AlertReportExportPDF {
 			addEmptyLine(content, 1);
 			content.add(new Paragraph(
 					extensionExport
-							.getMessageString("alertreport.export.message.export.pdf.solution"),
+							.getMessages().getString("alertreport.export.message.export.pdf.solution"),
 					subFont));
 			content.add(new Paragraph(getFieldAlertProperty(
 					alert.getPluginId(), "solution", alert.getSolution(),
@@ -340,7 +340,7 @@ public class AlertReportExportPDF {
 		if (!alert.getReference().equals("")) {
 			content.add(new Paragraph(
 					extensionExport
-							.getMessageString("alertreport.export.message.export.pdf.references"),
+							.getMessages().getString("alertreport.export.message.export.pdf.references"),
 					subFont));
 			content.add(new Paragraph(alert.getReference()));
 			addEmptyLine(content, 1);

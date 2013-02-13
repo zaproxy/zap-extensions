@@ -19,6 +19,7 @@ package org.zaproxy.zap.extension.tokengen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.tokengen.TokenAnalysisTestResult.Result;
@@ -44,6 +45,12 @@ public class TokenAnalyserThread extends Thread {
 
     private static Logger log = Logger.getLogger(TokenAnalyserThread.class);
 
+    private ResourceBundle messages;
+    
+    public TokenAnalyserThread(ResourceBundle messages) {
+        this.messages = messages;
+    }
+    
 	@Override
 	public void run() {
 		log.debug("run");
@@ -61,25 +68,25 @@ public class TokenAnalyserThread extends Thread {
 		result = new TokenAnalysisTestResult(TokenAnalysisTestResult.Type.MAX_ENTROPY);
 		if (maxEntropy >= 80) {
 			result.setResult(TokenAnalysisTestResult.Result.PASS);
-			result.setSummary(ExtensionTokenGen.messages.getString("tokengen.analyse.summary.excellent"));
+			result.setSummary(messages.getString("tokengen.analyse.summary.excellent"));
 		} else if (maxEntropy >= 60) {
 			result.setResult(TokenAnalysisTestResult.Result.HIGH);
-			result.setSummary(ExtensionTokenGen.messages.getString("tokengen.analyse.summary.good"));
+			result.setSummary(messages.getString("tokengen.analyse.summary.good"));
 		} else if (maxEntropy >= 40) {
 			result.setResult(TokenAnalysisTestResult.Result.MEDIUM);
-			result.setSummary(ExtensionTokenGen.messages.getString("tokengen.analyse.summary.robust"));
+			result.setSummary(messages.getString("tokengen.analyse.summary.robust"));
 		} else if (maxEntropy >= 20) {
 			result.setResult(TokenAnalysisTestResult.Result.LOW);
-			result.setSummary(ExtensionTokenGen.messages.getString("tokengen.analyse.summary.vulnerable"));
+			result.setSummary(messages.getString("tokengen.analyse.summary.vulnerable"));
 		} else {
 			result.setResult(TokenAnalysisTestResult.Result.FAIL);
-			result.setSummary(ExtensionTokenGen.messages.getString("tokengen.analyse.summary.deterministic"));
+			result.setSummary(messages.getString("tokengen.analyse.summary.deterministic"));
 		}
 		if (cancelled) {
 			return;
 		}
 		List<String> entDetails = new ArrayList<>();
-		entDetails.add(ExtensionTokenGen.messages.getString("tokengen.analyse.detail.maxentropy") + " " + maxEntropy);
+		entDetails.add(messages.getString("tokengen.analyse.detail.maxentropy") + " " + maxEntropy);
 		result.setDetails(entDetails);
 		this.notifyListenners(result);
 		if (cancelled) {

@@ -19,6 +19,8 @@ package org.zaproxy.zap.extension.tokengen;
 
 import java.util.List;
 
+import org.parosproxy.paros.Constant;
+
 public class TokenAnalysisTestResult {
 	
 	public enum Type {MAX_ENTROPY, CHR_UNIFORMITY, CHR_TRANSITIONS, COUNT_1_BIT, COUNT_2_BITS, COUNT_3_BITS, COUNT_4_BITS, COUNT_8_BITS, COUNT_16_BITS};
@@ -32,7 +34,7 @@ public class TokenAnalysisTestResult {
 	
 	public TokenAnalysisTestResult (Type type) {
 		this.type = type;
-		this.name = ExtensionTokenGen.messages.getString("tokengen.analyse.test." + type.name().toLowerCase());
+		this.name = Constant.messages.getString("tokengen.analyse.test." + type.name().toLowerCase());
 	}
 	
 	public Type getType() {

@@ -93,14 +93,14 @@ public class TokenPanel extends AbstractPanel {
 	private  void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
-        this.setName(ExtensionTokenGen.messages.getString("tokengen.panel.title"));
+        this.setName(extension.getMessages().getString("tokengen.panel.title"));
 		this.setIcon(new ImageIcon(getClass().getResource("/resource/icon/fugue/barcode.png")));
         this.add(getPanelCommand(), getPanelCommand().getName());
         
         scanStatus = new ScanStatus(
         				new ImageIcon(
         					getClass().getResource("/resource/icon/fugue/barcode.png")),
-        					ExtensionTokenGen.messages.getString("tokengen.panel.title"));
+        					extension.getMessages().getString("tokengen.panel.title"));
        
         View.getSingleton().getMainFrame().getMainFooterPanel().addFooterToolbarRightLabel(scanStatus.getCountLabel());
 
@@ -234,7 +234,7 @@ public class TokenPanel extends AbstractPanel {
 	private JButton getStopScanButton() {
 		if (stopScanButton == null) {
 			stopScanButton = new JButton();
-			stopScanButton.setToolTipText(ExtensionTokenGen.messages.getString("tokengen.toolbar.button.stop"));
+			stopScanButton.setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.stop"));
 			stopScanButton.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/142.png")));
 			stopScanButton.setEnabled(false);
 			stopScanButton.addActionListener(new ActionListener () {
@@ -250,7 +250,7 @@ public class TokenPanel extends AbstractPanel {
 	private JToggleButton getPauseScanButton() {
 		if (pauseScanButton == null) {
 			pauseScanButton = new JToggleButton();
-			pauseScanButton.setToolTipText(ExtensionTokenGen.messages.getString("tokengen.toolbar.button.pause"));
+			pauseScanButton.setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.pause"));
 			pauseScanButton.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/141.png")));
 			pauseScanButton.setEnabled(false);
 			pauseScanButton.addActionListener(new ActionListener () {
@@ -266,7 +266,7 @@ public class TokenPanel extends AbstractPanel {
 	private JButton getLoadButton() {
 		if (loadButton == null) {
 			loadButton = new JButton();
-			loadButton.setToolTipText(ExtensionTokenGen.messages.getString("tokengen.toolbar.button.load"));
+			loadButton.setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.load"));
 			loadButton.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/047.png")));
 			loadButton.setEnabled(true);
 			loadButton.addActionListener(new ActionListener () {
@@ -282,7 +282,7 @@ public class TokenPanel extends AbstractPanel {
 	private JButton getSaveButton() {
 		if (saveButton == null) {
 			saveButton = new JButton();
-			saveButton.setToolTipText(ExtensionTokenGen.messages.getString("tokengen.toolbar.button.save"));
+			saveButton.setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.save"));
 			saveButton.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/096.png")));
 			saveButton.setEnabled(false);
 			saveButton.addActionListener(new ActionListener () {
@@ -311,7 +311,7 @@ public class TokenPanel extends AbstractPanel {
 			initialMessage.setEditable(false);
 			initialMessage.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
 			initialMessage.setContentType("text/html");
-			initialMessage.setText(ExtensionTokenGen.messages.getString("tokengen.label.initialMessage"));
+			initialMessage.setText(extension.getMessages().getString("tokengen.label.initialMessage"));
 		}
 		
 		return initialMessage;
@@ -449,7 +449,7 @@ public class TokenPanel extends AbstractPanel {
 				this.extension.showAnalyseTokensDialog(cfm);
 				
 			} catch (Exception e) {
-				View.getSingleton().showWarningDialog(ExtensionTokenGen.messages.getString("tokengen.generate.load.error"));
+				View.getSingleton().showWarningDialog(extension.getMessages().getString("tokengen.generate.load.error"));
 	            log.error(e.getMessage(), e);
 			}
 	    }
@@ -479,7 +479,7 @@ public class TokenPanel extends AbstractPanel {
 				cfm.save(file);
 				
 			} catch (Exception e) {
-				View.getSingleton().showWarningDialog(ExtensionTokenGen.messages.getString("tokengen.generate.save.error"));
+				View.getSingleton().showWarningDialog(extension.getMessages().getString("tokengen.generate.save.error"));
 	            log.error(e.getMessage(), e);
 			}
 	    }
@@ -489,11 +489,11 @@ public class TokenPanel extends AbstractPanel {
 		if (getPauseScanButton().getModel().isSelected()) {
 			log.debug("Pausing token generation");
 			extension.pauseTokenGeneration();
-			getPauseScanButton().setToolTipText(ExtensionTokenGen.messages.getString("tokengen.toolbar.button.unpause"));
+			getPauseScanButton().setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.unpause"));
 		} else {
 			log.debug("Resuming token generation");
 			extension.resumeTokenGeneration();
-			getPauseScanButton().setToolTipText(ExtensionTokenGen.messages.getString("tokengen.toolbar.button.pause"));
+			getPauseScanButton().setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.pause"));
 
 		}
 	}
@@ -517,7 +517,7 @@ public class TokenPanel extends AbstractPanel {
 		getStopScanButton().setEnabled(false);
 		getPauseScanButton().setEnabled(false);
 		getPauseScanButton().setSelected(false);
-		getPauseScanButton().setToolTipText(ExtensionTokenGen.messages.getString("tokengen.toolbar.button.pause"));
+		getPauseScanButton().setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.pause"));
 		if (getTokenResultsSize() > 0) {
 			getSaveButton().setEnabled(true);
 		}

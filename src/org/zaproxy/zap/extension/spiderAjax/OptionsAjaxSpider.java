@@ -75,7 +75,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	 */
 	private void initialize() {
         this.setLayout(new CardLayout());
-        this.setName(this.extension.getString("spiderajax.options.title"));
+        this.setName(this.extension.getMessages().getString("spiderajax.options.title"));
 	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
 	    	this.setSize(391, 320);
 	    }
@@ -139,7 +139,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JCheckBox getClickAllElems() {
 			if (ClickAllElems == null) {
 				ClickAllElems = new JCheckBox();
-				ClickAllElems.setText(this.extension.getString("spiderajax.proxy.local.label.allElems"));
+				ClickAllElems.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.allElems"));
 			}
 			return ClickAllElems;
 		}
@@ -151,7 +151,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JCheckBox getFirefox() {
 		if (firefox == null) {
 			firefox = new JCheckBox();
-			firefox.setText(this.extension.getString("spiderajax.proxy.local.label.firefox"));
+			firefox.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.firefox"));
 		}
 		return firefox;
 	}
@@ -163,7 +163,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JCheckBox getChrome() {
 		if (chrome == null) {
 			chrome = new JCheckBox();
-			chrome.setText(this.extension.getString("spiderajax.proxy.local.label.chrome"));
+			chrome.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.chrome"));
 		}
 		return chrome;
 	}
@@ -175,7 +175,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JCheckBox getIE() {
 		if (ie == null) {
 			ie = new JCheckBox();
-			ie.setText(this.extension.getString("spiderajax.proxy.local.label.ie"));
+			ie.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.ie"));
 		}
 		return ie;
 	}
@@ -187,7 +187,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JCheckBox getHtmlunit() {
 		if (htmlunit == null) {
 			htmlunit = new JCheckBox();
-			htmlunit.setText(this.extension.getString("spiderajax.proxy.local.label.htmlunit"));
+			htmlunit.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.htmlunit"));
 		}
 		return htmlunit;
 	}
@@ -311,7 +311,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			panelLocalProxy = new JPanel();
 			panelLocalProxy.setLayout(new GridBagLayout());
 			panelLocalProxy.setBorder(javax.swing.BorderFactory.createTitledBorder(
-					null, this.extension.getString("spiderajax.proxy.local.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, 
+					null, this.extension.getMessages().getString("spiderajax.proxy.local.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, 
 					javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11), java.awt.Color.black));	// ZAP: i18n
 			jLabel.setText("Address (eg localhost, 127.0.0.1)");
 			gridBagConstraints4.gridx = 0;
@@ -350,8 +350,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	
 			
 			
-			jLabel1.setText(this.extension.getString("spiderajax.proxy.local.label.port"));
-			jLabel6.setText(this.extension.getString("spiderajax.proxy.local.label.browser"));
+			jLabel1.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.port"));
+			jLabel6.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.browser"));
 			gridBagConstraints15.anchor = java.awt.GridBagConstraints.NORTHWEST;
 			gridBagConstraints15.gridx = 0;
 			gridBagConstraints15.gridy = 4;
@@ -390,7 +390,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			panelCrawljax = new JPanel();
 			panelCrawljax.setLayout(new GridBagLayout());
 			panelCrawljax.setBorder(javax.swing.BorderFactory.createTitledBorder(
-					null, this.extension.getString("spiderajax.proxy.crawljax.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, 
+					null, this.extension.getMessages().getString("spiderajax.proxy.crawljax.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, 
 					javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11), java.awt.Color.black));	// ZAP: i18n
 		
 			gridBagConstraints5.gridx = 1;
@@ -430,8 +430,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			browsers = new JLabel();
 			threads = new JLabel();
 			
-			browsers.setText(this.extension.getString("spiderajax.options.label.browsers"));
-			threads.setText(this.extension.getString("spiderajax.options.label.threads"));
+			browsers.setText(this.extension.getMessages().getString("spiderajax.options.label.browsers"));
+			threads.setText(this.extension.getMessages().getString("spiderajax.options.label.threads"));
 
 			panelCrawljax.add(browsers, gridBagConstraints4);
 			panelCrawljax.add(getTxtNumBro(), gridBagConstraints5);
@@ -443,7 +443,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 
 			
 			panelCrawljax.add(getClickAllElems(), LayoutHelper.getGBC(0, 2, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			jLabel5.setText(this.extension.getString("spiderajax.proxy.local.label.browsers"));
+			jLabel5.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.browsers"));
 			panelCrawljax.add(jLabel5, LayoutHelper.getGBC(0, 3, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
 			panelCrawljax.add(getFirefox(), LayoutHelper.getGBC(0, 4, 3,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
 			panelCrawljax.add(getChrome(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(25,2,2,2)));

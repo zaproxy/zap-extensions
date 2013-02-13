@@ -23,6 +23,7 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -62,11 +63,14 @@ public class GenerateTokensDialog extends AbstractDialog {
 	
     private static Logger log = Logger.getLogger(GenerateTokensDialog.class);
 
+    private ResourceBundle messages;
+    
     /**
      * @throws HeadlessException
      */
-    public GenerateTokensDialog() throws HeadlessException {
+    public GenerateTokensDialog(ResourceBundle messages) throws HeadlessException {
         super();
+        this.messages = messages;
  		initialize();
     }
 
@@ -76,7 +80,7 @@ public class GenerateTokensDialog extends AbstractDialog {
 	 */
 	private void initialize() {
         this.setContentPane(getJTabbed());
-        this.setTitle(ExtensionTokenGen.messages.getString("tokengen.generate.title"));
+        this.setTitle(messages.getString("tokengen.generate.title"));
 		this.setSize(500, 150);
 	}
 	
@@ -90,11 +94,11 @@ public class GenerateTokensDialog extends AbstractDialog {
 			jPanel = new JPanel();
 			jPanel.setLayout(new GridBagLayout());
 
-			jPanel.add(new JLabel(ExtensionTokenGen.messages.getString("tokengen.generate.label.type")), getGBC(0, 0, 1, 0.25D));
+			jPanel.add(new JLabel(messages.getString("tokengen.generate.label.type")), getGBC(0, 0, 1, 0.25D));
 			jPanel.add(getParamType(), getGBC(1, 0, 3, 0.0D));
-			jPanel.add(new JLabel(ExtensionTokenGen.messages.getString("tokengen.generate.label.name")), getGBC(0, 1, 1, 0.25D));
+			jPanel.add(new JLabel(messages.getString("tokengen.generate.label.name")), getGBC(0, 1, 1, 0.25D));
 			jPanel.add(getParamName(), getGBC(1, 1, 3, 0.0D));
-			jPanel.add(new JLabel(ExtensionTokenGen.messages.getString("tokengen.generate.label.numTokens")), getGBC(0, 2, 1, 0.25D));
+			jPanel.add(new JLabel(messages.getString("tokengen.generate.label.numTokens")), getGBC(0, 2, 1, 0.25D));
 			jPanel.add(getNumTokensField(), getGBC(1, 2, 3, 0.0D));
 			jPanel.add(getCancelButton(), getGBC(2, 4, 1, 0.25));
 			jPanel.add(getStartButton(), getGBC(3, 4, 1, 0.25));
@@ -105,7 +109,7 @@ public class GenerateTokensDialog extends AbstractDialog {
 	private JButton getCancelButton() {
 		if (cancelButton == null) {
 			cancelButton = new JButton();
-			cancelButton.setText(ExtensionTokenGen.messages.getString("tokengen.generate.button.cancel"));
+			cancelButton.setText(messages.getString("tokengen.generate.button.cancel"));
 			cancelButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -123,7 +127,7 @@ public class GenerateTokensDialog extends AbstractDialog {
 	private JButton getStartButton() {
 		if (startButton == null) {
 			startButton = new JButton();
-			startButton.setText(ExtensionTokenGen.messages.getString("tokengen.generate.button.generate"));
+			startButton.setText(messages.getString("tokengen.generate.button.generate"));
 			startButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
