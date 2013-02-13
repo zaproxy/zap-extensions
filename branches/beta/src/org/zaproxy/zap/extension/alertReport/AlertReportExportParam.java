@@ -96,15 +96,15 @@ public class AlertReportExportParam extends AbstractParam {
     protected void parse(){
     	ResourceBundle messages = ResourceBundle.getBundle(
         		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
-		titleReport = getConfig().getString(TITLE_REPORT, messages.getString("alert.export.report.title.default"));
+		titleReport = getConfig().getString(TITLE_REPORT, messages.getString("alertreport.export.report.title.default"));
 		logoFileName = getConfig().getString(LOGO_FILE_NAME, DEFAULT_LOGO_FILE_NAME);
 		workingDirImages = getConfig().getString(WORKING_DIR_IMAGES, DEFAULT_WORKING_DIR_IMAGES);
-		customerName = getConfig().getString(CUSTOMER_NAME, messages.getString("alert.export.report.title.customername.default"));
-		confidentialText = getConfig().getString(CONFIDENTIAL_TEXT, messages.getString("alert.export.report.confidentialtext.default"));
-		pdfKeywords = getConfig().getString(PDF_KEYWORDS, messages.getString("alert.export.report.keywords.default"));
-		authorName = getConfig().getString(AUTHOR_NAME,  messages.getString("alert.export.report.authorname.default"));
-		companyName = getConfig().getString(COMPANY_NAME, messages.getString("alert.export.report.companyname.default"));
-		formatReport = getConfig().getString(FORMAT_REPORT, messages.getString("alert.export.report.formatreport.default"));
+		customerName = getConfig().getString(CUSTOMER_NAME, messages.getString("alertreport.export.report.title.customername.default"));
+		confidentialText = getConfig().getString(CONFIDENTIAL_TEXT, messages.getString("alertreport.export.report.confidentialtext.default"));
+		pdfKeywords = getConfig().getString(PDF_KEYWORDS, messages.getString("alertreport.export.report.keywords.default"));
+		authorName = getConfig().getString(AUTHOR_NAME,  messages.getString("alertreport.export.report.authorname.default"));
+		companyName = getConfig().getString(COMPANY_NAME, messages.getString("alertreport.export.report.companyname.default"));
+		formatReport = getConfig().getString(FORMAT_REPORT, messages.getString("alertreport.export.report.formatreport.default"));
 		documentAttach = getConfig().getString(DOCUMENT_ATTACH_FILE_NAME, DEFAULT_DOCUMENT_ATTACH_FILE_NAME);
     }
 

@@ -111,7 +111,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 	private JMenuItem getMenuItemAlertReport() {
 		if (menuItemAlertExport == null) {
 			menuItemAlertExport = new JMenuItem();
-			menuItemAlertExport.setText(this.getMessageString("alert.export.menu.report.generate"));
+			menuItemAlertExport.setText(this.getMessageString("alertreport.export.menu.report.generate"));
 			menuItemAlertExport.addActionListener(new java.awt.event.ActionListener() { 
 
 				@Override
@@ -128,7 +128,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 	private AlertReportExportMenuItem getAlertExportMsgPopupMenu() {
 		if (alertReportExportMenuItem == null) {
 			alertReportExportMenuItem = new AlertReportExportMenuItem(
-					this.getMessageString("alert.export.message.menuitem"));
+					this.getMessageString("alertreport.export.message.menuitem"));
 			alertReportExportMenuItem.setExtension(this);
 		}
 		return alertReportExportMenuItem;
@@ -149,7 +149,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 
 	@Override
 	public String getDescription() {
-		return this.getMessageString("alert.export.message.desc");
+		return this.getMessageString("alertreport.export.message.desc");
 	}
 	
     

@@ -101,7 +101,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
         scanStatus = new ScanStatus(
         				new ImageIcon(
         					SpiderPanel.class.getResource("/resource/icon/16/spiderAjax.png")),
-        					this.extension.getString("ajax.panel.title"));
+        					this.extension.getString("spiderajax.panel.title"));
         if (View.isInitialised()) {
         	View.getSingleton().getMainFrame().getMainFooterPanel().addFooterToolbarRightLabel(scanStatus.getCountLabel());
         }
@@ -171,7 +171,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private JButton getStopScanButton() {
 		if (stopScanButton == null) {
 			stopScanButton = new JButton();
-			stopScanButton.setToolTipText(this.extension.getString("ajax.toolbar.button.stop"));
+			stopScanButton.setToolTipText(this.extension.getString("spiderajax.toolbar.button.stop"));
 			stopScanButton.setIcon(new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/142.png")));
 			stopScanButton.setEnabled(false);
 			stopScanButton.addActionListener(new ActionListener () {
@@ -221,7 +221,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private JButton getStartScanButton() {
 		if (startScanButton == null) {
 			startScanButton = new JButton();
-			startScanButton.setToolTipText(this.extension.getString("ajax.toolbar.button.start"));
+			startScanButton.setToolTipText(this.extension.getString("spiderajax.toolbar.button.start"));
 			startScanButton.setIcon(new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/131.png")));
 			startScanButton.setEnabled(false);
 			startScanButton.addActionListener(new ActionListener () {
@@ -280,13 +280,13 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private JButton getOptionsButton() {
 		if (optionsButton == null) {
 			optionsButton = new JButton();
-			optionsButton.setToolTipText(this.extension.getString("ajax.options.title"));
+			optionsButton.setToolTipText(this.extension.getString("spiderajax.options.title"));
 			optionsButton.setIcon(new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/041.png")));
 			optionsButton.addActionListener(new ActionListener () {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					Control.getSingleton().getMenuToolsControl().options(
-							extension.getString("ajax.options.title"));
+							extension.getString("spiderajax.options.title"));
 				}
 			});
 		}
@@ -358,7 +358,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 			gridBagConstraintsy.gridy = 0;
 			gridBagConstraintsy.insets = new java.awt.Insets(0,0,0,0);
 			gridBagConstraintsy.anchor = java.awt.GridBagConstraints.WEST;
-			filterStatus = new JLabel(this.extension.getString("ajax.panel.subtitle"));
+			filterStatus = new JLabel(this.extension.getString("spiderajax.panel.subtitle"));
 			JLabel t1 = new JLabel();
 
 			panelToolbar.add(filterStatus, gridBagConstraints2);
