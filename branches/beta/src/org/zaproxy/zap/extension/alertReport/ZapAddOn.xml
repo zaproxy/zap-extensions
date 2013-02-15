@@ -5,7 +5,8 @@
 	<author>Talsoft SRL</author>
 	<url>http://www.talsoft.com.ar</url>
 	<changes>Changed to unload all components when uninstalling. Changed the messages keys prefix.
-	Changed to use the messages automatically loaded by ZAP.</changes>
+	Changed to use the messages automatically loaded by ZAP.
+	Changed to check if the keys of the messages exists. Restored the translations of the alerts.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.alertReport.ExtensionAlertReportExport</extension>

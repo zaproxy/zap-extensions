@@ -197,24 +197,25 @@ public class AlertReportExportPDF {
 	 */
 	private static String getFieldAlertProperty(Integer pluginId, String key,
 			String contentDefault, ExtensionAlertReportExport extensionExport) {
-		String result = contentDefault;
-		try {
-			if (key.contains("risk"))
-				result = extensionExport
-						.getMessages().getString("alertreport.export.pluginid." + key);
-			else if (key.contains("reliability"))
-				result = extensionExport
-						.getMessages().getString("alertreport.export.pluginid." + key);
-			else
-				result = extensionExport
-						.getMessages().getString("alertreport.export.pluginid."
-								+ String.valueOf(pluginId) + "." + key);
-		} catch (Exception e) {
-			logger.error("Failed to load message alert: " + e.getMessage(), e);
+		if (key.contains("risk") || key.contains("reliability")) {
+			return getMessage(extensionExport, "alertreport.export.pluginid." + key, contentDefault);
 		}
-		return result;
+		StringBuilder sbKey = new StringBuilder(50);
+		sbKey.append("alertreport.export.pluginid.");
+		sbKey.append(pluginId);
+		sbKey.append('.');
+		sbKey.append(key);
+		
+		return getMessage(extensionExport, sbKey.toString(), contentDefault);
 	}
 
+	private static String getMessage(ExtensionAlertReportExport extensionExport, String key, String defaultValue) {
+		if (extensionExport.getMessages().containsKey(key)) {
+			return extensionExport.getMessages().getString(key);
+		}
+		return defaultValue;
+	}
+	
 	private static void addContent(Document document,
 			java.util.List<Alert> alerts,
 			ExtensionAlertReportExport extensionExport)
