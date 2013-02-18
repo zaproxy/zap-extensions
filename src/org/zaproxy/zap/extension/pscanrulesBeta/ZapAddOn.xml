@@ -10,6 +10,8 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.CharsetMismatchScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.CookieLooselyScopedScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.CSRFCountermeasures</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.InformationDisclosureDebugErrors</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.InformationDisclosureInURL</pscanrule>
