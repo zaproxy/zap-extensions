@@ -4,8 +4,13 @@
 	<description>Allows you to spider sites that make heavy use of javascript using crawljax</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/AJAXSpider_getStarted</url>
-	<changes>Changed to unload some components when uninstalling. Changed the messages keys prefix.
-	Changed to use the messages automatically loaded by ZAP.</changes>
+	<changes>
+	<![CDATA[
+	Changed to unload some components when uninstalling.<br>
+	Changed the messages keys prefix.<br>
+	Changed to use the messages automatically loaded by ZAP.<br>
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.spiderAjax.ExtensionAjax</extension>
