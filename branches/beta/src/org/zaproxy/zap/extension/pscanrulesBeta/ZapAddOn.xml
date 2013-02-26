@@ -1,10 +1,15 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>2</version>
+	<version>3</version>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated to support new addon format</changes>
+	<changes>
+		v.3 Added the following passive scanner rules:
+			 - org.zaproxy.zap.extension.pscanrulesBeta.CharsetMismatchScanner
+			 - org.zaproxy.zap.extension.pscanrulesBeta.CookieLooselyScopedScanner			
+		v.2 Updated to support new addon format
+	</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
