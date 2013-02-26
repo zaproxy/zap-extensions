@@ -47,11 +47,6 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 	 */
 	private static final String MESSAGE_PREFIX = "pscanbeta.cookielooselyscoped.";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zaproxy.zap.extension.pscan.PassiveScanner#getName()
-	 */
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
@@ -62,17 +57,9 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zaproxy.zap.extension.pscan.PassiveScanner#scanHttpResponseReceive
-	 * (org.parosproxy.paros.network.HttpMessage, int,
-	 * net.htmlparser.jericho.Source)
-	 */
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {		
-		List<HttpCookie> cookies = getHttpCookies(msg);
+		List<HttpCookie> cookies = msg.getResponseHeader().getHttpCookies();
 		
 		// name of a host from which the response has been sent from
 		String host = msg.getRequestHeader().getHostName();
@@ -89,23 +76,6 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 		if (looselyScopedCookies.size() > 0) {
 			raiseAlert(msg, id, host, looselyScopedCookies);
 		}
-	}
-
-	// TODO: Fix in 2.0.0 - use msg.getResponseHeader().getHttpCookies()
-	private List<HttpCookie> getHttpCookies(HttpMessage msg) {
-		List<HttpCookie> cookies = new LinkedList<HttpCookie>();
-
-		Vector<String> cookiesS = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE);
-		if (cookiesS != null)
-			for (String c : cookiesS)
-				cookies.addAll(HttpCookie.parse(c));
-
-		cookiesS = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE2);
-		if (cookiesS != null)
-			for (String c : cookiesS)
-				cookies.addAll(HttpCookie.parse(c));
-
-		return cookies;
 	}
 
 	/*
@@ -180,13 +150,6 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 		return 90033;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zaproxy.zap.extension.pscan.PassiveScanner#setParent(org.zaproxy.
-	 * zap.extension.pscan.PassiveScanThread)
-	 */
 	@Override
 	public void setParent(PassiveScanThread parent) {
 		this.parent = parent;

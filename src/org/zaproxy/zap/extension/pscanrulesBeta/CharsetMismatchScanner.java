@@ -27,6 +27,7 @@ import net.htmlparser.jericho.StartTagType;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -44,11 +45,6 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 	 */
 	private static final String MESSAGE_PREFIX = "pscanbeta.charsetmismatch.";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.zaproxy.zap.extension.pscan.PassiveScanner#getName()
-	 */
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
@@ -59,14 +55,6 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zaproxy.zap.extension.pscan.PassiveScanner#scanHttpResponseReceive
-	 * (org.parosproxy.paros.network.HttpMessage, int,
-	 * net.htmlparser.jericho.Source)
-	 */
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		if (msg.getResponseBody().length() == 0) {
@@ -97,10 +85,12 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 					
 					// If META element defines HTTP-EQUIV and CONTENT attributes, 
 					// compare charset values 
-					if (httpEquiv != null && bodyContentType != null && httpEquiv.equalsIgnoreCase("content-type")) {
+					if (httpEquiv != null && bodyContentType != null && 
+							httpEquiv.equalsIgnoreCase("content-type")) {
 						String bodyContentCharset = getBodyContentCharset(bodyContentType);
 						if (!headerCharset.equalsIgnoreCase(bodyContentCharset)) {
-							raiseAlert(msg, id, getExtraInfoHTMLMessage(bodyContentCharset, headerCharset));
+							raiseAlert(msg, id, getExtraInfoHTMLMessage(bodyContentCharset, 
+									headerCharset));
 						}
 					}
 				}
@@ -110,7 +100,8 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 			// declaration tag (<?xml enconding=".."?>
 			//
 			// TODO: could there be more than one XML declaration tag for a single XML file?
-			List<StartTag> xmlDeclarationTags = source.getAllStartTags(StartTagType.XML_DECLARATION);
+			List<StartTag> xmlDeclarationTags = source.getAllStartTags(
+					StartTagType.XML_DECLARATION);
 			if (xmlDeclarationTags.size() > 0) {
 				StartTag xmlDeclarationTag = xmlDeclarationTags.get(0);
 				String encoding = xmlDeclarationTag.getAttributeValue("encoding");
@@ -123,10 +114,12 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 	}
 	
 	// TODO: Fix up to support other variations of text/html.  
-	// FIX: This will match Atom and RSS feeds now, which set text/html but use &lt;?xml&gt; in content
+	// FIX: This will match Atom and RSS feeds now, which set text/html but 
+	// use &lt;?xml&gt; in content
   	
 	private boolean isResponseHTML(HttpMessage message, Source source) {
-		String contentType = message.getResponseHeader().getHeader("content-type");
+		String contentType = message.getResponseHeader().getHeader(
+				HttpHeader.CONTENT_TYPE);
 		if (contentType == null) {
 			return false;
 		}
@@ -150,7 +143,8 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 		
 		int charsetIndex;
 		if ((charsetIndex = bodyContentType.indexOf("charset=")) != -1) {
-			charset = bodyContentType.substring(charsetIndex + 8);	 // 8 is a length of "charset="		
+			// 8 is a length of "charset="
+			charset = bodyContentType.substring(charsetIndex + 8);	 				
 		}
 		
 		return charset;
@@ -170,13 +164,6 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 		return 90011;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.zaproxy.zap.extension.pscan.PassiveScanner#setParent(org.zaproxy.
-	 * zap.extension.pscan.PassiveScanThread)
-	 */
 	@Override
 	public void setParent(PassiveScanThread parent) {
 		this.parent = parent;
@@ -204,13 +191,13 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 
 	private String getExtraInfoHTMLMessage(String contentCharset,
 			String headerCharset) {
-		return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.html", contentCharset,
-				headerCharset);
+		return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.html", 
+				contentCharset, headerCharset);
 	}
 
 	private String getExtraInfoXMLMessage(String contentCharset,
 			String headerCharset) {
-		return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.xml", contentCharset,
-				headerCharset);
+		return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.xml", 
+				contentCharset, headerCharset);
 	}
 }
