@@ -1,0 +1,16 @@
+<zapaddon>
+	<name>Diff</name>
+	<version>1</version>
+	<description>Displays a dialog showing the differences between 2 responses. It uses diffutils and diff_match_patch</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>First version.</changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.diff.ExtensionDiff</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+</zapaddon>
