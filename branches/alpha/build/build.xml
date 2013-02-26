@@ -199,6 +199,7 @@
 		
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
 		<!--antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall--> <!-- No rules yet-->
+		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
 		<!--antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall--> <!-- No rules yet-->
@@ -221,6 +222,10 @@
 		<antcall target="deploy-extension"> <param name="extension" value="ascanrulesAlpha"/> </antcall>
 	</target>
 
+	<target name="deploy-diff" depends="build-all" description="deploy the diff extension">
+		<antcall target="deploy-extension"> <param name="extension" value="diff"/> </antcall>
+	</target>
+	
 	<target name="deploy-highlighter" description="deploy the highlighter extension">
 		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
 	</target>
