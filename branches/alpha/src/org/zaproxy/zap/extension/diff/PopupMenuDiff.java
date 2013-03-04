@@ -33,9 +33,7 @@ public class PopupMenuDiff extends PopupMenuHistoryReference {
     public PopupMenuDiff(String label, ExtensionDiff ext) {
         super(label, true);
         this.setName("DiffPopup");
-        this.setText(label);
         this.ext = ext;
-        this.initialize();
     }
 
 
@@ -45,7 +43,17 @@ public class PopupMenuDiff extends PopupMenuHistoryReference {
 
 	@Override
     public boolean isEnabledForHistoryReferences (List<HistoryReference> hrefs) {
-    	return hrefs.size() == 2;
+	    if (hrefs.size() != 2) {
+	        return false;
+	    }
+	    
+	    for (HistoryReference hRef : hrefs) {
+	        if (hRef == null) {
+	            return false;
+	        }
+	    }
+	    
+    	return true;
     }
 
 	@Override
