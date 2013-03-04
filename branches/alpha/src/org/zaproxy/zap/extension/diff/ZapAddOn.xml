@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Diff</name>
-	<version>1</version>
+	<version>2</version>
 	<description>Displays a dialog showing the differences between 2 responses. It uses diffutils and diff_match_patch</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First version.</changes>
+	<changes>Changed to clear the panels (text areas) before showing a new diff.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.diff.ExtensionDiff</extension>
