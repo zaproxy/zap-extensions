@@ -25,11 +25,6 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
-/**
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class ExtensionTreeTools extends ExtensionAdaptor {
 	
 	public static final String NAME = "TreeTools";
