@@ -30,11 +30,6 @@ import org.zaproxy.zap.extension.diff.diff_match_patch.Diff;
 
 import difflib.DiffRow;
 
-/**
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class ExtensionDiff extends ExtensionAdaptor {
 
     private PopupMenuDiff popupMenuDiff = null;
