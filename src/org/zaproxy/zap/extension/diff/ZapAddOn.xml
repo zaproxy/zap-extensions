@@ -4,7 +4,12 @@
 	<description>Displays a dialog showing the differences between 2 responses. It uses diffutils and diff_match_patch</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Changed to clear the panels (text areas) before showing a new diff.</changes>
+	<changes>
+	<![CDATA[
+	Changed to clear the panels (text areas) before showing a new diff.<br>
+	Changed to not enable the option "Diff 2 responses" if the "Sites" tree root node is selected.
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.diff.ExtensionDiff</extension>
