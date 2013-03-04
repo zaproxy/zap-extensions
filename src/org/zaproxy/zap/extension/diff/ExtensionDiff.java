@@ -116,6 +116,8 @@ public class ExtensionDiff extends ExtensionAdaptor {
     	if (diffDialog.isVisible()) {
     		return;
     	}
+    	diffDialog.clearPanels();
+    	
     	List<String> msgList1 = new ArrayList<String>();
 		List<String> msgList2 = new ArrayList<String>();
 		

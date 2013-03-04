@@ -266,4 +266,9 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 		}
 	}
 
+    public void clearPanels() {
+        this.getTxtDisplayLeft().setText("");
+        this.getTxtDisplayRight().setText("");
+    }
+
 }
