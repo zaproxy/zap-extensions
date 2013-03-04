@@ -24,11 +24,6 @@ import java.util.ResourceBundle;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
 
-/**
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class AlertReportExportParam extends AbstractParam {
 
 	private static final String FORMAT_REPORT = "reportexport.format";

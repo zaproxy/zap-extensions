@@ -22,6 +22,7 @@
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
 // ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
+// ZAP: 2013/03/03 Issue 546: Remove all template Javadoc comments
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -35,11 +36,6 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 
 
-/**
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class TestInfoSessionIdURL extends AbstractAppPlugin {
 
 	/*

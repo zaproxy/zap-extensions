@@ -30,11 +30,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
-/**
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class ExtensionBeanShell extends ExtensionAdaptor {
 
 	private BeanShellConsoleFrame beanShellConsoleDialog = null;
