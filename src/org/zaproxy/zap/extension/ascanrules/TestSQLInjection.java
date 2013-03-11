@@ -166,10 +166,12 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 		//TODO: implement a plugin that uses Ingres specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("com.ingres.jdbc", "Ingres");
 
+		//generic error message fragments that do not fingerprint the RDBMS, but that may indicate SQL Injection, nonetheless
 		SQL_ERROR_TO_DBMS.put("com.ibatis.common.jdbc", "Generic SQL RDBMS");
 		SQL_ERROR_TO_DBMS.put("org.hibernate", "Generic SQL RDBMS");
 		SQL_ERROR_TO_DBMS.put("sun.jdbc.odbc", "Generic SQL RDBMS");
-		SQL_ERROR_TO_DBMS.put("[ODBC Driver Manager]", "Generic SQL RDBMS");		
+		SQL_ERROR_TO_DBMS.put("[ODBC Driver Manager]", "Generic SQL RDBMS");
+		SQL_ERROR_TO_DBMS.put("System.Data.OleDb", "Generic SQL RDBMS");   //System.Data.OleDb.OleDbException
 	}
 
 
