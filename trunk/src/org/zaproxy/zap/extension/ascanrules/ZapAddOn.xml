@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>4</version>
+	<version>5</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Split out Remote File Inclusions to separate rule, moved SQL Injection from beta, added 'Reflected' to XSS test name</changes>
+	<changes>Modified the generic SQL Injection scanner to detect ".NET Framework Data Provider for OLE DB." error message fragments</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
