@@ -52,20 +52,20 @@ import org.parosproxy.paros.network.HttpMessage;
  *  @author Colm O'Flaherty, Encription Ireland Ltd
  */
 public class TestSQLInjection extends AbstractAppParamPlugin  {
-	
+
 	//what do we do at each attack strength?
 	//(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
 	private boolean doErrorBased = true;  
 	private boolean doBooleanBased=true; 
 	private boolean doUnionBased = true;	
 	private boolean doStackedBased = true;  //TODO: use in the stacked based implementation
-	
+
 	//how many requests can we fire for each method? will be set depending on the attack strength
 	private int doErrorMaxRequests = 0;
 	private int doBooleanMaxRequests = 0;
 	private int doUnionMaxRequests = 0;
 	private int doStackedMaxRequests = 0;	//TODO: use in the stacked based implementation
-	
+
 	/**
 	 * generic one-line comment.  Various RDBMS Documentation suggests that this syntax works with almost every single RDBMS considered here
 	 */
@@ -150,7 +150,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 		SQL_ERROR_TO_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");
 		SQL_ERROR_TO_DBMS.put("Column count does not match in statement", "Hypersonic SQL");  //TODO: too generic to leave in???
 		SQL_ERROR_TO_DBMS.put("Table not found in statement", "Hypersonic SQL"); //TODO: too generic to leave in???
-		SQL_ERROR_TO_DBMS.put("Unexpected token:", "Hypersonic SQL"); //TODO: too generic to leave in???
+		SQL_ERROR_TO_DBMS.put("Unexpected token:", "Hypersonic SQL"); //TODO: too generic to leave in??? Works very nicely in Hypersonic cases, however
 
 		//TODO: implement a plugin that uses Sybase SQL Anywhere specific functionality to detect SQL Injection vulnerabilities
 		SQL_ERROR_TO_DBMS.put("sybase.jdbc.sqlanywhere", "Sybase SQL Anywhere");
@@ -172,6 +172,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 		SQL_ERROR_TO_DBMS.put("sun.jdbc.odbc", "Generic SQL RDBMS");
 		SQL_ERROR_TO_DBMS.put("[ODBC Driver Manager]", "Generic SQL RDBMS");
 		SQL_ERROR_TO_DBMS.put("System.Data.OleDb", "Generic SQL RDBMS");   //System.Data.OleDb.OleDbException
+		SQL_ERROR_TO_DBMS.put("java.sql.SQLException", "Generic SQL RDBMS");  //in case more specific messages were not detected!
 	}
 
 
@@ -213,12 +214,12 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 		") UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
 		"') UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
 		"\") UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
-		};
+	};
 
 
 	/*
     SQL UNION error messages for various RDBMSs. The more, the merrier.
-    */
+	 */
 	private static final Map<String, String> SQL_UNION_ERROR_TO_DBMS = new LinkedHashMap<>();
 	static {
 		SQL_UNION_ERROR_TO_DBMS.put("The used SELECT statements have a different number of columns", "MySQL");
@@ -292,20 +293,20 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 
 		//DEBUG only
 		//this.setAttackStrength(AttackStrength.LOW);		
-		
+
 		//set up what we are allowed to do, depending on the attack strength that was set.
 		if ( this.getAttackStrength() == AttackStrength.LOW ) {
-			doErrorBased=true; doErrorMaxRequests=2;
+			doErrorBased=true; doErrorMaxRequests=4;
 			doUnionBased=false; doUnionMaxRequests=0;
 			doStackedBased=false; doStackedMaxRequests=0;
 			doBooleanBased=false; doBooleanMaxRequests=0;	
 		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
-			doErrorBased=true; doErrorMaxRequests=5;
+			doErrorBased=true; doErrorMaxRequests=8;
 			doUnionBased=true; doUnionMaxRequests=5;
 			doStackedBased=true; doStackedMaxRequests=5;
 			doBooleanBased=false; doBooleanMaxRequests=0;
 		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
-			doErrorBased=true; doErrorMaxRequests=10;
+			doErrorBased=true; doErrorMaxRequests=16;
 			doUnionBased=true; doUnionMaxRequests=10;
 			doStackedBased=true; doStackedMaxRequests=10;
 			doBooleanBased=true; doBooleanMaxRequests=10;
@@ -323,68 +324,77 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 	 * scans for SQL Injection vulnerabilities
 	 */
 	@Override
-    public void scan(HttpMessage msg, String param, String value) {
-
+	public void scan(HttpMessage msg, String param, String value) {
+		//Note: the "value" we are passed here is escaped. we need to unescape it before handling it.
 		//as soon as we find a single SQL injection on the url, skip out. Do not look for SQL injection on a subsequent parameter on the same URL
 		//for performance reasons.
 		boolean sqlInjectionFoundForUrl = false;
-		
+
 		try {
-				
+
 			//reinitialise the count for each type of request, for each parameter.  We will be sticking to limits defined in the attach strength logic
 			int countErrorBasedRequests = 0;
 			int countBooleanBasedRequests = 0;
 			int countUnionBasedRequests = 0;
 			int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
 
+
 			//Check 1: Check for Error Based SQL Injection (actual error messages).
 			//for each SQL metacharacter combination to try
 			for (int sqlErrorStringIndex = 0; 
 					sqlErrorStringIndex < SQL_CHECK_ERR.length && !sqlInjectionFoundForUrl && doErrorBased && countErrorBasedRequests < doErrorMaxRequests ; 
 					sqlErrorStringIndex++) {
+				
+				//work through the attack using each of the following strings as a prefix: the empty string, and the original value
+				//Note: this doubles the amount of work done by the scanner, but is necessary in some cases
+				String [] prefixStrings = {"", getURLDecode(value)};
+				for (int prefixIndex = 0; prefixIndex < prefixStrings.length; prefixIndex++) {
+					
+					//new message for each value we attack with
+					HttpMessage msg1 = getNewMsg();
+					String sqlErrValue = prefixStrings[prefixIndex] + SQL_CHECK_ERR[sqlErrorStringIndex];
+					setParameter(msg1, param, sqlErrValue);
+					
+					//System.out.println("Attacking [" + msg + "], parameter [" + param + "] with value ["+ sqlErrValue + "]");
 
-				//new message for each value we attack with
-				HttpMessage msg1 = getNewMsg();
-				String sqlErrValue = SQL_CHECK_ERR[sqlErrorStringIndex];
-	            setParameter(msg1, param, sqlErrValue);
+					//send the message with the modified parameters
+					sendAndReceive(msg1);
+					countErrorBasedRequests++;
 
-				//send the message with the modified parameters
-				sendAndReceive(msg1);
-				countErrorBasedRequests++;
+					//now check the results against each pattern in turn, to try to identify a database, or even better: a specific database.
+					//Note: do NOT check the HTTP error code just yet, as the result could come back with one of various codes.
+					Iterator<String> errorPatternIterator =  SQL_ERROR_TO_DBMS.keySet().iterator();
 
-				//now check the results against each pattern in turn, to try to identify a database, or even better: a specific database.
-				//Note: do NOT check the HTTP error code just yet, as the result could come back with one of various codes.
-				Iterator<String> errorPatternIterator =  SQL_ERROR_TO_DBMS.keySet().iterator();
+					while (errorPatternIterator.hasNext() && ! sqlInjectionFoundForUrl) {
+						String errorPatternKey = errorPatternIterator.next();
+						String errorPatternRDBMS =  SQL_ERROR_TO_DBMS.get(errorPatternKey);
 
-				while (errorPatternIterator.hasNext() && ! sqlInjectionFoundForUrl) {
-					String errorPatternKey = errorPatternIterator.next();
-					String errorPatternRDBMS =  SQL_ERROR_TO_DBMS.get(errorPatternKey);
+						//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
+						Pattern errorPattern = Pattern.compile("\\Q"+errorPatternKey+"\\E", PATTERN_PARAM);
 
-					//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
-					Pattern errorPattern = Pattern.compile("\\Q"+errorPatternKey+"\\E", PATTERN_PARAM);
+						//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
+						//then we may may have a SQL Injection vulnerability
+						StringBuilder sb = new StringBuilder();
+						if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
+							//Likely a SQL Injection. Raise it
+							String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPatternKey);
 
-					//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
-					//then we may may have a SQL Injection vulnerability
-					StringBuilder sb = new StringBuilder();
-					if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
-						//Likely a SQL Injection. Raise it
-						String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPatternKey);
+							//raise the alert
+							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Error Based - " + errorPatternRDBMS, getDescription(), 
+									null,
+									param,  sb.toString(), 
+									extraInfo, getSolution(), msg1);
 
-						//raise the alert
-						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Error Based - " + errorPatternRDBMS, getDescription(), 
-								null,
-								param,  sb.toString(), 
-								extraInfo, getSolution(), msg1);
+							//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
+							getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/"+errorPatternRDBMS, Boolean.TRUE);
 
-						//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
-						getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/"+errorPatternRDBMS, Boolean.TRUE);
+							sqlInjectionFoundForUrl = true; 
+							continue; 
+						}
+					} //end of the loop to check for RDBMS specific error messages
 
-						sqlInjectionFoundForUrl = true; 
-						continue; 
-					}
-				} //end of the loop to check for RDBMS specific error messages
-
-			}  //for each of the SQL_CHECK_ERR values (SQL metacharacters)
+				}  //for each of the SQL_CHECK_ERR values (SQL metacharacters)
+			}
 
 
 			//Check 2: boolean based checks.
@@ -427,10 +437,10 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 					i++) {
 				//needs a new message for each type of AND to be issued
 				HttpMessage msg2 = getNewMsg();
-				String sqlBooleanAndValue = value + SQL_LOGIC_AND[i];
-				String sqlBooleanAndFalseValue = value + SQL_LOGIC_AND_FALSE[i];
+				String sqlBooleanAndValue = getURLDecode(value) + SQL_LOGIC_AND[i];
+				String sqlBooleanAndFalseValue = getURLDecode(value) + SQL_LOGIC_AND_FALSE[i];
 
-	            setParameter(msg2, param, sqlBooleanAndValue);
+				setParameter(msg2, param, sqlBooleanAndValue);
 
 				//send the AND with an additional TRUE statement tacked onto the end. Hopefully it will return the same results as the original (to find a vulnerability)
 				sendAndReceive(msg2);
@@ -444,11 +454,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 					//so they match. Was it a fluke? See if we get the same result by tacking on "AND 1 = 2" to the original
 					HttpMessage msg2_and_false = getNewMsg();  
 
-		            setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
+					setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
 
 					sendAndReceive(msg2_and_false);
 					countBooleanBasedRequests++;
-					
+
 					//String resBodyANDFalse = stripOff(msg2_and_false.getResponseBody().toString(), SQL_LOGIC_AND_FALSE[i]);
 					String resBodyANDFalse = msg2_and_false.getResponseBody().toString();
 
@@ -475,16 +485,16 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 						continue; //to the next entry in SQL_AND
 					} else {
 						//the first value to try..
-						String orValue = value + SQL_LOGIC_OR_TRUE[i];
+						String orValue = getURLDecode(value) + SQL_LOGIC_OR_TRUE[i];
 
 						//this is where that comment comes in handy: if the RDBMS supports one-line comments, add one in to attempt to ensure that the 
 						//condition becomes one that is effectively always true, returning ALL data (or as much as possible), allowing us to pinpoint the SQL Injection
 						if (this.debugEnabled) log.debug("Check 2, AND FALSE condition ["+sqlBooleanAndFalseValue+"] SAME as original (requiring OR TRUE check) for "+ getBaseMsg().getRequestHeader().getURI());
 						HttpMessage msg2_or_true = getNewMsg();  
-			            setParameter(msg2_or_true, param, orValue);
+						setParameter(msg2_or_true, param, orValue);
 						sendAndReceive(msg2_or_true);
 						countBooleanBasedRequests++;
-						
+
 						//String resBodyORTrue = stripOff(msg2_or_true.getResponseBody().toString(), orValue);
 						String resBodyORTrue = msg2_or_true.getResponseBody().toString();
 
@@ -495,13 +505,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 						//to see if we have the results of the page under our control by manipulating this parameter
 						if (compareOrToOriginal == 0) {
 							//need to append in the first character of the SQL_OR_TRUE to close off any open quotes before commenting out the remainder
-							orValue = value + SQL_LOGIC_OR_TRUE[i] + SQL_LOGIC_OR_TRUE[i].substring(0, 1) + SQL_ONE_LINE_COMMENT;
+							orValue = getURLDecode(value) + SQL_LOGIC_OR_TRUE[i] + SQL_LOGIC_OR_TRUE[i].substring(0, 1) + SQL_ONE_LINE_COMMENT;
 
 							HttpMessage msg2_or_true_comment = getNewMsg();  
-				            setParameter(msg2_or_true_comment, param, orValue);
+							setParameter(msg2_or_true_comment, param, orValue);
 							sendAndReceive(msg2_or_true_comment);
 							countBooleanBasedRequests++;
-							
+
 							//and re-set the variable with the results of trying the commented OR
 							compareOrToOriginal = resBodyORTrue.compareTo(mResBodyNormal);
 						}
@@ -531,9 +541,9 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 
 			}
 			//end of check 2
-			
+
 			//TODO: fix the numbering of the checks.. 
-			
+
 			//Check 4: UNION based
 			//for each SQL UNION combination to try
 			for (int sqlUnionStringIndex = 0; 
@@ -543,11 +553,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 				//new message for each value we attack with
 				HttpMessage msg3 = getNewMsg();
 				String sqlUnionValue = value+ SQL_UNION_APPENDAGES[sqlUnionStringIndex];
-	            setParameter(msg3, param, sqlUnionValue);
+				setParameter(msg3, param, sqlUnionValue);
 				//send the message with the modified parameters
 				sendAndReceive(msg3);
 				countUnionBasedRequests++;
-				
+
 				//now check the results.. look first for UNION specific error messages in the output that were not there in the original output
 				//and failing that, look for generic RDBMS specific error messages
 				//TODO: maybe also try looking at a differentiation based approach?? Prone to false positives though.
@@ -594,7 +604,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 	public int getRisk() {
 		return Alert.RISK_HIGH;
 	}
-	
+
 }
 
 
