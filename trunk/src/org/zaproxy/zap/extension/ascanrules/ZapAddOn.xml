@@ -4,7 +4,7 @@
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Modified the generic SQL Injection scanner to detect ".NET Framework Data Provider for OLE DB." error message fragments</changes>
+	<changes>Modified the generic SQL Injection scanner to detect ".NET Framework Data Provider for OLE DB." error message fragments, added an error fragment for generic JDBC error messages, fixed an encoding issue with special argument values, and try both replacing and appending the parameter value when attempting to force SQL error messages</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
