@@ -347,7 +347,12 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 				
 				//work through the attack using each of the following strings as a prefix: the empty string, and the original value
 				//Note: this doubles the amount of work done by the scanner, but is necessary in some cases
-				String [] prefixStrings = {"", getURLDecode(value)};
+				String [] prefixStrings;
+				if (value != null) {
+					prefixStrings = new String[] {"", getURLDecode(value)};
+				} else {
+					prefixStrings = new String[] {""};
+				}
 				for (int prefixIndex = 0; prefixIndex < prefixStrings.length; prefixIndex++) {
 					
 					//new message for each value we attack with
