@@ -1,0 +1,20 @@
+<zapaddon>
+	<name>Passive scanner rules (alpha)</name>
+	<version>1</version>
+	<description>The alpha quality Passive Scanner rules</description>
+	<author>ZAP Dev Team</author>
+	<url/>
+	<changes>
+		v.1 Added an alpha version of User Controlled Open Redirect passive rule ported from 
+		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-redirect		
+	</changes>
+	<dependson/>
+	<extensions>
+	</extensions>
+	<ascanrules/>
+	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>
+	</pscanrules>
+	<filters/>
+	<files/>
+</zapaddon>
