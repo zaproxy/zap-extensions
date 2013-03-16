@@ -231,7 +231,7 @@
 	</target>
 	
 	<target name="deploy-pscanrulesAlpha" description="deploy the passive scan rules">
-		<antcall target="deploy-extension"> <param name="extension" value="pscanrulesalpha"/> </antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="pscanrulesAlpha"/> </antcall>
 	</target>
 
 	<target name="deploy-serverSentEvents" description="deploy the Server-Sent Events extension">
