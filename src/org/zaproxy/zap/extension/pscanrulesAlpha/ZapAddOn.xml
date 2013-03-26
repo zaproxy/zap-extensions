@@ -26,9 +26,9 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules>
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCharsetScanner</pscanrule>		
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCookieScanner</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>		
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCharsetScanner</pscanrule>		
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCookieScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>		
 	</pscanrules>
 	<filters/>
 	<files/>
