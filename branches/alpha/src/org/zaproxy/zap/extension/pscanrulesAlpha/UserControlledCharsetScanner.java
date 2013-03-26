@@ -223,7 +223,7 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 
 	private String getExtraInfoMessage(HttpMessage msg, String tag, String attr,
 			HtmlParameter param, String charset) {        
-        return Constant.messages.getString(MESSAGE_PREFIX + "extraInfo", 
+        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", 
         		tag, attr, param.getName(), param.getValue(), charset);        
 	}
 }

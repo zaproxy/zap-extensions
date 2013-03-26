@@ -14,7 +14,11 @@
 		Added an alpha version of User Controlled Cookie passive rule ported from 
 		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-cookie
 		Added an alpha version of User Controlled Charset passive rule ported from 
-		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-charset		
+		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-charset
+		
+		v.3
+		Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
+		http://www.testcases.org/watcher/ test pages.		
 		]]>
 	</changes>
 	<dependson/>
