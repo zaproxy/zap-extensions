@@ -159,19 +159,9 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
         return null;
 	}
 
-	private String getExtraInfoMessage(HttpMessage msg, HtmlParameter param, String cookie) {
-		StringBuilder exploitMessage = new StringBuilder();
-        if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {      	        	
-        	exploitMessage.append(Constant.messages.getString(MESSAGE_PREFIX + "exploit.get",
-        			msg.getRequestHeader().getURI()));
-        } else if ("POST".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
-        	exploitMessage.append(Constant.messages.getString(MESSAGE_PREFIX + "exploit.post",
-        			msg.getRequestHeader().getURI()));
-        }
-        
-        exploitMessage.append(Constant.messages.getString(MESSAGE_PREFIX + "exploit.common", 
-        		cookie, param.getName(), param.getValue()));
-        
-        return exploitMessage.toString();        
+	private String getExtraInfoMessage(HttpMessage msg, HtmlParameter param, String cookie) {        
+        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", 
+        		msg.getRequestHeader().getURI().toString(), cookie, 
+        		param.getName(), param.getValue());        
 	}
 }

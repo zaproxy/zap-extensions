@@ -103,7 +103,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
             
             if (paramValue.equalsIgnoreCase(protocol) || paramValue.equalsIgnoreCase(domain) ||
             		paramValue.equalsIgnoreCase(token) || 
-            		(responseLocation.indexOf("://") > 0 && paramValue.indexOf(responseLocation) > 0)) {
+            		(responseLocation.indexOf("://") > 0 && paramValue.indexOf(responseLocation) >= 0)) {
             	raiseAlert(msg, getId(), param.getName(), paramValue, responseLocation, 
             			"POST".equalsIgnoreCase(msg.getRequestHeader().getMethod()));
             }
@@ -112,7 +112,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 	
 	private void raiseAlert(HttpMessage msg, int id, String paramName, String paramValue, 
 			String responseLocation, boolean ispost) {
-		Alert alert = new Alert(getId(), Alert.RISK_MEDIUM, Alert.WARNING,
+		Alert alert = new Alert(getId(), Alert.RISK_HIGH, Alert.WARNING,
 				getName());		
 		
      
@@ -164,9 +164,8 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
         }
         
         extraInfoSB.append(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.common", 
-        		msg.getRequestHeader().getURI().toString(), paramName, paramValue, responseLocation));    		
-		return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.get", 
-				msg.getRequestHeader().getURI(), paramName, paramValue,
-				responseLocation);
+        		msg.getRequestHeader().getURI().toString(), paramName, paramValue, responseLocation));
+        
+		return extraInfoSB.toString();
 	}
 }
