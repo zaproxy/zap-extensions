@@ -1,0 +1,220 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ * 
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ * 
+ * Copyright 2013 ZAP development team
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License.  
+ */
+package org.zaproxy.zap.extension.zest.dialogs;
+
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.mozilla.zest.core.v1.ZestAuthentication;
+import org.mozilla.zest.core.v1.ZestHttpAuthentication;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.encoder.Base64;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.view.StandardFieldsDialog;
+
+public class ZestScriptsDialog extends StandardFieldsDialog {
+
+	private static final String FIELD_TITLE = "zest.dialog.script.label.title"; 
+	private static final String FIELD_PREFIX = "zest.dialog.script.label.prefix"; 
+	private static final String FIELD_DESC = "zest.dialog.script.label.desc";
+	private static final String FIELD_AUTH_SITE = "zest.dialog.script.label.authsite";
+	private static final String FIELD_AUTH_REALM = "zest.dialog.script.label.authrealm";
+	private static final String FIELD_AUTH_USER = "zest.dialog.script.label.authuser";
+	private static final String FIELD_AUTH_PASSWORD = "zest.dialog.script.label.authpwd";
+	private static final String FIELD_STATUS = "zest.dialog.script.label.statuscode";
+	private static final String FIELD_LENGTH = "zest.dialog.script.label.length";
+	private static final String FIELD_APPROX = "zest.dialog.script.label.approx";
+
+	private static final Logger logger = Logger.getLogger(ZestScriptsDialog.class);
+
+	private static final long serialVersionUID = 1L;
+
+	private ExtensionZest extension = null;
+	private ZestScriptWrapper script = null;
+	private boolean add = false;
+
+	private ScriptTokensTableModel tokensModel = null;
+
+	private List<SiteNode> deferedSiteNodes = new ArrayList<SiteNode>();
+
+	public ZestScriptsDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+		super(owner, "zest.dialog.script.add.title", dim,
+				new String[] {
+					"zest.dialog.script.tab.main",
+					"zest.dialog.script.tab.tokens",
+					"zest.dialog.script.tab.auth",
+					"zest.dialog.script.tab.defaults"});
+		this.extension = ext;
+	}
+
+	public void init (ZestScriptWrapper script, boolean add) {
+		this.add = add;
+		this.script = script;
+
+		this.removeAllFields();
+		
+		if (add) {
+			this.setTitle(Constant.messages.getString("zest.dialog.script.add.title"));
+		} else {
+			this.setTitle(Constant.messages.getString("zest.dialog.script.edit.title"));
+		}
+		this.addTextField(0, FIELD_TITLE, script.getTitle());
+		this.addTextField(0, FIELD_PREFIX, script.getPrefix());
+		this.addMultilineField(0, FIELD_DESC, script.getDescription());
+		
+		this.getTokensModel().setValues(script.getTokens().getTokens());
+		this.addTableField(1, this.getTokensModel());
+		
+		boolean addedAuth = false;
+		if (script.getAuthentication() != null && script.getAuthentication().size() > 0) {
+			// Just support one for now
+			ZestAuthentication auth = script.getAuthentication().get(0);
+			if (auth instanceof ZestHttpAuthentication) {
+				ZestHttpAuthentication zha = (ZestHttpAuthentication) auth;
+				this.addTextField(2, FIELD_AUTH_SITE, zha.getSite());
+				this.addTextField(2, FIELD_AUTH_REALM, zha.getRealm());
+				this.addTextField(2, FIELD_AUTH_USER, zha.getUsername());
+				this.addTextField(2, FIELD_AUTH_PASSWORD, zha.getPassword());
+				this.addPadding(2);
+				addedAuth = true;
+			}
+		}
+		if (! addedAuth) {
+			this.addTextField(2, FIELD_AUTH_SITE, "");
+			this.addTextField(2, FIELD_AUTH_REALM, "");
+			this.addTextField(2, FIELD_AUTH_USER, "");
+			this.addTextField(2, FIELD_AUTH_PASSWORD, "");
+			this.addPadding(2);
+		}
+		
+		this.addCheckBoxField(3, FIELD_STATUS, script.isIncStatusCodeAssertion());
+		this.addCheckBoxField(3, FIELD_LENGTH, script.isIncLengthAssertion());
+		this.addNumberField(3, FIELD_APPROX, 0, 100, script.getLengthApprox());
+		this.addPadding(3);
+		
+		//this.requestFocus(FIELD_TITLE);
+	}
+
+	
+	private ScriptTokensTableModel getTokensModel() {
+		if (tokensModel == null) {
+			tokensModel = new ScriptTokensTableModel();
+		}
+		return tokensModel;
+	}
+
+	public void save() {
+		script.setTitle(this.getStringValue(FIELD_TITLE));
+		script.setDescription(this.getStringValue(FIELD_DESC));
+		try {
+			script.setPrefix(this.getStringValue(FIELD_PREFIX));
+		} catch (MalformedURLException e) {
+			logger.error(e.getMessage(), e);
+		}
+		script.setIncStatusCodeAssertion(this.getBoolValue(FIELD_STATUS));
+		script.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
+		script.setLengthApprox(this.getIntValue(FIELD_APPROX));
+		
+		Map<String, String> tokens = new HashMap<String, String>();
+		for (String[] nv : getTokensModel().getValues()) {
+			tokens.put(nv[0], nv[1]);
+		}
+		
+		script.getTokens().setTokens(tokens);
+		
+		// Just support one auth for now
+		script.setAuthentication(new ArrayList<ZestAuthentication>());
+		if (! this.isEmptyField(FIELD_AUTH_SITE)) {
+			ZestHttpAuthentication zha = new ZestHttpAuthentication();
+			zha.setSite(this.getStringValue(FIELD_AUTH_SITE));
+			zha.setRealm(this.getStringValue(FIELD_AUTH_REALM));
+			zha.setUsername(this.getStringValue(FIELD_AUTH_USER));
+			zha.setPassword(this.getStringValue(FIELD_AUTH_PASSWORD));
+			script.addAuthentication(zha);
+		}
+
+		if (add) {
+			extension.add(script);
+			// Add any defered and nodes
+			for (SiteNode sn : deferedSiteNodes) {
+				logger.debug("Adding defered node: " + sn.getNodeName());
+				extension.addToScript(script, sn);
+			}
+			deferedSiteNodes.clear();
+		} else {
+			extension.update(script);
+		}
+	}
+
+	@Override
+	public String validateFields() {
+		if (this.isEmptyField(FIELD_TITLE)) {
+			return Constant.messages.getString("zest.dialog.script.error.title");
+		}
+		if (!this.isEmptyField(FIELD_PREFIX)) {
+			try {
+				new URL(this.getStringValue(FIELD_PREFIX));
+			} catch (Exception e) {
+				return Constant.messages.getString("zest.dialog.script.error.prefix");
+			}
+		}
+
+		return null;
+	}
+
+	public void addDeferedNode(SiteNode sn) {
+		// Used for adding nodes to a new script
+		this.deferedSiteNodes.add(sn);
+
+		if (this.isEmptyField(FIELD_AUTH_SITE)) {
+			try {
+				// Check to see if basic authentication was used
+				HttpRequestHeader header = sn.getHistoryReference().getHttpMessage().getRequestHeader();
+				String auth = header.getHeader(HttpHeader.AUTHORIZATION);
+				if (auth != null && auth.length() > 0) {
+					if (auth.toLowerCase().startsWith("basic ")) {
+						String userPword = new String(Base64.decode(auth.substring(6)));
+						int colon = userPword.indexOf(":");
+						if (colon > 0) {
+							this.setFieldValue(FIELD_AUTH_SITE, header.getHostName());
+							this.setFieldValue(FIELD_AUTH_USER, userPword.substring(0, colon));
+							this.setFieldValue(FIELD_AUTH_PASSWORD, userPword.substring(colon+1));
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+		
+	}
+
+}
