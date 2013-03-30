@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>2</version>
+	<version>3</version>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes></changes>
+	<changes>Fixed a NullPointerException while managing a session in daemon mode.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.websocket.ExtensionWebSocket</extension>
