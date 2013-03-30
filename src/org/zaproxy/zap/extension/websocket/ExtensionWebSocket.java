@@ -843,7 +843,9 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			wsProxies.clear();
 		}
 		
-		wsFilterListener.reset();
+		if (wsFilterListener != null) {
+			wsFilterListener.reset();
+		}
 		
 		if (fuzzHandler != null) {
 			fuzzHandler.pause();
