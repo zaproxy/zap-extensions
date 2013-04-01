@@ -1,3 +1,22 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2012 The ZAP development team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.List;
@@ -48,6 +67,7 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {		
+	    // XXX Consider to use the constant HttpStatusCode.OK instead of the literal 200.
 		if (msg.getResponseHeader().getStatusCode() != 200) {
 			return;
 		}
@@ -57,26 +77,26 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
     		return;
     	}		
 		
-    	Set<HtmlParameter> params = new TreeSet<HtmlParameter>(msg.getFormParams());
+    	Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
     	params.addAll(msg.getUrlParams());    	
     	if (params.size() == 0) {
     		return;
     	}
     	
-    	if (!isResponseHTML(msg, source) && !isResponseXML(msg, source)) {
+    	if (!isResponseHTML(msg, source) && !isResponseXML(source)) {
     		return;
     	}		   	
     	        	
         if (isResponseHTML(msg, source)) {
-        	checkMetaContentCharset(msg, source, params);
-        } else if (isResponseXML(msg, source)) {
-        	checkXmlEncodingCharset(msg, source, params);
+        	checkMetaContentCharset(msg, id, source, params);
+        } else if (isResponseXML(source)) {
+        	checkXmlEncodingCharset(msg, id, source, params);
         }
             
-        checkContentTypeCharset(msg, params);
+        checkContentTypeCharset(msg, id, params);
 	}
 	
-	private void checkMetaContentCharset(HttpMessage msg, Source source,
+	private void checkMetaContentCharset(HttpMessage msg, int id, Source source,
 			Set<HtmlParameter> params) {
 		List<Element> metaElements = source.getAllElements(HTMLElementName.META);
 		if (metaElements == null || metaElements.size() == 0) {
@@ -98,7 +118,7 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 			String bodyContentCharset = getBodyContentCharset(bodyContentType);
 	        for (HtmlParameter param: params) {        	        	
 	            if (bodyContentCharset.equalsIgnoreCase(param.getValue())) {
-	            	raiseAlert(msg, "META", "Content-Type", param, bodyContentCharset);
+	            	raiseAlert(msg, id, "META", "Content-Type", param, bodyContentCharset);
 	            }                
 	        }
 		}
@@ -122,7 +142,7 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 		return charset;
 	}	
 	
-	private void checkXmlEncodingCharset(HttpMessage msg, Source source,
+	private void checkXmlEncodingCharset(HttpMessage msg, int id, Source source,
 			Set<HtmlParameter> params) {
 		List<StartTag> xmlDeclarationTags = source.getAllStartTags(
 				StartTagType.XML_DECLARATION);
@@ -139,12 +159,12 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 
         for (HtmlParameter param: params) {        	        	
             if (encoding.equalsIgnoreCase(param.getValue())) {
-            	raiseAlert(msg, "\\?xml", "encoding", param, encoding);
+            	raiseAlert(msg, id, "\\?xml", "encoding", param, encoding);
             }                
         }
 	}
 	
-	private void checkContentTypeCharset(HttpMessage msg, Set<HtmlParameter> params) {
+	private void checkContentTypeCharset(HttpMessage msg, int id, Set<HtmlParameter> params) {
     	String charset = msg.getResponseHeader().getCharset();
         if (charset == null || charset.equals("")) {
             return;
@@ -152,7 +172,7 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 				
         for (HtmlParameter param: params) {        	        	
             if (charset.equalsIgnoreCase(param.getValue())) {
-            	raiseAlert(msg, "Content-Type HTTP header", "charset", param, charset);
+            	raiseAlert(msg, id, "Content-Type HTTP header", "charset", param, charset);
             }                
         }
 	}
@@ -175,25 +195,25 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 				contentType.indexOf("application/xhtml") != -1;
 	}
 	
-	private boolean isResponseXML(HttpMessage message, Source source) {
+	private boolean isResponseXML(Source source) {
 		return source.isXML();
 	}    
 	
-	private void raiseAlert(HttpMessage msg, String tag, String attr, 
+	private void raiseAlert(HttpMessage msg, int id, String tag, String attr, 
 			HtmlParameter param, String charset) {
 		Alert alert = new Alert(getId(), Alert.RISK_MEDIUM, Alert.WARNING,
 				getName());				    
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), "content-type", getExploitMessage(msg), 
+				.getURI().toString(), param.getName(), getExploitMessage(msg), 
 				getExtraInfoMessage(msg, tag, attr, param, charset),
 				getSolutionMessage(), getReferenceMessage(), msg);  
 
-		parent.raiseAlert(getId(), alert);
+		parent.raiseAlert(id, alert);
 	}
 
 	private int getId() {
-		return 90011;
+		return 10030;
 	}
 
 	@Override
@@ -217,10 +237,12 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
 
+	// XXX Consider removing the parameter msg, it's never used.
 	private String getExploitMessage(HttpMessage msg) {
         return Constant.messages.getString(MESSAGE_PREFIX + "exploit");
 	}
 
+	// XXX Consider removing the parameter msg, it's never used.
 	private String getExtraInfoMessage(HttpMessage msg, String tag, String attr,
 			HtmlParameter param, String charset) {        
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", 

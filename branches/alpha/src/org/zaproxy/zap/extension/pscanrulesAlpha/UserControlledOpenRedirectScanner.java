@@ -1,3 +1,22 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2012 The ZAP development team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.net.MalformedURLException;
@@ -12,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -45,21 +65,21 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (msg.getResponseHeader().getStatusCode() == 301 || 
-        		msg.getResponseHeader().getStatusCode() == 302) {
+        if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.MOVED_PERMANENTLY || 
+        		msg.getResponseHeader().getStatusCode() == HttpStatusCode.FOUND) {
             if (msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION) != null) {
-            	Set<HtmlParameter> params = new TreeSet<HtmlParameter>(msg.getUrlParams());
+            	Set<HtmlParameter> params = new TreeSet<>(msg.getUrlParams());
             	params.addAll(msg.getFormParams());
             	
             	if (!params.isEmpty()) {
-                	checkUserControllableLocationHeaderValue(msg, params, 
+                	checkUserControllableLocationHeaderValue(msg, id, params, 
                 			msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION));
             	}
             }
         }	
 	}
 
-    private void checkUserControllableLocationHeaderValue(HttpMessage msg, 
+    private void checkUserControllableLocationHeaderValue(HttpMessage msg, int id, 
     		Set<HtmlParameter> params, String responseLocation) {
     	if (responseLocation.length() == 0) {
     		return;
@@ -104,21 +124,18 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
             if (paramValue.equalsIgnoreCase(protocol) || paramValue.equalsIgnoreCase(domain) ||
             		paramValue.equalsIgnoreCase(token) || 
             		(responseLocation.indexOf("://") > 0 && paramValue.indexOf(responseLocation) >= 0)) {
-            	raiseAlert(msg, getId(), param.getName(), paramValue, responseLocation, 
-            			"POST".equalsIgnoreCase(msg.getRequestHeader().getMethod()));
+            	raiseAlert(msg, id, param.getName(), paramValue, responseLocation);
             }
         }
     }
 	
 	private void raiseAlert(HttpMessage msg, int id, String paramName, String paramValue, 
-			String responseLocation, boolean ispost) {
+			String responseLocation) {
 		Alert alert = new Alert(getId(), Alert.RISK_HIGH, Alert.WARNING,
 				getName());		
-		
-     
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), "content-type", getExploitMessage(), 
+				.getURI().toString(), paramName, getExploitMessage(), 
 				getExtraInfoMessage(msg, paramName, paramValue, responseLocation),
 				getSolutionMessage(), getReferenceMessage(), msg);  
 
@@ -126,7 +143,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 	}
 
 	private int getId() {
-		return 90011;
+		return 10028;
 	}
 
 	@Override
