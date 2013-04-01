@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>1</version>
+	<version>2</version>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
@@ -9,16 +9,20 @@
 		v.1 		
 		Added an alpha version of User Controlled Open Redirect passive rule ported from 
 		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-redirect
-		
-		v.2 		
+		<br/>
 		Added an alpha version of User Controlled Cookie passive rule ported from 
 		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-cookie
 		Added an alpha version of User Controlled Charset passive rule ported from 
 		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-charset
-		
-		v.3
+		<br/>
 		Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 		http://www.testcases.org/watcher/ test pages.		
+		<br/>
+		v.2
+		Added an alpha version of User Controlled HTML Attributes passive rule ported from 
+		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-html-attribute
+		<br/>
+		Updated other User Controlled passive rules after peer review		 
 		]]>
 	</changes>
 	<dependson/>
@@ -26,9 +30,10 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules>
-		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCharsetScanner</pscanrule>		
-		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCookieScanner</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>		
+		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCharsetScanner</pscanrule>		
+		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCookieScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledHTMLAttributes</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>		
 	</pscanrules>
 	<filters/>
 	<files/>

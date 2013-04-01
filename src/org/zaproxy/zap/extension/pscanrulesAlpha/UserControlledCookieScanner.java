@@ -1,7 +1,27 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2012 The ZAP development team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -50,7 +70,7 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
 			
 		}
 		
-    	Set<HtmlParameter> params = new TreeSet<HtmlParameter>(msg.getFormParams());
+    	Set<HtmlParameter> params = new TreeSet<>(msg.getFormParams());
     	params.addAll(msg.getUrlParams());
 
         if (msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE) == null) {
@@ -60,11 +80,16 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
     	for (String cookie: msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE)) {
             // Cookies are commonly URL encoded, maybe other encodings.
             // TODO: apply other decodings?  htmlDecode, etc.
+    		String charset = msg.getResponseHeader().getCharset();
+    		if (charset == null) {
+    			charset = Charset.defaultCharset().name();
+    		}
+    		
     		try {
-				cookie = URLDecoder.decode(cookie, msg.getResponseHeader().getCharset());
+				cookie = URLDecoder.decode(cookie, charset);
 			} catch (UnsupportedEncodingException e) {
 				continue;
-			}    		
+			}
     		
             // Now we have a cookie.  Parse it out into an array.
             // I'm doing this to avoid false positives.  By parsing
@@ -80,13 +105,13 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
             String[] cookieSplit = cookie.split("[;=|]");
             for (String cookiePart: cookieSplit) {
                 if (params != null && params.size() > 0) {
-                    checkUserControllableCookieHeaderValue(msg, params, cookiePart, cookie);
+                    checkUserControllableCookieHeaderValue(msg, id, params, cookiePart, cookie);
                 }
             }
     	}
 	}
     
-    public void checkUserControllableCookieHeaderValue(HttpMessage msg, 
+    public void checkUserControllableCookieHeaderValue(HttpMessage msg, int id, 
     		Set<HtmlParameter> params, String cookiePart, String cookie) {
         if (cookie.length() == 0) {
         	return;
@@ -104,28 +129,26 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
             // positive.
             if (param.getValue() != null && param.getValue().length() > 1 &&
             		param.getValue().equals(cookiePart)) {
-            	raiseAlert(msg, param, cookie);
+            	raiseAlert(msg, id, param, cookie);
             }
         }
     }    
 	
-	private void raiseAlert(HttpMessage msg, HtmlParameter param,
+	private void raiseAlert(HttpMessage msg, int id, HtmlParameter param,
 			String cookie) {
 		Alert alert = new Alert(getId(), Alert.RISK_MEDIUM, Alert.WARNING,
 				getName());		
-		
-     
-
+		     
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), "content-type", getExploitMessage(msg), 
+				.getURI().toString(), param.getName(), getExploitMessage(msg), 
 				getExtraInfoMessage(msg, param, cookie),
 				getSolutionMessage(), getReferenceMessage(), msg);  
 
-		parent.raiseAlert(getId(), alert);
+		parent.raiseAlert(id, alert);
 	}
 
 	private int getId() {
-		return 90011;
+		return 10029;
 	}
 
 	@Override
