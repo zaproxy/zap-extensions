@@ -201,9 +201,9 @@
 		<!--antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall--> <!-- No rules yet-->
 		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
-		<!-- <antcall target="build-addon"><param name="addon" value="treetools"/></antcall> -->
+		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 
@@ -236,6 +236,10 @@
 
 	<target name="deploy-serverSentEvents" description="deploy the Server-Sent Events extension">
 		<antcall target="deploy-extension"> <param name="extension" value="serverSentEvents"/> </antcall>
+	</target>
+		
+	<target name="deploy-zest" description="deploy the Zest extension">
+		<antcall target="deploy-extension"> <param name="extension" value="zest"/> </antcall>
 	</target>
 		
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
