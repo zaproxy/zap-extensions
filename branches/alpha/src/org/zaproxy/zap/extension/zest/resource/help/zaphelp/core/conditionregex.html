@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Zest Regex Conditional
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1>Zest Regex Conditional</H1>
+
+<p>
+This <a href="conditionals.html">conditional</a> tests whether the specified regex is present.<br>
+
+<H2>Attributes</H2>
+<table>
+<tr> <td><i>Name</i></td> <td><i>Format</i></td> <td><i>Description</i></td> </tr>
+<tr> <td>regex</td> <td>String</td> <td>The regular expression to test for</td> </tr>
+<tr> <td>location</td> <td>String</td> <td>The location to test, either HEAD or BODY</td> </tr>
+<tr> <td>ifStatements</td> <td>Array</td> <td>The <a href="statements.html">statements</a> to run if the regex is found</td> </tr>
+<tr> <td>elseStatements</td> <td>Array</td> <td>The <a href="statements.html">statements</a> to run if the regex is not found</td> </tr>
+<tr> <td>index</td> <td>Integer</td> <td>The index of the statement in the script</td> </tr>
+<tr> <td>elementType</td> <td>String</td> <td>Always ZestConditionRegex</td> </tr>
+</table>
+
+<H2>JSON</H2>
+An basic example:
+<pre>
+{
+  "regex": "alert\(1\);",
+  "location": "BODY",
+  "ifStatements": [],
+  "elseStatements": [],
+  "index": 2,
+  "elementType": "ZestConditionRegex"
+}
+</pre>
+
+<H2>See also</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<a href="../introduction.html">Zest Introduction</a></td><td>for a short introduction to Zest</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<a href="../core/core.html">Zest Core</a></td><td>for details about Zest</td></tr>
+</table>
+
+</BODY>
+</HTML>
