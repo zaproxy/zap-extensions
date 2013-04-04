@@ -228,7 +228,16 @@ public class ZestZapUtils {
 	public static String toUiFailureString(ZestAssertion za, ZestResponse response) {
 		if (za instanceof ZestAssertLength) {
 			ZestAssertLength sla = (ZestAssertLength) za;
-			int intDiff = (sla.getLength() - response.getBody().length()) * 100 / sla.getLength();
+			int intDiff = 100;
+			if (response.getBody() != null) {
+				if (sla.getLength() == 0) {
+					if (sla.getLength() == 0) {
+						intDiff = 0;
+					}
+				} else {
+					intDiff = (sla.getLength() - response.getBody().length()) * 100 / sla.getLength();
+				}
+			}
 			String strDiff = Integer.toString(intDiff);
 			if (intDiff == 1) {
 				// Show to one decimal place

@@ -72,8 +72,13 @@ public class ZestActionDialog extends StandardFieldsDialog {
 
 		if (action instanceof ZestActionScan) {
 			ZestActionScan za = (ZestActionScan) action;
-			List<String> namesList = this.getParamNames(req.getUrl().getQuery());
-			namesList.addAll(this.getParamNames(req.getData()));
+			List<String> namesList = new ArrayList<String>();
+			if (req != null) {
+				namesList = this.getParamNames(req.getUrl().getQuery());
+				if (req.getData() != null) {
+					namesList.addAll(this.getParamNames(req.getData()));
+				}
+			}
 			namesList.add(0, "");	// Allow blank
 			this.addComboField(FIELD_PARAM, namesList, za.getTargetParameter());
 			
