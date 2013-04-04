@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Zest Scan Action
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1>Zest Scan Action</H1>
+
+<p>
+The Scan action causes the URL last accessed to be scanned for security vulnerabilities.<br>
+This action is not supported by the default Zest <a href="runtime">runtime</a> - 
+it is expected that it will be supported by security tools that include Zest..
+
+<H2>Attributes</H2>
+<table>
+<tr> <td><i>Name</i></td> <td><i>Format</i></td> <td><i>Description</i></td> </tr>
+<tr> <td>targetParameter</td> <td>String</td> <td>The parameter to attack - note that tools may ignore this and attack all parameters</td> </tr>
+<tr> <td>index</td> <td>Integer</td> <td>The index of the statement in the script</td> </tr>
+<tr> <td>elementType</td> <td>String</td> <td>Always ZestActionScan</td> </tr>
+</table>
+
+If a vulnerability is found then the script should fail.
+
+<H2>JSON</H2>
+An basic example:
+<pre>
+{
+  "targetParameter": "search",
+  "index": 1,
+  "elementType": "ZestActionScan"
+}
+</pre>
+
+<H2>See also</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<a href="../introduction.html">Zest Introduction</a></td><td>for a short introduction to Zest</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<a href="../core/core.html">Zest Core</a></td><td>for details about Zest</td></tr>
+</table>
+
+</BODY>
+</HTML>
