@@ -984,7 +984,21 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 			for (String val : vals) {
 				if (VALUE_RECORD.equalsIgnoreCase(val.trim())) {
 					try {
-						this.addToParent(this.getZestNode(this.getDefaultScript()), this.msgToZestRequest(msg));
+						ZestScriptWrapper script = this.getDefaultScript();
+						ZestRequest req = this.msgToZestRequest(msg);
+						if (script.isIncStatusCodeAssertion()) {
+							ZestAssertStatusCode codeAssert = new ZestAssertStatusCode(msg.getResponseHeader().getStatusCode());
+							req.addAssertion(codeAssert);
+							
+						}
+						if (script.isIncLengthAssertion()) {
+							ZestAssertLength lenAssert = new ZestAssertLength(msg.getResponseBody().length(), 0);
+							lenAssert.setApprox(script.getLengthApprox());
+							req.addAssertion(lenAssert);
+						}
+
+						this.addToParent(this.getZestNode(script), req);
+						
 					} catch (MalformedURLException e) {
 						logger.error(e.getMessage(), e);
 					}
