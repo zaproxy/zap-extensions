@@ -48,6 +48,7 @@ import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.mozilla.zest.core.v1.ZestTransformation;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
@@ -61,10 +62,13 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.zest.dialogs.ZestRedactDialog;
 import org.zaproxy.zap.extension.zest.dialogs.ZestTokenizeDialog;
 
-public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListener, CommandLineListener {
+public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListener, CommandLineListener, ProxyListener {
 	
 	public static final String NAME = "ExtensionZest";
 	public static final ImageIcon ZEST_ICON = new ImageIcon(ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resource/fruit-orange.png"));
+	
+	public static final String HTTP_HEADER_X_SECURITY_PROXY = "X-Security-Proxy";
+	public static final String VALUE_RECORD = "record";
 
 	private static final Logger logger = Logger.getLogger(ExtensionZest.class);
 	
@@ -122,6 +126,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	    //extensionHook.addOptionsParamSet(getScriptParam());
 	    
 	    if (getView() != null) {
+		    extensionHook.addProxyListener(this);
+		    
 	    	//extensionHook.getHookView().addWorkPanel(this.getZestDetailsPanel());
 	    	extensionHook.getHookView().addSelectPanel(this.getZestScriptsPanel());
 	    	extensionHook.getHookView().addStatusPanel(this.getZestResultsPanel());
@@ -530,6 +536,20 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		return this.getScriptWrapper((ZestNode)node.getParent());
 	}
 	
+	private ZestRequest msgToZestRequest(HttpMessage msg) throws MalformedURLException {
+		ZestRequest req = new ZestRequest();
+		req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
+		req.setMethod(msg.getRequestHeader().getMethod());
+		this.setHeaders(req, msg);
+		req.setData(msg.getRequestBody().toString());
+		req.setResponse(new ZestResponse(
+				msg.getResponseHeader().toString(), 
+				msg.getResponseBody().toString(),
+				msg.getResponseHeader().getStatusCode(),
+				msg.getTimeElapsedMillis()));
+		return req;
+	}
+	
 	public void addToParent(ZestNode parent, SiteNode sn, String prefix) {
 		if (parent == null) {
 			// They're gone for the 'new script' option...
@@ -538,17 +558,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		} else {
 			
 			try {
-				ZestRequest req = new ZestRequest();
 				HttpMessage msg = sn.getHistoryReference().getHttpMessage();
-				req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
-				req.setMethod(msg.getRequestHeader().getMethod());
-				this.setHeaders(req, msg);
-				req.setData(msg.getRequestBody().toString());
-				req.setResponse(new ZestResponse(
-						msg.getResponseHeader().toString(), 
-						msg.getResponseBody().toString(),
-						msg.getResponseHeader().getStatusCode(),
-						msg.getTimeElapsedMillis()));
+				ZestRequest req = this.msgToZestRequest(msg);
 
 				ZestElement ze = parent.getZestElement();
 				ZestScriptWrapper script = null;
@@ -941,5 +952,45 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		return View.getSingleton().getResponsePanel().getMessage() != null &&
 				View.getSingleton().getResponsePanel().getMessage().hashCode() == message.hashCode() &&
 				this.getZestResultsPanel().isSelectedMessage(message);
+	}
+
+	@Override
+	public int getArrangeableListenerOrder() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean onHttpRequestSend(HttpMessage msg) {
+		return true;
+	}
+	
+	private ZestScriptWrapper getDefaultScript() {
+		List<ZestScriptWrapper> scripts = this.getScripts();
+		if (scripts.size() > 0) {
+			return scripts.get(0);
+		}
+		ZestScriptWrapper script = new ZestScriptWrapper("Default", "");
+		this.add(script);
+		return script;
+		
+	}
+
+	@Override
+	public boolean onHttpResponseReceive(HttpMessage msg) {
+		String secProxyHeader = msg.getRequestHeader().getHeader(HTTP_HEADER_X_SECURITY_PROXY);
+		if (secProxyHeader != null) {
+			String [] vals = secProxyHeader.split(",");
+			for (String val : vals) {
+				if (VALUE_RECORD.equalsIgnoreCase(val.trim())) {
+					try {
+						this.addToParent(this.getZestNode(this.getDefaultScript()), this.msgToZestRequest(msg));
+					} catch (MalformedURLException e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
+		return true;
 	}
 }
