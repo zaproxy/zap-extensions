@@ -19,6 +19,9 @@ Note that this add-on will not work with ZAP 2.0.0 - you must either use the tru
 
 It is alpha status, and currently has no help or documentation - this will be added soon.
 
+[http://zaproxy.googlecode.com/svn/wiki/images/Zest-BodgeIt-Register-XSS-zap.jpg http://zaproxy.googlecode.com/svn/wiki/images/Zest-BodgeIt-Register-XSS-zap-sm.jpg]
+
+
 Some hints to help you get started:
   * Right click on requests in the Sites and History tab - there will be a right click option to add them to Zest scripts
   * Right click on nodes in the Zest Scripts tab - there will be options to add new nodes
