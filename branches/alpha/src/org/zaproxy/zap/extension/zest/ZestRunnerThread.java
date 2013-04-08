@@ -160,13 +160,17 @@ public class ZestRunnerThread extends ZestBasicRunner implements Runnable, Scann
 			
 			lastResult = zrw;
 
-			for (ZestAssertion za : request.getAssertions()) {
-				if (za.isValid(response)) {
-					zrw.setPassed(true);
-				} else {
-					zrw.setPassed(false);
-					zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
-					break;
+			if (request.getAssertions().size() == 0) {
+				zrw.setPassed(true);
+			} else {
+				for (ZestAssertion za : request.getAssertions()) {
+					if (za.isValid(response)) {
+						zrw.setPassed(true);
+					} else {
+						zrw.setPassed(false);
+						zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
+						break;
+					}
 				}
 			}
 			this.notifyResponse(zrw);
