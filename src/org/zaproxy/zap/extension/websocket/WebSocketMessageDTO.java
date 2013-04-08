@@ -194,4 +194,10 @@ public class WebSocketMessageDTO implements Message {
 			return "";
 		}
 	}
+	
+	public boolean isForceIntercept() {
+		// Not currently supported for WebSockets
+		return false;
+	}
+
 }
