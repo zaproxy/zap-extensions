@@ -465,7 +465,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		if ( cookieBack1ExpiryDate == null )  {
 	        			//session expires when the browser closes.. rate this as medium risk?
 	        			sessionExpiryRiskLevel = Alert.RISK_MEDIUM;
-	        			sessionExpiryRiskDescription="sessionidexpiry.browserclose";
+	        			sessionExpiryRiskDescription="ascanbeta.sessionidexpiry.browserclose";
 	        			sessionExpiryDescription = Constant.messages.getString(sessionExpiryRiskDescription);
 	        		} else {
 	        			long datediffSeconds = ( cookieBack1ExpiryDate.getTime() - cookieBack1TimeReceived) / 1000;
@@ -475,27 +475,27 @@ public class SessionFixation extends AbstractAppPlugin {
 		        		
 		        		if ( datediffSeconds < 0 ) { 
 		        			if ( this.debugEnabled ) log.debug("The session cookie has expired already");
-		        			sessionExpiryRiskDescription = "sessionidexpiry.timeexpired";
+		        			sessionExpiryRiskDescription = "ascanbeta.sessionidexpiry.timeexpired";
 		        			sessionExpiryRiskLevel = Alert.RISK_INFO;  // no risk.. the cookie has expired already 
 		        		}
 		        		else if (datediffSeconds > aWeekSeconds )  {
 		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for more than a week!");
-		        			sessionExpiryRiskDescription="sessionidexpiry.timemorethanoneweek";
+		        			sessionExpiryRiskDescription="ascanbeta.sessionidexpiry.timemorethanoneweek";
 		        			sessionExpiryRiskLevel = Alert.RISK_HIGH;
 		        		}
 		        		else if (datediffSeconds > aDaySeconds )  {
 		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for more than a day");
-		        			sessionExpiryRiskDescription="sessionidexpiry.timemorethanoneday";
+		        			sessionExpiryRiskDescription="ascanbeta.sessionidexpiry.timemorethanoneday";
 		        			sessionExpiryRiskLevel = Alert.RISK_MEDIUM;
 		        		}
 		        		else if (datediffSeconds > anHourSeconds )  {
 		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for more than an hour");
-		        			sessionExpiryRiskDescription="sessionidexpiry.timemorethanonehour";
+		        			sessionExpiryRiskDescription="ascanbeta.sessionidexpiry.timemorethanonehour";
 		        			sessionExpiryRiskLevel = Alert.RISK_LOW;
 		        		}
 		        		else {
 		        			if ( this.debugEnabled ) log.debug("The session cookie is set to last for less than an hour!");
-		        			sessionExpiryRiskDescription="sessionidexpiry.timelessthanonehour";
+		        			sessionExpiryRiskDescription="ascanbeta.sessionidexpiry.timelessthanonehour";
 		        			sessionExpiryRiskLevel = Alert.RISK_INFO;
 		        		}
 	        		}
