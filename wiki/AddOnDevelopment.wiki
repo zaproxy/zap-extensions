@@ -23,6 +23,25 @@ This review will just be to check basic things like:
   * It builds(!)
   * It loads as an add-on in the latest released version of ZAP
   * It doesnt do anything obviously bad
-As long as it passes those criteria then it will be released and available to instrall from within ZAP.
+As long as it passes those criteria then it will be released and available to install from within ZAP.
 
-==Beta version==
+You may continue to develop your extension while its in the alpha branch. If and when you would like another alpha version published let us know via the [http://groups.google.com/group/zaproxy-develop dev group] - this will _not_ happen automatically.
+
+==[AddOnsBeta Beta version]==
+There are additional [AddOnsBeta requirements] for add-ons to achieve beta status.
+
+If and when you think your add-on is ready to move to beta status then let us know via the [http://groups.google.com/group/zaproxy-develop dev group]
+
+It will then be reviewed, and when it has passed the review you will be able to move it to the [https://code.google.com/p/zap-extensions/source/browse/#svn%2Fbranches%2Fbeta beta branch]
+
+Again, let us know when it is ready to be published (and republished if relevant).
+
+==[AddOnsRelease Release version]==
+Again, ther are additional [AddOnsRelease requirements] for add-ons to achieve release status.
+
+If and when you think your add-on is ready to move to release status then let us know via the [http://groups.google.com/group/zaproxy-develop dev group]
+
+It will then be reviewed, and when it has passed the review you will be able to move it to the [https://code.google.com/p/zap-extensions/source/browse/#svn%2Ftrunk trunk]
+
+Again, let us know when it is ready to be published (and republished if relevant).
+
