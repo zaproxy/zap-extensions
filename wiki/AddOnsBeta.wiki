@@ -10,3 +10,4 @@ They will typically:
   * Be fully internationalised
   * Support dynamic loading and unloading
   * Mostly conform the to [http://code.google.com/p/zaproxy/wiki/DevGuidelines ZAP development rules and guidelines]
+  * Ideally have a zap-extensions wiki page (eg AddOn_scripts)
