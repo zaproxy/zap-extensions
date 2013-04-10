@@ -9,3 +9,4 @@ They will typically:
   * Include an integrated help file
   * Support dynamic loading and unloading
   * Fully conform the to [http://code.google.com/p/zaproxy/wiki/DevGuidelines ZAP development rules and guidelines]
+  * Have a zap-extensions wiki page (eg AddOn_scripts)
