@@ -1,0 +1,28 @@
+= Add-on Development =
+
+This page gives an overview of the process of developing an add-on and getting it published.
+
+==Implementation==
+
+Not surprisingly the first thing to do (apart from deciding what to implement) is to create the first version of your add-on.
+
+For help with that see:
+  * [http://code.google.com/p/zaproxy/wiki/Building Building ZAP]
+  * [http://code.google.com/p/zaproxy/wiki/DevExtending Extending ZAP]
+  * [http://code.google.com/p/zaproxy/wiki/ZapAddOns ZAP Add-ons]
+  * [http://code.google.com/p/zaproxy/wiki/InternalDetails ZAP Internal Details]
+
+==[AddOnsAlpha Alpha version]==
+Once you have something you would like to publish you will need commit access to this project. If you dont already have it then ask on the [http://groups.google.com/group/zaproxy-develop ZAP developer group] giving us a brief overview of your add-on
+
+You should then add your code to the [https://code.google.com/p/zap-extensions/source/browse/#svn%2Fbranches%2Falpha alpha branch]
+
+Let us know when you are happy with it (on the [http://groups.google.com/group/zaproxy-develop dev group] again) and we'll give it an initial review.
+
+This review will just be to check basic things like:
+  * It builds(!)
+  * It loads as an add-on in the latest released version of ZAP
+  * It doesnt do anything obviously bad
+As long as it passes those criteria then it will be released and available to instrall from within ZAP.
+
+==Beta version==
