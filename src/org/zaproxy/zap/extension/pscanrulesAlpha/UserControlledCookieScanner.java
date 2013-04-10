@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -78,18 +79,10 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
         }
         
     	for (String cookie: msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE)) {
-            // Cookies are commonly URL encoded, maybe other encodings.
-            // TODO: apply other decodings?  htmlDecode, etc.
-    		String charset = msg.getResponseHeader().getCharset();
-    		if (charset == null) {
-    			charset = Charset.defaultCharset().name();
+    		cookie = decodeCookie(cookie, msg.getResponseHeader().getCharset());
+    		if (cookie == null) {
+    			continue;
     		}
-    		
-    		try {
-				cookie = URLDecoder.decode(cookie, charset);
-			} catch (UnsupportedEncodingException e) {
-				continue;
-			}
     		
             // Now we have a cookie.  Parse it out into an array.
             // I'm doing this to avoid false positives.  By parsing
@@ -110,8 +103,41 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
             }
     	}
 	}
+	
+    // Cookies are commonly URL encoded, maybe other encodings.
+    // TODO: apply other decodings?  htmlDecode, etc.	
+	private String decodeCookie(String cookie, String charset) {
+		if (charset != null) {
+			try {
+				return URLDecoder.decode(cookie, charset);
+			} catch (UnsupportedEncodingException e) {
+				// try other possible charsets
+			}						
+		}
+
+		// if charset is not defined for response, or is defined incorrectly,
+		// try standard charsets
+		
+		Charset[] possibleCharsets = {
+				StandardCharsets.ISO_8859_1,
+				StandardCharsets.US_ASCII,
+				StandardCharsets.UTF_16,
+				StandardCharsets.UTF_16BE,
+				StandardCharsets.UTF_16LE,
+				StandardCharsets.UTF_8
+		};
+		
+		for (Charset possibleCharset: possibleCharsets) {			
+			try {
+				return URLDecoder.decode(cookie, possibleCharset.name());
+			} catch (UnsupportedEncodingException e) {
+			}		
+		}
+		
+		return null;
+	}
     
-    public void checkUserControllableCookieHeaderValue(HttpMessage msg, int id, 
+    private void checkUserControllableCookieHeaderValue(HttpMessage msg, int id, 
     		Set<HtmlParameter> params, String cookiePart, String cookie) {
         if (cookie.length() == 0) {
         	return;
