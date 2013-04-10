@@ -9,6 +9,7 @@
     * [AddOn_scripts Script Console]
    * [AddOnsAlpha Add-ons: Alpha]
     * [AddOn_Zest Zest - Scripting Security Tests]
+  * [AddOnDevelopment  Add-on Development]
   * [Examples Examples]
   * [CodeStructure Code Structure]
   * [V1Extensions 1.4 Add-ons]
