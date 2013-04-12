@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>3</version>
+	<version>2</version>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
@@ -18,10 +18,13 @@
 		v.2<br/>
 		Added an alpha version of User Controlled HTML Attributes passive rule ported from<br/> 
 		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-html-attribute<br/>
-		Updated other User Controlled passive rules after peer review		 
-		v.3<br/>	
+		Updated other User Controlled passive rules after peer review<br/>	
 		Added an alpha version of User Controlled HTML Attributes passive rule ported from<br/> 
 		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-javascript-event<br/>
+		Added an alpha version of Insecure Form Load passive rule ported from<br/> 
+		https://websecuritytool.codeplex.com/wikipage?title=Checks#ssl-insecure-transition-from-http<br/>
+		Added an alpha version of Insecure Form Load passive rule ported from<br/> 
+		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#ssl-insecure-transition-to-http<br/>
 		]]>
 	</changes>
 	<dependson/>
@@ -29,9 +32,11 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormLoadScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormPostScanner</pscanrule>	
 		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCharsetScanner</pscanrule>		
 		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCookieScanner</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledJavascriptEventScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledJavascriptEventScanner</pscanrule>		
 		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledHTMLAttributes</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>		
 	</pscanrules>

@@ -34,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -67,8 +68,7 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {		
-	    // XXX Consider to use the constant HttpStatusCode.OK instead of the literal 200.
-		if (msg.getResponseHeader().getStatusCode() != 200) {
+		if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
 			return;
 		}
 		
