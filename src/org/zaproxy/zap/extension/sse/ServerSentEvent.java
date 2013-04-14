@@ -217,4 +217,10 @@ public class ServerSentEvent implements Message {
 	public void setRawEventLength(Long length) {
 		this.rawEventLength = length;
 	}
+
+	@Override
+	public boolean isForceIntercept() {
+		// Not currently supported for Server-Sent events.
+		return false;
+	}
 }
