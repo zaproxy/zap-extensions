@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>8</version>
+	<version>9</version>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Added scroll pane for small resolutions and dark icon when used in dev</changes>
+	<changes>Fixed case where the active scan might start before waiting for the spider to finish.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.quickstart.ExtensionQuickStart</extension>

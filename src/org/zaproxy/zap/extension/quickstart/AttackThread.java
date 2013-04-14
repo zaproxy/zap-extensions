@@ -96,6 +96,9 @@ public class AttackThread extends Thread {
 				extSpider.startScan(startNode);
 			}
 			
+			// Give some time to the spider to finish to setup and start itself.
+			sleep(1500);
+			
 			try {
 				 // Wait for the spider to complete
 				while (extSpider.isScanning(startNode, true)) { 
