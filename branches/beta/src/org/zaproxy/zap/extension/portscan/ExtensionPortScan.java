@@ -88,7 +88,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
         super.hook(extensionHook);
         extensionHook.addSessionListener(this);
         extensionHook.addProxyListener(this);
-        extensionHook.addSiteMapListner(this);
+        extensionHook.addSiteMapListener(this);
 
         if (getView() != null) {
             @SuppressWarnings("unused")
