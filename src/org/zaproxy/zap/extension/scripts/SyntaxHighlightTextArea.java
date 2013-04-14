@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.Action;
@@ -256,13 +254,9 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 	protected static class CustomTokenMakerFactory extends AbstractTokenMakerFactory {
 		
 		@Override
-		protected Map<String, String> createTokenMakerKeyToClassNameMap() {
-			HashMap<String, String> map = new HashMap<>();
-
+		protected void initTokenMakerMap() {
 			String pkg = "org.fife.ui.rsyntaxtextarea.modes.";
-			map.put(SYNTAX_STYLE_NONE, pkg + "PlainTextTokenMaker");
-			
-			return map;
+			putMapping(SYNTAX_STYLE_NONE, pkg + "PlainTextTokenMaker");
 		}
 	}
 	
