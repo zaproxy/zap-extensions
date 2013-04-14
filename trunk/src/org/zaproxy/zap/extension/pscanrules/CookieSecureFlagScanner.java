@@ -45,7 +45,7 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		if (!msg.getRequestHeader().getSecure()) {
+		if (!msg.getRequestHeader().isSecure()) {
 			// If SSL isn't used then the Secure flag has not to be checked
 			return;
 		}

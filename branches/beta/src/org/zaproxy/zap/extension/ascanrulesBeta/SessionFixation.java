@@ -247,7 +247,7 @@ public class SessionFixation extends AbstractAppPlugin {
 		            
 		            	//Note that we need to clone the Request and the Response..
 		            	//we seem to need to track the secure flag now to make sure its set later
-		            	boolean secure1 = temp.getRequestHeader().getSecure();
+		            	boolean secure1 = temp.getRequestHeader().isSecure();
 		            	temp = temp.cloneAll(); //clone the previous message
 		            	
 		            	redirectsFollowed1++;
@@ -325,7 +325,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        		
 	        		//Check 1: was the session cookie sent and received securely by the server? 
 	        		//If not, alert this fact
-	        		if ( (! msg1Final.getRequestHeader().getSecure()) || 
+	        		if ( (! msg1Final.getRequestHeader().isSecure()) || 
 	        			 (! cookieBack1.getFlags().contains("secure")) ) {
         				//pass the original param value here, not the new value, since we're displaying the session id exposed in the original message
 	        			String extraInfo = Constant.messages.getString("ascanbeta.sessionidsentinsecurely.alert.extrainfo", currentHtmlParameter.getType(), currentHtmlParameter.getName(), currentHtmlParameter.getValue());
@@ -572,7 +572,7 @@ public class SessionFixation extends AbstractAppPlugin {
 		            while ( HttpStatusCode.isRedirection(temp2.getResponseHeader().getStatusCode())) {
 		            	
 		            	//clone the previous message
-		            	boolean secure2 = temp2.getRequestHeader().getSecure();
+		            	boolean secure2 = temp2.getRequestHeader().isSecure();
 		            	temp2 = temp2.cloneAll();
 		            	
 		                redirectsFollowed2++;

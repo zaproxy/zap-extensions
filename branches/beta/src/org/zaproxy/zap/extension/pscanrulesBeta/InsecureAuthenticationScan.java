@@ -77,7 +77,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 		//log.setLevel(org.apache.log4j.Level.DEBUG);
 		//this.debugEnabled = true;
 
-		if (msg.getRequestHeader().getSecure()) {
+		if (msg.getRequestHeader().isSecure()) {
 			// If SSL is used then the use of 'weak' authentication methods isn't really an issue
 			return;
 		}
@@ -225,7 +225,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		if (msg.getRequestHeader().getSecure()) {
+		if (msg.getRequestHeader().isSecure()) {
 			// If SSL is used then the use of 'weak' authentication methods isnt really an issue	
 			return;
 		}
