@@ -153,7 +153,7 @@ public class TestInfoSessionIdURL extends AbstractAppPlugin {
 	private void checkSessionIDExposure(HttpMessage msg) throws URIException {
 
 		String body = msg.getResponseBody().toString();
-		int risk = (msg.getRequestHeader().getSecure()) ? Alert.RISK_MEDIUM : Alert.RISK_INFO;
+		int risk = (msg.getRequestHeader().isSecure()) ? Alert.RISK_MEDIUM : Alert.RISK_INFO;
 		String linkHostName = null;
 		Matcher matcher = null;
 		

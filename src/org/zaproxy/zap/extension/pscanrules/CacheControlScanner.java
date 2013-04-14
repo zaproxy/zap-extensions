@@ -44,7 +44,7 @@ public class CacheControlScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		if (msg.getRequestHeader().getSecure() && !msg.getRequestHeader().getURI().toString().toLowerCase().endsWith(".css") && !msg.getResponseHeader().isImage() && msg.getResponseBody().length() > 0) {
+		if (msg.getRequestHeader().isSecure() && !msg.getRequestHeader().getURI().toString().toLowerCase().endsWith(".css") && !msg.getResponseHeader().isImage() && msg.getResponseBody().length() > 0) {
 			Vector<String> cacheControl = msg.getResponseHeader().getHeaders(HttpHeader.CACHE_CONTROL);
 			if (cacheControl != null) {
 				for (String cacheControlDirective : cacheControl) {

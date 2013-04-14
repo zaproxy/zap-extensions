@@ -46,7 +46,7 @@ public class MixedContentScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		if (!msg.getRequestHeader().getSecure()) {
+		if (!msg.getRequestHeader().isSecure()) {
 			// If SSL isn't used then this check isnt relevant
 			return;
 		}

@@ -98,7 +98,7 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
         HttpMessage msg = getBaseMsg();
 		boolean result = false;
 		
-		if (!msg.getRequestHeader().getSecure()) {
+		if (!msg.getRequestHeader().isSecure()) {
 		    // no need to if non-secure page;
 		    return;
 		} else if (msg.getRequestHeader().isImage()) {
