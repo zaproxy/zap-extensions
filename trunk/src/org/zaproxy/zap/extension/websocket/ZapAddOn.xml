@@ -4,7 +4,12 @@
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Fixed a NullPointerException while managing a session in daemon mode.</changes>
+	<changes>
+	<![CDATA[
+	Fixed a NullPointerException while managing a session in daemon mode.<br>
+	Allow to choose a new syntax highlighter (JSON).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.websocket.ExtensionWebSocket</extension>

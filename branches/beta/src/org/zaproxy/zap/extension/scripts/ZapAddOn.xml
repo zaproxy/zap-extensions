@@ -4,7 +4,12 @@
 	<description>Provides dynamic access to internal ZAP data structures</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/ScriptConsole</url>
-	<changes>Changed to unload all components when uninstalling.</changes>
+	<changes>
+	<![CDATA[
+	Changed to unload all components when uninstalling.<br>
+	Changed to use the new version of the RSyntaxTextArea library.
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.scripts.ExtensionScripts</extension>
