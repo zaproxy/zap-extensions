@@ -10,16 +10,13 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.view.SiteMapListener;
-import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
 /*
  * Implements the Extension Interface for HighlighterManager and HighlighterPanel
  */
 public class ExtensionHighlighter extends ExtensionAdaptor
-implements SessionChangedListener, /*ProxyListener, */ SiteMapListener {
+implements SessionChangedListener /*ProxyListener, */ {
 
 	public static final String NAME = "ExtensionHighlighter";
 	private HighlighterPanel highlighterPanel;
@@ -37,16 +34,9 @@ implements SessionChangedListener, /*ProxyListener, */ SiteMapListener {
 	}
 
 	@Override
-	public void nodeSelected(SiteNode node) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         extensionHook.addSessionListener(this);
-        extensionHook.addSiteMapListner(this);
         
         if (getView() != null) {
             @SuppressWarnings("unused")
@@ -150,8 +140,4 @@ implements SessionChangedListener, /*ProxyListener, */ SiteMapListener {
 	public void sessionScopeChanged(Session arg0) {
 	}
 
-	@Override
-	public void onReturnNodeRendererComponent(
-			SiteMapTreeCellRenderer component, boolean leaf, SiteNode value) {
-	}
 }
