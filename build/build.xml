@@ -52,6 +52,7 @@
 	&lt;addon_${extension}>
 		&lt;name>${name}&lt;/name>
 		&lt;description>${description}&lt;/description>
+		&lt;author>${author}&lt;/author>
 		&lt;version>${version}&lt;/version>
 		&lt;file>${file}&lt;/file>
 		&lt;status>${status}&lt;/status>
@@ -97,6 +98,7 @@
 			<param name="name" value="${zapaddon.name}"/> 
 			<param name="version" value="${zapaddon.version}"/> 
 			<param name="description" value="${zapaddon.description}"/> 
+			<param name="author" value="${zapaddon.author}"/> 
 			<param name="url" value="${zapaddon.url}"/> 
 			<param name="changes" value="${zapaddon.changes}"/> 
 			<param name="file" value="${file}"/> 
