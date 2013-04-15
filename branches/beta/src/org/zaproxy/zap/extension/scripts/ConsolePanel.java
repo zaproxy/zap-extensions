@@ -28,6 +28,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -294,16 +295,23 @@ public class ConsolePanel extends AbstractPanel implements Tab {
     			return;
     		}
     		extension.getScriptParam().setDefaultDir(chooser.getCurrentDirectory().getAbsolutePath());
-    	    try (BufferedReader fr = new BufferedReader(new FileReader(file))) {
+    	    BufferedReader fr = null;
+    	    try {
+    	    	fr = new BufferedReader(new FileReader(file));
                 getCommandPanel().clear();
                 String line;
                 while ((line = fr.readLine()) != null) {
                     getCommandPanel().appendToCommandScript(line + "\n");
                 }
-
             } catch (Exception e1) {
             	logger.error(e1.getMessage(), e1);
                 extension.getView().showWarningDialog(Constant.messages.getString("file.load.error") + " " + file.getAbsolutePath() + ".");
+            } finally {
+                try {
+					fr.close();
+				} catch (IOException e) {
+	            	logger.error(e.getMessage(), e);
+				}
             }
 	    }
 	}
@@ -323,12 +331,19 @@ public class ConsolePanel extends AbstractPanel implements Tab {
     			return;
     		}
     		extension.getScriptParam().setDefaultDir(chooser.getCurrentDirectory().getAbsolutePath());
-    	    try (BufferedWriter fw = new BufferedWriter(new FileWriter(file, false))) {
+    		BufferedWriter fw = null;
+    	    try {
+        		fw = new BufferedWriter(new FileWriter(file, false));
                 fw.append(getCommandScript());
-
             } catch (Exception e1) {
             	logger.error(e1.getMessage(), e1);
                 extension.getView().showWarningDialog(Constant.messages.getString("file.save.error") + " " + file.getAbsolutePath() + ".");
+            } finally {
+                try {
+					fw.close();
+				} catch (IOException e) {
+	            	logger.error(e.getMessage(), e);
+				}
             }
 	    }
 	}
