@@ -15,9 +15,9 @@ For more details see:
 
 This add-on allows you to create, edit and run Zest scripts.
 
-Note that this add-on will not work with ZAP 2.0.0 - you must either use the trunk or the latest weekly release. And right now you'll have to download it from http://code.google.com/p/zap-extensions/downloads/list and install it manually. It will be available to download within ZAP after the next ZAP release.
+Note that this add-on will not work with ZAP 2.0.0 - you must either use at least ZAP 2.1.0
 
-It is alpha status, and currently has no help or documentation - this will be added soon.
+It is alpha status, and currently has limited help - more will be added soon.
 
 [http://zaproxy.googlecode.com/svn/wiki/images/Zest-BodgeIt-Register-XSS-zap.jpg http://zaproxy.googlecode.com/svn/wiki/images/Zest-BodgeIt-Register-XSS-zap-sm.jpg]
 
