@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>9</version>
+	<version>10</version>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Fixed case where the active scan might start before waiting for the spider to finish.</changes>
+	<changes>Updated for ZAP 2.1.0</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.quickstart.ExtensionQuickStart</extension>
@@ -13,6 +13,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version/>
+	<not-before-version>2.1.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
