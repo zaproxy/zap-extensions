@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>3</version>
+	<version>4</version>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated to support new addon format</changes>
+	<changes>Updated for ZAP 2.1.0</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
@@ -24,6 +24,6 @@
 	</pscanrules>
 	<filters/>
 	<files/>
-	<not-before-version/>
+	<not-before-version>2.1.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
