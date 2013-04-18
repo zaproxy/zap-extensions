@@ -49,6 +49,7 @@ public class EventStreamSyntaxHighlightTextView extends HttpPanelSyntaxHighlight
         private static final String CSS = Constant.messages.getString("http.panel.view.syntaxtext.syntax.css");
         private static final String HTML = Constant.messages.getString("http.panel.view.syntaxtext.syntax.html");
         private static final String JAVASCRIPT = Constant.messages.getString("http.panel.view.syntaxtext.syntax.javascript");
+        private static final String JSON = Constant.messages.getString("http.panel.view.syntaxtext.syntax.json");
         private static final String XML = Constant.messages.getString("http.panel.view.syntaxtext.syntax.xml");
         
         private static EventStreamTokenMakerFactory tokenMakerFactory = null;
@@ -56,10 +57,10 @@ public class EventStreamSyntaxHighlightTextView extends HttpPanelSyntaxHighlight
 //		private final ExtensionServerSentEvents extEventStream;
 		
 		public EventStreamSyntaxHighlightTextArea() {
-			// Nice-2-Have: JSON support
             addSyntaxStyle(CSS, SyntaxConstants.SYNTAX_STYLE_CSS);
             addSyntaxStyle(HTML, SyntaxConstants.SYNTAX_STYLE_HTML);
             addSyntaxStyle(JAVASCRIPT, SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+            addSyntaxStyle(JSON, SyntaxConstants.SYNTAX_STYLE_JSON);
             addSyntaxStyle(XML, SyntaxConstants.SYNTAX_STYLE_XML);
             
 //    		this.extEventStream = (ExtensionServerSentEvents) Control.getSingleton().getExtensionLoader().getExtension(ExtensionServerSentEvents.NAME);
@@ -141,6 +142,7 @@ public class EventStreamSyntaxHighlightTextView extends HttpPanelSyntaxHighlight
                 putMapping(SYNTAX_STYLE_CSS, pkg + "CSSTokenMaker");
                 putMapping(SYNTAX_STYLE_HTML, pkg + "HTMLTokenMaker");
                 putMapping(SYNTAX_STYLE_JAVASCRIPT, pkg + "JavaScriptTokenMaker");
+                putMapping(SYNTAX_STYLE_JSON, pkg + "JsonTokenMaker");
                 putMapping(SYNTAX_STYLE_XML, pkg + "XMLTokenMaker");
 			}
 		}
