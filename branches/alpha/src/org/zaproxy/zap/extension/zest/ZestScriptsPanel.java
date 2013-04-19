@@ -421,7 +421,7 @@ public class ZestScriptsPanel extends AbstractPanel {
 					        			(ZestRequest)parent.getZestElement(), (ZestAssertion) obj, false);
 					        } else if (obj instanceof ZestAction) {
 					        	showZestActionDialog(
-					        			parent, (ZestRequest)parent.getZestElement(), (ZestAction) obj, false);
+					        			parent, null, (ZestAction) obj, false);
 					        } else if (obj instanceof ZestConditional) {
 					        	showZestConditionalDialog(
 					        			parent, null, (ZestConditional) obj, false);
