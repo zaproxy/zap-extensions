@@ -37,6 +37,7 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestActionDialog extends StandardFieldsDialog {
 
+	private static final String FIELD_LOCATION = "zest.dialog.action.label.location"; 
 	private static final String FIELD_MESSAGE = "zest.dialog.action.label.message"; 
 	private static final String FIELD_PARAM = "zest.dialog.action.label.targetparam";
 	private static final String FIELD_TOKEN = "zest.dialog.action.label.token";
@@ -85,6 +86,7 @@ public class ZestActionDialog extends StandardFieldsDialog {
 		} else if (action instanceof ZestActionSetToken) {
 			ZestActionSetToken za = (ZestActionSetToken) action;
 			this.addTextField(FIELD_TOKEN, za.getTokenName());
+			this.addComboField(FIELD_LOCATION, new String[]{"HEAD", "BODY"}, za.getLocation());
 			this.addTextField(FIELD_PREFIX, za.getPrefix());
 			this.addTextField(FIELD_POSTFIX, za.getPostfix());
 			
@@ -117,6 +119,7 @@ public class ZestActionDialog extends StandardFieldsDialog {
 		} else if (action instanceof ZestActionSetToken) {
 			ZestActionSetToken za = (ZestActionSetToken) action;
 			za.setTokenName(this.getStringValue(FIELD_TOKEN));
+			za.setLocation(this.getStringValue(FIELD_LOCATION));
 			za.setPrefix(this.getStringValue(FIELD_PREFIX));
 			za.setPostfix(this.getStringValue(FIELD_POSTFIX));
 

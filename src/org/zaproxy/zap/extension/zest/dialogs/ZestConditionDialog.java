@@ -109,7 +109,7 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 				extension.addAfterRequest(parent, request, condition);
 			}
 		} else {
-			extension.update((ZestStatement)parent.getZestElement(), condition);
+			extension.update(parent.getZestElement(), condition);
 		}
 	}
 

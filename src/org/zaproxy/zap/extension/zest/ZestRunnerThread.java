@@ -20,6 +20,7 @@
 
 package org.zaproxy.zap.extension.zest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,9 +30,11 @@ import org.mozilla.zest.core.v1.ZestActionFailException;
 import org.mozilla.zest.core.v1.ZestActionScan;
 import org.mozilla.zest.core.v1.ZestAssertFailException;
 import org.mozilla.zest.core.v1.ZestAssertion;
+import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestScript;
+import org.mozilla.zest.core.v1.ZestStatement;
 import org.mozilla.zest.core.v1.ZestTransformFailException;
 import org.mozilla.zest.core.v1.ZestTransformation;
 import org.mozilla.zest.impl.ZestBasicRunner;
@@ -120,6 +123,12 @@ public class ZestRunnerThread extends ZestBasicRunner implements Runnable, Scann
 			listener.notifyActionFail(e);
 		}
 	}
+	
+	private void notifyZestInvalidCommonTestFailed (ZestInvalidCommonTestException e) {
+		for (ZestRunnerListener listener : listenerList) {
+			listener.notifyZestInvalidCommonTestFail(e);
+		}
+	}
 
     @Override
     public void run() {
@@ -135,6 +144,36 @@ public class ZestRunnerThread extends ZestBasicRunner implements Runnable, Scann
 	    
         log.info("Zest Runner stopped");
 	}
+    
+	@Override
+	public ZestResponse runStatement(ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
+			throws ZestAssertFailException, ZestActionFailException, ZestTransformFailException, 
+			ZestInvalidCommonTestException, IOException {
+		while (this.isPaused() && ! this.isStop) {
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// Ignore
+			}
+		}
+		if (this.isStop) {
+			return null;
+		}
+		return super.runStatement(script, stmt, lastResponse);
+	}
+
+	@Override
+	public void runCommonTest(ZestStatement stmt, ZestResponse response) throws ZestActionFailException, ZestInvalidCommonTestException {
+		try {
+			super.runCommonTest(stmt, response);
+		} catch (ZestActionFailException e) {
+			notifyActionFailed(e);
+			
+		} catch (ZestInvalidCommonTestException e) {
+			notifyZestInvalidCommonTestFailed(e);
+		}
+	}
+
     
 	@Override
 	public String handleAction(ZestScript script, ZestAction action, ZestResponse lastResponse) throws ZestActionFailException {

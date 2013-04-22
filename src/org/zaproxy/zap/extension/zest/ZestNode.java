@@ -81,4 +81,15 @@ public class ZestNode extends DefaultMutableTreeNode {
 		this.shadow = shadow;
 	}
 	
+	public boolean isCommonTest() {
+		ZestNode node = this;
+		while (node != null) {
+			if (node.getZestElement() instanceof ZestCommonTestsElement) {
+				return true;
+			}
+			node = node.getParent();
+		}
+		return false;
+	}
+	
 }

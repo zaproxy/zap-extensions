@@ -88,6 +88,9 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
                     } else if (node != null && node.getZestElement() instanceof ZestContainer) {
                     	reCreateSubMenu(node, null, "BODY", "");
                     	return true;
+                    } else if (node != null && node.getZestElement() instanceof ZestCommonTestsElement) {
+                    	reCreateSubMenu(node, null, "BODY", "");
+                    	return true;
                     }
                 }
             } catch (Exception e) {}
