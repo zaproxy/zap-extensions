@@ -109,8 +109,11 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
     }
 
     private void reCreateSubMenu(ZestNode parent, ZestRequest req, String text) {
-		createPopupAddActionMenu (parent, req, new ZestActionScan(text));
-		createPopupAddActionMenu (parent, req, new ZestActionSetToken("", text, text));
+    	// Can only add 'fail' actions under Common Tests
+    	if (! parent.isCommonTest()) {
+    		createPopupAddActionMenu (parent, req, new ZestActionScan(text));
+    		createPopupAddActionMenu (parent, req, new ZestActionSetToken("", ZestActionSetToken.LOC_BODY, text, text));
+    	}
 		createPopupAddActionMenu (parent, req, new ZestActionFail(text));
 	}
 

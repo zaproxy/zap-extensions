@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -76,6 +77,8 @@ public class ZestScriptsPanel extends AbstractPanel {
 	private JButton saveButton = null;
 	private JButton newButton = null;
 	private JButton runButton = null;
+	private JToggleButton pauseButton = null;
+	private JButton stopButton = null;
 
 	private JScrollPane jScrollPane = null;
 	private JTree tree = null;
@@ -136,6 +139,8 @@ public class ZestScriptsPanel extends AbstractPanel {
 			panelToolbar.add(getSaveButton(), LayoutHelper.getGBC(1, 0, 1, 0.0D));
 			panelToolbar.add(getNewButton(), LayoutHelper.getGBC(2, 0, 1, 0.0D));
 			panelToolbar.add(getRunButton(), LayoutHelper.getGBC(3, 0, 1, 0.0D));
+			panelToolbar.add(getPauseButton(), LayoutHelper.getGBC(4, 0, 1, 0.0D));
+			panelToolbar.add(getStopButton(), LayoutHelper.getGBC(5, 0, 1, 0.0D));
 			panelToolbar.add(new JLabel(), LayoutHelper.getGBC(20, 0, 1, 1.0D));	// spacer
 		}
 		return panelToolbar;
@@ -210,11 +215,55 @@ public class ZestScriptsPanel extends AbstractPanel {
 					ZestScript zest = getSelectedScript();
 					if (zest != null) {
 						extension.runScript(zest);
+						setButtonStates();
 					}
 				}
 			});
 		}
 		return runButton;
+	}
+	
+	private JToggleButton getPauseButton() {
+		if (pauseButton == null) {
+			pauseButton = new JToggleButton();
+			pauseButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/141.png")));	// 'pause' icon
+			pauseButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.pause"));
+			pauseButton.setEnabled(false);
+			pauseButton.setSelected(false);
+
+			pauseButton.addActionListener(new java.awt.event.ActionListener() { 
+
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					if (extension.isScriptPaused()) {
+						extension.resumeScript();
+					} else {
+						extension.pauseScript();
+					}
+					setButtonStates();
+				}
+			});
+		}
+		return pauseButton;
+	}
+	
+	private JButton getStopButton() {
+		if (stopButton == null) {
+			stopButton = new JButton();
+			stopButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/142.png")));	// 'stop' icon (blue square)
+			stopButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.stop"));
+			stopButton.setEnabled(false);
+
+			stopButton.addActionListener(new java.awt.event.ActionListener() { 
+
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					extension.stopScript();
+					setButtonStates();
+				}
+			});
+		}
+		return stopButton;
 	}
 	
 	private FileFilter getZestFilter() {
@@ -345,7 +394,18 @@ public class ZestScriptsPanel extends AbstractPanel {
 	        }
 	    } else {
 	        this.getRunButton().setEnabled(false);
+	        this.getStopButton().setEnabled(false);
 	        this.getSaveButton().setEnabled(false);
+	    }
+	    
+	    if (this.extension.isScriptRunning()) {
+	        this.getRunButton().setEnabled(false);
+	        this.getStopButton().setEnabled(true);
+	        this.getPauseButton().setEnabled(true);
+	    } else {
+	        this.getStopButton().setEnabled(false);
+	        this.getPauseButton().setEnabled(false);
+	        this.getPauseButton().setSelected(false);
 	    }
 	}
 

@@ -90,7 +90,7 @@ public class ZestAddToScriptPopupMenu extends PopupMenuSiteNode {
 		subMenus.clear();
 		ZestNode selNode = extension.getSelectedScriptsNode();
 		if (selNode != null) {
-			if (selNode.getZestElement() instanceof ZestConditional) {
+			if (selNode.getZestElement() instanceof ZestConditional && ! selNode.isCommonTest()) {
 	        	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(selNode);
 	        	piicm.setMenuIndex(this.getMenuIndex());
 				View.getSingleton().getPopupMenu().addMenu(piicm);

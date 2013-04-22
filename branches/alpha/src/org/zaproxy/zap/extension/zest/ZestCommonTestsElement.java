@@ -17,20 +17,14 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-
 package org.zaproxy.zap.extension.zest;
 
-import org.mozilla.zest.core.v1.ZestActionFailException;
-import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
+import org.mozilla.zest.core.v1.ZestElement;
 
+public class ZestCommonTestsElement extends ZestElement {
 
-public interface ZestRunnerListener {
+	public ZestElement deepCopy() {
+		return new ZestCommonTestsElement();
+	}
 
-	void notifyResponse (ZestResultWrapper href);
-	
-	void notifyActionFail (ZestActionFailException e);
-	
-	void notifyZestInvalidCommonTestFail (ZestInvalidCommonTestException e);
-
-	void notifyComplete();
 }

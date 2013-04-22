@@ -41,6 +41,7 @@ import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
+import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
 import org.mozilla.zest.core.v1.ZestJSON;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
@@ -444,25 +445,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	public void remove(ZestScriptWrapper script) {
 		this.getTreeModel().removeScript(script);
 	}
-	
-	public void update(ZestScript script, ZestStatement stmt) {
-		this.getTreeModel().update(script, stmt);
-		this.statementUpdated(stmt);
-	}
 
-	public void update(ZestStatement parent, ZestStatement child) {
+	public void update(ZestElement parent, ZestElement child) {
 		this.getTreeModel().update(parent, child);
 		this.statementUpdated(parent);
-	}
-
-	public void update(ZestRequest req, ZestAssertion assertion) {
-		this.getTreeModel().update(req, assertion);
-		this.statementUpdated(req);
-	}
-
-	public void update(ZestRequest req, ZestTransformation transformation) {
-		this.getTreeModel().update(req, transformation);
-		this.statementUpdated(req);
 	}
 
 	protected List<ZestNode> getScriptNodes() {
@@ -509,7 +495,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		}
 	}
 	
-	private void statementUpdated(ZestStatement req) {
+	private void statementUpdated(ZestElement req) {
 		ZestNode node = this.getZestNode(req);
 		if (node != null) {
 			this.scriptUpdated(this.getScriptWrapper(node), node);
@@ -655,6 +641,13 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 			}
 			this.getTreeModel().addToNode(parent, newChild);
 			this.statementUpdated(newChild);
+			
+		} else if (parent.getZestElement() instanceof ZestCommonTestsElement) {
+			ZestScript zc = (ZestScript)parent.getParent().getZestElement();
+			zc.addCommonTest(newChild);
+			this.getTreeModel().addToNode(parent, newChild);
+			this.statementUpdated(newChild);
+			
 		} else {
 			throw new IllegalArgumentException("Unexpected parent node: " + parent.getZestElement().getElementType() + " " + parent.getNodeName());
 		}
@@ -714,6 +707,35 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		runner.start();
 		
 	}
+	
+	public boolean isScriptRunning() {
+		return runner != null && ! runner.isStop();
+	}
+
+	public boolean isScriptPaused() {
+		return runner != null && runner.isPaused();
+	}
+
+	public void pauseScript() {
+		if (! this.isScriptRunning()) {
+			return;
+		}
+		this.runner.pause();
+	}
+
+	public void resumeScript() {
+		if (! this.isScriptPaused()) {
+			return;
+		}
+		this.runner.resume();
+	}
+
+	public void stopScript() {
+		if (! this.isScriptRunning()) {
+			return;
+		}
+		this.runner.stop();
+	}
 
 	@Override
 	public void notifyResponse(ZestResultWrapper href) {
@@ -748,6 +770,26 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		}
 	}
 	
+	public void notifyZestInvalidCommonTestFail (ZestInvalidCommonTestException e) {
+		if (View.isInitialised()) {
+			int lastRow = this.getZestResultsPanel().getModel().getRowCount()-1;
+			ZestResultWrapper zrw = (ZestResultWrapper)this.getZestResultsPanel().getModel().getHistoryReference(lastRow);
+			zrw.setPassed(false);
+			// TODO use toUiFailureString varient?
+			//zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
+			zrw.setMessage(e.getMessage());
+
+			this.getZestResultsPanel().getModel().fireTableRowsUpdated(lastRow, lastRow);
+			
+		} else {
+			// TODO i18n for cmdline??
+			// TODO check type first? toUiFailureString as above?
+			System.out.println("Action: failed: " + e.getMessage());
+		}
+		
+	}
+
+	
 	public void notifyAlert(Alert alert) {
 		if (View.isInitialised()) {
 			int row = this.getZestResultsPanel().getModel().getIndex(alert.getMessage());
@@ -778,6 +820,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	@Override
 	public void notifyComplete() {
 		this.runner = null;
+		if (View.isInitialised()) {
+			this.getZestScriptsPanel().setButtonStates();
+		}
 	}
 
 	public void saveScript(ZestScriptWrapper script, File file) throws IOException {
@@ -956,7 +1001,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 
 	@Override
 	public int getArrangeableListenerOrder() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

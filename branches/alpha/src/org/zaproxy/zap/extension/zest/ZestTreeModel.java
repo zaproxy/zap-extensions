@@ -52,8 +52,14 @@ class ZestTreeModel extends DefaultTreeModel {
 		// TODO Check for duplicate names (?)
 		logger.debug("addScript " + script.getTitle());
 		ZestNode zestNode = new ZestNode(script);
-		zestNode.setUserObject(script);
 		((ZestNode)this.root).add(zestNode);
+		
+		// Load "Common Tests" - these are applied to each request
+		ZestNode ctNode = new ZestNode(new ZestCommonTestsElement());
+		zestNode.add(ctNode);
+		for (ZestStatement stmt :script.getCommonTests()) {
+			this.addToNode(ctNode, stmt);
+		}
 		
 		for (ZestStatement stmt :script.getStatements()) {
 			this.addToNode(zestNode, stmt);
@@ -261,7 +267,7 @@ class ZestTreeModel extends DefaultTreeModel {
 		return getZestNode((ZestNode) this.root, element);
 	}
 
-	public void update(ZestStatement parent, ZestElement child) {
+	public void update(ZestElement parent, ZestElement child) {
 		ZestNode node = this.getZestNode(parent);
 		if (node != null) {
 			node = this.getZestNode(node, child);

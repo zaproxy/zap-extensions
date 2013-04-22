@@ -219,6 +219,9 @@ public class ZestZapUtils {
 				return Constant.messages.getString("zest.element.action.fail.title");
 			}
 			
+		} else if (za instanceof ZestCommonTestsElement) {
+			return Constant.messages.getString("zest.element.commontests");
+			
 		} else {
 			return MessageFormat.format(
 					Constant.messages.getString("zest.element.unknown"), za.getClass().getCanonicalName());
