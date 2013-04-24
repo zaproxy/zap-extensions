@@ -19,7 +19,9 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.tree.DefaultTreeModel;
 
@@ -43,19 +45,54 @@ class ZestTreeModel extends DefaultTreeModel {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = Logger.getLogger(ZestTreeModel.class);
+	
+	private ZestNode scriptsNode;
+	private ZestNode pscanNode;
 
     ZestTreeModel() {
         super(new ZestNode());
+        scriptsNode = new ZestNode(new ZestTreeElement(ZestTreeElement.Type.TARGETED_SCRIPT));
+        this.getRoot().add(scriptsNode);
+        
+        pscanNode = new ZestNode(new ZestTreeElement(ZestTreeElement.Type.PASSIVE_SCRIPT));
+        this.getRoot().add(pscanNode);
+        
+    }
+    
+    @Override
+    public ZestNode getRoot() {
+    	return (ZestNode)this.root;
+    }
+    
+    public List<ZestNode> getScriptNodes() {
+		List<ZestNode> list = new ArrayList<ZestNode>();
+		for (int i=0; i < scriptsNode.getChildCount(); i++) {
+			list.add((ZestNode)scriptsNode.getChildAt(i));
+		}
+		return list;
     }
 
-	public ZestNode addScript(ZestScriptWrapper script) {
+    public List<ZestNode> getPscanNodes() {
+		List<ZestNode> list = new ArrayList<ZestNode>();
+		for (int i=0; i < pscanNode.getChildCount(); i++) {
+			list.add((ZestNode)pscanNode.getChildAt(i));
+		}
+		return list;
+    }
+
+	public ZestNode addScript(ZestScriptWrapper script, boolean pscan) {
 		// TODO Check for duplicate names (?)
 		logger.debug("addScript " + script.getTitle());
 		ZestNode zestNode = new ZestNode(script);
-		((ZestNode)this.root).add(zestNode);
+		
+		if (pscan) {
+			this.pscanNode.add(zestNode);
+		} else {
+			this.scriptsNode.add(zestNode);
+		}
 		
 		// Load "Common Tests" - these are applied to each request
-		ZestNode ctNode = new ZestNode(new ZestCommonTestsElement());
+		ZestNode ctNode = new ZestNode(new ZestTreeElement(ZestTreeElement.Type.COMMON_TESTS));
 		zestNode.add(ctNode);
 		for (ZestStatement stmt :script.getCommonTests()) {
 			this.addToNode(ctNode, stmt);
@@ -65,7 +102,7 @@ class ZestTreeModel extends DefaultTreeModel {
 			this.addToNode(zestNode, stmt);
 		}
 		
-		this.nodeStructureChanged(this.root);
+		this.nodeStructureChanged(this.scriptsNode);
 		return zestNode;
 	}
 
@@ -208,7 +245,7 @@ class ZestTreeModel extends DefaultTreeModel {
 		parent.remove(node);
 		
 
-		if (parent.isRoot()) {
+		if (parent.getParent().isRoot()) {
 			if ((node.getZestElement() instanceof ZestScript)) {
 				logger.error("delete: unexpected child of root node: " + node.getZestElement().getClass().getCanonicalName());
 			}
@@ -333,6 +370,5 @@ class ZestTreeModel extends DefaultTreeModel {
 			
 			this.nodeStructureChanged(parent);
 		}
-		
 	}
 }

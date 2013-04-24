@@ -106,6 +106,8 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
                     	return false;
                     } else if (node.isShadow()) {
                     	// Cant move these
+                    } else if (ZestTreeElement.isSubclass(node.getZestElement(), ZestTreeElement.Type.COMMON_TESTS)) {
+                    	// Cantmove these either
                     } else if (up) {
                     	ZestNode prev = (ZestNode) node.getPreviousSibling();
                     	if (prev != null && prev.isShadow()) {
@@ -116,7 +118,6 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
                     				(node.getZestElement() instanceof ZestStatement && prev.getZestElement() instanceof ZestStatement)) {
                     			this.setEnabled(true);
                     		}
-                    		//this.setEnabled(node.getZestElement().isSameSubclass(prev.getZestElement()));
                     	}
                     } else {
                     	// Down
@@ -129,7 +130,6 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
                     				(node.getZestElement() instanceof ZestStatement && next.getZestElement() instanceof ZestStatement)) {
                     			this.setEnabled(true);
                     		}
-                    		//this.setEnabled(node.getZestElement().isSameSubclass(next.getZestElement()));
                     	}
                     }
                     

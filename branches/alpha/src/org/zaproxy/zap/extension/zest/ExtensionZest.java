@@ -33,6 +33,8 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
+import net.htmlparser.jericho.Source;
+
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFailException;
 import org.mozilla.zest.core.v1.ZestAssertLength;
@@ -49,6 +51,7 @@ import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.mozilla.zest.core.v1.ZestTransformation;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.CommandLineArgument;
@@ -60,6 +63,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.zest.dialogs.ZestRedactDialog;
 import org.zaproxy.zap.extension.zest.dialogs.ZestTokenizeDialog;
 
@@ -360,7 +364,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		if (View.isInitialised()) {
 			this.getZestScriptsPanel().refreshMessage();
 			// TODO select token tab
-			this.getZestScriptsPanel().showZestEditScriptDialog(script);
+			this.getZestScriptsPanel().showZestEditScriptDialog(script, false);
 		}
 	}
 
@@ -368,6 +372,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		ZestResponse resp = request.getResponse();
 		if (resp != null) {
 			request.setResponse(new ZestResponse(
+					request.getUrl(),
 					resp.getHeaders().replace(replace, replaceWith),
 					resp.getBody().replace(replace, replaceWith), +
 					resp.getStatusCode(),
@@ -424,9 +429,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		return this.treeModel;
 	}
 	
-	public void add (ZestScriptWrapper script) {
+	public void add (ZestScriptWrapper script, boolean pscan) {
 		logger.debug("add script " + script.getTitle());
-		ZestNode node = this.getTreeModel().addScript(script);
+		ZestNode node = this.getTreeModel().addScript(script, pscan);
 		if (View.isInitialised()) {
 			this.getZestScriptsPanel().setTabFocus();
 			this.getZestScriptsPanel().expand(node);
@@ -452,20 +457,23 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	}
 
 	protected List<ZestNode> getScriptNodes() {
-		List<ZestNode> list = new ArrayList<ZestNode>();
-		ZestNode root = (ZestNode) this.getTreeModel().getRoot();
-		for (int i=0; i < root.getChildCount(); i++) {
-			list.add((ZestNode)root.getChildAt(i));
-		}
-		return list;
+		return this.getTreeModel().getScriptNodes();
 	}
 
 	public List<ZestScriptWrapper> getScripts() {
 		List<ZestScriptWrapper> list = new ArrayList<ZestScriptWrapper>();
-		ZestNode root = (ZestNode) this.getTreeModel().getRoot();
-		for (int i=0; i < root.getChildCount(); i++) {
-			ZestNode node = (ZestNode)root.getChildAt(i);
-			if (node != null && node.getZestElement() != null && node.getZestElement() instanceof ZestScriptWrapper) {
+		for (ZestNode node : this.getTreeModel().getScriptNodes()) {
+			if (node.getZestElement() instanceof ZestScriptWrapper) {
+				list.add((ZestScriptWrapper)node.getZestElement());
+			}
+		}
+		return list;
+	}
+	
+	public List<ZestScriptWrapper> getPscanScripts() {
+		List<ZestScriptWrapper> list = new ArrayList<ZestScriptWrapper>();
+		for (ZestNode node : this.getTreeModel().getPscanNodes()) {
+			if (node.getZestElement() instanceof ZestScriptWrapper) {
 				list.add((ZestScriptWrapper)node.getZestElement());
 			}
 		}
@@ -529,6 +537,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		this.setHeaders(req, msg);
 		req.setData(msg.getRequestBody().toString());
 		req.setResponse(new ZestResponse(
+				req.getUrl(),
 				msg.getResponseHeader().toString(), 
 				msg.getResponseBody().toString(),
 				msg.getResponseHeader().getStatusCode(),
@@ -539,7 +548,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	public void addToParent(ZestNode parent, SiteNode sn, String prefix) {
 		if (parent == null) {
 			// They're gone for the 'new script' option...
-			this.getZestScriptsPanel().showZestEditScriptDialog(null, prefix);
+			this.getZestScriptsPanel().showZestEditScriptDialog(null, false, prefix);
 			this.getZestScriptsPanel().addDeferedNode(sn);
 		} else {
 			
@@ -642,7 +651,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 			this.getTreeModel().addToNode(parent, newChild);
 			this.statementUpdated(newChild);
 			
-		} else if (parent.getZestElement() instanceof ZestCommonTestsElement) {
+		} else if (ZestTreeElement.Type.COMMON_TESTS.equals(parent.getTreeType())) {
 			ZestScript zc = (ZestScript)parent.getParent().getZestElement();
 			zc.addCommonTest(newChild);
 			this.getTreeModel().addToNode(parent, newChild);
@@ -1015,7 +1024,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 			return scripts.get(0);
 		}
 		ZestScriptWrapper script = new ZestScriptWrapper("Default", "");
-		this.add(script);
+		this.add(script, false);
 		return script;
 		
 	}
