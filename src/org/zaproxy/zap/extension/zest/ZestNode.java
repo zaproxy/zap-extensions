@@ -51,6 +51,13 @@ public class ZestNode extends DefaultMutableTreeNode {
         this.setUserObject(element);
     }
     
+	public ZestNode(ZestElement element, String nodeName, boolean shadow) {
+        super();
+        this.shadow = shadow;
+        this.nodeName = nodeName;
+        this.setUserObject(element);
+    }
+    
     @Override
     public String toString() {
         return nodeName;
@@ -58,6 +65,10 @@ public class ZestNode extends DefaultMutableTreeNode {
 
 	public String getNodeName() {
 		return nodeName;
+	}
+	
+	protected void setNodeName(String name) {
+		this.nodeName = name;
 	}
 	
 	public void nameChanged() {
@@ -81,10 +92,17 @@ public class ZestNode extends DefaultMutableTreeNode {
 		this.shadow = shadow;
 	}
 	
-	public boolean isCommonTest() {
+	public ZestTreeElement.Type getTreeType () {
+		if (this.getZestElement() instanceof ZestTreeElement) {
+			return ((ZestTreeElement)this.getZestElement()).getType();
+		}
+		return null;
+	}
+	
+	public boolean isChildOf(ZestTreeElement.Type type) {
 		ZestNode node = this;
 		while (node != null) {
-			if (node.getZestElement() instanceof ZestCommonTestsElement) {
+			if (type.equals(node.getTreeType())) {
 				return true;
 			}
 			node = node.getParent();

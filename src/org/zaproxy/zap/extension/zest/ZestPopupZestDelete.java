@@ -24,7 +24,6 @@ import java.awt.Component;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.parosproxy.paros.Constant;
@@ -100,8 +99,9 @@ public class ZestPopupZestDelete extends ExtensionPopupMenuItem {
                 if (tree.getLastSelectedPathComponent() != null) {
                     ZestNode node = (ZestNode) tree.getLastSelectedPathComponent();
                     // Cant delete root, and children of root are scripts - have to close these...
-                    return (node != null && ! node.isRoot() && ! ((DefaultMutableTreeNode)node.getParent()).isRoot()
-                    		&& ! node.isShadow());
+                    return (node != null && ! node.isRoot() && ! node.getParent().isRoot()
+                    		&& ! node.isShadow() && 
+                    		! ZestTreeElement.isSubclass(node.getZestElement(), ZestTreeElement.Type.COMMON_TESTS));
                 }
             } catch (Exception e) {}
             

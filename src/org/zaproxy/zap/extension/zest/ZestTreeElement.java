@@ -21,10 +21,31 @@ package org.zaproxy.zap.extension.zest;
 
 import org.mozilla.zest.core.v1.ZestElement;
 
-public class ZestCommonTestsElement extends ZestElement {
-
-	public ZestElement deepCopy() {
-		return new ZestCommonTestsElement();
+public class ZestTreeElement extends ZestElement {
+	
+	public enum Type {TARGETED_SCRIPT, PASSIVE_SCRIPT, COMMON_TESTS};
+	
+	private Type type;
+	
+	public ZestTreeElement (Type type) {
+		this.type = type;
 	}
 
+	public ZestElement deepCopy() {
+		return new ZestTreeElement(this.type);
+	}
+
+	public Type getType() {
+		return type;
+	}
+
+	@Override
+	public boolean isSameSubclass(ZestElement ze) {
+		return ze instanceof ZestTreeElement && this.type.equals(((ZestTreeElement)ze).getType());
+	}
+	
+	public static boolean isSubclass(ZestElement ze, Type type) {
+		return ze instanceof ZestTreeElement && type.equals(((ZestTreeElement)ze).getType());
+	}
+	
 }

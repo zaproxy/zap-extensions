@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
@@ -36,6 +38,7 @@ import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestConditionRegex;
 import org.mozilla.zest.core.v1.ZestConditionResponseTime;
 import org.mozilla.zest.core.v1.ZestConditionStatusCode;
+import org.mozilla.zest.core.v1.ZestConditionURL;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
@@ -168,7 +171,42 @@ public class ZestZapUtils {
 					}
 				}
 			} else {
-				return Constant.messages.getString("zest.element.condition.status.resptime");
+				return Constant.messages.getString("zest.element.condition.resptime.title");
+			}
+			
+		} else if (za instanceof ZestConditionURL) {
+			ZestConditionURL zcu = (ZestConditionURL) za;
+			
+			StringBuilder incSb = new StringBuilder();
+			for (String str : zcu.getIncludeRegexes()) {
+				incSb.append(str);
+				incSb.append(" ");
+			}
+			String incStr = incSb.toString();
+			if (incStr.length() > 20) {
+				incStr = incStr.substring(0, 20) + "...";
+			}
+			
+			StringBuilder excSb = new StringBuilder();
+			for (String str : zcu.getExcludeRegexes()) {
+				excSb.append(str);
+				excSb.append(" ");
+			}
+			String excStr = excSb.toString();
+			if (excStr.length() > 20) {
+				excStr = excStr.substring(0, 20) + "...";
+			}
+			
+			if (incParams) {
+				if (isShadow) {
+					return MessageFormat.format(
+							Constant.messages.getString("zest.element.condition.else.url"), incStr, excStr);
+				} else {
+					return MessageFormat.format(
+							Constant.messages.getString("zest.element.condition.if.url"), incStr, excStr);
+				}
+			} else {
+				return Constant.messages.getString("zest.element.condition.url.title");
 			}
 			
 		} else if (za instanceof ZestTransformFieldReplace) {
@@ -219,13 +257,16 @@ public class ZestZapUtils {
 				return Constant.messages.getString("zest.element.action.fail.title");
 			}
 			
-		} else if (za instanceof ZestCommonTestsElement) {
-			return Constant.messages.getString("zest.element.commontests");
-			
-		} else {
-			return MessageFormat.format(
-					Constant.messages.getString("zest.element.unknown"), za.getClass().getCanonicalName());
+		} else if (za instanceof ZestTreeElement) {
+			switch (((ZestTreeElement)za).getType()) {
+			case TARGETED_SCRIPT:	return Constant.messages.getString("zest.element.targetedcript");
+			case PASSIVE_SCRIPT:	return Constant.messages.getString("zest.element.passivescript");
+			case COMMON_TESTS:		return Constant.messages.getString("zest.element.commontests");
+			}
 		}
+		
+		return MessageFormat.format(
+				Constant.messages.getString("zest.element.unknown"), za.getClass().getCanonicalName());
 	}
 	
 	public static String toUiFailureString(ZestAssertion za, ZestResponse response) {
@@ -302,6 +343,12 @@ public class ZestZapUtils {
 		msg.setTimeElapsedMillis((int)response.getResponseTimeInMs());
 		
 		return msg;
+	}
+
+	public static ZestResponse toZestResponse(HttpMessage msg) throws MalformedURLException {
+		return new ZestResponse(new URL(msg.getRequestHeader().getURI().toString()), 
+				msg.getResponseHeader().toString(), msg.getResponseBody().toString(), 
+				msg.getResponseHeader().getStatusCode(), msg.getTimeElapsedMillis());
 	}
 
 }

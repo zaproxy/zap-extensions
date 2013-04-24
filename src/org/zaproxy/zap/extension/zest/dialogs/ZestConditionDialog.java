@@ -21,11 +21,14 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.mozilla.zest.core.v1.ZestConditionRegex;
 import org.mozilla.zest.core.v1.ZestConditionResponseTime;
 import org.mozilla.zest.core.v1.ZestConditionStatusCode;
+import org.mozilla.zest.core.v1.ZestConditionURL;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
@@ -41,6 +44,8 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 	private static final String FIELD_STATUS = "zest.dialog.condition.label.status"; 
 	private static final String FIELD_GREATER_THAN = "zest.dialog.condition.label.greaterthan"; 
 	private static final String FIELD_RESP_TIME = "zest.dialog.condition.label.resptime";
+	private static final String FIELD_INC_REGEXS = "zest.dialog.condition.label.incregexes"; 
+	private static final String FIELD_EXC_REGEXS = "zest.dialog.condition.label.excregexes"; 
 
 	private static final long serialVersionUID = 1L;
 
@@ -82,10 +87,33 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 			ZestConditionResponseTime zc = (ZestConditionResponseTime)condition;
 			this.addCheckBoxField(FIELD_GREATER_THAN, zc.isGreaterThan());
 			this.addNumberField(FIELD_RESP_TIME, 0, Integer.MAX_VALUE, (int)zc.getTimeInMs());
+		} else if (condition instanceof ZestConditionURL) {
+			ZestConditionURL zc = (ZestConditionURL)condition;
+			this.addMultilineField(FIELD_INC_REGEXS, this.listToStr(zc.getIncludeRegexes()));
+			this.addMultilineField(FIELD_EXC_REGEXS, this.listToStr(zc.getExcludeRegexes()));
 		}
 		this.addPadding();
 	}
 	
+	private String listToStr(List<String> list) {
+		StringBuilder sb = new StringBuilder();
+		for (String str : list) {
+			sb.append(str);
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+
+	private List<String> strToList(String str) {
+		List<String> list = new ArrayList<String>();
+		for (String el : str.split("\n")) {
+			if (el.length() > 0) {
+				list.add(el);
+			}
+		}
+		return list;
+	}
+
 	public void save() {
 		if (condition instanceof ZestConditionRegex) {
 			ZestConditionRegex zc = (ZestConditionRegex)condition;
@@ -100,6 +128,10 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 			ZestConditionResponseTime zc = (ZestConditionResponseTime)condition;
 			zc.setGreaterThan(this.getBoolValue(FIELD_GREATER_THAN));
 			zc.setTimeInMs(this.getIntValue(FIELD_RESP_TIME));
+		} else if (condition instanceof ZestConditionURL) {
+			ZestConditionURL zc = (ZestConditionURL)condition;
+			zc.setIncludeRegexes(this.strToList(this.getStringValue(FIELD_INC_REGEXS)));
+			zc.setExcludeRegexes(this.strToList(this.getStringValue(FIELD_EXC_REGEXS)));
 		}
 
 		if (add) {
@@ -121,6 +153,18 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 			} catch (Exception e) {
 				return Constant.messages.getString("zest.dialog.condition.error.regex");
 			}
+		} else if (condition instanceof ZestConditionURL) {
+			try {
+				for (String str : this.strToList(this.getStringValue(FIELD_INC_REGEXS))) {
+					Pattern.compile(str);
+				}
+				for (String str : this.strToList(this.getStringValue(FIELD_EXC_REGEXS))) {
+					Pattern.compile(str);
+				}
+			} catch (Exception e) {
+				return Constant.messages.getString("zest.dialog.condition.error.regexes");
+			}
+				
 		}
 		return null;
 	}

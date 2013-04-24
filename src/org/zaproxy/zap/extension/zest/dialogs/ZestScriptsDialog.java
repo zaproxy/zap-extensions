@@ -60,6 +60,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 	private ExtensionZest extension = null;
 	private ZestScriptWrapper script = null;
 	private boolean add = false;
+	private boolean pscan = false;
 
 	private ScriptTokensTableModel tokensModel = null;
 
@@ -75,9 +76,10 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 		this.extension = ext;
 	}
 
-	public void init (ZestScriptWrapper script, boolean add) {
-		this.add = add;
+	public void init (ZestScriptWrapper script, boolean add, boolean pscan) {
 		this.script = script;
+		this.add = add;
+		this.pscan = pscan;
 
 		this.removeAllFields();
 		
@@ -93,32 +95,35 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 		this.getTokensModel().setValues(script.getTokens().getTokens());
 		this.addTableField(1, this.getTokensModel());
 		
-		boolean addedAuth = false;
-		if (script.getAuthentication() != null && script.getAuthentication().size() > 0) {
-			// Just support one for now
-			ZestAuthentication auth = script.getAuthentication().get(0);
-			if (auth instanceof ZestHttpAuthentication) {
-				ZestHttpAuthentication zha = (ZestHttpAuthentication) auth;
-				this.addTextField(2, FIELD_AUTH_SITE, zha.getSite());
-				this.addTextField(2, FIELD_AUTH_REALM, zha.getRealm());
-				this.addTextField(2, FIELD_AUTH_USER, zha.getUsername());
-				this.addTextField(2, FIELD_AUTH_PASSWORD, zha.getPassword());
-				this.addPadding(2);
-				addedAuth = true;
+		if (! pscan) {
+			// These fields are only relevent for full scripts, not passive scan rules
+			boolean addedAuth = false;
+			if (script.getAuthentication() != null && script.getAuthentication().size() > 0) {
+				// Just support one for now
+				ZestAuthentication auth = script.getAuthentication().get(0);
+				if (auth instanceof ZestHttpAuthentication) {
+					ZestHttpAuthentication zha = (ZestHttpAuthentication) auth;
+					this.addTextField(2, FIELD_AUTH_SITE, zha.getSite());
+					this.addTextField(2, FIELD_AUTH_REALM, zha.getRealm());
+					this.addTextField(2, FIELD_AUTH_USER, zha.getUsername());
+					this.addTextField(2, FIELD_AUTH_PASSWORD, zha.getPassword());
+					this.addPadding(2);
+					addedAuth = true;
+				}
 			}
+			if (! addedAuth) {
+				this.addTextField(2, FIELD_AUTH_SITE, "");
+				this.addTextField(2, FIELD_AUTH_REALM, "");
+				this.addTextField(2, FIELD_AUTH_USER, "");
+				this.addTextField(2, FIELD_AUTH_PASSWORD, "");
+				this.addPadding(2);
+			}
+			
+			this.addCheckBoxField(3, FIELD_STATUS, script.isIncStatusCodeAssertion());
+			this.addCheckBoxField(3, FIELD_LENGTH, script.isIncLengthAssertion());
+			this.addNumberField(3, FIELD_APPROX, 0, 100, script.getLengthApprox());
+			this.addPadding(3);
 		}
-		if (! addedAuth) {
-			this.addTextField(2, FIELD_AUTH_SITE, "");
-			this.addTextField(2, FIELD_AUTH_REALM, "");
-			this.addTextField(2, FIELD_AUTH_USER, "");
-			this.addTextField(2, FIELD_AUTH_PASSWORD, "");
-			this.addPadding(2);
-		}
-		
-		this.addCheckBoxField(3, FIELD_STATUS, script.isIncStatusCodeAssertion());
-		this.addCheckBoxField(3, FIELD_LENGTH, script.isIncLengthAssertion());
-		this.addNumberField(3, FIELD_APPROX, 0, 100, script.getLengthApprox());
-		this.addPadding(3);
 		
 		//this.requestFocus(FIELD_TITLE);
 	}
@@ -139,30 +144,34 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 		} catch (MalformedURLException e) {
 			logger.error(e.getMessage(), e);
 		}
-		script.setIncStatusCodeAssertion(this.getBoolValue(FIELD_STATUS));
-		script.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
-		script.setLengthApprox(this.getIntValue(FIELD_APPROX));
 		
-		Map<String, String> tokens = new HashMap<String, String>();
-		for (String[] nv : getTokensModel().getValues()) {
-			tokens.put(nv[0], nv[1]);
-		}
-		
-		script.getTokens().setTokens(tokens);
-		
-		// Just support one auth for now
-		script.setAuthentication(new ArrayList<ZestAuthentication>());
-		if (! this.isEmptyField(FIELD_AUTH_SITE)) {
-			ZestHttpAuthentication zha = new ZestHttpAuthentication();
-			zha.setSite(this.getStringValue(FIELD_AUTH_SITE));
-			zha.setRealm(this.getStringValue(FIELD_AUTH_REALM));
-			zha.setUsername(this.getStringValue(FIELD_AUTH_USER));
-			zha.setPassword(this.getStringValue(FIELD_AUTH_PASSWORD));
-			script.addAuthentication(zha);
+		if (! pscan) {
+			script.setIncStatusCodeAssertion(this.getBoolValue(FIELD_STATUS));
+			script.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
+			script.setLengthApprox(this.getIntValue(FIELD_APPROX));
+			
+			Map<String, String> tokens = new HashMap<String, String>();
+			for (String[] nv : getTokensModel().getValues()) {
+				tokens.put(nv[0], nv[1]);
+			}
+			
+			script.getTokens().setTokens(tokens);
+			
+			// Just support one auth for now
+			script.setAuthentication(new ArrayList<ZestAuthentication>());
+			if (! this.isEmptyField(FIELD_AUTH_SITE)) {
+				ZestHttpAuthentication zha = new ZestHttpAuthentication();
+				zha.setSite(this.getStringValue(FIELD_AUTH_SITE));
+				zha.setRealm(this.getStringValue(FIELD_AUTH_REALM));
+				zha.setUsername(this.getStringValue(FIELD_AUTH_USER));
+				zha.setPassword(this.getStringValue(FIELD_AUTH_PASSWORD));
+				script.addAuthentication(zha);
+			}
 		}
 
 		if (add) {
-			extension.add(script);
+			
+			extension.add(script, this.pscan);
 			// Add any defered and nodes
 			for (SiteNode sn : deferedSiteNodes) {
 				logger.debug("Adding defered node: " + sn.getNodeName());

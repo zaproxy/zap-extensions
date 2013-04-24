@@ -28,9 +28,11 @@ import java.util.regex.Pattern;
 
 import javax.swing.JTree;
 
+import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestConditionRegex;
 import org.mozilla.zest.core.v1.ZestConditionResponseTime;
 import org.mozilla.zest.core.v1.ZestConditionStatusCode;
+import org.mozilla.zest.core.v1.ZestConditionURL;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestRequest;
@@ -46,6 +48,8 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 
 	private ExtensionZest extension;
     private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
+
+	private static final Logger logger = Logger.getLogger(ZestAddConditionPopupMenu.class);
 
 	/**
 	 * This method initializes 
@@ -82,18 +86,23 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
                 JTree tree = (JTree) invoker;
                 if (tree.getLastSelectedPathComponent() != null) {
                     ZestNode node = (ZestNode) tree.getLastSelectedPathComponent();
-                    if (node != null && node.getZestElement() instanceof ZestRequest) {
-                    	reCreateSubMenu(node.getParent(), (ZestRequest) node.getZestElement(), "BODY", "");
-                    	return true;
-                    } else if (node != null && node.getZestElement() instanceof ZestContainer) {
-                    	reCreateSubMenu(node, null, "BODY", "");
-                    	return true;
-                    } else if (node != null && node.getZestElement() instanceof ZestCommonTestsElement) {
-                    	reCreateSubMenu(node, null, "BODY", "");
-                    	return true;
+                    if (node != null) {
+	                    if (node.getZestElement() instanceof ZestRequest) {
+	                    	reCreateSubMenu(node.getParent(), (ZestRequest) node.getZestElement(), "BODY", "");
+	                    	return true;
+	                    } else if (node.getZestElement() instanceof ZestContainer &&
+	                    		! ZestTreeElement.isSubclass(node.getParent().getZestElement(), ZestTreeElement.Type.PASSIVE_SCRIPT)) {
+	                    	reCreateSubMenu(node, null, "BODY", "");
+	                    	return true;
+	                    } else if (ZestTreeElement.Type.COMMON_TESTS.equals(node.getTreeType())) {
+	                    	reCreateSubMenu(node, null, "BODY", "");
+	                    	return true;
+	                    }
                     }
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            	logger.error(e.getMessage(), e);
+            }
         } else if (invoker instanceof HttpPanelSyntaxHighlightTextArea) {
 			HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;
 			ZestNode node = extension.getSelectedScriptsNode();
@@ -123,6 +132,7 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 		createPopupAddActionMenu (script, stmt, new ZestConditionRegex(loc, text));
 		createPopupAddActionMenu (script, stmt, new ZestConditionStatusCode());
 		createPopupAddActionMenu (script, stmt, new ZestConditionResponseTime());
+		createPopupAddActionMenu (script, stmt, new ZestConditionURL());
 	}
 
     private void createPopupAddActionMenu(final ZestNode parent, final ZestStatement stmt, final ZestConditional za) {

@@ -81,12 +81,16 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
                 JTree tree = (JTree) invoker;
                 if (tree.getLastSelectedPathComponent() != null) {
                     ZestNode node = (ZestNode) tree.getLastSelectedPathComponent();
-                    if (node != null && node.getZestElement() instanceof ZestRequest) {
-                    	reCreateSubMenu(node.getParent(), (ZestRequest) node.getZestElement(), null);
-                    	return true;
-                    } else if (node != null && node.getZestElement() instanceof ZestContainer) {
-                    	reCreateSubMenu(node, null, null);
-                    	return true;
+                    
+                    if (node != null) {
+	                    if (node.getZestElement() instanceof ZestRequest) {
+	                    	reCreateSubMenu(node.getParent(), (ZestRequest) node.getZestElement(), null);
+	                    	return true;
+	                    } else if (node.getZestElement() instanceof ZestContainer &&
+	                    		! ZestTreeElement.isSubclass(node.getParent().getZestElement(), ZestTreeElement.Type.PASSIVE_SCRIPT)) {
+	                    	reCreateSubMenu(node, null, null);
+	                    	return true;
+	                    }
                     }
                 }
             } catch (Exception e) {}
@@ -109,8 +113,8 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
     }
 
     private void reCreateSubMenu(ZestNode parent, ZestRequest req, String text) {
-    	// Can only add 'fail' actions under Common Tests
-    	if (! parent.isCommonTest()) {
+    	if (! ZestTreeElement.Type.COMMON_TESTS.equals(parent.getTreeType()) &&
+    			! parent.isChildOf(ZestTreeElement.Type.PASSIVE_SCRIPT)) {
     		createPopupAddActionMenu (parent, req, new ZestActionScan(text));
     		createPopupAddActionMenu (parent, req, new ZestActionSetToken("", ZestActionSetToken.LOC_BODY, text, text));
     	}
