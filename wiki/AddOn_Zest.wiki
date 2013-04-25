@@ -13,9 +13,9 @@ For more details see:
 
 == The ZAP Zest Add-on==
 
-This add-on allows you to create, edit and run Zest scripts.
+This add-on allows you to create, edit, and run Zest scripts.
 
-Note that this add-on will not work with ZAP 2.0.0 - you must either use at least ZAP 2.1.0
+Note that this add-on will not work with ZAP 2.0.0 - you must use at least ZAP 2.1.0.
 
 It is alpha status, and currently has limited help - more will be added soon.
 
