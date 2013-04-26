@@ -147,7 +147,7 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 				logger.debug("Frame header of newly created WebSocketFrame: " + getByteAsBitString(frameHeader));
 
 				if (payloadLength < PAYLOAD_LENGTH_16) {
-					buffer.put((byte) ((isMasked ? 0x80 : 0x00) | (payloadLength & 0xDF)));
+					buffer.put((byte) ((isMasked ? 0x80 : 0x00) | (payloadLength & 0x7F)));
 				} else if (payloadLength < 65536) {
 					buffer.put((byte) ((isMasked ? 0x80 : 0x00) | PAYLOAD_LENGTH_16));
 					buffer.putShort((short) payloadLength);
