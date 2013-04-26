@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>3</version>
+	<version>4</version>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for ZAP 2.1.0</changes>
+	<changes>Fix Issue 2: setting payload for modified WebSocket messages was erroneous</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.websocket.ExtensionWebSocket</extension>
