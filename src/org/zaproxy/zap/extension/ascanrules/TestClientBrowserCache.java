@@ -39,11 +39,11 @@ import org.parosproxy.paros.network.HttpStatusCode;
 public class TestClientBrowserCache extends AbstractAppPlugin {
 
     
-    public final static Pattern patternNoCache	= Pattern.compile("\\QNo-cache\\E|\\QNo-store\\E", PATTERN_PARAM);
+    public static final Pattern patternNoCache	= Pattern.compile("\\QNo-cache\\E|\\QNo-store\\E", PATTERN_PARAM);
 
 	// <meta http-equiv="Pragma" content="no-cache">
 	// <meta http-equiv="Cache-Control" content="no-cache">
-	public final static Pattern patternHtmlNoCache = Pattern.compile("<META[^>]+(Pragma|\\QCache-Control\\E)[^>]+(\\QNo-cache\\E|\\QNo-store\\E)[^>]*>", PATTERN_PARAM);
+	public static final Pattern patternHtmlNoCache = Pattern.compile("<META[^>]+(Pragma|\\QCache-Control\\E)[^>]+(\\QNo-cache\\E|\\QNo-store\\E)[^>]*>", PATTERN_PARAM);
 
     @Override
     public int getId() {
