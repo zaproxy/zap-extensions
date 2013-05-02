@@ -305,7 +305,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             	}
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);;
+            log.error(e.getMessage(), e);
         }
     }
     
