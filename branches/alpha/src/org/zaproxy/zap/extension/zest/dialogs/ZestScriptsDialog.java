@@ -31,6 +31,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAuthentication;
 import org.mozilla.zest.core.v1.ZestHttpAuthentication;
+import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.model.SiteNode;
@@ -144,8 +145,11 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 		} catch (MalformedURLException e) {
 			logger.error(e.getMessage(), e);
 		}
-		
-		if (! pscan) {
+
+		if (pscan) {
+			script.setType(ZestScript.Type.Passive);
+		} else {
+			script.setType(ZestScript.Type.Targeted);
 			script.setIncStatusCodeAssertion(this.getBoolValue(FIELD_STATUS));
 			script.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
 			script.setLengthApprox(this.getIntValue(FIELD_APPROX));
@@ -171,7 +175,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 
 		if (add) {
 			
-			extension.add(script, this.pscan);
+			extension.add(script);
 			// Add any defered and nodes
 			for (SiteNode sn : deferedSiteNodes) {
 				logger.debug("Adding defered node: " + sn.getNodeName());

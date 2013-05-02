@@ -149,7 +149,6 @@ public class ZestScriptsPanel extends AbstractPanel {
 		return panelToolbar;
 	}
 
-	// TODO load passive scripts as well
 	private JButton getLoadButton() {
 		if (loadButton == null) {
 			loadButton = new JButton();
@@ -159,7 +158,7 @@ public class ZestScriptsPanel extends AbstractPanel {
 			loadButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					loadScript(false);
+					loadScript();
 				}
 			});
 		}
@@ -193,7 +192,7 @@ public class ZestScriptsPanel extends AbstractPanel {
 			newScriptButton = new JButton();
 			newScriptButton.setIcon(new ImageIcon(
 					ZestScriptsPanel.class.getResource("/org/zaproxy/zap/extension/zest/resource/zest-script-add.png")));
-			newScriptButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.new"));
+			newScriptButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.new.targeted"));
 			
 			newScriptButton.addActionListener(new java.awt.event.ActionListener() { 
 
@@ -211,7 +210,7 @@ public class ZestScriptsPanel extends AbstractPanel {
 			newPscanButton = new JButton();
 			newPscanButton.setIcon(new ImageIcon(
 					ZestScriptsPanel.class.getResource("/org/zaproxy/zap/extension/zest/resource/zest-pscan-add.png")));
-			newPscanButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.new"));
+			newPscanButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.new.passive"));
 			
 			newPscanButton.addActionListener(new java.awt.event.ActionListener() { 
 
@@ -350,7 +349,7 @@ public class ZestScriptsPanel extends AbstractPanel {
 		}
 	}
 	
-	private void loadScript(boolean pscan) {
+	private void loadScript() {
 		String dir = Model.getSingleton().getOptionsParam().getUserDirectory().getAbsolutePath();
 		
 	    JFileChooser chooser = new JFileChooser(dir);
@@ -365,7 +364,7 @@ public class ZestScriptsPanel extends AbstractPanel {
     	    try {
         		ZestScriptWrapper script = extension.loadScript(file);
         		if (script != null) {
-        			extension.add(script, pscan);
+        			extension.add(script);
         		}
 
             } catch (Exception e) {
@@ -406,10 +405,11 @@ public class ZestScriptsPanel extends AbstractPanel {
 	protected void setButtonStates() {
 	    ZestNode node = (ZestNode) tree.getLastSelectedPathComponent();
 	    if (node != null && node.getZestElement() != null &&
-	    		! node.getParent().isRoot() &&
-	    		node.isChildOf(ZestTreeElement.Type.TARGETED_SCRIPT)) {
+	    		! node.getParent().isRoot()) {
 	    	// Only enable if a targeted script has been selected
-	        this.getRunButton().setEnabled(true);
+	    	if (node.isChildOf(ZestTreeElement.Type.TARGETED_SCRIPT)) {
+	    		this.getRunButton().setEnabled(true);
+	    	}
 	        // Only enable the save button if the script has been updated
 	        while (node != null) {
 	        	if (node.getZestElement() instanceof ZestScriptWrapper) {
@@ -590,7 +590,7 @@ public class ZestScriptsPanel extends AbstractPanel {
 			return;
 		}
 		if (script == null) {
-			script = new ZestScriptWrapper("", "");
+			script = new ZestScriptWrapper("", "", pscan ? ZestScript.Type.Passive : ZestScript.Type.Targeted);
 			try {
 				script.setPrefix(prefix);
 			} catch (MalformedURLException e) {

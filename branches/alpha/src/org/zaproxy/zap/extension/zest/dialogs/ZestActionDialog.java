@@ -43,6 +43,9 @@ public class ZestActionDialog extends StandardFieldsDialog {
 	private static final String FIELD_TOKEN = "zest.dialog.action.label.token";
 	private static final String FIELD_PREFIX = "zest.dialog.action.label.prefix";
 	private static final String FIELD_POSTFIX = "zest.dialog.action.label.postfix";
+	private static final String FIELD_PRIORITY = "zest.dialog.action.label.priority";
+
+	private static final String PRIORITY_PREFIX = "zest.dialog.action.priority.";
 
 	private static final long serialVersionUID = 1L;
 
@@ -93,8 +96,33 @@ public class ZestActionDialog extends StandardFieldsDialog {
 		} else if (action instanceof ZestActionFail) {
 			ZestActionFail za = (ZestActionFail) action;
 			this.addTextField(FIELD_MESSAGE, za.getMessage());
+			String [] priorities = { 
+					priorityToStr(ZestActionFail.Priority.INFO),
+					priorityToStr(ZestActionFail.Priority.LOW),
+					priorityToStr(ZestActionFail.Priority.MEDIUM),
+					priorityToStr(ZestActionFail.Priority.HIGH)
+			};
+			if (za.getPriority() == null) {
+				this.addComboField(FIELD_PRIORITY, priorities, priorityToStr(ZestActionFail.Priority.HIGH));
+			} else {
+				this.addComboField(FIELD_PRIORITY, priorities, 
+						priorityToStr(ZestActionFail.Priority.valueOf(za.getPriority())));
+			}
 		}
 		this.addPadding();
+	}
+	
+	private String priorityToStr(ZestActionFail.Priority priority) {
+		return Constant.messages.getString(PRIORITY_PREFIX + priority.name().toLowerCase());
+	}
+	
+	private ZestActionFail.Priority strToPriority(String str) {
+		for (ZestActionFail.Priority p : ZestActionFail.Priority.values()) {
+			if (this.priorityToStr(p).equals(str)) {
+				return p;
+			}
+		}
+		return null;
 	}
 	
 	private List<String> getParamNames(String data) {
@@ -126,6 +154,7 @@ public class ZestActionDialog extends StandardFieldsDialog {
 		} else if (action instanceof ZestActionFail) {
 			ZestActionFail za = (ZestActionFail) action;
 			za.setMessage(this.getStringValue(FIELD_MESSAGE));
+			za.setPriority(this.strToPriority(this.getStringValue(FIELD_PRIORITY)));
 		}
 
 		if (add) {
