@@ -102,13 +102,26 @@ class ZestTreeModel extends DefaultTreeModel {
 			this.addToNode(zestNode, stmt);
 		}
 		
-		this.nodeStructureChanged(this.scriptsNode);
+		if (ZestScript.Type.Passive.name().equals(script.getType())) {
+			this.nodeStructureChanged(this.pscanNode);
+		} else {
+			this.nodeStructureChanged(this.scriptsNode);
+		}
 		return zestNode;
+	}
+	
+	private ZestNode getParent(ZestScriptWrapper script) {
+		if (ZestScript.Type.Passive.name().equals(script.getType())) {
+			return this.pscanNode;
+		} else {
+			return this.scriptsNode;
+		}
 	}
 
 	public void update(ZestScriptWrapper script) {
+		ZestNode parent = this.getParent(script);
 		@SuppressWarnings("unchecked")
-		Enumeration<ZestNode> en = this.root.children();
+		Enumeration<ZestNode> en = parent.children();
 		while (en.hasMoreElements()) {
 			ZestNode zn = en.nextElement();
 			if (script.equals(zn.getZestElement())) {
@@ -122,20 +135,22 @@ class ZestTreeModel extends DefaultTreeModel {
 				break;
 			}
 		}
-		this.nodeStructureChanged(this.root);
+		this.nodeStructureChanged(parent);
 	}
     
+	@SuppressWarnings("unchecked")
 	public void removeScript(ZestScriptWrapper script) {
-		@SuppressWarnings("unchecked")
-		Enumeration<ZestNode> en = this.root.children();
+		ZestNode parent = this.getParent(script);
+		Enumeration<ZestNode> en = parent.children();
+		
 		while (en.hasMoreElements()) {
 			ZestNode zn = en.nextElement();
 			if (script.equals(zn.getZestElement())) {
-				((ZestNode)root).remove(zn);
+				parent.remove(zn);
 				break;
 			}
 		}
-		this.nodeStructureChanged(this.root);
+		this.nodeStructureChanged(parent);
 	}
     
 	public ZestNode addToNode(ZestNode node, ZestRequest req) {

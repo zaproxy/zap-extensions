@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Zest - Scripting Security Tests</name>
-	<version>5</version>
+	<version>6</version>
 	<description>Allows you to create and run scripts for reproducing security issues.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Load and save passive scripts and added fail priorities</changes>
+	<changes>Load and save passive scripts, added fail priorities, fixed some related bugs</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.zest.ExtensionZest</extension>
