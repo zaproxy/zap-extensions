@@ -31,8 +31,12 @@ public class ZestScriptWrapper extends ZestScript {
 	private int lengthApprox = 1;
 	private boolean updated = false;
 
-	public ZestScriptWrapper(String title, String description) {
-		super(title, description);
+	public ZestScriptWrapper(String title, String description, String type) {
+		super(title, description, type);
+	}
+
+	public ZestScriptWrapper(String title, String description, ZestScript.Type type) {
+		super(title, description, type);
 	}
 
 	public ZestScriptWrapper(ZestScript script) {

@@ -80,12 +80,12 @@ class ZestTreeModel extends DefaultTreeModel {
 		return list;
     }
 
-	public ZestNode addScript(ZestScriptWrapper script, boolean pscan) {
+	public ZestNode addScript(ZestScriptWrapper script) {
 		// TODO Check for duplicate names (?)
 		logger.debug("addScript " + script.getTitle());
 		ZestNode zestNode = new ZestNode(script);
 		
-		if (pscan) {
+		if (ZestScript.Type.Passive.name().equals(script.getType())) {
 			this.pscanNode.add(zestNode);
 		} else {
 			this.scriptsNode.add(zestNode);

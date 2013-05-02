@@ -25,6 +25,7 @@ import java.util.List;
 import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
+import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestActionFailException;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestStatement;
@@ -104,6 +105,19 @@ public class ZestPassiveScanner extends PluginPassiveScanner {
 		alert.setMessage(msg);
 		alert.setUri(msg.getRequestHeader().getURI().toString());
 		alert.setDescription(script.getDescription());
+		
+		if (afe.getAction() instanceof ZestActionFail) {
+			ZestActionFail zaf = (ZestActionFail)afe.getAction();
+			if (ZestActionFail.Priority.INFO.name().equals(zaf.getPriority())) {
+				alert.setRiskReliability(Alert.RISK_INFO, Alert.WARNING);
+			} else if (ZestActionFail.Priority.LOW.name().equals(zaf.getPriority())) {
+				alert.setRiskReliability(Alert.RISK_LOW, Alert.WARNING);
+			} else if (ZestActionFail.Priority.MEDIUM.name().equals(zaf.getPriority())) {
+				alert.setRiskReliability(Alert.RISK_MEDIUM, Alert.WARNING);
+			} else if (ZestActionFail.Priority.HIGH.name().equals(zaf.getPriority())) {
+				alert.setRiskReliability(Alert.RISK_HIGH, Alert.WARNING);
+			}
+		}
 		parent.raiseAlert(this.getId(), alert);
 		
 	}
