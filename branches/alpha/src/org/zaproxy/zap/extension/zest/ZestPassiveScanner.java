@@ -43,6 +43,7 @@ public class ZestPassiveScanner extends PluginPassiveScanner {
 	private ExtensionZest extension = null;
 	private PassiveScanThread parent = null;
 	private ZestPassiveRunner runner = null;
+	private String name = null;
 	
 	private Logger logger = Logger.getLogger(ZestPassiveScanner.class);
 
@@ -52,7 +53,11 @@ public class ZestPassiveScanner extends PluginPassiveScanner {
 	
 	@Override
 	public String getName() {
-		return Constant.messages.getString("zest.passivescanner.title");
+		if (name == null) {
+			// Cache to prevent an NPE when unloaded
+			name = Constant.messages.getString("zest.passivescanner.title");
+		}
+		return name;
 	}
 
 	private ExtensionZest getExtension() {
