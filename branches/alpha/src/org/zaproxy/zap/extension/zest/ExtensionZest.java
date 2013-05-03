@@ -34,6 +34,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
+import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestActionFailException;
 import org.mozilla.zest.core.v1.ZestAssertLength;
 import org.mozilla.zest.core.v1.ZestAssertStatusCode;
@@ -87,6 +88,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	private ZestPopupZestDelete popupZestDelete = null;
 	private ZestPopupZestMove popupZestMoveUp = null;
 	private ZestPopupZestMove popupZestMoveDown = null;
+	
+	private ZestPopupNodeCopyOrCut popupNodeCopy = null;
+	private ZestPopupNodeCopyOrCut popupNodeCut = null;
+	private ZestPopupNodePaste popupNodePaste = null;
+	
 	private ZestOriginalRequestPopupMenu redactRequestPopupMenu = null;
 	private ZestOriginalRequestPopupMenu tokenizePopupMenu = null;
 	private ZestScript lastRunScript = null;
@@ -94,8 +100,13 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	private ZestTokenizeDialog tokenizeDialog = null;
 	
 	//private ZestReqRespPopupMenu popupReqRespMenu = null;
-	
+
 	private ZestRunnerThread runner = null;
+
+	// Cut-n-paste stuff
+	private List<ZestNode> cnpNodes = null;
+	private boolean cutNodes = false;
+
 
 	private CommandLineArgument[] arguments = new CommandLineArgument[1];
     private static final int ARG_ZEST_IDX = 0;
@@ -142,6 +153,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 			
 			extensionHook.getHookMenu().addPopupMenuItem(getCompareResponsePopupMenu());
 			
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupNodeCut ());
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupNodeCopy ());
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupNodePaste ());
+
             extensionHook.getHookMenu().addPopupMenuItem(getPopupZestMoveUp ());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupZestMoveDown ());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupZestClose ());
@@ -252,6 +267,28 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		}
 		return popupZestMoveDown;
 	}
+	
+	private ZestPopupNodeCopyOrCut getPopupNodeCopy () {
+		if (popupNodeCopy == null) {
+			popupNodeCopy = new ZestPopupNodeCopyOrCut(this, false);
+		}
+		return popupNodeCopy;
+	}
+	
+	private ZestPopupNodeCopyOrCut getPopupNodeCut () {
+		if (popupNodeCut == null) {
+			popupNodeCut = new ZestPopupNodeCopyOrCut(this, true);
+		}
+		return popupNodeCut;
+	}
+	
+	private ZestPopupNodePaste getPopupNodePaste () {
+		if (popupNodePaste == null) {
+			popupNodePaste = new ZestPopupNodePaste(this);
+		}
+		return popupNodePaste;
+	}
+
 
 	private ZestPopupZestClose getPopupZestClose () {
 		if (popupZestClose == null) {
@@ -1052,4 +1089,68 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		}
 		return true;
 	}
+	
+	public void setCnpNodes(List<ZestNode> cnpNodes) {
+		this.cnpNodes = cnpNodes;
+	}
+
+	public void setCut(boolean cut) {
+		this.cutNodes = cut;
+	}
+
+	public void pasteToNode(ZestNode parent) {
+		if (this.cnpNodes != null) {
+			for (ZestNode node : this.cnpNodes) {
+				this.addToParent(parent, ((ZestStatement) node.getZestElement()).deepCopy());
+				if (cutNodes) {
+					this.delete(node);
+				}
+			}
+		}
+	}
+	
+	private boolean canPasteIntoPassiveElement(ZestNode node) {
+		if ( ! (node.getZestElement() instanceof ZestConditional) &&
+				! (node.getZestElement() instanceof ZestActionFail)) {
+			return false;
+		}
+		for (int i=0; i < node.getChildCount(); i++) {
+			if (! canPasteIntoPassiveElement((ZestNode)node.getChildAt(i))) {
+				return false;
+			}
+		}
+		if ( node.getNextSibling() != null &&
+				((ZestNode)node.getNextSibling()).isShadow()) {
+			// The next node is a shadow one, eg an else node - need to check this too
+			if (! canPasteIntoPassiveElement(((ZestNode)node.getNextSibling()))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean canPasteNodesTo(ZestNode node) {
+		if (this.cnpNodes == null) {
+			return false;
+		}
+		boolean isPassive = false;
+		if (node.isChildOf(ZestTreeElement.Type.COMMON_TESTS)) {
+			isPassive = true;
+		} else if (node.isChildOf(ZestTreeElement.Type.PASSIVE_SCRIPT)) {
+			// Can only paste into common section of passive scripts
+			return false;
+		}
+		
+		for (ZestNode cnpNode : this.cnpNodes) {
+			if (cnpNode.isNodeDescendant(node)) {
+				// Cant paste into a descendant of one of the cut/copied nodes
+				return false;
+			}
+			if (isPassive && ! this.canPasteIntoPassiveElement(cnpNode)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }
