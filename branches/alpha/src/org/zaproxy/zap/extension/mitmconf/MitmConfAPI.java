@@ -18,10 +18,8 @@
  */
 package org.zaproxy.zap.extension.mitmconf;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import net.sf.json.JSONObject;
 
@@ -36,7 +34,7 @@ import org.zaproxy.zap.extension.api.ApiOther;
 
 public class MitmConfAPI extends ApiImplementor {
 
-	private static Logger log = Logger.getLogger(MitmConfAPI.class);
+	private static Logger logger = Logger.getLogger(MitmConfAPI.class);
 
 	private static final String PREFIX = "mitm";
 
@@ -47,8 +45,6 @@ public class MitmConfAPI extends ApiImplementor {
 	private static final String PROXY_PAC = "/proxy.pac";
 	private static final String ROOT_CERT = "/OTHER/core/other/rootcert/";
 	private static final String FIREFOX_ADDON = "OTHER/" + PREFIX + "/other/" + OTHER_FIREFOX_ADDON;
-
-	private Logger logger = Logger.getLogger(this.getClass());
 
 	public MitmConfAPI() {
 		
@@ -167,74 +163,40 @@ public class MitmConfAPI extends ApiImplementor {
 			
 		} else if (OTHER_FIREFOX_ADDON.equals(name)) {
 			InputStream in = null;
-				try {
-					// TODO - this isnt working yet!
-					// Looks ok in zap file, so write to disk and check?
-					
-					in = this.getClass().getResourceAsStream("resource/gclimitm.xpi");
+			try {
+				in = this.getClass().getResourceAsStream("resource/gclimitm.xpi");
 
-					// System.out.println("Bytes available? : " + in.available());
+				int numRead=0;
+				int length = 0;
+                byte[] buf = new byte[1024];
+                while((numRead = in.read(buf)) != -1){
+                	msg.getResponseBody().append(buf, numRead);
+                	length += numRead;
+                }
 
-					int totalLength = 0;
-					int numRead=0;
-
-					long length = in.available();
-					byte[] bytes = new byte[(int) length];
-					in.read(bytes);
-					String file = new String(bytes);
-					
-					msg.setRequestBody(file);
-	                //msg.setResponseBody(bytes.length);
-	                //totalLength = bytes.length;
-					
-
-/*					
-	                byte[] buf = new byte[1024];
-	                while((numRead = in.read(buf)) != -1){
-	                	msg.getRequestBody().append(buf, numRead);
-	                	//sb.a.append(str, offset, len).append(buf, numRead);
-	                	totalLength += numRead;
-	                }
-* /	                
-	                
-					StringBuilder sb = new StringBuilder();
-	                char[] cbuf = new char[1024];
-	                InputStreamReader r = new InputStreamReader(in);
-	                while((numRead = r.read(cbuf)) != -1){
-	                	sb.append(cbuf, 0, numRead);
-	                	//sb.a.append(str, offset, len).append(buf, numRead);
-	                	//totalLength += numRead;
-	                }
-	                msg.setResponseBody(sb.toString());
-	                totalLength = sb.length();
-*/	                
-	                
-					//System.out.println("Wrote # bytes? : " + totalLength);
-
-
-					msg.setResponseHeader(
-							"HTTP/1.1 200 OK\r\n" +
-							"Pragma: no-cache\r\n" +
-							"Cache-Control: no-cache\r\n" + 
-							"Access-Control-Allow-Origin: *\r\n" + 
-							"Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n" + 
-							"Access-Control-Allow-Headers: ZAP-Header\r\n" + 
-							//"Content-Length: " + totalLength + 
-							"\r\nContent-Type: application/octet-stream");
-					
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-					throw new ApiException(ApiException.Type.INTERNAL_ERROR);
-				} finally {
-					if (in != null) {
-						try {
-							in.close();
-						} catch (IOException e) {
-							// Ignore
-						}
+				msg.setResponseHeader(
+						"HTTP/1.1 200 OK\r\n" +
+						"Content-Type: application/x-xpinstall" +
+						"Accept-Ranges: byte" +
+						"Pragma: no-cache\r\n" +
+						"Cache-Control: no-cache\r\n" + 
+						"Access-Control-Allow-Origin: *\r\n" + 
+						"Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n" + 
+						"Access-Control-Allow-Headers: ZAP-Header\r\n" + 
+						"Content-Length: " + length + "\r\n"); 
+				
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+				throw new ApiException(ApiException.Type.INTERNAL_ERROR);
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						// Ignore
 					}
 				}
-				//System.out.println("Real Response size : " + msg.getResponseBody().getBytes().length);
+			}
 			
 			return msg;
 		} else {
@@ -256,16 +218,5 @@ public class MitmConfAPI extends ApiImplementor {
 		}
 		throw new ApiException (ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
 	}
-
-	private String getPacFile(String host, int port) {
-		// Could put in 'ignore urls'?
-		StringBuilder sb = new StringBuilder();
-		sb.append("function FindProxyForURL(url, host) {\n");
-		sb.append("  return \"PROXY " + host + ":" + port + "\";\n");
-		sb.append("} // End of function\n");
-		
-		return sb.toString();
-	}
-
 
 }
