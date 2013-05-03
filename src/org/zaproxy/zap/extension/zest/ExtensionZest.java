@@ -170,20 +170,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
         extensionHook.addCommandLine(getCommandLineArguments());
 
 	}
-	/*
+
     @Override
 	public boolean canUnload() {
     	return true;
     }
-	
-    @Override
-	public void unload() {
-	    if (getView() != null) {
-	    	Control.getSingleton().getExtensionLoader().removeWorkPanel(getConsolePanel());
-	    	Control.getSingleton().getExtensionLoader().removeToolsMenuItem(getMenuConsoleLink());
-	    }
-	}
-*/
 	
     private CommandLineArgument[] getCommandLineArguments() {
         arguments[ARG_ZEST_IDX] = new CommandLineArgument("-zest", 1, null, "", "-zest [zest_script_path]: DESC TBA and TBI.");
