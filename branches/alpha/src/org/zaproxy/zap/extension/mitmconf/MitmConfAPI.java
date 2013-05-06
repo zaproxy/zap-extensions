@@ -129,27 +129,26 @@ public class MitmConfAPI extends ApiImplementor {
 
 				sb.append("  <div id=\"messages\">\n");
 				sb.append("    <div id=\"setup\" style=\"display:none\">\n");
-				sb.append("      Here's some content to show when you want to get the user to install the\n");
-				sb.append("      XPI (or maybe get a browser that supports mitm setup).\n");
-				sb.append("<b>The Firefox add-on is at: <a href=\"" + firefoxAddonUrl + "\">" + firefoxAddonUrl + "</a> </b><br>");
+				sb.append("      <p>Your browser does not seem to support automatic man-in-the-middle configuration</p>\n");
+				sb.append("      <p>If you are using a recent version of Firefox, you can install the get the addon here:\n");
+				sb.append("<b><a href=\"" + firefoxAddonUrl + "\">" + firefoxAddonUrl + "</a> </b></p>");
 				sb.append("    </div>\n");
 				sb.append("    <div id=\"in_progress\" style=\"display:none\">\n");
-				sb.append("      Configuring...\n");
+				sb.append("      <p>Configuring your browser to work with your man-in-the-middle proxy...</p>\n");
 				sb.append("    </div>\n");
 				sb.append("    <div id=\"success\" style=\"display:none\">\n");
-				sb.append("      We have success!!!\n");
+				sb.append("      <p>Configuration succeeded!</p>\n");
 				sb.append("    </div>\n");
 				sb.append("    <div id=\"failure\" style=\"display:none\">\n");
-				sb.append("      Oh noes!\n");
+				sb.append("      <p>Configuration failed</p>\n");
 				sb.append("    </div>\n");
 				sb.append("    <div id=\"activated\" style=\"display:none\">\n");
-				sb.append("      mitm support has been activated in your browser.\n");
+				sb.append("      <p>mitm support has been activated in your browser:</p>\n");
 				sb.append("    </div>\n");
 				sb.append("    <div id=\"actions\">\n");
 				sb.append("      <p>\n");
 				sb.append("      <button id=\"btn\">Click to setup!</button>\n");
 				sb.append("      </p>\n");
-				sb.append("    </button>\n");
 				sb.append("  </div>\n");
 				// TODO
 
