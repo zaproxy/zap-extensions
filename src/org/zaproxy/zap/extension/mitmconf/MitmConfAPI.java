@@ -20,9 +20,12 @@ package org.zaproxy.zap.extension.mitmconf;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -75,6 +78,7 @@ public class MitmConfAPI extends ApiImplementor {
 				String firefoxAddonUrl = root + "/" + FIREFOX_ADDON;
 				
 				StringBuilder sb = new StringBuilder();
+				/*
 				sb.append("<head>\n");
 				sb.append("<title>");
 				sb.append(Constant.messages.getString("api.html.title"));
@@ -83,7 +87,6 @@ public class MitmConfAPI extends ApiImplementor {
 				sb.append("<body>\n");
 				sb.append(Constant.messages.getString("api.home.topmsg"));
 				
-				// TODO 
 				sb.append("<b>Note: This is a temporary add-on for testing MITM configuration :) </b><br>");
 				
 				sb.append("  <button id=\"btn\">Click to setup!</button><br>");
@@ -109,6 +112,115 @@ public class MitmConfAPI extends ApiImplementor {
 				sb.append("var btn = document.getElementById('btn');\n");
 				sb.append("btn.addEventListener('click',click,false);\n");
 				sb.append("</script>\n");
+				*/
+				
+				// TODO
+				sb.append("<html>\n");
+				sb.append("<head>\n");
+				sb.append("<title>");
+				sb.append(Constant.messages.getString("api.html.title"));
+				sb.append("</title>\n");
+				sb.append("</head>\n");
+				sb.append("<body>\n");
+
+				sb.append(Constant.messages.getString("api.home.topmsg"));
+				
+				sb.append("<b>Note: This is a temporary add-on for testing MITM configuration :) </b><br>");
+
+				sb.append("  <div id=\"messages\">\n");
+				sb.append("    <div id=\"setup\" style=\"display:none\">\n");
+				sb.append("      Here's some content to show when you want to get the user to install the\n");
+				sb.append("      XPI (or maybe get a browser that supports mitm setup).\n");
+				sb.append("<b>The Firefox add-on is at: <a href=\"" + firefoxAddonUrl + "\">" + firefoxAddonUrl + "</a> </b><br>");
+				sb.append("    </div>\n");
+				sb.append("    <div id=\"in_progress\" style=\"display:none\">\n");
+				sb.append("      Configuring...\n");
+				sb.append("    </div>\n");
+				sb.append("    <div id=\"success\" style=\"display:none\">\n");
+				sb.append("      We have success!!!\n");
+				sb.append("    </div>\n");
+				sb.append("    <div id=\"failure\" style=\"display:none\">\n");
+				sb.append("      Oh noes!\n");
+				sb.append("    </div>\n");
+				sb.append("    <div id=\"activated\" style=\"display:none\">\n");
+				sb.append("      mitm support has been activated in your browser.\n");
+				sb.append("    </div>\n");
+				sb.append("    <div id=\"actions\">\n");
+				sb.append("      <p>\n");
+				sb.append("      <button id=\"btn\">Click to setup!</button>\n");
+				sb.append("      </p>\n");
+				sb.append("    </button>\n");
+				sb.append("  </div>\n");
+				// TODO
+
+				sb.append("</body>\n");
+				sb.append("<script>\n");
+				sb.append("  var detected = false;\n");
+				sb.append("  var divs = ['setup','in_progress','success','failure','activated','actions'];\n");
+				sb.append("  var manifest = {\"detail\":{\"url\":\"" + manifestUrl + "\"}};\n");
+
+				sb.append("  // only show UI for the named elements\n");
+				sb.append("  var showUI = function(visible){\n");
+				sb.append("    for(var idx in divs){\n");
+				sb.append("      if (-1 != visible.indexOf(divs[idx])) {\n");
+				sb.append("        document.getElementById(divs[idx]).style.display = 'inline';\n");
+				sb.append("        } else {\n");
+				sb.append("        document.getElementById(divs[idx]).style.display = 'none';\n");
+				sb.append("      }\n");
+				sb.append("    }\n");
+				sb.append("  };\n");
+
+				sb.append("  // event listener for button press\n");
+				sb.append("  var click = function(event) {\n");
+				sb.append("    var evt = new CustomEvent('ConfigureSecProxy', manifest);\n");
+				sb.append("    document.dispatchEvent(evt);\n");
+				sb.append("    setTimeout(function() {\n");
+				sb.append("      if (!detected) {\n");
+				sb.append("        showUI(['setup']);\n");
+				sb.append("     }\n");
+				sb.append("    },1000);\n");
+				sb.append("  };\n");
+
+				sb.append("  // event listener for configuration started event\n");
+				sb.append("  var started = function(event) {\n");
+				sb.append("    console.log('configuration has started');\n");
+				sb.append("    showUI(['in_progress']);\n");
+				sb.append("    detected = true;\n");
+				sb.append("  };\n");
+
+				sb.append("  // event listener for configuration failed event\n");
+				sb.append("  // use this to let the user know something has gone wrong\n");
+				sb.append("  var failed = function(event) {\n");
+				sb.append("    console.log('configuration has failed');\n");
+				sb.append("    showUI(['failure','actions']);\n");
+				sb.append("  };\n");
+
+				sb.append("  // event listener for configuration succeeded\n");
+				sb.append("  // use this to show a success message to a user in your welcome doc\n");
+				sb.append("  var succeeded = function(event) {\n");
+				sb.append("    console.log('configuration has succeeded');\n");
+				sb.append("    showUI(['success']);\n");
+				sb.append("  };\n");
+
+				sb.append("  // event listener for browser support activated\n");
+				sb.append("  var activated = function(event) {\n");
+				sb.append("    console.log('activation has occurred');\n");
+				sb.append("    showUI(['activated','actions']);\n");
+				sb.append("  };\n");
+
+				sb.append("  // hook event listener into button\n");
+				sb.append("  var btn = document.getElementById('btn');\n");
+				sb.append("  btn.addEventListener('click',click,false);\n");
+
+				sb.append("  // Hook configuration event listeners into the document\n");
+				sb.append("  document.addEventListener('ConfigureSecProxyStarted',started,false);\n");
+				sb.append("  document.addEventListener('ConfigureSecProxyFailed',failed,false);\n");
+				sb.append("  document.addEventListener('ConfigureSecProxyActivated',activated,false);\n");
+				sb.append("  document.addEventListener('ConfigureSecProxySucceeded',succeeded,false);\n");
+				sb.append("</script>\n");
+				sb.append("</html>\n");
+
+				// TODO done
 				
 				String response = sb.toString();
 				
@@ -217,6 +329,14 @@ public class MitmConfAPI extends ApiImplementor {
 			throw new ApiException(ApiException.Type.INTERNAL_ERROR);
 		}
 		throw new ApiException (ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
+	}
+
+	public static void main (String [] params) throws NoSuchAlgorithmException {
+		MessageDigest cript = MessageDigest.getInstance("SHA-1");
+        cript.reset();
+        cript.update("sss".getBytes());
+        String str = String.valueOf(Hex.encodeHex(cript.digest()));
+        System.out.println("Str is " + str);
 	}
 
 }
