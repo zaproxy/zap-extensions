@@ -1,0 +1,10 @@
+= Active scanner rules (alpha) =
+
+The alpha quality Active Scanner rules.
+
+The rules include
+
+=== Cross Site Scripting (Persistent) ===
+This scanner injects 'safe' unique tokens into all available parameters.
+It then spiders to see where these tokens appear on the site.
+If it finds these tokens on any page it then attacks these parameters in a similar way to the reflected cross site scripting - targeting wherever they appear.
