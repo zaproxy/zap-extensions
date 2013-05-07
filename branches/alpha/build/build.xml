@@ -32,7 +32,6 @@
 		</condition>
 		
 		<!-- Compile the java code from ${src} into ${build} -->
-		<!--javac srcdir="${src}" destdir="${build}" classpath="zap.jar"/-->
 		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
 			<classpath>
 				<fileset dir="${dist.lib.dir}">
@@ -200,7 +199,7 @@
 		<echo file="${versions.file}" append="true">&lt;ZAP></echo>
 		
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
-		<!--antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall--> <!-- No rules yet-->
+		<antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="mitmconf"/></antcall>
@@ -222,7 +221,7 @@
 		<!--copy file="${dist}/${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
 	</target>
 
-	<target name="deploy-ascanrulesAlpha" description="deploy the active scan rules">
+	<target name="deploy-ascanrulesAlpha" depends="build-all" description="deploy the active scan rules">
 		<antcall target="deploy-extension"> <param name="extension" value="ascanrulesAlpha"/> </antcall>
 	</target>
 
@@ -230,7 +229,7 @@
 		<antcall target="deploy-extension"> <param name="extension" value="diff"/> </antcall>
 	</target>
 	
-	<target name="deploy-highlighter" description="deploy the highlighter extension">
+	<target name="deploy-highlighter" depends="build-all" description="deploy the highlighter extension">
 		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
 	</target>
 
@@ -238,7 +237,7 @@
 		<antcall target="deploy-extension"> <param name="extension" value="mitmconf"/> </antcall>
 	</target>
 
-	<target name="deploy-pscanrulesAlpha" description="deploy the passive scan rules">
+	<target name="deploy-pscanrulesAlpha" depends="build-all" description="deploy the passive scan rules">
 		<antcall target="deploy-extension"> <param name="extension" value="pscanrulesAlpha"/> </antcall>
 	</target>
 
@@ -246,7 +245,7 @@
 		<antcall target="deploy-extension"> <param name="extension" value="sitetools"/> </antcall>
 	</target-->
 
-	<target name="deploy-serverSentEvents" description="deploy the Server-Sent Events extension">
+	<target name="deploy-serverSentEvents" depends="build-all" description="deploy the Server-Sent Events extension">
 		<antcall target="deploy-extension"> <param name="extension" value="serverSentEvents"/> </antcall>
 	</target>
 		
