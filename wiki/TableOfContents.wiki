@@ -8,6 +8,7 @@
     * [AddOn_pscanrulesBeta Passive scanner rules (beta)]
     * [AddOn_scripts Script Console]
    * [AddOnsAlpha Add-ons: Alpha]
+    * [AddOn_ascanrulesAlpha Active scanner rules (alpha)]
     * [AddOn_Zest Zest - Scripting Security Tests]
   * [AddOnDevelopment  Add-on Development]
   * [Examples Examples]
