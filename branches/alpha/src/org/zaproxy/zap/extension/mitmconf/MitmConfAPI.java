@@ -249,7 +249,7 @@ public class MitmConfAPI extends ApiImplementor {
 				sb.append("\"proxyPAC\":\"" + root + PROXY_PAC + "\",\n");
 				sb.append("\"protocolVersion\":\"1.00\",\n");
 				sb.append("\"features\":{\n");
-				sb.append("\"intercept\":\"true\",");
+				sb.append("\"break\":\"true\",");
 				sb.append("\"record\":\"true\",");
 				sb.append("\"CACert\":\"" + root + ROOT_CERT + "\"}}\n");
 				
