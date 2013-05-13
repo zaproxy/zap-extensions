@@ -115,8 +115,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
                 genTokensDialog.dispose();
             }
             
-            // TODO Uncomment when available in main ZAP release (2.1.0?) or for weekly release.
-            //getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getTokenPanel().getScanStatus().getCountLabel());
+            getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getTokenPanel().getScanStatus().getCountLabel());
         }
         
         super.unload();

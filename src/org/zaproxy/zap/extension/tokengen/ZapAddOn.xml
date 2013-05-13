@@ -6,9 +6,10 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Changed to unload some components when uninstalling.<br>
+	Changed to unload all components when uninstalling.<br>
 	Changed the messages keys prefix.<br>
 	Changed to use the messages automatically loaded by ZAP.<br>
+	Updated for ZAP 2.1.0
 	]]>
 	</changes>
 	<dependson/>
@@ -19,4 +20,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
+	<not-before-version>2.1.0</not-before-version>
+	<not-from-version></not-from-version>
 </zapaddon>

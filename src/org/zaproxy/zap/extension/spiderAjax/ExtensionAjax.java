@@ -126,8 +126,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
                 proxy.stopServer();
             }
             
-            // TODO Uncomment when available in main ZAP release (2.1.0?) or for weekly release.
-            //getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getSpiderPanel().getScanStatus().getCountLabel());
+            getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getSpiderPanel().getScanStatus().getCountLabel());
         }
         
         super.unload();
