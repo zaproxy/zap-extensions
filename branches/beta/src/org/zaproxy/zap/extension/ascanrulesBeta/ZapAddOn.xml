@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>3</version>
+	<version>4</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Moved SQL Injection to release, tweaked SQL timing rules names</changes>
+	<changes>Fixed a MissingResourceException when scanning with "Anti CSRF tokens scanner"</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
