@@ -4,7 +4,7 @@
 	<description>Allows to port scan a target server</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Changed to unload some components when uninstalling.</changes>
+	<changes>Updated for ZAP 2.1.0 and changed to unload all components when uninstalling.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.portscan.ExtensionPortScan</extension>
@@ -13,4 +13,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
+	<not-before-version>2.1.0</not-before-version>
+	<not-from-version/>
 </zapaddon>
