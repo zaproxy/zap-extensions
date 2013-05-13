@@ -141,7 +141,9 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 		super();
 		
 		this.brkManager = brkManager;
-		brkManager.setWebSocketPanel(this);
+		if (brkManager != null) {
+			brkManager.setWebSocketPanel(this);
+		}
 		
 		table = webSocketTable;
 		channelsModel = new ChannelSortedListModel();
