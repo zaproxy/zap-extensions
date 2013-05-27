@@ -5,10 +5,11 @@
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
-		v.3 Added the following passive scanner rules:
-			 - org.zaproxy.zap.extension.pscanrulesBeta.CharsetMismatchScanner
-			 - org.zaproxy.zap.extension.pscanrulesBeta.CookieLooselyScopedScanner			
-		v.2 Updated to support new addon format
+	<![CDATA[
+	Added new passive scanners: "CharsetMismatchScanner" and "CookieLooselyScopedScanner";<br>
+	Updated language files;<br>
+	Updated for ZAP 2.1.0.<br>
+	]]>
 	</changes>
 	<dependson/>
 	<extensions>
