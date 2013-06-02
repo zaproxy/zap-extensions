@@ -9,7 +9,8 @@
 	Changed to remove the footer status label when uninstalling;<br>
 	Updated Crawljax library (and its dependencies);<br>
 	Fixed a NoSuchMethodError which prevented the use of "Firefox" browser;<br>
-	Fixed a NoSuchMethodError which prevented the use of "HtmlUnit" browser.
+	Fixed a NoSuchMethodError which prevented the use of "HtmlUnit" browser;<br>
+	Changed the selection of browsers to use radio buttons.
 	]]>
 	</changes>
 	<dependson/>

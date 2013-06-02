@@ -21,12 +21,13 @@ import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.history.LogPanel;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
@@ -50,10 +51,10 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	// ZAP: Do not allow invalid port numbers
 	private ZapPortNumberSpinner spinnerProxyPort = null;
 	private JCheckBox ClickAllElems = null;
-	private JCheckBox firefox = null;
-	private JCheckBox chrome = null;
-	private JCheckBox ie = null;
-	private JCheckBox htmlunit = null;
+	private JRadioButton firefox = null;
+	private JRadioButton chrome = null;
+	private JRadioButton ie = null;
+	private JRadioButton htmlunit = null;
 	private JLabel jLabel6 = null;
 	private JLabel browsers = null;
 	private JLabel threads = null;
@@ -146,11 +147,11 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 
 	/**
 	 * 
-	 * @return the firefox checkbox
+	 * @return the firefox radio button
 	 */
-	private JCheckBox getFirefox() {
+	private JRadioButton getFirefox() {
 		if (firefox == null) {
-			firefox = new JCheckBox();
+			firefox = new JRadioButton();
 			firefox.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.firefox"));
 		}
 		return firefox;
@@ -158,11 +159,11 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	
 	/**
 	 * 
-	 * @return the chrome checkbox
+	 * @return the chrome radio button
 	 */
-	private JCheckBox getChrome() {
+	private JRadioButton getChrome() {
 		if (chrome == null) {
-			chrome = new JCheckBox();
+			chrome = new JRadioButton();
 			chrome.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.chrome"));
 		}
 		return chrome;
@@ -170,11 +171,11 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	
 	/**
 	 * 
-	 * @return the IE checkbox
+	 * @return the IE radio button
 	 */
-	private JCheckBox getIE() {
+	private JRadioButton getIE() {
 		if (ie == null) {
-			ie = new JCheckBox();
+			ie = new JRadioButton();
 			ie.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.ie"));
 		}
 		return ie;
@@ -182,11 +183,11 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	
 	/**
 	 * 
-	 * @return the IE checkbox
+	 * @return the Htmlunit radio button
 	 */
-	private JCheckBox getHtmlunit() {
+	private JRadioButton getHtmlunit() {
 		if (htmlunit == null) {
-			htmlunit = new JCheckBox();
+			htmlunit = new JRadioButton();
 			htmlunit.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.htmlunit"));
 		}
 		return htmlunit;
@@ -208,15 +209,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    //set the browser type
 	    if(this.extension.getProxy().getBrowser() == BrowserType.firefox){
 	    	this.getFirefox().setSelected(true);
-		    this.getChrome().setSelected(false);
-		    this.getHtmlunit().setSelected(false);
 	    } else if (this.extension.getProxy().getBrowser() == BrowserType.chrome){
 		    this.getChrome().setSelected(true);
-	    	this.getFirefox().setSelected(false);
-		    this.getHtmlunit().setSelected(false);
 	    }else if (this.extension.getProxy().getBrowser() == BrowserType.htmlunit){
-		    this.getChrome().setSelected(false);
-	    	this.getFirefox().setSelected(false);
 		    this.getHtmlunit().setSelected(true);
 	    }
 	}
@@ -227,42 +222,10 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	@Override
 	public void validateParam(Object obj) throws Exception {
 		
-		//if more than one is selected or none are selected we use firefox
-		//if chrome not avail, we use firefox
-		//if non selected, we use firefox
-		if(getChrome().isSelected() && getHtmlunit().isSelected()){
-			getChrome().setSelected(false);
-			getHtmlunit().setSelected(false);
-			getFirefox().setSelected(true);
-			logger.info("Only one browser can be used, switching to the default browser.");
-		} else if(getFirefox().isSelected() && getChrome().isSelected()){
-			getChrome().setSelected(false);
-			getHtmlunit().setSelected(false);
-			getFirefox().setSelected(true);
-			logger.info("Only one browser can be used, switching to the default browser.");
-		} else if(getFirefox().isSelected() && getHtmlunit().isSelected()){
-			getChrome().setSelected(false);
-			getHtmlunit().setSelected(false);
-			getFirefox().setSelected(true);
-			logger.info("Only one browser can be used, switching to the default browser.");
-		} else if(getHtmlunit().isSelected() && getChrome().isSelected()){
-			getChrome().setSelected(false);
-			getHtmlunit().setSelected(false);
-			getFirefox().setSelected(true);
-			logger.info("Only one browser can be used, switching to the default browser.");
-		} else if(!getFirefox().isSelected() && !getHtmlunit().isSelected() && !getChrome().isSelected()){
-			getChrome().setSelected(false);
-			getHtmlunit().setSelected(false);
-			getFirefox().setSelected(true);
-			logger.info("One browser has to be selected, switching to the default browser.");
-		} else if (!getFirefox().isSelected() && getChrome().isSelected()&& !getHtmlunit().isSelected()){
-			if(!this.extension.getProxy().isChromeAvail()){
-				getChrome().setSelected(false);
-				getHtmlunit().setSelected(false);
-				getFirefox().setSelected(true);	
-				logger.info("ChromeDriver is not available, switching to the default browser.");
-				this.extension.showChromeAlert();
-			}
+		if(getChrome().isSelected() && !this.extension.getProxy().isChromeAvail()){
+			getFirefox().setSelected(true);	
+			logger.info("ChromeDriver is not available, switching to the default browser.");
+			this.extension.showChromeAlert();
 		}
 	}
 
@@ -280,11 +243,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		
 		if(getFirefox().isSelected()){
 			this.extension.getProxy().setBrowser(BrowserType.firefox);
-		}
-		if(getChrome().isSelected()){
+		} else if(getChrome().isSelected()){
 			this.extension.getProxy().setBrowser(BrowserType.chrome);
-		}
-		if(getHtmlunit().isSelected()){
+		} else if(getHtmlunit().isSelected()){
 			this.extension.getProxy().setBrowser(BrowserType.htmlunit);
 		}
 	}
@@ -426,6 +387,10 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			gridBagConstraints4.weightx = 0.5D;
 			gridBagConstraints4.fill = java.awt.GridBagConstraints.HORIZONTAL;
 			
+			ButtonGroup browsersButtonGroup = new ButtonGroup();
+			browsersButtonGroup.add(getFirefox());
+			browsersButtonGroup.add(getChrome());
+			browsersButtonGroup.add(getHtmlunit());
 			
 			browsers = new JLabel();
 			threads = new JLabel();
