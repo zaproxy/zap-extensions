@@ -4,7 +4,12 @@
 	<description>Allows you to spider sites that make heavy use of javascript using crawljax</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/AJAXSpider_getStarted</url>
-	<changes>Changed to remove the footer status label when uninstalling.</changes>
+	<changes>
+	<![CDATA[
+	Changed to remove the footer status label when uninstalling;<br>
+	Updated Crawljax library (and its dependencies).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.spiderAjax.ExtensionAjax</extension>
