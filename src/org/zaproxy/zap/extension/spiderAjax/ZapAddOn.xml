@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Changed to remove the footer status label when uninstalling;<br>
-	Updated Crawljax library (and its dependencies).
+	Updated Crawljax library (and its dependencies);<br>
+	Fixed a NoSuchMethodError which prevented the use of "Firefox" browser.
 	]]>
 	</changes>
 	<dependson/>
