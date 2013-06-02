@@ -8,7 +8,8 @@
 	<![CDATA[
 	Changed to remove the footer status label when uninstalling;<br>
 	Updated Crawljax library (and its dependencies);<br>
-	Fixed a NoSuchMethodError which prevented the use of "Firefox" browser.
+	Fixed a NoSuchMethodError which prevented the use of "Firefox" browser;<br>
+	Fixed a NoSuchMethodError which prevented the use of "HtmlUnit" browser.
 	]]>
 	</changes>
 	<dependson/>
