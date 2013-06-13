@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.zest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
@@ -69,8 +70,13 @@ public class ZestZapUtils {
 					Constant.messages.getString("zest.element.script"), zs.getTitle());
 		} else if (za instanceof ZestRequest) {
 			ZestRequest zr = (ZestRequest) za;
-			return MessageFormat.format(
-					Constant.messages.getString("zest.element.request"), zr.getMethod(), zr.getUrl());
+			if (zr.getUrl() != null) {
+				return MessageFormat.format(
+						Constant.messages.getString("zest.element.request"), zr.getMethod(), zr.getUrl());
+			} else {
+				return MessageFormat.format(
+						Constant.messages.getString("zest.element.request"), zr.getMethod(), zr.getUrlToken());
+			}
 			
 		} else if (za instanceof ZestResponse) {
 			ZestResponse zr = (ZestResponse) za;
@@ -259,7 +265,8 @@ public class ZestZapUtils {
 			
 		} else if (za instanceof ZestTreeElement) {
 			switch (((ZestTreeElement)za).getType()) {
-			case TARGETED_SCRIPT:	return Constant.messages.getString("zest.element.targetedcript");
+			case TARGETED_SCRIPT:	return Constant.messages.getString("zest.element.targetedscript");
+			case ACTIVE_SCRIPT:	return Constant.messages.getString("zest.element.activescript");
 			case PASSIVE_SCRIPT:	return Constant.messages.getString("zest.element.passivescript");
 			case COMMON_TESTS:		return Constant.messages.getString("zest.element.commontests");
 			}
@@ -349,6 +356,19 @@ public class ZestZapUtils {
 		return new ZestResponse(new URL(msg.getRequestHeader().getURI().toString()), 
 				msg.getResponseHeader().toString(), msg.getResponseBody().toString(), 
 				msg.getResponseHeader().getStatusCode(), msg.getTimeElapsedMillis());
+	}
+
+	public static ZestRequest toZestRequest(HttpMessage msg) throws MalformedURLException, HttpMalformedHeaderException, SQLException {
+		ZestRequest req = new ZestRequest();
+		req.setMethod(msg.getRequestHeader().getMethod());
+		req.setUrlToken(correctTokens(msg.getRequestHeader().getURI().toString()));
+		req.setHeaders(correctTokens(msg.getRequestHeader().getHeadersAsString()));
+		req.setData(correctTokens(msg.getRequestBody().toString()));
+		return req;
+	}
+	
+	private static String correctTokens(String str) {
+		return str.replace("%7B%7B", "{{").replace("%7D%7D", "}}");
 	}
 
 }
