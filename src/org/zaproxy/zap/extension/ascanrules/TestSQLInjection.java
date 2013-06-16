@@ -100,7 +100,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 		SQL_ERROR_TO_DBMS.put("[Microsoft]", "Microsoft SQL Server");
 		SQL_ERROR_TO_DBMS.put("[SQLServer]", "Microsoft SQL Server");
 		SQL_ERROR_TO_DBMS.put("[SQLServer 2000 Driver for JDBC]", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("net.sourceforge.jtds.jdbc", "Microsoft SQL Server"); 		//see also Sybase. could be either!
+		SQL_ERROR_TO_DBMS.put("net.sourceforge.jtds.jdbc", "Microsoft SQL Server"); 		//see also be Sybase. could be either!
+		SQL_ERROR_TO_DBMS.put("80040e14", "Microsoft SQL Server");
 
 		//DONE: we have implemented an Oracle specific scanner. See SQLInjectionOracle
 		SQL_ERROR_TO_DBMS.put("oracle.jdbc", "Oracle");
