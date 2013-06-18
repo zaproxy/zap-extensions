@@ -159,9 +159,11 @@ public class Csrftokenscan extends AbstractAppPlugin {
 				// We store the hidden input fields in a hash map.
 				List<Element> iElements = s.getAllElements(HTMLElementName.INPUT);
 				for (Element element : iElements) {
-					if (element.getAttributeValue("type").toLowerCase().equals("hidden")) {
-						tagsMap.put(element.getAttributeValue("name"), element.getAttributeValue("value"));
-						log.debug("Input Tag: " + element.getAttributeValue("name") + ", " + element.getAttributeValue("value"));
+					if (isHiddenInputElement(element) && hasNameAttribute(element)) {
+						final String name = element.getAttributeValue("name");
+						final String value = getNonNullValueAttribute(element);
+						tagsMap.put(name, value);
+						log.debug("Input Tag: " + name + ", " + value);
 					}
 				}
 	
@@ -176,14 +178,12 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	
 				// We store the hidden input fields in a hash map.
 				for (Element element2 : iElements) {
-					if (element2.getAttributeValue("type").toLowerCase().equals("hidden")) {
-						
-						// If the values of the tags changed they are an anti-csrf token
-						if (!tagsMap.get(element2.getAttributeValue("name"))
-								.equals(element2.getAttributeValue("value"))) {
-							log.debug("Found Anti-CSRF token: "
-									+ element2.getAttributeValue("name") + ", "
-									+ element2.getAttributeValue("value"));
+					if (isHiddenInputElement(element2) && hasNameAttribute(element2)) {
+						final String name = element2.getAttributeValue("name");
+						final String newValue = getNonNullValueAttribute(element2);
+						final String oldValue = tagsMap.get(name);
+						if (oldValue != null && !newValue.equals(oldValue)) {
+							log.debug("Found Anti-CSRF token: " + name + ", " + newValue);
 							vuln = false;
 						}
 					}
@@ -203,6 +203,23 @@ public class Csrftokenscan extends AbstractAppPlugin {
 			log.error(e);
 		}
 	}
+
+    private static boolean isHiddenInputElement(Element inputElement) {
+        return "hidden".equalsIgnoreCase(inputElement.getAttributeValue("type"));
+    }
+
+    private static boolean hasNameAttribute(Element element) {
+        return element.getAttributeValue("name") != null;
+    }
+
+    private static String getNonNullValueAttribute(Element element) {
+        final String value = element.getAttributeValue("value");
+
+        if (value == null) {
+            return "";
+        }
+        return value;
+    }
 
 	@Override
 	public int getRisk() {
