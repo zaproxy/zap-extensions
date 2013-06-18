@@ -20,6 +20,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -102,6 +103,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 		SQL_ERROR_TO_DBMS.put("[SQLServer 2000 Driver for JDBC]", "Microsoft SQL Server");
 		SQL_ERROR_TO_DBMS.put("net.sourceforge.jtds.jdbc", "Microsoft SQL Server"); 		//see also be Sybase. could be either!
 		SQL_ERROR_TO_DBMS.put("80040e14", "Microsoft SQL Server");
+		SQL_ERROR_TO_DBMS.put("800a0bcd", "Microsoft SQL Server");
+		SQL_ERROR_TO_DBMS.put("80040e57", "Microsoft SQL Server");
 
 		//DONE: we have implemented an Oracle specific scanner. See SQLInjectionOracle
 		SQL_ERROR_TO_DBMS.put("oracle.jdbc", "Oracle");
@@ -226,11 +229,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 		SQL_UNION_ERROR_TO_DBMS.put("The used SELECT statements have a different number of columns", "MySQL");
 		SQL_UNION_ERROR_TO_DBMS.put("each UNION query must have the same number of columns", "PostgreSQL");
 		SQL_UNION_ERROR_TO_DBMS.put("All queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists", "Microsoft SQL Server");
+		SQL_UNION_ERROR_TO_DBMS.put("All queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists", "Microsoft SQL Server");
 		SQL_UNION_ERROR_TO_DBMS.put("query block has incorrect number of result columns", "Oracle");
 		SQL_UNION_ERROR_TO_DBMS.put("ORA-01789", "Oracle");
 		SQL_UNION_ERROR_TO_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");  //needs a table name in a UNION query. Like Oracle?
 		SQL_UNION_ERROR_TO_DBMS.put("Column count does not match in statement", "Hypersonic SQL");
-
 		//TODO: add other specific UNION based error messages for Union here: PostgreSQL, Sybase, DB2, Informix, etc
 	}
 
@@ -325,7 +328,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 	 * scans for SQL Injection vulnerabilities
 	 */
 	@Override
-	public void scan(HttpMessage msg, String param, String value) {
+	public void scan(HttpMessage msg, String param, String origParamValue) {
 		//Note: the "value" we are passed here is escaped. we need to unescape it before handling it.
 		//as soon as we find a single SQL injection on the url, skip out. Do not look for SQL injection on a subsequent parameter on the same URL
 		//for performance reasons.
@@ -349,8 +352,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 				//work through the attack using each of the following strings as a prefix: the empty string, and the original value
 				//Note: this doubles the amount of work done by the scanner, but is necessary in some cases
 				String [] prefixStrings;
-				if (value != null) {
-					prefixStrings = new String[] {"", getURLDecode(value)};
+				if (origParamValue != null) {
+					prefixStrings = new String[] {"", getURLDecode(origParamValue)};
 				} else {
 					prefixStrings = new String[] {""};
 				}
@@ -432,7 +435,9 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 
 			if (this.debugEnabled) log.debug("Doing Check 2, since check 1 did not match for "+ getBaseMsg().getRequestHeader().getURI());
 
-			String mResBodyNormal = getBaseMsg().getResponseBody().toString();
+			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
+			String mResBodyNormal = this.stripOff(getBaseMsg().getResponseBody().toString(), origParamValue);
+			
 			//boolean booleanBasedSqlInjectionFoundForParam = false;
 
 			//try each of the AND syntax values in turn. 
@@ -443,8 +448,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 					i++) {
 				//needs a new message for each type of AND to be issued
 				HttpMessage msg2 = getNewMsg();
-				String sqlBooleanAndValue = getURLDecode(value) + SQL_LOGIC_AND[i];
-				String sqlBooleanAndFalseValue = getURLDecode(value) + SQL_LOGIC_AND_FALSE[i];
+				String sqlBooleanAndValue = getURLDecode(origParamValue) + SQL_LOGIC_AND[i];
+				String sqlBooleanAndFalseValue = getURLDecode(origParamValue) + SQL_LOGIC_AND_FALSE[i];
 
 				setParameter(msg2, param, sqlBooleanAndValue);
 
@@ -452,8 +457,9 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 				sendAndReceive(msg2);
 				countBooleanBasedRequests++;
 
-				//String resBodyAND = stripOff(msg2.getResponseBody().toString(), SQL_LOGIC_AND[i]);
-				String resBodyAND = msg2.getResponseBody().toString();
+				//String resBodyAND = msg2.getResponseBody().toString();
+				String resBodyAND = this.stripOff(msg2.getResponseBody().toString(), sqlBooleanAndValue);	
+								
 				//if the results of the "AND 1=1" match the original query, we may be onto something. 
 				if (resBodyAND.compareTo(mResBodyNormal) == 0) {
 					if (this.debugEnabled) log.debug("Check 2, AND condition ["+sqlBooleanAndValue+"] matched original results for "+ getBaseMsg().getRequestHeader().getURI());
@@ -466,8 +472,10 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 					countBooleanBasedRequests++;
 
 					//String resBodyANDFalse = stripOff(msg2_and_false.getResponseBody().toString(), SQL_LOGIC_AND_FALSE[i]);
-					String resBodyANDFalse = msg2_and_false.getResponseBody().toString();
-
+					//String resBodyANDFalse = msg2_and_false.getResponseBody().toString();
+					String resBodyANDFalse = this.stripOff(msg2_and_false.getResponseBody().toString(), sqlBooleanAndFalseValue);
+					
+					
 					// build an always false AND query.  Result should be different to prove the SQL works.
 					if (resBodyANDFalse.compareTo(mResBodyNormal) != 0) {
 						if (this.debugEnabled) log.debug("Check 2, AND FALSE condition ["+sqlBooleanAndFalseValue+"] differed from original for "+ getBaseMsg().getRequestHeader().getURI());
@@ -491,7 +499,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 						continue; //to the next entry in SQL_AND
 					} else {
 						//the first value to try..
-						String orValue = getURLDecode(value) + SQL_LOGIC_OR_TRUE[i];
+						String orValue = getURLDecode(origParamValue) + SQL_LOGIC_OR_TRUE[i];
 
 						//this is where that comment comes in handy: if the RDBMS supports one-line comments, add one in to attempt to ensure that the 
 						//condition becomes one that is effectively always true, returning ALL data (or as much as possible), allowing us to pinpoint the SQL Injection
@@ -502,8 +510,10 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 						countBooleanBasedRequests++;
 
 						//String resBodyORTrue = stripOff(msg2_or_true.getResponseBody().toString(), orValue);
-						String resBodyORTrue = msg2_or_true.getResponseBody().toString();
-
+						//String resBodyORTrue = msg2_or_true.getResponseBody().toString();
+						String resBodyORTrue = this.stripOff(msg2_or_true.getResponseBody().toString(), orValue);
+						
+						
 						int compareOrToOriginal = resBodyORTrue.compareTo(mResBodyNormal);
 
 						//if the results for the OR are the same as the original, try again with the OR statement, but this time, include a one-line comment at the end
@@ -511,7 +521,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 						//to see if we have the results of the page under our control by manipulating this parameter
 						if (compareOrToOriginal == 0) {
 							//need to append in the first character of the SQL_OR_TRUE to close off any open quotes before commenting out the remainder
-							orValue = getURLDecode(value) + SQL_LOGIC_OR_TRUE[i] + SQL_LOGIC_OR_TRUE[i].substring(0, 1) + SQL_ONE_LINE_COMMENT;
+							orValue = getURLDecode(origParamValue) + SQL_LOGIC_OR_TRUE[i] + SQL_LOGIC_OR_TRUE[i].substring(0, 1) + SQL_ONE_LINE_COMMENT;
 
 							HttpMessage msg2_or_true_comment = getNewMsg();  
 							setParameter(msg2_or_true_comment, param, orValue);
@@ -519,7 +529,9 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 							countBooleanBasedRequests++;
 
 							//and re-set the variable with the results of trying the commented OR
-							compareOrToOriginal = resBodyORTrue.compareTo(mResBodyNormal);
+							String resBodyORTrueComment = this.stripOff(msg2_or_true_comment.getResponseBody().toString(), orValue);
+							
+							compareOrToOriginal = resBodyORTrueComment.compareTo(mResBodyNormal);
 						}
 
 						//Note: do NOT put an else condition before this. This logic *always* needs to happen after the previous check.
@@ -558,7 +570,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 
 				//new message for each value we attack with
 				HttpMessage msg3 = getNewMsg();
-				String sqlUnionValue = value+ SQL_UNION_APPENDAGES[sqlUnionStringIndex];
+				String sqlUnionValue = origParamValue+ SQL_UNION_APPENDAGES[sqlUnionStringIndex];
 				setParameter(msg3, param, sqlUnionValue);
 				//send the message with the modified parameters
 				sendAndReceive(msg3);
@@ -579,8 +591,16 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 					//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
 					//then we may may have a SQL Injection vulnerability
 					StringBuilder sb = new StringBuilder();
-					if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg3, errorPattern, sb)) {
-						//Likely a UNION Based SQL Injection. Raise it
+					String sqlUnionBody = this.stripOff(msg3.getResponseBody().toString(), sqlUnionValue);
+					
+					Matcher matcherOrig = errorPattern.matcher(mResBodyNormal);
+					Matcher matcherSQLUnion = errorPattern.matcher(sqlUnionBody);
+					boolean patternInOrig = matcherOrig.find();
+					boolean patternInSQLUnion = matcherSQLUnion.find();
+					
+					//if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg3, errorPattern, sb)) {				
+					if (! patternInOrig && patternInSQLUnion) {
+						//Likely a UNION Based SQL Injection (by error message). Raise it
 						String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.unionbased.extrainfo", errorPatternRDBMS, errorPatternKey);
 
 						//raise the alert
@@ -610,6 +630,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 	public int getRisk() {
 		return Alert.RISK_HIGH;
 	}
+		
 
 }
 
