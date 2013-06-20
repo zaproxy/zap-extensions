@@ -92,18 +92,31 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 	//Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these examples below (see * comment)
 	//TODO: maybe add support for ')' after the original value, before the sleeps
 	private static String[] SQL_MYSQL_TIME_REPLACEMENTS = {
+		//LOW
 		"<<<<ORIGINALVALUE>>>> / sleep(5) ",				// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
 		"<<<<ORIGINALVALUE>>>>' / sleep(5) / '",			// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
 		"<<<<ORIGINALVALUE>>>>\" / sleep(5) / \"",			// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
-		"<<<<ORIGINALVALUE>>>> where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,	// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>>' where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,	// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>>\" where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		//MEDIUM
 		"<<<<ORIGINALVALUE>>>> and 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
 		"<<<<ORIGINALVALUE>>>>' and 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
 		"<<<<ORIGINALVALUE>>>>\" and 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
+		//HIGH
+		"<<<<ORIGINALVALUE>>>> where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,	// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		"<<<<ORIGINALVALUE>>>>' where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,	// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		"<<<<ORIGINALVALUE>>>>\" where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.	
 		"<<<<ORIGINALVALUE>>>> or 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,		// MySQL >= 5.0.12. Param in WHERE clause. 
 		"<<<<ORIGINALVALUE>>>>' or 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause. 
-		"<<<<ORIGINALVALUE>>>>\" or 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.		
+		"<<<<ORIGINALVALUE>>>>\" or 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.				
+		//INSANE	
+		"<<<<ORIGINALVALUE>>>> where 0 in (select sleep(5) ) " ,						// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		"<<<<ORIGINALVALUE>>>>' where 0 in (select sleep(5) ) and ''='" ,				// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		"<<<<ORIGINALVALUE>>>>\" where 0 in (select sleep(5) ) and \"\"=\"" ,			// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		"<<<<ORIGINALVALUE>>>> and 0 in (select sleep(5) ) " , 							// MySQL >= 5.0.12. Param in WHERE clause.
+		"<<<<ORIGINALVALUE>>>>' and 0 in (select sleep(5) ) and ''='" , 				// MySQL >= 5.0.12. Param in WHERE clause.
+		"<<<<ORIGINALVALUE>>>>\" and 0 in (select sleep(5) ) and \"\"=\"" , 			// MySQL >= 5.0.12. Param in WHERE clause.
+		"<<<<ORIGINALVALUE>>>> or 0 in (select sleep(5) ) " ,							// MySQL >= 5.0.12. Param in WHERE clause. 
+		"<<<<ORIGINALVALUE>>>>' or 0 in (select sleep(5) ) and ''='", 					// MySQL >= 5.0.12. Param in WHERE clause. 
+		"<<<<ORIGINALVALUE>>>>\" or 0 in (select sleep(5) ) and \"\"=\"", 				// MySQL >= 5.0.12. Param in WHERE clause.
 	};
 	
 
@@ -173,9 +186,9 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 		if ( this.getAttackStrength() == AttackStrength.LOW ) {
 			doTimeBased=true; doTimeMaxRequests=3;
 		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
-			doTimeBased=true; doTimeMaxRequests=5;
+			doTimeBased=true; doTimeMaxRequests=6;
 		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
-			doTimeBased=true; doTimeMaxRequests=10;
+			doTimeBased=true; doTimeMaxRequests=12;
 		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
 			doTimeBased=true; doTimeMaxRequests=100;
 		}
@@ -208,6 +221,30 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 				if ( this.debugEnabled ) log.debug("The Base Time Check timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"]");
 			}
 			long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
+			//if the time was very slow (because JSP was being compiled on first call, for instance)
+			//then the rest of the time based logic will fail.  Lets double-check for that scenario by requesting the url again.  
+			//If it comes back in a more reasonable time, we will use that time instead as our baseline.  If it come out in a slow fashion again, 
+			//we will abort the check on this URL, since we will only spend lots of time trying request, when we will (very likely) not get positive results.
+			if (originalTimeUsed > 5000) {
+				long originalTimeStarted2 = System.currentTimeMillis();
+				try {
+					sendAndReceive(msgTimeBaseline);
+				}
+				catch (java.net.SocketTimeoutException e) {
+					//to be expected occasionally, if the base query was one that contains some parameters exploiting time based SQL injection?
+					if ( this.debugEnabled ) log.debug("Base Time Check 2 timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"]");
+				}
+				long originalTimeUsed2 = System.currentTimeMillis() - originalTimeStarted2;
+				if ( originalTimeUsed2 > 5000 ) {
+					//no better the second time around.  we need to bale out.
+					if ( this.debugEnabled ) log.debug("Both base time checks 1 and 2 for ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.");
+					return;
+				} else {
+					//phew.  the second time came in within the limits. use the later timing details as the base time for the checks.
+					originalTimeUsed = originalTimeUsed2;
+					originalTimeStarted = originalTimeStarted2;
+				}
+			}		
 			//end of timing baseline check
 			
 			
@@ -266,7 +303,9 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 
 					if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on ["+currentHtmlParameter.getType()+"] field: ["+currentHtmlParameter.getName()+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
 
-					if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {  
+					//add some small leeway on the 5 seconds, since adding a 5 second delay in the SQL query will not cause the request
+					//to take a full 5 seconds longer to run than the original..
+					if (modifiedTimeUsed >= (originalTimeUsed + 5000 - 200)) {  
 						//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
 
 						//Likely a SQL Injection. Raise it
