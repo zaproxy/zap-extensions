@@ -9,7 +9,9 @@
 	<extensions>
 		<extension>org.zaproxy.zap.extension.zest.ExtensionZest</extension>
 	</extensions>
-	<ascanrules/>
+	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.zest.ZestActiveScanner</ascanrule>
+	</ascanrules>
 	<pscanrules>
 		<pscanrule>org.zaproxy.zap.extension.zest.ZestPassiveScanner</pscanrule>
 	</pscanrules>

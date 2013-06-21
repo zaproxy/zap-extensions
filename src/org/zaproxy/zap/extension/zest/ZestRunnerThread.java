@@ -58,6 +58,7 @@ public class ZestRunnerThread extends ZestBasicRunner implements Runnable, Scann
 
 	private ExtensionZest extension;
 	private ZestScript script = null;
+	private HttpMessage target = null;
     //private HttpSender httpSender;
 	private ZestResultWrapper lastResult = null;
 
@@ -133,9 +134,13 @@ public class ZestRunnerThread extends ZestBasicRunner implements Runnable, Scann
     @Override
     public void run() {
         log.info("Zest Runner started");
-        
 		try {
-			this.run(script);
+			if (target != null) {
+				ZestRequest targetRequest = ZestZapUtils.toZestRequest(target);
+				this.run(script, targetRequest);
+			} else {
+				this.run(script);
+			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -312,6 +317,14 @@ public class ZestRunnerThread extends ZestBasicRunner implements Runnable, Scann
 		extension.notifyAlert(alert);
 	}
 
+	public HttpMessage getTarget() {
+		return target;
+	}
+
+
+	public void setTarget(HttpMessage target) {
+		this.target = target;
+	}
 
 	@Override
 	public void notifyNewMessage(HttpMessage msg) {

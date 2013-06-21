@@ -56,6 +56,10 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-down-right.png"));
 	private static final ImageIcon CONDITION_IF_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-up-right.png"));
+	private static final ImageIcon ASCAN_ICON = 
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/zest-ascan.png"));
+	private static final ImageIcon ASCAN_EDIT_ICON = 
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/zest-ascan-edit.png"));
 	private static final ImageIcon PSCAN_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/zest-pscan.png"));
 	private static final ImageIcon PSCAN_EDIT_ICON = 
@@ -121,6 +125,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 					} else if (za instanceof ZestTreeElement) {
 						switch (((ZestTreeElement)za).getType()) {
 						case TARGETED_SCRIPT:	setIcon(SCRIPT_ICON); break;
+						case ACTIVE_SCRIPT:		setIcon(ASCAN_ICON); break;
 						case PASSIVE_SCRIPT:	setIcon(PSCAN_ICON); break;
 						case COMMON_TESTS:		setIcon(PSCAN_ICON); break;
 						}

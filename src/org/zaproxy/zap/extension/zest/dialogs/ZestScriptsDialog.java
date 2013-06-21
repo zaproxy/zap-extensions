@@ -31,6 +31,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAuthentication;
 import org.mozilla.zest.core.v1.ZestHttpAuthentication;
+import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.encoder.Base64;
@@ -61,7 +62,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 	private ExtensionZest extension = null;
 	private ZestScriptWrapper script = null;
 	private boolean add = false;
-	private boolean pscan = false;
+	private ZestScript.Type type;
 
 	private ScriptTokensTableModel tokensModel = null;
 
@@ -77,10 +78,10 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 		this.extension = ext;
 	}
 
-	public void init (ZestScriptWrapper script, boolean add, boolean pscan) {
+	public void init (ZestScriptWrapper script, boolean add, ZestScript.Type type) {
 		this.script = script;
 		this.add = add;
-		this.pscan = pscan;
+		this.type = type;
 
 		this.removeAllFields();
 		
@@ -96,8 +97,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 		this.getTokensModel().setValues(script.getTokens().getTokens());
 		this.addTableField(1, this.getTokensModel());
 		
-		if (! pscan) {
-			// These fields are only relevent for full scripts, not passive scan rules
+		if (ZestScript.Type.Targeted.equals(type)) {
+			// These fields are only relevant for targeted scripts, not passive scan rules
 			boolean addedAuth = false;
 			if (script.getAuthentication() != null && script.getAuthentication().size() > 0) {
 				// Just support one for now
@@ -140,16 +141,16 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 	public void save() {
 		script.setTitle(this.getStringValue(FIELD_TITLE));
 		script.setDescription(this.getStringValue(FIELD_DESC));
-		try {
-			script.setPrefix(this.getStringValue(FIELD_PREFIX));
-		} catch (MalformedURLException e) {
-			logger.error(e.getMessage(), e);
+		if (script.getPrefix() == null || ! script.getPrefix().equals(this.getStringValue(FIELD_PREFIX))) {
+			try {
+				script.setPrefix(this.getStringValue(FIELD_PREFIX));
+			} catch (MalformedURLException e) {
+				logger.error(e.getMessage(), e);
+			}
 		}
 
-		if (pscan) {
-			script.setType(ZestScript.Type.Passive);
-		} else {
-			script.setType(ZestScript.Type.Targeted);
+		script.setType(type);
+		if (ZestScript.Type.Targeted.equals(type)) {
 			script.setIncStatusCodeAssertion(this.getBoolValue(FIELD_STATUS));
 			script.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
 			script.setLengthApprox(this.getIntValue(FIELD_APPROX));
@@ -173,8 +174,19 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 			}
 		}
 
+		
+		if (ZestScript.Type.Active.equals(type)) {
+			// Create a template simple script
+			script.getTokens().addToken("target.value", "__replace__");
+			ZestRequest req = new ZestRequest();
+			req.setMethod("{{target.method}}");
+			req.setUrlToken("{{target.url}}");
+			req.setHeaders("{{target.headers}}");
+			req.setData("{{target.body}}");
+			script.add(req);
+		}
+
 		if (add) {
-			
 			extension.add(script);
 			// Add any defered and nodes
 			for (SiteNode sn : deferedSiteNodes) {
