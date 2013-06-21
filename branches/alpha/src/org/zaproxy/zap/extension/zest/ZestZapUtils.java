@@ -74,13 +74,8 @@ public class ZestZapUtils {
 				return MessageFormat.format(
 						Constant.messages.getString("zest.element.request"), zr.getMethod(), zr.getUrl());
 			} else {
-				// TODO - needs other changes to be checked in
-				/*
 				return MessageFormat.format(
 						Constant.messages.getString("zest.element.request"), zr.getMethod(), zr.getUrlToken());
-				*/
-				return MessageFormat.format(
-						Constant.messages.getString("zest.element.request"), zr.getMethod(), "");
 			}
 			
 		} else if (za instanceof ZestResponse) {
@@ -271,8 +266,7 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestTreeElement) {
 			switch (((ZestTreeElement)za).getType()) {
 			case TARGETED_SCRIPT:	return Constant.messages.getString("zest.element.targetedscript");
-			// TODO needs other changes checked in
-			// case ACTIVE_SCRIPT:	return Constant.messages.getString("zest.element.activescript");
+			case ACTIVE_SCRIPT:	return Constant.messages.getString("zest.element.activescript");
 			case PASSIVE_SCRIPT:	return Constant.messages.getString("zest.element.passivescript");
 			case COMMON_TESTS:		return Constant.messages.getString("zest.element.commontests");
 			}
@@ -336,7 +330,13 @@ public class ZestZapUtils {
 
 	public static HttpMessage toHttpMessage(ZestRequest request, ZestResponse response) 
 			throws URIException, HttpMalformedHeaderException {
-		HttpMessage msg = new HttpMessage(new URI(request.getUrl().toString(), false));
+		HttpMessage msg;
+		if (request.getUrl() != null) {
+			msg = new HttpMessage(new URI(request.getUrl().toString(), false));
+		} else {
+			// TODO - there a better option? 
+			return null;
+		}
 		if (request.getHeaders() != null) {
 			try {
 				msg.setRequestHeader(msg.getRequestHeader().getPrimeHeader() + "\r\n" + request.getHeaders());
@@ -367,11 +367,10 @@ public class ZestZapUtils {
 	public static ZestRequest toZestRequest(HttpMessage msg) throws MalformedURLException, HttpMalformedHeaderException, SQLException {
 		ZestRequest req = new ZestRequest();
 		req.setMethod(msg.getRequestHeader().getMethod());
-		// TODO needs other changes checked in
 		if (msg.getRequestHeader().getURI()!= null) {
 			req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
 		}
-		// req.setUrlToken(correctTokens(msg.getRequestHeader().getURI().toString()));
+		req.setUrlToken(correctTokens(msg.getRequestHeader().getURI().toString()));
 		req.setHeaders(correctTokens(msg.getRequestHeader().getHeadersAsString()));
 		req.setData(correctTokens(msg.getRequestBody().toString()));
 		return req;

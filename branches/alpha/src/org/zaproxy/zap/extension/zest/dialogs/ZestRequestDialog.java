@@ -26,7 +26,6 @@ import java.net.URL;
 
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestScript;
-import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -53,8 +52,12 @@ public class ZestRequestDialog extends StandardFieldsDialog {
 		this.request = req;
 
 		this.removeAllFields();
-		this.addTextField(FIELD_URL, req.getUrl().toString());
-		this.addComboField(FIELD_METHOD, new String[] {"GET", "POST"}, req.getMethod());
+		if (req.getUrl() != null) {
+			this.addTextField(FIELD_URL, req.getUrl().toString());
+		} else {
+			this.addTextField(FIELD_URL, req.getUrlToken());
+		}
+		this.addComboField(FIELD_METHOD, new String[] {"GET", "POST", "{{target.method}}"}, req.getMethod());
 		this.addMultilineField(FIELD_HEADERS, req.getHeaders());
 		this.addMultilineField(FIELD_BODY, req.getData());
 	}
@@ -63,7 +66,8 @@ public class ZestRequestDialog extends StandardFieldsDialog {
 		try {
 			this.request.setUrl(new URL(this.getStringValue(FIELD_URL)));
 		} catch (MalformedURLException e) {
-			// Should have already been validated
+			// Assume this is because it includes a token
+			this.request.setUrlToken(this.getStringValue(FIELD_URL));
 		}
 		this.request.setMethod(this.getStringValue(FIELD_METHOD));
 		this.request.setHeaders(this.getStringValue(FIELD_HEADERS));
@@ -75,11 +79,14 @@ public class ZestRequestDialog extends StandardFieldsDialog {
 
 	@Override
 	public String validateFields() {
+		// TODO is there any validation we can do now? The below doesnt work with tokens...
+		/* 
 		try {
 			new URL(this.getStringValue(FIELD_URL));
 		} catch (MalformedURLException e) {
 			return Constant.messages.getString("zest.dialog.request.error.url");
 		}
+		*/
 		return null;
 	}
 	

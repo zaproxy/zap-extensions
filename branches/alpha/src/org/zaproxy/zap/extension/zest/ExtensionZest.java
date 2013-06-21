@@ -83,6 +83,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	private ZestAddConditionPopupMenu addConditionPopupMenu = null;
 	private ZestAddTransformationPopupMenu addTransformationPopupMenu = null;
 	private ZestAddToScriptPopupMenu popupZestAddToMenu = null;
+	private ZestInvokeScriptWithNodePopupMenu popupInvokeScriptWithNodeMenu = null;
 	private ZestCompareResponsePopupMenu compareResponsePopupMenu = null;
 	private ZestPopupZestClose popupZestClose = null;
 	private ZestPopupZestDelete popupZestDelete = null;
@@ -150,7 +151,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 			extensionHook.getHookMenu().addPopupMenuItem(getAddConditionPopupMenu());
 			
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupZestAddToMenu());
-			
+			extensionHook.getHookMenu().addPopupMenuItem(getPopupInvokeScriptWithNodeMenu());
+						
 			extensionHook.getHookMenu().addPopupMenuItem(getCompareResponsePopupMenu());
 			
             extensionHook.getHookMenu().addPopupMenuItem(getPopupNodeCut ());
@@ -208,6 +210,13 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 			popupZestAddToMenu = new ZestAddToScriptPopupMenu(this);
 		}
 		return popupZestAddToMenu;
+	}
+
+	private ZestInvokeScriptWithNodePopupMenu getPopupInvokeScriptWithNodeMenu() {
+		if (popupInvokeScriptWithNodeMenu == null) {
+			popupInvokeScriptWithNodeMenu = new ZestInvokeScriptWithNodePopupMenu(this);
+		}
+		return popupInvokeScriptWithNodeMenu;
 	}
 
 	private ZestAddTransformationPopupMenu getAddTransformationPopupMenu() {
@@ -388,7 +397,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		if (View.isInitialised()) {
 			this.getZestScriptsPanel().refreshMessage();
 			// TODO select token tab
-			this.getZestScriptsPanel().showZestEditScriptDialog(script, false);
+			this.getZestScriptsPanel().showZestEditScriptDialog(script, ZestScript.Type.Targeted);
 		}
 	}
 
@@ -504,6 +513,16 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		return list;
 	}
 	
+	public List<ZestScriptWrapper> getAscanScripts() {
+		List<ZestScriptWrapper> list = new ArrayList<ZestScriptWrapper>();
+		for (ZestNode node : this.getTreeModel().getAscanNodes()) {
+			if (node.getZestElement() instanceof ZestScriptWrapper) {
+				list.add((ZestScriptWrapper)node.getZestElement());
+			}
+		}
+		return list;
+	}
+	
 	public ZestNode getZestNode(ZestElement element) {
 		return this.getTreeModel().getZestNode(element);
 	}
@@ -569,7 +588,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	public void addToParent(ZestNode parent, SiteNode sn, String prefix) {
 		if (parent == null) {
 			// They're gone for the 'new script' option...
-			this.getZestScriptsPanel().showZestEditScriptDialog(null, false, prefix);
+			this.getZestScriptsPanel().showZestEditScriptDialog(null, ZestScript.Type.Targeted, prefix);
 			this.getZestScriptsPanel().addDeferedNode(sn);
 		} else {
 			
@@ -720,7 +739,20 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		}
 	}
 
+	/**
+	 * Run a targetted (ie standalone) script
+	 * @param script
+	 */
 	public void runScript(ZestScript script) {
+		this.runScript(script, null);
+	}
+	
+	/**
+	 * Run a script, which can be targeted or generic
+	 * @param script
+	 * @param target optional - if supplied will be passed to the script as a target
+	 */
+	public void runScript(ZestScript script, HttpMessage target) {
 		if (runner != null) {
 			// last one still going..
 			return;
@@ -728,6 +760,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		this.lastRunScript = script;
 		runner = new ZestRunnerThread(this, script);
 		runner.addListener(this);
+		runner.setTarget(target);
 		
 		if (View.isInitialised()) {
 			this.getZestResultsPanel().getModel().removeAllElements();

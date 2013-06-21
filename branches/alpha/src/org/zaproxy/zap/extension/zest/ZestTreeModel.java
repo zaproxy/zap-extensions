@@ -47,12 +47,16 @@ class ZestTreeModel extends DefaultTreeModel {
 	private static final Logger logger = Logger.getLogger(ZestTreeModel.class);
 	
 	private ZestNode scriptsNode;
+	private ZestNode ascanNode;
 	private ZestNode pscanNode;
 
     ZestTreeModel() {
         super(new ZestNode());
         scriptsNode = new ZestNode(new ZestTreeElement(ZestTreeElement.Type.TARGETED_SCRIPT));
         this.getRoot().add(scriptsNode);
+        
+        ascanNode = new ZestNode(new ZestTreeElement(ZestTreeElement.Type.ACTIVE_SCRIPT));
+        this.getRoot().add(ascanNode);
         
         pscanNode = new ZestNode(new ZestTreeElement(ZestTreeElement.Type.PASSIVE_SCRIPT));
         this.getRoot().add(pscanNode);
@@ -80,6 +84,14 @@ class ZestTreeModel extends DefaultTreeModel {
 		return list;
     }
 
+    public List<ZestNode> getAscanNodes() {
+		List<ZestNode> list = new ArrayList<ZestNode>();
+		for (int i=0; i < ascanNode.getChildCount(); i++) {
+			list.add((ZestNode)ascanNode.getChildAt(i));
+		}
+		return list;
+    }
+
 	public ZestNode addScript(ZestScriptWrapper script) {
 		// TODO Check for duplicate names (?)
 		logger.debug("addScript " + script.getTitle());
@@ -87,6 +99,8 @@ class ZestTreeModel extends DefaultTreeModel {
 		
 		if (ZestScript.Type.Passive.name().equals(script.getType())) {
 			this.pscanNode.add(zestNode);
+		} else if (ZestScript.Type.Active.name().equals(script.getType())) {
+			this.ascanNode.add(zestNode);
 		} else {
 			this.scriptsNode.add(zestNode);
 		}
@@ -104,6 +118,8 @@ class ZestTreeModel extends DefaultTreeModel {
 		
 		if (ZestScript.Type.Passive.name().equals(script.getType())) {
 			this.nodeStructureChanged(this.pscanNode);
+		} else if (ZestScript.Type.Active.name().equals(script.getType())) {
+			this.nodeStructureChanged(this.ascanNode);
 		} else {
 			this.nodeStructureChanged(this.scriptsNode);
 		}
@@ -113,6 +129,8 @@ class ZestTreeModel extends DefaultTreeModel {
 	private ZestNode getParent(ZestScriptWrapper script) {
 		if (ZestScript.Type.Passive.name().equals(script.getType())) {
 			return this.pscanNode;
+		} else if (ZestScript.Type.Active.name().equals(script.getType())) {
+			return this.ascanNode;
 		} else {
 			return this.scriptsNode;
 		}

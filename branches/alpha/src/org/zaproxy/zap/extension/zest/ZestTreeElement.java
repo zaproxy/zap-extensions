@@ -23,7 +23,7 @@ import org.mozilla.zest.core.v1.ZestElement;
 
 public class ZestTreeElement extends ZestElement {
 	
-	public enum Type {TARGETED_SCRIPT, PASSIVE_SCRIPT, COMMON_TESTS};
+	public enum Type {TARGETED_SCRIPT, PASSIVE_SCRIPT, ACTIVE_SCRIPT, COMMON_TESTS};
 	
 	private Type type;
 	
