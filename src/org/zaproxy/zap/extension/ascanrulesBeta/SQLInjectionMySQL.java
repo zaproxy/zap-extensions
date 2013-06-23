@@ -310,12 +310,11 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 
 						//Likely a SQL Injection. Raise it
 						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, currentHtmlParameter.getValue(), originalTimeUsed);
-						String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue);
-
+						
 						//raise the alert
-						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Time Based", getDescription(), 
+						bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(), 
 								getBaseMsg().getRequestHeader().getURI().getURI(), //url
-								"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
+								currentHtmlParameter.getName(),  newTimeBasedInjectionValue, 
 								extraInfo, getSolution(), msg3);
 
 						log.info("A likely Time Based SQL Injection Vulnerability has been found with ["+msg3.getRequestHeader().getMethod()+"] URL ["+msg3.getRequestHeader().getURI().getURI()+"] on "+currentHtmlParameter.getType()+" field: ["+currentHtmlParameter.getName()+"]");
