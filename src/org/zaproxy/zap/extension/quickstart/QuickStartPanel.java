@@ -42,10 +42,12 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.brk.BreakPanel;
 import org.zaproxy.zap.extension.search.SearchPanel;
 import org.zaproxy.zap.extension.tab.Tab;
+import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -56,7 +58,9 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	private ExtensionQuickStart extension;
 	private JButton attackButton = null;
 	private JButton stopButton = null;
+	private JButton confButton = null;
 	private ZapTextField urlField = null;
+	private ZapTextField confField = null;
 	private JLabel progressLabel = null;
 	private JCheckBox showOnStart = null;
 
@@ -120,13 +124,38 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 				LayoutHelper.getGBC(0, 3, 1, 0.0D, new Insets(5,5,5,5)));
 		panelContent.add(this.progressLabel, LayoutHelper.getGBC(1, 3, 3, 0.0D));
 
-		panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.bottommsg")), 
+		panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.proxymsg")), 
 				LayoutHelper.getGBC(0, 4, 5, 1.0D, new Insets(5,5,5,5)));
-		panelContent.add(new JLabel(""), LayoutHelper.getGBC(0, 5, 4, 1.D, 1.0D));	// Padding at bottom
+
+		if (Control.getSingleton().getExtensionLoader().getExtension("ExtensionMitmConf") != null) {
+			// MitmConf extension has been installed - this makes configuration much easier :)
+			panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.mitm")), 
+					LayoutHelper.getGBC(0, 6, 1, 0.0D, new Insets(5,5,5,5)));
+
+			panelContent.add(this.getConfField(), LayoutHelper.getGBC(1, 6, 3, 0.25D));
+
+			if (DesktopUtils.canOpenUrlInBrowser()) {
+				panelContent.add(this.getConfButton(), LayoutHelper.getGBC(1, 7, 1, 0.0D));
+				panelContent.add(new JLabel(
+						Constant.messages.getString("quickstart.label.mitmalt")),
+						LayoutHelper.getGBC(2, 7, 2, 0.0D));
+			} else {
+				panelContent.add(new JLabel(
+						Constant.messages.getString("quickstart.label.mitmurl")),
+						LayoutHelper.getGBC(3, 7, 3, 0.0D));
+			}
+			
+		} else {
+			panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.helpmsg")), 
+					LayoutHelper.getGBC(0, 5, 5, 1.0D, new Insets(5,5,5,5)));
+			
+		}
+		
+		panelContent.add(new JLabel(""), LayoutHelper.getGBC(0, 8, 4, 1.D, 1.0D));	// Padding at bottom
 
 		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.show")), 
-				LayoutHelper.getGBC(0, 6, 1, 0.0D, new Insets(5,5,5,5)));
-		panelContent.add(this.getShowOnStart(), LayoutHelper.getGBC(1, 6, 1, 0.0D));
+				LayoutHelper.getGBC(0, 9, 1, 0.0D, new Insets(5,5,5,5)));
+		panelContent.add(this.getShowOnStart(), LayoutHelper.getGBC(1, 9, 1, 0.0D));
 		
 		this.setMode(Control.getSingleton().getMode());
 	}
@@ -177,6 +206,36 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 			});
 		}
 		return stopButton;
+	}
+	
+	private String getMitmUrl() {
+		return "http://" + Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp() + ":" + 
+				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort() + "/mitm/"; 
+	}
+
+	private ZapTextField getConfField () {
+		if (confField == null) {
+			confField = new ZapTextField();
+			confField.setText(getMitmUrl());
+			confField.setEditable(false);
+		}
+		return confField;
+	}
+	
+	private JButton getConfButton() {
+		if (confButton == null) {
+			confButton = new JButton();
+			confButton.setText(Constant.messages.getString("quickstart.button.label.mitm"));
+			confButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.mitm"));
+
+			confButton.addActionListener(new java.awt.event.ActionListener() { 
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					DesktopUtils.openUrlInBrowser(getMitmUrl());
+				}
+			});
+		}
+		return confButton;
 	}
 
 	private void attackUrl () {
