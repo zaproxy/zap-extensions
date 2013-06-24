@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>11</version>
+	<version>12</version>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated language files.</changes>
+	<changes>Link to mitmconf add-on URL if present.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.quickstart.ExtensionQuickStart</extension>
