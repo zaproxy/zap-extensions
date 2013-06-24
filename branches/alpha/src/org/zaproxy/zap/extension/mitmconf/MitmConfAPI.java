@@ -20,17 +20,13 @@ package org.zaproxy.zap.extension.mitmconf;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import net.sf.json.JSONObject;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiOther;
@@ -43,16 +39,20 @@ public class MitmConfAPI extends ApiImplementor {
 
 	private static final String OTHER_MITM = "mitm";
 	private static final String OTHER_MANIFEST = "manifest";
-	private static final String OTHER_FIREFOX_ADDON = "gclimitm.xpi";
+	private static final String OTHER_SERVICE = "service";
+	private static final String OTHER_FIREFOX_ADDON = "ringleader.xpi";
 	
+	/*
 	private static final String PROXY_PAC = "/proxy.pac";
 	private static final String ROOT_CERT = "/OTHER/core/other/rootcert/";
 	private static final String FIREFOX_ADDON = "OTHER/" + PREFIX + "/other/" + OTHER_FIREFOX_ADDON;
+	*/
 
 	public MitmConfAPI() {
 		
 		this.addApiOthers(new ApiOther(OTHER_MITM));
 		this.addApiOthers(new ApiOther(OTHER_MANIFEST));
+		this.addApiOthers(new ApiOther(OTHER_SERVICE));
 		this.addApiOthers(new ApiOther(OTHER_FIREFOX_ADDON));
 
 		this.addApiShortcut(OTHER_MITM);
@@ -73,155 +73,29 @@ public class MitmConfAPI extends ApiImplementor {
 
 		if (OTHER_MITM.equals(name)) {
 			try {
-				// Copied from as for WebUI.handleRequest(..)
-				String manifestUrl = root + "/" + OTHER_MANIFEST;
-				String firefoxAddonUrl = root + "/" + FIREFOX_ADDON;
-				
-				StringBuilder sb = new StringBuilder();
+				String welcomePage = this.getStringReource("resource/welcome.html");
+				// Replace the dynamic parts
+				welcomePage = welcomePage.replace("{{ROOT}}", root);
+				// Replace the i18n strings
+				welcomePage = welcomePage.replace("{{MSG.TITLE}}", Constant.messages.getString("mitmconf.title"));
+				welcomePage = welcomePage.replace("{{MSG.HEADER}}", Constant.messages.getString("mitmconf.header"));
+				welcomePage = welcomePage.replace("{{MSG.INTRO1}}", Constant.messages.getString("mitmconf.intro1"));
+				welcomePage = welcomePage.replace("{{MSG.INTRO2}}", Constant.messages.getString("mitmconf.intro2"));
+				welcomePage = welcomePage.replace("{{MSG.SETUP1}}", Constant.messages.getString("mitmconf.setup1"));
+				welcomePage = welcomePage.replace("{{MSG.SETUP2}}", Constant.messages.getString("mitmconf.setup2"));
+				welcomePage = welcomePage.replace("{{MSG.PROGRESS}}", Constant.messages.getString("mitmconf.progress"));
+				welcomePage = welcomePage.replace("{{MSG.FAILURE}}", Constant.messages.getString("mitmconf.failure"));
+				welcomePage = welcomePage.replace("{{MSG.SUCCESS}}", Constant.messages.getString("mitmconf.success"));
+				welcomePage = welcomePage.replace("{{MSG.ACTIVATED}}", Constant.messages.getString("mitmconf.activated"));
+				welcomePage = welcomePage.replace("{{MSG.BUTTON}}", Constant.messages.getString("mitmconf.button"));
+
 				/*
-				sb.append("<head>\n");
-				sb.append("<title>");
-				sb.append(Constant.messages.getString("api.html.title"));
-				sb.append("</title>\n");
-				sb.append("</head>\n");
-				sb.append("<body>\n");
-				sb.append(Constant.messages.getString("api.home.topmsg"));
-				
-				sb.append("<b>Note: This is a temporary add-on for testing MITM configuration :) </b><br>");
-				
-				sb.append("  <button id=\"btn\">Click to setup!</button><br>");
-				
-				sb.append("<b>The manifest is at: <a href=\"" + manifestUrl + "\">" + manifestUrl + "</a> </b><br>");
-				sb.append("<b>The Firefox add-on is at: <a href=\"" + firefoxAddonUrl + "\">" + firefoxAddonUrl + "</a> </b><br>");
-				
-				sb.append(Constant.messages.getString("api.home.proxypac"));
-				sb.append(Constant.messages.getString("api.home.links.header"));
-				if (API.getInstance().isEnabled()) {
-					sb.append(Constant.messages.getString("api.home.links.api.enabled"));
-				} else {
-					sb.append(Constant.messages.getString("api.home.links.api.disabled"));
+				// TODO - this seems to detect Firefox fine...
+				String userAgent = msg.getRequestHeader().getHeader(HttpHeader.USER_AGENT);
+				if (userAgent.toLowerCase().indexOf("firefox") >= 0) {
+					// It looks like firefox
 				}
-				sb.append(Constant.messages.getString("api.home.links.online"));
-				sb.append("</body>\n");
-				
-				sb.append("<script>\n");
-				sb.append("	var click = function(event) {\n");
-				sb.append("	var evt = new CustomEvent('ConfigureSecProxy',{\"detail\":{\"url\":\"" + manifestUrl + "\"}});\n");
-				sb.append(" document.dispatchEvent(evt);\n");
-				sb.append("};\n");
-				sb.append("var btn = document.getElementById('btn');\n");
-				sb.append("btn.addEventListener('click',click,false);\n");
-				sb.append("</script>\n");
 				*/
-				
-				// TODO
-				sb.append("<html>\n");
-				sb.append("<head>\n");
-				sb.append("<title>");
-				sb.append(Constant.messages.getString("api.html.title"));
-				sb.append("</title>\n");
-				sb.append("</head>\n");
-				sb.append("<body>\n");
-
-				sb.append(Constant.messages.getString("api.home.topmsg"));
-				
-				sb.append("<b>Note: This is a temporary add-on for testing MITM configuration :) </b><br>");
-
-				sb.append("  <div id=\"messages\">\n");
-				sb.append("    <div id=\"setup\" style=\"display:none\">\n");
-				sb.append("      <p>Your browser does not seem to support automatic man-in-the-middle configuration</p>\n");
-				sb.append("      <p>If you are using a recent version of Firefox, you can install the get the addon here:\n");
-				sb.append("<b><a href=\"" + firefoxAddonUrl + "\">" + firefoxAddonUrl + "</a> </b></p>");
-				sb.append("    </div>\n");
-				sb.append("    <div id=\"in_progress\" style=\"display:none\">\n");
-				sb.append("      <p>Configuring your browser to work with your man-in-the-middle proxy...</p>\n");
-				sb.append("    </div>\n");
-				sb.append("    <div id=\"success\" style=\"display:none\">\n");
-				sb.append("      <p>Configuration succeeded!</p>\n");
-				sb.append("    </div>\n");
-				sb.append("    <div id=\"failure\" style=\"display:none\">\n");
-				sb.append("      <p>Configuration failed</p>\n");
-				sb.append("    </div>\n");
-				sb.append("    <div id=\"activated\" style=\"display:none\">\n");
-				sb.append("      <p>mitm support has been activated in your browser:</p>\n");
-				sb.append("    </div>\n");
-				sb.append("    <div id=\"actions\">\n");
-				sb.append("      <p>\n");
-				sb.append("      <button id=\"btn\">Click to setup!</button>\n");
-				sb.append("      </p>\n");
-				sb.append("  </div>\n");
-				// TODO
-
-				sb.append("</body>\n");
-				sb.append("<script>\n");
-				sb.append("  var detected = false;\n");
-				sb.append("  var divs = ['setup','in_progress','success','failure','activated','actions'];\n");
-				sb.append("  var manifest = {\"detail\":{\"url\":\"" + manifestUrl + "\"}};\n");
-
-				sb.append("  // only show UI for the named elements\n");
-				sb.append("  var showUI = function(visible){\n");
-				sb.append("    for(var idx in divs){\n");
-				sb.append("      if (-1 != visible.indexOf(divs[idx])) {\n");
-				sb.append("        document.getElementById(divs[idx]).style.display = 'inline';\n");
-				sb.append("        } else {\n");
-				sb.append("        document.getElementById(divs[idx]).style.display = 'none';\n");
-				sb.append("      }\n");
-				sb.append("    }\n");
-				sb.append("  };\n");
-
-				sb.append("  // event listener for button press\n");
-				sb.append("  var click = function(event) {\n");
-				sb.append("    var evt = new CustomEvent('ConfigureSecProxy', manifest);\n");
-				sb.append("    document.dispatchEvent(evt);\n");
-				sb.append("    setTimeout(function() {\n");
-				sb.append("      if (!detected) {\n");
-				sb.append("        showUI(['setup']);\n");
-				sb.append("     }\n");
-				sb.append("    },1000);\n");
-				sb.append("  };\n");
-
-				sb.append("  // event listener for configuration started event\n");
-				sb.append("  var started = function(event) {\n");
-				sb.append("    console.log('configuration has started');\n");
-				sb.append("    showUI(['in_progress']);\n");
-				sb.append("    detected = true;\n");
-				sb.append("  };\n");
-
-				sb.append("  // event listener for configuration failed event\n");
-				sb.append("  // use this to let the user know something has gone wrong\n");
-				sb.append("  var failed = function(event) {\n");
-				sb.append("    console.log('configuration has failed');\n");
-				sb.append("    showUI(['failure','actions']);\n");
-				sb.append("  };\n");
-
-				sb.append("  // event listener for configuration succeeded\n");
-				sb.append("  // use this to show a success message to a user in your welcome doc\n");
-				sb.append("  var succeeded = function(event) {\n");
-				sb.append("    console.log('configuration has succeeded');\n");
-				sb.append("    showUI(['success']);\n");
-				sb.append("  };\n");
-
-				sb.append("  // event listener for browser support activated\n");
-				sb.append("  var activated = function(event) {\n");
-				sb.append("    console.log('activation has occurred');\n");
-				sb.append("    showUI(['activated','actions']);\n");
-				sb.append("  };\n");
-
-				sb.append("  // hook event listener into button\n");
-				sb.append("  var btn = document.getElementById('btn');\n");
-				sb.append("  btn.addEventListener('click',click,false);\n");
-
-				sb.append("  // Hook configuration event listeners into the document\n");
-				sb.append("  document.addEventListener('ConfigureSecProxyStarted',started,false);\n");
-				sb.append("  document.addEventListener('ConfigureSecProxyFailed',failed,false);\n");
-				sb.append("  document.addEventListener('ConfigureSecProxyActivated',activated,false);\n");
-				sb.append("  document.addEventListener('ConfigureSecProxySucceeded',succeeded,false);\n");
-				sb.append("</script>\n");
-				sb.append("</html>\n");
-
-				// TODO done
-				
-				String response = sb.toString();
 				
 				msg.setResponseHeader(
 						"HTTP/1.1 200 OK\r\n" +
@@ -230,10 +104,10 @@ public class MitmConfAPI extends ApiImplementor {
 						"Access-Control-Allow-Origin: *\r\n" + 
 						"Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n" + 
 						"Access-Control-Allow-Headers: ZAP-Header\r\n" + 
-						"Content-Length: " + response.length() + 
+						"Content-Length: " + welcomePage.length() + 
 						"\r\nContent-Type: text/html;");
 				
-		    	msg.setResponseBody(response);
+		    	msg.setResponseBody(welcomePage);
 		    	
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
@@ -242,19 +116,10 @@ public class MitmConfAPI extends ApiImplementor {
 			
 		} else if (OTHER_MANIFEST.equals(name)) {
 			try {
-				StringBuilder sb = new StringBuilder();
-				sb.append("{\"mitmTool\":\"");
-				sb.append(Constant.PROGRAM_NAME + " " + Constant.PROGRAM_VERSION);
-				sb.append("\",\n");
-				sb.append("\"proxyPAC\":\"" + root + PROXY_PAC + "\",\n");
-				sb.append("\"protocolVersion\":\"1.00\",\n");
-				sb.append("\"features\":{\n");
-				sb.append("\"break\":\"true\",");
-				sb.append("\"record\":\"true\",");
-				sb.append("\"CACert\":\"" + root + ROOT_CERT + "\"}}\n");
-				
-				String response = sb.toString();
-				
+				String manifest = this.getStringReource("resource/manifest.json");
+				// Replace the dynamic parts
+				manifest = manifest.replace("{{ROOT}}", root);
+
 				msg.setResponseHeader(
 						"HTTP/1.1 200 OK\r\n" +
 						"Pragma: no-cache\r\n" +
@@ -262,10 +127,33 @@ public class MitmConfAPI extends ApiImplementor {
 						"Access-Control-Allow-Origin: *\r\n" + 
 						"Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n" + 
 						"Access-Control-Allow-Headers: ZAP-Header\r\n" + 
-						"Content-Length: " + response.length() + 
+						"Content-Length: " + manifest.length() + 
 						"\r\nContent-Type: application/json");
 				
-		    	msg.setResponseBody(response);
+		    	msg.setResponseBody(manifest);
+		    	
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+			return msg;
+			
+		} else if (OTHER_SERVICE.equals(name)) {
+			try {
+				String service = this.getStringReource("resource/service.json");
+				// Replace the dynamic parts
+				service = service.replace("{{ROOT}}", root);
+
+				msg.setResponseHeader(
+						"HTTP/1.1 200 OK\r\n" +
+						"Pragma: no-cache\r\n" +
+						"Cache-Control: no-cache\r\n" + 
+						"Access-Control-Allow-Origin: *\r\n" + 
+						"Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n" + 
+						"Access-Control-Allow-Headers: ZAP-Header\r\n" + 
+						"Content-Length: " + service.length() + 
+						"\r\nContent-Type: application/json");
+				
+		    	msg.setResponseBody(service);
 		    	
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
@@ -275,7 +163,7 @@ public class MitmConfAPI extends ApiImplementor {
 		} else if (OTHER_FIREFOX_ADDON.equals(name)) {
 			InputStream in = null;
 			try {
-				in = this.getClass().getResourceAsStream("resource/gclimitm.xpi");
+				in = this.getClass().getResourceAsStream("resource/" + OTHER_FIREFOX_ADDON);
 
 				int numRead=0;
 				int length = 0;
@@ -314,6 +202,32 @@ public class MitmConfAPI extends ApiImplementor {
 			throw new ApiException(ApiException.Type.BAD_OTHER);
 		}
 	}
+	
+	private String getStringReource(String resourceName) throws ApiException {
+		InputStream in = null;
+		StringBuilder sb = new StringBuilder();
+		try {
+			in = this.getClass().getResourceAsStream(resourceName);
+			int numRead=0;
+            byte[] buf = new byte[1024];
+            while((numRead = in.read(buf)) != -1){
+            	sb.append(new String(buf, 0, numRead));
+            }
+            return sb.toString();
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ApiException(ApiException.Type.INTERNAL_ERROR);
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					// Ignore
+				}
+			}
+		}
+	}
 
 	@Override
 	public HttpMessage handleShortcut(HttpMessage msg)  throws ApiException {
@@ -329,13 +243,4 @@ public class MitmConfAPI extends ApiImplementor {
 		}
 		throw new ApiException (ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
 	}
-
-	public static void main (String [] params) throws NoSuchAlgorithmException {
-		MessageDigest cript = MessageDigest.getInstance("SHA-1");
-        cript.reset();
-        cript.update("sss".getBytes());
-        String str = String.valueOf(Hex.encodeHex(cript.digest()));
-        System.out.println("Str is " + str);
-	}
-
 }
