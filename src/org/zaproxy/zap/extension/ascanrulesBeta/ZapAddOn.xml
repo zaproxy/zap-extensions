@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>5</version>
+	<version>6</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Fixed NullPointerExceptions when scanning with "Anti CSRF tokens scanner"</changes>
+	<changes>Improvements to the MySQL scanner</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
