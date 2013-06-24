@@ -11,6 +11,7 @@
     * [AddOn_ascanrulesAlpha Active scanner rules (alpha)]
     * [AddOn_Zest Zest - Scripting Security Tests]
   * [AddOnDevelopment  Add-on Development]
+  * [AddOnStructure  Add-on Structure]
   * [AddOnDebugging Add-on Debugging]
   * [Examples Examples]
   * [CodeStructure Code Structure]
