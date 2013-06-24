@@ -73,6 +73,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 	private boolean doBooleanBased=false; 
 	private boolean doUnionBased = false;	
 	private boolean doExpressionBased = false;
+	private boolean doOrderByBased = false;
 	private boolean doStackedBased = false;  //TODO: use in the stacked based implementation
 
 	//how many requests can we fire for each method? will be set depending on the attack strength
@@ -80,6 +81,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 	private int doBooleanMaxRequests = 0;
 	private int doUnionMaxRequests = 0;
 	private int doExpressionMaxRequests=0;
+	private int doOrderByMaxRequests = 0;
 	private int doStackedMaxRequests = 0;	//TODO: use in the stacked based implementation
 
 	/**
@@ -341,29 +343,33 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 			doExpressionBased=true; doExpressionMaxRequests=4;
 			doBooleanBased=false; doBooleanMaxRequests=0;			
 			doUnionBased=false; doUnionMaxRequests=0;
+			doOrderByBased=false; doOrderByMaxRequests=0;
 			doStackedBased=false; doStackedMaxRequests=0;
 				
 		} else if ( this.getAttackStrength() == AttackStrength.MEDIUM) {
-			//do some more error based (if Threshold allows), some more expression based, and some boolean based
+			//do some more error based (if Threshold allows), some more expression based, some boolean based, and some Union based
 			doErrorBased=true; doErrorMaxRequests=8;
 			doExpressionBased=true; doExpressionMaxRequests=8;			
 			doBooleanBased=true; doBooleanMaxRequests=6;
 			doUnionBased=true; doUnionMaxRequests=5;
+			doOrderByBased=false; doOrderByMaxRequests=0;
 			doStackedBased=false; doStackedMaxRequests=5;
 			
 		} else if ( this.getAttackStrength() == AttackStrength.HIGH) {
-			//do some more error based (if Threshold allows), some more expression based, some more boolean based, and some union based 
+			//do some more error based (if Threshold allows), some more expression based, some more boolean based, some union based, and some order by based
 			doErrorBased=true; doErrorMaxRequests=16;
 			doExpressionBased=true; doExpressionMaxRequests=16;
 			doBooleanBased=true; doBooleanMaxRequests=20;	//will not run all the LIKE attacks.. these are done at insane..
 			doUnionBased=true; doUnionMaxRequests=10;
+			doOrderByBased=true; doOrderByMaxRequests=5;
 			doStackedBased=false; doStackedMaxRequests=10;			
 		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
-			//do some more error based (if Threshold allows), some more expression based, some more boolean based, and some more union based
+			//do some more error based (if Threshold allows), some more expression based, some more boolean based, some more union based, and some more order by based
 			doErrorBased=true; doErrorMaxRequests=100;
 			doExpressionBased=true; doExpressionMaxRequests=100;
 			doBooleanBased=true; doBooleanMaxRequests=100;
 			doUnionBased=true; doUnionMaxRequests=100;
+			doOrderByBased=true; doOrderByMaxRequests=100;
 			doStackedBased=false; doStackedMaxRequests=100;			
 		}
 		//if a high threshold is in place, turn off the error based, which are more prone to false positives
@@ -397,6 +403,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 			int countExpressionBasedRequests=0;
 			int countBooleanBasedRequests = 0;
 			int countUnionBasedRequests = 0;
+			int countOrderByBasedRequests=0;
 			int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
 
 
@@ -824,7 +831,96 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 			//end of check 3
 
 		
+			//###############################
 			
+			//check for columns used in the "order by" clause of a SQL statement. earlier tests will likely not catch these
+			
+			//append on " ASC -- " to the end of the original parameter. Grab the results.
+			//if the results are different to the original (unmodified parameter) results, then bale
+			//if the results are the same as for the original parameter value, then the parameter *might* be influencing the order by
+			//	try again for "DESC": append on " DESC -- " to the end of the original parameter. Grab the results.
+			//	if the results are the same as the original (unmodified parameter) results, then bale 
+			//	(the results are not under our control, or there is no difference in the ordering, for some reason: 0 or 1 rows only, or ordering 
+			//	by the first column alone is not sufficient to change the ordering of the data.)
+			//	if the results were different to the original (unmodified parameter) results, then
+			//		SQL injection!!
+			
+			//Since the previous checks are attempting SQL injection, and may have actually succeeded in modifying the database (ask me how I know?!)
+			//then we cannot rely on the database contents being the same as when the original query was last run (could be hours ago)
+			//so to work around this, simply re-run the query again now at this point.
+			//Note that we are not counting this request in our max number of requests to be issued
+			refreshedmessage = getNewMsg();	
+			sendAndReceive(refreshedmessage);
+			
+			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
+			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
+			mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
+			
+			if (! sqlInjectionFoundForUrl && doOrderByBased && countOrderByBasedRequests < doOrderByMaxRequests ) {
+				
+					String modifiedParamValue=TestSQLInjection.getURLDecode(origParamValue) + " ASC "+ SQL_ONE_LINE_COMMENT;
+					
+					HttpMessage msg5 = getNewMsg();
+					setParameter(msg5, param, modifiedParamValue);
+					
+					sendAndReceive(msg5);
+					countOrderByBasedRequests++;
+					
+					String modifiedAscendingOutputUnstripped = msg5.getResponseBody().toString();
+					String modifiedAscendingOutputStripped = this.stripOff(modifiedAscendingOutputUnstripped, modifiedParamValue);
+					
+					//set up two little arrays to ease the work of checking the unstripped output, and then the stripped output
+					String normalBodyOutput [] = {mResBodyNormalUnstripped, mResBodyNormalStripped};
+					String ascendingBodyOutput [] = {modifiedAscendingOutputUnstripped, modifiedAscendingOutputStripped};
+					boolean strippedOutput [] = {false, true};
+					
+					for (int booleanStrippedUnstrippedIndex = 0; booleanStrippedUnstrippedIndex < 2; booleanStrippedUnstrippedIndex++) {
+						//if the results of the modified request match the original query, we may be onto something. 
+						if (ascendingBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) == 0 ) {
+							if (this.debugEnabled) log.debug("Check X, " + (strippedOutput[booleanStrippedUnstrippedIndex] ? "STRIPPED": "UNSTRIPPED")+ " html output for modified Order By parameter ["+modifiedParamValue+"] matched (refreshed) original results for "+ refreshedmessage.getRequestHeader().getURI());
+							//confirm that a different parameter value generates different output, to minimise false positives
+							
+							//use the descending order this time
+							String modifiedParamValueConfirm=TestSQLInjection.getURLDecode(origParamValue) + " DESC "+ SQL_ONE_LINE_COMMENT;
+							
+							HttpMessage msg5Confirm = getNewMsg();
+							setParameter(msg5Confirm, param, modifiedParamValueConfirm);
+							
+							sendAndReceive(msg5Confirm);
+							countOrderByBasedRequests++;
+							
+							String confirmOrderByOutputUnstripped = msg5Confirm.getResponseBody().toString();
+							String confirmOrderByOutputStripped = this.stripOff(confirmOrderByOutputUnstripped, modifiedParamValueConfirm);
+							
+							//set up two little arrays to ease the work of checking the unstripped output or the stripped output
+							String confirmOrderByBodyOutput [] = {confirmOrderByOutputUnstripped, confirmOrderByOutputStripped};
+							
+							if (confirmOrderByBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) != 0 ) {
+								//the confirm query did not return the same results.  This means that arbitrary queries are not all producing the same page output.
+								//this means the fact we earlier reproduced the original page output with a modified parameter was not a coincidence
+								
+								//Likely a SQL Injection. Raise it
+								String extraInfo = null;
+								if (strippedOutput [booleanStrippedUnstrippedIndex]) 
+									extraInfo=Constant.messages.getString("ascanrules.sqlinjection.alert.orderbybased.extrainfo", modifiedParamValue, "");
+								else 
+									extraInfo=Constant.messages.getString("ascanrules.sqlinjection.alert.orderbybased.extrainfo", modifiedParamValue, "NOT ");							
+								
+								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
+								sqlInjectionAttack=modifiedParamValue;
+								bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(), 
+										null, //url
+										param,  sqlInjectionAttack, 
+										extraInfo, getSolution(), msg5);
+
+								sqlInjectionFoundForUrl= true; 								
+							}
+						}
+					}
+				
+				
+			}				
+
 			
 			//###############################
 			
