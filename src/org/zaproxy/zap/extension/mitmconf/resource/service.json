@@ -1,0 +1,70 @@
+{
+  "commands":[{
+    "description":"These are sample commands to demonstrate calling a REST service from GCLI "
+  },
+  {
+    "name":"session",
+    "description":"manipulate ZAP sessions"
+  },
+  {
+    "name":"session new",
+    "description":"create a new session",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"name",
+      "type": "string",
+      "description":"the name of the new session to create"
+    }
+    ],
+        "execAction":{
+          "url":"{{ROOT}}/JSON/core/action/newSession/?name=${name}",
+          "expression":"$.Result",
+          "callbackData":{"foo":"bar","wibble":{"type":"expression","expression":"$.response.Result","extract":true}}
+        }
+  }, {
+    "name":"brk",
+    "description":"create a new session",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"state",
+      "type": {"name":"selection", "data":["on","off"]},
+      "description": "break on request",
+      "defaultValue": "on"
+    },
+    {
+      "name":"scope",
+      "type": {"name":"selection", "data":["tab","global"]},
+      "description": "local to tab or global",
+      "defaultValue": "tab"
+    }
+    ],
+    "execAction":{
+      "expression":"$.Result",
+      "callbackData":{
+        "conditionalCommands":{
+          "expression":"$.args.state",
+          "states":{
+            "on":[{
+              "command":"addToHeader",
+              "params": {
+                "headerName":"X-Security-Proxy",
+                "value":"intercept",
+                "scope":{"type":"expression","expression":"$.args.scope","extract":true}
+              }
+            }],
+            "off":[{
+              "command":"removeFromHeader",
+              "params": {
+                "headerName":"X-Security-Proxy",
+                "value":"intercept",
+                "scope":{"type":"expression","expression":"$.args.scope","extract":true}
+              }
+            }]
+          }
+        }
+      }
+    }
+  }]
+}
