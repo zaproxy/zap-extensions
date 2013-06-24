@@ -1,0 +1,24 @@
+= Add-on Structure =
+
+Add-ons allow you to dynamically add functionality to ZAP.
+
+They can contain:
+  * Extensions, ie code that includes a class which extends [http://code.google.com/p/zaproxy/source/browse/trunk/src/org/parosproxy/paros/extension/Extension.java Extension.java]
+  * Active scan rules, which extend [http://code.google.com/p/zaproxy/source/browse/trunk/src/org/parosproxy/paros/core/scanner/AbstractPlugin.java AbstractPlugin.java]
+  * Passive scan rules, which extend [http://code.google.com/p/zaproxy/source/browse/trunk/src/org/zaproxy/zap/extension/pscan/PluginPassiveScanner.java PluginPassiveScanner.java]
+  * 'Raw' files
+
+Add-ons have a standard naming convention: 
+
+  * _name_-_status_-_version_.zap
+
+Where
+  * _name_ is the last element of the add-on package name
+  * _status_ is one or "alpha", "beta", "release"
+  * _version_ is an integer which increments on each release
+
+Add-ons are jar (zip) files and must contain a file called [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/ZapAddOn.xml ZapAddOn.xml] at the top level.
+
+This file defines the contents of the add-on and is used by ZAP to dynamically load and unload it. 
+
+You should use the 'build-addon' task in the relevant [https://code.google.com/p/zap-extensions/source/browse/branches/alpha/build/build.xml build.xml] file to create add-ons.
