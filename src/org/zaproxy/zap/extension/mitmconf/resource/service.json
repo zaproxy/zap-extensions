@@ -1,6 +1,6 @@
 {
   "commands":[{
-    "description":"These are sample commands to demonstrate calling a REST service from GCLI "
+    "description":"OWASP ZAP Commands"
   },
   {
     "name":"session",
@@ -17,14 +17,26 @@
       "description":"the name of the new session to create"
     }
     ],
-        "execAction":{
-          "url":"{{ROOT}}/JSON/core/action/newSession/?name=${name}",
-          "expression":"$.Result",
-          "callbackData":{"foo":"bar","wibble":{"type":"expression","expression":"$.response.Result","extract":true}}
-        }
-  }, {
+    "execAction":{
+      "url":"{{ROOT}}/JSON/core/action/newSession/?name=${name}",
+      "expression":"$.Result",
+      "callbackData":{"foo":"bar","wibble":{"type":"expression","expression":"$.response.Result","extract":true}}
+    }
+  },
+  {
+    "name":"version",
+    "description":"returns the ZAP version",
+    "returnType":"string",
+    "params":[],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/core/view/version/",
+      "expression":"$.version",
+      "callbackData":{"foo":"bar","wibble":{"type":"expression","expression":"$.response.version","extract":true}}
+    }
+  },
+  {
     "name":"brk",
-    "description":"create a new session",
+    "description":"break on new requests",
     "returnType":"string",
     "params":[
     {
@@ -59,6 +71,51 @@
               "params": {
                 "headerName":"X-Security-Proxy",
                 "value":"intercept",
+                "scope":{"type":"expression","expression":"$.args.scope","extract":true}
+              }
+            }]
+          }
+        }
+      }
+    }
+  },
+  {
+    "name":"record",
+    "description":"record all requests",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"state",
+      "type": {"name":"selection", "data":["on","off"]},
+      "description": "record requests",
+      "defaultValue": "on"
+    },
+    {
+      "name":"scope",
+      "type": {"name":"selection", "data":["tab","global"]},
+      "description": "local to tab or global",
+      "defaultValue": "tab"
+    }
+    ],
+    "execAction":{
+      "expression":"$.Result",
+      "callbackData":{
+        "conditionalCommands":{
+          "expression":"$.args.state",
+          "states":{
+            "on":[{
+              "command":"addToHeader",
+              "params": {
+                "headerName":"X-Security-Proxy",
+                "value":"record",
+                "scope":{"type":"expression","expression":"$.args.scope","extract":true}
+              }
+            }],
+            "off":[{
+              "command":"removeFromHeader",
+              "params": {
+                "headerName":"X-Security-Proxy",
+                "value":"record",
                 "scope":{"type":"expression","expression":"$.args.scope","extract":true}
               }
             }]
