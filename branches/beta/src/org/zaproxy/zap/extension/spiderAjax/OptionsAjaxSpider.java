@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
@@ -45,8 +46,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JPanel panelCrawljax = null;
 	private JPanel panelProxy = null;
 	private ZapTextField txtProxyIp = null;
-	private ZapTextField txtNumBro = null;
-	private ZapTextField txtNumThre = null;
+	private ZapNumberSpinner txtNumBro = null;
+	private ZapNumberSpinner txtNumThre = null;
     
 	// ZAP: Do not allow invalid port numbers
 	private ZapPortNumberSpinner spinnerProxyPort = null;
@@ -86,11 +87,11 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	/**
 	 * This method initializes txtNumBro	
 	 * 	
-	 * @return org.zaproxy.zap.utils.ZapTextField	
+	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
 	 */    
-	private ZapTextField getTxtNumBro() {
+	private ZapNumberSpinner getTxtNumBro() {
 		if (txtNumBro == null) {
-			txtNumBro = new ZapTextField("");
+			txtNumBro = new ZapNumberSpinner(1, 1, Integer.MAX_VALUE);
 		}
 		return txtNumBro;
 	}
@@ -98,11 +99,11 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	/**
 	 * This method initializes txtNumThre	
 	 * 	
-	 * @return org.zaproxy.zap.utils.ZapTextField	
+	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
 	 */    
-	private ZapTextField getTxtNumThre() {
+	private ZapNumberSpinner getTxtNumThre() {
 		if (txtNumThre == null) {
-			txtNumThre = new ZapTextField("");
+			txtNumThre = new ZapNumberSpinner(1, 1, Integer.MAX_VALUE);
 		}
 		return txtNumThre;
 	}
@@ -203,8 +204,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    txtProxyIp.setText(this.extension.getProxy().getProxyHost());
 	    txtProxyIp.discardAllEdits();
 	    spinnerProxyPort.setValue(this.extension.getProxy().getProxyPort());
-	    txtNumBro.setText(String.valueOf(this.extension.getProxy().getBrowsers()));
-	    txtNumThre.setText(String.valueOf(this.extension.getProxy().getThreads()));
+	    txtNumBro.setValue(Integer.valueOf(this.extension.getProxy().getBrowsers()));
+	    txtNumThre.setValue(Integer.valueOf(this.extension.getProxy().getThreads()));
 	    
 	    //set the browser type
 	    if(this.extension.getProxy().getBrowser() == BrowserType.firefox){
@@ -238,8 +239,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    this.extension.getProxy().setMegaScan(getClickAllElems().isSelected());
 		this.extension.getProxy().setProxyHost(txtProxyIp.getText());
 		this.extension.getProxy().setProxyPort(spinnerProxyPort.getValue());
-		this.extension.getProxy().setBrowsers(Integer.parseInt(txtNumBro.getText()));
-		this.extension.getProxy().setThreads(Integer.parseInt(txtNumThre.getText()));
+		this.extension.getProxy().setBrowsers(txtNumBro.getValue().intValue());
+		this.extension.getProxy().setThreads(txtNumThre.getValue().intValue());
 		
 		if(getFirefox().isSelected()){
 			this.extension.getProxy().setBrowser(BrowserType.firefox);
