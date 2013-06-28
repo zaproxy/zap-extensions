@@ -106,7 +106,7 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 		
 		charset = Charset.forName("UTF-8");
 		
-		setOrder(160);
+		setOrder(159);
 	}
 	
 	@Override
@@ -127,22 +127,24 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 	@Override
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
-		ExtensionHookView hookView = extensionHook.getHookView();
 		
 		extensionHook.addPersistentConnectionListener(this);
 		
 		extensionHook.addSessionListener(this);
 		
-		// setup SSE tab
-		EventStreamPanel tab = getEventStreamTab();
-		tab.setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
-		addObserver(tab);
-		extensionHook.addSessionListener(tab.getSessionListener());
-		hookView.addStatusPanel(tab);
-		
-		initializeWorkPanel();
-		
-        ExtensionHelp.enableHelpKey(tab, "sse.tab");
+		if (getView() != null) {
+			
+			// setup SSE tab
+			EventStreamPanel tab = getEventStreamTab();
+			tab.setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
+			addObserver(tab);
+			extensionHook.addSessionListener(tab.getSessionListener());
+			extensionHook.getHookView().addStatusPanel(tab);
+			
+			initializeWorkPanel();
+			
+			ExtensionHelp.enableHelpKey(tab, "sse.tab");
+		}
 	}
 	
 	@Override
