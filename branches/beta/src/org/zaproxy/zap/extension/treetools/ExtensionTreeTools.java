@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
@@ -92,10 +91,5 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
 	@Override
 	public boolean canUnload() {
 		return true;
-	}
-	
-	public void unload() {
-		Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupMenuTreeTools());  //added when going from alpha to beta
-		//Control.getSingleton().getExtensionLoader().removeExtension(this, hook);  //removed when going from alpha to beta
 	}
 }
