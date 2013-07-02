@@ -2,6 +2,7 @@
   * [V2Extensions 2.0 Add-ons]
    * [AddOnsRelease Add-ons: Release]
     * [AddOn_ascanrules Active scanner rules]
+    * [AddOn_fuzzdb Fuzzdb files]
     * [AddOn_pscanrules Passive scanner rules]
    * [AddOnsBeta Add-ons: Beta]
     * [AddOn_ascanrulesBeta Active scanner rules (beta)]
