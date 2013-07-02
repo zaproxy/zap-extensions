@@ -1,4 +1,4 @@
-= Fuzzdb =
+= Fuzzdb files =
 
 [https://code.google.com/p/fuzzdb/ Fuzzdb] is an open source collection of 
   * Predictable Resource Locations
