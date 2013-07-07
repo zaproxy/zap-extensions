@@ -7,6 +7,8 @@ They can contain:
   * Active scan rules, which extend [http://code.google.com/p/zaproxy/source/browse/trunk/src/org/parosproxy/paros/core/scanner/AbstractPlugin.java AbstractPlugin.java]
   * Passive scan rules, which extend [http://code.google.com/p/zaproxy/source/browse/trunk/src/org/zaproxy/zap/extension/pscan/PluginPassiveScanner.java PluginPassiveScanner.java]
   * 'Raw' files
+  * Help files, which must be under 'resource/help' and follow a standard structure (to be documented)
+  * Libraries, which will be automatically loaded and must be under 'lib'
 
 Add-ons have a standard naming convention: 
 
