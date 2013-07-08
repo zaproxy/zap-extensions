@@ -1,16 +1,20 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>7</version>
-	<description>Provides dynamic access to internal ZAP data structures</description>
+	<version>8</version>
+	<description>Supports all JRS 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/ScriptConsole</url>
-	<changes>Updated language files.</changes>
+	<changes>Added Scripts tree and support for scripted active and passive scan rules.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.scripts.ExtensionScripts</extension>
 	</extensions>
-	<ascanrules/>
-	<pscanrules/>
+	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.scripts.ScriptsActiveScanner</ascanrule>
+	</ascanrules>
+	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.scripts.ScriptsPassiveScanner</pscanrule>
+	</pscanrules>
 	<filters/>
 	<files/>
 </zapaddon>
