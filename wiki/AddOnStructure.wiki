@@ -45,6 +45,6 @@ Target: deploy-all add:
     <antcall target="deploy-myaddon"/>
 }}}
 
-You can then just use the 'deploy-myaddon' to build and deploy your add-on to your 'zaproxy'project.
+You can then just use the 'deploy-myaddon' to build and deploy your add-on to your 'zaproxy' project.
 
 You can also just use the 'build-all' target and then manually import your add-on into ZAP using the "File/Load Add-on file..." menu option, for example if you want to test your add-on with a version of ZAP that you have not built yourself. Your add-on will be under the 'build/zap-exts' directory.
