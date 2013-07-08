@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.awt.CardLayout;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JScrollPane;
 
@@ -34,12 +35,14 @@ public class CommandPanel extends AbstractPanel {
 
 	private JScrollPane jScrollPane = null;
 	private SyntaxHighlightTextArea syntaxTxtArea = null;
+	private KeyListener listener = null;
 
 	/**
      * 
      */
-    public CommandPanel() {
+    public CommandPanel(KeyListener listener) {
         super();
+        this.listener = listener;
  		initialize();
     }
 
@@ -95,8 +98,15 @@ public class CommandPanel extends AbstractPanel {
 				}
 				
 			});
+			if (listener != null) {
+				this.syntaxTxtArea.addKeyListener(listener);
+			}
 		}
 		return this.syntaxTxtArea;
+	}
+	
+	public void addKeyListener(KeyListener l) {
+		
 	}
 	
 	public void setSyntax (String syntax) {
@@ -114,10 +124,15 @@ public class CommandPanel extends AbstractPanel {
 	
 	protected void appendToCommandScript (String str) {
 		getTxtOutput().append(str);
+		getTxtOutput().requestFocus();
 	}
 	
 	void unload() {
 		getTxtOutput().unload();
+	}
+	
+	public void setEditable(boolean editable) {
+		getTxtOutput().setEditable(editable);
 	}
 	
 }

@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE index
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/index_2_0.dtd">
+
+<index version="2.0">scripts
+	<indexitem text="Scripts" target="addon.scripts.scripts" />
+	<indexitem text="Script Console tab" target="addon.scripts.console" />
+	<indexitem text="Scripts tree tab" target="addon.scripts.tree" />
+</index>

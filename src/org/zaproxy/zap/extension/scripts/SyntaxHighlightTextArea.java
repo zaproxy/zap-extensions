@@ -79,8 +79,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 	}
 	
 	public SyntaxHighlightTextArea() {
-		// TODO hacking...
-		setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+		setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
 		
 		syntaxStyles = new Vector<>();
 		addSyntaxStyle(PLAIN_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_NONE);

@@ -21,32 +21,20 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.List;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
-import org.parosproxy.paros.model.Model;
-import org.zaproxy.zap.extension.brk.BreakPanel;
-import org.zaproxy.zap.extension.search.SearchPanel;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -57,17 +45,18 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private ExtensionScripts extension;
 	private JPanel panelContent = null;
 	private JToolBar panelToolbar = null;
-	private JComboBox<String> engineOptions = null;
 	private JButton runButton = null;
 	private JButton stopButton = null;
-	private JButton loadButton = null;
-	private JButton saveButton = null;
+	private JLabel scriptTitle = null;
 	private CommandPanel commandPanel = null;
 	private OutputPanel outputPanel = null;
+	private KeyListener listener = null;
+	
+	private ScriptWrapper script = null;
 
 	private Thread thread = null;
 
-	private static final Logger logger = Logger.getLogger(ConsolePanel.class);
+	//private static final Logger logger = Logger.getLogger(ConsolePanel.class);
 
 	public ConsolePanel(ExtensionScripts extension) {
 		super();
@@ -76,7 +65,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	}
 
 	private void initialize() {
-		this.setIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/059.png")));	// 'script' icon
+		this.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")));	// 'script' icon
 		this.setLayout(new BorderLayout());
 
 		panelContent = new JPanel(new GridBagLayout());
@@ -105,75 +94,49 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 			panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
 			panelToolbar.setName("ParamsToolbar");
 			
-			panelToolbar.add(this.getEngineOptions(), LayoutHelper.getGBC(0, 0, 1, 0.0D));
-			panelToolbar.add(this.getRunButton(), LayoutHelper.getGBC(1, 0, 1, 0.0D));
-			panelToolbar.add(this.getStopButton(), LayoutHelper.getGBC(2, 0, 1, 0.0D));
-			panelToolbar.add(this.getLoadButton(), LayoutHelper.getGBC(3, 0, 1, 0.0D));
-			panelToolbar.add(this.getSaveButton(), LayoutHelper.getGBC(4, 0, 1, 0.0D));
+			panelToolbar.add(this.getRunButton(), LayoutHelper.getGBC(0, 0, 1, 0.0D));
+			panelToolbar.add(this.getStopButton(), LayoutHelper.getGBC(1, 0, 1, 0.0D));
+			panelToolbar.add(this.getScriptTitle(), LayoutHelper.getGBC(2, 0, 1, 0.0D));
 			panelToolbar.add(new JLabel(), LayoutHelper.getGBC(20, 0, 1, 1.0D));	// Filler
 		}
 		return panelToolbar;
 	}
 	
-	private JComboBox<String> getEngineOptions() {
-		if (this.engineOptions == null) {
-			this.engineOptions = new JComboBox<>();
-			List<String> engineNames = extension.getScriptingEngines();
-			for (String name : engineNames) {
-				this.engineOptions.addItem(name);
-			}
-			String defaultScript = extension.getScriptParam().getDefaultScript();
-			if (defaultScript != null) {
-				this.engineOptions.setSelectedItem(defaultScript);
-				setSyntaxForScript (defaultScript);
-			}
-			
-			this.engineOptions.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					setSyntaxForScript (engineOptions.getSelectedItem().toString());
-					
-					extension.getScriptParam().setDefaultScript(engineOptions.getSelectedItem().toString());
-					try {
-						extension.getScriptParam().getConfig().save();
-					} catch (ConfigurationException e1) {
-						logger.error("Failed to save config file " + e1.getMessage(), e1);
-					}
-				}});
-			
-
+	private JLabel getScriptTitle () {
+		if (scriptTitle == null) {
+			scriptTitle = new JLabel();
 		}
-		return this.engineOptions;
+		return scriptTitle;
 	}
-	
-	private void setSyntaxForScript (String engine) {
+
+	private String getSyntaxForScript (String engine) {
 		String engineLc = engine.toLowerCase();
 		if (engineLc.startsWith("clojure")) {
-			getCommandPanel().setSyntax(SyntaxConstants.SYNTAX_STYLE_CLOJURE);
+			return SyntaxConstants.SYNTAX_STYLE_CLOJURE;
 		} else if (engineLc.startsWith("groovy")) {
-			getCommandPanel().setSyntax(SyntaxConstants.SYNTAX_STYLE_GROOVY);
+			return SyntaxConstants.SYNTAX_STYLE_GROOVY;
 		} else if (engineLc.startsWith("ecmacript")) {
-			getCommandPanel().setSyntax(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+			return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
 		} else if (engineLc.startsWith("javascript")) {
-			getCommandPanel().setSyntax(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
+			return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
 		} else if (engineLc.startsWith("python")) {
-			getCommandPanel().setSyntax(SyntaxConstants.SYNTAX_STYLE_PYTHON);
+			return SyntaxConstants.SYNTAX_STYLE_PYTHON;
 		} else if (engineLc.startsWith("ruby")) {
-			getCommandPanel().setSyntax(SyntaxConstants.SYNTAX_STYLE_RUBY);
+			return SyntaxConstants.SYNTAX_STYLE_RUBY;
 		} else if (engineLc.startsWith("scala")) {
-			getCommandPanel().setSyntax(SyntaxConstants.SYNTAX_STYLE_SCALA);
+			return SyntaxConstants.SYNTAX_STYLE_SCALA;
 		} else {
-			getCommandPanel().setSyntax(SyntaxConstants.SYNTAX_STYLE_NONE);
+			return SyntaxConstants.SYNTAX_STYLE_NONE;
 		}
-		
 	}
 
 	private JButton getRunButton() {
 		if (runButton == null) {
 			runButton = new JButton();
 			runButton.setText(Constant.messages.getString("scripts.toolbar.label.run"));
-			runButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/131.png")));	// 'play' icon
+			runButton.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/131.png")));	// 'play' icon
 			runButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.run"));
+			runButton.setEnabled(false);
 
 			runButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
@@ -188,7 +151,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private JButton getStopButton() {
 		if (stopButton == null) {
 			stopButton = new JButton();
-			stopButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/142.png")));	// 'stop' icon
+			stopButton.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/142.png")));	// 'stop' icon
 			stopButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.stop"));
 			stopButton.setEnabled(false);
 
@@ -202,43 +165,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		return stopButton;
 	}
 
-	private JButton getLoadButton() {
-		if (loadButton == null) {
-			loadButton = new JButton();
-			loadButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/047.png")));	// 'open folder' icon
-			loadButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.load"));
-
-			loadButton.addActionListener(new java.awt.event.ActionListener() { 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					loadScript();
-				}
-			});
-		}
-		return loadButton;
-	}
-	
-	private JButton getSaveButton() {
-		if (saveButton == null) {
-			saveButton = new JButton();
-			saveButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/096.png")));	// 'diskette' icon
-			saveButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.save"));
-
-			saveButton.addActionListener(new java.awt.event.ActionListener() { 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					saveScript();
-				}
-			});
-		}
-		return saveButton;
-	}
-	
-
 	private void runScript () {
 		getRunButton().setEnabled(false);
-		getLoadButton().setEnabled(false);
-		getSaveButton().setEnabled(false);
 		getStopButton().setEnabled(true);
 		
 		getOutputPanel().clear();
@@ -247,14 +175,14 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 			@Override
 			public void run() {
 				try {
-					extension.runScript(getEngineOptions().getSelectedItem().toString(), getCommandScript(), 
+					// Update it, in case its been changed
+					script.setContents(getCommandScript());
+					extension.invokeScript(script, 
 							new OutputPanelWriter(getOutputPanel()));
 				} catch (Exception e) {
 					getOutputPanel().append(e);
 				}
 				getRunButton().setEnabled(true);
-				getLoadButton().setEnabled(true);
-				getSaveButton().setEnabled(true);
 				getStopButton().setEnabled(false);
 			}
 		};
@@ -273,77 +201,44 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 			// Yes, its deprecated, but there are no alternatives, and we have to be able to stop scripts
 			thread.stop();
 			getRunButton().setEnabled(true);
-			getLoadButton().setEnabled(true);
-			getSaveButton().setEnabled(true);
 			getStopButton().setEnabled(false);
 		}
 	}
 
-	private void loadScript() {
-		String dir = extension.getScriptParam().getDefaultDir();
-		if (dir == null || dir.length() == 0) {
-			dir = Model.getSingleton().getOptionsParam().getUserDirectory().getAbsolutePath();
+	private KeyListener getKeyListener () {
+		if (listener == null) {
+			listener = new KeyListener() {
+				@Override
+				public void keyTyped(KeyEvent e) {
+					if (! script.isChanged()) {
+						extension.setChanged(script, true);
+					}
+				}
+				@Override
+				public void keyPressed(KeyEvent e) {
+					// Ignore
+				}
+				@Override
+				public void keyReleased(KeyEvent e) {
+					// Ignore
+				}};
 		}
-		
-	    JFileChooser chooser = new JFileChooser(dir);
-		File file = null;
-	    int rc = chooser.showOpenDialog(this);
-	    if(rc == JFileChooser.APPROVE_OPTION) {
-    		file = chooser.getSelectedFile();
-    		if (file == null) {
-    			return;
-    		}
-    		extension.getScriptParam().setDefaultDir(chooser.getCurrentDirectory().getAbsolutePath());
-    	    try (BufferedReader fr = new BufferedReader(new FileReader(file))) {
-                getCommandPanel().clear();
-                String line;
-                while ((line = fr.readLine()) != null) {
-                    getCommandPanel().appendToCommandScript(line + "\n");
-                }
-
-            } catch (Exception e1) {
-            	logger.error(e1.getMessage(), e1);
-                extension.getView().showWarningDialog(Constant.messages.getString("file.load.error") + " " + file.getAbsolutePath() + ".");
-            }
-	    }
-	}
-
-	private void saveScript() {
-		String dir = extension.getScriptParam().getDefaultDir();
-		if (dir == null || dir.length() == 0) {
-			dir = Model.getSingleton().getOptionsParam().getUserDirectory().getAbsolutePath();
-		}
-		
-	    JFileChooser chooser = new JFileChooser(dir);
-		File file = null;
-	    int rc = chooser.showSaveDialog(this);
-	    if(rc == JFileChooser.APPROVE_OPTION) {
-    		file = chooser.getSelectedFile();
-    		if (file == null) {
-    			return;
-    		}
-    		extension.getScriptParam().setDefaultDir(chooser.getCurrentDirectory().getAbsolutePath());
-    	    try (BufferedWriter fw = new BufferedWriter(new FileWriter(file, false))) {
-                fw.append(getCommandScript());
-
-            } catch (Exception e1) {
-            	logger.error(e1.getMessage(), e1);
-                extension.getView().showWarningDialog(Constant.messages.getString("file.save.error") + " " + file.getAbsolutePath() + ".");
-            }
-	    }
+		return listener;
 	}
 
 	private CommandPanel getCommandPanel() {
 		if (commandPanel == null) {
-			commandPanel = new CommandPanel();
+			commandPanel = new CommandPanel(getKeyListener());
+			commandPanel.setEditable(false);
+			commandPanel.appendToCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
 		}
 		return commandPanel;
 	}
 
-	private OutputPanel getOutputPanel() {
+	protected OutputPanel getOutputPanel() {
 		if (outputPanel == null) {
 			outputPanel = new OutputPanel();
-			outputPanel.append(Constant.messages.getString("scripts.welcome"));
+			outputPanel.append(Constant.messages.getString("scripts.welcome.results"));
 		}
 		return outputPanel;
 	}
@@ -355,4 +250,28 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	void unload() {
 		getCommandPanel().unload();
 	}
+
+	public ScriptWrapper getScript() {
+		return script;
+	}
+
+	public void setScript(ScriptWrapper script) {
+		this.script = script;
+		
+		getCommandPanel().setEditable(true);
+        getCommandPanel().clear();
+        getCommandPanel().appendToCommandScript(script.getContents());
+        if (script.getEngine().getSyntaxStyle() != null) {
+        	getCommandPanel().setSyntax(script.getEngine().getSyntaxStyle());
+        } else {
+        	getCommandPanel().setSyntax(getSyntaxForScript(script.getEngine().getEngineName()));
+        }
+        this.getScriptTitle().setText(script.getEngine().getLanguageName() + " : " + script.getName());
+        switch (script.getType()) {
+        case STANDALONE:	this.getRunButton().setEnabled(true); break;
+        default:			this.getRunButton().setEnabled(false); break;
+        }
+        setTabFocus();
+	}
+	
 }

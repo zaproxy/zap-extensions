@@ -125,14 +125,35 @@ public class OutputPanel extends AbstractPanel {
 		}
 	}
 
-	public void append(final ScriptException e) {
+	public void appendError(String str) {
 		getTxtOutput().setForeground(Color.RED);
-		this.append(e.getMessage());
+		this.append(str);
+		//getTxtOutput().setForeground(Color.BLACK);
+	}
+
+	public void append(final ScriptException e) {
+		this.appendError(e.getMessage());
 	}
 
 	public void append(final Exception e) {
-		getTxtOutput().setForeground(Color.RED);
-		this.append(e.getMessage());
+System.out.println("SBSB append an exception.. " + e);		
+System.out.println("SBSB cause = " + e.getCause());
+
+if (e.getCause() != null) {
+	System.out.println("SBSB cause.class = " + e.getCause().getClass().getCanonicalName());		
+	
+}
+		Throwable cause = e.getCause();
+		while (cause != null) {
+			if (cause instanceof ScriptException) {
+				// This is the most useful message
+				this.appendError(cause.getMessage());
+				return;
+			}
+			cause = cause.getCause();
+		}
+		// This will have to do
+		this.appendError(e.toString());
 	}
 
 	public void clear() {
