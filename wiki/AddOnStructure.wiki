@@ -23,4 +23,24 @@ Add-ons are jar (zip) files and must contain a file called [https://code.google.
 
 This file defines the contents of the add-on and is used by ZAP to dynamically load and unload it. 
 
+=== Building your add-on ===
+
 You should use the 'build-addon' task in the relevant [https://code.google.com/p/zap-extensions/source/browse/branches/alpha/build/build.xml build.xml] file to create add-ons.
+
+As long as your add-on is structured as above then you should just need to make the following changes (where _myaddon_ is the package name of your add-on):
+
+Target: build-all add:
+{{{
+    <antcall target="build-addon"><param name="addon" value="myaddon"/></antcall>
+}}}
+New target:
+{{{
+    <target name="deploy-myaddon" depends="build-all" description="deploy the myaddon extension">
+        <antcall target="deploy-extension"> <param name="extension" value="myaddon"/> </antcall>
+    </target>
+
+}}}
+Target: deploy-all add:
+{{{
+    <antcall target="deploy-myaddon"/>
+}}}
