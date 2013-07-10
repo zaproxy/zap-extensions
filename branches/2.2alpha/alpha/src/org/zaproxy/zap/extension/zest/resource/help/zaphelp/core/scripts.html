@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Zest Scripts
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1>Zest Scripts</H1>
+
+<p>
+Zest Scripts are top level containers for all of the other elements.<br>
+
+<H2>Attributes</H2>
+<table>
+<tr> <td><i>Name</i></td> <td><i>Format</i></td> <td><i>Description</i></td> </tr>
+<tr> <td>about</td> <td>String</td> <td>A standard string that should be the same for all Zest scripts (see below)</td> </tr>
+<tr> <td>zestVersion</td> <td>String</td> <td>The version of Zest this script conforms to, currently only "1" is supported</td> </tr>
+<tr> <td>generatedBy</td> <td>String</td> <td>The tools used to generate the script</td> </tr>
+<tr> <td>title</td> <td>String</td> <td>A summary of what the script is intended to do</td> </tr>
+<tr> <td>description</td> <td>String</td> <td>A longer description which can give more details about the script</td> </tr>
+<tr> <td>prefix</td> <td>String</td> <td>If specified this must be a URL prefix that is common to all of the requests</td> </tr>
+<tr> <td>tokens</td> <td>Object</td> <td>Details of the <a href="tokens.html">Tokens</a> used in the script</td> </tr>
+<tr> <td>statements</td> <td>Array</td> <td>The <a href="statements.html">Statements</a> included in the script</td> </tr>
+<tr> <td>authentication</td> <td>Array</td> <td>The <a href="authentication.html">Authentication</a> used by the script</td> </tr>
+<tr> <td>index</td> <td>Integer</td> <td>Always 0</td> </tr>
+<tr> <td>elementType</td> <td>String</td> <td>Always ZestScript</td> </tr>
+</table>
+
+
+<H2>JSON</H2>
+An basic example:
+<pre>
+{
+  "about": "This is a Zest script. For more details about Zest visit https://developer.mozilla.org/en-US/docs/Zest",
+  "zestVersion": 1,
+  "generatedBy": "OWASP ZAP Dev Build",
+  "title": "An empty script",
+  "description": "An example empty script",
+  "prefix": "",
+  "tokens": {
+    "tokenStart": "{{",
+    "tokenEnd": "}}",
+    "tokens": {},
+    "elementType": "ZestTokens"
+  },
+  "statements": [],
+  "authentication": [],
+  "index": 0,
+  "elementType": "ZestScript"
+}
+</pre>
+
+<H2>See also</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<a href="../introduction.html">Zest Introduction</a></td><td>for a short introduction to Zest</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<a href="../core/core.html">Zest Core</a></td><td>for details about Zest</td></tr>
+</table>
+
+</BODY>
+</HTML>

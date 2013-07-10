@@ -1,0 +1,16 @@
+<zapaddon>
+	<name>Highlighter</name>
+	<version>3</version>
+	<description>Allows you to highlight strings in the request and response tabs.</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>Changed to unload all components when uninstalling.</changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.highlighter.ExtensionHighlighter</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+</zapaddon>

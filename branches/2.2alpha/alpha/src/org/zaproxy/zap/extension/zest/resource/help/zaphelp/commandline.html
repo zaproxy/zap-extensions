@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Command Line
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1>Command Line</H1>
+<p>
+The Zest Java Reference library can run scripts from the command line.
+<p>
+The options supported are reported when you run the Zest shell script:
+<pre>
+./zest.sh
+Using Java version: 1.7.0_09
+Usage: -script <file> [-summary | -list] [-prefix <http://prefix>] [-token <name>=<value>]...
+    [-http-auth-site <site> -http-auth-realm <realm> -http-auth-user <user> -http-auth-password <password>]
+    For more information about Zest visit https://developer.mozilla.org/en-US/docs/Zest
+</pre>
+
+<H2>Parameters</H2>
+<table>
+<tr> <td><i>Name</i></td> <td><i>Description</i></td> </tr>
+<tr> <td>-script</td> <td>Allows you to specify the Zest script to use</td> </tr>
+<tr> <td>-summary</td> <td>Displays a summary of the Zest script without running it</td> </tr>
+<tr> <td>-list</td> <td>Lists the Zest script without running it</td> </tr>
+<tr> <td>-prefix</td> <td>Replaces the prefix with the one specified when the script is run</td> </tr>
+<tr> <td>-token</td> <td>Sets the specified token values when the script is run</td> </tr>
+<tr> <td>-http-auth-site</td> <td>Replaces the HTTP authentication site with the one specified when the script is run</td> </tr>
+<tr> <td>-http-auth-realm</td> <td>Replaces the HTTP authentication realm with the one specified when the script is run</td> </tr>
+<tr> <td>-http-auth-user</td> <td>Replaces the HTTP authentication user with the one specified when the script is run</td> </tr>
+<tr> <td>-http-auth-password</td> <td>Replaces the HTTP authentication password with the one specified when the script is run</td> </tr>
+</table>
+<p>
+If a script is supplied and neither -summary or -list are specified then the script will be run.
+
+<H2>See also</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<a href="core/core.html">Zest Core</a></td><td>for details about Zest</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<a href="ui/ui.html">Zest UI</a></td><td>for an overview of ZAP add-on UI</td></tr>
+</table>
+
+</BODY>
+</HTML>

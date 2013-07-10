@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Zest Fail Action
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1>Zest Fail Action</H1>
+
+<p>
+The Fail action is used to indicate that the script has not been successful.<br>
+It is typically a child of a <a href="conditionals.html">conditional</a> statement and used to indicate that a vulnerability has been triggered.
+
+<H2>Attributes</H2>
+<table>
+<tr> <td><i>Name</i></td> <td><i>Format</i></td> <td><i>Description</i></td> </tr>
+<tr> <td>message</td> <td>String</td> <td>The failure message to display to the user</td> </tr>
+<tr> <td>index</td> <td>Integer</td> <td>The index of the statement in the script</td> </tr>
+<tr> <td>elementType</td> <td>String</td> <td>Always ZestActionFail</td> </tr>
+</table>
+
+
+<H2>JSON</H2>
+An basic example:
+<pre>
+{
+  "message": "There is an XSS vulnerability in the 'search' parameter",
+  "index": 1,
+  "elementType": "ZestActionFail"
+}
+</pre>
+
+<H2>See also</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<a href="../introduction.html">Zest Introduction</a></td><td>for a short introduction to Zest</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<a href="../core/core.html">Zest Core</a></td><td>for details about Zest</td></tr>
+</table>
+
+</BODY>
+</HTML>
