@@ -1,0 +1,19 @@
+<zapaddon>
+	<name>Active scanner rules (alpha)</name>
+	<version>1</version>
+	<description>The alpha quality Active Scanner rules</description>
+	<author>ZAP Dev Team</author>
+	<url/>
+	<changes>First version, including persistent XSS tests</changes>
+	<dependson/>
+	<extensions>
+	</extensions>
+	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestPersistentXSSAttack</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestPersistentXSSPrime</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestPersistentXSSSpider</ascanrule>
+	</ascanrules>
+	<pscanrules/>
+	<filters/>
+	<files/>
+</zapaddon>

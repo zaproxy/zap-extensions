@@ -1,0 +1,18 @@
+<zapaddon>
+	<name>MITM Configuration</name>
+	<version>3</version>
+	<description>Experimental add-on for easy MITM configuration.</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>First version</changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.mitmconf.ExtensionMitmConf</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.1.0</not-before-version>
+	<not-from-version/>
+</zapaddon>
