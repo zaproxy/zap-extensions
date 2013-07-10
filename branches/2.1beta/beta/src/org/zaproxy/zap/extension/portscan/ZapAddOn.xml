@@ -1,0 +1,18 @@
+<zapaddon>
+	<name>Port Scanner</name>
+	<version>3</version>
+	<description>Allows to port scan a target server</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>Updated language files.</changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.portscan.ExtensionPortScan</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.1.0</not-before-version>
+	<not-from-version/>
+</zapaddon>
