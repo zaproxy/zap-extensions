@@ -1,0 +1,30 @@
+<zapaddon>
+	<name>Active scanner rules</name>
+	<version>8</version>
+	<description>New expression based technique for detecting SQL injection vulnerabilities and improvements to the generic SQLi scanner</description>
+	<author>ZAP Dev Team</author>
+	<url/>
+	<changes>Updated language files.</changes>
+	<dependson/>
+	<extensions>
+	</extensions>
+	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestClientBrowserCache</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestCrossSiteScriptV2</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestDirectoryBrowsing</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestExternalRedirect</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestInfoSessionIdURL</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestInjectionCRLF</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestParameterTamper</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPathTraversal</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRedirect</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRemoteFileInclude</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestServerSideInclude</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestSQLInjection</ascanrule>
+	</ascanrules>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.1.0</not-before-version>
+	<not-from-version/>
+</zapaddon>
