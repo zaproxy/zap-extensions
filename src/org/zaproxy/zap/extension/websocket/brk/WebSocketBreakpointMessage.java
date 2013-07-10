@@ -116,7 +116,7 @@ public class WebSocketBreakpointMessage extends AbstractBreakPointMessage {
 	}
 
 	@Override
-	public boolean match(Message aMessage, boolean onlyIfInScope) {
+	public boolean match(Message aMessage, boolean isRequest, boolean onlyIfInScope) {
 	    if (aMessage instanceof WebSocketMessageDTO) {
 	        WebSocketMessageDTO msg = (WebSocketMessageDTO)aMessage;
 	        
@@ -185,4 +185,5 @@ public class WebSocketBreakpointMessage extends AbstractBreakPointMessage {
         
         return Constant.messages.getString("websocket.brk.add.break_on_custom") + " " + message;
     }
+
 }
