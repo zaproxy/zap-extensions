@@ -112,7 +112,11 @@ public class InsecureFormPostScanner extends PluginPassiveScanner {
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
 				.getURI().toString(), "", getExploitMessage(msg), 
 				getExtraInfoMessage(msg, formElement),
-				getSolutionMessage(), getReferenceMessage(), msg);  
+				getSolutionMessage(), getReferenceMessage(),  
+				"",	// No evidence
+				0,	// TODO CWE Id
+				0,	// TODO WASC Id
+				msg);  
 
 		parent.raiseAlert(id, alert);
 	}

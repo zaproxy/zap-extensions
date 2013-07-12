@@ -137,7 +137,11 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
 				.getURI().toString(), paramName, getExploitMessage(), 
 				getExtraInfoMessage(msg, paramName, paramValue, responseLocation),
-				getSolutionMessage(), getReferenceMessage(), msg);  
+				getSolutionMessage(), getReferenceMessage(),  
+				"",	// No evidence
+				0,	// TODO CWE Id
+				38,	// WASC Id
+				msg);  
 
 		parent.raiseAlert(id, alert);
 	}
