@@ -52,6 +52,9 @@ public class ScriptParam extends AbstractParam {
 	private String defaultDir = null;
 	private Set<ScriptWrapper> scripts;
 
+	public ScriptParam() {
+	}
+
 	@Override
 	protected void parse() {
 		defaultScript = getConfig().getString(PARAM_DEFAULT_SCRIPT, "");
@@ -76,7 +79,7 @@ public class ScriptParam extends AbstractParam {
                         sub.getString(SCRIPT_NAME_KEY),
                         sub.getString(SCRIPT_DESC_KEY),
                         sub.getString(SCRIPT_ENGINE_KEY),
-                        ScriptWrapper.Type.valueOf(sub.getString(SCRIPT_TYPE_KEY)),
+                        sub.getString(SCRIPT_TYPE_KEY),
                         sub.getBoolean(SCRIPT_ENABLED_KEY),
                         file);
                     
@@ -109,7 +112,7 @@ public class ScriptParam extends AbstractParam {
 	            getConfig().setProperty(elementBaseKey + SCRIPT_NAME_KEY, script.getName());
 	            getConfig().setProperty(elementBaseKey + SCRIPT_DESC_KEY, script.getDescription());
 	            getConfig().setProperty(elementBaseKey + SCRIPT_ENGINE_KEY, script.getEngineName());
-	            getConfig().setProperty(elementBaseKey + SCRIPT_TYPE_KEY, script.getType().toString());
+	            getConfig().setProperty(elementBaseKey + SCRIPT_TYPE_KEY, script.getType().getName());
 	            getConfig().setProperty(elementBaseKey + SCRIPT_ENABLED_KEY, Boolean.valueOf(script.isEnabled()));
 	            getConfig().setProperty(elementBaseKey + SCRIPT_FILE_KEY, script.getFile().getAbsolutePath());
 	            i++;

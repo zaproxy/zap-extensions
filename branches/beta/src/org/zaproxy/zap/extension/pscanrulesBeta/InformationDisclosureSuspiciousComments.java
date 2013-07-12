@@ -113,6 +113,9 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
 		    	    detail,
 		    	    "Remove all comments that return information that may help an attacker and fix any underlying problems they refer to", 
 		            "", 
+					"",	// No Evidence
+					0,	// TODO CWE Id
+		            13,	// WASC Id - Info leakage
 		            msg);
 	
     	parent.raiseAlert(id, alert);

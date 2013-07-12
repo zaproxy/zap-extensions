@@ -267,9 +267,9 @@ public class ConsolePanel extends AbstractPanel implements Tab {
         	getCommandPanel().setSyntax(getSyntaxForScript(script.getEngine().getEngineName()));
         }
         this.getScriptTitle().setText(script.getEngine().getLanguageName() + " : " + script.getName());
-        switch (script.getType()) {
-        case STANDALONE:	this.getRunButton().setEnabled(true); break;
-        default:			this.getRunButton().setEnabled(false); break;
+        if (ExtensionScripts.TYPE_STANDALONE.equals(script.getType().getName())) {
+        	// The only type that can be run directly from the console
+        	this.getRunButton().setEnabled(true);
         }
         setTabFocus();
 	}

@@ -308,5 +308,18 @@ public class HPP extends AbstractAppPlugin {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+
+	@Override
+	public int getCweId() {
+		return 352;
+	}
+
+
+	@Override
+	public int getWascId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

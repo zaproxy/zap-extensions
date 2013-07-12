@@ -29,6 +29,7 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.scripts.ExtensionScripts;
 import org.zaproxy.zap.extension.scripts.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.scripts.ScriptType;
 import org.zaproxy.zap.extension.scripts.ScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -39,8 +40,6 @@ public class NewScriptDialog extends StandardFieldsDialog {
 	private static final String FIELD_DESC = "scripts.dialog.script.label.desc";
 	private static final String FIELD_TYPE = "scripts.dialog.script.label.type";
 	private static final String FIELD_LOAD = "scripts.dialog.script.label.load";
-
-	private static final String TYPE_PREFIX = "scripts.type.";
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,8 +66,8 @@ public class NewScriptDialog extends StandardFieldsDialog {
 				if (sew.isRawEngine()) {
 					// Raw engines can only support targeted scripts as there will be no templates
 					setComboFields(FIELD_TYPE, 
-							new String[]{typeToName(ScriptWrapper.Type.STANDALONE)}, 
-							typeToName(ScriptWrapper.Type.STANDALONE));
+							new String[]{Constant.messages.getString(ExtensionScripts.TYPE_STANDALONE)}, 
+							Constant.messages.getString(ExtensionScripts.TYPE_STANDALONE));
 				} else {
 					setComboFields(FIELD_TYPE, getTypes(), "");
 				}
@@ -77,27 +76,17 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		this.addPadding();
 	}
 	
-	private String typeToName (ScriptWrapper.Type type) {
-		return Constant.messages.getString(TYPE_PREFIX + type.name().toLowerCase());
-	}
-	
 	private List<String> getTypes() {
 		ArrayList<String> list = new ArrayList<String>();
-		/* Dont support all ofthese yet!
-		for (ScriptWrapper.Type type : ScriptWrapper.Type.values()) {
-			list.add(this.typeToName(type));
+		for (ScriptType type : extension.getScriptTypes()) {
+			list.add(Constant.messages.getString(type.getI18nKey()));
 		}
-		*/
-		list.add(this.typeToName(ScriptWrapper.Type.STANDALONE));
-		list.add(this.typeToName(ScriptWrapper.Type.ACTIVE));
-		list.add(this.typeToName(ScriptWrapper.Type.PASSIVE));
-		
 		return list;
 	}
 	
-	private ScriptWrapper.Type nameToType (String name) {
-		for (ScriptWrapper.Type type : ScriptWrapper.Type.values()) {
-			if (Constant.messages.getString(TYPE_PREFIX + type.name().toLowerCase()).equals(name)) {
+	private ScriptType nameToType (String name) {
+		for (ScriptType type : extension.getScriptTypes()) {
+			if (Constant.messages.getString(type.getI18nKey()).equals(name)) {
 				return type;
 			}
 		}
@@ -114,7 +103,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
 
 		ScriptEngineWrapper ew = extension.getEngineWrapper(this.getStringValue(FIELD_ENGINE));
 		script.setEngine(ew);
-		script.setContents(ew.getTemplate(script.getType()));
+		script.setContents(ew.getTemplate(script.getType().getName()));
 		
 		extension.addScript(script);
 	}

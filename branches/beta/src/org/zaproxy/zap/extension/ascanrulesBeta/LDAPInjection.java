@@ -253,5 +253,15 @@ public class LDAPInjection extends AbstractAppPlugin {
 	public int getRisk() {
 		return Alert.RISK_HIGH;
 	}
+
+	@Override
+	public int getCweId() {
+		return 90;
+	}
+
+	@Override
+	public int getWascId() {
+		return 29;
+	}
 	
 }

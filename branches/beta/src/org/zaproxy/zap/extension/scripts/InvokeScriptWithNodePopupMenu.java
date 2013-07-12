@@ -88,7 +88,7 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuSiteNode {
 		}
 		subMenus.clear();
 		
-		for (ScriptWrapper script : extension.getScripts(ScriptWrapper.Type.TARGETED)) {
+		for (ScriptWrapper script : extension.getScripts(ExtensionScripts.TYPE_TARGETED)) {
         	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(script);
         	piicm.setMenuIndex(this.getMenuIndex());
 			View.getSingleton().getPopupMenu().addMenu(piicm);

@@ -541,5 +541,16 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 		Hirshberg hirschberg = new Hirshberg();
 		return hirschberg.lcs(a, b);
 	}
+
+	@Override
+	public int getCweId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getWascId() {
+        return 13;	// Info leakage
+	}
 	
 }

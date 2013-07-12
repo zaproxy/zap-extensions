@@ -141,7 +141,11 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
 				.getURI().toString(), null, getExploitMessage(), 
 				Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", host, sbCookies),
-				getSolutionMessage(), getReferenceMessage(), msg);
+				getSolutionMessage(), getReferenceMessage(), 
+				"",	// No Evidence
+				0,	// TODO CWE Id
+				0,	// TODO WASC Id
+				msg);
 
 		parent.raiseAlert(id, alert);
 	}

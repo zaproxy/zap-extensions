@@ -90,7 +90,7 @@ public class ScriptsActiveScanner extends AbstractAppParamPlugin {
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
-		List<ScriptWrapper> scripts = this.getExtension().getScripts(ScriptWrapper.Type.ACTIVE);
+		List<ScriptWrapper> scripts = this.getExtension().getScripts(ExtensionScripts.TYPE_ACTIVE);
 			
 		for (ScriptWrapper script : scripts) {
 			StringWriter writer = new StringWriter();
@@ -135,13 +135,25 @@ public class ScriptsActiveScanner extends AbstractAppParamPlugin {
     }
 
 	public void raiseAlert(int risk, int reliability, String name, String description, String uri, 
-			String param, String attack, String otherInfo, String solution, HttpMessage msg) {
-		super.bingo(risk, reliability, name, description, uri, param, attack, otherInfo, solution, msg);
+			String param, String attack, String otherInfo, String solution, String evidence, 
+			int cweId, int wascId, HttpMessage msg) {
+		super.bingo(risk, reliability, name, description, uri, param, attack, 
+				otherInfo, solution, evidence, cweId, wascId, msg);
 	}
 
 	@Override
 	public int getRisk() {
 		return Alert.RISK_INFO;
+	}
+
+	@Override
+	public int getCweId() {
+		return 0;
+	}
+
+	@Override
+	public int getWascId() {
+		return 0;
 	}
 
 }

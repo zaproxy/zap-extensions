@@ -50,7 +50,7 @@ public abstract class ScriptEngineWrapper {
 	
 	public abstract boolean isTextBased();
 	
-	public abstract String getTemplate(ScriptWrapper.Type type);
+	public abstract String getTemplate(String type);
 	
 	public abstract String getSyntaxStyle();
 	

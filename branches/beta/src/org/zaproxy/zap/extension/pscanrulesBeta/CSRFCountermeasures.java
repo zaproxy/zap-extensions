@@ -192,6 +192,9 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				    		extraInfo,
 				    		getSolution(), 
 				            getReference(), 
+							attack,	// Evidence
+							0,	// TODO CWE Id
+							9,	// WASC Id
 				            msg);
 
 			    parent.raiseAlert(id, alert);
