@@ -194,4 +194,14 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 		return Alert.RISK_MEDIUM;
 	}
 
+	@Override
+	public int getCweId() {
+		return 472;
+	}
+
+	@Override
+	public int getWascId() {
+		return 20;
+	}
+
 }

@@ -125,6 +125,9 @@ public class MixedContentScanner extends PluginPassiveScanner {
     	    "The page must not contain any content that is transmitted over unencrypted HTTP.\n" +
     	    "This includes content from unrelated third party sites.",
             "https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet", 
+            first, // evidence
+            0,	// TODO CWE Id
+            0,	// TODO WASC Id
             msg);
 	
     	parent.raiseAlert(id, alert);

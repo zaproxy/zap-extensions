@@ -47,6 +47,9 @@ public class XContentTypeOptionsScanner  extends PluginPassiveScanner {
 		    	    "", 
 		    	    "This check is specific to Internet Explorer 8 and Google Chrome. Ensure each page sets a Content-Type header and the X-CONTENT-TYPE-OPTIONS if the Content-Type header is unknown", 
 		            "", 
+		            "", // No evidence
+		            0,	// TODO CWE Id
+		            0,	// TODO WASC Id
 		            msg);
 	
     	parent.raiseAlert(id, alert);

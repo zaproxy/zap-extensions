@@ -176,4 +176,14 @@ public class TestInfoSessionIdURL extends AbstractAppPlugin {
 		return Alert.RISK_MEDIUM;
 	}
 
+	@Override
+	public int getCweId() {
+		return 200;
+	}
+
+	@Override
+	public int getWascId() {
+		return 13;
+	}
+
 }

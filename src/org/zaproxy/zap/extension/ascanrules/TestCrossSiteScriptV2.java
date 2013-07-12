@@ -143,7 +143,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 	            if (contexts2.size() > 0) {
             		// Yep, its vulnerable
 					bingo(Alert.RISK_HIGH, Alert.SUSPICIOUS, null, param, contexts2.get(0).getTarget(), 
-							"", contexts2.get(0).getMsg());
+							"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
 					attackWorked = true;
 	            }
             }
@@ -166,7 +166,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            			context2.isInScriptAttribute()) {
         	            		// Yep, its vulnerable
         						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, context2.getTarget(), 
-        								"", context2.getMsg());
+        								"", contexts2.get(0).getTarget(), context2.getMsg());
         						attackWorked = true;
         						break;
         	            	}
@@ -182,7 +182,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            if (contexts2.size() > 0) {
     	            		// Yep, its vulnerable
     						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-    							"", contexts2.get(0).getMsg());
+    							"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     						attackWorked = true;
         	            }
         	            if (!attackWorked) {
@@ -196,7 +196,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 
         	            if (contexts2.size() > 0) {
     						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-    							"", contexts2.get(0).getMsg());
+    							"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     						attackWorked = true;
         	            }
         	            if (!attackWorked) {
@@ -211,7 +211,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            if (contexts2.size() > 0) {
     	            		// Yep, its vulnerable
     						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-    								"", contexts2.get(0).getMsg());
+    								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     						attackWorked = true;
         	            }
         	            if (!attackWorked) {
@@ -226,7 +226,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            if (contexts2.size() > 0) {
     	            		// Yep, its vulnerable
     						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-    								"", contexts2.get(0).getMsg());
+    								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     						attackWorked = true;
     	            	}
         	            if (!attackWorked) {
@@ -240,7 +240,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     	            if (contexts2.size() > 0) {
 	            		// Yep, its vulnerable
 						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-								"", contexts2.get(0).getMsg());
+								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
 						attackWorked = true;
     	            } else {
     	            	// Maybe they're blocking script tags
@@ -249,7 +249,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            if (contexts2.size() > 0) {
 		            		// Yep, its vulnerable
 							bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-									"", contexts2.get(0).getMsg());
+									"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
 							attackWorked = true;
 			            }
     	            }
@@ -263,7 +263,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            if (contexts2.size() > 0) {
         	            		// Yep, its vulnerable
         						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-        								"", contexts2.get(0).getMsg());
+        								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
         						attackWorked = true;
         	            } else {
         	            	// Maybe they're blocking script tags
@@ -274,7 +274,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     			            			"script".equalsIgnoreCase(context2.getParentTag())) {
     			            		// Yep, its vulnerable
     								bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-    										"TBI Body tag", contexts2.get(0).getMsg());
+    										"TBI Body tag", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     								attackWorked = true;
     								break;
     			            	}
@@ -288,7 +288,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            if (contexts2.size() > 0) {
        	            		// Yep, its vulnerable
        						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-       								"", contexts2.get(0).getMsg());
+       								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     						attackWorked = true;
         	            } else if ("script".equalsIgnoreCase(context.getParentTag())){
         	            	// its in a script tag...
@@ -297,7 +297,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             	            if (contexts2.size() > 0) {
            	            		// Yep, its vulnerable
            						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-           								"", contexts2.get(0).getMsg());
+           								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
         						attackWorked = true;
             	            }
         	            }
@@ -312,6 +312,16 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 	@Override
 	public int getRisk() {
 		return Alert.RISK_HIGH;
+	}
+
+	@Override
+	public int getCweId() {
+		return 79;
+	}
+
+	@Override
+	public int getWascId() {
+		return 8;
 	}
 
 }

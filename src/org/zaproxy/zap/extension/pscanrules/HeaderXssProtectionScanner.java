@@ -65,6 +65,9 @@ public class HeaderXssProtectionScanner extends PluginPassiveScanner {
 		    	    "",
 		    	    "Enable the IE's XSS filter. If it must be disabled for any reasons, ensure that the application is properly protected against XSS vulnerability", 
 		            "https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet", 
+		            "", // No evidence
+		            0,	// TODO CWE Id
+		            0,	// TODO WASC Id
 		            msg);
 	
     	parent.raiseAlert(id, alert);

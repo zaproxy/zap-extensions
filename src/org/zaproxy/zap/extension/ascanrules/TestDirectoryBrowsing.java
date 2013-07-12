@@ -155,4 +155,14 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
 		return Alert.RISK_MEDIUM;
 	}
 
+	@Override
+	public int getCweId() {
+		return 548;
+	}
+
+	@Override
+	public int getWascId() {
+		return 48;
+	}
+
 }

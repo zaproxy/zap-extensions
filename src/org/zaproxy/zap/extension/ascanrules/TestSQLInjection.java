@@ -1021,6 +1021,16 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
         }
         return result;
 	}
+
+	@Override
+	public int getCweId() {
+		return 89;
+	}
+
+	@Override
+	public int getWascId() {
+		return 19;
+	}
 	
 }
 

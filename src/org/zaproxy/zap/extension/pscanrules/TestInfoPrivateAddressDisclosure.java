@@ -124,6 +124,9 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
 				sbTxtFound.toString(), 
 				this.getSolution(), 
 				this.getReference(), 
+	            firstOne, // evidence
+	            200,	// CWE Id
+	            13,	// WASC Id - Info leakage
 				msg);
 			
 			parent.raiseAlert(id, alert);

@@ -148,4 +148,15 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
 		return Alert.RISK_MEDIUM;
 	}
 
+	@Override
+	public int getCweId() {
+		return 113;
+	}
+
+	@Override
+	public int getWascId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

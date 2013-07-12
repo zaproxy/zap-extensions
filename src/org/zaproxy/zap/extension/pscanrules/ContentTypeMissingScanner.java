@@ -67,6 +67,9 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
 		    	    "", 
 		    	    "Ensure each page is setting the specific and appropriate content-type value for the content being delivered", 
 		            "", 
+		            "", // No evidence
+		            0,	// TODO CWE Id
+		            0,	// TODO WASC Id
 		            msg);
 	
     	parent.raiseAlert(id, alert);
