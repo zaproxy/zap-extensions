@@ -327,4 +327,14 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 		return Alert.RISK_HIGH;
 	}
 
+	@Override
+	public int getCweId() {
+		return 22;
+	}
+
+	@Override
+	public int getWascId() {
+		return 33;
+	}
+
 }

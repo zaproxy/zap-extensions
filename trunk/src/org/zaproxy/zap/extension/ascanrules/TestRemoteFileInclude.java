@@ -216,4 +216,14 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
 		return Alert.RISK_HIGH;
 	}
 
+	@Override
+	public int getCweId() {
+		return 98;
+	}
+
+	@Override
+	public int getWascId() {
+		return 5;
+	}
+
 }

@@ -66,6 +66,9 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 		    	    "",
 		    	    "Ensure JavaScript source files are loaded from only trusted sources, and the sources can't be controlled by end users of the application", 
 		            "", 
+		            crossDomainScript, // evidence
+		            0,	// TODO CWE Id
+		            0,	// TODO WASC Id
 		            msg);
 	
     	parent.raiseAlert(id, alert);

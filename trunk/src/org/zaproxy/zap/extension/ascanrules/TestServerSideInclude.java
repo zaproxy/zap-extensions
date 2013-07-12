@@ -160,5 +160,15 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 	public int getRisk() {
 		return Alert.RISK_HIGH;
 	}
+
+	@Override
+	public int getCweId() {
+		return 97;
+	}
+
+	@Override
+	public int getWascId() {
+		return 31;
+	}
        
 }

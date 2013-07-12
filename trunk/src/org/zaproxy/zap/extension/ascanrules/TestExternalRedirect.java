@@ -170,4 +170,14 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
 		return Alert.RISK_MEDIUM;
 	}
 
+	@Override
+	public int getCweId() {
+		return 601;
+	}
+
+	@Override
+	public int getWascId() {
+		return 38;
+	}
+
 }

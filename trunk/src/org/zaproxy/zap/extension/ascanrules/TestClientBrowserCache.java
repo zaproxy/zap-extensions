@@ -119,7 +119,7 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 		}
 		
 		if (result) {
-		    bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, null, "", "", msg);
+		    bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, null, "", "", "", msg);	// TODO
 		}
 
     }
@@ -127,6 +127,17 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 	@Override
 	public int getRisk() {
 		return Alert.RISK_MEDIUM;
+	}
+
+	@Override
+	public int getCweId() {
+		return 525;
+	}
+
+	@Override
+	public int getWascId() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

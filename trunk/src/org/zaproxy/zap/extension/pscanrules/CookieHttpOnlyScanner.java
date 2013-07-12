@@ -77,6 +77,9 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 		    		cookie, "", "",
 		    		"Ensure that the HttpOnly flag is set for all cookies.", 
 		            "www.owasp.org/index.php/HttpOnly", 
+		            cookie, // evidence
+		            0,	// TODO CWE Id
+		            13,	// WASC Id - Info leakage
 		            msg);
 	
     	parent.raiseAlert(id, alert);

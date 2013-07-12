@@ -72,11 +72,14 @@ public class ExamplePassiveScanner extends PluginPassiveScanner {
 			    	alert.setDetail(
 			    		getDescription(), 
 			    		msg.getRequestHeader().getURI().toString(),
-			    		"",
-			    		"", 
-			    		"", 
+			    		"",	// Param
+			    		"", // Attack
+			    		"", // Other info
 			    		getSolution(), 
 			            getReference(), 
+			            "",	// Evidence
+			            0,	// CWE Id
+			            0,	// WASC Id
 			            msg);
 
 	    	parent.raiseAlert(id, alert);

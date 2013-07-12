@@ -132,4 +132,16 @@ public class ExampleActiveScanner extends AbstractAppParamPlugin {
 		return Alert.RISK_HIGH;
 	}
 
+	@Override
+	public int getCweId() {
+		// The CWE id
+		return 0;
+	}
+
+	@Override
+	public int getWascId() {
+		// The WASC ID
+		return 0;
+	}
+
 }

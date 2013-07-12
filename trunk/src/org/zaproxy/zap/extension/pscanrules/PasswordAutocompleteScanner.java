@@ -87,6 +87,9 @@ public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 											"", 
 											"Turn off AUTOCOMPLETE attribute in form or individual input elements containing password by using AUTOCOMPLETE='OFF'", 
 											"http://msdn.microsoft.com/library/default.asp?url=/workshop/author/forms/autocomplete_ovr.asp", 
+								            "", // No evidence
+								            525,	// CWE Id
+								            0,	// TODO WASC Id
 											msg);
 									
 									parent.raiseAlert(id, alert);
