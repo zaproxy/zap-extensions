@@ -59,33 +59,31 @@ public class InvokeScriptWithNodeMenu extends PopupMenuSiteNode {
 	@Override
 	public void performAction(SiteNode sn) throws Exception {
 		if (sn != null && sn.getHistoryReference() != null) {
-			if (ScriptWrapper.Type.TARGETED.equals(script.getType())) {
-				// TODO - this will need to use a different interface!
-				StringWriter writer = new StringWriter();
-				try {
-					Invocable inv = extension.invokeScript(script, writer);
-						
-					ScriptAScan s = inv.getInterface(ScriptAScan.class);
+			// TODO - this will need to use a different interface!
+			StringWriter writer = new StringWriter();
+			try {
+				Invocable inv = extension.invokeScript(script, writer);
 					
-					if (s != null) {
-						
-						HttpMessage msg = sn.getHistoryReference().getHttpMessage();
-						TreeSet<HtmlParameter> params = msg.getUrlParams();
-						
-						for (HtmlParameter param : params) {
-							s.scan(sas, msg, param.getName(), param.getValue());
-						}
-						
-					} else {
-						writer.append(Constant.messages.getString("scripts.interface.targeted.error"));
-						extension.setError(script, writer.toString());
-						extension.setEnabled(script, false);
+				ScriptAScan s = inv.getInterface(ScriptAScan.class);
+				
+				if (s != null) {
+					
+					HttpMessage msg = sn.getHistoryReference().getHttpMessage();
+					TreeSet<HtmlParameter> params = msg.getUrlParams();
+					
+					for (HtmlParameter param : params) {
+						s.scan(sas, msg, param.getName(), param.getValue());
 					}
-				} catch (Exception e) {
-					writer.append(e.toString());
-					extension.setError(script, e);
+					
+				} else {
+					writer.append(Constant.messages.getString("scripts.interface.targeted.error"));
+					extension.setError(script, writer.toString());
 					extension.setEnabled(script, false);
 				}
+			} catch (Exception e) {
+				writer.append(e.toString());
+				extension.setError(script, e);
+				extension.setEnabled(script, false);
 			}
 		}		
 	}

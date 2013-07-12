@@ -24,13 +24,12 @@ import java.io.File;
 
 public class ScriptWrapper {
 
-	public enum Type {ACTIVE, PASSIVE, INLINE, STANDALONE, TARGETED, LIBRARY};
-
 	private String name;
 	private String description;
 	private ScriptEngineWrapper engine;
 	private String engineName;
-	private Type type;
+	private ScriptType type;
+	private String typeName;
 	private String contents = "";
 	private String lastOutput = "";
 	private boolean changed;
@@ -44,7 +43,7 @@ public class ScriptWrapper {
 	public ScriptWrapper() {
 	}
 	
-	public ScriptWrapper(String name, String description, ScriptEngineWrapper engine, Type type) {
+	public ScriptWrapper(String name, String description, ScriptEngineWrapper engine, ScriptType type) {
 		super();
 		this.name = name;
 		this.description = description;
@@ -52,7 +51,7 @@ public class ScriptWrapper {
 		this.type = type;
 	}
 	
-	public ScriptWrapper(String name, String description, String engineName, Type type, boolean enabled, File file) {
+	public ScriptWrapper(String name, String description, String engineName, ScriptType type, boolean enabled, File file) {
 		super();
 		this.name = name;
 		this.description = description;
@@ -63,12 +62,22 @@ public class ScriptWrapper {
 	}
 	
 	public ScriptWrapper(String name, String description,
-			ScriptEngineWrapper engine, Type type, boolean enabled, File file) {
+			ScriptEngineWrapper engine, ScriptType type, boolean enabled, File file) {
 		super();
 		this.name = name;
 		this.description = description;
 		this.engine = engine;
 		this.type = type;
+		this.enabled = enabled;
+		this.file = file;
+	}
+
+	protected ScriptWrapper(String name, String description, String engineName, String typeName, boolean enabled, File file) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.engineName = engineName;
+		this.typeName = typeName;
 		this.enabled = enabled;
 		this.file = file;
 	}
@@ -100,12 +109,17 @@ public class ScriptWrapper {
 		}
 		return engineName;
 	}
-	public Type getType() {
+	public ScriptType getType() {
 		return type;
 	}
-	public void setType(Type type) {
+	public void setType(ScriptType type) {
 		this.type = type;
 	}
+	
+	public String getTypeName() {
+		return typeName;
+	}
+
 	public String getContents() {
 		return contents;
 	}

@@ -80,6 +80,9 @@ public class ViewstateScanner extends PluginPassiveScanner {
                 var.getResultExtract().toString(), 
                 "Verify the provided information isn't confidential.",
                 "",
+				"",	// No Evidence
+				0,	// TODO CWE Id
+				0,	// TODO WASC Id
                 msg);
         
         parent.raiseAlert(id, alert);
@@ -99,6 +102,9 @@ public class ViewstateScanner extends PluginPassiveScanner {
                 "", "", "",
                 "Ensure the engaged framework is still supported by Microsoft",
                 "",
+				"",	// No Evidence
+				0,	// TODO CWE Id
+				0,	// TODO WASC Id
                 msg);
         
         parent.raiseAlert(id, alert);
@@ -118,6 +124,9 @@ public class ViewstateScanner extends PluginPassiveScanner {
                 "", "", "",
                 "Ensure the MAC is set for all pages on this website.",
                 "msdn.microsoft.com/en-us/library/ff649308.aspx",
+				"",	// No Evidence
+				0,	// TODO CWE Id
+				0,	// TODO WASC Id
                 msg);
 
         parent.raiseAlert(id, alert);
@@ -136,6 +145,9 @@ public class ViewstateScanner extends PluginPassiveScanner {
             "", "", "",
             "Ensure the MAC is set for all pages on this website.",
             "msdn.microsoft.com/en-us/library/ff649308.aspx",
+			"",	// No Evidence
+			0,	// TODO CWE Id
+			0,	// TODO WASC Id
             msg);
 
         parent.raiseAlert(id, alert);
@@ -154,6 +166,9 @@ public class ViewstateScanner extends PluginPassiveScanner {
             "", "", "",
             "None - the guys running the server may have tuned the configuration as this isn't the default setting",
             "",
+			"",	// No Evidence
+			0,	// TODO CWE Id
+			0,	// TODO WASC Id
             msg);
 
         parent.raiseAlert(id, alert);

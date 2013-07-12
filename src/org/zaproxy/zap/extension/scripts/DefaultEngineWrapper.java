@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.scripts;
 import javax.script.ScriptEngine;
 import javax.swing.ImageIcon;
 
-import org.zaproxy.zap.extension.scripts.ScriptWrapper.Type;
-
 public class DefaultEngineWrapper extends ScriptEngineWrapper {
 
 	public DefaultEngineWrapper(ScriptEngine engine) {
@@ -41,7 +39,7 @@ public class DefaultEngineWrapper extends ScriptEngineWrapper {
 	}
 
 	@Override
-	public String getTemplate(Type type) {
+	public String getTemplate(String type) {
 		return "";
 	}
 

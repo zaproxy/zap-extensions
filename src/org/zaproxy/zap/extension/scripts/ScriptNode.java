@@ -31,7 +31,7 @@ import org.parosproxy.paros.Constant;
 public class ScriptNode extends DefaultMutableTreeNode {
 	private static final long serialVersionUID = 1L;
 	private String nodeName = null;
-	private ScriptWrapper.Type type = null;
+	private ScriptType type = null;
     
 	public ScriptNode() {
 		// Only use for the root node
@@ -39,8 +39,8 @@ public class ScriptNode extends DefaultMutableTreeNode {
         this.nodeName = Constant.messages.getString("scripts.tree.root");
     }
 
-	public ScriptNode(ScriptWrapper.Type type) {
-		this.nodeName = Constant.messages.getString("scripts.type." + type.name().toLowerCase());
+	public ScriptNode(ScriptType type) {
+		this.nodeName = Constant.messages.getString(type.getI18nKey());
 		this.type = type;
 	}
 
@@ -72,7 +72,7 @@ public class ScriptNode extends DefaultMutableTreeNode {
 		return (ScriptNode) super.getParent();
 	}
 
-	public ScriptWrapper.Type getType() {
+	public ScriptType getType() {
 		return type;
 	}
 	

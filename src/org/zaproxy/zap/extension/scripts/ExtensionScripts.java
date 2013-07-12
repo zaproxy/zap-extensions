@@ -29,8 +29,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -58,7 +61,29 @@ public class ExtensionScripts extends ExtensionAdaptor {
 	
 	private static final String LANG_ENGINE_SEP = " : ";
 	protected static final String SCRIPT_CONSOLE_HOME_PAGE = "http://code.google.com/p/zaproxy/wiki/ScriptConsole";
+
+	public static final String TYPE_STANDALONE = "standalone";
+	public static final String TYPE_ACTIVE = "active";
+	public static final String TYPE_PASSIVE = "passive";
+	public static final String TYPE_TARGETED = "targeted";
 	
+	private static final String RESOURCE_ROOT = "/org/zaproxy/zap/extension/scripts/resource/icons/";
+	private static final ImageIcon ASCAN_ICON = 
+			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-ascan.png"));
+	private static final ImageIcon PSCAN_ICON = 
+			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-pscan.png"));
+	private static final ImageIcon STANDALONE_ICON =
+			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-standalone.png"));
+	/*
+	private static final ImageIcon INLINE_ICON = 
+			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-proxy.png"));
+	private static final ImageIcon TARGETED_ICON = 
+			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-target.png"));
+	private static final ImageIcon LIBRARY_ICON =
+			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-library.png"));
+	*/
+
+
 	private ScriptsListPanel scriptsPanel = null;
 	private ConsolePanel consolePanel = null;
 	private ScriptEngineManager mgr = new ScriptEngineManager();
@@ -71,6 +96,7 @@ public class ExtensionScripts extends ExtensionAdaptor {
 
 	private ScriptTreeModel treeModel = null;
 	private List <ScriptEngineWrapper> engineWrappers = new ArrayList<ScriptEngineWrapper>();
+	private Map<String, ScriptType> typeMap = new HashMap<String, ScriptType>();
 
 	private static final Logger logger = Logger.getLogger(ExtensionScripts.class);
 
@@ -99,11 +125,17 @@ public class ExtensionScripts extends ExtensionAdaptor {
         } else {
         	logger.error("No Javascript/ECMAScript engine found");
         }
+        
 	}
 	
 	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
+
+		this.registerScriptType(new ScriptType(TYPE_STANDALONE, "scripts.type.standalone", STANDALONE_ICON, false));
+		// TODO move into relevant extensions
+		this.registerScriptType(new ScriptType(TYPE_ACTIVE, "scripts.type.active", ASCAN_ICON, true));
+		this.registerScriptType(new ScriptType(TYPE_PASSIVE, "scripts.type.passive", PSCAN_ICON, true));
 
 	    extensionHook.addOptionsParamSet(getScriptParam());
 	    
@@ -272,7 +304,22 @@ public class ExtensionScripts extends ExtensionAdaptor {
 		}
 		return this.treeModel;
 	}
+	
+	public void registerScriptType(ScriptType type) {
+		if (typeMap.containsKey(type.getName())) {
+			throw new InvalidParameterException("ScriptType already registered: " + type.getName());
+		}
+		this.typeMap.put(type.getName(), type);
+		this.getTreeModel().addType(type);
+	}
 
+	public ScriptType getScriptType (String name) {
+		return this.typeMap.get(name);
+	}
+	
+	public Collection<ScriptType> getScriptTypes() {
+		return typeMap.values();
+	}
 
 	@Override
 	public String getAuthor() {
@@ -383,12 +430,26 @@ public class ExtensionScripts extends ExtensionAdaptor {
 		}
         script.setContents(sb.toString());
         script.setChanged(false);
+        
+        if (script.getType() == null) {
+        	// This happens when scripts are loaded from the configs as the types 
+        	// may well not have been registered at that stage
+System.out.println("SBSB ext loadScript, typeName = " + script.getTypeName());
+        	script.setType(this.getScriptType(script.getTypeName()));
+        }
 	    return script;
 	}
 
-	public List<ScriptWrapper> getScripts(ScriptWrapper.Type type) {
+	public List<ScriptWrapper> getScripts(String type) {
+		return this.getScripts(this.getScriptType(type));
+	}
+
+	public List<ScriptWrapper> getScripts(ScriptType type) {
 		List<ScriptWrapper> scripts = new ArrayList<ScriptWrapper>();
-		for (ScriptNode node : this.getTreeModel().getNodes(type)) {
+		if (type == null) {
+			return scripts;
+		}
+		for (ScriptNode node : this.getTreeModel().getNodes(type.getName())) {
 			ScriptWrapper script = (ScriptWrapper) node.getUserObject();
 			refreshScript(script);
 			scripts.add((ScriptWrapper) node.getUserObject());

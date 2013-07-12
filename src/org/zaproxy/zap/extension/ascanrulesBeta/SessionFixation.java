@@ -1008,4 +1008,14 @@ public class SessionFixation extends AbstractAppPlugin {
 		return Alert.RISK_HIGH;
 	}
 
+	@Override
+	public int getCweId() {
+		return 384;
+	}
+
+	@Override
+	public int getWascId() {
+		return 37;
+	}
+
 }

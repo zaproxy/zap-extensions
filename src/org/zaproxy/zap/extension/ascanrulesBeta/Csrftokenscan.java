@@ -226,4 +226,14 @@ public class Csrftokenscan extends AbstractAppPlugin {
 		return Alert.RISK_HIGH;
 	}
 
+	@Override
+	public int getCweId() {
+		return 352;
+	}
+
+	@Override
+	public int getWascId() {
+		return 9;
+	}
+
 }

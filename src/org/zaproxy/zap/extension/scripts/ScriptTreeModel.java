@@ -38,25 +38,17 @@ class ScriptTreeModel extends DefaultTreeModel {
 
 	//private static final Logger logger = Logger.getLogger(ScriptTreeModel.class);
 	
-	private Map<ScriptWrapper.Type, ScriptNode> nodeMap = new HashMap<ScriptWrapper.Type, ScriptNode>(); 
+	private Map<String, ScriptNode> nodeMap = new HashMap<String, ScriptNode>(); 
 
     ScriptTreeModel() {
         super(new ScriptNode());
-
-        ScriptNode node;
-
-        node = new ScriptNode(ScriptWrapper.Type.STANDALONE);
-        nodeMap.put(ScriptWrapper.Type.STANDALONE, node);
+    }
+    
+    protected void addType(ScriptType type) {
+        ScriptNode node = new ScriptNode(type);
+        nodeMap.put(type.getName(), node);
         this.getRoot().add(node);
-
-        node = new ScriptNode(ScriptWrapper.Type.ACTIVE);
-        nodeMap.put(ScriptWrapper.Type.ACTIVE, node);
-        this.getRoot().add(node);
-
-        node = new ScriptNode(ScriptWrapper.Type.PASSIVE);
-        nodeMap.put(ScriptWrapper.Type.PASSIVE, node);
-        this.getRoot().add(node);
-
+    	
     }
     
     @Override
@@ -64,7 +56,7 @@ class ScriptTreeModel extends DefaultTreeModel {
     	return (ScriptNode)this.root;
     }
     
-    public List<ScriptNode> getNodes(ScriptWrapper.Type type) {
+    public List<ScriptNode> getNodes(String type) {
 		List<ScriptNode> list = new ArrayList<ScriptNode>();
 		ScriptNode parent = nodeMap.get(type);
 		if (parent != null) {
@@ -84,14 +76,15 @@ class ScriptTreeModel extends DefaultTreeModel {
 		}
 		
 		ScriptNode node = new ScriptNode(script);
-		ScriptNode parent = nodeMap.get(script.getType());
+		ScriptNode parent = nodeMap.get(script.getType().getName());
 		
 		if (parent != null) {
 			parent.add(node);
 			this.nodeStructureChanged(parent);
 			return node;
+		} else {
+			throw new InvalidParameterException("Unrecognised type: " + script.getType());
 		}
-		return null;
 	}
 
 	public void removeScript(ScriptWrapper script) {
@@ -108,7 +101,7 @@ class ScriptTreeModel extends DefaultTreeModel {
 	}
 	
 	public ScriptNode getNodeForScript(ScriptWrapper script) {
-		ScriptNode parent = nodeMap.get(script.getType());
+		ScriptNode parent = nodeMap.get(script.getType().getName());
 		
 		if (parent != null) {
 			ScriptNode node = (ScriptNode) parent.getFirstChild();

@@ -62,6 +62,9 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 		    	    "",
 		    	    "Disable debugging messages before pushing to production", 
 		            "", 
+					infoDisclosureDBError,	// Evidence
+					0,	// TODO CWE Id
+		            13,	// WASC Id - Info leakage
 		            msg);
 	
     	parent.raiseAlert(id, alert);

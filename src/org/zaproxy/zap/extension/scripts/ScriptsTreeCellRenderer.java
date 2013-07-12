@@ -34,19 +34,6 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 	
 	private static final String RESOURCE_ROOT = "/org/zaproxy/zap/extension/scripts/resource/icons/";
 	
-	private static final ImageIcon ASCAN_ICON = 
-			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-ascan.png"));
-	private static final ImageIcon PSCAN_ICON = 
-			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-pscan.png"));
-	private static final ImageIcon INLINE_ICON = 
-			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-proxy.png"));
-	private static final ImageIcon STANDALONE_ICON =
-			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-standalone.png"));
-	private static final ImageIcon TARGETED_ICON = 
-			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-target.png"));
-	private static final ImageIcon LIBRARY_ICON =
-			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-library.png"));
-
 	private static final ImageIcon CROSS_OVERLAY_ICON = 
 			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "cross-overlay.png"));
 	private static final ImageIcon PENCIL_OVERLAY_ICON = 
@@ -107,7 +94,7 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 				if (script.isError()) {
 					icon.add(WARNING_OVERLAY_ICON);
 				}
-				if (! script.getType().equals(ScriptWrapper.Type.STANDALONE)) {
+				if (script.getType().isEnableable()) {
 					if (script.isEnabled()) {
 						icon.add(TICK_OVERLAY_ICON);
 					} else {
@@ -117,15 +104,7 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 				setIcon(icon);
 				
 			} else if (node.getType() != null) {
-				switch (node.getType()) {
-				case ACTIVE:		setIcon(ASCAN_ICON); break;
-				case PASSIVE:		setIcon(PSCAN_ICON); break;
-				case INLINE:		setIcon(INLINE_ICON); break;
-				case LIBRARY:		setIcon(LIBRARY_ICON); break;
-				case STANDALONE:	setIcon(STANDALONE_ICON); break;
-				case TARGETED:		setIcon(TARGETED_ICON); break;
-				}
-			} else {
+				setIcon(node.getType().getIcon());
 			}
 		}
 

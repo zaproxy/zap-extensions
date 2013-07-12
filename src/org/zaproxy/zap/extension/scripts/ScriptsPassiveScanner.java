@@ -48,7 +48,10 @@ public class ScriptsPassiveScanner extends PluginPassiveScanner {
 	public String getName() {
 		if (name == null) {
 			// Cache to prevent an NPE when unloaded
-			name = Constant.messages.getString("scripts.passivescanner.title");
+	    	if (Constant.messages.containsKey("scripts.passivescanner.title")) {
+	    		name = Constant.messages.getString("scripts.passivescanner.title");
+	    	}
+	    	name = "Script passive scan rules";
 		}
 		return name;
 	}
@@ -72,7 +75,7 @@ public class ScriptsPassiveScanner extends PluginPassiveScanner {
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		if (this.getExtension() != null) {
-			List<ScriptWrapper> scripts = extension.getScripts(ScriptWrapper.Type.PASSIVE);
+			List<ScriptWrapper> scripts = extension.getScripts(ExtensionScripts.TYPE_PASSIVE);
 			for (ScriptWrapper script : scripts) {
 				StringWriter writer = new StringWriter();
 				try {
@@ -102,12 +105,13 @@ public class ScriptsPassiveScanner extends PluginPassiveScanner {
 	}
 	
 	public void raiseAlert(int risk, int reliability, String name, String description, String uri, 
-			String param, String attack, String otherInfo, String solution, HttpMessage msg) {
+			String param, String attack, String otherInfo, String solution, String evidence, 
+			int cweId, int wascId, HttpMessage msg) {
 		
 		Alert alert = new Alert(getId(), risk, reliability, name);
 		     
 		alert.setDetail(description, msg.getRequestHeader().getURI().toString(), 
-				param, attack, otherInfo, solution, null, msg);		// Left out reference to match ScriptsActiveScanner
+				param, attack, otherInfo, solution, null, evidence, cweId, wascId, msg);		// Left out reference to match ScriptsActiveScanner
 
 		this.parent.raiseAlert(this.getId(), alert);
 	}

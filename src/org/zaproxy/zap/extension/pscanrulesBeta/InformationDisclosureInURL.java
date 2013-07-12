@@ -74,6 +74,9 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 		    	    "",
 		    	    "Do not pass sensitive information in URI's", 
 		            "", 
+					param,	// Evidence
+					0,	// TODO CWE Id
+		            13,	// WASC Id - Info leakage
 		            msg);
 	
     	parent.raiseAlert(id, alert);

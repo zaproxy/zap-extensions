@@ -330,6 +330,13 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 		return Alert.RISK_HIGH;
 	}
 
+	@Override
+	public int getCweId() {
+		return 89;
+	}
+
+	@Override
+	public int getWascId() {
+		return 19;
+	}
 }
-
-

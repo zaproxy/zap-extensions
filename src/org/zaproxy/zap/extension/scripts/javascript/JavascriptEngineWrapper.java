@@ -31,14 +31,13 @@ import javax.swing.ImageIcon;
 import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.zaproxy.zap.extension.scripts.ScriptEngineWrapper;
-import org.zaproxy.zap.extension.scripts.ScriptWrapper.Type;
 
 public class JavascriptEngineWrapper extends ScriptEngineWrapper {
 
 	private static final String RESOURCE_ROOT = "/org/zaproxy/zap/extension/scripts/resource/";
     private static Logger logger = Logger.getLogger(JavascriptEngineWrapper.class);
 
-    private Map<Type, String> templateMap = new HashMap<Type, String>();
+    private Map<String, String> templateMap = new HashMap<String, String>();
 
 	public static final ImageIcon ICON = new ImageIcon(
 			JavascriptEngineWrapper.class.getResource(RESOURCE_ROOT + "icons/cup.png"));
@@ -58,9 +57,9 @@ public class JavascriptEngineWrapper extends ScriptEngineWrapper {
 	}
 
 	@Override
-	public String getTemplate(Type type) {
+	public String getTemplate(String type) {
 		if (! templateMap.containsKey(type)) {
-			templateMap.put(type, this.getStringReource("js/" + type.name().toLowerCase() + "-template.js"));
+			templateMap.put(type, this.getStringReource("js/" + type.toLowerCase() + "-template.js"));
 		}
 		return templateMap.get(type);
 	}
