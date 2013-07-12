@@ -101,4 +101,16 @@ public class ZestActiveScanner extends AbstractAppParamPlugin {
 		return Alert.RISK_INFO;
 	}
 
+	@Override
+	public int getCweId() {
+		// Not relevant
+		return 0;
+	}
+
+	@Override
+	public int getWascId() {
+		// No relevant
+		return 0;
+	}
+
 }

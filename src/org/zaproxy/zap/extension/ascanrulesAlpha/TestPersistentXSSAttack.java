@@ -314,4 +314,14 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		return Alert.RISK_HIGH;
 	}
 
+	@Override
+	public int getCweId() {
+		return 79;
+	}
+
+	@Override
+	public int getWascId() {
+		return 8;
+	}
+
 }

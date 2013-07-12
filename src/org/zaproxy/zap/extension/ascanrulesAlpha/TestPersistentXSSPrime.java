@@ -90,4 +90,13 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
 		return Alert.RISK_INFO;
 	}
 
+	@Override
+	public int getCweId() {
+		return 79;
+	}
+
+	@Override
+	public int getWascId() {
+		return 8;
+	}
 }
