@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>8</version>
-	<description>New expression based technique for detecting SQL injection vulnerabilities and improvements to the generic SQLi scanner</description>
+	<version>11</version>
+	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated language files.</changes>
+	<changes>Updated to be compatible with 2.2.0</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
