@@ -136,13 +136,6 @@ public class OutputPanel extends AbstractPanel {
 	}
 
 	public void append(final Exception e) {
-System.out.println("SBSB append an exception.. " + e);		
-System.out.println("SBSB cause = " + e.getCause());
-
-if (e.getCause() != null) {
-	System.out.println("SBSB cause.class = " + e.getCause().getClass().getCanonicalName());		
-	
-}
 		Throwable cause = e.getCause();
 		while (cause != null) {
 			if (cause instanceof ScriptException) {

@@ -27,6 +27,7 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.view.PopupMenuSiteNode;
 
 public class InvokeScriptWithNodePopupMenu extends PopupMenuSiteNode {
@@ -88,7 +89,7 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuSiteNode {
 		}
 		subMenus.clear();
 		
-		for (ScriptWrapper script : extension.getScripts(ExtensionScripts.TYPE_TARGETED)) {
+		for (ScriptWrapper script : extension.getExtScript().getScripts(ExtensionScripts.TYPE_TARGETED)) {
         	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(script);
         	piicm.setMenuIndex(this.getMenuIndex());
 			View.getSingleton().getPopupMenu().addMenu(piicm);

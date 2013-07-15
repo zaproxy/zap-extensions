@@ -19,27 +19,21 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
-import java.io.StringWriter;
-import java.util.TreeSet;
-
-import javax.script.Invocable;
-
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.view.PopupMenuSiteNode;
 
 public class InvokeScriptWithNodeMenu extends PopupMenuSiteNode {
 
 	private static final long serialVersionUID = 2282358266003940700L;
-    //private static Logger logger = Logger.getLogger(InvokeScriptWithNodeMenu.class);
+    private static Logger logger = Logger.getLogger(InvokeScriptWithNodeMenu.class);
 
 	private ExtensionScripts extension;
 	private ScriptWrapper script;
 	
-	private ScriptsActiveScanner sas = new ScriptsActiveScanner();
-
 	public InvokeScriptWithNodeMenu(ExtensionScripts extension, ScriptWrapper script) {
 		super(script.getName(), true);
 		this.extension = extension;
@@ -59,33 +53,16 @@ public class InvokeScriptWithNodeMenu extends PopupMenuSiteNode {
 	@Override
 	public void performAction(SiteNode sn) throws Exception {
 		if (sn != null && sn.getHistoryReference() != null) {
-			// TODO - this will need to use a different interface!
-			StringWriter writer = new StringWriter();
+			logger.debug("Invoke script with " + sn.getNodeName());
 			try {
-				Invocable inv = extension.invokeScript(script, writer);
+				HttpMessage msg = sn.getHistoryReference().getHttpMessage();
+				extension.invokeTargetedScript(script, msg);
 					
-				ScriptAScan s = inv.getInterface(ScriptAScan.class);
-				
-				if (s != null) {
-					
-					HttpMessage msg = sn.getHistoryReference().getHttpMessage();
-					TreeSet<HtmlParameter> params = msg.getUrlParams();
-					
-					for (HtmlParameter param : params) {
-						s.scan(sas, msg, param.getName(), param.getValue());
-					}
-					
-				} else {
-					writer.append(Constant.messages.getString("scripts.interface.targeted.error"));
-					extension.setError(script, writer.toString());
-					extension.setEnabled(script, false);
-				}
 			} catch (Exception e) {
-				writer.append(e.toString());
-				extension.setError(script, e);
-				extension.setEnabled(script, false);
+				logger.debug("Script " + script.getName() + " failed with error: " + e.toString());
+				extension.showError(e);
 			}
-		}		
+		}
 	}
 	
 	@Override

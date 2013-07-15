@@ -23,8 +23,8 @@ import java.awt.Dimension;
 import java.awt.Frame;
 
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScripts;
-import org.zaproxy.zap.extension.scripts.ScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class EditScriptDialog extends StandardFieldsDialog {
@@ -60,7 +60,7 @@ public class EditScriptDialog extends StandardFieldsDialog {
 		script.setName(this.getStringValue(FIELD_NAME));
 		script.setDescription(this.getStringValue(FIELD_DESC));
 		script.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
-		extension.setChanged(script, true);
+		extension.getExtScript().setChanged(script, true);
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class EditScriptDialog extends StandardFieldsDialog {
 		if (this.isEmptyField(FIELD_NAME)) {
 			return Constant.messages.getString("scripts.dialog.script.error.name");
 		}
-		if (extension.getScript(this.getStringValue(FIELD_NAME)) != null) {
+		if (extension.getExtScript().getScript(this.getStringValue(FIELD_NAME)) != null) {
 			return Constant.messages.getString("scripts.dialog.script.error.duplicate");
 		}
 		return null;

@@ -35,6 +35,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -177,8 +178,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 				try {
 					// Update it, in case its been changed
 					script.setContents(getCommandScript());
-					extension.invokeScript(script, 
-							new OutputPanelWriter(getOutputPanel()));
+					extension.getExtScript().invokeScript(script);
 				} catch (Exception e) {
 					getOutputPanel().append(e);
 				}
@@ -211,7 +211,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 				@Override
 				public void keyTyped(KeyEvent e) {
 					if (! script.isChanged()) {
-						extension.setChanged(script, true);
+						extension.getExtScript().setChanged(script, true);
 					}
 				}
 				@Override
