@@ -1,16 +1,10 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>3</version>
+	<version>6</version>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>
-	<![CDATA[
-	Added new passive scanners: "CharsetMismatchScanner" and "CookieLooselyScopedScanner";<br>
-	Updated language files;<br>
-	Updated for ZAP 2.1.0.<br>
-	]]>
-	</changes>
+	<changes>Updated to be compatible with 2.2.0</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
@@ -30,6 +24,6 @@
 	</pscanrules>
 	<filters/>
 	<files/>
-	<not-before-version>2.1.0</not-before-version>
+	<not-before-version>2.2.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
