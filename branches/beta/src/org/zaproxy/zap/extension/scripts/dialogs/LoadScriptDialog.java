@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptType;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScripts;
-import org.zaproxy.zap.extension.scripts.ScriptEngineWrapper;
-import org.zaproxy.zap.extension.scripts.ScriptType;
-import org.zaproxy.zap.extension.scripts.ScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class LoadScriptDialog extends StandardFieldsDialog {
@@ -57,7 +57,7 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 		// TODO this should really be a load file 
 		this.setTitle(Constant.messages.getString("scripts.dialog.script.load.title"));
 		this.addTextField(FIELD_NAME, "");
-		this.addComboField(FIELD_ENGINE, extension.getScriptingEngines(), "");
+		this.addComboField(FIELD_ENGINE, extension.getExtScript().getScriptingEngines(), "");
 		this.addComboField(FIELD_TYPE, this.getTypes(), "");
 		this.addMultilineField(FIELD_DESC, "");
 		this.addCheckBoxField(FIELD_LOAD, false);
@@ -65,14 +65,14 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// Change the types based on which engine is selected
-				ScriptEngineWrapper sew = extension.getEngineWrapper(getStringValue(FIELD_ENGINE));
+				ScriptEngineWrapper sew = extension.getExtScript().getEngineWrapper(getStringValue(FIELD_ENGINE));
 				if (sew.isRawEngine()) {
 					// Raw engines can only support targeted scripts as there will be no templates
 					setComboFields(FIELD_TYPE, 
 							new String[]{Constant.messages.getString(ExtensionScripts.TYPE_STANDALONE)}, 
 							Constant.messages.getString(ExtensionScripts.TYPE_STANDALONE));
 				} else {
-					setComboFields(FIELD_ENGINE, extension.getScriptingEngines(), "");
+					setComboFields(FIELD_ENGINE, extension.getExtScript().getScriptingEngines(), "");
 				}
 			}});
 
@@ -81,14 +81,14 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 	
 	private List<String> getTypes() {
 		ArrayList<String> list = new ArrayList<String>();
-		for (ScriptType type : extension.getScriptTypes()) {
+		for (ScriptType type : extension.getExtScript().getScriptTypes()) {
 			list.add(Constant.messages.getString(type.getI18nKey()));
 		}
 		return list;
 	}
 	
 	private ScriptType nameToType (String name) {
-		for (ScriptType type : extension.getScriptTypes()) {
+		for (ScriptType type : extension.getExtScript().getScriptTypes()) {
 			if (Constant.messages.getString(type.getI18nKey()).equals(name)) {
 				return type;
 			}
@@ -101,9 +101,9 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 		script.setDescription(this.getStringValue(FIELD_DESC));
 		script.setType(this.nameToType(this.getStringValue(FIELD_TYPE)));
 		script.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
-		script.setEngine(extension.getEngineWrapper(this.getStringValue(FIELD_ENGINE)));
+		script.setEngine(extension.getExtScript().getEngineWrapper(this.getStringValue(FIELD_ENGINE)));
 
-		extension.addScript(script);
+		extension.getExtScript().addScript(script);
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 		if (this.isEmptyField(FIELD_NAME)) {
 			return Constant.messages.getString("scripts.dialog.script.error.name");
 		}
-		if (extension.getScript(this.getStringValue(FIELD_NAME)) != null) {
+		if (extension.getExtScript().getScript(this.getStringValue(FIELD_NAME)) != null) {
 			return Constant.messages.getString("scripts.dialog.script.error.duplicate");
 		}
 		return null;

@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 
 /**
@@ -80,7 +81,7 @@ public class PopupRemoveScript extends ExtensionPopupMenuItem {
 	    		return;
 	    	}
 		}
-		extension.removeScript(script);
+		extension.getExtScript().removeScript(script);
 	}
 	
     @Override

@@ -46,6 +46,9 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptTreeModel;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.dialogs.EditScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.LoadScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.NewScriptDialog;
@@ -210,7 +213,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	private void saveScript (ScriptWrapper script) {
 		if (script.getFile() != null) {
 			try {
-				extension.saveScript(script);
+				extension.getExtScript().saveScript(script);
 				this.setButtonStates();
 				((ScriptTreeModel)this.getTree().getModel()).nodeChanged(this.getSelectedScriptNode());
 				
@@ -238,7 +241,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	    		}
 	    		
 				try {
-					extension.saveScript(script);
+					extension.getExtScript().saveScript(script);
 					this.setButtonStates();
 					((ScriptTreeModel)this.getTree().getModel()).nodeChanged(this.getSelectedScriptNode());
 
@@ -264,7 +267,7 @@ public class ScriptsListPanel extends AbstractPanel {
     	    try {
     	    	ScriptWrapper script = new ScriptWrapper();
     	    	script.setFile(file);
-        		extension.loadScript(script);
+        		extension.getExtScript().loadScript(script);
        			// TODO Not ideal, but will require some core changes to do properly
        			showLoadScriptDialog(script);
 
@@ -341,7 +344,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	JTree getTree() {
 		if (tree == null) {
 			tree = new JTree();
-			tree.setModel(extension.getTreeModel());
+			tree.setModel(extension.getExtScript().getTreeModel());
 			tree.setName(TREE);
 			tree.setShowsRootHandles(true);
 			tree.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,0,0,0));

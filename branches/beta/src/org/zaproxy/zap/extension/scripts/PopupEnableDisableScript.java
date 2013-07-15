@@ -28,6 +28,8 @@ import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 
 /**
@@ -72,7 +74,7 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
                     	return;
                     }
                 	ScriptWrapper script = (ScriptWrapper) node.getUserObject();
-                    extension.setEnabled(script, ! script.isEnabled());
+                    extension.getExtScript().setEnabled(script, ! script.isEnabled());
 			    }
         	}
         });

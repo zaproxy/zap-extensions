@@ -25,6 +25,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.view.OverlayIcon;
+
 /**
  * Custom renderer for {@link ScriptsListPanel} to set custom icons
  * and tooltips. If you want tooltips you have to enable them via:
@@ -79,7 +84,7 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 				ScriptEngineWrapper engine = script.getEngine();
 				if (script.getEngine() == null) {
 					// Scripts loaded from the configs my have loaded before all of the engines
-					script.setEngine(extension.getEngineWrapper(script.getEngineName()));
+					script.setEngine(extension.getExtScript().getEngineWrapper(script.getEngineName()));
 				}
 				
 				if (engine != null && engine.getIcon() != null) {
