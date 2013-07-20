@@ -1,10 +1,15 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>8</version>
-	<description>New expression based technique for detecting SQL injection vulnerabilities and improvements to the generic SQLi scanner</description>
+	<version>9</version>
+	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated language files.</changes>
+	<changes>
+	<![CDATA[
+	Improved the "SQL Injection" scanner with detection of parameters used in the "ORDER BY" clause of the SQL select statement;<br>
+	Changed the "Session ID in URL rewrite" scanner to allow the characters "-" and "!" in "JSESSIONID" session token value.
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
