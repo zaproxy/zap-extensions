@@ -23,6 +23,7 @@
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
 // ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
 // ZAP: 2013/03/03 Issue 546: Remove all template Javadoc comments
+// ZAP: 2013/07/19 Issue 366: "Other Info" for "Session ID in URL rewrite" not always correct
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -49,16 +50,17 @@ public class TestInfoSessionIdURL extends AbstractAppPlugin {
 	
 	*/
 	
-	private static Pattern staticSessionIDPHP1 = Pattern.compile("(PHPSESSION)=\\w+", PATTERN_PARAM);
-	private static Pattern staticSessionIDPHP2 = Pattern.compile("(PHPSESSID)=\\w+", PATTERN_PARAM);
-	private static Pattern staticSessionIDJava = Pattern.compile("(JSESSIONID)=\\w+", PATTERN_PARAM);
-	private static Pattern staticSessionIDASP = Pattern.compile("(ASPSESSIONID)=\\w+", PATTERN_PARAM);
-	private static Pattern staticSessionIDColdFusion = Pattern.compile("(CFTOKEN)=\\w+", PATTERN_PARAM);
-	private static Pattern staticSessionIDJW = Pattern.compile("(JWSESSIONID)=\\w+", PATTERN_PARAM);
-	private static Pattern staticSessionIDWebLogic = Pattern.compile("(WebLogicSession)=\\w+", PATTERN_PARAM);
-	private static Pattern staticSessionIDApache = Pattern.compile("(SESSIONID)=\\w+", PATTERN_PARAM);
+	private static final String GENERIC_SESSION_TOKEN_VALUE = "\\w+";
+	private static final Pattern staticSessionIDPHP1 = Pattern.compile("(PHPSESSION)=" + GENERIC_SESSION_TOKEN_VALUE, PATTERN_PARAM);
+	private static final Pattern staticSessionIDPHP2 = Pattern.compile("(PHPSESSID)=" + GENERIC_SESSION_TOKEN_VALUE, PATTERN_PARAM);
+	private static final Pattern staticSessionIDJava = Pattern.compile("(JSESSIONID)=[\\w\\-!]+", PATTERN_PARAM);
+	private static final Pattern staticSessionIDASP = Pattern.compile("(ASPSESSIONID)=" + GENERIC_SESSION_TOKEN_VALUE, PATTERN_PARAM);
+	private static final Pattern staticSessionIDColdFusion = Pattern.compile("(CFTOKEN)=" + GENERIC_SESSION_TOKEN_VALUE, PATTERN_PARAM);
+	private static final Pattern staticSessionIDJW = Pattern.compile("(JWSESSIONID)=" + GENERIC_SESSION_TOKEN_VALUE, PATTERN_PARAM);
+	private static final Pattern staticSessionIDWebLogic = Pattern.compile("(WebLogicSession)=" + GENERIC_SESSION_TOKEN_VALUE, PATTERN_PARAM);
+	private static final Pattern staticSessionIDApache = Pattern.compile("(SESSIONID)=" + GENERIC_SESSION_TOKEN_VALUE, PATTERN_PARAM);
 	
-	private static Pattern[] staticSessionIDList =
+	private static final Pattern[] staticSessionIDList =
 		{staticSessionIDPHP1, staticSessionIDPHP2, staticSessionIDJava, staticSessionIDColdFusion,
 			staticSessionIDASP, staticSessionIDJW, staticSessionIDWebLogic, staticSessionIDApache};
 
@@ -122,7 +124,7 @@ public class TestInfoSessionIdURL extends AbstractAppPlugin {
 
 				if (kb == null || !kb.equals(sessionIdValue)) {
 				    getKb().add("sessionId/nameValue", sessionIdValue);
-					bingo(Alert.RISK_LOW, Alert.WARNING, uri, "", sessionIdValue, null, base);
+					bingo(Alert.RISK_LOW, Alert.WARNING, uri, null, "", null, sessionIdValue, base);
 				}
 				kb = getKb().getString("sessionId/name");
 				getKb().add("sessionId/name", sessionIdName);
@@ -165,7 +167,7 @@ public class TestInfoSessionIdURL extends AbstractAppPlugin {
 				String host = msg.getRequestHeader().getURI().getHost();
 				if (host.compareToIgnoreCase(linkHostName) != 0) {
 					bingo(risk, Alert.WARNING, alertReferer, descReferer, 
-							msg.getRequestHeader().getURI().getURI(), "", linkHostName, null, solutionReferer, msg);
+							msg.getRequestHeader().getURI().getURI(), null, "", null, solutionReferer, linkHostName, msg);
 				}
 			}
 		}
