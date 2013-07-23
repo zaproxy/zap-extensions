@@ -24,16 +24,12 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EtchedBorder;
@@ -62,7 +58,6 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	private ZapTextField urlField = null;
 	private ZapTextField confField = null;
 	private JLabel progressLabel = null;
-	private JCheckBox showOnStart = null;
 
 	public QuickStartPanel(ExtensionQuickStart extension) {
 		super();
@@ -152,10 +147,6 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		}
 		
 		panelContent.add(new JLabel(""), LayoutHelper.getGBC(0, 8, 4, 1.D, 1.0D));	// Padding at bottom
-
-		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.show")), 
-				LayoutHelper.getGBC(0, 9, 1, 0.0D, new Insets(5,5,5,5)));
-		panelContent.add(this.getShowOnStart(), LayoutHelper.getGBC(1, 9, 1, 0.0D));
 		
 		this.setMode(Control.getSingleton().getMode());
 	}
@@ -279,22 +270,4 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		}
 	}
 	
-	private JCheckBox getShowOnStart() {
-		if (showOnStart == null) {
-			showOnStart = new JCheckBox();
-			showOnStart.setSelected(true);
-			showOnStart.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (extension.getView().showConfirmDialog(Constant.messages.getString("quickstart.start.remove")) 
-							!= JOptionPane.OK_OPTION) {
-						showOnStart.setSelected(true);
-						return;
-					}
-					extension.showOnStart(false);
-				}
-			});
-		}
-		return showOnStart;
-	}
 }
