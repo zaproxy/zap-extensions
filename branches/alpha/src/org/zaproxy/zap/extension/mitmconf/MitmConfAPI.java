@@ -20,8 +20,11 @@ package org.zaproxy.zap.extension.mitmconf;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
@@ -42,13 +45,11 @@ public class MitmConfAPI extends ApiImplementor {
 	private static final String OTHER_SERVICE = "service";
 	private static final String OTHER_FIREFOX_ADDON = "ringleader.xpi";
 	
-	/*
-	private static final String PROXY_PAC = "/proxy.pac";
-	private static final String ROOT_CERT = "/OTHER/core/other/rootcert/";
-	private static final String FIREFOX_ADDON = "OTHER/" + PREFIX + "/other/" + OTHER_FIREFOX_ADDON;
-	*/
+	//private ExtensionMitmConf extension = null;
 
-	public MitmConfAPI() {
+	public MitmConfAPI(ExtensionMitmConf ext) {
+		
+		//extension = ext;
 		
 		this.addApiOthers(new ApiOther(OTHER_MITM));
 		this.addApiOthers(new ApiOther(OTHER_MANIFEST));
@@ -65,7 +66,6 @@ public class MitmConfAPI extends ApiImplementor {
 		return PREFIX;
 	}
 
-	
 	@Override
 	public HttpMessage handleApiOther(HttpMessage msg, String name,
 			JSONObject params) throws ApiException {
@@ -88,6 +88,7 @@ public class MitmConfAPI extends ApiImplementor {
 				welcomePage = welcomePage.replace("{{MSG.SUCCESS}}", Constant.messages.getString("mitmconf.success"));
 				welcomePage = welcomePage.replace("{{MSG.ACTIVATED}}", Constant.messages.getString("mitmconf.activated"));
 				welcomePage = welcomePage.replace("{{MSG.BUTTON}}", Constant.messages.getString("mitmconf.button"));
+				welcomePage = welcomePage.replace("{{MSG.FIREFOX}}", Constant.messages.getString("mitmconf.firefox"));
 
 				/*
 				// TODO - this seems to detect Firefox fine...
@@ -243,4 +244,63 @@ public class MitmConfAPI extends ApiImplementor {
 		}
 		throw new ApiException (ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
 	}
+	
+	
+	public static void main (String[] args) throws Exception {
+		// Sanity check the json config files are valid!
+		MitmConfAPI api = new MitmConfAPI(null);
+		JSON json;
+		
+		String manifest = api.getStringReource("resource/manifest.json");
+		//System.out.println("Manifest = " + manifest);
+		json = JSONSerializer.toJSON(manifest);
+		System.out.println("Manifest OK? " + json);
+		
+		String service = api.getStringReource("resource/service.json");
+		//System.out.println("Service = " + service);
+		json = JSONSerializer.toJSON(service);
+		System.out.println("Service OK? " + json);
+		
+		// Calculate the Firefox addon hash
+		
+		InputStream in = null;
+		try {
+			in = ExtensionMitmConf.class.getResourceAsStream("resource/" + OTHER_FIREFOX_ADDON);
+
+    	    MessageDigest md = MessageDigest.getInstance("SHA1");
+    	    //FileInputStream fis = new FileInputStream(in);
+    	    byte[] dataBytes = new byte[1024];
+    	 
+    	    int nread = 0; 
+    	 
+    	    while ((nread = in.read(dataBytes)) != -1) {
+    	      md.update(dataBytes, 0, nread);
+    	    };
+    	 
+    	    byte[] mdbytes = md.digest();
+    	 
+    	    //convert the byte to hex format
+    	    StringBuffer sb = new StringBuffer("");
+    	    for (int i = 0; i < mdbytes.length; i++) {
+    	    	sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+    	    }
+    	 
+    	    System.out.println("Digest(in hex format):: " + sb.toString());
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new ApiException(ApiException.Type.INTERNAL_ERROR);
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					// Ignore
+				}
+			}
+		}
+
+		
+	}
+
 }

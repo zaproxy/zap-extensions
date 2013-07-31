@@ -20,20 +20,19 @@ package org.zaproxy.zap.extension.mitmconf;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.api.API;
 
-public class ExtensionMitmConf extends ExtensionAdaptor  {
+public class ExtensionMitmConf extends ExtensionAdaptor {
 
-	private static final Logger logger = Logger.getLogger(ExtensionMitmConf.class);
+	//private static final Logger logger = Logger.getLogger(ExtensionMitmConf.class);
 	
 	public static final String NAME = "ExtensionMitmConf";
 	
-	private MitmConfAPI api = new MitmConfAPI();
-
+	private MitmConfAPI api = new MitmConfAPI(this);
+	
 	public ExtensionMitmConf() {
 		super();
 		initialize();
@@ -56,7 +55,7 @@ public class ExtensionMitmConf extends ExtensionAdaptor  {
 
 	@Override
 	public String getDescription() {
-		return "TODO"; // TODO: Constant.messages.getString("reveal.desc");
+		return Constant.messages.getString("mitmconf.desc");
 	}
 
 	@Override

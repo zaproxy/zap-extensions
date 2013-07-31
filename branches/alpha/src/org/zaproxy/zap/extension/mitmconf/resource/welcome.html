@@ -1,8 +1,38 @@
 <html>
 <head>
 <title>{{MSG.TITLE}}</title>
+<style type="text/css">
+a.button {
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 2px 6px 2px 6px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-left: 1px solid #CCCCCC;
+}
+</style>
 </head>
 <body>
+<script type="application/javascript">
+<!--
+function install (aEvent)
+{
+  for (var a = aEvent.target; a.href === undefined;) a = a.parentNode;
+  var params = {
+    "Foo": { URL: aEvent.target.href,
+             IconURL: aEvent.target.getAttribute("iconURL"),
+             Hash: aEvent.target.getAttribute("hash"),
+             toString: function () { return this.URL; }
+    }
+  };
+  InstallTrigger.install(params);
+
+  return false;
+}
+-->
+</script>
 	<h1>{{MSG.HEADER}}</h1>
 	<p>{{MSG.INTRO1}}</p>
 	<p></p>
@@ -13,7 +43,15 @@
       <p>{{MSG.SETUP1}}</p>
       <p>
       	{{MSG.SETUP2}}
+      	
+      	<b><a class="button" href="{{ROOT}}/OTHER/mitm/other/ringleader.xpi"
+  iconURL="http://www.example.com/foo.png"
+  hash="sha1:a46529265cf57d81895904d1015197a5b6e24afc"
+  onclick="return install(event);">{{MSG.FIREFOX}}</a></b>
+      	
+      	<!--
 	  	<b><a href="{{ROOT}}/OTHER/mitm/other/ringleader.xpi">{{ROOT}}/OTHER/mitm/other/ringleader.xpi</a></b>
+	  	-->
 	  </p>
 	</div>
     <div id="in_progress" style="display:none">

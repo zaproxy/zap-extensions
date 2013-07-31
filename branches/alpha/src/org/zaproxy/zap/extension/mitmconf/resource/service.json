@@ -3,80 +3,58 @@
     "description":"OWASP ZAP Commands"
   },
   {
-    "name":"session",
-    "description":"manipulate ZAP sessions"
-  },
-  {
-    "name":"session new",
-    "description":"create a new session",
-    "returnType":"string",
-    "params":[
-    {
-      "name":"name",
+    "name": "session-new",
+    "description": "create a new session",
+    "returnType": "string",
+    "params": [{
+      "name": "name",
       "type": "string",
-      "description":"the name of the new session to create"
-    }
-    ],
+      "description": "the name of the new session to create"
+    }],
     "execAction":{
-      "url":"{{ROOT}}/JSON/core/action/newSession/?name=${name}",
-      "expression":"$.Result",
-      "callbackData":{"foo":"bar","wibble":{"type":"expression","expression":"$.response.Result","extract":true}}
+      "url":"{{ROOT}}/JSON/core/action/newSession/?name=${$.args.name}",
+      "expression":"$.Result"
     }
   },
   {
-    "name":"version",
+    "name":"zap-version",
     "description":"returns the ZAP version",
     "returnType":"string",
     "params":[],
     "execAction":{
       "url":"{{ROOT}}/JSON/core/view/version/",
       "expression":"$.version",
-      "callbackData":{"foo":"bar","wibble":{"type":"expression","expression":"$.response.version","extract":true}}
+      "callbackData":{"result":{"type":"expression","expression":"$.response.version","extract":true}}
     }
   },
   {
-    "name":"brk",
-    "description":"break on new requests",
+    "name":"brk-all-requests",
+    "description":"break on all new requests",
     "returnType":"string",
-    "params":[
-    {
-      "name":"state",
-      "type": {"name":"selection", "data":["on","off"]},
-      "description": "break on request",
-      "defaultValue": "on"
-    },
-    {
-      "name":"scope",
-      "type": {"name":"selection", "data":["tab","global"]},
-      "description": "local to tab or global",
-      "defaultValue": "tab"
-    }
-    ],
+    "params": [{
+      "name": "break",
+      "type": "boolean",
+      "description": "turn breaking on or off"
+    }],
     "execAction":{
+      "url":"{{ROOT}}/JSON/break/action/breakOnAllRequests/?break=${$.args.break}",
       "expression":"$.Result",
-      "callbackData":{
-        "conditionalCommands":{
-          "expression":"$.args.state",
-          "states":{
-            "on":[{
-              "command":"addToHeader",
-              "params": {
-                "headerName":"X-Security-Proxy",
-                "value":"intercept",
-                "scope":{"type":"expression","expression":"$.args.scope","extract":true}
-              }
-            }],
-            "off":[{
-              "command":"removeFromHeader",
-              "params": {
-                "headerName":"X-Security-Proxy",
-                "value":"intercept",
-                "scope":{"type":"expression","expression":"$.args.scope","extract":true}
-              }
-            }]
-          }
-        }
-      }
+      "callbackData":{"result":{"type":"expression","expression":"$.response.Result","extract":true}}
+    }
+  },
+  {
+    "name":"brk-all-responses",
+    "description":"break on all new responses",
+    "returnType":"string",
+    "params": [{
+      "name": "break",
+      "type": "boolean",
+      "description": "turn breaking on or off"
+    }],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/break/action/breakOnAllResponses/?break=${$.args.break}",
+      "expression":"$.Result",
+      "callbackData":{"result":{"type":"expression","expression":"$.response.Result","extract":true}}
     }
   },
   {
@@ -122,6 +100,78 @@
           }
         }
       }
+    }
+  },
+  {
+    "name":"scan",
+    "description":"active scan a site",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"site",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/core/view/sites/",
+          "expression":"$.sites[*]"
+          }
+        },
+      "description":"the site to scan (attack)"
+    }
+    ],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/ascan/action/scan/?url=${$.args.site}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  },
+  {
+    "name":"scan-status",
+    "description":"Scan progress out of 100",
+    "returnType":"string",
+    "params":[],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/ascan/view/status/",
+      "expression":"$.Result",
+      "callbackData":{},
+      "expression":"$.status",
+      "callbackData":{"result":{"type":"expression","expression":"$.response.status","extract":true}}
+    }
+  },
+  {
+    "name":"spider",
+    "description":"spider a site",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"site",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/core/view/sites/",
+          "expression":"$.sites[*]"
+          }
+        },
+      "description":"the site to spider"
+    }
+    ],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/spider/action/scan/?url=${$.args.site}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  },
+  {
+    "name":"spider-status",
+    "description":"Spider progress out of 100",
+    "returnType":"string",
+    "params":[],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/spider/view/status/",
+      "expression":"$.Result",
+      "callbackData":{},
+      "expression":"$.status",
+      "callbackData":{"result":{"type":"expression","expression":"$.response.status","extract":true}}
     }
   }]
 }
