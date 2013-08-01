@@ -1,0 +1,16 @@
+<zapaddon>
+	<name>HttpsInfo</name>
+	<version>1</version>
+	<description>Adds Https status information</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes></changes>
+	<dependson/>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.httpsInfo.RightClickMenu</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+</zapaddon>
