@@ -202,6 +202,7 @@
 		<antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
+    <antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="mitmconf"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
 		<!--antcall target="build-addon"><param name="addon" value="sitetools"/></antcall-->
@@ -232,6 +233,10 @@
 	<target name="deploy-highlighter" depends="build-all" description="deploy the highlighter extension">
 		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
 	</target>
+  
+  <target name="deploy-httpsInfo" depends="build-all" description="deploy the httpsInfo extension">
+		<antcall target="deploy-extension"> <param name="extension" value="httpsInfo"/> </antcall>
+	</target>
 
 	<target name="deploy-mitmConf" depends="build-all" description="deploy the MITM conf extension">
 		<antcall target="deploy-extension"> <param name="extension" value="mitmconf"/> </antcall>
@@ -257,6 +262,7 @@
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-ascanrulesAlpha"/>
 		<antcall target="deploy-highlighter"/>
+    <antcall target="deploy-httpsInfo"/>
 		<antcall target="deploy-mitmConf"/>
 		<antcall target="deploy-pscanrulesAlpha"/>
 		<antcall target="deploy-serverSentEvents"/>
