@@ -26,6 +26,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -77,6 +80,8 @@ public class ScriptsListPanel extends AbstractPanel {
 	private EditScriptDialog editScriptDialog = null;
 
 	private HttpMessage lastMessageDisplayed = null;
+	
+	private List<Class<?>> disabledScriptDialogs = new ArrayList<Class<?>>(); 
 
 	public ScriptsListPanel(ExtensionScripts extension) {
 		super();
@@ -225,7 +230,7 @@ public class ScriptsListPanel extends AbstractPanel {
 		    JFileChooser chooser = new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
 		    // ZAP: set session name as file name proposal
 			chooser.setSelectedFile(new File(script.getName()));
-		    chooser.setFileFilter(getScriptFilter(script.getEngine().getExtension(), script.getEngineName()));
+		    chooser.setFileFilter(getScriptFilter(script.getEngine().getExtensions().get(0), script.getEngineName()));
 			File file = null;
 		    int rc = chooser.showSaveDialog(View.getSingleton().getMainFrame());
 		    if(rc == JFileChooser.APPROVE_OPTION) {
@@ -234,11 +239,12 @@ public class ScriptsListPanel extends AbstractPanel {
 	    			return;
 	    		}
 	    		String fileName = file.getAbsolutePath();
-	    		if (!fileName.endsWith(script.getEngine().getExtension())) {
-	    		    fileName += script.getEngine().getExtension();
-	    		    file = new File(fileName);
-	    		    script.setFile(file);
+	    		String ext = script.getEngine().getExtensions().get(0);
+	    		if (ext != null && !fileName.endsWith(ext)) {
+	    		    fileName += "." + ext;
 	    		}
+    		    file = new File(fileName);
+    		    script.setFile(file);
 	    		
 				try {
 					extension.getExtScript().saveScript(script);
@@ -285,7 +291,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	           public boolean accept(File file) {
 	                if (file.isDirectory()) {
 	                    return true;
-	                } else if (file.isFile() && file.getName().endsWith(extension)) {
+	                } else if (file.isFile() && (extension == null || file.getName().endsWith(extension))) {
 	                    return true;
 	                }
 	                return false;
@@ -319,7 +325,20 @@ public class ScriptsListPanel extends AbstractPanel {
 	    }
 	    return null;
 	}
-	
+
+	protected List<ScriptNode> getSelectedNodes() {
+		List<ScriptNode> nodes = new ArrayList<ScriptNode>();
+	    
+    	if (tree.getSelectionPaths() != null) {
+    		for (TreePath t : tree.getSelectionPaths()) {
+    			nodes.add((ScriptNode)t.getLastPathComponent());
+    		}
+    	}
+
+	    return nodes;
+	}
+
+
 	protected void setButtonStates() {
 	    ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
 	    
@@ -348,7 +367,7 @@ public class ScriptsListPanel extends AbstractPanel {
 			tree.setName(TREE);
 			tree.setShowsRootHandles(true);
 			tree.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,0,0,0));
-			tree.setCellRenderer(new ScriptsTreeCellRenderer(this.extension));
+			tree.setCellRenderer(this.extension.getScriptsTreeCellRenderer());
 			
 			tree.addMouseListener(new java.awt.event.MouseAdapter() { 
 				@Override
@@ -392,7 +411,19 @@ public class ScriptsListPanel extends AbstractPanel {
 				    	ScriptNode node = getSelectedNode();
 					    if (node != null && node.getUserObject() != null) {
 					    	if (node.getUserObject() instanceof ScriptWrapper) {
-					    		showEditScriptDialog((ScriptWrapper)node.getUserObject());
+					    		boolean edit = true;
+					    		// Only show edit dialog if another add-on hasnt disabled it for the class(es)
+					    		// they manage
+					    		for (Class<?> c : disabledScriptDialogs) {
+					    			if (c.isInstance(node.getUserObject())) {
+					    				edit = false;
+					    				break;
+					    			}
+					    		}
+						    	if (edit) {
+						    		showEditScriptDialog((ScriptWrapper)node.getUserObject());
+						    		
+						    	}
 					    	}
 					    }
 				    }
@@ -427,13 +458,27 @@ public class ScriptsListPanel extends AbstractPanel {
 	public boolean isSelectedMessage(Message message) {
 		return message != null && lastMessageDisplayed != null && (message.hashCode() == lastMessageDisplayed.hashCode());
 	}
-	
+
 	public void showInTree (ScriptNode node) {
+		this.showInTree(node, false);
+	}
+
+	public void showInTree (ScriptNode node, boolean expand) {
 		TreeNode[] path = node.getPath();
 		TreePath tp = new TreePath(path);
 		getTree().setExpandsSelectedPaths(true);
 		getTree().setSelectionPath(tp);
 		getTree().scrollPathToVisible(tp);
+		if (expand) {
+			getTree().expandPath(tp);
+		}
+	}
+
+	public void disableScriptDialog(Class<?> klass) {
+		if (ScriptWrapper.class.equals(klass) || ! ScriptWrapper.class.isAssignableFrom(klass)) {
+			throw new InvalidParameterException("Must specify a subclass of ScriptWrapper");
+		}
+		this.disabledScriptDialogs.add(klass);
 	}
 
 }

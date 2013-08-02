@@ -20,10 +20,14 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeCellRenderer;
 
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -51,14 +55,23 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 	private ExtensionScripts extension = null;
 	
 	private static final long serialVersionUID = -4278691012245035225L;
+	
+	@SuppressWarnings("rawtypes")
+	private Map<Class, TreeCellRenderer> renderers = new HashMap<Class, TreeCellRenderer>();
 
 	public ScriptsTreeCellRenderer(ExtensionScripts ext) {
 		this.extension = ext;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void addRenderer(Class c, TreeCellRenderer renderer) {
+		this.renderers.put(c, renderer);
 	}
 
 	/**
 	 * Sets custom tree node logos.
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value,
 			boolean sel, boolean expanded, boolean leaf, int row,
@@ -74,7 +87,13 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 		}
 		
 		if (node != null) {
-			// folder / file icons with scope 'target' if relevant
+			for (Entry<Class, TreeCellRenderer> entry : this.renderers.entrySet()) {
+				if (entry.getKey().isInstance(node.getUserObject())) {
+					return entry.getValue().getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+				}
+			}
+			
+			
 			if (node.isRoot()) {
 				setIcon(ExtensionScripts.ICON);
 				

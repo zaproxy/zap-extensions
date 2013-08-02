@@ -35,6 +35,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.view.LayoutHelper;
@@ -258,7 +259,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	public void setScript(ScriptWrapper script) {
 		this.script = script;
 		
-		getCommandPanel().setEditable(true);
+		getCommandPanel().setEditable(script.getEngine().isTextBased());
         getCommandPanel().clear();
         getCommandPanel().appendToCommandScript(script.getContents());
         if (script.getEngine().getSyntaxStyle() != null) {
@@ -267,7 +268,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
         	getCommandPanel().setSyntax(getSyntaxForScript(script.getEngine().getEngineName()));
         }
         this.getScriptTitle().setText(script.getEngine().getLanguageName() + " : " + script.getName());
-        if (ExtensionScripts.TYPE_STANDALONE.equals(script.getType().getName())) {
+        if (ExtensionScript.TYPE_STANDALONE.equals(script.getType().getName())) {
         	// The only type that can be run directly from the console
         	this.getRunButton().setEnabled(true);
         }

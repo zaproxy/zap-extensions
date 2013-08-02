@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -68,11 +69,12 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 				ScriptEngineWrapper sew = extension.getExtScript().getEngineWrapper(getStringValue(FIELD_ENGINE));
 				if (sew.isRawEngine()) {
 					// Raw engines can only support targeted scripts as there will be no templates
+					ScriptType tsa = extension.getExtScript().getScriptType(ExtensionScript.TYPE_STANDALONE);
 					setComboFields(FIELD_TYPE, 
-							new String[]{Constant.messages.getString(ExtensionScripts.TYPE_STANDALONE)}, 
-							Constant.messages.getString(ExtensionScripts.TYPE_STANDALONE));
+							new String[]{Constant.messages.getString(tsa.getI18nKey())}, 
+							Constant.messages.getString(tsa.getI18nKey()));
 				} else {
-					setComboFields(FIELD_ENGINE, extension.getExtScript().getScriptingEngines(), "");
+					setComboFields(FIELD_TYPE, getTypes(), "");
 				}
 			}});
 
@@ -121,6 +123,15 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 		this.script = script;
 		this.setFieldValue(FIELD_FILE, script.getFile().getAbsolutePath());
 		this.setFieldValue(FIELD_NAME, script.getFile().getName());
+		int dotIndex = script.getFile().getName().lastIndexOf(".");
+		if (dotIndex > 0) {
+			// Work out the type based on the extension
+			String extn = script.getFile().getName().substring(dotIndex + 1);
+			String name = extension.getExtScript().getEngineNameForExtension(extn);
+			if (name != null) {
+				this.setFieldValue(FIELD_ENGINE, name);
+			}
+		}
 		this.setFieldValue(FIELD_DESC, "");
 	}
 	
