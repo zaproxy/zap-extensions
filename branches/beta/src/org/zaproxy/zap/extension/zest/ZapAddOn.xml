@@ -1,0 +1,22 @@
+<zapaddon>
+	<name>Zest - Scripting Security Tests</name>
+	<version>8</version>
+	<description>Allows you to create and run scripts for reproducing security issues.</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>Promoted to beta (provisionally) and plug into script console ** Not ready for release yet!! *** </changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.zest.ExtensionZest</extension>
+	</extensions>
+	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.zest.ZestActiveScanner</ascanrule>
+	</ascanrules>
+	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.zest.ZestPassiveScanner</pscanrule>
+	</pscanrules>
+	<filters/>
+	<files/>
+	<not-before-version>2.2.0</not-before-version>
+	<not-from-version/>
+</zapaddon>
