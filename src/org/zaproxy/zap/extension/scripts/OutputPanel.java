@@ -28,6 +28,7 @@ import javax.script.ScriptException;
 import javax.swing.JScrollPane;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.ZapTextArea;
@@ -132,10 +133,16 @@ public class OutputPanel extends AbstractPanel {
 	}
 
 	public void append(final ScriptException e) {
+		if (Constant.isDevBuild()) {
+			logger.error(e.getMessage(), e);
+		}
 		this.appendError(e.getMessage());
 	}
 
 	public void append(final Exception e) {
+		if (Constant.isDevBuild()) {
+			logger.error(e.getMessage(), e);
+		}
 		Throwable cause = e.getCause();
 		while (cause != null) {
 			if (cause instanceof ScriptException) {

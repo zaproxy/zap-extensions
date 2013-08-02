@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -65,9 +66,10 @@ public class NewScriptDialog extends StandardFieldsDialog {
 				ScriptEngineWrapper sew = extension.getExtScript().getEngineWrapper(getStringValue(FIELD_ENGINE));
 				if (sew.isRawEngine()) {
 					// Raw engines can only support targeted scripts as there will be no templates
+					ScriptType tsa = extension.getExtScript().getScriptType(ExtensionScript.TYPE_STANDALONE);
 					setComboFields(FIELD_TYPE, 
-							new String[]{Constant.messages.getString(ExtensionScripts.TYPE_STANDALONE)}, 
-							Constant.messages.getString(ExtensionScripts.TYPE_STANDALONE));
+							new String[]{Constant.messages.getString(tsa.getI18nKey())}, 
+							Constant.messages.getString(tsa.getI18nKey()));
 				} else {
 					setComboFields(FIELD_TYPE, getTypes(), "");
 				}

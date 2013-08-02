@@ -19,11 +19,14 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
+import java.awt.event.MouseAdapter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
+import javax.swing.tree.TreeCellRenderer;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -33,24 +36,21 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
+import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.DesktopUtils;
 
-public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventListener {
+public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventListener, ScriptUI {
 	
 	public static final String NAME = "ExtensionScripts";
 	public static final ImageIcon ICON = new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")); // Script icon
 	
 	protected static final String SCRIPT_CONSOLE_HOME_PAGE = "http://code.google.com/p/zaproxy/wiki/ScriptConsole";
 
-	public static final String TYPE_STANDALONE = "standalone";
-	public static final String TYPE_ACTIVE = "active";
-	public static final String TYPE_PASSIVE = "passive";
-	public static final String TYPE_TARGETED = "targeted";
-	
 	private ScriptsListPanel scriptsPanel = null;
 	private ConsolePanel consolePanel = null;
 	private JMenuItem menuConsoleLink = null;
@@ -61,6 +61,7 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 	private PopupRemoveScript popupRemoveScript = null;
 	
 	private ExtensionScript extScript = null;
+	private ScriptsTreeCellRenderer renderer = null;
 
 	//private static final Logger logger = Logger.getLogger(ExtensionScripts.class);
 
@@ -124,6 +125,7 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 			extScript = (ExtensionScript) Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.NAME);
 			if (View.isInitialised()) {
 				extScript.addWriter(getOutputPanelWriter());
+				extScript.setScriptUI(this);
 			}
 		}
 		return extScript;
@@ -159,6 +161,7 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 		return popupRemoveScript;
 	}
 
+	@Override
 	public void displayScript (ScriptWrapper script) {
 		if (!View.isInitialised()) {
 			return;
@@ -170,7 +173,10 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 		}
 		if (script.getEngine() != null) {
 			// Save any changes
-			refreshScript(this.getConsolePanel().getScript());
+			if (script.getEngine().isTextBased()) {
+				// Non text based scripts wont be updated via the console panel
+				refreshScript(this.getConsolePanel().getScript());
+			}
 			// push to ScriptConsole
 			this.getConsolePanel().setScript(script);
 			
@@ -274,11 +280,18 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 	}
 
 	@Override
-	public void scriptAdded(ScriptWrapper script) {
-		if (View.isInitialised()) {
+	public void scriptAdded(ScriptWrapper script, boolean display) {
+		if (View.isInitialised() && display) {
 			this.displayScript(script);
 		}
+		
 	}
+
+	@Override
+	public void scriptRemoved(ScriptWrapper arg0) {
+		// Ignore
+	}
+
 
 	@Override
 	public void scriptChanged(ScriptWrapper script) {
@@ -315,6 +328,68 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 		} else {
 			System.out.println("ERROR: " + string);
 		}
+	}
+
+	@Override
+	public void addMouseListener(MouseAdapter l) {
+		if (View.isInitialised()) {
+			this.getScriptsPanel().getTree().addMouseListener(l);
+		}
+	}
+
+	@Override
+	public ScriptNode getSelectedNode() {
+		if (View.isInitialised()) {
+			return this.getScriptsPanel().getSelectedNode();
+		}
+		return null;
+	}
+
+	@Override
+	public List<ScriptNode> getSelectedNodes() {
+		if (View.isInitialised()) {
+			return this.getScriptsPanel().getSelectedNodes();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean isSelectedMessage(Message msg) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void addRenderer(Class c, TreeCellRenderer renderer) {
+		this.getScriptsTreeCellRenderer().addRenderer(c, renderer);
+	}
+
+	public ScriptsTreeCellRenderer getScriptsTreeCellRenderer() {
+		if (renderer == null) {
+			renderer = new ScriptsTreeCellRenderer(this);
+		}
+		return renderer;
+	}
+
+	@Override
+	public void disableScriptDialog(Class<?> klass) {
+		if (View.isInitialised()) {
+			this.getScriptsPanel().disableScriptDialog(klass);
+		}
+		
+	}
+
+	@Override
+	public void selectNode(ScriptNode node, boolean expand) {
+		if (View.isInitialised()) {
+			this.getScriptsPanel().showInTree(node, expand);
+			this.getScriptsPanel().setTabFocus();
+		}
+	}
+
+	@Override
+	public String getTreeName() {
+		return ScriptsListPanel.TREE;
 	}
 
 }

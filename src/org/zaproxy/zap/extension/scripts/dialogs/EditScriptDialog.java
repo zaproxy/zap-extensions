@@ -68,7 +68,9 @@ public class EditScriptDialog extends StandardFieldsDialog {
 		if (this.isEmptyField(FIELD_NAME)) {
 			return Constant.messages.getString("scripts.dialog.script.error.name");
 		}
-		if (extension.getExtScript().getScript(this.getStringValue(FIELD_NAME)) != null) {
+		if (!this.getStringValue(FIELD_NAME).equals(script.getName()) && 
+				extension.getExtScript().getScript(this.getStringValue(FIELD_NAME)) != null) {
+			// Trying to change the name to one used by another script
 			return Constant.messages.getString("scripts.dialog.script.error.duplicate");
 		}
 		return null;
