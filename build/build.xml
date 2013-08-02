@@ -187,6 +187,7 @@
 		<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="treetools"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
 
 		<!-- Special case due to dependencies - need to fix this sometime;) -->
 		<antcall target="build-tokengen"/>
@@ -204,35 +205,38 @@
 		<!--copy file="${dist}/${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
 	</target>
 
-	<target name="deploy-ascanrules" description="deploy the active scan rules">
+	<target name="deploy-ascanrules" depends="build-all" description="deploy the active scan rules">
 		<antcall target="deploy-extension"> <param name="extension" value="ascanrulesBeta"/> </antcall>
 	</target>
 	
-	<target name="deploy-beanshell" description="deploy the beanshell">
+	<target name="deploy-beanshell" depends="build-all" description="deploy the beanshell">
 		<antcall target="deploy-extension"> <param name="extension" value="beanshell"/> </antcall>
 	</target>
 	
-	<target name="deploy-portscan" description="deploy the port scan extension">
+	<target name="deploy-portscan" depends="build-all" description="deploy the port scan extension">
 		<antcall target="deploy-extension"> <param name="extension" value="portscan"/> </antcall>
 	</target>
 	
-	<target name="deploy-pscanrules" description="deploy the passive scan rules">
+	<target name="deploy-pscanrules" depends="build-all" description="deploy the passive scan rules">
 		<antcall target="deploy-extension"> <param name="extension" value="pscanrulesBeta"/> </antcall>
 	</target>
 	
-	<target name="deploy-scripts" description="deploy the scripts extension">
+	<target name="deploy-scripts" depends="build-all" description="deploy the scripts extension">
 		<antcall target="deploy-extension"> <param name="extension" value="scripts"/> </antcall>
+
+		<!-- TODO HACK -->
+		<antcall target="deploy-extension"> <param name="extension" value="zest"/> </antcall>
 	</target>
 	
-	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
+	<target name="deploy-spiderAjax" depends="build-all" description="deploy the spiderAjax extension">
 		<antcall target="deploy-extension"> <param name="extension" value="spiderAjax"/> </antcall>
 	</target>
 
-	<target name="deploy-tokengen" description="deploy the tokengen extension">
+	<target name="deploy-tokengen" depends="build-all" description="deploy the tokengen extension">
 		<antcall target="deploy-extension"> <param name="extension" value="tokengen"/> </antcall>
 	</target>
 
-	<target name="deploy-alertReport" description="deploy the Alert Report ZAP extension">
+	<target name="deploy-alertReport" depends="build-all" description="deploy the Alert Report ZAP extension">
 			<antcall target="deploy-extension"> <param name="extension" value="alertReport"/> </antcall>
 		</target>
 	
