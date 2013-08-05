@@ -17,9 +17,18 @@
  */
 package org.zaproxy.zap.extension.httpsInfo;
 
+import java.awt.Component;
+
+import javax.swing.JTree;
+import javax.swing.text.JTextComponent;
+import javax.swing.tree.TreePath;
+
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.PopupMenuHttpMessage;
+import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.parosproxy.paros.model.SiteNode;
 
 /*
  * An example ZAP extension which adds a right click menu item to all of the main
@@ -27,39 +36,47 @@ import org.zaproxy.zap.view.PopupMenuHttpMessage;
  * 
  * This class is defines the popup menu item.
  */
-public class MenuEntry extends PopupMenuHttpMessage {
+public class MenuEntry extends ExtensionPopupMenuItem {
 
-	private static final long serialVersionUID = 1L;
-	private RightClickMenu extension = null;
+    private static final long serialVersionUID = 1L;
+    private RightClickMenu extension = null;
+    private SiteNode node = null;
 
     public MenuEntry(String label) {
-        super(label);
+	super(label);
+	init();
     }
-	@Override
-	public void performAction(HttpMessage msg) throws Exception {
-	    SSLServer mServer = new SSLServer(getHostName(msg.getRequestHeader().getURI().toString()));
-	    View.getSingleton().showMessageDialog(mServer.getInfo());
-	}
-	public String getHostName(String name){
-	    String host = name;
-	    while(!host.startsWith("www")){
-		host = host.substring(1);
-	    }
-	    while(!Character.isDigit(host.charAt(host.length()-1)) && !Character.isLetter(host.charAt(host.length()-1))){
-		host = host.substring(0, host.length()-1);
-	    }
-	    return host;
-	}
-	public void setExtension(RightClickMenu extension) {
-		this.extension = extension;
-	}
+    public void init(){
+	this.addActionListener(new java.awt.event.ActionListener() { 
 
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
-		// This is enabled for all tabs which list messages
-		// You can examine the invoker is you wish to restrict this to specific tabs
+	    @Override
+	    public void actionPerformed(java.awt.event.ActionEvent e) {        		
+		    SSLServer mServer = new SSLServer(getHostName(node.getNodeName()));
+		    View.getSingleton().showMessageDialog( mServer.getInfo());
+	    }
+	});
+    }
+    @Override
+    public boolean isEnableForComponent(Component invoker) {
+	if (invoker instanceof JTree) {
+	    JTree tree = (JTree) invoker;
+	    node = (SiteNode) tree.getLastSelectedPathComponent();
+	    if (node.getNodeName().startsWith("https://")) {
+		this.setEnabled(true);
 		return true;
+	    }
 	}
-
-	
+	return false;
+    }
+    public String getHostName(String name){
+	String host = name;
+	host = host.substring(8);
+	while(!Character.isDigit(host.charAt(host.length()-1)) && !Character.isLetter(host.charAt(host.length()-1))){
+	    host = host.substring(0, host.length()-1);
+	}
+	return host;
+    }
+    public void setExtension(RightClickMenu extension) {
+	this.extension = extension;
+    }
 }
