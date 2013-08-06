@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestActionScan;
-import org.mozilla.zest.core.v1.ZestActionSetToken;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestRequest;
@@ -116,7 +115,6 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
     	//if (! ZestTreeElement.Type.COMMON_TESTS.equals(parent.getTreeType()) &&
     	//		! parent.isChildOf(ZestTreeElement.Type.PASSIVE_SCRIPT)) {
     		createPopupAddActionMenu (parent, child, req, new ZestActionScan(text));
-    		createPopupAddActionMenu (parent, child, req, new ZestActionSetToken("", ZestActionSetToken.LOC_BODY, text, text));
     	//}
 		createPopupAddActionMenu (parent, child, req, new ZestActionFail(text));
 	}

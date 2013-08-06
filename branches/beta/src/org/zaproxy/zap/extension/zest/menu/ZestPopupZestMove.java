@@ -101,7 +101,7 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
         			ScriptNode node = extension.getExtScript().getScriptUI().getSelectedNode();
             		this.setEnabled(false);
             		
-                    if (node == null || node.isRoot()) {
+                    if (node == null || node.isRoot() || ZestZapUtils.getElement(node) == null) {
                     	return false;
                     } else if ((ZestZapUtils.getElement(node) instanceof ZestScript)) {
                     	return false;

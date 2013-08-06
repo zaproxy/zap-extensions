@@ -21,6 +21,7 @@
 package org.zaproxy.zap.extension.zest;
 
 import org.mozilla.zest.core.v1.ZestActionFailException;
+import org.mozilla.zest.core.v1.ZestAssignFailException;
 import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
 
 public interface ZestRunnerListener {
@@ -28,7 +29,9 @@ public interface ZestRunnerListener {
 	void notifyResponse (ZestResultWrapper href);
 	
 	void notifyActionFail (ZestActionFailException e);
-	
+
+	void notifyAssignFail (ZestAssignFailException e);
+
 	void notifyZestInvalidCommonTestFail (ZestInvalidCommonTestException e);
 
 	void notifyComplete();

@@ -27,7 +27,6 @@ import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestTransformation;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptTreeModel;
 
@@ -74,34 +73,12 @@ public class ZestTreeModel {
 		ZestElement parentZe = ZestZapUtils.getElement(parent);
 		
 		if (parentZe instanceof ZestRequest) {
-			int childIndex = 0;
-			for (; childIndex < parent.getChildCount(); childIndex++) {
-				ScriptNode child = (ScriptNode) parent.getChildAt(childIndex);
-				/* Order:
-				 *  Transformations
-				 *  Assertations
-				 */
-				
-				ZestElement childZe = ZestZapUtils.getElement(child);
-				if (childZe instanceof ZestTransformation) {
-					// These should always be first
-					continue;
-				} else if (childZe instanceof ZestAssertion) {
-					if (za instanceof ZestTransformation) {
-						// Transformations come before Assertions
-						break;
-					}
-				}
-			}
-			parent.insert(zestNode, childIndex);
+			parent.add(zestNode);
 			
 		} else if (za instanceof ZestRequest) {
 			ZestRequest zr = (ZestRequest)za;
 			parent.add(zestNode);
 			
-			for (ZestTransformation zt : zr.getTransformations()) {
-				this.addToNode(zestNode, zt);
-			}
 			for (ZestAssertion zt : zr.getAssertions()) {
 				this.addToNode(zestNode, zt);
 			}
@@ -185,8 +162,6 @@ public class ZestTreeModel {
 		} else if (parentZe instanceof ZestRequest) {
 			if (childZe instanceof ZestAssertion) {
 				((ZestRequest)parentZe).removeAssertion((ZestAssertion)childZe);
-			} else if (childZe instanceof ZestTransformation) {
-				((ZestRequest)parentZe).removeTransformation((ZestTransformation)childZe);
 			} else {
 				logger.error("delete: unexpected child of request node: " + childZe.getClass().getCanonicalName());
 			}

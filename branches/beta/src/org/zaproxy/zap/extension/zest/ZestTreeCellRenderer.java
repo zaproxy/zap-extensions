@@ -28,12 +28,11 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestActionScan;
-import org.mozilla.zest.core.v1.ZestActionSetToken;
 import org.mozilla.zest.core.v1.ZestAssertion;
+import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestTransformation;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 
@@ -50,7 +49,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(Constant.class.getResource("/resource/icon/16/050.png"));	// Warning triangle
 	private static final ImageIcon ACTION_SCAN_ICON = 
 			new ImageIcon(Constant.class.getResource("/resource/icon/16/093.png"));	// Flame
-	private static final ImageIcon ACTION_SET_TOKEN_ICON = 
+	private static final ImageIcon ASSIGNMENT_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/pin.png"));
 	private static final ImageIcon ASSERT_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/balance.png"));
@@ -58,8 +57,6 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-down-right.png"));
 	private static final ImageIcon CONDITION_IF_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-up-right.png"));
-	private static final ImageIcon TRASFORM_ICON = 
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/wand.png"));
 
 	private static final long serialVersionUID = -4278691012245035225L;
 
@@ -102,10 +99,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 						setIcon(ACTION_SCAN_ICON);
 					} else if (za instanceof ZestActionFail) {
 						setIcon(ACTION_FAIL_ICON);
-					} else if (za instanceof ZestActionSetToken) {
-						setIcon(ACTION_SET_TOKEN_ICON);
-					} else if (za instanceof ZestTransformation) {
-						setIcon(TRASFORM_ICON);
+					} else if (za instanceof ZestAssignment) {
+						setIcon(ASSIGNMENT_ICON);
 					} else {
 						logger.error("Unrecognised element element class=" + zew.getElement().getClass().getCanonicalName());
 					}

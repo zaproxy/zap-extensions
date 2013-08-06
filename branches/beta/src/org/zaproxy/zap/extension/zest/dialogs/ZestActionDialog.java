@@ -27,7 +27,6 @@ import java.util.List;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestActionScan;
-import org.mozilla.zest.core.v1.ZestActionSetToken;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
@@ -37,12 +36,8 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestActionDialog extends StandardFieldsDialog {
 
-	private static final String FIELD_LOCATION = "zest.dialog.action.label.location"; 
 	private static final String FIELD_MESSAGE = "zest.dialog.action.label.message"; 
 	private static final String FIELD_PARAM = "zest.dialog.action.label.targetparam";
-	private static final String FIELD_TOKEN = "zest.dialog.action.label.token";
-	private static final String FIELD_PREFIX = "zest.dialog.action.label.prefix";
-	private static final String FIELD_POSTFIX = "zest.dialog.action.label.postfix";
 	private static final String FIELD_PRIORITY = "zest.dialog.action.label.priority";
 
 	private static final String PRIORITY_PREFIX = "zest.dialog.action.priority.";
@@ -87,13 +82,6 @@ public class ZestActionDialog extends StandardFieldsDialog {
 			}
 			namesList.add(0, "");	// Allow blank
 			this.addComboField(FIELD_PARAM, namesList, za.getTargetParameter());
-			
-		} else if (action instanceof ZestActionSetToken) {
-			ZestActionSetToken za = (ZestActionSetToken) action;
-			this.addTextField(FIELD_TOKEN, za.getTokenName());
-			this.addComboField(FIELD_LOCATION, new String[]{"HEAD", "BODY"}, za.getLocation());
-			this.addTextField(FIELD_PREFIX, za.getPrefix());
-			this.addTextField(FIELD_POSTFIX, za.getPostfix());
 			
 		} else if (action instanceof ZestActionFail) {
 			ZestActionFail za = (ZestActionFail) action;
@@ -146,13 +134,6 @@ public class ZestActionDialog extends StandardFieldsDialog {
 			ZestActionScan za = (ZestActionScan) action;
 			za.setTargetParameter(this.getStringValue(FIELD_PARAM));
 			
-		} else if (action instanceof ZestActionSetToken) {
-			ZestActionSetToken za = (ZestActionSetToken) action;
-			za.setTokenName(this.getStringValue(FIELD_TOKEN));
-			za.setLocation(this.getStringValue(FIELD_LOCATION));
-			za.setPrefix(this.getStringValue(FIELD_PREFIX));
-			za.setPostfix(this.getStringValue(FIELD_POSTFIX));
-
 		} else if (action instanceof ZestActionFail) {
 			ZestActionFail za = (ZestActionFail) action;
 			za.setMessage(this.getStringValue(FIELD_MESSAGE));

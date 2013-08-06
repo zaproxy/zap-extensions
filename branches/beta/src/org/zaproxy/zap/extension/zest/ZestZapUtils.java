@@ -29,8 +29,11 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestActionScan;
-import org.mozilla.zest.core.v1.ZestActionSetToken;
 import org.mozilla.zest.core.v1.ZestAssertion;
+import org.mozilla.zest.core.v1.ZestAssignFieldValue;
+import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
+import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
+import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
@@ -41,8 +44,6 @@ import org.mozilla.zest.core.v1.ZestExpressionURL;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestTransformFieldReplace;
-import org.mozilla.zest.core.v1.ZestTransformRndIntReplace;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -170,24 +171,44 @@ public class ZestZapUtils {
 				return Constant.messages.getString("zest.element.expression.url.title");
 			}
 
-		} else if (za instanceof ZestTransformFieldReplace) {
-			ZestTransformFieldReplace zt = (ZestTransformFieldReplace) za;
+		} else if (za instanceof ZestAssignFieldValue) {
+			ZestAssignFieldValue zsa = (ZestAssignFieldValue) za;
 			if (incParams) {
 				return MessageFormat.format(
-						Constant.messages.getString("zest.element.transform.fieldrep"), 
-						zt.getRequestString(), zt.getFieldDefinition().getKey());
+						Constant.messages.getString("zest.element.assign.field"), 
+						zsa.getVariableName(), zsa.getFieldDefinition().getFormIndex(), zsa.getFieldDefinition().getFieldName());
 			} else {
-				return Constant.messages.getString("zest.element.transform.fieldrep.title");
+				return Constant.messages.getString("zest.element.assign.field.title");
 			}
 			
-		} else if (za instanceof ZestTransformRndIntReplace) {
-			ZestTransformRndIntReplace zt = (ZestTransformRndIntReplace) za;
+		} else if (za instanceof ZestAssignRegexDelimiters) {
+			ZestAssignRegexDelimiters zsa = (ZestAssignRegexDelimiters) za;
 			if (incParams) {
 				return MessageFormat.format(
-						Constant.messages.getString("zest.element.transform.rndint"), 
-						zt.getRequestString(), zt.getMinInt(), zt.getMaxInt());
+						Constant.messages.getString("zest.element.assign.regex"), 
+						zsa.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
 			} else {
-				return Constant.messages.getString("zest.element.transform.rndint.title");
+				return Constant.messages.getString("zest.element.assign.regex.title");
+			}
+			
+		} else if (za instanceof ZestAssignStringDelimiters) {
+			ZestAssignStringDelimiters zsa = (ZestAssignStringDelimiters) za;
+			if (incParams) {
+				return MessageFormat.format(
+						Constant.messages.getString("zest.element.assign.string"), 
+						zsa.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
+			} else {
+				return Constant.messages.getString("zest.element.assign.string.title");
+			}
+			
+		} else if (za instanceof ZestAssignRandomInteger) {
+			ZestAssignRandomInteger zsa = (ZestAssignRandomInteger) za;
+			if (incParams) {
+				return MessageFormat.format(
+						Constant.messages.getString("zest.element.assign.rndint"), 
+						zsa.getVariableName(), zsa.getMinInt(), zsa.getMaxInt());
+			} else {
+				return Constant.messages.getString("zest.element.assign.rndint.title");
 			}
 
 		} else if (za instanceof ZestActionScan) {
@@ -197,16 +218,6 @@ public class ZestZapUtils {
 						Constant.messages.getString("zest.element.action.scan"), zsa.getTargetParameter());
 			} else {
 				return Constant.messages.getString("zest.element.action.scan.title");
-			}
-			
-		} else if (za instanceof ZestActionSetToken) {
-			ZestActionSetToken zsa = (ZestActionSetToken) za;
-			if (incParams) {
-				return MessageFormat.format(
-						Constant.messages.getString("zest.element.action.settoken"), 
-						zsa.getTokenName(), zsa.getPrefix(), zsa.getPostfix());
-			} else {
-				return Constant.messages.getString("zest.element.action.settoken.title");
 			}
 			
 		} else if (za instanceof ZestActionFail) {

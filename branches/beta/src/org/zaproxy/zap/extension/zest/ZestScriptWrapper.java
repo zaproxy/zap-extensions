@@ -19,8 +19,13 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import java.io.IOException;
+
+import javax.script.ScriptException;
+
 import org.mozilla.zest.core.v1.ZestJSON;
 import org.mozilla.zest.core.v1.ZestScript;
+import org.zaproxy.zap.extension.pscan.PassiveScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ZestScriptWrapper extends ScriptWrapper {
@@ -84,6 +89,14 @@ public class ZestScriptWrapper extends ScriptWrapper {
 
 	public ZestScript getZestScript() {
 		return zestScript;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getInterface(Class<T> class1) throws ScriptException, IOException {
+		if (class1.isAssignableFrom(class1)) {
+			return (T) new ZestPassiveScanner(this);
+		}
+		return (T) new ZestPassiveScanner(this);
 	}
 
 }
