@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestActionFailException;
 import org.mozilla.zest.core.v1.ZestAssertion;
+import org.mozilla.zest.core.v1.ZestAssignFailException;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
@@ -47,7 +48,6 @@ import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestScript.Type;
 import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestTransformation;
 import org.mozilla.zest.impl.ZestScriptEngineFactory;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -530,13 +530,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		}
 	}
 
-	public void addToRequest(ScriptNode parent, ZestRequest req, ZestTransformation transformation) {
-		req.addTransformation(transformation);
-		ScriptNode child = this.getZestTreeModel().addToNode(parent, transformation);
-		this.updated(child);
-		this.display(child, false);
-	}
-
 	@Override
 	public void notifyResponse(ZestResultWrapper href) {
 		if (View.isInitialised()) {
@@ -568,6 +561,24 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 			// TODO i18n for cmdline??
 			// TODO check type first? toUiFailureString as above?
 			System.out.println("Action: failed: " + e.getMessage());
+		}
+	}
+	
+	public void notifyAssignFail (ZestAssignFailException e) {
+		if (View.isInitialised()) {
+			int lastRow = this.getZestResultsPanel().getModel().getRowCount()-1;
+			ZestResultWrapper zrw = (ZestResultWrapper)this.getZestResultsPanel().getModel().getHistoryReference(lastRow);
+			zrw.setPassed(false);
+			// TODO use toUiFailureString varient?
+			//zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
+			zrw.setMessage(e.getMessage());
+
+			this.getZestResultsPanel().getModel().fireTableRowsUpdated(lastRow, lastRow);
+			
+		} else {
+			// TODO i18n for cmdline??
+			// TODO check type first? toUiFailureString as above?
+			System.out.println("Assign: failed: " + e.getMessage());
 		}
 	}
 	

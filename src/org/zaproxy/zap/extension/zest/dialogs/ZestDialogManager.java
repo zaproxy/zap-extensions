@@ -26,11 +26,11 @@ import java.net.MalformedURLException;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestAssertion;
+import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestTransformation;
 import org.mozilla.zest.impl.ZestScriptEngineFactory;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -56,9 +56,9 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestScriptsDialog scriptDialog = null;
 	private ZestRequestDialog requestDialog = null;
 	private ZestAssertionsDialog assertionsDialog = null;
+	private ZestAssignmentDialog assignmentDialog = null;
 	private ZestActionDialog actionDialog = null;
 	private ZestConditionDialog conditionDialog = null;
-	private ZestTransformDialog transformationDialog = null;
 
 	public ZestDialogManager(ExtensionZest extension, ScriptUI scriptUI) {
 		super();
@@ -105,19 +105,20 @@ public class ZestDialogManager extends AbstractPanel {
 					        	showZestEditRequestDialog(parent, sn);
 					        } else if (obj instanceof ZestAssertion) {
 					        	showZestAssertionDialog(parent, sn, (ZestAssertion)obj, false);
+					        } else if (obj instanceof ZestAssignment) {
+					        	ScriptNode prev = (ScriptNode) sn.getPreviousSibling();
+					        	ZestRequest req = null;
+					        	if (prev != null && ZestZapUtils.getElement(prev) instanceof ZestRequest) {
+					        		req = (ZestRequest) ZestZapUtils.getElement(prev);
+					        	}
+					        	showZestAssignDialog(
+					        			parent, sn, req, (ZestAssignment) obj, false);
 					        } else if (obj instanceof ZestAction) {
 					        	showZestActionDialog(
 					        			parent, sn, null, (ZestAction) obj, false);
 					        } else if (obj instanceof ZestConditional) {
 					        	showZestConditionalDialog(
 					        			parent, sn, null, (ZestConditional) obj, false);
-					        } else if (obj instanceof ZestTransformation) {
-					        	/* TODO
-					        	showZestTransformationDialog(
-					        			extension.getScriptWrapper(node), 
-					        			(ScriptNode)node.getParent(), 
-					        			(ZestTransformation) obj, false);
-					        			*/
 					        }  
 					    }
 			    	}
@@ -193,6 +194,17 @@ public class ZestDialogManager extends AbstractPanel {
 		actionDialog.setVisible(true);
 	}
 
+	public void showZestAssignDialog(ScriptNode parent, ScriptNode child, ZestRequest req, ZestAssignment assign, boolean add) {
+		if (assignmentDialog == null) {
+			assignmentDialog = new ZestAssignmentDialog(extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+		} else if (assignmentDialog.isVisible()) {
+			// Already being displayed, dont overwrite anything
+			return;
+		}
+		assignmentDialog.init(parent, child, req, assign, add);
+		assignmentDialog.setVisible(true);
+	}
+
 	public void showZestConditionalDialog(ScriptNode parent, ScriptNode child, ZestStatement stmt, ZestConditional condition, boolean add) {
 		if (conditionDialog == null) {
 			conditionDialog = new ZestConditionDialog(extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
@@ -202,17 +214,6 @@ public class ZestDialogManager extends AbstractPanel {
 		}
 		conditionDialog.init(parent, child, stmt, condition, add);
 		conditionDialog.setVisible(true);
-	}
-
-	public void showZestTransformationDialog(ZestScript script, ScriptNode req, ZestTransformation transform, boolean add) {
-		if (transformationDialog == null) {
-			transformationDialog = new ZestTransformDialog(extension, View.getSingleton().getMainFrame(), new Dimension(400, 250));
-		} else if (transformationDialog.isVisible()) {
-			// Already being displayed, dont overwrite anything
-			return;
-		}
-		transformationDialog.init(script, req, transform, add);
-		transformationDialog.setVisible(true);
 	}
 
 	public void addDeferedMessage(HttpMessage msg) {

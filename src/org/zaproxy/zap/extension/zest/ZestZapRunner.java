@@ -30,13 +30,13 @@ import org.mozilla.zest.core.v1.ZestActionFailException;
 import org.mozilla.zest.core.v1.ZestActionScan;
 import org.mozilla.zest.core.v1.ZestAssertFailException;
 import org.mozilla.zest.core.v1.ZestAssertion;
+import org.mozilla.zest.core.v1.ZestAssignFailException;
+import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestTransformFailException;
-import org.mozilla.zest.core.v1.ZestTransformation;
 import org.mozilla.zest.impl.ZestBasicRunner;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -85,7 +85,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     
 	@Override
 	public void run(ZestScript script) throws ZestAssertFailException, ZestActionFailException, 
-			ZestTransformFailException, IOException, ZestInvalidCommonTestException {
+			IOException, ZestInvalidCommonTestException, ZestAssignFailException {
     	log.debug("Run script " + script.getTitle());
 
 		this.target = null;
@@ -95,8 +95,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
 	@Override
 	public void run (ZestScript script, ZestRequest target) 
-			throws ZestTransformFailException, ZestAssertFailException, ZestActionFailException, IOException,
-			ZestInvalidCommonTestException {
+			throws ZestAssertFailException, ZestActionFailException, IOException,
+			ZestInvalidCommonTestException, ZestAssignFailException {
     	log.debug("Run script " + script.getTitle());
 		super.run(script, target);
 		this.notifyComplete();
@@ -132,6 +132,12 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		}
 	}
 	
+	private void notifyAssignFailed(ZestAssignFailException e) {
+		for (ZestRunnerListener listener : listenerList) {
+			listener.notifyAssignFail(e);
+		}
+	}
+	
 	private void notifyZestInvalidCommonTestFailed (ZestInvalidCommonTestException e) {
 		for (ZestRunnerListener listener : listenerList) {
 			listener.notifyZestInvalidCommonTestFail(e);
@@ -140,8 +146,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
 	@Override
 	public ZestResponse runStatement(ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
-			throws ZestAssertFailException, ZestActionFailException, ZestTransformFailException, 
-			ZestInvalidCommonTestException, IOException {
+			throws ZestAssertFailException, ZestActionFailException, 
+			ZestInvalidCommonTestException, IOException, ZestAssignFailException {
 		while (this.isPaused() && ! this.isStop) {
 			try {
 				Thread.sleep(200);
@@ -173,12 +179,21 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		if (action instanceof ZestActionScan) {
 			this.invokeScan(script, (ZestActionScan)action);
 		} else {
-			// TODO dont really need to pass last action in from Zest?
 			try {
 				return super.handleAction(script, action, lastResponse);
 			} catch (ZestActionFailException e) {
 				notifyActionFailed(e); 
 			}
+		}
+		return null;
+	}
+
+	@Override
+	public String handleAssignment(ZestScript script, ZestAssignment assign, ZestResponse lastResponse) throws ZestAssignFailException {
+		try {
+			return super.handleAssignment(script, assign, lastResponse);
+		} catch (ZestAssignFailException e) {
+			notifyAssignFailed(e); 
 		}
 		return null;
 	}
@@ -209,14 +224,6 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
 	    } catch (Exception e) {
 	    	log.error(e.getMessage(), e);
-		}
-	}
-	
-	public void handleTransform (ZestRequest request, ZestTransformation transform) {
-		try {
-			super.handleTransform(request, transform);
-		} catch (ZestTransformFailException e) {
-			log.error(e.getMessage(), e);
 		}
 	}
 	

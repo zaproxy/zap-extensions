@@ -29,6 +29,7 @@ public class ZestMenuManager {
 
 	private ZestAddActionPopupMenu popupAddActionMenu = null;
 	private ZestAddAssertionPopupMenu popupAddAssertionMenu = null;
+	private ZestAddAssignPopupMenu popupAddAssignMenu = null;
 	private ZestAddConditionPopupMenu popupAddConditionMenu = null;
 	private ZestPopupZestMove popupZestMoveUp = null;
 	private ZestPopupZestMove popupZestMoveDown = null;
@@ -48,6 +49,7 @@ public class ZestMenuManager {
 
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddActionMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddAssertionMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddAssignMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddConditionMenu());
 	
         extensionHook.getHookMenu().addPopupMenuItem(getPopupNodeCut ());
@@ -72,6 +74,13 @@ public class ZestMenuManager {
 			popupAddAssertionMenu= new ZestAddAssertionPopupMenu(this.extension);
 		}
 		return popupAddAssertionMenu;
+	}
+
+	private ZestAddAssignPopupMenu getPopupAddAssignMenu() {
+		if (popupAddAssignMenu == null) {
+			popupAddAssignMenu= new ZestAddAssignPopupMenu(this.extension);
+		}
+		return popupAddAssignMenu;
 	}
 
 	private ZestAddConditionPopupMenu getPopupAddConditionMenu() {
