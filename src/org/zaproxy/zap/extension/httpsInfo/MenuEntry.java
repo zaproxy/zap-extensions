@@ -51,8 +51,8 @@ public class MenuEntry extends ExtensionPopupMenuItem {
 
 	    @Override
 	    public void actionPerformed(java.awt.event.ActionEvent e) {        		
-		    SSLServer mServer = new SSLServer(getHostName(node.getNodeName()));
-		    View.getSingleton().showMessageDialog( mServer.getInfo());
+		SSLServer mServer = new SSLServer(getHostName(node.getNodeName()));
+		View.getSingleton().showMessageDialog( mServer.getInfo());
 	    }
 	});
     }
@@ -60,10 +60,12 @@ public class MenuEntry extends ExtensionPopupMenuItem {
     public boolean isEnableForComponent(Component invoker) {
 	if (invoker instanceof JTree) {
 	    JTree tree = (JTree) invoker;
-	    node = (SiteNode) tree.getLastSelectedPathComponent();
-	    if (node.getNodeName().startsWith("https://")) {
-		this.setEnabled(true);
-		return true;
+	    if(tree.getLastSelectedPathComponent() instanceof SiteNode){
+		node = (SiteNode) tree.getLastSelectedPathComponent();
+		if (node.getNodeName().startsWith("https://")) {
+		    this.setEnabled(true);
+		    return true;
+		}
 	    }
 	}
 	return false;
