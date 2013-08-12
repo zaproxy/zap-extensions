@@ -167,7 +167,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	
 	public ZestFuzzerDelegate getFuzzerDelegate(){
 		if(fuzzerMessenger==null){
-			fuzzerMessenger=new ZestFuzzerDelegate("LoopDialogFuzz");
+			fuzzerMessenger=new ZestFuzzerDelegate();
 		}
 		return fuzzerMessenger;
 	}

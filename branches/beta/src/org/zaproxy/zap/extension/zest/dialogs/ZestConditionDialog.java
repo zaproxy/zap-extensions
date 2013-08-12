@@ -213,5 +213,8 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 		}
 		return null;
 	}
-
+	
+	protected ZestConditional getCondition(){
+		return this.condition;
+	}
 }
