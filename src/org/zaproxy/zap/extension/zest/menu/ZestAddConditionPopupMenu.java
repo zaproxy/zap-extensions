@@ -30,12 +30,15 @@ import java.util.regex.Pattern;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
+import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
 import org.mozilla.zest.core.v1.ZestExpressionURL;
 import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestStatement;
+import org.mozilla.zest.core.v1.ZestStructuredExpression;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -129,11 +132,12 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
         return false;
     }
 
-    private void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestStatement stmt, String loc, String text) {
+    protected void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestStatement stmt, String loc, String text) {
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionRegex(loc, text)));
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionStatusCode()));
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionResponseTime()));
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionURL()));
+		createPopupAddActionMenu(parent, child, stmt, new ZestConditional());
 	}
 
     private void createPopupAddActionMenu(final ScriptNode parent, ScriptNode child, 

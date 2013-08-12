@@ -14,19 +14,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.owasp.jbrofuzz.core.Fuzzer;
+import org.owasp.jbrofuzz.core.NoSuchFuzzerException;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
+import org.zaproxy.zap.extension.fuzz.FileFuzzer;
 
-public class ZestFuzzerDelegate extends ExtensionFuzz {
+public class ZestFuzzerDelegate {
+	private ExtensionFuzz extensionFuzz=(ExtensionFuzz)org.parosproxy.paros.control.Control.getSingleton().
+	        getExtensionLoader().getExtension(ExtensionFuzz.NAME);
 	private File fuzzerDir = null;
 	private File fuzzerCustomDir = null;
+	public final static String JBROFUZZ_CATEGORY_PREFIX=ExtensionFuzz.JBROFUZZ_CATEGORY_PREFIX;
 	
 	public ZestFuzzerDelegate() {
-		super();
-	}
-
-	public ZestFuzzerDelegate(String name) {
-		super(name);
 	}
 
 	public File getFuzzerDir() {
@@ -52,6 +52,13 @@ public class ZestFuzzerDelegate extends ExtensionFuzz {
 		}
 		writer.close();
 		return copyOfFuzzer;
+	}
+	
+	public List<String> getJBroFuzzFuzzerNames(String category){
+		return extensionFuzz.getJBroFuzzFuzzerNames(category);
+	}
+	public List<String> getFileFuzzerNames(String category){
+		return extensionFuzz.getFileFuzzerNames(category);
 	}
 
 	public List<ZestFuzzerFileDelegate> getAllFuzzFilesAllCat() {
@@ -87,11 +94,25 @@ public class ZestFuzzerDelegate extends ExtensionFuzz {
 	public void addFuzzFile(String cat, ZestFuzzerFileDelegate fuzzFile) {
 		try {
 			if(fuzzFile.toFuzzerFolder(cat).createNewFile()){
-				super.filesAdded();
+				extensionFuzz.filesAdded();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public FileFuzzer getCustomFileFuzzer(String name){
+		return extensionFuzz.getCustomFileFuzzer(name);
+	}
+	public Fuzzer getJBroFuzzer(String name) throws NoSuchFuzzerException{
+		return extensionFuzz.getJBroFuzzer(name);
+	}
+	
+	public List<String> getJBroFuzzCategories(){
+		return extensionFuzz.getJBroFuzzCategories();
+	}
+	public List<String> getCustomFileList(){
+		return extensionFuzz.getCustomFileList();
 	}
 	
 	public ZestFuzzerFileDelegate getFuzzerFileDelegate(File file){
