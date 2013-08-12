@@ -44,7 +44,6 @@ import org.zaproxy.zap.extension.fuzz.FileFuzzer;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestFuzzerDelegate;
-import org.zaproxy.zap.extension.zest.ZestFuzzerDelegate.ZestFuzzerFileDelegate;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestLoopDialog extends StandardFieldsDialog {

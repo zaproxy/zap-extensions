@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.owasp.jbrofuzz.core.Database;
 import org.owasp.jbrofuzz.core.Fuzzer;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
