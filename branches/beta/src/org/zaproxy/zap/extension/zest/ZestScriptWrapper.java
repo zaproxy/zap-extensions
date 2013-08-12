@@ -25,7 +25,7 @@ import javax.script.ScriptException;
 
 import org.mozilla.zest.core.v1.ZestJSON;
 import org.mozilla.zest.core.v1.ZestScript;
-import org.zaproxy.zap.extension.pscan.PassiveScript;
+import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ZestScriptWrapper extends ScriptWrapper {
@@ -34,6 +34,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	private boolean incLengthAssertion = true;
 	private int lengthApprox = 1;
 	private ZestScript zestScript = null;
+	private ExtensionZest extension = null;
 
 	public ZestScriptWrapper(ZestScript.Type type) {
 		zestScript = new ZestScript();
@@ -48,10 +49,12 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		if (zestScript == null) {
 			// new script
 			zestScript = new ZestScript();
-			zestScript.setTitle(script.getName());
+			zestScript.setType(ZestScript.Type.Active);
 			zestScript.setDescription(script.getDescription());
-			zestScript.setType(ZestScript.Type.Targeted);
 		}
+		// Override the title in case its taken from a template
+		zestScript.setTitle(script.getName());
+
 		this.setName(script.getName());
 		this.setDescription(script.getDescription());
 		this.setEngine(script.getEngine());
@@ -93,10 +96,23 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	
 	@SuppressWarnings("unchecked")
 	public <T> T getInterface(Class<T> class1) throws ScriptException, IOException {
-		if (class1.isAssignableFrom(class1)) {
-			return (T) new ZestPassiveScanner(this);
+		if (class1.isAssignableFrom(ZestPassiveRunner.class)) {
+			return (T) new ZestPassiveRunner(this.getExtension(), this);
+			
+		} else if (class1.isAssignableFrom(ZestActiveRunner.class)) {
+			return (T) new ZestActiveRunner(this.getExtension(), this);
+			
+		} else if (class1.isAssignableFrom(ZestTargetedRunner.class)) {
+			return (T) new ZestTargetedRunner(this.getExtension(), this);
 		}
-		return (T) new ZestPassiveScanner(this);
+		return null;
+	}
+
+	private ExtensionZest getExtension() {
+		if (extension == null) {
+			extension = (ExtensionZest) Control.getSingleton().getExtensionLoader().getExtension(ExtensionZest.NAME);
+		}
+		return extension;
 	}
 
 }

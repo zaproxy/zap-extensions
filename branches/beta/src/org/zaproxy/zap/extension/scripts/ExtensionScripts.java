@@ -36,7 +36,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -199,7 +198,8 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 		}
 	}
 	
-	private boolean isScriptDisplayed(ScriptWrapper script) {
+	@Override
+	public boolean isScriptDisplayed(ScriptWrapper script) {
 		return View.isInitialised() && script != null && script.equals(this.getConsolePanel().getScript());
 	}
 
@@ -322,11 +322,19 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 			System.out.println("ERROR: " + e);
 		}
 	}
+	
 	public void showError(String string) {
 		if (View.isInitialised()) {
 			this.getConsolePanel().getOutputPanel().appendError(string);
 		} else {
 			System.out.println("ERROR: " + string);
+		}
+	}
+	
+	public void setOutput(String string) {
+		if (View.isInitialised()) {
+			this.getConsolePanel().getOutputPanel().clear();
+			this.getConsolePanel().getOutputPanel().append(string);
 		}
 	}
 
@@ -351,12 +359,6 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 			return this.getScriptsPanel().getSelectedNodes();
 		}
 		return null;
-	}
-
-	@Override
-	public boolean isSelectedMessage(Message msg) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@SuppressWarnings("rawtypes")

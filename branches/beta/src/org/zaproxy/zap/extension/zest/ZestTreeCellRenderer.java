@@ -58,9 +58,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-down-right.png"));
 	private static final ImageIcon CONDITION_IF_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-up-right.png"));
-	private static final ImageIcon LOOP_ICON=new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/loop.png"));
-	private static final ImageIcon TRASFORM_ICON = 
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/wand.png"));
+	private static final ImageIcon LOOP_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/loop.png"));
 
 	private static final long serialVersionUID = -4278691012245035225L;
 

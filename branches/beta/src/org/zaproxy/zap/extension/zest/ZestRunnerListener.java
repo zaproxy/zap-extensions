@@ -26,13 +26,13 @@ import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
 
 public interface ZestRunnerListener {
 
-	void notifyResponse (ZestResultWrapper href);
+	void notifyResponse (ZestScriptWrapper wrapper, ZestResultWrapper href);
 	
-	void notifyActionFail (ZestActionFailException e);
+	void notifyActionFail (ZestScriptWrapper wrapper, ZestActionFailException e);
 
-	void notifyAssignFail (ZestAssignFailException e);
+	void notifyAssignFail (ZestScriptWrapper wrapper, ZestAssignFailException e);
 
-	void notifyZestInvalidCommonTestFail (ZestInvalidCommonTestException e);
+	void notifyZestInvalidCommonTestFail (ZestScriptWrapper wrapper, ZestInvalidCommonTestException e);
 
-	void notifyComplete();
+	void notifyComplete(ZestScriptWrapper wrapper);
 }

@@ -34,15 +34,12 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
-import org.mozilla.zest.core.v1.ZestActionFailException;
 import org.mozilla.zest.core.v1.ZestAssertion;
-import org.mozilla.zest.core.v1.ZestAssignFailException;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
-import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
 import org.mozilla.zest.core.v1.ZestJSON;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
@@ -61,6 +58,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -72,7 +70,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.dialogs.ZestDialogManager;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
 
-public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListener, ProxyListener, ScriptEventListener {
+public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, ScriptEventListener {
 	
 	public static final String NAME = "ExtensionZest";
 	public static final ImageIcon ZEST_ICON = new ImageIcon(ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resource/fruit-orange.png"));
@@ -84,7 +82,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	
 	private ZestResultsPanel zestResultsPanel = null;
 	
-	private ZestZapRunner runner = null;
 	private ZestTreeModel zestTreeModel = null;
 	private ZestDialogManager dialogManager = null;
 	private ZestEngineWrapper zestEngineWrapper = null;
@@ -140,21 +137,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
         	// Looks like this only works if the Zest lib is in the top level lib directory
         	zestEngineWrapper = new ZestEngineWrapper(se);
             this.getExtScript().registerScriptEngineWrapper(zestEngineWrapper);
-
-			if (se.getFactory() instanceof ZestScriptEngineFactory) {
-				ZestScriptEngineFactory zsef = (ZestScriptEngineFactory) se.getFactory();
-				zsef.setRunner(this.getRunner());
-			} else {
-	        	logger.error("Factory not an instance of ZestScriptEngineFactory: " + se.getFactory().getClass().getCanonicalName());
-			}
-        
         } else {
         	// Needed for when the Zest lib is in an add-on (usual case)
         	ZestScriptEngineFactory zsef = new ZestScriptEngineFactory();
-			zsef.setRunner(this.getRunner());
         	zestEngineWrapper = new ZestEngineWrapper(zsef.getScriptEngine());
             this.getExtScript().registerScriptEngineWrapper(zestEngineWrapper);
-        	
         }
         this.getExtScript().addListener(this);
         
@@ -244,8 +231,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	public void setToken (ZestScriptWrapper script, ZestRequest request, String replace,
 			String token, boolean replaceInCurrent, boolean replaceInAdded) {
 		// TODO add default value
-		script.getZestScript().getTokens().addToken(token, replace);
-		token = script.getZestScript().getTokens().getTokenStart() + token + script.getZestScript().getTokens().getTokenEnd(); 
+		script.getZestScript().getParameters().addVariable(token, replace);
+		token = script.getZestScript().getParameters().getTokenStart() + token + script.getZestScript().getParameters().getTokenEnd(); 
 		if (replaceInCurrent) {
 			ZestStatement stmt = script.getZestScript().getNext();
 			while (stmt != null) {
@@ -408,7 +395,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		if (parent == null) {
 			// They're gone for the 'new script' option...
 			logger.debug("addToParent parent=null msg=" + msg.getRequestHeader().getURI());
-			this.dialogManager.showZestEditScriptDialog(null, null, ZestScript.Type.Targeted, prefix);
+			this.dialogManager.showZestEditScriptDialog(null, null, ZestScript.Type.Active, prefix, true);
 			if (msg != null) {
 				this.dialogManager.addDeferedMessage(msg);
 			}
@@ -547,76 +534,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		}
 	}
 
-	@Override
-	public void notifyResponse(ZestResultWrapper href) {
-		if (View.isInitialised()) {
-			this.getZestResultsPanel().getModel().add(href);
-			this.getZestResultsPanel().setTabFocus();
-			
-		} else {
-			// TODO i18n for cmdline??
-			try {
-				System.out.println("Response: " + href.getURI() + " passed = " + href.isPassed() + " code=" + href.getStatusCode());
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-	}
-	
-	public void notifyActionFail (ZestActionFailException e) {
-		if (View.isInitialised()) {
-			int lastRow = this.getZestResultsPanel().getModel().getRowCount()-1;
-			ZestResultWrapper zrw = (ZestResultWrapper)this.getZestResultsPanel().getModel().getHistoryReference(lastRow);
-			zrw.setPassed(false);
-			// TODO use toUiFailureString varient?
-			//zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
-			zrw.setMessage(e.getMessage());
-
-			this.getZestResultsPanel().getModel().fireTableRowsUpdated(lastRow, lastRow);
-			
-		} else {
-			// TODO i18n for cmdline??
-			// TODO check type first? toUiFailureString as above?
-			System.out.println("Action: failed: " + e.getMessage());
-		}
-	}
-	
-	public void notifyAssignFail (ZestAssignFailException e) {
-		if (View.isInitialised()) {
-			int lastRow = this.getZestResultsPanel().getModel().getRowCount()-1;
-			ZestResultWrapper zrw = (ZestResultWrapper)this.getZestResultsPanel().getModel().getHistoryReference(lastRow);
-			zrw.setPassed(false);
-			// TODO use toUiFailureString varient?
-			//zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
-			zrw.setMessage(e.getMessage());
-
-			this.getZestResultsPanel().getModel().fireTableRowsUpdated(lastRow, lastRow);
-			
-		} else {
-			// TODO i18n for cmdline??
-			// TODO check type first? toUiFailureString as above?
-			System.out.println("Assign: failed: " + e.getMessage());
-		}
-	}
-	
-	public void notifyZestInvalidCommonTestFail (ZestInvalidCommonTestException e) {
-		if (View.isInitialised()) {
-			int lastRow = this.getZestResultsPanel().getModel().getRowCount()-1;
-			ZestResultWrapper zrw = (ZestResultWrapper)this.getZestResultsPanel().getModel().getHistoryReference(lastRow);
-			zrw.setPassed(false);
-			// TODO use toUiFailureString varient?
-			//zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
-			zrw.setMessage(e.getMessage());
-
-			this.getZestResultsPanel().getModel().fireTableRowsUpdated(lastRow, lastRow);
-			
-		} else {
-			// TODO i18n for cmdline??
-			// TODO check type first? toUiFailureString as above?
-			System.out.println("Action: failed: " + e.getMessage());
-		}
-	}
-	
 	public void notifyAlert(Alert alert) {
 		if (View.isInitialised()) {
 			int row = this.getZestResultsPanel().getModel().getIndex(alert.getMessage());
@@ -640,12 +557,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 				logger.error(e.getMessage(), e);
 			}
 		}
-	}
-
-
-	@Override
-	public void notifyComplete() {
-		// Ignore
 	}
 
 	public void delete(ScriptNode node) {
@@ -916,12 +827,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		
 		if (ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getType())) {
 			isPassive = true;
-		// TODO
-		/*
-		} else if (node.isChildOf(ZestTreeElement.Type.PASSIVE_SCRIPT)) {
-			// Can only paste into common section of passive scripts
-			return false;
-		*/
 		}
 		
 		for (ScriptNode cnpNode : this.cnpNodes) {
@@ -1006,37 +911,44 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		return Collections.unmodifiableList(list);
 	}
 	
+	public void addResultToList(ZestResultWrapper href) {
+		this.getZestResultsPanel().getModel().add(href);
+		this.getZestResultsPanel().setTabFocus();
+	}
+
+	public void failLastResult(Exception e) {
+		int lastRow = this.getZestResultsPanel().getModel().getRowCount()-1;
+		ZestResultWrapper zrw = (ZestResultWrapper)this.getZestResultsPanel().getModel().getHistoryReference(lastRow);
+		zrw.setPassed(false);
+		// TODO use toUiFailureString varient?
+		//zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
+		zrw.setMessage(e.getMessage());
+		this.getZestResultsPanel().getModel().fireTableRowsUpdated(lastRow, lastRow);
+
+	}
+
 	public boolean isSelectedMessage(Message msg) {
-		return false;
+		Message selMsg = View.getSingleton().getRequestPanel().getMessage();
+		return selMsg != null && selMsg.equals(msg);
 	}
 	
 	public void addMouseListener(MouseAdapter adapter) {
 	}
 
-	private ZestZapRunner getRunner() {
-		if (runner == null) {
-			runner = new ZestZapRunner(this);
-			runner.addListener(this);
-		}
-		return runner;
-	}
-	
 	@Override
 	public void preInvoke(ScriptWrapper script) {
 		ScriptEngineWrapper ewrap = this.getExtScript().getEngineWrapper(ZestScriptEngineFactory.NAME);
 		if (ewrap == null) {
 			logger.error("Failed to find engine Mozilla Zest");
-		} else {
+		} else if (script instanceof ZestScriptWrapper) {
 			ScriptEngine engine = ewrap.getEngine();
 			ZestScriptEngineFactory zsef = (ZestScriptEngineFactory) engine.getFactory();
-			zsef.setRunner(this.getRunner());
+			zsef.setRunner(new ZestZapRunner(this, (ZestScriptWrapper)script));
 			if (View.isInitialised()) {
 				// Clear the previous results
 				this.getZestResultsPanel().getModel().removeAllElements();
 			}
-			if (script instanceof ZestScriptWrapper) {
-				this.lastRunScript = ((ZestScriptWrapper)script).getZestScript();
-			}
+			this.lastRunScript = ((ZestScriptWrapper)script).getZestScript();
 		}
 	}
 
@@ -1070,16 +982,19 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	        this.getZestTreeModel().addScript(parentNode, zsw);
 	        this.updated(parentNode);
 
-	        // TODO support other types!
-	    	Type ztype = Type.Targeted;
-	    	/*
+	        // Map between ZAP script types and Zest script types - ZAP supports more!
+	    	Type ztype;
 	    	switch (script.getType().getName()) {
-	    	case 
+	    	case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE: 	ztype = Type.Active;		break;
+	    	case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE: 	ztype = Type.Passive;		break;
+	    	case ExtensionScript.TYPE_TARGETED: 			ztype = Type.Targeted;		break;
+	    	case ExtensionScript.TYPE_STANDALONE:
+	    	default:										ztype = Type.StandAlone;	break;
 	    	}
-	    	*/
+	    	
 	    	if (display) {
 		        this.display(zsw, parentNode, true);
-	    		this.dialogManager.showZestEditScriptDialog(parentNode, zsw, ztype);
+	    		this.dialogManager.showZestEditScriptDialog(parentNode, zsw, ztype, false);
 	    	}
 		}
 	}

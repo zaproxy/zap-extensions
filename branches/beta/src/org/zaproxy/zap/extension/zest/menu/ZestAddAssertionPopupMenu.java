@@ -88,7 +88,7 @@ public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
 			HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;
 			ScriptNode node = extension.getExtScript().getScriptUI().getSelectedNode();
 			
-			if (node != null && extension.getExtScript().getScriptUI().isSelectedMessage(panel.getMessage()) &&
+			if (node != null && extension.isSelectedMessage(panel.getMessage()) &&
 					panel.getSelectedText() != null && panel.getSelectedText().length() > 0) {
 
                 if (ZestZapUtils.getElement(node) instanceof ZestRequest) {
