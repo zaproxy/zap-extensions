@@ -20,16 +20,13 @@ import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 public class ZestFuzzerDelegate extends ExtensionFuzz {
 	private File fuzzerDir = null;
 	private File fuzzerCustomDir = null;
-	private ExtensionZest extension=null;
-
-	public ZestFuzzerDelegate(ExtensionZest extension) {
+	
+	public ZestFuzzerDelegate() {
 		super();
-		this.extension=extension;
 	}
 
-	public ZestFuzzerDelegate(String name, ExtensionZest extension) {
+	public ZestFuzzerDelegate(String name) {
 		super(name);
-		this.extension=extension;
 	}
 
 	public File getFuzzerDir() {
