@@ -63,7 +63,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 	private static final long serialVersionUID = 1L;
 
 	private ExtensionZest extension = null;
-	private ScriptNode parentNode = null;
+	private ScriptNode scriptNode = null;
 	private ZestScriptWrapper scriptWrapper = null;
 	private ZestScript script = null;
 	private boolean add = false;
@@ -83,8 +83,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 		this.extension = ext;
 	}
 
-	public void init (ScriptNode parentNode, ZestScriptWrapper scriptWrapper, boolean add, ZestScript.Type type) {
-		this.parentNode = parentNode;
+	public void init (ScriptNode scriptNode, ZestScriptWrapper scriptWrapper, boolean add, ZestScript.Type type) {
+		this.scriptNode = scriptNode;
 		this.scriptWrapper = scriptWrapper;
 		this.script = scriptWrapper.getZestScript();
 		this.add = add;
@@ -102,7 +102,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 		this.addCheckBoxField(0, FIELD_LOAD, scriptWrapper.isLoadOnStart());
 		this.addMultilineField(0, FIELD_DESC, script.getDescription());
 		
-		this.getTokensModel().setValues(script.getTokens().getTokens());
+		this.getTokensModel().setValues(script.getParameters().getVariable());
 		this.addTableField(1, this.getTokensModel());
 		
 		if (ZestScript.Type.Targeted.equals(type)) {
@@ -162,50 +162,43 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 		scriptWrapper.setContents(ZestJSON.toString(script));
 		scriptWrapper.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
 
-		script.setType(type);
-		if (ZestScript.Type.Targeted.equals(type)) {
-			scriptWrapper.setIncStatusCodeAssertion(this.getBoolValue(FIELD_STATUS));
-			scriptWrapper.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
-			scriptWrapper.setLengthApprox(this.getIntValue(FIELD_APPROX));
-			
-			Map<String, String> tokens = new HashMap<String, String>();
-			for (String[] nv : getTokensModel().getValues()) {
-				tokens.put(nv[0], nv[1]);
-			}
-			
-			script.getTokens().setTokens(tokens);
-			
-			// Just support one auth for now
-			script.setAuthentication(new ArrayList<ZestAuthentication>());
-			if (! this.isEmptyField(FIELD_AUTH_SITE)) {
-				ZestHttpAuthentication zha = new ZestHttpAuthentication();
-				zha.setSite(this.getStringValue(FIELD_AUTH_SITE));
-				zha.setRealm(this.getStringValue(FIELD_AUTH_REALM));
-				zha.setUsername(this.getStringValue(FIELD_AUTH_USER));
-				zha.setPassword(this.getStringValue(FIELD_AUTH_PASSWORD));
-				script.addAuthentication(zha);
-			}
-		} else if (ZestScript.Type.Active.equals(type)) {
-			// Create a template simple script
-			script.getTokens().addToken("target.value", "__replace__");
-			ZestRequest req = new ZestRequest();
-			req.setMethod("{{target.method}}");
-			req.setUrlToken("{{target.url}}");
-			req.setHeaders("{{target.headers}}");
-			req.setData("{{target.body}}");
-			script.add(req);
-		}
-
 		if (add) {
-			parentNode = extension.add(scriptWrapper);
+			
+			script.setType(type);
+			if (ZestScript.Type.StandAlone.equals(type)) {
+				// Only need to handle standalone scripts here - rest handled by templates
+				scriptWrapper.setIncStatusCodeAssertion(this.getBoolValue(FIELD_STATUS));
+				scriptWrapper.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
+				scriptWrapper.setLengthApprox(this.getIntValue(FIELD_APPROX));
+				
+				Map<String, String> tokens = new HashMap<String, String>();
+				for (String[] nv : getTokensModel().getValues()) {
+					tokens.put(nv[0], nv[1]);
+				}
+				
+				script.getParameters().setVariable(tokens);
+				
+				// Just support one auth for now
+				script.setAuthentication(new ArrayList<ZestAuthentication>());
+				if (! this.isEmptyField(FIELD_AUTH_SITE)) {
+					ZestHttpAuthentication zha = new ZestHttpAuthentication();
+					zha.setSite(this.getStringValue(FIELD_AUTH_SITE));
+					zha.setRealm(this.getStringValue(FIELD_AUTH_REALM));
+					zha.setUsername(this.getStringValue(FIELD_AUTH_USER));
+					zha.setPassword(this.getStringValue(FIELD_AUTH_PASSWORD));
+					script.addAuthentication(zha);
+				}
+			}
+
+			scriptNode = extension.add(scriptWrapper);
 			// Add any defered messages
 			for (HttpMessage msg : deferedMessages) {
 				logger.debug("Adding defered message: " + msg.getRequestHeader().getURI().toString());
-				extension.addToParent(parentNode, msg, null);
+				extension.addToParent(scriptNode, msg, null);
 			}
 			deferedMessages.clear();
 		}
-		extension.updated(parentNode);
+		extension.updated(scriptNode);
 	}
 
 	@Override

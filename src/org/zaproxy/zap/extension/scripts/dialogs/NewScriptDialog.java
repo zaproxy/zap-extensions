@@ -97,15 +97,17 @@ public class NewScriptDialog extends StandardFieldsDialog {
 	
 	public void save() {
 		ScriptWrapper script = new ScriptWrapper();
+		script.setType(this.nameToType(this.getStringValue(FIELD_TYPE)));
+		
+		// Set the template first in case it includes info overwridden by other fields
+		ScriptEngineWrapper ew = extension.getExtScript().getEngineWrapper(this.getStringValue(FIELD_ENGINE));
+		script.setEngine(ew);
+		script.setContents(ew.getTemplate(script.getType().getName()));
+		
 		script.setName(this.getStringValue(FIELD_NAME));
 		script.setDescription(this.getStringValue(FIELD_DESC));
 		script.setType(this.nameToType(this.getStringValue(FIELD_TYPE)));
 		script.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
-		script.setType(this.nameToType(this.getStringValue(FIELD_TYPE)));
-
-		ScriptEngineWrapper ew = extension.getExtScript().getEngineWrapper(this.getStringValue(FIELD_ENGINE));
-		script.setEngine(ew);
-		script.setContents(ew.getTemplate(script.getType().getName()));
 		
 		extension.getExtScript().addScript(script);
 	}

@@ -65,7 +65,6 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestAssignmentDialog assignmentDialog = null;
 	private ZestActionDialog actionDialog = null;
 	private ZestConditionDialog conditionDialog = null;
-	private ZestComplexConditionDialog complexConditionDialog = null;
 	private ZestLoopDialog loopDialog = null;
 	private ZestFuzzerCategoryDialog fuzzCatDialog = null;
 
@@ -103,10 +102,8 @@ public class ZestDialogManager extends AbstractPanel {
 					ScriptNode parent = sn.getParent();
 
 					if (sn.getUserObject() instanceof ZestScriptWrapper) {
-						showZestEditScriptDialog(parent,
-								(ZestScriptWrapper) sn.getUserObject(),
-								ZestScript.Type.Active);
-
+			        	showZestEditScriptDialog(sn, (ZestScriptWrapper) sn.getUserObject(), null, false);
+			        	
 					} else if (sn.getUserObject() instanceof ZestElementWrapper) {
 						ZestElementWrapper zew = (ZestElementWrapper) sn
 								.getUserObject();
@@ -152,18 +149,16 @@ public class ZestDialogManager extends AbstractPanel {
 		});
 
 	}
-
-	public void showZestEditScriptDialog(ScriptNode parentNode,
-			ZestScriptWrapper script, ZestScript.Type type) {
-		this.showZestEditScriptDialog(parentNode, script, type, null);
+	
+	public void showZestEditScriptDialog(ScriptNode parentNode, ZestScriptWrapper script, ZestScript.Type type, boolean add) {
+		this.showZestEditScriptDialog(parentNode, script, type, null, add);
 	}
-
-	public void showZestFuzzerCatSelectorDialog(
-			ZestFuzzerFileDelegate fuzzFile, Frame owner) {
-		if (this.fuzzCatDialog == null) {
-			fuzzCatDialog = new ZestFuzzerCategoryDialog(extension, owner,
-					new Dimension(500, 500));
-		} else if (fuzzCatDialog.isVisible()) {
+	
+	public void showZestFuzzerCatSelectorDialog(ZestFuzzerFileDelegate fuzzFile, Frame owner){
+		if(this.fuzzCatDialog==null){
+			fuzzCatDialog=new ZestFuzzerCategoryDialog(extension, owner, new Dimension(500, 500));
+		}
+		else if(fuzzCatDialog.isVisible()){
 			// Already being displayed, dont overwrite anything
 			return;
 		}
@@ -171,8 +166,8 @@ public class ZestDialogManager extends AbstractPanel {
 		fuzzCatDialog.setVisible(true);
 	}
 
-	public void showZestEditScriptDialog(ScriptNode parentNode,
-			ZestScriptWrapper script, ZestScript.Type type, String prefix) {
+	public void showZestEditScriptDialog(ScriptNode parentNode, ZestScriptWrapper script, 
+			ZestScript.Type type, String prefix, boolean add) {
 		if (scriptDialog == null) {
 			scriptDialog = new ZestScriptsDialog(extension, View.getSingleton()
 					.getMainFrame(), new Dimension(500, 500));
@@ -193,10 +188,10 @@ public class ZestDialogManager extends AbstractPanel {
 			} catch (MalformedURLException e) {
 				logger.error(e.getMessage(), e);
 			}
-			scriptDialog.init(parentNode, script, true, type);
+			scriptDialog.init(parentNode, script, add, type);
 
 		} else {
-			scriptDialog.init(parentNode, script, false, type);
+			scriptDialog.init(parentNode, script, add, type);
 		}
 		scriptDialog.setVisible(true);
 	}
@@ -255,29 +250,17 @@ public class ZestDialogManager extends AbstractPanel {
 
 	public void showZestConditionalDialog(ScriptNode parent,
 			List<ScriptNode> children, ZestStatement stmt,
-			ZestConditional condition, boolean add, boolean surround) {
-		if (condition.getRootExpression() == null) {
-			if(complexConditionDialog==null){
-				complexConditionDialog=new ZestComplexConditionDialog(extension,  View
-						.getSingleton().getMainFrame(), new Dimension(300, 200));
-			} else if(complexConditionDialog.isVisible()){
-				// Already being displayed, dont overwrite anything
-				return;
-			}
-			complexConditionDialog.init(parent, children, stmt, condition, add, surround);
-			complexConditionDialog.setVisible(true);
-		} else {
-			if (conditionDialog == null) {
-				conditionDialog = new ZestConditionDialog(extension, View
-						.getSingleton().getMainFrame(), new Dimension(300, 200));
-			} else if (conditionDialog.isVisible()) {
-				// Already being displayed, dont overwrite anything
-				return;
-			}
-			conditionDialog.init(parent, children, stmt, condition, add,
-					surround);
-			conditionDialog.setVisible(true);
+		ZestConditional condition, boolean add, boolean surround) {
+		if (conditionDialog == null) {
+			conditionDialog = new ZestConditionDialog(extension, View
+					.getSingleton().getMainFrame(), new Dimension(300, 200));
+		} else if (conditionDialog.isVisible()) {
+			// Already being displayed, dont overwrite anything
+			return;
 		}
+		conditionDialog.init(parent, children, stmt, condition, add,
+				surround);
+		conditionDialog.setVisible(true);
 	}
 
 	public void showZestLoopDialog(ScriptNode parent,
