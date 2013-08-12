@@ -21,13 +21,17 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.net.MalformedURLException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestConditional;
+import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
@@ -36,12 +40,14 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.fuzz.FuzzDialog;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestElementWrapper;
+import org.zaproxy.zap.extension.zest.ZestFuzzerDelegate.ZestFuzzerFileDelegate;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
@@ -59,6 +65,8 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestAssignmentDialog assignmentDialog = null;
 	private ZestActionDialog actionDialog = null;
 	private ZestConditionDialog conditionDialog = null;
+	private ZestLoopDialog loopDialog=null;
+	private ZestFuzzerCategoryDialog fuzzCatDialog=null;
 
 	public ZestDialogManager(ExtensionZest extension, ScriptUI scriptUI) {
 		super();
@@ -117,9 +125,15 @@ public class ZestDialogManager extends AbstractPanel {
 					        	showZestActionDialog(
 					        			parent, sn, null, (ZestAction) obj, false);
 					        } else if (obj instanceof ZestConditional) {
+					        	LinkedList<ScriptNode> nodes=new LinkedList<>();
+					        	nodes.add(sn);
 					        	showZestConditionalDialog(
-					        			parent, sn, null, (ZestConditional) obj, false);
-					        }  
+					        			parent, nodes, null, (ZestConditional) obj, false, false);
+					        } else if(obj instanceof ZestLoop<?>){
+					        	LinkedList<ScriptNode> nodes=new LinkedList<>();
+					        	nodes.add(sn);
+				        		showZestLoopDialog(parent, nodes, null, (ZestLoop<?>) obj, false, false);
+					        }
 					    }
 			    	}
 			    }
@@ -132,7 +146,17 @@ public class ZestDialogManager extends AbstractPanel {
 	public void showZestEditScriptDialog(ScriptNode parentNode, ZestScriptWrapper script, ZestScript.Type type) {
 		this.showZestEditScriptDialog(parentNode, script, type, null);
 	}
-
+	public void showZestFuzzerCatSelectorDialog(ZestFuzzerFileDelegate fuzzFile, Frame owner){
+		if(this.fuzzCatDialog==null){
+			fuzzCatDialog=new ZestFuzzerCategoryDialog(extension, owner, new Dimension(500, 500));
+		}
+		else if(fuzzCatDialog.isVisible()){
+			// Already being displayed, dont overwrite anything
+			return;
+		}
+		fuzzCatDialog.init(fuzzFile, owner);
+		fuzzCatDialog.setVisible(true);
+	}
 	public void showZestEditScriptDialog(ScriptNode parentNode, ZestScriptWrapper script, ZestScript.Type type, String prefix) {
 		if (scriptDialog == null) {
 			scriptDialog = new ZestScriptsDialog(extension, View.getSingleton().getMainFrame(), new Dimension(500, 500));
@@ -205,17 +229,26 @@ public class ZestDialogManager extends AbstractPanel {
 		assignmentDialog.setVisible(true);
 	}
 
-	public void showZestConditionalDialog(ScriptNode parent, ScriptNode child, ZestStatement stmt, ZestConditional condition, boolean add) {
+	public void showZestConditionalDialog(ScriptNode parent, List<ScriptNode> children, ZestStatement stmt, ZestConditional condition, boolean add, boolean surround) {
 		if (conditionDialog == null) {
 			conditionDialog = new ZestConditionDialog(extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
 		} else if (conditionDialog.isVisible()) {
 			// Already being displayed, dont overwrite anything
 			return;
 		}
-		conditionDialog.init(parent, child, stmt, condition, add);
+		conditionDialog.init(parent, children, stmt, condition, add, surround);
 		conditionDialog.setVisible(true);
 	}
-
+	public void showZestLoopDialog(ScriptNode parent, List<ScriptNode> children, ZestStatement stmt, ZestLoop<?> loop, boolean add, boolean surround) {
+		if (loopDialog == null) {
+			loopDialog = new ZestLoopDialog(extension, View.getSingleton().getMainFrame(), new Dimension(700, 200));
+		} else if (loopDialog.isVisible()) {
+			// Already being displayed, dont overwrite anything
+			return;
+		}
+		loopDialog.init(parent, children, stmt, loop, add, surround);
+		loopDialog.setVisible(true);
+	}
 	public void addDeferedMessage(HttpMessage msg) {
 		scriptDialog.addDeferedMessage(msg);
 	}

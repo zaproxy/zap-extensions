@@ -9,8 +9,6 @@
 	<extensions>
 		<extension>org.zaproxy.zap.extension.zest.ExtensionZest</extension>
 	</extensions>
-	<ascanrules/>
-	<pscanrules/>
 	<filters/>
 	<files/>
 	<not-before-version>2.2.0</not-before-version>

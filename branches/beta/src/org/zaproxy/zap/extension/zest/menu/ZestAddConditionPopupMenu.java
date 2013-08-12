@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -135,16 +136,17 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionURL()));
 	}
 
-    private void createPopupAddActionMenu(final ScriptNode parent, final ScriptNode child, 
+    private void createPopupAddActionMenu(final ScriptNode parent, ScriptNode child, 
     		final ZestStatement stmt, final ZestConditional za) {
-    	
+    	 final List<ScriptNode> nodes=new LinkedList<>();
+    	nodes.add(child);
 		ZestPopupMenu menu = new ZestPopupMenu(
 				Constant.messages.getString("zest.condition.add.popup"),
 				ZestZapUtils.toUiString(za, false));
 		menu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				extension.getDialogManager().showZestConditionalDialog(parent, child, stmt, za, true);
+				extension.getDialogManager().showZestConditionalDialog(parent, nodes, stmt, za, true, false);
 			}});
     	menu.setMenuIndex(this.getMenuIndex());
 		View.getSingleton().getPopupMenu().addMenu(menu);
