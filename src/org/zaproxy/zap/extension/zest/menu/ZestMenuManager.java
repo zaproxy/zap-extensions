@@ -19,7 +19,11 @@
  */
 package org.zaproxy.zap.extension.zest.menu;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 
 public class ZestMenuManager {
@@ -31,6 +35,12 @@ public class ZestMenuManager {
 	private ZestAddAssertionPopupMenu popupAddAssertionMenu = null;
 	private ZestAddAssignPopupMenu popupAddAssignMenu = null;
 	private ZestAddConditionPopupMenu popupAddConditionMenu = null;
+	private ZestAddLoopPopupMenu popupAddLoopMenu = null;
+	
+	private ZestSurroundWithPopupMenu popupSurroundWithMenu = null;
+	private ZestAddConditionPopupMenu popupAddConditionMenuLevel2 = null;
+	private ZestAddLoopPopupMenu popupAddLoopMenuLevel2 = null;
+	
 	private ZestPopupZestMove popupZestMoveUp = null;
 	private ZestPopupZestMove popupZestMoveDown = null;
 	private ZestPopupNodeCopyOrCut popupNodeCopy = null;
@@ -51,7 +61,10 @@ public class ZestMenuManager {
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddAssertionMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddAssignMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddConditionMenu());
-	
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddLoopMenu());
+		
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupSurroundWithMenu());
+			
         extensionHook.getHookMenu().addPopupMenuItem(getPopupNodeCut ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupNodeCopy ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupNodePaste ());
@@ -89,6 +102,39 @@ public class ZestMenuManager {
 		}
 		return popupAddConditionMenu;
 	}
+	private ZestAddConditionPopupMenu getPopupAddConditionMenuLevel2() {
+		if (popupAddConditionMenuLevel2 == null) {
+			popupAddConditionMenuLevel2= new ZestAddConditionPopupMenu(this.extension);
+		}
+		return popupAddConditionMenuLevel2;
+	}
+	
+	protected ZestAddLoopPopupMenu getPopupAddLoopMenu() {
+		if (popupAddLoopMenu == null) {
+			popupAddLoopMenu= new ZestAddLoopPopupMenu(this.extension);
+		}
+		return popupAddLoopMenu;
+	}
+	
+	protected ZestAddLoopPopupMenu getPopupAddLoopMenuLevel2() {
+		if (popupAddLoopMenuLevel2 == null) {
+			popupAddLoopMenuLevel2= new ZestAddLoopPopupMenu(this.extension);
+		}
+		return popupAddLoopMenuLevel2;
+	}
+	
+	private ZestSurroundWithPopupMenu getPopupSurroundWithMenu() {
+		if (popupSurroundWithMenu== null) {
+			popupSurroundWithMenu= new ZestSurroundWithPopupMenu(this.extension);
+		}
+		return popupSurroundWithMenu;
+	}
+//	private List<ExtensionPopupMenuItem> getSurroundOptions(){// TODO maybe store as a field.
+//		LinkedList<ExtensionPopupMenuItem> options=new LinkedList<>();
+//		options.add(getPopupAddConditionMenu());
+//		options.add(getPopupAddConditionMenu());
+//		return options;
+//	}
 
 	private ZestAddToScriptPopupMenu getPopupZestAddToMenu() {
 		if (popupZestAddToMenu == null) {

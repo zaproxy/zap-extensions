@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.script.ScriptEngine;
@@ -43,6 +44,7 @@ import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
 import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
 import org.mozilla.zest.core.v1.ZestJSON;
+import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestScript;
@@ -90,6 +92,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	private ExtensionScript extScript = null;
 	private HttpMessage lastMessageDisplayed = null;
 	private ZestScript lastRunScript = null;
+	
+	private ZestFuzzerDelegate fuzzerMessenger=null;
 	
 	// Cut-n-paste stuff
 	private List<ScriptNode> cnpNodes = null;
@@ -159,6 +163,14 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
         	this.getExtScript().getScriptUI().addRenderer(ZestElementWrapper.class, renderer);
         	this.getExtScript().getScriptUI().disableScriptDialog(ZestScriptWrapper.class);
         }
+	}
+	
+	public ZestFuzzerDelegate getFuzzerDelegate(){
+		if(fuzzerMessenger==null){
+			fuzzerMessenger=new ZestFuzzerDelegate("LoopDialogFuzz", this);
+//			fuzzerMessenger=new ZestFuzzerMessenger();
+		}
+		return fuzzerMessenger;
 	}
 	
 	@Override
@@ -419,7 +431,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 					} else {
 						((ZestConditional)ZestZapUtils.getElement(parent)).addIf(req);
 					}
-				} else {
+				} else if (parentZe instanceof ZestLoop) {
+						((ZestLoop<?>)ZestZapUtils.getElement(parent)).addStatement(req);
+				} 
+				else {
 					throw new IllegalArgumentException("Unexpected parent node: " + 
 							parentZe.getElementType() + " " + parent.getNodeName());
 				}
@@ -479,15 +494,14 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		this.display(child, false);
 	}
 	
-	public ScriptNode addToParent(ScriptNode parent, ZestStatement newChild) {
+	public final ScriptNode addToParent(ScriptNode parent, ZestStatement newChild) {
 		logger.debug("addToParent parent=" + parent.getNodeName() + " new=" + newChild.getElementType());
 		ScriptNode node;
 		
 		if (ZestZapUtils.getElement(parent) instanceof ZestScript) {
 			ZestScript zc = (ZestScript)ZestZapUtils.getElement(parent);
 			zc.add(newChild);
-			node = this.getZestTreeModel().addToNode(parent, newChild);
-			
+			node = this.getZestTreeModel().addToNode(parent, newChild);			
 		} else if (ZestZapUtils.getElement(parent) instanceof ZestConditional) {
 			ZestConditional zc = (ZestConditional)ZestZapUtils.getElement(parent);
 			
@@ -498,7 +512,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 			}
 			node = this.getZestTreeModel().addToNode(parent, newChild);
 			
-		} else {
+		} else if (ZestZapUtils.getElement(parent) instanceof ZestLoop){
+			ZestLoop<?> zl=(ZestLoop<?>) ZestZapUtils.getElement(parent);
+			zl.addStatement(newChild);
+			node= this.getZestTreeModel().addToNode(parent, newChild);
+		}	else {
 			throw new IllegalArgumentException("Unexpected parent node: " + ZestZapUtils.getElement(parent) + " " + parent.getNodeName());
 		}
 		this.updated(node);
@@ -741,6 +759,18 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 		}
 		return ZestZapUtils.getElement(this.getExtScript().getScriptUI().getSelectedNode());
 	}
+	
+	public List<ZestElement> getSelectedZestElements(){
+		if (this.getExtScript().getScriptUI() == null) {
+			return null;
+		}
+		List<ScriptNode> nodes=this.getExtScript().getScriptUI().getSelectedNodes();
+		LinkedList<ZestElement> elems=new LinkedList<>();
+		for(ScriptNode node:nodes){
+			elems.add(ZestZapUtils.getElement(node));
+		}
+		return Collections.unmodifiableList(elems);
+	}
 
 
 	public boolean isSelectedZestRequestMessage(Message message) {
@@ -834,14 +864,26 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 	public void pasteToNode(ScriptNode parent) {
 		if (this.cnpNodes != null) {
 			ScriptNode lastNode = null;
-			for (ScriptNode node : this.cnpNodes) {
-				lastNode = this.addToParent(parent, ((ZestStatement) ZestZapUtils.getElement(node)).deepCopy());
-				if (cutNodes) {
-					this.delete(node);
+			for (int i=0; i<cnpNodes.size(); i++) {
+				lastNode = this.addToParent(parent, ((ZestStatement) ZestZapUtils.getElement(cnpNodes.get(i))).deepCopy());
+				if (cutNodes && !ZestZapUtils.isShadow(cnpNodes.get(i))) {
+					this.delete(cnpNodes.get(i));
 				}
 			}
+			refreshNode(parent);//refreshes the subtree starting from the parent
 			// Display the last node, otherwise the parent will be displayed if we've done a delete
 			this.display(lastNode, false);
+		}
+	}
+	public void refreshNode(ScriptNode node){
+		if(node.isLeaf()){
+			return;
+		}
+		else{
+			for(int i=0; i<node.getChildCount(); i++){
+				this.getZestTreeModel().update((ScriptNode)node.getChildAt(i));
+				refreshNode((ScriptNode)node.getChildAt(i));
+			}
 		}
 	}
 	
@@ -944,7 +986,14 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
     	View.getSingleton().getResponsePanel().clearView(false);
     	this.lastMessageDisplayed = null;
     }
-
+//    public boolean isSelectedZestNode(ScriptNode node){
+//    	for(ScriptNode tmpNode:getSelectedZestNodes()){
+//    		if(tmpNode.equals(node)){
+//    			return true;
+//    		}
+//    	}
+//    	return false;
+//    }
 	public List<ScriptNode> getSelectedZestNodes() {
 		List<ScriptNode> list = new ArrayList<ScriptNode>();
 		if (this.getExtScript().getScriptUI() == null) {
@@ -955,7 +1004,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ZestRunnerListene
 				list.add(node);
 			}
 		}
-		return list;
+		return Collections.unmodifiableList(list);
 	}
 	
 	public boolean isSelectedMessage(Message msg) {
