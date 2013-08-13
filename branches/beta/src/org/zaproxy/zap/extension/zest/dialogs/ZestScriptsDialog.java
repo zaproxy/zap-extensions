@@ -32,10 +32,11 @@ import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAuthentication;
 import org.mozilla.zest.core.v1.ZestHttpAuthentication;
 import org.mozilla.zest.core.v1.ZestJSON;
-import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.encoder.Base64;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -98,7 +99,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 			this.setTitle(Constant.messages.getString("zest.dialog.script.edit.title"));
 		}
 		this.addTextField(0, FIELD_TITLE, script.getTitle());
-		this.addTextField(0, FIELD_PREFIX, script.getPrefix());
+		
+		this.addComboField(0, FIELD_PREFIX, this.getSites(), script.getPrefix(), true);
 		this.addCheckBoxField(0, FIELD_LOAD, scriptWrapper.isLoadOnStart());
 		this.addMultilineField(0, FIELD_DESC, script.getDescription());
 		
@@ -138,6 +140,19 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 		//this.requestFocus(FIELD_TITLE);
 	}
 
+	private List<String> getSites() {
+		List<String> list = new ArrayList<String>();
+		list.add("");	// Always start with the blank option
+		SiteNode siteRoot = (SiteNode) Model.getSingleton().getSession().getSiteTree().getRoot();
+		if (siteRoot != null && siteRoot.getChildCount() > 0) {
+			SiteNode child = (SiteNode) siteRoot.getFirstChild();
+			while (child != null) {
+				list.add(child.getHierarchicNodeName());
+				child = (SiteNode) child.getNextSibling();
+			}
+		}
+		return list;
+	}
 	
 	private ScriptTokensTableModel getTokensModel() {
 		if (tokensModel == null) {

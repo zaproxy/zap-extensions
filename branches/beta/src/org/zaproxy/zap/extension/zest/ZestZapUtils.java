@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.zest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
 import org.apache.commons.httpclient.URI;
@@ -36,6 +37,7 @@ import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
+import org.mozilla.zest.core.v1.ZestExpressionEquals;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
@@ -46,6 +48,7 @@ import org.mozilla.zest.core.v1.ZestLoopInteger;
 import org.mozilla.zest.core.v1.ZestLoopString;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
+import org.mozilla.zest.core.v1.ZestRuntime;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -122,9 +125,8 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestExpressionLength) {
 			ZestExpressionLength sla = (ZestExpressionLength) za;
 			if (incParams) {
-				return MessageFormat.format(Constant.messages
-						.getString("zest.element.expression.length"), sla
-						.getLength(), sla.getApprox());
+				return MessageFormat.format(Constant.messages.getString("zest.element.expression.length"), 
+						sla.getVariableName(), sla.getLength(), sla.getApprox());
 			} else {
 				return Constant.messages
 						.getString("zest.element.expression.length.title");
@@ -146,20 +148,31 @@ public class ZestZapUtils {
 						.getString("zest.element.expression.resptime.title");
 			}
 		} else if (za instanceof ZestExpressionRegex) {
+			// TODO case exact
+			// TODO what about exp inverse ??
 			ZestExpressionRegex zer = (ZestExpressionRegex) za;
 			if (incParams) {
 				if (zer.isInverse()) {
 					return MessageFormat.format(Constant.messages
 							.getString("zest.element.expression.regex.exc"),
-							zer.getLocation(), zer.getRegex());
+							zer.getVariableName(), zer.getRegex());
 				} else {
 					return MessageFormat.format(Constant.messages
 							.getString("zest.element.expression.regex.inc"),
-							zer.getLocation(), zer.getRegex());
+							zer.getVariableName(), zer.getRegex());
 				}
 			} else {
-				return Constant.messages
-						.getString("zest.element.expression.regex.title");
+				return Constant.messages.getString("zest.element.expression.regex.title");
+			}
+		} else if (za instanceof ZestExpressionEquals) {
+			// TODO case exact
+			ZestExpressionEquals zer = (ZestExpressionEquals) za;
+			if (incParams) {
+				return MessageFormat.format(
+						Constant.messages.getString("zest.element.expression.equals"),
+						zer.getVariableName(), zer.getValue());
+			} else {
+				return Constant.messages.getString("zest.element.expression.equals.title");
 			}
 		} else if (za instanceof ZestExpressionURL) {
 			ZestExpressionURL zeu = (ZestExpressionURL) za;
@@ -287,41 +300,52 @@ public class ZestZapUtils {
 	}
 
 	public static String toUiFailureString(ZestAssertion za,
-			ZestResponse response) {
-		/*
-		 * if (za instanceof ZestAssertLength) { ZestAssertLength sla =
-		 * (ZestAssertLength) za; int intDiff = 100; if (response.getBody() !=
-		 * null) { if (sla.getLength() == 0) { if (sla.getLength() == 0) {
-		 * intDiff = 0; } } else { intDiff = (sla.getLength() -
-		 * response.getBody().length()) * 100 / sla.getLength(); } } String
-		 * strDiff = Integer.toString(intDiff); if (intDiff == 1) { // Show to
-		 * one decimal place DecimalFormat df = new DecimalFormat("#.#");
-		 * strDiff = df.format(((double)(sla.getLength() -
-		 * response.getBody().length()) * 100) / sla.getLength()); } else if
-		 * (intDiff == 0) { // Show to two decimal place DecimalFormat df = new
-		 * DecimalFormat("#.##"); strDiff = df.format(((double)(sla.getLength()
-		 * - response.getBody().length()) * 100) / sla.getLength()); } return
-		 * MessageFormat.format(
-		 * Constant.messages.getString("zest.fail.assert.length"),
-		 * sla.getLength(), response.getBody().length(), strDiff); } else if (za
-		 * instanceof ZestAssertStatusCode) { ZestAssertStatusCode sca =
-		 * (ZestAssertStatusCode) za; return MessageFormat.format(
-		 * Constant.messages.getString("zest.fail.assert.statuscode"),
-		 * sca.getCode(), response.getStatusCode()); } else if (za instanceof
-		 * ZestAssertHeaderRegex) { ZestAssertHeaderRegex zhr =
-		 * (ZestAssertHeaderRegex) za; if (zhr.isInverse()) { return
-		 * MessageFormat.format(
-		 * Constant.messages.getString("zest.fail.assert.headregex.exc"),
-		 * zhr.getRegex()); } else { return MessageFormat.format(
-		 * Constant.messages.getString("zest.fail.assert.headregex.inc"),
-		 * zhr.getRegex()); } } else if (za instanceof ZestAssertBodyRegex) {
-		 * ZestAssertBodyRegex zbr = (ZestAssertBodyRegex) za; if
-		 * (zbr.isInverse()) { return MessageFormat.format(
-		 * Constant.messages.getString("zest.fail.assert.bodyregex.exc"),
-		 * zbr.getRegex()); } else { return MessageFormat.format(
-		 * Constant.messages.getString("zest.fail.assert.bodyregex.inc"),
-		 * zbr.getRegex()); } }
-		 */
+			ZestRuntime runtime) {
+
+		if (za.getRootExpression() instanceof ZestExpressionLength) {
+			ZestExpressionLength sla = (ZestExpressionLength) za.getRootExpression();
+			int intDiff = 100;
+			String var = runtime.getVariable(sla.getVariableName());
+			int varLength = -1;
+			if (var != null) {
+				varLength = var.length();
+				if (sla.getLength() == 0) {
+					if (sla.getLength() == 0) {
+						intDiff = 0;
+					}
+				} else {
+					intDiff = (sla.getLength() - varLength) * 100 / sla.getLength();
+				}
+			}
+			String strDiff = Integer.toString(intDiff);
+			if (intDiff == 1) {
+				// Show to one decimal place
+				DecimalFormat df = new DecimalFormat("#.#");
+				strDiff = df.format(((double)(sla.getLength() - varLength) * 100) / sla.getLength());
+			} else if (intDiff == 0) {
+				// Show to two decimal place
+				DecimalFormat df = new DecimalFormat("#.##");
+				strDiff = df.format(((double)(sla.getLength() - varLength) * 100) / sla.getLength());
+			}			
+			return MessageFormat.format(
+					Constant.messages.getString("zest.fail.assert.length"), 
+					var, sla.getLength(), varLength, strDiff); 
+		} else if (za.getRootExpression() instanceof ZestExpressionStatusCode) {
+			ZestExpressionStatusCode sca = (ZestExpressionStatusCode) za.getRootExpression();
+			return MessageFormat.format(
+					Constant.messages.getString("zest.fail.assert.statuscode"), 
+					sca.getCode(), runtime.getLastResponse().getStatusCode());
+		} else if (za.getRootExpression() instanceof ZestExpressionRegex) {
+			ZestExpressionRegex zhr = (ZestExpressionRegex) za.getRootExpression();
+			if (zhr.isInverse()) {
+				return MessageFormat.format(
+						Constant.messages.getString("zest.fail.assert.headregex.exc"), zhr.getRegex());
+			} else {
+				return MessageFormat.format(
+						Constant.messages.getString("zest.fail.assert.headregex.inc"), zhr.getRegex());
+			}
+		}
+		
 		return toUiString(za, true);
 	}
 

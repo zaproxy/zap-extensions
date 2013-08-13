@@ -30,15 +30,15 @@ import java.util.regex.Pattern;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestExpression;
+import org.mozilla.zest.core.v1.ZestExpressionEquals;
+import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
 import org.mozilla.zest.core.v1.ZestExpressionURL;
 import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestStructuredExpression;
+import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -92,11 +92,11 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 
             if (node != null) {
                 if (ze instanceof ZestRequest) {
-                	reCreateSubMenu(node.getParent(), node, (ZestRequest) ze, "BODY", "");
+                	reCreateSubMenu(node.getParent(), node, (ZestRequest) ze, ZestVariables.RESPONSE_BODY, "");
                 	return true;
                 } else if (ze instanceof ZestContainer /*&& TODO
                 		! ZestTreeElement.isSubclass(node.getParent().getZestElement(), ZestTreeElement.Type.PASSIVE_SCRIPT)*/) {
-                	reCreateSubMenu(node, null, null, "BODY", "");
+                	reCreateSubMenu(node, null, null, ZestVariables.RESPONSE_BODY, "");
                 	return true;
                 	/* TODO
                 } else if (ZestTreeElement.Type.COMMON_TESTS.equals(node.getTreeType())) {
@@ -134,10 +134,11 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 
     protected void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestStatement stmt, String loc, String text) {
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionRegex(loc, text)));
+		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionEquals(loc, text)));
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionStatusCode()));
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionResponseTime()));
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionURL()));
-		createPopupAddActionMenu(parent, child, stmt, new ZestConditional());
+		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionLength()));
 	}
 
     private void createPopupAddActionMenu(final ScriptNode parent, ScriptNode child, 

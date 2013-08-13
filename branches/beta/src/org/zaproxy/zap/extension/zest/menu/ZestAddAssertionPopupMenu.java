@@ -32,6 +32,7 @@ import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
 import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -102,23 +103,18 @@ public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
 
     private void reCreateSubMenu(ScriptNode parent, ZestRequest req, String text) {
 		boolean incStatusCode = true;
-		boolean incLength = true;
 		for (ZestAssertion za : req.getAssertions()) {
 			if (za.getRootExpression() instanceof ZestExpressionStatusCode) {
 				incStatusCode = false;
-			} else if (za.getRootExpression() instanceof ZestExpressionLength) {
-				incLength = false;
 			}
 		}
 		// Only makes sence to have one of each of these
 		if (incStatusCode) {
 			createPopupAddAssertionMenu (parent,  new ZestAssertion(new ZestExpressionStatusCode()));
 		}
-		if (incLength) {
-			createPopupAddAssertionMenu (parent, new ZestAssertion(new ZestExpressionLength()));
-		}
 		// Can be any number of these
-		createPopupAddAssertionMenu (parent, new ZestAssertion(new ZestExpressionRegex("BODY", text)));
+		createPopupAddAssertionMenu (parent, new ZestAssertion(new ZestExpressionLength()));
+		createPopupAddAssertionMenu (parent, new ZestAssertion(new ZestExpressionRegex(ZestVariables.RESPONSE_BODY, text)));
 	}
 
     private void createPopupAddAssertionMenu(final ScriptNode req, final ZestAssertion za2) {
