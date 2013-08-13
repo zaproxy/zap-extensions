@@ -25,29 +25,36 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
 
+import net.htmlparser.jericho.Source;
+
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestAssertion;
+import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
+import org.mozilla.zest.core.v1.ZestFieldDefinition;
 import org.mozilla.zest.core.v1.ZestJSON;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestVariables;
 import org.mozilla.zest.core.v1.ZestScript.Type;
 import org.mozilla.zest.core.v1.ZestStatement;
+import org.mozilla.zest.core.v1.ZestVariables;
 import org.mozilla.zest.impl.ZestScriptEngineFactory;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -56,9 +63,10 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
+import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
@@ -88,8 +96,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 	private ZestEngineWrapper zestEngineWrapper = null;
 
 	private ExtensionScript extScript = null;
+	private ExtensionAntiCSRF extAcsrf = null;
 	private ZestScript lastRunScript = null;
 	private HttpMessage lastSelectedMessage = null;
+	private Map<String, String> acsrfTokenToVar = new HashMap<String, String>();
 	
 	private ZestFuzzerDelegate fuzzerMessenger=null;
 	
@@ -186,6 +196,13 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 			extScript = (ExtensionScript) Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.NAME);
 		}
 		return extScript;
+	}
+	
+	public ExtensionAntiCSRF getExtACSRF() {
+		if (extAcsrf == null) {
+			extAcsrf = (ExtensionAntiCSRF) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.NAME);
+		}
+		return extAcsrf;
 	}
 	
 	public ZestDialogManager getDialogManager() {
@@ -362,21 +379,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 		return Collections.unmodifiableList(list);
 	}
 
-	private ZestRequest msgToZestRequest(HttpMessage msg) throws MalformedURLException {
-		ZestRequest req = new ZestRequest();
-		req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
-		req.setMethod(msg.getRequestHeader().getMethod());
-		this.setHeaders(req, msg);
-		req.setData(msg.getRequestBody().toString());
-		req.setResponse(new ZestResponse(
-				req.getUrl(),
-				msg.getResponseHeader().toString(), 
-				msg.getResponseBody().toString(),
-				msg.getResponseHeader().getStatusCode(),
-				msg.getTimeElapsedMillis()));
-		return req;
-	}
-
 	public void addToParent(ScriptNode parent, SiteNode sn, String prefix) {
 		try {
 			this.addToParent(parent, sn.getHistoryReference().getHttpMessage(), prefix);
@@ -397,7 +399,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 			logger.debug("addToParent parent=" + parent.getNodeName() + " msg=" + msg.getRequestHeader().getURI());
 			
 			try {
-				ZestRequest req = this.msgToZestRequest(msg);
+				ZestRequest req = ZestZapUtils.toZestRequest(msg, false);
 				ZestScriptWrapper zsw = this.getZestTreeModel().getScriptWrapper(parent);
 				
 				ZestScript script = zsw.getZestScript();
@@ -433,10 +435,46 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 											msg.getResponseBody().length(), 
 											zsw.getLengthApprox())));
 				}
-			
+
+				if (getExtACSRF() != null) {
+					// Identify and CSRF tokens being used
+					List<AntiCsrfToken> acsrfTokens = getExtACSRF().getTokens(msg);
+					for (AntiCsrfToken acsrf : acsrfTokens) {
+						String var = acsrfTokenToVar.get(acsrf.getValue());
+						if (var != null) {
+							logger.debug("Replacing ACSRF value " + acsrf.getValue() + " with variable " + var);
+							this.replaceInRequest(req, acsrf.getValue(),
+									script.getParameters().getTokenStart() + var + script.getParameters().getTokenEnd());
+						}
+					}
+				}
+
 				// Update tree
 				ScriptNode reqNode = this.getZestTreeModel().addToNode(parent, req);
 
+				if (getExtACSRF() != null) {
+					// Create assignments for any ACSRF tokens
+					Source src = new Source(msg.getResponseHeader().toString() + msg.getResponseBody().toString());
+					List<AntiCsrfToken> acsrfTokens = getExtACSRF().getTokensFromResponse(msg, src);
+					for (AntiCsrfToken acsrf : acsrfTokens) {
+						ZestAssignFieldValue zafv = new ZestAssignFieldValue();
+						int id = 1;
+						Set<String> names = script.getVariableNames();
+						while (names.contains("csrf" + id)) {
+							id++;
+						}
+						zafv.setVariableName("csrf" + id);
+						ZestFieldDefinition fd = new ZestFieldDefinition();
+						fd.setFormIndex(acsrf.getFormIndex());
+						fd.setFieldName(acsrf.getName());
+						// Record mapping of value to variable name for later replacement
+						logger.debug("Recording ACSRF value " + acsrf.getValue() + " against variable " + zafv.getVariableName());
+						acsrfTokenToVar.put(acsrf.getValue(), zafv.getVariableName());
+						zafv.setFieldDefinition(fd );
+						this.addToParent(parent, zafv);
+					}
+				}
+				
 				this.updated(reqNode);
 				this.display(reqNode, false);
 				
@@ -444,19 +482,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 				logger.error(e.getMessage(), e);
 			}
 		}
-	}
-	
-	private void setHeaders(ZestRequest req, HttpMessage msg) {
-		// TODO filter some headers out??
-		String [] headers = msg.getRequestHeader().getHeadersAsString().split(HttpHeader.CRLF);
-		StringBuilder sb = new StringBuilder();
-		for (String header : headers) {
-			if (header.toLowerCase().startsWith(HttpHeader.CONTENT_TYPE.toLowerCase())) {
-				sb.append(header);
-				sb.append(HttpHeader.CRLF);
-			}
-		}
-		req.setHeaders(sb.toString());
 	}
 	
 	public void addToRequest(ScriptNode node, ZestRequest req, ZestAssertion assertion) {

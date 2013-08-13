@@ -150,6 +150,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	}
 
 	private void notifyActionFailed(ZestActionFailException e) {
+    	log.debug("notifyActionFailed " + e);
 		if (e.getAction() instanceof ZestActionFail) {
 			int risk = Alert.RISK_LOW;
 			ZestActionFail zaf = (ZestActionFail)e.getAction();
@@ -197,6 +198,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	}
 
 	private void notifyAssignFailed(ZestAssignFailException e) {
+    	log.debug("notifyAssignFailed " + e);
 		if (View.isInitialised()) {
 			if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
 				if (! ZestScript.Type.Passive.equals(wrapper.getZestScript().getType())) {
@@ -216,6 +218,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	public ZestResponse runStatement(ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
 			throws ZestAssertFailException, ZestActionFailException, 
 			ZestInvalidCommonTestException, IOException, ZestAssignFailException {
+    	log.debug("runStatement " + stmt.getElementType());
 		while (this.isPaused() && ! this.isStop) {
 			try {
 				Thread.sleep(200);
@@ -231,6 +234,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
 	@Override
 	public String handleAction(ZestScript script, ZestAction action, ZestResponse lastResponse) throws ZestActionFailException {
+    	log.debug("handleAction " + action.getElementType());
 		if (action instanceof ZestActionScan) {
 			this.invokeScan(script, (ZestActionScan)action);
 		} else {
@@ -245,6 +249,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
 	@Override
 	public String handleAssignment(ZestScript script, ZestAssignment assign, ZestResponse lastResponse) throws ZestAssignFailException {
+    	log.debug("handleAssignment " + assign.getElementType());
 		try {
 			return super.handleAssignment(script, assign, lastResponse);
 		} catch (ZestAssignFailException e) {
@@ -254,6 +259,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	}
 
 	public void handleResponse(ZestRequest request, ZestResponse response) throws ZestAssertFailException {
+    	log.debug("handleResponse " + request.getElementType());
 	    try {
 			HttpMessage msg = ZestZapUtils.toHttpMessage(request, response);
 			
@@ -283,6 +289,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	}
 	
 	private void invokeScan(ZestScript script, ZestActionScan scan) throws ZestActionFailException {
+    	log.debug("invokeScan " + scan.getElementType());
 		this.alerts = new ArrayList<Alert>();
 		
 		ScannerParam scannerParam = new ScannerParam();
