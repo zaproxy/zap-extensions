@@ -67,6 +67,7 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestConditionDialog conditionDialog = null;
 	private ZestLoopDialog loopDialog = null;
 	private ZestFuzzerCategoryDialog fuzzCatDialog = null;
+	private ZestRedactDialog redactDialog = null;
 
 	public ZestDialogManager(ExtensionZest extension, ScriptUI scriptUI) {
 		super();
@@ -279,8 +280,7 @@ public class ZestDialogManager extends AbstractPanel {
 			List<ScriptNode> children, ZestStatement stmt, ZestLoop<?> loop,
 			boolean add, boolean surround) {
 		if (loopDialog == null) {
-			loopDialog = new ZestLoopDialog(extension, View.getSingleton()
-					.getMainFrame(), new Dimension(700, 200));
+			loopDialog = new ZestLoopDialog(extension, View.getSingleton().getMainFrame(), new Dimension(700, 200));
 		} else if (loopDialog.isVisible()) {
 			// Already being displayed, dont overwrite anything
 			return;
@@ -291,6 +291,15 @@ public class ZestDialogManager extends AbstractPanel {
 
 	public void addDeferedMessage(HttpMessage msg) {
 		scriptDialog.addDeferedMessage(msg);
+	}
+	
+	public ZestRedactDialog showZestRedactDialog(ScriptNode node, String replace) {
+		if (redactDialog == null) {
+			redactDialog = new ZestRedactDialog(extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+		}
+		redactDialog.init(node, replace);
+		redactDialog.setVisible(true);
+		return redactDialog;
 	}
 
 }

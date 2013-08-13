@@ -19,11 +19,8 @@
  */
 package org.zaproxy.zap.extension.zest.menu;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 
 public class ZestMenuManager {
@@ -38,7 +35,6 @@ public class ZestMenuManager {
 	private ZestAddLoopPopupMenu popupAddLoopMenu = null;
 	
 	private ZestSurroundWithPopupMenu popupSurroundWithMenu = null;
-	private ZestAddConditionPopupMenu popupAddConditionMenuLevel2 = null;
 	private ZestAddLoopPopupMenu popupAddLoopMenuLevel2 = null;
 	
 	private ZestPopupZestMove popupZestMoveUp = null;
@@ -49,6 +45,8 @@ public class ZestMenuManager {
 
 	private ZestPopupZestDelete popupZestDelete = null;
 
+	private ZestRedactPopupMenu popupRedact = null;
+	
 	private ExtensionZest extension = null;
 	
 	public ZestMenuManager(ExtensionZest extension, ExtensionHook extensionHook) {
@@ -72,6 +70,8 @@ public class ZestMenuManager {
         extensionHook.getHookMenu().addPopupMenuItem(getPopupZestMoveUp ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupZestMoveDown ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupZestDelete ());
+
+        extensionHook.getHookMenu().addPopupMenuItem(getPopupRedact ());
 
 	}
 
@@ -101,12 +101,6 @@ public class ZestMenuManager {
 			popupAddConditionMenu= new ZestAddConditionPopupMenu(this.extension);
 		}
 		return popupAddConditionMenu;
-	}
-	private ZestAddConditionPopupMenu getPopupAddConditionMenuLevel2() {
-		if (popupAddConditionMenuLevel2 == null) {
-			popupAddConditionMenuLevel2= new ZestAddConditionPopupMenu(this.extension);
-		}
-		return popupAddConditionMenuLevel2;
 	}
 	
 	protected ZestAddLoopPopupMenu getPopupAddLoopMenu() {
@@ -191,5 +185,13 @@ public class ZestMenuManager {
 		}
 		return popupNodePaste;
 	}
+
+	private ZestRedactPopupMenu getPopupRedact() {
+		if (popupRedact == null) {
+			popupRedact = new ZestRedactPopupMenu(this.extension, Constant.messages.getString("zest.redact.popup"));
+		}
+		return popupRedact;
+	}
+	
 
 }
