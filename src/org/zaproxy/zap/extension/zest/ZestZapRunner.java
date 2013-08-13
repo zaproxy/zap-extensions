@@ -266,11 +266,11 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 				zrw.setPassed(true);
 			} else {
 				for (ZestAssertion za : request.getAssertions()) {
-					if (za.isValid(response)) {
+					if (za.isValid(this)) {
 						zrw.setPassed(true);
 					} else {
 						zrw.setPassed(false);
-						zrw.setMessage(ZestZapUtils.toUiFailureString(za, response));
+						zrw.setMessage(ZestZapUtils.toUiFailureString(za, this));
 						break;
 					}
 				}

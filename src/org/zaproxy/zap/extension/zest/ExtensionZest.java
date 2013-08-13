@@ -45,6 +45,7 @@ import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestScript;
+import org.mozilla.zest.core.v1.ZestVariables;
 import org.mozilla.zest.core.v1.ZestScript.Type;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.mozilla.zest.impl.ZestScriptEngineFactory;
@@ -434,7 +435,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 				if (zsw.isIncLengthAssertion()) {
 					req.addAssertion(
 							new ZestAssertion(
-									new ZestExpressionLength(msg.getResponseBody().length(), zsw.getLengthApprox())));
+									new ZestExpressionLength(
+											ZestVariables.RESPONSE_BODY, 
+											msg.getResponseBody().length(), 
+											zsw.getLengthApprox())));
 				}
 			
 				// Update tree

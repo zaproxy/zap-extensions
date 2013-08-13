@@ -53,8 +53,7 @@ import org.zaproxy.zap.extension.zest.ZestZapUtils;
 public class ZestDialogManager extends AbstractPanel {
 
 	private static final long serialVersionUID = 1L;
-	private static final Logger logger = Logger
-			.getLogger(ZestDialogManager.class);
+	private static final Logger logger = Logger.getLogger(ZestDialogManager.class);
 
 	private ExtensionZest extension = null;
 	private ScriptUI scriptUI = null;
@@ -218,7 +217,8 @@ public class ZestDialogManager extends AbstractPanel {
 			// Already being displayed, dont overwrite anything
 			return;
 		}
-		assertionsDialog.init(parent, child, assertion, add);
+		ZestScript script = extension.getZestTreeModel().getScriptWrapper(parent).getZestScript();
+		assertionsDialog.init(script, parent, child, assertion, add);
 		assertionsDialog.setVisible(true);
 	}
 
@@ -258,8 +258,8 @@ public class ZestDialogManager extends AbstractPanel {
 			// Already being displayed, dont overwrite anything
 			return;
 		}
-		conditionDialog.init(parent, children, stmt, condition, add,
-				surround);
+		ZestScript script = extension.getZestTreeModel().getScriptWrapper(parent).getZestScript();
+		conditionDialog.init(script, parent, children, stmt, condition, add, surround);
 		conditionDialog.setVisible(true);
 	}
 
