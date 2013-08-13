@@ -32,6 +32,7 @@ import org.mozilla.zest.core.v1.ZestActionScan;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -80,12 +81,12 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
 		if (extension.isScriptTree(invoker)) {
     		ScriptNode node = extension.getSelectedZestNode();
     		ZestElement ze = extension.getSelectedZestElement();
+        	ZestScript script = extension.getZestTreeModel().getScriptWrapper(node).getZestScript();
     		if (ze != null) {
 	    		if (ze instanceof ZestRequest) {
 	            	reCreateSubMenu(node.getParent(), node, (ZestRequest) ZestZapUtils.getElement(node), null);
 	            	return true;
-	    		} else if (ze instanceof ZestContainer /*&&
-            		! ZestTreeElement.isSubclass(node.getParent().getZestElement(), ZestTreeElement.Type.PASSIVE_SCRIPT)*/) {
+	    		} else if (ze instanceof ZestContainer && script.isPassive()) {
 	            	reCreateSubMenu(node, null, null, null);
 	    		}
     		}
@@ -111,11 +112,13 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
     }
 
     private void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestRequest req, String text) {
-    	// TODO
-    	//if (! ZestTreeElement.Type.COMMON_TESTS.equals(parent.getTreeType()) &&
-    	//		! parent.isChildOf(ZestTreeElement.Type.PASSIVE_SCRIPT)) {
+    	String type = extension.getZestTreeModel().getScriptWrapper(parent).getZestScript().getType();
+    	if (ZestScript.Type.StandAlone.name().equals(type) ||
+    			ZestScript.Type.Targeted.name().equals(type)) {
+    		// Doenst really make sense for passive or active scripts 
     		createPopupAddActionMenu (parent, child, req, new ZestActionScan(text));
-    	//}
+    	}
+    	
 		createPopupAddActionMenu (parent, child, req, new ZestActionFail(text));
 	}
 

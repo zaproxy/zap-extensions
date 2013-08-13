@@ -89,6 +89,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
 	private ExtensionScript extScript = null;
 	private ZestScript lastRunScript = null;
+	private HttpMessage lastSelectedMessage = null;
 	
 	private ZestFuzzerDelegate fuzzerMessenger=null;
 	
@@ -206,23 +207,16 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 		return zestTreeModel;
 	}
 	
-	public void redact (ZestScript script, ZestRequest request, ZestResponse response, String replace,
-			String replaceWith, boolean replaceInCurrent, boolean replaceInAdded) {
-		if (replaceInCurrent) {
-			ZestStatement stmt = script.getNext();
-			while (stmt != null) {
-				if (stmt instanceof ZestRequest) {
-					this.replaceInResponse((ZestRequest)stmt, replace, replaceWith);
-					stmt = stmt.getNext();
-				}
-			}
-		} else {
+	public void redact (ScriptNode node, String replace, String replaceWith, boolean recurse) {
+		if (ZestZapUtils.getElement(node) instanceof ZestRequest) {
+			ZestRequest request = (ZestRequest) ZestZapUtils.getElement(node);
 			this.replaceInResponse(request, replace, replaceWith);
-			// TODO
-			//this.update(script, request);
+			this.updated(node);
 		}
-		if (replaceInAdded) {
-			// TODO support redact in added reqs
+		if (recurse) {
+			for (int i=0; i < node.getChildCount(); i++) {
+				this.redact((ScriptNode)node.getChildAt(i), replace, replaceWith, true);
+			}
 		}
 		// Good chance the current response has been changed
 		this.refreshMessage();
@@ -858,27 +852,27 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     		return;
     	}
 		try {
-			HttpMessage msg = ZestZapUtils.toHttpMessage(ze, ze.getResponse());
-			if (msg == null) {
+			lastSelectedMessage = ZestZapUtils.toHttpMessage(ze, ze.getResponse());
+			if (lastSelectedMessage == null) {
 				return;
 			}
 			
-	    	if (msg.getRequestHeader() != null) {
-	    		logger.debug("displayMessage " + msg.getRequestHeader().getURI());
+	    	if (lastSelectedMessage.getRequestHeader() != null) {
+	    		logger.debug("displayMessage " + lastSelectedMessage.getRequestHeader().getURI());
 	    	} else {
 	    		logger.debug("displayMessage null header");
 	    	}
 	    	
-	        if (msg.getRequestHeader() == null) {
+	        if (lastSelectedMessage.getRequestHeader() == null) {
 	            View.getSingleton().getRequestPanel().clearView(true);
 	        } else {
-	        	View.getSingleton().getRequestPanel().setMessage(msg);
+	        	View.getSingleton().getRequestPanel().setMessage(lastSelectedMessage);
 	        }
 	        
-	        if (msg.getResponseHeader() == null) {
+	        if (lastSelectedMessage.getResponseHeader() == null) {
 	        	View.getSingleton().getResponsePanel().clearView(false);
 	        } else {
-	        	View.getSingleton().getResponsePanel().setMessage(msg, true);
+	        	View.getSingleton().getResponsePanel().setMessage(lastSelectedMessage, true);
 	        }
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -891,6 +885,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     	}
         View.getSingleton().getRequestPanel().clearView(true);
     	View.getSingleton().getResponsePanel().clearView(false);
+    	lastSelectedMessage = null;
     }
 
     public List<ScriptNode> getSelectedZestNodes() {
@@ -923,8 +918,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 	}
 
 	public boolean isSelectedMessage(Message msg) {
-		Message selMsg = View.getSingleton().getRequestPanel().getMessage();
-		return selMsg != null && selMsg.equals(msg);
+		return lastSelectedMessage != null && lastSelectedMessage.equals(msg); 
 	}
 	
 	public void addMouseListener(MouseAdapter adapter) {

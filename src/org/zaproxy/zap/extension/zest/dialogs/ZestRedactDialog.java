@@ -22,10 +22,8 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import java.awt.Dimension;
 import java.awt.Frame;
 
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -34,41 +32,47 @@ public class ZestRedactDialog extends StandardFieldsDialog {
 	private static final String FIELD_REPLACE_STRING = "zest.dialog.redact.label.repstring"; 
 	private static final String FIELD_REPLACE_WITH_CHRS = "zest.dialog.redact.label.repchrs"; 
 	private static final String FIELD_IN_CURRENT = "zest.dialog.redact.label.current"; 
-	private static final String FIELD_IN_ADDED = "zest.dialog.redact.label.added"; 
+	//private static final String FIELD_IN_ADDED = "zest.dialog.redact.label.added"; 
 
 	private static final long serialVersionUID = 1L;
 
 	private ExtensionZest extension = null;
-	private ZestScript script= null;
-	private ZestRequest request = null;
-	private ZestResponse response = null;
+	
+	private ScriptNode node = null;
+	
 	private String replaceWith = "XXX";
 	private boolean replaceInCurrent = true;
-	private boolean replaceInAdded = true;
+	//private boolean replaceInAdded = true;
 
 	public ZestRedactDialog(ExtensionZest ext, Frame owner, Dimension dim) {
 		super(owner, "zest.dialog.redact.title", dim);
 		this.extension = ext;
 	}
-
-	public void init (ZestScript script, ZestRequest request, ZestResponse response, String replace) {
-		this.script = script;
-		this.request = request;
-		this.response = response;
+	public void init (ScriptNode node, String replace) {
+		this.node = node;
 
 		this.removeAllFields();
 
 		this.addTextField(FIELD_REPLACE_STRING, replace);
 		this.addTextField(FIELD_REPLACE_WITH_CHRS, this.replaceWith);
 		this.addCheckBoxField(FIELD_IN_CURRENT, this.replaceInCurrent);
-		this.addCheckBoxField(FIELD_IN_ADDED, this.replaceInAdded);
+		// Not yet supported
+		//this.addCheckBoxField(FIELD_IN_ADDED, this.replaceInAdded);
 		this.addPadding();
 	}
 	
 
 	public void save() {
-		this.extension.redact(script, request, response, this.getStringValue(FIELD_REPLACE_STRING),
-				this.getStringValue(FIELD_REPLACE_WITH_CHRS), this.getBoolValue(FIELD_IN_CURRENT), this.getBoolValue(FIELD_IN_ADDED));
+		
+		if (this.getBoolValue(FIELD_IN_CURRENT)) {
+			// Recurse from the script node
+			this.extension.redact(extension.getZestTreeModel().getScriptWrapperNode(node), 
+					this.getStringValue(FIELD_REPLACE_STRING), this.getStringValue(FIELD_REPLACE_WITH_CHRS), true);
+		} else {
+			this.extension.redact(node, 
+					this.getStringValue(FIELD_REPLACE_STRING), this.getStringValue(FIELD_REPLACE_WITH_CHRS), false);
+			
+		}
 	}
 
 	@Override
