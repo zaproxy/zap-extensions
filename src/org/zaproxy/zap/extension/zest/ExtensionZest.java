@@ -88,7 +88,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 	private ZestEngineWrapper zestEngineWrapper = null;
 
 	private ExtensionScript extScript = null;
-	private HttpMessage lastMessageDisplayed = null;
 	private ZestScript lastRunScript = null;
 	
 	private ZestFuzzerDelegate fuzzerMessenger=null;
@@ -854,32 +853,32 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         }
     }
 
-    private void displayMessage(ZestRequest ze) {
+    public void displayMessage(ZestRequest ze) {
     	if (! View.isInitialised()) {
     		return;
     	}
 		try {
-			lastMessageDisplayed = ZestZapUtils.toHttpMessage(ze, ze.getResponse());
-			if (lastMessageDisplayed == null) {
+			HttpMessage msg = ZestZapUtils.toHttpMessage(ze, ze.getResponse());
+			if (msg == null) {
 				return;
 			}
 			
-	    	if (lastMessageDisplayed.getRequestHeader() != null) {
-	    		logger.debug("displayMessage " + lastMessageDisplayed.getRequestHeader().getURI());
+	    	if (msg.getRequestHeader() != null) {
+	    		logger.debug("displayMessage " + msg.getRequestHeader().getURI());
 	    	} else {
 	    		logger.debug("displayMessage null header");
 	    	}
 	    	
-	        if (lastMessageDisplayed.getRequestHeader() != null && lastMessageDisplayed.getRequestHeader().isEmpty()) {
+	        if (msg.getRequestHeader() == null) {
 	            View.getSingleton().getRequestPanel().clearView(true);
 	        } else {
-	        	View.getSingleton().getRequestPanel().setMessage(lastMessageDisplayed);
+	        	View.getSingleton().getRequestPanel().setMessage(msg);
 	        }
 	        
-	        if (lastMessageDisplayed.getResponseHeader() != null && lastMessageDisplayed.getResponseHeader().isEmpty()) {
+	        if (msg.getResponseHeader() == null) {
 	        	View.getSingleton().getResponsePanel().clearView(false);
 	        } else {
-	        	View.getSingleton().getResponsePanel().setMessage(lastMessageDisplayed, true);
+	        	View.getSingleton().getResponsePanel().setMessage(msg, true);
 	        }
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -892,17 +891,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     	}
         View.getSingleton().getRequestPanel().clearView(true);
     	View.getSingleton().getResponsePanel().clearView(false);
-    	this.lastMessageDisplayed = null;
     }
-//    public boolean isSelectedZestNode(ScriptNode node){
-//    	for(ScriptNode tmpNode:getSelectedZestNodes()){
-//    		if(tmpNode.equals(node)){
-//    			return true;
-//    		}
-//    	}
-//    	return false;
-//    }
-	public List<ScriptNode> getSelectedZestNodes() {
+
+    public List<ScriptNode> getSelectedZestNodes() {
 		List<ScriptNode> list = new ArrayList<ScriptNode>();
 		if (this.getExtScript().getScriptUI() == null) {
 			return list;
