@@ -31,6 +31,7 @@ import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestConditional;
+import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestScript;
@@ -141,6 +142,17 @@ public class ZestDialogManager extends AbstractPanel {
 										(ZestLoop<?>) obj, false, false);
 							}
 						}
+					}
+				} else {
+					// Single click
+					ScriptNode sn = scriptUI.getSelectedNode();
+					ZestElement ze = ZestZapUtils.getElement(sn);
+					if (ze == null) {
+						return;
+					}
+					if (ze instanceof ZestRequest) {
+						// Show the original request and response
+						extension.displayMessage((ZestRequest)ze);
 					}
 				}
 
