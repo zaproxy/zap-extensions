@@ -228,6 +228,12 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 				return Constant.messages.getString("zest.dialog.script.error.prefix");
 			}
 		}
+		if (!this.getStringValue(FIELD_TITLE).equals(script.getTitle()) && 
+				extension.getExtScript().getScript(this.getStringValue(FIELD_TITLE)) != null) {
+			// Trying to change the name to one used by another script
+			return Constant.messages.getString("zest.dialog.script.error.duplicate");
+		}
+
 
 		return null;
 	}
