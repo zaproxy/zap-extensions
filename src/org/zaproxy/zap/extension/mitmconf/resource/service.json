@@ -173,5 +173,107 @@
       "expression":"$.status",
       "callbackData":{"result":{"type":"expression","expression":"$.response.status","extract":true}}
     }
-  }]
+  },
+  {
+    "name":"http-session-new",
+    "description":"start a new HTTP session",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"site",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/core/view/sites/",
+          "expression":"$.sites[*]"
+          }
+        },
+      "description":"the site"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "the name of the new http session to create"
+    }
+    ],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/httpSessions/action/createEmptySession/?site=${$.args.site}&session=${$.args.name}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  },
+  {
+    "name":"http-session-rename",
+    "description":"rename an HTTP session",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"site",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/core/view/sites/",
+          "expression":"$.sites[*]"
+          }
+        },
+      "description":"the site"
+    },
+    {
+      "name":"session",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/httpSessions/view/sessions/?site=${$.args.site}&session=",
+          "expression":"$.sessions.*.session.0"
+          }
+        },
+      "description":"the session to rename"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "the new name for http session"
+    }
+    ],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/httpSessions/action/renameSession/?site=${$.args.site}&oldSessionName=${$.args.session}&newSessionName=${$.args.name}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  },
+  {
+    "name":"http-session-switch",
+    "description":"switch to another HTTP session",
+    "returnType":"string",
+    "params":[
+    {
+      "name":"site",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/core/view/sites/",
+          "expression":"$.sites[*]"
+          }
+        },
+      "description":"the site"
+    },
+    {
+      "name":"session",
+      "type": {
+        "name":"selection",
+        "dataAction":{
+          "url":"{{ROOT}}/JSON/httpSessions/view/sessions/?site=${$.args.site}&session=",
+          "expression":"$.sessions.*.session.0"
+          }
+        },
+      "description":"the session to use"
+    }
+    ],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/httpSessions/action/setActiveSession/?site=${$.args.site}&session=${$.args.session}",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  }
+  ]
 }
