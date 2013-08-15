@@ -63,10 +63,12 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 	private ZestConditional condition = null;
 	private boolean add = false;
 	private boolean surround = false;
+	private Frame owner = null;
 
 	public ZestConditionDialog(ExtensionZest ext, Frame owner, Dimension dim) {
 		super(owner, "zest.dialog.condition.add.title", dim);
 		this.extension = ext;
+		this.owner = owner;
 	}
 
 	public void init(ZestScript script, ScriptNode parent, List<ScriptNode> children,
@@ -181,28 +183,31 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 					.getStringValue(FIELD_INC_REGEXS)));
 			zc.setExcludeRegexes(this.strToList(this
 					.getStringValue(FIELD_EXC_REGEXS)));
-		}
-
-		if (add) {
-			if (request == null) {
-				ScriptNode condNode = extension.addToParent(parent, condition);
-				if (surround) {
-					extension.setCnpNodes(children);
-					extension.setCut(true);
-					extension.pasteToNode(condNode);
+//		}if (this.owner instanceof ZestComplexConditionDialog) {
+//			return; //adds to the tree only if the parent is NOT a ZestComplexConditionalDialog
+		}// else {
+			if (add) {
+				if (request == null) {
+					ScriptNode condNode = extension.addToParent(parent,
+							condition);
+					if (surround) {
+						extension.setCnpNodes(children);
+						extension.setCut(true);
+						extension.pasteToNode(condNode);
+					}
+				} else {
+					for (ScriptNode child : children) {
+						extension.addAfterRequest(parent, child, request,
+								condition);
+					}
 				}
 			} else {
 				for (ScriptNode child : children) {
-					extension
-							.addAfterRequest(parent, child, request, condition);
+					extension.updated(child);
+					extension.display(child, false);
 				}
 			}
-		} else {
-			for (ScriptNode child : children) {
-				extension.updated(child);
-				extension.display(child, false);
-			}
-		}
+//		}
 	}
 
 	@Override
@@ -235,8 +240,8 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 		}
 		return null;
 	}
-	
-	protected ZestConditional getCondition(){
+
+	protected ZestConditional getCondition() {
 		return this.condition;
 	}
 }

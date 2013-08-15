@@ -30,8 +30,9 @@ import java.util.regex.Pattern;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
+//import org.mozilla.zest.core.v1.ZestExpressionOr;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
-import org.mozilla.zest.core.v1.ZestExpressionLength;
+//import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
@@ -138,7 +139,8 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionStatusCode()));
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionResponseTime()));
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionURL()));
-		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionLength()));
+//		createPopupAddActionMenu(parent, child, stmt, new ZestConditional(new ZestExpressionOr()));
+//		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionLength()));
 	}
 
     private void createPopupAddActionMenu(final ScriptNode parent, ScriptNode child, 

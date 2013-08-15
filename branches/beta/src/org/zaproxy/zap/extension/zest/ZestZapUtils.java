@@ -50,6 +50,7 @@ import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestRuntime;
 import org.mozilla.zest.core.v1.ZestScript;
+import org.mozilla.zest.core.v1.ZestStructuredExpression;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -112,8 +113,11 @@ public class ZestZapUtils {
 						toUiString((ZestElement) zac.getRootExpression(),
 								incParams, isShadow));
 			}
-
-		} else if (za instanceof ZestExpressionStatusCode) {
+		} else if (za instanceof ZestStructuredExpression) {
+			return MessageFormat.format(
+					Constant.messages.getString("zest.element.expression.structured"),
+					incParams);
+		}  else if (za instanceof ZestExpressionStatusCode) {
 			ZestExpressionStatusCode sca = (ZestExpressionStatusCode) za;
 			if (incParams) {
 				return MessageFormat.format(Constant.messages
@@ -209,57 +213,67 @@ public class ZestZapUtils {
 
 		} else if (za instanceof ZestLoopString) {
 			ZestLoopString zals = (ZestLoopString) za;
-			return MessageFormat.format(Constant.messages.getString("zest.element.loop.string.title"),
+			return MessageFormat.format(Constant.messages
+					.getString("zest.element.loop.string.title"),
 					(Object[]) zals.getValues());
 		} else if (za instanceof ZestLoopFile) {
 			ZestLoopFile zalf = (ZestLoopFile) za;
-			return MessageFormat.format(Constant.messages.getString("zest.element.loop.file.title"), zalf
-					.getFile().getAbsolutePath());
+			return MessageFormat
+					.format(Constant.messages
+							.getString("zest.element.loop.file.title"), zalf
+							.getFile().getAbsolutePath());
 		} else if (za instanceof ZestLoopInteger) {
 			ZestLoopInteger zali = (ZestLoopInteger) za;
-			return MessageFormat.format(Constant.messages.getString("zest.element.loop.integer.title"),
-					" FROM ", zali.getStart(), " TO ", zali.getEnd());
-		 } else if (za instanceof ZestAssignFieldValue) {
-             ZestAssignFieldValue zsa = (ZestAssignFieldValue) za;
-             if (incParams) {
-                     return MessageFormat.format(
-                                     Constant.messages.getString("zest.element.assign.field"), 
-                                     zsa.getVariableName(), zsa.getFieldDefinition().getFormIndex(), zsa.getFieldDefinition().getFieldName());
-             } else {
-                     return Constant.messages.getString("zest.element.assign.field.title");
-             }
-             
-     } else if (za instanceof ZestAssignRegexDelimiters) {
-             ZestAssignRegexDelimiters zsa = (ZestAssignRegexDelimiters) za;
-             if (incParams) {
-                     return MessageFormat.format(
-                                     Constant.messages.getString("zest.element.assign.regex"), 
-                                     zsa.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
-             } else {
-                     return Constant.messages.getString("zest.element.assign.regex.title");
-             }
-             
-     } else if (za instanceof ZestAssignStringDelimiters) {
-             ZestAssignStringDelimiters zsa = (ZestAssignStringDelimiters) za;
-             if (incParams) {
-                     return MessageFormat.format(
-                                     Constant.messages.getString("zest.element.assign.string"), 
-                                     zsa.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
-             } else {
-                     return Constant.messages.getString("zest.element.assign.string.title");
-             }
-             
-     } else if (za instanceof ZestAssignRandomInteger) {
-             ZestAssignRandomInteger zsa = (ZestAssignRandomInteger) za;
-             if (incParams) {
-                     return MessageFormat.format(
-                                     Constant.messages.getString("zest.element.assign.rndint"), 
-                                     zsa.getVariableName(), zsa.getMinInt(), zsa.getMaxInt());
-             } else {
-                     return Constant.messages.getString("zest.element.assign.rndint.title");
-             }
+			return MessageFormat.format(Constant.messages
+					.getString("zest.element.loop.integer.title"), " FROM ",
+					zali.getStart(), " TO ", zali.getEnd());
+		} else if (za instanceof ZestAssignFieldValue) {
+			ZestAssignFieldValue zsa = (ZestAssignFieldValue) za;
+			if (incParams) {
+				return MessageFormat.format(Constant.messages
+						.getString("zest.element.assign.field"), zsa
+						.getVariableName(), zsa.getFieldDefinition()
+						.getFormIndex(), zsa.getFieldDefinition()
+						.getFieldName());
+			} else {
+				return Constant.messages
+						.getString("zest.element.assign.field.title");
+			}
 
-     } else if (za instanceof ZestActionScan) {
+		} else if (za instanceof ZestAssignRegexDelimiters) {
+			ZestAssignRegexDelimiters zsa = (ZestAssignRegexDelimiters) za;
+			if (incParams) {
+				return MessageFormat.format(Constant.messages
+						.getString("zest.element.assign.regex"), zsa
+						.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
+			} else {
+				return Constant.messages
+						.getString("zest.element.assign.regex.title");
+			}
+
+		} else if (za instanceof ZestAssignStringDelimiters) {
+			ZestAssignStringDelimiters zsa = (ZestAssignStringDelimiters) za;
+			if (incParams) {
+				return MessageFormat.format(Constant.messages
+						.getString("zest.element.assign.string"), zsa
+						.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
+			} else {
+				return Constant.messages
+						.getString("zest.element.assign.string.title");
+			}
+
+		} else if (za instanceof ZestAssignRandomInteger) {
+			ZestAssignRandomInteger zsa = (ZestAssignRandomInteger) za;
+			if (incParams) {
+				return MessageFormat.format(Constant.messages
+						.getString("zest.element.assign.rndint"), zsa
+						.getVariableName(), zsa.getMinInt(), zsa.getMaxInt());
+			} else {
+				return Constant.messages
+						.getString("zest.element.assign.rndint.title");
+			}
+
+		} else if (za instanceof ZestActionScan) {
 			ZestActionScan zsa = (ZestActionScan) za;
 			if (incParams) {
 				return MessageFormat
