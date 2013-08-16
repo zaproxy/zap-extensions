@@ -88,7 +88,7 @@ function install (aEvent)
   };
   // event listener for button press
   var click = function(event) {
-    var evt = new CustomEvent('ConfigureSecProxy', manifest);
+    var evt = new CustomEvent('ConfigureSecTool', manifest);
     document.dispatchEvent(evt);
     setTimeout(function() {
       if (!detected) {
@@ -123,9 +123,9 @@ function install (aEvent)
   var btn = document.getElementById('btn');
   btn.addEventListener('click',click,false);
   // Hook configuration event listeners into the document
-  document.addEventListener('ConfigureSecProxyStarted',started,false);
-  document.addEventListener('ConfigureSecProxyFailed',failed,false);
-  document.addEventListener('ConfigureSecProxyActivated',activated,false);
-  document.addEventListener('ConfigureSecProxySucceeded',succeeded,false);
+  document.addEventListener('ConfigureSecToolStarted',started,false);
+  document.addEventListener('ConfigureSecToolFailed',failed,false);
+  document.addEventListener('ConfigureSecToolActivated',activated,false);
+  document.addEventListener('ConfigureSecToolSucceeded',succeeded,false);
 </script>
 </html>
