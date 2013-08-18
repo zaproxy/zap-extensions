@@ -235,9 +235,7 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 			}
 		} else if (this.loop instanceof ZestLoopInteger) {
 			if (this.getIntValue(START_INTEGER) > this.getIntValue(END_INTEGER)) {
-				((ZestLoopInteger) this.loop).getSet().setStart(this.getIntValue(END_INTEGER));
-				((ZestLoopInteger) this.loop).getSet().setEnd(this.getIntValue(START_INTEGER));
-				// it simply inverts start with end generating no error.
+				return Constant.messages.getString("zest.dialog.loop.integer.error.constraints");
 			}
 		}
 		return null;

@@ -49,6 +49,9 @@ import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
 import org.mozilla.zest.core.v1.ZestFieldDefinition;
 import org.mozilla.zest.core.v1.ZestJSON;
 import org.mozilla.zest.core.v1.ZestLoop;
+import org.mozilla.zest.core.v1.ZestLoopFile;
+import org.mozilla.zest.core.v1.ZestLoopInteger;
+import org.mozilla.zest.core.v1.ZestLoopString;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestScript;
@@ -443,7 +446,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 						((ZestConditional) ZestZapUtils.getElement(parent))
 								.addIf(req);
 					}
-				} else if (parentZe instanceof ZestLoop) {
+				} else if (parentZe instanceof ZestLoop<?>) {
 					((ZestLoop<?>) ZestZapUtils.getElement(parent))
 							.addStatement(req);
 				} else {
@@ -572,7 +575,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			}
 			node = this.getZestTreeModel().addToNode(parent, newChild);
 
-		} else if (ZestZapUtils.getElement(parent) instanceof ZestLoop) {
+		} else if (ZestZapUtils.getElement(parent) instanceof ZestLoop<?>) {
 			ZestLoop<?> zl = (ZestLoop<?>) ZestZapUtils.getElement(parent);
 			zl.addStatement(newChild);
 			node = this.getZestTreeModel().addToNode(parent, newChild);
@@ -605,6 +608,15 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			} else {
 				zc.addIf(zc.getIndex(existingChild) + 1, newChild);
 			}
+			ScriptNode child = this.getZestTreeModel().addAfterNode(parent,
+					newChild);
+			this.updated(child);
+			this.display(child, false);
+		} else if (ZestZapUtils.getElement(parent) instanceof ZestLoopFile
+				|| ZestZapUtils.getElement(parent) instanceof ZestLoopString
+				|| ZestZapUtils.getElement(parent) instanceof ZestLoopInteger) {
+			ZestLoop<?> zl=(ZestLoop<?>) ZestZapUtils.getElement(parent);
+			zl.addStatement(newChild);
 			ScriptNode child = this.getZestTreeModel().addAfterNode(parent,
 					newChild);
 			this.updated(child);
