@@ -103,7 +103,14 @@ public class ZestTreeModel {
 				this.addToNode(elseNode, stmt);
 			}
 
-		} else {
+		} else if(za instanceof ZestLoop<?>){
+			ZestLoop<?> zl=(ZestLoop<?>) za;
+			parent.add(zestNode);
+			for(ZestStatement stmt: zl.getStatements()){
+				this.addToNode(zestNode, stmt);
+			}
+			
+		}else {
 			parent.add(zestNode);
 		}
 		model.nodeStructureChanged(parent);

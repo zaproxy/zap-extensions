@@ -36,7 +36,6 @@ import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
-import org.mozilla.zest.core.v1.ZestStructuredExpression;
 import org.mozilla.zest.impl.ZestScriptEngineFactory;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
