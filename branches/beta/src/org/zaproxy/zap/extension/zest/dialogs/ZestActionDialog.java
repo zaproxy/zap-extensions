@@ -32,9 +32,10 @@ import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
-public class ZestActionDialog extends StandardFieldsDialog {
+public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog {
 
 	private static final String FIELD_MESSAGE = "zest.dialog.action.label.message"; 
 	private static final String FIELD_PARAM = "zest.dialog.action.label.targetparam";
@@ -155,6 +156,12 @@ public class ZestActionDialog extends StandardFieldsDialog {
 	@Override
 	public String validateFields() {
 		// Nothing to do
+		return null;
+	}
+
+	@Override
+	public ZestScriptWrapper getScript() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 	

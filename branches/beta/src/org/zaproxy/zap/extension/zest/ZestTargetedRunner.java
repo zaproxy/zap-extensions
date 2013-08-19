@@ -25,18 +25,21 @@ import org.zaproxy.zap.extension.script.TargetedScript;
 
 public class ZestTargetedRunner extends ZestZapRunner implements TargetedScript {
 
+	private ExtensionZest extension = null;
 	private ZestScriptWrapper script = null;
 	
     private static Logger logger = Logger.getLogger(ZestTargetedRunner.class);
 
 	public ZestTargetedRunner(ExtensionZest extension, ZestScriptWrapper script) {
 		super(extension, script);
+		this.extension = extension;
 		this.script = script;
 	}
 
 	@Override
 	public void invokeWith(HttpMessage msg) {
 		try {
+			this.extension.clearResults();
 			this.run(script.getZestScript(), ZestZapUtils.toZestRequest(msg));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

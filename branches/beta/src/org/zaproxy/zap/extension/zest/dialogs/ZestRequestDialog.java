@@ -27,10 +27,11 @@ import java.net.URL;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
-public class ZestRequestDialog extends StandardFieldsDialog {
+public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialog {
 
 	private static final String FIELD_URL = "zest.dialog.request.label.url"; 
 	private static final String FIELD_METHOD = "zest.dialog.request.label.method"; 
@@ -62,6 +63,12 @@ public class ZestRequestDialog extends StandardFieldsDialog {
 		this.addComboField(FIELD_METHOD, new String[] {"GET", "POST", "{{target.method}}"}, request.getMethod());
 		this.addMultilineField(FIELD_HEADERS, request.getHeaders());
 		this.addMultilineField(FIELD_BODY, request.getData());
+		
+		// Enable right click menus
+		this.addFieldListener(FIELD_URL, ZestZapUtils.stdMenuAdapter()); 
+		this.addFieldListener(FIELD_HEADERS, ZestZapUtils.stdMenuAdapter()); 
+		this.addFieldListener(FIELD_BODY, ZestZapUtils.stdMenuAdapter()); 
+
 	}
 
 	public void save() {
@@ -91,6 +98,11 @@ public class ZestRequestDialog extends StandardFieldsDialog {
 		}
 		*/
 		return null;
+	}
+
+	@Override
+	public ZestScriptWrapper getScript() {
+		return extension.getZestTreeModel().getScriptWrapper(node);
 	}
 	
 }

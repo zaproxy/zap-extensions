@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.zest;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -334,10 +335,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		}
 	}
 
-	public ScriptNode add(ZestScriptWrapper script) {
+	public ScriptNode add(ZestScriptWrapper script, boolean display) {
 		logger.debug("add script " + script.getName());
 
-		ScriptNode node = this.getExtScript().addScript(script);
+		ScriptNode node = this.getExtScript().addScript(script, display);
 		this.display(script, node, true);
 		return node;
 	}
@@ -836,44 +837,61 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		return true;
 	}
 
-	/*
-	 * private ZestScriptWrapper getDefaultScript() { List<ZestScriptWrapper>
-	 * scripts = this.getScripts(); if (scripts.size() > 0) { return
-	 * scripts.get(0); } ZestScriptWrapper script = new
-	 * ZestScriptWrapper("Default", "", ZestScript.Type.Targeted);
-	 * this.add(script); return script;
-	 * 
-	 * }
-	 */
+	
+	private ScriptNode getDefaultStandAloneScript() {
+		ScriptNode node = this.getSelectedZestNode();
+		if (node != null) {
+			// Theres a selected Zest node, is it a standalone one?
+			ZestScriptWrapper script = this.getZestTreeModel().getScriptWrapper(node);
+			if (script != null && ExtensionScript.TYPE_STANDALONE.equals(script.getTypeName())) {
+				// right type, use if or the script if its not a container
+				if (ZestZapUtils.getElement(node) instanceof ZestContainer) {
+					return node;
+				} else {
+					return this.getZestTreeModel().getScriptWrapperNode(node);
+				}
+			}
+			
+		}
+		// Is there already a default standalone Zest script
+		for (ScriptNode zn : this.getZestScriptNodes(ExtensionScript.TYPE_STANDALONE)) {
+			if (this.zestTreeModel.getScriptWrapper(zn).getName().equals(
+					Constant.messages.getString("zest.targeted.script.default"))) {
+				return zn;
+			}
+		}
+		// No, create one
+		ScriptWrapper sw = new ScriptWrapper();
+		sw.setName(Constant.messages.getString("zest.targeted.script.default"));
+		sw.setEngine(this.getZestEngineWrapper());
+		sw.setEngineName(ZestScriptEngineFactory.NAME);
+		sw.setType(this.getExtScript().getScriptType(
+				ExtensionScript.TYPE_STANDALONE));
+		ZestScriptWrapper script = new ZestScriptWrapper(sw);
+		return this.add(script, false); 
+	}
+	 
 	@Override
-	public boolean onHttpResponseReceive(HttpMessage msg) {
+	public boolean onHttpResponseReceive(final HttpMessage msg) {
 		String secProxyHeader = msg.getRequestHeader().getHeader(
 				HTTP_HEADER_X_SECURITY_PROXY);
 		if (secProxyHeader != null) {
 			String[] vals = secProxyHeader.split(",");
 			for (String val : vals) {
 				if (VALUE_RECORD.equalsIgnoreCase(val.trim())) {
-					/*
-					 * try { ZestScriptWrapper script = this.getDefaultScript();
-					 * ZestRequest req = this.msgToZestRequest(msg);
-					 * 
-					 * if (script.isIncStatusCodeAssertion()) {
-					 * ZestAssertStatusCode codeAssert = new
-					 * ZestAssertStatusCode
-					 * (msg.getResponseHeader().getStatusCode());
-					 * req.addAssertion(codeAssert);
-					 * 
-					 * } if (script.isIncLengthAssertion()) { ZestAssertLength
-					 * lenAssert = new
-					 * ZestAssertLength(msg.getResponseBody().length(), 0);
-					 * lenAssert.setApprox(script.getLengthApprox());
-					 * req.addAssertion(lenAssert); }
-					 * 
-					 * this.addToParent(this.getScriptNode(script), req);
-					 * 
-					 * } catch (MalformedURLException e) {
-					 * logger.error(e.getMessage(), e); }
-					 */
+					// TODO check script prefix??
+					
+					EventQueue.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								addToParent(getDefaultStandAloneScript(), msg, null);	
+							} catch (Exception e) {
+								logger.error(e.getMessage(), e);
+							}
+						}});
+						
+					break;
 				}
 			}
 		}
@@ -1068,11 +1086,15 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			ZestScriptEngineFactory zsef = (ZestScriptEngineFactory) engine
 					.getFactory();
 			zsef.setRunner(new ZestZapRunner(this, (ZestScriptWrapper) script));
-			if (View.isInitialised()) {
-				// Clear the previous results
-				this.getZestResultsPanel().getModel().removeAllElements();
-			}
+			clearResults();
 			this.lastRunScript = ((ZestScriptWrapper) script).getZestScript();
+		}
+	}
+	
+	public void clearResults() {
+		if (View.isInitialised()) {
+			// Clear the previous results
+			this.getZestResultsPanel().getModel().removeAllElements();
 		}
 	}
 
@@ -1093,7 +1115,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 						+ script.getTypeName());
 
 				typeNode = this.getExtScript().getTreeModel()
-						.getTypeNode("standalone");
+						.getTypeNode(ExtensionScript.TYPE_STANDALONE);
 			}
 			logger.debug("Adding Zest script to tree");
 

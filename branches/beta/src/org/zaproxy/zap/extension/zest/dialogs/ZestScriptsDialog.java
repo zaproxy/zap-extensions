@@ -205,7 +205,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                                 }
                         }
 
-                        scriptNode = extension.add(scriptWrapper);
+                        scriptNode = extension.add(scriptWrapper, false);
                         // Add any defered messages
                         for (HttpMessage msg : deferedMessages) {
                                 logger.debug("Adding defered message: " + msg.getRequestHeader().getURI().toString());

@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -56,6 +58,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 
 public class ZestZapUtils {
@@ -490,4 +493,22 @@ public class ZestZapUtils {
 		return false;
 	}
 
+	public static MouseAdapter stdMenuAdapter () {
+		return new java.awt.event.MouseAdapter() { 
+			@Override
+			public void mousePressed(java.awt.event.MouseEvent e) {
+				mouseAction(e);
+			}
+			@Override
+			public void mouseReleased(java.awt.event.MouseEvent e) {
+				mouseAction(e);
+			}
+			public void mouseAction(java.awt.event.MouseEvent e) {
+				// right mouse button action
+				if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0 || e.isPopupTrigger()) {
+					View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		};
+	}
 }
