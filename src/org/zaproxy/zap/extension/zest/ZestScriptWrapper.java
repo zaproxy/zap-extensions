@@ -36,14 +36,6 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	private ZestScript zestScript = null;
 	private ExtensionZest extension = null;
 
-	public ZestScriptWrapper(ZestScript.Type type) {
-		zestScript = new ZestScript();
-		zestScript.setTitle("");
-		zestScript.setDescription("");
-		zestScript.setType(type);
-		
-	}
-
 	public ZestScriptWrapper(ScriptWrapper script) {
 		zestScript = (ZestScript) ZestJSON.fromString(script.getContents());
 		if (zestScript == null) {
