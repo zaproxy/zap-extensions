@@ -81,13 +81,13 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
 		if (extension.isScriptTree(invoker)) {
     		ScriptNode node = extension.getSelectedZestNode();
     		ZestElement ze = extension.getSelectedZestElement();
-        	ZestScript script = extension.getZestTreeModel().getScriptWrapper(node).getZestScript();
     		if (ze != null) {
 	    		if (ze instanceof ZestRequest) {
 	            	reCreateSubMenu(node.getParent(), node, (ZestRequest) ZestZapUtils.getElement(node), null);
 	            	return true;
-	    		} else if (ze instanceof ZestContainer && script.isPassive()) {
+	    		} else if (ze instanceof ZestContainer) {
 	            	reCreateSubMenu(node, null, null, null);
+	            	return true;
 	    		}
     		}
     		
