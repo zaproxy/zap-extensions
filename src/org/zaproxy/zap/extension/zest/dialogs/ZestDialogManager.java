@@ -167,8 +167,8 @@ public class ZestDialogManager extends AbstractPanel {
 	}
 
 	public void showZestEditScriptDialog(ScriptNode parentNode,
-			ZestScriptWrapper script, ZestScript.Type type, boolean add) {
-		this.showZestEditScriptDialog(parentNode, script, type, null, add);
+			ZestScriptWrapper script, boolean add) {
+		this.showZestEditScriptDialog(parentNode, script, null, add);
 	}
 
 	public void showZestFuzzerCatSelectorDialog(
@@ -185,7 +185,7 @@ public class ZestDialogManager extends AbstractPanel {
 	}
 
 	public void showZestEditScriptDialog(ScriptNode parentNode,
-			ZestScriptWrapper script, ZestScript.Type type, String prefix,
+			ZestScriptWrapper script, String prefix,
 			boolean add) {
 		if (scriptDialog == null) {
 			scriptDialog = new ZestScriptsDialog(extension, View.getSingleton()
@@ -207,10 +207,10 @@ public class ZestDialogManager extends AbstractPanel {
 			} catch (MalformedURLException e) {
 				logger.error(e.getMessage(), e);
 			}
-			scriptDialog.init(parentNode, script, add, type);
+			scriptDialog.init(parentNode, script, add);
 
 		} else {
-			scriptDialog.init(parentNode, script, add, type);
+			scriptDialog.init(parentNode, script, add);
 		}
 		scriptDialog.setVisible(true);
 	}

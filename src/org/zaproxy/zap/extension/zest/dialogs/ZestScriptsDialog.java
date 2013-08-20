@@ -84,12 +84,17 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 this.extension = ext;
         }
 
-        public void init (ScriptNode scriptNode, ZestScriptWrapper scriptWrapper, boolean add, ZestScript.Type type) {
+        public void init (ScriptNode scriptNode, ZestScriptWrapper scriptWrapper, boolean add/*, ZestScript.Type type*/) {
                 this.scriptNode = scriptNode;
                 this.scriptWrapper = scriptWrapper;
                 this.script = scriptWrapper.getZestScript();
                 this.add = add;
-                this.type = type;
+                
+                if (scriptWrapper.getZestScript().getType() != null) {
+                	this.type = ZestScript.Type.valueOf(scriptWrapper.getZestScript().getType());
+                } else {
+                	this.type  = ZestScript.Type.StandAlone;
+                }
 
                 this.removeAllFields();
                 
@@ -107,8 +112,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 this.getTokensModel().setValues(script.getParameters().getVariable());
                 this.addTableField(1, this.getTokensModel());
                 
-                if (ZestScript.Type.Targeted.equals(type)) {
-                        // These fields are only relevant for targeted scripts, not passive scan rules
+                if (ZestScript.Type.StandAlone.equals(this.type)) {
+                        // These fields are only relevant for standalone scripts
                         boolean addedAuth = false;
                         if (script.getAuthentication() != null && script.getAuthentication().size() > 0) {
                                 // Just support one for now
@@ -178,7 +183,6 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 scriptWrapper.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
 
                 if (add) {
-                        
                         script.setType(type);
                         if (ZestScript.Type.StandAlone.equals(type)) {
                                 // Only need to handle standalone scripts here - rest handled by templates

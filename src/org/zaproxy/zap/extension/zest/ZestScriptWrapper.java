@@ -25,7 +25,11 @@ import javax.script.ScriptException;
 
 import org.mozilla.zest.core.v1.ZestJSON;
 import org.mozilla.zest.core.v1.ZestScript;
+import org.mozilla.zest.core.v1.ZestScript.Type;
 import org.parosproxy.paros.control.Control;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ZestScriptWrapper extends ScriptWrapper {
@@ -41,7 +45,23 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		if (zestScript == null) {
 			// new script
 			zestScript = new ZestScript();
-			zestScript.setType(ZestScript.Type.Active);
+			Type ztype;
+			switch (script.getType().getName()) {
+			case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE:
+				ztype = Type.Active;
+				break;
+			case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
+				ztype = Type.Passive;
+				break;
+			case ExtensionScript.TYPE_TARGETED:
+				ztype = Type.Targeted;
+				break;
+			case ExtensionScript.TYPE_STANDALONE:
+			default:
+				ztype = Type.StandAlone;
+				break;
+			}
+			zestScript.setType(ztype);
 			zestScript.setDescription(script.getDescription());
 		}
 		// Override the title in case its taken from a template

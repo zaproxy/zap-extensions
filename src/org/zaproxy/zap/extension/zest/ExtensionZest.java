@@ -56,7 +56,6 @@ import org.mozilla.zest.core.v1.ZestLoopString;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestScript.Type;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.mozilla.zest.core.v1.ZestVariables;
 import org.mozilla.zest.impl.ZestScriptEngineFactory;
@@ -71,7 +70,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
-import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -420,8 +418,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			// They're gone for the 'new script' option...
 			logger.debug("addToParent parent=null msg="
 					+ msg.getRequestHeader().getURI());
-			this.dialogManager.showZestEditScriptDialog(null, null,
-					ZestScript.Type.Active, prefix, true);
+			this.dialogManager.showZestEditScriptDialog(null, null, prefix, true);
 			if (msg != null) {
 				this.dialogManager.addDeferedMessage(msg);
 			}
@@ -1117,6 +1114,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				typeNode = this.getExtScript().getTreeModel()
 						.getTypeNode(ExtensionScript.TYPE_STANDALONE);
 			}
+			
 			logger.debug("Adding Zest script to tree");
 
 			ZestScriptWrapper zsw = new ZestScriptWrapper(script);
@@ -1131,29 +1129,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			this.getZestTreeModel().addScript(parentNode, zsw);
 			this.updated(parentNode);
 
-			// Map between ZAP script types and Zest script types - ZAP supports
-			// more!
-			Type ztype;
-			switch (script.getType().getName()) {
-			case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE:
-				ztype = Type.Active;
-				break;
-			case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
-				ztype = Type.Passive;
-				break;
-			case ExtensionScript.TYPE_TARGETED:
-				ztype = Type.Targeted;
-				break;
-			case ExtensionScript.TYPE_STANDALONE:
-			default:
-				ztype = Type.StandAlone;
-				break;
-			}
-
 			if (display) {
 				this.display(zsw, parentNode, true);
-				this.dialogManager.showZestEditScriptDialog(parentNode, zsw,
-						ztype, false);
+				this.dialogManager.showZestEditScriptDialog(parentNode, zsw, false);
 			}
 		}
 	}
