@@ -124,21 +124,20 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
 		if (Control.getSingleton().getExtensionLoader().getExtension("ExtensionMitmConf") != null) {
 			// MitmConf extension has been installed - this makes configuration much easier :)
-			panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.mitm")), 
-					LayoutHelper.getGBC(0, 6, 1, 0.0D, new Insets(5,5,5,5)));
-
-			panelContent.add(this.getConfField(), LayoutHelper.getGBC(1, 6, 3, 0.25D));
-
 			if (DesktopUtils.canOpenUrlInBrowser()) {
-				panelContent.add(this.getConfButton(), LayoutHelper.getGBC(1, 7, 1, 0.0D));
+				panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.mitm")), 
+						LayoutHelper.getGBC(0, 6, 1, 0.0D, new Insets(5,5,5,5)));
+				panelContent.add(this.getConfButton(), LayoutHelper.getGBC(1, 6, 1, 0.0D));
+
 				panelContent.add(new JLabel(
 						Constant.messages.getString("quickstart.label.mitmalt")),
-						LayoutHelper.getGBC(2, 7, 2, 0.0D));
+						LayoutHelper.getGBC(0, 7, 1, 0.0D, new Insets(5,5,5,5)));
 			} else {
 				panelContent.add(new JLabel(
 						Constant.messages.getString("quickstart.label.mitmurl")),
-						LayoutHelper.getGBC(3, 7, 3, 0.0D));
+						LayoutHelper.getGBC(0, 7, 1, 0.0D, new Insets(5,5,5,5)));
 			}
+			panelContent.add(this.getConfField(), LayoutHelper.getGBC(1, 7, 3, 0.25D));
 			
 		} else {
 			panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.helpmsg")), 
@@ -146,7 +145,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 			
 		}
 		
-		panelContent.add(new JLabel(""), LayoutHelper.getGBC(0, 8, 4, 1.D, 1.0D));	// Padding at bottom
+		panelContent.add(new JLabel(""), LayoutHelper.getGBC(0, 10, 4, 1.D, 1.0D));	// Padding at bottom
 		
 		this.setMode(Control.getSingleton().getMode());
 	}
