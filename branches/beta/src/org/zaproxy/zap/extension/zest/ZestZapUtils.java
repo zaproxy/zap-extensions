@@ -347,7 +347,7 @@ public class ZestZapUtils {
 			}			
 			return MessageFormat.format(
 					Constant.messages.getString("zest.fail.assert.length"), 
-					var, sla.getLength(), varLength, strDiff); 
+					sla.getVariableName(), sla.getLength(), varLength, strDiff); 
 		} else if (za.getRootExpression() instanceof ZestExpressionStatusCode) {
 			ZestExpressionStatusCode sca = (ZestExpressionStatusCode) za.getRootExpression();
 			return MessageFormat.format(
