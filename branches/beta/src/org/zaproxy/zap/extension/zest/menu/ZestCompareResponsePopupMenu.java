@@ -60,7 +60,9 @@ public class ZestCompareResponsePopupMenu extends PopupMenuHistoryReference {
 			return false;
 		}
 		// TODO check to see if its an 'action' node
-        return (invoker.getName() != null && invoker.getName().equals(ZestResultsPanel.TABLE_NAME));
+        return (extension.getLastRunScript() != null && 
+        		invoker.getName() != null && 
+        		invoker.getName().equals(ZestResultsPanel.TABLE_NAME));
     }
 
 	@Override
@@ -71,7 +73,7 @@ public class ZestCompareResponsePopupMenu extends PopupMenuHistoryReference {
 	@Override
 	public void performAction(HistoryReference href) throws Exception {
     	ZestResultWrapper newRes = (ZestResultWrapper)href;
-    	if (newRes != null && newRes.getScriptRequestIndex() >= 0) {
+    	if (extension.getLastRunScript() != null && newRes != null && newRes.getScriptRequestIndex() >= 0) {
     		ZestStatement stmt = extension.getLastRunScript().getStatement(newRes.getScriptRequestIndex());
     		if (stmt instanceof ZestRequest) {
     			ZestRequest zr = (ZestRequest)stmt;
