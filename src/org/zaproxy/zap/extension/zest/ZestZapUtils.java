@@ -216,20 +216,42 @@ public class ZestZapUtils {
 
 		} else if (za instanceof ZestLoopString) {
 			ZestLoopString zals = (ZestLoopString) za;
-			return MessageFormat.format(Constant.messages
-					.getString("zest.element.loop.string.title"),
-					(Object[]) zals.getValues());
+			if (incParams) {
+				// Build up a list of the linitial values
+				StringBuilder vals = new StringBuilder();
+				for (String val : zals.getValues()) {
+					if (vals.length() > 0) {
+						vals.append(", ");
+					}
+					if (vals.length() > 20) {
+						vals.append("...");
+						break;
+					}
+					vals.append(val);
+				}
+
+				return MessageFormat.format(Constant.messages.getString("zest.element.loop.string"),
+						zals.getVariableName(), vals.toString());
+			} else {
+				return Constant.messages.getString("zest.element.loop.string.title");
+				
+			}
 		} else if (za instanceof ZestLoopFile) {
 			ZestLoopFile zalf = (ZestLoopFile) za;
-			return MessageFormat
-					.format(Constant.messages
-							.getString("zest.element.loop.file.title"), zalf
-							.getFile().getAbsolutePath());
+			if (incParams) {
+				return MessageFormat.format(Constant.messages.getString("zest.element.loop.file"), 
+						zalf.getVariableName(), zalf.getFile().getAbsolutePath());
+			} else {
+				return Constant.messages.getString("zest.element.loop.file.title");
+			}
 		} else if (za instanceof ZestLoopInteger) {
 			ZestLoopInteger zali = (ZestLoopInteger) za;
-			return MessageFormat.format(Constant.messages
-					.getString("zest.element.loop.integer.title"), " FROM ",
-					zali.getStart(), " TO ", zali.getEnd());
+			if (incParams) {
+				return MessageFormat.format(Constant.messages.getString("zest.element.loop.integer"), 
+					zali.getVariableName(), zali.getStart(), zali.getEnd(), zali.getStep());
+			} else {
+				return Constant.messages.getString("zest.element.loop.integer.title");
+			}
 		} else if (za instanceof ZestAssignFieldValue) {
 			ZestAssignFieldValue zsa = (ZestAssignFieldValue) za;
 			if (incParams) {
