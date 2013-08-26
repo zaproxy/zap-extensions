@@ -32,7 +32,6 @@
 		</condition>
 		
 		<!-- Compile the java code from ${src} into ${build} -->
-		<!--javac srcdir="${src}" destdir="${build}" classpath="zap.jar"/-->
 		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
 			<classpath>
 				<fileset dir="${dist.lib.dir}">
@@ -223,9 +222,6 @@
 	
 	<target name="deploy-scripts" depends="build-all" description="deploy the scripts extension">
 		<antcall target="deploy-extension"> <param name="extension" value="scripts"/> </antcall>
-
-		<!-- TODO HACK -->
-		<antcall target="deploy-extension"> <param name="extension" value="zest"/> </antcall>
 	</target>
 	
 	<target name="deploy-spiderAjax" depends="build-all" description="deploy the spiderAjax extension">
@@ -239,7 +235,12 @@
 	<target name="deploy-alertReport" depends="build-all" description="deploy the Alert Report ZAP extension">
 			<antcall target="deploy-extension"> <param name="extension" value="alertReport"/> </antcall>
 		</target>
+
+	<target name="deploy-zest" depends="build-all" description="deploy the zest extension">
+		<antcall target="deploy-extension"> <param name="extension" value="zest"/> </antcall>
+	</target>
 	
+
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-alertReport"/>
@@ -249,6 +250,7 @@
 		<antcall target="deploy-scripts"/>
 		<antcall target="deploy-spiderAjax"/>
 		<antcall target="deploy-tokengen"/>
+		<antcall target="deploy-zest"/>
 	</target>
 
 	<target name="deploy-weekly" depends="build-all" description="deploy extensions to be included in weekly releases">
@@ -262,6 +264,7 @@
 				<include name="pscanrulesBeta-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="spiderAjax-${status}-*.zap"/>
+				<include name="zest-${status}-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
