@@ -3,13 +3,27 @@
     "description":"OWASP ZAP Commands"
   },
   {
-    "name": "session-new",
-    "description": "create a new session",
+    "name":"session",
+    "description":"Manipulate ZAP sessions"
+  },
+  {
+    "name": "session clear",
+    "description": "Clear the ZAP session (not saved to disk)",
+    "returnType": "string",
+    "params":[],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/core/action/newSession/",
+      "expression":"$.Result"
+    }
+  },
+  {
+    "name": "session new",
+    "description": "Create a new ZAP session (saved to disk)",
     "returnType": "string",
     "params": [{
       "name": "name",
       "type": "string",
-      "description": "the name of the new session to create"
+      "description": "The name of the new ZAP session to create"
     }],
     "execAction":{
       "url":"{{ROOT}}/JSON/core/action/newSession/?name=${$.args.name}",
@@ -17,8 +31,8 @@
     }
   },
   {
-    "name":"zap-version",
-    "description":"returns the ZAP version",
+    "name":"version",
+    "description":"Returns the ZAP version",
     "returnType":"string",
     "params":[],
     "execAction":{
@@ -28,103 +42,48 @@
     }
   },
   {
-    "name":"brk-all-requests",
-    "description":"break on all new requests",
+    "name":"brk",
+    "description":"Break on all new requests and/or responses",
     "returnType":"string",
     "params": [{
-      "name": "break",
-      "type": "boolean",
-      "description": "turn breaking on or off"
-    }],
-    "execAction":{
-      "url":"{{ROOT}}/JSON/break/action/breakOnAllRequests/?break=${$.args.break}",
-      "expression":"$.Result",
-      "callbackData":{"result":{"type":"expression","expression":"$.response.Result","extract":true}}
-    }
-  },
-  {
-    "name":"brk-all-responses",
-    "description":"break on all new responses",
-    "returnType":"string",
-    "params": [{
-      "name": "break",
-      "type": "boolean",
-      "description": "turn breaking on or off"
-    }],
-    "execAction":{
-      "url":"{{ROOT}}/JSON/break/action/breakOnAllResponses/?break=${$.args.break}",
-      "expression":"$.Result",
-      "callbackData":{"result":{"type":"expression","expression":"$.response.Result","extract":true}}
-    }
-  },
-  {
-    "name":"brk-on-tab",
-    "description":"break just on this tab",
-    "returnType":"string",
-    "params":[
-    {
       "name":"scope",
-      "type": {"name":"selection", "data":["tab","global"]},
-      "description": "scope",
-      "defaultValue": "tab"
+      "type": {"name":"selection", "data":["global"]},
+      "description": "The scope - currently only 'global' supported",
+      "defaultValue": "global"
     },
     {
-      "name":"state",
-      "type": {"name":"selection", "data":["on","off"]},
-      "description": "break on request",
-      "defaultValue": "on"
+      "name":"type",
+      "type": {"name":"selection", "data":["http-all","http-requests", "http-responses"]},
+      "description": "The types of messages to break on",
+      "defaultValue": "http-all"
+    },
+    {
+      "name": "state",
+      "type": "boolean",
+      "description": "Turn breaking on or off"
     }],
     "execAction":{
-      "url":"{{ROOT}}/JSON/break/action/breakOnId/?key=${$.tab.key}&state=${$.args.state}",
-      "callbackData":{
-        "conditionalCommands":{
-          "expression":"$.args.scope",
-          "states":{
-            "on":[{
-              "command":"addToHeader",
-              "params": {
-                "headerName":"X-Security-Proxy",
-                "value":{
-                          "type":"template",
-                          "template":"key=${$.tab.key}"
-                },
-                "scope":{"type":"expression","expression":"$.args.scope","extract":true},
-                "tab":{"type":"expression","expression":"$.tab.key","extract":true}
-              }
-            }],
-            "off":[{
-              "command":"removeFromHeader",
-              "params": {
-                "headerName":"X-Security-Proxy",
-                "value":{
-                          "type":"template",
-                          "template":"key=${$.tab.key}"
-                },
-                "scope":{"type":"expression","expression":"$.args.scope","extract":true},
-                "tab":{"type":"expression","expression":"$.tab.key","extract":true}
-              }
-            }]
-          }
-        }
-      }
+      "url":"{{ROOT}}/JSON/break/action/break/?type=${$.args.type}&scope=${$.args.scope}&state=${$.args.state}",
+      "expression":"$.Result",
+      "callbackData":{"result":{"type":"expression","expression":"$.response.Result","extract":true}}
     }
   },
   {
     "name":"record",
-    "description":"record all requests",
+    "description":"Record all requests",
     "returnType":"string",
     "params":[
     {
       "name":"state",
       "type": {"name":"selection", "data":["on","off"]},
-      "description": "record requests",
+      "description": "Record requests",
       "defaultValue": "on"
     },
     {
       "name":"scope",
       "type": {"name":"selection", "data":["tab","global"]},
-      "description": "local to tab or global",
-      "defaultValue": "tab"
+      "description": "Local to tab or global",
+      "defaultValue": "global"
     }
     ],
     "execAction":{
@@ -156,7 +115,11 @@
   },
   {
     "name":"scan",
-    "description":"active scan a site",
+    "description":"Control the ZAP active scanner"
+  },
+  {
+    "name":"scan start",
+    "description":"Start actively scanning a site",
     "returnType":"string",
     "params":[
     {
@@ -168,7 +131,7 @@
           "expression":"$.sites[*]"
           }
         },
-      "description":"the site to scan (attack)"
+      "description":"The site to scan (attack)"
     }
     ],
     "execAction":{
@@ -178,7 +141,7 @@
     }
   },
   {
-    "name":"scan-status",
+    "name":"scan status",
     "description":"Scan progress out of 100",
     "returnType":"string",
     "params":[],
@@ -192,7 +155,11 @@
   },
   {
     "name":"spider",
-    "description":"spider a site",
+    "description":"Control the ZAP spider"
+  },
+  {
+    "name":"spider start",
+    "description":"Start spidering a site",
     "returnType":"string",
     "params":[
     {
@@ -214,7 +181,18 @@
     }
   },
   {
-    "name":"spider-status",
+    "name":"spider stop",
+    "description":"Stop spidering a site",
+    "returnType":"string",
+    "params":[],
+    "execAction":{
+      "url":"{{ROOT}}/JSON/spider/action/stop/",
+      "expression":"$.Result",
+      "callbackData":{}
+    }
+  },
+  {
+    "name":"spider status",
     "description":"Spider progress out of 100",
     "returnType":"string",
     "params":[],
@@ -227,8 +205,12 @@
     }
   },
   {
-    "name":"http-session-new",
-    "description":"start a new HTTP session",
+    "name":"http-session",
+    "description":"Manipulate HTTP sessions"
+  },
+  {
+    "name":"http-session new",
+    "description":"Start a new HTTP session",
     "returnType":"string",
     "params":[
     {
@@ -245,7 +227,7 @@
     {
       "name": "name",
       "type": "string",
-      "description": "the name of the new http session to create"
+      "description": "The name of the new http session to create"
     }
     ],
     "execAction":{
@@ -255,8 +237,8 @@
     }
   },
   {
-    "name":"http-session-rename",
-    "description":"rename an HTTP session",
+    "name":"http-session rename",
+    "description":"Rename an HTTP session",
     "returnType":"string",
     "params":[
     {
@@ -268,7 +250,7 @@
           "expression":"$.sites[*]"
           }
         },
-      "description":"the site"
+      "description":"The site"
     },
     {
       "name":"session",
@@ -279,12 +261,12 @@
           "expression":"$.sessions.*.session.0"
           }
         },
-      "description":"the session to rename"
+      "description":"The session to rename"
     },
     {
       "name": "name",
       "type": "string",
-      "description": "the new name for http session"
+      "description": "The new name for HTTP session"
     }
     ],
     "execAction":{
@@ -294,8 +276,8 @@
     }
   },
   {
-    "name":"http-session-switch",
-    "description":"switch to another HTTP session",
+    "name":"http-session switch",
+    "description":"Switch to another HTTP session",
     "returnType":"string",
     "params":[
     {
@@ -318,7 +300,7 @@
           "expression":"$.sessions.*.session.0"
           }
         },
-      "description":"the session to use"
+      "description":"The session to use"
     }
     ],
     "execAction":{
