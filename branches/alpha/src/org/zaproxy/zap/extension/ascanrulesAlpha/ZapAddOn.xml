@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>1</version>
+	<version>2</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>First version, including persistent XSS tests</changes>
+	<changes>Added Code Injection and Command Injection plugins</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
