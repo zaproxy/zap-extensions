@@ -39,6 +39,7 @@ import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.DesktopUtils;
@@ -195,6 +196,19 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 			} else if (script.getLastErrorDetails() != null && script.getLastErrorDetails().length() > 0) {
 				this.showError(script.getLastErrorDetails());
 			}
+		}
+	}
+	
+	public void displayType (ScriptType type) {
+		if (!View.isInitialised()) {
+			return;
+		}
+		this.getConsolePanel().clearScript();
+		this.getConsolePanel().getOutputPanel().clear();
+
+		if (Constant.messages.containsKey(type.getI18nKey() + ".desc")) {
+			setOutput(Constant.messages.getString(type.getI18nKey() + ".desc"));
+			this.getConsolePanel().setTabFocus();
 		}
 	}
 	

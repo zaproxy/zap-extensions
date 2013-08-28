@@ -256,6 +256,13 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		return script;
 	}
 
+	public void clearScript() {
+		this.script = null;
+		getCommandPanel().setEditable(false);
+        getCommandPanel().clear();
+        getCommandPanel().appendToCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
+	}
+
 	public void setScript(ScriptWrapper script) {
 		this.script = script;
 		
