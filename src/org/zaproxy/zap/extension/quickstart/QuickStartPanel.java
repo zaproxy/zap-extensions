@@ -122,8 +122,8 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.proxymsg")), 
 				LayoutHelper.getGBC(0, 4, 5, 1.0D, new Insets(5,5,5,5)));
 
-		if (Control.getSingleton().getExtensionLoader().getExtension("ExtensionMitmConf") != null) {
-			// MitmConf extension has been installed - this makes configuration much easier :)
+		if (Control.getSingleton().getExtensionLoader().getExtension("ExtensionPlugNHack") != null) {
+			// Plug-n-Hack extension has been installed - this makes configuration much easier :)
 			if (DesktopUtils.canOpenUrlInBrowser()) {
 				panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.mitm")), 
 						LayoutHelper.getGBC(0, 6, 1, 0.0D, new Insets(5,5,5,5)));
@@ -198,15 +198,15 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		return stopButton;
 	}
 	
-	private String getMitmUrl() {
+	private String getPlugNHackUrl() {
 		return "http://" + Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp() + ":" + 
-				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort() + "/mitm/"; 
+				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort() + "/pnh/"; 
 	}
 
 	private ZapTextField getConfField () {
 		if (confField == null) {
 			confField = new ZapTextField();
-			confField.setText(getMitmUrl());
+			confField.setText(getPlugNHackUrl());
 			confField.setEditable(false);
 		}
 		return confField;
@@ -221,7 +221,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 			confButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					DesktopUtils.openUrlInBrowser(getMitmUrl());
+					DesktopUtils.openUrlInBrowser(getPlugNHackUrl());
 				}
 			});
 		}
