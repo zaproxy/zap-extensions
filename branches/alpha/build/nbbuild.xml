@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="ZAP_Extensions_Alpha" default="default" basedir=".">
+    <description>Builds, tests, and runs the project ZAP Extensions Alpha.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <!--
+
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar-with-manifest:    JAR building (if you are using a manifest)
+      -do-jar-without-manifest: JAR building (if you are not using a manifest)
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="ZAP_Advanced_Test_Bundle_-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+    -->
+    <target depends="clean" name="-do-jar-with-manifest">
+        <property name="status" value="alpha" />
+        <property name="versions.file" location="${dist.dir}/ZapVersions.xml"  />
+
+        <delete file="${versions.file}"/>
+                
+        <echo file="${versions.file}" append="true">&lt;ZAP></echo>
+        
+        <!-- 'Standard' addons (keep in alphabetical order ;) -->
+        <antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="diff"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="mitmconf"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
+        <!--antcall target="build-addon"><param name="addon" value="sitetools"/></antcall-->
+        <antcall target="build-addon"><param name="addon" value="sse"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="zest"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="sqliplugin"/></antcall>
+		
+        <echo file="${versions.file}" append="true">&lt;/ZAP></echo>
+		
+    </target>
+
+    <!-- Version file content appender -->            
+    <target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
+        <length file="${dist.dir}/${file}" property="length" />
+        <tstamp>
+            <format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+        </tstamp>
+        <echo file="${versions.file}" append="true">
+	&lt;addon>${extension}&lt;/addon>
+	&lt;addon_${extension}>
+		&lt;name>${name}&lt;/name>
+		&lt;description>${description}&lt;/description>
+		&lt;author>${author}&lt;/author>
+		&lt;version>${version}&lt;/version>
+		&lt;file>${file}&lt;/file>
+		&lt;status>${status}&lt;/status>
+		&lt;changes>${changes}&lt;/changes>
+		&lt;url>https://zap-extensions.googlecode.com/files/${file}&lt;/url>
+		&lt;size>${length}&lt;/size>
+		&lt;date>${yyyymmdd}&lt;/date>
+	&lt;/addon_${extension}>
+</echo>
+    </target>
+
+    <!-- Package the specific addon -->
+    <target name="build-addon" description="build the specified addon">            
+        <xmlproperty file="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+        <property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+        
+        <!--antcall target="build-addon-help"> 
+            <param name="addon" value="${addon}"/>
+        </antcall-->
+        
+        <jar jarfile="${dist.dir}/${file}" compress="${jar.compress}">
+            <zipfileset dir="${build.classes.dir}" prefix="">
+                <include name="org/zaproxy/zap/extension/${addon}/**"/>
+            </zipfileset>
+            <zipfileset dir="${build.classes.dir}" prefix="">
+                <include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
+            </zipfileset>
+            <zipfileset dir="${build.classes.dir}" prefix="">
+                <include name="org/zaproxy/zap/extension/${addon}/resource/**"/>
+            </zipfileset>
+            <zipgroupfileset dir="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false"/>
+            <zipfileset dir="${build.classes.dir}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+        </jar>
+        
+        <antcall target="include-files"> 
+            <param name="addon" value="${addon}"/>
+            <param name="file" value="${file}"/>
+        </antcall>
+        
+        <antcall target="append-to-versions-file"> 
+            <param name="extension" value="${addon}"/> 
+            <param name="name" value="${zapaddon.name}"/> 
+            <param name="version" value="${zapaddon.version}"/> 
+            <param name="description" value="${zapaddon.description}"/> 
+            <param name="author" value="${zapaddon.author}"/> 
+            <param name="url" value="${zapaddon.url}"/> 
+            <param name="changes" value="${zapaddon.changes}"/> 
+            <param name="file" value="${file}"/> 
+        </antcall>        
+    </target>
+
+    <!-- add files -->
+    <target name="include-files" depends="is-files-available" if="files.available"> 
+        <jar jarfile="${dist.dir}/${file}" update="true" compress="${jar.compress}">
+            <zipfileset dir="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/files/" prefix=""/>
+        </jar>
+    </target>
+    
+    <target name="is-files-available">
+        <available property="files.available" type="dir" file="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/files"/>
+    </target>
+
+    <target name="clean">
+	<delete dir="${dist.dir}" includeEmptyDirs="true" />
+    </target>
+      
+</project>
