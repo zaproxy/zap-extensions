@@ -443,10 +443,23 @@ public class ScriptsListPanel extends AbstractPanel {
 	private void selectionChanged() {
 		setButtonStates();
     	ScriptNode node = getSelectedNode();
-	    if (node != null && node.getUserObject() != null) {
-	    	if (node.getUserObject() instanceof ScriptWrapper) {
-	    		extension.displayScript((ScriptWrapper)node.getUserObject());
+	    while (node != null) {
+	    	if (node.getUserObject() != null) {
+		    	if (node.getUserObject() instanceof ScriptWrapper) {
+		    		// Only display the script if its not already displayed -
+		    		// down want to keep switching to the Script Console tab
+		    		if (! extension.isScriptDisplayed((ScriptWrapper)node.getUserObject())) {
+		    			extension.displayScript((ScriptWrapper)node.getUserObject());
+		    		}
+		    		break;
+		    	}
+	    	} else if (!node.isRoot() && node.getParent().isRoot() && node.getType() != null) {
+	    		// This is a 'type' node, display help (if any)
+				extension.displayType(node.getType());
+	    		break;
 	    	}
+	    	// Keep going up until we find something
+	    	node = node.getParent();
 	    }
 		
 	}
