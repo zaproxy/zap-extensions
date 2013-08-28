@@ -1,0 +1,14 @@
+{
+  "toolName":"OWASP ZAP",
+  "protocolVersion":"0.2",
+  "features":{
+    "proxy":{
+      "PAC":"{{ROOT}}/proxy.pac",
+      "CACert":"{{ROOT}}/OTHER/core/other/rootcert/"
+    },
+    "commands":{
+      "prefix":"zap",
+      "manifest":"{{ROOT}}/OTHER/pnh/other/service/"
+    }
+  }
+}

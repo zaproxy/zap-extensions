@@ -180,6 +180,7 @@
 		<antcall target="build-addon"><param name="addon" value="alertReport"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="plugnhack"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="portscan"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="scripts"/></antcall>
@@ -210,6 +211,10 @@
 	
 	<target name="deploy-beanshell" depends="build-all" description="deploy the beanshell">
 		<antcall target="deploy-extension"> <param name="extension" value="beanshell"/> </antcall>
+	</target>
+	
+	<target name="deploy-plugnhack" depends="build-all" description="deploy the plug-n-hack extension">
+		<antcall target="deploy-extension"> <param name="extension" value="plugnhack"/> </antcall>
 	</target>
 	
 	<target name="deploy-portscan" depends="build-all" description="deploy the port scan extension">
@@ -245,6 +250,7 @@
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-alertReport"/>
 		<antcall target="deploy-ascanrules"/>
+		<antcall target="deploy-plugnhack"/>
 		<antcall target="deploy-portscan"/>
 		<antcall target="deploy-pscanrules"/>
 		<antcall target="deploy-scripts"/>

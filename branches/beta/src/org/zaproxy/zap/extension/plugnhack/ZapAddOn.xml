@@ -1,0 +1,18 @@
+<zapaddon>
+	<name>Plug-n-Hack Configuration</name>
+	<version>4</version>
+	<description>Supports the Mozilla Plug-n-Hack standard: https://developer.mozilla.org/en-US/docs/Plug-n-Hack.</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>Moved to beta</changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.2.0</not-before-version>
+	<not-from-version/>
+</zapaddon>
