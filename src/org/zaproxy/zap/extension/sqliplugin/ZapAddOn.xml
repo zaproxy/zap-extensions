@@ -1,0 +1,19 @@
+<zapaddon>
+	<name>SQLMap Injection Engine (alpha)</name>
+	<version>1</version>
+	<description>An advanced active injection bundle for SQLi (derived by SQLMap)</description>
+	<author>Andrea Pompili (Yhawke)</author>
+	<url/>
+	<changes>First version, mapping the overall testing environment</changes>
+	<dependson/>
+	<extensions>
+	</extensions>
+	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.sqliplugin.SQLInjectionPlugin</ascanrule>
+	</ascanrules>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.1.0</not-before-version>
+	<not-from-version/>
+</zapaddon>

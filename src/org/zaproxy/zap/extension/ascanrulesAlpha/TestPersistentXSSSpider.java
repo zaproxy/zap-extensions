@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import org.parosproxy.paros.Constant;
@@ -33,13 +32,13 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
 
     @Override
     public String getName() {
-    	AscanUtils.registerI18N();
-    	return Constant.messages.getString("ascanalpha.pxss.spider.name");
+        AscanUtils.registerI18N();
+        return Constant.messages.getString("ascanalpha.pxss.spider.name");
     }
 
     @Override
     public String[] getDependency() {
-        return new String[] {"TestPersistentXSSPrime"};
+        return new String[]{"TestPersistentXSSPrime"};
     }
 
     @Override
@@ -64,36 +63,35 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
 
     @Override
     public void init() {
- 
     }
-    
+
     @Override
     public void scan() {
 
         HttpMessage msg = getBaseMsg();
-		try {
-			HttpMessage msg1 = msg.cloneRequest();
-		    sendAndReceive(msg1, false);
-		    PersistentXSSUtils.testForSink(msg1);
+        try {
+            HttpMessage msg1 = msg.cloneRequest();
+            sendAndReceive(msg1, false);
+            PersistentXSSUtils.testForSink(msg1);
 
-		} catch (Exception e) {
-	    	System.out.println("Exception " + e);
-		    e.printStackTrace();
-		}
-	}
-	
-	@Override
-	public int getRisk() {
-		return Alert.RISK_INFO;
-	}
-	
-	@Override
-	public int getCweId() {
-		return 79;
-	}
+        } catch (Exception e) {
+            System.out.println("Exception " + e);
+            e.printStackTrace();
+        }
+    }
 
-	@Override
-	public int getWascId() {
-		return 8;
-	}
+    @Override
+    public int getRisk() {
+        return Alert.RISK_INFO;
+    }
+
+    @Override
+    public int getCweId() {
+        return 79;
+    }
+
+    @Override
+    public int getWascId() {
+        return 8;
+    }
 }
