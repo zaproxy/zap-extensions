@@ -137,8 +137,17 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		this.lastHref = href;
 		if (View.isInitialised()) {
 			if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
+				// Add to the Zest results tab
 				this.extension.addResultToList(href);
 			}
+			// Add to history tab
+			/* TODO wont work until ExtensionHistory changed to display non MANUAL requests
+			ExtensionHistory extHist = (ExtensionHistory) Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.NAME);
+			if (extHist != null) {
+				extHist.addHistory(href);
+			}
+			*/
+			
 		} else {
 			// TODO i18n for cmdline??
 			try {

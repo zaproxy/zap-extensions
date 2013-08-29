@@ -1127,9 +1127,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			parentNode.setUserObject(zsw);
 
 			this.getZestTreeModel().addScript(parentNode, zsw);
-			this.updated(parentNode);
 
 			if (display) {
+				this.updated(parentNode);
 				this.display(zsw, parentNode, true);
 				this.dialogManager.showZestEditScriptDialog(parentNode, zsw, false);
 			}

@@ -39,8 +39,10 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	private int lengthApprox = 1;
 	private ZestScript zestScript = null;
 	private ExtensionZest extension = null;
+	private ScriptWrapper original = null;
 
 	public ZestScriptWrapper(ScriptWrapper script) {
+		this.original = script;
 		zestScript = (ZestScript) ZestJSON.fromString(script.getContents());
 		if (zestScript == null) {
 			// new script
@@ -76,6 +78,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		this.setFile(script.getFile());
 		this.setContents(script.getContents());
 		this.setLoadOnStart(script.isLoadOnStart());
+		this.setChanged(false);
 	}
 
 	public boolean isIncStatusCodeAssertion() {
@@ -127,4 +130,19 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		return extension;
 	}
 
+	@Override
+	public String getContents() {
+		return ZestJSON.toString(this.zestScript);
+	}
+
+	@Override
+	public boolean equals (Object script) {
+		return super.equals(script) || this.original.equals(script);
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.original.hashCode();
+	}
+	
 }

@@ -23,16 +23,15 @@ import java.awt.Component;
 
 import javax.swing.text.JTextComponent;
 
+import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
 public class ZestPasteVariableMenu extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 2282358266003940700L;
 
-	private ExtensionZest extension;
 	private String variable;
 	private JTextComponent lastInvoker = null;
     private ZestScriptWrapper script = null;
@@ -41,11 +40,10 @@ public class ZestPasteVariableMenu extends ExtensionPopupMenuItem {
 	 * This method initializes 
 	 * 
 	 */
-	public ZestPasteVariableMenu(ExtensionZest extension, JTextComponent lastInvoker, String variable) {
+	public ZestPasteVariableMenu(ZestScriptWrapper script, JTextComponent lastInvoker, String variable) {
 		super(variable);
-System.out.println("PVM lastInvoker=" + lastInvoker);
+		this.script = script;
 		this.variable = variable;
-		this.extension = extension;
 		this.lastInvoker = lastInvoker;
 		this.initialize();
 	}
@@ -55,20 +53,8 @@ System.out.println("PVM lastInvoker=" + lastInvoker);
 
         	@Override
         	public void actionPerformed(java.awt.event.ActionEvent e) {
-        		// TODO get correct delimiters
-        		lastInvoker.replaceSelection("{{" + variable + "}}");
-        		/*
-        		if (lastInvoker instanceof JTextArea) {
-        			JTextArea jta = (JTextArea) lastInvoker;
-        			//jta.insert("{{" + variable + "}}", jta.getCaretPosition());
-        			jta.replaceSelection("{{" + variable + "}}");
-        		} else if (lastInvoker instanceof JTextField) {
-        			JTextField jtf = (JTextField) lastInvoker;
-        			jtf.getCaretPosition();
-        			jtf.rep
-        			
-        		}
-        		*/
+        		ZestVariables vars = script.getZestScript().getParameters();
+        		lastInvoker.replaceSelection(vars.getTokenStart() + variable + vars.getTokenEnd());
         	}
         });
 
