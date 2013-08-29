@@ -21,12 +21,20 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAuthentication;
@@ -40,6 +48,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
@@ -69,8 +78,14 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private ZestScript script = null;
     private boolean add = false;
     private ZestScript.Type type;
+    
+    private JButton addButton = null;
+    private JButton modifyButton = null;
+    private JButton removeButton = null;
 
-    private ScriptTokensTableModel tokensModel = null;
+    private JTable paramsTable = null;
+    private ScriptTokensTableModel paramsModel = null;
+    private ZestParameterDialog parmaDialog = null;
 
     private List<HttpMessage> deferedMessages = new ArrayList<HttpMessage>();
 
@@ -109,8 +124,14 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         this.addCheckBoxField(0, FIELD_LOAD, scriptWrapper.isLoadOnStart());
         this.addMultilineField(0, FIELD_DESC, script.getDescription());
         
-        this.getTokensModel().setValues(script.getParameters().getVariable());
-        this.addTableField(1, this.getTokensModel());
+        this.getParamsModel().setValues(script.getParameters().getVariables());
+        
+        List<JButton> buttons = new ArrayList<JButton>();
+        buttons.add(getAddButton());
+        buttons.add(getModifyButton());
+        buttons.add(getRemoveButton());
+        
+        this.addTableField(1, this.getParamsTable(), buttons);
         
         if (ZestScript.Type.StandAlone.equals(this.type)) {
             // These fields are only relevant for standalone scripts
@@ -145,6 +166,68 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         //this.requestFocus(FIELD_TITLE);
     }
 
+    private JButton getAddButton () {
+    	if (this.addButton == null) {
+    		this.addButton = new JButton(Constant.messages.getString("zest.dialog.script.button.add"));
+    		this.addButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ZestParameterDialog dialog = getParamDialog();
+					if (! dialog.isVisible()) {
+						dialog.init("", "", true, -1, true);
+						dialog.setVisible(true);
+					}
+				}});
+    	}
+    	return this.addButton;
+    }
+    
+    private JButton getModifyButton () {
+    	if (this.modifyButton == null) {
+    		this.modifyButton = new JButton(Constant.messages.getString("zest.dialog.script.button.modify"));
+    		this.modifyButton.setEnabled(false);
+    		this.modifyButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ZestParameterDialog dialog = getParamDialog();
+					if (! dialog.isVisible()) {
+						int row = getParamsTable().getSelectedRow();
+						dialog.init(
+								(String)getParamsModel().getValueAt(row, 0), 
+								(String)getParamsModel().getValueAt(row, 1), 
+								false, row, true);
+						dialog.setVisible(true);
+					}
+				}});
+    	}
+    	return this.modifyButton;
+    }
+    
+    private JButton getRemoveButton () {
+    	if (this.removeButton == null) {
+    		this.removeButton = new JButton(Constant.messages.getString("zest.dialog.script.button.remove"));
+    		this.removeButton.setEnabled(false);
+    		final ZestScriptsDialog parent = this;
+    		this.removeButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (JOptionPane.OK_OPTION == 
+							View.getSingleton().showConfirmDialog(parent, 
+									Constant.messages.getString("zest.dialog.script.remove.confirm"))) {
+						getParamsModel().remove(getParamsTable().getSelectedRow());
+					}
+				}});
+    	}
+    	return this.removeButton;
+    }
+    
+    private ZestParameterDialog getParamDialog() {
+    	if (this.parmaDialog == null) {
+    		this.parmaDialog = new ZestParameterDialog(this.getParamsModel(), this, new Dimension(300, 200)); 
+    	}
+    	return this.parmaDialog;
+    }
+
     private List<String> getSites() {
         List<String> list = new ArrayList<String>();
         list.add("");   // Always start with the blank option
@@ -159,11 +242,34 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         return list;
     }
     
-    private ScriptTokensTableModel getTokensModel() {
-        if (tokensModel == null) {
-            tokensModel = new ScriptTokensTableModel();
+    private JTable getParamsTable() {
+    	if (paramsTable == null) {
+    		paramsTable = new JTable();
+    		paramsTable.setModel(getParamsModel());
+    		paramsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					if (getParamsTable().getSelectedRowCount() == 0) {
+			    		modifyButton.setEnabled(false);
+			    		removeButton.setEnabled(false);
+					} else if (getParamsTable().getSelectedRowCount() == 1) {
+			    		modifyButton.setEnabled(true);
+			    		removeButton.setEnabled(true);
+					} else {
+			    		modifyButton.setEnabled(false);
+			    		// TODO allow multiple deletions?
+			    		removeButton.setEnabled(false);
+					}
+				}});
+    	}
+    	return paramsTable;
+    }
+
+    private ScriptTokensTableModel getParamsModel() {
+        if (paramsModel == null) {
+            paramsModel = new ScriptTokensTableModel();
         }
-        return tokensModel;
+        return paramsModel;
     }
 
     public void save() {
@@ -177,6 +283,12 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             }
         }
         
+        Map<String, String> map = new HashMap<String, String>();
+        for (String nv[] : getParamsModel().getValues()) {
+        	map.put(nv[0], nv[1]);
+        }
+    	script.getParameters().setVariable(map);
+
         scriptWrapper.setName(script.getTitle());
         scriptWrapper.setDescription(script.getDescription());
         scriptWrapper.setContents(ZestJSON.toString(script));
@@ -191,7 +303,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                 scriptWrapper.setLengthApprox(this.getIntValue(FIELD_APPROX));
                 
                 Map<String, String> tokens = new HashMap<String, String>();
-                for (String[] nv : getTokensModel().getValues()) {
+                for (String[] nv : getParamsModel().getValues()) {
                     tokens.put(nv[0], nv[1]);
                 }
                 

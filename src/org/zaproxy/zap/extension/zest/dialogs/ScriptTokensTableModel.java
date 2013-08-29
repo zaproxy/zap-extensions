@@ -62,11 +62,7 @@ public class ScriptTokensTableModel extends AbstractTableModel {
     
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-		switch (columnIndex) {
-		case 0:	return false;
-		case 1:	return true;
-		default: return false;
-		}
+    	return false;
     }
     
     
@@ -94,6 +90,26 @@ public class ScriptTokensTableModel extends AbstractTableModel {
 
 	public void setValues(List<String[]> values) {
 		this.values = values;
+	}
+	
+	public void add(String name, String value) {
+		this.values.add(new String[] {name, value});
+		this.fireTableRowsInserted(this.values.size()-1, this.values.size()-1);
+	}
+	
+	public void replace(int index, String name, String value) {
+		if (index < this.values.size()) {
+			this.values.get(index)[0] = name;
+			this.values.get(index)[1] = value;
+			this.fireTableRowsInserted(index, index);
+		}
+	}
+
+	public void remove(int index) {
+		if (index < this.values.size()) {
+			this.values.remove(index);
+			this.fireTableRowsDeleted(index, index);
+		}
 	}
 	
 }

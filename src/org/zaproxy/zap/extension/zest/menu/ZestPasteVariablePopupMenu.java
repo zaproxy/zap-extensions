@@ -37,9 +37,7 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 2282358266003940700L;
 
-	private ExtensionZest extension;
 	private JTextComponent lastInvoker = null;
-    //private JFrame parentFrame = null;
     private ZestScriptWrapper script = null;
     private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
@@ -49,7 +47,6 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 	 */
 	public ZestPasteVariablePopupMenu(ExtensionZest extension) {
 		super();
-		this.extension = extension;
 	}
 	
 	/**/
@@ -105,7 +102,7 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 		if (script != null) {
 			TreeSet<String> sortedSet = new TreeSet<String>(script.getZestScript().getVariableNames());
 			for (String var : sortedSet) {
-	        	ExtensionPopupMenuItem piicm = new ZestPasteVariableMenu(extension, lastInvoker, var);
+	        	ExtensionPopupMenuItem piicm = new ZestPasteVariableMenu(script, lastInvoker, var);
 	        	piicm.setMenuIndex(this.getMenuIndex());
 				View.getSingleton().getPopupMenu().addMenu(piicm);
 				this.subMenus.add(piicm);
@@ -122,7 +119,6 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
      * @param lastInvoker The lastInvoker to set.
      */
     public void setLastInvoker(JTextComponent lastInvoker) {
-System.out.println("PVPM lastInvoker=" + lastInvoker);
         this.lastInvoker = lastInvoker;
     }
 }
