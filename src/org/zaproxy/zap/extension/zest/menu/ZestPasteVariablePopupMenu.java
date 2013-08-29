@@ -66,6 +66,8 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
+    	this.clearSubMenus();
+    	
         if (invoker instanceof JTextComponent) {
         	// Need to be optimistic so invoker is initialised
         	setLastInvoker((JTextComponent) invoker);
@@ -92,13 +94,15 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
     	}
 	}
 
-    private void reCreateSubMenu() {
+    private void clearSubMenus() {
     	for (ExtensionPopupMenuItem menu : subMenus) {
 			View.getSingleton().getPopupMenu().removeMenu(menu);
 			
 		}
 		subMenus.clear();
-		
+    }
+
+    private void reCreateSubMenu() {
 		if (script != null) {
 			TreeSet<String> sortedSet = new TreeSet<String>(script.getZestScript().getVariableNames());
 			for (String var : sortedSet) {

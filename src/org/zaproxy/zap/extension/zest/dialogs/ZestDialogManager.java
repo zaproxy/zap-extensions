@@ -246,8 +246,9 @@ public class ZestDialogManager extends AbstractPanel {
 	public void showZestActionDialog(ScriptNode parent, ScriptNode child,
 			ZestRequest req, ZestAction action, boolean add) {
 		if (actionDialog == null) {
-			actionDialog = new ZestActionDialog(extension, View.getSingleton()
-					.getMainFrame(), new Dimension(300, 200));
+			actionDialog = new ZestActionDialog(extension,
+					extension.getZestTreeModel().getScriptWrapper(parent),
+					View.getSingleton().getMainFrame(), new Dimension(300, 200));
 		} else if (actionDialog.isVisible()) {
 			// Already being displayed, dont overwrite anything
 			return;
