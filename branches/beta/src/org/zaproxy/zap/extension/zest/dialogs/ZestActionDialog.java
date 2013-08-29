@@ -33,6 +33,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog {
@@ -48,13 +49,15 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 	private ExtensionZest extension = null;
 	private ScriptNode parent = null;
 	private ScriptNode child = null;
+	private ZestScriptWrapper script = null;
 	private ZestStatement request = null;
 	private ZestAction action = null;
 	private boolean add = false;
 
-	public ZestActionDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+	public ZestActionDialog(ExtensionZest ext, ZestScriptWrapper script, Frame owner, Dimension dim) {
 		super(owner, "zest.dialog.action.add.title", dim);
 		this.extension = ext;
+		this.script = script;
 	}
 
 	public void init (ScriptNode parent, ScriptNode child, ZestRequest req, ZestAction action, boolean add) {
@@ -99,6 +102,8 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 				this.addComboField(FIELD_PRIORITY, priorities, 
 						priorityToStr(ZestActionFail.Priority.valueOf(za.getPriority())));
 			}
+			// Enable right click menus
+			this.addFieldListener(FIELD_MESSAGE, ZestZapUtils.stdMenuAdapter()); 
 		}
 		this.addPadding();
 	}
@@ -161,8 +166,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 
 	@Override
 	public ZestScriptWrapper getScript() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.script;
 	}
 	
 }
