@@ -33,19 +33,20 @@ function install (aEvent)
 }
 -->
 </script>
-	<h1>{{MSG.HEADER}}</h1>
-	<p>{{MSG.INTRO1}}</p>
-	<p></p>
-	<p>{{MSG.INTRO2}}</p>
-	<p>
+  <h1>{{MSG.HEADER}}</h1>
+  <p>{{MSG.INTRO1}}</p>
+  <p></p>
+  <p>{{MSG.INTRO2}}</p>
+  <p>
 
+  <div id="messages">
     <div id="setup" style="display:none">
       <p>{{MSG.SETUP1}}</p>
       <p>
       	{{MSG.SETUP2}}
       	
       	<b><a class="button" href="{{ROOT}}/OTHER/pnh/other/fx_pnh.xpi"
-    hash="sha1:f26654fa3f3990be23935b29515c84f800c020bc" onclick="return install(event);">{{MSG.FIREFOX}}</a></b>
+    hash="sha1:5422386ecbdb31d704886a846786e7c73db82e16" onclick="return install(event);">{{MSG.FIREFOX}}</a></b>
 	  </p>
 	</div>
     <div id="in_progress" style="display:none">
@@ -65,7 +66,9 @@ function install (aEvent)
       <button id="btn">{{MSG.BUTTON}}</button>
       </p>
   	</div>
+  </div>
   </p>
+
 </body>
 <script>
   var detected = false;
