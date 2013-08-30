@@ -217,6 +217,8 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 			confButton = new JButton();
 			confButton.setText(Constant.messages.getString("quickstart.button.label.mitm"));
 			confButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.mitm"));
+			confButton.setIcon(new ImageIcon(
+					QuickStartPanel.class.getResource("/org/zaproxy/zap/extension/quickstart/resource/plug.png")));
 
 			confButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
