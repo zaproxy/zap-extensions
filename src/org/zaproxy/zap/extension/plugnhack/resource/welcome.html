@@ -53,13 +53,14 @@ function install (aEvent)
       <p>{{MSG.PROGRESS}}</p>
     </div>
     <div id="success" style="display:none">
-      <p>{{MSG.SUCCESS}}</p>
+      <p id="successMessage">{{MSG.SUCCESS}}</p>
     </div>
     <div id="failure" style="display:none">
-      <p>{{MSG.FAILURE}}</p>
+      <p id="failureMessage">{{MSG.FAILURE}}</p>
     </div>
     <div id="activated" style="display:none">
       <p>{{MSG.ACTIVATED}}</p>
+      <p id="activatedMessage">{{MSG.ACTIVATED}}</p>
     </div>
     <div id="actions">
       <p>
@@ -72,15 +73,27 @@ function install (aEvent)
 </body>
 <script>
   var detected = false;
-  var divs = ['setup','in_progress','success','failure','activated','actions'];
+  var elements = ['setup','in_progress','success','failure','activated','actions'];
   var manifest = {"detail":{"url":"{{ROOT}}/manifest"}};
   // only show UI for the named elements
-  var showUI = function(visible){
-    for(var idx in divs){
-      if (-1 != visible.indexOf(divs[idx])) {
-        document.getElementById(divs[idx]).style.display = 'inline';
-        } else {
-        document.getElementById(divs[idx]).style.display = 'none';
+  var showUI = function(visible,data){
+    function replaceTextContent(node, message) {
+      while(node.firstChild) {
+        node.removeChild(node.firstChild);
+      }
+      node.appendChild(document.createTextNode(message));
+    }
+    for(var idx in elements){
+      var elementName = elements[idx];
+      var displayElement = document.getElementById(elements[idx]);
+      var messageElement = document.getElementById(elements[idx]+'Message');
+      if (-1 != visible.indexOf(elementName)) {
+        if(data && data[elementName]) {
+          replaceTextContent(messageElement, data[elementName]);
+        }
+        displayElement.style.display = 'inline';
+      } else {
+        displayElement.style.display = 'none';
       }
     }
   };
@@ -104,7 +117,8 @@ function install (aEvent)
   // use this to let the user know something has gone wrong
   var failed = function(event) {
     console.log('configuration has failed');
-    showUI(['failure','actions']);
+    var detail = event.detail ? JSON.parse(event.detail) : null;
+    showUI(['failure','actions'], detail);
   };
   // event listener for configuration succeeded
   // use this to show a success message to a user in your welcome doc
