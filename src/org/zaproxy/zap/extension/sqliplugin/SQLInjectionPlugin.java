@@ -416,7 +416,17 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                 
                 continue;
             }
-
+            
+            // Skip test if it is the same SQL injection type already
+            // identified by another test
+            //if (test.getStype() in injection.data) {
+            //    if (log.isDebugEnabled()) {
+            //        log.debug("skipping test '" + title 
+            //        + "' because the payload for XXXX has already been identified"
+            //    }
+            //    continue;
+            //}
+            
             // Skip test if the risk is higher than the provided (or default) value
             // Parse test's <risk>
             if (test.getRisk() > risk) {
