@@ -309,13 +309,15 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         String cmpPayload;
         String content;
         String title;
+        
+        boolean injectable;
 
         // Maybe could be a good idea to sort tests
         // according to the behavior and the heaviness
         // TODO: define a compare logic and sort it according to that
         for (SQLiTest test : manager.getTests()) {
             title = test.getTitle();
-            //unionExtended = False
+            //unionExtended = false;
 
             // If it's a union based query test
             // first prepare all the needed elements
@@ -511,6 +513,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             // Start iterating through applicable boundaries
             for (SQLiBoundary boundary : manager.getBoundaries()) {
 
+                // First set to false the injectable param
+                injectable = false;
+                
                 // Skip boundary if the level is higher than the provided (or
                 // default) value
                 // Parse boundary's <level>
@@ -699,6 +704,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                             info.toString(),
                                             getSolution(),
                                             tempMsg);
+
+                                    // Close the boundary/where iteration
+                                    injectable = true;
                                 }
 
                                 /*
@@ -783,6 +791,10 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                         info.toString(),
                                         getSolution(),
                                         tempMsg);
+                                
+                                
+                                // Close the boundary/where iteration                                    
+                                injectable = true;
                             }
 
                         // -----------------------------------------------
@@ -854,6 +866,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                             info.toString(),
                                             getSolution(),
                                             tempMsg);
+
+                                    // Close the boundary/where iteration
+                                    injectable = true;
                                 }
                             }
 
@@ -926,16 +941,31 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                         info.toString(),
                                         getSolution(),
                                         engine.getExploitMessage());
+                                
+                                // Close the boundary/where iteration                                    
+                                injectable = true;
                             }
                         }
                     }
+                    
                     // If the injection test was successful feed the injection
                     // object with the test's details
                     //if injection:
                     //  injection = checkFalsePositives(injection)
                     //if injection:
                     //  checkSuhoshinPatch(injection)
+
+                    // There is no need to perform this test for other                                
+                    // <where> tags
+                    if (injectable) {
+                        break;
+                    }                    
                 }
+                
+                // If injectable skip other boundary checks
+                if (injectable) {                        
+                    break;                    
+                }                                    
             }
         }
     }
