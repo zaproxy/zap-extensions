@@ -7,8 +7,8 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="ZAP_Extensions_Alpha" default="default" basedir=".">
-    <description>Builds, tests, and runs the project ZAP Extensions Alpha.</description>
+<project name="ZAP_Extensions_Beta" default="default" basedir=".">
+    <description>Builds, tests, and runs the project ZAP Extensions Beta.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 
