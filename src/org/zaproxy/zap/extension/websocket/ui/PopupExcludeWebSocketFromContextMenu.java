@@ -74,7 +74,7 @@ public class PopupExcludeWebSocketFromContextMenu extends PopupExcludeFromContex
             context.addExcludeFromContextRegex(url);
             session.saveContext(context);
 
-            View.getSingleton().showSessionDialog(session, ContextExcludePanel.getPanelName(context));
+            View.getSingleton().showSessionDialog(session, ContextExcludePanel.getPanelName(context.getIndex()));
 		}
 	}
 	
