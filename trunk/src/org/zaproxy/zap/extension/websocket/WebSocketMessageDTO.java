@@ -200,4 +200,11 @@ public class WebSocketMessageDTO implements Message {
 		return false;
 	}
 
+
+	//@Override
+	public String getHeader(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
