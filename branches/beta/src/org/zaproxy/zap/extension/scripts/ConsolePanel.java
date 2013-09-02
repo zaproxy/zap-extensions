@@ -55,6 +55,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private KeyListener listener = null;
 	
 	private ScriptWrapper script = null;
+	private ScriptWrapper template = null;
 
 	private Thread thread = null;
 
@@ -256,6 +257,10 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		return script;
 	}
 
+	public ScriptWrapper getTemplate() {
+		return template;
+	}
+
 	public void clearScript() {
 		this.script = null;
 		getCommandPanel().setEditable(false);
@@ -265,20 +270,38 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 
 	public void setScript(ScriptWrapper script) {
 		this.script = script;
+		this.template = null;
 		
 		getCommandPanel().setEditable(script.getEngine().isTextBased());
         getCommandPanel().clear();
         getCommandPanel().appendToCommandScript(script.getContents());
+        getCommandPanel().setCommandCursorPosition(0);
         if (script.getEngine().getSyntaxStyle() != null) {
         	getCommandPanel().setSyntax(script.getEngine().getSyntaxStyle());
         } else {
         	getCommandPanel().setSyntax(getSyntaxForScript(script.getEngine().getEngineName()));
         }
         this.getScriptTitle().setText(script.getEngine().getLanguageName() + " : " + script.getName());
-        if (ExtensionScript.TYPE_STANDALONE.equals(script.getType().getName())) {
-        	// The only type that can be run directly from the console
-        	this.getRunButton().setEnabled(true);
+       	// The only type that can be run directly from the console
+    	this.getRunButton().setEnabled(ExtensionScript.TYPE_STANDALONE.equals(script.getType().getName()));
+        setTabFocus();
+	}
+	
+	public void setTemplate(ScriptWrapper template) {
+		this.template = template;
+		this.script = null;
+		
+		getCommandPanel().setEditable(false);
+        getCommandPanel().clear();
+        getCommandPanel().appendToCommandScript(template.getContents());
+        getCommandPanel().setCommandCursorPosition(0);
+        if (template.getEngine().getSyntaxStyle() != null) {
+        	getCommandPanel().setSyntax(template.getEngine().getSyntaxStyle());
+        } else {
+        	getCommandPanel().setSyntax(getSyntaxForScript(template.getEngine().getEngineName()));
         }
+        this.getScriptTitle().setText(template.getEngine().getLanguageName() + " : " + template.getName());
+       	this.getRunButton().setEnabled(false);
         setTabFocus();
 	}
 	

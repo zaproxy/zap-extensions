@@ -127,6 +127,10 @@ public class CommandPanel extends AbstractPanel {
 		getTxtOutput().requestFocus();
 	}
 	
+	protected void setCommandCursorPosition (int offset) {
+		getTxtOutput().setCaretPosition(offset);
+	}
+	
 	void unload() {
 		getTxtOutput().unload();
 	}

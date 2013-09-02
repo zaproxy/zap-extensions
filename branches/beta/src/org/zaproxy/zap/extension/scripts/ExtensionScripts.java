@@ -198,7 +198,35 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 			}
 		}
 	}
-	
+
+	public void displayTemplate (ScriptWrapper script) {
+		if (!View.isInitialised()) {
+			return;
+		}
+		
+		if (script.getEngine() == null) {
+			// Scripts loaded from the configs my have loaded before all of the engines
+			script.setEngine(getExtScript().getEngineWrapper(script.getEngineName()));
+		}
+		if (script.getEngine() != null) {
+			// Save any changes
+			if (script.getEngine().isTextBased()) {
+				// Non text based scripts wont be updated via the console panel
+				refreshScript(this.getConsolePanel().getScript());
+			}
+			// push to ScriptConsole
+			this.getConsolePanel().setTemplate(script);
+			
+			// Show in the tree panel
+			ScriptNode node = this.getExtScript().getTreeModel().getNodeForScript(script);
+			if (node != null) {
+				this.getScriptsPanel().showInTree(node);
+			}
+			
+			this.getConsolePanel().getOutputPanel().clear();
+		}
+	}
+
 	public void displayType (ScriptType type) {
 		if (!View.isInitialised()) {
 			return;
@@ -302,10 +330,19 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 	}
 
 	@Override
-	public void scriptRemoved(ScriptWrapper arg0) {
+	public void scriptRemoved(ScriptWrapper script) {
 		// Ignore
 	}
 
+	@Override
+	public void templateAdded(ScriptWrapper script, boolean display) {
+		// Ignore
+	}
+
+	@Override
+	public void templateRemoved(ScriptWrapper script) {
+		// Ignore
+	}
 
 	@Override
 	public void scriptChanged(ScriptWrapper script) {

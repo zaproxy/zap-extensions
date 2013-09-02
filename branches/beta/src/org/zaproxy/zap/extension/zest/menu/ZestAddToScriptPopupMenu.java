@@ -85,7 +85,7 @@ public class ZestAddToScriptPopupMenu extends PopupMenuHistoryReference {
 		ZestElement ze = extension.getSelectedZestElement();
 		
 		if (ze != null) {
-			if (ze instanceof ZestConditional /* TODO && ! selNode.isChildOf(ZestTreeElement.Type.COMMON_TESTS)*/) {
+			if (ze instanceof ZestConditional) {
 	        	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(selNode);
 	        	piicm.setMenuIndex(this.getMenuIndex());
 				View.getSingleton().getPopupMenu().addMenu(piicm);

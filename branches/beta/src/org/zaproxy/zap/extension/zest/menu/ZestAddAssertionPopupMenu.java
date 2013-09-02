@@ -81,7 +81,9 @@ public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
 		if (extension.isScriptTree(invoker)) {
     		ScriptNode node = extension.getSelectedZestNode();
     		ZestElement ze = extension.getSelectedZestElement();
-    		if (ze != null && ze instanceof ZestRequest) {
+    		if (node == null || node.isTemplate()) {
+    			return false;
+    		} else if (ze != null && ze instanceof ZestRequest) {
             	reCreateSubMenu(node, (ZestRequest) ZestZapUtils.getElement(node), null);
             	return true;
     		}
@@ -89,7 +91,9 @@ public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
 			HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;
 			ScriptNode node = extension.getExtScript().getScriptUI().getSelectedNode();
 			
-			if (node != null && extension.isSelectedMessage(panel.getMessage()) &&
+			if (node == null || node.isTemplate()) {
+    			return false;
+    		} else if (extension.isSelectedMessage(panel.getMessage()) &&
 					panel.getSelectedText() != null && panel.getSelectedText().length() > 0) {
 
                 if (ZestZapUtils.getElement(node) instanceof ZestRequest) {
