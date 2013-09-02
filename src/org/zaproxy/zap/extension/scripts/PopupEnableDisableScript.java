@@ -94,7 +94,8 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
                     ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
             		this.setEnabled(false);
             		
-                    if (node == null || node.getUserObject() == null || ! (node.getUserObject() instanceof ScriptWrapper)) {
+                    if (node == null || node.isTemplate() ||
+                    		node.getUserObject() == null || ! (node.getUserObject() instanceof ScriptWrapper)) {
                     	return false;
                     	
                     } else {

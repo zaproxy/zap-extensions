@@ -1157,6 +1157,43 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		// Ignore
 	}
 
+	@Override
+	public void templateAdded(ScriptWrapper script, boolean display) {
+		/* TODO ??
+		if (View.isInitialised() && this.getExtScript().getScriptUI() != null
+				&& script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+
+			ScriptNode typeNode = this.getExtScript().getTreeModel()
+					.getTypeNode(script.getTypeName());
+			if (typeNode == null) {
+				logger.error("Failed to find type node: "
+						+ script.getTypeName());
+
+				typeNode = this.getExtScript().getTreeModel()
+						.getTypeNode(ExtensionScript.TYPE_STANDALONE);
+			}
+			
+			logger.debug("Adding Zest script to tree");
+
+			ZestScriptWrapper zsw = new ZestScriptWrapper(script);
+			if (zsw.getName() == null) {
+				zsw.setName(script.getName());
+			}
+
+			ScriptNode parentNode = this.getExtScript().getTreeModel()
+					.getNodeForScript(script);
+			parentNode.setUserObject(zsw);
+
+			this.getZestTreeModel().addScript(parentNode, zsw);
+		}
+		*/
+	}
+
+	@Override
+	public void templateRemoved(ScriptWrapper script) {
+		// Ignore
+	}
+
 	public ZestScript getLastRunScript() {
 		return lastRunScript;
 	}

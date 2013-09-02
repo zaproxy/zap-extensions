@@ -23,10 +23,12 @@ package org.zaproxy.zap.extension.scripts;
 import java.awt.Component;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 
@@ -88,6 +90,14 @@ public class PopupRemoveScript extends ExtensionPopupMenuItem {
     public boolean isEnableForComponent(Component invoker) {
         if (invoker.getName() != null && invoker.getName().equals(ScriptsListPanel.TREE)) {
             try {
+                JTree tree = (JTree) invoker;
+                ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
+        		
+                if (node == null || node.isTemplate() ||
+                		node.getUserObject() == null || ! (node.getUserObject() instanceof ScriptWrapper)) {
+                	return false;
+                }
+                	
             	return extension.getScriptsPanel().getSelectedScript() != null;
             } catch (Exception e) {}
             

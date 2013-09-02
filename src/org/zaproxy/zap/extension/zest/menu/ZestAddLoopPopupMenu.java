@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestLoop;
@@ -37,7 +38,7 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 	private ExtensionZest extension;
     private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
-	//private static final Logger logger = Logger.getLogger(ZestAddConditionPopupMenu.class);
+	private static final Logger logger = Logger.getLogger(ZestAddConditionPopupMenu.class);
 
 	/**
 	 * This method initializes 
@@ -73,20 +74,14 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
     		ScriptNode node = extension.getSelectedZestNode();
     		ZestElement ze = extension.getSelectedZestElement();
 
-            if (node != null) {
-                if (ze instanceof ZestRequest) {
-                	reCreateSubMenu(node.getParent(), node, (ZestRequest) ze);
-                	return true;
-                } else if (ze instanceof ZestContainer /*&& TODO
-                		! ZestTreeElement.isSubclass(node.getParent().getZestElement(), ZestTreeElement.Type.PASSIVE_SCRIPT)*/) {
-                	reCreateSubMenu(node, null, null);
-                	return true;
-                	/* TODO
-                } else if (ZestTreeElement.Type.COMMON_TESTS.equals(node.getTreeType())) {
-                	reCreateSubMenu(node, null, "BODY", "");
-                	return true;
-                	*/
-                }
+    		if (node == null || node.isTemplate()) {
+    			return false;
+    		} else if (ze instanceof ZestRequest) {
+            	reCreateSubMenu(node.getParent(), node, (ZestRequest) ze);
+            	return true;
+            } else if (ze instanceof ZestContainer) {
+            	reCreateSubMenu(node, null, null);
+            	return true;
             }
         }
         return false;
@@ -99,7 +94,7 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 		try {
 			createPopupAddActionMenu (parent, children, stmt, new ZestLoopFile());
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.debug(e.getMessage(), e);
 		}
 		createPopupAddActionMenu (parent, children, stmt, new ZestLoopInteger());
 	}

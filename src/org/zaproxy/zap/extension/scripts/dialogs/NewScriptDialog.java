@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -39,6 +38,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
 	private static final String FIELD_NAME = "scripts.dialog.script.label.name"; 
 	private static final String FIELD_ENGINE = "scripts.dialog.script.label.engine"; 
 	private static final String FIELD_DESC = "scripts.dialog.script.label.desc";
+	private static final String FIELD_TEMPLATE = "scripts.dialog.script.label.template";
 	private static final String FIELD_TYPE = "scripts.dialog.script.label.type";
 	private static final String FIELD_LOAD = "scripts.dialog.script.label.load";
 
@@ -55,31 +55,65 @@ public class NewScriptDialog extends StandardFieldsDialog {
 	private void init () {
 		this.setTitle(Constant.messages.getString("scripts.dialog.script.new.title"));
 		this.addTextField(FIELD_NAME, "");
-		this.addComboField(FIELD_ENGINE, extension.getExtScript().getScriptingEngines(), "");
 		this.addComboField(FIELD_TYPE, this.getTypes(), "");
+		this.addComboField(FIELD_ENGINE, this.getEngines(), "");
+		this.addComboField(FIELD_TEMPLATE, this.getTemplates(), "");
 		this.addMultilineField(FIELD_DESC, "");
 		this.addCheckBoxField(FIELD_LOAD, false);
+
+		this.addFieldListener(FIELD_TYPE, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (isEmptyField(FIELD_TYPE)) {
+					// Unset the template, otherwise it just resets the type again ;)
+					if (!isEmptyField(FIELD_ENGINE)) {
+						setFieldValue(FIELD_ENGINE, "");
+					}
+					setFieldValue(FIELD_TEMPLATE, "");
+				}
+				resetTemplates();
+			}});
+
 		this.addFieldListener(FIELD_ENGINE, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Change the types based on which engine is selected
-				ScriptEngineWrapper sew = extension.getExtScript().getEngineWrapper(getStringValue(FIELD_ENGINE));
-				if (sew.isRawEngine()) {
-					// Raw engines can only support targeted scripts as there will be no templates
-					ScriptType tsa = extension.getExtScript().getScriptType(ExtensionScript.TYPE_STANDALONE);
-					setComboFields(FIELD_TYPE, 
-							new String[]{Constant.messages.getString(tsa.getI18nKey())}, 
-							Constant.messages.getString(tsa.getI18nKey()));
-				} else {
-					setComboFields(FIELD_TYPE, getTypes(), "");
+				if (isEmptyField(FIELD_ENGINE)) {
+					// Unset the template, otherwise it just resets the engine again ;)
+					setFieldValue(FIELD_TEMPLATE, "");
 				}
+				resetTemplates();
 			}});
 
 		this.addPadding();
 	}
 	
+	private void resetTemplates() {
+		List<String> templates = getTemplates();
+		if (templates.size() == 0) {
+			// None to select :(
+			setComboFields(FIELD_TEMPLATE, templates, "");
+		} else if (! this.isEmptyField(FIELD_TEMPLATE) && templates.contains(getStringValue(FIELD_TEMPLATE))) {
+			// Current selected one is still valid
+			setComboFields(FIELD_TEMPLATE, templates, getStringValue(FIELD_TEMPLATE));
+		} else if (templates.size() == 1 ) {
+			// Only one - select that template
+			setComboFields(FIELD_TEMPLATE, templates, templates.get(0));
+		} else {
+			// Default to none
+			setComboFields(FIELD_TEMPLATE, templates, "");
+		}
+	}
+	
+	private List<String> getEngines() {
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("");
+		list.addAll(extension.getExtScript().getScriptingEngines());
+		return list;
+	}
+
 	private List<String> getTypes() {
 		ArrayList<String> list = new ArrayList<String>();
+		list.add("");
 		for (ScriptType type : extension.getExtScript().getScriptTypes()) {
 			list.add(Constant.messages.getString(type.getI18nKey()));
 		}
@@ -95,18 +129,49 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		return null;
 	}
 	
+	private ScriptEngineWrapper getSelectedEngine() {
+		if (this.isEmptyField(FIELD_ENGINE)) {
+			return null;
+		}
+		return extension.getExtScript().getEngineWrapper(this.getStringValue(FIELD_ENGINE));
+	}
+
+	private List<String> getTemplates() {
+		ArrayList<String> list = new ArrayList<String>();
+		for (ScriptWrapper template : extension.getExtScript().getTreeModel().getTemplates(
+				this.nameToType(this.getStringValue(FIELD_TYPE)))) {
+			
+			if (getSelectedEngine() == null || template.getEngine().equals(getSelectedEngine())) {
+				list.add(template.getName());
+			}
+		}
+		if (list.size() > 1) {
+			// Only give an empty choice if theres more than one
+			list.add("");
+		}
+		return list;
+	}
+	
+
 	public void save() {
 		ScriptWrapper script = new ScriptWrapper();
 		script.setType(this.nameToType(this.getStringValue(FIELD_TYPE)));
 		
-		// Set the template first in case it includes info overwridden by other fields
-		ScriptEngineWrapper ew = extension.getExtScript().getEngineWrapper(this.getStringValue(FIELD_ENGINE));
-		script.setEngine(ew);
-		script.setContents(ew.getTemplate(script.getType().getName()));
+		if (! this.isEmptyField(FIELD_TEMPLATE)) {
+			// Template overrides everything else - will match the other fields anyway
+			ScriptWrapper template = extension.getExtScript().getTreeModel().getTemplate(this.getStringValue(FIELD_TEMPLATE));
+			script.setContents(template.getContents());
+			script.setType(template.getType());
+			script.setEngine(template.getEngine());
+		} else {
+			// Template not set, create a blank script
+			ScriptEngineWrapper ew = getSelectedEngine();
+			script.setEngine(ew);
+			script.setType(this.nameToType(this.getStringValue(FIELD_TYPE)));
+		}
 		
 		script.setName(this.getStringValue(FIELD_NAME));
 		script.setDescription(this.getStringValue(FIELD_DESC));
-		script.setType(this.nameToType(this.getStringValue(FIELD_TYPE)));
 		script.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
 		
 		extension.getExtScript().addScript(script);
@@ -116,6 +181,10 @@ public class NewScriptDialog extends StandardFieldsDialog {
 	public String validateFields() {
 		if (this.isEmptyField(FIELD_NAME)) {
 			return Constant.messages.getString("scripts.dialog.script.error.name");
+		}
+		if (this.isEmptyField(FIELD_TEMPLATE) && (this.isEmptyField(FIELD_TYPE) || this.isEmptyField(FIELD_ENGINE))) {
+			// Must specify template or both the type and engine
+			return Constant.messages.getString("scripts.dialog.script.error.template");
 		}
 		if (extension.getExtScript().getScript(this.getStringValue(FIELD_NAME)) != null) {
 			return Constant.messages.getString("scripts.dialog.script.error.duplicate");

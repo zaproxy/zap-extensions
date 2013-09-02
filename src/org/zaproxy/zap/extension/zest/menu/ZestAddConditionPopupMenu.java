@@ -91,27 +91,24 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
     		ScriptNode node = extension.getSelectedZestNode();
     		ZestElement ze = extension.getSelectedZestElement();
 
-            if (node != null) {
-                if (ze instanceof ZestRequest) {
-                	reCreateSubMenu(node.getParent(), node, (ZestRequest) ze, ZestVariables.RESPONSE_BODY, "");
-                	return true;
-                } else if (ze instanceof ZestContainer /*&& TODO
-                		! ZestTreeElement.isSubclass(node.getParent().getZestElement(), ZestTreeElement.Type.PASSIVE_SCRIPT)*/) {
-                	reCreateSubMenu(node, null, null, ZestVariables.RESPONSE_BODY, "");
-                	return true;
-                	/* TODO
-                } else if (ZestTreeElement.Type.COMMON_TESTS.equals(node.getTreeType())) {
-                	reCreateSubMenu(node, null, "BODY", "");
-                	return true;
-                	*/
-                }
+    		if (node == null || node.isTemplate()) {
+    			return false;
+    		} else if (ze instanceof ZestRequest) {
+            	reCreateSubMenu(node.getParent(), node, (ZestRequest) ze, ZestVariables.RESPONSE_BODY, "");
+            	return true;
+            } else if (ze instanceof ZestContainer /*&& TODO
+            		! ZestTreeElement.isSubclass(node.getParent().getZestElement(), ZestTreeElement.Type.PASSIVE_SCRIPT)*/) {
+            	reCreateSubMenu(node, null, null, ZestVariables.RESPONSE_BODY, "");
+            	return true;
             }
         } else if (invoker instanceof HttpPanelSyntaxHighlightTextArea && extension.getExtScript().getScriptUI() != null) {
 			HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;
     		ScriptNode node = extension.getSelectedZestNode();
     		ZestElement ze = extension.getSelectedZestElement();
 
-			if (node != null && extension.isSelectedZestOriginalResponseMessage(panel.getMessage()) &&
+    		if (node == null || node.isTemplate()) {
+    			return false;
+    		} else if (extension.isSelectedZestOriginalResponseMessage(panel.getMessage()) &&
 					panel.getSelectedText() != null && panel.getSelectedText().length() > 0) {
                 if (ze instanceof ZestRequest) {
                 	ZestRequest req = (ZestRequest) ze;

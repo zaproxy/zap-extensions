@@ -82,12 +82,13 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
 		if (extension.isScriptTree(invoker)) {
     		ScriptNode node = extension.getSelectedZestNode();
     		ZestElement ze = extension.getSelectedZestElement();
-    		if (ze != null) {
+    		if (node == null || node.isTemplate()) {
+    			return false;
+    		} else if (ze != null) {
 	    		if (ze instanceof ZestRequest) {
 	            	reCreateSubMenu(node.getParent(), node, (ZestRequest) ZestZapUtils.getElement(node), null);
 	            	return true;
-	    		} else if (ze instanceof ZestContainer /*&&
-            		! ZestTreeElement.isSubclass(node.getParent().getZestElement(), ZestTreeElement.Type.PASSIVE_SCRIPT)*/) {
+	    		} else if (ze instanceof ZestContainer) {
 	            	reCreateSubMenu(node, null, null, null);
 	    		}
     		}
@@ -96,7 +97,9 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
 			HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;
 			ScriptNode node = extension.getExtScript().getScriptUI().getSelectedNode();
 			
-			if (node != null && extension.isSelectedMessage(panel.getMessage()) &&
+			if (node == null || node.isTemplate()) {
+    			return false;
+    		} else if (extension.isSelectedMessage(panel.getMessage()) &&
 					panel.getSelectedText() != null && panel.getSelectedText().length() > 0) {
 
                 if (ZestZapUtils.getElement(node) instanceof ZestRequest) {

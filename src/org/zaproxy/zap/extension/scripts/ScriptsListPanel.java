@@ -369,6 +369,17 @@ public class ScriptsListPanel extends AbstractPanel {
 			tree.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,0,0,0));
 			tree.setCellRenderer(this.extension.getScriptsTreeCellRenderer());
 			
+			TreeNode firstChild = extension.getExtScript().getTreeModel().getRoot().getFirstChild();
+			if (firstChild != null && firstChild instanceof ScriptNode) {
+				// Nasty way of expanding the Scripts node - should tydy up
+				TreeNode[] path = ((ScriptNode)firstChild).getPath();
+				TreePath tp = new TreePath(path);
+				getTree().setExpandsSelectedPaths(true);
+				getTree().setSelectionPath(tp);
+				getTree().scrollPathToVisible(tp);
+				getTree().expandPath(tp);
+			}
+			
 			tree.addMouseListener(new java.awt.event.MouseAdapter() { 
 				@Override
 				public void mousePressed(java.awt.event.MouseEvent e) {
@@ -449,11 +460,16 @@ public class ScriptsListPanel extends AbstractPanel {
 		    		// Only display the script if its not already displayed -
 		    		// down want to keep switching to the Script Console tab
 		    		if (! extension.isScriptDisplayed((ScriptWrapper)node.getUserObject())) {
-		    			extension.displayScript((ScriptWrapper)node.getUserObject());
+		    			if (node.isTemplate()) {
+		    				extension.displayTemplate((ScriptWrapper)node.getUserObject());
+		    			} else {
+			    			extension.displayScript((ScriptWrapper)node.getUserObject());
+		    			}
 		    		}
 		    		break;
 		    	}
-	    	} else if (!node.isRoot() && node.getParent().isRoot() && node.getType() != null) {
+	    	} else if (!node.isRoot() && !node.getParent().isRoot() && 
+	    			node.getParent().getParent().isRoot() && node.getType() != null) {
 	    		// This is a 'type' node, display help (if any)
 				extension.displayType(node.getType());
 	    		break;

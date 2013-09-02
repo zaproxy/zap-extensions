@@ -95,7 +95,7 @@ public class ZestPopupNodeCopyOrCut extends ExtensionPopupMenuItem {
             try {
        			this.setEnabled(false);
             	for (ScriptNode node : extension.getSelectedZestNodes()) {
-                    if (node == null || node.isRoot()) {
+                    if (node == null || node.isRoot() || node.isTemplate()) {
                			this.setEnabled(false);
                     	return false;
                     } else if ((ZestZapUtils.getElement(node) instanceof ZestScript)) {

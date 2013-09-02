@@ -94,7 +94,8 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 			}
 			
 			
-			if (node.isRoot()) {
+			if (node.isRoot() || node.getParent().isRoot()) {
+				// Top 2 levels use same icon .. for now ;)
 				setIcon(ExtensionScripts.ICON);
 				
 			} else if (userObject != null && userObject instanceof ScriptWrapper) {
@@ -112,13 +113,13 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 					// Default to the blank script
 					icon = new OverlayIcon(ExtensionScripts.ICON);
 				}
-				if (script.isChanged()) {
+				if (script.isChanged() && ! node.isTemplate()) {
 					icon.add(PENCIL_OVERLAY_ICON);
 				}
-				if (script.isError()) {
+				if (script.isError() && ! node.isTemplate()) {
 					icon.add(WARNING_OVERLAY_ICON);
 				}
-				if (script.getType().isEnableable()) {
+				if (script.getType().isEnableable() && ! node.isTemplate()) {
 					if (script.isEnabled()) {
 						icon.add(TICK_OVERLAY_ICON);
 					} else {
