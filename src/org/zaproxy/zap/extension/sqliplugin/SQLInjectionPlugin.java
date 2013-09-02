@@ -311,6 +311,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         String title;
         
         boolean injectable;
+        int injectableTechniques = 0;
 
         // Maybe could be a good idea to sort tests
         // according to the behavior and the heaviness
@@ -416,17 +417,19 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                 
                 continue;
             }
-            
+
             // Skip test if it is the same SQL injection type already
             // identified by another test
-            //if (test.getStype() in injection.data) {
-            //    if (log.isDebugEnabled()) {
-            //        log.debug("skipping test '" + title 
-            //        + "' because the payload for XXXX has already been identified"
-            //    }
-            //    continue;
-            //}
-            
+            if ((injectableTechniques & (1 << test.getStype())) != 0) {
+                if (log.isDebugEnabled()) {
+                    log.debug("skipping test '" + title 
+                            + "' because the payload for " + SQLiPayloadManager.SQLI_TECHNIQUES.get(test.getStype()) 
+                            + " has already been identified");
+                }
+                
+                continue;
+            }
+                        
             // Skip test if the risk is higher than the provided (or default) value
             // Parse test's <risk>
             if (test.getRisk() > risk) {
@@ -969,11 +972,12 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                     // <where> tags
                     if (injectable) {
                         break;
-                    }                    
+                    }
                 }
                 
                 // If injectable skip other boundary checks
                 if (injectable) {                        
+                    injectableTechniques |= 1 << test.getStype();
                     break;                    
                 }                                    
             }
