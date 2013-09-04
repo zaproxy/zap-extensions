@@ -29,6 +29,8 @@ import java.util.regex.Pattern;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
+import org.mozilla.zest.core.v1.ZestAssignReplace;
+import org.mozilla.zest.core.v1.ZestAssignString;
 import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestContainer;
@@ -116,10 +118,12 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
     }
 
     private void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestRequest req, String text) {
+		createPopupAddActionMenu (parent, child, req, new ZestAssignString());
 		createPopupAddActionMenu (parent, child, req, new ZestAssignFieldValue());
 		createPopupAddActionMenu (parent, child, req, new ZestAssignRegexDelimiters());
 		createPopupAddActionMenu (parent, child, req, new ZestAssignStringDelimiters());
 		createPopupAddActionMenu (parent, child, req, new ZestAssignRandomInteger());
+		createPopupAddActionMenu (parent, child, req, new ZestAssignReplace());
 	}
 
     private void createPopupAddActionMenu(final ScriptNode parent, final ScriptNode child, final ZestRequest req, 

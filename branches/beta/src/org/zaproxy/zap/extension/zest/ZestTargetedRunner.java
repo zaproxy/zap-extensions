@@ -18,9 +18,9 @@
 
 package org.zaproxy.zap.extension.zest;
 
-import org.apache.log4j.Logger;
+import javax.script.ScriptException;
+
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.TargetedScript;
 
 public class ZestTargetedRunner extends ZestZapRunner implements TargetedScript {
@@ -28,8 +28,6 @@ public class ZestTargetedRunner extends ZestZapRunner implements TargetedScript 
 	private ExtensionZest extension = null;
 	private ZestScriptWrapper script = null;
 	
-    private static Logger logger = Logger.getLogger(ZestTargetedRunner.class);
-
 	public ZestTargetedRunner(ExtensionZest extension, ZestScriptWrapper script) {
 		super(extension, script);
 		this.extension = extension;
@@ -37,17 +35,12 @@ public class ZestTargetedRunner extends ZestZapRunner implements TargetedScript 
 	}
 
 	@Override
-	public void invokeWith(HttpMessage msg) {
+	public void invokeWith(HttpMessage msg) throws ScriptException {
 		try {
 			this.extension.clearResults();
 			this.run(script.getZestScript(), ZestZapUtils.toZestRequest(msg));
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			script.setLastException(e);
-			if (View.isInitialised()) {
-				// Also write to Output tab
-				View.getSingleton().getOutputPanel().append(e.getMessage() + e.getStackTrace());
-			}
+			throw new ScriptException(e);
 		}
 	}
 }

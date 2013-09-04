@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestStatement;
@@ -54,13 +55,14 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 	private ZestAction action = null;
 	private boolean add = false;
 
-	public ZestActionDialog(ExtensionZest ext, ZestScriptWrapper script, Frame owner, Dimension dim) {
+	public ZestActionDialog(ExtensionZest ext, Frame owner, Dimension dim) {
 		super(owner, "zest.dialog.action.add.title", dim);
 		this.extension = ext;
-		this.script = script;
 	}
 
-	public void init (ScriptNode parent, ScriptNode child, ZestRequest req, ZestAction action, boolean add) {
+	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
+			ZestRequest req, ZestAction action, boolean add) {
+		this.script = script;
 		this.add = add;
 		this.parent = parent;
 		this.child = child;
@@ -104,6 +106,12 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 			}
 			// Enable right click menus
 			this.addFieldListener(FIELD_MESSAGE, ZestZapUtils.stdMenuAdapter()); 
+
+		} else if (action instanceof ZestActionPrint) {
+			ZestActionPrint za = (ZestActionPrint) action;
+			this.addTextField(FIELD_MESSAGE, za.getMessage());
+			// Enable right click menus
+			this.addFieldListener(FIELD_MESSAGE, ZestZapUtils.stdMenuAdapter()); 
 		}
 		this.addPadding();
 	}
@@ -144,6 +152,10 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 			ZestActionFail za = (ZestActionFail) action;
 			za.setMessage(this.getStringValue(FIELD_MESSAGE));
 			za.setPriority(this.strToPriority(this.getStringValue(FIELD_PRIORITY)));
+
+		} else if (action instanceof ZestActionPrint) {
+			ZestActionPrint za = (ZestActionPrint) action;
+			za.setMessage(this.getStringValue(FIELD_MESSAGE));
 		}
 
 		if (add) {

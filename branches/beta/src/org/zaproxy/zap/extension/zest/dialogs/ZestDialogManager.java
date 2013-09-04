@@ -247,13 +247,13 @@ public class ZestDialogManager extends AbstractPanel {
 			ZestRequest req, ZestAction action, boolean add) {
 		if (actionDialog == null) {
 			actionDialog = new ZestActionDialog(extension,
-					extension.getZestTreeModel().getScriptWrapper(parent),
 					View.getSingleton().getMainFrame(), new Dimension(300, 200));
 		} else if (actionDialog.isVisible()) {
 			// Already being displayed, dont overwrite anything
 			return;
 		}
-		actionDialog.init(parent, child, req, action, add);
+		
+		actionDialog.init(extension.getZestTreeModel().getScriptWrapper(parent), parent, child, req, action, add);
 		actionDialog.setVisible(true);
 	}
 
@@ -266,7 +266,8 @@ public class ZestDialogManager extends AbstractPanel {
 			// Already being displayed, dont overwrite anything
 			return;
 		}
-		assignmentDialog.init(parent, child, req, assign, add);
+		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+		assignmentDialog.init(script, parent, child, req, assign, add);
 		assignmentDialog.setVisible(true);
 	}
 

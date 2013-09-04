@@ -24,12 +24,16 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
+import org.mozilla.zest.core.v1.ZestAssignReplace;
+import org.mozilla.zest.core.v1.ZestAssignString;
 import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestFieldDefinition;
@@ -37,9 +41,11 @@ import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
-public class ZestAssignmentDialog extends StandardFieldsDialog {
+public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDialog {
 
 	private static final String FIELD_VARIABLE = "zest.dialog.assign.label.variable";
 	private static final String FIELD_MIN_INT = "zest.dialog.assign.label.minint";
@@ -47,14 +53,19 @@ public class ZestAssignmentDialog extends StandardFieldsDialog {
 	private static final String FIELD_REPLACE_FORM = "zest.dialog.assign.label.repform";
 	private static final String FIELD_REPLACE_FIELD = "zest.dialog.assign.label.repfield";
 	private static final String FIELD_LOCATION = "zest.dialog.assign.label.location"; 
+	private static final String FIELD_REGEX = "zest.dialog.assign.label.regex";
 	private static final String FIELD_REGEX_PREFIX = "zest.dialog.assign.label.rgxprefix";
 	private static final String FIELD_REGEX_POSTFIX = "zest.dialog.assign.label.rgxpostfix";
+	private static final String FIELD_REPLACE = "zest.dialog.assign.label.replace";
+	private static final String FIELD_REPLACEMENT = "zest.dialog.assign.label.replacement";
+	private static final String FIELD_STRING = "zest.dialog.assign.label.string";
 	private static final String FIELD_STRING_PREFIX = "zest.dialog.assign.label.strprefix";
 	private static final String FIELD_STRING_POSTFIX = "zest.dialog.assign.label.strpostfix";
 
 	private static final long serialVersionUID = 1L;
 
 	private ExtensionZest extension = null;
+	private ZestScriptWrapper script = null;
 	private ScriptNode parent = null;
 	private ScriptNode child = null;
 	private ZestRequest request = null;
@@ -66,8 +77,10 @@ public class ZestAssignmentDialog extends StandardFieldsDialog {
 		this.extension = ext;
 	}
 
-	public void init (ScriptNode parent, ScriptNode child, ZestRequest req, ZestAssignment assign, boolean add) {
+	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
+			ZestRequest req, ZestAssignment assign, boolean add) {
 		this.add = add;
+		this.script = script;
 		this.parent = parent;
 		this.child = child;
 		this.request = req;
@@ -81,13 +94,12 @@ public class ZestAssignmentDialog extends StandardFieldsDialog {
 			this.setTitle(Constant.messages.getString("zest.dialog.assign.edit.title"));
 		}
 		
-		this.addTextField(FIELD_VARIABLE, assign.getVariableName());
-
 		if (assign instanceof ZestAssignFieldValue) {
 			ZestAssignFieldValue za = (ZestAssignFieldValue) assign;
 			if (za.getFieldDefinition() == null) {
 				za.setFieldDefinition(new ZestFieldDefinition());
 			}
+			this.addTextField(FIELD_VARIABLE, assign.getVariableName());
 			this.addComboField(FIELD_REPLACE_FORM, new String [] {}, "");
 			this.addFieldListener(FIELD_REPLACE_FORM, new ActionListener() {
 				@Override
@@ -103,23 +115,59 @@ public class ZestAssignmentDialog extends StandardFieldsDialog {
 
 		} else if (assign instanceof ZestAssignRandomInteger) {
 			ZestAssignRandomInteger za = (ZestAssignRandomInteger) assign;
+			this.addTextField(FIELD_VARIABLE, assign.getVariableName());
 			this.addNumberField(FIELD_MIN_INT, 0, Integer.MAX_VALUE, za.getMinInt());
 			this.addNumberField(FIELD_MAX_INT, 0, Integer.MAX_VALUE, za.getMaxInt());
 
 		} else if (assign instanceof ZestAssignRegexDelimiters) {
 			ZestAssignRegexDelimiters za = (ZestAssignRegexDelimiters) assign;
+			this.addTextField(FIELD_VARIABLE, assign.getVariableName());
 			this.addComboField(FIELD_LOCATION, new String[]{"HEAD", "BODY"}, za.getLocation());
 			this.addTextField(FIELD_REGEX_PREFIX, za.getPrefix());
 			this.addTextField(FIELD_REGEX_POSTFIX, za.getPostfix());
 
 		} else if (assign instanceof ZestAssignStringDelimiters) {
 			ZestAssignStringDelimiters za = (ZestAssignStringDelimiters) assign;
+			this.addTextField(FIELD_VARIABLE, assign.getVariableName());
 			this.addComboField(FIELD_LOCATION, new String[]{"HEAD", "BODY"}, za.getLocation());
 			this.addTextField(FIELD_STRING_PREFIX, za.getPrefix());
 			this.addTextField(FIELD_STRING_POSTFIX, za.getPostfix());
+			
+		} else if (assign instanceof ZestAssignString) {
+			ZestAssignString za = (ZestAssignString) assign;
+			this.addComboField(FIELD_VARIABLE, this.getVariableNames(true), 
+					assign.getVariableName(), true);
+			this.addTextField(FIELD_STRING, za.getString());
+			
+			// Enable right click menus
+			this.addFieldListener(FIELD_STRING, ZestZapUtils.stdMenuAdapter()); 
+
+		} else if (assign instanceof ZestAssignReplace) {
+			ZestAssignReplace za = (ZestAssignReplace) assign;
+			this.addComboField(FIELD_VARIABLE, this.getVariableNames(false), 
+					assign.getVariableName(), false);
+			this.addTextField(FIELD_REPLACE, za.getReplace());
+			this.addTextField(FIELD_REPLACEMENT, za.getReplacement());
+			this.addCheckBoxField(FIELD_REGEX, za.isRegex());
+
+			// Enable right click menus
+			this.addFieldListener(FIELD_REPLACE, ZestZapUtils.stdMenuAdapter()); 
+			this.addFieldListener(FIELD_REPLACEMENT, ZestZapUtils.stdMenuAdapter()); 
 		}
+		
 		this.addPadding();
 	}
+	
+	private List<String> getVariableNames(boolean editable) {
+		ArrayList<String> list = new ArrayList<String>();
+		if (editable) {
+			list.add("");
+		}
+		list.addAll(script.getZestScript().getVariableNames());
+		Collections.sort(list);
+		return list;
+	}
+
 	
 	private void initFormField(String value) {
 		List <String> list = new ArrayList<String>();
@@ -178,6 +226,17 @@ public class ZestAssignmentDialog extends StandardFieldsDialog {
 			za.setLocation(this.getStringValue(FIELD_LOCATION));
 			za.setPrefix(this.getStringValue(FIELD_STRING_PREFIX));
 			za.setPostfix(this.getStringValue(FIELD_STRING_POSTFIX));
+			
+		} else if (assign instanceof ZestAssignString) {
+			ZestAssignString za = (ZestAssignString) assign;
+			za.setString(this.getStringValue(FIELD_STRING));
+			
+		} else if (assign instanceof ZestAssignReplace) {
+			ZestAssignReplace za = (ZestAssignReplace) assign;
+			za.setReplace(this.getStringValue(FIELD_REPLACE));
+			za.setReplacement(this.getStringValue(FIELD_REPLACEMENT));
+			za.setRegex(this.getBoolValue(FIELD_REGEX));
+			// TODO support caseexact
 		}
 
 		if (add) {
@@ -194,9 +253,13 @@ public class ZestAssignmentDialog extends StandardFieldsDialog {
 	
 	@Override
 	public String validateFields() {
-		if (this.isEmptyField(FIELD_VARIABLE)) {
+		
+		
+		if (this.isEmptyField(FIELD_VARIABLE) || (! StringUtils.isAlphanumeric(this.getStringValue(FIELD_VARIABLE)) &&
+				! this.getVariableNames(false).contains(this.getStringValue(FIELD_VARIABLE)))) {
 			return Constant.messages.getString("zest.dialog.assign.error.variable");
 		}
+
 		if (assign instanceof ZestAssignFieldValue) {
 			if (this.isEmptyField(FIELD_REPLACE_FORM)) {
 				return Constant.messages.getString("zest.dialog.assign.error.repform");
@@ -237,8 +300,25 @@ public class ZestAssignmentDialog extends StandardFieldsDialog {
 			if (this.isEmptyField(FIELD_STRING_POSTFIX)) {
 				return Constant.messages.getString("zest.dialog.assign.error.strpostfix");
 			}
+			
+		} else if (assign instanceof ZestAssignString) {
+			// No validation needed
+			
+		} else if (assign instanceof ZestAssignReplace) {
+			if (this.getBoolValue(FIELD_REGEX)) {
+				try {
+					Pattern.compile(this.getStringValue(FIELD_REPLACE));
+				} catch (Exception e) {
+					return Constant.messages.getString("zest.dialog.assign.error.regexreplace");
+				}
+			}
 		}
 		return null;
+	}
+
+	@Override
+	public ZestScriptWrapper getScript() {
+		return this.script;
 	}
 	
 }

@@ -58,6 +58,10 @@ public class ZestScriptWrapper extends ScriptWrapper {
 			case ExtensionScript.TYPE_TARGETED:
 				ztype = Type.Targeted;
 				break;
+			case ExtensionScript.TYPE_PROXY:
+				// TODO this ok?
+				ztype = Type.Targeted;
+				break;
 			case ExtensionScript.TYPE_STANDALONE:
 			default:
 				ztype = Type.StandAlone;
@@ -119,6 +123,9 @@ public class ZestScriptWrapper extends ScriptWrapper {
 			
 		} else if (class1.isAssignableFrom(ZestTargetedRunner.class)) {
 			return (T) new ZestTargetedRunner(this.getExtension(), this);
+			
+		} else if (class1.isAssignableFrom(ZestProxyRunner.class)) {
+			return (T) new ZestProxyRunner(this.getExtension(), this);
 		}
 		return null;
 	}
