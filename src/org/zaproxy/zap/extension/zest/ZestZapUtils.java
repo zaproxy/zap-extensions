@@ -31,11 +31,14 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
+import org.mozilla.zest.core.v1.ZestAssignReplace;
+import org.mozilla.zest.core.v1.ZestAssignString;
 import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
@@ -280,11 +283,11 @@ public class ZestZapUtils {
 			ZestAssignStringDelimiters zsa = (ZestAssignStringDelimiters) za;
 			if (incParams) {
 				return MessageFormat.format(Constant.messages
-						.getString("zest.element.assign.string"), zsa
+						.getString("zest.element.assign.delstring"), zsa
 						.getVariableName(), zsa.getPrefix(), zsa.getPostfix());
 			} else {
 				return Constant.messages
-						.getString("zest.element.assign.string.title");
+						.getString("zest.element.assign.delstring.title");
 			}
 
 		} else if (za instanceof ZestAssignRandomInteger) {
@@ -296,6 +299,28 @@ public class ZestZapUtils {
 			} else {
 				return Constant.messages
 						.getString("zest.element.assign.rndint.title");
+			}
+
+		} else if (za instanceof ZestAssignString) {
+			ZestAssignString zsa = (ZestAssignString) za;
+			if (incParams) {
+				return MessageFormat.format(Constant.messages
+						.getString("zest.element.assign.string"), zsa
+						.getVariableName(), zsa.getString());
+			} else {
+				return Constant.messages
+						.getString("zest.element.assign.string.title");
+			}
+
+		} else if (za instanceof ZestAssignReplace) {
+			ZestAssignReplace zsa = (ZestAssignReplace) za;
+			if (incParams) {
+				return MessageFormat.format(Constant.messages
+						.getString("zest.element.assign.replace"), zsa
+						.getVariableName(), zsa.getReplace(), zsa.getReplacement());
+			} else {
+				return Constant.messages
+						.getString("zest.element.assign.replace.title");
 			}
 
 		} else if (za instanceof ZestActionScan) {
@@ -320,6 +345,17 @@ public class ZestZapUtils {
 			} else {
 				return Constant.messages
 						.getString("zest.element.action.fail.title");
+			}
+		} else if (za instanceof ZestActionPrint) {
+			ZestActionPrint zsa = (ZestActionPrint) za;
+			if (incParams) {
+				return MessageFormat
+						.format(Constant.messages
+								.getString("zest.element.action.print"), zsa
+								.getMessage());
+			} else {
+				return Constant.messages
+						.getString("zest.element.action.print.title");
 			}
 			/*
 			 * } else if (za instanceof ZestTreeElement) { switch

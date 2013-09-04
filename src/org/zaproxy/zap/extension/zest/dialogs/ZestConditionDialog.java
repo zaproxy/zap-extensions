@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
+import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
@@ -52,6 +53,8 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 	private static final String FIELD_VARIABLE = "zest.dialog.condition.label.variable";
 	private static final String FIELD_VALUE = "zest.dialog.condition.label.value";
 	private static final String FIELD_EXACT = "zest.dialog.condition.label.exact"; 
+	private static final String FIELD_LENGTH = "zest.dialog.condition.label.length"; 
+	private static final String FIELD_APPROX = "zest.dialog.condition.label.approx"; 
 
 	private static final long serialVersionUID = 1L;
 
@@ -63,12 +66,10 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 	private ZestConditional condition = null;
 	private boolean add = false;
 	private boolean surround = false;
-	private Frame owner = null;
 
 	public ZestConditionDialog(ExtensionZest ext, Frame owner, Dimension dim) {
 		super(owner, "zest.dialog.condition.add.title", dim);
 		this.extension = ext;
-		this.owner = owner;
 	}
 
 	public void init(ZestScript script, ScriptNode parent, List<ScriptNode> children,
@@ -119,6 +120,11 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 			ZestExpressionURL zc = (ZestExpressionURL) condition.getRootExpression();
 			this.addMultilineField(FIELD_INC_REGEXS, this.listToStr(zc.getIncludeRegexes()));
 			this.addMultilineField(FIELD_EXC_REGEXS, this.listToStr(zc.getExcludeRegexes()));
+			
+		} else if (condition.getRootExpression() instanceof ZestExpressionLength) {
+			ZestExpressionLength zc = (ZestExpressionLength) condition.getRootExpression();
+			this.addNumberField(FIELD_LENGTH, 0, Integer.MAX_VALUE, zc.getLength());
+			this.addNumberField(FIELD_APPROX, 0, 100, zc.getApprox());
 		}
 		this.addPadding();
 	}
@@ -183,6 +189,13 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 					.getStringValue(FIELD_INC_REGEXS)));
 			zc.setExcludeRegexes(this.strToList(this
 					.getStringValue(FIELD_EXC_REGEXS)));
+
+		} else if (condition.getRootExpression() instanceof ZestExpressionLength) {
+			ZestExpressionLength za = (ZestExpressionLength) condition.getRootExpression();
+			za.setVariableName(this.getStringValue(FIELD_VARIABLE));
+			za.setLength(this.getIntValue(FIELD_LENGTH));
+			za.setApprox(this.getIntValue(FIELD_APPROX));
+
 //		}if (this.owner instanceof ZestComplexConditionDialog) {
 //			return; //adds to the tree only if the parent is NOT a ZestComplexConditionalDialog
 		}// else {

@@ -834,7 +834,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		return true;
 	}
 
-	
 	private ScriptNode getDefaultStandAloneScript() {
 		ScriptNode node = this.getSelectedZestNode();
 		if (node != null) {

@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.zest;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestAssertion;
@@ -140,8 +138,7 @@ public class ZestTreeModel {
 		ZestElement childZe = ZestZapUtils.getElement(node);
 
 		if (parentZe == null) {
-			logger.error("delete: Parent user object null: "
-					+ parent.toString());
+			logger.error("delete: Parent user object null: " + node.toString());
 			return;
 		}
 		if (childZe == null) {
@@ -199,10 +196,6 @@ public class ZestTreeModel {
 		model.nodeStructureChanged(parent);
 	}
 	
-	public void surroundWith(List<ScriptNode> nodes, ScriptNode parent){
-		//TODO
-	}
-
 	public ZestScriptWrapper getScriptWrapper(ScriptNode node) {
 		if (node == null || node.getUserObject() == null) {
 			return null;

@@ -30,9 +30,8 @@ import java.util.regex.Pattern;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
-//import org.mozilla.zest.core.v1.ZestExpressionOr;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
-//import org.mozilla.zest.core.v1.ZestExpressionLength;
+import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
@@ -47,6 +46,8 @@ import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxH
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+//import org.mozilla.zest.core.v1.ZestExpressionOr;
+//import org.mozilla.zest.core.v1.ZestExpressionLength;
 
 public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 
@@ -96,8 +97,7 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
     		} else if (ze instanceof ZestRequest) {
             	reCreateSubMenu(node.getParent(), node, (ZestRequest) ze, ZestVariables.RESPONSE_BODY, "");
             	return true;
-            } else if (ze instanceof ZestContainer /*&& TODO
-            		! ZestTreeElement.isSubclass(node.getParent().getZestElement(), ZestTreeElement.Type.PASSIVE_SCRIPT)*/) {
+            } else if (ze instanceof ZestContainer) {
             	reCreateSubMenu(node, null, null, ZestVariables.RESPONSE_BODY, "");
             	return true;
             }
@@ -136,8 +136,8 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionStatusCode()));
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionResponseTime()));
 		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionURL()));
+		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionLength()));
 //		createPopupAddActionMenu(parent, child, stmt, new ZestConditional(new ZestExpressionOr()));
-//		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionLength()));
 	}
 
     private void createPopupAddActionMenu(final ScriptNode parent, ScriptNode child, 

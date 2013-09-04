@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import javax.script.ScriptException;
+
 import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
@@ -43,7 +45,7 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
 	}
 
 	@Override
-	public void scan(ScriptsPassiveScanner scriptsPassiveScanner, HttpMessage msg, Source source) {
+	public void scan(ScriptsPassiveScanner scriptsPassiveScanner, HttpMessage msg, Source source) throws ScriptException{
 		logger.debug("Zest PassiveScan script: " + this.script.getName());
 		this.sps = scriptsPassiveScanner;
 		this.msg = msg;
@@ -56,7 +58,7 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
 			this.run(script.getZestScript(), req);
 
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+			throw new ScriptException(e);
 		}
 	}
 	
