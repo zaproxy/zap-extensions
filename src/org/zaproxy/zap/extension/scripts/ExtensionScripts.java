@@ -181,11 +181,9 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 			script.setEngine(getExtScript().getEngineWrapper(script.getEngineName()));
 		}
 		if (script.getEngine() != null) {
-			// Save any changes
-			if (script.getEngine().isTextBased()) {
-				// Non text based scripts wont be updated via the console panel
-				refreshScript(this.getConsolePanel().getScript());
-			}
+			// Save any changes to previous script
+			this.saveChanges();
+			
 			// push to ScriptConsole
 			this.getConsolePanel().setScript(script);
 			
@@ -218,11 +216,9 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 			script.setEngine(getExtScript().getEngineWrapper(script.getEngineName()));
 		}
 		if (script.getEngine() != null) {
-			// Save any changes
-			if (script.getEngine().isTextBased()) {
-				// Non text based scripts wont be updated via the console panel
-				refreshScript(this.getConsolePanel().getScript());
-			}
+			// Save any changes to previous script
+			this.saveChanges();
+
 			// push to ScriptConsole
 			this.getConsolePanel().setTemplate(script);
 			
@@ -235,11 +231,22 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 			this.getConsolePanel().getOutputPanel().clear();
 		}
 	}
+	
+	private void saveChanges() {
+		if (this.getConsolePanel().getScript() != null && this.getConsolePanel().getScript().getEngine().isTextBased()) {
+			// Save any changes made
+			// Non text based scripts wont be updated via the console panel
+			refreshScript(this.getConsolePanel().getScript());
+		}
+	}
 
 	public void displayType (ScriptType type) {
 		if (!View.isInitialised()) {
 			return;
 		}
+		// Save any changes to previous script
+		this.saveChanges();
+
 		this.getConsolePanel().clearScript();
 		this.getConsolePanel().getOutputPanel().clear();
 
