@@ -215,8 +215,11 @@ public class ZestTreeModel {
 		}
 		return this.getScriptWrapperNode((ScriptNode) node.getParent());
 	}
-
+	
 	public void update(ScriptNode node) {
+		if (node == null) {
+			return;
+		}
 		logger.debug("Update node=" + node.getNodeName());
 		ZestElement ze = ZestZapUtils.getElement(node);
 		node.setNodeName(ZestZapUtils.toUiString(ze, true,
