@@ -192,9 +192,15 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		return null;
 	}
 
-	public void reset() {
-		this.setFieldValue(FIELD_NAME, "");
-		this.setFieldValue(FIELD_DESC, "");
+	public void reset(ScriptWrapper template) {
+		if (template == null) {
+			this.setFieldValue(FIELD_NAME, "");
+			this.setFieldValue(FIELD_DESC, "");
+		} else {
+			this.setFieldValue(FIELD_NAME, template.getName());
+			this.setFieldValue(FIELD_DESC, template.getDescription());
+			this.setFieldValue(FIELD_TEMPLATE, template.getName());
+		}
 	}
-	
+
 }
