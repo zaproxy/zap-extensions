@@ -342,8 +342,17 @@ public class ScriptsListPanel extends AbstractPanel {
 	protected void setButtonStates() {
 	    ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
 	    
-	    if (node != null && node.getUserObject() instanceof ScriptWrapper) {
-	    	ScriptWrapper script = (ScriptWrapper) node.getUserObject();
+	    // Loop up to support tree based scripts
+    	ScriptWrapper script = null;
+    	while (node != null) {
+    		if (node.getUserObject() instanceof ScriptWrapper) {
+    	    	script = (ScriptWrapper) node.getUserObject();
+    	    	break;
+    		}
+    		node = node.getParent();
+    	}
+	    
+	    if (script != null) {
     		this.getSaveButton().setEnabled(script.isChanged());
 	    } else {
     		this.getSaveButton().setEnabled(false);
