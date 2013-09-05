@@ -316,6 +316,34 @@ public enum DBMSUtil {
             builder.append(')');
             return builder.toString();
         }
+    },
+                
+    HSQLDB("HSQLDB", new String[]{"hsql", "hsqldb", "hs", "hypersql"}, 
+            "||", 
+            "CAST({0} AS LONGVARCHAR)", 
+            "IFNULL({0},''' ''')", 
+            " FROM INFORMATION_SCHEMA.SYSTEM_USERS") {
+        
+        @Override
+        public String doEncode(String value) {
+            StringBuilder builder = new StringBuilder();
+            boolean isFirst = true;
+            
+            for (int i = 0; i < value.length(); i++) {
+                if (isFirst) {
+                    isFirst = false;
+                    
+                } else {
+                    builder.append(getDelimiter());
+                }
+
+                builder.append("CHAR(");
+                builder.append((int)value.charAt(i));
+                builder.append(')');
+            }
+            
+            return builder.toString();
+        }
     };
 
     // ------------------------------------------------------------------
