@@ -183,7 +183,7 @@ public class ScriptsListPanel extends AbstractPanel {
 
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					showNewScriptDialog();
+					showNewScriptDialog(null);
 				}
 
 			});
@@ -191,11 +191,11 @@ public class ScriptsListPanel extends AbstractPanel {
 		return newScriptButton;
 	}
 
-	private void showNewScriptDialog() {
+	public void showNewScriptDialog(ScriptWrapper template) {
 		if (newScriptDialog == null) {
 			newScriptDialog = new NewScriptDialog(extension, View.getSingleton().getMainFrame(), new Dimension(500, 400));
 		}
-		newScriptDialog.reset();
+		newScriptDialog.reset(template);
 		newScriptDialog.setVisible(true);
 	}
 

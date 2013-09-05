@@ -59,6 +59,7 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 	private InvokeScriptWithNodePopupMenu popupInvokeScriptWithNodeMenu = null;
 	private PopupEnableDisableScript popupEnableDisableScript = null;
 	private PopupRemoveScript popupRemoveScript = null;
+	private PopupInstantiateTemplate popupInstantiateTemplate = null;
 	
 	private ExtensionScript extScript = null;
 	private ScriptsTreeCellRenderer renderer = null;
@@ -95,8 +96,9 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 	        extensionHook.getHookView().addWorkPanel(getConsolePanel());
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuConsoleLink());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupInvokeScriptWithNodeMenu());
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupEnableDisableScript ());
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupRemoveScript ());
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupEnableDisableScript());
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupRemoveScript());
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupInstantiateTemplate());
             
             ExtensionHelp.enableHelpKey(getConsolePanel(), "addon.scripts.console");
             ExtensionHelp.enableHelpKey(getScriptsPanel(), "addon.scripts.tree");
@@ -159,6 +161,13 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 			popupRemoveScript = new PopupRemoveScript(this); 
 		}
 		return popupRemoveScript;
+	}
+
+	private PopupInstantiateTemplate getPopupInstantiateTemplate () {
+		if (popupInstantiateTemplate == null) {
+			popupInstantiateTemplate = new PopupInstantiateTemplate(this); 
+		}
+		return popupInstantiateTemplate;
 	}
 
 	@Override
@@ -301,7 +310,6 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
     	}
    		this.getExtScript().invokeTargetedScript(script, msg);
     }
-
 
 	@Override
 	public void preInvoke(ScriptWrapper script) {
