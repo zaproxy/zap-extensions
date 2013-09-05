@@ -80,17 +80,18 @@
         <echo file="${versions.file}" append="true">&lt;ZAP></echo>
         
         <!-- 'Standard' addons (keep in alphabetical order ;) -->
-	<antcall target="build-addon"><param name="addon" value="alertReport"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="plugnhack"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="portscan"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="scripts"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="treetools"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="alertReport"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="plugnhack"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="portscan"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="scripts"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="treetools"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
 				
         <echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 		
