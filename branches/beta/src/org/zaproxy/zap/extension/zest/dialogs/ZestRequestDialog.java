@@ -37,6 +37,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 	private static final String FIELD_METHOD = "zest.dialog.request.label.method"; 
 	private static final String FIELD_HEADERS = "zest.dialog.request.label.headers"; 
 	private static final String FIELD_BODY = "zest.dialog.request.label.body"; 
+	private static final String FIELD_FOLLOW_REDIR = "zest.dialog.request.label.redir"; 
 
 	private static final long serialVersionUID = 1L;
 
@@ -61,6 +62,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 			this.addTextField(FIELD_URL, request.getUrlToken());
 		}
 		this.addComboField(FIELD_METHOD, new String[] {"GET", "POST", "{{target.method}}"}, request.getMethod());
+		this.addCheckBoxField(FIELD_FOLLOW_REDIR, request.isFollowRedirects());
 		this.addMultilineField(FIELD_HEADERS, request.getHeaders());
 		this.addMultilineField(FIELD_BODY, request.getData());
 		
@@ -81,6 +83,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 		this.request.setMethod(this.getStringValue(FIELD_METHOD));
 		this.request.setHeaders(this.getStringValue(FIELD_HEADERS));
 		this.request.setData(this.getStringValue(FIELD_BODY));
+		this.request.setFollowRedirects(this.getBoolValue(FIELD_FOLLOW_REDIR));
 		
 		this.extension.updated(node);
 		this.extension.display(node, false);
