@@ -200,15 +200,12 @@
 		
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
 		<antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="mitmconf"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
 		<!--antcall target="build-addon"><param name="addon" value="sitetools"/></antcall-->
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
-	        <antcall target="build-addon"><param name="addon" value="sqliplugin"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="sqliplugin"/></antcall>
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 
@@ -227,20 +224,12 @@
 		<antcall target="deploy-extension"> <param name="extension" value="ascanrulesAlpha"/> </antcall>
 	</target>
 
-	<target name="deploy-diff" depends="build-all" description="deploy the diff extension">
-		<antcall target="deploy-extension"> <param name="extension" value="diff"/> </antcall>
-	</target>
-	
 	<target name="deploy-highlighter" depends="build-all" description="deploy the highlighter extension">
 		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
 	</target>
   
-  <target name="deploy-httpsInfo" depends="build-all" description="deploy the httpsInfo extension">
+  	<target name="deploy-httpsInfo" depends="build-all" description="deploy the httpsInfo extension">
 		<antcall target="deploy-extension"> <param name="extension" value="httpsInfo"/> </antcall>
-	</target>
-
-	<target name="deploy-mitmConf" depends="build-all" description="deploy the MITM conf extension">
-		<antcall target="deploy-extension"> <param name="extension" value="mitmconf"/> </antcall>
 	</target>
 
 	<target name="deploy-pscanrulesAlpha" depends="build-all" description="deploy the passive scan rules">
@@ -255,16 +244,11 @@
 		<antcall target="deploy-extension"> <param name="extension" value="serverSentEvents"/> </antcall>
 	</target>
 		
-	<target name="deploy-zest" depends="build-all" description="deploy the Zest extension">
-		<antcall target="deploy-extension"> <param name="extension" value="zest"/> </antcall>
-	</target>
-		
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-ascanrulesAlpha"/>
 		<antcall target="deploy-highlighter"/>
-    <antcall target="deploy-httpsInfo"/>
-		<antcall target="deploy-mitmConf"/>
+	    <antcall target="deploy-httpsInfo"/>
 		<antcall target="deploy-pscanrulesAlpha"/>
 		<antcall target="deploy-serverSentEvents"/>
 		<antcall target="deploy-serverSentEvents"/>
