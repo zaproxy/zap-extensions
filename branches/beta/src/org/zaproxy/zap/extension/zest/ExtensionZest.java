@@ -253,10 +253,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		this.refreshMessage();
 	}
 
-	public void setToken(ZestScriptWrapper script, ZestRequest request,
+	public void perameterize(ZestScriptWrapper script, ScriptNode node, ZestRequest request,
 			String replace, String token, boolean replaceInCurrent,
 			boolean replaceInAdded) {
-		// TODO add default value
 		script.getZestScript().getParameters().addVariable(token, replace);
 		token = script.getZestScript().getParameters().getTokenStart() + token
 				+ script.getZestScript().getParameters().getTokenEnd();
@@ -268,11 +267,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				}
 				stmt = stmt.getNext();
 			}
+			// All nodes could have changed
+			this.refreshNode(this.getZestTreeModel().getScriptWrapperNode(node));
+
 		} else {
 			this.replaceInRequest(request, replace, token);
-			// this.updated(node);
-			// TODO
-			// this.update(script.getZestScript(), request);
+			this.updated(node);
 		}
 		if (replaceInAdded) {
 			// TODO support tokens in added reqs
@@ -280,9 +280,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		// Good chance the current response has been changed
 		if (View.isInitialised()) {
 			this.refreshMessage();
-			// TODO select token tab
-			// this.dialogManager.showZestEditScriptDialog(script,
-			// ZestScript.Type.Targeted);
+			// Show scripts dialog, selecting the Parameters tab
+			this.dialogManager.showZestEditScriptDialog(node, script, false, 1);
 		}
 	}
 
