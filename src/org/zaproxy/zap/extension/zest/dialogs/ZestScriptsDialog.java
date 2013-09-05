@@ -99,7 +99,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         this.extension = ext;
     }
 
-    public void init (ScriptNode scriptNode, ZestScriptWrapper scriptWrapper, boolean add/*, ZestScript.Type type*/) {
+    public void init (ScriptNode scriptNode, ZestScriptWrapper scriptWrapper, boolean add) {
         this.scriptNode = scriptNode;
         this.scriptWrapper = scriptWrapper;
         this.script = scriptWrapper.getZestScript();
@@ -164,6 +164,10 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         }
         
         //this.requestFocus(FIELD_TITLE);
+    }
+    
+    public void selectTab(int tab) {
+    	this.requestTabFocus(tab);
     }
 
     private JButton getAddButton () {

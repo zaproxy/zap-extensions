@@ -69,6 +69,7 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestLoopDialog loopDialog = null;
 	private ZestFuzzerCategoryDialog fuzzCatDialog = null;
 	private ZestRedactDialog redactDialog = null;
+	private ZestParameterizeDialog paramDialog = null;
 //	private ZestComplexConditionDialog complexConditionDialog = null;
 
 	public ZestDialogManager(ExtensionZest extension, ScriptUI scriptUI) {
@@ -169,6 +170,12 @@ public class ZestDialogManager extends AbstractPanel {
 	public void showZestEditScriptDialog(ScriptNode parentNode,
 			ZestScriptWrapper script, boolean add) {
 		this.showZestEditScriptDialog(parentNode, script, null, add);
+	}
+
+	public void showZestEditScriptDialog(ScriptNode parentNode,
+			ZestScriptWrapper script, boolean add, int showtab) {
+		this.showZestEditScriptDialog(parentNode, script, null, add);
+		this.scriptDialog.requestTabFocus(showtab);
 	}
 
 	public void showZestFuzzerCatSelectorDialog(
@@ -333,6 +340,17 @@ public class ZestDialogManager extends AbstractPanel {
 		redactDialog.init(node, replace);
 		redactDialog.setVisible(true);
 		return redactDialog;
+	}
+
+	public ZestParameterizeDialog showZestParameterizeDialog(
+			ZestScriptWrapper script, ScriptNode node, ZestRequest request, String replace) {
+		if (paramDialog == null) {
+			paramDialog = new ZestParameterizeDialog(extension, View.getSingleton()
+					.getMainFrame(), new Dimension(400, 200));
+		}
+		paramDialog.init(script, node, request, replace);
+		paramDialog.setVisible(true);
+		return paramDialog;
 	}
 
 }
