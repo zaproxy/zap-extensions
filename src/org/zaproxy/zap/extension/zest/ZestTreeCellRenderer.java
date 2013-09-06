@@ -25,16 +25,21 @@ import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
+import org.mozilla.zest.core.v1.ZestActionSleep;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignment;
+import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestReturn;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 
@@ -49,20 +54,28 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(Constant.class.getResource("/resource/icon/16/105.png"));		// Blue right arrow
 	private static final ImageIcon ACTION_FAIL_ICON = 
 			new ImageIcon(Constant.class.getResource("/resource/icon/16/050.png"));	// Warning triangle
+	private static final ImageIcon ACTION_INVOKE_ICON = 
+			new ImageIcon(Constant.class.getResource("/resource/icon/16/059.png"));	// Script
 	private static final ImageIcon ACTION_SCAN_ICON = 
 			new ImageIcon(Constant.class.getResource("/resource/icon/16/093.png"));	// Flame
+	private static final ImageIcon ACTION_SLEEP_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/hourglass.png"));
 	private static final ImageIcon ACTION_PRINT_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/printer.png"));
 	private static final ImageIcon ASSIGNMENT_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/pin.png"));
 	private static final ImageIcon ASSERT_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/balance.png"));
+	private static final ImageIcon COMMENT_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/balloon.png"));
 	private static final ImageIcon CONDITION_ELSE_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-down-right.png"));
 	private static final ImageIcon CONDITION_IF_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-up-right.png"));
 	private static final ImageIcon LOOP_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/loop.png"));
+	private static final ImageIcon RETURN_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/arrow-return-180.png"));
 
 	private static final long serialVersionUID = -4278691012245035225L;
 
@@ -85,6 +98,9 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 		if (value instanceof ScriptNode) {
 			scriptNode = (ScriptNode) value;
 			Object obj = scriptNode.getUserObject();
+			// Reset the tooltip
+			this.setToolTipText(null);
+
 				
 			if (obj != null && obj instanceof ZestElementWrapper) {
 				ZestElementWrapper zew = (ZestElementWrapper) obj;
@@ -101,16 +117,28 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 						setIcon(REQUEST_ICON);
 					} else if (za instanceof ZestAssertion) {
 						setIcon(ASSERT_ICON);
-					} else if (za instanceof ZestActionScan) {
-						setIcon(ACTION_SCAN_ICON);
 					} else if (za instanceof ZestActionFail) {
 						setIcon(ACTION_FAIL_ICON);
+					} else if (za instanceof ZestActionInvoke) {
+						setIcon(ACTION_INVOKE_ICON);
 					} else if (za instanceof ZestActionPrint) {
 						setIcon(ACTION_PRINT_ICON);
+					} else if (za instanceof ZestActionScan) {
+						setIcon(ACTION_SCAN_ICON);
+					} else if (za instanceof ZestActionSleep) {
+						setIcon(ACTION_SLEEP_ICON);
 					} else if (za instanceof ZestAssignment) {
 						setIcon(ASSIGNMENT_ICON);
+					} else if (za instanceof ZestComment) {
+						setIcon(COMMENT_ICON);
+						// Ensure newlines work while not allow any other nasties to get displayed 
+						String tooltip = "<html>" + 
+								StringEscapeUtils.escapeHtml(((ZestComment)za).getComment()).replace("\n", "<br>") + "</html>"; 
+						this.setToolTipText(tooltip);
 					} else if (za instanceof ZestLoop){
 						setIcon(LOOP_ICON);
+					} else if (za instanceof ZestReturn) {
+						setIcon(RETURN_ICON);
 					} else {
 						logger.error("Unrecognised element element class=" + zew.getElement().getClass().getCanonicalName());
 					}

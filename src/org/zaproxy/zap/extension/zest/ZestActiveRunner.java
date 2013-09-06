@@ -49,7 +49,7 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
 
 		try {
 			sas.setParam(msg, param, "{{target.value}}");
-			this.run(script.getZestScript(), ZestZapUtils.toZestRequest(msg));
+			this.run(script.getZestScript(), ZestZapUtils.toZestRequest(msg), null);
 		} catch (Exception e) {
 			throw new ScriptException(e);
 		}

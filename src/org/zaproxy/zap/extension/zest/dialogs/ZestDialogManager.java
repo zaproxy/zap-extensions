@@ -30,10 +30,12 @@ import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignment;
+import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestReturn;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.mozilla.zest.impl.ZestScriptEngineFactory;
@@ -65,10 +67,12 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestAssertionsDialog assertionsDialog = null;
 	private ZestAssignmentDialog assignmentDialog = null;
 	private ZestActionDialog actionDialog = null;
+	private ZestCommentDialog commentDialog = null;
 	private ZestConditionDialog conditionDialog = null;
 	private ZestLoopDialog loopDialog = null;
 	private ZestFuzzerCategoryDialog fuzzCatDialog = null;
 	private ZestRedactDialog redactDialog = null;
+	private ZestReturnDialog returnDialog = null;
 	private ZestParameterizeDialog paramDialog = null;
 //	private ZestComplexConditionDialog complexConditionDialog = null;
 
@@ -136,6 +140,9 @@ public class ZestDialogManager extends AbstractPanel {
 							} else if (obj instanceof ZestAction) {
 								showZestActionDialog(parent, sn, null,
 										(ZestAction) obj, false);
+							} else if (obj instanceof ZestComment) {
+								showZestCommentDialog(parent, sn, null,
+										(ZestComment) obj, false);
 							} else if (obj instanceof ZestConditional) {
 								LinkedList<ScriptNode> nodes = new LinkedList<>();
 								nodes.add(sn);
@@ -146,6 +153,9 @@ public class ZestDialogManager extends AbstractPanel {
 								nodes.add(sn);
 								showZestLoopDialog(parent, nodes, null,
 										(ZestLoop<?>) obj, false, false);
+							} else if (obj instanceof ZestReturn) {
+								showZestReturnDialog(parent, sn, null,
+										(ZestReturn) obj, false);
 							}
 						}
 					}
@@ -276,6 +286,34 @@ public class ZestDialogManager extends AbstractPanel {
 		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
 		assignmentDialog.init(script, parent, child, req, assign, add);
 		assignmentDialog.setVisible(true);
+	}
+
+	public void showZestCommentDialog(ScriptNode parent, ScriptNode child,
+			ZestRequest req, ZestComment comment, boolean add) {
+		if (commentDialog == null) {
+			commentDialog = new ZestCommentDialog(extension, View
+					.getSingleton().getMainFrame(), new Dimension(300, 200));
+		} else if (commentDialog.isVisible()) {
+			// Already being displayed, dont overwrite anything
+			return;
+		}
+		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+		commentDialog.init(script, parent, child, req, comment, add);
+		commentDialog.setVisible(true);
+	}
+
+	public void showZestReturnDialog(ScriptNode parent, ScriptNode child,
+			ZestRequest req, ZestReturn retrn, boolean add) {
+		if (returnDialog == null) {
+			returnDialog = new ZestReturnDialog(extension, View
+					.getSingleton().getMainFrame(), new Dimension(300, 200));
+		} else if (returnDialog.isVisible()) {
+			// Already being displayed, dont overwrite anything
+			return;
+		}
+		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+		returnDialog.init(script, parent, child, req, retrn, add);
+		returnDialog.setVisible(true);
 	}
 
 	public void showZestConditionalDialog(ScriptNode parent,

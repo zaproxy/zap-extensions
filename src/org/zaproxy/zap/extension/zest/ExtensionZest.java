@@ -99,6 +99,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	private ZestTreeModel zestTreeModel = null;
 	private ZestDialogManager dialogManager = null;
 	private ZestEngineWrapper zestEngineWrapper = null;
+	private ZestScriptEngineFactory zestEngineFactory = null;
 
 	private ExtensionScript extScript = null;
 	private ExtensionAntiCSRF extAcsrf = null;
@@ -154,12 +155,13 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		if (se != null) {
 			// Looks like this only works if the Zest lib is in the top level
 			// lib directory
+			this.zestEngineFactory = (ZestScriptEngineFactory) se.getFactory();
 			zestEngineWrapper = new ZestEngineWrapper(se);
 			this.getExtScript().registerScriptEngineWrapper(zestEngineWrapper);
 		} else {
 			// Needed for when the Zest lib is in an add-on (usual case)
-			ZestScriptEngineFactory zsef = new ZestScriptEngineFactory();
-			zestEngineWrapper = new ZestEngineWrapper(zsef.getScriptEngine());
+			this.zestEngineFactory = new ZestScriptEngineFactory();
+			zestEngineWrapper = new ZestEngineWrapper(zestEngineFactory.getScriptEngine());
 			this.getExtScript().registerScriptEngineWrapper(zestEngineWrapper);
 		}
 		this.getExtScript().addListener(this);
@@ -171,6 +173,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			this.getExtScript().getScriptUI()
 					.disableScriptDialog(ZestScriptWrapper.class);
 		}
+	}
+	
+	protected ZestScriptEngineFactory getZestScriptEngineFactory() {
+		return this.zestEngineFactory;
 	}
 
 	public ZestFuzzerDelegate getFuzzerDelegate() {
@@ -1077,10 +1083,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		if (ewrap == null) {
 			logger.error("Failed to find engine Mozilla Zest");
 		} else if (script instanceof ZestScriptWrapper) {
-			ScriptEngine engine = ewrap.getEngine();
-			ZestScriptEngineFactory zsef = (ZestScriptEngineFactory) engine
-					.getFactory();
-			zsef.setRunner(new ZestZapRunner(this, (ZestScriptWrapper) script));
+			this.getZestScriptEngineFactory().setRunner(
+					new ZestZapRunner(this, (ZestScriptWrapper) script));
 			clearResults();
 			this.lastRunScript = ((ZestScriptWrapper) script).getZestScript();
 		}
