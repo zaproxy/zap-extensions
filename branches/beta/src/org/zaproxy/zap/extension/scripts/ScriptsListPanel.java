@@ -37,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -377,6 +378,9 @@ public class ScriptsListPanel extends AbstractPanel {
 			tree.setShowsRootHandles(true);
 			tree.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,0,0,0));
 			tree.setCellRenderer(this.extension.getScriptsTreeCellRenderer());
+			
+			// Have to register the tree otherwise tooltips dont work
+			ToolTipManager.sharedInstance().registerComponent(tree);
 			
 			TreeNode firstChild = extension.getExtScript().getTreeModel().getRoot().getFirstChild();
 			if (firstChild != null && firstChild instanceof ScriptNode) {
