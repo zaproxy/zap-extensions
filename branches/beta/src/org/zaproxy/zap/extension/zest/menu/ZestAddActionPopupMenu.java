@@ -28,8 +28,10 @@ import java.util.regex.Pattern;
 
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
+import org.mozilla.zest.core.v1.ZestActionSleep;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestRequest;
@@ -117,15 +119,20 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
     }
 
     private void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestRequest req, String text) {
-    	String type = extension.getZestTreeModel().getScriptWrapper(parent).getZestScript().getType();
+    	ZestScript script = extension.getZestTreeModel().getScriptWrapper(parent).getZestScript();
+    	String type = script.getType();
     	if (ZestScript.Type.StandAlone.name().equals(type) ||
     			ZestScript.Type.Targeted.name().equals(type)) {
     		// Doenst really make sense for passive or active scripts 
     		createPopupAddActionMenu (parent, child, req, new ZestActionScan(text));
     	}
+    	if (!script.isPassive()) {
+    		createPopupAddActionMenu (parent, child, req, new ZestActionInvoke());
+    	}
     	
 		createPopupAddActionMenu (parent, child, req, new ZestActionPrint(text));
 		createPopupAddActionMenu (parent, child, req, new ZestActionFail(text));
+		createPopupAddActionMenu (parent, child, req, new ZestActionSleep());
 	}
 
     private void createPopupAddActionMenu(final ScriptNode parent, final ScriptNode child, final ZestRequest req, final ZestAction za) {

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAction;
@@ -84,6 +85,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     	this.extension = extension;
     	this.wrapper = wrapper;
     	this.scriptUI = extension.getExtScript().getScriptUI();
+    	this.setScriptEngineFactory(extension.getZestScriptEngineFactory());
     	
 	    this.setStopOnAssertFail(false);
 	    this.setStopOnTestFail(false);
@@ -95,24 +97,26 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
     
 	@Override
-	public void run(ZestScript script) throws ZestAssertFailException, ZestActionFailException, 
+	public String run(ZestScript script, Map<String, String> params) throws ZestAssertFailException, ZestActionFailException, 
 			IOException, ZestInvalidCommonTestException, ZestAssignFailException {
     	log.debug("Run script " + script.getTitle());
 
 		this.target = null;
 		super.setOutputWriter(writer);
-		super.run(script);
+		String result = super.run(script, params);
 		this.notifyComplete();
+		return result;
 	}
 
 	@Override
-	public void run (ZestScript script, ZestRequest target) 
+	public String run (ZestScript script, ZestRequest target, Map<String, String> params) 
 			throws ZestAssertFailException, ZestActionFailException, IOException,
 			ZestInvalidCommonTestException, ZestAssignFailException {
     	log.debug("Run script " + script.getTitle());
 		super.setOutputWriter(writer);
-		super.run(script, target);
+		String result = super.run(script, target, params);
 		this.notifyComplete();
+		return result;
 	}
     
     public void stop() {
@@ -406,4 +410,38 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		this.wrapper = wrapper;
 	}
 
+
+	public String getVariable(String name) {
+		if (log.isDebugEnabled()) {
+			String value = super.getVariable(name);
+			String val = value;
+			if (value != null) {
+				val = value.replace("\n", " ");
+				if (val.length() > 100) {
+					val = val.substring(0, 100) + "...";
+				}
+			}
+			log.debug("getVariable " + name + " : " + val);
+			
+			return value;
+		} else {
+			return super.getVariable(name);
+		}
+	}
+	
+	public void setVariable(String name, String value) {
+		if (log.isDebugEnabled()) {
+			String val = value;
+			if (value != null) {
+				val = value.replace("\n", " ");
+				if (val.length() > 100) {
+					val = val.substring(0, 100) + "...";
+				}
+			}
+			log.debug("setVariable " + name + " = " + val);
+			super.setVariable(name, value);
+		} else {
+			super.setVariable(name, value);
+		}
+	}
 }

@@ -55,7 +55,7 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
 			ZestRequest req = ZestZapUtils.toZestRequest(msg);
 			req.setResponse(ZestZapUtils.toZestResponse(msg));
 				
-			this.run(script.getZestScript(), req);
+			this.run(script.getZestScript(), req, null);
 
 		} catch (Exception e) {
 			throw new ScriptException(e);

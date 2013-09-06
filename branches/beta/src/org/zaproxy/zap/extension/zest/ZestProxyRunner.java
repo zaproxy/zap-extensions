@@ -49,7 +49,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 			// Create the previous request so the script has something to run against
 			ZestRequest req = ZestZapUtils.toZestRequest(msg);
 
-			this.run(script.getZestScript(), req);
+			this.run(script.getZestScript(), req, null);
 			
 			String reqHeader = this.getVariable(ZestVariables.REQUEST_HEADER);
 			
@@ -83,7 +83,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 			ZestRequest req = ZestZapUtils.toZestRequest(msg);
 			req.setResponse(ZestZapUtils.toZestResponse(msg));
 
-			this.run(script.getZestScript(), req);
+			this.run(script.getZestScript(), req, null);
 			
 			String respHeader = this.getVariable(ZestVariables.RESPONSE_HEADER);
 			

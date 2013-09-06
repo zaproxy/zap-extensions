@@ -26,12 +26,16 @@ import java.util.List;
 
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
+import org.mozilla.zest.core.v1.ZestActionSleep;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
@@ -42,6 +46,10 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 	private static final String FIELD_MESSAGE = "zest.dialog.action.label.message"; 
 	private static final String FIELD_PARAM = "zest.dialog.action.label.targetparam";
 	private static final String FIELD_PRIORITY = "zest.dialog.action.label.priority";
+	private static final String FIELD_MILLISECS = "zest.dialog.action.label.millisecs"; 
+	private static final String FIELD_SCRIPT = "zest.dialog.action.label.script"; 
+	private static final String FIELD_VARIABLE = "zest.dialog.action.label.variable"; 
+	private static final String FIELD_PARAMS = "zest.dialog.action.label.params"; 
 
 	private static final String PRIORITY_PREFIX = "zest.dialog.action.priority.";
 
@@ -112,6 +120,21 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 			this.addTextField(FIELD_MESSAGE, za.getMessage());
 			// Enable right click menus
 			this.addFieldListener(FIELD_MESSAGE, ZestZapUtils.stdMenuAdapter()); 
+			
+		} else if (action instanceof ZestActionSleep) {
+			ZestActionSleep za = (ZestActionSleep) action;
+			// TODO support longs?
+			this.addNumberField(FIELD_MILLISECS, 0, Integer.MAX_VALUE, (int)za.getMilliseconds());
+			
+		} else if (action instanceof ZestActionInvoke) {
+			ZestActionInvoke za = (ZestActionInvoke) action;
+			this.addComboField(FIELD_SCRIPT, this.getScriptNames(), za.getScript());
+			this.addTextField(FIELD_VARIABLE, za.getVariableName());
+			/* TODO params!
+			this.addTextField(FIELD_MESSAGE, za.getMessage());
+			// Enable right click menus
+			this.addFieldListener(FIELD_MESSAGE, ZestZapUtils.stdMenuAdapter());
+			*/ 
 		}
 		this.addPadding();
 	}
@@ -128,7 +151,18 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 		}
 		return null;
 	}
-	
+
+	private List<String> getScriptNames() {
+		List<String> vals = new ArrayList<String>();
+		for (ScriptWrapper script : this.extension.getExtScript().getScripts(ExtensionScript.TYPE_STANDALONE)) {
+			if (script.getFile() != null) {
+				// Only show scripts we can refer to
+				vals.add(script.getName());
+			}
+		}
+		return vals;
+	}
+
 	private List<String> getParamNames(String data) {
 		List<String> vals = new ArrayList<String>();
 		if (data != null && data.length() > 0) {
@@ -156,6 +190,18 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 		} else if (action instanceof ZestActionPrint) {
 			ZestActionPrint za = (ZestActionPrint) action;
 			za.setMessage(this.getStringValue(FIELD_MESSAGE));
+			
+		} else if (action instanceof ZestActionSleep) {
+			ZestActionSleep za = (ZestActionSleep) action;
+			za.setMilliseconds(this.getIntValue(FIELD_MILLISECS));
+			
+		} else if (action instanceof ZestActionInvoke) {
+			ZestActionInvoke za = (ZestActionInvoke) action;
+			za.setVariableName(this.getStringValue(FIELD_VARIABLE));
+			
+			ScriptWrapper sc = this.extension.getExtScript().getScript(this.getStringValue(FIELD_SCRIPT));
+			
+			za.setScript(sc.getFile().getAbsolutePath());
 		}
 
 		if (add) {
@@ -173,6 +219,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 	@Override
 	public String validateFields() {
 		// Nothing to do
+		// TODO check script chosen + variable name exists
 		return null;
 	}
 

@@ -33,6 +33,8 @@ public class ZestMenuManager {
 	private ZestAddAssignPopupMenu popupAddAssignMenu = null;
 	private ZestAddConditionPopupMenu popupAddConditionMenu = null;
 	private ZestAddLoopPopupMenu popupAddLoopMenu = null;
+	private ZestAddCommentPopupMenu popupAddCommentMenu = null;
+	private ZestAddReturnPopupMenu popupAddReturnMenu = null;
 	
 	private ZestSurroundWithPopupMenu popupSurroundWithMenu = null;
 	private ZestAddLoopPopupMenu popupAddLoopMenuLevel2 = null;
@@ -61,6 +63,8 @@ public class ZestMenuManager {
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddAssignMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddConditionMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddLoopMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddCommentMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddReturnMenu());
 		
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupSurroundWithMenu());
 			
@@ -139,14 +143,28 @@ public class ZestMenuManager {
 		}
 		return popupZestAddToMenu;
 	}
-	
+
+	private ZestAddCommentPopupMenu getPopupAddCommentMenu() {
+		if (popupAddCommentMenu == null) {
+			popupAddCommentMenu = new ZestAddCommentPopupMenu(this.extension);
+		}
+		return popupAddCommentMenu;
+	}
+
+	private ZestAddReturnPopupMenu getPopupAddReturnMenu() {
+		if (popupAddReturnMenu == null) {
+			popupAddReturnMenu = new ZestAddReturnPopupMenu(this.extension);
+		}
+		return popupAddReturnMenu;
+	}
+
 	private ZestCompareResponsePopupMenu getCompareResponsePopupMenu() {
 		if (compareResponsePopupMenu == null) {
 			compareResponsePopupMenu = new ZestCompareResponsePopupMenu(this.extension);
 		}
 		return compareResponsePopupMenu;
 	}
-
+	
 	private ZestPopupZestDelete getPopupZestDelete () {
 		if (popupZestDelete == null) {
 			popupZestDelete = new ZestPopupZestDelete(this.extension); 

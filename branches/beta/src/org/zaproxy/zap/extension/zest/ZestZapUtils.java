@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.zest;
 
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -31,8 +32,10 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
+import org.mozilla.zest.core.v1.ZestActionSleep;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
@@ -40,6 +43,7 @@ import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignReplace;
 import org.mozilla.zest.core.v1.ZestAssignString;
 import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
+import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
@@ -53,6 +57,7 @@ import org.mozilla.zest.core.v1.ZestLoopInteger;
 import org.mozilla.zest.core.v1.ZestLoopString;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
+import org.mozilla.zest.core.v1.ZestReturn;
 import org.mozilla.zest.core.v1.ZestRuntime;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStructuredExpression;
@@ -346,6 +351,17 @@ public class ZestZapUtils {
 				return Constant.messages
 						.getString("zest.element.action.fail.title");
 			}
+		} else if (za instanceof ZestActionInvoke) {
+			ZestActionInvoke zsa = (ZestActionInvoke) za;
+			if (incParams) {
+				File f = new File(zsa.getScript());
+				return MessageFormat.format(
+						Constant.messages.getString("zest.element.action.invoke"), 
+						zsa.getVariableName(), f.getName());
+			} else {
+				return Constant.messages
+						.getString("zest.element.action.invoke.title");
+			}
 		} else if (za instanceof ZestActionPrint) {
 			ZestActionPrint zsa = (ZestActionPrint) za;
 			if (incParams) {
@@ -356,6 +372,41 @@ public class ZestZapUtils {
 			} else {
 				return Constant.messages
 						.getString("zest.element.action.print.title");
+			}
+		} else if (za instanceof ZestActionSleep) {
+			ZestActionSleep zsa = (ZestActionSleep) za;
+			if (incParams) {
+				return MessageFormat.format(
+						Constant.messages.getString("zest.element.action.sleep"), 
+						zsa.getMilliseconds());
+			} else {
+				return Constant.messages
+						.getString("zest.element.action.sleep.title");
+			}
+		} else if (za instanceof ZestComment) {
+			ZestComment zsa = (ZestComment) za;
+			if (incParams) {
+				String comment = zsa.getComment();
+				if (comment.length() > 30) {
+					comment = comment.substring(0, 30) + "...";
+					comment.replace("\n", " ");
+				}
+				return MessageFormat.format(
+						Constant.messages.getString("zest.element.comment"), 
+						comment);
+			} else {
+				return Constant.messages
+						.getString("zest.element.comment.title");
+			}
+		} else if (za instanceof ZestReturn) {
+			ZestReturn zsa = (ZestReturn) za;
+			if (incParams) {
+				return MessageFormat.format(
+						Constant.messages.getString("zest.element.return"), 
+						zsa.getValue());
+			} else {
+				return Constant.messages
+						.getString("zest.element.return.title");
 			}
 			/*
 			 * } else if (za instanceof ZestTreeElement) { switch
