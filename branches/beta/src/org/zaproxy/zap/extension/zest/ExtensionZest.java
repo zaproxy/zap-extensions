@@ -44,6 +44,7 @@ import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
+import org.mozilla.zest.core.v1.ZestControl;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
@@ -419,6 +420,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	public void addToParent(ScriptNode parent, HttpMessage msg, String prefix) {
+		// TODO add before control nodes
 		if (parent == null) {
 			// They're gone for the 'new script' option...
 			logger.debug("addToParent parent=null msg="
@@ -565,23 +567,56 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 		if (ZestZapUtils.getElement(parent) instanceof ZestScript) {
 			ZestScript zc = (ZestScript) ZestZapUtils.getElement(parent);
-			zc.add(newChild);
-			node = this.getZestTreeModel().addToNode(parent, newChild);
+			
+			// Check for controls
+			List<ZestStatement> stmts = zc.getStatements();
+			if (stmts.size() > 0 && stmts.get((stmts.size()-1)) instanceof ZestControl) {
+				// Yes, theres a control at the end - insert before that
+				zc.add(stmts.size()-1, newChild);
+				node = this.getZestTreeModel().addToNodeAt(parent, newChild, stmts.size()-2);
+			} else {
+				zc.add(newChild);
+				node = this.getZestTreeModel().addToNode(parent, newChild);
+			}
 		} else if (ZestZapUtils.getElement(parent) instanceof ZestConditional) {
-			ZestConditional zc = (ZestConditional) ZestZapUtils
-					.getElement(parent);
+			ZestConditional zc = (ZestConditional) ZestZapUtils.getElement(parent);
 
 			if (ZestZapUtils.isShadow(parent)) {
-				zc.addElse(newChild);
+				// Check for controls
+				List<ZestStatement> stmts = zc.getElseStatements();
+				if (stmts.size() > 0 && stmts.get((stmts.size()-1)) instanceof ZestControl) {
+					// Yes, theres a control at the end - insert before that
+					zc.addElse(stmts.size()-1, newChild);
+					node = this.getZestTreeModel().addToNodeAt(parent, newChild, stmts.size()-2);
+				} else {
+					zc.addElse(newChild);
+					node = this.getZestTreeModel().addToNode(parent, newChild);
+				}
 			} else {
-				zc.addIf(newChild);
+				// Check for controls
+				List<ZestStatement> stmts = zc.getIfStatements();
+				if (stmts.size() > 0 && stmts.get((stmts.size()-1)) instanceof ZestControl) {
+					// Yes, theres a control at the end - insert before that
+					zc.addIf(stmts.size()-1, newChild);
+					node = this.getZestTreeModel().addToNodeAt(parent, newChild, stmts.size()-2);
+				} else {
+					zc.addIf(newChild);
+					node = this.getZestTreeModel().addToNode(parent, newChild);
+				}
 			}
-			node = this.getZestTreeModel().addToNode(parent, newChild);
 
 		} else if (ZestZapUtils.getElement(parent) instanceof ZestLoop<?>) {
 			ZestLoop<?> zl = (ZestLoop<?>) ZestZapUtils.getElement(parent);
-			zl.addStatement(newChild);
-			node = this.getZestTreeModel().addToNode(parent, newChild);
+
+			// Check for controls
+			List<ZestStatement> stmts = zl.getStatements();
+			if (stmts.size() > 0 && stmts.get((stmts.size()-1)) instanceof ZestControl) {
+				zl.add(stmts.size()-1, newChild);
+				node = this.getZestTreeModel().addToNodeAt(parent, newChild, stmts.size()-2);
+			} else {
+				zl.addStatement(newChild);
+				node = this.getZestTreeModel().addToNode(parent, newChild);
+			}
 		} else {
 			throw new IllegalArgumentException("Unexpected parent node: "
 					+ ZestZapUtils.getElement(parent) + " "

@@ -15,8 +15,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestLoopFile;
 import org.mozilla.zest.core.v1.ZestLoopInteger;
@@ -96,12 +96,12 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 
 	private void drawLoopStringDialog(ZestLoopString loop) {
 		if (loop.getValues() != null) {
-			String allValues = " ";
+			StringBuilder allValues = new StringBuilder();
 			for (String token : loop.getValues()) {
-				allValues += token;
+				allValues.append(token);
+				allValues.append("\n");
 			}
-			allValues = allValues.substring(1);
-			this.addMultilineField(VALUES_STRING, allValues);
+			this.addMultilineField(VALUES_STRING, allValues.toString());
 		} else {
 			this.addMultilineField(VALUES_STRING, "");
 		}
@@ -142,13 +142,10 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 		this.loop.setVariableName(this.getStringValue(VARIABLE_NAME));
 		if (this.loop instanceof ZestLoopString) {
 			ZestLoopString loopString=(ZestLoopString) this.loop;
-			StringTokenizer st = new StringTokenizer(
-					this.getStringValue(VALUES_STRING));
 			ZestLoopTokenStringSet newSet=new ZestLoopTokenStringSet();
-			String value="";
-			while (st.hasMoreTokens()) {
-				value=st.nextToken();
-				newSet.addToken(value);
+			String [] strs = this.getStringValue(VALUES_STRING).split("\n");
+			for (String str : strs) {
+				newSet.addToken(str);
 			}
 			loopString.setSet(newSet);
 		} else if (this.loop instanceof ZestLoopFile) {
@@ -220,18 +217,18 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 
 	@Override
 	public String validateFields() {
+		if (this.isEmptyField(VARIABLE_NAME)  || (! StringUtils.isAlphanumeric(this.getStringValue(VARIABLE_NAME)))) {
+			return Constant.messages.getString("zest.dialog.loop.string.error.variable");
+		}
+
 		if (this.loop instanceof ZestLoopString) {
-			StringTokenizer st = new StringTokenizer(
-					this.getStringValue(VALUES_STRING));
-			if (!st.hasMoreTokens()) {
-				return Constant.messages
-						.getString("zest.dialog.loop.string.error.values");
+			if (this.isEmptyField(VALUES_STRING)) {
+				return Constant.messages.getString("zest.dialog.loop.string.error.values");
 			}
 		} else if (this.loop instanceof ZestLoopFile) {
 			this.fileProposed = this.getFileFromSelection();
 			if (!fileProposed.exists()) {
-				return Constant.messages
-						.getString("zest.dialog.loop.file.error.nonexisting");
+				return Constant.messages.getString("zest.dialog.loop.file.error.nonexisting");
 			}
 		} else if (this.loop instanceof ZestLoopInteger) {
 			if (this.getIntValue(START_INTEGER) > this.getIntValue(END_INTEGER)) {
