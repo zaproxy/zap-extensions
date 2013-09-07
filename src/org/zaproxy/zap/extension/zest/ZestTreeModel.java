@@ -115,6 +115,53 @@ public class ZestTreeModel {
 		return zestNode;
 	}
 
+	public ScriptNode addToNodeAt(ScriptNode parent, ZestElement za, int index) {
+		logger.debug("addToNode " + parent.getNodeName() + " "
+				+ za.getElementType());
+
+		ScriptNode zestNode = this.getZestNode(za);
+		ZestElement parentZe = ZestZapUtils.getElement(parent);
+
+		if (parentZe instanceof ZestRequest) {
+			parent.insert(zestNode, index);
+		} else if (za instanceof ZestRequest) {
+			ZestRequest zr = (ZestRequest) za;
+			parent.insert(zestNode, index);
+
+			for (ZestAssertion zt : zr.getAssertions()) {
+				this.addToNode(zestNode, zt);
+			}
+
+		} else if (za instanceof ZestConditional) {
+			ZestConditional zc = (ZestConditional) za;
+
+			parent.insert(zestNode, index);
+			for (ZestStatement stmt : zc.getIfStatements()) {
+				this.addToNode(zestNode, stmt);
+			}
+
+			// 'Shadow' node for else path
+			ScriptNode elseNode = this.getZestNode(za, true);
+
+			parent.insert(elseNode, index+1);
+			for (ZestStatement stmt : zc.getElseStatements()) {
+				this.addToNode(elseNode, stmt);
+			}
+
+		} else if(za instanceof ZestLoop<?>){
+			ZestLoop<?> zl=(ZestLoop<?>) za;
+			parent.insert(zestNode, index);
+			for(ZestStatement stmt: zl.getStatements()){
+				this.addToNode(zestNode, stmt);
+			}
+			
+		} else {
+			parent.insert(zestNode, index);
+		}
+		model.nodeStructureChanged(parent);
+		return zestNode;
+	}
+
 	public ScriptNode addAfterNode(ScriptNode node, ZestStatement stmt) {
 		logger.debug("addAfterNode " + node.getNodeName() + " "
 				+ stmt.getElementType());

@@ -358,7 +358,7 @@ public class ZestDialogManager extends AbstractPanel {
 			boolean add, boolean surround) {
 		if (loopDialog == null) {
 			loopDialog = new ZestLoopDialog(extension, View.getSingleton()
-					.getMainFrame(), new Dimension(700, 200));
+					.getMainFrame(), new Dimension(400, 300));
 		} else if (loopDialog.isVisible()) {
 			// Already being displayed, dont overwrite anything
 			return;
