@@ -25,6 +25,7 @@ import java.awt.Component;
 import javax.swing.JTree;
 
 import org.apache.log4j.Logger;
+import org.mozilla.zest.core.v1.ZestControl;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
@@ -105,6 +106,8 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
                     	return false;
                     } else if ((ZestZapUtils.getElement(node) instanceof ZestScript)) {
                     	return false;
+                    } else if ((ZestZapUtils.getElement(node) instanceof ZestControl)) {
+                    	return false;
                     } else if (ZestZapUtils.isShadow(node)) {
                     	// Cant move these
                     	/* TODO
@@ -130,9 +133,10 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
                     		next = (ScriptNode)next.getNextSibling();
                     	}
                     	if (next != null) {
-                    		if (ZestZapUtils.getElement(node).isSameSubclass(ZestZapUtils.getElement(next)) ||
+                    		if ( ! (ZestZapUtils.getElement(next) instanceof ZestControl) &&
+                    				(ZestZapUtils.getElement(node).isSameSubclass(ZestZapUtils.getElement(next)) ||
                     				(ZestZapUtils.getElement(node) instanceof ZestStatement && 
-                    						ZestZapUtils.getElement(next) instanceof ZestStatement)) {
+                    						ZestZapUtils.getElement(next) instanceof ZestStatement))) {
                     			this.setEnabled(true);
                     		}
                     	}

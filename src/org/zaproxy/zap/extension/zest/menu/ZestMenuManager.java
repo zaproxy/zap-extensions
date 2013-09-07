@@ -34,7 +34,7 @@ public class ZestMenuManager {
 	private ZestAddConditionPopupMenu popupAddConditionMenu = null;
 	private ZestAddLoopPopupMenu popupAddLoopMenu = null;
 	private ZestAddCommentPopupMenu popupAddCommentMenu = null;
-	private ZestAddReturnPopupMenu popupAddReturnMenu = null;
+	private ZestAddControlPopupMenu popupAddReturnMenu = null;
 	
 	private ZestSurroundWithPopupMenu popupSurroundWithMenu = null;
 	private ZestAddLoopPopupMenu popupAddLoopMenuLevel2 = null;
@@ -151,9 +151,9 @@ public class ZestMenuManager {
 		return popupAddCommentMenu;
 	}
 
-	private ZestAddReturnPopupMenu getPopupAddReturnMenu() {
+	private ZestAddControlPopupMenu getPopupAddReturnMenu() {
 		if (popupAddReturnMenu == null) {
-			popupAddReturnMenu = new ZestAddReturnPopupMenu(this.extension);
+			popupAddReturnMenu = new ZestAddControlPopupMenu(this.extension);
 		}
 		return popupAddReturnMenu;
 	}

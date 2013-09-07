@@ -45,6 +45,9 @@ import org.mozilla.zest.core.v1.ZestAssignString;
 import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
+import org.mozilla.zest.core.v1.ZestControlLoopBreak;
+import org.mozilla.zest.core.v1.ZestControlLoopNext;
+import org.mozilla.zest.core.v1.ZestControlReturn;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
@@ -57,7 +60,6 @@ import org.mozilla.zest.core.v1.ZestLoopInteger;
 import org.mozilla.zest.core.v1.ZestLoopString;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestReturn;
 import org.mozilla.zest.core.v1.ZestRuntime;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStructuredExpression;
@@ -398,16 +400,20 @@ public class ZestZapUtils {
 				return Constant.messages
 						.getString("zest.element.comment.title");
 			}
-		} else if (za instanceof ZestReturn) {
-			ZestReturn zsa = (ZestReturn) za;
+		} else if (za instanceof ZestControlReturn) {
+			ZestControlReturn zsa = (ZestControlReturn) za;
 			if (incParams) {
 				return MessageFormat.format(
-						Constant.messages.getString("zest.element.return"), 
+						Constant.messages.getString("zest.element.control.return"), 
 						zsa.getValue());
 			} else {
 				return Constant.messages
-						.getString("zest.element.return.title");
+						.getString("zest.element.control.return.title");
 			}
+		} else if (za instanceof ZestControlLoopBreak) {
+			return Constant.messages.getString("zest.element.control.loopbrk.title");
+		} else if (za instanceof ZestControlLoopNext) {
+			return Constant.messages.getString("zest.element.control.loopnext.title");
 			/*
 			 * } else if (za instanceof ZestTreeElement) { switch
 			 * (((ZestTreeElement)za).getType()) { case TARGETED_SCRIPT: return

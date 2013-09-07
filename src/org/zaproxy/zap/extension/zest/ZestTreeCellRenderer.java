@@ -36,10 +36,12 @@ import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
+import org.mozilla.zest.core.v1.ZestControlLoopBreak;
+import org.mozilla.zest.core.v1.ZestControlLoopNext;
+import org.mozilla.zest.core.v1.ZestControlReturn;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestReturn;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 
@@ -74,8 +76,12 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-up-right.png"));
 	private static final ImageIcon LOOP_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/loop.png"));
-	private static final ImageIcon RETURN_ICON =
+	private static final ImageIcon CONTROL_RETURN_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/arrow-return-180.png"));
+	private static final ImageIcon CONTROL_LOOP_BREAK_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/arrow-turn-180.png"));
+	private static final ImageIcon CONTROL_LOOP_NEXT_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/arrow-turn-180-left.png"));
 
 	private static final long serialVersionUID = -4278691012245035225L;
 
@@ -137,8 +143,12 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 						this.setToolTipText(tooltip);
 					} else if (za instanceof ZestLoop){
 						setIcon(LOOP_ICON);
-					} else if (za instanceof ZestReturn) {
-						setIcon(RETURN_ICON);
+					} else if (za instanceof ZestControlReturn) {
+						setIcon(CONTROL_RETURN_ICON);
+					} else if (za instanceof ZestControlLoopBreak) {
+						setIcon(CONTROL_LOOP_BREAK_ICON);
+					} else if (za instanceof ZestControlLoopNext) {
+						setIcon(CONTROL_LOOP_NEXT_ICON);
 					} else {
 						logger.error("Unrecognised element element class=" + zew.getElement().getClass().getCanonicalName());
 					}
