@@ -32,10 +32,11 @@ import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
+import org.mozilla.zest.core.v1.ZestControl;
+import org.mozilla.zest.core.v1.ZestControlReturn;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestReturn;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.mozilla.zest.impl.ZestScriptEngineFactory;
@@ -72,7 +73,7 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestLoopDialog loopDialog = null;
 	private ZestFuzzerCategoryDialog fuzzCatDialog = null;
 	private ZestRedactDialog redactDialog = null;
-	private ZestReturnDialog returnDialog = null;
+	private ZestControlDialog controlDialog = null;
 	private ZestParameterizeDialog paramDialog = null;
 //	private ZestComplexConditionDialog complexConditionDialog = null;
 
@@ -153,9 +154,9 @@ public class ZestDialogManager extends AbstractPanel {
 								nodes.add(sn);
 								showZestLoopDialog(parent, nodes, null,
 										(ZestLoop<?>) obj, false, false);
-							} else if (obj instanceof ZestReturn) {
-								showZestReturnDialog(parent, sn, null,
-										(ZestReturn) obj, false);
+							} else if (obj instanceof ZestControlReturn) {
+								showZestControlDialog(parent, sn, null,
+										(ZestControlReturn) obj, false);
 							}
 						}
 					}
@@ -302,18 +303,18 @@ public class ZestDialogManager extends AbstractPanel {
 		commentDialog.setVisible(true);
 	}
 
-	public void showZestReturnDialog(ScriptNode parent, ScriptNode child,
-			ZestRequest req, ZestReturn retrn, boolean add) {
-		if (returnDialog == null) {
-			returnDialog = new ZestReturnDialog(extension, View
+	public void showZestControlDialog(ScriptNode parent, ScriptNode child,
+			ZestRequest req, ZestControl ctrl, boolean add) {
+		if (controlDialog == null) {
+			controlDialog = new ZestControlDialog(extension, View
 					.getSingleton().getMainFrame(), new Dimension(300, 200));
-		} else if (returnDialog.isVisible()) {
+		} else if (controlDialog.isVisible()) {
 			// Already being displayed, dont overwrite anything
 			return;
 		}
 		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
-		returnDialog.init(script, parent, child, req, retrn, add);
-		returnDialog.setVisible(true);
+		controlDialog.init(script, parent, child, req, ctrl, add);
+		controlDialog.setVisible(true);
 	}
 
 	public void showZestConditionalDialog(ScriptNode parent,

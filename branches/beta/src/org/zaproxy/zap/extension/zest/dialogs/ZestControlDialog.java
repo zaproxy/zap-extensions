@@ -22,8 +22,9 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import java.awt.Dimension;
 import java.awt.Frame;
 
+import org.mozilla.zest.core.v1.ZestControl;
 import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestReturn;
+import org.mozilla.zest.core.v1.ZestControlReturn;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -32,7 +33,7 @@ import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
-public class ZestReturnDialog extends StandardFieldsDialog implements ZestDialog {
+public class ZestControlDialog extends StandardFieldsDialog implements ZestDialog {
 
 	private static final String FIELD_VALUE = "zest.dialog.return.label.value"; 
 
@@ -43,22 +44,22 @@ public class ZestReturnDialog extends StandardFieldsDialog implements ZestDialog
 	private ScriptNode child = null;
 	private ZestScriptWrapper script = null;
 	private ZestStatement request = null;
-	private ZestReturn retrn = null;
+	private ZestControl control = null;
 	private boolean add = false;
 
-	public ZestReturnDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+	public ZestControlDialog(ExtensionZest ext, Frame owner, Dimension dim) {
 		super(owner, "zest.dialog.action.add.title", dim);
 		this.extension = ext;
 	}
 
 	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestRequest req, ZestReturn comment, boolean add) {
+			ZestRequest req, ZestControl control, boolean add) {
 		this.script = script;
 		this.add = add;
 		this.parent = parent;
 		this.child = child;
 		this.request = req;
-		this.retrn = comment;
+		this.control = control;
 
 		this.removeAllFields();
 		
@@ -68,21 +69,26 @@ public class ZestReturnDialog extends StandardFieldsDialog implements ZestDialog
 			this.setTitle(Constant.messages.getString("zest.dialog.return.edit.title"));
 		}
 
-		ZestReturn za = (ZestReturn) comment;
-		this.addTextField(FIELD_VALUE, za.getValue());
-		// Enable right click menus
-		this.addFieldListener(FIELD_VALUE, ZestZapUtils.stdMenuAdapter()); 
+		if (control instanceof ZestControlReturn) {
+			ZestControlReturn za = (ZestControlReturn) control;
+			this.addTextField(FIELD_VALUE, za.getValue());
+			// Enable right click menus
+			this.addFieldListener(FIELD_VALUE, ZestZapUtils.stdMenuAdapter());
+		}
 		this.addPadding();
 	}
 
 	public void save() {
-		retrn.setValue(this.getStringValue(FIELD_VALUE));
+		if (control instanceof ZestControlReturn) {
+			ZestControlReturn za = (ZestControlReturn) control;
+			za.setValue(this.getStringValue(FIELD_VALUE));
+		}
 
 		if (add) {
 			if (request == null) {
-				extension.addToParent(parent, retrn);
+				extension.addToParent(parent, control);
 			} else {
-				extension.addAfterRequest(parent, child, request, retrn);
+				extension.addAfterRequest(parent, child, request, control);
 			}
 		} else {
 			extension.updated(child);
