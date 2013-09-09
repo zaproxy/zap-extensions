@@ -104,7 +104,11 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 				ScriptEngineWrapper engine = script.getEngine();
 				if (script.getEngine() == null) {
 					// Scripts loaded from the configs my have loaded before all of the engines
-					script.setEngine(extension.getExtScript().getEngineWrapper(script.getEngineName()));
+					try {
+						script.setEngine(extension.getExtScript().getEngineWrapper(script.getEngineName()));
+					} catch (Exception e) {
+						// Failed to find the engine, just keep going
+					}
 				}
 				
 				if (engine != null && engine.getIcon() != null) {
