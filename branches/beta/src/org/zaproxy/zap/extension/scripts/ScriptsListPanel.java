@@ -305,7 +305,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	}
 
 	protected ScriptWrapper getSelectedScript() {
-	    ScriptNode node = this.getSelectedNode();
+	    ScriptNode node = this.getSelectedScriptNode();
 	    if (node != null) {
 	    	return (ScriptWrapper)node.getUserObject();
 	    }
