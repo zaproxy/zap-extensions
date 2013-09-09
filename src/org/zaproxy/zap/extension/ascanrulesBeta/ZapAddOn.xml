@@ -12,6 +12,9 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HPP</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.LDAPInjection</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSAttack</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSPrime</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSSpider</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SessionFixation</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionHypersonic</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionMySQL</ascanrule>
