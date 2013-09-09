@@ -40,6 +40,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	private ZestScript zestScript = null;
 	private ExtensionZest extension = null;
 	private ScriptWrapper original = null;
+	private boolean debug = false;
 
 	public ZestScriptWrapper(ScriptWrapper script) {
 		this.original = script;
@@ -150,6 +151,14 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	@Override
 	public int hashCode() {
 		return this.original.hashCode();
+	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 	
 }

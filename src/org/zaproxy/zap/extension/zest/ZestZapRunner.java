@@ -103,6 +103,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
 		this.target = null;
 		super.setOutputWriter(writer);
+		this.setDebug(this.wrapper.isDebug());
 		String result = super.run(script, params);
 		this.notifyComplete();
 		return result;
@@ -114,6 +115,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			ZestInvalidCommonTestException, ZestAssignFailException {
     	log.debug("Run script " + script.getTitle());
 		super.setOutputWriter(writer);
+		this.setDebug(this.wrapper.isDebug());
 		String result = super.run(script, target, params);
 		this.notifyComplete();
 		return result;
