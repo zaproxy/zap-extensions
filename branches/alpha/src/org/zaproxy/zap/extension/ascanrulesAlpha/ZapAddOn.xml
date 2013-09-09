@@ -9,9 +9,6 @@
 	<extensions>
 	</extensions>
 	<ascanrules>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestPersistentXSSAttack</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestPersistentXSSPrime</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestPersistentXSSSpider</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.CodeInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.CommandExecutionPlugin</ascanrule>
 	</ascanrules>

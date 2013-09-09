@@ -16,7 +16,7 @@
  * limitations under the License. 
  */
 
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
