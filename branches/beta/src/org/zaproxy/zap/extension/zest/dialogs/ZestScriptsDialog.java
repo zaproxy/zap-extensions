@@ -67,6 +67,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private static final String FIELD_LENGTH = "zest.dialog.script.label.length";
     private static final String FIELD_APPROX = "zest.dialog.script.label.approx";
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
+    private static final String FIELD_DEBUG = "zest.dialog.script.label.debug";
 
     private static final Logger logger = Logger.getLogger(ZestScriptsDialog.class);
 
@@ -123,6 +124,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         this.addComboField(0, FIELD_PREFIX, this.getSites(), script.getPrefix(), true);
         this.addCheckBoxField(0, FIELD_LOAD, scriptWrapper.isLoadOnStart());
         this.addMultilineField(0, FIELD_DESC, script.getDescription());
+        this.addCheckBoxField(0, FIELD_DEBUG, scriptWrapper.isDebug());
         
         this.getParamsModel().setValues(script.getParameters().getVariables());
         
@@ -299,6 +301,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         scriptWrapper.setDescription(script.getDescription());
         scriptWrapper.setContents(ZestJSON.toString(script));
         scriptWrapper.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
+        scriptWrapper.setDebug(this.getBoolValue(FIELD_DEBUG));
 
         if (add) {
             script.setType(type);
