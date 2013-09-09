@@ -265,7 +265,7 @@ public class ZestDialogManager extends AbstractPanel {
 			ZestRequest req, ZestAction action, boolean add) {
 		if (actionDialog == null) {
 			actionDialog = new ZestActionDialog(extension,
-					View.getSingleton().getMainFrame(), new Dimension(300, 200));
+					View.getSingleton().getMainFrame(), new Dimension(400, 300));
 		} else if (actionDialog.isVisible()) {
 			// Already being displayed, dont overwrite anything
 			return;

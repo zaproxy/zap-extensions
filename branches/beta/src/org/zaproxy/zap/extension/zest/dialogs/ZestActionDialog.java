@@ -21,8 +21,16 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
@@ -33,6 +41,7 @@ import org.mozilla.zest.core.v1.ZestActionSleep;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -62,6 +71,14 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 	private ZestStatement request = null;
 	private ZestAction action = null;
 	private boolean add = false;
+
+    private JButton addButton = null;
+    private JButton modifyButton = null;
+    private JButton removeButton = null;
+
+    private JTable paramsTable = null;
+    private ScriptTokensTableModel paramsModel = null;
+    private ZestParameterDialog parmaDialog = null;
 
 	public ZestActionDialog(ExtensionZest ext, Frame owner, Dimension dim) {
 		super(owner, "zest.dialog.action.add.title", dim);
@@ -130,15 +147,111 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 			ZestActionInvoke za = (ZestActionInvoke) action;
 			this.addComboField(FIELD_SCRIPT, this.getScriptNames(), za.getScript());
 			this.addTextField(FIELD_VARIABLE, za.getVariableName());
-			/* TODO params!
-			this.addTextField(FIELD_MESSAGE, za.getMessage());
-			// Enable right click menus
-			this.addFieldListener(FIELD_MESSAGE, ZestZapUtils.stdMenuAdapter());
-			*/ 
+
+	        this.getParamsModel().setValues(za.getParameters());
+	        
+	        List<JButton> buttons = new ArrayList<JButton>();
+	        buttons.add(getAddButton());
+	        buttons.add(getModifyButton());
+	        buttons.add(getRemoveButton());
+	        
+	        this.addTableField(FIELD_PARAMS, this.getParamsTable(), buttons);
 		}
 		this.addPadding();
 	}
 	
+    private JButton getAddButton () {
+    	if (this.addButton == null) {
+    		this.addButton = new JButton(Constant.messages.getString("zest.dialog.script.button.add"));
+    		this.addButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ZestParameterDialog dialog = getParamDialog();
+					if (! dialog.isVisible()) {
+						dialog.init("", "", true, -1, true);
+						dialog.setVisible(true);
+					}
+				}});
+    	}
+    	return this.addButton;
+    }
+    
+    private JButton getModifyButton () {
+    	if (this.modifyButton == null) {
+    		this.modifyButton = new JButton(Constant.messages.getString("zest.dialog.script.button.modify"));
+    		this.modifyButton.setEnabled(false);
+    		this.modifyButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ZestParameterDialog dialog = getParamDialog();
+					if (! dialog.isVisible()) {
+						int row = getParamsTable().getSelectedRow();
+						dialog.init(
+								(String)getParamsModel().getValueAt(row, 0), 
+								(String)getParamsModel().getValueAt(row, 1), 
+								false, row, true);
+						dialog.setVisible(true);
+					}
+				}});
+    	}
+    	return this.modifyButton;
+    }
+    
+    private JButton getRemoveButton () {
+    	if (this.removeButton == null) {
+    		this.removeButton = new JButton(Constant.messages.getString("zest.dialog.script.button.remove"));
+    		this.removeButton.setEnabled(false);
+    		final ZestActionDialog parent = this;
+    		this.removeButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (JOptionPane.OK_OPTION == 
+							View.getSingleton().showConfirmDialog(parent, 
+									Constant.messages.getString("zest.dialog.script.remove.confirm"))) {
+						getParamsModel().remove(getParamsTable().getSelectedRow());
+					}
+				}});
+    	}
+    	return this.removeButton;
+    }
+    
+    private ZestParameterDialog getParamDialog() {
+    	if (this.parmaDialog == null) {
+    		this.parmaDialog = new ZestParameterDialog(this.getParamsModel(), this, new Dimension(300, 200)); 
+    	}
+    	return this.parmaDialog;
+    }
+    
+    private JTable getParamsTable() {
+    	if (paramsTable == null) {
+    		paramsTable = new JTable();
+    		paramsTable.setModel(getParamsModel());
+    		paramsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					if (getParamsTable().getSelectedRowCount() == 0) {
+			    		modifyButton.setEnabled(false);
+			    		removeButton.setEnabled(false);
+					} else if (getParamsTable().getSelectedRowCount() == 1) {
+			    		modifyButton.setEnabled(true);
+			    		removeButton.setEnabled(true);
+					} else {
+			    		modifyButton.setEnabled(false);
+			    		// TODO allow multiple deletions?
+			    		removeButton.setEnabled(false);
+					}
+				}});
+    	}
+    	return paramsTable;
+    }
+
+    private ScriptTokensTableModel getParamsModel() {
+        if (paramsModel == null) {
+            paramsModel = new ScriptTokensTableModel();
+        }
+        return paramsModel;
+    }
+
 	private String priorityToStr(ZestActionFail.Priority priority) {
 		return Constant.messages.getString(PRIORITY_PREFIX + priority.name().toLowerCase());
 	}
@@ -198,6 +311,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 		} else if (action instanceof ZestActionInvoke) {
 			ZestActionInvoke za = (ZestActionInvoke) action;
 			za.setVariableName(this.getStringValue(FIELD_VARIABLE));
+			za.setParameters(this.getParamsModel().getValues());
 			
 			ScriptWrapper sc = this.extension.getExtScript().getScript(this.getStringValue(FIELD_SCRIPT));
 			
