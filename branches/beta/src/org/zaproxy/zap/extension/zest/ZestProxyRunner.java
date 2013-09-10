@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
@@ -48,8 +51,12 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 		try {
 			// Create the previous request so the script has something to run against
 			ZestRequest req = ZestZapUtils.toZestRequest(msg);
+			
+			// Set the response url to empty to give us a way to work out this is a request in the script
+			Map<String, String> params = new HashMap<String, String>();
+			params.put(ZestVariables.RESPONSE_URL, "");
 
-			this.run(script.getZestScript(), req, null);
+			this.run(script.getZestScript(), req, params);
 			
 			String reqHeader = this.getVariable(ZestVariables.REQUEST_HEADER);
 			
