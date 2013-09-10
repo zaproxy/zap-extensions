@@ -420,7 +420,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	public void addToParent(ScriptNode parent, HttpMessage msg, String prefix) {
-		// TODO add before control nodes
 		if (parent == null) {
 			// They're gone for the 'new script' option...
 			logger.debug("addToParent parent=null msg="
@@ -944,13 +943,17 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	public void pasteToNode(ScriptNode parent) {
 		if (this.cnpNodes != null) {
+			ZestScriptWrapper script = this.getZestTreeModel().getScriptWrapper(parent);
 			ScriptNode lastNode = null;
 			for (int i = 0; i < cnpNodes.size(); i++) {
-				lastNode = this.addToParent(parent,
-						((ZestStatement) ZestZapUtils.getElement(cnpNodes
-								.get(i))).deepCopy());
-				if (cutNodes && !ZestZapUtils.isShadow(cnpNodes.get(i))) {
-					this.delete(cnpNodes.get(i));
+				ZestStatement stmt = ((ZestStatement) ZestZapUtils.getElement(cnpNodes.get(i))).deepCopy();
+				if (stmt.isPassive() || ! ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getTypeName())) {
+					// Dont paste non passive statements into a passive script
+					lastNode = this.addToParent(parent, stmt);
+					
+					if (cutNodes && !ZestZapUtils.isShadow(cnpNodes.get(i))) {
+						this.delete(cnpNodes.get(i));
+					}
 				}
 			}
 			refreshNode(parent);// refreshes the subtree starting from the
