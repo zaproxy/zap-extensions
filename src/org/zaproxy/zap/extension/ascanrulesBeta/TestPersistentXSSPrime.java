@@ -37,7 +37,7 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
     @Override
     public String getName() {
     	AscanUtils.registerI18N();
-    	return Constant.messages.getString("ascanalpha.pxss.prime.name");
+    	return Constant.messages.getString("ascanbeta.pxss.prime.name");
     }
 
     @Override
