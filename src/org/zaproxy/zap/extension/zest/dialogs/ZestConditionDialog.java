@@ -123,6 +123,7 @@ public class ZestConditionDialog extends StandardFieldsDialog {
 			
 		} else if (condition.getRootExpression() instanceof ZestExpressionLength) {
 			ZestExpressionLength zc = (ZestExpressionLength) condition.getRootExpression();
+			this.addComboField(FIELD_VARIABLE, this.getVariableNames(), zc.getVariableName());
 			this.addNumberField(FIELD_LENGTH, 0, Integer.MAX_VALUE, zc.getLength());
 			this.addNumberField(FIELD_APPROX, 0, 100, zc.getApprox());
 		}
