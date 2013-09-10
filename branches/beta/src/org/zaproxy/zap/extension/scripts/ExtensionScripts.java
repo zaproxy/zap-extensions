@@ -25,7 +25,6 @@ import java.net.URL;
 import java.util.List;
 
 import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
 import javax.swing.tree.TreeCellRenderer;
 
 import org.parosproxy.paros.Constant;
@@ -42,18 +41,14 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.utils.DesktopUtils;
 
 public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventListener, ScriptUI {
 	
 	public static final String NAME = "ExtensionScripts";
 	public static final ImageIcon ICON = new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")); // Script icon
 	
-	protected static final String SCRIPT_CONSOLE_HOME_PAGE = "http://code.google.com/p/zaproxy/wiki/ScriptConsole";
-
 	private ScriptsListPanel scriptsPanel = null;
 	private ConsolePanel consolePanel = null;
-	private JMenuItem menuConsoleLink = null;
 	private OutputPanelWriter outputPanelWriter = null;
 
 	private InvokeScriptWithNodePopupMenu popupInvokeScriptWithNodeMenu = null;
@@ -94,7 +89,6 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 	    if (getView() != null) {
 	    	extensionHook.getHookView().addSelectPanel(getScriptsPanel());
 	        extensionHook.getHookView().addWorkPanel(getConsolePanel());
-	        extensionHook.getHookMenu().addToolsMenuItem(getMenuConsoleLink());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupInvokeScriptWithNodeMenu());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupEnableDisableScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupRemoveScript());
@@ -285,22 +279,6 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 		} catch (MalformedURLException e) {
 			return null;
 		}
-	}
-	
-	private JMenuItem getMenuConsoleLink() {
-        if (menuConsoleLink == null) {
-        	menuConsoleLink = new JMenuItem();
-        	menuConsoleLink.setText(Constant.messages.getString("scripts.topmenu.tools.consoleLink"));
-
-        	menuConsoleLink.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent e) {
-            		// Open the Script Console wiki page using the default browser
-                	DesktopUtils.openUrlInBrowser(SCRIPT_CONSOLE_HOME_PAGE);
-                }
-            });
-        }
-        return menuConsoleLink;
 	}
 	
 	protected OutputPanelWriter getOutputPanelWriter() {
