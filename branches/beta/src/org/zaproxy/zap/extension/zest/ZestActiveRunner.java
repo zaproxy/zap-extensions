@@ -42,13 +42,13 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
 
 	@Override
 	public void scan(ScriptsActiveScanner sas, HttpMessage msg, String param, String value) throws ScriptException {
-		logger.debug("Zest SctiveScan script: " + this.script.getName());
+		logger.debug("Zest ActiveScan script: " + this.script.getName());
 		this.sas = sas;
 		this.msg = msg;
 		this.param = param;
 
 		try {
-			sas.setParam(msg, param, "{{target.value}}");
+			sas.setParam(msg, param, "{{target}}");
 			this.run(script.getZestScript(), ZestZapUtils.toZestRequest(msg), null);
 		} catch (Exception e) {
 			throw new ScriptException(e);

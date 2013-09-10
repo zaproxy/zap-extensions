@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestVariables;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
@@ -61,7 +62,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 		} else {
 			this.addTextField(FIELD_URL, request.getUrlToken());
 		}
-		this.addComboField(FIELD_METHOD, new String[] {"GET", "POST", "{{target.method}}"}, request.getMethod());
+		this.addComboField(FIELD_METHOD, new String[] {"GET", "POST", "{{" + ZestVariables.REQUEST_METHOD + "}}"}, request.getMethod());
 		this.addCheckBoxField(FIELD_FOLLOW_REDIR, request.isFollowRedirects());
 		this.addMultilineField(FIELD_HEADERS, request.getHeaders());
 		this.addMultilineField(FIELD_BODY, request.getData());
