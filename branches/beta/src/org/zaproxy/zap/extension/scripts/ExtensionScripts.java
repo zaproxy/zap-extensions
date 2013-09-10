@@ -169,6 +169,8 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 		if (!View.isInitialised()) {
 			return;
 		}
+// TODO
+System.out.println("--- displayScript " + script.getName());
 		
 		if (script.getEngine() == null) {
 			// Scripts loaded from the configs my have loaded before all of the engines
@@ -188,14 +190,22 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 			}
 			
 			// Show last result
+			boolean noOutput = true;
 			this.getConsolePanel().getOutputPanel().clear();
-			if (script.getLastOutput() != null) {
+			if (script.getLastOutput() != null && script.getLastOutput().length() > 0) {
 				this.getConsolePanel().getOutputPanel().append(script.getLastOutput());
+				noOutput = false;
 			}
 			if (script.getLastException() != null) {
 				this.showError(script.getLastException());
+				noOutput = false;
 			} else if (script.getLastErrorDetails() != null && script.getLastErrorDetails().length() > 0) {
 				this.showError(script.getLastErrorDetails());
+				noOutput = false;
+			}
+			if (! script.getEngine().isTextBased() && noOutput) {
+				// Output message to explain about non test based scriopts
+				this.getConsolePanel().getOutputPanel().append(Constant.messages.getString("scripts.welcome.nontest"));
 			}
 		}
 	}
