@@ -46,7 +46,7 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
     @Override
     public String getName() {
     	AscanUtils.registerI18N();
-    	return Constant.messages.getString("ascanalpha.pxss.attack.name");
+    	return Constant.messages.getString("ascanbeta.pxss.attack.name");
     }
 
     @Override
@@ -122,7 +122,7 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
     @Override
     public void scan(HttpMessage sourceMsg, String param, String value) {
     	String otherInfo = MessageFormat.format(
-				Constant.messages.getString("ascanalpha.pxss.otherinfo"), 
+				Constant.messages.getString("ascanbeta.pxss.otherinfo"), 
 				sourceMsg.getRequestHeader().getURI().toString());
     	
 		try {
