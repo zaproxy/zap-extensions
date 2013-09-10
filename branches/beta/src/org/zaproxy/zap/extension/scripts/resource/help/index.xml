@@ -4,7 +4,7 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">scripts
-	<indexitem text="Scripts" target="addon.scripts.scripts" />
-	<indexitem text="Script Console tab" target="addon.scripts.console" />
-	<indexitem text="Scripts tree tab" target="addon.scripts.tree" />
+	<indexitem text="scripts" target="addon.scripts.scripts" />
+	<indexitem text="script console tab" target="addon.scripts.console" />
+	<indexitem text="scripts tree tab" target="addon.scripts.tree" />
 </index>
