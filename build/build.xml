@@ -292,7 +292,7 @@
 		<antcall target="deploy-extension"> <param name="extension" value="pscanrules"/> </antcall>
 	</target>
 
-	<target name="deploy-quickstart" description="deploy the quick start extension">
+	<target name="deploy-quickstart" description="deploy the quick start extension" depends="build-all">
 		<antcall target="deploy-extension"> <param name="extension" value="quickstart"/> </antcall>
 	</target>
 	
@@ -319,7 +319,21 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="ascanrules-${status}-*.zap"/>
-				<!--include name="bruteforce-${status}-*.zap"/-->
+				<include name="pscanrules-${status}-*.zap"/>
+				<include name="quickstart-${status}-*.zap"/>
+				<include name="websocket-${status}-*.zap"/>
+			</fileset>
+		</copy>
+	</target>
+
+
+	<target name="deploy-release" depends="build-all" description="deploy all of the extension to be included in a full release">
+		<!-- Set to compile with debug information -->
+		<property name="javac.debug" value="true" />
+		<antcall target="build-all" />
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+				<include name="ascanrules-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="websocket-${status}-*.zap"/>
