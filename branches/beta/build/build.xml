@@ -283,5 +283,19 @@
 		</copy>
 	</target>
 	
+	<target name="deploy-release" depends="build-all" description="deploy extensions to be included in full releases">
+		<!-- Set to compile with debug information -->
+		<property name="javac.debug" value="true" />
+		<antcall target="build-all" />
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+				<include name="diff-${status}-*.zap"/>
+				<include name="plugnhack-${status}-*.zap"/>
+				<include name="scripts-${status}-*.zap"/>
+				<include name="spiderAjax-${status}-*.zap"/>
+				<include name="zest-${status}-*.zap"/>
+			</fileset>
+		</copy>
+	</target>
 
 </project>
