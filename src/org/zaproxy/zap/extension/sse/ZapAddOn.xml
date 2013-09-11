@@ -1,15 +1,10 @@
 <zapaddon>
 	<name>Server-Sent Events</name>
-	<version>5</version>
+	<version>6</version>
 	<description>Allows you to view Server-Sent Events (SSE) communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>
-	<![CDATA[
-	Changed the loading order of the extension.<br>
-	Changed to not load view components when in daemon mode.
-	]]>
-	</changes>
+	<changes>Updated for ZAP 2.2.0</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.sse.ExtensionServerSentEvents</extension>
@@ -18,6 +13,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.1.0</not-before-version>
+	<not-before-version>2.2.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
