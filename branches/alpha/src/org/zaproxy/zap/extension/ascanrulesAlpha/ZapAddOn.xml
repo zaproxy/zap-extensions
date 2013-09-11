@@ -4,7 +4,7 @@
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Added Code Injection and Command Injection plugins</changes>
+	<changes>Updated for ZAP 2.2.0</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
@@ -15,4 +15,5 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
+	<not-before-version>2.2.0</not-before-version>
 </zapaddon>
