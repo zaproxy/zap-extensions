@@ -1,5 +1,5 @@
 <zapaddon>
-	<name>SQLMap Injection Engine (alpha)</name>
+	<name>SQLMap Injection Engine</name>
 	<version>3</version>
 	<description>An advanced active injection bundle for SQLi (derived by SQLMap)</description>
 	<author>Andrea Pompili (Yhawke)</author>
@@ -14,6 +14,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.1.0</not-before-version>
+	<not-before-version>2.2.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
