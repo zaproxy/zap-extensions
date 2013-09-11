@@ -1,15 +1,10 @@
 <zapaddon>
 	<name>TreeTools</name>
-	<version>2</version>
+	<version>4</version>
 	<description>Tools to add functionality to the tree view.</description>
 	<author>Carl Sampson</author>
 	<url/>
-	<changes>
-	<![CDATA[
-	Moved to beta status.<br>
-	Changed the loading order of the extension.
-	]]>
-	</changes>
+	<changes>Updated for ZAP 2.2.0</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.treetools.ExtensionTreeTools</extension>

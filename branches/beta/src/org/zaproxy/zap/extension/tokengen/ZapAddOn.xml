@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Token generation and analysis</name>
-	<version>5</version>
+	<version>6</version>
 	<description>Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated language files.</changes>
+	<changes>Updated for ZAP 2.2.0</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.tokengen.ExtensionTokenGen</extension>

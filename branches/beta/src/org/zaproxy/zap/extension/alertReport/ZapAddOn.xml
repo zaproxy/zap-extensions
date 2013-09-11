@@ -1,18 +1,10 @@
 <zapaddon>
 	<name>Report alert generator</name>
-	<version>9</version>
+	<version>10</version>
 	<description>Allows you to generate reports for alerts you specify in pdf or odt format</description>
 	<author>Talsoft SRL</author>
 	<url>http://www.talsoft.com.ar</url>
-	<changes>
-	<![CDATA[
-	Changed to unload all components when uninstalling.<br>
-	Changed the messages keys prefix.<br>
-	Changed to use the messages automatically loaded by ZAP.<br>
-	Changed to check if the keys of the messages exists.<br>
-	Restored the translations of the alerts.<br>
-	]]>
-	</changes>
+	<changes>Updated for ZAP 2.2.0</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.alertReport.ExtensionAlertReportExport</extension>
