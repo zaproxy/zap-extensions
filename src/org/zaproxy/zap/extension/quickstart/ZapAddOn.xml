@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>12</version>
+	<version>13</version>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Link to mitmconf add-on URL if present.</changes>
+	<changes>Updated for 2.2.0.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.quickstart.ExtensionQuickStart</extension>
@@ -13,6 +13,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.1.0</not-before-version>
+	<not-before-version>2.2.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
