@@ -4,29 +4,7 @@
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>
-	 	<![CDATA[
-		v.1 		
-		Added an alpha version of User Controlled Open Redirect passive rule ported from<br/> 
-		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-redirect<br/>
-		Added an alpha version of User Controlled Cookie passive rule ported from<br/>
-		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-cookie<br/>
-		Added an alpha version of User Controlled Charset passive rule ported from<br/>
-		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-charset<br/>
-		Updated User Controlled Open Redirect, Cookie and Charset rules after testing with<br/>
-		http://www.testcases.org/watcher/ test pages.
-		v.2<br/>
-		Added an alpha version of User Controlled HTML Attributes passive rule ported from<br/> 
-		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-controlled-html-attribute<br/>
-		Updated other User Controlled passive rules after peer review<br/>	
-		Added an alpha version of User Controlled HTML Attributes passive rule ported from<br/> 
-		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#user-javascript-event<br/>
-		Added an alpha version of Insecure Form Load passive rule ported from<br/> 
-		https://websecuritytool.codeplex.com/wikipage?title=Checks#ssl-insecure-transition-from-http<br/>
-		Added an alpha version of Insecure Form Load passive rule ported from<br/> 
-		Watcher rule https://websecuritytool.codeplex.com/wikipage?title=Checks#ssl-insecure-transition-to-http<br/>
-		]]>
-	</changes>
+	<changes>Updated for ZAP 2.2.0</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
@@ -42,4 +20,5 @@
 	</pscanrules>
 	<filters/>
 	<files/>
+	<not-before-version>2.2.0</not-before-version>
 </zapaddon>

@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>HttpsInfo</name>
-	<version>1</version>
+	<version>2</version>
 	<description>Adds Https status information</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes></changes>
+	<changes>Updated for ZAP 2.2.0</changes>
 	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.httpsInfo.RightClickMenu</extension>
@@ -13,4 +13,5 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
+	<not-before-version>2.2.0</not-before-version>
 </zapaddon>
