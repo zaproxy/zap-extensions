@@ -1,5 +1,5 @@
-= The Script Console =
+= Scripts =
 
-The Script Console is now included in ZAP by default.
+Scripts support is now included in ZAP by default.
 
 For more details see the [http://code.google.com/p/zaproxy/wiki/HelpAddonsScriptsScripts ZAP wiki].
