@@ -1,26 +1,5 @@
 = The Script Console =
-The ZAP Script Console allows you to access internal ZAP data structures dynamically using any scripting language that supports [http://www.jcp.org/en/jsr/detail?id=223 JSR 223], including
 
-  * ECMAScript / Javascript (built in)
-  * Groovy http://groovy.codehaus.org/
-  * Python http://www.jython.org
-  * Ruby - http://jruby.org/
-  * and many more...
+The Script Console is now included in ZAP by default.
 
-Note that only ECMAScript (Javascript) support is built in - for other languages you will need to download the relevant jar(s), copy them into the 'lib' directory and restart ZAP.
-
-You will now have access to the Script Console as seen here (click for the full size image):
-[http://zaproxy.googlecode.com/svn/wiki/images/zap-scriptconsole.png http://zaproxy.googlecode.com/svn/wiki/images/zap-scriptconsole-sm.jpg]
-
-For some examples on what you can do in the console please see: http://code.google.com/p/zaproxy/wiki/InternalDetails.
-
-And for full details of all of the classes see the [http://code.google.com/p/zaproxy/wiki/JavaDocs JavaDocs] or (of course) the [http://code.google.com/p/zaproxy/source/browse/ source code].
-
-Any problems, get in touch via the [http://groups.google.com/group/zaproxy-develop developer-group].
-
-You may find it difficult to get access to some of the ZAP data structures as some of it is not as accessible as it should be.
-If so then please [http://groups.google.com/group/zaproxy-develop let us know] - we are committed to exposing anything that could be useful.
-
-Please [http://groups.google.com/group/zaproxy-develop tell us] if you develop any useful scripts and we'll publish them (with full credit of course).
-
-But be aware that scripts run with the same permissions as ZAP, so do not run any scripts that you do not trust!
+For more details see the [http://code.google.com/p/zaproxy/wiki/HelpAddonsScriptsScripts ZAP wiki].
