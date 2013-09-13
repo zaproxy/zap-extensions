@@ -24,23 +24,26 @@ import org.mozilla.zest.core.v1.ZestElement;
 
 public class ZestElementWrapper {
 	private ZestElement element;
-	private boolean shadow = false;
+	private int shadowLevel = 0;
 
 	public ZestElementWrapper(ZestElement element) {
-		this(element, false);
+		this(element, 0);
 	}
 	
-	public ZestElementWrapper(ZestElement element, boolean shadow) {
+	public ZestElementWrapper(ZestElement element, int shadowLevel) {
 		super();
 		this.element = element;
-		this.shadow = shadow;
+		this.shadowLevel = shadowLevel;
 	}
 
 	public ZestElement getElement() {
 		return element;
 	}
 
-	public boolean isShadow() {
-		return shadow;
+//	public boolean isShadow() {
+//		return shadowLevel>0;
+//	}
+	public int getShadowLevel(){
+		return this.shadowLevel;
 	}
 }

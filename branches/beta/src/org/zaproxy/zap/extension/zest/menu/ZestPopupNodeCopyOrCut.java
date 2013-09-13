@@ -102,7 +102,7 @@ public class ZestPopupNodeCopyOrCut extends ExtensionPopupMenuItem {
                     	// Cant copy the whole script
                			this.setEnabled(false);
                     	return false;
-                    } else if (ZestZapUtils.isShadow(node)) {
+                    } else if (ZestZapUtils.getShadowLevel(node)>0) {
                     	// Ignore these
                     } else if (! (ZestZapUtils.getElement(node) instanceof ZestStatement)) {
                     	// Cant copy these

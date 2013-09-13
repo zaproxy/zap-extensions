@@ -33,6 +33,7 @@ import org.mozilla.zest.core.v1.ZestAssignReplace;
 import org.mozilla.zest.core.v1.ZestAssignString;
 import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignment;
+import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestRequest;
@@ -91,7 +92,10 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
 	            	reCreateSubMenu(node.getParent(), node, (ZestRequest) ZestZapUtils.getElement(node), null);
 	            	return true;
 	    		} else if (ze instanceof ZestContainer) {
-	            	reCreateSubMenu(node, null, null, null);
+	            	if(ze instanceof ZestConditional && ZestZapUtils.getShadowLevel(node)==0){
+	            		return false;
+	            	}
+	    			reCreateSubMenu(node, null, null, null);
 	    		}
     		}
     		

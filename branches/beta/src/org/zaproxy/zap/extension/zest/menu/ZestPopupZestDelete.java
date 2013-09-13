@@ -93,7 +93,7 @@ public class ZestPopupZestDelete extends ExtensionPopupMenuItem {
                     // TODO ^ these checks
                     return ZestZapUtils.isZestNode(node) &&
                     		! (ZestZapUtils.getElement(node) instanceof ZestScript) &&
-                    		! ZestZapUtils.isShadow(node);
+                    		 ZestZapUtils.getShadowLevel(node)==0;
                     /*
                     return (node != null && ! node.isRoot() && ! node.getParent().isRoot()
                     		&& ! node.isShadow() && 

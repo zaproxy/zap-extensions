@@ -100,7 +100,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         this.extension = ext;
     }
 
-    public void init (ScriptNode scriptNode, ZestScriptWrapper scriptWrapper, boolean add) {
+    public void init (ScriptNode scriptNode, ZestScriptWrapper scriptWrapper, boolean add/*, ZestScript.Type type*/) {
         this.scriptNode = scriptNode;
         this.scriptWrapper = scriptWrapper;
         this.script = scriptWrapper.getZestScript();
@@ -166,10 +166,6 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         }
         
         //this.requestFocus(FIELD_TITLE);
-    }
-    
-    public void selectTab(int tab) {
-    	this.requestTabFocus(tab);
     }
 
     private JButton getAddButton () {
@@ -284,8 +280,6 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         if (script.getPrefix() == null || ! script.getPrefix().equals(this.getStringValue(FIELD_PREFIX))) {
             try {
                 script.setPrefix(this.getStringValue(FIELD_PREFIX));
-                // Ensure all children updated with new display names
-                extension.refreshNode(scriptNode);
             } catch (MalformedURLException e) {
                 logger.error(e.getMessage(), e);
             }
@@ -339,7 +333,6 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             deferedMessages.clear();
         }
         extension.updated(scriptNode);
-        extension.display(scriptWrapper, scriptNode, true);
     }
 
     @Override
