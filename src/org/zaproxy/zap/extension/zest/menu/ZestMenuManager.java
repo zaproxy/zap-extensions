@@ -32,6 +32,7 @@ public class ZestMenuManager {
 	private ZestAddAssertionPopupMenu popupAddAssertionMenu = null;
 	private ZestAddAssignPopupMenu popupAddAssignMenu = null;
 	private ZestAddConditionPopupMenu popupAddConditionMenu = null;
+	private ZestAddExpressionPopupMenu popupAddExpressionMenu = null;
 	private ZestAddLoopPopupMenu popupAddLoopMenu = null;
 	private ZestAddCommentPopupMenu popupAddCommentMenu = null;
 	private ZestAddControlPopupMenu popupAddReturnMenu = null;
@@ -47,7 +48,6 @@ public class ZestMenuManager {
 
 	private ZestPopupZestDelete popupZestDelete = null;
 	private ZestRedactPopupMenu popupRedact = null;
-	private ZestParameterizePopupMenu popupParam = null;
 	private ZestPasteVariablePopupMenu popupPasteVar = null;
 	
 	private ExtensionZest extension = null;
@@ -62,6 +62,7 @@ public class ZestMenuManager {
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddAssertionMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddAssignMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddConditionMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddExpressionMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddLoopMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddCommentMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddReturnMenu());
@@ -76,10 +77,16 @@ public class ZestMenuManager {
         extensionHook.getHookMenu().addPopupMenuItem(getPopupZestMoveDown ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupZestDelete ());
 
-        extensionHook.getHookMenu().addPopupMenuItem(getPopupParam ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupRedact ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupPasteVar ());
 
+	}
+	
+	private ZestAddExpressionPopupMenu getPopupAddExpressionMenu(){
+		if(popupAddExpressionMenu==null){
+			popupAddExpressionMenu=new ZestAddExpressionPopupMenu(this.extension);
+		}
+		return popupAddExpressionMenu;
 	}
 
 	private ZestAddActionPopupMenu getPopupAddActionMenu() {
@@ -212,13 +219,6 @@ public class ZestMenuManager {
 			popupRedact = new ZestRedactPopupMenu(this.extension, Constant.messages.getString("zest.redact.popup"));
 		}
 		return popupRedact;
-	}
-
-	private ZestParameterizePopupMenu getPopupParam() {
-		if (popupParam == null) {
-			popupParam = new ZestParameterizePopupMenu(this.extension, Constant.messages.getString("zest.parameterize.popup"));
-		}
-		return popupParam;
 	}
 
 	private ZestPasteVariablePopupMenu getPopupPasteVar () {
