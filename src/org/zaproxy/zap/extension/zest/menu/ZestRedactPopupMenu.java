@@ -32,41 +32,41 @@ import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
 public class ZestRedactPopupMenu extends ExtensionPopupMenuItem {
 
-    private static final long serialVersionUID = 2282358266003940700L;
+        private static final long serialVersionUID = 2282358266003940700L;
 
-    private ExtensionZest extension;
-    private String replace = null;
-    
-    private ScriptNode node = null;
+        private ExtensionZest extension;
+        private String replace = null;
+        
+        private ScriptNode node = null;
 
-    /**
-     * This method initializes 
-     * 
-     */
-    public ZestRedactPopupMenu(final ExtensionZest extension, String label) {
-        super(label);
-        this.extension = extension;
+        /**
+         * This method initializes 
+         * 
+         */
+        public ZestRedactPopupMenu(final ExtensionZest extension, String label) {
+                super(label);
+                this.extension = extension;
 
-        this.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                extension.getDialogManager().showZestRedactDialog(node, replace);
-            }
-        });
-    }
+                this.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                                extension.getDialogManager().showZestRedactDialog(node, replace);
+                        }
+                });
+        }
 
     public boolean isEnableForComponent(Component invoker) {
         if (invoker instanceof HttpPanelSyntaxHighlightTextArea && extension.getExtScript().getScriptUI() != null) {
-            HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;
-            ScriptNode node = extension.getExtScript().getScriptUI().getSelectedNode();
-            if (node != null && extension.isSelectedMessage(panel.getMessage()) &&
-                    panel.getSelectedText() != null && panel.getSelectedText().length() > 0) {
+                        HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;
+                        ScriptNode node = extension.getExtScript().getScriptUI().getSelectedNode();
+                        if (node != null && extension.isSelectedMessage(panel.getMessage()) &&
+                                        panel.getSelectedText() != null && panel.getSelectedText().length() > 0) {
                 if (ZestZapUtils.getElement(node) instanceof ZestRequest) {
-                        this.replace = panel.getSelectedText();
-                        this.node = node;
-                    return true;
+                                this.replace = panel.getSelectedText();
+                                this.node = node;
+                        return true;
                 }
-            }
+                        }
         }
        
         return false;

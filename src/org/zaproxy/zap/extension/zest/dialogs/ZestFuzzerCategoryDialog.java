@@ -22,7 +22,7 @@ public class ZestFuzzerCategoryDialog extends StandardFieldsDialog {
 	private static final long serialVersionUID = 8128872516912291657L;
 	
 	private ExtensionZest extension=null;
-	private Frame owner=null;
+//	private Frame owner=null;
 	
 	private final static String SELECT_CATEGORY_COMBO_BOX="zest.dialog.fuzz.label.category";
 
@@ -37,7 +37,7 @@ public class ZestFuzzerCategoryDialog extends StandardFieldsDialog {
 	
 	public void init(ZestFuzzerFileDelegate file, Frame owner){
 		this.fuzzFile=file;
-		this.owner=owner;
+//		this.owner=owner;
 		List<String> categories=extension.getFuzzerDelegate().getJBroFuzzCategories();
 		for(String item:categories){
 			categorySelectorCb.addItem(item);

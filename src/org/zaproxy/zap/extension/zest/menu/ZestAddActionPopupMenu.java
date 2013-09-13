@@ -31,9 +31,11 @@ import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
+import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestActionSleep;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
+import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
@@ -91,8 +93,15 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
 	            	reCreateSubMenu(node.getParent(), node, (ZestRequest) ZestZapUtils.getElement(node), null);
 	            	return true;
 	    		} else if (ze instanceof ZestContainer) {
+	    			if(ze instanceof ZestConditional){
+	    				if(ZestZapUtils.getShadowLevel(node)==0){
+	    					return false;
+	    				}
+	    			}
 	            	reCreateSubMenu(node, null, null, null);
 	            	return true;
+	    		} else if (ze instanceof ZestExpression){
+	    			return false;
 	    		}
     		}
     		
