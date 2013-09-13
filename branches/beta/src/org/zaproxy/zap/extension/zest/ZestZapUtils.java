@@ -49,8 +49,10 @@ import org.mozilla.zest.core.v1.ZestControlLoopBreak;
 import org.mozilla.zest.core.v1.ZestControlLoopNext;
 import org.mozilla.zest.core.v1.ZestControlReturn;
 import org.mozilla.zest.core.v1.ZestElement;
+import org.mozilla.zest.core.v1.ZestExpressionAnd;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
+import org.mozilla.zest.core.v1.ZestExpressionOr;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
@@ -76,15 +78,15 @@ public class ZestZapUtils {
 	private static final Logger log = Logger.getLogger(ZestZapUtils.class);
 
 	public static String toUiString(ZestElement za) {
-		return toUiString(za, true, false);
+		return toUiString(za, true, 0);
 	}
 
 	public static String toUiString(ZestElement za, boolean incParams) {
-		return toUiString(za, incParams, false);
+		return toUiString(za, incParams, 0);
 	}
 
 	public static String toUiString(ZestElement za, boolean incParams,
-			boolean isShadow) {
+			int shadowLevel) {
 		if (za instanceof ZestScript) {
 			ZestScript zs = (ZestScript) za;
 			return MessageFormat.format(
@@ -112,25 +114,46 @@ public class ZestZapUtils {
 			return MessageFormat.format(
 					Constant.messages.getString("zest.element.assert"),
 					toUiString((ZestElement) zas.getRootExpression(),
-							incParams, isShadow));
+							incParams, shadowLevel));
 
 		} else if (za instanceof ZestConditional) {
 			ZestConditional zac = (ZestConditional) za;
-			if (isShadow) {
+			if (shadowLevel == 0) {
+				if (zac.getRootExpression() != null) {
+					return Constant.messages
+							.getString("zest.element.conditional.if")
+							+ toUiString((ZestElement) zac.getRootExpression(),
+									false, 0);
+				} else {
+					return Constant.messages
+							.getString("zest.element.conditional.if")+" ";
+				}
+			} else if (shadowLevel == 1) {
+				return Constant.messages
+						.getString("zest.element.conditional.then");
+			} else {
 				return Constant.messages
 						.getString("zest.element.conditional.else");
-			} else {
-				return MessageFormat.format(
-						Constant.messages
-								.getString("zest.element.conditional.if"),
-						toUiString((ZestElement) zac.getRootExpression(),
-								incParams, isShadow));
+//				if (zac.getRootExpression() != null) {
+//					return MessageFormat
+//							.format(Constant.messages
+//									.getString("zest.element.conditional.else"),
+//									toUiString((ZestElement) zac
+//											.getRootExpression(), incParams,
+//											shadowLevel));
+//				} else {
+//					return MessageFormat.format(Constant.messages
+//							.getString("zest.element.conditional.else"), "");
+//				}
 			}
-		} else if (za instanceof ZestStructuredExpression) {
-			return MessageFormat.format(
-					Constant.messages.getString("zest.element.expression.structured"),
-					incParams);
-		}  else if (za instanceof ZestExpressionStatusCode) {
+		} else if (za instanceof ZestExpressionAnd) {
+			return MessageFormat
+					.format(Constant.messages
+							.getString("zest.element.expression.and"),
+							incParams);
+		} else if (za instanceof ZestExpressionOr){
+			return MessageFormat.format(Constant.messages.getString("zest.element.expression.or"), incParams);
+		} else if (za instanceof ZestExpressionStatusCode) {
 			ZestExpressionStatusCode sca = (ZestExpressionStatusCode) za;
 			if (incParams) {
 				return MessageFormat.format(Constant.messages
@@ -143,8 +166,9 @@ public class ZestZapUtils {
 		} else if (za instanceof ZestExpressionLength) {
 			ZestExpressionLength sla = (ZestExpressionLength) za;
 			if (incParams) {
-				return MessageFormat.format(Constant.messages.getString("zest.element.expression.length"), 
-						sla.getVariableName(), sla.getLength(), sla.getApprox());
+				return MessageFormat.format(Constant.messages
+						.getString("zest.element.expression.length"), sla
+						.getVariableName(), sla.getLength(), sla.getApprox());
 			} else {
 				return Constant.messages
 						.getString("zest.element.expression.length.title");
@@ -180,17 +204,19 @@ public class ZestZapUtils {
 							zer.getVariableName(), zer.getRegex());
 				}
 			} else {
-				return Constant.messages.getString("zest.element.expression.regex.title");
+				return Constant.messages
+						.getString("zest.element.expression.regex.title");
 			}
 		} else if (za instanceof ZestExpressionEquals) {
 			// TODO case exact
 			ZestExpressionEquals zer = (ZestExpressionEquals) za;
 			if (incParams) {
-				return MessageFormat.format(
-						Constant.messages.getString("zest.element.expression.equals"),
-						zer.getVariableName(), zer.getValue());
+				return MessageFormat.format(Constant.messages
+						.getString("zest.element.expression.equals"), zer
+						.getVariableName(), zer.getValue());
 			} else {
-				return Constant.messages.getString("zest.element.expression.equals.title");
+				return Constant.messages
+						.getString("zest.element.expression.equals.title");
 			}
 		} else if (za instanceof ZestExpressionURL) {
 			ZestExpressionURL zeu = (ZestExpressionURL) za;
@@ -240,27 +266,35 @@ public class ZestZapUtils {
 					vals.append(val);
 				}
 
-				return MessageFormat.format(Constant.messages.getString("zest.element.loop.string"),
-						zals.getVariableName(), vals.toString());
+				return MessageFormat
+						.format(Constant.messages
+								.getString("zest.element.loop.string"), zals
+								.getVariableName(), vals.toString());
 			} else {
-				return Constant.messages.getString("zest.element.loop.string.title");
-				
+				return Constant.messages
+						.getString("zest.element.loop.string.title");
+
 			}
 		} else if (za instanceof ZestLoopFile) {
 			ZestLoopFile zalf = (ZestLoopFile) za;
 			if (incParams) {
-				return MessageFormat.format(Constant.messages.getString("zest.element.loop.file"), 
-						zalf.getVariableName(), zalf.getFile().getAbsolutePath());
+				return MessageFormat.format(Constant.messages
+						.getString("zest.element.loop.file"), zalf
+						.getVariableName(), zalf.getFile().getAbsolutePath());
 			} else {
-				return Constant.messages.getString("zest.element.loop.file.title");
+				return Constant.messages
+						.getString("zest.element.loop.file.title");
 			}
 		} else if (za instanceof ZestLoopInteger) {
 			ZestLoopInteger zali = (ZestLoopInteger) za;
 			if (incParams) {
-				return MessageFormat.format(Constant.messages.getString("zest.element.loop.integer"), 
-					zali.getVariableName(), zali.getStart(), zali.getEnd(), zali.getStep());
+				return MessageFormat.format(Constant.messages
+						.getString("zest.element.loop.integer"), zali
+						.getVariableName(), zali.getStart(), zali.getEnd(),
+						zali.getStep());
 			} else {
-				return Constant.messages.getString("zest.element.loop.integer.title");
+				return Constant.messages
+						.getString("zest.element.loop.integer.title");
 			}
 		} else if (za instanceof ZestAssignFieldValue) {
 			ZestAssignFieldValue zsa = (ZestAssignFieldValue) za;
@@ -432,11 +466,11 @@ public class ZestZapUtils {
 				.getCanonicalName());
 	}
 
-	public static String toUiFailureString(ZestAssertion za,
-			ZestRuntime runtime) {
+	public static String toUiFailureString(ZestAssertion za, ZestRuntime runtime) {
 
 		if (za.getRootExpression() instanceof ZestExpressionLength) {
-			ZestExpressionLength sla = (ZestExpressionLength) za.getRootExpression();
+			ZestExpressionLength sla = (ZestExpressionLength) za
+					.getRootExpression();
 			int intDiff = 100;
 			String var = runtime.getVariable(sla.getVariableName());
 			int varLength = -1;
@@ -447,38 +481,47 @@ public class ZestZapUtils {
 						intDiff = 0;
 					}
 				} else {
-					intDiff = (sla.getLength() - varLength) * 100 / sla.getLength();
+					intDiff = (sla.getLength() - varLength) * 100
+							/ sla.getLength();
 				}
 			}
 			String strDiff = Integer.toString(intDiff);
 			if (intDiff == 1) {
 				// Show to one decimal place
 				DecimalFormat df = new DecimalFormat("#.#");
-				strDiff = df.format(((double)(sla.getLength() - varLength) * 100) / sla.getLength());
+				strDiff = df
+						.format(((double) (sla.getLength() - varLength) * 100)
+								/ sla.getLength());
 			} else if (intDiff == 0) {
 				// Show to two decimal place
 				DecimalFormat df = new DecimalFormat("#.##");
-				strDiff = df.format(((double)(sla.getLength() - varLength) * 100) / sla.getLength());
-			}			
+				strDiff = df
+						.format(((double) (sla.getLength() - varLength) * 100)
+								/ sla.getLength());
+			}
 			return MessageFormat.format(
-					Constant.messages.getString("zest.fail.assert.length"), 
-					sla.getVariableName(), sla.getLength(), varLength, strDiff); 
+					Constant.messages.getString("zest.fail.assert.length"),
+					sla.getVariableName(), sla.getLength(), varLength, strDiff);
 		} else if (za.getRootExpression() instanceof ZestExpressionStatusCode) {
-			ZestExpressionStatusCode sca = (ZestExpressionStatusCode) za.getRootExpression();
+			ZestExpressionStatusCode sca = (ZestExpressionStatusCode) za
+					.getRootExpression();
 			return MessageFormat.format(
-					Constant.messages.getString("zest.fail.assert.statuscode"), 
+					Constant.messages.getString("zest.fail.assert.statuscode"),
 					sca.getCode(), runtime.getLastResponse().getStatusCode());
 		} else if (za.getRootExpression() instanceof ZestExpressionRegex) {
-			ZestExpressionRegex zhr = (ZestExpressionRegex) za.getRootExpression();
+			ZestExpressionRegex zhr = (ZestExpressionRegex) za
+					.getRootExpression();
 			if (zhr.isInverse()) {
-				return MessageFormat.format(
-						Constant.messages.getString("zest.fail.assert.headregex.exc"), zhr.getRegex());
+				return MessageFormat.format(Constant.messages
+						.getString("zest.fail.assert.headregex.exc"), zhr
+						.getRegex());
 			} else {
-				return MessageFormat.format(
-						Constant.messages.getString("zest.fail.assert.headregex.inc"), zhr.getRegex());
+				return MessageFormat.format(Constant.messages
+						.getString("zest.fail.assert.headregex.inc"), zhr
+						.getRegex());
 			}
 		}
-		
+
 		return toUiString(za, true);
 	}
 
@@ -528,48 +571,50 @@ public class ZestZapUtils {
 		return toZestRequest(msg, true);
 	}
 
-	public static ZestRequest toZestRequest(HttpMessage msg, boolean replaceTokens)
-			throws MalformedURLException, HttpMalformedHeaderException, SQLException {
+	public static ZestRequest toZestRequest(HttpMessage msg,
+			boolean replaceTokens) throws MalformedURLException,
+			HttpMalformedHeaderException, SQLException {
 		if (replaceTokens) {
 			ZestRequest req = new ZestRequest();
 			req.setMethod(msg.getRequestHeader().getMethod());
 			if (msg.getRequestHeader().getURI() != null) {
 				req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
 			}
-			req.setUrlToken(correctTokens(msg.getRequestHeader().getURI().toString()));
-			req.setHeaders(correctTokens(msg.getRequestHeader().getHeadersAsString()));
+			req.setUrlToken(correctTokens(msg.getRequestHeader().getURI()
+					.toString()));
+			req.setHeaders(correctTokens(msg.getRequestHeader()
+					.getHeadersAsString()));
 			req.setData(correctTokens(msg.getRequestBody().toString()));
 			return req;
-			
+
 		} else {
 			ZestRequest req = new ZestRequest();
 			req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
 			req.setMethod(msg.getRequestHeader().getMethod());
 			setHeaders(req, msg);
 			req.setData(msg.getRequestBody().toString());
-			req.setResponse(new ZestResponse(
-					req.getUrl(),
-					msg.getResponseHeader().toString(), 
-					msg.getResponseBody().toString(),
-					msg.getResponseHeader().getStatusCode(),
-					msg.getTimeElapsedMillis()));
+			req.setResponse(new ZestResponse(req.getUrl(), msg
+					.getResponseHeader().toString(), msg.getResponseBody()
+					.toString(), msg.getResponseHeader().getStatusCode(), msg
+					.getTimeElapsedMillis()));
 			return req;
 		}
 	}
-	
+
 	private static void setHeaders(ZestRequest req, HttpMessage msg) {
 		// TODO filter some headers out??
-		String [] headers = msg.getRequestHeader().getHeadersAsString().split(HttpHeader.CRLF);
+		String[] headers = msg.getRequestHeader().getHeadersAsString()
+				.split(HttpHeader.CRLF);
 		StringBuilder sb = new StringBuilder();
 		for (String header : headers) {
-			if (header.toLowerCase().startsWith(HttpHeader.CONTENT_TYPE.toLowerCase())) {
+			if (header.toLowerCase().startsWith(
+					HttpHeader.CONTENT_TYPE.toLowerCase())) {
 				sb.append(header);
 				sb.append(HttpHeader.CRLF);
 			}
 		}
 		req.setHeaders(sb.toString());
 	}
-
 
 	private static String correctTokens(String str) {
 		return str.replace("%7B%7B", "{{").replace("%7D%7D", "}}");
@@ -598,30 +643,44 @@ public class ZestZapUtils {
 		return null;
 	}
 
-	public static boolean isShadow(ScriptNode node) {
+	// public static boolean isShadow(ScriptNode node) {
+	// if (node == null || node.getUserObject() == null) {
+	// return false;
+	// }
+	// if (node.getUserObject() instanceof ZestElementWrapper) {
+	// return ((ZestElementWrapper) node.getUserObject()).isShadow();
+	// }
+	// return false;
+	// }
+
+	public static int getShadowLevel(ScriptNode node) {
 		if (node == null || node.getUserObject() == null) {
-			return false;
+			return 0;
 		}
 		if (node.getUserObject() instanceof ZestElementWrapper) {
-			return ((ZestElementWrapper) node.getUserObject()).isShadow();
+			return ((ZestElementWrapper) node.getUserObject()).getShadowLevel();
 		}
-		return false;
+		return 0;
 	}
 
-	public static MouseAdapter stdMenuAdapter () {
-		return new java.awt.event.MouseAdapter() { 
+	public static MouseAdapter stdMenuAdapter() {
+		return new java.awt.event.MouseAdapter() {
 			@Override
 			public void mousePressed(java.awt.event.MouseEvent e) {
 				mouseAction(e);
 			}
+
 			@Override
 			public void mouseReleased(java.awt.event.MouseEvent e) {
 				mouseAction(e);
 			}
+
 			public void mouseAction(java.awt.event.MouseEvent e) {
 				// right mouse button action
-				if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0 || e.isPopupTrigger()) {
-					View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
+				if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0
+						|| e.isPopupTrigger()) {
+					View.getSingleton().getPopupMenu()
+							.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
 		};

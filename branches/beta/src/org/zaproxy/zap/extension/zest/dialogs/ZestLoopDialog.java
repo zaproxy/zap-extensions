@@ -31,6 +31,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestFuzzerDelegate;
+import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestLoopDialog extends StandardFieldsDialog {
@@ -139,7 +140,6 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 
 	@Override
 	public void save() {
-		this.loop.setVariableName(this.getStringValue(VARIABLE_NAME));
 		if (this.loop instanceof ZestLoopString) {
 			ZestLoopString loopString=(ZestLoopString) this.loop;
 			ZestLoopTokenStringSet newSet=new ZestLoopTokenStringSet();
@@ -166,14 +166,20 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 			loopInteger.setSet(newSet);
 			loopInteger.setStep(step);
 		}
+		this.loop.setVariableName(this.getStringValue(VARIABLE_NAME));
 		if (add) {
 			if (request == null) {
-				ScriptNode loopNode = extension.addToParent(parent, this.loop);
 				if (surround) {
-					extension.setCnpNodes(children);
-					extension.setCut(true);
-					extension.pasteToNode(loopNode);
+					for(ScriptNode node:children){
+						extension.delete(node);
+						ZestStatement stmt=(ZestStatement)ZestZapUtils.getElement(node);
+						loop.addStatement(stmt);
+					}
+//					extension.setCnpNodes(children);
+//					extension.setCut(true);
+//					extension.pasteToNode(loopNode);
 				}
+				ScriptNode loopNode = extension.addToParent(parent, this.loop);
 			} else {
 				for (ScriptNode child : children) {
 					extension

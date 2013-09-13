@@ -40,14 +40,15 @@ import org.mozilla.zest.core.v1.ZestControlLoopBreak;
 import org.mozilla.zest.core.v1.ZestControlLoopNext;
 import org.mozilla.zest.core.v1.ZestControlReturn;
 import org.mozilla.zest.core.v1.ZestElement;
+import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 
 /**
- * Custom renderer for {@link ZestScriptsPanel} to set custom icons
- * and tooltips. If you want tooltips you have to enable them via:
+ * Custom renderer for {@link ZestScriptsPanel} to set custom icons and
+ * tooltips. If you want tooltips you have to enable them via:
  * <code>ToolTipManager.sharedInstance().registerComponent(tree);</code>
  */
 public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
@@ -64,18 +65,29 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/hourglass.png"));
 	private static final ImageIcon ACTION_PRINT_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/printer.png"));
-	private static final ImageIcon ASSIGNMENT_ICON = 
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/pin.png"));
-	private static final ImageIcon ASSERT_ICON = 
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/balance.png"));
+	private static final ImageIcon ASSIGNMENT_ICON = new ImageIcon(
+			ZestTreeCellRenderer.class
+					.getResource("/org/zaproxy/zap/extension/zest/resource/pin.png"));
+	private static final ImageIcon ASSERT_ICON = new ImageIcon(
+			ZestTreeCellRenderer.class
+					.getResource("/org/zaproxy/zap/extension/zest/resource/balance.png"));
+	private static final ImageIcon CONDITION_ELSE_ICON = new ImageIcon(
+			ZestTreeCellRenderer.class
+					.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-down-right.png"));
+	private static final ImageIcon CONDITION_THEN_ICON = new ImageIcon(
+			ZestTreeCellRenderer.class
+					.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-up-right.png"));
+	private static final ImageIcon CONDITION_IF_ICON = new ImageIcon(
+			ZestTreeCellRenderer.class
+					.getResource("/org/zaproxy/zap/extension/zest/resource/condition_if.png"));
+	private static final ImageIcon LOOP_ICON = new ImageIcon(
+			ZestTreeCellRenderer.class
+					.getResource("/org/zaproxy/zap/extension/zest/resource/loop.png"));
+	private static final ImageIcon EXPRESSION_ICON = new ImageIcon(
+			ZestTreeCellRenderer.class
+					.getResource("/org/zaproxy/zap/extension/zest/resource/expression.png"));
 	private static final ImageIcon COMMENT_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/balloon.png"));
-	private static final ImageIcon CONDITION_ELSE_ICON = 
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-down-right.png"));
-	private static final ImageIcon CONDITION_IF_ICON = 
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-up-right.png"));
-	private static final ImageIcon LOOP_ICON =
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/loop.png"));
 	private static final ImageIcon CONTROL_RETURN_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/arrow-return-180.png"));
 	private static final ImageIcon CONTROL_LOOP_BREAK_ICON =
@@ -85,7 +97,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 
 	private static final long serialVersionUID = -4278691012245035225L;
 
-	private static final Logger logger = Logger.getLogger(ZestTreeCellRenderer.class);
+	private static final Logger logger = Logger
+			.getLogger(ZestTreeCellRenderer.class);
 
 	public ZestTreeCellRenderer() {
 	}
@@ -98,7 +111,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			boolean sel, boolean expanded, boolean leaf, int row,
 			boolean hasFocus) {
 
-		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf,
+				row, hasFocus);
 
 		ScriptNode scriptNode = null;
 		if (value instanceof ScriptNode) {
@@ -107,17 +121,24 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			// Reset the tooltip
 			this.setToolTipText(null);
 
-				
+	
 			if (obj != null && obj instanceof ZestElementWrapper) {
 				ZestElementWrapper zew = (ZestElementWrapper) obj;
 
 				if (zew.getElement() != null) {
 					ZestElement za = zew.getElement();
 					if (za instanceof ZestConditional) {
-						if (zew.isShadow()) {
-							setIcon(CONDITION_ELSE_ICON);
-						} else {
+						switch (zew.getShadowLevel()) {
+						case 0:
+
 							setIcon(CONDITION_IF_ICON);
+							break;
+						case 1:
+							setIcon(CONDITION_THEN_ICON);
+							break;
+						case 2:
+							setIcon(CONDITION_ELSE_ICON);
+							break;
 						}
 					} else if (za instanceof ZestRequest) {
 						setIcon(REQUEST_ICON);
@@ -143,6 +164,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 						this.setToolTipText(tooltip);
 					} else if (za instanceof ZestLoop){
 						setIcon(LOOP_ICON);
+					} else if (za instanceof ZestExpression) {
+						setIcon(EXPRESSION_ICON);
 					} else if (za instanceof ZestControlReturn) {
 						setIcon(CONTROL_RETURN_ICON);
 					} else if (za instanceof ZestControlLoopBreak) {
@@ -150,7 +173,9 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 					} else if (za instanceof ZestControlLoopNext) {
 						setIcon(CONTROL_LOOP_NEXT_ICON);
 					} else {
-						logger.error("Unrecognised element element class=" + zew.getElement().getClass().getCanonicalName());
+						logger.error("Unrecognised element element class="
+								+ zew.getElement().getClass()
+										.getCanonicalName());
 					}
 				}
 			}
