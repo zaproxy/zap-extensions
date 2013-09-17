@@ -13,7 +13,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jdom2.Document;
+import org.jdom.Document;
 
 public class PlunginGuesser {
 	
