@@ -20,7 +20,7 @@ import java.util.zip.Inflater;
 public class SAMLUtils {
     private static final int MAX_INFLATED_SIZE = 5000;
 
-    protected static Logger log = Logger.getLogger(SAMLUtils.class);
+    protected static final Logger log = Logger.getLogger(SAMLUtils.class);
     /**
      * Private constructor, because this class is and Util class and the methods are static
      */
@@ -140,8 +140,10 @@ public class SAMLUtils {
             switch (binding) {
                 case HTTPPost:
                     val = URLDecoder.decode(val, "UTF-8");
-                case HTTPRedirect:
                     byte[] b64decoded = b64Decode(val);
+                    return inflateMessage(b64decoded);
+                case HTTPRedirect:
+                    b64decoded = b64Decode(val);
                     return inflateMessage(b64decoded);
                 default:
                     break;
