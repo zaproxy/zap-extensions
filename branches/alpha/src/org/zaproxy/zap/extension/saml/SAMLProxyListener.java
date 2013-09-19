@@ -11,7 +11,7 @@ public class SAMLProxyListener implements ProxyListener {
     private boolean active;
     private Set<Attribute> autoChangeAttribs;
 
-    protected static Logger log = Logger.getLogger(SAMLProxyListener.class.getName());
+    protected final static Logger log = Logger.getLogger(SAMLProxyListener.class.getName());
 
     public SAMLProxyListener() {
         setActive(SAMLConfiguration.getConfigurations().getAutoChangeEnabled());

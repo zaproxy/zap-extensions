@@ -1,7 +1,7 @@
 package org.zaproxy.zap.extension.saml.ui;
 
 import org.zaproxy.zap.extension.saml.Attribute;
-import org.zaproxy.zap.extension.saml.DesiredAttributeChangeListener;
+import org.zaproxy.zap.extension.saml.AttributeChangeListener;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -23,7 +23,7 @@ public class ChangeAttribValueDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public ChangeAttribValueDialog(final DesiredAttributeChangeListener listener, final Attribute attribute) {
+	public ChangeAttribValueDialog(final AttributeChangeListener listener, final Attribute attribute) {
 		setTitle("Add/Edit values for "+attribute.getViewName());
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());

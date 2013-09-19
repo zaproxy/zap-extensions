@@ -17,10 +17,9 @@ public class SAMLConfiguration {
     private static final String SAML_CONF_FILE = "zap_saml_conf.xml";
     private static SAMLConfiguration configuration = new SAMLConfiguration();
 
-    private boolean initialized;
     private SAMLConfigData configData;
 
-    protected static Logger log = Logger.getLogger(SAMLConfiguration.class);
+    protected final static Logger log = Logger.getLogger(SAMLConfiguration.class);
 
     public static SAMLConfiguration getConfigurations(){
         return configuration;
@@ -28,7 +27,7 @@ public class SAMLConfiguration {
 
     /**
      * Initialize the attributes and configurations
-     * @throws org.zaproxy.zap.extension.saml.SAMLException
+     * @throws SAMLException
      */
     public void initialize() throws SAMLException {
         String confPath = Model.getSingleton().getOptionsParam(). getUserDirectory().getAbsolutePath()+ "/" +
@@ -36,6 +35,12 @@ public class SAMLConfiguration {
         initialize(confPath);
     }
 
+    /**
+     * Initialize the configuration using the config file at given path, if file is not available this will try to
+     * load the default settings that are bundled with the extension and will be saved to user directory
+     * @param confPath Configuration file path
+     * @throws SAMLException If both configuration file and default configuration files are not available
+     */
     public void initialize(String confPath) throws SAMLException {
         File confFile = new File(confPath);
 
@@ -56,33 +61,82 @@ public class SAMLConfiguration {
 
         //load the configuration
         configData = (SAMLConfigData) loadXMLObject(SAMLConfigData.class,confFile);
-        initialized = true;
     }
 
+    /**
+     * Get the set of all attributes that are defined in the extension
+     * @return
+     */
     public Set<Attribute> getAvailableAttributes() {
         return configData.getAvailableAttributes();
     }
 
+    /**
+     * Get the set of attributes that need to be changed to the given values before the message is sent to the end
+     * point
+     * @return set of attributes that will be changed within the message if present
+     */
     public Set<Attribute> getAutoChangeAttributes(){
         return configData.getAutoChangeValues();
     }
 
+    /**
+     * Get whether the auto attribute value change at passive scanner is enabled
+     * @return <code>true</code> if enabled, <code>false</code> if disabled.
+     */
     public boolean getAutoChangeEnabled(){
         return configData.isAutoChangerEnabled();
     }
 
+    /**
+     * Enable or disable automatic attribute value change at the passive scanner. If enabled the values of the
+     * attributes will be changes as predefined, before the message is sent to the endpoint
+     * @param value <code>true</code> to enable auto change, <code>false</code> to disable it.
+     */
     public void setAutochangeEnabled(boolean value){
         configData.setAutoChangerEnabled(value);
     }
 
+    /**
+     * Whether the XSW (signature removal) is enabled.
+     * @return <code>true</code> if enabled, <code>false</code> if disabled
+     * @see #setXSWEnabled(boolean)
+     */
     public boolean getXSWEnabled(){
         return configData.isXswEnabled();
     }
 
+    /**
+     * Set true to remove signature of the messages (if present) to simulate signature exclusion attacks
+     * @param value <code>true</code> to remove signatures if present, <code>false</code> to keep unchanged.
+     */
     public void setXSWEnabled(boolean value){
         configData.setXswEnabled(value);
     }
 
+    /**
+     * Get whether the validation is enabled for attribute data types.
+     * @see #setValidationEnabled(boolean)
+     * @return <code>true</code> if validation is enabled, <code>false</code> if disabled
+     */
+    public boolean isValidationEnabled(){
+        return configData.isValidationEnabled();
+    }
+
+    /**
+     * Get whether the validation is enabled for the attribute types. Enabling this will ensure invalid data types are
+     * not set to the attributes. Disabling validation gives the user the ability to set whatever values he/she like,
+     * inject new attributes which may be needed for some tests
+     * @param value <code>true</code> to enable validation, <code>false</code> to disable it.
+     */
+    public void setValidationEnabled(boolean value){
+        configData.setValidationEnabled(value);
+    }
+
+    /**
+     * Save the configurations to the xml file
+     * @return <code>true</code> if save is success, <code>false</code> otherwise
+     */
     public boolean saveConfiguration(){
         try {
             JAXBContext context = JAXBContext.newInstance(SAMLConfigData.class);
@@ -103,7 +157,7 @@ public class SAMLConfiguration {
      * @param clazz class of the object
      * @param file xml file
      * @return unmarshalled object
-     * @throws org.zaproxy.zap.extension.saml.SAMLException
+     * @throws SAMLException
      */
     private Object loadXMLObject(Class clazz, File file) throws SAMLException {
         try {

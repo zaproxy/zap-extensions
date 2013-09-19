@@ -6,7 +6,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.ExtensionPopupMenu;
-import org.zaproxy.zap.extension.saml.ui.AutoChangerSettingFrame;
+import org.zaproxy.zap.extension.saml.ui.SamlExtentionSettingsUI;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,7 +16,7 @@ import java.net.URL;
 
 public class SAMLExtension extends ExtensionAdaptor {
 
-    protected static Logger log = Logger.getLogger(SAMLExtension.class);
+    protected static final Logger log = Logger.getLogger(SAMLExtension.class);
 
     @Override
     public URL getURL() {
@@ -38,7 +38,11 @@ public class SAMLExtension extends ExtensionAdaptor {
 
         try {
             SAMLConfiguration conf = SAMLConfiguration.getConfigurations();
-            conf.initialize();
+            if(conf!=null){
+                conf.initialize();
+            } else {
+                log.error("SAML Configuration can't be loaded. Extention will not be loaded...");
+            }
             if (getView() != null && conf!=null) {
                 final SAMLProxyListener proxyListener = new SAMLProxyListener();
                 extensionHook.addProxyListener(proxyListener);
@@ -53,7 +57,7 @@ public class SAMLExtension extends ExtensionAdaptor {
                 samlActiveEditorMenu.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        AutoChangerSettingFrame settingUI = new AutoChangerSettingFrame(proxyListener);
+                        SamlExtentionSettingsUI settingUI = new SamlExtentionSettingsUI(proxyListener);
                         settingUI.setVisible(true);
                     }
                 });

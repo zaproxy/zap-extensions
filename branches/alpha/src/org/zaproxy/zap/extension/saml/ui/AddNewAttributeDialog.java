@@ -17,7 +17,7 @@ public class AddNewAttributeDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public AddNewAttributeDialog(final DesiredAttributeChangeListener listener) {
+	public AddNewAttributeDialog(final AttributeChangeListener listener) {
         setTitle("Add New Attribute");
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
@@ -34,13 +34,10 @@ public class AddNewAttributeDialog extends JDialog {
 			{
                 attribNamePanel.setBorder(BorderFactory.createTitledBorder("Attribute Name"));
 				comboBoxAttribSelect = new JComboBox<>();
-                try {
-                    for (Attribute attribute : SAMLConfiguration.getConfigurations().getAvailableAttributes()) {
-                        if(!listener.getDesiredAttributes().contains(attribute)){
-                            comboBoxAttribSelect.addItem((Attribute) attribute.clone());
-                        }
+                for (Attribute attribute : SAMLConfiguration.getConfigurations().getAvailableAttributes()) {
+                    if(!listener.getDesiredAttributes().contains(attribute)){
+                        comboBoxAttribSelect.addItem(attribute.createCopy());
                     }
-                } catch (CloneNotSupportedException ignored) {
                 }
                 comboBoxAttribSelect.setMaximumRowCount(5);
 				attribNamePanel.add(comboBoxAttribSelect);
