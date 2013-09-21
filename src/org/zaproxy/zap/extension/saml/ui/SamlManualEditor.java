@@ -29,52 +29,51 @@ public class SamlManualEditor extends JFrame {
     private JScrollPane attribScrollPane;
 
 
-
     /**
-	 * Create the frame.
-	 */
-	public SamlManualEditor(final SAMLMessage samlMessage) {
+     * Create the frame.
+     */
+    public SamlManualEditor(final SAMLMessage samlMessage) {
         this.samlMessage = samlMessage;
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(50, 50, 800, 700);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setBounds(50, 50, 800, 700);
         JPanel contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
-		
-		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        contentPane.setLayout(new BorderLayout(0, 0));
+        setContentPane(contentPane);
+
+        tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         contentPane.add(tabbedPane, BorderLayout.CENTER);
-		
-		final JPanel reqPanel = new JPanel();
-		tabbedPane.addTab("Request", null, reqPanel, null);
-		reqPanel.setLayout(new BorderLayout(0, 0));
-		
-		JPanel topPanel = new JPanel();
+
+        final JPanel reqPanel = new JPanel();
+        tabbedPane.addTab("Request", null, reqPanel, null);
+        reqPanel.setLayout(new BorderLayout(0, 0));
+
+        JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-		reqPanel.add(topPanel, BorderLayout.NORTH);
-		
-		JLabel lblNote = new JLabel("<html><p><b>Note :</b>This add-on would only run very basic test cases for SAML" +
+        reqPanel.add(topPanel, BorderLayout.NORTH);
+
+        JLabel lblNote = new JLabel("<html><p><b>Note :</b>This add-on would only run very basic test cases for SAML" +
                 " implementations. <br/> Signed SAML assertions cannot be tampered with at this time <br/> because " +
                 "the signings have not been" +
                 " made available to ZAP</p></html>");
-		topPanel.add(lblNote);
+        topPanel.add(lblNote);
 
-		JPanel centerPanel = new JPanel();
-		reqPanel.add(centerPanel, BorderLayout.CENTER);
-		centerPanel.setLayout(new GridLayout(2, 1, 0, 10));
-		
-		msgScrollPane = new JScrollPane();
+        JPanel centerPanel = new JPanel();
+        reqPanel.add(centerPanel, BorderLayout.CENTER);
+        centerPanel.setLayout(new GridLayout(2, 1, 0, 10));
+
+        msgScrollPane = new JScrollPane();
         centerPanel.add(msgScrollPane);
 
         attribScrollPane = new JScrollPane();
         centerPanel.add(attribScrollPane);
-		
-		JPanel bottomPanel = new JPanel();
-		reqPanel.add(bottomPanel, BorderLayout.SOUTH);
-		
+
+        JPanel bottomPanel = new JPanel();
+        reqPanel.add(bottomPanel, BorderLayout.SOUTH);
+
         btnResend = new JButton("Resend");
         bottomPanel.add(btnResend);
-		
+
         btnReset = new JButton("Reset");
         bottomPanel.add(btnReset);
 
@@ -99,27 +98,30 @@ public class SamlManualEditor extends JFrame {
                 updateFields();
             }
         });
-		
-		JPanel respPanel = new JPanel();
-		tabbedPane.addTab("Response", null, respPanel, null);
-		respPanel.setLayout(new GridLayout(2, 1, 0, 15));
-		
-		JScrollPane resHeadScrollPane = new JScrollPane();
-		respPanel.add(resHeadScrollPane);
-		
-		respHeadTextPane = new JTextPane();
+
+        JPanel respPanel = new JPanel();
+        tabbedPane.addTab("Response", null, respPanel, null);
+        respPanel.setLayout(new GridLayout(2, 1, 0, 15));
+
+        JScrollPane resHeadScrollPane = new JScrollPane();
+        respPanel.add(resHeadScrollPane);
+
+        respHeadTextPane = new JTextPane();
         resHeadScrollPane.setViewportView(respHeadTextPane);
-		
-		JScrollPane resBodyScrollPane = new JScrollPane();
-		respPanel.add(resBodyScrollPane);
-		
+
+        JScrollPane resBodyScrollPane = new JScrollPane();
+        respPanel.add(resBodyScrollPane);
+
 
         respBodyTextPane = new JTextPane();
         resBodyScrollPane.setViewportView(respBodyTextPane);
         updateFields();
-	}
+    }
 
-    private void updateFields(){
+    /**
+     * Update the UI fields with the new values. To be called on value changes
+     */
+    private void updateFields() {
         msgPane = new JTextPane();
         msgScrollPane.setViewportView(msgPane);
         msgPane.setText(samlMessage.getSamlMessageString());
@@ -197,7 +199,7 @@ public class SamlManualEditor extends JFrame {
 
                 @Override
                 public void focusLost(FocusEvent e) {
-                    samlMessage.changeAttributeValueTo(attribute.getName(),txtValue.getText());
+                    samlMessage.changeAttributeValueTo(attribute.getName(), txtValue.getText());
                     updateFields();
                 }
             });
@@ -205,6 +207,11 @@ public class SamlManualEditor extends JFrame {
         }
     }
 
+    /**
+     * Update the response
+     *
+     * @param msg
+     */
     private void updateResponse(HttpMessage msg) {
         respBodyTextPane.setText(msg.getResponseBody().createCachedString("UTF-8"));
         respHeadTextPane.setText(msg.getResponseHeader().toString());

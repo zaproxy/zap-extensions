@@ -1,16 +1,16 @@
 <zapaddon>
-	<name>SAML Extension</name>
-	<version>1</version>
-	<description>Detect, Show, Edit, Fuzz SAML requests</description>
-	<author>ZAP Dev Team</author>
-	<url>http://code.google.com/p/zaproxy/</url>
-	<dependson/>
-	<extensions>
-		<extension>org.zaproxy.zap.extension.saml.SAMLExtension</extension>
-	</extensions>
-	<ascanrules/>
-	<pscanrules>
-	</pscanrules>
-	<filters/>
-	<files/>
+    <name>SAML Extension</name>
+    <version>1</version>
+    <description>Detect, Show, Edit, Fuzz SAML requests</description>
+    <author>ZAP Dev Team</author>
+    <url>http://code.google.com/p/zaproxy/</url>
+    <dependson/>
+    <extensions>
+        <extension>org.zaproxy.zap.extension.saml.SAMLExtension</extension>
+    </extensions>
+    <ascanrules/>
+    <pscanrules>
+    </pscanrules>
+    <filters/>
+    <files/>
 </zapaddon>

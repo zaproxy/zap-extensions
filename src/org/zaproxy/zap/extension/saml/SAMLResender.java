@@ -20,6 +20,7 @@ public class SAMLResender {
 
     /**
      * Resend the message to the desired endpoint and get the response
+     *
      * @param msg The message to be sent
      */
     public static void resendMessage(final HttpMessage msg) throws SAMLException {

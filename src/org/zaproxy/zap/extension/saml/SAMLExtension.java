@@ -37,13 +37,13 @@ public class SAMLExtension extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         try {
-            SAMLConfiguration conf = SAMLConfiguration.getConfigurations();
-            if(conf!=null){
+            SAMLConfiguration conf = SAMLConfiguration.getInstance();
+            if (conf != null) {
                 conf.initialize();
             } else {
                 log.error("SAML Configuration can't be loaded. Extention will not be loaded...");
             }
-            if (getView() != null && conf!=null) {
+            if (getView() != null && conf != null) {
                 final SAMLProxyListener proxyListener = new SAMLProxyListener();
                 extensionHook.addProxyListener(proxyListener);
 
@@ -53,7 +53,7 @@ public class SAMLExtension extends ExtensionAdaptor {
                 samlMenu.add(samlResendMenuItem);
                 extensionHook.getHookMenu().addPopupMenuItem(samlMenu);
 
-                JMenuItem samlActiveEditorMenu = new JMenuItem("SAML Request Editor");
+                JMenuItem samlActiveEditorMenu = new JMenuItem("SAML Settings");
                 samlActiveEditorMenu.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
