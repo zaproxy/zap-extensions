@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class SamlExtentionSettingsUI extends JFrame implements AttributeChangeListener {
+public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeChangeListener, AttributeListener {
 
     private JScrollPane settingsScrollPane;
     private Set<Attribute> attributeSet;
@@ -20,46 +20,55 @@ public class SamlExtentionSettingsUI extends JFrame implements AttributeChangeLi
     JCheckBox chckbxValidateAttributeValue;
 
     /**
-	 * Create the frame.
-	 */
-	public SamlExtentionSettingsUI(final SAMLProxyListener listener) {
-		setTitle("SAML Automatic Request Changer Settings");
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setSize(800, 700);
-		setLocationRelativeTo(null);
+     * Create the frame.
+     */
+    public SamlExtentionSettingsUI(final SAMLProxyListener listener) {
+        setTitle("SAML Settings");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(800, 700);
+        setLocationRelativeTo(null);
         JPanel contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        contentPane.setLayout(new BorderLayout(0, 0));
+        setContentPane(contentPane);
 
-		JLabel lblHeaderlabel = new JLabel("<html><h2>SAML Settings</h2></html>");
-		contentPane.add(lblHeaderlabel, BorderLayout.NORTH);
-		
-		settingsScrollPane = new JScrollPane();
+        JLabel lblHeaderlabel = new JLabel("<html><h2>SAML Settings</h2></html>");
+        contentPane.add(lblHeaderlabel, BorderLayout.NORTH);
+
+        settingsScrollPane = new JScrollPane();
         contentPane.add(settingsScrollPane, BorderLayout.CENTER);
-		
 
+        JPanel footerPanel = new JPanel();
+        contentPane.add(footerPanel, BorderLayout.SOUTH);
+        footerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-		JPanel footerPanel = new JPanel();
-		contentPane.add(footerPanel, BorderLayout.SOUTH);
-		footerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		
-		JButton btnAdd = new JButton("Add more attributes");
-        btnAdd.addActionListener(new ActionListener() {
+        JButton btnAddAutoChange = new JButton("Add Auto Change attributes");
+        btnAddAutoChange.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AddNewAttributeDialog dialog = new AddNewAttributeDialog(SamlExtentionSettingsUI.this);
+                AddAutoChangeAttributeUI dialog = new AddAutoChangeAttributeUI(SamlExtentionSettingsUI.this);
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                 dialog.setVisible(true);
             }
         });
-		footerPanel.add(btnAdd);
-		
-		JButton btnSaveChanges = new JButton("Save Changes");
+        footerPanel.add(btnAddAutoChange);
+
+        JButton btnAdd = new JButton("Add SAML Attributes");
+        btnAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AddAttributeUI addAttributeUI = new AddAttributeUI(SamlExtentionSettingsUI.this);
+                addAttributeUI.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                addAttributeUI.setVisible(true);
+            }
+        });
+        footerPanel.add(btnAdd);
+
+        JButton btnSaveChanges = new JButton("Save Changes");
         btnSaveChanges.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SAMLConfiguration samlConfiguration = SAMLConfiguration.getConfigurations();
+                SAMLConfiguration samlConfiguration = SAMLConfiguration.getInstance();
                 samlConfiguration.getAutoChangeAttributes().clear();
                 samlConfiguration.getAutoChangeAttributes().addAll(attributeSet);
                 listener.loadAutoChangeAttributes();
@@ -67,18 +76,18 @@ public class SamlExtentionSettingsUI extends JFrame implements AttributeChangeLi
                 samlConfiguration.setXSWEnabled(chckbxRemoveMessageSignatures.isSelected());
                 samlConfiguration.setValidationEnabled(chckbxValidateAttributeValue.isSelected());
                 boolean success = samlConfiguration.saveConfiguration();
-                if(success){
-                    JOptionPane.showMessageDialog(SamlExtentionSettingsUI.this,"Changes saved","Success",
+                if (success) {
+                    JOptionPane.showMessageDialog(SamlExtentionSettingsUI.this, "Changes saved", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
-                } else{
-                    JOptionPane.showMessageDialog(SamlExtentionSettingsUI.this,"Could not save changes. Please retry",
+                } else {
+                    JOptionPane.showMessageDialog(SamlExtentionSettingsUI.this, "Could not save changes. Please retry",
                             "Failed", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-		footerPanel.add(btnSaveChanges);
-		
-		JButton btnResetChanges = new JButton("Reset changes");
+        footerPanel.add(btnSaveChanges);
+
+        JButton btnResetChanges = new JButton("Reset changes");
         btnResetChanges.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -86,100 +95,163 @@ public class SamlExtentionSettingsUI extends JFrame implements AttributeChangeLi
                 initAttributes();
             }
         });
-		footerPanel.add(btnResetChanges);
-		
-		JButton btnExit = new JButton("Exit");
+        footerPanel.add(btnResetChanges);
+
+        JButton btnExit = new JButton("Exit");
         btnExit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SamlExtentionSettingsUI.this.setVisible(false);
             }
         });
-		footerPanel.add(btnExit);
+        footerPanel.add(btnExit);
         loadAutoChangeAttributes();
         initAttributes();
-	}
+    }
 
-    private void loadAutoChangeAttributes(){
+    /**
+     * Load the auto change attributes
+     */
+    private void loadAutoChangeAttributes() {
         attributeSet = new LinkedHashSet<>();
-        for (Attribute autoChangeAttribute : SAMLConfiguration.getConfigurations().getAutoChangeAttributes()) {
+        for (Attribute autoChangeAttribute : SAMLConfiguration.getInstance().getAutoChangeAttributes()) {
             Attribute clonedAttribute = autoChangeAttribute.createCopy();
             clonedAttribute.setValue(autoChangeAttribute.getValue());
             attributeSet.add(clonedAttribute);
         }
     }
 
-    private void initAttributes(){
+    /**
+     * Initialize UI with the attributes
+     */
+    private void initAttributes() {
         JPanel settingsPanel = new JPanel();
         settingsScrollPane.setViewportView(settingsPanel);
-        settingsPanel.setLayout(new GridLayout(2, 1, 5, 15));
-        
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        settingsPanel.setLayout(gridBagLayout);
+
+        GridBagConstraints panelConstraints = new GridBagConstraints();
+        panelConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
+        panelConstraints.fill = GridBagConstraints.HORIZONTAL;
+        panelConstraints.weightx = 1.0;
+        panelConstraints.gridx = 0;
+        panelConstraints.gridy = 0;
         JPanel globalSettingsPanel = new JPanel();
         globalSettingsPanel.setBorder(new TitledBorder(null, "Global Settings", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        settingsPanel.add(globalSettingsPanel);
-        globalSettingsPanel.setLayout(new BoxLayout(globalSettingsPanel, BoxLayout.Y_AXIS));
+        settingsPanel.add(globalSettingsPanel, panelConstraints);
 
-        SAMLConfiguration configuration = SAMLConfiguration.getConfigurations();
+        GridBagLayout settingPanelLayout = new GridBagLayout();
+        globalSettingsPanel.setLayout(settingPanelLayout);
+
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 0;
+
+        SAMLConfiguration configuration = SAMLConfiguration.getInstance();
         chckbxEnablePassiveChanger = new JCheckBox("Enable Passive changer");
         chckbxEnablePassiveChanger.setSelected(configuration.getAutoChangeEnabled());
-        globalSettingsPanel.add(chckbxEnablePassiveChanger);
+        globalSettingsPanel.add(chckbxEnablePassiveChanger, gridBagConstraints);
 
+        gridBagConstraints.gridy++;
         chckbxRemoveMessageSignatures = new JCheckBox("Remove message signatures");
         chckbxRemoveMessageSignatures.setSelected(configuration.getXSWEnabled());
-        globalSettingsPanel.add(chckbxRemoveMessageSignatures);
-        
+        globalSettingsPanel.add(chckbxRemoveMessageSignatures, gridBagConstraints);
+
+        gridBagConstraints.gridy++;
         chckbxValidateAttributeValue = new JCheckBox("Validate attribute value types");
         chckbxValidateAttributeValue.setSelected(configuration.isValidationEnabled());
-        globalSettingsPanel.add(chckbxValidateAttributeValue);
+        globalSettingsPanel.add(chckbxValidateAttributeValue, gridBagConstraints);
+
+        panelConstraints.gridy++;
+        panelConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
         JPanel attributePanel = new JPanel();
         attributePanel.setBorder(new TitledBorder(null, "Auto Change Attributes and Values", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        settingsPanel.add(attributePanel);
-        attributePanel.setLayout(new GridLayout(Math.max(10,attributeSet.size()), 1, 0, 5));
+        settingsPanel.add(attributePanel, panelConstraints);
+        attributePanel.setLayout(new GridBagLayout());
+
+        gridBagConstraints.gridy = 0;
         for (final Attribute attribute : attributeSet) {
-            JPanel panel = new JPanel();
-            attributePanel.add(panel);
-            panel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+            gridBagConstraints.gridx = 0;
 
             final JLabel lblAttribute = new JLabel(attribute.getViewName());
-            Dimension size = lblAttribute.getPreferredSize();
-            size.width = 200;
-            lblAttribute.setMinimumSize(size);
-            lblAttribute.setPreferredSize(size);
-            panel.add(lblAttribute);
+            attributePanel.add(lblAttribute, gridBagConstraints);
 
+            gridBagConstraints.gridx++;
             JTextField txtValue = new JTextField();
             lblAttribute.setLabelFor(txtValue);
             txtValue.setText(attribute.getValue().toString());
-            panel.add(txtValue);
             txtValue.setColumns(20);
+            txtValue.setEnabled(false);
+            attributePanel.add(txtValue, gridBagConstraints);
 
+            gridBagConstraints.gridx++;
             JButton btnAddeditValues = new JButton("Add/Edit Values");
             btnAddeditValues.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    AddNewAttributeDialog editDialog = new AddNewAttributeDialog(SamlExtentionSettingsUI.this);
+                    AddAutoChangeAttributeUI editDialog = new AddAutoChangeAttributeUI(SamlExtentionSettingsUI.this);
                     editDialog.getComboBoxAttribSelect().removeAllItems();
                     editDialog.getComboBoxAttribSelect().addItem(attribute);
                     editDialog.getTxtAttribValues().setText(attribute.getValue().toString().replaceAll(",", "\n"));
                     editDialog.setVisible(true);
                 }
             });
-            panel.add(btnAddeditValues);
+            attributePanel.add(btnAddeditValues, gridBagConstraints);
 
+            gridBagConstraints.gridx++;
             JButton btnRemoveAttribute = new JButton("Remove Attribute");
             btnRemoveAttribute.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     int response = JOptionPane.showConfirmDialog(SamlExtentionSettingsUI.this,
-                            "Are you sure to remove the attribute","Confirm",JOptionPane.YES_NO_OPTION);
-                    if(response == JOptionPane.YES_OPTION){
+                            "Are you sure to remove the attribute", "Confirm", JOptionPane.YES_NO_OPTION);
+                    if (response == JOptionPane.YES_OPTION) {
                         onDeleteDesiredAttribute(attribute);
                     }
                 }
             });
-            panel.add(btnRemoveAttribute);
+            attributePanel.add(btnRemoveAttribute, gridBagConstraints);
+            gridBagConstraints.gridy++;
         }
 
+        panelConstraints.gridy++;
+        panelConstraints.weighty = 1.0;
+        panelConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
+        JPanel allAttributePanel = new JPanel();
+        allAttributePanel.setBorder(new TitledBorder(null, "Configured Attributes", TitledBorder.LEADING,
+                TitledBorder.TOP, null, null));
+        settingsPanel.add(allAttributePanel, panelConstraints);
+        allAttributePanel.setLayout(new GridBagLayout());
+
+        gridBagConstraints.gridy = 0;
+        for (final Attribute attribute : SAMLConfiguration.getInstance().getAvailableAttributes()) {
+            gridBagConstraints.gridx = 0;
+
+            final JLabel lblAttribute = new JLabel(attribute.getViewName());
+            allAttributePanel.add(lblAttribute, gridBagConstraints);
+
+            gridBagConstraints.gridx++;
+            JLabel lblAttributeType = new JLabel(attribute.getValueType().name());
+            allAttributePanel.add(lblAttributeType, gridBagConstraints);
+
+            gridBagConstraints.gridx++;
+            JButton btnRemoveAttribute = new JButton("Remove Attribute");
+            btnRemoveAttribute.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int response = JOptionPane.showConfirmDialog(SamlExtentionSettingsUI.this,
+                            "Are you sure to remove the attribute", "Confirm", JOptionPane.YES_NO_OPTION);
+                    if (response == JOptionPane.YES_OPTION) {
+                        onAttributeDelete(attribute);
+                    }
+                }
+            });
+            allAttributePanel.add(btnRemoveAttribute, gridBagConstraints);
+            gridBagConstraints.gridy++;
+        }
     }
 
     @Override
@@ -203,5 +275,17 @@ public class SamlExtentionSettingsUI extends JFrame implements AttributeChangeLi
     @Override
     public Set<Attribute> getDesiredAttributes() {
         return attributeSet;
+    }
+
+    @Override
+    public void onAttributeAdd(Attribute a) {
+        SAMLConfiguration.getInstance().onAttributeAdd(a);
+        initAttributes();
+    }
+
+    @Override
+    public void onAttributeDelete(Attribute a) {
+        SAMLConfiguration.getInstance().onAttributeDelete(a);
+        initAttributes();
     }
 }

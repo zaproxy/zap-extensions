@@ -14,9 +14,15 @@ public class SAMLProxyListener implements ProxyListener {
     protected final static Logger log = Logger.getLogger(SAMLProxyListener.class.getName());
 
     public SAMLProxyListener() {
-        setActive(SAMLConfiguration.getConfigurations().getAutoChangeEnabled());
+        setActive(SAMLConfiguration.getInstance().getAutoChangeEnabled());
     }
 
+    /**
+     * Activate/Deactivate the passive listner. If deactivated the requests will be unchanged even the attributes to
+     * be changed, exists in the message
+     *
+     * @param value
+     */
     public void setActive(boolean value) {
         active = value;
         if (active && autoChangeAttribs == null) {
@@ -34,14 +40,14 @@ public class SAMLProxyListener implements ProxyListener {
                 for (Attribute attribute : autoChangeAttribs) {
                     String value = attribute.getValue().toString();
                     boolean changed = samlMessage.changeAttributeValueTo(attribute.getName(), value);
-                    if(changed){
-                        log.debug(attribute.getName()+": value changed to "+value);
+                    if (changed) {
+                        log.debug(attribute.getName() + ": value changed to " + value);
                     }
                 }
 
                 //change the original message
                 HttpMessage changedMessege = samlMessage.getChangedMessage();
-                if(changedMessege!=message){
+                if (changedMessege != message) {
                     //check for reference, if they are same the message is already changed,
                     // else the header and body are changed
                     message.setRequestBody(changedMessege.getRequestBody());
@@ -63,7 +69,10 @@ public class SAMLProxyListener implements ProxyListener {
         return 0;
     }
 
+    /**
+     * Load the attributes and values to change automatically if they are found in a message
+     */
     public void loadAutoChangeAttributes() {
-        autoChangeAttribs = SAMLConfiguration.getConfigurations().getAutoChangeAttributes();
+        autoChangeAttribs = SAMLConfiguration.getInstance().getAutoChangeAttributes();
     }
 }

@@ -112,7 +112,7 @@ public class SAMLMessage {
         // xpath initialization
         XPathFactory xFactory = XPathFactory.newInstance();
         XPath xpath = xFactory.newXPath();
-        Set<Attribute> allAttributes = SAMLConfiguration.getConfigurations().getAvailableAttributes();
+        Set<Attribute> allAttributes = SAMLConfiguration.getInstance().getAvailableAttributes();
         for (Attribute attribute : allAttributes) {
             try {
                 XPathExpression expression = xpath.compile(attribute.getxPath());
@@ -186,7 +186,7 @@ public class SAMLMessage {
                 log.warn(attribute.getxPath() + " is not a valid XPath", e);
             }
         }
-        if (SAMLConfiguration.getConfigurations().getXSWEnabled()) {
+        if (SAMLConfiguration.getInstance().getXSWEnabled()) {
             try {
                 NodeList nodeList = (NodeList) xpath.compile("/Response//Signature")
                         .evaluate(xmlDocument, XPathConstants.NODESET);
@@ -282,7 +282,7 @@ public class SAMLMessage {
         if (attributeMap.containsKey(attributeName)) {
             Attribute attribute = attributeMap.get(attributeName);
             Object newValue;
-            if (SAMLConfiguration.getConfigurations().isValidationEnabled()) {
+            if (SAMLConfiguration.getInstance().isValidationEnabled()) {
                 newValue = validateValueType(attribute.getValueType(), value);
             } else {
                 newValue = value;
@@ -330,10 +330,20 @@ public class SAMLMessage {
         }
     }
 
+    /**
+     * Get the relay state
+     *
+     * @return
+     */
     public String getRelayState() {
         return relayState;
     }
 
+    /**
+     * Set the relay state
+     *
+     * @param relayState
+     */
     public void setRelayState(String relayState) {
         if (!this.relayState.equals(relayState)) {
             this.relayState = relayState;
@@ -341,6 +351,11 @@ public class SAMLMessage {
         }
     }
 
+    /**
+     * Get the saml message as a formatted XML
+     *
+     * @return
+     */
     public String getSamlMessageString() {
         try {
             Source xmlInput;
@@ -361,6 +376,11 @@ public class SAMLMessage {
         }
     }
 
+    /**
+     * Set the saml message XML string to the given value
+     *
+     * @param samlMessageString
+     */
     public void setSamlMessageString(String samlMessageString) {
         String trimmedMessage = samlMessageString.trim().replaceAll("\n", "").replaceAll("\\s+", " ");
         if (!this.samlMessageString.equals(trimmedMessage)) {
@@ -377,10 +397,21 @@ public class SAMLMessage {
         }
     }
 
+    /**
+     * Get the attribute name:value map. This will only contain the configured attributes and their values if they
+     * are found in the message
+     *
+     * @return
+     */
     public Map<String, Attribute> getAttributeMap() {
         return attributeMap;
     }
 
+    /**
+     * set the attribute name:value map to be updated in the saml message
+     *
+     * @param attributeMap
+     */
     public void setAttributeMap(Map<String, Attribute> attributeMap) {
         this.attributeMap = attributeMap;
     }

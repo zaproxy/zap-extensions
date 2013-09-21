@@ -8,12 +8,12 @@ import org.zaproxy.zap.view.PopupMenuHttpMessage;
 public class SAMLResendMenuItem extends PopupMenuHttpMessage {
 
     public SAMLResendMenuItem(String label) {
-        super("Resend...");
+        super("View/Resend...");
     }
 
     @Override
     public void performAction(HttpMessage httpMessage) throws Exception {
-        if(!SAMLUtils.hasSAMLMessage(httpMessage)){
+        if (!SAMLUtils.hasSAMLMessage(httpMessage)) {
             View.getSingleton().showWarningDialog("Not a valid SAML request");
             return;
         }
