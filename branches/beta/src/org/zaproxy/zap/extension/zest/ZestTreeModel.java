@@ -126,7 +126,7 @@ public class ZestTreeModel {
 				}
 			}
 		} else {
-			System.err.println("added a non container element "+ za.getElementType());
+			logger.debug("added a non container element "+ za.getElementType());
 			parent.add(zestNode);
 		}
 		model.nodeStructureChanged(parent);
@@ -176,7 +176,6 @@ public class ZestTreeModel {
 				this.addToNode(zestNode, stmt);
 			}
 		} else if(za instanceof ZestExpression && parentZe instanceof ZestStructuredExpression){
-			System.err.println("insert expression at given index");
 			ZestExpression exp=(ZestExpression) za;
 			ZestStructuredExpression parentExp=(ZestStructuredExpression) parentZe;
 			parentExp.addChildCondition(exp, index);
