@@ -26,7 +26,8 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 public class ZestMenuManager {
 
 	private ZestAddToScriptPopupMenu popupZestAddToMenu = null;
-	private ZestCompareResponsePopupMenu compareResponsePopupMenu = null;
+	private ZestCompareReqRespPopupMenu compareRequestPopupMenu = null;
+	private ZestCompareReqRespPopupMenu compareResponsePopupMenu = null;
 
 	private ZestAddActionPopupMenu popupAddActionMenu = null;
 	private ZestAddAssertionPopupMenu popupAddAssertionMenu = null;
@@ -56,6 +57,7 @@ public class ZestMenuManager {
 		this.extension = extension;
 		
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupZestAddToMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getCompareRequestPopupMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getCompareResponsePopupMenu());
 
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddActionMenu());
@@ -165,9 +167,16 @@ public class ZestMenuManager {
 		return popupAddReturnMenu;
 	}
 
-	private ZestCompareResponsePopupMenu getCompareResponsePopupMenu() {
+	private ZestCompareReqRespPopupMenu getCompareRequestPopupMenu() {
+		if (compareRequestPopupMenu == null) {
+			compareRequestPopupMenu = new ZestCompareReqRespPopupMenu(this.extension, true);
+		}
+		return compareRequestPopupMenu;
+	}
+	
+	private ZestCompareReqRespPopupMenu getCompareResponsePopupMenu() {
 		if (compareResponsePopupMenu == null) {
-			compareResponsePopupMenu = new ZestCompareResponsePopupMenu(this.extension);
+			compareResponsePopupMenu = new ZestCompareReqRespPopupMenu(this.extension, false);
 		}
 		return compareResponsePopupMenu;
 	}

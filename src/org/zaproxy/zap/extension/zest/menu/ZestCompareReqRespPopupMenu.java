@@ -36,19 +36,24 @@ import org.zaproxy.zap.extension.zest.ZestResultsPanel;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.PopupMenuHistoryReference;
 
-public class ZestCompareResponsePopupMenu extends PopupMenuHistoryReference {
+public class ZestCompareReqRespPopupMenu extends PopupMenuHistoryReference {
 
 	private static final long serialVersionUID = 2282358266003940700L;
 
 	private ExtensionZest extension;
+	private boolean request = false;
 
 	/**
 	 * This method initializes 
 	 * 
 	 */
-	public ZestCompareResponsePopupMenu(ExtensionZest extension) {
-		super(Constant.messages.getString("zest.compare.popup"));
+	public ZestCompareReqRespPopupMenu(ExtensionZest extension, boolean request) {
+		super(Constant.messages.getString("zest.compare.resp.popup"));
+		if (request) {
+			this.setText(Constant.messages.getString("zest.compare.req.popup"));
+		}
 		this.extension = extension;
+		this.request = request;
 	}
 	
 	@Override
@@ -82,9 +87,10 @@ public class ZestCompareResponsePopupMenu extends PopupMenuHistoryReference {
 				// loaded using a different class loader
 				Extension ext = Control.getSingleton().getExtensionLoader().getExtension("ExtensionDiff");
 				if (ext != null) {
-					Method method = ext.getClass().getMethod("showDiffDialog", new Class<?>[]{HttpMessage.class, HttpMessage.class});
+					Method method = ext.getClass().getMethod("showDiffDialog", 
+							new Class<?>[]{HttpMessage.class, HttpMessage.class, boolean.class});
 					if (method != null) {
-						method.invoke(ext, ZestZapUtils.toHttpMessage(zr, resp), newRes.getHttpMessage());
+						method.invoke(ext, ZestZapUtils.toHttpMessage(zr, resp), newRes.getHttpMessage(), this.request);
 					}
 				}
     		}
