@@ -169,8 +169,6 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 		if (!View.isInitialised()) {
 			return;
 		}
-// TODO
-System.out.println("--- displayScript " + script.getName());
 		
 		if (script.getEngine() == null) {
 			// Scripts loaded from the configs my have loaded before all of the engines
