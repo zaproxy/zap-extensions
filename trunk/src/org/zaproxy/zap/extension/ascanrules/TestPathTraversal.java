@@ -20,6 +20,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -315,8 +316,9 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             //request to find the vulnerability 
             //but it would be foiled by simple input validation on "..", for instance.
             
-    	}
-		catch (Exception e) {
+    	} catch (InvalidRedirectLocationException e) {
+    		// Not an error, just means we probably attacked the redirect location
+    	} catch (Exception e) {
 			log.error("Error scanning parameters for Path Traversal: "+ e.getMessage(), e);
 			return;
 		}

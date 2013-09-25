@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>11</version>
+	<version>12</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated to be compatible with 2.2.0</changes>
+	<changes>Fixed various errors logged</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
