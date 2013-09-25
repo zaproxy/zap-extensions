@@ -17,7 +17,6 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,6 +27,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -974,6 +974,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 				} //not a login page
 			} //no sql Injection Found For Url
 
+    	} catch (InvalidRedirectLocationException e) {
+    		// Not an error, just means we probably attacked the redirect location
 		} catch (Exception e) {
 			//Do not try to internationalise this.. we need an error message in any event.. 
 			//if it's in English, it's still better than not having it at all. 
@@ -998,6 +1000,9 @@ public class TestSQLInjection extends AbstractAppParamPlugin  {
 	 * @return
 	 */
 	protected String stripOff(String body, String pattern) {
+		if (pattern == null) {
+			return body;
+		}
 	    String urlEncodePattern = getURLEncode(pattern);
 	    String htmlEncodePattern1 = getHTMLEncode(pattern);
 	    String htmlEncodePattern2 = getHTMLEncode(urlEncodePattern);

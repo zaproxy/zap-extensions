@@ -19,6 +19,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.List;
 
+import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -98,6 +99,8 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 		setParameter(msg2, param, attack);
         try {
 			sendAndReceive(msg2);
+    	} catch (InvalidRedirectLocationException e) {
+    		// Not an error, just means we probably attacked the redirect location
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -304,6 +307,8 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             		}
             	}
             }
+    	} catch (InvalidRedirectLocationException e) {
+    		// Not an error, just means we probably attacked the redirect location
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
