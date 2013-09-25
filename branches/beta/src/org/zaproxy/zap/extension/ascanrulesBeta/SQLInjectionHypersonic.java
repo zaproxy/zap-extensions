@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -319,6 +320,8 @@ public class SQLInjectionHypersonic extends AbstractAppPlugin {
 
 			} //end of the for loop around the parameter list
 
+    	} catch (InvalidRedirectLocationException e) {
+    		// Not an error, just means we probably attacked the redirect location
 		} catch (Exception e) {
 			//Do not try to internationalise this.. we need an error message in any event.. 
 			//if it's in English, it's still better than not having it at all. 
