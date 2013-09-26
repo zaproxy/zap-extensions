@@ -1,29 +1,6 @@
 /*
- * Command-line tool to test a SSL/TLS server for some vulnerabilities.
- * =====================================================================
- *
- * This application connects to the provided SSL/TLS server (by name and
- * port) and extracts the following information:
- * - supported versions (SSL 2.0, SSL 3.0, TLS 1.0 to 1.2)
- * - support of Deflate compression
- * - list of supported cipher suites (for each protocol version)
- * - BEAST/CRIME vulnerabilities.
- *
- * BEAST and CRIME are client-side attack, but the server can protect the
- * client by refusing to use the feature combinations which can be
- * attacked. For CRIME, the weakness is Deflate compression. For BEAST,
- * the attack conditions are more complex: it works with CBC ciphers with
- * SSL 3.0 and TLS 1.0. Hence, a server fails to protect the client against
- * BEAST if it does not enforce usage of RC4 over CBC ciphers under these
- * protocol versions, if given the choice.
- *
- * (The BEAST test considers only the cipher suites with strong
- * encryption; if the server supports none, then there are bigger
- * problems. We also assume that all clients support RC4-128; thus, the
- * server protects the client if it selects RC4-128 even if some strong
- * CBC-based ciphers are announced as supported by the client with a
- * higher preference level.)
- *
+ * This class was derived from Thomas Pornins SSL Command Tool available at:
+ * http://www.bolet.org/TestSSLServer/
  * ----------------------------------------------------------------------
  * Copyright (c) 2012  Thomas Pornin <pornin@bolet.org>
  * 
@@ -63,17 +40,21 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
+import java.util.*;
+import org.parosproxy.paros.view.View;
 public class SSLServer {
+    
+    
     private InetSocketAddress isa;
+    private Set<Integer> sv = new TreeSet<Integer>();
+    private Map<Integer, LinkedHashSet<Integer>> suppCS = new TreeMap<Integer, LinkedHashSet<Integer>>();
+    private boolean defcomp = true;
+    private boolean BeastVuln = true;
+    private Set<String> Cert = new TreeSet<String>();
+    private int maxStr = CLEAR;
+    private int minStr = CLEAR;
+
+    
     public SSLServer(String name){
 	this(name, 443);
     }
@@ -81,118 +62,124 @@ public class SSLServer {
 	if (port <= 0 || port > 65535) {
 	    port = 443;
 	}
-
 	isa = new InetSocketAddress(name, port);
+	this.updateSupportedVersions();
+	this.updateCertificate();
+	this.updateCompress();
+	this.updateSupportedCS();
+	this.updateAttackVuln();
     }
-    public String getInfo(){
-	StringBuffer info = new StringBuffer();
-	Set<Integer> sv = new TreeSet<Integer>();
-	boolean compress = false;
+    public Map<Integer, LinkedHashSet<Integer>> getSupportedCipherSuites(){
+	return this.suppCS;
+    }
+    public Set<String> getCert(){
+	return this.Cert;
+    }
+    public boolean getDeflateCompression(){
+	return this.defcomp;
+    }
+    public boolean getCrimeVuln(){
+	return this.defcomp;
+    }
+    public boolean getBeastVuln(){
+	return this.BeastVuln;
+    }
+    public int getMaxStrength(){
+	return this.maxStr;
+    }
+    public int getMinStrength(){
+	return this.minStr;
+    }
+    public void updateSupportedVersions(){
 	for (int v = 0x0300; v <= 0x0303; v ++) {
 	    ServerHello sh = connect(isa, v, CIPHER_SUITES.keySet());
 	    if (sh == null) {
 		continue;
 	    }
 	    sv.add(sh.protoVersion);
-	    if (sh.compression == 1) {
-		compress = true;
-	    }
 	}
-
 	ServerHelloSSLv2 sh2 = connectV2(isa);
 
 	if (sh2 != null) {
 	    sv.add(0x0200);
 	}
-
-	if (sv.size() == 0) {
-	    info.append("No SSL/TLS server at " + isa );
-	    return info.toString();
+    }
+    public void updateCompress(){
+	for (int v = 0x0300; v <= 0x0303; v ++) {
+	    ServerHello sh = connect(isa, v, CIPHER_SUITES.keySet());
+	    if (sh.compression == 1) {
+		defcomp = true;
+	    }
+	    else{
+		defcomp = false;
+	    }
 	}
-	info.append("Supported versions:");
-	for (int v : sv) {
-	    info.append(" "+ versionString(v));
-	}
-	info.append("\nDeflate compression: " + (compress ? "YES" : "no") + "\n");
-
-	info.append("Supported cipher suites" + " (ORDER IS NOT SIGNIFICANT):\n");
+    }
+    public void updateSupportedCS(){
 	Set<Integer> lastSuppCS = null;
-	Map<Integer, Set<Integer>> suppCS = new TreeMap<Integer, Set<Integer>>();
-	Set<String> certID = new TreeSet<String>();
-
-	if (sh2 != null) {
-	    info.append("  " + versionString(0x0200) + "\n");
-	    Set<Integer> vc2 = new TreeSet<Integer>();
-	    for (int c : sh2.cipherSuites) {
-		vc2.add(c);
-	    }
-	    for (int c : vc2) {
-		info.append("     " + cipherSuiteStringV2(c) + "\n");
-	    }
-	    suppCS.put(0x0200, vc2);
-	    if (sh2.serverCertName != null) {
-		certID.add(sh2.serverCertHash + ": " + sh2.serverCertName);
-	    }
-	}
 
 	for (int v : sv) {
 	    if (v == 0x0200) {
-		continue;
-	    }
-	    Set<Integer> vsc = supportedSuites(isa, v, certID);
-	    suppCS.put(v, vsc);
-	    if (lastSuppCS == null || !lastSuppCS.equals(vsc)) {
-		info.append("  " + versionString(v) + "\n");
-		for (int c : vsc) {
-		    info.append("     "  + cipherSuiteString(c) + "\n");
+		ServerHelloSSLv2 sh2 = connectV2(isa);
+		LinkedHashSet<Integer> vc2 = new LinkedHashSet<Integer>();
+		for (int c : sh2.cipherSuites) {
+			vc2.add(c);
 		}
-		lastSuppCS = vsc;
-	    } else {
-		info.append("  (" + versionString(v) + ": idem)\n");
+		suppCS.put(0x0200, vc2);
+	    }
+	    else{
+	    LinkedHashSet<Integer> vsc = supportedSuites(isa, v, Cert);
+	    suppCS.put(v, vsc);
 	    }
 	}
-	info.append("----------------------\n");
-	if (certID.size() == 0) {
-	    info.append("No server certificate !\n");
-	} else {
-	    info.append("Server certificate(s):\n");
-	    for (String cc : certID) {
-		info.append("  " + cc + "\n");
-	    }
+    }
+    public void updateCertificate(){
+	ServerHelloSSLv2 sh2 = connectV2(isa);
+	if (sh2 != null && sh2.serverCertName != null) {
+		Cert.add(sh2.serverCertHash + ": " + sh2.serverCertName);
 	}
-	info.append("----------------------\n");
-	int agMaxStrength = STRONG;
-	int agMinStrength = STRONG;
-	boolean vulnBEAST = false;
+    }
+    
+    public void updateAttackVuln(){
+	this.BeastVuln = false;
 	for (int v : sv) {
 	    Set<Integer> vsc = suppCS.get(v);
-	    agMaxStrength = Math.min(
-		    maxStrength(vsc), agMaxStrength);
-	    agMinStrength = Math.min(
-		    minStrength(vsc), agMinStrength);
-	    if (!vulnBEAST) {
-		vulnBEAST = testBEAST(isa, v, vsc);
+	    if (!BeastVuln) {
+		BeastVuln = testBEAST(isa, v, vsc);
 	    }
 	}
-	info.append("Minimal encryption strength:     " + strengthString(agMinStrength) + "\n");
-	info.append("Achievable encryption strength:  " + strengthString(agMaxStrength) + "\n");
-	info.append("BEAST status: " + (vulnBEAST ? "vulnerable" : "protected") + "\n");
-	info.append("CRIME status: " + (compress ? "vulnerable" : "protected") + "\n");
-	return info.toString();
     }
-
-    /*
+    public void orderCertificates(){
+	for(int v : sv){
+	    LinkedHashSet<Integer> ordered = new LinkedHashSet<Integer>();
+	    while(!suppCS.get(v).isEmpty()){
+		ServerHello sh = connect(isa, v, suppCS.get(v));
+		ordered.add(sh.cipherSuite);
+		suppCS.get(v).remove(sh.cipherSuite);
+	    }
+	    this.suppCS.get(v).addAll(ordered);
+	}
+    }
+    public void updateStrength(){
+    this.minStr = STRONG;
+    this.maxStr = CLEAR;
+    for (int v : sv) {
+        Set<Integer> vsc = suppCS.get(v);
+        maxStr = Math.max(
+                maxStrength(vsc), maxStr);
+        minStr = Math.min(
+        	minStrength(vsc), minStr);
+    }
+    }/*
      * Get cipher suites supported by the server. This is done by
      * repeatedly contacting the server, each time removing from our
      * list of supported suites the suite which the server just
      * selected. We keep on until the server can no longer respond
      * to us with a ServerHello.
      */
-    static Set<Integer> supportedSuites(InetSocketAddress isa, int version,
-	    Set<String> serverCertID)
-	    {
+    static LinkedHashSet<Integer> supportedSuites(InetSocketAddress isa, int version, Set<String> serverCertID){
 	Set<Integer> cs = new TreeSet<Integer>(CIPHER_SUITES.keySet());
-	Set<Integer> rs = new TreeSet<Integer>();
+	LinkedHashSet<Integer> rs = new LinkedHashSet<Integer>();
 	for (;;) {
 	    ServerHello sh = connect(isa, version, cs);
 	    if (sh == null) {
@@ -213,7 +200,7 @@ public class SSLServer {
 	    }
 	}
 	return rs;
-	    }
+    }
 
     static int minStrength(Set<Integer> supp)
     {
@@ -308,9 +295,7 @@ public class SSLServer {
      * Connect to the server, send a ClientHello, and decode the
      * response (ServerHello). On error, null is returned.
      */
-    static ServerHello connect(InetSocketAddress isa,
-	    int version, Collection<Integer> cipherSuites)
-    {
+    static ServerHello connect(InetSocketAddress isa, int version, Collection<Integer> cipherSuites){
 	Socket s = null;
 	try {
 	    s = new Socket();
@@ -950,18 +935,6 @@ public class SSLServer {
     static final int WEAK   = 1; // weak encryption: 40-bit key
     static final int MEDIUM = 2; // medium encryption: 56-bit key
     static final int STRONG = 3; // strong encryption
-
-    static final String strengthString(int strength)
-    {
-	switch (strength) {
-	case CLEAR:  return "no encryption";
-	case WEAK:   return "weak encryption (40-bit)";
-	case MEDIUM: return "medium encryption (56-bit)";
-	case STRONG: return "strong encryption (96-bit or more)";
-	default:
-	    throw new Error("strange strength: " + strength);
-	}
-    }
 
     static final String cipherSuiteString(int suite)
     {
