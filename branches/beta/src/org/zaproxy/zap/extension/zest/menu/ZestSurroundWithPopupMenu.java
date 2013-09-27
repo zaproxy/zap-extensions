@@ -159,12 +159,12 @@ public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
 			menu = new ZestPopupMenu(
 					Constant.messages.getString("zest.surround.with.popup"),
 					Constant.messages
-							.getString("zest.condition.add.popup.empty.and"));
+							.getString("zest.condition.add.popup.expr.and"));
 		} else if (za instanceof ZestExpressionOr) {
 			menu = new ZestPopupMenu(
 					Constant.messages.getString("zest.surround.with.popup"),
 					Constant.messages
-							.getString("zest.condition.add.popup.empty.or"));
+							.getString("zest.condition.add.popup.expr.or"));
 		} else {
 			menu = new ZestPopupMenu(
 					Constant.messages.getString("zest.surround.with.popup"),

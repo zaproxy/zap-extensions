@@ -100,47 +100,34 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
 
 	protected void reCreateSubMenu(ScriptNode parent, ScriptNode child,
 			ZestStatement stmt, String loc, String text) {
-		createPopupAddActionMenu(parent, child, stmt, new ZestExpressionRegex(
-				loc, text));
-		createPopupAddActionMenu(parent, child, stmt, new ZestExpressionEquals(
-				loc, text));
-		createPopupAddActionMenu(parent, child, stmt,
-				new ZestExpressionStatusCode());
-		createPopupAddActionMenu(parent, child, stmt,
-				new ZestExpressionResponseTime());
-		createPopupAddActionMenu(parent, child, stmt, new ZestExpressionURL());
-		createPopupAddActionMenu(parent, child, stmt, new ZestExpressionOr(),
-				true);
-		createPopupAddActionMenu(parent, child, stmt, new ZestExpressionAnd(),
-				true);
-//		createPopupAddActionMenu(parent, child, stmt, new ZestExpressionOr(),
-//				false);
+		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionRegex(loc, text));
+		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionEquals(loc, text));
+		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionStatusCode());
+		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionResponseTime());
+		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionURL());
+		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionOr(), true);
+		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionAnd(), true);
 	}
 
-	private void createPopupAddActionMenu(final ScriptNode parent,
+	private void createPopupAddExprMenu(final ScriptNode parent,
 			ScriptNode child, final ZestStatement stmt,
 			final ZestStructuredExpression exp, boolean empty) {
 		if (!empty) {
-			createPopupAddActionMenu(parent, child, stmt, exp);
+			createPopupAddExprMenu(parent, child, stmt, exp);
 		} else {
 			final List<ScriptNode> nodes = new LinkedList<>();
 			nodes.add(child);
 			ZestPopupMenu menu;
 			menu = new ZestPopupMenu(
 					Constant.messages
-							.getString("zest.structured.epxression.add.popup"),
+							.getString("zest.expression.add.popup"),
 					ZestZapUtils.toUiString(exp, false));
 			menu.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					extension.addToParent(extension.getSelectedZestNode(), exp);// adds
-																				// a
-																				// new
-																				// empty
-																				// structured
-																				// expression
-																				// node
+					// add a new empty structures expression node (no dialog needed)
+					extension.addToParent(extension.getSelectedZestNode(), exp);
 				}
 			});
 			menu.setMenuIndex(this.getMenuIndex());
@@ -149,7 +136,7 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
 		}
 	}
 
-	private void createPopupAddActionMenu(final ScriptNode parent,
+	private void createPopupAddExprMenu(final ScriptNode parent,
 			ScriptNode child, final ZestStatement stmt, final ZestExpression ze) {
 		final List<ScriptNode> nodes = new LinkedList<>();
 		nodes.add(child);
@@ -167,15 +154,8 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
 		menu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (ze != null) {
-					extension.getDialogManager().showZestExpressionDialog(
-							parent, nodes, stmt, ze, true, false, false);
-				} else {
-					extension.addToParent(extension.getSelectedZestNode(),
-							new ZestConditional());// adds a new empty
-													// conditional with no
-													// dialog.
-				}
+				extension.getDialogManager().showZestExpressionDialog(
+						parent, nodes, stmt, ze, true, false, false);
 			}
 		});
 		menu.setMenuIndex(this.getMenuIndex());
