@@ -22,7 +22,6 @@
 // ZAP: 2012/01/02 Separate param and attack
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
-
 package org.zaproxy.zap.extension.ascanrules;
 
 import org.apache.commons.httpclient.URI;
@@ -35,9 +34,9 @@ import org.parosproxy.paros.network.HttpStatusCode;
 
 public class TestExternalRedirect extends AbstractAppParamPlugin {
 
-	// ZAP: Changed to use owasp.org
-	private String redirect1 = "http://www.owasp.org";
-	private String redirect2 = "www.owasp.org";
+    // ZAP: Changed to use owasp.org
+    private String redirect1 = "http://www.owasp.org";
+    private String redirect2 = "www.owasp.org";
 
     @Override
     public int getId() {
@@ -49,8 +48,6 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
         return "External redirect";
     }
 
-
-
     @Override
     public String[] getDependency() {
         return null;
@@ -58,7 +55,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        
+
         String msg = "Arbitrary external redirection can be.  A phishing email can make use of this to entice readers to click on the link to redirect readers to bogus sites.";
         return msg;
     }
@@ -71,7 +68,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
     @Override
     public String getSolution() {
         return "Only allow redirection within the same web sites; or only allow redirection to designated external URLs.";
-        
+
     }
 
     @Override
@@ -81,103 +78,103 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
- 
     }
-    
+
     @Override
     public void scan(HttpMessage msg, String param, String value) {
 
-		String locationHeader = null;
-		String locationHeader2 = null;
-		String redirect = "";
-		
-		URI uri = null;
-		
-		msg = getNewMsg();
-		try {
-		    sendAndReceive(msg, false);
-		    if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.MOVED_PERMANENTLY
-		            && msg.getResponseHeader().getStatusCode() != HttpStatusCode.FOUND) {
-		        // not redirect page, return;
-		        return;
-		    }
-		    
-		    locationHeader = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
-		    if (locationHeader == null) {
-		        return;
-		    }
-		    
-		    if (locationHeader.compareToIgnoreCase(value) == 0) {
-		        // URI found in param 
-		        redirect = redirect1;
-		    } else if (locationHeader.compareToIgnoreCase(getURLDecode(value)) == 0) {
-		        redirect = getURLEncode(redirect1);
-		    }
+        String locationHeader = null;
+        String locationHeader2 = null;
+        String redirect = "";
 
-		    if (redirect != null) {
-			    uri = new URI(locationHeader, true);
-			    locationHeader2 = uri.getPathQuery();
-			    if (locationHeader2.compareToIgnoreCase(value) == 0) {
-			        // path and query found in param
-			        redirect = redirect2;
-			    } else if (locationHeader2.compareToIgnoreCase(getURLDecode(value)) == 0) {
-			        redirect = getURLEncode(redirect2);
-			    }		        
-		    }
-		    
-		    if (redirect == null) {
-		        return;
-		    }
-		    
-		} catch (Exception e) {
-		    
-		}
+        URI uri = null;
 
-		msg = getNewMsg();
-		setParameter(msg, param, redirect);
-		try {
-		    sendAndReceive(msg, false);
-			if (checkResult(msg, param, redirect)) {
-			    return;
-			}
+        msg = getNewMsg();
+        try {
+            sendAndReceive(msg, false);
+            if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.MOVED_PERMANENTLY
+                    && msg.getResponseHeader().getStatusCode() != HttpStatusCode.FOUND) {
+                // not redirect page, return;
+                return;
+            }
 
-		} catch (Exception e) {
-		    
-		}
-		
-		
-	}
+            locationHeader = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
+            if (locationHeader == null) {
+                return;
+            }
 
-	private boolean checkResult(HttpMessage msg, String param, String attack) {
-	    if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.MOVED_PERMANENTLY
-	            && msg.getResponseHeader().getStatusCode() != HttpStatusCode.FOUND) {
-	        // not redirect page, return;
-	        return false;
-	    }
+            if (locationHeader.compareToIgnoreCase(value) == 0) {
+                // URI found in param 
+                redirect = redirect1;
 
-	    String locationHeader = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
-	    if (locationHeader != null && locationHeader.startsWith(redirect1)) {
-			bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, param, attack , "", msg);
-			return true;
-		}
-		
-		return false;
-		
-	}
-	
-	@Override
-	public int getRisk() {
-		return Alert.RISK_MEDIUM;
-	}
+            //ZAP: Removed getURLDecode()
+            } else if (locationHeader.compareToIgnoreCase(value) == 0) {
+                redirect = getURLEncode(redirect1);
+            }
 
-	@Override
-	public int getCweId() {
-		return 601;
-	}
+            if (redirect != null) {
+                uri = new URI(locationHeader, true);
+                locationHeader2 = uri.getPathQuery();
+                if (locationHeader2.compareToIgnoreCase(value) == 0) {
+                    // path and query found in param
+                    redirect = redirect2;
 
-	@Override
-	public int getWascId() {
-		return 38;
-	}
+                //ZAP: Removed getURLDecode()
+                } else if (locationHeader2.compareToIgnoreCase(value) == 0) {
+                    redirect = getURLEncode(redirect2);
+                }
+            }
 
+            if (redirect == null) {
+                return;
+            }
+
+        } catch (Exception e) {
+        }
+
+        msg = getNewMsg();
+        setParameter(msg, param, redirect);
+        try {
+            sendAndReceive(msg, false);
+            if (checkResult(msg, param, redirect)) {
+                return;
+            }
+
+        } catch (Exception e) {
+        }
+
+
+    }
+
+    private boolean checkResult(HttpMessage msg, String param, String attack) {
+        if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.MOVED_PERMANENTLY
+                && msg.getResponseHeader().getStatusCode() != HttpStatusCode.FOUND) {
+            // not redirect page, return;
+            return false;
+        }
+
+        String locationHeader = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
+        if (locationHeader != null && locationHeader.startsWith(redirect1)) {
+            bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, param, attack, "", msg);
+            return true;
+        }
+
+        return false;
+
+    }
+
+    @Override
+    public int getRisk() {
+        return Alert.RISK_MEDIUM;
+    }
+
+    @Override
+    public int getCweId() {
+        return 601;
+    }
+
+    @Override
+    public int getWascId() {
+        return 38;
+    }
 }
