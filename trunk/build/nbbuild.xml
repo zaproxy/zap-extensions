@@ -99,93 +99,93 @@
 		
     </target>
 	
-	<target name="build-fuzzdb" description="build the fuzzdb addon">
-		<antcall target="build-addon"><param name="addon" value="fuzzdb"/></antcall>
-	
-		<!-- Add the fuzzdb files in the right place -->
-		<property name="addon" value="fuzzdb" /> <!-- Set this to make cut-n-pasting safer ;) -->
-		<xmlproperty file="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
-		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
-		<jar jarfile="${dist.dir}/${file}" update="true" compress="true">
-			<zipfileset dir="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/files/" prefix="fuzzers/fuzzdb-1.09/"/>
-		</jar>
-	</target>
-	
-	<target name="build-exampleActiveScan" description="build the exampleActiveScan extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="exampleActiveScan"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Example active scan rule"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-examplePassiveScan" description="build the examplePassiveScan extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="examplePassiveScan"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Example passive scan rule"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-exampleRightClickMsg" description="build the exampleRightClickMsg extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="exampleRightClickMsg"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Example extension demonstrating right-click message menu"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-exampleTopMenu" description="build the exampleTopMenu extension">
-		<antcall target="build-extension"> 
-			<param name="extension" value="exampleTopMenu"/> 
-			<param name="type" value="example"/> 
-			<param name="version" value="1"/> 
-			<param name="name" value="Example extension demonstrating to top level menu"/> 
-			<param name="changes" value=""/> 
-		</antcall>
-	</target>
-
-	<target name="build-extension" description="build the specified extension">
-		<property name="file" value="${extension}-${type}-${version}.zap" />
-		
-		<!--antcall target="build-extension-help"> 
-			<param name="extension" value="${extension}"/>
-		</antcall-->
-
-		<jar jarfile="${dist.dir}/${file}" update="true" compress="false">
-			<zipfileset dir="${build.classes.dir}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/**"/>
-			</zipfileset>
-			<zipfileset dir="${build.classes.dir}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
-			</zipfileset>
-			<zipfileset dir="${build.classes.dir}" prefix="">
-				<include name="org/zaproxy/zap/extension/${extension}/resource/**"/>
-			</zipfileset>
-		</jar>
-		
-		<!--antcall target="cleanup-extension-help"> 
-			<param name="extension" value="${extension}"/>
-		</antcall-->
-
-		<condition property="addon-example">
-			<equals arg1="${type}" arg2="example"/>
-		</condition>
-
-		<antcall target="append-to-versions-file"> 
-			<param name="extension" value="${extension}"/> 
-			<param name="version" value="${version}"/> 
-			<param name="name" value="${name}"/> 
-			<param name="changes" value="${changes}"/> 
-			<param name="file" value="${file}"/> 
-		</antcall>
-	</target>
+    <target name="build-fuzzdb" description="build the fuzzdb addon">
+    	<antcall target="build-addon"><param name="addon" value="fuzzdb"/></antcall>
+    
+    	<!-- Add the fuzzdb files in the right place -->
+    	<property name="addon" value="fuzzdb" /> <!-- Set this to make cut-n-pasting safer ;) -->
+    	<xmlproperty file="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+    	<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+    	<jar jarfile="${dist.dir}/${file}" update="true" compress="true">
+    		<zipfileset dir="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/files/" prefix="fuzzers/fuzzdb-1.09/"/>
+    	</jar>
+    </target>
+    
+    <target name="build-exampleActiveScan" description="build the exampleActiveScan extension">
+    	<antcall target="build-extension"> 
+    		<param name="extension" value="exampleActiveScan"/> 
+    		<param name="type" value="example"/> 
+    		<param name="version" value="1"/> 
+    		<param name="name" value="Example active scan rule"/> 
+    		<param name="changes" value=""/> 
+    	</antcall>
+    </target>
+    
+    <target name="build-examplePassiveScan" description="build the examplePassiveScan extension">
+    	<antcall target="build-extension"> 
+    		<param name="extension" value="examplePassiveScan"/> 
+    		<param name="type" value="example"/> 
+    		<param name="version" value="1"/> 
+    		<param name="name" value="Example passive scan rule"/> 
+    		<param name="changes" value=""/> 
+    	</antcall>
+    </target>
+    
+    <target name="build-exampleRightClickMsg" description="build the exampleRightClickMsg extension">
+    	<antcall target="build-extension"> 
+    		<param name="extension" value="exampleRightClickMsg"/> 
+    		<param name="type" value="example"/> 
+    		<param name="version" value="1"/> 
+    		<param name="name" value="Example extension demonstrating right-click message menu"/> 
+    		<param name="changes" value=""/> 
+    	</antcall>
+    </target>
+    
+    <target name="build-exampleTopMenu" description="build the exampleTopMenu extension">
+    	<antcall target="build-extension"> 
+    		<param name="extension" value="exampleTopMenu"/> 
+    		<param name="type" value="example"/> 
+    		<param name="version" value="1"/> 
+    		<param name="name" value="Example extension demonstrating to top level menu"/> 
+    		<param name="changes" value=""/> 
+    	</antcall>
+    </target>
+    
+    <target name="build-extension" description="build the specified extension">
+    	<property name="file" value="${extension}-${type}-${version}.zap" />
+    	
+    	<!--antcall target="build-extension-help"> 
+    		<param name="extension" value="${extension}"/>
+    	</antcall-->
+    
+    	<jar jarfile="${dist.dir}/${file}" update="true" compress="false">
+    		<zipfileset dir="${build.classes.dir}" prefix="">
+    			<include name="org/zaproxy/zap/extension/${extension}/**"/>
+    		</zipfileset>
+    		<zipfileset dir="${build.classes.dir}" prefix="">
+    			<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
+    		</zipfileset>
+    		<zipfileset dir="${build.classes.dir}" prefix="">
+    			<include name="org/zaproxy/zap/extension/${extension}/resource/**"/>
+    		</zipfileset>
+    	</jar>
+    	
+    	<!--antcall target="cleanup-extension-help"> 
+    		<param name="extension" value="${extension}"/>
+    	</antcall-->
+    
+    	<condition property="addon-example">
+    		<equals arg1="${type}" arg2="example"/>
+    	</condition>
+    
+    	<antcall target="append-to-versions-file"> 
+    		<param name="extension" value="${extension}"/> 
+    		<param name="version" value="${version}"/> 
+    		<param name="name" value="${name}"/> 
+    		<param name="changes" value="${changes}"/> 
+    		<param name="file" value="${file}"/> 
+    	</antcall>
+    </target>
 		
     <!-- Version file content appender -->            
     <target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
@@ -263,6 +263,21 @@
 
     <target name="clean">
 	<delete dir="${dist.dir}" includeEmptyDirs="true" />
+    </target>
+
+    <!-- Copy Minimal Extensions on the ZAP trunk -->
+    <target name="-post-jar" description="deploy all of the extension to be included in a full release">
+	<!-- Set to compile with debug information -->
+	<!--property name="javac.debug" value="true" /-->
+	<property name="zap.plugin.dir" location="../../../trunk/src/plugin" />
+	<copy todir="${zap.plugin.dir}">
+	  <fileset dir="${dist.dir}"> 
+	    <include name="ascanrules-${status}-*.zap"/>
+	    <include name="pscanrules-${status}-*.zap"/>
+	    <include name="quickstart-${status}-*.zap"/>
+	    <include name="websocket-${status}-*.zap"/>
+	  </fileset>
+	</copy>
     </target>
       
 </project>
