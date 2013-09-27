@@ -44,8 +44,6 @@ import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestControlLoopBreak;
-import org.mozilla.zest.core.v1.ZestControlLoopNext;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
@@ -955,7 +953,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		this.cutNodes = cut;
 	}
 
-	public void pasteExpressionsToNode(ScriptNode parent) {
+	private void pasteExpressionsToNode(ScriptNode parent) {
 		for (int i = 0; i < cnpNodes.size(); i++) {
 			this.addToParent(parent,
 					(ZestExpression) ZestZapUtils.getElement(cnpNodes.get(i)));
@@ -966,21 +964,31 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	public void pasteToNode(ScriptNode parent) {
-		if (this.cnpNodes != null) {
+		if (this.cnpNodes != null && this.cnpNodes.size() > 0) {
 			if (ZestZapUtils.getElement(cnpNodes.get(0)) instanceof ZestExpression) {
 				pasteExpressionsToNode(parent);
 			} else {
-				 ZestScriptWrapper script = this.getZestTreeModel().getScriptWrapper(parent);
-                        	ScriptNode lastNode = null;
-                        	for (int i = 0; i < cnpNodes.size(); i++) {
-                        		if (cutNodes) {
-                                this.delete(cnpNodes.get(i));
-                        		}
-                        	        ZestStatement stmt = ((ZestStatement) ZestZapUtils.getElement(cnpNodes.get(i))).deepCopy();
-                        	        if (ZestZapUtils.getShadowLevel(cnpNodes.get(i)) == 0 && stmt.isPassive() || ! ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getTypeName())) {
-                        	                // Dont paste non passive statements into a passive script
-                        	                lastNode = this.addToParent(parent, stmt);
-                        	        }
+				ZestScriptWrapper script = this.getZestTreeModel().getScriptWrapper(parent);
+            	ScriptNode lastNode = null;
+            	for (int i = 0; i < cnpNodes.size(); i++) {
+        	        ZestStatement stmt = ((ZestStatement) ZestZapUtils.getElement(cnpNodes.get(i))).deepCopy();
+System.out.println("SBSB stmt is " + stmt.getElementType() + " idx=" + stmt.getIndex());
+if (stmt instanceof ZestConditional) {
+	System.out.println("SBSB if orig " + ((ZestConditional)ZestZapUtils.getElement(cnpNodes.get(i))).getIfStatements().size() + "/" + ((ZestConditional)ZestZapUtils.getElement(cnpNodes.get(i))).getElseStatements().size());
+	System.out.println("SBSB if stmts " + ((ZestConditional)stmt).getIfStatements().size() + "/" + ((ZestConditional)stmt).getElseStatements().size());
+	
+}
+            		if (cutNodes) {
+            			this.delete(cnpNodes.get(i));
+            		}
+// TODO fix!
+System.out.println("SBSB paste into node? " + cnpNodes.get(i).getNodeName() + " " + ZestZapUtils.getShadowLevel(cnpNodes.get(i)));
+        	        if (ZestZapUtils.getShadowLevel(cnpNodes.get(i)) == 0 && stmt.isPassive() || ! ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getTypeName())) {
+    	                // Dont paste non passive statements into a passive script
+System.out.println("SBSB yes...");
+    	                lastNode = this.addToParent(parent, stmt);
+System.out.println("SBSB lastNode = " + lastNode.getNodeName() + " " + lastNode.getChildCount());
+        	        }
 				}
 				refreshNode(parent);// refreshes the subtree starting from the
 									// parent

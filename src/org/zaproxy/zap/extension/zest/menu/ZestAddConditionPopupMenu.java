@@ -33,6 +33,7 @@ import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestExpressionAnd;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
+import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionOr;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
@@ -102,15 +103,7 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 					reCreateSubMenu(node.getParent(), node, (ZestRequest) ze,
 							ZestVariables.RESPONSE_BODY, "");
 					return true;
-				} else if (ze instanceof ZestContainer /*
-														 * && TODO !
-														 * ZestTreeElement
-														 * .isSubclass
-														 * (node.getParent
-														 * ().getZestElement(),
-														 * ZestTreeElement
-														 * .Type.PASSIVE_SCRIPT)
-														 */) {
+				} else if (ze instanceof ZestContainer) {
 					if (!(ze instanceof ZestConditional)
 							|| (ze instanceof ZestConditional && ZestZapUtils
 									.getShadowLevel(node) > 0)) {
@@ -122,14 +115,9 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 						return false;
 					}
 					return true;
-					/*
-					 * TODO } else if
-					 * (ZestTreeElement.Type.COMMON_TESTS.equals(node
-					 * .getTreeType())) { reCreateSubMenu(node, null, "BODY",
-					 * ""); return true;
-					 */
 				}
 			}
+			/*
 		} else if (invoker instanceof HttpPanelSyntaxHighlightTextArea
 				&& extension.getExtScript().getScriptUI() != null) {
 			HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea) invoker;
@@ -141,15 +129,7 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 				reCreateSubMenu(node.getParent(), node, (ZestRequest) ze,
 						ZestVariables.RESPONSE_BODY, "");
 				return true;
-			} else if (ze instanceof ZestContainer /*
-													 * && TODO !
-													 * ZestTreeElement.
-													 * isSubclass
-													 * (node.getParent(
-													 * ).getZestElement(),
-													 * ZestTreeElement
-													 * .Type.PASSIVE_SCRIPT)
-													 */) {
+			} else if (ze instanceof ZestContainer) {
 				reCreateSubMenu(node, null, null, ZestVariables.RESPONSE_BODY,
 						"");
 				return true;
@@ -168,22 +148,22 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
             	reCreateSubMenu(node, null, null, ZestVariables.RESPONSE_BODY, "");
             	return true;
             }
+            */
         } else if (invoker instanceof HttpPanelSyntaxHighlightTextArea && extension.getExtScript().getScriptUI() != null) {
 			HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;
     		ScriptNode node = extension.getSelectedZestNode();
     		ZestElement ze = extension.getSelectedZestElement();
 
-			if (node != null
-					&& extension.isSelectedZestOriginalResponseMessage(panel
-							.getMessage()) && panel.getSelectedText() != null
-					&& panel.getSelectedText().length() > 0) {
+			if (node != null && 
+					extension.isSelectedZestOriginalResponseMessage(panel.getMessage()) && 
+					panel.getSelectedText() != null &&
+					panel.getSelectedText().length() > 0) {
 				if (ze instanceof ZestRequest) {
 					ZestRequest req = (ZestRequest) ze;
 					String loc = "BODY";
 					if (req.getResponse() != null
 							&& req.getResponse().getHeaders() != null
-							&& req.getResponse().getHeaders()
-									.indexOf(panel.getSelectedText()) >= 0) {
+							&& req.getResponse().getHeaders().indexOf(panel.getSelectedText()) >= 0) {
 						loc = "HEAD";
 					}
 
@@ -193,18 +173,15 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 				}
 				if (node == null || node.isTemplate()) {
 					return false;
-				} else if (extension
-						.isSelectedZestOriginalResponseMessage(panel
-								.getMessage())
-						&& panel.getSelectedText() != null
-						&& panel.getSelectedText().length() > 0) {
+				} else if (extension.isSelectedZestOriginalResponseMessage(panel.getMessage()) &&
+						panel.getSelectedText() != null &&
+						panel.getSelectedText().length() > 0) {
 					if (ze instanceof ZestRequest) {
 						ZestRequest req = (ZestRequest) ze;
 						String loc = "BODY";
-						if (req.getResponse() != null
-								&& req.getResponse().getHeaders() != null
-								&& req.getResponse().getHeaders()
-										.indexOf(panel.getSelectedText()) >= 0) {
+						if (req.getResponse() != null &&
+								req.getResponse().getHeaders() != null &&
+								req.getResponse().getHeaders().indexOf(panel.getSelectedText()) >= 0) {
 							loc = "HEAD";
 						}
 
@@ -221,18 +198,15 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 
 	protected void reCreateSubMenu(ScriptNode parent, ScriptNode child,
 			ZestStatement stmt, String loc, String text) {
-		createPopupAddActionMenu(parent, child, stmt, new ZestExpressionRegex(
-				loc, text));
-		createPopupAddActionMenu(parent, child, stmt, new ZestExpressionEquals(
-				loc, text));
-		createPopupAddActionMenu(parent, child, stmt,
-				new ZestExpressionStatusCode());
-		createPopupAddActionMenu(parent, child, stmt,
-				new ZestExpressionResponseTime());
-		createPopupAddActionMenu(parent, child, stmt, new ZestExpressionURL());
+		createPopupAddConditionMenu(parent, child, stmt, new ZestExpressionRegex(loc, text));
+		createPopupAddConditionMenu(parent, child, stmt, new ZestExpressionEquals(loc, text));
+		createPopupAddConditionMenu(parent, child, stmt, new ZestExpressionLength());
+		createPopupAddConditionMenu(parent, child, stmt, new ZestExpressionStatusCode());
+		createPopupAddConditionMenu(parent, child, stmt, new ZestExpressionResponseTime());
+		createPopupAddConditionMenu(parent, child, stmt, new ZestExpressionURL());
 		// createPopupAddActionMenu(parent, child, stmt, new
 		// ZestExpressionOr());
-		createPopupAddActionMenu(parent, child, stmt, null);
+		createPopupAddConditionMenu(parent, child, stmt, null);
 //    protected void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestStatement stmt, String loc, String text) {
 //		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionRegex(loc, text)));
 //		createPopupAddActionMenu (parent, child, stmt, new ZestConditional(new ZestExpressionEquals(loc, text)));
@@ -243,7 +217,7 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 //		createPopupAddActionMenu(parent, child, stmt, new ZestConditional(new ZestExpressionOr()));
 	}
 
-	private void createPopupAddActionMenu(final ScriptNode parent,
+	private void createPopupAddConditionMenu(final ScriptNode parent,
 			ScriptNode child, final ZestStatement stmt, final ZestExpression ze) {
 		final List<ScriptNode> nodes = new LinkedList<>();
 		nodes.add(child);
@@ -284,13 +258,9 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 					extension.addAfterRequest(parent, childNode, existingChild,
 							newChild);
 				} else {
+					// add a new empty conditional with no dialog
 					extension.addToParent(extension.getSelectedZestNode(),
-							new ZestConditional(new ZestExpressionAnd()));// adds
-																			// a
-																			// new
-																			// empty
-					// conditional with no
-					// dialog.
+							new ZestConditional(new ZestExpressionAnd()));
 				}
 			}
 		});
@@ -314,13 +284,9 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 						extension.addAfterRequest(parent, childNode,
 								existingChild, newChild);
 					} else {
+						// add a new empty conditional with no dialog
 						extension.addToParent(extension.getSelectedZestNode(),
-								new ZestConditional(new ZestExpressionOr()));// adds
-																				// a
-																				// new
-																				// empty
-						// conditional with no
-						// dialog.
+								new ZestConditional(new ZestExpressionOr()));
 					}
 				}
 			});

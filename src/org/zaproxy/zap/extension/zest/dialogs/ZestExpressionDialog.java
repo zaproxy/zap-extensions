@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
+import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
@@ -54,6 +55,8 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 	private static final String FIELD_VARIABLE = "zest.dialog.condition.label.variable";
 	private static final String FIELD_VALUE = "zest.dialog.condition.label.value";
 	private static final String FIELD_EXACT = "zest.dialog.condition.label.exact";
+	private static final String FIELD_LENGTH = "zest.dialog.condition.label.length"; 
+	private static final String FIELD_APPROX = "zest.dialog.condition.label.approx"; 
 
 	private static final long serialVersionUID = 1L;
 
@@ -139,6 +142,12 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 					this.listToStr(zc.getIncludeRegexes()));
 			this.addMultilineField(FIELD_EXC_REGEXS,
 					this.listToStr(zc.getExcludeRegexes()));
+			
+		} else if (expression instanceof ZestExpressionLength) {
+			ZestExpressionLength zc = (ZestExpressionLength) expression;
+			this.addComboField(FIELD_VARIABLE, this.getVariableNames(), zc.getVariableName());
+			this.addNumberField(FIELD_LENGTH, 0, Integer.MAX_VALUE, zc.getLength());
+			this.addNumberField(FIELD_APPROX, 0, 100, zc.getApprox());
 		}
 		this.addPadding();
 	}
@@ -203,6 +212,12 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 					.getStringValue(FIELD_INC_REGEXS)));
 			zc.setExcludeRegexes(this.strToList(this
 					.getStringValue(FIELD_EXC_REGEXS)));
+
+		} else if (expression instanceof ZestExpressionLength) {
+			ZestExpressionLength za = (ZestExpressionLength) expression;
+			za.setVariableName(this.getStringValue(FIELD_VARIABLE));
+			za.setLength(this.getIntValue(FIELD_LENGTH));
+			za.setApprox(this.getIntValue(FIELD_APPROX));
 		}
 		if (addToNewConditional) {
 			ZestConditional condition = new ZestConditional(expression);

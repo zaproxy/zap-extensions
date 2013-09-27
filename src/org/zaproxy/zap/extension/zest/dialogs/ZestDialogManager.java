@@ -31,7 +31,6 @@ import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestComment;
-import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestControl;
 import org.mozilla.zest.core.v1.ZestControlReturn;
 import org.mozilla.zest.core.v1.ZestElement;
