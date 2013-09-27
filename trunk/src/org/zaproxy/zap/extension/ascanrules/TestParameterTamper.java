@@ -25,7 +25,6 @@
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
 // ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
 // ZAP: 2013/03/03 Issue 546: Remove all template Javadoc comments
-
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.regex.Pattern;
@@ -38,31 +37,24 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-
-
 public class TestParameterTamper extends AbstractAppParamPlugin {
 
-	//private static final String[] PARAM_LIST = {"", "@", "+", "%A", "%1Z", "%", "%00", "|"};
+    //private static final String[] PARAM_LIST = {"", "@", "+", "%A", "%1Z", "%", "%00", "|"};
     // problem sending "%A", "%1Z" to server - assume server can handle properly on this.
     // %0A not included as this is in CRLFInjection already.
-
-    private static String[] PARAM_LIST = {"", "", "@", "+", AbstractPlugin.getURLDecode("%00") , "|"};
+    private static String[] PARAM_LIST = {"", "", "@", "+", AbstractPlugin.getURLDecode("%00"), "|"};
     
-    
-	private static Pattern patternErrorJava1 = Pattern.compile("javax\\.servlet\\.\\S+", PATTERN_PARAM);
-	private static Pattern patternErrorJava2 = Pattern.compile("invoke.+exception|exception.+invoke", PATTERN_PARAM);
-
-	private static Pattern patternErrorVBScript = Pattern.compile("Microsoft(\\s+|&nbsp)*VBScript(\\s+|&nbsp)+error", PATTERN_PARAM);
-	private static Pattern patternErrorODBC1 = Pattern.compile("Microsoft OLE DB Provider for ODBC Drivers.*error", PATTERN_PARAM);
-	private static Pattern patternErrorODBC2 = Pattern.compile("ODBC.*Drivers.*error", PATTERN_PARAM);
-    private static Pattern patternErrorJet = Pattern.compile("Microsoft JET Database Engine.*error", PATTERN_PARAM);    
-    private static Pattern patternErrorPHP= Pattern.compile(" on line <b>", PATTERN_PARAM);
-    private static Pattern patternErrorTomcat= Pattern.compile("(Apache Tomcat).*(^Caused by:|HTTP Status 500 - Internal Server Error)", PATTERN_PARAM);
-
+    private static Pattern patternErrorJava1 = Pattern.compile("javax\\.servlet\\.\\S+", PATTERN_PARAM);
+    private static Pattern patternErrorJava2 = Pattern.compile("invoke.+exception|exception.+invoke", PATTERN_PARAM);
+    private static Pattern patternErrorVBScript = Pattern.compile("Microsoft(\\s+|&nbsp)*VBScript(\\s+|&nbsp)+error", PATTERN_PARAM);
+    private static Pattern patternErrorODBC1 = Pattern.compile("Microsoft OLE DB Provider for ODBC Drivers.*error", PATTERN_PARAM);
+    private static Pattern patternErrorODBC2 = Pattern.compile("ODBC.*Drivers.*error", PATTERN_PARAM);
+    private static Pattern patternErrorJet = Pattern.compile("Microsoft JET Database Engine.*error", PATTERN_PARAM);
+    private static Pattern patternErrorPHP = Pattern.compile(" on line <b>", PATTERN_PARAM);
+    private static Pattern patternErrorTomcat = Pattern.compile("(Apache Tomcat).*(^Caused by:|HTTP Status 500 - Internal Server Error)", PATTERN_PARAM);
     // ZAP: Added logger
     private static Logger log = Logger.getLogger(TestParameterTamper.class);
 
-    
     @Override
     public int getId() {
         return 40008;
@@ -73,8 +65,6 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
         return "Parameter tampering";
     }
 
-
-
     @Override
     public String[] getDependency() {
         return null;
@@ -82,7 +72,7 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        
+
         String msg = "Certain parameter caused error page or Java stacktrace to be displayed.  This indicated lack of exception handling and potential areas for further exploit.";
         return msg;
     }
@@ -95,113 +85,111 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
     @Override
     public String getSolution() {
         return "Identify the cause of the error and fix it.  Do not trust client side input and enforece tight check in the server side.  Besides, catch the exception properly.  Use a generic 500 error page for internal server error.";
-        
+
     }
 
     @Override
     public String getReference() {
         return "";
-        
+
     }
 
     @Override
     public void init() {
- 
     }
-    
+
     @Override
     public void scan(HttpMessage msg, String param, String value) {
 
-		String attack = null;
-		
-		// always try normal query first
-		HttpMessage normalMsg = getNewMsg();
+        String attack = null;
 
-		try {
+        // always try normal query first
+        HttpMessage normalMsg = getNewMsg();
+
+        try {
             sendAndReceive(normalMsg);
         } catch (Exception e) {
-        	// ZAP: Log exceptions
-        	log.warn(e.getMessage(), e);
+            // ZAP: Log exceptions
+            log.warn(e.getMessage(), e);
             return;
-        }            
+        }
 
-		if (normalMsg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
-			return;
-		}		
-		
-		for (int i=0; i<PARAM_LIST.length; i++) {
-			msg = getNewMsg();
-			if (i==0) {
-			    // remove entire parameter when i=0;
-				setParameter(msg, null, null);
-				attack = null;
-			} else {
-				setParameter(msg, param, PARAM_LIST[i]);
-				attack = PARAM_LIST[i];
+        if (normalMsg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
+            return;
+        }
 
-			}
-			try {
+        for (int i = 0; i < PARAM_LIST.length; i++) {
+            msg = getNewMsg();
+            if (i == 0) {
+                // remove entire parameter when i=0;
+                setParameter(msg, null, null);
+                attack = null;
+            } else {
+                setParameter(msg, param, PARAM_LIST[i]);
+                attack = PARAM_LIST[i];
+
+            }
+            try {
                 sendAndReceive(msg);
-    			if (checkResult(msg, param, attack, normalMsg.getResponseBody().toString())) {
-    			    return;
-    			}
+                if (checkResult(msg, param, attack, normalMsg.getResponseBody().toString())) {
+                    return;
+                }
 
             } catch (Exception e) {
-            	// ZAP: Log exceptions
-            	log.warn(e.getMessage(), e);
-            }    
+                // ZAP: Log exceptions
+                log.warn(e.getMessage(), e);
+            }
 
-		}
+        }
 
-		
-	}
 
-	private boolean checkResult(HttpMessage msg, String param, String attack, String normalHTTPResponse) {
+    }
 
-		if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK
-			&& !HttpStatusCode.isServerError(msg.getResponseHeader().getStatusCode())) {
-			return false;
-		}
-		
-		// remove false positive if parameter have no effect on output
-		if (msg.getResponseBody().toString().equals(normalHTTPResponse)) {
-			return false;
-		}
+    private boolean checkResult(HttpMessage msg, String param, String attack, String normalHTTPResponse) {
 
-		StringBuilder sb = new StringBuilder();
-		
-		if (matchBodyPattern(msg, patternErrorJava1, sb) && matchBodyPattern(msg, patternErrorJava2, null)) {
+        if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK
+                && !HttpStatusCode.isServerError(msg.getResponseHeader().getStatusCode())) {
+            return false;
+        }
 
-			bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, param, attack, sb.toString(), msg);
-			return true;
-		} else if (matchBodyPattern(msg, patternErrorVBScript, sb)
-				|| matchBodyPattern(msg, patternErrorODBC1, sb)
-				|| matchBodyPattern(msg, patternErrorODBC2, sb)
+        // remove false positive if parameter have no effect on output
+        if (msg.getResponseBody().toString().equals(normalHTTPResponse)) {
+            return false;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        if (matchBodyPattern(msg, patternErrorJava1, sb) && matchBodyPattern(msg, patternErrorJava2, null)) {
+
+            bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, param, attack, sb.toString(), msg);
+            return true;
+        } else if (matchBodyPattern(msg, patternErrorVBScript, sb)
+                || matchBodyPattern(msg, patternErrorODBC1, sb)
+                || matchBodyPattern(msg, patternErrorODBC2, sb)
                 || matchBodyPattern(msg, patternErrorJet, sb)
                 || matchBodyPattern(msg, patternErrorTomcat, sb)
                 || matchBodyPattern(msg, patternErrorPHP, sb)) {
-			bingo(Alert.RISK_MEDIUM, Alert.SUSPICIOUS, "", param, sb.toString(), attack, msg);
+            bingo(Alert.RISK_MEDIUM, Alert.SUSPICIOUS, "", param, sb.toString(), attack, msg);
 
-			return true;
-		}
-		
-		return false;
-		
-	}
+            return true;
+        }
 
-	@Override
-	public int getRisk() {
-		return Alert.RISK_MEDIUM;
-	}
+        return false;
 
-	@Override
-	public int getCweId() {
-		return 472;
-	}
+    }
 
-	@Override
-	public int getWascId() {
-		return 20;
-	}
+    @Override
+    public int getRisk() {
+        return Alert.RISK_MEDIUM;
+    }
 
+    @Override
+    public int getCweId() {
+        return 472;
+    }
+
+    @Override
+    public int getWascId() {
+        return 20;
+    }
 }
