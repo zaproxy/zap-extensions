@@ -26,6 +26,33 @@
  * ----------------------------------------------------------------------
  */
 package org.zaproxy.zap.extension.httpsInfo;
+/*
+ * This class was derived from Thomas Pornins SSL Command Tool available at:
+ * http://www.bolet.org/TestSSLServer/
+ * ----------------------------------------------------------------------
+ * Copyright (c) 2012  Thomas Pornin <pornin@bolet.org>
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * ----------------------------------------------------------------------
+ */
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -41,18 +68,16 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.*;
-import org.parosproxy.paros.view.View;
 public class SSLServer {
-    
     
     private InetSocketAddress isa;
     private Set<Integer> sv = new TreeSet<Integer>();
     private Map<Integer, LinkedHashSet<Integer>> suppCS = new TreeMap<Integer, LinkedHashSet<Integer>>();
-    private boolean defcomp = true;
-    private boolean BeastVuln = true;
+    private Boolean defcomp;
+    private Boolean BeastVuln;
     private Set<String> Cert = new TreeSet<String>();
-    private int maxStr = CLEAR;
-    private int minStr = CLEAR;
+    private Integer maxStr;
+    private Integer minStr;
 
     
     public SSLServer(String name){
@@ -64,10 +89,12 @@ public class SSLServer {
 	}
 	isa = new InetSocketAddress(name, port);
 	this.updateSupportedVersions();
-	this.updateCertificate();
-	this.updateCompress();
-	this.updateSupportedCS();
-	this.updateAttackVuln();
+    }
+    public String getServerName(){
+	return this.isa.getHostName();
+    }
+    public Set<Integer> getSupportedVersions(){
+	return this.sv;
     }
     public Map<Integer, LinkedHashSet<Integer>> getSupportedCipherSuites(){
 	return this.suppCS;
@@ -75,19 +102,19 @@ public class SSLServer {
     public Set<String> getCert(){
 	return this.Cert;
     }
-    public boolean getDeflateCompression(){
+    public Boolean getDeflateCompression(){
 	return this.defcomp;
     }
-    public boolean getCrimeVuln(){
+    public Boolean getCrimeVuln(){
 	return this.defcomp;
     }
-    public boolean getBeastVuln(){
+    public Boolean getBeastVuln(){
 	return this.BeastVuln;
     }
-    public int getMaxStrength(){
+    public Integer getMaxStrength(){
 	return this.maxStr;
     }
-    public int getMinStrength(){
+    public Integer getMinStrength(){
 	return this.minStr;
     }
     public void updateSupportedVersions(){
