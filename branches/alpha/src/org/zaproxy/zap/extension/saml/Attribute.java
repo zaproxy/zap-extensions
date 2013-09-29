@@ -25,7 +25,6 @@ public class Attribute {
 
     /**
      * Get the attribute's unique name
-     *
      * @return
      */
     public String getName() {
@@ -34,7 +33,6 @@ public class Attribute {
 
     /**
      * Set the attribute name
-     *
      * @param name
      */
     public void setName(String name) {
@@ -44,7 +42,6 @@ public class Attribute {
     /**
      * Get Xpath of the attribute. In the saml messages this xpath will be evaluated and the value of that will be
      * taken as the attribute value
-     *
      * @return
      */
     public String getxPath() {
@@ -53,9 +50,8 @@ public class Attribute {
 
     /**
      * Set Xpath of attribute
-     *
-     * @param xPath
      * @see #getxPath()
+     * @param xPath
      */
     public void setxPath(String xPath) {
         this.xPath = xPath;
@@ -64,7 +60,6 @@ public class Attribute {
     /**
      * Get the human friendly name of the attribute. This may be different from the name,
      * if the name is too long or contain special characters.
-     *
      * @return
      */
     public String getViewName() {
@@ -73,9 +68,8 @@ public class Attribute {
 
     /**
      * Set the human readable attribute view name
-     *
-     * @param viewName
      * @see #getViewName()
+     * @param viewName
      */
     public void setViewName(String viewName) {
         this.viewName = viewName;
@@ -83,9 +77,8 @@ public class Attribute {
 
     /**
      * Get the data type of the attribute.
-     *
-     * @return
      * @see SAMLAttributeValueType
+     * @return
      */
     public SAMLAttributeValueType getValueType() {
         return valueType;
@@ -93,9 +86,8 @@ public class Attribute {
 
     /**
      * Set the data type of the attribute.
-     *
-     * @param valueType
      * @see #getValueType()
+     * @param valueType
      */
     public void setValueType(SAMLAttributeValueType valueType) {
         this.valueType = valueType;
@@ -103,7 +95,6 @@ public class Attribute {
 
     /**
      * Get the value of the attribute if set
-     *
      * @return
      */
     public Object getValue() {
@@ -112,7 +103,6 @@ public class Attribute {
 
     /**
      * Set the value of the given attribute to the given value
-     *
      * @param value
      */
     public void setValue(Object value) {
@@ -122,7 +112,6 @@ public class Attribute {
     /**
      * Create a copy of attribute. The new attribute object will have the exact values for the fields except for the
      * value field which is null
-     *
      * @return
      */
     public Attribute createCopy() {
@@ -137,5 +126,19 @@ public class Attribute {
     @Override
     public String toString() {
         return viewName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Attribute attribute = (Attribute) o;
+        return name.equals(attribute.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 }

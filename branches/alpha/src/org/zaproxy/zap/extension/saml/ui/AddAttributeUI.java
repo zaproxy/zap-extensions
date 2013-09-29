@@ -2,6 +2,7 @@ package org.zaproxy.zap.extension.saml.ui;
 
 import org.zaproxy.zap.extension.saml.Attribute;
 import org.zaproxy.zap.extension.saml.AttributeListener;
+import org.zaproxy.zap.extension.saml.SamlI18n;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -15,7 +16,6 @@ import java.awt.event.ActionListener;
 
 public class AddAttributeUI extends JFrame {
 
-    private JPanel contentPane;
     private JTextField textFieldAttributeName;
     private JTextField textFieldViewName;
     private JTextField textFieldXpath;
@@ -27,45 +27,62 @@ public class AddAttributeUI extends JFrame {
     public AddAttributeUI(AttributeListener l) {
         this.attributeListener = l;
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 400, 300);
-        contentPane = new JPanel();
+        setBounds(100, 100, 400, 250);
+        JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        contentPane.setLayout(new BorderLayout(0, 0));
+        contentPane.setLayout(new BorderLayout());
         setContentPane(contentPane);
 
-        JLabel lblAddNewAttribute = new JLabel("<html><h2>Add New Attribute</h2></html>");
-        contentPane.add(lblAddNewAttribute, BorderLayout.NORTH);
+        JLabel lblAddNewAttribute = new JLabel(SamlI18n.getMessage("saml.addattrib.header"));
+        contentPane.add(lblAddNewAttribute, BorderLayout.PAGE_START);
 
         JPanel centerPanel = new JPanel();
         contentPane.add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setLayout(new GridLayout(0, 2, 10, 10));
+        centerPanel.setLayout(new GridBagLayout());
 
-        JLabel lblAttributeName = new JLabel("Attribute Name");
-        centerPanel.add(lblAttributeName);
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 0.5;
+        c.fill=GridBagConstraints.HORIZONTAL;
+
+        JLabel lblAttributeName = new JLabel(SamlI18n.getMessage("saml.addattrib.attribname"));
+        centerPanel.add(lblAttributeName, c);
+
+        c.gridx++;
 
         textFieldAttributeName = new JTextField();
-        centerPanel.add(textFieldAttributeName);
-        textFieldAttributeName.setColumns(10);
+        centerPanel.add(textFieldAttributeName, c);
 
-        JLabel lblAttributeViewName = new JLabel("View Name (Max 30 Char.)");
-        centerPanel.add(lblAttributeViewName);
+        c.gridx = 0;
+        c.gridy++;
+
+        JLabel lblAttributeViewName = new JLabel(SamlI18n.getMessage("saml.addattrib.attribviewname"));
+        centerPanel.add(lblAttributeViewName,c);
+
+        c.gridx++;
 
         textFieldViewName = new JTextField();
-        centerPanel.add(textFieldViewName);
-        textFieldViewName.setColumns(10);
+        centerPanel.add(textFieldViewName,c);
 
-        JLabel lblXpath = new JLabel("XPath");
-        centerPanel.add(lblXpath);
+        c.gridx = 0;
+        c.gridy++;
+        JLabel lblXpath = new JLabel(SamlI18n.getMessage("saml.addattrib.attribxpath"));
+        centerPanel.add(lblXpath,c);
 
+        c.gridx++;
         textFieldXpath = new JTextField();
-        centerPanel.add(textFieldXpath);
-        textFieldXpath.setColumns(10);
+        centerPanel.add(textFieldXpath,c);
 
-        JLabel lblValueType = new JLabel("Value Type");
-        centerPanel.add(lblValueType);
+        c.gridx = 0;
+        c.gridy++;
 
+        JLabel lblValueType = new JLabel(SamlI18n.getMessage("saml.addattrib.attribvaluetype"));
+        centerPanel.add(lblValueType,c);
+
+        c.gridx++;
         final JComboBox<Attribute.SAMLAttributeValueType> comboBoxValueType = new JComboBox<>();
-        centerPanel.add(comboBoxValueType);
+        centerPanel.add(comboBoxValueType,c);
 
         for (Attribute.SAMLAttributeValueType samlAttributeValueType : Attribute.SAMLAttributeValueType.values()) {
             comboBoxValueType.addItem(samlAttributeValueType);
@@ -74,21 +91,21 @@ public class AddAttributeUI extends JFrame {
         JPanel bottomPanel = new JPanel();
         contentPane.add(bottomPanel, BorderLayout.SOUTH);
 
-        JButton btnNewButton = new JButton("Save and Exit");
+        JButton btnNewButton = new JButton(SamlI18n.getMessage("saml.addattrib.button.saveexit"));
         btnNewButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String error = "";
                 if (textFieldAttributeName.getText().equals("")) {
-                    error = "Attribute Name is empty\n";
+                    error = SamlI18n.getMessage("saml.addattrib.error.noname")+"\n";
                 }
                 if (textFieldViewName.getText().equals("")) {
-                    error += "Attribute View Name is empty\n";
+                    error += SamlI18n.getMessage("saml.addattrib.error.noviewname")+"\n";
                 }
                 if (textFieldViewName.getText().length() > 30) {
-                    error += "Attribute View Name should be less than 30 Characters\n";
+                    error += SamlI18n.getMessage("saml.addattrib.error.longviewname")+"\n";
                 }
                 if (textFieldXpath.getText().equals("")) {
-                    error += "XPath is empty\n";
+                    error += SamlI18n.getMessage("saml.addattrib.error.noxpath")+"\n";
                 }
 
                 //validate xpath expression
@@ -97,12 +114,12 @@ public class AddAttributeUI extends JFrame {
                 try {
                     XPathExpression expression = xpath.compile(textFieldXpath.getText());
                 } catch (XPathExpressionException e1) {
-                    error += "Invalid XPath";
+                    error += SamlI18n.getMessage("saml.addattrib.error.invalidxpath")+"\n";
                 }
 
                 if (!error.equals("")) {
                     //Something wrong with inputs
-                    JOptionPane.showMessageDialog(AddAttributeUI.this, error, "Error with input values", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(AddAttributeUI.this, error, SamlI18n.getMessage("saml.addattrib.error.error"), JOptionPane.ERROR_MESSAGE);
                 } else {
                     //valid input
                     Attribute attribute = new Attribute();
@@ -118,10 +135,10 @@ public class AddAttributeUI extends JFrame {
         });
         bottomPanel.add(btnNewButton);
 
-        JButton btnCancel = new JButton("Cancel");
+        JButton btnCancel = new JButton(SamlI18n.getMessage("saml.addattrib.button.cancel"));
         btnCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int response = JOptionPane.showConfirmDialog(AddAttributeUI.this, "Are you sure?", "Confirm exit",
+                int response = JOptionPane.showConfirmDialog(AddAttributeUI.this, SamlI18n.getMessage("saml.addattrib.msg.confirm"), SamlI18n.getMessage("saml.addattrib.msg.confirmexit"),
                         JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
                     close();

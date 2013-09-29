@@ -8,7 +8,7 @@ import org.zaproxy.zap.view.PopupMenuHttpMessage;
 public class SAMLResendMenuItem extends PopupMenuHttpMessage {
 
     public SAMLResendMenuItem(String label) {
-        super("View/Resend...");
+        super(label);
     }
 
     @Override
