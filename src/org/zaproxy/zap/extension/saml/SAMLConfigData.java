@@ -18,7 +18,6 @@ public class SAMLConfigData {
 
     /**
      * Get whether the autochanger is enabled
-     *
      * @return
      */
     public boolean isAutoChangerEnabled() {
@@ -27,7 +26,6 @@ public class SAMLConfigData {
 
     /**
      * Set auto changer enabled/disabled
-     *
      * @param autoChangerEnabled
      */
     public void setAutoChangerEnabled(boolean autoChangerEnabled) {
@@ -36,7 +34,6 @@ public class SAMLConfigData {
 
     /**
      * Get the set of all available attributes
-     *
      * @return
      */
     @XmlElementWrapper(name = "AllAttributes")
@@ -50,7 +47,6 @@ public class SAMLConfigData {
 
     /**
      * Setter for get available attributes
-     *
      * @param availableAttributes
      */
     public void setAvailableAttributes(Set<Attribute> availableAttributes) {
@@ -59,7 +55,6 @@ public class SAMLConfigData {
 
     /**
      * Get the auto change attributes to be used by passive scanner
-     *
      * @return
      */
     public Set<Attribute> getAutoChangeValues() {
@@ -71,7 +66,6 @@ public class SAMLConfigData {
 
     /**
      * Set the auto change attributes
-     *
      * @param autoChangeValues
      */
     @XmlElementWrapper(name = "AutoChangeAttributes")
@@ -82,7 +76,6 @@ public class SAMLConfigData {
 
     /**
      * Get whether the Signature removal is enabled
-     *
      * @return
      */
     public boolean isXswEnabled() {
@@ -91,7 +84,6 @@ public class SAMLConfigData {
 
     /**
      * Enable/Disable signature removal
-     *
      * @param xswEnabled
      */
     public void setXswEnabled(boolean xswEnabled) {
@@ -101,7 +93,6 @@ public class SAMLConfigData {
     /**
      * Get whether the data type validation is enabled. If enabled the values of attributes should have the values
      * matching to the type
-     *
      * @return
      */
     public boolean isValidationEnabled() {
@@ -110,7 +101,6 @@ public class SAMLConfigData {
 
     /**
      * Enable/ Disable the attribute type validation
-     *
      * @param validationEnabled
      */
     public void setValidationEnabled(boolean validationEnabled) {

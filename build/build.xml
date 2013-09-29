@@ -206,6 +206,7 @@
 		<!--antcall target="build-addon"><param name="addon" value="sitetools"/></antcall-->
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
         <antcall target="build-addon"><param name="addon" value="sqliplugin"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="saml"/></antcall>
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 
@@ -243,6 +244,10 @@
 	<target name="deploy-serverSentEvents" depends="build-all" description="deploy the Server-Sent Events extension">
 		<antcall target="deploy-extension"> <param name="extension" value="serverSentEvents"/> </antcall>
 	</target>
+
+    <target name="deploy-saml" description="deploy the SAML extension">
+        <antcall target="deploy-extension"> <param name="extension" value="saml"/> </antcall>
+    </target>
 		
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
@@ -253,6 +258,7 @@
 		<antcall target="deploy-serverSentEvents"/>
 		<antcall target="deploy-serverSentEvents"/>
 		<!--antcall target="deploy-sitetools"/-->
+        <antcall target="deploy-saml"/>
 	</target>
 
 </project>

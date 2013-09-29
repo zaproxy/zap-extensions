@@ -1,10 +1,7 @@
 package org.zaproxy.zap.extension.saml.ui;
 
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.saml.Attribute;
-import org.zaproxy.zap.extension.saml.SAMLException;
-import org.zaproxy.zap.extension.saml.SAMLMessage;
-import org.zaproxy.zap.extension.saml.SAMLResender;
+import org.zaproxy.zap.extension.saml.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -28,11 +25,14 @@ public class SamlManualEditor extends JFrame {
     private JScrollPane msgScrollPane;
     private JScrollPane attribScrollPane;
 
+    private boolean msgUpdating;
+
 
     /**
      * Create the frame.
      */
     public SamlManualEditor(final SAMLMessage samlMessage) {
+        setTitle(SamlI18n.getMessage("saml.editor.title"));
         this.samlMessage = samlMessage;
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setBounds(50, 50, 800, 700);
@@ -45,17 +45,14 @@ public class SamlManualEditor extends JFrame {
         contentPane.add(tabbedPane, BorderLayout.CENTER);
 
         final JPanel reqPanel = new JPanel();
-        tabbedPane.addTab("Request", null, reqPanel, null);
+        tabbedPane.addTab(SamlI18n.getMessage("saml.editor.tab.request"), null, reqPanel, null);
         reqPanel.setLayout(new BorderLayout(0, 0));
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         reqPanel.add(topPanel, BorderLayout.NORTH);
 
-        JLabel lblNote = new JLabel("<html><p><b>Note :</b>This add-on would only run very basic test cases for SAML" +
-                " implementations. <br/> Signed SAML assertions cannot be tampered with at this time <br/> because " +
-                "the signings have not been" +
-                " made available to ZAP</p></html>");
+        JLabel lblNote = new JLabel(SamlI18n.getMessage("saml.editor.headerwarn"));
         topPanel.add(lblNote);
 
         JPanel centerPanel = new JPanel();
@@ -71,22 +68,29 @@ public class SamlManualEditor extends JFrame {
         JPanel bottomPanel = new JPanel();
         reqPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        btnResend = new JButton("Resend");
+        btnResend = new JButton(SamlI18n.getMessage("saml.editor.btn.resend"));
         bottomPanel.add(btnResend);
 
-        btnReset = new JButton("Reset");
+        btnReset = new JButton(SamlI18n.getMessage("saml.editor.btn.reset"));
         bottomPanel.add(btnReset);
 
         btnResend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
+                //wait till the message is updated
+                while (msgUpdating){
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
                 try {
                     SAMLResender.resendMessage(SamlManualEditor.this.samlMessage.getChangedMessage());
                     updateResponse(SamlManualEditor.this.samlMessage.getChangedMessage());
                     btnResend.setEnabled(false);
                     btnReset.setEnabled(false);
                 } catch (SAMLException e) {
-                    JOptionPane.showMessageDialog(reqPanel, e.getMessage(), "Cannot resend request",
+                    JOptionPane.showMessageDialog(reqPanel, e.getMessage(), SamlI18n.getMessage("saml.editor.msg.cantresend"),
                             JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -100,7 +104,7 @@ public class SamlManualEditor extends JFrame {
         });
 
         JPanel respPanel = new JPanel();
-        tabbedPane.addTab("Response", null, respPanel, null);
+        tabbedPane.addTab(SamlI18n.getMessage("saml.editor.tab.response"), null, respPanel, null);
         respPanel.setLayout(new GridLayout(2, 1, 0, 15));
 
         JScrollPane resHeadScrollPane = new JScrollPane();
@@ -128,13 +132,15 @@ public class SamlManualEditor extends JFrame {
         msgPane.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
+                msgUpdating = true;
             }
 
             @Override
             public void focusLost(FocusEvent e) {
                 samlMessage.setSamlMessageString(msgPane.getText());
-                //todo check for validity
+                //todo: check for validity
                 updateFields();
+                msgUpdating = false;
             }
         });
 
@@ -156,7 +162,7 @@ public class SamlManualEditor extends JFrame {
         relayStatePane.setDividerLocation(300);
         relayStatePane.setDividerSize(0);
 
-        lblRelayState.setText("Relay State");
+        lblRelayState.setText(SamlI18n.getMessage("saml.editor.relaystate"));
         relayStatePane.setLeftComponent(lblRelayState);
 
         txtRelayStateValue.setText(samlMessage.getRelayState());
@@ -166,11 +172,13 @@ public class SamlManualEditor extends JFrame {
         txtRelayStateValue.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
+                msgUpdating = true;
             }
 
             @Override
             public void focusLost(FocusEvent e) {
                 samlMessage.setRelayState(txtRelayStateValue.getText());
+                msgUpdating = false;
             }
         });
         attributesPane.add(relayStatePane);
@@ -195,12 +203,14 @@ public class SamlManualEditor extends JFrame {
             txtValue.addFocusListener(new FocusListener() {
                 @Override
                 public void focusGained(FocusEvent e) {
+                    msgUpdating = true;
                 }
 
                 @Override
                 public void focusLost(FocusEvent e) {
                     samlMessage.changeAttributeValueTo(attribute.getName(), txtValue.getText());
-                    updateFields();
+                    msgPane.setText(samlMessage.getSamlMessageString());
+                    msgUpdating = false;
                 }
             });
             attributesPane.add(sPane);
@@ -209,7 +219,6 @@ public class SamlManualEditor extends JFrame {
 
     /**
      * Update the response
-     *
      * @param msg
      */
     private void updateResponse(HttpMessage msg) {

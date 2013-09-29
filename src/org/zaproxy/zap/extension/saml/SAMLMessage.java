@@ -240,8 +240,11 @@ public class SAMLMessage {
                     newParamBuilder.append("&");  //add '&' between params for separation
                 }
                 paramIndex++;
+            }  //todo if paramindex>0
+
+            if(httpMessage.getUrlParams().size()>0){
+                httpMessage.getRequestHeader().getURI().setEscapedQuery(newParamBuilder.toString());
             }
-            httpMessage.getRequestHeader().getURI().setEscapedQuery(newParamBuilder.toString());
 
             newParamBuilder = new StringBuilder();
             paramIndex = 0;
@@ -261,6 +264,7 @@ public class SAMLMessage {
                 paramIndex++;
             }
             httpMessage.setRequestBody(newParamBuilder.toString());
+            httpMessage.getRequestHeader().setContentLength(newParamBuilder.length());
         } catch (UnsupportedEncodingException e) {
             log.warn("Unsupported encoding.", e);
         } catch (URIException e) {
@@ -332,7 +336,6 @@ public class SAMLMessage {
 
     /**
      * Get the relay state
-     *
      * @return
      */
     public String getRelayState() {
@@ -341,7 +344,6 @@ public class SAMLMessage {
 
     /**
      * Set the relay state
-     *
      * @param relayState
      */
     public void setRelayState(String relayState) {
@@ -353,7 +355,6 @@ public class SAMLMessage {
 
     /**
      * Get the saml message as a formatted XML
-     *
      * @return
      */
     public String getSamlMessageString() {
@@ -378,7 +379,6 @@ public class SAMLMessage {
 
     /**
      * Set the saml message XML string to the given value
-     *
      * @param samlMessageString
      */
     public void setSamlMessageString(String samlMessageString) {
@@ -400,7 +400,6 @@ public class SAMLMessage {
     /**
      * Get the attribute name:value map. This will only contain the configured attributes and their values if they
      * are found in the message
-     *
      * @return
      */
     public Map<String, Attribute> getAttributeMap() {
@@ -409,7 +408,6 @@ public class SAMLMessage {
 
     /**
      * set the attribute name:value map to be updated in the saml message
-     *
      * @param attributeMap
      */
     public void setAttributeMap(Map<String, Attribute> attributeMap) {

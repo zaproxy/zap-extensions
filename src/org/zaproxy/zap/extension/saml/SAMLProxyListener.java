@@ -4,40 +4,32 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.network.HttpMessage;
 
-import java.util.Set;
-
 public class SAMLProxyListener implements ProxyListener {
 
-    private boolean active;
-    private Set<Attribute> autoChangeAttribs;
+    private SAMLConfiguration configuration;
 
     protected final static Logger log = Logger.getLogger(SAMLProxyListener.class.getName());
 
     public SAMLProxyListener() {
-        setActive(SAMLConfiguration.getInstance().getAutoChangeEnabled());
+        configuration = SAMLConfiguration.getInstance();
     }
 
     /**
-     * Activate/Deactivate the passive listner. If deactivated the requests will be unchanged even the attributes to
-     * be changed, exists in the message
-     *
-     * @param value
+     * Check whether the passive listener is activated. If deactivated the requests will be unchanged even the
+     * attributes to be changed, exists in the message
      */
-    public void setActive(boolean value) {
-        active = value;
-        if (active && autoChangeAttribs == null) {
-            loadAutoChangeAttributes();
-        }
+    public boolean isActive() {
+        return configuration.getAutoChangeEnabled();
     }
 
     @Override
     public boolean onHttpRequestSend(HttpMessage message) {
-        if (active && SAMLUtils.hasSAMLMessage(message)) {
+        if (isActive() && SAMLUtils.hasSAMLMessage(message)) {
             try {
                 SAMLMessage samlMessage = new SAMLMessage(message);
 
                 //change the params
-                for (Attribute attribute : autoChangeAttribs) {
+                for (Attribute attribute : configuration.getAutoChangeAttributes()) {
                     String value = attribute.getValue().toString();
                     boolean changed = samlMessage.changeAttributeValueTo(attribute.getName(), value);
                     if (changed) {
@@ -53,6 +45,7 @@ public class SAMLProxyListener implements ProxyListener {
                     message.setRequestBody(changedMessege.getRequestBody());
                     message.setRequestHeader(changedMessege.getRequestHeader());
                 }
+
             } catch (SAMLException ignored) {
             }
         }
@@ -67,12 +60,5 @@ public class SAMLProxyListener implements ProxyListener {
     @Override
     public int getArrangeableListenerOrder() {
         return 0;
-    }
-
-    /**
-     * Load the attributes and values to change automatically if they are found in a message
-     */
-    public void loadAutoChangeAttributes() {
-        autoChangeAttribs = SAMLConfiguration.getInstance().getAutoChangeAttributes();
     }
 }
