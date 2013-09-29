@@ -1,16 +1,17 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>2</version>
+	<version>3</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated for ZAP 2.2.0</changes>
+	<changes>Added Injection Plugins</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.CodeInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.CommandExecutionPlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.XpathInjectionPlugin</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
