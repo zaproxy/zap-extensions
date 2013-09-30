@@ -27,10 +27,13 @@
 		
 		<!-- Compile with debug information if the property "javac.debug" is set to true -->
 		<local name="debug" />
-		<condition property="debug" value="true" else="false">
+		<condition property="debug" value="true" else="true">
 			<istrue value="${javac.debug}" />
 		</condition>
-		
+
+		<property name="debug" value="true" />
+		<echo message="Debug = ${debug}" />
+
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
 			<classpath>
@@ -202,6 +205,7 @@
 		<antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
 		<!--antcall target="build-addon"><param name="addon" value="sitetools"/></antcall-->
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
@@ -233,6 +237,10 @@
 		<antcall target="deploy-extension"> <param name="extension" value="httpsInfo"/> </antcall>
 	</target>
 
+  	<target name="deploy-jython" depends="build-all" description="deploy the jython extension">
+		<antcall target="deploy-extension"> <param name="extension" value="jython"/> </antcall>
+	</target>
+
 	<target name="deploy-pscanrulesAlpha" depends="build-all" description="deploy the passive scan rules">
 		<antcall target="deploy-extension"> <param name="extension" value="pscanrulesAlpha"/> </antcall>
 	</target>
@@ -254,6 +262,7 @@
 		<antcall target="deploy-ascanrulesAlpha"/>
 		<antcall target="deploy-highlighter"/>
 	    <antcall target="deploy-httpsInfo"/>
+	    <antcall target="deploy-jython"/>
 		<antcall target="deploy-pscanrulesAlpha"/>
 		<antcall target="deploy-serverSentEvents"/>
 		<antcall target="deploy-serverSentEvents"/>
