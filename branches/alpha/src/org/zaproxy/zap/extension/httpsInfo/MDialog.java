@@ -4,7 +4,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,14 +16,12 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTextArea;
-import javax.swing.SpinnerListModel;
-import javax.swing.SpinnerModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.parosproxy.paros.view.AbstractFrame;
 
-public class MDialog {
+public class MDialog extends AbstractFrame{
     boolean ordered = false;
     Map<String, Integer> versionStrings;
     SSLServer server;
@@ -36,22 +33,20 @@ public class MDialog {
     JButton refresh;
 
     public MDialog(SSLServer s){
+	super();
 	this.server = s;
+	this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+	int x = (d.width - getSize().width) / 2;
+	int y = (d.height - getSize().height) / 2;
+	this.setLocation(x, y);
+	init();
+	addComponentsToPane(getContentPane());
+	this.pack();
+	updateContent();
+	this.setVisible(true);
     }
 
-    public void show(){
-	JFrame frame = new JFrame("HTTPS Information");
-	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-	int x = (d.width - frame.getSize().width) / 2;
-	int y = (d.height - frame.getSize().height) / 2;
-	frame.setLocation(x, y);
-	init();
-	addComponentsToPane(frame.getContentPane());
-	frame.pack();
-	updateContent();
-	frame.setVisible(true);
-    }
     public void init(){
 	general = new JTextArea();
 	general.setEditable(false);
@@ -70,8 +65,8 @@ public class MDialog {
 		    public void run() {
 			refresh.setEnabled(false);
 			server.orderCertificates();
-			refresh.setEnabled(true);
 			ordered = true;
+			refresh.setVisible(false);
 			updateContent();
 		    }
 		}).start();
