@@ -95,7 +95,6 @@ class BackgroundThread implements Runnable{
 	 public void run() {
 		SSLServer mServer = new SSLServer(servername);
 		MDialog d = new MDialog(mServer);
-		d.show();
 	 }
 
 	}
