@@ -65,7 +65,7 @@ public class SAMLExtension extends ExtensionAdaptor {
                 extensionHook.getHookMenu().addToolsMenuItem(samlActiveEditorMenu);
             }
         } catch (SAMLException e) {
-            log.error("SAML Extension can't be loaded. Configuration not found or invalid");
+            log.error("SAML Extension can't be loaded. Configuration not found or invalid",e);
         }
     }
 }

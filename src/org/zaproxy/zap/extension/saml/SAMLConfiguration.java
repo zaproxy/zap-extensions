@@ -7,8 +7,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.Set;
 
@@ -51,18 +51,29 @@ public class SAMLConfiguration implements AttributeListener {
         File confFile = new File(confPath);
 
         if (!confFile.exists()) {
-            File defaultConfFile = new File(SAMLConfiguration.class.getResource(SAML_CONF_FILE).getFile());
-            if (!defaultConfFile.exists()) {
+            URL confURL = getClass().getResource("resource/"+SAML_CONF_FILE);
+            if (confURL ==null) {
+                log.error("Configuration file not found ");
                 throw new SAMLException("Configuration file not found");
-            }
 
+            }
             //try to copy configuration to user directory
             try {
-                Files.copy(defaultConfFile.toPath(), confFile.toPath());
+                confFile.createNewFile();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(confURL.openStream()));
+                BufferedWriter writer = new BufferedWriter(new FileWriter(confFile));
+                String line;
+                while ((line=reader.readLine())!=null){
+                    writer.write(line);
+                    writer.newLine();
+                }
+                writer.flush();
+                writer.close();
+                reader.close();
+
             } catch (IOException e) {
-                throw new SAMLException("SAML Configuration file can't be modified, Will lose changes at exit");
+                throw new SAMLException("SAML Configuration file "+confFile.getAbsolutePath()+" can't be modified");
             }
-            confFile = defaultConfFile;
         }
 
         //load the configuration
