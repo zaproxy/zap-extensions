@@ -9,9 +9,6 @@
 	<extensions>
 	</extensions>
 	<ascanrules>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.CodeInjectionPlugin</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.CommandExecutionPlugin</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.XpathInjectionPlugin</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
