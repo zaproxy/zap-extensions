@@ -3,22 +3,21 @@ The code is structured in svn as follows:
 ==v1.4 Extensions==
 All extensions for ZAP 1.4 line in the [https://code.google.com/p/zap-extensions/source/browse/#svn%2Fbranches%2F1.4 1.4 branch]
 
-==v2.0 Extensions==
-ZAP 2.0 has not yet been released, but all of the existing 1.4 extensions have been converted to work with this latest code in the trunk.
+==v2.2 Extensions==
 
-===2.0 Alpha Extensions==
+===2.2 Alpha Extensions==
 New extensions should typically be added to the [https://code.google.com/p/zap-extensions/source/browse/#svn%2Fbranches%2Falpha alpha branch]
 
 Code in this branch must compile, but may not be complete or have a variety of issues.
 
 When you are happy that your code is working correctly and follows _most_ of the [http://code.google.com/p/zaproxy/wiki/DevGuidelines development rules and guidelines] post a request to the ZAP [http://groups.google.com/group/zaproxy-develop developer group] to ask for a review. If the general consensus is that it is ready then you can move it to the beta branch.
 
-===2.0 Beta Extensions==
+===2.2 Beta Extensions==
 Code in the [https://code.google.com/p/zap-extensions/source/browse/#svn%2Fbranches%2Fbeta beta branch] has been reviewed and can be expected to be generally fit for purpose.
 
 When you are happy that your code is ready for release status and follows _all_ of the [http://code.google.com/p/zaproxy/wiki/DevGuidelines development rules and guidelines] post a request to the ZAP [http://groups.google.com/group/zaproxy-develop developer group] to ask for another review. If the general consensus is that it is ready then you can move it to the trunk.
 
-===2.0 Release Extensions==
+===2.2 Release Extensions==
 Code in the [https://code.google.com/p/zap-extensions/source/browse/trunk trunk] has been reviewed and can be expected to be of high quality.
 
 ==Notes==
@@ -31,3 +30,5 @@ We would not normally expect an extension to drop, eg from release to beta, but 
 An extension should have only one release, and in any case the code will only show the most recent release.
 
 In the 'check for updates' code the version number takes precedence - so an alpha-3 release is an update to a beta-2 release.
+
+If you need to use features in your add-on that are only available in the trunk then people get in touch via the ZAP developer group.
