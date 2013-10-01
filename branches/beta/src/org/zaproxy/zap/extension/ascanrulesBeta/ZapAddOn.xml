@@ -1,26 +1,29 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>10</version>
+	<version>11</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Fixed various errors logged</changes>
+	<changes>Added new plugins</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CodeInjectionPlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CommandExecutionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HPP</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.LDAPInjection</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSAttack</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSPrime</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSSpider</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SessionFixation</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionHypersonic</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionMySQL</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionOracle</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionPostgresql</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSAttack</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSPrime</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSSpider</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.UsernameEnumeration</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.XpathInjectionPlugin</ascanrule>                
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
