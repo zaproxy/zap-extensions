@@ -1,10 +1,10 @@
 <zapaddon>
-	<name>Jython scripting</name>
-	<version>1</version>
-	<description>Allows Jython to be used for ZAP scripting - templates included</description>
+	<name>Python scripting</name>
+	<version>2</version>
+	<description>Allows Python to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes/>
+	<changes>Added help and extra templates</changes>
 	<dependson/>
 	<extensions>org.zaproxy.zap.extension.jython.ExtensionJython</extensions>
 	<ascanrules/>
@@ -14,7 +14,9 @@
 		<file>scripts/templates/active/Active default template.py</file>
 		<file>scripts/templates/passive/Passive default template.py</file>
 		<file>scripts/templates/proxy/Proxy default template.py</file>
+		<file>scripts/templates/standalone/Loop through history table.py</file>
 		<file>scripts/templates/standalone/Standalone default template.py</file>
+		<file>scripts/templates/standalone/Traverse sites tree.py</file>
 		<file>scripts/templates/targeted/Targeted default template.py</file>
 	</files>
 </zapaddon>
