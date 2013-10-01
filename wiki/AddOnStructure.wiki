@@ -6,7 +6,7 @@ They can contain:
   * Extensions, ie code that includes a class which extends [http://code.google.com/p/zaproxy/source/browse/trunk/src/org/parosproxy/paros/extension/Extension.java Extension.java]
   * Active scan rules, which extend [http://code.google.com/p/zaproxy/source/browse/trunk/src/org/parosproxy/paros/core/scanner/AbstractPlugin.java AbstractPlugin.java]
   * Passive scan rules, which extend [http://code.google.com/p/zaproxy/source/browse/trunk/src/org/zaproxy/zap/extension/pscan/PluginPassiveScanner.java PluginPassiveScanner.java]
-  * 'Raw' files
+  * 'Raw' files (see below)
   * Help files, which must be under 'resource/help' and follow a standard structure (to be documented)
   * Libraries, which will be automatically loaded and must be under 'lib'
 
@@ -22,6 +22,11 @@ Where
 Add-ons are jar (zip) files and must contain a file called [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/ZapAddOn.xml ZapAddOn.xml] at the top level.
 
 This file defines the contents of the add-on and is used by ZAP to dynamically load and unload it. 
+
+=== Raw Files ===
+To include 'raw files' include them in a directory structure underneath a 'files' directory. Reference the files in the [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/ZapAddOn.xml ZapAddOn.xml] file - these files will then be installed in the right places in the same directory structure under the users ZAP home directory.
+
+See the [https://code.google.com/p/zap-extensions/source/browse/#svn%2Ftrunk%2Fsrc%2Forg%2Fzaproxy%2Fzap%2Fextension%2Ffuzzdb fuzzdb] add-on for a good example.
 
 === Building your add-on ===
 
