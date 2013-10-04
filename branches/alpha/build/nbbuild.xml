@@ -81,15 +81,15 @@
         
         <!-- 'Standard' addons (keep in alphabetical order ;) -->
         <antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
-        <antcall target="build-addon"><param name="addon" value="diff"/></antcall>
         <antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
         <antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
-        <antcall target="build-addon"><param name="addon" value="mitmconf"/></antcall>
+	<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
+	<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
         <antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
         <!--antcall target="build-addon"><param name="addon" value="sitetools"/></antcall-->
         <antcall target="build-addon"><param name="addon" value="sse"/></antcall>
-        <antcall target="build-addon"><param name="addon" value="zest"/></antcall>
         <antcall target="build-addon"><param name="addon" value="sqliplugin"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="saml"/></antcall>
 		
         <echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 		
@@ -130,6 +130,7 @@
         <jar jarfile="${dist.dir}/${file}" compress="${jar.compress}">
             <zipfileset dir="${build.classes.dir}" prefix="">
                 <include name="org/zaproxy/zap/extension/${addon}/**"/>
+                <exclude name="**/*.jar"/>
             </zipfileset>
             <zipfileset dir="${build.classes.dir}" prefix="">
                 <include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
