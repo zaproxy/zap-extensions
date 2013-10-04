@@ -132,6 +132,7 @@
         <jar jarfile="${dist.dir}/${file}" compress="${jar.compress}">
             <zipfileset dir="${build.classes.dir}" prefix="">
                 <include name="org/zaproxy/zap/extension/${addon}/**"/>
+                <exclude name="**/*.jar"/>
             </zipfileset>
             <zipfileset dir="${build.classes.dir}" prefix="">
                 <include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
