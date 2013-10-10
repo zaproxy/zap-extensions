@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Ruby scripting</name>
-	<version>1</version>
+	<version>2</version>
 	<description>Allows Ruby to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>Fixed bug where non ruby scripts were treated as ruby scripts (issue 810)</changes>
 	<dependson/>
 	<extensions>org.zaproxy.zap.extension.jruby.ExtensionJruby</extensions>
 	<ascanrules/>
