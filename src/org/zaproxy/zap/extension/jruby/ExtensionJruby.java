@@ -43,6 +43,7 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 			ExtensionJruby.class.getResource("/org/zaproxy/zap/extension/jruby/resource/ruby.png"));
 
 	private ExtensionScript extScript = null;
+	private ScriptEngine rubyScriptEngine = null;
 
 	public ExtensionJruby() {
 		super();
@@ -68,22 +69,26 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 
-
-		ScriptEngineManager mgr = new ScriptEngineManager();
-		
-		ScriptEngine se = mgr.getEngineByExtension("rb");
-		
-		if (se == null) {
+		if (this.getRubyScriptEngine() == null) {
 			JRubyEngineFactory factory = new JRubyEngineFactory();
-			this.getExtScript().registerScriptEngineWrapper(new JrubyEngineWrapper(factory.getScriptEngine()));
+			this.rubyScriptEngine = factory.getScriptEngine();
+			this.getExtScript().registerScriptEngineWrapper(new JrubyEngineWrapper(this.rubyScriptEngine));
 		}
 
 		this.getExtScript().addListener(this);
-}
+	}
 
 	@Override
 	public boolean canUnload() {
 		return false;
+	}
+	
+	private ScriptEngine getRubyScriptEngine() {
+		if (this.rubyScriptEngine == null) {
+			ScriptEngineManager mgr = new ScriptEngineManager();
+			this.rubyScriptEngine = mgr.getEngineByExtension("rb");
+		}
+		return this.rubyScriptEngine;
 	}
 
 	private ExtensionScript getExtScript() {
@@ -126,21 +131,26 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 
 	@Override
 	public void scriptAdded(ScriptWrapper script, boolean arg1) {
-		// Replace the standard ScriptWrapper with a JrubyScriptWrapper as
-		// JRuby seems to handle interfaces differently from other JSR223 languages
-		ScriptNode parentNode = this.getExtScript().getTreeModel().getNodeForScript(script);
 		
-		JrubyScriptWrapper jsw = new JrubyScriptWrapper();
-		jsw.setName(script.getName());
-		jsw.setType(script.getType());
-		jsw.setContents(script.getContents());
-		jsw.setDescription(script.getDescription());
-		jsw.setEnabled(script.isEnabled());
-		jsw.setEngine(script.getEngine());
-		jsw.setFile(script.getFile());
-		jsw.setLoadOnStart(script.isLoadOnStart());
-		
-		parentNode.setUserObject(jsw);
+		if (this.getRubyScriptEngine() != null &&
+				this.getRubyScriptEngine().getFactory().getEngineName().equals(script.getEngineName())) {
+
+			// Replace the standard ScriptWrapper with a JrubyScriptWrapper as
+			// JRuby seems to handle interfaces differently from other JSR223 languages
+			ScriptNode parentNode = this.getExtScript().getTreeModel().getNodeForScript(script);
+			
+			JrubyScriptWrapper jsw = new JrubyScriptWrapper();
+			jsw.setName(script.getName());
+			jsw.setType(script.getType());
+			jsw.setContents(script.getContents());
+			jsw.setDescription(script.getDescription());
+			jsw.setEnabled(script.isEnabled());
+			jsw.setEngine(script.getEngine());
+			jsw.setFile(script.getFile());
+			jsw.setLoadOnStart(script.isLoadOnStart());
+			
+			parentNode.setUserObject(jsw);
+		}
 
 	}
 
