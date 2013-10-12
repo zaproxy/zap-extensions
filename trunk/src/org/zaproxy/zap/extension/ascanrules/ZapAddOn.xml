@@ -13,7 +13,6 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestCrossSiteScriptV2</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestDirectoryBrowsing</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestExternalRedirect</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestInfoSessionIdURL</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestInjectionCRLF</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestParameterTamper</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPathTraversal</ascanrule>
