@@ -300,14 +300,4 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
             }
         }
     }
-
-    public static void main(String[] args) {
-        for (Pattern pattern : EXT_LINK_PATTERNS) {
-            Matcher matcher = pattern.matcher("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-
-            while (matcher.find()) {
-                System.out.println(matcher.group());
-            }
-        }
-    }
 }
