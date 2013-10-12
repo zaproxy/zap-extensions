@@ -21,6 +21,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.TestInfoPrivateAddressDisclosure</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.XContentTypeOptionsScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.XFrameOptionScanner</pscanrule>
+		<ascanrule>org.zaproxy.zap.extension.pscanrules.TestInfoSessionIdURL</ascanrule>                
 	</pscanrules>
 	<filters/>
 	<files/>
