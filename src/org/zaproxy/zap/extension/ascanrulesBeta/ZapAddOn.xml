@@ -1,17 +1,17 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>11</version>
+	<version>12</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Added new plugins</changes>
+	<changes>Corrected IDs to prevent clash</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
 	<ascanrules>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CodeInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CommandExecutionPlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HPP</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.LDAPInjection</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SessionFixation</ascanrule>
