@@ -31,7 +31,7 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
 	
     @Override
     public int getId() {
-        return 40012;
+        return 40016;
     }
 
     @Override
@@ -79,9 +79,7 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
 			}
 		    sendAndReceive(msg1, false);
 		} catch (Exception e) {
-			// TODO
-	    	System.out.println("Exception " + e);
-		    e.printStackTrace();
+			log.error(e.getMessage(), e);
 		}
 	}
 

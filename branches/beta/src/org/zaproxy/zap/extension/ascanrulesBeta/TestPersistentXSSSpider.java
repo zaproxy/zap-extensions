@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -25,9 +26,11 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class TestPersistentXSSSpider extends AbstractAppPlugin {
 
+    private static Logger log = Logger.getLogger(TestPersistentXSSSpider.class);
+
     @Override
     public int getId() {
-        return 40013;
+        return 40017;
     }
 
     @Override
@@ -75,8 +78,7 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
             PersistentXSSUtils.testForSink(msg1);
 
         } catch (Exception e) {
-            System.out.println("Exception " + e);
-            e.printStackTrace();
+			log.error(e.getMessage(), e);
         }
     }
 
