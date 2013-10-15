@@ -191,7 +191,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                         getDescription(),
                         uri,
                         sessionIdName,
-                        "",
+                        sessionIdValue,
                         "",
                         getSolution(),
                         getReference(),
@@ -283,11 +283,11 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                     alert.setDetail(
                             getRefererDescription(),
                             msg.getRequestHeader().getURI().getURI(),
-                            "",
-                            "",
+                            "N/A",
+                            linkHostName,
                             "",
                             getRefererSolution(),
-                            "",
+                            getReference(),
                             linkHostName, // evidence
                             getCweId(), // CWE Id
                             getWascId(), // WASC Id - Info leakage

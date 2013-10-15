@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>7</version>
+	<version>8</version>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated to be compatible with 2.2.0</changes>
+	<changes>Refactored new plugins for information disclosure detection</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
@@ -21,7 +21,8 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.TestInfoPrivateAddressDisclosure</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.XContentTypeOptionsScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.XFrameOptionScanner</pscanrule>
-		<ascanrule>org.zaproxy.zap.extension.pscanrules.TestInfoSessionIdURL</ascanrule>                
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.TestInfoSessionIdURL</pscanrule>         
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanner</pscanrule>         
 	</pscanrules>
 	<filters/>
 	<files/>
