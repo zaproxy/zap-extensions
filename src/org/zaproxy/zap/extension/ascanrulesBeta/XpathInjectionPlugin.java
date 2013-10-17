@@ -80,7 +80,7 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
     
     // Logger instance
     private static final Logger log 
-            = Logger.getLogger(CodeInjectionPlugin.class);
+            = Logger.getLogger(XpathInjectionPlugin.class);
 
     /**
      * Get the unique identifier of this plugin
