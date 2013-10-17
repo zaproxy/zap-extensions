@@ -9,7 +9,6 @@
 	<extensions>
 	</extensions>
 	<ascanrules>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CodeInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CommandExecutionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HPP</ascanrule>
