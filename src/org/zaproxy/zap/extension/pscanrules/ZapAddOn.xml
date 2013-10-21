@@ -10,6 +10,7 @@
 	</extensions>
 	<ascanrules/>
 	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanner</pscanrule>         
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.CacheControlScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.ContentTypeMissingScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.CookieHttpOnlyScanner</pscanrule>
@@ -19,10 +20,9 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.MixedContentScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.PasswordAutocompleteScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.TestInfoPrivateAddressDisclosure</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrules.TestInfoSessionIdURL</pscanrule>         
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.XContentTypeOptionsScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.XFrameOptionScanner</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.pscanrules.TestInfoSessionIdURL</pscanrule>         
-		<pscanrule>org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanner</pscanrule>         
 	</pscanrules>
 	<filters/>
 	<files/>
