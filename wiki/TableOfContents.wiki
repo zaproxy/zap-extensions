@@ -14,6 +14,7 @@
     * [AddOn_zest Zest]
    * [AddOnsAlpha Add-ons: Alpha]
     * [AddOn_ascanrulesAlpha Active scanner rules (alpha)]
+    * [AddOn_techDetection Technology Detection (alpha)]
   * [AddOnDevelopment  Add-on Development]
   * [AddOnStructure  Add-on Structure]
   * [AddOnDebugging Add-on Debugging]
