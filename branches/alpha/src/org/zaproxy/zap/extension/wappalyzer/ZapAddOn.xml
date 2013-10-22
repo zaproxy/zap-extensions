@@ -1,0 +1,18 @@
+<zapaddon>
+	<name>Technology detection using Wappalyzer</name>
+	<version>1</version>
+	<description>Technology detection using Wappalyzer: wappalyzer.com</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>First version</changes>
+	<dependson/>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.wappalyzer.WappalyzerPassiveScanner</pscanrule>
+	</pscanrules>
+	<filters/>
+	<files/>
+</zapaddon>
