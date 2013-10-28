@@ -128,7 +128,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        return "Advanced SQL Injection Plugin";
+        return "Advanced SQL Injection";
     }
 
     /**
