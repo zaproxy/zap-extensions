@@ -27,6 +27,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.regex.Pattern;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -52,7 +53,7 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 
     @Override
     public String getName() {
-        return "Secure page browser cache";
+        return Constant.messages.getString("ascanrules.clientbrowsercache.name");
     }
 
     @Override
@@ -62,7 +63,7 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 
     @Override
     public String getDescription() {
-        return "Secure page can be cached in browser.  Cache control is not set in HTTP header nor HTML header.  Sensitive content can be recovered from browser storage.";
+        return Constant.messages.getString("ascanrules.clientbrowsercache.desc");
     }
 
     @Override
@@ -72,19 +73,12 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        String msg = "The best way is to set HTTP header with: 'Pragma: No-cache' and 'Cache-control: No-cache'." + CRLF
-            + "Alternatively, this can be set in the HTML header by:" + CRLF
-            + "<META HTTP-EQUIV='Pragma' CONTENT='no-cache'>" + CRLF
-            + "<META HTTP-EQUIV='Cache-Control' CONTENT='no-cache'>" + CRLF
-            + "but some browsers may have problem using this method.";
-        return msg;
+        return Constant.messages.getString("ascanrules.clientbrowsercache.solution");
     }
 
     @Override
     public String getReference() {
-        String msg = ". How to prevent caching in Internet Explorer - http://support.microsoft.com/default.aspx?kbid=234067" + CRLF
-            + ". Pragma: No-cache Tag May Not Prevent Page from Being Cached - http://support.microsoft.com/default.aspx?kbid=222064";
-        return msg;
+        return Constant.messages.getString("ascanrules.clientbrowsercache.ref");
     }
 
     @Override
@@ -119,7 +113,7 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 		}
 		
 		if (result) {
-		    bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, null, "", "", "", msg);	// TODO
+		    bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, null, "", "", "", msg);
 		}
 
     }
@@ -136,7 +130,6 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 
 	@Override
 	public int getWascId() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
