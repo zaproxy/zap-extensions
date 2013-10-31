@@ -35,7 +35,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class ApplicationErrorScanner extends PluginPassiveScanner {
 
     // Name of the file related to pattern's definition list
-    private static final String APP_ERRORS_FILE = "resource/application_errors.xml";
+    private static final String APP_ERRORS_FILE = "/org/zaproxy/zap/extension/pscanrules/resource/application_errors.xml";
     // Evidence used for Internal Server Error doccurrence
     private static final String EVIDENCE_INTERNAL_SERVER_ERROR = "HTTP 500 Internal server error";
     // Inner Content Matcher component with pattern definitions
