@@ -972,22 +972,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
             	ScriptNode lastNode = null;
             	for (int i = 0; i < cnpNodes.size(); i++) {
         	        ZestStatement stmt = ((ZestStatement) ZestZapUtils.getElement(cnpNodes.get(i))).deepCopy();
-System.out.println("SBSB stmt is " + stmt.getElementType() + " idx=" + stmt.getIndex());
-if (stmt instanceof ZestConditional) {
-	System.out.println("SBSB if orig " + ((ZestConditional)ZestZapUtils.getElement(cnpNodes.get(i))).getIfStatements().size() + "/" + ((ZestConditional)ZestZapUtils.getElement(cnpNodes.get(i))).getElseStatements().size());
-	System.out.println("SBSB if stmts " + ((ZestConditional)stmt).getIfStatements().size() + "/" + ((ZestConditional)stmt).getElseStatements().size());
-	
-}
             		if (cutNodes) {
             			this.delete(cnpNodes.get(i));
             		}
-// TODO fix!
-System.out.println("SBSB paste into node? " + cnpNodes.get(i).getNodeName() + " " + ZestZapUtils.getShadowLevel(cnpNodes.get(i)));
         	        if (ZestZapUtils.getShadowLevel(cnpNodes.get(i)) == 0 && stmt.isPassive() || ! ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getTypeName())) {
     	                // Dont paste non passive statements into a passive script
-System.out.println("SBSB yes...");
     	                lastNode = this.addToParent(parent, stmt);
-System.out.println("SBSB lastNode = " + lastNode.getNodeName() + " " + lastNode.getChildCount());
         	        }
 				}
 				refreshNode(parent);// refreshes the subtree starting from the
