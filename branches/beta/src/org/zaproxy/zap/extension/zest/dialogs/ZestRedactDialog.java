@@ -40,7 +40,7 @@ public class ZestRedactDialog extends StandardFieldsDialog {
 	
 	private ScriptNode node = null;
 	
-	private String replaceWith = "XXX";
+	private String replaceWith = "\u2588\u2588\u2588\u2588\u2588";	// 5 'block' characters
 	private boolean replaceInCurrent = true;
 	//private boolean replaceInAdded = true;
 
