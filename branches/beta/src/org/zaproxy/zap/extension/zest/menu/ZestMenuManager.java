@@ -51,6 +51,8 @@ public class ZestMenuManager {
 	private ZestRedactPopupMenu popupRedact = null;
 	private ZestPasteVariablePopupMenu popupPasteVar = null;
 	
+	private ZestGenerateScriptFromAlertMenu popupGenAlertScript = null;
+	
 	private ExtensionZest extension = null;
 	
 	public ZestMenuManager(ExtensionZest extension, ExtensionHook extensionHook) {
@@ -81,6 +83,8 @@ public class ZestMenuManager {
 
         extensionHook.getHookMenu().addPopupMenuItem(getPopupRedact ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupPasteVar ());
+        
+        extensionHook.getHookMenu().addPopupMenuItem(getPopupGenAlertScript());
 
 	}
 	
@@ -237,5 +241,11 @@ public class ZestMenuManager {
 		return popupPasteVar;
 	}
 
+	private ZestGenerateScriptFromAlertMenu getPopupGenAlertScript() {
+		if (popupGenAlertScript == null) {
+			popupGenAlertScript = new ZestGenerateScriptFromAlertMenu(this.extension);
+		}
+		return popupGenAlertScript;
+	}
 
 }

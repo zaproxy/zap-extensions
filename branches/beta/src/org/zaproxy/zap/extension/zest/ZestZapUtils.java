@@ -64,7 +64,6 @@ import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestRuntime;
 import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStructuredExpression;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -528,13 +527,10 @@ public class ZestZapUtils {
 	public static HttpMessage toHttpMessage(ZestRequest request,
 			ZestResponse response) throws URIException,
 			HttpMalformedHeaderException {
-		HttpMessage msg;
-		if (request.getUrl() != null) {
-			msg = new HttpMessage(new URI(request.getUrl().toString(), false));
-		} else {
-			// TODO - there a better option?
+		if (request == null || request.getUrl() == null) {
 			return null;
 		}
+		HttpMessage msg = new HttpMessage(new URI(request.getUrl().toString(), false));
 		if (request.getHeaders() != null) {
 			try {
 				msg.setRequestHeader(msg.getRequestHeader().getPrimeHeader()
@@ -559,10 +555,11 @@ public class ZestZapUtils {
 
 	public static ZestResponse toZestResponse(HttpMessage msg)
 			throws MalformedURLException {
-		return new ZestResponse(new URL(msg.getRequestHeader().getURI()
-				.toString()), msg.getResponseHeader().toString(), msg
-				.getResponseBody().toString(), msg.getResponseHeader()
-				.getStatusCode(), msg.getTimeElapsedMillis());
+		return new ZestResponse(new URL(msg.getRequestHeader().getURI().toString()), 
+				msg.getResponseHeader().toString(), 
+				msg.getResponseBody().toString(), 
+				msg.getResponseHeader().getStatusCode(), 
+				msg.getTimeElapsedMillis());
 	}
 
 	public static ZestRequest toZestRequest(HttpMessage msg)
@@ -580,18 +577,23 @@ public class ZestZapUtils {
 			if (msg.getRequestHeader().getURI() != null) {
 				req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
 			}
-			req.setUrlToken(correctTokens(msg.getRequestHeader().getURI()
-					.toString()));
-			req.setHeaders(correctTokens(msg.getRequestHeader()
-					.getHeadersAsString()));
+			req.setUrlToken(correctTokens(msg.getRequestHeader().getURI().toString()));
+			setHeaders(req, msg, true);
 			req.setData(correctTokens(msg.getRequestBody().toString()));
+			req.setResponse(
+					new ZestResponse(
+							req.getUrl(), 
+							msg.getResponseHeader().toString(), 
+							msg.getResponseBody().toString(), 
+							msg.getResponseHeader().getStatusCode(), 
+							msg.getTimeElapsedMillis()));
 			return req;
 
 		} else {
 			ZestRequest req = new ZestRequest();
 			req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
 			req.setMethod(msg.getRequestHeader().getMethod());
-			setHeaders(req, msg);
+			setHeaders(req, msg, false);
 			req.setData(msg.getRequestBody().toString());
 			req.setResponse(new ZestResponse(req.getUrl(), msg
 					.getResponseHeader().toString(), msg.getResponseBody()
@@ -601,8 +603,8 @@ public class ZestZapUtils {
 		}
 	}
 
-	private static void setHeaders(ZestRequest req, HttpMessage msg) {
-		// TODO filter some headers out??
+	private static void setHeaders(ZestRequest req, HttpMessage msg, boolean replaceTokens) {
+		// TODO make the headers included be configurable
 		String[] headers = msg.getRequestHeader().getHeadersAsString()
 				.split(HttpHeader.CRLF);
 		StringBuilder sb = new StringBuilder();
@@ -613,7 +615,11 @@ public class ZestZapUtils {
 				sb.append(HttpHeader.CRLF);
 			}
 		}
-		req.setHeaders(sb.toString());
+		if (replaceTokens) {
+			req.setHeaders(correctTokens(sb.toString()));
+		} else {
+			req.setHeaders(sb.toString());
+		}
 	}
 
 	private static String correctTokens(String str) {
