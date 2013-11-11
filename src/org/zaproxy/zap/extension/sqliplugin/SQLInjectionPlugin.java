@@ -516,9 +516,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
             // This check is suitable to the current configuration
             // Start logging the current execution (only in debugging)
-            if (log.isDebugEnabled()) {
-                log.debug("testing '" + title + "'");
-            }
+            log.info("Testing '" + title + "'");
 
             // Parse test's <request>
             currentComment = (manager.getBoundaries().size() > 1) ? test.getRequest().getComment() : null;
@@ -979,8 +977,13 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                 if (injectable) {                        
                     injectableTechniques |= 1 << test.getStype();
                     break;                    
-                }                                    
+                }                                 
             }
+        }
+        
+        // check if the parameter is not injectable
+        if (injectableTechniques == 0) {
+            log.info("Parameter '" + parameter + "' is not injectable");
         }
     }
 
