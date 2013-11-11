@@ -23,7 +23,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.utils.ContentMatcher;
+import org.zaproxy.zap.extension.pscanrules.utils.ContentMatcher;
 
 /**
  * Plugin able to analyze the content for Application Error messages. The plugin
