@@ -516,7 +516,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
             // This check is suitable to the current configuration
             // Start logging the current execution (only in debugging)
-            log.info("Testing '" + title + "'");
+            if (log.isDebugEnabled()) {
+                log.debug("testing '" + title + "'");
+            }
 
             // Parse test's <request>
             currentComment = (manager.getBoundaries().size() > 1) ? test.getRequest().getComment() : null;
@@ -701,7 +703,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     info.append("The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter");
 
                                     // Do logging
-                                    log.info("[BOOLEAN-BASED Injection Found] " + title + " with payload [" + reqPayload + "]");
+                                    log.info("[BOOLEAN-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
                                     
                                     // Alert the vulnerability to the main core
                                     this.bingo(
@@ -788,7 +790,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                         + "a database error message to be returned and recognised");
 
                                 // Do logging
-                                log.info("[ERROR-BASED Injection Found] " + title + " with payload [" + reqPayload + "]");
+                                log.info("[ERROR-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
 
                                 // Alert the vulnerability to the main core
                                 this.bingo(
@@ -863,7 +865,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     info.append("] milliseconds");
 
                                     // Do logging
-                                    log.info("[TIME-BASED Injection Found] " + title + " with payload [" + reqPayload + "]");
+                                    log.info("[TIME-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
 
                                     // Alert the vulnerability to the main core
                                     this.bingo(
@@ -938,7 +940,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 info.append("] columns\nThe vulnerability was detected by manipulating the parameter with an SQL 'UNION' clause to cause a database error message to be returned and recognised.");
 
                                 // Do logging
-                                log.info("[UNION-BASED Injection Found] " + title + " with payload [" + reqPayload + "]");
+                                log.info("[UNION-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
 
                                 // Alert the vulnerability to the main core
                                 this.bingo(
