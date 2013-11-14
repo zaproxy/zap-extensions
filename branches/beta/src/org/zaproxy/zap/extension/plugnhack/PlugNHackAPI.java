@@ -26,13 +26,17 @@ import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiOther;
+import org.zaproxy.zap.extension.api.ApiResponse;
+import org.zaproxy.zap.extension.api.ApiResponseElement;
 
 public class PlugNHackAPI extends ApiImplementor {
 
@@ -40,16 +44,32 @@ public class PlugNHackAPI extends ApiImplementor {
 
 	private static final String PREFIX = "pnh";
 
+	private static final String ACTION_MONITOR = "monitor";
+	private static final String ACTION_ORACLE = "oracle";
+	private static final String ACTION_START_MONITORING = "startMonitoring";
+	private static final String ACTION_STOP_MONITORING = "stopMonitoring";
+	// TODO API calls for managing the monitoring regexes?  
+	// private static final String ACTION_ADD_MONITORING_REGEX = "stopMonitoring";
+
 	private static final String OTHER_PNH = "pnh";
 	private static final String OTHER_MANIFEST = "manifest";
 	private static final String OTHER_SERVICE = "service";
 	private static final String OTHER_FIREFOX_ADDON = "fx_pnh.xpi";
-	
-	//private ExtensionPlugNHack extension = null;
+
+	private static final String PARAM_ID = "id";
+	private static final String PARAM_MESSAGE = "message";
+	private static final String PARAM_URL = "url";
+
+	private ExtensionPlugNHack extension = null;
 
 	public PlugNHackAPI(ExtensionPlugNHack ext) {
 		
-		//extension = ext;
+		extension = ext;
+		
+		this.addApiAction(new ApiAction(ACTION_MONITOR, new String[] {PARAM_ID, PARAM_MESSAGE}));
+		this.addApiAction(new ApiAction(ACTION_ORACLE, new String[] {PARAM_ID}));
+		this.addApiAction(new ApiAction(ACTION_START_MONITORING, new String[] {PARAM_URL}));
+		this.addApiAction(new ApiAction(ACTION_STOP_MONITORING, new String[] {PARAM_ID}));
 		
 		this.addApiOthers(new ApiOther(OTHER_PNH));
 		this.addApiOthers(new ApiOther(OTHER_MANIFEST));
@@ -67,13 +87,49 @@ public class PlugNHackAPI extends ApiImplementor {
 	}
 
 	@Override
+	public ApiResponse handleApiAction(String name, JSONObject params)
+			throws ApiException {
+		ApiResponse response = ApiResponseElement.OK;
+		
+		if (ACTION_MONITOR.equals(name)) {
+			String id = params.getString(PARAM_ID);
+			String message = params.getString(PARAM_MESSAGE);
+			
+			JSONObject json = JSONObject.fromObject(message);
+			
+			ApiResponse resp = this.extension.messageReceived(new ClientMessage(id, json));
+			if (response != null) {
+				// logger.debug("Returning " + response.toString(0));
+				response = resp;
+			}
+		} else if (ACTION_ORACLE.equals(name)) {
+			extension.oracleInvoked(params.getInt(PARAM_ID));
+			
+		} else if (ACTION_START_MONITORING.equals(name)) {
+			String url = params.getString(PARAM_URL);
+			try {
+				String id = this.extension.startMonitoring(new URI(url, true));
+				response = new ApiResponseElement(PARAM_ID, id);
+				
+			} catch (Exception e) {
+				throw new ApiException (ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
+			}
+		} else if (ACTION_STOP_MONITORING.equals(name)) {
+			String id = params.getString(PARAM_ID);
+			this.extension.stopMonitoring(id);
+		}
+		
+		return response;
+	}
+
+	@Override
 	public HttpMessage handleApiOther(HttpMessage msg, String name,
 			JSONObject params) throws ApiException {
-		String root = "http://" + msg.getRequestHeader().getHostName() + ":" + msg.getRequestHeader().getHostPort();
+		String root = this.extension.getApiRoot();
 
 		if (OTHER_PNH.equals(name)) {
 			try {
-				String welcomePage = this.getStringReource("resource/welcome.html");
+				String welcomePage = ExtensionPlugNHack.getStringReource("resource/welcome.html");
 				// Replace the dynamic parts
 				welcomePage = welcomePage.replace("{{ROOT}}", root);
 				// Replace the i18n strings
@@ -117,7 +173,7 @@ public class PlugNHackAPI extends ApiImplementor {
 			
 		} else if (OTHER_MANIFEST.equals(name)) {
 			try {
-				String manifest = this.getStringReource("resource/manifest.json");
+				String manifest = ExtensionPlugNHack.getStringReource("resource/manifest.json");
 				// Replace the dynamic parts
 				manifest = manifest.replace("{{ROOT}}", root);
 
@@ -140,7 +196,7 @@ public class PlugNHackAPI extends ApiImplementor {
 			
 		} else if (OTHER_SERVICE.equals(name)) {
 			try {
-				String service = this.getStringReource("resource/service.json");
+				String service = ExtensionPlugNHack.getStringReource("resource/service.json");
 				// Replace the dynamic parts
 				service = service.replace("{{ROOT}}", root);
 
@@ -204,32 +260,6 @@ public class PlugNHackAPI extends ApiImplementor {
 		}
 	}
 	
-	private String getStringReource(String resourceName) throws ApiException {
-		InputStream in = null;
-		StringBuilder sb = new StringBuilder();
-		try {
-			in = this.getClass().getResourceAsStream(resourceName);
-			int numRead=0;
-            byte[] buf = new byte[1024];
-            while((numRead = in.read(buf)) != -1){
-            	sb.append(new String(buf, 0, numRead));
-            }
-            return sb.toString();
-			
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new ApiException(ApiException.Type.INTERNAL_ERROR);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// Ignore
-				}
-			}
-		}
-	}
-
 	@Override
 	public HttpMessage handleShortcut(HttpMessage msg)  throws ApiException {
 		try {
@@ -248,15 +278,14 @@ public class PlugNHackAPI extends ApiImplementor {
 	
 	public static void main (String[] args) throws Exception {
 		// Sanity check the json config files are valid!
-		PlugNHackAPI api = new PlugNHackAPI(null);
 		JSON json;
 		
-		String manifest = api.getStringReource("resource/manifest.json");
+		String manifest = ExtensionPlugNHack.getStringReource("resource/manifest.json");
 		//System.out.println("Manifest = " + manifest);
 		json = JSONSerializer.toJSON(manifest);
 		System.out.println("Manifest OK? " + json);
 		
-		String service = api.getStringReource("resource/service.json");
+		String service = ExtensionPlugNHack.getStringReource("resource/service.json");
 		//System.out.println("Service = " + service);
 		json = JSONSerializer.toJSON(service);
 		System.out.println("Service OK? " + json);
