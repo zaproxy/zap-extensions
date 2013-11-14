@@ -1,0 +1,80 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ * 
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ */
+package org.zaproxy.zap.extension.plugnhack.brk;
+
+import org.zaproxy.zap.extension.brk.BreakPanel;
+import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
+import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.extension.plugnhack.ClientMessage;
+
+/**
+ * Wraps WebSocket specific options to determine if breakpoint should be applied
+ * on given {@link WebSocketMessageDTO}.
+ */
+public class ClientBreakpointMessageHandler extends BreakpointMessageHandler {
+
+	public ClientBreakpointMessageHandler(BreakPanel aBreakPanel) {
+		super(aBreakPanel);
+	}
+
+	/**
+	 * Only break on all requests when 'Break on all' is enabled for WebSockets.
+	 * 
+	 * @param aMessage
+	 * @param isRequest
+	 * @return True if it breaks on all requests.
+	 */
+	@Override
+	public boolean isBreakOnAllRequests(Message aMessage, boolean isRequest) {
+		if (super.isBreakOnAllRequests(aMessage, isRequest)) {
+			return true;
+		}
+    	return false;
+	}
+
+	/**
+	 * Only break on all responses when 'Break on all' is enabled for WebSockets.
+	 * 
+	 * @param aMessage
+	 * @param isRequest
+	 * @return True if it breaks on all responses.
+	 */
+	@Override
+	public boolean isBreakOnAllResponses(Message aMessage, boolean isRequest) {
+		if (super.isBreakOnAllResponses(aMessage, isRequest)) {
+			return true;
+		}
+    	return false;
+	}
+
+	/**
+	 * Only break on stepping if opcode is allowed.
+	 * 
+	 * @param aMessage
+	 * @param isRequest
+	 * @return True if it breaks on stepping through action.
+	 */
+	@Override
+	protected boolean isBreakOnStepping(Message aMessage, boolean isRequest) {
+		if (aMessage instanceof ClientMessage && super.isBreakOnStepping(aMessage, isRequest)) {
+			return true;
+		}
+		return false;
+	}
+	
+}

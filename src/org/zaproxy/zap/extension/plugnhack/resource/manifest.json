@@ -9,6 +9,12 @@
     "commands":{
       "prefix":"zap",
       "manifest":"{{ROOT}}/OTHER/pnh/other/service/"
+    },
+    "probe":{
+      "transport":"HTTPMessageTransport",
+      "endpoint":"{{ROOT}}/JSON/pnh/action/monitor/",
+      "oracle":"{{ROOT}}/JSON/pnh/action/oracle/?id=",
+      "endpointName":"ZAP"
     }
   }
 }
