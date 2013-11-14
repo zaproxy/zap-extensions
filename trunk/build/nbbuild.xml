@@ -163,12 +163,6 @@
     			<include name="org/zaproxy/zap/extension/${extension}/**"/>
                         <exclude name="**/*.jar"/>
     		</zipfileset>
-    		<zipfileset dir="${build.classes.dir}" prefix="">
-    			<include name="org/zaproxy/zap/extension/${extension}/Messages*"/>
-    		</zipfileset>
-    		<zipfileset dir="${build.classes.dir}" prefix="">
-    			<include name="org/zaproxy/zap/extension/${extension}/resource/**"/>
-    		</zipfileset>
     	</jar>
     	
     	<!--antcall target="cleanup-extension-help"> 
