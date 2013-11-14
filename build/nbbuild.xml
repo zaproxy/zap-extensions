@@ -132,12 +132,6 @@
                 <include name="org/zaproxy/zap/extension/${addon}/**"/>
                 <exclude name="**/*.jar"/>
             </zipfileset>
-            <zipfileset dir="${build.classes.dir}" prefix="">
-                <include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
-            </zipfileset>
-            <zipfileset dir="${build.classes.dir}" prefix="">
-                <include name="org/zaproxy/zap/extension/${addon}/resource/**"/>
-            </zipfileset>
             <zipgroupfileset dir="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false"/>
             <zipfileset dir="${build.classes.dir}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
         </jar>

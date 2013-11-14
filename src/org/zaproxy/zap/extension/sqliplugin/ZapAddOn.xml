@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>SQLMap Injection Engine</name>
-	<version>3</version>
+	<version>4</version>
 	<description>An advanced active injection bundle for SQLi (derived by SQLMap)</description>
 	<author>Andrea Pompili (Yhawke)</author>
 	<url/>
-	<changes>Added support for HyperSQL DB</changes>
+	<changes>Solved some bugs and updated the SQLi payload battery</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
