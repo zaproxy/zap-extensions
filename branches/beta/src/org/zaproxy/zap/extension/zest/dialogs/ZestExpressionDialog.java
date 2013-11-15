@@ -258,6 +258,10 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 					extension.pasteToNode(expNode);
 
 				}
+			} else {
+				for (ScriptNode child : children) {
+					extension.updated(child);
+				}
 			}
 		}
 	}
