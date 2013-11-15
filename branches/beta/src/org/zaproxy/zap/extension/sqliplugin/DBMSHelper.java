@@ -34,7 +34,7 @@ import org.apache.commons.lang.ArrayUtils;
  * 
  * @author yhawke (2013)
  */
-public enum DBMSUtil {
+public enum DBMSHelper {
     MYSQL("MySQL", new String[]{"mysql", "my"}, 
             ",", 
             "CAST({0} AS CHAR)", 
@@ -365,7 +365,7 @@ public enum DBMSUtil {
      * @param isnullQuery
      * @param dummyTable 
      */
-    private DBMSUtil(String name, String[] aliases, String delimiter, String castQuery, String isnullQuery, String dummyTable) {
+    private DBMSHelper(String name, String[] aliases, String delimiter, String castQuery, String isnullQuery, String dummyTable) {
         this.name = name;
         this.aliases = aliases;
         this.delimiter = delimiter;
@@ -473,10 +473,10 @@ public enum DBMSUtil {
      * @param value
      * @return 
      */
-    public static DBMSUtil getByName(String value) {
-        for (DBMSUtil util : DBMSUtil.values()) {
-            if (ArrayUtils.contains(util.aliases, value.toLowerCase()) || util.name.equalsIgnoreCase(value)) {
-                return util;
+    public static DBMSHelper getByName(String value) {
+        for (DBMSHelper helper : DBMSHelper.values()) {
+            if (ArrayUtils.contains(helper.aliases, value.toLowerCase()) || helper.name.equalsIgnoreCase(value)) {
+                return helper;
             }
         }
         
