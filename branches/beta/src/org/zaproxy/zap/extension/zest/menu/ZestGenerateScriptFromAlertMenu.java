@@ -120,7 +120,7 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuHistoryReference {
 			}
 			
 			// Add the request
-			sz.add(ZestZapUtils.toZestRequest(this.lastAlert.getMessage()));
+			sz.add(ZestZapUtils.toZestRequest(this.lastAlert.getMessage(), false));
 			
 			String evidence = this.lastAlert.getEvidence();
 			if (evidence != null && evidence.length() > 0) {

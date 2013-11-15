@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,9 +28,11 @@ import javax.script.ScriptException;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestVariables;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ProxyScript;
 
 public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
@@ -50,7 +53,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 		this.msg = msg;
 		try {
 			// Create the previous request so the script has something to run against
-			ZestRequest req = ZestZapUtils.toZestRequest(msg);
+			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true);
 			
 			// Set the response url to empty to give us a way to work out this is a request in the script
 			Map<String, String> params = new HashMap<String, String>();
@@ -62,7 +65,12 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 			
 			if (reqHeader == null || reqHeader.length() == 0) {
 				// Its been cleared - drop the request
-				// TODO log or write to script output
+				if (View.isInitialised()) {
+					View.getSingleton().getOutputPanel().append(
+							MessageFormat.format(
+									Constant.messages.getString("zest.proxy.request.drop"), 
+									msg.getRequestHeader().getURI()));
+				}
 				return false;
 			}
 
@@ -87,7 +95,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 		this.msg = msg;
 		try {
 			// Create the previous request so the script has something to run against
-			ZestRequest req = ZestZapUtils.toZestRequest(msg);
+			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true);
 			req.setResponse(ZestZapUtils.toZestResponse(msg));
 
 			this.run(script.getZestScript(), req, null);
@@ -96,7 +104,12 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 			
 			if (respHeader == null || respHeader.length() == 0) {
 				// Its been cleared - drop the request
-				// TODO log or write to script output
+				if (View.isInitialised()) {
+					View.getSingleton().getOutputPanel().append(
+							MessageFormat.format(
+									Constant.messages.getString("zest.proxy.response.drop"), 
+									msg.getRequestHeader().getURI()));
+				}
 				return false;
 			}
 			msg.setResponseHeader(respHeader);
