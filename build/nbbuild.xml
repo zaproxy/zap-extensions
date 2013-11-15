@@ -89,6 +89,7 @@
 		<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="scripts"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="sqliplugin"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="treetools"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
