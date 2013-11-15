@@ -21,13 +21,12 @@ import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.AbstractFuzzProcess;
 import org.zaproxy.zap.extension.fuzz.FuzzResult;
 import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
-import org.zaproxy.zap.extension.plugnhack.OracleListener;
 import org.zaproxy.zap.extension.plugnhack.httppanel.views.ClientFuzzableTextMessage;
 
 /**
  * On process is created per fuzz string.
  */
-public class ClientMessageFuzzProcess extends AbstractFuzzProcess implements OracleListener {
+public class ClientMessageFuzzProcess extends AbstractFuzzProcess {
 
     private static final Logger logger = Logger.getLogger(ClientMessageFuzzProcess.class);
 
@@ -37,7 +36,6 @@ public class ClientMessageFuzzProcess extends AbstractFuzzProcess implements Ora
     public ClientMessageFuzzProcess(ExtensionPlugNHack extension, ClientFuzzableTextMessage fuzzableMessage) {
     	this.extension = extension;
         this.fuzzableMessage = fuzzableMessage;
-        this.extension.removeOracleListenner(this);
     }
 
     @Override
@@ -80,10 +78,4 @@ public class ClientMessageFuzzProcess extends AbstractFuzzProcess implements Ora
         return fuzzResult;
     }
 
-	@Override
-	public void oracleInvoked(int id) {
-		// TODO implement!
-		logger.debug("Fuzz oracle received " + id);
-		
-	}
 }
