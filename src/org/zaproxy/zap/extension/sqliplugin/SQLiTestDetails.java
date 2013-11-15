@@ -44,7 +44,7 @@ public class SQLiTestDetails {
             What is the database management system underlying operating
             system.
      */
-    private List<DBMSUtil> dbms;
+    private List<DBMSHelper> dbms;
     private String dbmsVersion;
     private String os;
 
@@ -74,7 +74,7 @@ public class SQLiTestDetails {
         
         Element value = el.getChild(TAG_DETAILS_DBMS);
         if (value != null) {
-            this.dbms.add(DBMSUtil.getByName(value.getText()));
+            this.dbms.add(DBMSHelper.getByName(value.getText()));
         }
         
         value = el.getChild(TAG_DETAILS_DBMS_VERSION);
@@ -92,7 +92,7 @@ public class SQLiTestDetails {
      * 
      * @return 
      */
-    public List<DBMSUtil> getDbms() {
+    public List<DBMSHelper> getDbms() {
         return this.dbms;
     }
 
@@ -101,7 +101,7 @@ public class SQLiTestDetails {
      * @param name
      * @return 
      */
-    public boolean matchDbms(DBMSUtil dbms) {
+    public boolean matchDbms(DBMSHelper dbms) {
        return this.dbms.contains(dbms);
     }
 

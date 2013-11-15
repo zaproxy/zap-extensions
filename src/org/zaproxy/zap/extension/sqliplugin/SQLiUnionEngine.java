@@ -60,7 +60,7 @@ public class SQLiUnionEngine {
     private String prefix;
     private String suffix;
     private String comment;
-    private DBMSUtil dbms;
+    private DBMSHelper dbms;
     private int uColsStart;
     private int uColsStop;
     private String uChars;
@@ -494,7 +494,7 @@ public class SQLiUnionEngine {
         if ((field != null) && (dbms != null)) {
             if (!field.startsWith("(CASE") && 
                     !field.startsWith("(IIF") &&
-                    (dbms != DBMSUtil.SQLITE)) { //and not isDBMSVersionAtLeast('3'):
+                    (dbms != DBMSHelper.SQLITE)) { //and not isDBMSVersionAtLeast('3'):
                 
                 String nulledCastedField = dbms.formatCast(field);
                 nulledCastedField = dbms.formatIsNull(nulledCastedField);
@@ -549,7 +549,7 @@ public class SQLiUnionEngine {
 
         String baseQuery = "UNION ALL SELECT ";
         if (where == SQLiPayloadManager.WHERE_ORIGINAL) {
-            if (dbms == DBMSUtil.MYSQL) {
+            if (dbms == DBMSHelper.MYSQL) {
                 baseQuery = "LIMIT 0,1 " + baseQuery;
             }
         }
@@ -941,7 +941,7 @@ public class SQLiUnionEngine {
         this.comment = comment;
     }
 
-    public void setDbms(DBMSUtil dbms) {
+    public void setDbms(DBMSHelper dbms) {
         this.dbms = dbms;
     }
 

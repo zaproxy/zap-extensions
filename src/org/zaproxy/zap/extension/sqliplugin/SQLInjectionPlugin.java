@@ -68,7 +68,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     //--level=LEVEL       Level of tests to perform (1-5, default 1)
     private int level = 1;
     // --dbms=DBMS         Force back-end DBMS to this value
-    private DBMSUtil dbms = null;
+    private DBMSHelper dbms = null;
     // --prefix=PREFIX     Injection payload prefix string
     private String prefix = null;
     // --suffix=SUFFIX     Injection payload suffix string
@@ -91,6 +91,14 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     private static final Pattern errorPattern 
             = Pattern.compile("SQL (warning|error|syntax)", Pattern.CASE_INSENSITIVE);
     
+    // Generic pattern for RandNum tag retrieval
+    private static final Pattern randnumPattern 
+            = Pattern.compile("\\[RANDNUM(?:\\d+)?\\]");
+    
+    // Generic pattern for RandStr tag retrieval
+    private static final Pattern randstrPattern 
+            = Pattern.compile("\\[RANDSTR(?:\\d+)?\\]");
+    
     // Internal dynamic properties
     private ResponseMatcher responseMatcher;
     private List<Long> responseTimes;
@@ -99,7 +107,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     private long lastResponseTime;
     private int uColsStart;
     private int uColsStop;
-    private DBMSUtil currentDbms;
+    private DBMSHelper currentDbms;
     private String uChars;
 
     /**
@@ -1175,8 +1183,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
         // Set random integers
         // ------------------------
-        Pattern pattern = Pattern.compile("\\[RANDNUM(?:\\d+)?\\]");
-        Matcher matcher = pattern.matcher(result);
+        Matcher matcher = randnumPattern.matcher(result);
         Set<String> elements = new HashSet();
         while (matcher.find()) {
             elements.add(matcher.group());
@@ -1188,8 +1195,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
         // Set random strings
         // ------------------------
-        pattern = Pattern.compile("\\[RANDSTR(?:\\d+)?\\]");
-        matcher = pattern.matcher(result);
+        matcher = randstrPattern.matcher(result);
         elements.clear();
         while (matcher.find()) {
             elements.add(matcher.group());
@@ -1208,14 +1214,13 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
             } catch (NumberFormatException nfe) {
                 result = result.replace("[ORIGVALUE]", "'" + paramValue + "'");
-
             }
         }
 
         // Inferenced payload seems used only to exploit
         // the vulnerability, not to test it. 
         // So we skip this replacement
-        if (result.contains("[INFERENCE]")) {
+        //if (result.contains("[INFERENCE]")) {
             /*
              if Backend.getIdentifiedDbms() is not None:
              inference = queries[Backend.getIdentifiedDbms()].inference
@@ -1234,7 +1239,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
              errMsg += "knowledge of underlying DBMS"
              raise SqlmapNoneDataException, errMsg
              */
-        }
+        //}
 
         return result;
     }
@@ -1292,7 +1297,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     protected String prepareSuffix(String payload, String comment, String suffix, int where) {
 
         // Set correct comment if it's revealed as an Access database
-        if ((currentDbms == DBMSUtil.ACCESS) && DBMSUtil.GENERIC_SQL_COMMENT.equals(comment)) {
+        if ((currentDbms == DBMSHelper.ACCESS) && DBMSHelper.GENERIC_SQL_COMMENT.equals(comment)) {
             comment = "%00";
         }
 
@@ -1333,5 +1338,101 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                 uColsStop = tmp;
             }
         }
+    }
+
+    /**
+     * Set the character sequence to use 
+     * for bruteforcing number of columns
+     * @param charSequence a sequence of characters 
+     */
+    public void setUnionChar(String charSequence) {
+        this.unionChar = charSequence;
+    }
+
+    /**
+     * Set the range of columns to test for 
+     * UNION preparePrefix SQL injection 
+     * (using the form [START]-[END])
+     * @param columnRange the range of columns that need to be iterated
+     */
+    public void setUnionCols(String columnRange) {
+        this.unionCols = columnRange;
+    }
+
+    /**
+     * Set the Risk of tests to perform (0-3, default 1)
+     * @param risk a risk value from 0 to 3 (0 means no risk, 3 high risk)
+     */
+    public void setRisk(int risk) {
+        this.risk = risk;
+    }
+
+    /**
+     * Set the Level of tests to perform (1-5, default 1):<br>
+     * 1: Always (&lt;100 requests)<br>
+     * 2: Try a bit harder (100-200 requests)<br>
+     * 3: Good number of requests (200-500 requests)<br>
+     * 4: Extensive test (500-1000 requests)<br>
+     * 5: You have plenty of time (>1000 requests)<br>
+     * 
+     * @param level a level value from 1 to 5
+     */
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    /**
+     * Force back-end DBMS to a specific instance choosen inside these values:
+     * MySQL, PostgreSQL, Microsoft SQL Server, Oracle,
+     * SQLite, Microsoft Access, Firebird, SAP MaxDB,
+     * Sybase, IBM DB2, HSQLDB
+     * @param dbms the dbms name
+     */
+    public void setDbms(String dbms) {
+        this.dbms = DBMSHelper.getByName(dbms);
+    }
+
+    /**
+     * Set the injection payload prefix string that will be put
+     * before each SQLi payload
+     * @param prefix the prefix string 
+     */
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    /**
+     * Set the injection payload suffix string that will be put
+     * at the end of each SQLi payload
+     * @param suffix 
+     */
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    /**
+     * Use big numbers for invalidating values in place of the original
+     * parameter value (usually a float based 6 digit value)
+     * @param invalidBignum set to true if you want to use a big number replacement
+     */
+    public void setInvalidBignum(boolean invalidBignum) {
+        this.invalidBignum = invalidBignum;
+    }
+
+    /**
+     * Use logical operations for invalidating values in place of the original
+     * parameter value (for example ' AND 45=67')
+     * @param invalidLogical set to true if you want to use an invalid logical replacement
+     */
+    public void setInvalidLogical(boolean invalidLogical) {
+        this.invalidLogical = invalidLogical;
+    }
+
+    /**
+     * Set the Seconds to delay for the DBMS response in case of Time based SQLi (default 5 secs)
+     * @param seconds the number of seconds the system should wait for 
+     */
+    public void setTimeSec(int seconds) {
+        this.timeSec = seconds;
     }
 }
