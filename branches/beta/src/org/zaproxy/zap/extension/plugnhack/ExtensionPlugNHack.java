@@ -55,6 +55,7 @@ import org.zaproxy.zap.extension.httppanel.view.HttpPanelDefaultViewSelector;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
 import org.zaproxy.zap.extension.httppanel.view.hex.HttpPanelHexView;
 import org.zaproxy.zap.extension.plugnhack.brk.ClientBreakpointMessageHandler;
+import org.zaproxy.zap.extension.plugnhack.fuzz.ClientMessageFuzzerContentPanel;
 import org.zaproxy.zap.extension.plugnhack.fuzz.ClientMessageFuzzerHandler;
 import org.zaproxy.zap.extension.plugnhack.httppanel.component.ClientComponent;
 import org.zaproxy.zap.extension.plugnhack.httppanel.models.ByteClientPanelViewModel;
@@ -99,6 +100,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 			"/org/zaproxy/zap/extension/plugnhack/resource/icons/bin-metal.png"));
 	public static final ImageIcon PENDING_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
 			"/org/zaproxy/zap/extension/plugnhack/resource/icons/hourglass.png"));
+	public static final ImageIcon ORACLE_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
+			"/org/zaproxy/zap/extension/plugnhack/resource/icons/burn.png"));
 	
 	private static final int poll = 3000;
 	
@@ -114,6 +117,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 	private PopupMenuMonitorScope popupMenuMonitorScope = null;
 	private BreakpointMessageHandler brkMessageHandler = null;
 	private ManualClientMessageSendEditorDialog resendDialog = null;
+	private ClientMessageFuzzerContentPanel fuzzerContentPanel = null;
 	
 	private Thread timeoutThread = null;
 	private boolean shutdown = false;
@@ -204,6 +208,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 				
 				ClientMessageFuzzerHandler fuzzHandler = new ClientMessageFuzzerHandler(extFuzz, this);
 				extFuzz.addFuzzerHandler(ClientMessage.class, fuzzHandler);
+				this.fuzzerContentPanel = (ClientMessageFuzzerContentPanel) fuzzHandler.getFuzzerContentPanel();
 			}
 
 
@@ -503,6 +508,10 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 	public void oracleInvoked(int id) {
 		logger.debug("Oracle invoked for " + id);
 		this.oracleManager.oracleInvoked(id);
+		
+		if (this.fuzzerContentPanel != null) {
+			this.fuzzerContentPanel.flagOracleInvoked(id);
+		}
 	}
 	
 	public String startMonitoring (URI uri) throws HttpMalformedHeaderException {

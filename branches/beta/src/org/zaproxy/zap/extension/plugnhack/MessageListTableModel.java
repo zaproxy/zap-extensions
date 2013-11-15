@@ -78,6 +78,7 @@ public class MessageListTableModel extends AbstractTableModel {
 				case pending:	obj = ExtensionPlugNHack.PENDING_ICON;	break;
 				case resent:	obj = ExtensionPlugNHack.CHANGED_ICON;	break;
 				case dropped:	obj = ExtensionPlugNHack.DROPPED_ICON;	break;
+				case oraclehit:	obj = ExtensionPlugNHack.ORACLE_ICON;	break;
 				}
 				break;
 		case 2:	obj = msg.getClientId(); break;

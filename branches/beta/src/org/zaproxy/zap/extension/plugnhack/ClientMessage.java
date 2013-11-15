@@ -27,7 +27,7 @@ import net.sf.json.JSONObject;
 
 public class ClientMessage implements Message {
 
-	public enum State {received, pending, resent, dropped}
+	public enum State {received, pending, resent, dropped, oraclehit}
 	private JSONObject json;
 	private String clientId;
 	private Date received;

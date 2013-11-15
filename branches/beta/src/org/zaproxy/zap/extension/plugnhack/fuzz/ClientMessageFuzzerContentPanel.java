@@ -24,12 +24,16 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
+import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.fuzz.FuzzResult;
 import org.zaproxy.zap.extension.fuzz.FuzzerContentPanel;
+import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 import org.zaproxy.zap.extension.plugnhack.MessageListTableModel;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class ClientMessageFuzzerContentPanel implements FuzzerContentPanel {
+
+	private static final Logger logger = Logger.getLogger(ClientMessageFuzzerContentPanel.class);
 
 	private JPanel panel = null;
 
@@ -94,6 +98,21 @@ public class ClientMessageFuzzerContentPanel implements FuzzerContentPanel {
 	@Override
 	public void addFuzzResult(FuzzResult fuzzResult) {
 		this.getMessageModel().addClientMessage(((ClientMessageFuzzResult)fuzzResult).getMessage());
+	}
+
+	public void flagOracleInvoked(int id) {
+		logger.debug("Oracle: " + id);
+		for (int row = 0; row < this.getMessageModel().getRowCount(); row++) {
+			ClientMessage msg = this.getMessageModel().getClientMessageAtRow(row);
+			if (msg.getData().indexOf("xss(" + id + ")") >= 0) {
+				// Found the attack!
+				// Flag in the fuzzer window
+				msg.setState(ClientMessage.State.oraclehit);
+				this.getMessageModel().clientMessageChanged(msg);
+				return;
+			}
+		}
+		logger.debug("Oracle not found: " + id);
 	}
 
 }
