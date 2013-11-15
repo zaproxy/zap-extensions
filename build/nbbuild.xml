@@ -80,16 +80,17 @@
         <echo file="${versions.file}" append="true">&lt;ZAP></echo>
         
         <!-- 'Standard' addons (keep in alphabetical order ;) -->
-        <antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
-        <antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
-        <antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
-	<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
+	<antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
+	<antcall target="build-addon"><param name="addon" value="birtreports"/></antcall>
+	<antcall target="build-addon"><param name="addon" value="cmss"/></antcall>
+	<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
+	<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
 	<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
-        <antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
-        <!--antcall target="build-addon"><param name="addon" value="sitetools"/></antcall-->
-        <antcall target="build-addon"><param name="addon" value="sse"/></antcall>
-        <antcall target="build-addon"><param name="addon" value="sqliplugin"/></antcall>
+	<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
+	<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
+	<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
         <antcall target="build-addon"><param name="addon" value="saml"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="wappalyzer"/></antcall>
 		
         <echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 		

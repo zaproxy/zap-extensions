@@ -211,7 +211,6 @@
 		<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
-        <antcall target="build-addon"><param name="addon" value="sqliplugin"/></antcall>
         <antcall target="build-addon"><param name="addon" value="saml"/></antcall>
         <antcall target="build-addon"><param name="addon" value="wappalyzer"/></antcall>
 
