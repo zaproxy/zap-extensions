@@ -38,7 +38,7 @@ public class ZestTargetedRunner extends ZestZapRunner implements TargetedScript 
 	public void invokeWith(HttpMessage msg) throws ScriptException {
 		try {
 			this.extension.clearResults();
-			this.run(script.getZestScript(), ZestZapUtils.toZestRequest(msg), null);
+			this.run(script.getZestScript(), ZestZapUtils.toZestRequest(msg, false, true), null);
 		} catch (Exception e) {
 			throw new ScriptException(e);
 		}

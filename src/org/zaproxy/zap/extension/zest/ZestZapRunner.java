@@ -133,7 +133,11 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		if (View.isInitialised()) {
 			if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
 				// TODO Should be an easier way to just update output
-				scriptUI.displayScript(wrapper);
+				try {
+					scriptUI.displayScript(wrapper);
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
 			}
 		}
 	

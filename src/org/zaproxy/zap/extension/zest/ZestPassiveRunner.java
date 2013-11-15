@@ -52,7 +52,7 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
 
 		try {
 			// Create the previous request so the script has something to run against
-			ZestRequest req = ZestZapUtils.toZestRequest(msg);
+			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true);
 			req.setResponse(ZestZapUtils.toZestResponse(msg));
 				
 			this.run(script.getZestScript(), req, null);

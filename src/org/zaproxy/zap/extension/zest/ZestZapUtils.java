@@ -562,14 +562,14 @@ public class ZestZapUtils {
 				msg.getTimeElapsedMillis());
 	}
 
-	public static ZestRequest toZestRequest(HttpMessage msg)
+	public static ZestRequest toZestRequest(HttpMessage msg, boolean replaceTokens)
 			throws MalformedURLException, HttpMalformedHeaderException,
 			SQLException {
-		return toZestRequest(msg, true);
+		return toZestRequest(msg, replaceTokens, false);
 	}
 
 	public static ZestRequest toZestRequest(HttpMessage msg,
-			boolean replaceTokens) throws MalformedURLException,
+			boolean replaceTokens, boolean incAllHeaders) throws MalformedURLException,
 			HttpMalformedHeaderException, SQLException {
 		if (replaceTokens) {
 			ZestRequest req = new ZestRequest();
@@ -578,7 +578,12 @@ public class ZestZapUtils {
 				req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
 			}
 			req.setUrlToken(correctTokens(msg.getRequestHeader().getURI().toString()));
-			setHeaders(req, msg, true);
+			
+			if (incAllHeaders) {
+				setAllHeaders(req, msg);
+			} else {
+				setHeaders(req, msg, true);
+			}
 			req.setData(correctTokens(msg.getRequestBody().toString()));
 			req.setResponse(
 					new ZestResponse(
@@ -593,7 +598,11 @@ public class ZestZapUtils {
 			ZestRequest req = new ZestRequest();
 			req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
 			req.setMethod(msg.getRequestHeader().getMethod());
-			setHeaders(req, msg, false);
+			if (incAllHeaders) {
+				setAllHeaders(req, msg);
+			} else {
+				setHeaders(req, msg, true);
+			}
 			req.setData(msg.getRequestBody().toString());
 			req.setResponse(new ZestResponse(req.getUrl(), msg
 					.getResponseHeader().toString(), msg.getResponseBody()
@@ -620,6 +629,23 @@ public class ZestZapUtils {
 		} else {
 			req.setHeaders(sb.toString());
 		}
+	}
+
+	private static void setAllHeaders(ZestRequest req, HttpMessage msg) {
+		String[] headers = msg.getRequestHeader().getHeadersAsString()
+				.split(HttpHeader.CRLF);
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (String header : headers) {
+			if (first) {
+				// Drop the first one as this one will get added anyway
+				first = false;
+			} else {
+				sb.append(header);
+				sb.append(HttpHeader.CRLF);
+			}
+		}
+		req.setHeaders(sb.toString());
 	}
 
 	private static String correctTokens(String str) {
