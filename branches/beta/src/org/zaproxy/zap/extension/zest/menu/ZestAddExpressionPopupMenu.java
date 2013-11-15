@@ -19,6 +19,7 @@ import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestExpressionAnd;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
+import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionOr;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
@@ -102,6 +103,7 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
 			ZestStatement stmt, String loc, String text) {
 		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionRegex(loc, text));
 		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionEquals(loc, text));
+		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionLength());
 		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionStatusCode());
 		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionResponseTime());
 		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionURL());
