@@ -1,7 +1,7 @@
 <zapaddon>
 	<name>Zest - Scripting Security Tests</name>
 	<version>10</version>
-	<description>Allows you to create and run scripts for reproducing security issues.</description>
+	<description>A graphical security scripting language..</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>Misc bug fixes</changes>
