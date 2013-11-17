@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Zest - Scripting Security Tests</name>
-	<version>9</version>
+	<version>10</version>
 	<description>Allows you to create and run scripts for reproducing security issues.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
@@ -11,8 +11,10 @@
 	</extensions>
 	<filters/>
 	<files>
+		<!-- Need a core fix before these can be included
 		<file>scripts/templates/zest/active.template.zst</file>
 		<file>scripts/templates/zest/targeted.template.zst</file>
+		-->
 	</files>
 	<not-before-version>2.2.0</not-before-version>
 	<not-from-version/>
