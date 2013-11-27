@@ -47,6 +47,7 @@ public class MonitoredPagesManager {
 	private boolean monitorAllInScope = false;
 	private List<Pattern> includeRegexes = new ArrayList<Pattern>();
 	private List<Pattern> excludeRegexes = new ArrayList<Pattern>();
+	private List<String> oneTimeURLs = new ArrayList<String>();
 	
 	private Map<String, MonitoredPage> monitoredPages = new HashMap<String, MonitoredPage>();
 	private List<MonitoredPageListener> listeners = new ArrayList<MonitoredPageListener>();
@@ -85,8 +86,17 @@ public class MonitoredPagesManager {
 			logger.debug("URL is an image " + uri);
 			return false;
 		}
+		
+		// Onetime urls take precedence over everything
+		for (String otu : this.oneTimeURLs) {
+			if (uri.equals(otu)) {
+				logger.debug("URL is a onetime URL " + uri);
+				// Note that this will be removed from the list when we receive the first client message from it
+				return true;
+			}
+		}
 
-		// Exclude regexes take precedence over everything
+		// Then exclude regexes
 		for (Pattern pattern : this.excludeRegexes) {
 			if (pattern.matcher(uri).matches()) {
 				logger.debug("URL excluded " + uri);
@@ -156,6 +166,15 @@ public class MonitoredPagesManager {
 		}
 	
 	}
+
+	/**
+	 * Add a 'one time' URL - this URL is 'remembered' until we receive the first client message from it
+	 * @param uri
+	 */
+	public void setMonitorOnetimeURL(URI uri) {
+		this.oneTimeURLs.add(uri.toString());
+	}
+
 
 	private void setMonitorFlags(HttpMessage msg, boolean monitor) {
 		// TODO work out which of these actually work
@@ -292,11 +311,21 @@ public class MonitoredPagesManager {
 	public ApiResponse messageReceived(ClientMessage msg) {
 		List<ApiResponse> responseSet = new ArrayList<ApiResponse>();
 
+		
 		MonitoredPage page = this.monitoredPages.get(msg.getClientId());
 		if (page != null) {
 			page.setLastMessage(new Date());
 			// Side effect will (re)set the active icon
 			this.getNodeForPage(page);
+			
+			String uri = page.getMessage().getRequestHeader().getURI().toString();
+			for (String otu : this.oneTimeURLs) {
+				if (uri.equals(otu)) {
+					logger.debug("Removing onetime URL " + uri);
+					this.oneTimeURLs.remove(otu);
+					break;
+				}
+			}
 		}
 
 		if (msg.getType().equals("heartbeat")) {
@@ -339,6 +368,9 @@ public class MonitoredPagesManager {
 						listener.messageReceived(qmsg);
 					}
 					handledMessages.add(qmsg);
+					
+					// TODO Just add one at a time for now - adding multiple messages can cause problems
+					break;
 				}
 			}
 			for (ClientMessage hmsg : handledMessages) {
@@ -398,7 +430,14 @@ public class MonitoredPagesManager {
 			if (node != null && ! activeNodes.contains(node)) {
 				// Only remove the active icon if the page isnt open in another tab/browser...
 				node.removeCustomIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON_RESOURCE);
-				node.addCustomIcon(ExtensionPlugNHack.CLIENT_INACTIVE_ICON_RESOURCE, false);
+				HistoryReference href = node.getHistoryReference();
+				try {
+					if (href != null && this.isMonitored(href.getHttpMessage())) {
+						node.addCustomIcon(ExtensionPlugNHack.CLIENT_INACTIVE_ICON_RESOURCE, false);
+					}
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
 			}
 		}
 	}
