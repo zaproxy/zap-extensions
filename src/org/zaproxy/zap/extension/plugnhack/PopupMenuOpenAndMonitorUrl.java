@@ -21,19 +21,19 @@ package org.zaproxy.zap.extension.plugnhack;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.view.PopupMenuHttpMessage;
 
-public class PopupMenuMonitorSubtree extends PopupMenuHttpMessage {
+public class PopupMenuOpenAndMonitorUrl extends PopupMenuHttpMessage {
 
 	private static final long serialVersionUID = 1L;
 	private MonitoredPagesManager mpm = null;
-	private boolean monitored = false;
 
     /**
      * @param label
      */
-    public PopupMenuMonitorSubtree(MonitoredPagesManager mpm) {
-        super(Constant.messages.getString("plugnhack.menu.monitor.include"));
+    public PopupMenuOpenAndMonitorUrl(MonitoredPagesManager mpm) {
+        super(Constant.messages.getString("plugnhack.menu.monitor.open"));
         this.mpm = mpm;
     }
     
@@ -48,7 +48,8 @@ public class PopupMenuMonitorSubtree extends PopupMenuHttpMessage {
     
 	@Override
 	public void performAction(HttpMessage msg) throws Exception {
-		this.mpm.setMonitorSubtree(msg, ! monitored);
+		this.mpm.setMonitorOnetimeURL(msg.getRequestHeader().getURI());
+		DesktopUtils.openUrlInBrowser(msg.getRequestHeader().getURI());
 	}
 	
 	@Override
@@ -56,14 +57,7 @@ public class PopupMenuMonitorSubtree extends PopupMenuHttpMessage {
 		if (msg == null) {
 			return false;
 		}
-		if (this.mpm.isMonitored(msg)) {
-			this.monitored = true;
-			this.setText(Constant.messages.getString("plugnhack.menu.monitor.exclude"));
-		} else {
-			this.monitored = false;
-			this.setText(Constant.messages.getString("plugnhack.menu.monitor.include"));
-		}
-    	return true;
+		return DesktopUtils.canOpenUrlInBrowser();
     }
 
 	

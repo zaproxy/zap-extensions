@@ -115,6 +115,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 	
 	private PopupMenuMonitorSubtree popupMenuMonitorSubtree = null;
 	private PopupMenuMonitorScope popupMenuMonitorScope = null;
+	private PopupMenuOpenAndMonitorUrl popupMenuOpenAndMonitorUrl = null;
+	
 	private BreakpointMessageHandler brkMessageHandler = null;
 	private ManualClientMessageSendEditorDialog resendDialog = null;
 	private ClientMessageFuzzerContentPanel fuzzerContentPanel = null;
@@ -172,8 +174,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 		extensionHook.addProxyListener(this);
 		
 		if (getView() != null) {
-			extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorScope());
+			extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuOpenAndMonitorUrl());
 			extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorSubtree());
+			extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorScope());
 			extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuResend());
             extensionHook.getHookView().addStatusPanel(getClientsPanel());
             
@@ -360,6 +363,13 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 		} catch (MalformedURLException e) {
 			return null;
 		}
+	}
+	
+	private PopupMenuOpenAndMonitorUrl getPopupMenuOpenAndMonitorUrl() {
+		if (popupMenuOpenAndMonitorUrl == null) {
+			popupMenuOpenAndMonitorUrl = new PopupMenuOpenAndMonitorUrl(this.mpm);
+		}
+		return popupMenuOpenAndMonitorUrl;
 	}
 	
 	private PopupMenuMonitorSubtree getPopupMenuMonitorSubtree() {
