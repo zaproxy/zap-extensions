@@ -18,20 +18,15 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HtmlParameter;
-import org.parosproxy.paros.network.HtmlParameter.Type;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 
@@ -41,7 +36,7 @@ import org.parosproxy.paros.network.HttpStatusCode;
  *
  * @author Colm O'Flaherty, Encription Ireland Ltd
  */
-public class LDAPInjection extends AbstractAppPlugin {
+public class LDAPInjection extends AbstractAppParamPlugin {
 
     /**
      * plugin dependencies
@@ -62,7 +57,7 @@ public class LDAPInjection extends AbstractAppPlugin {
     // LDAP errors for Injection testing
     // Use an inverse map to avoid multimap use
     // ----------------------------------------
-    private static final Map<Pattern, String> LDAP_ERRORS = new HashMap();
+    private static final Map<Pattern, String> LDAP_ERRORS = new HashMap<Pattern, String>();
     static {
         String ldapImplementationsFlat = Constant.messages.getString("ascanbeta.ldapinjection.knownimplementations");
         String[] ldapImplementations = ldapImplementationsFlat.split(":");
@@ -132,95 +127,25 @@ public class LDAPInjection extends AbstractAppPlugin {
     }
 
     /**
-     * scans all POST, GET, Cookie params, and header fields for LDAP injection
-     * vulnerabilities. Requires min one extra request for each parameter
-     * (cookie, URL, POST param), and one request for each header value
-     * specified
+     * scans the user specified parameter for LDAP injection
+     * vulnerabilities. Requires one extra request for each parameter checked
      */
-    @Override
-    public void scan() {
-
+	public void scan(HttpMessage msg, String paramname, String paramvalue) {
+		
         try {
-            //find all params set in the request (GET(URL)/POST(FORM)/Cookie)    		
-            TreeSet<HtmlParameter> htmlParams = new TreeSet<>();
-            htmlParams.addAll(getBaseMsg().getRequestHeader().getCookieParams());  //request cookies only. no response cookies
-            htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
-            htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
-
-            //get the full list of headers for the original request
-            String headersString = getBaseMsg().getRequestHeader().getHeadersAsString();
-            String[] headers = headersString.split(CRLF);
-
-            //see if the headers are vulnerable to LDAP injection
-            for (String header : headers) {
-                String[] headervalues = header.split(":", 2);
-                if (headervalues.length > 1) {
-                    HttpMessage msg1Initial = getNewMsg();
-                    if (this.debugEnabled) {
-                        log.debug("Scanning URL [" + msg1Initial.getRequestHeader().getMethod() + "] [" + msg1Initial.getRequestHeader().getURI() + "], header field [" + headervalues[0] + "] with value [" + headervalues[1] + "] for LDAP Injection");
-                    }
-                    
-                    msg1Initial.getRequestHeader().setHeader(headervalues[0], errorAttack);
-
-                    //send it, and see what happens :)
-                    sendAndReceive(msg1Initial);
-                    checkResultsForAlert(msg1Initial, "header", headervalues[0]);
-                }
-            }
-
-            //for each parameter in turn, see if they are vulnerable to LDAP injection
-            for (Iterator<HtmlParameter> iter = htmlParams.iterator(); iter.hasNext();) {
-                HttpMessage msg1Initial = getNewMsg();
-                HtmlParameter currentHtmlParameter = iter.next();
-
+                HttpMessage attackMsg = getNewMsg();
+                
                 if (this.debugEnabled) {
-                    log.debug("Scanning URL [" + msg1Initial.getRequestHeader().getMethod() + "] [" + msg1Initial.getRequestHeader().getURI() + "], [" + currentHtmlParameter.getType() + "] field [" + currentHtmlParameter.getName() + "] with value [" + currentHtmlParameter.getValue() + "] for LDAP Injection");
+                    log.debug("Scanning URL [" + attackMsg.getRequestHeader().getMethod() + "] [" + attackMsg.getRequestHeader().getURI() + "],  [" + paramname + "] with value [" + paramvalue + "] for LDAP Injection");
                 }
-
-                TreeSet<HtmlParameter> requestParams = null;
-                if (currentHtmlParameter.getType() == Type.cookie) {
-                    requestParams = msg1Initial.getCookieParams();
-
-                } else if (currentHtmlParameter.getType() == Type.form) {
-                    requestParams = msg1Initial.getFormParams();
-
-                } else if (currentHtmlParameter.getType() == Type.url) {
-                    requestParams = msg1Initial.getUrlParams();
-
-                } else {
-                    //just in case... nothing else exists now, but maybe later... 
-                    throw new Exception("Unknown parameter type [" + currentHtmlParameter.getType() + "] for parameter [" + currentHtmlParameter.getName() + "]");
-                }
-
-                //delete the original parameter from the set of parameters
-                requestParams.remove(currentHtmlParameter);
-                //create a new cookie parameter with various LDAP metacharacters, to see if this trips the code up
-                //note: use the same name and type as the original
-                HtmlParameter errorParameter = new HtmlParameter(
-                        currentHtmlParameter.getType(),
-                        currentHtmlParameter.getName(),
-                        errorAttack);
-
-                requestParams.add(errorParameter);
-
-                if (currentHtmlParameter.getType() == Type.cookie) {
-                    msg1Initial.setCookieParams(requestParams);
-
-                } else if (currentHtmlParameter.getType() == Type.form) {
-                    msg1Initial.setFormParams(requestParams);
-
-                } else if (currentHtmlParameter.getType() == Type.url) {
-                    msg1Initial.setGetParams(requestParams);
-                }
-
+                
+                //set a new parameter.. with a value designed to cause an LDAP error to occur
+                this.setParameter(attackMsg, paramname, errorAttack);
+                
                 //send it, and see what happens :)
-                sendAndReceive(msg1Initial);
-                checkResultsForAlert(msg1Initial, currentHtmlParameter.getType().toString(), currentHtmlParameter.getName());
+                sendAndReceive(attackMsg);
+                checkResultsForAlert(attackMsg, /*currentHtmlParameter.getType().toString(), */ paramname);
 
-            } //end of the for loop around the parameter list
-
-        } catch (InvalidRedirectLocationException e) {
-            // Not an error, just means we probably attacked the redirect location
         } catch (Exception e) {
             //Do not try to internationalise this.. we need an error message in any event.. 
             //if it's in English, it's still better than not having it at all. 
@@ -229,7 +154,7 @@ public class LDAPInjection extends AbstractAppPlugin {
     }
 
     /**
-     * returns does the Message Response matche the pattern provided?
+     * returns does the Message Response match the pattern provided?
      *
      * @param msg the Message whose response we will examine
      * @param pattern the pattern which we will look for in the Message Body
@@ -248,7 +173,7 @@ public class LDAPInjection extends AbstractAppPlugin {
      * @return
      * @throws Exception
      */
-    private boolean checkResultsForAlert(HttpMessage message, String parameterType, String parameterName) throws Exception {
+    private boolean checkResultsForAlert(HttpMessage message, /*String parameterType, */ String parameterName) throws Exception {
         //compare the request response with each of the known error messages, 
         //for each of the known LDAP implementations.
         //in order to minimise false positives, only consider a match 
@@ -266,7 +191,7 @@ public class LDAPInjection extends AbstractAppPlugin {
                 //response code is ok, and the HTML matches one of the known LDAP errors.
                 //so raise the error, and move on to the next parameter
                 String extraInfo = Constant.messages.getString("ascanbeta.ldapinjection.alert.extrainfo",
-                        parameterType,
+                        /*parameterType,*/
                         parameterName,
                         getBaseMsg().getRequestHeader().getMethod(),
                         getBaseMsg().getRequestHeader().getURI().getURI(),
@@ -274,7 +199,7 @@ public class LDAPInjection extends AbstractAppPlugin {
                         LDAP_ERRORS.get(errorPattern), 
                         errorPattern);
 
-                String attack = Constant.messages.getString("ascanbeta.ldapinjection.alert.attack", parameterType, parameterName, errorAttack);
+                String attack = Constant.messages.getString("ascanbeta.ldapinjection.alert.attack", /*parameterType, */ parameterName, errorAttack);
                 String vulnname = Constant.messages.getString("ascanbeta.ldapinjection.name");
                 String vulndesc = Constant.messages.getString("ascanbeta.ldapinjection.desc");
                 String vulnsoln = Constant.messages.getString("ascanbeta.ldapinjection.soln");
@@ -291,7 +216,7 @@ public class LDAPInjection extends AbstractAppPlugin {
                 String logMessage = Constant.messages.getString("ascanbeta.ldapinjection.alert.logmessage",
                         getBaseMsg().getRequestHeader().getMethod(),
                         getBaseMsg().getRequestHeader().getURI().getURI(),
-                        parameterType,
+                        /* parameterType, */
                         parameterName,
                         errorAttack, 
                         LDAP_ERRORS.get(errorPattern), 
@@ -333,4 +258,5 @@ public class LDAPInjection extends AbstractAppPlugin {
     public int getWascId() {
         return 29;
     }
+
 }
