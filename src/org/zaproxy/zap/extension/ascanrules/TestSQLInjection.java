@@ -49,17 +49,19 @@ import difflib.Patch;
  * but can). PostgreSQL and MSSQL on ASP, ASP.NET, and PHP *do* support it, for
  * instance. It's better to put the code here and try it for all RDBMSs as a
  * result. Use the following variables: doStackedBased, doStackedMaxRequests,
- * countStackedBasedRequests TODO: implement checks in Header fields (currently
- * does Cookie values, form fields, and url parameters) TODO: change the Alert
- * Titles. TODO: if the argument is reflected back in the HTML output, the
+ * countStackedBasedRequests 
+ * TODO: implement checks in Header fields (currently
+ * does Cookie values, form fields, and url parameters) 
+ * TODO: change the Alert Titles. 
+ * TODO: if the argument is reflected back in the HTML output, the
  * boolean based logic will not detect an alert (because the HTML results of
- * argument values "id=1" will not be the same as for "id=1 and 1=1") TODO: add
- * "<param>*2/2" check to the Logic based ones (for integer parameter values)..
- * if the result is the same, it might be a SQL Injection TODO: implement mode
- * checks (Mode.standard, Mode.safe, Mode.protected) for 2.* using "implements
- * SessionChangedListener"
+ * argument values "id=1" will not be the same as for "id=1 and 1=1") 
+ * TODO: add"<param>*2/2" check to the Logic based ones (for integer parameter 
+ * values).. if the result is the same, it might be a SQL Injection 
+ * TODO: implement mode checks (Mode.standard, Mode.safe, Mode.protected) for 
+ * 2.* using "implements SessionChangedListener"
  *
- * The SQLInjection plugin identifies SQL Injection vulnerabilities note the
+ * The SQLInjection plugin identifies SQL Injection vulnerabilities. Note the
  * ordering of checks, for efficiency is : 1) Error based 2) Boolean Based 3)
  * UNION based 4) Stacked (TODO: implement stacked based) 5) Blind/Time Based
  * (RDBMS specific, so not done here right now)
@@ -75,14 +77,14 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
     private boolean doUnionBased = false;
     private boolean doExpressionBased = false;
     private boolean doOrderByBased = false;
-    private boolean doStackedBased = false;  //TODO: use in the stacked based implementation
+    //private boolean doStackedBased = false;  //TODO: use in the stacked based implementation
     //how many requests can we fire for each method? will be set depending on the attack strength
     private int doErrorMaxRequests = 0;
     private int doBooleanMaxRequests = 0;
     private int doUnionMaxRequests = 0;
     private int doExpressionMaxRequests = 0;
     private int doOrderByMaxRequests = 0;
-    private int doStackedMaxRequests = 0;	//TODO: use in the stacked based implementation
+    //private int doStackedMaxRequests = 0;	//TODO: use in the stacked based implementation
     /**
      * generic one-line comment. Various RDBMS Documentation suggests that this
      * syntax works with almost every single RDBMS considered here
@@ -349,8 +351,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
             doUnionMaxRequests = 0;
             doOrderByBased = false;
             doOrderByMaxRequests = 0;
-            doStackedBased = false;
-            doStackedMaxRequests = 0;
+            //doStackedBased = false;
+            //doStackedMaxRequests = 0;
 
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
             //do some more error based (if Threshold allows), some more expression based, some boolean based, and some Union based
@@ -364,8 +366,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
             doUnionMaxRequests = 5;
             doOrderByBased = false;
             doOrderByMaxRequests = 0;
-            doStackedBased = false;
-            doStackedMaxRequests = 5;
+            //doStackedBased = false;
+            //doStackedMaxRequests = 5;
 
         } else if (this.getAttackStrength() == AttackStrength.HIGH) {
             //do some more error based (if Threshold allows), some more expression based, some more boolean based, some union based, and some order by based
@@ -379,8 +381,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
             doUnionMaxRequests = 10;
             doOrderByBased = true;
             doOrderByMaxRequests = 5;
-            doStackedBased = false;
-            doStackedMaxRequests = 10;
+            //doStackedBased = false;
+            //doStackedMaxRequests = 10;
             
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
             //do some more error based (if Threshold allows), some more expression based, some more boolean based, some more union based, and some more order by based
@@ -394,8 +396,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
             doUnionMaxRequests = 100;
             doOrderByBased = true;
             doOrderByMaxRequests = 100;
-            doStackedBased = false;
-            doStackedMaxRequests = 100;
+            //doStackedBased = false;
+            //doStackedMaxRequests = 100;
         }
         
         //if a high threshold is in place, turn off the error based, which are more prone to false positives
@@ -430,7 +432,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
             int countBooleanBasedRequests = 0;
             int countUnionBasedRequests = 0;
             int countOrderByBasedRequests = 0;
-            int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
+            //int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
 
             //Check 1: Check for Error Based SQL Injection (actual error messages).
             //for each SQL metacharacter combination to try
@@ -850,7 +852,6 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
                     //if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
                     //then we may may have a SQL Injection vulnerability
-                    StringBuilder sb = new StringBuilder();
                     String sqlUnionBodyUnstripped = msg3.getResponseBody().toString();
                     String sqlUnionBodyStripped = this.stripOff(sqlUnionBodyUnstripped, sqlUnionValue);
 
