@@ -600,7 +600,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             }
 
                             // Launch again a simple payload with the changed value
-                            // then take it as the original one ofr boolean base checkings
+                            // then take it as the original one for boolean base checkings
                             origMsg = sendPayload(parameter, payloadValue, true);
                             break;
 
@@ -1037,9 +1037,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         // Set initial time for request timing calculation
         lastResponseTime = System.currentTimeMillis();
 
-        // Launch the requested query
+        // Launch the requested query (followRedirect set to false?)
         try {
-            sendAndReceive(tempMsg);
+            sendAndReceive(tempMsg, true);
             lastResponseTime = System.currentTimeMillis() - lastResponseTime;
 
             // If trace is enabled log the entire request sent to the target
@@ -1058,10 +1058,20 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             }
 
         } catch (IOException ex) {
+            //Ok we got an error, but take in care always the given response
+            //Previously this could cause a deadlock because the requests
+            //went in exception and the minimum amount of requests should never be reached
+            lastResponseTime = System.currentTimeMillis() - lastResponseTime;
+            
             //Do not try to internationalise this.. we need an error message in any event..
             //if it's in English, it's still better than not having it at all.
             log.error("SQL Injection vulnerability check failed for parameter ["
                     + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
+        }
+
+        // record the response time if needed
+        if (recordResponseTime) {
+            responseTimes.add(lastResponseTime);
         }
 
         return tempMsg;
