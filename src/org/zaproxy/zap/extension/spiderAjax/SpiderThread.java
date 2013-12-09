@@ -36,7 +36,7 @@ public class SpiderThread implements Runnable, ProxyListener {
 	private static final boolean BROWSER_BOOTING = false;
 	private static final int MAX_STATES = 0;
 	private static final boolean RAND_INPUT_FORMS = true;
-	private static final int MAX_DEPTH = 0;
+	private static final int MAX_DEPTH = 10;	// TODO - make this configurable by the user
 	private int numBrowsers;
 	private int numThreads;
 	private String url = null;
@@ -192,14 +192,12 @@ public class SpiderThread implements Runnable, ProxyListener {
 			crawler.setDepth(MAX_DEPTH);
 			crawler.setRandomInputInForms(RAND_INPUT_FORMS);
 			crawler.setClickOnce(true);
+			// TODO - make this configurable by the user
+			crawler.setWaitTimeAfterEvent(1000);
 			if (this.extension.getProxy().getMegaScan()) {
 				crawler.clickMoreElements();
 			} else {
 				crawler.clickDefaultElements();
-			}
-			//TODO: fix this in crawljax
-			if (url.toLowerCase().contains("wivet")) {
-				crawler.dontClick("a").withAttribute("href","../innerpages/2_2.php");
 			}
 		}
 		return crawler;
