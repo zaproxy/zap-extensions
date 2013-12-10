@@ -1,14 +1,10 @@
 <zapaddon>
 	<name>Ajax Spider</name>
-	<version>7</version>
+	<version>8</version>
 	<description>Allows you to spider sites that make heavy use of javascript using crawljax</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/AJAXSpider_getStarted</url>
-	<changes>
-	<![CDATA[
-	Restored the dependencies to the original ones (were previouly changed because of incompatibility issues).
-	]]>
-	</changes>
+	<changes>Fixed problem where self referencing links could trap the spider</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.spiderAjax.ExtensionAjax</extension>
