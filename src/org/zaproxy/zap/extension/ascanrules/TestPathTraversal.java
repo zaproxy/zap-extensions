@@ -48,77 +48,54 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     private static final String[] LOCAL_FILE_TARGET_PREFIXES = {
         "/",
         "\\",
-        // Added for absolute Windows file retrieval
-        "C:\\",
-        "C:/",        
+        // Absolute Windows file retrieval (we suppose C:\\)
+        "c:\\",
+        "c:/",
+        // Path traversal intended to obtain the filesystem's root
         "/../../../../../../../../../../../../../../../../../",
         "\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
-        // End '/' added
-        //"../../../../../../../../../../../../../../../..",
         "../../../../../../../../../../../../../../../../",
-        // End '\' added
-        //"..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..",
         "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
         "",
-        // Added for absolute Windows file retrieval
-        "D:\\",
-        "D:/",   
+        // Absolute Windows file retrieval in case of D:\\ installation dir 
+        "d:\\",
+        "d:/",
+        // Other shorter traversals
         "\\..\\..\\",
         "./",
         "../",
         "/../../",
         "../../",
-        // End '/' should be added, but in this way the prefix is equal to the next
-        // So I avoid to repeat it
-        //"/..",
         "/../",
-        // End '/' should be added, but in this way the prefix is equal to the next
-        // So I avoid to repeat it        
-        //"/../..",
         "/./",
-        // Repeated so I commented it
-        //"\\",
         ".\\",
         "..\\",
         "..\\..\\",
-        // End '\' should be added, but in this way the prefix is equal to the next
-        // So I avoid to repeat it        
-        //"\\..",
         "\\..\\",
-        // End '\' should be added, but in this way the prefix is equal to a previous one
-        // So I avoid to repeat it        
-        //"\\..\\..",
         "\\.\\",
-        // Added for absolute Windows file retrieval
-        "E:\\",
-        "E:/",
         // From Wikipedia (http://en.wikipedia.org/wiki/File_URI_scheme)
         // file://host/path 
         // If host is omitted, it is taken to be "localhost", the machine from 
         // which the URL is being interpreted. Note that when omitting host you 
         // do not omit the slash
-        "file:///",    //*nix
-        "file:///C:\\",
-        "file:///C:/",
-        "file:///D:\\",
-        "file:///D:/",
-        "file:///E:\\",
-        "file:///E:/",
+        "file:///",         //*nix
+        "file:///c:\\",     //Windows
+        "file:///c:/",      //Windows
+        "file:///d:\\",     //Windows
+        "file:///d:/",      //Windows
         // Useful when the application filters out the / char
-        "file:\\\\\\",  //*nix
-        "file:\\\\\\C:\\",
-        "file:\\\\\\C:/",
-        "file:\\\\\\D:\\",
-        "file:\\\\\\D:/",
-        "file:\\\\\\E:\\",
-        "file:\\\\\\E:/",
-        // Evasions!!! I put only C:\ to avoid too much of them
-        "fiLe:///",     //*nix
-        "FILE:///",     //*nix
-        "fiLe:///C:\\",
-        "FILE:///C:\\",
-        "fiLe:///C:/",
-        "FILE:///C:/"
+        "file:\\\\\\",      //*nix
+        "file:\\\\\\c:\\",  //Windows
+        "file:\\\\\\c:/",   //Windows
+        "file:\\\\\\d:\\",  //Windows
+        "file:\\\\\\d:/",   //Windows
+        // Evasions temptatives: we use only C:\\ to avoid too much of them
+        "fiLe:///",         //*nix
+        "FILE:///",         //*nix
+        "fiLe:///c:\\",     //Windows
+        "FILE:///c:\\",     //Windows
+        "fiLe:///c:/",      //Windows
+        "FILE:///c:/",      //Windows
         // Colm please check these last one on *Nix because seems not working on Windows...
         //"file://",
         //"fiLe://",
@@ -126,7 +103,15 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         //"fiLe:",
         //"FILE:",
         //"FILE://"
-        // Acunetix use them - for future evaluation!!!!
+        // It may be possible that Windows is installed on E:\\
+        // so repeat the Windows prefixes again...
+        "E:\\",
+        "E:/",
+        "file:///E:\\",
+        "file:///E:/",
+        "file:\\\\\\E:\\",
+        "file:\\\\\\E:/"
+        // Other LFI ideas (for future expansions)
         //"/\../\../\../\../\../\../\../etc/passwd"
         //"/.\\./.\\./.\\./.\\./.\\./.\\./windows/win.ini"
         //"../.../.././../.../.././../.../.././../.../.././../.../.././../.../.././etc/passwd"
@@ -267,7 +252,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     
                 case HIGH:
                     // This works out as a total of 69 reqs / param
-                    prefixCount = 23; // changed to 8 to add also all extended traversals
+                    prefixCount = 23; // changed to 23 to add also all extended traversals
                     targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.size() / 2;
                     prefixCountOurUrl = 1;
                     break;
@@ -330,6 +315,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     }
                 }
             }
+            
             //Check 2: try a local file Path Traversal on the file name of the URL (which obviously will not be in the target list above).
             //first send a query for a random parameter value, and see if we get a 200 back
             //if 200 is returned, abort this check (on the url filename itself), because it would be unreliable.
