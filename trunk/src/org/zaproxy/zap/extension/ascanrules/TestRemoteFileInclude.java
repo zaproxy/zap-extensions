@@ -57,7 +57,14 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
 	/**
 	 * the patterns to look for, associated with the equivalent remote file targets above
 	 */
-	private static Pattern REMOTE_FILE_PATTERN = Pattern.compile("<title>Google</title>");
+	private static final Pattern [] REMOTE_FILE_PATTERNS = {
+		Pattern.compile("<title>Google</title>"),
+		Pattern.compile("<title>Google</title>"),
+		Pattern.compile("<title>Google</title>"),
+		Pattern.compile("<title>Google</title>"),
+		Pattern.compile("<title.*Google.*/title>"),
+		Pattern.compile("<title.*Google.*/title>")
+	};
 	
 	/**
 	 * The number of requests we will send per parameter, based on the attack strength
@@ -188,7 +195,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
 		        	sendAndReceive(msg);
 		        	//does it match the pattern specified for that file name?
 					String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-		            matcher = REMOTE_FILE_PATTERN.matcher(response);
+		            matcher = REMOTE_FILE_PATTERNS[i].matcher(response);
 		            //if the output matches, and we get a 200
 		            if (matcher.find() && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
 		                bingo(Alert.RISK_HIGH, Alert.WARNING, 
