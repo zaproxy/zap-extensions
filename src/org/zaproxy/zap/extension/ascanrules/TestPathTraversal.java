@@ -17,13 +17,9 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -41,7 +37,6 @@ import org.zaproxy.zap.model.Vulnerability;
 public class TestPathTraversal extends AbstractAppParamPlugin {
 
     private static final String NON_EXISTANT_FILENAME = "thishouldnotexistandhopefullyitwillnot";
-    
     /**
      * the various (prioritised) prefixes to try, for each of the local file
      * targets below
@@ -51,68 +46,38 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         "\\",
         "/../../../../../../../../../../../../../../../../../",
         "\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
-        // The following 2 tests don't finish with a separator, changed with the next 2 ones
-        //"../../../../../../../../../../../../../../../..",
-        //"..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..",
-        "../../../../../../../../../../../../../../../../",
-        "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
+        "../../../../../../../../../../../../../../../..",
+        "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..",
         "",
-        //"\\..\\..\\", // This test was repeated
+        "\\..\\..\\",
         "./",
         "../",
         "/../../",
         "../../",
         "/..",
         "/../",
-        //"/../..", // This test was repeated
+        "/../..",
         "/./",
-        //"\\", // This test was repeated
+        "\\",
         ".\\",
         "..\\",
         "..\\..\\",
         "\\..",
         "\\..\\",
-        //"\\..\\..", // This test doesn't finish with a valid separator
-        "\\..\\..\\",
+        "\\..\\..",
         "\\.\\",
-        // Added for absolute Windows file retrieval
-        "C:\\",
-        "C:/",
-        // From Wikipedia (http://en.wikipedia.org/wiki/File_URI_scheme)
-        // file://host/path 
-        // If host is omitted, it is taken to be "localhost", the machine from 
-        // which the URL is being interpreted. Note that when omitting host you 
-        // do not omit the slash
-        "file:///",    
-        "file:///C:\\",
-        "file:///C:/",
-        // These other paths works on wavsep but could be useful
-        // only when the application filters out the / char
-        "file:\\\\\\",  
-        "file:\\\\\\C:\\",
-        "file:\\\\\\C:/",
-        "fiLe:///",
-        "FILE:///",
-        "fiLe:///C:\\",
-        "FILE:///C:\\",
-        "fiLe:///C:/",
-        "FILE:///C:/",
-        // Following test should be be evaluated
-        // usually the standard force to have a // or \\ before the file
-        "file:",      
-        "fiLe:",      
+        "file://",
+        "fiLe://",
+        "file:",
+        "fiLe:",
         "FILE:",
-        // The old one... seems not working on some real cases
-        "file://"    
-        // This is an Acunetix test, maybe 4 the future
-        //"/\\../\\../\\../\\../\\../\\../\\../"             
+        "FILE://"
     };
     
     /**
      * the various (prioritised) local file targets to look for (prefixed by the
      * prefixes above)
      */
-    /*
     private static final String[][] LOCAL_FILE_TARGETS_AND_PATTERNS = {
         {"etc/passwd", "root:.:0:0"}, // Dot used to match 'x' or '!' (used in AIX)
         {"Windows\\system.ini", "\\[drivers\\]"},
@@ -121,28 +86,12 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         {"Windows/system.ini", "\\[drivers\\]"},
         {"WEB-INF\\web.xml", "</web-app>"}
     };
-    */
-    // Reduce the number of Pattern objects
-    private static final Pattern WIN_PATTERN = Pattern.compile("\\[drivers\\]");
-    private static final Pattern NIX_PATTERN = Pattern.compile("root:.:0:0");
-    private static final Pattern WAR_PATTERN = Pattern.compile("</web-app>");
-    
-    // Set in this way we avoid to build Pattern objects for every iteration
-    private static final Map<String, Pattern> LOCAL_FILE_TARGETS_AND_PATTERNS = new HashMap();
-    static {
-        // Dot used to match 'x' or '!' (used in AIX)
-        LOCAL_FILE_TARGETS_AND_PATTERNS.put("etc/passwd", NIX_PATTERN);
-        LOCAL_FILE_TARGETS_AND_PATTERNS.put("Windows\\system.ini", WIN_PATTERN);
-        LOCAL_FILE_TARGETS_AND_PATTERNS.put("WEB-INF/web.xml", WAR_PATTERN);
-        LOCAL_FILE_TARGETS_AND_PATTERNS.put("etc\\passwd", NIX_PATTERN);
-        LOCAL_FILE_TARGETS_AND_PATTERNS.put("Windows/system.ini", WIN_PATTERN);
-        LOCAL_FILE_TARGETS_AND_PATTERNS.put("WEB-INF\\web.xml", WAR_PATTERN);
-    }
     
     /**
      * details of the vulnerability which we are attempting to find
      */
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
+    
     /**
      * the logger object
      */
@@ -239,28 +188,28 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                 case LOW:
                     // This works out as a total of 7 reqs / param
                     prefixCount = 2;
-                    targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.size() / 2;
+                    targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.length / 2;
                     prefixCountOurUrl = 0;
                     break;
                     
                 case MEDIUM:
                     // This works out as a total of 13 reqs / param
                     prefixCount = 4;
-                    targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.size() / 2;
+                    targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.length / 2;
                     prefixCountOurUrl = 0;
                     break;
                     
                 case HIGH:
                     // This works out as a total of 26 reqs / param
                     prefixCount = 6;
-                    targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.size() / 2;
+                    targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.length / 2;
                     prefixCountOurUrl = 1;
                     break;
                     
                 case INSANE:
                     // This works out as a total of 211(!) reqs / param
                     prefixCount = LOCAL_FILE_TARGET_PREFIXES.length;
-                    targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.size();
+                    targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.length;
                     prefixCountOurUrl = LOCAL_FILE_TARGET_PREFIXES.length;
                     break;
                     
@@ -278,16 +227,12 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             //for each local prefix in turn
             //note that depending on the AttackLevel, the number of prefixes that we will try changes.
             for (int h = 0; h < prefixCount; h++) {
-                
                 String prefix = LOCAL_FILE_TARGET_PREFIXES[h];
-                Iterator<String> it = LOCAL_FILE_TARGETS_AND_PATTERNS.keySet().iterator();
-                
                 //for each target in turn
                 //note: regardless of the specified Attack Strength, we want to try all files name here 
                 //(just for a limited number of prefixes)
                 for (int i = 0; i < targetCount; i++) {
-                    
-                    String target = it.next();
+                    String target = LOCAL_FILE_TARGETS_AND_PATTERNS[i][0];
 
                     //get a new copy of the original message (request only) for each parameter value to try
                     msg = getNewMsg();
@@ -300,23 +245,19 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 
                     //send the modified request, and see what we get back
                     sendAndReceive(msg);
-                    
                     //does it match the pattern specified for that file name?
                     String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-                    matcher = LOCAL_FILE_TARGETS_AND_PATTERNS.get(target).matcher(response);
-                    
+                    matcher = Pattern.compile(LOCAL_FILE_TARGETS_AND_PATTERNS[i][1]).matcher(response);
                     //if the output matches, and we get a 200
                     if (matcher.find() && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
                         bingo(Alert.RISK_HIGH, Alert.WARNING,
                                 null, param,
                                 matcher.group(), null, msg);
-                        
                         // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact)
                         return;
                     }
                 }
             }
-            
             //Check 2: try a local file Path Traversal on the file name of the URL (which obviously will not be in the target list above).
             //first send a query for a random parameter value, and see if we get a 200 back
             //if 200 is returned, abort this check (on the url filename itself), because it would be unreliable.
@@ -336,12 +277,10 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK
                     || exceptionMatcher.find()
                     || errorMatcher.find()) {
-                
                 if (log.isDebugEnabled()) {
                     log.debug("It IS possible to check for local file Path Traversal on the url filename on ["
                             + msg.getRequestHeader().getMethod() + "] [" + msg.getRequestHeader().getURI() + "], [" + param + "]");
                 }
-                
                 String urlfilename = msg.getRequestHeader().getURI().getName();
 
                 //for the url filename, try each of the prefixes in turn
@@ -359,12 +298,10 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK
                             && (!exceptionMatcher.find())
                             && (!errorMatcher.find())) {
-                        
                         //if it returns OK, and the random string above did NOT return ok, then raise an alert
                         //since the filename has likely been picked up and used as a file name from the parameter
                         bingo(Alert.RISK_HIGH, Alert.WARNING,
                                 null, param, prefixedUrlfilename, null, msg);
-                        
                         // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact)
                         return;
                     }
@@ -382,9 +319,6 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             //request to find the vulnerability 
             //but it would be foiled by simple input validation on "..", for instance.
 
-        } catch (InvalidRedirectLocationException e) {
-            // Not an error, just means we probably attacked the redirect location
-            
         } catch (Exception e) {
             log.error("Error scanning parameters for Path Traversal: " + e.getMessage(), e);
         }
