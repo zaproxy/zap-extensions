@@ -96,11 +96,14 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         "fiLe:///C:\\",
         "FILE:///C:\\",
         "fiLe:///C:/",
-        "FILE:///C:/"
-        //"file:",      // To be evaluated, it's valid only for absolute files
-        //"fiLe:",      // To be evaluated, it's valid only for absolute files
-        //"FILE:",      // To be evaluated, it's valid only for absolute files
-        //"file://",    // The old one... seems not working on some real cases
+        "FILE:///C:/",
+        // Following test should be be evaluated
+        // usually the standard force to have a // or \\ before the file
+        "file:",      
+        "fiLe:",      
+        "FILE:",
+        // The old one... seems not working on some real cases
+        "file://"    
         // This is an Acunetix test, maybe 4 the future
         //"/\\../\\../\\../\\../\\../\\../\\../"             
     };
