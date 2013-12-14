@@ -4,7 +4,12 @@
 	<description>A graphical security scripting language..</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Changed to depend on core ExtensionScript to avoid NullPointerException (Issue 848)</changes>
+	<changes>
+	<![CDATA[
+	Changed to depend on core ExtensionScript to avoid NullPointerException (Issue 848)<br>
+	Changed to show the correct selected message when the results are sorted in "Zest Results" tab (Issue 942).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.zest.ExtensionZest</extension>

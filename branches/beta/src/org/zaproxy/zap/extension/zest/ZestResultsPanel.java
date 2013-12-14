@@ -94,7 +94,18 @@ public class ZestResultsPanel extends AbstractPanel {
 	private HistoryReferenceTable getResultsTable () {
 		if (this.resultsTable == null) {
 			this.model = new ZestResultsTableModel(COLS);
-			this.resultsTable = new HistoryReferenceTable(model);
+			this.resultsTable = new HistoryReferenceTable(model) {
+
+				private static final long serialVersionUID = 557191363644673221L;
+
+				@Override
+				public HistoryReference getSelectedValue() {
+					if (this.getSelectedRow() >= 0) {
+						return model.getHistoryReference(resultsTable.convertRowIndexToModel(this.getSelectedRow()));
+					}
+					return null;
+				}
+			};
 			this.resultsTable.setName(TABLE_NAME);
 			this.resultsTable.setColumnSizes(SIZES);
 			this.resultsTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
