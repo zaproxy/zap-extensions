@@ -4,6 +4,7 @@
 	<property name="src" location="../src" />
 	<property name="src.version" value="1.7" />
 	<property name="build" location="build" />
+	<property name="temp" location="temp" />
 	<property name="dist" location="zap-exts" />
 	<property name="dist.lib.dir" location="../lib" />
 	<property name="status" value="beta" />
@@ -14,12 +15,14 @@
 	<target name="clean">
 		<delete dir="${dist}" includeEmptyDirs="true" />
 		<delete dir="${build}" includeEmptyDirs="true" />
+		<delete dir="${temp}" includeEmptyDirs="true" />
 	</target>
 
 	<target name="init">
 		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${dist}" />
 		<mkdir dir="${build}" />
+		<mkdir dir="${temp}" />
 	</target>
 
 	<target name="compile" depends="init" description="compile the source">
@@ -74,6 +77,14 @@
 			<param name="addon" value="${addon}"/>
 		</antcall>
 
+		<local name="addon.libs.zip" />
+		<property name="addon.libs.zip" value="${temp}/libs-${addon}.zip" />
+
+		<delete file="${addon.libs.zip}" failonerror="true" />
+		<zip destfile="${addon.libs.zip}" whenempty="create">
+			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false" />
+		</zip>
+
 		<jar jarfile="${dist}/${file}" update="true" compress="true">
 			<zipfileset dir="${build}" prefix="">
 				<include name="org/zaproxy/zap/extension/${addon}/**"/>
@@ -84,9 +95,13 @@
 			<zipfileset dir="${src}" prefix="">
 				<include name="org/zaproxy/zap/extension/${addon}/resource/**"/>
 			</zipfileset>
-			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false"/>
+			<zipfileset src="${addon.libs.zip}">
+				<exclude name="META-INF/*.DSA" />
+				<exclude name="META-INF/*.SF" />
+			</zipfileset>
 			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
 		</jar>
+		<delete file="${addon.libs.zip}" />
 
 		<antcall target="include-files"> 
 			<param name="addon" value="${addon}"/>
