@@ -18,11 +18,17 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.crawljax.core.CrawlSession;
 import com.crawljax.core.CrawljaxController;
 import com.crawljax.core.configuration.CrawlSpecification;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.ProxyConfiguration;
 import com.crawljax.core.configuration.ThreadConfiguration;
+import com.crawljax.core.plugin.PostCrawlingPlugin;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
@@ -59,6 +65,7 @@ public class SpiderThread implements Runnable {
 
 	private HttpResponseHeader outOfScopeResponseHeader;
 	private HttpResponseBody outOfScopeResponseBody;
+	private List<SpiderListener> spiderListeners;
 
 	/**
 	 * 
@@ -66,11 +73,13 @@ public class SpiderThread implements Runnable {
 	 * @param extension
 	 * @param inScope
 	 */
-	SpiderThread(String url, ExtensionAjax extension, boolean inScope) {
+	SpiderThread(String url, ExtensionAjax extension, boolean inScope, SpiderListener spiderListener) {
 		this.url = url;
 		this.extension = extension;
 		this.spiderInScope = inScope;
 		this.running = false;
+		spiderListeners = new ArrayList<>(2);
+		spiderListeners.add(spiderListener);
 		//by default we will use 1 browser & thread
 		this.numBrowsers = this.extension.getProxy().getBrowsers();
 		this.numThreads = this.extension.getProxy().getThreads();
@@ -110,7 +119,6 @@ public class SpiderThread implements Runnable {
 		this.extension.getProxy().updateProxyConf();
 		this.extension.getProxy().getProxy().removeOverwriteMessageProxyListeners();
 		this.extension.getProxy().getProxy().addOverwriteMessageProxyListener(new SpiderProxyListener());
-	    this.extension.getSpiderPanel().getListLog().setModel(this.extension.getSpiderPanel().getHistList());
 	}
 
 	
@@ -202,6 +210,7 @@ public class SpiderThread implements Runnable {
 
 			// we add the plugins
 			crawlConf.addPlugin(new SpiderFilter(this.extension, this));
+			crawlConf.addPlugin(new SpiderPostCrawlingPlugin());
 		}
 		return crawlConf;
 	}
@@ -235,6 +244,7 @@ public class SpiderThread implements Runnable {
 	@Override
 	public void run() {
 		this.running = true;
+		notifyListenersSpiderStarted();
 		logger.info("Running crawljax targeting " + this.url );
 		Logger.getLogger("org.parosproxy.paros.core.proxy.ProxyThread").setLevel(Level.OFF);
 		Logger.getLogger("com.crawljax.browser.WebDriverBackedEmbeddedBrowser").setLevel(Level.OFF);
@@ -250,7 +260,7 @@ public class SpiderThread implements Runnable {
 		} catch (Exception e) {
 			logger.error(e, e);
 		} finally {
-			this.extension.getSpiderPanel().stopScan(this.url);
+			notifyListenersSpiderStoped();
 		}
 	}
 
@@ -264,6 +274,42 @@ public class SpiderThread implements Runnable {
 		crawljax.terminate(false);
 		} catch (Exception e) {
 			logger.error(e, e);
+		} finally {
+			notifyListenersSpiderStoped();
+		}
+	}
+
+	public void addSpiderListener(SpiderListener spiderListener) {
+		spiderListeners.add(spiderListener);
+	}
+
+	public void removeSpiderListener(SpiderListener spiderListener) {
+		spiderListeners.remove(spiderListener);
+	}
+
+	private void notifyListenersSpiderStarted() {
+		for (SpiderListener listener : spiderListeners) {
+			listener.spiderStarted();
+		}
+	}
+
+	private void notifySpiderListenersFoundMessage(HistoryReference historyReference, HttpMessage httpMessage) {
+		for (SpiderListener listener : spiderListeners) {
+			listener.foundMessage(historyReference, httpMessage);
+		}
+	}
+
+	private void notifyListenersSpiderStoped() {
+		for (SpiderListener listener : spiderListeners) {
+			listener.spiderStopped();
+		}
+	}
+
+	private class SpiderPostCrawlingPlugin implements PostCrawlingPlugin {
+
+		@Override
+		public void postCrawling(CrawlSession arg0) {
+			notifyListenersSpiderStoped();
 		}
 	}
 
@@ -301,7 +347,7 @@ public class SpiderThread implements Runnable {
 				HistoryReference historyRef = new HistoryReference(session, HistoryReference.TYPE_SPIDER_AJAX, httpMessage);
 				historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
 				session.getSiteTree().addPath(historyRef, httpMessage);
-				extension.getSpiderPanel().addHistoryUrl(historyRef, httpMessage, url);
+				notifySpiderListenersFoundMessage(historyRef, httpMessage);
 			} catch (Exception e) {
 				logger.error(e);
 			}

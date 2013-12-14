@@ -31,8 +31,11 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.ProxyListenerLog;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 
 /**
@@ -53,6 +56,9 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private List<String> excludeList = null;
 	private ProxyAjax proxy = null;
 	private ChromeAlertDialog addDialog = null;
+	private boolean spiderRunning;
+	private SpiderListener spiderListener;
+	private AjaxSpiderAPI ajaxSpiderApi;
 
 	/**
 	 * initializes the extension
@@ -84,6 +90,13 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		this.setOrder(234);
 	}
 
+	@Override
+	public void init() {
+		super.init();
+		
+		ajaxSpiderApi = new AjaxSpiderAPI(this);
+	}
+
 	/**
 	 * starts the proxy and all elements of the UI
 	 * @param extensionHook the extension
@@ -91,6 +104,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	@Override
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
+
+		API.getInstance().registerApiImplementor(ajaxSpiderApi);
 
 		if (getView() != null) {
 			extensionHook.addSessionListener(new SpiderSessionChangedListener());
@@ -122,13 +137,13 @@ public class ExtensionAjax extends ExtensionAdaptor {
                 addDialog.dispose();
             }
             
-            if (proxy != null) {
-                proxy.stopServer();
-            }
-            
             getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getSpiderPanel().getScanStatus().getCountLabel());
         }
         
+        if (proxy != null) {
+            proxy.stopServer();
+        }
+
         super.unload();
     }
 
@@ -197,7 +212,9 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 * @param incPort
 	 */
 	public void spiderSite(SiteNode node, boolean inScope) {
-		this.getSpiderPanel().scanSite(node, inScope);
+		if (getView() != null) {
+			getSpiderPanel().startScan(node.getHierarchicNodeName(), inScope);
+		}
 	}
 
 
@@ -249,11 +266,32 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		}
 	}
 	
-	/**
-	 * @param url the targeted url
-	 */
-	public void run(String url, boolean inScope) {
-		this.spiderPanel.newScanThread(url, this.getProxy().getAjaxProxyParam(), inScope);
+	SpiderThread createSpiderThread(String url, boolean inScope, SpiderListener spiderListener) {
+		SpiderThread spiderThread = new SpiderThread(url, this, inScope, spiderListener);
+		spiderThread.addSpiderListener(getSpiderListener());
+		
+		return spiderThread;
+	}
+	
+	private SpiderListener getSpiderListener() {
+		if (spiderListener == null) {
+			createSpiderListener();
+		}
+		return spiderListener;
+	}
+
+	private synchronized void createSpiderListener() {
+		if (spiderListener == null) {
+			spiderListener = new ExtensionAjaxSpiderListener();
+		}
+	}
+
+	boolean isSpiderRunning() {
+		return spiderRunning;
+	}
+
+	private void setSpiderRunning(boolean running) {
+		spiderRunning = running;
 	}
 
 	/**
@@ -272,6 +310,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
 		@Override
 		public void sessionAboutToChange(Session session) {
+			ajaxSpiderApi.reset();
 		}
 
 		@Override
@@ -283,6 +322,23 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			if (getView() != null) {
 				getSpiderPanel().sessionModeChanged(mode);
 			}
+		}
+	}
+
+	private class ExtensionAjaxSpiderListener implements SpiderListener {
+
+		@Override
+		public void spiderStarted() {
+			setSpiderRunning(true);
+		}
+
+		@Override
+		public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage) {
+		}
+
+		@Override
+		public void spiderStopped() {
+			setSpiderRunning(false);
 		}
 	}
 }

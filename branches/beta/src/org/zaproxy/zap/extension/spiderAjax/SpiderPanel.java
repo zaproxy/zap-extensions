@@ -36,7 +36,6 @@ import javax.swing.JLabel;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -45,7 +44,6 @@ import org.parosproxy.paros.extension.history.LogPanelCellRenderer;
 import org.parosproxy.paros.model.HistoryList;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
@@ -56,7 +54,7 @@ import org.zaproxy.zap.view.ScanStatus;
  * It has a button to stop the crawler and another one to open the options.
  *
  */
-public class SpiderPanel extends AbstractPanel implements Runnable {
+public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListener {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SpiderPanel.class);
 	private javax.swing.JScrollPane scrollLog = null;
@@ -79,6 +77,8 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private JLabel activeScansValueLabel = null;
 	private List<String> activeScans = new ArrayList<>();
 
+	private String targetSite;
+
 	/**
 	 * This is the default constructor
 	 */
@@ -93,12 +93,12 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	 * 
 	 */
 	private  void initialize() {
+		this.list = new HistoryList();
 		this.setLayout(new BorderLayout());
 	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
 	    	this.setSize(600, 200);
 	    }
 		this.add(getAJAXSpiderPanel(), java.awt.BorderLayout.CENTER);
-		this.list = new HistoryList();		
         scanStatus = new ScanStatus(
         				new ImageIcon(
         					SpiderPanel.class.getResource("/resource/icon/16/spiderAjax.png")),
@@ -205,13 +205,17 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	 * Stops all threads
 	 */
 	public void stopScan() {
+		resetPanelState();
+		if (runnable != null) {
+			this.runnable.stopSpider();
+		}
+	}
+
+	private void resetPanelState() {
 		this.activeScans = new ArrayList<>();
 		this.setActiveScanLabels();
 		this.getStartScanButton().setEnabled(true);
 		this.getStopScanButton().setEnabled(false);
-		if (runnable != null) {
-			this.runnable.stopSpider();
-		}
 	}
 	
 	
@@ -252,7 +256,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	 * @param msg the http message
 	 * @param url the targeted url
 	 */
-	public void addHistoryUrl(HistoryReference r, HttpMessage msg, String url){
+	private void addHistoryUrl(HistoryReference r, HttpMessage msg, String url){
 			if(isNewUrl(r, msg) && msg.getRequestHeader().getURI().toString().contains(url)){
 				this.getHistList().addElement(r);
 			}
@@ -264,7 +268,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	 * @param msg the http message
 	 * @return if the url is new or not
 	 */
-	public boolean isNewUrl(HistoryReference r, HttpMessage msg){
+	private boolean isNewUrl(HistoryReference r, HttpMessage msg){
 		Enumeration<?> e = this.getHistList().elements();
 		while (e.hasMoreElements()) {
 			if (e.nextElement().toString().contains(msg.getRequestHeader().getURI().toString())) {
@@ -375,9 +379,9 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	 * 
 	 * @return javax.swing.JList
 	 */
-	protected javax.swing.JList<HistoryReference> getListLog() {
+	private javax.swing.JList<HistoryReference> getListLog() {
 		if (listLog == null) {
-			listLog = new javax.swing.JList<>();
+			listLog = new javax.swing.JList<>(getHistList());
 			listLog.setDoubleBuffered(true);
 			listLog.setCellRenderer(getLogPanelCellRenderer());
 			listLog.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -608,35 +612,22 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	/**
 	 * 
 	 * @param site the targeted site
-	 * @param params if it is in scope
 	 * @param inScope if it is in scope
 	 */
-	public void newScanThread(String site, AbstractParam params, boolean inScope) {
+	public void startScan(String site, boolean inScope) {
 		this.getStartScanButton().setEnabled(false);
 		this.getStopScanButton().setEnabled(true);
 		this.activeScans.add(site);
 		this.setActiveScanLabels();
+		this.targetSite = site;
+		this.runnable = extension.createSpiderThread(site, inScope, this);
 		try {
-			new Thread(this.runnable = new SpiderThread(site, this.extension, inScope)).start();
+			new Thread(runnable).start();
 		} catch (Exception e) {
 			logger.error(e);
 		}
 	}
 
-	/**
-	 * 
-	 * @param n the sitenode
-	 * @param inScope if it is in scope
-	 */
-	public void scanSite(SiteNode n, boolean inScope) {
-		try {
-			this.extension.run(n.getHierarchicNodeName(), inScope);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-	}
-	
-	
 	/**
 	 * @return the active scans name label
 	 */
@@ -698,6 +689,20 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 		case safe:
 			stopScan();
 		}
+	}
+
+	@Override
+	public void spiderStarted() {
+	}
+
+	@Override
+	public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage) {
+		addHistoryUrl(historyReference, httpMessage, targetSite);
+	}
+
+	@Override
+	public void spiderStopped() {
+		resetPanelState();
 	}
 
 }
