@@ -33,6 +33,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.ProxyListenerLog;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.api.API;
@@ -74,7 +75,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	public ProxyAjax getProxy() {
 		if (this.proxy == null) {
-			this.proxy = new ProxyAjax(this);
+			this.proxy = new ProxyAjax(this, Model.getSingleton().getOptionsParam().getConnectionParam());
 		}
 		return this.proxy;
 	}

@@ -7,7 +7,9 @@
 	<changes>
 	<![CDATA[
 	Added support for modes and scope (Issue 334).<br>
-	Added API to control the Ajax Spider (Issue 369).
+	Added API to control the Ajax Spider (Issue 369).<br>
+	AJAX Spider will now use the HTTP authentication credentials set in "Options" > "Authentication" (Issue 584).<br>
+	AJAX Spider will now use the options set in "Options" > "Connection".
 	]]>
 	</changes>
 	<dependson/>
