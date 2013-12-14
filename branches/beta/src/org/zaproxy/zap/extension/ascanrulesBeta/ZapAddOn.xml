@@ -1,10 +1,16 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>11</version>
+	<version>12</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Corrected IDs to prevent clash</changes>
+	<changes>
+	<![CDATA[
+	Fixed a ClassNotFoundException while installing the add-on.<br>
+	Removed the scanner "Server Side Code Injection Plugin" (promoted to "Active scanner rules" add-on).<br>
+	Changed the "LDAP Injection" scanner to scan the parameters defined in the "Active Scan" options.
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
