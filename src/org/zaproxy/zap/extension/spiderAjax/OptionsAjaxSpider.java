@@ -21,8 +21,13 @@ import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -39,6 +44,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 
 public class OptionsAjaxSpider extends AbstractParamPanel {
 
+	private static final String WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY = "webdriver.chrome.driver";
 
 	private static final long serialVersionUID = -1350537974139536669L;
 
@@ -56,6 +62,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JRadioButton chrome = null;
 	private JRadioButton ie = null;
 	private JRadioButton htmlunit = null;
+	private JButton selectChromeDriverButton;
 	private JLabel jLabel6 = null;
 	private JLabel browsers = null;
 	private static final Logger logger = Logger.getLogger(OptionsAjaxSpider.class);
@@ -324,7 +331,32 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		return panelLocalProxy;
 	}
 	
-	
+	private JButton getSelectChromeDriverButton() {
+		if (selectChromeDriverButton == null) {
+			selectChromeDriverButton = new JButton(this.extension.getMessages().getString(
+					"spiderajax.options.select.chrome.driver.button.label"));
+			selectChromeDriverButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JFileChooser fileChooser = new JFileChooser();
+					String path = System.getProperty(WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY);
+					if (path != null) {
+						File file = new File(path);
+						if (file.exists()) {
+							fileChooser.setSelectedFile(file);
+						}
+					}
+					if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+						final File selectedFile = fileChooser.getSelectedFile();
+
+						System.setProperty(WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY, selectedFile.getAbsolutePath());
+					}
+				}
+			});
+		}
+		return selectChromeDriverButton;
+	}
 	
 	
 	
@@ -381,9 +413,10 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			panelCrawljax.add(getClickAllElems(), LayoutHelper.getGBC(0, 2, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
 			jLabel5.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.browsers"));
 			panelCrawljax.add(jLabel5, LayoutHelper.getGBC(0, 3, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			panelCrawljax.add(getFirefox(), LayoutHelper.getGBC(0, 4, 3,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			panelCrawljax.add(getChrome(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(25,2,2,2)));
-			panelCrawljax.add(getHtmlunit(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(50,2,2,2)));
+			panelCrawljax.add(getFirefox(), LayoutHelper.getGBC(0, 4, 1,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
+			panelCrawljax.add(getChrome(), LayoutHelper.getGBC(0, 5, 1,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
+			panelCrawljax.add(getHtmlunit(), LayoutHelper.getGBC(0, 6, 1,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
+			panelCrawljax.add(getSelectChromeDriverButton(), LayoutHelper.getGBC(0, 7, 1,  1.0D, 1, GridBagConstraints.NONE, new Insets(10,2,2,2)));
 		
 		}
 		
