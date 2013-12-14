@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Zest - Scripting Security Tests</name>
-	<version>10</version>
+	<version>11</version>
 	<description>A graphical security scripting language..</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Misc bug fixes</changes>
+	<changes>Changed to depend on core ExtensionScript to avoid NullPointerException (Issue 848)</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.zest.ExtensionZest</extension>

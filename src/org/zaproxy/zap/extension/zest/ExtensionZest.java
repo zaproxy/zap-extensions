@@ -93,6 +93,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	private static final Logger logger = Logger.getLogger(ExtensionZest.class);
 
+	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
+
 	private ZestResultsPanel zestResultsPanel = null;
 
 	private ZestTreeModel zestTreeModel = null;
@@ -111,6 +113,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	// Cut-n-paste stuff
 	private List<ScriptNode> cnpNodes = null;
 	private boolean cutNodes = false;
+
+	static {
+		List<Class<?>> dependencies = new ArrayList<>(1);
+		dependencies.add(ExtensionScript.class);
+		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
+	}
 
 	public ExtensionZest() {
 		super();
@@ -1266,4 +1274,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		return lastRunScript;
 	}
 
+	@Override
+	public List<Class<?>> getDependencies() {
+		return EXTENSION_DEPENDENCIES;
+	}
 }
