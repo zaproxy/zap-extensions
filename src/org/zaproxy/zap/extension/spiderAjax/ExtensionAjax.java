@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
@@ -276,7 +277,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		}
 	}
 	
-	SpiderThread createSpiderThread(String url, boolean inScope, SpiderListener spiderListener) {
+	SpiderThread createSpiderThread(String url, boolean inScope, SpiderListener spiderListener) throws URIException {
 		SpiderThread spiderThread = new SpiderThread(url, this, inScope, spiderListener);
 		spiderThread.addSpiderListener(getSpiderListener());
 		

@@ -20,11 +20,14 @@ package org.zaproxy.zap.extension.spiderAjax;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.crawljax.core.CrawlSession;
 
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 
 import com.crawljax.browser.EmbeddedBrowser;
 import com.crawljax.browser.EmbeddedBrowser.BrowserType;
@@ -74,6 +77,8 @@ public class SpiderThread implements Runnable {
 	private HttpResponseHeader outOfScopeResponseHeader;
 	private HttpResponseBody outOfScopeResponseBody;
 	private List<SpiderListener> spiderListeners;
+	private final List<String> exclusionList;
+	private final String targetHost;
 
 	/**
 	 * 
@@ -81,7 +86,7 @@ public class SpiderThread implements Runnable {
 	 * @param extension
 	 * @param inScope
 	 */
-	SpiderThread(String url, ExtensionAjax extension, boolean inScope, SpiderListener spiderListener) {
+	SpiderThread(String url, ExtensionAjax extension, boolean inScope, SpiderListener spiderListener) throws URIException {
 		this.url = url;
 		this.extension = extension;
 		this.spiderInScope = inScope;
@@ -89,6 +94,8 @@ public class SpiderThread implements Runnable {
 		spiderListeners = new ArrayList<>(2);
 		spiderListeners.add(spiderListener);
 		this.session = extension.getModel().getSession();
+		this.exclusionList = session.getExcludeFromSpiderRegexs();
+		this.targetHost = new URI(url, true).getHost();
 		this.initiProxy();
 
 		createOutOfScopeResponse(extension.getMessages().getString("spiderajax.outofscope.response"));
@@ -202,7 +209,6 @@ public class SpiderThread implements Runnable {
 			crawlConf.setProxyConfiguration(this.getProxyConf());
 
 			// we add the plugins
-			crawlConf.addPlugin(new SpiderFilter(this.extension, this));
 			crawlConf.addPlugin(new SpiderPostCrawlingPlugin());
 		}
 		return crawlConf;
@@ -334,9 +340,27 @@ public class SpiderThread implements Runnable {
 
 		@Override
 		public boolean onHttpRequestSend(HttpMessage httpMessage) {
+			boolean excluded = false;
 			final String uri = httpMessage.getRequestHeader().getURI().toString();
-			if (spiderInScope && !session.isInScope(uri)) {
-				logger.debug("Excluding request [" + uri + "] not in scope.");
+			if (spiderInScope) {
+				if (!session.isInScope(uri)) {
+					logger.debug("Excluding request [" + uri + "] not in scope.");
+					excluded = true;
+				}
+			} else if (!targetHost.equalsIgnoreCase(httpMessage.getRequestHeader().getHostName())) {
+				logger.debug("Excluding request [" + uri + "] not on target site [" + targetHost + "].");
+				excluded = true;
+			}
+			if (!excluded) {
+				for (String regex : exclusionList) {
+					if (Pattern.matches(regex, uri)) {
+						logger.debug("Excluding request [" + uri + "] matched regex [" + regex + "].");
+						excluded = true;
+					}
+				}
+			}
+
+			if (excluded) {
 				setOutOfScopeResponse(httpMessage);
 				return true;
 			}

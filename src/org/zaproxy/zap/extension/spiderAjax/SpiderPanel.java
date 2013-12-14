@@ -34,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -615,12 +616,17 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 	 * @param inScope if it is in scope
 	 */
 	public void startScan(String site, boolean inScope) {
+		try {
+			this.runnable = extension.createSpiderThread(site, inScope, this);
+		} catch (URIException e) {
+			logger.error(e);
+			return;
+		}
 		this.getStartScanButton().setEnabled(false);
 		this.getStopScanButton().setEnabled(true);
 		this.activeScans.add(site);
 		this.setActiveScanLabels();
 		this.targetSite = site;
-		this.runnable = extension.createSpiderThread(site, inScope, this);
 		try {
 			new Thread(runnable).start();
 		} catch (Exception e) {
