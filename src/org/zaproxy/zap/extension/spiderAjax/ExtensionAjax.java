@@ -25,6 +25,7 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -34,7 +35,6 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.ProxyListenerLog;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.api.API;
@@ -56,7 +56,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private PopupMenuAjaxSiteInScope popupMenuInScope = null;
 	private OptionsAjaxSpider optionsAjaxSpider = null;
 	private List<String> excludeList = null;
-	private ProxyAjax proxy = null;
 	private ChromeAlertDialog addDialog = null;
 	private boolean spiderRunning;
 	private SpiderListener spiderListener;
@@ -70,16 +69,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	public ExtensionAjax() throws ClassNotFoundException {
 		super(NAME);
 		initialize();
-	}
-
-	/**
-	 * @return the new ajax proxy
-	 */
-	public ProxyAjax getProxy() {
-		if (this.proxy == null) {
-			this.proxy = new ProxyAjax(this, getAjaxSpiderParam(), Model.getSingleton().getOptionsParam().getConnectionParam());
-		}
-		return this.proxy;
 	}
 
 
@@ -144,10 +133,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
             getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getSpiderPanel().getScanStatus().getCountLabel());
         }
         
-        if (proxy != null) {
-            proxy.stopServer();
-        }
-
         super.unload();
     }
 
@@ -311,6 +296,20 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	public void showChromeAlert() {
 		addDialog = new ChromeAlertDialog(getView().getMainFrame(), false, this);
 		addDialog.setVisible(true);
+	}
+
+	/**
+	 * This method checks if the chromedriver is available
+	 * @return true if available, false otherwise.
+	 */
+	public boolean isChromeAvail(){
+		try{
+			new ChromeDriver().quit();
+		} catch (Exception e) {
+			logger.error(e);
+			return false;
+		}
+		return true;
 	}
 	
 	private class SpiderSessionChangedListener implements SessionChangedListener {

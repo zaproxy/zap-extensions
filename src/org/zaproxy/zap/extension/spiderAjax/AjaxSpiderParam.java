@@ -56,26 +56,17 @@ public class AjaxSpiderParam extends AbstractParam {
 
     private static final String CONFIG_VERSION_KEY = AJAX_SPIDER_BASE_KEY + ".configVersion";
 
-    private static final String PROXY_IP_KEY = AJAX_SPIDER_BASE_KEY + ".proxyIp";
-    private static final String PROXY_PORT_KEY = AJAX_SPIDER_BASE_KEY + ".proxyPort";
-
     private static final String NUMBER_OF_BROWSERS_KEY = AJAX_SPIDER_BASE_KEY + ".numberOfBrowsers";
 
     private static final String BROWSER_ID_KEY = AJAX_SPIDER_BASE_KEY + ".browserId";
 
     private static final String CRAWL_IN_DEPTH_KEY = AJAX_SPIDER_BASE_KEY + ".crawlInDepth";
 
-    private static final String DEFAULT_PROXY_IP = "localhost";
-    private static final int DEFAULT_PROXY_PORT = 8081;
-
     private static final int DEFAULT_NUMBER_OF_BROWSERS = 1;
 
     private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
 
     private static final boolean DEFAULT_CRAWL_IN_DEPTH = false;
-
-    private String proxyIp;
-    private int proxyPort;
 
     private int numberOfBrowsers;
     private int numberOfThreads;
@@ -96,18 +87,6 @@ public class AjaxSpiderParam extends AbstractParam {
 
         if (configVersion == -1) {
             getConfig().setProperty(CONFIG_VERSION_KEY, Integer.valueOf(CONFIG_VERSION));
-        }
-
-        try {
-            this.proxyIp = getConfig().getString(PROXY_IP_KEY, DEFAULT_PROXY_IP);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the proxy ip: " + e.getMessage(), e);
-        }
-
-        try {
-            this.proxyPort = getConfig().getInt(PROXY_PORT_KEY, DEFAULT_PROXY_PORT);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the proxy port: " + e.getMessage(), e);
         }
 
         try {
@@ -135,24 +114,6 @@ public class AjaxSpiderParam extends AbstractParam {
         } catch (ConversionException e) {
             logger.error("Error while loading the crawl in depth option: " + e.getMessage(), e);
         }
-    }
-
-    public String getProxyIp() {
-        return proxyIp;
-    }
-
-    public void setProxyIp(String proxyIp) {
-        this.proxyIp = proxyIp;
-        getConfig().setProperty(PROXY_IP_KEY, proxyIp);
-    }
-
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    public void setProxyPort(int proxyPort) {
-        this.proxyPort = proxyPort;
-        getConfig().setProperty(PROXY_PORT_KEY, Integer.valueOf(proxyPort));
     }
 
     public int getNumberOfBrowsers() {

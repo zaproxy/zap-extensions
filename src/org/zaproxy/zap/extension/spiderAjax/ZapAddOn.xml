@@ -15,7 +15,8 @@
 	Fixed a ChromeDriver process leak that occurred after closing the "Options" with Chrome browser selected (Issue 831).<br>
 	Changed to verify and deny all requests outside of spider scope (Issue 833).<br>
 	Updated Crawljax library (version 3.4) and dependencies (Issue 834).<br>
-	Changed to allow to set ChromeDriver's path through the "AJAX Spider" options (Issue 835).
+	Changed to allow to set ChromeDriver's path through the "AJAX Spider" options (Issue 835).<br>
+	Changed to automatically configure the proxy settings (Issue 836).
 	]]>
 	</changes>
 	<dependson/>

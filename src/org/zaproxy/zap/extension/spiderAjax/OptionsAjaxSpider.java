@@ -17,10 +17,9 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
-import java.awt.CardLayout;
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -32,15 +31,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.Browser;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
-import org.zaproxy.zap.utils.ZapPortNumberSpinner;
-import org.zaproxy.zap.utils.ZapTextField;
-import org.zaproxy.zap.view.LayoutHelper;
 
 public class OptionsAjaxSpider extends AbstractParamPanel {
 
@@ -49,21 +44,15 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private static final long serialVersionUID = -1350537974139536669L;
 
 	private ExtensionAjax extension=null;
-	private JPanel panelLocalProxy = null;
 	private JPanel panelCrawljax = null;
-	private JPanel panelProxy = null;
-	private ZapTextField txtProxyIp = null;
 	private ZapNumberSpinner txtNumBro = null;
     
-	// ZAP: Do not allow invalid port numbers
-	private ZapPortNumberSpinner spinnerProxyPort = null;
 	private JCheckBox ClickAllElems = null;
 	private JRadioButton firefox = null;
 	private JRadioButton chrome = null;
 	private JRadioButton ie = null;
 	private JRadioButton htmlunit = null;
 	private JButton selectChromeDriverButton;
-	private JLabel jLabel6 = null;
 	private JLabel browsers = null;
 	private static final Logger logger = Logger.getLogger(OptionsAjaxSpider.class);
 
@@ -82,12 +71,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	 * 
 	 */
 	private void initialize() {
-        this.setLayout(new CardLayout());
+        this.setLayout(new BorderLayout());
         this.setName(this.extension.getMessages().getString("spiderajax.options.title"));
 	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
 	    	this.setSize(391, 320);
 	    }
-        this.add(getPanelProxy(), getPanelProxy().getName()); 
+        this.add(getPanelCrawljax(), BorderLayout.PAGE_START); 
 	}
 	
 	/**
@@ -100,31 +89,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			txtNumBro = new ZapNumberSpinner(1, 1, Integer.MAX_VALUE);
 		}
 		return txtNumBro;
-	}
-	
-	/**
-	 * This method initializes txtProxyIp	
-	 * 	
-	 * @return org.zaproxy.zap.utils.ZapTextField	
-	 */    
-	private ZapTextField getTxtProxyIp() {
-		if (txtProxyIp == null) {
-			txtProxyIp = new ZapTextField("");
-		}
-		return txtProxyIp;
-	}
-	
-	/**
-	 * This method initializes spinnerProxyPort	
-	 * 	
-	 * @return ZapPortNumberSpinner
-	 */    
-	private ZapPortNumberSpinner getSpinnerProxyPort() {
-		if (spinnerProxyPort == null) {
-			// ZAP: Do not allow invalid port numbers
-			spinnerProxyPort = new ZapPortNumberSpinner(8081);
-		}
-		return spinnerProxyPort;
 	}
 	
 
@@ -197,10 +161,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    OptionsParam optionsParam = (OptionsParam) obj;
 	    AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
 
-	    // set Local Proxy parameters
-	    txtProxyIp.setText(ajaxSpiderParam.getProxyIp());
-	    txtProxyIp.discardAllEdits();
-	    spinnerProxyPort.setValue(ajaxSpiderParam.getProxyPort());
 	    txtNumBro.setValue(Integer.valueOf(ajaxSpiderParam.getNumberOfBrowsers()));
 	    getClickAllElems().setSelected(ajaxSpiderParam.isCrawlInDepth());
 	    
@@ -225,7 +185,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	@Override
 	public void validateParam(Object obj) throws Exception {
 		
-		if(getChrome().isSelected() && !this.extension.getProxy().isChromeAvail()){
+		if(getChrome().isSelected() && !this.extension.isChromeAvail()){
 			getFirefox().setSelected(true);	
 			logger.info("ChromeDriver is not available, switching to the default browser.");
 			this.extension.showChromeAlert();
@@ -238,8 +198,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
 
 		ajaxSpiderParam.setCrawlInDepth(getClickAllElems().isSelected());
-		ajaxSpiderParam.setProxyIp(txtProxyIp.getText());
-		ajaxSpiderParam.setProxyPort(spinnerProxyPort.getValue());
 		ajaxSpiderParam.setNumberOfBrowsers(txtNumBro.getValue().intValue());
 		
 		if(getFirefox().isSelected()){
@@ -251,86 +209,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		}
 	}
 
-
-    
-	/**
-	 * This method initializes panelAjaxProxy
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
-	private JPanel getPanelLocalProxy() {
-		if (panelLocalProxy == null) {
-			jLabel6 = new JLabel();
-			GridBagConstraints gridBagConstraints15 = new GridBagConstraints();
-			java.awt.GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			java.awt.GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
-			java.awt.GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			java.awt.GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-
-			javax.swing.JLabel jLabel = new JLabel();
-			javax.swing.JLabel jLabel1 = new JLabel();
-			
-			panelLocalProxy = new JPanel();
-			panelLocalProxy.setLayout(new GridBagLayout());
-			panelLocalProxy.setBorder(javax.swing.BorderFactory.createTitledBorder(
-					null, this.extension.getMessages().getString("spiderajax.proxy.local.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, 
-					javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11), java.awt.Color.black));	// ZAP: i18n
-			jLabel.setText("Address (eg localhost, 127.0.0.1)");
-			gridBagConstraints4.gridx = 0;
-			gridBagConstraints4.gridy = 0;
-			gridBagConstraints4.ipadx = 0;
-			gridBagConstraints4.ipady = 0;
-			gridBagConstraints4.anchor = java.awt.GridBagConstraints.WEST;
-			gridBagConstraints4.insets = new java.awt.Insets(2,2,2,2);
-			gridBagConstraints4.weightx = 0.5D;
-			gridBagConstraints4.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints5.gridx = 1;
-			gridBagConstraints5.gridy = 0;
-			gridBagConstraints5.weightx = 0.5D;
-			gridBagConstraints5.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints5.ipadx = 50;
-			gridBagConstraints5.ipady = 0;
-			gridBagConstraints5.anchor = java.awt.GridBagConstraints.EAST;
-			gridBagConstraints5.insets = new java.awt.Insets(2,2,2,2);
-			gridBagConstraints6.gridx = 0;
-			gridBagConstraints6.gridy = 1;
-			gridBagConstraints6.ipadx = 0;
-			gridBagConstraints6.ipady = 0;
-			gridBagConstraints6.anchor = java.awt.GridBagConstraints.WEST;
-			gridBagConstraints6.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints6.insets = new java.awt.Insets(2,2,2,2);
-			gridBagConstraints6.weightx = 0.5D;
-			gridBagConstraints7.gridx = 1;
-			gridBagConstraints7.gridy = 1;
-			gridBagConstraints7.weightx = 0.5D;
-			gridBagConstraints7.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints7.ipadx = 50;
-			gridBagConstraints7.ipady = 0;
-			gridBagConstraints7.anchor = java.awt.GridBagConstraints.EAST;
-			gridBagConstraints7.insets = new java.awt.Insets(2,2,2,2);
-			
-	
-			
-			
-			jLabel1.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.port"));
-			jLabel6.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.browser"));
-			gridBagConstraints15.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints15.gridx = 0;
-			gridBagConstraints15.gridy = 4;
-			gridBagConstraints15.insets = new java.awt.Insets(2,2,2,2);
-			gridBagConstraints15.weightx = 1.0D;
-			gridBagConstraints15.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints15.gridwidth = 2;
-			panelLocalProxy.add(jLabel, gridBagConstraints4);
-			panelLocalProxy.add(getTxtProxyIp(), gridBagConstraints5);
-			panelLocalProxy.add(jLabel1, gridBagConstraints6);
-			panelLocalProxy.add(getSpinnerProxyPort(), gridBagConstraints7);
-			panelLocalProxy.add(jLabel6, gridBagConstraints15);
-			
-		}
-		return panelLocalProxy;
-	}
-	
 	private JButton getSelectChromeDriverButton() {
 		if (selectChromeDriverButton == null) {
 			selectChromeDriverButton = new JButton(this.extension.getMessages().getString(
@@ -357,10 +235,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		}
 		return selectChromeDriverButton;
 	}
-	
-	
-	
-	
+
 	/**
 	 * This method initializes panelAjaxProxy
 	 * 	
@@ -368,123 +243,50 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	 */    
 	private JPanel getPanelCrawljax() {
 		if (panelCrawljax == null) {
-			jLabel6 = new JLabel();
-			java.awt.GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
-			java.awt.GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			
-			panelCrawljax = new JPanel();
-			panelCrawljax.setLayout(new GridBagLayout());
-			panelCrawljax.setBorder(javax.swing.BorderFactory.createTitledBorder(
-					null, this.extension.getMessages().getString("spiderajax.proxy.crawljax.title"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, 
-					javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11), java.awt.Color.black));	// ZAP: i18n
-		
-			gridBagConstraints5.gridx = 1;
-			gridBagConstraints5.gridy = 0;
-			gridBagConstraints5.weightx = 0.5D;
-			gridBagConstraints5.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints5.ipadx = 0;
-			gridBagConstraints5.ipady = 0;
-			gridBagConstraints5.anchor = java.awt.GridBagConstraints.EAST;
-			gridBagConstraints5.insets = new java.awt.Insets(2,2,2,2);
-			gridBagConstraints4.gridx = 0;
-			gridBagConstraints4.gridy = 0;
-			gridBagConstraints4.ipadx = 0;
-			gridBagConstraints4.ipady = 0;
-			gridBagConstraints4.anchor = java.awt.GridBagConstraints.WEST;
-			gridBagConstraints4.insets = new java.awt.Insets(2,2,2,2);
-			gridBagConstraints4.weightx = 0.5D;
-			gridBagConstraints4.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			panelCrawljax = new JPanel(new GridBagLayout());
 			
 			ButtonGroup browsersButtonGroup = new ButtonGroup();
 			browsersButtonGroup.add(getFirefox());
 			browsersButtonGroup.add(getChrome());
 			browsersButtonGroup.add(getHtmlunit());
 			
-			browsers = new JLabel();
-			
-			browsers.setText(this.extension.getMessages().getString("spiderajax.options.label.browsers"));
+			browsers = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.browsers"));
 
-			panelCrawljax.add(browsers, gridBagConstraints4);
-			panelCrawljax.add(getTxtNumBro(), gridBagConstraints5);
-			
-			javax.swing.JLabel jLabel5 = new JLabel();
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.gridx = 0;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new java.awt.Insets(2,2,2,2);
+			gbc.anchor = GridBagConstraints.LINE_START;
+			gbc.weightx = 0.5D;
 
+			panelCrawljax.add(browsers, gbc);
+			gbc.gridx++;
+			gbc.anchor = GridBagConstraints.LINE_END;
 			
-			panelCrawljax.add(getClickAllElems(), LayoutHelper.getGBC(0, 2, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			jLabel5.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.browsers"));
-			panelCrawljax.add(jLabel5, LayoutHelper.getGBC(0, 3, 3,  1.0D, 0, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			panelCrawljax.add(getFirefox(), LayoutHelper.getGBC(0, 4, 1,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			panelCrawljax.add(getChrome(), LayoutHelper.getGBC(0, 5, 1,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			panelCrawljax.add(getHtmlunit(), LayoutHelper.getGBC(0, 6, 1,  1.0D, 1, GridBagConstraints.HORIZONTAL, new Insets(2,2,2,2)));
-			panelCrawljax.add(getSelectChromeDriverButton(), LayoutHelper.getGBC(0, 7, 1,  1.0D, 1, GridBagConstraints.NONE, new Insets(10,2,2,2)));
-		
+			panelCrawljax.add(getTxtNumBro(), gbc);
+			gbc.gridx = 0;
+			gbc.gridwidth = 2;
+			gbc.anchor = GridBagConstraints.LINE_START;
+			gbc.weightx = 1.0D;
+
+			panelCrawljax.add(getClickAllElems(), gbc);
+
+			panelCrawljax.add(new JLabel(this.extension.getMessages().getString("spiderajax.proxy.local.label.browsers")), gbc);
+			gbc.gridwidth = 1;
+
+			panelCrawljax.add(getFirefox(), gbc);
+
+			panelCrawljax.add(getChrome(), gbc);
+
+			panelCrawljax.add(getHtmlunit(), gbc);
+
+			gbc.fill = GridBagConstraints.NONE;
+			gbc.insets = new java.awt.Insets(8,2,2,2);
+			panelCrawljax.add(getSelectChromeDriverButton(), gbc);
 		}
 		
 		return panelCrawljax;
 	}
-	
-	/**
-	 * This method initializes panelAjaxProxy	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
-	private JPanel getPanelProxy() {
-		if (panelProxy == null) {
-			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-			panelProxy = new JPanel();
-
-			java.awt.GridBagConstraints gridBagConstraints14 = new GridBagConstraints();
-			GridBagConstraints gridBagConstraints91 = new GridBagConstraints();
-			java.awt.GridBagConstraints gridBagConstraints81 = new GridBagConstraints();
-
-			javax.swing.JLabel jLabel4 = new JLabel();
-
-			panelProxy.setLayout(new GridBagLayout());
-
-			panelProxy.setName(Constant.messages.getString("options.proxy.local.label.local"));
-		    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
-		    	panelProxy.setSize(303, 177);
-		    }
-			panelProxy.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
-			gridBagConstraints81.gridx = 0;
-			gridBagConstraints81.gridy = 0;
-			gridBagConstraints81.ipadx = 2;
-			gridBagConstraints81.ipady = 4;
-			gridBagConstraints81.insets = new java.awt.Insets(2,2,2,2);
-			gridBagConstraints81.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints81.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints81.weightx = 1.0D;
-			gridBagConstraints81.weighty = 1.0D;
-			gridBagConstraints91.gridx = 0;
-			gridBagConstraints91.gridy = 2;
-			gridBagConstraints91.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints91.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints91.weightx = 1.0D;
-			gridBagConstraints91.weighty = 0.0D;
-			gridBagConstraints91.ipady = 4;
-			gridBagConstraints91.ipadx = 2;
-			jLabel4.setText("");
-			gridBagConstraints14.fill = java.awt.GridBagConstraints.BOTH;
-			gridBagConstraints14.gridx = 0;
-			gridBagConstraints14.gridy = 2;
-			gridBagConstraints14.weightx = 1.0D;
-			gridBagConstraints14.weighty = 1.0D;
-			gridBagConstraints2.gridx = 0;
-			gridBagConstraints2.gridy = 1;
-			gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints2.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints2.insets = new java.awt.Insets(2,2,2,2);
-			gridBagConstraints2.weightx = 1.0D;
-			panelProxy.add(getPanelLocalProxy(), gridBagConstraints81);
-			panelProxy.add(getPanelCrawljax(), gridBagConstraints91);
-			panelProxy.add(jLabel4, gridBagConstraints14);
-			//TODO add proxy configuration compatibility in crawljax
-			//panelProxy.add(getIE(), LayoutHelper.getGBC(0, 4, 4,  2.0D, 2, GridBagConstraints.HORIZONTAL+2, new Insets(50,2,2,2)));
-
-		}
-		return panelProxy;
-	}
-
 	
 	/**
 	 * @return the help file of the plugin

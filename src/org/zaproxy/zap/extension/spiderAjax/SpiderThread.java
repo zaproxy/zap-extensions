@@ -42,6 +42,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.Browser;
 import org.zaproxy.zap.extension.spiderAjax.proxy.OverwriteMessageProxyListener;
+import org.zaproxy.zap.extension.spiderAjax.proxy.ProxyServer;
 import org.zaproxy.zap.network.HttpResponseBody;
 
 import com.crawljax.browser.EmbeddedBrowser;
@@ -59,6 +60,8 @@ import com.google.common.collect.ImmutableSortedSet;
 
 public class SpiderThread implements Runnable {
 
+	private static final String LOCAL_PROXY_IP = "127.0.0.1";
+
 	// crawljax config
 	private static final boolean RAND_INPUT_FORMS = true;
 	private static final int MAX_DEPTH = 10;	// TODO - make this configurable by the user
@@ -75,6 +78,8 @@ public class SpiderThread implements Runnable {
 	private List<SpiderListener> spiderListeners;
 	private final List<String> exclusionList;
 	private final String targetHost;
+	private ProxyServer proxy;
+	private int proxyPort;
 
 	/**
 	 * 
@@ -92,9 +97,12 @@ public class SpiderThread implements Runnable {
 		this.session = extension.getModel().getSession();
 		this.exclusionList = session.getExcludeFromSpiderRegexs();
 		this.targetHost = new URI(url, true).getHost();
-		this.initiProxy();
 
 		createOutOfScopeResponse(extension.getMessages().getString("spiderajax.outofscope.response"));
+
+		proxy = new ProxyServer();
+		proxy.setConnectionParam(extension.getModel().getOptionsParam().getConnectionParam());
+		proxy.addOverwriteMessageProxyListener(new SpiderProxyListener());
 	}
 
 	private void createOutOfScopeResponse(String response) {
@@ -119,16 +127,6 @@ public class SpiderThread implements Runnable {
 		outOfScopeResponseHeader = responseHeader;
 	}
 
-	
-	/**
-	 * This method refreshes the proxy
-	 */
-	private void initiProxy() {
-		this.extension.getProxy().updateProxyConf();
-		this.extension.getProxy().getProxy().removeOverwriteMessageProxyListeners();
-		this.extension.getProxy().getProxy().addOverwriteMessageProxyListener(new SpiderProxyListener());
-	}
-
 	/**
 	 * 
 	 * @return the SpiderThread object
@@ -148,9 +146,7 @@ public class SpiderThread implements Runnable {
 	public CrawljaxConfiguration createCrawljaxConfiguration() {
 		CrawljaxConfigurationBuilder configurationBuilder = CrawljaxConfiguration.builderFor(this.url);
 
-		configurationBuilder.setProxyConfig(ProxyConfiguration.manualProxyOn(
-				this.extension.getAjaxSpiderParam().getProxyIp(),
-				this.extension.getAjaxSpiderParam().getProxyPort()));
+		configurationBuilder.setProxyConfig(ProxyConfiguration.manualProxyOn(LOCAL_PROXY_IP, proxyPort));
 
 		configurationBuilder.setBrowserConfig(new BrowserConfiguration(
 				com.crawljax.browser.EmbeddedBrowser.BrowserType.FIREFOX,
@@ -202,6 +198,9 @@ public class SpiderThread implements Runnable {
 		logger.info("Running crawljax targeting " + this.url );
 		this.running = true;
 		notifyListenersSpiderStarted();
+		logger.info("Starting proxy...");
+		this.proxyPort = proxy.startServer(LOCAL_PROXY_IP, 0, true);
+		logger.info("Proxy started, listening at port [" + proxyPort + "].");
 		try {
 			crawljax = new CrawljaxRunner(createCrawljaxConfiguration());
 			crawljax.call();
@@ -209,8 +208,18 @@ public class SpiderThread implements Runnable {
 			logger.error(e, e);
 		} finally {
 			this.running = false;
+			logger.info("Stopping proxy...");
+			stopProxy();
+			logger.info("Proxy stopped.");
 			notifyListenersSpiderStoped();
 			logger.info("Finished crawljax targeting " + this.url );
+		}
+	}
+
+	private void stopProxy() {
+		if (proxy != null) {
+			proxy.stopServer();
+			proxy = null;
 		}
 	}
 
