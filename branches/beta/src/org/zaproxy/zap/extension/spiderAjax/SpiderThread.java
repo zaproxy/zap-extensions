@@ -20,55 +20,51 @@ package org.zaproxy.zap.extension.spiderAjax;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import com.crawljax.core.CrawlSession;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-
-import com.crawljax.browser.EmbeddedBrowser;
-import com.crawljax.browser.EmbeddedBrowser.BrowserType;
-import com.crawljax.browser.WebDriverBackedEmbeddedBrowser;
-import com.crawljax.browser.WebDriverBrowserBuilder;
-import com.crawljax.core.CrawljaxController;
-import com.crawljax.core.configuration.CrawlSpecification;
-import com.crawljax.core.configuration.CrawljaxConfiguration;
-import com.crawljax.core.configuration.CrawljaxConfigurationReader;
-import com.crawljax.core.configuration.ProxyConfiguration;
-import com.crawljax.core.configuration.ThreadConfiguration;
-import com.crawljax.core.plugin.PostCrawlingPlugin;
-
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.Browser;
 import org.zaproxy.zap.extension.spiderAjax.proxy.OverwriteMessageProxyListener;
 import org.zaproxy.zap.network.HttpResponseBody;
 
+import com.crawljax.browser.EmbeddedBrowser;
+import com.crawljax.browser.WebDriverBackedEmbeddedBrowser;
+import com.crawljax.core.CrawljaxRunner;
+import com.crawljax.core.configuration.BrowserConfiguration;
+import com.crawljax.core.configuration.CrawlRules.CrawlRulesBuilder;
+import com.crawljax.core.configuration.CrawljaxConfiguration;
+import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurationBuilder;
+import com.crawljax.core.configuration.ProxyConfiguration;
+import com.crawljax.core.configuration.ProxyConfiguration.ProxyType;
+import com.crawljax.core.plugin.Plugins;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSortedSet;
+
 public class SpiderThread implements Runnable {
 
 	// crawljax config
-	private static final boolean BROWSER_BOOTING = false;
-	private static final int MAX_STATES = 0;
 	private static final boolean RAND_INPUT_FORMS = true;
 	private static final int MAX_DEPTH = 10;	// TODO - make this configurable by the user
 	private String url = null;
 	private ExtensionAjax extension = null;
-	private String host = null;
-	private int port;
-	private CrawljaxConfiguration crawlConf = null;
-	private ThreadConfiguration threConf = null;
-	private CrawljaxController crawljax = null;
-	private CrawlSpecification crawler = null;
-	private ProxyConfiguration proxyConf = null;
+	private CrawljaxRunner crawljax;
 	private final boolean spiderInScope;
 	private boolean running;
 	private final Session session;
@@ -133,22 +129,6 @@ public class SpiderThread implements Runnable {
 		this.extension.getProxy().getProxy().addOverwriteMessageProxyListener(new SpiderProxyListener());
 	}
 
-	
-	/** 
-	 * @return the port to be used by crawljax
-	 */
-	public int getPort() {
-		return this.port;
-	}
-
-	
-	/**
-	 * @return the host to be used in the proxy config
-	 */
-	public String getHost() {
-		return this.host;
-	}
-	
 	/**
 	 * 
 	 * @return the SpiderThread object
@@ -165,120 +145,72 @@ public class SpiderThread implements Runnable {
 		return this.running;
 	}
 	
+	public CrawljaxConfiguration createCrawljaxConfiguration() {
+		CrawljaxConfigurationBuilder configurationBuilder = CrawljaxConfiguration.builderFor(this.url);
 
-	
-	/**
-	 * @return the proxy configuration of crawljax
-	 */
-	public ProxyConfiguration getProxyConf() {
-		if (proxyConf == null) {
-			proxyConf = new ProxyConfiguration();
-			proxyConf.setHostname(this.getHost());
-			proxyConf.setPort(this.getPort());
+		configurationBuilder.setProxyConfig(ProxyConfiguration.manualProxyOn(
+				this.extension.getAjaxSpiderParam().getProxyIp(),
+				this.extension.getAjaxSpiderParam().getProxyPort()));
+
+		configurationBuilder.setBrowserConfig(new BrowserConfiguration(
+				com.crawljax.browser.EmbeddedBrowser.BrowserType.FIREFOX,
+				this.extension.getAjaxSpiderParam().getNumberOfBrowsers(),
+				new AjaxSpiderBrowserBuilder(extension.getAjaxSpiderParam().getBrowser())));
+
+		if (this.extension.getAjaxSpiderParam().isCrawlInDepth()) {
+			CrawlRulesBuilder crawlRulesBuilder = configurationBuilder.crawlRules();
+			crawlRulesBuilder.click("a");
+			crawlRulesBuilder.click("button");
+			crawlRulesBuilder.click("td");
+			crawlRulesBuilder.click("span");
+			crawlRulesBuilder.click("div");
+			crawlRulesBuilder.click("tr");
+			crawlRulesBuilder.click("ol");
+			crawlRulesBuilder.click("li");
+			crawlRulesBuilder.click("radio");
+			crawlRulesBuilder.click("non");
+			crawlRulesBuilder.click("meta");
+			crawlRulesBuilder.click("refresh");
+			crawlRulesBuilder.click("xhr");
+			crawlRulesBuilder.click("relative");
+			crawlRulesBuilder.click("link");
+			crawlRulesBuilder.click("self");
+			crawlRulesBuilder.click("form");
+			crawlRulesBuilder.click("select");
+			crawlRulesBuilder.click("input");
+			crawlRulesBuilder.click("option");
+			crawlRulesBuilder.click("img");
+			crawlRulesBuilder.click("p");
 		}
-		return proxyConf;
+
+		configurationBuilder.crawlRules().insertRandomDataInInputForms(RAND_INPUT_FORMS);
+		// TODO - make this configurable by the user
+		configurationBuilder.crawlRules().waitAfterEvent(1000, TimeUnit.MILLISECONDS);
+
+		// TODO - make this configurable by the user
+		configurationBuilder.setUnlimitedStates();
+		configurationBuilder.setMaximumDepth(MAX_DEPTH);
+
+		return configurationBuilder.build();
 	}
-
-	
-	/**
-	 * @return the thread configuration for crawljax
-	 */
-	public ThreadConfiguration getThreadConf() {
-		if (threConf == null) {
-			threConf = new ThreadConfiguration();
-			threConf.setBrowserBooting(BROWSER_BOOTING);
-			threConf.setNumberBrowsers(extension.getAjaxSpiderParam().getNumberOfBrowsers());
-			threConf.setNumberThreads(extension.getAjaxSpiderParam().getNumberOfThreads());
-		}
-		return threConf;
-	}
-
-	
-	/**
-	 * @return the crawljax configuration (thread conf+spec+proxy conf+plugins)
-	 */
-	public CrawljaxConfiguration getCrawConf() {
-		if (crawlConf == null) {
-			crawlConf = new CrawljaxConfiguration();
-			crawlConf.setThreadConfiguration(this.getThreadConf());
-			crawlConf.setBrowser(getBrowserType(this.extension.getAjaxSpiderParam().getBrowser()));
-			crawlConf.setBrowserBuilder(new AjaxSpiderBrowserBuilder());
-			crawlConf.setCrawlSpecification(this.getCrawSpec());
-			this.port = this.extension.getAjaxSpiderParam().getProxyPort();
-			this.host = this.extension.getAjaxSpiderParam().getProxyIp();
-			crawlConf.setProxyConfiguration(this.getProxyConf());
-
-			// we add the plugins
-			crawlConf.addPlugin(new SpiderPostCrawlingPlugin());
-		}
-		return crawlConf;
-	}
-
-	private static BrowserType getBrowserType(Browser browser) {
-		BrowserType browserType;
-		switch (browser) {
-		case CHROME:
-			browserType = BrowserType.chrome;
-			break;
-		case FIREFOX:
-			browserType = BrowserType.firefox;
-			break;
-		case HTML_UNIT:
-			browserType = BrowserType.htmlunit;
-			break;
-		default:
-			browserType = BrowserType.firefox;
-			break;
-		}
-		return browserType;
-	}
-
-	
-	/**
-	 * @return the new crawljax specification
-	 */
-	public CrawlSpecification getCrawSpec() {
-		if (crawler == null) {
-			crawler = new CrawlSpecification(this.url);
-			crawler.setMaximumStates(MAX_STATES);
-			crawler.setDepth(MAX_DEPTH);
-			crawler.setRandomInputInForms(RAND_INPUT_FORMS);
-			crawler.setClickOnce(true);
-			// TODO - make this configurable by the user
-			crawler.setWaitTimeAfterEvent(1000);
-			if (this.extension.getAjaxSpiderParam().isCrawlInDepth()) {
-				crawler.clickMoreElements();
-			} else {
-				crawler.clickDefaultElements();
-			}
-		}
-		return crawler;
-	}
-
 	
 	/**
 	 * Instantiates the crawljax classes. 
 	 */
 	@Override
 	public void run() {
+		logger.info("Running crawljax targeting " + this.url );
 		this.running = true;
 		notifyListenersSpiderStarted();
-		logger.info("Running crawljax targeting " + this.url );
-		Logger.getLogger("org.parosproxy.paros.core.proxy.ProxyThread").setLevel(Level.OFF);
-		Logger.getLogger("com.crawljax.browser.WebDriverBackedEmbeddedBrowser").setLevel(Level.OFF);
-		Logger.getLogger("org.openqa.selenium.remote.ErrorHandler").setLevel(Level.OFF);
-		Logger.getLogger("com.crawljax.core.state.StateVertix").setLevel(Level.OFF);
-		Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
-		Logger.getLogger("org.parosproxy.paros.network").setLevel(Level.OFF);
-		Logger.getLogger("org.openqa.selenium.remote").setLevel(Level.OFF);
-		Logger.getLogger("org.parosproxy.paros.view.SiteMapPanel").setLevel(Level.OFF);
 		try {
-			crawljax = new CrawljaxController(getCrawConf());
-			crawljax.run();		
+			crawljax = new CrawljaxRunner(createCrawljaxConfiguration());
+			crawljax.call();
 		} catch (Exception e) {
 			logger.error(e, e);
 		} finally {
+			this.running = false;
 			notifyListenersSpiderStoped();
+			logger.info("Finished crawljax targeting " + this.url );
 		}
 	}
 
@@ -286,15 +218,7 @@ public class SpiderThread implements Runnable {
 	 * called by the buttons of the panel to stop the spider
 	 */
 	public void stopSpider() {
-		logger.info("Finished crawljax targeting " + this.url );
-		this.running = false;
-		try {
-		crawljax.terminate(false);
-		} catch (Exception e) {
-			logger.error(e, e);
-		} finally {
-			notifyListenersSpiderStoped();
-		}
+		crawljax.stop();
 	}
 
 	public void addSpiderListener(SpiderListener spiderListener) {
@@ -320,14 +244,6 @@ public class SpiderThread implements Runnable {
 	private void notifyListenersSpiderStoped() {
 		for (SpiderListener listener : spiderListeners) {
 			listener.spiderStopped();
-		}
-	}
-
-	private class SpiderPostCrawlingPlugin implements PostCrawlingPlugin {
-
-		@Override
-		public void postCrawling(CrawlSession arg0) {
-			notifyListenersSpiderStoped();
 		}
 	}
 
@@ -392,37 +308,133 @@ public class SpiderThread implements Runnable {
 		}
 	}
 
-	private static class AjaxSpiderBrowserBuilder extends WebDriverBrowserBuilder {
+	// NOTE: The implementation of this class was copied from com.crawljax.browser.WebDriverBrowserBuilder since it's not
+	// possible to correctly extend it because of DI issues.
+	// Changes:
+	// - Changed to set the properties to Firefox to enable SSL proxying;
+	// - Changed to use the custom browser enum;
+	// - Removed the code of browsers not (yet) supported;
+	// - Added support for HtmlUnit.
+	private static class AjaxSpiderBrowserBuilder implements Provider<EmbeddedBrowser> {
 
-		// Note: Implementation copied from base class but changed to also set the properties to enable SSL proxying.
+		@Inject
+		private CrawljaxConfiguration configuration;
+		@Inject
+		private Plugins plugins;
+
+		private final Browser browser;
+
+		public AjaxSpiderBrowserBuilder(Browser browser) {
+			super();
+			this.browser = browser;
+		}
+
+		/**
+		 * Build a new WebDriver based EmbeddedBrowser.
+		 * 
+		 * @return the new build WebDriver based embeddedBrowser
+		 */
 		@Override
-		public EmbeddedBrowser buildEmbeddedBrowser(CrawljaxConfigurationReader configuration) {
-			switch (configuration.getBrowser()) {
-			case firefox:
-				if (configuration.getProxyConfiguration() != null) {
-					FirefoxProfile profile = new FirefoxProfile();
+		public EmbeddedBrowser get() {
+			logger.debug("Setting up a Browser");
+			// Retrieve the config values used
+			ImmutableSortedSet<String> filterAttributes = configuration.getCrawlRules()
+					.getPreCrawlConfig()
+					.getFilterAttributeNames();
+			long crawlWaitReload = configuration.getCrawlRules().getWaitAfterReloadUrl();
+			long crawlWaitEvent = configuration.getCrawlRules().getWaitAfterEvent();
 
-					final String hostname = configuration.getProxyConfiguration().getHostname();
-					final int port = configuration.getProxyConfiguration().getPort();
-
-					profile.setPreference("network.proxy.http", hostname);
-					profile.setPreference("network.proxy.http_port", port);
-					profile.setPreference("network.proxy.ssl", hostname);
-					profile.setPreference("network.proxy.ssl_port", port);
-					profile.setPreference("network.proxy.type", configuration.getProxyConfiguration().getType().toInt());
-					profile.setPreference("network.proxy.no_proxies_on", "");
-
-					return WebDriverBackedEmbeddedBrowser.withDriver(
-							new FirefoxDriver(profile),
-							configuration.getFilterAttributeNames(),
-							configuration.getCrawlSpecificationReader().getWaitAfterReloadUrl(),
-							configuration.getCrawlSpecificationReader().getWaitAfterEvent());
-				}
+			// Determine the requested browser type
+			EmbeddedBrowser embeddedBrowser = null;
+			switch (browser) {
+			case FIREFOX:
+				embeddedBrowser = newFireFoxBrowser(filterAttributes, crawlWaitReload, crawlWaitEvent);
+				break;
+			case CHROME:
+				embeddedBrowser = newChromeBrowser(filterAttributes, crawlWaitReload, crawlWaitEvent);
+				break;
+			case HTML_UNIT:
+				embeddedBrowser = newHtmlUnitBrowser(filterAttributes, crawlWaitReload, crawlWaitEvent);
 				break;
 			default:
-
+				throw new IllegalStateException("Unrecognized browsertype " + browser);
 			}
-			return super.buildEmbeddedBrowser(configuration);
+			plugins.runOnBrowserCreatedPlugins(embeddedBrowser);
+			return embeddedBrowser;
+		}
+
+		private EmbeddedBrowser newFireFoxBrowser(
+				ImmutableSortedSet<String> filterAttributes,
+				long crawlWaitReload,
+				long crawlWaitEvent) {
+			if (configuration.getProxyConfiguration() != null) {
+				FirefoxProfile profile = new FirefoxProfile();
+				String lang = configuration.getBrowserConfig().getLangOrNull();
+				if (!Strings.isNullOrEmpty(lang)) {
+					profile.setPreference("intl.accept_languages", lang);
+				}
+
+				final String hostname = configuration.getProxyConfiguration().getHostname();
+				final int port = configuration.getProxyConfiguration().getPort();
+
+				profile.setPreference("network.proxy.http", hostname);
+				profile.setPreference("network.proxy.http_port", port);
+				profile.setPreference("network.proxy.type", configuration.getProxyConfiguration().getType().toInt());
+				profile.setPreference("network.proxy.ssl", hostname);
+				profile.setPreference("network.proxy.ssl_port", port);
+				/* use proxy for everything, including localhost */
+				profile.setPreference("network.proxy.no_proxies_on", "");
+
+				return WebDriverBackedEmbeddedBrowser.withDriver(
+						new FirefoxDriver(profile),
+						filterAttributes,
+						crawlWaitReload,
+						crawlWaitEvent);
+			}
+
+			return WebDriverBackedEmbeddedBrowser.withDriver(
+					new FirefoxDriver(),
+					filterAttributes,
+					crawlWaitEvent,
+					crawlWaitReload);
+		}
+
+		private EmbeddedBrowser newChromeBrowser(
+				ImmutableSortedSet<String> filterAttributes,
+				long crawlWaitReload,
+				long crawlWaitEvent) {
+			ChromeDriver driverChrome;
+			if (configuration.getProxyConfiguration() != null
+					&& configuration.getProxyConfiguration().getType() != ProxyType.NOTHING) {
+				ChromeOptions optionsChrome = new ChromeOptions();
+				String lang = configuration.getBrowserConfig().getLangOrNull();
+				if (!Strings.isNullOrEmpty(lang)) {
+					optionsChrome.setExperimentalOptions("intl.accept_languages", lang);
+				}
+				optionsChrome.addArguments("--proxy-server=http://" + configuration.getProxyConfiguration().getHostname() + ":"
+						+ configuration.getProxyConfiguration().getPort());
+				driverChrome = new ChromeDriver(optionsChrome);
+			} else {
+				driverChrome = new ChromeDriver();
+			}
+
+			return WebDriverBackedEmbeddedBrowser.withDriver(driverChrome, filterAttributes, crawlWaitEvent, crawlWaitReload);
+		}
+
+		private EmbeddedBrowser newHtmlUnitBrowser(
+				ImmutableSortedSet<String> filterAttributes,
+				long crawlWaitReload,
+				long crawlWaitEvent) {
+
+			HtmlUnitDriver driverHtmlUnit = new HtmlUnitDriver(true);
+			if (configuration.getProxyConfiguration() != null
+					&& configuration.getProxyConfiguration().getType() != ProxyType.NOTHING) {
+				driverHtmlUnit.setProxy(
+						configuration.getProxyConfiguration().getHostname(),
+						configuration.getProxyConfiguration().getPort());
+			}
+
+			return WebDriverBackedEmbeddedBrowser.withDriver(driverHtmlUnit, filterAttributes, crawlWaitEvent, crawlWaitReload);
 		}
 	}
 }

@@ -60,7 +60,6 @@ public class AjaxSpiderParam extends AbstractParam {
     private static final String PROXY_PORT_KEY = AJAX_SPIDER_BASE_KEY + ".proxyPort";
 
     private static final String NUMBER_OF_BROWSERS_KEY = AJAX_SPIDER_BASE_KEY + ".numberOfBrowsers";
-    private static final String NUMBER_OF_THREADS_KEY = AJAX_SPIDER_BASE_KEY + ".numberOfThreads";
 
     private static final String BROWSER_ID_KEY = AJAX_SPIDER_BASE_KEY + ".browserId";
 
@@ -70,7 +69,6 @@ public class AjaxSpiderParam extends AbstractParam {
     private static final int DEFAULT_PROXY_PORT = 8081;
 
     private static final int DEFAULT_NUMBER_OF_BROWSERS = 1;
-    private static final int DEFAULT_NUMBER_OF_THREADS = 1;
 
     private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
 
@@ -116,12 +114,6 @@ public class AjaxSpiderParam extends AbstractParam {
             this.numberOfBrowsers = getConfig().getInt(NUMBER_OF_BROWSERS_KEY, DEFAULT_NUMBER_OF_BROWSERS);
         } catch (ConversionException e) {
             logger.error("Error while loading the number of browsers: " + e.getMessage(), e);
-        }
-
-        try {
-            this.numberOfThreads = getConfig().getInt(NUMBER_OF_THREADS_KEY, DEFAULT_NUMBER_OF_THREADS);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the number of threads: " + e.getMessage(), e);
         }
 
         String browserId;
@@ -174,11 +166,6 @@ public class AjaxSpiderParam extends AbstractParam {
 
     public int getNumberOfThreads() {
         return numberOfThreads;
-    }
-
-    public void setNumberOfThreads(int numberOfThreads) {
-        this.numberOfThreads = numberOfThreads;
-        getConfig().setProperty(NUMBER_OF_THREADS_KEY, Integer.valueOf(numberOfThreads));
     }
 
     public Browser getBrowser() {
