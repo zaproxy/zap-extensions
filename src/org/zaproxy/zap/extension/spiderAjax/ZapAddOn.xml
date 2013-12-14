@@ -10,7 +10,8 @@
 	Added API to control the Ajax Spider (Issue 369).<br>
 	AJAX Spider will now use the HTTP authentication credentials set in "Options" > "Authentication" (Issue 584).<br>
 	AJAX Spider will now use the options set in "Options" > "Connection".<br>
-	Changed to persist the configurations (Issue 678).
+	Changed to persist the configurations (Issue 678).<br>
+	Changed to proxy SSL traffic (Firefox) (Issue 824).
 	]]>
 	</changes>
 	<dependson/>
