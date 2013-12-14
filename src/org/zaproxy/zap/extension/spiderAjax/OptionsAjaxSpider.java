@@ -48,7 +48,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JPanel panelProxy = null;
 	private ZapTextField txtProxyIp = null;
 	private ZapNumberSpinner txtNumBro = null;
-	private ZapNumberSpinner txtNumThre = null;
     
 	// ZAP: Do not allow invalid port numbers
 	private ZapPortNumberSpinner spinnerProxyPort = null;
@@ -59,7 +58,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JRadioButton htmlunit = null;
 	private JLabel jLabel6 = null;
 	private JLabel browsers = null;
-	private JLabel threads = null;
 	private static final Logger logger = Logger.getLogger(OptionsAjaxSpider.class);
 
 	/**
@@ -95,18 +93,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			txtNumBro = new ZapNumberSpinner(1, 1, Integer.MAX_VALUE);
 		}
 		return txtNumBro;
-	}
-	
-	/**
-	 * This method initializes txtNumThre	
-	 * 	
-	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
-	 */    
-	private ZapNumberSpinner getTxtNumThre() {
-		if (txtNumThre == null) {
-			txtNumThre = new ZapNumberSpinner(1, 1, Integer.MAX_VALUE);
-		}
-		return txtNumThre;
 	}
 	
 	/**
@@ -209,7 +195,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    txtProxyIp.discardAllEdits();
 	    spinnerProxyPort.setValue(ajaxSpiderParam.getProxyPort());
 	    txtNumBro.setValue(Integer.valueOf(ajaxSpiderParam.getNumberOfBrowsers()));
-	    txtNumThre.setValue(Integer.valueOf(ajaxSpiderParam.getNumberOfThreads()));
 	    getClickAllElems().setSelected(ajaxSpiderParam.isCrawlInDepth());
 	    
 	    switch (ajaxSpiderParam.getBrowser()) {
@@ -249,7 +234,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		ajaxSpiderParam.setProxyIp(txtProxyIp.getText());
 		ajaxSpiderParam.setProxyPort(spinnerProxyPort.getValue());
 		ajaxSpiderParam.setNumberOfBrowsers(txtNumBro.getValue().intValue());
-		ajaxSpiderParam.setNumberOfThreads(txtNumThre.getValue().intValue());
 		
 		if(getFirefox().isSelected()){
 			ajaxSpiderParam.setBrowser(Browser.FIREFOX);
@@ -355,8 +339,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			jLabel6 = new JLabel();
 			java.awt.GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			java.awt.GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
-			java.awt.GridBagConstraints gridBagConstraints7 = new GridBagConstraints();
-			java.awt.GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			
 			panelCrawljax = new JPanel();
 			panelCrawljax.setLayout(new GridBagLayout());
@@ -372,22 +354,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			gridBagConstraints5.ipady = 0;
 			gridBagConstraints5.anchor = java.awt.GridBagConstraints.EAST;
 			gridBagConstraints5.insets = new java.awt.Insets(2,2,2,2);
-			gridBagConstraints6.gridx = 0;
-			gridBagConstraints6.gridy = 1;
-			gridBagConstraints6.ipadx = 0;
-			gridBagConstraints6.ipady = 0;
-			gridBagConstraints6.anchor = java.awt.GridBagConstraints.EAST;
-			gridBagConstraints6.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints6.insets = new java.awt.Insets(2,2,2,2);
-			gridBagConstraints6.weightx = 0.5D;
-			gridBagConstraints7.gridx = 1;
-			gridBagConstraints7.gridy = 1;
-			gridBagConstraints7.weightx = 0.5D;
-			gridBagConstraints7.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints7.ipadx = 0;
-			gridBagConstraints7.ipady = 0;
-			gridBagConstraints7.anchor = java.awt.GridBagConstraints.WEST;
-			gridBagConstraints7.insets = new java.awt.Insets(2,2,2,2);
 			gridBagConstraints4.gridx = 0;
 			gridBagConstraints4.gridy = 0;
 			gridBagConstraints4.ipadx = 0;
@@ -403,17 +369,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			browsersButtonGroup.add(getHtmlunit());
 			
 			browsers = new JLabel();
-			threads = new JLabel();
 			
 			browsers.setText(this.extension.getMessages().getString("spiderajax.options.label.browsers"));
-			threads.setText(this.extension.getMessages().getString("spiderajax.options.label.threads"));
 
 			panelCrawljax.add(browsers, gridBagConstraints4);
 			panelCrawljax.add(getTxtNumBro(), gridBagConstraints5);
 			
-			panelCrawljax.add(threads, gridBagConstraints6);
-			panelCrawljax.add(getTxtNumThre(), gridBagConstraints7);
-		
 			javax.swing.JLabel jLabel5 = new JLabel();
 
 			

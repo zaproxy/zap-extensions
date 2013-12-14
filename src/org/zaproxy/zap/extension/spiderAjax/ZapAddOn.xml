@@ -13,7 +13,8 @@
 	Changed to persist the configurations (Issue 678).<br>
 	Changed to proxy SSL traffic (Firefox) (Issue 824).<br>
 	Fixed a ChromeDriver process leak that occurred after closing the "Options" with Chrome browser selected (Issue 831).<br>
-	Changed to verify and deny all requests outside of spider scope (Issue 833).
+	Changed to verify and deny all requests outside of spider scope (Issue 833).<br>
+	Updated Crawljax library (version 3.4) and dependencies (Issue 834).
 	]]>
 	</changes>
 	<dependson/>
