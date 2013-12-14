@@ -643,7 +643,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	private JLabel getActiveScansNameLabel() {
 		if (activeScansNameLabel == null) {
 			activeScansNameLabel = new javax.swing.JLabel();
-			activeScansNameLabel.setText(Constant.messages.getString("bruteforce.toolbar.ascans.label"));
+			activeScansNameLabel.setText(Constant.messages.getString("spiderajax.panel.toolbar.currentscans.label"));
 		}
 		return activeScansNameLabel;
 	}
