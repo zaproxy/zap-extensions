@@ -4,7 +4,12 @@
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Restored the name of "Loosely Scoped Cookie" alert/scanner (Issue 850).</changes>
+	<changes>
+	<![CDATA[
+	Restored the name of "Loosely Scoped Cookie" alert/scanner (Issue 850).<br>
+	Restored the name of "Charset Mismatch" alert/scanner (Issue 851).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
