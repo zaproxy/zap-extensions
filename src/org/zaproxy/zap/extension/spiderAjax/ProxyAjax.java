@@ -85,7 +85,7 @@ public class ProxyAjax {
 	 */
 	public boolean isChromeAvail(){
 		try{
-			new ChromeDriver().close();
+			new ChromeDriver().quit();
 		} catch (Exception e) {
 			logger.error(e);
 			return false;

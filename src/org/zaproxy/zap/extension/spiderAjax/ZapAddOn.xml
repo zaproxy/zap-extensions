@@ -11,7 +11,8 @@
 	AJAX Spider will now use the HTTP authentication credentials set in "Options" > "Authentication" (Issue 584).<br>
 	AJAX Spider will now use the options set in "Options" > "Connection".<br>
 	Changed to persist the configurations (Issue 678).<br>
-	Changed to proxy SSL traffic (Firefox) (Issue 824).
+	Changed to proxy SSL traffic (Firefox) (Issue 824).<br>
+	Fixed a ChromeDriver process leak that occurred after closing the "Options" with Chrome browser selected (Issue 831).
 	]]>
 	</changes>
 	<dependson/>
