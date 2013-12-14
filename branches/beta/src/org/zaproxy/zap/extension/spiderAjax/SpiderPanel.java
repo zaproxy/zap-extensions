@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.history.HistoryFilter;
 import org.parosproxy.paros.extension.history.LogPanelCellRenderer;
@@ -689,6 +690,15 @@ public class SpiderPanel extends AbstractPanel implements Runnable {
 	
 	
 	
+	public void sessionModeChanged(Mode mode) {
+		switch (mode) {
+		case standard:
+		case protect:
+			break;
+		case safe:
+			stopScan();
+		}
+	}
 
 }
 

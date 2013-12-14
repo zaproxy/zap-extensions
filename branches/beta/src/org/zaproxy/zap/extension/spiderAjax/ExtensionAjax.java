@@ -25,10 +25,13 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
+import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.ProxyListenerLog;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 
@@ -50,8 +53,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private List<String> excludeList = null;
 	private ProxyAjax proxy = null;
 	private ChromeAlertDialog addDialog = null;
-	//private ScopeController scope = null;
-	private String mode = null;
 
 	/**
 	 * initializes the extension
@@ -81,9 +82,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		this.setName(NAME);
 		this.setI18nPrefix("spiderajax");
 		this.setOrder(234);
-		//TODO: fix the mode & scope things
-		//this.scope = new ScopeController();
-		//this.mode = this.getModel().getOptionsParam().getViewParam().getMode();
 	}
 
 	/**
@@ -95,6 +93,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		super.hook(extensionHook);
 
 		if (getView() != null) {
+			extensionHook.addSessionListener(new SpiderSessionChangedListener());
+
 			@SuppressWarnings("unused")
 			ExtensionHookView pv = extensionHook.getHookView();
 			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
@@ -102,7 +102,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
 			//scope control
 			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpider());
-			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSiteInScope());
+			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSiteInScope());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSite());
 			ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spiderAjax");
 		}
@@ -132,14 +132,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
         super.unload();
     }
 
-	/*public void getMode() {
-		if(this.getModel().getOptionsParam().getViewParam().getMode().equals("safe")) {
-		} else if(this.getModel().getOptionsParam().getViewParam().getMode().equals("protect")) {
-					
-		} else if(this.getModel().getOptionsParam().getViewParam().getMode().equals("standard}")) {
-					
-		}
-	}*/
 	/**
 	 * Creates the panel with the config of the proxy
 	 * @return the panel
@@ -272,4 +264,25 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		addDialog.setVisible(true);
 	}
 	
+	private class SpiderSessionChangedListener implements SessionChangedListener {
+
+		@Override
+		public void sessionChanged(Session session) {
+		}
+
+		@Override
+		public void sessionAboutToChange(Session session) {
+		}
+
+		@Override
+		public void sessionScopeChanged(Session session) {
+		}
+
+		@Override
+		public void sessionModeChanged(Mode mode) {
+			if (getView() != null) {
+				getSpiderPanel().sessionModeChanged(mode);
+			}
+		}
+	}
 }

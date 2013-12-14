@@ -19,7 +19,7 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.parosproxy.paros.core.proxy.ProxyServer;
+import org.zaproxy.zap.extension.spiderAjax.proxy.ProxyServer;
 import com.crawljax.browser.EmbeddedBrowser.BrowserType;
 
 /**
