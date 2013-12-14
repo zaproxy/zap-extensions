@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>6</version>
+	<version>7</version>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated to be compatible with 2.2.0</changes>
+	<changes>Restored the name of "Loosely Scoped Cookie" alert/scanner (Issue 850).</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
