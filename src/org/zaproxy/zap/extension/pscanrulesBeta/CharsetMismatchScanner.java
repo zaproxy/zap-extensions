@@ -47,8 +47,7 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return MESSAGE_PREFIX+"name";//TODO invert comments
-//		return Constant.messages.getString(MESSAGE_PREFIX + "name");
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 
 	@Override
