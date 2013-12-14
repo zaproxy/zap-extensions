@@ -321,6 +321,9 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		@Override
 		public void sessionAboutToChange(Session session) {
 			ajaxSpiderApi.reset();
+			if (getView() != null) {
+				getSpiderPanel().reset();
+			}
 		}
 
 		@Override
