@@ -20,14 +20,11 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 import java.net.HttpCookie;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Vector;
 
 import net.htmlparser.jericho.Source;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
