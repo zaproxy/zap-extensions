@@ -19,6 +19,7 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.parosproxy.paros.network.ConnectionParam;
 import org.zaproxy.zap.extension.spiderAjax.proxy.ProxyServer;
 import com.crawljax.browser.EmbeddedBrowser.BrowserType;
 
@@ -44,10 +45,11 @@ public class ProxyAjax {
 	 * constructor
 	 * @param e the extension
 	 */
-	public ProxyAjax(ExtensionAjax e) {
+	public ProxyAjax(ExtensionAjax e, ConnectionParam connectionParam) {
 		extension = e;
 		this.getProxy();
 		this.proxy.setProxyParam(getAjaxProxyParam());
+		this.proxy.setConnectionParam(connectionParam);
 		this.proxy.startServer(this.getAjaxProxyParam().getProxyIp(), this.getAjaxProxyParam().getProxyPort(), false);
 		this.browser = defaultBrowser;
 		this.browsers = 1;
