@@ -97,7 +97,7 @@ public class PopupMenuAjaxSiteInScope extends PopupMenuSiteNode {
      */	
 	@Override
     public boolean isEnabledForSiteNode (SiteNode node) {
-        return (node != null && node.isIncludedInScope());
+        return (!extension.isSpiderRunning() && node != null && node.isIncludedInScope());
     }
   
 	
