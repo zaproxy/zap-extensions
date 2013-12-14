@@ -270,7 +270,7 @@
 		<antcall target="deploy-zest"/>
 	</target>
 
-	<target name="deploy-weekly" depends="build-all" description="deploy extensions to be included in weekly releases">
+	<target name="deploy-weekly" description="deploy extensions to be included in weekly releases">
 		<!-- Set to compile with debug information -->
 		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
@@ -288,7 +288,7 @@
 		</copy>
 	</target>
 	
-	<target name="deploy-release" depends="build-all" description="deploy extensions to be included in full releases">
+	<target name="deploy-release" description="deploy extensions to be included in full releases">
 		<!-- Set to compile with debug information -->
 		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
