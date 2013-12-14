@@ -685,7 +685,10 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 		return scanStatus;
 	}
 	
-	
+	public void reset() {
+		stopScan();
+		this.getHistList().clear();
+	}
 	
 	
 	public void sessionModeChanged(Mode mode) {
