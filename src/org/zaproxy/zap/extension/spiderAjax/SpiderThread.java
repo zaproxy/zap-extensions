@@ -246,13 +246,9 @@ public class SpiderThread implements Runnable {
 		Logger.getLogger("org.parosproxy.paros.view.SiteMapPanel").setLevel(Level.OFF);
 		try {
 			crawljax = new CrawljaxController(getCrawConf());
-        } catch (Exception e) {
-			logger.error(e);
-		}
-		try {
 			crawljax.run();		
 		} catch (Exception e) {
-			//logger.error(e);
+			logger.error(e, e);
 		} finally {
 			this.extension.getSpiderPanel().stopScan(this.url);
 		}
@@ -267,7 +263,7 @@ public class SpiderThread implements Runnable {
 		try {
 		crawljax.terminate(false);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e, e);
 		}
 	}
 
