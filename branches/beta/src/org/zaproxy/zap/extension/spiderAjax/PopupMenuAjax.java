@@ -107,7 +107,7 @@ public class PopupMenuAjax extends ExtensionPopupMenuItem {
 		treeSite = getTree(invoker);
 		if (treeSite != null) {
 			SiteNode node = (SiteNode) treeSite.getLastSelectedPathComponent();
-			if (node != null && !node.isRoot()) {
+			if (!extension.isSpiderRunning() && node != null && !node.isRoot()) {
 				this.setEnabled(true);
 			} else {
 				this.setEnabled(false);

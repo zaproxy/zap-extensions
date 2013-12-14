@@ -17,7 +17,8 @@
 	Updated Crawljax library (version 3.4) and dependencies (Issue 834).<br>
 	Changed to allow to set ChromeDriver's path through the "AJAX Spider" options (Issue 835).<br>
 	Changed to automatically configure the proxy settings (Issue 836).<br>
-	Changed to clear the results tab when a new spider process is started (Issue 926).
+	Changed to clear the results tab when a new spider process is started (Issue 926).<br>
+	Changed to not allow to start a new spider process if one is already running (Issue 927).
 	]]>
 	</changes>
 	<dependson/>
