@@ -35,6 +35,7 @@ import java.util.zip.GZIPInputStream;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpHeader;
@@ -110,7 +111,11 @@ class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 				throw new ApiException(ApiException.Type.SCAN_IN_PROGRESS);
 			}
 
-			spiderThread = extension.createSpiderThread(url, getParam(params, PARAM_IN_SCOPE, false), this);
+			try {
+				spiderThread = extension.createSpiderThread(url, getParam(params, PARAM_IN_SCOPE, false), this);
+			} catch(URIException e) {
+				throw new ApiException(Type.ILLEGAL_PARAMETER, PARAM_URL);
+			}
 			try {
 				new Thread(spiderThread).start();
 			} catch (Exception e) {
