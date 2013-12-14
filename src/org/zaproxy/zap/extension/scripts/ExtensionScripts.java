@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.scripts;
 import java.awt.event.MouseAdapter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -47,6 +49,8 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 	public static final String NAME = "ExtensionScripts";
 	public static final ImageIcon ICON = new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")); // Script icon
 	
+	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
+
 	private ScriptsListPanel scriptsPanel = null;
 	private ConsolePanel consolePanel = null;
 	private OutputPanelWriter outputPanelWriter = null;
@@ -60,6 +64,12 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 	private ScriptsTreeCellRenderer renderer = null;
 
 	//private static final Logger logger = Logger.getLogger(ExtensionScripts.class);
+
+	static {
+		List<Class<?>> dependencies = new ArrayList<>(1);
+		dependencies.add(ExtensionScript.class);
+		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
+	}
 
     public ExtensionScripts() {
         super();
@@ -446,4 +456,8 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 		return ScriptsListPanel.TREE;
 	}
 
+	@Override
+	public List<Class<?>> getDependencies() {
+		return EXTENSION_DEPENDENCIES;
+	}
 }
