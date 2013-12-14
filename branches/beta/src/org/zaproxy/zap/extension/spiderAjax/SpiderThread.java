@@ -23,10 +23,17 @@ import java.util.List;
 
 import com.crawljax.core.CrawlSession;
 
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+
+import com.crawljax.browser.EmbeddedBrowser;
 import com.crawljax.browser.EmbeddedBrowser.BrowserType;
+import com.crawljax.browser.WebDriverBackedEmbeddedBrowser;
+import com.crawljax.browser.WebDriverBrowserBuilder;
 import com.crawljax.core.CrawljaxController;
 import com.crawljax.core.configuration.CrawlSpecification;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
+import com.crawljax.core.configuration.CrawljaxConfigurationReader;
 import com.crawljax.core.configuration.ProxyConfiguration;
 import com.crawljax.core.configuration.ThreadConfiguration;
 import com.crawljax.core.plugin.PostCrawlingPlugin;
@@ -188,6 +195,7 @@ public class SpiderThread implements Runnable {
 			crawlConf = new CrawljaxConfiguration();
 			crawlConf.setThreadConfiguration(this.getThreadConf());
 			crawlConf.setBrowser(getBrowserType(this.extension.getAjaxSpiderParam().getBrowser()));
+			crawlConf.setBrowserBuilder(new AjaxSpiderBrowserBuilder());
 			crawlConf.setCrawlSpecification(this.getCrawSpec());
 			this.port = this.extension.getAjaxSpiderParam().getProxyPort();
 			this.host = this.extension.getAjaxSpiderParam().getProxyIp();
@@ -357,6 +365,40 @@ public class SpiderThread implements Runnable {
 			}
 
 			return false;
+		}
+	}
+
+	private static class AjaxSpiderBrowserBuilder extends WebDriverBrowserBuilder {
+
+		// Note: Implementation copied from base class but changed to also set the properties to enable SSL proxying.
+		@Override
+		public EmbeddedBrowser buildEmbeddedBrowser(CrawljaxConfigurationReader configuration) {
+			switch (configuration.getBrowser()) {
+			case firefox:
+				if (configuration.getProxyConfiguration() != null) {
+					FirefoxProfile profile = new FirefoxProfile();
+
+					final String hostname = configuration.getProxyConfiguration().getHostname();
+					final int port = configuration.getProxyConfiguration().getPort();
+
+					profile.setPreference("network.proxy.http", hostname);
+					profile.setPreference("network.proxy.http_port", port);
+					profile.setPreference("network.proxy.ssl", hostname);
+					profile.setPreference("network.proxy.ssl_port", port);
+					profile.setPreference("network.proxy.type", configuration.getProxyConfiguration().getType().toInt());
+					profile.setPreference("network.proxy.no_proxies_on", "");
+
+					return WebDriverBackedEmbeddedBrowser.withDriver(
+							new FirefoxDriver(profile),
+							configuration.getFilterAttributeNames(),
+							configuration.getCrawlSpecificationReader().getWaitAfterReloadUrl(),
+							configuration.getCrawlSpecificationReader().getWaitAfterEvent());
+				}
+				break;
+			default:
+
+			}
+			return super.buildEmbeddedBrowser(configuration);
 		}
 	}
 }
