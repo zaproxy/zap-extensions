@@ -626,6 +626,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 		this.getStopScanButton().setEnabled(true);
 		this.activeScans.add(site);
 		this.setActiveScanLabels();
+		this.getHistList().clear();
 		this.targetSite = site;
 		try {
 			new Thread(runnable).start();
