@@ -87,7 +87,7 @@ public class PopupMenuAjaxSiteInScope extends PopupMenuSiteNode {
 	@Override
 	public void performAction(SiteNode node) throws Exception {
 	    if (node != null) {
-	    	extension.spiderSite(node, false);
+	    	extension.spiderSite(node, true);
 	    }
 	}
     
@@ -97,12 +97,7 @@ public class PopupMenuAjaxSiteInScope extends PopupMenuSiteNode {
      */	
 	@Override
     public boolean isEnabledForSiteNode (SiteNode node) {
-	    if (node != null && ! node.isRoot() ) {
-	        this.setEnabled(true);
-	    } else {
-	        this.setEnabled(false);
-	    }
-        return true;
+        return (node != null && node.isIncludedInScope());
     }
   
 	

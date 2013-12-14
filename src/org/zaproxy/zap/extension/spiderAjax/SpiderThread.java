@@ -17,8 +17,7 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
-
-import java.util.regex.Pattern;
+import java.nio.charset.StandardCharsets;
 import com.crawljax.core.CrawljaxController;
 import com.crawljax.core.configuration.CrawlSpecification;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
@@ -26,11 +25,16 @@ import com.crawljax.core.configuration.ProxyConfiguration;
 import com.crawljax.core.configuration.ThreadConfiguration;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.core.proxy.ProxyListener;
+import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Session;
+import org.zaproxy.zap.extension.spiderAjax.proxy.OverwriteMessageProxyListener;
+import org.zaproxy.zap.network.HttpResponseBody;
 
-public class SpiderThread implements Runnable, ProxyListener {
+public class SpiderThread implements Runnable {
 
 	// crawljax config
 	private static final boolean BROWSER_BOOTING = false;
@@ -48,11 +52,14 @@ public class SpiderThread implements Runnable, ProxyListener {
 	private CrawljaxController crawljax = null;
 	private CrawlSpecification crawler = null;
 	private ProxyConfiguration proxyConf = null;
-	private boolean spiderInScope;
+	private final boolean spiderInScope;
 	private boolean running;
+	private final Session session;
 	private static final Logger logger = Logger.getLogger(SpiderThread.class);
 
-	
+	private HttpResponseHeader outOfScopeResponseHeader;
+	private HttpResponseBody outOfScopeResponseBody;
+
 	/**
 	 * 
 	 * @param url
@@ -64,10 +71,35 @@ public class SpiderThread implements Runnable, ProxyListener {
 		this.extension = extension;
 		this.spiderInScope = inScope;
 		this.running = false;
-		this.initiProxy();
 		//by default we will use 1 browser & thread
 		this.numBrowsers = this.extension.getProxy().getBrowsers();
 		this.numThreads = this.extension.getProxy().getThreads();
+		this.session = extension.getModel().getSession();
+		this.initiProxy();
+
+		createOutOfScopeResponse(extension.getMessages().getString("spiderajax.outofscope.response"));
+	}
+
+	private void createOutOfScopeResponse(String response) {
+		outOfScopeResponseBody = new HttpResponseBody();
+		outOfScopeResponseBody.setBody(response.getBytes(StandardCharsets.UTF_8));
+
+		final StringBuilder strBuilder = new StringBuilder(150);
+		final String crlf = HttpHeader.CRLF;
+		strBuilder.append("HTTP/1.1 403 Forbidden").append(crlf);
+		strBuilder.append(HttpHeader.PRAGMA).append(": ").append("no-cache").append(crlf);
+		strBuilder.append(HttpHeader.CACHE_CONTROL).append(": ").append("no-cache").append(crlf);
+		strBuilder.append(HttpHeader.CONTENT_TYPE).append(": ").append("text/plain; charset=UTF-8").append(crlf);
+		strBuilder.append(HttpHeader.CONTENT_LENGTH).append(": ").append(outOfScopeResponseBody.length()).append(crlf);
+
+		HttpResponseHeader responseHeader;
+		try {
+			responseHeader = new HttpResponseHeader(strBuilder.toString());
+		} catch (HttpMalformedHeaderException e) {
+			logger.error("Failed to create a valid! response header: ", e);
+			responseHeader = new HttpResponseHeader();
+		}
+		outOfScopeResponseHeader = responseHeader;
 	}
 
 	
@@ -76,7 +108,8 @@ public class SpiderThread implements Runnable, ProxyListener {
 	 */
 	private void initiProxy() {
 		this.extension.getProxy().updateProxyConf();
-		this.extension.getProxy().getProxy().addProxyListener(this);
+		this.extension.getProxy().getProxy().removeOverwriteMessageProxyListeners();
+		this.extension.getProxy().getProxy().addOverwriteMessageProxyListener(new SpiderProxyListener());
 	    this.extension.getSpiderPanel().getListLog().setModel(this.extension.getSpiderPanel().getHistList());
 	}
 
@@ -94,14 +127,6 @@ public class SpiderThread implements Runnable, ProxyListener {
 	 */
 	public String getHost() {
 		return this.host;
-	}
-	
-	/**
-	 * 
-	 * @return whether there is a scope defined
-	 */
-	public boolean isInScope() {
-		return this.spiderInScope;
 	}
 	
 	/**
@@ -232,45 +257,6 @@ public class SpiderThread implements Runnable, ProxyListener {
 			this.extension.getSpiderPanel().stopScan(this.url);
 		}
 	}
-	
-	
-	/**
-	 * @param msg sent
-	 */
-	@Override
-	public boolean onHttpRequestSend(HttpMessage msg) {
-		return true;
-	}
-
-	
-	/**
-	 * @param msg received
-	 */
-	@Override
-	public boolean onHttpResponseReceive(HttpMessage msg) {
-		// we check if the scan is scope limited and if so if the node is in scope
-		//if ((this.spiderInScope && msg.getHistoryRef().getSiteNode().isIncludedInScope()) || !this.spiderInScope) {
-			//we check if it has to be put in the sites tree or is already there
-			boolean ignore = false;
-			for (String pa : this.extension.getModel().getSession().getExcludeFromScanRegexs()) {
-				Pattern p = Pattern.compile(pa, Pattern.CASE_INSENSITIVE);
-				if (p.matcher(msg.getRequestHeader().getURI().toString()).matches()) {
-					ignore=true;
-				}
-			}
-			if(!ignore){
-				try {
-					HistoryReference historyRef = new HistoryReference(extension.getModel().getSession(), HistoryReference.TYPE_SPIDER_AJAX, msg);
-					historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
-					extension.getModel().getSession().getSiteTree().addPath(historyRef, msg);
-					this.extension.getSpiderPanel().addHistoryUrl(historyRef, msg, this.url);
-				} catch (Exception e){
-					logger.error(e);
-				}
-			/*}*/
-		}
-		return true;
-	}
 
 	/**
 	 * called by the buttons of the panel to stop the spider
@@ -285,9 +271,46 @@ public class SpiderThread implements Runnable, ProxyListener {
 		}
 	}
 
+	private class SpiderProxyListener implements OverwriteMessageProxyListener {
 
-	@Override
-	public int getArrangeableListenerOrder() {
-		return 0;
+		@Override
+		public int getArrangeableListenerOrder() {
+			return 0;
+		}
+
+		@Override
+		public boolean onHttpRequestSend(HttpMessage httpMessage) {
+			final String uri = httpMessage.getRequestHeader().getURI().toString();
+			if (spiderInScope && !session.isInScope(uri)) {
+				logger.debug("Excluding request [" + uri + "] not in scope.");
+				setOutOfScopeResponse(httpMessage);
+				return true;
+			}
+
+			return false;
+		}
+
+		private void setOutOfScopeResponse(HttpMessage httpMessage) {
+			try {
+				httpMessage.setResponseHeader(outOfScopeResponseHeader.toString());
+			} catch (HttpMalformedHeaderException ignore) {
+				// Setting a valid response header.
+			}
+			httpMessage.setResponseBody(outOfScopeResponseBody.getBytes());
+		}
+
+		@Override
+		public boolean onHttpResponseReceived(HttpMessage httpMessage) {
+			try {
+				HistoryReference historyRef = new HistoryReference(session, HistoryReference.TYPE_SPIDER_AJAX, httpMessage);
+				historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
+				session.getSiteTree().addPath(historyRef, httpMessage);
+				extension.getSpiderPanel().addHistoryUrl(historyRef, httpMessage, url);
+			} catch (Exception e) {
+				logger.error(e);
+			}
+
+			return false;
+		}
 	}
 }
