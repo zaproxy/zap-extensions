@@ -21,7 +21,6 @@ import org.apache.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.zaproxy.zap.extension.spiderAjax.proxy.ProxyServer;
-import com.crawljax.browser.EmbeddedBrowser.BrowserType;
 
 /**
  * This class manages the ajax spider proxy server
@@ -30,50 +29,23 @@ import com.crawljax.browser.EmbeddedBrowser.BrowserType;
 public class ProxyAjax {
 	
 	private ProxyServer proxy = null;
-	private boolean megaScan = false;
-	private BrowserType browser = null;
-	// default config for the new ajax proxy
-	private BrowserType defaultBrowser = BrowserType.firefox;
-	private AjaxProxyParam proxyParam = null;
 	private ExtensionAjax extension;
-	private int browsers;
-	private int threads;
 	private static final Logger logger = Logger.getLogger(ProxyAjax.class);
 
+	private final AjaxSpiderParam ajaxSpiderParam;
 	
 	/**
 	 * constructor
 	 * @param e the extension
 	 */
-	public ProxyAjax(ExtensionAjax e, ConnectionParam connectionParam) {
+	public ProxyAjax(ExtensionAjax e, AjaxSpiderParam ajaxSpiderParam, ConnectionParam connectionParam) {
 		extension = e;
+		this.ajaxSpiderParam = ajaxSpiderParam;
 		this.getProxy();
-		this.proxy.setProxyParam(getAjaxProxyParam());
 		this.proxy.setConnectionParam(connectionParam);
-		this.proxy.startServer(this.getAjaxProxyParam().getProxyIp(), this.getAjaxProxyParam().getProxyPort(), false);
-		this.browser = defaultBrowser;
-		this.browsers = 1;
-		this.threads = 1;
+		this.proxy.startServer(ajaxSpiderParam.getProxyIp(), ajaxSpiderParam.getProxyPort(), false);
 	}
 
-	
-	/**
-	 * Sets the crawljax to megascan mode that is slower but more accurate
-	 * @param b
-	 */
-	public void setMegaScan(boolean b) {
-		this.megaScan = b;
-	}
-
-
-	/**
-	 * @return true if crawljax is set to 'megascan' mode, false otherwise
-	 */
-	public boolean getMegaScan() {
-		return this.megaScan;
-	}
-
-	
 	/**
 	 * stops the sever, updates the config and starts it again
 	 */
@@ -83,7 +55,7 @@ public class ProxyAjax {
 		if(this.proxy.isAnyProxyThreadRunning()){
 			this.proxy.stopServer();
 		}
-		this.proxy.startServer(this.getProxyHost(), this.getProxyPort(), false);
+		this.proxy.startServer(ajaxSpiderParam.getProxyIp(), ajaxSpiderParam.getProxyPort(), false);
 		if(this.extension.getExcludeList()!=null){
 			this.proxy.setExcludeList(this.extension.getExcludeList());
 		}
@@ -106,102 +78,6 @@ public class ProxyAjax {
 		}
 		return proxy;
 	}
-
-
-	/**
-	 * sets the new config for the proxy
-	 * 
-	 * @return the parameter for the proxy with the new config
-	 */
-	public BrowserType getBrowser() {
-		return this.browser;
-	}
-
-	
-	/**
-	 * Sets the type of browser to be used
-	 * @param b browser
-	 */
-	public void setBrowser(BrowserType b) {
-		this.browser = b;
-	}
-
-	
-	/**
-	 * @return the current port used by the new ajax proxy
-	 */
-	public int getProxyPort() {
-		return this.getAjaxProxyParam().getProxyPort();
-	}
-
-	
-	/**
-	 * @return the current host used by the new ajax proxy
-	 */
-	public String getProxyHost() {
-		return this.getAjaxProxyParam().getProxyIp();
-	}
-
-	
-	/**
-	 * 
-	 * @param host
-	 */
-	public void setProxyHost(String ip) {
-		this.getAjaxProxyParam().setProxyIp(ip);
-	}
-
-	
-	/**
-	 *  Sets the port of the proxy
-	 * @param port
-	 */
-	public void setProxyPort(int port) {
-		this.getAjaxProxyParam().setProxyPort(port);
-	}
-	
-	/**
-	 *  Sets the num of threds to use
-	 * @param port
-	 */
-	public void setThreads(int t) {
-		this.threads = t;
-	}
-	
-	/**
-	 *  @return the num of threds to use
-	 */
-	public int getThreads() {
-		return this.threads;
-	}
-
-	/**
-	 *  Sets the num of browsers to use
-	 * @param port
-	 */
-	public void setBrowsers(int b) {
-		this.browsers = b;
-	}
-	
-	/**
-	 *  @return the num of browsers to use
-	 * 
-	 */
-	public int getBrowsers() {
-		return this.browsers;
-	}
-	
-	/**
-	 * 
-	 * @return the proxyparameter
-	 */
-	public AjaxProxyParam getAjaxProxyParam() {
-		if (proxyParam == null) {
-			proxyParam = new AjaxProxyParam();
-		}
-		return proxyParam;
-	}
-
 
 	/**
 	 * This method checks if the chromedriver is available

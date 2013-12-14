@@ -29,12 +29,13 @@ import javax.swing.JRadioButton;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.Browser;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
-import com.crawljax.browser.EmbeddedBrowser.BrowserType;
 
 public class OptionsAjaxSpider extends AbstractParamPanel {
 
@@ -200,20 +201,29 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	@Override
 	public void initParam(Object obj) {
 	    
+	    OptionsParam optionsParam = (OptionsParam) obj;
+	    AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
+
 	    // set Local Proxy parameters
-	    txtProxyIp.setText(this.extension.getProxy().getProxyHost());
+	    txtProxyIp.setText(ajaxSpiderParam.getProxyIp());
 	    txtProxyIp.discardAllEdits();
-	    spinnerProxyPort.setValue(this.extension.getProxy().getProxyPort());
-	    txtNumBro.setValue(Integer.valueOf(this.extension.getProxy().getBrowsers()));
-	    txtNumThre.setValue(Integer.valueOf(this.extension.getProxy().getThreads()));
+	    spinnerProxyPort.setValue(ajaxSpiderParam.getProxyPort());
+	    txtNumBro.setValue(Integer.valueOf(ajaxSpiderParam.getNumberOfBrowsers()));
+	    txtNumThre.setValue(Integer.valueOf(ajaxSpiderParam.getNumberOfThreads()));
+	    getClickAllElems().setSelected(ajaxSpiderParam.isCrawlInDepth());
 	    
-	    //set the browser type
-	    if(this.extension.getProxy().getBrowser() == BrowserType.firefox){
+	    switch (ajaxSpiderParam.getBrowser()) {
+	    case FIREFOX:
 	    	this.getFirefox().setSelected(true);
-	    } else if (this.extension.getProxy().getBrowser() == BrowserType.chrome){
-		    this.getChrome().setSelected(true);
-	    }else if (this.extension.getProxy().getBrowser() == BrowserType.htmlunit){
-		    this.getHtmlunit().setSelected(true);
+	    	break;
+	    case CHROME:
+	    	this.getChrome().setSelected(true);
+	    	break;
+	    case HTML_UNIT:
+	    	this.getHtmlunit().setSelected(true);
+	    	break;
+	    default:
+	    	this.getFirefox().setSelected(true);
 	    }
 	}
 	
@@ -230,24 +240,23 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		}
 	}
 
-	
-	/**
-	 * this methos sets megascan and the browser type
-	 */
 	@Override
 	public void saveParam(Object obj) throws Exception  {; 
-	    this.extension.getProxy().setMegaScan(getClickAllElems().isSelected());
-		this.extension.getProxy().setProxyHost(txtProxyIp.getText());
-		this.extension.getProxy().setProxyPort(spinnerProxyPort.getValue());
-		this.extension.getProxy().setBrowsers(txtNumBro.getValue().intValue());
-		this.extension.getProxy().setThreads(txtNumThre.getValue().intValue());
+		OptionsParam optionsParam = (OptionsParam) obj;
+		AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
+
+		ajaxSpiderParam.setCrawlInDepth(getClickAllElems().isSelected());
+		ajaxSpiderParam.setProxyIp(txtProxyIp.getText());
+		ajaxSpiderParam.setProxyPort(spinnerProxyPort.getValue());
+		ajaxSpiderParam.setNumberOfBrowsers(txtNumBro.getValue().intValue());
+		ajaxSpiderParam.setNumberOfThreads(txtNumThre.getValue().intValue());
 		
 		if(getFirefox().isSelected()){
-			this.extension.getProxy().setBrowser(BrowserType.firefox);
+			ajaxSpiderParam.setBrowser(Browser.FIREFOX);
 		} else if(getChrome().isSelected()){
-			this.extension.getProxy().setBrowser(BrowserType.chrome);
+			ajaxSpiderParam.setBrowser(Browser.CHROME);
 		} else if(getHtmlunit().isSelected()){
-			this.extension.getProxy().setBrowser(BrowserType.htmlunit);
+			ajaxSpiderParam.setBrowser(Browser.HTML_UNIT);
 		}
 	}
 

@@ -60,6 +60,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private boolean spiderRunning;
 	private SpiderListener spiderListener;
 	private AjaxSpiderAPI ajaxSpiderApi;
+	private AjaxSpiderParam ajaxSpiderParam;
 
 	/**
 	 * initializes the extension
@@ -75,7 +76,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	public ProxyAjax getProxy() {
 		if (this.proxy == null) {
-			this.proxy = new ProxyAjax(this, Model.getSingleton().getOptionsParam().getConnectionParam());
+			this.proxy = new ProxyAjax(this, getAjaxSpiderParam(), Model.getSingleton().getOptionsParam().getConnectionParam());
 		}
 		return this.proxy;
 	}
@@ -107,6 +108,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		super.hook(extensionHook);
 
 		API.getInstance().registerApiImplementor(ajaxSpiderApi);
+		extensionHook.addOptionsParamSet(getAjaxSpiderParam());
 
 		if (getView() != null) {
 			extensionHook.addSessionListener(new SpiderSessionChangedListener());
@@ -159,6 +161,13 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			spiderPanel.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/spiderAjax.png")));
 			}
 		return spiderPanel;
+	}
+
+	AjaxSpiderParam getAjaxSpiderParam() {
+		if (ajaxSpiderParam == null) {
+			ajaxSpiderParam = new AjaxSpiderParam();
+		}
+		return ajaxSpiderParam;
 	}
 
 	/**
