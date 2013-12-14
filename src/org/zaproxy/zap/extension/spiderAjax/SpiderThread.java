@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crawljax.core.CrawlSession;
+
+import com.crawljax.browser.EmbeddedBrowser.BrowserType;
 import com.crawljax.core.CrawljaxController;
 import com.crawljax.core.configuration.CrawlSpecification;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
@@ -37,6 +39,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.Browser;
 import org.zaproxy.zap.extension.spiderAjax.proxy.OverwriteMessageProxyListener;
 import org.zaproxy.zap.network.HttpResponseBody;
 
@@ -47,8 +50,6 @@ public class SpiderThread implements Runnable {
 	private static final int MAX_STATES = 0;
 	private static final boolean RAND_INPUT_FORMS = true;
 	private static final int MAX_DEPTH = 10;	// TODO - make this configurable by the user
-	private int numBrowsers;
-	private int numThreads;
 	private String url = null;
 	private ExtensionAjax extension = null;
 	private String host = null;
@@ -80,9 +81,6 @@ public class SpiderThread implements Runnable {
 		this.running = false;
 		spiderListeners = new ArrayList<>(2);
 		spiderListeners.add(spiderListener);
-		//by default we will use 1 browser & thread
-		this.numBrowsers = this.extension.getProxy().getBrowsers();
-		this.numThreads = this.extension.getProxy().getThreads();
 		this.session = extension.getModel().getSession();
 		this.initiProxy();
 
@@ -144,19 +142,6 @@ public class SpiderThread implements Runnable {
 	public SpiderThread getSpiderThread() {
 		return this;
 	}
-	/** 
-	 * @return the # of threads to be used by crawljax
-	 */
-	public int getNumThreads() {
-		return this.numThreads;
-	}
-	
-	/** 
-	 * @return the # of browsers to be used by crawljax
-	 */
-	public int getNumBrowsers() {
-		return this.numBrowsers;
-	}
 	
 	/**
 	 * 
@@ -188,8 +173,8 @@ public class SpiderThread implements Runnable {
 		if (threConf == null) {
 			threConf = new ThreadConfiguration();
 			threConf.setBrowserBooting(BROWSER_BOOTING);
-			threConf.setNumberBrowsers(this.numBrowsers);
-			threConf.setNumberThreads(this.numThreads);
+			threConf.setNumberBrowsers(extension.getAjaxSpiderParam().getNumberOfBrowsers());
+			threConf.setNumberThreads(extension.getAjaxSpiderParam().getNumberOfThreads());
 		}
 		return threConf;
 	}
@@ -202,10 +187,10 @@ public class SpiderThread implements Runnable {
 		if (crawlConf == null) {
 			crawlConf = new CrawljaxConfiguration();
 			crawlConf.setThreadConfiguration(this.getThreadConf());
-			crawlConf.setBrowser(this.extension.getProxy().getBrowser());
+			crawlConf.setBrowser(getBrowserType(this.extension.getAjaxSpiderParam().getBrowser()));
 			crawlConf.setCrawlSpecification(this.getCrawSpec());
-			this.port = this.extension.getProxy().getProxyPort();
-			this.host = this.extension.getProxy().getProxyHost();
+			this.port = this.extension.getAjaxSpiderParam().getProxyPort();
+			this.host = this.extension.getAjaxSpiderParam().getProxyIp();
 			crawlConf.setProxyConfiguration(this.getProxyConf());
 
 			// we add the plugins
@@ -213,6 +198,25 @@ public class SpiderThread implements Runnable {
 			crawlConf.addPlugin(new SpiderPostCrawlingPlugin());
 		}
 		return crawlConf;
+	}
+
+	private static BrowserType getBrowserType(Browser browser) {
+		BrowserType browserType;
+		switch (browser) {
+		case CHROME:
+			browserType = BrowserType.chrome;
+			break;
+		case FIREFOX:
+			browserType = BrowserType.firefox;
+			break;
+		case HTML_UNIT:
+			browserType = BrowserType.htmlunit;
+			break;
+		default:
+			browserType = BrowserType.firefox;
+			break;
+		}
+		return browserType;
 	}
 
 	
@@ -228,7 +232,7 @@ public class SpiderThread implements Runnable {
 			crawler.setClickOnce(true);
 			// TODO - make this configurable by the user
 			crawler.setWaitTimeAfterEvent(1000);
-			if (this.extension.getProxy().getMegaScan()) {
+			if (this.extension.getAjaxSpiderParam().isCrawlInDepth()) {
 				crawler.clickMoreElements();
 			} else {
 				crawler.clickDefaultElements();
