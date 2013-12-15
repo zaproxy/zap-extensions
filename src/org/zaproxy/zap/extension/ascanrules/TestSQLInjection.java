@@ -401,9 +401,9 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
         }
         
         //if a high threshold is in place, turn off the error based, which are more prone to false positives
-        if (this.getAlertThreshold() == AlertThreshold.HIGH) {
+        if (this.getAlertThreshold() == AlertThreshold.HIGH || this.getAlertThreshold() == AlertThreshold.MEDIUM) {
             if (this.debugEnabled) {
-                log.debug("Disabling the Error Based checking, since the Alert Threshold is set to High, and this type of check is notably prone to false positives");
+                log.debug("Disabling the Error Based checking, since the Alert Threshold is set to High or Medium, and this type of check is notably prone to false positives");
             }
             doErrorBased = false;
             doErrorMaxRequests = 0;
