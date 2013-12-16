@@ -18,14 +18,18 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.*;
 
 import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
@@ -37,6 +41,7 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 	private PassiveScanThread parent = null;
 	private static final String URLSensitiveInformationFile = "xml/URL-information-disclosure-messages.txt";
 	private static final Logger logger = Logger.getLogger(InformationDisclosureInURL.class);
+	private List<String> messages = null;
 
 	
 	@Override
@@ -44,16 +49,20 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 		TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
 		for (HtmlParameter urlParam : urlParams) {
 			if (doesParamNameContainsSensitiveInformation(urlParam.getName())) {
-				this.raiseAlert(msg, id, "the URL contains sensitive informations. Parameter: " + urlParam.getName() + ", value: " + urlParam.getValue(), "");
+				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(), 
+						"The URL contains potentially sensitive information");
 			}
 			if (isCreditCard(urlParam.getValue())) {
-				this.raiseAlert(msg, id, "the URL contains credit card informations. Parameter: " + urlParam.getName() + ", value: " + urlParam.getValue(), "");
+				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(),
+						"The URL appears to contain credit card information");
 			}
 			if (isEmailAddress(urlParam.getValue())) {
-				this.raiseAlert(msg, id, "the URL contains email address(es). Parameter: " + urlParam.getName() + ", value: " + urlParam.getValue(), "");
+				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(),
+						"The URL contains email address(es)");
 			}
 			if (isUsSSN(urlParam.getValue())) {
-				this.raiseAlert(msg, id, "the URL contains US Social Security Number(s). Parameter: " + urlParam.getName() + ", value: " + urlParam.getValue(), "");
+				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(),
+						"The URL appears to contain US Social Security Number(s)");
 			}
 		}
 	}
@@ -63,7 +72,7 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 		
 	}
 	
-	private void raiseAlert(HttpMessage msg, int id, String param, String other) {
+	private void raiseAlert(HttpMessage msg, int id, String param, String evidence, String other) {
 		Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
@@ -74,7 +83,7 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 		    	    "",
 		    	    "Do not pass sensitive information in URI's", 
 		            "", 
-					param,	// Evidence
+					evidence,	// Evidence
 					0,	// TODO CWE Id
 		            13,	// WASC Id - Info leakage
 		            msg);
@@ -82,29 +91,45 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
     	parent.raiseAlert(id, alert);
 	}
 	
-	private boolean doesParamNameContainsSensitiveInformation (String paramName) {
-		String line = null;
+	private List<String> loadFile(String file) {
+		List<String> strings = new ArrayList<String>();
 		BufferedReader reader = null;
+		File f = new File(Constant.getZapHome() + File.separator + file);
+		if (! f.exists()) {
+			logger.error("No such file: " + f.getAbsolutePath());
+			return strings;
+		}
 		try {
-			// TODO cache this :)
-			reader = new BufferedReader(new FileReader(URLSensitiveInformationFile));
-			paramName = paramName.toLowerCase();
+			String line;
+			reader = new BufferedReader(new FileReader(f));
 			while ((line = reader.readLine()) != null) {
-				// performed the check with contains to match if we have passwordApp or whatever as we are only checking against generic strings
-				if (!line.startsWith("#") && paramName.contains(line.toLowerCase())) {
-					return true;
+				if (!line.startsWith("#")) {
+					strings.add(line.trim().toLowerCase());
 				}
 			}
 		} catch (IOException e) {
-			logger.debug("Error on opening/reading URL information disclosure file. Error: " + e.getMessage());
+			logger.debug("Error on opening/reading debug error file. Error: " + e.getMessage(), e);
 		} finally {
 			if (reader != null) {
 				try {
 					reader.close();			
 				}
 				catch (IOException e) {
-					logger.debug("Error on closing the file reader. Error: " + e.getMessage());
+					logger.debug("Error on closing the file reader. Error: " + e.getMessage(), e);
 				}
+			}
+		}
+		return strings;
+	}
+	
+	private boolean doesParamNameContainsSensitiveInformation (String paramName) {
+		if (this.messages == null) {
+			this.messages = loadFile(URLSensitiveInformationFile);
+		}
+		String ciParamName = paramName.toLowerCase();
+		for (String msg : this.messages) {
+			if (ciParamName.contains(msg)) {
+				return true;
 			}
 		}
 		return false;

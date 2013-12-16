@@ -18,8 +18,11 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +32,7 @@ import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -40,24 +44,25 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 	private PassiveScanThread parent = null;
 	private static final String URLSensitiveInformationFile = "xml/URL-information-disclosure-messages.txt";
 	private static final Logger logger = Logger.getLogger(InformationDisclosureReferrerScanner.class);
+	private List<String> messages = null;
 	
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
 		if (msg.getRequestHeader().getHeader(HttpHeader.REFERER) != null && !isRequestedURLSameDomainAsHTTPReferrer(msg.getRequestHeader().getHostName(), msg.getRequestHeader().getHeader(HttpHeader.REFERER))) {
 			Vector<String> referrer = msg.getRequestHeader().getHeaders(HttpHeader.REFERER);
-			String parameter;
+			String evidence;
 			for (String referrerValue : referrer) {
-				if ((parameter = doesURLContainsSensitiveInformation(referrerValue)) != null) {
-					this.raiseAlert(msg, id, parameter);
+				if ((evidence = doesURLContainsSensitiveInformation(referrerValue)) != null) {
+					this.raiseAlert(msg, id, evidence, "The URL in the referrer appears to contain sensitive infomation");
 				}
-				if (isCreditCard(referrerValue)) {
-					this.raiseAlert(msg, id, "the URL in the referrer contains credit card informations");
+				if ((evidence = doesContainCreditCard(referrerValue)) != null) {
+					this.raiseAlert(msg, id, evidence, "The URL in the referrer appears to contain credit card information");
 				}
-				if (isEmailAddress(referrerValue)) {
-					this.raiseAlert(msg, id, "the URL in the referrer contains email address(es)");
+				if ((evidence = doesContainEmailAddress(referrerValue)) != null) {
+					this.raiseAlert(msg, id, evidence, "The URL in the referrer contains email address(es)");
 				}
-				if (isUsSSN(referrerValue)) {
-					this.raiseAlert(msg, id, "the URL in the referrer contains US Social Security Number(s)");
+				if ((evidence = doesContainUsSSN(referrerValue)) != null) {
+					this.raiseAlert(msg, id, evidence, "The URL in the referrer appears to contain US Social Security Number(s)");
 				}	
 			}
 		}
@@ -80,18 +85,18 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 		return result;
 	}
 	
-	private void raiseAlert(HttpMessage msg, int id, String infoDisclosureInURL) {
+	private void raiseAlert(HttpMessage msg, int id, String evidence, String other) {
 		Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
 		    			"The HTTP Header may have leaked a potentially sensitive parameter to another domain. This can violate PCI and most organizational compliance policies. You can configure the list of strings for this check to add or remove values specific to your environment", 
 		    	    msg.getRequestHeader().getURI().toString(),
-		    	    infoDisclosureInURL,
-		    	    "", 
 		    	    "",
+		    	    "", 
+		    	    other,
 		    	    "Do not pass sensitive information in URI's", 
 		            "", 
-					infoDisclosureInURL,	// Evidence
+					evidence,	// Evidence
 					0,	// TODO CWE Id
 		            13,	// WASC Id - Info leakage
 		            msg);
@@ -99,29 +104,50 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
     	parent.raiseAlert(id, alert);
 	}
 	
-	private String doesURLContainsSensitiveInformation (String URL) {
-		String line = null;
+	private List<String> loadFile(String file) {
+		List<String> strings = new ArrayList<String>();
 		BufferedReader reader = null;
+		File f = new File(Constant.getZapHome() + File.separator + file);
+		if (! f.exists()) {
+			logger.error("No such file: " + f.getAbsolutePath());
+			return strings;
+		}
 		try {
-			reader = new BufferedReader(new FileReader(URLSensitiveInformationFile));
-			URL = URL.toLowerCase();
+			String line;
+			reader = new BufferedReader(new FileReader(f));
 			while ((line = reader.readLine()) != null) {
-				if (!line.startsWith("#") && URL.contains(line.toLowerCase())) {
-					return line;
+				if (!line.startsWith("#")) {
+					strings.add(line.trim().toLowerCase());
 				}
 			}
 		} catch (IOException e) {
-			logger.debug("Error on opening/reading URL information disclosure file. Error: " + e.getMessage());
+			logger.debug("Error on opening/reading debug error file. Error: " + e.getMessage(), e);
 		} finally {
 			if (reader != null) {
-				try{
-					reader.close();
-				} catch (IOException e) {
-					logger.debug("Error on closing the file reader. Error: " + e.getMessage());
+				try {
+					reader.close();			
+				}
+				catch (IOException e) {
+					logger.debug("Error on closing the file reader. Error: " + e.getMessage(), e);
 				}
 			}
 		}
-			
+		return strings;
+	}
+
+	
+	private String doesURLContainsSensitiveInformation (String url) {
+		if (this.messages == null) {
+			this.messages = loadFile(URLSensitiveInformationFile);
+		}
+		String lcUrl = url.toLowerCase();
+		for (String msg : this.messages) {
+			int start = lcUrl.indexOf(msg);
+			if (start >= 0) {
+				// Return the original (case exact) string so we can match it in the response
+				return url.substring(start, start + msg.length());
+			}
+		}
 		return null;
 	}
 
@@ -144,30 +170,30 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 		return "Information disclosure - sensitive informations on HTTP Referrer header";
 	}
 	
-	private boolean isEmailAddress(String emailAddress) {
+	private String doesContainEmailAddress(String emailAddress) {
 		Pattern emailAddressPattern = Pattern.compile("\\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}\\b");
 		Matcher matcher = emailAddressPattern.matcher(emailAddress);
 		if (matcher.find()) {
-			return true;
+			return matcher.group();
 		}
-		return false;
+		return null;
 	}
 	
-	private boolean isCreditCard(String creditCard) {
+	private String doesContainCreditCard(String creditCard) {
 		Pattern creditCardPattern = Pattern.compile("\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})\\b");
 		Matcher matcher = creditCardPattern.matcher(creditCard);
 		if (matcher.find()) {
-			return true;
+			return matcher.group();
 		}
-		return false;
+		return null;
 	}
 	
-	private boolean isUsSSN(String usSSN) {
+	private String doesContainUsSSN(String usSSN) {
 		Pattern usSSNPattern = Pattern.compile("\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b");
 		Matcher matcher = usSSNPattern.matcher(usSSN);
 		if (matcher.find()){
-			return true;
+			return matcher.group();
 		}
-		return false;
+		return null;
 	}
 }

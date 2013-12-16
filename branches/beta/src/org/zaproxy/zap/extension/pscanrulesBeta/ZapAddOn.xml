@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Restored the name of "Loosely Scoped Cookie" alert/scanner (Issue 850).<br>
-	Restored the name of "Charset Mismatch" alert/scanner (Issue 851).
+	Restored the name of "Charset Mismatch" alert/scanner (Issue 851).<br>
+	Cope with ZAP running from dir other than the one its installed in (Issue 933)
 	]]>
 	</changes>
 	<dependson/>
@@ -28,7 +29,11 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesBeta.ViewstateScanner</pscanrule>
 	</pscanrules>
 	<filters/>
-	<files/>
+	<files>
+		<file>xml/debug-error-messages.txt</file>
+		<file>xml/suspicious-comments.txt</file>
+		<file>xml/URL-information-disclosure-messages.txt</file>
+	</files>
 	<not-before-version>2.2.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

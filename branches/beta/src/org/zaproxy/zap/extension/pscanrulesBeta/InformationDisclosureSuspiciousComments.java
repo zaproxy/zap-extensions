@@ -32,6 +32,7 @@ import net.htmlparser.jericho.StartTagType;
 import net.htmlparser.jericho.Tag;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -125,7 +126,7 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
 		if (patterns == null) {
 			patterns = new ArrayList<>();
 			String line = null;
-			File f = new File(databaseErrorFile);
+			File f = new File(Constant.getZapHome() + File.separator + databaseErrorFile);
 			BufferedReader reader = null;
 			try {
 				reader = new BufferedReader(new FileReader(f));
