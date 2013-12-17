@@ -309,7 +309,7 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
     public void invokeTargetedScript(ScriptWrapper script, HttpMessage msg) {
     	if (View.isInitialised()) {
     		this.displayScript(script);
-			this.getConsolePanel().getOutputPanel().clear();
+			this.getConsolePanel().getOutputPanel().preScriptInvoke();
     	}
    		this.getExtScript().invokeTargetedScript(script, msg);
     }
@@ -317,7 +317,7 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 	@Override
 	public void preInvoke(ScriptWrapper script) {
 		if (this.isScriptDisplayed(script)) {
-			this.getConsolePanel().getOutputPanel().clear();
+			this.getConsolePanel().getOutputPanel().preScriptInvoke();
 		}
 	}
 

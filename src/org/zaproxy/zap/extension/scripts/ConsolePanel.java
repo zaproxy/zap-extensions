@@ -172,7 +172,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		getRunButton().setEnabled(false);
 		getStopButton().setEnabled(true);
 		
-		getOutputPanel().clear();
+		getOutputPanel().preScriptInvoke();
 		
 		thread = new Thread() {
 			@Override
