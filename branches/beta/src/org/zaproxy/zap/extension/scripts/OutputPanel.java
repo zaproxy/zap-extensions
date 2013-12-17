@@ -19,13 +19,19 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
-import java.awt.CardLayout;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 
 import javax.script.ScriptException;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+import javax.swing.text.DefaultCaret;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -38,8 +44,22 @@ public class OutputPanel extends AbstractPanel {
 	private static final long serialVersionUID = -947074835463140074L;
 	private static final Logger logger = Logger.getLogger(OutputPanel.class);
 
+	private static final ImageIcon CLEAR_ICON = new ImageIcon(OutputPanel.class.getResource(
+    		"/org/zaproxy/zap/extension/scripts/resource/icons/broom.png"));
+	private static final ImageIcon CLEAR_ON_RUN_DISABLED_ICON = new ImageIcon(OutputPanel.class.getResource(
+    		"/org/zaproxy/zap/extension/scripts/resource/icons/broom-play-disabled.png"));
+	private static final ImageIcon CLEAR_ON_RUN_ENABLED_ICON = new ImageIcon(OutputPanel.class.getResource(
+    		"/org/zaproxy/zap/extension/scripts/resource/icons/broom-play-enabled.png"));
+	private static final ImageIcon SCROLL_LOCK_DISABLED_ICON = new ImageIcon(OutputPanel.class.getResource(
+    		"/org/zaproxy/zap/extension/scripts/resource/icons/ui-scroll-pane.png"));
+	private static final ImageIcon SCROLL_LOCK_ENABLED_ICON = new ImageIcon(OutputPanel.class.getResource(
+    		"/org/zaproxy/zap/extension/scripts/resource/icons/ui-scroll-lock-pane.png"));
+
+	private JPanel mainPanel;
+	private JToolBar mainToolBar;
 	private JScrollPane jScrollPane = null;
 	private ZapTextArea txtOutput = null;
+	private boolean clearOnRun = false;
 
 	/**
      * 
@@ -53,11 +73,94 @@ public class OutputPanel extends AbstractPanel {
 	 * This method initializes this
 	 */
 	private void initialize() {
-        this.setLayout(new CardLayout());
+        this.setLayout(new BorderLayout());
         this.setName("ConsoleOutputPanel");
-        this.add(getJScrollPane(), getJScrollPane().getName());
-			
+        this.add(getMainPanel(), BorderLayout.CENTER);
 	}
+	
+    private JPanel getMainPanel() {
+        if (mainPanel == null) {
+            mainPanel = new JPanel(new BorderLayout());
+            mainPanel.add(getToolBar(), BorderLayout.PAGE_START);
+            mainPanel.add(getJScrollPane(), BorderLayout.CENTER);
+        }
+        return mainPanel;
+    }
+
+    private JToolBar getToolBar() {
+        if (mainToolBar == null) {
+            mainToolBar = new JToolBar();
+            mainToolBar.setEnabled(true);
+            mainToolBar.setFloatable(false);
+            mainToolBar.setRollover(true);
+
+            final JButton clearButton = new JButton();
+            clearButton.setToolTipText(Constant.messages.getString("scripts.output.clear.button.toolTip"));
+            clearButton.setIcon(CLEAR_ICON);
+            clearButton.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    getTxtOutput().setText("");
+                };
+            });
+            
+            final JToggleButton clearOnRunButton = new JToggleButton();
+            clearOnRunButton.setToolTipText(
+            		Constant.messages.getString("scripts.output.clearOnRun.button.disabled.toolTip"));
+            clearOnRunButton.setIcon(CLEAR_ON_RUN_DISABLED_ICON);
+            clearOnRunButton.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    if (clearOnRunButton.isSelected()) {
+                        clearOnRunButton.setToolTipText(
+                        		Constant.messages.getString("scripts.output.clearOnRun.button.enabled.toolTip"));
+                        clearOnRunButton.setIcon(CLEAR_ON_RUN_ENABLED_ICON);
+                    	clearOnRun = true;
+                    	// Disable the clear button to make the distinction between the buttons more obvious 
+                    	clearButton.setEnabled(false);
+                    } else {
+                        clearOnRunButton.setToolTipText(
+                        		Constant.messages.getString("scripts.output.clearOnRun.button.disabled.toolTip"));
+                        clearOnRunButton.setIcon(CLEAR_ON_RUN_DISABLED_ICON);
+                    	clearOnRun = false;
+                    	// Enable the clear button to make the distinction between the buttons more obvious 
+                    	clearButton.setEnabled(true);
+                    }
+                };
+            });
+            
+            final JToggleButton scrollLockButton = new JToggleButton();
+            scrollLockButton.setToolTipText(
+            		Constant.messages.getString("scripts.output.scrolllock.button.disabled.toolTip"));
+            scrollLockButton.setIcon(SCROLL_LOCK_DISABLED_ICON);
+            scrollLockButton.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    if (scrollLockButton.isSelected()) {
+                    	scrollLockButton.setToolTipText(
+                        		Constant.messages.getString("scripts.output.scrolllock.button.enabled.toolTip"));
+                    	scrollLockButton.setIcon(SCROLL_LOCK_ENABLED_ICON);
+                    	DefaultCaret caret = (DefaultCaret) getTxtOutput().getCaret();
+                    	caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+                    } else {
+                    	scrollLockButton.setToolTipText(
+                        		Constant.messages.getString("scripts.output.scrolllock.button.disabled.toolTip"));
+                    	scrollLockButton.setIcon(SCROLL_LOCK_DISABLED_ICON);
+                    	DefaultCaret caret = (DefaultCaret) getTxtOutput().getCaret();
+                    	caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+                    	getTxtOutput().setCaretPosition(getTxtOutput().getDocument().getLength());
+                    }
+                };
+            });
+
+            mainToolBar.add(clearButton);
+            mainToolBar.add(clearOnRunButton);
+            mainToolBar.add(scrollLockButton);
+        }
+        return mainToolBar;
+    }
+
+	
 	/**
 	 * This method initializes jScrollPane	
 	 * 	
@@ -67,7 +170,7 @@ public class OutputPanel extends AbstractPanel {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
 			jScrollPane.setViewportView(getTxtOutput());
-			jScrollPane.setName("jScrollPane");
+			jScrollPane.setName("ConsoleScrollPane");
 			jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
 		}
@@ -122,14 +225,17 @@ public class OutputPanel extends AbstractPanel {
 				}
 			});
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+	    	if (e instanceof InterruptedException) {
+	    		// Ignore - stop button likely to have been used
+	    	} else {
+	    		logger.error(e.getMessage(), e);
+	    	}
 		}
 	}
 
 	public void appendError(String str) {
-		getTxtOutput().setForeground(Color.RED);
 		this.append(str);
-		//getTxtOutput().setForeground(Color.BLACK);
+		this.append("\n");
 	}
 
 	public void append(final ScriptException e) {
@@ -154,6 +260,12 @@ public class OutputPanel extends AbstractPanel {
 		}
 		// This will have to do
 		this.appendError(e.toString());
+	}
+	
+	public void preScriptInvoke() {
+		if (this.clearOnRun) {
+			clear();
+		}
 	}
 
 	public void clear() {
