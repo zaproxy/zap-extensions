@@ -4,7 +4,7 @@
 	<description>Supports all JRS 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/ScriptConsole</url>
-	<changes>Changed to depend on core ExtensionScript to avoid NullPointerException (Issue 847)</changes>
+	<changes>Changed to add an output console toolbar, depend on core ExtensionScript to avoid NullPointerException (Issue 847)</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.scripts.ExtensionScripts</extension>
