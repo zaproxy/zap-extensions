@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,7 +50,6 @@ import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestElementWrapper;
-import org.zaproxy.zap.extension.zest.ZestFuzzerDelegate.ZestFuzzerFileDelegate;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
@@ -72,7 +70,6 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestExpressionDialog conditionDialog = null;
 	private ZestCommentDialog commentDialog = null;
 	private ZestLoopDialog loopDialog = null;
-	private ZestFuzzerCategoryDialog fuzzCatDialog = null;
 	private ZestRedactDialog redactDialog = null;
 	private ZestControlDialog controlDialog = null;
 	private ZestParameterizeDialog paramDialog = null;
@@ -188,19 +185,6 @@ public class ZestDialogManager extends AbstractPanel {
 			ZestScriptWrapper script, boolean add, int showtab) {
 		this.showZestEditScriptDialog(parentNode, script, null, add, false);
 		this.scriptDialog.requestTabFocus(showtab);
-	}
-
-	public void showZestFuzzerCatSelectorDialog(
-			ZestFuzzerFileDelegate fuzzFile, Frame owner) {
-		if (this.fuzzCatDialog == null) {
-			fuzzCatDialog = new ZestFuzzerCategoryDialog(extension, owner,
-					new Dimension(500, 500));
-		} else if (fuzzCatDialog.isVisible()) {
-			// Already being displayed, dont overwrite anything
-			return;
-		}
-		fuzzCatDialog.init(fuzzFile, owner);
-		fuzzCatDialog.setVisible(true);
 	}
 
 	public void showZestEditScriptDialog(ScriptNode parentNode,
