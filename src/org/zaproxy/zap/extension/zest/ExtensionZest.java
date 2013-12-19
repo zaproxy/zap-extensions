@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.zest;
 
 import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,6 +36,7 @@ import java.util.Set;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
+import javax.swing.JToggleButton;
 
 import net.htmlparser.jericho.Source;
 
@@ -85,8 +87,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	public static final String NAME = "ExtensionZest";
 	public static final ImageIcon ZEST_ICON = new ImageIcon(
-			ExtensionZest.class
-					.getResource("/org/zaproxy/zap/extension/zest/resource/fruit-orange.png"));
+			ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resource/fruit-orange.png"));
+	
+	private static final ImageIcon RECORD_OFF_ICON = new ImageIcon(
+			ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resource/cassette.png"));
+	private static final ImageIcon RECORD_ON_ICON = new ImageIcon(
+			ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resource/cassette-red.png"));
 
 	public static final String HTTP_HEADER_X_SECURITY_PROXY = "X-Security-Proxy";
 	public static final String VALUE_RECORD = "record";
@@ -96,6 +102,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
 
 	private ZestResultsPanel zestResultsPanel = null;
+	private JToggleButton recordButton = null;
+
 
 	private ZestTreeModel zestTreeModel = null;
 	private ZestDialogManager dialogManager = null;
@@ -109,6 +117,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	private Map<String, String> acsrfTokenToVar = new HashMap<String, String>();
 
 	private ZestFuzzerDelegate fuzzerMessenger = null;
+	private ScriptNode scriptNodeRecording = null;
 
 	// Cut-n-paste stuff
 	private List<ScriptNode> cnpNodes = null;
@@ -155,6 +164,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			this.dialogManager = new ZestDialogManager(this, this
 					.getExtScript().getScriptUI());
 			new ZestMenuManager(this, extensionHook);
+			
+			View.getSingleton().addMainToolbarButton(getRecordButton());
+			View.getSingleton().addMainToolbarSeparator();
 		}
 
 		ScriptEngineManager mgr = new ScriptEngineManager();
@@ -175,10 +187,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 		if (this.getExtScript().getScriptUI() != null) {
 			ZestTreeCellRenderer renderer = new ZestTreeCellRenderer();
-			this.getExtScript().getScriptUI()
-					.addRenderer(ZestElementWrapper.class, renderer);
-			this.getExtScript().getScriptUI()
-					.disableScriptDialog(ZestScriptWrapper.class);
+			this.getExtScript().getScriptUI().addRenderer(ZestElementWrapper.class, renderer);
+			this.getExtScript().getScriptUI().addRenderer(ZestScriptWrapper.class, renderer);
+			this.getExtScript().getScriptUI().disableScriptDialog(ZestScriptWrapper.class);
 		}
 	}
 	
@@ -247,6 +258,53 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 					.getTreeModel());
 		}
 		return zestTreeModel;
+	}
+	
+	private JToggleButton getRecordButton() {
+		if (recordButton == null) {
+			recordButton = new JToggleButton();
+			recordButton.setIcon(RECORD_OFF_ICON);
+			recordButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.record.off"));
+			
+			recordButton.addActionListener(new java.awt.event.ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					if (recordButton.isSelected()) {
+						getDialogManager().showZestEditScriptDialog(null, null, true, true);
+						recordButton.setIcon(RECORD_ON_ICON);
+						recordButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.record.on"));
+					} else {
+						cancelScriptRecording();
+					}
+				}
+			});
+		}
+		return recordButton;
+	}
+	
+	public void cancelScriptRecording() {
+		if (scriptNodeRecording != null) {
+			// Turn recording off for the 'current' script being recording
+			getZestTreeModel().getScriptWrapper(scriptNodeRecording).setRecording(false);
+			getZestTreeModel().nodeChanged(scriptNodeRecording);
+			scriptNodeRecording = null;
+		}
+		getRecordButton().setSelected(false);
+		getRecordButton().setIcon(RECORD_OFF_ICON);
+		getRecordButton().setToolTipText(Constant.messages.getString("zest.toolbar.button.record.off"));
+	}
+
+	public void setRecording(ScriptNode node, boolean record) {
+		if (node != null && node.getUserObject() instanceof ZestScriptWrapper) {
+			ZestScriptWrapper script = (ZestScriptWrapper) node.getUserObject();
+	    	script.setRecording(record);
+	    	getZestTreeModel().nodeChanged(node);
+	    	if (node.equals(scriptNodeRecording)) {
+	    		// User has cancelled the recording via the right click option,
+	    		// keep the button in step
+	    		cancelScriptRecording();
+	    	}
+	    }
 	}
 
 	public void redact(ScriptNode node, String replace, String replaceWith,
@@ -348,9 +406,14 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	public ScriptNode add(ZestScriptWrapper script, boolean display) {
 		logger.debug("add script " + script.getName());
-
 		ScriptNode node = this.getExtScript().addScript(script, display);
 		this.display(script, node, true);
+		if (script.isRecording()) {
+			scriptNodeRecording = node;
+			// OK, I admit I dont know why this line is required .. but it is ;)
+			((ZestScriptWrapper)node.getUserObject()).setRecording(true);
+			getZestTreeModel().nodeChanged(scriptNodeRecording);
+		}
 		return node;
 	}
 
@@ -438,7 +501,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			logger.debug("addToParent parent=null msg="
 					+ msg.getRequestHeader().getURI());
 			this.dialogManager.showZestEditScriptDialog(null, null, prefix,
-					true);
+					true, false);
 			if (msg != null) {
 				this.dialogManager.addDeferedMessage(msg);
 			}
@@ -938,8 +1001,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 						@Override
 						public void run() {
 							try {
-								addToParent(getDefaultStandAloneScript(), msg,
-										null);
+								addToParent(getDefaultStandAloneScript(), msg, null);
 							} catch (Exception e) {
 								logger.error(e.getMessage(), e);
 							}
@@ -950,6 +1012,26 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				}
 			}
 		}
+		// Check to see if any standalone scripts are recording
+		for (final ScriptNode node : getZestScriptNodes(ExtensionScript.TYPE_STANDALONE)) {
+			ZestScriptWrapper zsw = (ZestScriptWrapper) node.getUserObject();
+			if (zsw.isRecording()) {
+				if (msg.getRequestHeader().getURI().toString().startsWith(zsw.getZestScript().getPrefix())) {
+					EventQueue.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								addToParent(node, msg, null);
+							} catch (Exception e) {
+								logger.error(e.getMessage(), e);
+							}
+						}
+					});
+					
+				}
+			}
+		}
+		
 		return true;
 	}
 
@@ -1046,7 +1128,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		ZestScriptWrapper script = this.getZestTreeModel().getScriptWrapper(
 				node);
 
-		if (ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getType())) {
+		if (ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getType().getName())) {
 			isPassive = true;
 		}
 
@@ -1212,8 +1294,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			if (display) {
 				this.updated(parentNode);
 				this.display(zsw, parentNode, true);
-				this.dialogManager.showZestEditScriptDialog(parentNode, zsw,
-						false);
+				this.dialogManager.showZestEditScriptDialog(
+						parentNode, zsw, false, false);
 			}
 		}
 	}

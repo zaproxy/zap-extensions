@@ -79,6 +79,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private ZestScript script = null;
     private boolean add = false;
     private ZestScript.Type type;
+    // Need the saved boolean for deciding if we need to cancel the record button 
+    private boolean saved = false;
     
     private JButton addButton = null;
     private JButton modifyButton = null;
@@ -105,6 +107,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         this.scriptWrapper = scriptWrapper;
         this.script = scriptWrapper.getZestScript();
         this.add = add;
+        this.saved = false;
         
         if (scriptWrapper.getZestScript().getType() != null) {
         	this.type = ZestScript.Type.valueOf(scriptWrapper.getZestScript().getType());
@@ -296,7 +299,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         scriptWrapper.setContents(ZestJSON.toString(script));
         scriptWrapper.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
         scriptWrapper.setDebug(this.getBoolValue(FIELD_DEBUG));
-
+        
         if (add) {
             script.setType(type);
             if (ZestScript.Type.StandAlone.equals(type)) {
@@ -333,6 +336,18 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             deferedMessages.clear();
         }
         extension.updated(scriptNode);
+        this.saved = true;
+    }
+    
+    @Override
+    public void setVisible(boolean vis) {
+    	if (!vis && !saved) {
+    		// Cancel recording if switched on
+    		if (this.scriptWrapper != null && this.scriptWrapper.isRecording()) {
+    			extension.cancelScriptRecording();
+    		}
+    	}
+    	super.setVisible(vis);
     }
 
     @Override

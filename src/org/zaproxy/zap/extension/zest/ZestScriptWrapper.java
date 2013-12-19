@@ -41,6 +41,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	private ExtensionZest extension = null;
 	private ScriptWrapper original = null;
 	private boolean debug = false;
+	private boolean recording = false;
 
 	public ZestScriptWrapper(ScriptWrapper script) {
 		this.original = script;
@@ -159,6 +160,14 @@ public class ZestScriptWrapper extends ScriptWrapper {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public boolean isRecording() {
+		return recording;
+	}
+
+	public void setRecording(boolean recording) {
+		this.recording = recording;
 	}
 	
 }
