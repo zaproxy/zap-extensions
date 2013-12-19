@@ -4,11 +4,16 @@
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Added Injection Plugins</changes>
+	<changes>
+	<![CDATA[
+	Added a new Source Code Disclosure scanner, using Local File Include (LFI) techniques</br>
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
 	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosure</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
