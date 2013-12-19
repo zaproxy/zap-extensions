@@ -45,6 +45,7 @@ import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.view.OverlayIcon;
 
 /**
  * Custom renderer for {@link ZestScriptsPanel} to set custom icons and
@@ -95,6 +96,22 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 	private static final ImageIcon CONTROL_LOOP_NEXT_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/arrow-turn-180-left.png"));
 
+	private static final ImageIcon CROSS_OVERLAY_ICON = 
+			new ImageIcon(ZestTreeCellRenderer.class.getResource(
+					"/org/zaproxy/zap/extension/zest/resource/cross-overlay.png"));
+	private static final ImageIcon PENCIL_OVERLAY_ICON = 
+			new ImageIcon(ZestTreeCellRenderer.class.getResource(
+					"/org/zaproxy/zap/extension/zest/resource/pencil-overlay.png"));
+	private static final ImageIcon TICK_OVERLAY_ICON = 
+			new ImageIcon(ZestTreeCellRenderer.class.getResource(
+					"/org/zaproxy/zap/extension/zest/resource/tick-overlay.png"));
+	private static final ImageIcon WARNING_OVERLAY_ICON = 
+			new ImageIcon(ZestTreeCellRenderer.class.getResource(
+					"/org/zaproxy/zap/extension/zest/resource/exclamation-overlay.png"));
+	private static final ImageIcon RECORD_OVERLAY_ICON = 
+			new ImageIcon(ZestTreeCellRenderer.class.getResource(
+					"/org/zaproxy/zap/extension/zest/resource/cassette-red-small-overlay.png"));
+
 	private static final long serialVersionUID = -4278691012245035225L;
 
 	private static final Logger logger = Logger
@@ -122,7 +139,34 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			this.setToolTipText(null);
 
 	
-			if (obj != null && obj instanceof ZestElementWrapper) {
+			if (obj != null && obj instanceof ZestScriptWrapper) {
+				OverlayIcon icon = new OverlayIcon(ExtensionZest.ZEST_ICON);
+				ZestScriptWrapper script = (ZestScriptWrapper) obj;
+				
+				// Copied from ScriptsTreeCellRenderer as we want to add an additional overlay 
+				if (! scriptNode.isTemplate()) {
+					if (script.isChanged()) {
+						icon.add(PENCIL_OVERLAY_ICON);
+					}
+					if (script.isError()) {
+						icon.add(WARNING_OVERLAY_ICON);
+					}
+					if (script.getType().isEnableable()) {
+						if (script.isEnabled()) {
+							icon.add(TICK_OVERLAY_ICON);
+						} else {
+							icon.add(CROSS_OVERLAY_ICON);
+						}
+					}
+				}
+				
+				if (script.isRecording()) {
+					icon.add(RECORD_OVERLAY_ICON);
+				}
+
+				setIcon(icon);
+				
+			} else if (obj != null && obj instanceof ZestElementWrapper) {
 				ZestElementWrapper zew = (ZestElementWrapper) obj;
 
 				if (zew.getElement() != null) {

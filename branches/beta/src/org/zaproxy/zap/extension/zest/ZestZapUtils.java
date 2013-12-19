@@ -279,7 +279,7 @@ public class ZestZapUtils {
 			if (incParams) {
 				return MessageFormat.format(Constant.messages
 						.getString("zest.element.loop.file"), zalf
-						.getVariableName(), zalf.getFile().getAbsolutePath());
+						.getVariableName(), zalf.getFile().getName());
 			} else {
 				return Constant.messages
 						.getString("zest.element.loop.file.title");
@@ -447,17 +447,6 @@ public class ZestZapUtils {
 			return Constant.messages.getString("zest.element.control.loopbrk.title");
 		} else if (za instanceof ZestControlLoopNext) {
 			return Constant.messages.getString("zest.element.control.loopnext.title");
-			/*
-			 * } else if (za instanceof ZestTreeElement) { switch
-			 * (((ZestTreeElement)za).getType()) { case TARGETED_SCRIPT: return
-			 * Constant.messages.getString("zest.element.targetedscript"); case
-			 * ACTIVE_SCRIPT: return
-			 * Constant.messages.getString("zest.element.activescript"); case
-			 * PASSIVE_SCRIPT: return
-			 * Constant.messages.getString("zest.element.passivescript"); case
-			 * COMMON_TESTS: return
-			 * Constant.messages.getString("zest.element.commontests"); }
-			 */
 		}
 
 		return MessageFormat.format(Constant.messages

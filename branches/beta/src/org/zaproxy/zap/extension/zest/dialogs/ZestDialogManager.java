@@ -55,8 +55,6 @@ import org.zaproxy.zap.extension.zest.ZestFuzzerDelegate.ZestFuzzerFileDelegate;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
-//import org.mozilla.zest.core.v1.ZestStructuredExpression;
-
 public class ZestDialogManager extends AbstractPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -117,7 +115,7 @@ public class ZestDialogManager extends AbstractPanel {
 					if (sn.getUserObject() instanceof ZestScriptWrapper) {
 						showZestEditScriptDialog(sn,
 								(ZestScriptWrapper) sn.getUserObject(), null,
-								false);
+								false, false);
 
 					} else if (sn.getUserObject() instanceof ZestElementWrapper) {
 						ZestElementWrapper zew = (ZestElementWrapper) sn
@@ -145,18 +143,10 @@ public class ZestDialogManager extends AbstractPanel {
 							} else if (obj instanceof ZestAction) {
 								showZestActionDialog(parent, sn, null,
 										(ZestAction) obj, false);
-								// } else if (obj instanceof ZestConditional) {
-								// LinkedList<ScriptNode> nodes = new
-								// LinkedList<>();
-								// nodes.add(sn);
-								// showZestExpressionDialog(parent, nodes, null,
-								// (ZestExpression) ((ZestConditional)
-								// obj).getRootExpression(), false, false,
-								// false);
 							} else if (obj instanceof ZestExpression) {LinkedList<ScriptNode> nodes=new LinkedList<>();
-							nodes.add(sn);
-							showZestExpressionDialog(parent, nodes, null,
-									(ZestExpression) ((ZestExpression) obj), false, false, false);//TODO
+								nodes.add(sn);
+								showZestExpressionDialog(parent, nodes, null,
+										(ZestExpression) ((ZestExpression) obj), false, false, false);
 							} else if (obj instanceof ZestComment) {
 								showZestCommentDialog(parent, sn, null,
 										(ZestComment) obj, false);
@@ -190,13 +180,13 @@ public class ZestDialogManager extends AbstractPanel {
 	}
 
 	public void showZestEditScriptDialog(ScriptNode parentNode,
-			ZestScriptWrapper script, boolean add) {
-		this.showZestEditScriptDialog(parentNode, script, null, add);
+			ZestScriptWrapper script, boolean add, boolean record) {
+		this.showZestEditScriptDialog(parentNode, script, null, add, record);
 	}
 
 	public void showZestEditScriptDialog(ScriptNode parentNode,
 			ZestScriptWrapper script, boolean add, int showtab) {
-		this.showZestEditScriptDialog(parentNode, script, null, add);
+		this.showZestEditScriptDialog(parentNode, script, null, add, false);
 		this.scriptDialog.requestTabFocus(showtab);
 	}
 
@@ -214,7 +204,7 @@ public class ZestDialogManager extends AbstractPanel {
 	}
 
 	public void showZestEditScriptDialog(ScriptNode parentNode,
-			ZestScriptWrapper script, String prefix, boolean add) {
+			ZestScriptWrapper script, String prefix, boolean add, boolean record) {
 		if (scriptDialog == null) {
 			scriptDialog = new ZestScriptsDialog(extension, View.getSingleton()
 					.getMainFrame(), new Dimension(500, 500));
@@ -230,6 +220,7 @@ public class ZestDialogManager extends AbstractPanel {
 			sw.setType(extension.getExtScript().getScriptType(
 					ExtensionScript.TYPE_STANDALONE));
 			script = new ZestScriptWrapper(sw);
+			script.setRecording(record);
 			try {
 				script.getZestScript().setPrefix(prefix);
 			} catch (MalformedURLException e) {
@@ -338,21 +329,7 @@ public class ZestDialogManager extends AbstractPanel {
 		ZestScript script = extension.getZestTreeModel()
 				.getScriptWrapper(parent).getZestScript();
 		if (expr instanceof ZestStructuredExpression) {
-			return;// TODO remove
-			// if (complexConditionDialog == null) {
-			// complexConditionDialog = new ZestComplexConditionDialog(
-			// extension, View.getSingleton().getMainFrame(),
-			// new Dimension(300, 200));
-			// } else if (complexConditionDialog.isVisible()) {
-			// // Already being displayed, dont overwrite anything
-			// return;
-			// }
-			// complexConditionDialog = new
-			// ZestComplexConditionDialog(extension,
-			// View.getSingleton().getMainFrame(), new Dimension(900, 500));
-			// complexConditionDialog.init(script, parent, children, stmt,
-			// expr, add, surround);
-			// complexConditionDialog.setVisible(true);
+			return;
 		} else {
 			if (conditionDialog == null) {
 				conditionDialog = new ZestExpressionDialog(extension, View
@@ -366,39 +343,6 @@ public class ZestDialogManager extends AbstractPanel {
 			conditionDialog.setVisible(true);
 		}
 	}
-
-	// public void showZestExpressionDialog(ScriptNode parent,
-	// List<ScriptNode> children, ZestStatement stmt,
-	// ZestConditional condition, boolean add, boolean surround) {
-	// ZestScript script = extension.getZestTreeModel()
-	// .getScriptWrapper(parent).getZestScript();
-	// if (condition.getRootExpression() instanceof ZestStructuredExpression) {
-	// if (complexConditionDialog == null) {
-	// complexConditionDialog = new ZestComplexConditionDialog(
-	// extension, View.getSingleton().getMainFrame(),
-	// new Dimension(300, 200));
-	// } else if (complexConditionDialog.isVisible()) {
-	// // Already being displayed, dont overwrite anything
-	// return;
-	// }
-	// complexConditionDialog = new ZestComplexConditionDialog(extension,
-	// View.getSingleton().getMainFrame(), new Dimension(900, 500));
-	// complexConditionDialog.init(script, parent, children, stmt,
-	// expr, add, surround);
-	// complexConditionDialog.setVisible(true);
-	// } else {
-	// if (conditionDialog == null) {
-	// conditionDialog = new ZestExpressionDialog(extension, View
-	// .getSingleton().getMainFrame(), new Dimension(300, 200));
-	// } else if (conditionDialog.isVisible()) {
-	// // Already being displayed, dont overwrite anything
-	// return;
-	// }
-	// conditionDialog.init(script, parent, children, stmt, condition,
-	// add, surround);
-	// conditionDialog.setVisible(true);
-	// }
-	// }
 
 	public void showZestLoopDialog(ScriptNode parent,
 			List<ScriptNode> children, ZestStatement stmt, ZestLoop<?> loop,

@@ -329,6 +329,10 @@ public class ZestTreeModel {
 		model.nodeChanged(node);
 		model.nodeStructureChanged(node.getParent());
 	}
+	
+	public void nodeChanged(ScriptNode node) {
+		model.nodeChanged(node);
+	}
 
 	/**
 	 * Switch the 2 specified nodes - they must have the same parent and be

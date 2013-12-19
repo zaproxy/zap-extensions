@@ -221,10 +221,6 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 		}
 		if (addToNewConditional) {
 			ZestConditional condition = new ZestConditional(expression);
-			// if (this.owner instanceof ZestComplexConditionDialog) {
-			// return; // adds to the tree only if the parent is NOT a
-			// ZestComplexConditionalDialog
-			// } else { TODO line 235
 			if (add) {
 				if (request == null) {
 					if (surround) {
@@ -245,10 +241,9 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 			} else {
 				for (ScriptNode child : children) {
 					extension.updated(child);
-					extension.display(child, false);
+					extension.display(child, true);
 				}
 			}
-			// }
 		} else {
 			if (add) {
 				ScriptNode expNode = extension.addToParent(parent, expression);

@@ -31,6 +31,7 @@ public class ZestFuzzerDelegate {
 
 	public File getFuzzerDir() {
 		if (this.fuzzerDir == null) {
+			// TODO this will need to use the new method for getting the install dir
 			fuzzerDir = new File(Constant.getInstance().FUZZER_DIR);
 		}
 		return fuzzerDir;
