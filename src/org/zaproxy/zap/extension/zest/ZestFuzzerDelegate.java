@@ -10,9 +10,10 @@ package org.zaproxy.zap.extension.zest;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.owasp.jbrofuzz.core.Fuzzer;
 import org.owasp.jbrofuzz.core.NoSuchFuzzerException;
 import org.parosproxy.paros.Constant;
@@ -24,12 +25,15 @@ public class ZestFuzzerDelegate {
 	        getExtensionLoader().getExtension(ExtensionFuzz.NAME);
 	private File fuzzerDir = null;
 	private File fuzzerCustomDir = null;
+	private File fuzzerJBroFuzzDir = null;
 	public final static String JBROFUZZ_CATEGORY_PREFIX=ExtensionFuzz.JBROFUZZ_CATEGORY_PREFIX;
-	
+
+	private static final Logger logger = Logger.getLogger(ZestFuzzerDelegate.class);
+
 	public ZestFuzzerDelegate() {
 	}
 
-	public File getFuzzerDir() {
+	private File getFuzzerDir() {
 		if (this.fuzzerDir == null) {
 			// TODO this will need to use the new method for getting the install dir
 			fuzzerDir = new File(Constant.getInstance().FUZZER_DIR);
@@ -37,87 +41,108 @@ public class ZestFuzzerDelegate {
 		return fuzzerDir;
 	}
 
-	public File getCustomFuzzerDir() {
+	private File getCustomFuzzerDir() {
 		if (fuzzerCustomDir == null) {
+			// TODO this will need to use the new method for getting the install dir
 			fuzzerCustomDir = new File(Constant.getInstance().FUZZER_CUSTOM_DIR);
 		}
 		return fuzzerCustomDir;
 	}
-	public File fromFuzzer(Fuzzer fuzzer) throws IOException{
-		String fuzzerFileName=fuzzer.getName();
-		fuzzerFileName.replace(" ", "_");//TODO not a nice solution
-		File copyOfFuzzer=new File(getFuzzerDir().getAbsolutePath()+File.separator+fuzzerFileName);
-		FileWriter writer=new FileWriter(copyOfFuzzer);
+	
+	private File getJBroFuzzFuzzerDir() {
+		if (fuzzerJBroFuzzDir == null) {
+			fuzzerJBroFuzzDir = new File(getCustomFuzzerDir(), "jbrofuzz");
+			if (! fuzzerJBroFuzzDir.exists()) {
+				fuzzerJBroFuzzDir.mkdirs();
+			}
+		}
+		return fuzzerJBroFuzzDir;
+	}
+	
+	private File fromFuzzer(Fuzzer fuzzer) throws IOException{
+		// Copy the fuzzer to filestore, otherwise Zest wont be able to access it
+		String fuzzerFileName = fuzzer.getName();
+		File copyOfFuzzer = new File(getJBroFuzzFuzzerDir(), fuzzerFileName);
+		FileWriter writer = new FileWriter(copyOfFuzzer);
 		while(fuzzer.hasNext()){
 			writer.write(fuzzer.next()+"\n");
 		}
 		writer.close();
 		return copyOfFuzzer;
 	}
-	
-	public List<String> getJBroFuzzFuzzerNames(String category){
-		return extensionFuzz.getJBroFuzzFuzzerNames(category);
-	}
-	public List<String> getFileFuzzerNames(String category){
-		return extensionFuzz.getFileFuzzerNames(category);
+
+	public List<String> getFuzzersForCategory(String category){
+		if (category == null || category.length() == 0) {
+			List<String> list = new ArrayList<String>();
+			list.add("");
+			return list;
+		} else if (category.startsWith(JBROFUZZ_CATEGORY_PREFIX)) {
+			return extensionFuzz.getJBroFuzzFuzzerNames(category);
+		} else if (category.equals(Constant.messages.getString("fuzz.category.custom"))) {
+			return extensionFuzz.getCustomFileList();
+		} else {
+			return extensionFuzz.getFileFuzzerNames(category);
+		}
 	}
 
-	public List<ZestFuzzerFileDelegate> getAllFuzzFilesAllCat() {
-		File[] subDirectory=this.getFuzzerDir().listFiles();
-		List<File> filesInDir=new LinkedList<>();
-		for(File file: subDirectory){
-			if(file.isDirectory()){
-				filesInDir = getChildrenFiles(this.getFuzzerDir());
-			}
-		}
-		List<ZestFuzzerFileDelegate> filesDelegateInDir=new LinkedList<>();
-		for(File file:filesInDir){
-			filesDelegateInDir.add(new ZestFuzzerFileDelegate(file));
-		}
-		return filesDelegateInDir;
-	}
-
-	private List<File> getChildrenFiles(File file) {
-		List<File> allFiles = new LinkedList<>();
-		for (String filename : fuzzerDir.list()) {
-			String absolutePath = file.getAbsolutePath() + File.separator
-					+ filename;
-			File tmpFile = new File(absolutePath);
-			if (tmpFile.isDirectory()) {
-				allFiles.addAll(getChildrenFiles(tmpFile));
-			} else {
-				allFiles.add(tmpFile);
-			}
-		}
-		return allFiles;
-	}
-
-	public void addFuzzFile(String cat, ZestFuzzerFileDelegate fuzzFile) {
-		try {
-			if(fuzzFile.toFuzzerFolder(cat).createNewFile()){
-				extensionFuzz.filesAdded();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private FileFuzzer getFileFuzzer(String category, String name){
+		return extensionFuzz.getFileFuzzer(category, name);
 	}
 	
-	public FileFuzzer getCustomFileFuzzer(String name){
+	private FileFuzzer getCustomFileFuzzer(String name){
 		return extensionFuzz.getCustomFileFuzzer(name);
 	}
-	public Fuzzer getJBroFuzzer(String name) throws NoSuchFuzzerException{
+	
+	private Fuzzer getJBroFuzzer(String name) throws NoSuchFuzzerException{
 		return extensionFuzz.getJBroFuzzer(name);
 	}
 	
-	public List<String> getJBroFuzzCategories(){
-		return extensionFuzz.getJBroFuzzCategories();
-	}
-	public List<String> getCustomFileList(){
-		return extensionFuzz.getCustomFileList();
+	public List<String> getAllFuzzCategories(){
+		List<String> cats = new ArrayList<String>();
+		cats.add("");
+		for (String cat : extensionFuzz.getJBroFuzzCategories()) {
+			if (cat.length() > 0) {
+				cats.add(cat);
+			}
+		}
+		for (String cat : extensionFuzz.getFileFuzzerCategories()) {
+			if (cat.length() > 0) {
+				cats.add(cat);
+			}
+		}
+		cats.add(Constant.messages.getString("fuzz.category.custom"));
+		return cats;
 	}
 	
-	public ZestFuzzerFileDelegate getFuzzerFileDelegate(File file){
-		return this.new ZestFuzzerFileDelegate(file);
+	public File getFuzzerFile (String category, String fuzzerName) {
+		File fuzzerFile = null;
+		if (fuzzerName == null || fuzzerName.length() == 0) {
+			return null;
+		} else if (category.startsWith(JBROFUZZ_CATEGORY_PREFIX)) {
+			Fuzzer fuzzer;
+			try {
+				fuzzer = getJBroFuzzer(fuzzerName);
+				fuzzerFile = fromFuzzer(fuzzer);
+			} catch (NoSuchFuzzerException e) {
+				logger.error(e.getMessage(), e);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+			
+		} else if (category.equals(Constant.messages.getString("fuzz.category.custom"))) {
+			String absolutePath = getCustomFileFuzzer(fuzzerName).getFileName();
+			absolutePath = getCustomFuzzerDir().getAbsolutePath() +
+					File.separator + absolutePath;
+			fuzzerFile = new File(absolutePath);
+
+		} else {
+			String absolutePath = getCustomFuzzerDir().getAbsolutePath() + 
+					File.separator + category.replace(" / ", File.separator) +
+					File.separator + getFileFuzzer(category, fuzzerName).getFileName();
+			fuzzerFile = new File(absolutePath);
+		}
+		return fuzzerFile;
+
 	}
 	
 	public class ZestFuzzerFileDelegate{
