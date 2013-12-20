@@ -1,0 +1,69 @@
+{
+  "about": "This is a Zest script. For more details about Zest visit https://developer.mozilla.org/en-US/docs/Zest",
+  "zestVersion": "0.3",
+  "title": "301-302 body",
+  "description": "Redirect (301-302) contains a body",
+  "prefix": "",
+  "type": "Passive",
+  "parameters": {
+    "tokenStart": "{{",
+    "tokenEnd": "}}",
+    "tokens": {
+      "response.body": "",
+      "response.header": "",
+      "request.header": "",
+      "request.body": "",
+      "request.url": "",
+      "request.method": ""
+    },
+    "elementType": "ZestVariables"
+  },
+  "statements": [
+    {
+      "rootExpression": {
+        "children": [
+          {
+            "code": 301,
+            "not": false,
+            "elementType": "ZestExpressionStatusCode"
+          },
+          {
+            "code": 302,
+            "not": false,
+            "elementType": "ZestExpressionStatusCode"
+          }
+        ],
+        "not": false,
+        "elementType": "ZestExpressionOr"
+      },
+      "ifStatements": [
+        {
+          "rootExpression": {
+            "length": 0,
+            "approx": 0,
+            "variableName": "response.body",
+            "not": false,
+            "elementType": "ZestExpressionLength"
+          },
+          "ifStatements": [],
+          "elseStatements": [
+            {
+              "message": "Redirect contains a body",
+              "priority": "LOW",
+              "index": 4,
+              "elementType": "ZestActionFail"
+            }
+          ],
+          "index": 3,
+          "elementType": "ZestConditional"
+        }
+      ],
+      "elseStatements": [],
+      "index": 2,
+      "elementType": "ZestConditional"
+    }
+  ],
+  "authentication": [],
+  "index": 0,
+  "elementType": "ZestScript"
+}
