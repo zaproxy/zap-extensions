@@ -7,7 +7,9 @@
 	<changes>
 	<![CDATA[
 	Changed to depend on core ExtensionScript to avoid NullPointerException (Issue 848)<br>
-	Changed to show the correct selected message when the results are sorted in "Zest Results" tab (Issue 942).
+	Fixed to allow Loops to use Custom fuzzers (Issue 916)<br>
+	Changed to show the correct selected message when the results are sorted in "Zest Results" tab (Issue 942)<br>
+	Added a 'Record new Zest script' toolbar button (Issue 953)
 	]]>
 	</changes>
 	<dependson/>
@@ -16,6 +18,9 @@
 	</extensions>
 	<filters/>
 	<files>
+		<file>scripts/templates/passive/301-302 body.zst</file>
+		<file>scripts/templates/proxy/Drop requests via URL regexes.zst</file>
+		<file>scripts/templates/proxy/Remove CSP.zst</file>
 		<!-- Need a core fix before these can be included
 		<file>scripts/templates/zest/active.template.zst</file>
 		<file>scripts/templates/zest/targeted.template.zst</file>
