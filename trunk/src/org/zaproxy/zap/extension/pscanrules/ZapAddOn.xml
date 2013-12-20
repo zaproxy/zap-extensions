@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>8</version>
+	<version>9</version>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Refactored new plugins for information disclosure detection</changes>
+	<changes>NOT YET RELEASED! Added reference for X-Content-Type-Options header missing</changes>
 	<dependson/>
 	<extensions>
 	</extensions>

@@ -66,7 +66,7 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
 		    	    "", 
 		    	    "", 
 		    	    "Ensure each page is setting the specific and appropriate content-type value for the content being delivered", 
-		            "", 
+		            "http://msdn.microsoft.com/en-us/library/ie/gg622941%28v=vs.85%29.aspx", 
 		            "", // No evidence
 		            0,	// TODO CWE Id
 		            0,	// TODO WASC Id
