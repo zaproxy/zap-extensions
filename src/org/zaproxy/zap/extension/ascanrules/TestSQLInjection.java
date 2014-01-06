@@ -66,7 +66,7 @@ import difflib.Patch;
  * UNION based 4) Stacked (TODO: implement stacked based) 5) Blind/Time Based
  * (RDBMS specific, so not done here right now)
  *
- * @author Colm O'Flaherty, Encription Ireland Ltd
+ * @author 70pointer
  */
 public class TestSQLInjection extends AbstractAppParamPlugin {
 
