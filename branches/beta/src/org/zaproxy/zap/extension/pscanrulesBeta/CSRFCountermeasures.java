@@ -46,7 +46,7 @@ import org.zaproxy.zap.model.Vulnerability;
  * or to allow org.zaproxy.zap.extension.pscan.scanner.CrossSiteRequestForgeryScanner to actually 
  * scan for CSRF vulnerabilities.
  * 
- *  @author Colm O'Flaherty, Encription Ireland Ltd
+ *  @author 70pointer
  */
 public class CSRFCountermeasures extends PluginPassiveScanner {
     
