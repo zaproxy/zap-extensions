@@ -61,7 +61,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * - 5 second delay select statement: select "java.lang.Thread.sleep"(5000) from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'
  * - metadata select statement: select TABLE_NAME, COLUMN_NAME, TYPE_NAME, COLUMN_SIZE, DECIMAL_DIGITS, IS_NULLABLE from INFORMATION_SCHEMA.SYSTEM_COLUMNS		
  * 
- *  @author Colm O'Flaherty, Encription Ireland Ltd
+ *  @author 70pointer
  */
 public class SQLInjectionHypersonic extends AbstractAppPlugin {
 		

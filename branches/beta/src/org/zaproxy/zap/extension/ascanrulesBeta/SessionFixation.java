@@ -57,7 +57,7 @@ import org.zaproxy.zap.extension.auth.ExtensionAuth;
  * - session ids built into the url path, and typically extracted by means of url rewriting
  * TODO: implement a check for session fixation issues on form parameters (by checking what?? resulting form params?)
  *
- *  @author Colm O'Flaherty, Encription Ireland Ltd
+ *  @author 70pointer
  */
 public class SessionFixation extends AbstractAppPlugin {
 	/**
