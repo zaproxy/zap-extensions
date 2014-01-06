@@ -32,7 +32,7 @@ import org.apache.commons.httpclient.URI;
 /**
  * a scanner that looks for application source code disclosure using path traversal techniques
  * 
- * @author Colm O'Flaherty
+ * @author 70pointer
  *
  */
 public class SourceCodeDisclosure extends AbstractAppParamPlugin {

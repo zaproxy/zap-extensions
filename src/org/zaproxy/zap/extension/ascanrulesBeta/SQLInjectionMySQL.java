@@ -50,7 +50,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * http://www.websec.ca/kb/sql_injection#MySQL_Stacked_Queries
  * http://pentestmonkey.net/cheat-sheet/sql-injection/mysql-sql-injection-cheat-sheet
  * 
- *  @author Colm O'Flaherty, Encription Ireland Ltd
+ *  @author 70pointer
  */
 public class SQLInjectionMySQL extends AbstractAppPlugin {
 	

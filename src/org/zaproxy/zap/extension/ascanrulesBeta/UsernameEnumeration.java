@@ -50,7 +50,7 @@ import difflib.Patch;
  * 
  * TODO: how to avoid false positives on the password field?
  * 
- *  @author Colm O'Flaherty
+ *  @author 70pointer
  */
 public class UsernameEnumeration extends AbstractAppPlugin {
 	/**

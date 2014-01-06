@@ -61,7 +61,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * - 5 second delay select statement: SELECT  UTL_INADDR.get_host_name('10.0.0.1') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.2') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.3') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.4') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.5') from dual
  * - metadata select statement: TODO
  * 
- *  @author Colm O'Flaherty, Encription Ireland Ltd
+ *  @author 70pointer
  */
 public class SQLInjectionOracle extends AbstractAppPlugin {
 	

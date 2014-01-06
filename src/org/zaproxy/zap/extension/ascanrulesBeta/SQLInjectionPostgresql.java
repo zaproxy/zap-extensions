@@ -58,7 +58,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * - 5 second delay select statement (not taking into account casting, etc): SELECT pg_sleep(5)
  * - metadata select statement: TODO
  * 
- *  @author Colm O'Flaherty, Encription Ireland Ltd
+ *  @author 70pointer
  */
 public class SQLInjectionPostgresql extends AbstractAppPlugin {
 	

@@ -33,7 +33,7 @@ import org.parosproxy.paros.network.HttpMessage;
 /**
  * The LDAPInjection plugin identifies LDAP injection vulnerabilities with LDAP based login pages, and LDAP searches
  *
- * @author Colm O'Flaherty
+ * @author 70pointer
  */
 public class LDAPInjection extends AbstractAppParamPlugin {
 
