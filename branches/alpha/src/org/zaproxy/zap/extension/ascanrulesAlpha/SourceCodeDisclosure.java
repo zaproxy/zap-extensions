@@ -25,18 +25,28 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.ascanrulesAlpha.AscanUtils;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 import org.apache.commons.httpclient.URI;
 
 /**
- * a scanner that looks for application source code disclosure using path traversal techniques
+ * a scanner that looks for application source code disclosure using path traversal techniques, and SVN file disclosure
  * 
  * @author 70pointer
  *
  */
 public class SourceCodeDisclosure extends AbstractAppParamPlugin {
+	
+	static {
+    	//register for internationalisation.  
+    	//The prefix used will vary depending on whether the Class is in alpha or beta
+    	//interesting that this only needs to be done in alpha, and does not need to be done for beta. 
+    	//not sure why that is..
+		//this also needs to be done before the class is initialised, since the name of the scanner itself is i18ned
+    	AscanUtils.registerI18N();	
+	}
 
 	//TODO: replace this with an actual random value, or someone will decide to play with our heads by creating actual files with this name.
     private static final String NON_EXISTANT_FILENAME = "thishouldnotexistandhopefullyitwillnot";
@@ -76,9 +86,11 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
     
     
     /**
-     * details of the vulnerability which we are attempting to find (in this case 33 = Path Traversal)
+     * details of the vulnerability which we are attempting to find 
+     * (in this case 33 = "Path Traversal", 34 = "Predictable Resource Location")
+     * 34 is the most correct, most of the time :/
      */
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
+    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_34");
     
     /**
      * the logger object
@@ -102,6 +114,7 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
      */
     private static final Pattern PATTERN_JSP = Pattern.compile("<%.*%>");
     private static final Pattern PATTERN_PHP = Pattern.compile("<?php");
+    private static final Pattern PATTERN_JAVA = Pattern.compile("class");  //Java is compiled, not interpreted, but this helps with my test cases.
 
     /**
      * returns the plugin id
@@ -116,11 +129,11 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-    	//this would return "Path Traversal", given WASC 33, but we want "Source Code Disclosure"
+    	//this would return "Path Traversal", given WASC 33, but we want "Source Code Disclosure" (or an i18n equivalent)
         //if (vuln != null) {
         //    return vuln.getAlert();
-        //}
-        return "Source Code Disclosure"; //boo-ya!
+        //}        
+        return Constant.messages.getString("ascanalpha.sourcecodeinclusion.name");
     }
 
     @Override
@@ -138,7 +151,7 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 
     @Override
     public int getCategory() {
-        return Category.SERVER;
+        return Category.INFO_GATHER;
     }
 
     @Override
@@ -169,12 +182,6 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
     	//DEBUG only
     	//log.setLevel(org.apache.log4j.Level.DEBUG);
     	
-    	//register for internationalisation.  
-    	//The prefix used will vary depending on whether the Class is in alpha or beta
-    	//interesting that this only needs to be done in alpha, and does not need to be done for beta. 
-    	//not sure why that is..
-    	AscanUtils.registerI18N();
-    	
     	switch (this.getAlertThreshold()) {
     	case HIGH:
     		this.thresholdPercentage = 95;
@@ -194,7 +201,7 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
     	}
     }
 
-    /**
+	/**
      * scans the given parameter for source code disclosure vulnerabilities, using path traversal vulnerabilities
      */
     @Override
@@ -273,30 +280,8 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
                     		log.debug("The output for the source code filename ["+ prefixedUrlfilename + "] does not sufficiently differ from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
                     	}
                     } else {
-                    	//has the response been verified as source code
-                    	boolean responseIsSource = false;
-                    	
-                    	//TODO: validate the contents looks like what the file extension says it shoud be.
-                    	//for instance, for JSP, it should contain "<%" or "%>"
-                    	//				for PHP, it should contain "<?php"
-                    	if ( fileExtension != null) {
-                    		if (fileExtension.equals ("JSP")) {
-                    			if ( PATTERN_JSP.matcher(sourceattackmsg.getResponseBody().toString()).find() ) responseIsSource = true;
-                    		} else if (fileExtension.equals ("PHP")) {
-                    			if ( PATTERN_PHP.matcher(sourceattackmsg.getResponseBody().toString()).find() ) responseIsSource = true;
-                    		} else {
-                    			if (log.isDebugEnabled()) {
-                    				log.debug ("Unknown file extension "+ fileExtension + ". Accepting this file type without verifying it. Could therefore be a false positive.");
-                    			}
-                    			responseIsSource = true;
-                    		}
-                    	} else {
-                			//no file extension, therefore no way to verify the source code.. so accept it as it is
-                			responseIsSource= true;
-                		}
-                    	
-                    	//if we verified it, or couldn't verify it...
-                    	if (responseIsSource) {
+                    	//if we verified the response
+                    	if (responseMatchesExtension (sourceattackmsg, fileExtension)) {
                     		log.info("Source code disclosure!  The output for the source code filename ["+ prefixedUrlfilename + "] differs sufficiently from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
                     		
 		                    //if we get to here, is is very likely that we have source file inclusion attack. alert it.
@@ -306,13 +291,12 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 		                    		getBaseMsg().getRequestHeader().getURI().getURI(),
 		                            paramname, 
 		                            prefixedUrlfilename,
-		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.extrainfo", prefixedUrlfilename, NON_EXISTANT_FILENAME, randomversussourcefilenamematchpercentage, this.thresholdPercentage),
-		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.soln"),
-		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.evidence"),
+		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.lfibased.extrainfo", prefixedUrlfilename, NON_EXISTANT_FILENAME, randomversussourcefilenamematchpercentage, this.thresholdPercentage),
+		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.lfibased.soln"),
+		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.lfibased.evidence"),
 		                            sourceattackmsg
 		                            );
-		                    
-		                    // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact)
+		                    // All done on this parameter
 		                    return;	
 	                    } else {
 	                    	if (log.isDebugEnabled()) {
@@ -372,9 +356,9 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 		                    		getBaseMsg().getRequestHeader().getURI().getURI(),
 		                            paramname, 
 		                            prefixedUrlfilename,
-		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.extrainfo", prefixedUrlfilename, NON_EXISTANT_FILENAME, randomversussourcefilenamematchpercentage, this.thresholdPercentage),
-		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.soln"),
-		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.evidence"),
+		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.lfibased.extrainfo", prefixedUrlfilename, NON_EXISTANT_FILENAME, randomversussourcefilenamematchpercentage, this.thresholdPercentage),
+		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.lfibased.soln"),
+		                            Constant.messages.getString("ascanalpha.sourcecodeinclusion.lfibased.evidence"),
 		                            sourceattackmsg
 		                            );
 		                    
@@ -400,6 +384,124 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
     }
 
     @Override
+    public void scan() {
+
+
+        // and then scan the node itself (ie, at URL level, rather than at parameter level)
+        if (log.isDebugEnabled()) {
+			log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
+			log.debug("Checking [" + getBaseMsg().getRequestHeader().getMethod() + "] ["
+					+ getBaseMsg().getRequestHeader().getURI() + "], for Source Code Disclosure (using SVN)");
+		}
+        
+        try {
+        	URI uri = this.getBaseMsg().getRequestHeader().getURI();
+			String path = uri.getPath();
+			//String filename = path.substring( path.lastIndexOf('/')+1, path.length() );
+			String filename = uri.getName();
+
+			String fileExtension = null;
+			if(filename.contains(".")) {
+				fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
+				fileExtension = fileExtension.toUpperCase();
+			}
+
+			if ( filename != null && filename.length() > 0) {
+				//there is a file name at the end of the path. Look for SVN metadata containing source code
+				String pathminusfilename = path.substring( 0, path.lastIndexOf(filename));
+
+				HttpMessage svnsourcefileattackmsg = new HttpMessage(new URI (uri.getScheme(), uri.getAuthority(), pathminusfilename + ".svn/text-base/" + filename + ".svn-base", null, null));
+				svnsourcefileattackmsg.setCookieParams(this.getBaseMsg().getCookieParams());
+				//svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
+				sendAndReceive(svnsourcefileattackmsg);
+				
+				//if we got a 404 specifically, then this is NOT a match
+				//note that since we are simply relying on the file existing or not, we 
+				//will not attempt any fuzzy matching. Old school.
+				//this check is necessary, otherwise a recursive scan on nodes in the url path cause lots of false positives.
+				if ( svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND ) {
+					
+					String attackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/text-base/" + filename + ".svn-base";
+	
+					//check the contents of the output to some degree, if we have a file extension.
+					//if not, just try it (could be a false positive, but hey)    			
+					if (responseMatchesExtension (svnsourcefileattackmsg, fileExtension)) {
+						log.info("Source code disclosure, using SVN metadata leakage!");
+	
+						//if we get to here, is is very likely that we have source file inclusion attack. alert it.
+						bingo(Alert.RISK_HIGH, Alert.WARNING,
+								Constant.messages.getString("ascanalpha.sourcecodeinclusion.name"),
+								Constant.messages.getString("ascanalpha.sourcecodeinclusion.desc"), 
+								getBaseMsg().getRequestHeader().getURI().getURI(),
+								null, 
+								attackFilename,
+								Constant.messages.getString("ascanalpha.sourcecodeinclusion.svnbased.extrainfo", filename, attackFilename),
+								Constant.messages.getString("ascanalpha.sourcecodeinclusion.svnbased.soln"),
+								Constant.messages.getString("ascanalpha.sourcecodeinclusion.svnbased.evidence"),
+								svnsourcefileattackmsg
+								);
+						//if we found one, do not even try the "super" method, which tries each of the parameters,
+						//since this is slow, and we already found an instance
+						return;
+					} else {
+						if (log.isDebugEnabled()) {
+							log.debug("The HTML output does not look like source code of type "+fileExtension );
+						}
+					}
+				} else {
+					if (log.isDebugEnabled()) {
+						log.debug("Got a 404, so the SVN source code file was not found");
+					}
+				}
+
+			} else {
+				if (log.isDebugEnabled()) {
+					log.debug ("The URI has no filename component, so there is not much point in looking for corresponding SVN source code!");
+				}
+				//do not return, since we want to look for source code at the application level, as well as the file level
+			}
+		} catch (Exception e) {
+			log.error("Error scanning a request for Source Code Disclosure: " + e.getMessage(), e);
+		}
+		
+        // scan all of the individual parameters last 
+        //(because this is definitely the slow way and less likely way of finding a vulnerability like this)
+    	// ie calls scan (a, b, c)
+        super.scan();
+
+    }
+
+    /**
+     * returns whether the message response content matches the specified extension
+     * @param svnsourcefileattackmsg
+     * @param fileExtension
+     * @return
+     */
+    private boolean responseMatchesExtension(HttpMessage message, String fileExtension) {
+    	if ( fileExtension != null) {
+    		if (fileExtension.equals ("JSP")) {
+    			if ( PATTERN_JSP.matcher(message.getResponseBody().toString()).find() ) return true; 
+    		} else if (fileExtension.equals ("PHP")) {
+    			if ( PATTERN_PHP.matcher(message.getResponseBody().toString()).find() ) return true; 	
+    		} else if (fileExtension.equals ("JAVA")) {
+    			if ( PATTERN_JAVA.matcher(message.getResponseBody().toString()).find() ) return true; 
+    			
+    		} else {
+    			if (log.isDebugEnabled()) {
+    				log.debug ("Unknown file extension "+ fileExtension + ". Accepting this file type without verifying it. Could therefore be a false positive.");
+    			}
+    			//unknown file extension. just accept it as it is.
+    			return true;
+    		}
+    		//known file type, but not matched. do not accept it.
+    		return false;
+    	} else {
+			//no file extension, therefore no way to verify the source code.. so accept it as it is
+			return true;
+		}
+	}
+
+    @Override
     public int getRisk() {
         return Alert.RISK_HIGH; //definitely a High. If we get the source, we don't need to hack the app any more, because we can just analyse it off-line! Sweet..
     }
@@ -411,7 +513,11 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 
     @Override
     public int getWascId() {
-        return 33;  //Path Traversal 
+    	//this is not entirely satisfactory. 
+    	//the vulnerability could be caused by either "Path Traversal" (33), 
+    	//or by "Predictable Resource Location" (34)
+    	//but we need to choose just one, so "Predictable Resource Location" is probably the most correct general response to give
+        return 34;  //Predictable Resource Location
     }
     
 	/**
@@ -456,5 +562,7 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 		return (int) ( ( ((double)Math.min (a, b)) / Math.max (a, b)) * 100) ;
 		
 	}
+	
+	
 
 }
