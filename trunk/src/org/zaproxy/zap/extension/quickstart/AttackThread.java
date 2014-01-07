@@ -81,11 +81,6 @@ public class AttackThread extends Thread {
 	        	return;
 	        }
 
-	        if (startNode.isLeaf() && !((SiteNode)startNode.getParent()).isRoot()) {
-	        	// Go one level up 
-	        	startNode = (SiteNode)startNode.getParent();
-	        }
-
 			ExtensionSpider extSpider = (ExtensionSpider) Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.NAME);
 			if (extSpider == null) {
 				logger.error("No spider");
