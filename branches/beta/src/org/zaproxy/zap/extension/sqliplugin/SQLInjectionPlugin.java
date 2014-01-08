@@ -325,6 +325,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         // according to the behavior and the heaviness
         // TODO: define a compare logic and sort it according to that
         for (SQLiTest test : manager.getTests()) {
+            
             title = test.getTitle();
             //unionExtended = false;
 
@@ -980,6 +981,14 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                     // <where> tags
                     if (injectable) {
                         break;
+                    }
+                    
+                    // Check if the scan has been stopped
+                    // if yes dispose resources and exit
+                    if (isStop()) {
+                        // Dispose all resources
+                        // Exit the plugin
+                        return;
                     }
                 }
                 

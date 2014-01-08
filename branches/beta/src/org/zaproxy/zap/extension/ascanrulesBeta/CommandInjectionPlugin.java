@@ -264,6 +264,14 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 log.error("PHP Code Injection vulnerability check failed for parameter ["
                     + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
             }
+            
+            // Check if the scan has been stopped
+            // if yes dispose resources and exit
+            if (isStop()) {
+                // Dispose all resources
+                // Exit the plugin
+                return;
+            }
         }
     }
 }
