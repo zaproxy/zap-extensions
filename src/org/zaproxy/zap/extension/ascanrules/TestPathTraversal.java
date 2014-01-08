@@ -313,6 +313,14 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact)
                         return;
                     }
+                    
+                    // Check if the scan has been stopped
+                    // if yes dispose resources and exit
+                    if (isStop()) {
+                        // Dispose all resources
+                        // Exit the plugin
+                        return;
+                    }                    
                 }
             }
             
@@ -370,6 +378,14 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact)
                         return;
                     }
+                    
+                    // Check if the scan has been stopped
+                    // if yes dispose resources and exit
+                    if (isStop()) {
+                        // Dispose all resources
+                        // Exit the plugin
+                        return;
+                    }                    
                 }
             }
 
