@@ -233,6 +233,14 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                 log.error("PHP Code Injection vulnerability check failed for parameter ["
                     + paramName + "] and payload [" + phpPayload + "] due to an I/O error", ex);
             }
+            
+            // Check if the scan has been stopped
+            // if yes dispose resources and exit
+            if (isStop()) {
+                // Dispose all resources
+                // Exit the plugin
+                return;
+            }
         }
             
         // ------------------------------------------
@@ -280,6 +288,14 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                 //if it's in English, it's still better than not having it at all.
                 log.error("ASP Code Injection vulnerability check failed for parameter ["
                     + paramName + "] and payload [" + aspPayload + "] due to an I/O error", ex);
+            }
+            
+            // Check if the scan has been stopped
+            // if yes dispose resources and exit
+            if (isStop()) {
+                // Dispose all resources
+                // Exit the plugin
+                return;
             }
         }       
     }
