@@ -239,7 +239,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
         arguments[ARG_QUICK_URL_IDX] = new CommandLineArgument("-quickurl", 1, null, "", 
         		"-quickurl [target url]: " + Constant.messages.getString("quickstart.cmdline.url.help"));
         arguments[ARG_QUICK_OUT_IDX] = new CommandLineArgument("-quickout", 1, null, "", 
-        		"-quickout [output filename]: " + Constant.messages.getString("script.cmdline.out.help"));
+        		"-quickout [output filename]: " + Constant.messages.getString("quickstart.cmdline.out.help"));
         return arguments;
     }
 
