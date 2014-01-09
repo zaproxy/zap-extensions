@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Technology detection using Wappalyzer</name>
-	<version>1</version>
+	<version>2</version>
 	<description>Technology detection using Wappalyzer: wappalyzer.com</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>Updated to latest rules and icons</changes>
 	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer</extension>
