@@ -314,6 +314,14 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 	                    	}
 	                    }
                     }
+                    
+                    // Check if the scan has been stopped
+                    // if yes dispose resources and exit
+                    if (isStop()) {
+                        // Dispose all resources
+                        // Exit the plugin
+                        return;
+                    }                    
                 }            
             }
             
@@ -380,6 +388,14 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 	                    		log.debug("The output for the WAR/EAR code filename ["+ prefixedUrlfilename + "] does not sufficiently differ in length from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
 	                    	}
 	                    }
+                            
+                            // Check if the scan has been stopped
+                            // if yes dispose resources and exit
+                            if (isStop()) {
+                                // Dispose all resources
+                                // Exit the plugin
+                                return;
+                            }
 	                }
 	            }
             } else {
