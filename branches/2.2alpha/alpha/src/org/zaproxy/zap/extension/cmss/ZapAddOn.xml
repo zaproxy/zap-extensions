@@ -1,0 +1,16 @@
+<zapaddon>
+	<name>WAFP Extension</name>
+	<version>1.0</version>
+	<description>Fingerprint web applications</description>
+	<author>ZAP Dev Team</author>
+	<url>http://code.google.com/p/zaproxy/</url>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.cmss.CMSSTopMenu</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules>
+	</pscanrules>
+	<filters></filters>
+	<files/>
+</zapaddon>

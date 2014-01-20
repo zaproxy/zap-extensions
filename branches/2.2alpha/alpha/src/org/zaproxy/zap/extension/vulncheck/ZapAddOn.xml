@@ -1,0 +1,16 @@
+<zapaddon>
+	<name>VulnCheck Extension</name>
+	<version>1.0</version>
+	<description>list vulnerabilities from known databases </description>
+	<author>ZAP Dev Team</author>
+	<url>http://code.google.com/p/zaproxy/</url>
+	<dependson></dependson>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.vulncheck.VulnCheckTopMenu</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules>
+	</pscanrules>
+	<filters></filters>
+	<files/>
+</zapaddon>
