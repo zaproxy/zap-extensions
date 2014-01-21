@@ -17,18 +17,15 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeSet;
 
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 
 
@@ -52,7 +49,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * 
  *  @author 70pointer
  */
-public class SQLInjectionMySQL extends AbstractAppPlugin {
+public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 	
 	private boolean doTimeBased = false;
 	
@@ -82,14 +79,6 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 	 * MySQL specific time based injection strings. each for 5 seconds
 	 */
 	
-	//issue with "+" symbols in here: 
-	//we cannot encode them here as %2B, as then the database gets them double encoded as %252B
-	//we cannot leave them as unencoded '+' characters either, as then they are NOT encoded by the HttpMessage.setGetParams (x) or by AbstractPlugin.sendAndReceive (HttpMessage)
-	//and are seen by the database as spaces :(
-	//in short, we cannot use the "+" character in parameters, unless we mean to use it as a space character!!!! Particularly Nasty.
-	//Workaround: use RDBMS specific functions like "CONCAT(a,b,c)" which mean parsing the original value into the middle of the parameter value to be passed, 
-	//rather than just appending to it
-	//Issue: this technique does not close the open ' or " in the query.. so do not use it..
 	//Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these examples below (see * comment)
 	//TODO: maybe add support for ')' after the original value, before the sleeps
 	private static String[] SQL_MYSQL_TIME_REPLACEMENTS = {
@@ -173,16 +162,8 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 
 	@Override
 	public void init() {
-		//DEBUG: turn on for debugging
-		//TODO: turn this off
-		//log.setLevel(org.apache.log4j.Level.DEBUG);
-		//this.debugEnabled = true;
-
 		if ( this.debugEnabled ) log.debug("Initialising");
-		
-		//TODO: debug only
-		//this.setAttackStrength(AttackStrength.INSANE);
-		
+				
 		//set up what we are allowed to do, depending on the attack strength that was set.
 		if ( this.getAttackStrength() == AttackStrength.LOW ) {
 			doTimeBased=true; doTimeMaxRequests=3;
@@ -197,18 +178,10 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 
 
 	/**
-	 * scans for SQL Injection vulnerabilities, using MySQL specific syntax.  If it doesn't use specifically MySQL syntax, it does not belong in here, but in SQLInjection 
+	 * scans for SQL Injection vulnerabilities, using MySQL specific syntax.  If it doesn't use specifically MySQL syntax, it does not belong in here, but in TestSQLInjection 
 	 */
 	@Override
-	public void scan() {
-
-		//as soon as we find a single SQL injection on the url, skip out. Do not look for SQL injection on a subsequent parameter on the same URL
-		//for performance reasons.
-		boolean sqlInjectionFoundForUrl = false;
-		
-		//DEBUG only
-		//log.setLevel(org.apache.log4j.Level.DEBUG);
-		//this.debugEnabled = true;
+	public void scan(HttpMessage originalMessage, String paramName, String originalParamValue) {
 
 		try {
 			//Timing Baseline check: we need to get the time that it took the original query, to know if the time based check is working correctly..
@@ -247,86 +220,59 @@ public class SQLInjectionMySQL extends AbstractAppPlugin {
 				}
 			}		
 			//end of timing baseline check
-			
-			
-			TreeSet<HtmlParameter> htmlParams = new TreeSet<> (); 
-			htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
-			htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
-
-			//for each parameter in turn
-			for (Iterator<HtmlParameter> iter = htmlParams.iterator(); iter.hasNext() && ! sqlInjectionFoundForUrl; ) {
-				
-				int countTimeBasedRequests = 0;		
-
-				HtmlParameter currentHtmlParameter = iter.next();
-				if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], ["+ currentHtmlParameter.getType()+"] field ["+ currentHtmlParameter.getName() + "] with value ["+currentHtmlParameter.getValue()+"] for SQL Injection");    			
-				
-				//Check 3: check for time based SQL Injection
-				//MySQL specific time based SQL injection checks
-
-				for (int timeBasedSQLindex = 0; 
-						timeBasedSQLindex < SQL_MYSQL_TIME_REPLACEMENTS.length && ! sqlInjectionFoundForUrl && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
-						timeBasedSQLindex ++) {
-					HttpMessage msg3 = getNewMsg();
-					String newTimeBasedInjectionValue = SQL_MYSQL_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", currentHtmlParameter.getValue());
-					
-					if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getUrlParams(); //get parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue)); 
-						msg3.setGetParams(requestParams); //url parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.form)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getFormParams(); //form parameters
-						requestParams.remove(currentHtmlParameter);
-						//new HtmlParameter ();
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue));
-						msg3.setFormParams(requestParams); //form parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.cookie)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getCookieParams(); //cookie parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue));
-						msg3.setCookieParams(requestParams); //cookie parameters
-					}
-
-					//send it.
-					long modifiedTimeStarted = System.currentTimeMillis();
-					try {
-						sendAndReceive(msg3);
-						countTimeBasedRequests++;
-					}
-					catch (java.net.SocketTimeoutException e) {
-						//to be expected occasionally, if the contains some parameters exploiting time based SQL injection
-						if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] on ["+currentHtmlParameter.getType()+"] field: ["+currentHtmlParameter.getName()+"]");
-					}
-					long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
-
-					if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on ["+currentHtmlParameter.getType()+"] field: ["+currentHtmlParameter.getName()+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
-
-					//add some small leeway on the 5 seconds, since adding a 5 second delay in the SQL query will not cause the request
-					//to take a full 5 seconds longer to run than the original..
-					if (modifiedTimeUsed >= (originalTimeUsed + 5000 - 200)) {  
-						//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
-
-						//Likely a SQL Injection. Raise it
-						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, currentHtmlParameter.getValue(), originalTimeUsed);
 						
-						//raise the alert
-						bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(), 
-								getBaseMsg().getRequestHeader().getURI().getURI(), //url
-								currentHtmlParameter.getName(),  newTimeBasedInjectionValue, 
-								extraInfo, getSolution(), msg3);
+			int countTimeBasedRequests = 0;		
 
-						log.info("A likely Time Based SQL Injection Vulnerability has been found with ["+msg3.getRequestHeader().getMethod()+"] URL ["+msg3.getRequestHeader().getURI().getURI()+"] on "+currentHtmlParameter.getType()+" field: ["+currentHtmlParameter.getName()+"]");
+			if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], ["+ paramName + "] with value ["+originalParamValue+"] for SQL Injection");
+			
+			//MySQL specific time-based SQL injection checks
+			for (int timeBasedSQLindex = 0; 
+					timeBasedSQLindex < SQL_MYSQL_TIME_REPLACEMENTS.length && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
+					timeBasedSQLindex ++) {
+				HttpMessage msg3 = getNewMsg();
+				String newTimeBasedInjectionValue = SQL_MYSQL_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", originalParamValue);
+				setParameter(msg3, paramName, newTimeBasedInjectionValue);
 
-						sqlInjectionFoundForUrl = true; 
-						continue;
-					} //query took longer than the amount of time we attempted to retard it by						
-				}  //for each time based SQL index
-				//end of Check 3: end of check for time based SQL Injection
+				//send it.
+				long modifiedTimeStarted = System.currentTimeMillis();
+				try {
+					sendAndReceive(msg3);
+					countTimeBasedRequests++;
+				}
+				catch (java.net.SocketTimeoutException e) {
+					//to be expected occasionally, if the contains some parameters exploiting time based SQL injection
+					if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+				}
+				long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
 
-			} //end of the for loop around the parameter list
+				if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on field: ["+paramName+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
+
+				//add some small leeway on the 5 seconds, since adding a 5 second delay in the SQL query will not cause the request
+				//to take a full 5 seconds longer to run than the original..
+				if (modifiedTimeUsed >= (originalTimeUsed + 5000 - 200)) {  
+					//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
+
+					//Likely a SQL Injection. Raise it
+					String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, originalParamValue, originalTimeUsed);
+					
+					//raise the alert
+					bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(), 
+							getBaseMsg().getRequestHeader().getURI().getURI(), //url
+							paramName,  newTimeBasedInjectionValue, 
+							extraInfo, getSolution(), msg3);
+
+					log.info("A likely Time Based SQL Injection Vulnerability has been found with ["+msg3.getRequestHeader().getMethod()+"] URL ["+msg3.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+
+					return;
+				} //query took longer than the amount of time we attempted to retard it by
+			//bale out if we were asked nicely
+			if (isStop()) { 
+				log.debug("Stopping the scan due to a user request");
+				return;
+				}
+			}  //for each time based SQL index
+			//end of check for MySQL time based SQL Injection
+
 
     	} catch (InvalidRedirectLocationException e) {
     		// Not an error, just means we probably attacked the redirect location
