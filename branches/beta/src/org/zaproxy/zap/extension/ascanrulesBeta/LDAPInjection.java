@@ -203,6 +203,12 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                 	return;
                 }
                 
+                //bale out if we were asked nicely
+                if (isStop()) { 
+                	if (log.isDebugEnabled() ) log.debug("Stopping the scan due to a user request");
+                	return;
+                	}
+                
                 //otherwise continue to check for non error-based LDAP injection, using boolean based logic.                
                 //first check stability of the output for the original parameter.
                 //if its not stable (enough), there is not much point in continuing
@@ -216,6 +222,11 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                 	return;
                 }
                 
+                //bale out if we were asked nicely
+                if (isStop()) { 
+                	if (log.isDebugEnabled() ) log.debug("Stopping the scan due to a user request");
+                	return;
+                	}
                 
                 //now try a random parameter of the same length, to make sure that changing it results in output substantially DIFFERENT to the original
 				//get a random parameter value the same length as the original!
@@ -225,6 +236,12 @@ public class LDAPInjection extends AbstractAppParamPlugin {
 				HttpMessage randomParamMsg1 = getNewMsg();
                 this.setParameter(randomParamMsg1, paramname, randomparameterAttack);
                 sendAndReceive(randomParamMsg1);
+                
+                //bale out if we were asked nicely
+                if (isStop()) { 
+                	if (log.isDebugEnabled() ) log.debug("Stopping the scan due to a user request");
+                	return;
+                	}
 
 				HttpMessage randomParamMsg2 = getNewMsg();
                 this.setParameter(randomParamMsg2, paramname, randomparameterAttack);
@@ -247,6 +264,11 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                 	return;
                 }
 
+                //bale out if we were asked nicely
+                if (isStop()) { 
+                	if (log.isDebugEnabled() ) log.debug("Stopping the scan due to a user request");
+                	return;
+                	}
                 
                 //1: The following logic is designed for login pages, which is the primary use case of LDAP within web apps
 	        	//try inserting a logically equivalent expression, to see if we get a match for the original output
@@ -309,7 +331,12 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                         
 	                	//all done for this parameter. return.
 	                	return;
-	                }
+	                	}
+	                //bale out if we were asked nicely
+	                if (isStop()) { 
+	                	if (log.isDebugEnabled() ) log.debug("Stopping the scan due to a user request");
+	                	return;
+	                	}
 	        	}
                 
                 //2: try a separate case for where the LDAP injection point is *not* wrapped in parentheses, like the following complete filter expression:
