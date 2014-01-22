@@ -30,10 +30,6 @@ import org.parosproxy.paros.network.HttpMessage;
 
 
 /**
- * TODO: do not do dangerous operations unless the Mode is right!
- * TODO: implement checks in Header fields (currently does Cookie values, form fields, and url parameters)
- * TODO: change the Alert Titles.
- * 
  * The SQLInjectionMySQL plugin identifies MySQL specific SQL Injection vulnerabilities
  * using MySQL specific syntax.  If it doesn't use MySQL specific syntax, it belongs in the generic SQLInjection class! 
  * Note the ordering of checks, for efficiency is : 
@@ -261,13 +257,13 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 							paramName,  newTimeBasedInjectionValue, 
 							extraInfo, getSolution(), msg3);
 
-					log.info("A likely Time Based SQL Injection Vulnerability has been found with ["+msg3.getRequestHeader().getMethod()+"] URL ["+msg3.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+					if ( this.debugEnabled ) log.debug ("A likely Time Based SQL Injection Vulnerability has been found with ["+msg3.getRequestHeader().getMethod()+"] URL ["+msg3.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
 
 					return;
 				} //query took longer than the amount of time we attempted to retard it by
 			//bale out if we were asked nicely
 			if (isStop()) { 
-				log.debug("Stopping the scan due to a user request");
+				if ( this.debugEnabled ) log.debug("Stopping the scan due to a user request");
 				return;
 				}
 			}  //for each time based SQL index
