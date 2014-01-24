@@ -11,5 +11,5 @@ It works in a very similar way to the Wappalyzer browser add-ons with the follow
 
 == The Technology Tab==
 This tab shows all of the detected technologies for the site selected.<br>
-Right clicking on a technology will display a 'Show evidence' menu underneight which are all of the regexes used to detect it.<br>
+Right clicking on a technology will display a 'Show evidence' menu underneath which are all of the regexes used to detect it.<br>
 Selecting a regex will switch to the 'Search' tab and search through the history for that regex.
