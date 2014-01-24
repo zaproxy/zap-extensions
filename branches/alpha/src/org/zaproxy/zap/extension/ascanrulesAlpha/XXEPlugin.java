@@ -41,7 +41,7 @@ import org.zaproxy.zap.model.Vulnerability;
 public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlugin {
 
     // Get the correct vulnerability description from WASC
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_43");
+    private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_43");
     private static final int CHALLENGE_LENGTH = 16;
 
     // Payload built on examples retrieved in:
@@ -70,7 +70,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     // AttValue ::= '"' ([^<&"] | Reference)* '"' |  "'" ([^<&'] | Reference)* "'"
     // ----------------------------------------------
     private final static String tagRegex = "\\<[\\_\\:A-Za-z][\\_\\:A-Za-z0-9\\-\\.]*\\s*[^\\>]*\\>((?:\\<\\!\\[CDATA\\[(?:.(?<!\\]\\]>))*\\]\\]>)|(?:[^\\<\\&]*))\\<\\/[\\_\\:A-Za-z][\\_\\:A-Za-z0-9\\-\\.]*\\s*\\>";
-    private Pattern tagPattern = Pattern.compile(tagRegex);
+    private final static Pattern tagPattern = Pattern.compile(tagRegex);
         
     // Local targets for local file inclusion
     private static final String[] LOCAL_FILE_TARGETS = {
@@ -208,6 +208,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     @Override
     public void init() {
         // to do
+        
     }
 
     /**
@@ -225,7 +226,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
         // first check if it's an XML otherwise it's useless...
         if ((contentType != null) && (contentType.contains("xml"))) {
             
-            // Check #2 : XXE Remote File Inclusion Attack
+            // Check #1 : XXE Remote File Inclusion Attack
             // ------------------------------------------------------
             // This attack is described in 
             // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
@@ -251,8 +252,13 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                 //if it's in English, it's still better than not having it at all.
                 log.error("XXE Injection vulnerability check failed for payload [" + payload + "] due to an I/O error", ex);
             }
+
+            // Check if we've to do only basic analysis (only remote should be done)...
+            if (this.getAttackStrength() == AttackStrength.LOW) {
+                return;
+            }
             
-            // Check #3 : XXE Local File Reflection Attack
+            // Check #2 : XXE Local File Reflection Attack
             // ------------------------------------------------------
             // This attack is not described anywhere but the idea is
             // very simple: use the original XML request and substitute
@@ -292,8 +298,9 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
 
                     // Parse the result
                     response = msg.getResponseBody().toString();
+                    matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
                     if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK)
-                            && LOCAL_FILE_PATTERNS[idx].matcher(response).find()) {
+                            && matcher.find()) {
 
                         // Alert the vulnerability to the main core
                         this.bingo(
@@ -303,6 +310,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                                 null, //param
                                 payload, //attack
                                 null, //otherinfo
+                                matcher.group(), //evidence
                                 msg);
                     }
 
@@ -315,11 +323,16 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                     }
                 }
                 
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 log.error("XXE Injection vulnerability check failed for payload [" + payload + "] due to an I/O error", ex);
             }
 
-            // Check #1 : XXE Local File Inclusion Attack
+            // Check if we've to do only medium sized analysis (only remote and reflected will be done)...
+            if (this.getAttackStrength() == AttackStrength.MEDIUM) {
+                return;
+            }
+            
+            // Check #3 : XXE Local File Inclusion Attack
             // ------------------------------------------------------
             // This attack is described in 
             // https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing
@@ -333,6 +346,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
             try {
                 String localFile;
                 String response;
+                Matcher matcher;
                 
                 for (int idx = 0; idx < LOCAL_FILE_TARGETS.length; idx++) {
                     // Prepare the message
@@ -346,8 +360,9 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
 
                     // Parse the result
                     response = msg.getResponseBody().toString();
+                    matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
                     if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK)
-                            && LOCAL_FILE_PATTERNS[idx].matcher(response).find()) {
+                            && matcher.find()) {
                         
                         // Alert the vulnerability to the main core
                         this.bingo(
@@ -357,6 +372,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                                 null, //param
                                 payload, //attack
                                 null, //otherinfo
+                                matcher.group(), //evidence
                                 msg);
                     }
                     
@@ -378,14 +394,16 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     }
 
     /**
+     * Notification for a successful plugin execution
      * 
-     * @param msg
-     * @param challenge 
+     * @param challenge the challenge callback that has been used
+     * @param targetMessage the original message sent to the target containing the callback
      */
     @Override
-    public void notifyCallback(String challenge, HttpMessage msg) {
-        HttpMessage targetMessage = (HttpMessage)getKb().get(challenge);        
-        if (targetMessage != null) {
+    public void notifyCallback(String challenge, HttpMessage targetMessage) {
+        if (challenge != null) {
+            
+            String evidence = pluginApi.getCallbackUrl(challenge);            
             
             // Alert the vulnerability to the main core
             this.bingo(
@@ -395,6 +413,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                     null, //param
                     getCallbackAttackPayload(challenge), //attack
                     null, //otherinfo
+                    evidence, //evidence
                     targetMessage);
         }
     }
@@ -405,7 +424,8 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
      * @return 
      */
     private String getCallbackAttackPayload(String challenge) {
-        return MessageFormat.format(ATTACK_HEADER + ATTACK_ENTITY, pluginApi.getCallbackUrl(challenge));
+        String message = ATTACK_HEADER + ATTACK_BODY;
+        return MessageFormat.format(message, pluginApi.getCallbackUrl(challenge));
     }
     
     /**
