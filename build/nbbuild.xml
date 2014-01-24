@@ -71,7 +71,7 @@
     nbproject/build-impl.xml file. 
 
     -->
-    <target depends="clean" name="-do-jar-with-manifest">
+    <target depends="clean" name="-do-jar-jar">
         <property name="status" value="alpha" />
         <property name="versions.file" location="${dist.dir}/ZapVersions.xml"  />
 
