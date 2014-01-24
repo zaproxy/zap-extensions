@@ -247,7 +247,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
     	return null;
     }
 
-	@Override
+	//@Override
 	public boolean handleFile(File file) {
 		// Not supported
 		return false;
