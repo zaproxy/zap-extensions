@@ -24,7 +24,6 @@ import java.awt.HeadlessException;
 import java.awt.Insets;
 
 import javax.swing.JButton;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
@@ -36,6 +35,7 @@ import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
+import org.zaproxy.zap.view.ZapMenuItem;
 
 /**
  * Send custom crafted WebSocket messages.
@@ -144,7 +144,7 @@ public class ManualClientMessageSendEditorDialog extends ManualRequestEditorDial
 	}
 
 	@Override
-	public JMenuItem getMenuItem() {
+	public ZapMenuItem getMenuItem() {
 		// Not supported
 		return null;
 		/*

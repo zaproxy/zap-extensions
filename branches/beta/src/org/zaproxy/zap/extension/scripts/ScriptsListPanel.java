@@ -21,9 +21,11 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
@@ -36,6 +38,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.filechooser.FileFilter;
@@ -94,6 +97,9 @@ public class ScriptsListPanel extends AbstractPanel {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("scripts.list.panel.title"));
 		this.setIcon(ExtensionScripts.ICON);
+		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_S, Event.CTRL_MASK | Event.ALT_MASK | Event.SHIFT_MASK, false));
+		this.setMnemonic(Constant.messages.getChar("scripts.list.panel.mnemonic"));
 
         this.add(getListPanel(), getListPanel().getName());
 			

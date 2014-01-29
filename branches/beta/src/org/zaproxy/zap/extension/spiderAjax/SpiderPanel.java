@@ -18,12 +18,14 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.BorderLayout;
+import java.awt.Event;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -33,6 +35,7 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.KeyStroke;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
@@ -104,6 +107,11 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
         				new ImageIcon(
         					SpiderPanel.class.getResource("/resource/icon/16/spiderAjax.png")),
         					this.extension.getMessages().getString("spiderajax.panel.title"));
+        
+		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_J, Event.CTRL_MASK | Event.SHIFT_MASK, false));
+		this.setMnemonic(Constant.messages.getChar("spiderajax.panel.mnemonic"));
+        
         if (View.isInitialised()) {
         	View.getSingleton().getMainFrame().getMainFooterPanel().addFooterToolbarRightLabel(scanStatus.getCountLabel());
         }
