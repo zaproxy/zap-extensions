@@ -20,10 +20,12 @@
 package org.zaproxy.zap.extension.tokengen;
 
 import java.awt.CardLayout;
+import java.awt.Event;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 import javax.swing.DefaultListModel;
@@ -38,10 +40,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
@@ -91,6 +95,9 @@ public class TokenPanel extends AbstractPanel {
         this.setSize(474, 251);
         this.setName(extension.getMessages().getString("tokengen.panel.title"));
 		this.setIcon(new ImageIcon(getClass().getResource("/resource/icon/fugue/barcode.png")));
+		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_T, Event.CTRL_MASK | Event.SHIFT_MASK, false));
+		this.setMnemonic(Constant.messages.getChar("tokengen.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
         
         scanStatus = new ScanStatus(

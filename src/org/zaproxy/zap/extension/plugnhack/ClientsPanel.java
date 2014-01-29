@@ -19,9 +19,11 @@ package org.zaproxy.zap.extension.plugnhack;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -32,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -89,6 +92,8 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
         this.setSize(274, 251);
         this.setName(Constant.messages.getString("plugnhack.client.panel.title"));
 		this.setIcon(new ImageIcon(ZAP.class.getResource(ExtensionPlugNHack.CLIENT_ACTIVE_ICON_RESOURCE)));
+		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Event.CTRL_MASK | Event.SHIFT_MASK, false));
+		this.setMnemonic(Constant.messages.getChar("plugnhack.client.panel.mnemonic"));
 
         this.add(getClientsPanel(), getClientsPanel().getName());
 	}
@@ -123,6 +128,8 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 			gridBagConstraints2.fill = java.awt.GridBagConstraints.BOTH;
 			gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
 			
+			// TODO Work in progress
+			//panelCommand.add(clientToolbar, gridBagConstraints1);
 			panelCommand.add(getSplitPane(), gridBagConstraints2);
 
 		}
@@ -138,7 +145,21 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 			splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 			JPanel panel = new JPanel();
 			panel.setLayout(new GridBagLayout());
-			//panel.add(this.getPanelToolbar(), LayoutHelper.getGBC(0, 0, 1, 0.0D));
+
+			// TODO Work in progress
+			/*
+			JToolBar clientToolbar = new JToolBar();
+			clientToolbar.setFloatable(false);
+			clientToolbar.setEnabled(true);
+			clientToolbar.setRollover(true);
+			clientToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			
+			JButton customBreak = new JButton();
+			customBreak.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/break_add.png")));
+			clientToolbar.add(customBreak);
+			//panel.add(clientToolbar, LayoutHelper.getGBC(0, 0, 1, 0.0D));
+			 */
+			
 			panel.add(getClientScrollPane(), LayoutHelper.getGBC(0, 1, 1, 1.0D, 1.0D));
 			
 			splitPane.setLeftComponent(panel);

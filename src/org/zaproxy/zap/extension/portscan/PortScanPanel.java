@@ -19,15 +19,19 @@
  */
 package org.zaproxy.zap.extension.portscan;
 
+import java.awt.Event;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.model.GenericScanner;
@@ -54,6 +58,9 @@ public class PortScanPanel extends ScanPanel implements ScanListenner {
     	// 'picture list' icon
         super("ports", new ImageIcon(PortScanPanel.class.getResource("/resource/icon/16/187.png")), extension, portScanParam);
         
+		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_P, Event.CTRL_MASK | Event.ALT_MASK | Event.SHIFT_MASK, false));
+		this.setMnemonic(Constant.messages.getChar("ports.panel.mnemonic"));
     }
 
 
