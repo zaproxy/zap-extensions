@@ -27,11 +27,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
 import org.parosproxy.paros.extension.manualrequest.MessageSender;
 import org.parosproxy.paros.model.Model;
@@ -42,6 +40,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.ui.ChannelSortedListModel;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketUiHelper;
+import org.zaproxy.zap.view.ZapMenuItem;
 
 /**
  * Send custom crafted WebSocket messages.
@@ -51,7 +50,7 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
 	private static final long serialVersionUID = -5830450800029295419L;
 //    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(ManualWebSocketSendEditorDialog.class);
 
-	private JMenuItem menuItem;
+	private ZapMenuItem menuItem;
 	
 	private WebSocketPanelSender sender;
 
@@ -155,10 +154,9 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
 	}
 
 	@Override
-	public JMenuItem getMenuItem() {
+	public ZapMenuItem getMenuItem() {
 		if (menuItem == null) {
-			menuItem = new JMenuItem();
-			menuItem.setText(Constant.messages.getString("websocket.manual_send.menu"));
+			menuItem = new ZapMenuItem("websocket.manual_send.menu");
 			menuItem.addActionListener(new ActionListener() {
 				
 				@Override

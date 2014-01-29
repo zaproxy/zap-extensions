@@ -19,12 +19,14 @@ package org.zaproxy.zap.extension.websocket.ui;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +41,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -62,6 +65,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInterface;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
+import org.zaproxy.zap.extension.websocket.filter.WebSocketFilter;
 import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
 
 /**
@@ -167,6 +171,10 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 	 */
 	private void initializePanel() {
 		setName(Constant.messages.getString("websocket.panel.title"));
+		setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK | Event.SHIFT_MASK, false));
+		setMnemonic(Constant.messages.getChar("websocket.panel.mnemonic"));
+
+		
 		setLayout(new GridBagLayout());
 		
 		GridBagConstraints constraints = new GridBagConstraints();
