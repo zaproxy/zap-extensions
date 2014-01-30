@@ -794,7 +794,6 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
     	 */
     	private int inflateBufferSize;
     	
-    	
     	/**
     	 * store off the URIs that were requested to get the source code disclosure
     	 * The current logic uses a maximum of 5 (worst case): 
@@ -894,7 +893,7 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
     		}
     		catch (FileNotFoundException e) {
     			//try the packed format instead
-    			if (log.isDebugEnabled()) log.debug("An unpacked file was not found for sha1 "+ filesha1 + ". Trying for a packed file instead");
+    			if (log.isDebugEnabled()) log.debug("An unpacked file was not found for SHA1 "+ filesha1 + ". Trying for a packed file instead");
     			
     			//and re-initialise the URIs that we record, because the file in unpacked format did not work out for us 
     			this.uriCount=0;
@@ -949,8 +948,35 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
     		} 
     		else {
     			//try the packed format
-    			//get info on the pack file name (which may or may not exist).. if not, tough louck.
-    			//String url=".git/objects/info/packs";
+    			
+    			//With the Git "packed" format, there are Git "pack index" files, and Git "pack" files. They come as a set. You need both to get the contents of the file you're looking for.
+    			//The name of the Git "pack" files and "pack index" files is based on the SHA1 sum of the SHA1 objects that it contains, and is not guessable.  
+    			//This is an issue if you do not already know what pack files live in the directory (unless you have a directory listing, for instance).
+    			//Luckily, in practice, in most cases (although not always) the name of the "pack" file is contained in an ".git/objects/info/packs" file in the Git repo metadata. 
+    			//The ".git/objects/info/packs" can also contain the names of multiple pack files, which I have not seen in practice. That scenario is not currently supported here.
+    			
+    			//Both the "pack" and "pack index" files have an associated version number, but not necessarily the same version number as each other. 
+    			//There are constraints and interdependencies on these version numbers, however. 
+    			
+    			//The Git "pack index" file currently comes in versions 1,2, and 3 (as of January 30, 2014).
+    			    			
+    			//version 1 "pack index" files are not seen in the wild, but can be created using later versions of Git, if necessary.  Version 1 is supported here. 
+    			//				(Version 1 "pack index" files are seen in conjunction with Version 2 "pack" files, but there is no reason (that I know of) why they should not also support Version 3 or 4 pack files).
+    			//version 2 "pack index" files use either a version 2 or version 3 "pack" file. All these versions are supported here.
+    			//    			(Version 1 and 2 "pack index" file formats have structural differences, but not not wildly dis-similar).
+    			//version 3 "pack index" file cannot yet be created by any currently known version of Git, but the format is documented.  
+    			//				(Version 3 "pack index" files require a version 4 "pack file". Both these versions are tentatively supported here, although this code has never been tested)
+    			
+    			//The Git "pack" file currently comes in versions 1,2,3, and 4 (as of January 30, 2014).
+    			//Version 1 "pack" files do not appear to be documented. They are not supported here. 
+    			//Version 2 "pack files" are used with version 2 "pack index" files. This is a common scenario in the wild. Both versions are supported here. 
+    			//Version 3 "pack files" are (also) used with version 2 "pack index" files. Both versions are supported here.
+    			//           (Version 3 "pack files" are identical in format to version 2, with only the version number differing)
+    			//Version 4 "pack files" are used in conjunction with version 3 "pack index" files. Both these versions are tentatively supported here, although this code has never been tested.
+    			
+    			//There are also separate version numbers in the Git "index file" (unrelated to the "pack index" files mentioned above), which are probably similarly inter-related.
+    			//I do not have a mapping of the Git version number (1.7.6 / 1.8.5, for instance) to any of the the internal file version numbers that they create (by default) or support. So sue me.
+
     			URI uri = new URI (originaluri.getScheme(), originaluri.getAuthority(), gitbasepath + "objects/info/packs", null, null);
 
     			if (log.isDebugEnabled()) log.debug("The internal Git file containing the name of the pack file is "+ uri);
@@ -987,183 +1013,292 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
     			}
 
     			//Now generate the full name of the pack file, and the pack index.
-    			//String fullpackfilename = ".git/objects/pack/" + packfilename;
-    			//String fullpackfileindexname = ".git/objects/pack/" + packfilename.substring (0, packfilename.length() - 5) + ".idx";		
-    			URI pack = new URI (originaluri.getScheme(), originaluri.getAuthority(), gitbasepath + "objects/pack/" + packfilename, null, null);
-    			URI packindex = new URI (originaluri.getScheme(), originaluri.getAuthority(), gitbasepath + "objects/pack/" + packfilename.substring (0, packfilename.length() - 5) + ".idx", null, null);
+    			URI packuri = new URI (originaluri.getScheme(), originaluri.getAuthority(), gitbasepath + "objects/pack/" + packfilename, null, null);
+    			URI packindexuri = new URI (originaluri.getScheme(), originaluri.getAuthority(), gitbasepath + "objects/pack/" + packfilename.substring (0, packfilename.length() - 5) + ".idx", null, null);
 
-    			//retrieve the content for the index, and hopefully parse it!
+    			//retrieve the content for the "pack index" file!
     			byte [] packfileindexdata = null;
     			try {
-    				packfileindexdata = getURIResponseBody (packindex, false);
+    				packfileindexdata = getURIResponseBody (packindexuri, false);
     			}
     			catch (FileNotFoundException e) {
-    				System.out.println("We could not read '"+ packindex + "', which is necessary to get the packed contents of the SHA1 requested: "+ e.getMessage());
+    				System.out.println("We could not read '"+ packindexuri + "', which is necessary to get the packed contents of the SHA1 requested: "+ e.getMessage());
     				throw e;
     			}
 
-    			//retrieve the content for the pack file data, and hopefully parse it!
+    			//retrieve the content for the "pack" file!
     			byte [] packfiledata = null;
     			try {
-    				packfiledata = getURIResponseBody (pack, false);
+    				packfiledata = getURIResponseBody (packuri, false);
     			}
     			catch (FileNotFoundException e) {
-    				System.out.println("We could not read '"+ pack + "', which should contain the packed contents of the SHA1 requested: "+ e.getMessage());
+    				System.out.println("We could not read '"+ packuri + "', which should contain the packed contents of the SHA1 requested: "+ e.getMessage());
     				throw e;
     			}
 
-    			//now that we know we have both the pack index and the pack data file, parse the data
-    			//first parse out some version info from the pack file, which is not in the index file.
+    			//now that we know we have both the "pack index" and the "pack" (data) file, parse the data
+    			//first parse out some signature data info from the "pack" file
     			ByteBuffer packfileheaderBuffer = ByteBuffer.wrap(packfiledata, 0, 12);
-
-    			byte [] packfileheaderSignatureArray = new byte [4];
-    			packfileheaderBuffer.get(packfileheaderSignatureArray, 0, 4);
+    			byte [] packfileheaderSignatureArray = new byte [4];  //4 bytes
+    			packfileheaderBuffer.get(packfileheaderSignatureArray);
     			if (! new String(packfileheaderSignatureArray).equals("PACK")) {
     				throw new Exception ("The pack file header does not appear to be valid");
     			}
+    			int packFileVersion = packfileheaderBuffer.getInt(); //4 bytes 
+    			int packEntryCount = packfileheaderBuffer.getInt();  //4 bytes
 
-    			int packFileVersion = packfileheaderBuffer.getInt();
-    			int packEntryCount = packfileheaderBuffer.getInt();
-
-    			if ( packFileVersion != 2 ) {
-    				throw new Exception ("Only Git Pack File versions 2 is currently supported. Git Pack File Version "+ packFileVersion + " was found. Contact the zaproxy (OWASP Zap) dev team");
+    			if ( packFileVersion != 2 && packFileVersion != 3 && packFileVersion != 4) {
+    				throw new Exception ("Only Git Pack File versions 2, 3, and 4 are currently supported. Git Pack File Version "+ packFileVersion + " was found. Contact the zaproxy (OWASP Zap) dev team");
     			}
-
-    			//now parse the pack index file header, using the version information derived from the pack data file
-    			//the version 1 and 2 index file formats do not have a common header, so this seems the smartest way to do it..
-    			//since version 1 pack files are no longer seen, it might mean that we will not see a version 1 pack index file.. maybe.
-    			//but then again, I could be wrong on all of the above.
-    			if ( packFileVersion == 2 )  {
-    				ByteBuffer packindexfiledataBuffer = ByteBuffer.wrap(packfileindexdata);
-    				//start: handle pack index file version 2
-    				byte [] packindexfileheaderSignatureArray = new byte [4];
-    				packindexfiledataBuffer.get(packindexfileheaderSignatureArray, 0, 4);
-    				if ( 	
-    						/*packindexfileheaderSignatureArray[0]!= 0xFF || */
-    						packindexfileheaderSignatureArray[1]!= 't' ||
-    						packindexfileheaderSignatureArray[2]!= 'O' || 
-    						packindexfileheaderSignatureArray[3]!= 'c') {
-    					throw new Exception ("The pack index file header does not appear to be valid for pack file index version 2: '"+ new String (packindexfileheaderSignatureArray)+ "' was found" );
-    				}
-
-    				int packindexFileVersion = packindexfiledataBuffer.getInt();
-    				if ( packindexFileVersion != packFileVersion) {
-    					throw new Exception ("The pack index file version("+ packindexFileVersion + ") does not match the the pack file version (" + packFileVersion + ")");
-    				}
-
-    				int packEntrySizeArray [] = new int [256];
-    				for (int i=0; i< 256; i++) {
-    					packEntrySizeArray[i] = packindexfiledataBuffer.getInt();
-    				}
-    				int indexEntryCount = packEntrySizeArray[255];
-    				//validate that this matches the number of entries in the pack file, according to its header.
-    				if ( indexEntryCount != packEntryCount ) {
-    					throw new Exception ("The entry count from the pack index ("+ indexEntryCount + ") does not match the entry count from the pack file (" + packEntryCount + ")");
-    				}
-
+    			
+    			//for pack file version 4, read the SHA1 tables from the "pack" file at this point
+    			//these used to live in the "pack index" file, in earlier versions.
+    			//Note: since at this point in time, there is no way to generate a v3 pack index file + v4 pack file
+    			//so this particular block of code remains hypothetical.  it seems to comply with the documented version 4 "pack" file format, however, and it 
+    			//works for version 2 "pack index" and version 2 "pack" files, which appears to be the most common combination seen in the wild.
+    			
+    			int sha1Index = Integer.MAX_VALUE;
+    			int packEntryOffsetArray [] = null;
+    			int packEntryOffsetArrayOrdered[] = null;
+    			int indexEntryCount = 0;
+    			
+    			if ( packFileVersion >= 4 ) {
+					sha1Index = Integer.MAX_VALUE;
+					//the tables in the V4 tables in the pack file are variable length, so just grab the data after the main header for now
+					ByteBuffer packfileTablesBuffer = ByteBuffer.wrap(packfiledata, 12, packfiledata.length - 12);
     				//read the series of 20 byte sha1 entries.
-    				//ours should be in here somewhere.. find it
+    				//ours *should* be in here somewhere.. find it
     				//make sure to read *all* of the entries from the file (or else seek to the end of the data), so the parsing logic is not broken.
     				//TODO: use a binary search to find this in a more efficient manner
-    				int ourIndex = Integer.MAX_VALUE;
-    				for (int i=0; i< indexEntryCount; i++) {
-    					byte [] indexEntryIdBuffer = new byte [20];
-    					packindexfiledataBuffer.get(indexEntryIdBuffer, 0, 20);
-    					String indexEntrySha1 = Hex.encodeHexString( indexEntryIdBuffer );
-    					if ( indexEntrySha1.equals(filesha1) ) {
-    						if (log.isDebugEnabled()) log.debug("FOUND our sha1 "+ indexEntrySha1+ " at entry " + i + " in the sha1 table");
-    						ourIndex=i;
-    					} 
-    				}
-    				//read the CRCs for the various entries (and throw it away, for now)
-    				for (int i=0; i< indexEntryCount; i++) {
-    					packindexfiledataBuffer.getInt();
-    				}
-    				//read the offsets for the various entries. We need to know the offset into the pack file of the sha entry we are looking at
-    				//NB: the various tables in the pack index file are sorted by the corresponding sha1.
-    				//2 adjacent entries in the offset table (for consequtive sha1 entries) could have wildly different offsets into the pack file
-    				//and the offsets in the table are therefore not sorted by offset.
-    				//so in order to calculate the deflated length of an entry in the pack file (which is not stored anywhere), 
-    				//we need to generate an extra offset table, ordered by the offset. We will then look for the next ordered offset, and store it alongside
-    				//the offset of the sha1 we're interested in.
-    				int packEntryOffsetArray [] = new int [indexEntryCount];
-    				int packEntryOffsetArrayOrdered [] = new int [indexEntryCount];
-    				for (int i=0; i< indexEntryCount; i++) {
-    					packEntryOffsetArray[i]=packindexfiledataBuffer.getInt();
-    					packEntryOffsetArrayOrdered[i]=packEntryOffsetArray[i];
-    				}
-    				Arrays.sort (packEntryOffsetArrayOrdered);
-
-    				int nextOffset = packfiledata.length -20;	//take account of the 20 byte sha1 checksum after all the individual entries
-    				//get the first offset greater than the offset of our sha1. since the table is ordered by offset, these 2 offsets gives us the deflated length of the entry
-    				for (int i = 0; i < indexEntryCount; i++) { 
-    					if ( packEntryOffsetArrayOrdered[i] > packEntryOffsetArray[ourIndex]) {
-    						nextOffset=packEntryOffsetArrayOrdered[i];
-    						if (log.isDebugEnabled()) log.debug("Found the entry with the next offset");
+    				
+    				for (int i=0; i< packEntryCount; i++) {
+    					byte [] packTableData = new byte [20];
+    					packfileTablesBuffer.get(packTableData);
+    					String packTableSha1 = Hex.encodeHexString( packTableData );
+    					//TODO :use more efficient byte based comparison to find the SHA1 here (and in similar code in pack index version 2 logic, later..
+    					if ( packTableSha1.equals(filesha1) ) {
+    						if (log.isDebugEnabled()) log.debug("FOUND our SHA1 "+ packTableSha1+ " at entry " + i + " in the v4 pack tables");
+    						sha1Index=i;
+    						
+    						//we do not need to "read past" all the entries.
     						break;
     					}
     				}
-
-    				int entryLength = (nextOffset - packEntryOffsetArray[ourIndex] ) ;
-    				if (log.isDebugEnabled()) { 
-    						log.debug("Our offset into the pack file is " + packEntryOffsetArray[ourIndex]);
-    						log.debug("offset of next entry into the pack file is " + nextOffset);
-    						log.debug("The un-deflated entry length, based on offset differences, is " + entryLength);
-    				}
-
-    				//No need to read the remainder of the pack index file at this point..
-    				//so start reading the pack file again.
-    				//wrap the entry we are interested in in a ByteBuffer (using the offsets to calculate the length)
-    				//Note: the offset needs to be from the entries, so take the header out of the equation by not bringing it into the ByteBuffer (by adding 12 - its lengh in v2)
-    				ByteBuffer entryBuffer = ByteBuffer.wrap(packfiledata, packEntryOffsetArray[ourIndex], entryLength);
-    				byte typeandsize = entryBuffer.get(); //size byte #1: 4 bits of size data available
-    				//get bits 6,5,4 into a byte, as the least significant bits. So if  typeandsize = bXYZbbbbb, then entryType = 00000XYZ
-    				byte entryType = (byte)((typeandsize & (byte)0x70) >> 4); 
-    				if ( entryType != 0x3 ) { 
-    					//there are various entry types, but the only one we will attempt to handle (because its the only one we should get) is the OBJ_BLOB
-    					//entry type, which means that the sha1 relates to a blob.
-    					throw new Exception ("This logic only handles sha1 values which correspond to Git BLOBs, if the object is packed.");
-    				}
-
-    				//Note that 0x7F is 0111 1111 in binary. Useful to mask off all but the top bit of a byte
-    				// and that 0x80 is 1000 0000 in binary. Useful to mask off the lower bits of a byte
-
-    				//get bits 2,1,0 into a byte, as the least significant bits. So if  typeandsize = bbbbbbXYZ, then entrySizeNibble = 00000XYZ
-    				//get the lower 4 bits of the byte as the first size byte
-    				byte entrySizeNibble = (byte)((typeandsize & (byte)0xF) ); 
-    				int entrySizeWhenInflated = (int)entrySizeNibble;
-
-    				//set up to check if the "more" flag is set on the entry+size byte, then look at the next byte for size..
-    				byte nextsizebyte =  (byte) (typeandsize & (byte)0x80);
-
-    				//the next piece of logic decodes the variable length "size" information, which comes in an initial 4 bit, followed by potentially multiple additional 7 bit chunks.
-    				int sizebytescounted = 1; 
-    				if ( (nextsizebyte & 0x80) > 0 ) {
-    					//top bit is set on nextsizebyte, so we need to get the next byte as well
-    					if ( sizebytescounted > 4 ) {
-    						//this should not happen. the size shoud be determined by a max of 4 bytes.
-    						throw new Exception ("The number of entry size bytes read exceeds 4. Either data corruption, or a parsing error has occurred");
-    					}
-    					nextsizebyte = entryBuffer.get();
-    					entrySizeWhenInflated = ( (((int)(nextsizebyte & 0x7F))<<(4+(7*(sizebytescounted-1)))) | entrySizeWhenInflated);
-    					sizebytescounted++;
-    				}
-
-    				if (log.isDebugEnabled()) log.debug("The size of the inflated entry should be " + entrySizeWhenInflated + ", binary: " + Integer.toBinaryString(entrySizeWhenInflated) );
-
-    				//extract the data, taking into account the total size, based on the offsets, and the number of type and size bytes already read.
-    				int entryDataBytesToRead = entryLength - sizebytescounted;
-    				if (log.isDebugEnabled()) log.debug("Read " + sizebytescounted + " size bytes, so will read " + entryDataBytesToRead + " bytes of entry data");
-
-    				byte deflatedSource [] = new byte [entryDataBytesToRead];
-    				entryBuffer.get(deflatedSource);
-    				byte []  inflatedData = inflate (deflatedSource, 1024);
-
-    				return inflatedData;
-    				//end: handle pack index file version 2
-    			} else {
-    				throw new Exception ("Only Git Pack Index File version 2 is currently supported. Git Pack File Version (not Pack Index file version) "+ packFileVersion + " was found.");
     			}
+    			
+    			//try to parse the "pack index" as a version 1 "pack index" file, which has a different layout to subsequent versions.
+    			//use a separate ByteBuffer for this, in case things don't work out (becuase they probably will not work out) :)
+    			try {
+	    			ByteBuffer packindexfileV1dataBuffer = ByteBuffer.wrap(packfileindexdata);
+	    			byte packEntrySizeArray [] = new byte [256*4];
+					packindexfileV1dataBuffer.get(packEntrySizeArray);
+					
+					if ( /*packEntrySizeArray[0]== 0xFF && */
+							packEntrySizeArray[1]== 't' &&
+							packEntrySizeArray[2]== 'O' && 
+							packEntrySizeArray[3]== 'c') {
+						//the signature is a non-V1 signature.  
+						throw new NotV1PackIndexFileException ();
+						}
+					//get the last 4 bytes as an int, network order.
+					indexEntryCount  = ( packEntrySizeArray[(255*4)+3] << 0);  
+					indexEntryCount |= ( packEntrySizeArray[(255*4)+2] << 8);
+					indexEntryCount |= ( packEntrySizeArray[(255*4)+1] << 16);
+					indexEntryCount |= ( packEntrySizeArray[(255*4)+0] << 24);
+					
+					//validate that this matches the number of entries in the "pack" file.
+					if ( indexEntryCount != packEntryCount ) {
+						throw new Exception ("The entry count ("+ indexEntryCount + ") from the version 1 pack index file does not match the entry count (" + packEntryCount + ") from the pack file ");
+					}
+					if (log.isDebugEnabled()) log.debug("Got a pack index entry count of "+ indexEntryCount + " from the version 1 pack index file");
+					
+					//read the indexEntryCount * (4+20) byte entries (4 + 20 blackbirds baked in a pie!)
+					sha1Index = Integer.MAX_VALUE;
+					packEntryOffsetArray = new int [indexEntryCount];
+					packEntryOffsetArrayOrdered = new int [indexEntryCount];
+					
+    				//TODO: use a binary search to find this in a more efficient manner
+    				for (int i=0; i< indexEntryCount; i++) {    					
+    					//read 4 bytes offset (the offset of the SHA1's data in the "pack" file)
+    					packEntryOffsetArray[i]=packindexfileV1dataBuffer.getInt();
+						packEntryOffsetArrayOrdered[i]=packEntryOffsetArray[i];
+    					
+						//read 20 bytes SHA1
+    					byte [] indexEntryIdBuffer = new byte [20];
+    					packindexfileV1dataBuffer.get(indexEntryIdBuffer);
+    					String indexEntrySha1 = Hex.encodeHexString( indexEntryIdBuffer );
+    					if ( indexEntrySha1.equals(filesha1) ) {
+    						if (log.isDebugEnabled()) log.debug("FOUND our SHA1 "+ indexEntrySha1+ " at entry " + i + " in the SHA1 table");
+    						sha1Index=i;
+    					}
+    				}
+    				//final sanity check, if all of the above panned out for version 1 index file.
+    				//Note: we *think* that that "pack index" file version 1 is compatible with "pack" file version 3 and 4, but really, we don't know for sure.. Again, so sue me. 
+    				int packindexFileVersion = 1;
+    				if (packFileVersion!= 2 && packFileVersion!= 3 && packFileVersion!= 4) {
+						throw new Exception ("Pack index file version ("+ packindexFileVersion + ") is incompatible with pack file version (" + packFileVersion + ")");
+					}
+    				
+				}
+    			catch (NotV1PackIndexFileException e) {
+    				//so it's not a version 1 "pack index" file. Try parsing it as a version 2, 3, 4 (or later versions, once there are more versions, and we support them) 
+    				if (log.isDebugEnabled()) log.debug("The 'pack index' file looks like a > version 1 'pack index' file. Trying to parse it as later formats instead");
+    			
+	    			//Parse the "pack index" file header				
+					ByteBuffer packindexfiledataBuffer = ByteBuffer.wrap(packfileindexdata);
+					
+					byte [] packindexfileheaderSignatureArray = new byte [4];
+					packindexfiledataBuffer.get(packindexfileheaderSignatureArray);
+					if ( 	
+							/*packindexfileheaderSignatureArray[0]!= 0xFF || */
+							packindexfileheaderSignatureArray[1]!= 't' ||
+							packindexfileheaderSignatureArray[2]!= 'O' || 
+							packindexfileheaderSignatureArray[3]!= 'c') {
+						throw new Exception ("The pack index file header does not appear to be valid for pack index file version 2, 3, or 4: '"+ new String (packindexfileheaderSignatureArray)+ "' was found" );
+					}
+	
+					//Note: version 1 is hanled separately, so need to check for it here.
+					int packindexFileVersion = packindexfiledataBuffer.getInt();
+					if (packindexFileVersion !=2 && packindexFileVersion != 3 ) {   				
+						throw new Exception ("Pack index file version("+ packindexFileVersion + ") is not supported");
+					}
+					if ((packFileVersion ==2 || packFileVersion ==3) && packindexFileVersion!= 2) {
+						throw new Exception ("Pack index file version ("+ packindexFileVersion + ") is incompatible with pack file version (" + packFileVersion + ")");
+					}
+					if (packindexFileVersion == 3 && packFileVersion !=4) {
+						throw new Exception ("Pack index file version ("+ packindexFileVersion + ") is only compatible with pack file version 4. Pack file version (" + packFileVersion + ") was found");
+					}
+	
+					int packEntrySizeArray [] = new int [256];
+					for (int i=0; i< 256; i++) {
+						packEntrySizeArray[i] = packindexfiledataBuffer.getInt();
+					}
+					//get the total number of entries, as being the number of entries from the final fanout table entry.
+					indexEntryCount = packEntrySizeArray[255];
+					//validate that this matches the number of entries in the pack file, according to its header.
+					if ( indexEntryCount != packEntryCount ) {
+						throw new Exception ("The entry count ("+ indexEntryCount + ") from the pack index does not match the entry count (" + packEntryCount + ") from the pack file");
+					}
+					
+					//in version 3 of the pack index file, the SHA1 table moves from the pack index file to the pack file (necessitating a version 4 pack file, as noted earlier)
+					//in versions < 3 of the index file, the SHA1 data lives in the index file in some manner (differs between version 1, and versions 2,3).
+					if (packindexFileVersion < 3) {
+						sha1Index = Integer.MAX_VALUE;
+	    				//read the series of 20 byte sha1 entries.
+	    				//ours *should* be in here somewhere.. find it
+	    				//make sure to read *all* of the entries from the file (or else seek to the end of the data), so the parsing logic is not broken.
+	    				//TODO: use a binary search to find this in a more efficient manner
+	    				
+	    				for (int i=0; i< indexEntryCount; i++) {
+	    					byte [] indexEntryIdBuffer = new byte [20];
+	    					packindexfiledataBuffer.get(indexEntryIdBuffer);
+	    					String indexEntrySha1 = Hex.encodeHexString( indexEntryIdBuffer );
+	    					if ( indexEntrySha1.equals(filesha1) ) {
+	    						if (log.isDebugEnabled()) log.debug("FOUND our SHA1 "+ indexEntrySha1+ " at entry " + i + " in the SHA11 table");
+	    						sha1Index=i;
+	    					}
+	    				}
+					}
+					//read the CRCs for the various entries (and throw them away, for now)
+					byte [] crcs = new byte [indexEntryCount * 4];
+					packindexfiledataBuffer.get(crcs);
+					
+					//read the offsets for the various entries. We need to know the offset into the pack file of the SHA11 entry we are looking at
+					//NB: the various tables in the "pack index" file are sorted by the corresponding SHA1.
+					//2 adjacent entries in the offset table (for consequtive SHA11 entries) could have wildly different offsets into the "pack" file
+					//and the offsets in the table are therefore not sorted by offset.
+					//In order to calculate the deflated length of an entry in the pack file (which is not stored anywhere), 
+					//we need to generate an extra offset table, ordered by the offset. We will then look for the next ordered offset, and store it alongside
+					//the offset of the SHA1 we're interested in.
+					packEntryOffsetArray = new int [indexEntryCount];
+					packEntryOffsetArrayOrdered = new int [indexEntryCount];
+					for (int i=0; i< indexEntryCount; i++) {
+						packEntryOffsetArray[i]=packindexfiledataBuffer.getInt();
+						packEntryOffsetArrayOrdered[i]=packEntryOffsetArray[i];
+					}								
+    			}
+    			//now we're out of the pack index file version 1 or 2/3 specific stuff.. the rest of the logic is fairly common (execept for the "pack" file version 4 stuff, of course! :)    			
+				Arrays.sort (packEntryOffsetArrayOrdered);
+
+				//take account of the 20 byte sha1 checksum after all the individual entries
+				int nextOffset = packfiledata.length -20;	
+				//get the first offset greater than the offset of our sha1. since the table is ordered by offset, these 2 offsets gives us the deflated length of the entry
+				for (int i = 0; i < indexEntryCount; i++) { 
+					if ( packEntryOffsetArrayOrdered[i] > packEntryOffsetArray[sha1Index]) {
+						nextOffset=packEntryOffsetArrayOrdered[i];
+						if (log.isDebugEnabled()) log.debug("Found the entry with the next offset: "+ nextOffset);
+						if ( nextOffset >  ( packfiledata.length - 1)) 
+							throw new Exception ("A 'next' offset of "+ nextOffset+ " is not feasible for a pack file with length "+ packfiledata.length);
+						break;
+					}
+				}
+				//given the "pack" file offsets, we know the deflated length of the entry in there.
+				int entryLength = (nextOffset - packEntryOffsetArray[sha1Index] ) ;
+				if (log.isDebugEnabled()) { 
+						log.debug("Our offset into the pack file is " + packEntryOffsetArray[sha1Index]);
+						log.debug("The offset of the next entry into the pack file is " + nextOffset);
+						log.debug("The deflated entry length, based on offset differences, is " + entryLength);
+				}
+
+				//No need to read the remainder of the "pack index" file at this point.. (for either version 1, or versions 2/3)
+				//so start reading the pack file again.
+				//wrap the entry we are interested in in a ByteBuffer (using the offsets to calculate the length)
+				//Note: the offset is from the start of the "pack" file, not from after the header.
+				ByteBuffer entryBuffer = ByteBuffer.wrap(packfiledata, packEntryOffsetArray[sha1Index], entryLength);
+				byte typeandsize = entryBuffer.get(); //size byte #1: 4 bits of size data available
+				//get bits 6,5,4 into a byte, as the least significant bits. So if  typeandsize = bXYZbbbbb, then entryType = 00000XYZ
+				//TODO: there may be a change required here for version 4 "pack" files, which use a 4 bit type, rather than a 3 bit type in earlier versions.
+				//but maybe not, because we only handle one type (for blocbs), which probably does not set the highest bit in the "type" nibble.
+				byte entryType = (byte)((typeandsize & (byte)0x70) >> 4); 
+				if ( entryType != 0x3 ) { 
+					//there are various entry types, but the only one we will attempt to handle (because its the only one we should get) is the Git OBJ_BLOB
+					//entry type, which means that the SHA11 relates to a Git blob.
+					throw new Exception ("This logic only handles SHA1 values which correspond to Git BLOBs, if the object is packed.");
+				}
+
+				//Note that 0x7F is 0111 1111 in binary. Useful to mask off all but the top bit of a byte
+				// and that 0x80 is 1000 0000 in binary. Useful to mask off the lower bits of a byte
+				// and that 0x70 is 0111 0000 in binary. Used above to mask off 3 bits of a byte
+				// and that  0xF is 0000 1111 in binary.
+				
+				//get bits 2,1,0 into a byte, as the least significant bits. So if  typeandsize = bbbbbbXYZ, then entrySizeNibble = 00000XYZ
+				//get the lower 4 bits of the byte as the first size byte				  
+				byte entrySizeNibble = (byte)((typeandsize & (byte)0xF) ); 
+				int entrySizeWhenInflated = (int)entrySizeNibble;
+
+				//set up to check if the "more" flag is set on the entry+size byte, then look at the next byte for size..
+				byte nextsizebyte =  (byte) (typeandsize & (byte)0x80);
+
+				//the next piece of logic decodes the variable length "size" information, which comes in an initial 4 bit, followed by potentially multiple additional 7 bit chunks.
+				//(3 bits type for versions < 4, or 4 bits for version 4 "pack" files)
+				int sizebytescounted = 1; 
+				if ( (nextsizebyte & 0x80) > 0 ) {
+					//top bit is set on nextsizebyte, so we need to get the next byte as well
+					if ( sizebytescounted > 4 ) {
+						//this should not happen. the size shoud be determined by a max of 4 bytes.
+						throw new Exception ("The number of entry size bytes read exceeds 4. Either data corruption, or a parsing error has occurred");
+					}
+					nextsizebyte = entryBuffer.get();
+					entrySizeWhenInflated = ( (((int)(nextsizebyte & 0x7F))<<(4+(7*(sizebytescounted-1)))) | entrySizeWhenInflated);
+					sizebytescounted++;
+				}
+
+				if (log.isDebugEnabled()) log.debug("The size of the inflated entry should be " + entrySizeWhenInflated + ", binary: " + Integer.toBinaryString(entrySizeWhenInflated) );
+
+				//extract the data from the "pack" file, taking into account its total size, based on the offsets, and the number of type and size bytes already read.
+				int entryDataBytesToRead = entryLength - sizebytescounted;
+				if (log.isDebugEnabled()) log.debug("Read " + sizebytescounted + " size bytes, so will read " + entryDataBytesToRead + " bytes of entry data from the 'pack' file");
+
+				byte deflatedSource [] = new byte [entryDataBytesToRead];
+				entryBuffer.get(deflatedSource);
+				byte []  inflatedData = inflate (deflatedSource, 1024);
+				
+				//validate that entrySizeWhenInflated == the actual size of the inflated data (probably not an issue, because the inflate would very likely fail if the data or length were wrong)
+				if ( entrySizeWhenInflated != inflatedData.length )
+					throw new Exception ("The predicted inflated length of the entry was "+ entrySizeWhenInflated + ", when we inflated the entry, we got data of length " + inflatedData.length);
+
+				//finally..
+				return inflatedData;
     		}
     	}
     	
@@ -1181,7 +1316,7 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 			ByteBuffer dataBuffer = ByteBuffer.wrap(data);
 			
 			byte [] dircArray = new byte [4];
-			dataBuffer.get(dircArray, 0, 4);
+			dataBuffer.get(dircArray);
 			
 			int indexFileVersion = dataBuffer.getInt();
 			if ( log.isDebugEnabled() ) log.debug("The Git index file version is "+ indexFileVersion);
@@ -1213,7 +1348,7 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 				//size is unspecified for the entry id, but it seems to be 40 bytes SHA-1 string
 				//stored as 20 bytes, network order
 				byte [] indexEntryIdBuffer = new byte [20];
-				dataBuffer.get(indexEntryIdBuffer, 0, 20);	entryBytesRead+=20;
+				dataBuffer.get(indexEntryIdBuffer);	entryBytesRead+=20;
 				String indexEntrySha1 = Hex.encodeHexString( indexEntryIdBuffer );						
 				
 				short indexEntryFlags = dataBuffer.getShort(); entryBytesRead+=2;						
@@ -1268,14 +1403,14 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 					//now read the (partial) name for the current entry
 					int bytesToReadCurrentNameEntry = indexEntryNameByteLength- (previousIndexEntryName.length() - removeNfromPreviousName);
 					byte [] indexEntryNameBuffer = new byte [bytesToReadCurrentNameEntry];
-					dataBuffer.get(indexEntryNameBuffer, 0, bytesToReadCurrentNameEntry); entryBytesRead+=bytesToReadCurrentNameEntry;
+					dataBuffer.get(indexEntryNameBuffer); entryBytesRead+=bytesToReadCurrentNameEntry;
 
 					//build it up
 					indexEntryName = previousIndexEntryName.substring(0, previousIndexEntryName.length() - removeNfromPreviousName) + new String (indexEntryNameBuffer);
 				} else {
 					//indexFileVersion <= 3 (waaaaay simpler logic, but the index file is larger in this version than for v4+)
 					byte [] indexEntryNameBuffer = new byte [indexEntryNameByteLength];
-					dataBuffer.get(indexEntryNameBuffer, 0, indexEntryNameByteLength); entryBytesRead+=indexEntryNameByteLength;
+					dataBuffer.get(indexEntryNameBuffer); entryBytesRead+=indexEntryNameByteLength;
 					indexEntryName = new String (indexEntryNameBuffer);
 				}
 				
@@ -1297,7 +1432,7 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
 						}
 					//read the 0-7 (NUL) bytes to keep reading index entries on an 8 byte boundary
 					byte [] indexEntryPadBuffer = new byte [entryBytesToRead];
-					dataBuffer.get(indexEntryPadBuffer, 0, entryBytesToRead); entryBytesRead+=entryBytesToRead;
+					dataBuffer.get(indexEntryPadBuffer); entryBytesRead+=entryBytesToRead;
 					} 
 				else {
 					if ( log.isDebugEnabled() ) log.debug("Not aligning to an 8 byte boundary after Entry "+ entryIndex + ", since Index file version "+ indexFileVersion + " does not mandate 64 bit alignment for index entries");
@@ -1334,6 +1469,19 @@ public class SourceCodeDisclosure extends AbstractAppParamPlugin {
     		return true;
     	}
 
+    }
+    
+    /**
+     * thrown if an index file is not a valid V1 "pack index" file.
+     * @author 70pointer@gmail.com
+     *
+     */
+    public class NotV1PackIndexFileException extends Exception {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 664525398598253409L;    	
+    	
     }
 }
