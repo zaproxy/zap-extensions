@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>4</version>
+	<version>5</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Added XXE External Entity plugin for External/Local vulnerability check</br>
+	Added Padding Oracle experimental plugin</br>
 	]]>
 	</changes>
 	<dependson/>
