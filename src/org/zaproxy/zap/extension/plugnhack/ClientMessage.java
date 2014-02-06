@@ -41,6 +41,9 @@ public class ClientMessage implements Message {
 	private State state = State.received;
 	private boolean changed = false;
 
+	public ClientMessage() {
+	}
+
 	public ClientMessage(String clientId, JSONObject json) {
 		super();
 		setReceived(new Date());
@@ -170,13 +173,11 @@ public class ClientMessage implements Message {
 
 	@Override
 	public boolean isInScope() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isForceIntercept() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

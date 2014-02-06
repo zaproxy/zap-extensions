@@ -44,12 +44,14 @@ import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
 
 public class MonitoredPagesManager {
 
+	public static final String CLIENT_MESSAGE_TYPE_HEARTBEAT = "heartbeat";
 	private boolean monitorAllInScope = false;
 	private List<Pattern> includeRegexes = new ArrayList<Pattern>();
 	private List<Pattern> excludeRegexes = new ArrayList<Pattern>();
 	private List<String> oneTimeURLs = new ArrayList<String>();
 	
 	private Map<String, MonitoredPage> monitoredPages = new HashMap<String, MonitoredPage>();
+	private Map<String, MonitoredPage> inactivePages = new HashMap<String, MonitoredPage>();
 	private List<MonitoredPageListener> listeners = new ArrayList<MonitoredPageListener>();
 	private List<ClientMessage> queuedMessages = new ArrayList<ClientMessage>();
 	
@@ -328,7 +330,7 @@ public class MonitoredPagesManager {
 			}
 		}
 
-		if (msg.getType().equals("heartbeat")) {
+		if (msg.getType().equals(CLIENT_MESSAGE_TYPE_HEARTBEAT)) {
 			// hide heartbeats - could be an option instead?
 		} else {
 			for (MonitoredPageListener listener : this.listeners) {
@@ -423,6 +425,8 @@ public class MonitoredPagesManager {
 		}
 		for (MonitoredPage page : removeList) {
 			this.monitoredPages.remove(page.getId());
+			page.setActive(false);
+			this.inactivePages.put(page.getId(), page);
 			for (MonitoredPageListener listener : this.listeners) {
 				listener.stopMonitoringPageEvent(page);
 			}
@@ -473,7 +477,11 @@ public class MonitoredPagesManager {
 	}
 	
 	public void stopMonitoring (String id) {
-		this.monitoredPages.remove(id);
+		MonitoredPage page = this.monitoredPages.remove(id);
+		if (page != null) {
+			page.setActive(false);
+			this.inactivePages.put(id, page);
+		}
 	}
 
 	public MonitoredPage monitorPage(HttpMessage msg) {
@@ -488,8 +496,12 @@ public class MonitoredPagesManager {
 		return page;
 	}
 
-	public MonitoredPage getMonitoredPage(String id) {
-		return this.monitoredPages.get(id);
+	public MonitoredPage getMonitoredPage(String id, boolean incInactive) {
+		MonitoredPage page = this.monitoredPages.get(id);
+		if (page == null && incInactive) {
+			page = this.inactivePages.get(id);
+		}
+		return page;
 	}
 
 	public void reset() {
@@ -540,5 +552,36 @@ public class MonitoredPagesManager {
 		this.sessionPanel = sessionPanel;
 	}
 
+	public List<String> getActiveClientIds() {
+		List<String> list = new ArrayList<String>();
+		for (MonitoredPage page : this.monitoredPages.values()) {
+			list.add(page.getId());
+		}
+		return list;
+	}
+
+	public List<MonitoredPage> getActiveClients() {
+		List<MonitoredPage> list = new ArrayList<MonitoredPage>();
+		for (MonitoredPage page : this.monitoredPages.values()) {
+			list.add(page);
+		}
+		return list;
+	}
+
+	public List<String> getInactiveClientIds() {
+		List<String> list = new ArrayList<String>();
+		for (MonitoredPage page : this.inactivePages.values()) {
+			list.add(page.getId());
+		}
+		return list;
+	}
+
+	public List<MonitoredPage> getInactiveClients() {
+		List<MonitoredPage> list = new ArrayList<MonitoredPage>();
+		for (MonitoredPage page : this.inactivePages.values()) {
+			list.add(page);
+		}
+		return list;
+	}
 
 }
