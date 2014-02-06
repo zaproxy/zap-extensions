@@ -17,9 +17,11 @@
  */
 package org.zaproxy.zap.extension.plugnhack.brk;
 
+import java.text.MessageFormat;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.brk.AbstractBreakPointMessage;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
@@ -28,10 +30,14 @@ public class ClientBreakpointMessage extends AbstractBreakPointMessage {
 
     private static final String TYPE = "Client";
     
-    private Pattern urlPattern = null;
+    private String messageType;
+    private String client;
+    private Pattern payloadPattern = null;
     
-	public ClientBreakpointMessage(String urlPattern) throws PatternSyntaxException {
-		setUrlPattern(urlPattern);
+	public ClientBreakpointMessage(String messageType, String client, String payloadPattern) throws PatternSyntaxException {
+		this.messageType = messageType;
+		this.client = client;
+		setPayloadPattern(payloadPattern);
 	}
 
 	@Override
@@ -39,34 +45,72 @@ public class ClientBreakpointMessage extends AbstractBreakPointMessage {
         return TYPE;
     }
 	
-	public String getUrlPattern() {
-		if (urlPattern != null) {
-			return urlPattern.pattern();
+	public String getPayloadPattern() {
+		if (payloadPattern != null) {
+			return payloadPattern.pattern();
 		}
 		return null;
+	}
+
+	public String getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(String messageType) {
+		if (messageType == null || messageType.length() == 0) {
+			this.messageType = null;
+		} else {
+			this.messageType = messageType;
+		}
+	}
+
+	public String getClient() {
+		return client;
+	}
+
+	public void setClient(String client) {
+		if (client == null || client.length() == 0) {
+			this.client = null;
+		} else {
+			this.client = client;
+		}
 	}
 
 	/**
 	 * Catch {@link PatternSyntaxException} in dialog & show warning. You can do
 	 * this by <code>View.getSingleton().showWarningDialog(message)</code>.
 	 * 
-	 * @param urlPattern
+	 * @param PayloadPattern
 	 * @throws PatternSyntaxException
 	 */
-	public void setUrlPattern(String urlPattern) throws PatternSyntaxException {
-		if (urlPattern == null || urlPattern.length() == 0) {
-			this.urlPattern = null;
+	public void setPayloadPattern(String PayloadPattern) throws PatternSyntaxException {
+		if (PayloadPattern == null || PayloadPattern.length() == 0) {
+			this.payloadPattern = null;
 		} else {
-			this.urlPattern = Pattern.compile(urlPattern, Pattern.MULTILINE);
+			this.payloadPattern = Pattern.compile(PayloadPattern, Pattern.MULTILINE);
 		}
 	}
 
 	@Override
 	public boolean match(Message aMessage, boolean isRequest, boolean onlyIfInScope) {
 	    if (aMessage instanceof ClientMessage) {
-	    	// TODO
-	    	// ClientMessage msg = (ClientMessage)aMessage;
-	        
+	    	ClientMessage msg = (ClientMessage)aMessage;
+	    	
+	    	if (this.messageType != null && ! this.messageType.equals(msg.getType())) {
+	    		// Didnt match the message type
+	    		return false;
+	    	}
+
+	    	if (this.client != null && ! this.client.equals(msg.getClientId())) {
+	    		// Didnt match the client id
+	    		return false;
+	    	}
+	    	
+	    	if (this.payloadPattern != null && ! this.payloadPattern.matcher(msg.getData()).find()) {
+	    		// Didnt match the payload pattern
+	    		return false;
+	    	}
+
 	        return true;
 	    }
 	    
@@ -75,33 +119,10 @@ public class ClientBreakpointMessage extends AbstractBreakPointMessage {
 
     @Override
     public String getDisplayMessage() {
-    	return this.getUrlPattern();
-    	// TODO
-    	/*
-    	String message = "";
-    	
-    	if (opcode != null) {
-    		message += Constant.messages.getString("websocket.brk.add.opcode") + " " + opcode + "; ";
-        }
-        
-        if (channelId != null) {
-    		message += Constant.messages.getString("websocket.brk.add.channel") + " #" + channelId + "; ";
-        }
-        
-        if (payloadPattern != null) {
-    		message += Constant.messages.getString("websocket.brk.add.pattern") + " " + payloadPattern.pattern() + "; ";
-        }
-        
-        if (direction != null) {
-    		message += Constant.messages.getString("websocket.brk.add.direction") + " " + direction + "; ";
-        }
-        
-        if (message.isEmpty()) {
-        	return Constant.messages.getString("websocket.brk.add.break_on_all");
-        }
-        
-        return Constant.messages.getString("websocket.brk.add.break_on_custom") + " " + message;
-        */
+    	return MessageFormat.format(Constant.messages.getString("plugnhack.brk.display"), 
+    			messageType == null ? "*" : messageType,
+    			client == null ? "*" : client,
+    			getPayloadPattern() == null ? "" : getPayloadPattern());
     }
 
 }

@@ -4,7 +4,7 @@
 	<description>Supports the Mozilla Plug-n-Hack standard: https://developer.mozilla.org/en-US/docs/Plug-n-Hack.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Phase 2 support - intercepting, resending and fuzzing postMessages</changes>
+	<changes>Phase 2 support - intercepting, resending and fuzzing postMessages - TODO </changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack</extension>

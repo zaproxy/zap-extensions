@@ -23,17 +23,21 @@ import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -49,6 +53,7 @@ import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
 import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ClientsPanel extends AbstractPanel implements MonitoredPageListener {
 
@@ -73,6 +78,8 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 	
 	private HttpPanelRequest requestPanel = null;
 	private HttpPanelResponse responsePanel = null;
+	
+	private boolean showInactiveClients = false;
 
     /**
      * 
@@ -91,7 +98,7 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
         this.setLayout(new CardLayout());
         this.setSize(274, 251);
         this.setName(Constant.messages.getString("plugnhack.client.panel.title"));
-		this.setIcon(new ImageIcon(ZAP.class.getResource(ExtensionPlugNHack.CLIENT_ACTIVE_ICON_RESOURCE)));
+		this.setIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Event.CTRL_MASK | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("plugnhack.client.panel.mnemonic"));
 
@@ -139,15 +146,14 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 	private JSplitPane getSplitPane() {
 		if (splitPane == null) {
 			splitPane = new JSplitPane();
-			splitPane.setName("AlertPanels");
+			splitPane.setName("ClientsPanels");
 			splitPane.setDividerSize(3);
 			splitPane.setDividerLocation(400);
 			splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 			JPanel panel = new JPanel();
 			panel.setLayout(new GridBagLayout());
 
-			// TODO Work in progress
-			/*
+			// Add the toolbar
 			JToolBar clientToolbar = new JToolBar();
 			clientToolbar.setFloatable(false);
 			clientToolbar.setEnabled(true);
@@ -156,10 +162,30 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 			
 			JButton customBreak = new JButton();
 			customBreak.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/break_add.png")));
+			customBreak.setToolTipText(Constant.messages.getString("plugnhack.client.button.custom.tooltip"));
+			customBreak.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					extension.getBrkManager().handleAddBreakpoint(new ClientMessage());
+				}});
 			clientToolbar.add(customBreak);
-			//panel.add(clientToolbar, LayoutHelper.getGBC(0, 0, 1, 0.0D));
-			 */
 			
+			final ZapToggleButton activeSwitch = new ZapToggleButton();
+			activeSwitch.setSelected(true);
+			activeSwitch.setIcon(ExtensionPlugNHack.CLIENT_INACTIVE_ICON);
+			activeSwitch.setSelectedIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON);
+			activeSwitch.setToolTipText(Constant.messages.getString("plugnhack.client.button.active.off"));
+			activeSwitch.setSelectedToolTipText(Constant.messages.getString("plugnhack.client.button.active.on"));
+			activeSwitch.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					showInactiveClients = ! activeSwitch.isSelected();
+					refreshClientList();
+				}});
+			clientToolbar.add(activeSwitch);
+
+			panel.add(clientToolbar, LayoutHelper.getGBC(0, 0, 1, 0.0D));
+
 			panel.add(getClientScrollPane(), LayoutHelper.getGBC(0, 1, 1, 1.0D, 1.0D));
 			
 			splitPane.setLeftComponent(panel);
@@ -310,24 +336,54 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 	        requestPanel.setTabFocus();
 		}
 	}
+	
+	private void refreshClientList() {
+		DefaultListModel<MonitoredPage> model = this.getClientsListModel();
+		model.removeAllElements();
+		for (MonitoredPage page : this.extension.getActiveClients()) {
+			model.addElement(page);
+		}
+		if (this.showInactiveClients) {
+			for (MonitoredPage page : this.extension.getInactiveClients()) {
+				model.addElement(page);
+			}
+		}
+	}
 
 	@Override
 	public void startMonitoringPageEvent(MonitoredPage page) {
+		if (this.showInactiveClients) {
+			// Add before inactive pages
+			for (int i=0; i < this.getClientsListModel().size(); i++) {
+				if (! this.getClientsListModel().elementAt(i).isActive()) {
+					this.getClientsListModel().add(i, page);
+					return;
+				}
+			}
+		}
 		this.getClientsListModel().addElement(page);
 	}
 
 	@Override
 	public void stopMonitoringPageEvent(MonitoredPage page) {
 		this.getClientsListModel().removeElement(page);
+		if (this.showInactiveClients) {
+			// Add back at the end, which will also cause the icon to change
+			this.getClientsListModel().addElement(page);
+		}
 	}
 
 	@Override
-	public ApiResponse messageReceived(ClientMessage message) {
-		try {
-			this.getMessageModel().addClientMessage(message);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-		}
+	public ApiResponse messageReceived(final ClientMessage message) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					getMessageModel().addClientMessage(message);
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
+			}});
 		return null;
 	}
 
@@ -339,8 +395,12 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 		return null;
 	}
 
-	public void messageChanged(ClientMessage msg) {
-		this.getMessageModel().clientMessageChanged(msg);
+	public void messageChanged(final ClientMessage msg) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				getMessageModel().clientMessageChanged(msg);
+			}});
 	}
 
 }

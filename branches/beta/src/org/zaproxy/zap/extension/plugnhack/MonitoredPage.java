@@ -31,6 +31,7 @@ public class MonitoredPage {
 	private HttpMessage message;
 	private SiteNode node = null;
 	private Date lastMessage;
+	private boolean active = true;
 	
 	public MonitoredPage(String id, HttpMessage message, Date lastMessage) {
 		super();
@@ -61,6 +62,13 @@ public class MonitoredPage {
 	}
 	public void setNode(SiteNode node) {
 		this.node = node;
+	}
+	
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 	public ImageIcon getIcon() {
 		String userAgent = message.getRequestHeader().getHeader(HttpHeader.USER_AGENT);

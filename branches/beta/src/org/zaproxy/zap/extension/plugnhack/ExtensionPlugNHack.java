@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -43,6 +46,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiResponse;
@@ -55,6 +59,8 @@ import org.zaproxy.zap.extension.httppanel.view.HttpPanelDefaultViewSelector;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
 import org.zaproxy.zap.extension.httppanel.view.hex.HttpPanelHexView;
 import org.zaproxy.zap.extension.plugnhack.brk.ClientBreakpointMessageHandler;
+import org.zaproxy.zap.extension.plugnhack.brk.ClientBreakpointsUiManagerInterface;
+import org.zaproxy.zap.extension.plugnhack.brk.PopupMenuAddBreakClient;
 import org.zaproxy.zap.extension.plugnhack.fuzz.ClientMessageFuzzerContentPanel;
 import org.zaproxy.zap.extension.plugnhack.fuzz.ClientMessageFuzzerHandler;
 import org.zaproxy.zap.extension.plugnhack.httppanel.component.ClientComponent;
@@ -95,42 +101,53 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     public static final String OPERA_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resource/icons/opera-icon.png";
     public static final String SAFARI_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resource/icons/safari-icon.png";    
 
-    public static final ImageIcon CHANGED_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
-            "/org/zaproxy/zap/extension/plugnhack/resource/icons/screwdriver.png"));    
-    public static final ImageIcon DROPPED_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
-            "/org/zaproxy/zap/extension/plugnhack/resource/icons/bin-metal.png"));
-    public static final ImageIcon PENDING_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
-            "/org/zaproxy/zap/extension/plugnhack/resource/icons/hourglass.png"));
-    public static final ImageIcon ORACLE_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
-            "/org/zaproxy/zap/extension/plugnhack/resource/icons/burn.png"));
-    
-    private static final int poll = 3000;
-    private ClientsPanel clientsPanel = null;
-    private PopupMenuResend popupMenuResend = null;
-    
-    private PlugNHackAPI api = new PlugNHackAPI(this);
-    private MonitoredPagesManager mpm = new MonitoredPagesManager(this);
-    private OracleManager oracleManager = new OracleManager();
-    private SessionMonitoredClientsPanel monitoredClientsPanel = null;
-    private PopupMenuMonitorSubtree popupMenuMonitorSubtree = null;
-    private PopupMenuMonitorScope popupMenuMonitorScope = null;
-    private PopupMenuOpenAndMonitorUrl popupMenuOpenAndMonitorUrl = null;
-    private BreakpointMessageHandler brkMessageHandler = null;
-    private ManualClientMessageSendEditorDialog resendDialog = null;
-    private ClientMessageFuzzerContentPanel fuzzerContentPanel = null;
-    
-    private Thread timeoutThread = null;
-    private boolean shutdown = false;
-    private String pnhScript = null;
-
-    /*
-     * TODO
-     * Handle mode
-     */
-    public ExtensionPlugNHack() {
-        super();
-        initialize();
-    }
+	public static final ImageIcon CLIENT_ACTIVE_ICON = new ImageIcon(ZAP.class.getResource(CLIENT_ACTIVE_ICON_RESOURCE));
+	public static final ImageIcon CLIENT_INACTIVE_ICON = new ImageIcon(ZAP.class.getResource(CLIENT_INACTIVE_ICON_RESOURCE));
+	
+	public static final ImageIcon CHANGED_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
+			"/org/zaproxy/zap/extension/plugnhack/resource/icons/screwdriver.png"));
+	public static final ImageIcon DROPPED_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
+			"/org/zaproxy/zap/extension/plugnhack/resource/icons/bin-metal.png"));
+	public static final ImageIcon PENDING_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
+			"/org/zaproxy/zap/extension/plugnhack/resource/icons/hourglass.png"));
+	public static final ImageIcon ORACLE_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
+			"/org/zaproxy/zap/extension/plugnhack/resource/icons/burn.png"));
+	
+	private static final int poll = 3000;
+	
+	private ClientsPanel clientsPanel = null;
+	private PopupMenuResend popupMenuResend = null;
+	
+	private PlugNHackAPI api = new PlugNHackAPI(this);
+	private MonitoredPagesManager mpm = new MonitoredPagesManager(this);
+	private OracleManager oracleManager = new OracleManager();
+	private SessionMonitoredClientsPanel monitoredClientsPanel = null;
+	
+	private PopupMenuMonitorSubtree popupMenuMonitorSubtree = null;
+	private PopupMenuMonitorScope popupMenuMonitorScope = null;
+	private PopupMenuOpenAndMonitorUrl popupMenuOpenAndMonitorUrl = null;
+	
+	private BreakpointMessageHandler brkMessageHandler = null;
+	private ManualClientMessageSendEditorDialog resendDialog = null;
+	private ClientMessageFuzzerContentPanel fuzzerContentPanel = null;
+	
+	private ClientBreakpointsUiManagerInterface brkManager = null;
+	
+	private List<String> knownTypes = new ArrayList<String>();
+	
+	private Thread timeoutThread = null;
+	private boolean shutdown = false;
+	private String pnhScript = null;
+	
+	/*
+	 * TODO
+	 * Handle mode
+	 */
+	
+	public ExtensionPlugNHack() {
+		super();
+		initialize();
+	}
 
     private void initialize() {
         this.setName(NAME);
@@ -196,21 +213,21 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
                 this.mpm.setClientBreakpointMessageHandler(brkMessageHandler);
 
                 // pop up to add the breakpoint
-				/*
-                 hookMenu.addPopupMenuItem(new PopupMenuAddBreakWebSocket(extBreak));
-                 extBreak.addBreakpointsUiManager(getBrkManager());
-                 */
-            }
-
-            // setup fuzzable extension
-            ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
-            if (extFuzz != null) {
-                //hookMenu.addPopupMenuItem(new ShowFuzzMessageInWebSocketsTabMenuItem(getWebSocketPanel()));
-
-                ClientMessageFuzzerHandler fuzzHandler = new ClientMessageFuzzerHandler(extFuzz, this);
-                extFuzz.addFuzzerHandler(ClientMessage.class, fuzzHandler);
-                this.fuzzerContentPanel = (ClientMessageFuzzerContentPanel) fuzzHandler.getFuzzerContentPanel();
-            }
+				
+				extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuAddBreakClient(extBreak));
+				
+				extBreak.addBreakpointsUiManager(getBrkManager());
+			}
+			
+			// setup fuzzable extension
+			ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
+			if (extFuzz != null) {
+				//hookMenu.addPopupMenuItem(new ShowFuzzMessageInWebSocketsTabMenuItem(getWebSocketPanel()));
+				
+				ClientMessageFuzzerHandler fuzzHandler = new ClientMessageFuzzerHandler(extFuzz, this);
+				extFuzz.addFuzzerHandler(ClientMessage.class, fuzzHandler);
+				this.fuzzerContentPanel = (ClientMessageFuzzerContentPanel) fuzzHandler.getFuzzerContentPanel();
+			}
         }
     }
 
@@ -385,6 +402,43 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
         return this.popupMenuMonitorScope;
     }
 
+	@Override
+	public boolean onHttpResponseReceive(HttpMessage msg) {
+		if (mpm.isMonitored(msg)) {
+			try {
+				// Inject javascript into response
+				String body = msg.getResponseBody().toString();
+				// inject at start
+				int startHeadOffset = body.toLowerCase().indexOf("<head");
+				boolean injected = false;
+				if (startHeadOffset >= 0) {
+					int endHeadTag = body.indexOf('>', startHeadOffset);
+					if (endHeadTag > 0) {
+						endHeadTag++;
+						logger.debug("Injecting PnH script into " + msg.getRequestHeader().getURI().toString());
+						// this assign the unique id
+						MonitoredPage page = mpm.monitorPage(msg);
+						
+						body = body.substring(0, endHeadTag) + SCRIPT_START + this.getPnhScript() +
+								SCRIPT_END.replace(REPLACE_ROOT_TOKEN, this.getApiRoot()).replace(REPLACE_ID_TOKEN, page.getId()) + 
+								body.substring(endHeadTag); 
+						msg.setResponseBody(body);
+						msg.getResponseHeader().setContentLength(body.length());
+						injected = true;
+					}
+					if (! injected) {
+						logger.debug("Cant inject PnH script into " + 
+								msg.getRequestHeader().getURI().toString() + " no head tag found " + msg.getResponseHeader().getStatusCode());
+					}
+				}
+			} catch (ApiException e) {
+				logger.error(e.getMessage(), e);
+			}
+			
+		}
+		return true;
+	}
+
     protected ManualClientMessageSendEditorDialog getResendDialog() {
         if (resendDialog == null) {
             resendDialog =
@@ -393,6 +447,30 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
         
         return resendDialog;
     }
+	/*
+	public void setMonitored(MonitoredPage page, boolean monitored) {
+		SiteNode node = Model.getSingleton().getSession().getSiteTree().findNode(page.getMessage());
+		if (node != null) {
+			logger.debug("setMonitored " + node.getNodeName() + " " + monitored);
+			if (monitored) {
+				node.addCustomIcon(CLIENT_ACTIVE_ICON_RESOURCE, false);
+			} else {
+				node.removeCustomIcon(CLIENT_ACTIVE_ICON_RESOURCE);
+			}
+		}
+	}
+	*/
+	
+	public ApiResponse messageReceived(ClientMessage msg) {
+		if (! this.knownTypes.contains(msg.getType())) {
+			this.knownTypes.add(msg.getType());
+		}
+		return this.mpm.messageReceived(msg);
+	}
+	
+	public boolean isBeingMonitored(String clientId) {
+		return this.mpm.isBeingMonitored(clientId);
+	}
 
     @Override
     public int getArrangeableListenerOrder() {
@@ -409,61 +487,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
         }
         
         return true;
-    }
-
-    @Override
-    public boolean onHttpResponseReceive(HttpMessage msg) {
-        if (mpm.isMonitored(msg)) {
-            try {
-                // Inject javascript into response
-                String body = msg.getResponseBody().toString();
-                int endHeadOffset = body.toLowerCase().indexOf("</head");
-                if (endHeadOffset > 0) {
-                    logger.debug("Injecting PnH script into " + msg.getRequestHeader().getURI().toString());
-                    // this assign the unique id
-                    MonitoredPage page = mpm.monitorPage(msg);
-
-
-                    body = body.substring(0, endHeadOffset) + SCRIPT_START + this.getPnhScript()
-                            + SCRIPT_END.replace(REPLACE_ROOT_TOKEN, this.getApiRoot()).replace(REPLACE_ID_TOKEN, page.getId())
-                            + body.substring(endHeadOffset);
-                    
-                    msg.setResponseBody(body);
-                    msg.getResponseHeader().setContentLength(body.length());
-
-                } else {
-                    logger.debug("Cant inject PnH script into "
-                            + msg.getRequestHeader().getURI().toString() + " no head close tag " + msg.getResponseHeader().getStatusCode());
-                }
-                
-            } catch (ApiException e) {
-                logger.error(e.getMessage(), e);
-            }
-
-        }
-        
-        return true;
-    }
-
-    /*
-     public void setMonitored(MonitoredPage page, boolean monitored) {
-     SiteNode node = Model.getSingleton().getSession().getSiteTree().findNode(page.getMessage());
-     if (node != null) {
-     logger.debug("setMonitored " + node.getNodeName() + " " + monitored);
-     if (monitored) {
-     node.addCustomIcon(CLIENT_ACTIVE_ICON_RESOURCE, false);
-     } else {
-     node.removeCustomIcon(CLIENT_ACTIVE_ICON_RESOURCE);
-     }
-     }
-     }
-     */
-    public ApiResponse messageReceived(ClientMessage msg) {
-        return this.mpm.messageReceived(msg);
-    }
-
-    public boolean isBeingMonitored(String clientId) {
-        return this.mpm.isBeingMonitored(clientId);
     }
 
     private String getPnhScript() throws ApiException {
@@ -711,6 +734,41 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
             this.getClientsPanel().messageChanged(msg);
         }
     }
+	
+	protected ClientBreakpointsUiManagerInterface getBrkManager() {
+		if (brkManager == null) {
+			ExtensionBreak extBreak = 
+					(ExtensionBreak) Control.getSingleton().getExtensionLoader().getExtension(
+							ExtensionBreak.NAME);
+			if (extBreak != null) {
+				brkManager = new ClientBreakpointsUiManagerInterface(this, extBreak);
+			}
+		}
+		return brkManager;
+	}
+
+	public List<String> getKnownTypes() {
+		Collections.sort(this.knownTypes);
+		return Collections.unmodifiableList(this.knownTypes);
+	}
+	
+	public List<String> getActiveClientIds() {
+		Collections.sort(this.mpm.getActiveClientIds());
+		return Collections.unmodifiableList(this.mpm.getActiveClientIds());
+	}
+
+	public List<MonitoredPage> getActiveClients() {
+		return this.mpm.getActiveClients();
+	}
+
+	public List<String> getInactiveClientIds() {
+		Collections.sort(this.mpm.getInactiveClientIds());
+		return Collections.unmodifiableList(this.mpm.getInactiveClientIds());
+	}
+
+	public List<MonitoredPage> getInactiveClients() {
+		return this.mpm.getInactiveClients();
+	}
 
     /* TODO
      private static final class ClientLargePayloadViewFactory implements HttpPanelViewFactory {
