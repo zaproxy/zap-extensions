@@ -6,7 +6,7 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Added Padding Oracle experimental plugin</br>
+	Promoted to beta XXE and Padding Oracle Plugins</br>
 	]]>
 	</changes>
 	<dependson/>
@@ -14,7 +14,6 @@
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosure</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.XXEPlugin</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
