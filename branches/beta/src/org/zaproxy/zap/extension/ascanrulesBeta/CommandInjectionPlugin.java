@@ -267,7 +267,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 Matcher matcher = OS_PAYLOADS.get(payload).matcher(content);
                 if (matcher.find()) {
                     // We Found IT!                    
-                    // Fisrt do logging
+                    // First do logging
                     log.info("[OS Command Injection Found] on parameter [" + paramName + "] with payload [" + payload + "]");
                     
                     // Now create the alert message
@@ -289,7 +289,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 //Do not try to internationalise this.. we need an error message in any event..
                 //if it's in English, it's still better than not having it at all.
-                log.error("PCommand Injection vulnerability check failed for parameter ["
+                log.error("Command Injection vulnerability check failed for parameter ["
                     + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
             }
             
