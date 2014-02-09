@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>12</version>
+	<version>13</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Fixed a ClassNotFoundException while installing the add-on.<br>
-	Removed the scanner "Server Side Code Injection Plugin" (promoted to "Active scanner rules" add-on).<br>
-	Changed the "LDAP Injection" scanner to scan the parameters defined in the "Active Scan" options.</br>
-	Updated the "LDAP Injection" scanner to perform logic-based LDAP injection vulnerability detection 
+	Promoted new XXE Plugin to test for remotr and local XML External Entity Vulnerability</br>
+	Promoted new PaddingOracle plugin to test for possible encryption padding errors 
 	]]>
 	</changes>
 	<dependson/>
@@ -30,6 +28,8 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSSpider</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.UsernameEnumeration</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.XpathInjectionPlugin</ascanrule>                
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.XXEPlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.PaddingOraclePlugin</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
