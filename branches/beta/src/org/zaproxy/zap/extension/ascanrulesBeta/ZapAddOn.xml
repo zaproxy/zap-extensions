@@ -28,9 +28,6 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionMySQL</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionOracle</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionPostgresql</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSAttack</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSPrime</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.TestPersistentXSSSpider</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.UsernameEnumeration</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.XpathInjectionPlugin</ascanrule>                
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.XXEPlugin</ascanrule>

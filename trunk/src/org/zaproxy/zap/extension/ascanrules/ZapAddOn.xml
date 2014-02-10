@@ -17,6 +17,9 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestInjectionCRLF</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestParameterTamper</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPathTraversal</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPersistentXSSAttack</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPersistentXSSPrime</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPersistentXSSSpider</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRedirect</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRemoteFileInclude</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestServerSideInclude</ascanrule>
