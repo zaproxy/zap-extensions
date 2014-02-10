@@ -342,7 +342,9 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 
 	@Override
 	public void scriptRemoved(ScriptWrapper script) {
-		// Ignore
+		if (this.isScriptDisplayed(script)) {
+			this.getConsolePanel().clearScript();
+		}
 	}
 
 	@Override
