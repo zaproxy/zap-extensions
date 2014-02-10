@@ -12,6 +12,7 @@
 	Updated the "LDAP Injection" scanner to perform logic-based LDAP injection vulnerability detection.</br> 
 	Promoted new XXE Plugin to test for remotr and local XML External Entity Vulnerability.</br>
 	Promoted new PaddingOracle plugin to test for possible encryption padding errors. 
+	Promoted PXSS tests to beta
 	]]>
 	</changes>
 	<dependson/>
