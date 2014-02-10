@@ -219,7 +219,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     @Override
     public void scan() {
         // Prepare the message
-        HttpMessage msg = getNewMsg();
+        HttpMessage msg = getBaseMsg();
         String contentType = msg.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE);
         String payload = null;
         
@@ -238,8 +238,9 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
 
             try {
                 // Prepare the attack message
-                //msg = getNewMsg();
-                msg.setRequestBody(getCallbackAttackPayload(challenge));
+                msg = getNewMsg();
+                payload = getCallbackAttackPayload(challenge);
+                msg.setRequestBody(payload);
                 
                 // Register the callback for future actions
                 pluginApi.registerCallback(challenge, this, msg);
@@ -297,21 +298,23 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                     sendAndReceive(msg);
 
                     // Parse the result
-                    response = msg.getResponseBody().toString();
-                    matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
-                    if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK)
-                            && matcher.find()) {
+                    if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
 
-                        // Alert the vulnerability to the main core
-                        this.bingo(
-                                Alert.RISK_HIGH,
-                                Alert.WARNING,
-                                null, //URI
-                                null, //param
-                                payload, //attack
-                                null, //otherinfo
-                                matcher.group(), //evidence
-                                msg);
+                        response = msg.getResponseBody().toString();
+                        matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
+                        if (matcher.find()) {
+
+                            // Alert the vulnerability to the main core
+                            this.bingo(
+                                    Alert.RISK_HIGH,
+                                    Alert.WARNING,
+                                    null, //URI
+                                    null, //param
+                                    payload, //attack
+                                    null, //otherinfo
+                                    matcher.group(), //evidence
+                                    msg);
+                        }
                     }
 
                     // Check if the scan has been stopped
@@ -359,21 +362,23 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                     sendAndReceive(msg);
 
                     // Parse the result
-                    response = msg.getResponseBody().toString();
-                    matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
-                    if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK)
-                            && matcher.find()) {
+                    if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
                         
-                        // Alert the vulnerability to the main core
-                        this.bingo(
-                                Alert.RISK_HIGH,
-                                Alert.WARNING,
-                                null, //URI
-                                null, //param
-                                payload, //attack
-                                null, //otherinfo
-                                matcher.group(), //evidence
-                                msg);
+                        response = msg.getResponseBody().toString();
+                        matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
+                        if (matcher.find()) {
+
+                            // Alert the vulnerability to the main core
+                            this.bingo(
+                                    Alert.RISK_HIGH,
+                                    Alert.WARNING,
+                                    null, //URI
+                                    null, //param
+                                    payload, //attack
+                                    null, //otherinfo
+                                    matcher.group(), //evidence
+                                    msg);
+                        }
                     }
                     
                     // Check if the scan has been stopped
@@ -435,7 +440,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
      */
     private String randomString(int length) {
         SecureRandom rand = new SecureRandom();
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = new StringBuilder(length);
         String alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         for (int i = 0; i < length; i++) {
