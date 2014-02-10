@@ -451,8 +451,8 @@ public class MonitoredPagesManager {
 			return page.getNode();
 		}
 		SiteNode node = null;
-		if (page.getMessage().getHistoryRef() != null) {
-			node = page.getMessage().getHistoryRef().getSiteNode();
+		if (page.getHistoryReference() != null) {
+			node = page.getHistoryReference().getSiteNode();
 			if (node == null) {
 				node = Model.getSingleton().getSession().getSiteTree().findNode(page.getMessage());
 			}

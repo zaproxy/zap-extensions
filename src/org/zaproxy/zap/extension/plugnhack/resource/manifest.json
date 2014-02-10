@@ -4,16 +4,16 @@
   "features":{
     "proxy":{
       "PAC":"{{ROOT}}/proxy.pac",
-      "CACert":"{{ROOT}}/OTHER/core/other/rootcert/"
+      "CACert":"{{ROOT}}/OTHER/core/other/rootcert/?apikey={{APIKEY}}"
     },
     "commands":{
       "prefix":"zap",
-      "manifest":"{{ROOT}}/OTHER/pnh/other/service/"
+      "manifest":"{{ROOT}}/OTHER/pnh/other/service/?apikey={{APIKEY}}"
     },
     "probe":{
       "transport":"HTTPMessageTransport",
-      "endpoint":"{{ROOT}}/JSON/pnh/action/monitor/",
-      "oracle":"{{ROOT}}/JSON/pnh/action/oracle/?id=",
+      "endpoint":"{{ROOT}}/JSON/pnh/action/monitor/?apikey={{APIKEY}}&",
+      "oracle":"{{ROOT}}/JSON/pnh/action/oracle/?apikey={{APIKEY}}&id=",
       "endpointName":"ZAP"
     }
   }

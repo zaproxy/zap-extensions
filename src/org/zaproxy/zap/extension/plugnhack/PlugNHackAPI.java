@@ -31,6 +31,7 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
@@ -70,10 +71,10 @@ public class PlugNHackAPI extends ApiImplementor {
         this.addApiAction(new ApiAction(ACTION_START_MONITORING, new String[]{PARAM_URL}));
         this.addApiAction(new ApiAction(ACTION_STOP_MONITORING, new String[]{PARAM_ID}));
 
-        this.addApiOthers(new ApiOther(OTHER_PNH));
-        this.addApiOthers(new ApiOther(OTHER_MANIFEST));
-        this.addApiOthers(new ApiOther(OTHER_SERVICE));
-        this.addApiOthers(new ApiOther(OTHER_FIREFOX_ADDON));
+        this.addApiOthers(new ApiOther(OTHER_PNH, false));
+        this.addApiOthers(new ApiOther(OTHER_MANIFEST, false));
+        this.addApiOthers(new ApiOther(OTHER_SERVICE, false));
+        this.addApiOthers(new ApiOther(OTHER_FIREFOX_ADDON, false));
 
         this.addApiShortcut(OTHER_PNH);
         this.addApiShortcut(OTHER_MANIFEST);
@@ -148,7 +149,7 @@ public class PlugNHackAPI extends ApiImplementor {
             try {
                 String welcomePage = ExtensionPlugNHack.getStringReource("resource/welcome.html");
                 // Replace the dynamic parts
-                welcomePage = welcomePage.replace("{{ROOT}}", root);
+                welcomePage = welcomePage.replace("{{ROOT}}", root).replace("{{APIKEY}}", API.getInstance().getApiKey());
                 // Replace the i18n strings
                 welcomePage = welcomePage.replace("{{MSG.TITLE}}", Constant.messages.getString("plugnhack.title"));
                 welcomePage = welcomePage.replace("{{MSG.HEADER}}", Constant.messages.getString("plugnhack.header"));
@@ -193,7 +194,7 @@ public class PlugNHackAPI extends ApiImplementor {
             try {
                 String manifest = ExtensionPlugNHack.getStringReource("resource/manifest.json");
                 // Replace the dynamic parts
-                manifest = manifest.replace("{{ROOT}}", root);
+                manifest = manifest.replace("{{ROOT}}", root).replace("{{APIKEY}}", API.getInstance().getApiKey());
 
                 msg.setResponseHeader(
                         "HTTP/1.1 200 OK\r\n"
@@ -217,7 +218,7 @@ public class PlugNHackAPI extends ApiImplementor {
             try {
                 String service = ExtensionPlugNHack.getStringReource("resource/service.json");
                 // Replace the dynamic parts
-                service = service.replace("{{ROOT}}", root);
+                service = service.replace("{{ROOT}}", root).replace("{{APIKEY}}", API.getInstance().getApiKey());
 
                 msg.setResponseHeader(
                         "HTTP/1.1 200 OK\r\n"

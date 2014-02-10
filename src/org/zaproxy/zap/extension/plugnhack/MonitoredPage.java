@@ -21,6 +21,8 @@ import java.util.Date;
 
 import javax.swing.ImageIcon;
 
+import org.apache.commons.httpclient.URI;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -29,35 +31,109 @@ public class MonitoredPage {
 
 	private String id;
 	private HttpMessage message;
+	private HistoryReference historyReference;
 	private SiteNode node = null;
 	private Date lastMessage;
 	private boolean active = true;
-	
+	private ImageIcon icon = null;
+
 	public MonitoredPage(String id, HttpMessage message, Date lastMessage) {
 		super();
 		this.id = id;
-		this.message = message;
+		if (message != null && message.getHistoryRef() != null) {
+			this.historyReference = message.getHistoryRef();
+		} else {
+			this.message = message;
+		}
 		this.lastMessage = lastMessage;
+		this.setIcon(message);
 	}
+
+	public MonitoredPage(String id, HistoryReference href, Date lastMessage) {
+		super();
+		this.id = id;
+		//this.message = message;
+		this.historyReference = href;
+		this.lastMessage = lastMessage;
+		
+		try {
+			this.setIcon(href.getHttpMessage());
+		} catch (Exception e) {
+			// Ignore
+		}
+	}
+	
+	private void setIcon(HttpMessage message) {
+		String userAgent = message.getRequestHeader().getHeader(HttpHeader.USER_AGENT);
+		if (userAgent != null) {
+			userAgent = userAgent.toLowerCase();
+			if (userAgent.indexOf("firefox") >= 0) {
+				this.icon = new ImageIcon(ExtensionPlugNHack.class.getResource(ExtensionPlugNHack.FIREFOX_ICON_RESOURCE));
+			}
+			if (userAgent.indexOf("chrome") >= 0) {
+				this.icon = new ImageIcon(ExtensionPlugNHack.class.getResource(ExtensionPlugNHack.CHROME_ICON_RESOURCE));
+			}
+			if (userAgent.indexOf("msie") >= 0) {
+				this.icon =  new ImageIcon(ExtensionPlugNHack.class.getResource(ExtensionPlugNHack.IE_ICON_RESOURCE));
+			}
+			if (userAgent.indexOf("opera") >= 0) {
+				this.icon =  new ImageIcon(ExtensionPlugNHack.class.getResource(ExtensionPlugNHack.OPERA_ICON_RESOURCE));
+			}
+			if (userAgent.indexOf("safari") >= 0) {
+				this.icon =  new ImageIcon(ExtensionPlugNHack.class.getResource(ExtensionPlugNHack.SAFARI_ICON_RESOURCE));
+			}
+		}
+	}
+	
+	private void checkMessage() {
+		if (this.message != null && this.message.getHistoryRef() != null) {
+			/*
+			 * We dont really want to keep references to HttpMessage as these contain all of the req/resp data
+			 * and take up a lot of memory.
+			 * But when we set up new MonitoredPages the HistoryReference is typically not initialized.
+			 * So we keep the HttpMessage until the HistoryReference is available. 
+			 */
+			this.historyReference = message.getHistoryRef();
+			this.message = null;
+		}
+	}
+	
 	public String getId() {
+		checkMessage();
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
 	public HttpMessage getMessage() {
+		checkMessage();
+		if (this.historyReference != null) {
+			try {
+				return this.historyReference.getHttpMessage();
+			} catch (Exception e) {
+				// Ignore
+			}
+		}
 		return message;
 	}
+	
+	public HistoryReference getHistoryReference() {
+		checkMessage();
+		return historyReference;
+	}
+
 	public void setMessage(HttpMessage message) {
 		this.message = message;
 	}
 	public Date getLastMessage() {
+		checkMessage();
 		return lastMessage;
 	}
 	public void setLastMessage(Date lastMessage) {
 		this.lastMessage = lastMessage;
 	}
 	public SiteNode getNode() {
+		checkMessage();
 		return node;
 	}
 	public void setNode(SiteNode node) {
@@ -71,28 +147,20 @@ public class MonitoredPage {
 		this.active = active;
 	}
 	public ImageIcon getIcon() {
-		String userAgent = message.getRequestHeader().getHeader(HttpHeader.USER_AGENT);
-		if (userAgent != null) {
-			userAgent = userAgent.toLowerCase();
-			if (userAgent.indexOf("firefox") >= 0) {
-				return new ImageIcon(ExtensionPlugNHack.class.getResource(ExtensionPlugNHack.FIREFOX_ICON_RESOURCE));
-			}
-			if (userAgent.indexOf("chrome") >= 0) {
-				return new ImageIcon(ExtensionPlugNHack.class.getResource(ExtensionPlugNHack.CHROME_ICON_RESOURCE));
-			}
-			if (userAgent.indexOf("msie") >= 0) {
-				return new ImageIcon(ExtensionPlugNHack.class.getResource(ExtensionPlugNHack.IE_ICON_RESOURCE));
-			}
-			if (userAgent.indexOf("opera") >= 0) {
-				return new ImageIcon(ExtensionPlugNHack.class.getResource(ExtensionPlugNHack.OPERA_ICON_RESOURCE));
-			}
-			if (userAgent.indexOf("safari") >= 0) {
-				return new ImageIcon(ExtensionPlugNHack.class.getResource(ExtensionPlugNHack.SAFARI_ICON_RESOURCE));
-			}
-		}
-		
-		return null;
+		checkMessage();
+		return this.icon;
 	}
-
-	
+	public URI getURI() {
+		checkMessage();
+		if (this.historyReference != null) {
+			try {
+				return this.historyReference.getURI();
+			} catch (Exception e) {
+				// Ignore
+			}
+			return null;
+		} else {
+			return this.message.getRequestHeader().getURI();
+		}
+	}
 }

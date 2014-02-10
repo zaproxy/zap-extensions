@@ -12,7 +12,7 @@
     "returnType": "string",
     "params":[],
     "execAction":{
-      "url":"{{ROOT}}/JSON/core/action/newSession/",
+      "url":"{{ROOT}}/JSON/core/action/newSession/?apikey={{APIKEY}}",
       "expression":"$.Result"
     }
   },
@@ -26,7 +26,7 @@
       "description": "The name of the new ZAP session to create"
     }],
     "execAction":{
-      "url":"{{ROOT}}/JSON/core/action/newSession/?name=${$.args.name}",
+      "url":"{{ROOT}}/JSON/core/action/newSession/?apikey={{APIKEY}}&name=${$.args.name}",
       "expression":"$.Result"
     }
   },
@@ -63,7 +63,7 @@
       "description": "Turn breaking on or off"
     }],
     "execAction":{
-      "url":"{{ROOT}}/JSON/break/action/break/?type=${$.args.type}&scope=${$.args.scope}&state=${$.args.state}",
+      "url":"{{ROOT}}/JSON/break/action/break/?apikey={{APIKEY}}&type=${$.args.type}&scope=${$.args.scope}&state=${$.args.state}",
       "expression":"$.Result",
       "callbackData":{"result":{"type":"expression","expression":"$.response.Result","extract":true}}
     }
@@ -135,7 +135,7 @@
     }
     ],
     "execAction":{
-      "url":"{{ROOT}}/JSON/ascan/action/scan/?url=${$.args.site}",
+      "url":"{{ROOT}}/JSON/ascan/action/scan/?apikey={{APIKEY}}&url=${$.args.site}",
       "expression":"$.Result",
       "callbackData":{}
     }
@@ -175,7 +175,7 @@
     }
     ],
     "execAction":{
-      "url":"{{ROOT}}/JSON/spider/action/scan/?url=${$.args.site}",
+      "url":"{{ROOT}}/JSON/spider/action/scan/?apikey={{APIKEY}}&url=${$.args.site}",
       "expression":"$.Result",
       "callbackData":{}
     }
@@ -186,7 +186,7 @@
     "returnType":"string",
     "params":[],
     "execAction":{
-      "url":"{{ROOT}}/JSON/spider/action/stop/",
+      "url":"{{ROOT}}/JSON/spider/action/stop/?apikey={{APIKEY}}",
       "expression":"$.Result",
       "callbackData":{}
     }
@@ -231,7 +231,7 @@
     }
     ],
     "execAction":{
-      "url":"{{ROOT}}/JSON/httpSessions/action/createEmptySession/?site=${$.args.site}&session=${$.args.name}",
+      "url":"{{ROOT}}/JSON/httpSessions/action/createEmptySession/?apikey={{APIKEY}}&site=${$.args.site}&session=${$.args.name}",
       "expression":"$.Result",
       "callbackData":{}
     }
@@ -270,7 +270,7 @@
     }
     ],
     "execAction":{
-      "url":"{{ROOT}}/JSON/httpSessions/action/renameSession/?site=${$.args.site}&oldSessionName=${$.args.session}&newSessionName=${$.args.name}",
+      "url":"{{ROOT}}/JSON/httpSessions/action/renameSession/?apikey={{APIKEY}}&site=${$.args.site}&oldSessionName=${$.args.session}&newSessionName=${$.args.name}",
       "expression":"$.Result",
       "callbackData":{}
     }
@@ -304,7 +304,7 @@
     }
     ],
     "execAction":{
-      "url":"{{ROOT}}/JSON/httpSessions/action/setActiveSession/?site=${$.args.site}&session=${$.args.session}",
+      "url":"{{ROOT}}/JSON/httpSessions/action/setActiveSession/?apikey={{APIKEY}}&site=${$.args.site}&session=${$.args.session}",
       "expression":"$.Result",
       "callbackData":{}
     }
