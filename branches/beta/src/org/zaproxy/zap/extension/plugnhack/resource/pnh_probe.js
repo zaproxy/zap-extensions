@@ -10,7 +10,7 @@ function makeProxyFrame(ifr) {
  */
 function getActorsListener(messagePeer, getEndpointName) {
   // TODO: replace with something that actually makes something globally
-  // unique
+  // unique (this is what ZAP uses currently)
   function zapS4() {
     return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
   }
@@ -99,6 +99,45 @@ function getActorsListener(messagePeer, getEndpointName) {
     }
   }
 
+  function makeProxy(fn, pre, post) {
+    if(fn.isPnHProbeProxy) return fn;
+    console.log('make proxy... '+fn);
+    newFn = function(){
+      var newArgs = pre ? pre(this,arguments) : arguments;
+      var ret = fn.apply(this, newArgs);
+      return post ? post(ret) : ret;
+    }
+    newFn.isPnHProbeProxy = true;
+    return newFn;
+  }
+
+  function addEventListenerProxy(obj, args) {
+    var type = args[0];
+    var onEventProxy = makeProxy(args[1], function() {
+      //TODO: replace with an actual implementation
+      var evt = arguments[1][0];
+      var endpointId = zapGuidGen();
+      var message = 'a '+type+' event happened!';
+      var pMsg = {
+        to:getEndpointName(),
+        type:'eventInfoMessage',
+        from:'TODO: we need a from',
+        target:'someTarget',
+        data:message,
+        evt:evt,
+        messageId:zapGuidGen(),
+        endpointId:endpointId
+      };
+      messagePeer.sendMessage(pMsg);
+      return arguments[1];
+    });
+    return[args[0], onEventProxy, args[2]];
+  }
+
+  function proxyAddEventListener(node) {
+    node.addEventListener = makeProxy(node.addEventListener, addEventListenerProxy);
+  }
+
   var observer = new MutationObserver(function(mutations) {
     function hookNode(node) {
       if(node.contentWindow && node.contentWindow.postMessage) {
@@ -123,13 +162,15 @@ function getActorsListener(messagePeer, getEndpointName) {
     });
   });
 
-  hookWindow(window);
-
   // configuration of the observer:
   var config = { attributes: true, childList: true, characterData: true, subtree: true };
 
   // pass in the target node, as well as the observer options
   observer.observe(document, config);
+
+  hookWindow(window);
+  proxyAddEventListener(window);
+  proxyAddEventListener(Node.prototype);
 
   /*
    * The actual listener that's returned for adding to a receiver.
@@ -142,14 +183,16 @@ function getActorsListener(messagePeer, getEndpointName) {
         // if we're awaiting a response with this ID, call the handler
         if(message.responseTo) {
           if(awaitingResponses[message.responseTo]){
+            console.log('awaiting response: '+message.responseTo+' - handling');
             var handleFunc = awaitingResponses[message.responseTo];
             delete awaitingResponses[message.responseTo];
             handleFunc(message);
           } else {
             if(endpoints[message.responseTo]){
+              console.log('known endpoint: '+message.responseTo+' - handling');
               endpoints[message.responseTo](message);
             } else {
-              console.log('not awaiting a response for message '+message.responseTo);
+              console.log('no endpoint or awaited response for message '+message.responseTo);
             }
           }
         }
@@ -243,7 +286,8 @@ function HTTPMessageTransport(name, receiver, config) {
 HTTPMessageTransport.prototype.makeURL = function(message) {
   var unencoded = JSON.stringify(message);
   var encoded = encodeURI ? encodeURI(unencoded) : escape(unencoded);
-  var URL = this.config.endpoint+"?message="+encoded+'&id='+this.name;
+  // TODO local ZAP edit
+  var URL = this.config.endpoint+"message="+encoded+'&id='+this.name;
   return URL;
 }
 
@@ -273,7 +317,7 @@ HTTPMessageTransport.prototype.send = function(message) {
   };
   xhr.send();
 }
-var transports = {HTTPMessageTransport:HTTPMessageTransport};
+const transports = {HTTPMessageTransport:HTTPMessageTransport};
 
 function Probe(url, id) {
   // TODO: create the transport name from a GUID or something (perhaps the

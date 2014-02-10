@@ -82,7 +82,11 @@ public class ClientListCellRenderer extends JPanel implements ListCellRenderer<M
     public Component getListCellRendererComponent(JList<? extends MonitoredPage> list, MonitoredPage page, int index, boolean isSelected, boolean cellHasFocus) {
         
     	id.setText(page.getId());
-        url.setText(page.getMessage().getRequestHeader().getURI().toString());
+        try {
+			url.setText(page.getURI().toString());
+		} catch (Exception e) {
+			// Ignore
+		}
         
         if (page.isActive()) {
         	id.setIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON);
