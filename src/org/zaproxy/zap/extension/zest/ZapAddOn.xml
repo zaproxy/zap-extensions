@@ -10,6 +10,7 @@
 	Fixed to allow Loops to use Custom fuzzers (Issue 916)<br>
 	Changed to show the correct selected message when the results are sorted in "Zest Results" tab (Issue 942)<br>
 	Added a 'Record new Zest script' toolbar button (Issue 953)
+	Moved templates from core
 	]]>
 	</changes>
 	<dependson/>
@@ -18,13 +19,19 @@
 	</extensions>
 	<filters/>
 	<files>
+		<file>scripts/templates/active/Active default template.zst</file>
 		<file>scripts/templates/passive/301-302 body.zst</file>
+		<file>scripts/templates/passive/Passive default template.zst</file>
+		<file>scripts/templates/proxy/Change all POSTs to GETs.zst</file>
 		<file>scripts/templates/proxy/Drop requests via URL regexes.zst</file>
+		<file>scripts/templates/proxy/Proxy default template.zst</file>
 		<file>scripts/templates/proxy/Remove CSP.zst</file>
-		<!-- Need a core fix before these can be included
-		<file>scripts/templates/zest/active.template.zst</file>
-		<file>scripts/templates/zest/targeted.template.zst</file>
-		-->
+		<file>scripts/templates/proxy/Replace in request body.zst</file>
+		<file>scripts/templates/proxy/Replace in request header.zst</file>
+		<file>scripts/templates/proxy/Replace in response body.zst</file>
+		<file>scripts/templates/proxy/Replace in response header.zst</file>
+		<file>scripts/templates/targeted/Resend as a GET request.zst</file>
+		<file>scripts/templates/targeted/Targeted default template.zst</file>
 	</files>
 	<not-before-version>2.2.0</not-before-version>
 	<not-from-version/>
