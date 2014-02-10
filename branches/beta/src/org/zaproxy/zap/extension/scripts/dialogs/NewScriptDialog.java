@@ -189,6 +189,13 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		if (extension.getExtScript().getScript(this.getStringValue(FIELD_NAME)) != null) {
 			return Constant.messages.getString("scripts.dialog.script.error.duplicate");
 		}
+		if (this.isEmptyField(FIELD_TEMPLATE)) {
+			// No template, check the engine supports this
+			if (! getSelectedEngine().isSupportsMissingTemplates()) {
+				return Constant.messages.getString("scripts.dialog.script.error.notemplate");
+			}
+		}
+		
 		return null;
 	}
 

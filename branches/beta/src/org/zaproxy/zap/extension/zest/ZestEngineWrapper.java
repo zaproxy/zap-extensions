@@ -63,4 +63,9 @@ public class ZestEngineWrapper extends DefaultEngineWrapper {
 		return false;
 	}
 
+	@Override
+	public boolean isSupportsMissingTemplates() {
+		return false;
+	}
+
 }
