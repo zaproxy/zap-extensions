@@ -22,12 +22,13 @@ import java.util.regex.Pattern;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 
 /**
  *
@@ -47,7 +48,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
     };
 
     // Logger object
-    private static Logger log = Logger.getLogger(PaddingOraclePlugin.class);    
+    private static final Logger log = Logger.getLogger(PaddingOraclePlugin.class);    
     
     /**
      * Get the unique identifier of this plugin
@@ -64,7 +65,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        return "Generic Padding Oracle";
+        return Constant.messages.getString("ascanbeta.paddingoracle.name");
     }
 
     /**
@@ -82,14 +83,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getDescription() {
-        return "By manipulating the padding on an encrypted string, an attacker is able"
-                + "to generate an error message that indicates a likely 'padding oracle' vulnerability. "
-                + "Such a vulnerability can affect any application or framework that uses encryption improperly, "
-                + "such as some versions of ASP.net, Java Server Faces, and Mono. "
-                + "An attacker may exploit this issue to decrypt data and recover encryption keys, "
-                + "potentially viewing and modifying confidential data. "
-                + "This plugin should detect the MS10-070 padding oracle vulnerability in ASP.net "
-                + "if CustomErrors are enabled for that.";
+        return Constant.messages.getString("ascanbeta.paddingoracle.desc");
     }
 
     /**
@@ -108,9 +102,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getSolution() {        
-        return "Update the affected server software, or modify the scripts "
-                + "so that they properly validate encrypted data before "
-                + "attempting decryption.";    
+        return Constant.messages.getString("ascanbeta.paddingoracle.soln");
     }
 
     /**
@@ -119,10 +111,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
      */    
     @Override
     public String getReference() {
-        return "http://netifera.com/research/\n"
-                + "http://www.microsoft.com/technet/security/bulletin/ms10-070.mspx\n"
-                + "http://www.mono-project.com/Vulnerabilities#ASP.NET_Padding_Oracle\n"
-                + "https://bugzilla.redhat.com/show_bug.cgi?id=623799";
+        return Constant.messages.getString("ascanbeta.paddingoracle.refs");
     }
     
     /**
@@ -204,11 +193,11 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                 setParameter(msg, paramName, encodedValue);
                 sendAndReceive(msg);
 
-                // Response without any modification
-                String controlResponse = msg.getResponseBody().toString();
-
                 // If the control test returned an error, then keep going
-                if (msg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK) {
+                if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
+
+                    // Response without any modification
+                    String controlResponse = msg.getResponseBody().toString();
 
                     // The first test is going to change the last bit
                     oracle[oracle.length - 1] ^= 0x1;
@@ -218,7 +207,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
 
                     // First check if an Internal Server Error ws launched
                     // in this case we found (very) likely Padding Oracle vulnerability
-                    if (msg.getResponseHeader().getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+                    if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR) {
                             // We Found IT!                    
                             // First do logging
                             log.info("[Padding Oracle Found] on parameter [" + paramName + "] with payload [" + encodedValue + "]");
@@ -229,9 +218,9 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                                     Alert.WARNING,
                                     null,
                                     paramName,
-                                    encodedValue,
+                                    msg.getRequestHeader().getURI().toString(),
                                     null,
-                                    HttpStatus.getStatusText(HttpStatus.SC_INTERNAL_SERVER_ERROR),
+                                    msg.getResponseHeader().getReasonPhrase(),
                                     msg);
                     }
 
@@ -256,7 +245,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                                     Alert.WARNING,
                                     null,
                                     paramName,
-                                    encodedValue,
+                                    msg.getRequestHeader().getURI().toString(),
                                     null,
                                     pattern,
                                     msg);
