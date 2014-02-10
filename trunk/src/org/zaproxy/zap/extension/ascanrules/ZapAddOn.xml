@@ -4,7 +4,7 @@
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Fix for TestRemoteFileInclude failing if Google return localized page </changes>
+	<changes>Fix for TestRemoteFileInclude failing if Google return localized page. moved PXXS tests from beta </changes>
 	<dependson/>
 	<extensions>
 	</extensions>

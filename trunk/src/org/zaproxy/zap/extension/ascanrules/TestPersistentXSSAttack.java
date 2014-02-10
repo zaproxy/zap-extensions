@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -46,7 +46,7 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
     @Override
     public String getName() {
     	AscanUtils.registerI18N();
-    	return Constant.messages.getString("ascanbeta.pxss.attack.name");
+    	return Constant.messages.getString("ascanrules.pxss.attack.name");
     }
 
     @Override
@@ -122,7 +122,7 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
     @Override
     public void scan(HttpMessage sourceMsg, String param, String value) {
     	String otherInfo = MessageFormat.format(
-				Constant.messages.getString("ascanbeta.pxss.otherinfo"), 
+				Constant.messages.getString("ascanrules.pxss.otherinfo"), 
 				sourceMsg.getRequestHeader().getURI().toString());
     	
 		try {

@@ -15,33 +15,34 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+
+package org.zaproxy.zap.extension.ascanrules;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 
-public class TestPersistentXSSSpider extends AbstractAppPlugin {
+public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
 
-    private static Logger log = Logger.getLogger(TestPersistentXSSSpider.class);
-
+    private static Logger log = Logger.getLogger(TestPersistentXSSPrime.class);
+	
     @Override
     public int getId() {
-        return 40017;
+        return 40016;
     }
 
     @Override
     public String getName() {
-        AscanUtils.registerI18N();
-        return Constant.messages.getString("ascanbeta.pxss.spider.name");
+    	AscanUtils.registerI18N();
+    	return Constant.messages.getString("ascanrules.pxss.prime.name");
     }
 
     @Override
     public String[] getDependency() {
-        return new String[]{"TestPersistentXSSPrime"};
+        return null;
     }
 
     @Override
@@ -67,33 +68,33 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
     @Override
     public void init() {
     }
-
+    
     @Override
-    public void scan() {
-
-        HttpMessage msg = getBaseMsg();
-        try {
-            HttpMessage msg1 = msg.cloneRequest();
-            sendAndReceive(msg1, false);
-            PersistentXSSUtils.testForSink(msg1);
-
-        } catch (Exception e) {
+    public void scan(HttpMessage msg, String param, String value) {
+		try {
+			HttpMessage msg1 = msg.cloneRequest();
+			this.setParameter(msg1, param, PersistentXSSUtils.getUniqueValue(msg1, param));
+			if (log.isDebugEnabled()) {
+				log.debug("Prime msg=" + msg1.getRequestHeader().getURI() + " param=" + param);
+			}
+		    sendAndReceive(msg1, false);
+		} catch (Exception e) {
 			log.error(e.getMessage(), e);
-        }
-    }
+		}
+	}
 
-    @Override
-    public int getRisk() {
-        return Alert.RISK_INFO;
-    }
+	@Override
+	public int getRisk() {
+		return Alert.RISK_INFO;
+	}
 
-    @Override
-    public int getCweId() {
-        return 79;
-    }
+	@Override
+	public int getCweId() {
+		return 79;
+	}
 
-    @Override
-    public int getWascId() {
-        return 8;
-    }
+	@Override
+	public int getWascId() {
+		return 8;
+	}
 }
