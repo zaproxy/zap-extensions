@@ -317,7 +317,7 @@ HTTPMessageTransport.prototype.send = function(message) {
   };
   xhr.send();
 }
-const transports = {HTTPMessageTransport:HTTPMessageTransport};
+var transports = {HTTPMessageTransport:HTTPMessageTransport};
 
 function Probe(url, id) {
   // TODO: create the transport name from a GUID or something (perhaps the
