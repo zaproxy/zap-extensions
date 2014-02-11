@@ -4,12 +4,19 @@
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Fix for TestRemoteFileInclude failing if Google return localized page. moved PXXS tests from beta </changes>
+	<changes>
+	<![CDATA[            
+        Fix for TestRemoteFileInclude failing if Google return localized page. 
+        Moved PXXS tests from beta. 
+        Moved Command Injection from beta
+	]]>
+        </changes>
 	<dependson/>
 	<extensions>
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.CodeInjectionPlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.CommandInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestClientBrowserCache</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestCrossSiteScriptV2</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestDirectoryBrowsing</ascanrule>
