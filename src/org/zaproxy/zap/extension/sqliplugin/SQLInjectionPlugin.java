@@ -262,15 +262,15 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                 
             case MEDIUM:
                 // Default setting
-                level = 2;
+                level = 1;
                 break;
                 
             case HIGH:
-                level = 3;
+                level = 2;
                 break;
                 
             case INSANE:
-                level = 5;
+                level = 3;
                 break;
         }
         

@@ -11,15 +11,15 @@
 	Changed the "LDAP Injection" scanner to scan the parameters defined in the "Active Scan" options.</br>
 	Updated the "LDAP Injection" scanner to perform logic-based LDAP injection vulnerability detection.</br> 
 	Promoted new XXE Plugin to test for remotr and local XML External Entity Vulnerability.</br>
-	Promoted new PaddingOracle plugin to test for possible encryption padding errors. 
-	Promoted PXSS tests to beta
+	Promoted new PaddingOracle plugin to test for possible encryption padding errors.</br> 
+	Promoted PXSS tests to beta.</br>
+        Promoted Command Injection release.</br> 
 	]]>
 	</changes>
 	<dependson/>
 	<extensions>
 	</extensions>
 	<ascanrules>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CommandInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HPP</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.LDAPInjection</ascanrule>
