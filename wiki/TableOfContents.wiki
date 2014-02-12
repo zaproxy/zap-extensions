@@ -11,6 +11,7 @@
     * [AddOn_pscanrulesBeta Passive scanner rules (beta)]
     * [AddOn_plugnhack Plug-n-Hack]
     * [AddOn_scripts Script Console]
+    * [AddOn_tokengen Token generation and analysis]
     * [AddOn_zest Zest]
    * [AddOnsAlpha Add-ons: Alpha]
     * [AddOn_ascanrulesAlpha Active scanner rules (alpha)]
