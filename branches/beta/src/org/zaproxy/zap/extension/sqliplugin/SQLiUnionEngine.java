@@ -155,6 +155,12 @@ public class SQLiUnionEngine {
             
             // Perform the request
             msg = plugin.sendPayload(paramName, payload, true);
+            if (msg == null) {
+                // Probably a Circular Exception occurred
+                // exit with no match
+                return false;
+            }
+            
             content = msg.getResponseBody().toString();            
             content = SQLiPayloadManager.removeReflectiveValues(content, payload).toLowerCase();
             // Check also inside headers (?)
@@ -692,6 +698,12 @@ public class SQLiUnionEngine {
         Pattern orderPattern = Pattern.compile("(warning|error|order by|failed)", Pattern.CASE_INSENSITIVE);
         
         HttpMessage msg = plugin.sendPayload(paramName, payload, true);
+        if (msg == null) {
+            // Probably a Circular Exception occurred
+            // exit with no match
+            return false;
+        }
+        
         String content = msg.getResponseBody().toString();
                 
         return (((content != null) && !orderPattern.matcher(content).lookingAt()) && 
@@ -824,6 +836,12 @@ public class SQLiUnionEngine {
             payload = prepareUnionPayload("", -1, count, uChars, null, false, null);
             payload = paramValue + payload;
             msg = plugin.sendPayload(paramName, payload, true);
+            if (msg == null) {
+                // Probably a Circular Exception occurred
+                // exit with no results
+                return -1;
+            }
+            
             content = msg.getResponseBody().toString();
             content = SQLiPayloadManager.removeReflectiveValues(content, payload);
 
