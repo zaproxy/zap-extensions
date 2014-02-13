@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.httpclient.CircularRedirectException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -603,6 +604,12 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             // Launch again a simple payload with the changed value
                             // then take it as the original one for boolean base checkings
                             origMsg = sendPayload(parameter, payloadValue, true);
+                            if (origMsg == null) {
+                                // Probably a Circular Exception occurred
+                                // exit the plugin
+                                return;
+                            }
+                            
                             break;
 
                         case SQLiPayloadManager.WHERE_REPLACE:
@@ -671,6 +678,12 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             // Useful to set first matchRatio on
                             // the False response content
                             tempMsg = sendPayload(parameter, cmpPayload, true);
+                            if (tempMsg == null) {
+                                // Probably a Circular Exception occurred
+                                // exit the plugin
+                                return;
+                            }
+                            
                             content = tempMsg.getResponseBody().toString();
                             content = SQLiPayloadManager.removeReflectiveValues(content, cmpPayload);
                             responseMatcher.setInjectedResponse(content);
@@ -679,6 +692,12 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
                             // Perform the test's True request
                             tempMsg = sendPayload(parameter, reqPayload, true);
+                            if (tempMsg == null) {
+                                // Probably a Circular Exception occurred
+                                // exit the plugin
+                                return;
+                            }
+                            
                             content = tempMsg.getResponseBody().toString();
                             content = SQLiPayloadManager.removeReflectiveValues(content, reqPayload);                            
                             responseMatcher.setInjectedResponse(content);
@@ -690,6 +709,12 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
                                 // Perform again the test's False request
                                 tempMsg = sendPayload(parameter, cmpPayload, true);
+                                if (tempMsg == null) {
+                                    // Probably a Circular Exception occurred
+                                    // exit the plugin
+                                    return;
+                                }
+                                
                                 content = tempMsg.getResponseBody().toString();
                                 content = SQLiPayloadManager.removeReflectiveValues(content, cmpPayload);                            
                                 responseMatcher.setInjectedResponse(content);
@@ -754,6 +779,11 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             // Perform the test's request and grep the response
                             // body for the test's <grep> regular expression                            
                             tempMsg = sendPayload(parameter, reqPayload, true);
+                            if (tempMsg == null) {
+                                // Probably a Circular Exception occurred
+                                // exit the plugin
+                                return;
+                            }
 
                             // Get the payload that need to be checked
                             // inside the response content
@@ -839,7 +869,12 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                         + "making a few dummy requests");
                                 
                                 do {
-                                    sendPayload(null, null, false);
+                                    tempMsg = sendPayload(null, null, false);
+                                    if (tempMsg == null) {
+                                        // Probably a Circular Exception occurred
+                                        // exit the plugin
+                                        return;
+                                    }
                                     
                                 } while (responseTimes.size() < MIN_TIME_RESPONSES);
                             }
@@ -851,12 +886,23 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
                             // Perform the test's request
                             reqPayload = setDelayValue(reqPayload);
-                            sendPayload(parameter, reqPayload, false);
+                            tempMsg = sendPayload(parameter, reqPayload, false);
+                            if (tempMsg == null) {
+                                // Probably a Circular Exception occurred
+                                // exit the plugin
+                                return;
+                            }
+                            
                             // Check if enough time has passed 
                             if (lastResponseTime >= lowerLimit) {
 
                                 // Confirm again test's results
                                 tempMsg = sendPayload(parameter, reqPayload, false);
+                                if (tempMsg == null) {
+                                    // Probably a Circular Exception occurred
+                                    // exit the plugin
+                                    return;
+                                }
                                 
                                 // Check if enough time has passed                            
                                 if (lastResponseTime >= lowerLimit) {
@@ -1066,11 +1112,24 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                 lastErrorPageUID = lastRequestUID;
             }
 
+        } catch (CircularRedirectException cre) {
+            //Do not try to internationalise this.. we need an error message in any event..
+            //if it's in English, it's still better than not having it at all.
+            log.error("SQL Injection vulnerability check failed for parameter ["
+                    + paramName + "] because a Circular Exception occurred, exiting the plugin", cre);
+            
+            return null;
+            
         } catch (IOException ex) {
             //Ok we got an error, but take in care always the given response
             //Previously this could cause a deadlock because the requests
             //went in exception and the minimum amount of requests should never be reached
             lastResponseTime = System.currentTimeMillis() - lastResponseTime;
+            
+            // record the response time if needed
+            if (recordResponseTime) {
+                responseTimes.add(lastResponseTime);
+            }
             
             //Do not try to internationalise this.. we need an error message in any event..
             //if it's in English, it's still better than not having it at all.
