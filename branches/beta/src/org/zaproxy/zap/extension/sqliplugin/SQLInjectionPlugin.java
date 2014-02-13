@@ -869,7 +869,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                         + "making a few dummy requests");
                                 
                                 do {
-                                    tempMsg = sendPayload(null, null, false);
+                                    tempMsg = sendPayload(null, null, true);
                                     if (tempMsg == null) {
                                         // Probably a Circular Exception occurred
                                         // exit the plugin
@@ -1102,11 +1102,6 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                 log.trace(tempMsg.getRequestHeader().toString() + "\n" + tempMsg.getRequestBody().toString());
             }
 
-            // record the response time if needed
-            if (recordResponseTime) {
-                responseTimes.add(lastResponseTime);
-            }
-
             // generic SQL warning/error messages            
             if (errorPattern.matcher(tempMsg.getResponseBody().toString()).find()) {
                 lastErrorPageUID = lastRequestUID;
@@ -1125,11 +1120,6 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             //Previously this could cause a deadlock because the requests
             //went in exception and the minimum amount of requests should never be reached
             lastResponseTime = System.currentTimeMillis() - lastResponseTime;
-            
-            // record the response time if needed
-            if (recordResponseTime) {
-                responseTimes.add(lastResponseTime);
-            }
             
             //Do not try to internationalise this.. we need an error message in any event..
             //if it's in English, it's still better than not having it at all.
