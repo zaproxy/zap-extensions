@@ -24,6 +24,7 @@ import javax.script.ScriptException;
 
 import org.apache.commons.httpclient.URI;
 import org.mozilla.zest.core.v1.ZestVariables;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
@@ -66,7 +67,11 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 			
 			String respUrl = this.getVariable(ZestVariables.RESPONSE_URL);
 			HttpMessage msg = new HttpMessage(new URI(respUrl, true));
-			msg.setRequestHeader(this.getVariable(ZestVariables.REQUEST_HEADER));
+			msg.setRequestHeader(
+					this.getVariable(ZestVariables.REQUEST_METHOD) + " " +
+						this.getVariable(ZestVariables.REQUEST_URL) + " " + 
+							msg.getRequestHeader().getVersion() + HttpHeader.CRLF + 
+								this.getVariable(ZestVariables.REQUEST_HEADER));
 			msg.setRequestBody(this.getVariable(ZestVariables.REQUEST_BODY));
 			msg.setResponseHeader(this.getVariable(ZestVariables.RESPONSE_HEADER));
 			msg.setResponseBody(this.getVariable(ZestVariables.RESPONSE_BODY));
