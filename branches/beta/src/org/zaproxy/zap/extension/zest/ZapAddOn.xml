@@ -20,6 +20,7 @@
 	<filters/>
 	<files>
 		<file>scripts/templates/active/Active default template.zst</file>
+		<file>scripts/templates/authentication/Authentication default template.zst</file>
 		<file>scripts/templates/passive/301-302 body.zst</file>
 		<file>scripts/templates/passive/Passive default template.zst</file>
 		<file>scripts/templates/proxy/Change all POSTs to GETs.zst</file>
@@ -30,6 +31,7 @@
 		<file>scripts/templates/proxy/Replace in request header.zst</file>
 		<file>scripts/templates/proxy/Replace in response body.zst</file>
 		<file>scripts/templates/proxy/Replace in response header.zst</file>
+		<file>scripts/templates/standalone/Standalone default template.zst</file>
 		<file>scripts/templates/targeted/Resend as a GET request.zst</file>
 		<file>scripts/templates/targeted/Targeted default template.zst</file>
 	</files>

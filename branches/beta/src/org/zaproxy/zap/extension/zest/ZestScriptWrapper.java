@@ -27,6 +27,7 @@ import org.mozilla.zest.core.v1.ZestJSON;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestScript.Type;
 import org.parosproxy.paros.control.Control;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -61,10 +62,10 @@ public class ZestScriptWrapper extends ScriptWrapper {
 				ztype = Type.Targeted;
 				break;
 			case ExtensionScript.TYPE_PROXY:
-				// TODO this ok?
 				ztype = Type.Targeted;
 				break;
 			case ExtensionScript.TYPE_STANDALONE:
+			case ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH:
 			default:
 				ztype = Type.StandAlone;
 				break;
@@ -128,6 +129,9 @@ public class ZestScriptWrapper extends ScriptWrapper {
 			
 		} else if (class1.isAssignableFrom(ZestProxyRunner.class)) {
 			return (T) new ZestProxyRunner(this.getExtension(), this);
+			
+		} else if (class1.isAssignableFrom(ZestAuthenticationRunner.class)) {
+			return (T) new ZestAuthenticationRunner(this.getExtension(), this);
 		}
 		return null;
 	}
@@ -170,4 +174,8 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		this.recording = recording;
 	}
 	
+	public boolean isRunableStandalone() {
+		// We can always prompt for parameters :)
+		return true;
+	}
 }
