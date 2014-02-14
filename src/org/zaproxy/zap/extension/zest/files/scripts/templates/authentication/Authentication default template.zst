@@ -1,0 +1,38 @@
+{
+  "about": "This is a Zest script. For more details about Zest visit https://developer.mozilla.org/en-US/docs/Zest",
+  "zestVersion": "0.3",
+  "title": "Authentication default template.zst",
+  "description": "",
+  "prefix": "",
+  "type": "StandAlone",
+  "parameters": {
+    "tokenStart": "{{",
+    "tokenEnd": "}}",
+    "tokens": {
+      "LoginURL": "",
+      "Password": "",
+      "Username": ""
+    },
+    "elementType": "ZestVariables"
+  },
+  "statements": [
+    {
+      "comment": "Authentication scripts are used to authenticate to an application.\n The Username and Password parameters are set depending on how the script is invoked.",
+      "index": 1,
+      "elementType": "ZestComment"
+    },
+    {
+      "urlToken": "{{LoginURL}}",
+      "data": "username\u003d{{Username}}\u0026password\u003d{{Password}}",
+      "method": "POST",
+      "headers": "Content-Type: application/x-www-form-urlencoded",
+      "assertions": [],
+      "followRedirects": true,
+      "index": 2,
+      "elementType": "ZestRequest"
+    }
+  ],
+  "authentication": [],
+  "index": 0,
+  "elementType": "ZestScript"
+}
