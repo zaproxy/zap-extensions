@@ -22,7 +22,9 @@ import java.util.Map;
 
 import javax.script.ScriptException;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -63,6 +65,13 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 			paramsValues.put("Username", credentials.getParam("Username"));
 			paramsValues.put("Password", credentials.getParam("Password"));
 
+			// Use a custom HttpClient so we can set the proper HttpState and CookiePolicy, in order
+			// to properly remember any cookie changes during the authentication
+			HttpClient newClient=new HttpClient();
+			newClient.setState(helper.getCorrespondingHttpState());
+			newClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+			this.setHttpClient(newClient);
+			
 			this.run(script.getZestScript(), paramsValues);
 			
 			String respUrl = this.getVariable(ZestVariables.RESPONSE_URL);
