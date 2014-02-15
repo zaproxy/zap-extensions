@@ -7,6 +7,7 @@
 	<changes>
 	<![CDATA[
 	Promoted to beta XXE and Padding Oracle Plugins</br>
+        Added a new Expression Language Plugin
 	]]>
 	</changes>
 	<dependson/>
@@ -14,6 +15,7 @@
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosure</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExpressionLanguageInjectionPlugin</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
