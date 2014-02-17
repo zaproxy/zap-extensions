@@ -158,8 +158,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     private void initialize() {
         this.setName(NAME);
         this.setOrder(101);
-
-        startTimeoutThread();
     }
 
     private void startTimeoutThread() {
@@ -200,7 +198,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     @Override
     public void stop() {
         this.shutdown = true;
-        this.timeoutThread.interrupt();
+        if (timeoutThread != null) {
+        	this.timeoutThread.interrupt();
+        }
         super.stop();
     }
 
@@ -252,6 +252,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 				extFuzz.addFuzzerHandler(ClientMessage.class, fuzzHandler);
 				this.fuzzerContentPanel = (ClientMessageFuzzerContentPanel) fuzzHandler.getFuzzerContentPanel();
 			}
+	        startTimeoutThread();
         }
     }
     
