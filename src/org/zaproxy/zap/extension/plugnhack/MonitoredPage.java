@@ -36,6 +36,13 @@ public class MonitoredPage {
 	private Date lastMessage;
 	private boolean active = true;
 	private ImageIcon icon = null;
+	// Configuration info
+	private int heartbeat = 0;
+	private boolean monitorPostMessage = true;
+	private boolean interceptPostMessage = true;
+	private boolean monitorEvents = true;
+	private boolean interceptEvents = true;
+
 
 	public MonitoredPage(String id, HttpMessage message, Date lastMessage) {
 		super();
@@ -163,4 +170,45 @@ public class MonitoredPage {
 			return this.message.getRequestHeader().getURI();
 		}
 	}
+
+	public int getHeartbeat() {
+		return heartbeat;
+	}
+
+	public void setHeartbeat(int heartbeat) {
+		this.heartbeat = heartbeat;
+	}
+
+	public boolean isMonitorPostMessage() {
+		return monitorPostMessage;
+	}
+
+	public void setMonitorPostMessage(boolean monitorPostMessage) {
+		this.monitorPostMessage = monitorPostMessage;
+	}
+
+	public boolean isInterceptPostMessage() {
+		return interceptPostMessage;
+	}
+
+	public void setInterceptPostMessage(boolean interceptPostMessage) {
+		this.interceptPostMessage = interceptPostMessage;
+	}
+
+	public boolean isMonitorEvents() {
+		return monitorEvents;
+	}
+
+	public void setMonitorEvents(boolean monitorEvents) {
+		this.monitorEvents = monitorEvents;
+	}
+
+	public boolean isInterceptEvents() {
+		return interceptEvents;
+	}
+
+	public void setInterceptEvents(boolean interceptEvents) {
+		this.interceptEvents = interceptEvents;
+	}
+	
 }

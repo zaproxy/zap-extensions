@@ -391,7 +391,7 @@ public class MonitoredPagesManager {
 	}
 	
 	private ApiResponseSet msgToResponse(ClientMessage msg, boolean resend) {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, Object> map = msg.toMap();
 		map.put("type", msg.getType());
 		if (resend) {
 			// This is essentially a new message, so target the endpoint not the original messageid
@@ -400,7 +400,6 @@ public class MonitoredPagesManager {
 			// This is a 'known' message
 			map.put("responseTo", msg.getMessageId());
 		}
-		map.put("data", msg.getData());
 		return new ApiResponseSet("message", map);
 	}
 
@@ -409,10 +408,17 @@ public class MonitoredPagesManager {
 	}
 	
 	public void timeoutPages (int time) {
-		long timeout = new Date().getTime() - time;
+		long timenow = new Date().getTime();
+		long timeout;
 		List<MonitoredPage> removeList = new ArrayList<MonitoredPage>();
 		List<SiteNode> activeNodes = new ArrayList<SiteNode>();
 		for (MonitoredPage page : this.monitoredPages.values()) {
+			if (page.getHeartbeat() > 0 && page.getHeartbeat() * 2000 > time) {
+				// Extend the timeout if the poll time is set long
+				timeout = timenow - (page.getHeartbeat() * 2000);
+			} else {
+				timeout = timenow - time;
+			}
 			if (page.getLastMessage().getTime() < timeout) {
 				// remove outside the loop 
 				removeList.add(page);
@@ -541,10 +547,14 @@ public class MonitoredPagesManager {
 	public void resend(ClientMessage msg) {
 		ClientMessage msg2 = new ClientMessage(msg.getClientId(), msg.getJson());
 		msg2.setChanged(true);
-		msg2.setState(ClientMessage.State.pending);
+		this.send(msg2);
+	}
+
+	public void send(ClientMessage msg) {
+		msg.setState(ClientMessage.State.pending);
 		synchronized (this.queuedMessages) {
-			logger.debug("Adding message to queue for " + msg2.getClientId() + " : " + msg2.getData());
-			this.queuedMessages.add(msg2);
+			logger.debug("Adding message to queue for " + msg.getClientId() + " : " + msg.getData());
+			this.queuedMessages.add(msg);
 		}
 	}
 
