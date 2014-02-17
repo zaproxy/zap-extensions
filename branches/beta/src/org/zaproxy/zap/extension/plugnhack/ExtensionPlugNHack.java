@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.plugnhack;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -128,10 +129,13 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 	private PopupMenuMonitorSubtree popupMenuMonitorSubtree = null;
 	private PopupMenuMonitorScope popupMenuMonitorScope = null;
 	private PopupMenuOpenAndMonitorUrl popupMenuOpenAndMonitorUrl = null;
+    // TODO Work in progress
+	//private PopupMenuShowResponseInBrowser popupMenuShowResponseInBrowser = null;
 	
 	private BreakpointMessageHandler brkMessageHandler = null;
 	private ManualClientMessageSendEditorDialog resendDialog = null;
 	private ClientMessageFuzzerContentPanel fuzzerContentPanel = null;
+	private ClientConfigDialog clientConfigDialog = null;
 	
 	private ClientBreakpointsUiManagerInterface brkManager = null;
 	
@@ -163,9 +167,24 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
             @Override
             public void run() {
                 this.setName("ZAP-pnh-timeout");
+                // Cant init extBreak here - Control wont have been initialized
+                boolean ctrlInit = false;
+                ExtensionBreak extBreak = null;
                 while (!shutdown) {
                     try {
                         sleep(poll);
+                        
+                        if (! ctrlInit && Control.getSingleton() != null) {
+                            extBreak = (ExtensionBreak) 
+                            		Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.NAME);
+                        	ctrlInit = true;
+                        }
+                        if (extBreak != null && 
+                        		extBreak.getBreakPanel().isBreakRequest() || extBreak.getBreakPanel().isBreakResponse()) {
+                        	// Dont timeout pages while global breakpoints set
+                        	// TODO find a solution for custom break points too
+                        	continue;
+                        }
                         mpm.timeoutPages(poll * 2);
                         
                     } catch (InterruptedException e) {
@@ -195,6 +214,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorSubtree());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorScope());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuResend());
+            // TODO Work in progress
+	        //extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuShowResponseInBrowser());
             extensionHook.getHookView().addStatusPanel(getClientsPanel());
 
             getClientsPanel().setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
@@ -203,6 +224,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 
             monitoredClientsPanel = new SessionMonitoredClientsPanel(this.mpm);
             getView().getSessionDialog().addParamPanel(new String[]{}, monitoredClientsPanel, false);
+            
+			extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuConfigureClient(this));
 
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
 
@@ -215,7 +238,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
                 this.mpm.setClientBreakpointMessageHandler(brkMessageHandler);
 
                 // pop up to add the breakpoint
-				
 				extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuAddBreakClient(extBreak));
 				
 				extBreak.addBreakpointsUiManager(getBrkManager());
@@ -231,6 +253,19 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 				this.fuzzerContentPanel = (ClientMessageFuzzerContentPanel) fuzzHandler.getFuzzerContentPanel();
 			}
         }
+    }
+    
+    /* TODO Work in progress
+	private PopupMenuShowResponseInBrowser getPopupMenuShowResponseInBrowser() {
+		if (popupMenuShowResponseInBrowser == null) {
+			popupMenuShowResponseInBrowser = new PopupMenuShowResponseInBrowser(this, "Open history in browser TODO");	// TODO
+		}
+		return popupMenuShowResponseInBrowser;
+	}
+	*/
+    
+    protected PlugNHackAPI getAPI() {
+    	return api;
     }
 
     @Override
@@ -772,6 +807,25 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 
 	public List<MonitoredPage> getInactiveClients() {
 		return this.mpm.getInactiveClients();
+	}
+
+	public void showClientConfigDialog(MonitoredPage page) {
+		if (clientConfigDialog == null) {
+			clientConfigDialog = new ClientConfigDialog(this, 
+					View.getSingleton().getMainFrame(), new Dimension(300, 200));
+		}
+		clientConfigDialog.init(page);
+		clientConfigDialog.setVisible(true);
+	}
+	
+	public void setClientConfig (MonitoredPage page, String key, Object value) {
+		ClientMessage cmsg = new ClientMessage();
+		cmsg.setTo("ZAP");
+		cmsg.setType("setConfig");
+		cmsg.setClientId(page.getId());
+		cmsg.set("name", key);
+		cmsg.set("value", value);
+		this.mpm.send(cmsg);
 	}
 
     /* TODO

@@ -231,9 +231,8 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 			clientsList.addMouseListener(new java.awt.event.MouseAdapter() {
 				@Override
 				public void mousePressed(java.awt.event.MouseEvent e) {
+					// TODO should use e.isPopupTrigger() now?
 					if (SwingUtilities.isRightMouseButton(e)) { 
-						View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
-						
 						// Select list item on right click
 					    int Idx = clientsList.locationToIndex( e.getPoint() );
 					    if ( Idx >= 0 ) {
@@ -246,6 +245,7 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 					    		clientsList.getSelectionModel().setSelectionInterval( Idx, Idx );
 					    	}
 					    }
+						View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
 					}
 				}
 			});

@@ -41,10 +41,14 @@ public class ClientBreakpointMessageHandler extends BreakpointMessageHandler {
 	 */
 	@Override
 	public boolean isBreakOnAllRequests(Message aMessage, boolean isRequest) {
-		if (super.isBreakOnAllRequests(aMessage, isRequest)) {
-			return true;
+		if (aMessage instanceof ClientMessage) {
+			ClientMessage cmsg = (ClientMessage) aMessage;
+			if (!cmsg.getBoolean("intercept")) {
+				// Only break on messages that have intercept=true set
+				return false;
+			}
 		}
-    	return false;
+		return super.isBreakOnAllRequests(aMessage, isRequest);
 	}
 
 	/**
@@ -56,10 +60,14 @@ public class ClientBreakpointMessageHandler extends BreakpointMessageHandler {
 	 */
 	@Override
 	public boolean isBreakOnAllResponses(Message aMessage, boolean isRequest) {
-		if (super.isBreakOnAllResponses(aMessage, isRequest)) {
-			return true;
+		if (aMessage instanceof ClientMessage) {
+			ClientMessage cmsg = (ClientMessage) aMessage;
+			if (!cmsg.getBoolean("intercept")) {
+				// Only break on messages that have intercept=true set
+				return false;
+			}
 		}
-    	return false;
+		return super.isBreakOnAllResponses(aMessage, isRequest);
 	}
 
 	/**
@@ -71,10 +79,7 @@ public class ClientBreakpointMessageHandler extends BreakpointMessageHandler {
 	 */
 	@Override
 	protected boolean isBreakOnStepping(Message aMessage, boolean isRequest) {
-		if (aMessage instanceof ClientMessage && super.isBreakOnStepping(aMessage, isRequest)) {
-			return true;
-		}
-		return false;
+		return aMessage instanceof ClientMessage && super.isBreakOnStepping(aMessage, isRequest);
 	}
 	
 }

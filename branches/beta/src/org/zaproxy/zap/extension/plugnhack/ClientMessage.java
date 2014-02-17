@@ -17,13 +17,15 @@
  */
 package org.zaproxy.zap.extension.plugnhack;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.zaproxy.zap.extension.httppanel.Message;
+import java.util.Map.Entry;
 
 import net.sf.json.JSONObject;
+
+import org.zaproxy.zap.extension.httppanel.Message;
 
 public class ClientMessage implements Message {
 
@@ -31,17 +33,12 @@ public class ClientMessage implements Message {
 	private JSONObject json;
 	private String clientId;
 	private Date received;
-	private String from;
-	private String to;
-	private String type;
-	private String data;
-	private String target;
-	private String messageId;
-	private String endpointId;
 	private State state = State.received;
 	private boolean changed = false;
+	private Map<String, Object> extraFields = new HashMap<String, Object>();
 
 	public ClientMessage() {
+		json = new JSONObject();
 	}
 
 	public ClientMessage(String clientId, JSONObject json) {
@@ -54,28 +51,6 @@ public class ClientMessage implements Message {
 	
 	public void setJson(JSONObject json) {
 		this.json = json;
-		if (json.has("type")) {
-			setType(json.getString("type"));
-		}
-		if (json.has("from")) {
-			setFrom(json.getString("from"));
-		}
-		if (json.has("to")) {
-			setTo(json.getString("to"));
-		}
-		if (json.has("target")) {
-			setTarget(json.getString("target"));
-		}
-		if (json.has("data")) {
-			setData(json.getString("data"));
-		}
-		if (json.has("messageId")) {
-			setMessageId(json.getString("messageId"));
-		}
-		if (json.has("endpointId")) {
-			setEndpointId(json.getString("endpointId"));
-		}
-		
 	}
 
 	public Date getReceived() {
@@ -84,82 +59,90 @@ public class ClientMessage implements Message {
 	public void setReceived(Date received) {
 		this.received = received;
 	}
+	
 	public String getFrom() {
-		return from;
+		return this.json.optString("from",null);
 	}
+	
 	public void setFrom(String from) {
-		this.from = from;
 		this.json.put("from", from);
 	}
+	
 	public String getTo() {
-		return to;
+		return this.json.optString("to",null);
 	}
+	
 	public void setTo(String to) {
-		this.to = to;
 		this.json.put("to", to);
 	}
+	
 	public String getType() {
-		return type;
+		return this.json.optString("type",null);
 	}
+	
 	public void setType(String type) {
-		this.type = type;
 		this.json.put("type", type);
 	}
+	
 	public String getData() {
-		return data;
+		return this.json.optString("data",null);
 	}
+	
 	public void setData(String data) {
-		this.data = data;
 		this.json.put("data", data);
 	}
+	
 	public String getEndpointId() {
-		return endpointId;
+		return this.json.optString("endpointId",null);
 	}
+	
 	public void setEndpointId(String endpointId) {
-		this.endpointId = endpointId;
+		this.json.put("endpointId", endpointId);
 	}
 
-	public Map<String, String> toMap() {
-		HashMap<String, String> map = new HashMap<String, String>();
-		if (this.to != null) {
-			map.put("to", this.to);
+	public Map<String, Object> toMap() {
+		// TODO: can maybe just pull the values map from this.json and augment a clone of that?
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		if (this.getTo() != null) {
+			map.put("to", this.getTo());
 		}
-		if (this.from != null) {
-			map.put("from", this.from);
+		if (this.getFrom() != null) {
+			map.put("from", this.getFrom());
 		}
-		if (this.type != null) {
-			map.put("type", this.type);
+		if (this.getType() != null) {
+			map.put("type", this.getType());
 		}
-		if (this.target != null) {
-			map.put("target", this.target);
+		if (this.getTarget() != null) {
+			map.put("target", this.getTarget());
 		}
-		if (this.data != null) {
-			map.put("data", this.data);
+		if (this.getData() != null) {
+			map.put("data", this.getData());
 		}
-		if (this.messageId != null) {
-			map.put("messageId", this.messageId);
+		if (this.getMessageId() != null) {
+			map.put("messageId", this.getMessageId());
 		}
-		if (this.endpointId != null) {
-			map.put("endpointId", this.endpointId);
+		if (this.getEndpointId() != null) {
+			map.put("endpointId", this.getEndpointId());
+		}
+		for (Entry<String, Object> entry : this.extraFields.entrySet()) {
+			map.put(entry.getKey(), entry.getValue());
 		}
 		return map;
 	}
 
 	public String getTarget() {
-		return target;
+		return this.json.optString("target",null);
 	}
 
 	public void setTarget(String target) {
-		this.target = target;
 		this.json.put("target", target);
 	}
 
 	public String getMessageId() {
-		return messageId;
+		return this.json.optString("messageId",null);
 	}
 
 	public void setMessageId(String messageId) {
-		this.messageId = messageId;
 		this.json.put("messageId", messageId);
 	}
 
@@ -169,6 +152,10 @@ public class ClientMessage implements Message {
 
 	public String getClientId() {
 		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
 	}
 
 	@Override
@@ -197,4 +184,28 @@ public class ClientMessage implements Message {
 		this.state = state;
 	}
 	
+	public void set(String key, Object value) {
+		if (value == null) {
+			this.extraFields.remove(key);
+			this.json.remove(key);
+		} else {
+			this.extraFields.put(key, value);
+			this.json.put(key, value);
+		}
+	}
+	
+	public String getString (String key) {
+		return this.json.optString(key);
+	}
+	
+	public boolean getBoolean(String key) {
+		if (json.containsKey(key)) {
+			return this.json.getBoolean(key);
+		}
+		return false;
+	}
+	
+	public Map<String, Object> getExtraFields() {
+		return Collections.unmodifiableMap(this.extraFields);
+	}
 }
