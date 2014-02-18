@@ -29,9 +29,11 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class MonitoredPage {
 
+	private long index;
 	private String id;
 	private HttpMessage message;
 	private HistoryReference historyReference;
+	private int hrefId = -1;
 	private SiteNode node = null;
 	private Date lastMessage;
 	private boolean active = true;
@@ -42,7 +44,7 @@ public class MonitoredPage {
 	private boolean interceptPostMessage = true;
 	private boolean monitorEvents = true;
 	private boolean interceptEvents = true;
-
+	private boolean hrefPersisted = false;
 
 	public MonitoredPage(String id, HttpMessage message, Date lastMessage) {
 		super();
@@ -54,6 +56,13 @@ public class MonitoredPage {
 		}
 		this.lastMessage = lastMessage;
 		this.setIcon(message);
+	}
+
+	public MonitoredPage(long index, String id, int hrefId) {
+		super();
+		this.index = index;
+		this.id = id;
+		this.hrefId = hrefId;
 	}
 
 	public MonitoredPage(String id, HistoryReference href, Date lastMessage) {
@@ -109,9 +118,11 @@ public class MonitoredPage {
 		checkMessage();
 		return id;
 	}
+	
 	public void setId(String id) {
 		this.id = id;
 	}
+	
 	public HttpMessage getMessage() {
 		checkMessage();
 		if (this.historyReference != null) {
@@ -127,6 +138,21 @@ public class MonitoredPage {
 	public HistoryReference getHistoryReference() {
 		checkMessage();
 		return historyReference;
+	}
+
+	public void setHistoryReference(HistoryReference historyReference) {
+		this.historyReference = historyReference;
+		try {
+			if (historyReference != null) {
+				this.setIcon(historyReference.getHttpMessage());
+			}
+		} catch (Exception e) {
+			// Ignore
+		}
+	}
+
+	public int getHrefId() {
+		return hrefId;
 	}
 
 	public void setMessage(HttpMessage message) {
@@ -209,6 +235,22 @@ public class MonitoredPage {
 
 	public void setInterceptEvents(boolean interceptEvents) {
 		this.interceptEvents = interceptEvents;
+	}
+
+	public long getIndex() {
+		return index;
+	}
+
+	public void setIndex(long index) {
+		this.index = index;
+	}
+
+	public boolean isHrefPersisted() {
+		return hrefPersisted;
+	}
+
+	public void setHrefPersisted(boolean hrefPersisted) {
+		this.hrefPersisted = hrefPersisted;
 	}
 	
 }
