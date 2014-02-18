@@ -337,6 +337,11 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 		}
 	}
 	
+	public void reset() {
+		refreshClientList();
+		getMessageModel().removeAllElements();
+	}
+	
 	private void refreshClientList() {
 		DefaultListModel<MonitoredPage> model = this.getClientsListModel();
 		model.removeAllElements();

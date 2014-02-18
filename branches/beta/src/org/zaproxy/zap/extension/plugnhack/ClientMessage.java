@@ -30,6 +30,8 @@ import org.zaproxy.zap.extension.httppanel.Message;
 public class ClientMessage implements Message {
 
 	public enum State {received, pending, resent, dropped, oraclehit}
+	
+	private long index = -1;
 	private JSONObject json;
 	private String clientId;
 	private Date received;
@@ -49,6 +51,14 @@ public class ClientMessage implements Message {
 		this.setJson(JSONObject.fromObject(json.toString()));
 	}
 	
+	public long getIndex() {
+		return index;
+	}
+
+	public void setIndex(long index) {
+		this.index = index;
+	}
+
 	public void setJson(JSONObject json) {
 		this.json = json;
 	}

@@ -61,7 +61,8 @@ public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
         if (ClientsPanel.CLIENTS_LIST_NAME.equals(invoker.getName())) {
             try {
             	clientsList = (JList<MonitoredPage>) invoker;
-                if (clientsList.getSelectedValue() != null) {
+                MonitoredPage client = clientsList.getSelectedValue();
+                if (client != null && client.isActive()) {
                     this.setEnabled(true);
                 } else {
                     this.setEnabled(false);

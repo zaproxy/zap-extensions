@@ -18,10 +18,12 @@
 package org.zaproxy.zap.extension.plugnhack;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,10 +38,12 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyParam;
+import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -62,6 +66,8 @@ import org.zaproxy.zap.extension.httppanel.view.hex.HttpPanelHexView;
 import org.zaproxy.zap.extension.plugnhack.brk.ClientBreakpointMessageHandler;
 import org.zaproxy.zap.extension.plugnhack.brk.ClientBreakpointsUiManagerInterface;
 import org.zaproxy.zap.extension.plugnhack.brk.PopupMenuAddBreakClient;
+import org.zaproxy.zap.extension.plugnhack.db.ClientTable;
+import org.zaproxy.zap.extension.plugnhack.db.MessageTable;
 import org.zaproxy.zap.extension.plugnhack.fuzz.ClientMessageFuzzerContentPanel;
 import org.zaproxy.zap.extension.plugnhack.fuzz.ClientMessageFuzzerHandler;
 import org.zaproxy.zap.extension.plugnhack.httppanel.component.ClientComponent;
@@ -145,6 +151,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 	private boolean shutdown = false;
 	private String pnhScript = null;
 	
+    private ClientTable clientTable = null;
+    private MessageTable messageTable = null;
+
 	/*
 	 * TODO
 	 * Handle mode
@@ -158,6 +167,25 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     private void initialize() {
         this.setName(NAME);
         this.setOrder(101);
+        
+		Database db = Model.getSingleton().getDb();
+
+		clientTable = new ClientTable();
+		db.addDatabaseListener(clientTable);
+		try {
+			clientTable.databaseOpen(db.getDatabaseServer());
+		} catch (SQLException e) {
+			logger.warn(e.getMessage(), e);
+		}
+
+		messageTable = new MessageTable();
+		db.addDatabaseListener(messageTable);
+		try {
+			messageTable.databaseOpen(db.getDatabaseServer());
+		} catch (SQLException e) {
+			logger.warn(e.getMessage(), e);
+		}
+
     }
 
     private void startTimeoutThread() {
@@ -208,6 +236,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     public void hook(ExtensionHook extensionHook) {
         API.getInstance().registerApiImplementor(api);
         extensionHook.addProxyListener(this);
+        extensionHook.addSessionListener(this);
 
         if (getView() != null) {
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuOpenAndMonitorUrl());
@@ -456,6 +485,11 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 						logger.debug("Injecting PnH script into " + msg.getRequestHeader().getURI().toString());
 						// this assign the unique id
 						MonitoredPage page = mpm.monitorPage(msg);
+				        try {
+							this.clientTable.insert(page);
+						} catch (SQLException e) {
+							logger.error(e.getMessage(), e);
+						}
 						
 						body = body.substring(0, endHeadTag) + SCRIPT_START + this.getPnhScript() +
 								SCRIPT_END.replace(REPLACE_ROOT_TOKEN, this.getApiRoot())
@@ -505,7 +539,42 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 		if (! this.knownTypes.contains(msg.getType())) {
 			this.knownTypes.add(msg.getType());
 		}
+		MonitoredPage page = this.mpm.getClient(msg.getClientId());
+		if (page != null && ! page.isHrefPersisted()) {
+			/*
+			 * When the pages are initialized the href typically is not available
+			 */
+			if (page.getHistoryReference() != null) {
+				System.out.println("SBSB messageReceived updating for href " + page.getId());
+				try {
+					this.clientTable.update(page);
+				} catch (SQLException e) {
+					logger.error(e.getMessage(), e);
+				}
+			} else {
+				System.out.println("SBSB messageReceived NO HREF :((( for href " + page.getId());
+				
+			}
+		}
+		persist(msg);
 		return this.mpm.messageReceived(msg);
+	}
+	
+	protected void persist(ClientMessage cmsg) {
+		try {
+			if (cmsg.getIndex() >= 0) {
+				// Already persisted
+				if (cmsg.isChanged()) {
+					// but has been changed, so update
+					this.messageTable.update(cmsg);
+				}
+			} else if (! cmsg.getType().equals(MonitoredPagesManager.CLIENT_MESSAGE_TYPE_HEARTBEAT)) {
+				// Record everything _except_ heartbeats
+				this.messageTable.insert(cmsg);
+			}
+		} catch (SQLException e) {
+			logger.error(e.getMessage(), e);
+		}
 	}
 	
 	public boolean isBeingMonitored(String clientId) {
@@ -592,7 +661,13 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     }
 
     public String startMonitoring(URI uri) throws HttpMalformedHeaderException {
-        return this.mpm.startMonitoring(uri);
+        MonitoredPage page = this.mpm.startMonitoring(uri);
+        try {
+			this.clientTable.insert(page);
+		} catch (SQLException e) {
+			logger.error(e.getMessage(), e);
+		}
+        return page.getId();
     }
 
     public void stopMonitoring(String id) {
@@ -613,22 +688,67 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     }
 
     @Override
-    public void sessionAboutToChange(Session arg0) {
+    public void sessionAboutToChange(Session session) {
         // Ignore
     }
 
     @Override
-    public void sessionChanged(Session arg0) {
+    public void sessionChanged(final Session session) {
+        if (EventQueue.isDispatchThread()) {
+            sessionChangedEventHandler(session);
+
+        } else {
+            try {
+                EventQueue.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        sessionChangedEventHandler(session);
+                    }
+                });
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    private void sessionChangedEventHandler(Session session) {
         this.mpm.reset();
+
+        if (View.isInitialised()) {
+        	getClientsPanel().reset();
+        }
+        
+        try {
+        	ExtensionHistory extHist = (ExtensionHistory) org.parosproxy.paros.control.Control.getSingleton().
+        	        getExtensionLoader().getExtension(ExtensionHistory.NAME);
+        	if (extHist != null) {
+				// Load any clients from the db
+				for (MonitoredPage page : this.clientTable.list()) {
+					int hrefId = page.getHrefId();
+					if (hrefId >= 0) {
+						page.setHistoryReference(extHist.getHistoryReference(hrefId));
+					}
+					this.mpm.addInactiveClient(page);
+				}
+				
+		        if (View.isInitialised()) {
+					for (ClientMessage cmsg : this.messageTable.list()) {
+						this.getClientsPanel().messageReceived(cmsg);
+					}
+		        }
+        	}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
     }
 
     @Override
-    public void sessionModeChanged(Mode arg0) {
+    public void sessionModeChanged(Mode session) {
         // Ignore
     }
 
     @Override
-    public void sessionScopeChanged(Session arg0) {
+    public void sessionScopeChanged(Session session) {
         // Ignore
     }
 
@@ -770,9 +890,11 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     }
 
     protected void messageChanged(ClientMessage msg) {
+    	msg.setChanged(true);
         if (View.isInitialised()) {
             this.getClientsPanel().messageChanged(msg);
         }
+        this.persist(msg);
     }
 	
 	protected ClientBreakpointsUiManagerInterface getBrkManager() {

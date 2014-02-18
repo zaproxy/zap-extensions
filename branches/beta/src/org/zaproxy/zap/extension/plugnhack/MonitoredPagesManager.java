@@ -313,7 +313,6 @@ public class MonitoredPagesManager {
 	public ApiResponse messageReceived(ClientMessage msg) {
 		List<ApiResponse> responseSet = new ArrayList<ApiResponse>();
 
-		
 		MonitoredPage page = this.monitoredPages.get(msg.getClientId());
 		if (page != null) {
 			page.setLastMessage(new Date());
@@ -365,12 +364,13 @@ public class MonitoredPagesManager {
 					responseSet.add(this.msgToResponse(qmsg, true));
 					qmsg.setState(ClientMessage.State.resent);
 
-					// TODO add to list - this a bit hacky?
+					// add to list
 					for (MonitoredPageListener listener : this.listeners) {
 						listener.messageReceived(qmsg);
 					}
 					handledMessages.add(qmsg);
-					
+					extension.persist(qmsg);
+
 					// TODO Just add one at a time for now - adding multiple messages can cause problems
 					break;
 				}
@@ -472,14 +472,14 @@ public class MonitoredPagesManager {
 		return node;
 	}
 	
-	public String startMonitoring (URI uri) throws HttpMalformedHeaderException {
+	public MonitoredPage startMonitoring (URI uri) throws HttpMalformedHeaderException {
 		HttpMessage msg = new HttpMessage(uri);
 		MonitoredPage page = new MonitoredPage(this.getUniqueId(), msg, new Date());
 		this.monitoredPages.put(page.getId(), page);
 		for (MonitoredPageListener listener : this.listeners) {
 			listener.startMonitoringPageEvent(page);
 		}
-		return page.getId();
+		return page;
 	}
 	
 	public void stopMonitoring (String id) {
@@ -515,6 +515,7 @@ public class MonitoredPagesManager {
 		this.includeRegexes.clear();
 		this.excludeRegexes.clear();
 		this.monitoredPages.clear();
+		this.inactivePages.clear();
 		if (this.sessionPanel != null) {
 			this.sessionPanel.refresh();
 		}
@@ -592,6 +593,19 @@ public class MonitoredPagesManager {
 			list.add(page);
 		}
 		return list;
+	}
+
+	public void addInactiveClient(MonitoredPage page) {
+		page.setActive(false);
+		this.inactivePages.put(page.getId(), page);
+	}
+
+	public MonitoredPage getClient(String clientId) {
+		MonitoredPage client = this.monitoredPages.get(clientId);
+		if (client == null) {
+			client = this.inactivePages.get(clientId);
+		}
+		return client;
 	}
 
 }

@@ -74,7 +74,10 @@ public class MessageListTableModel extends AbstractTableModel {
 		case 0: obj = SDF.format(msg.getReceived()); break;
 		case 1: 
 				switch (msg.getState()) {
-				case received:	break;
+				case received:	if (msg.isChanged()) {
+									obj = ExtensionPlugNHack.CHANGED_ICON;									
+								}
+								break;
 				case pending:	obj = ExtensionPlugNHack.PENDING_ICON;	break;
 				case resent:	obj = ExtensionPlugNHack.CHANGED_ICON;	break;
 				case dropped:	obj = ExtensionPlugNHack.DROPPED_ICON;	break;
