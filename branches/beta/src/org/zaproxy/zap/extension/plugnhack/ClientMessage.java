@@ -31,6 +31,11 @@ public class ClientMessage implements Message {
 
 	public enum State {received, pending, resent, dropped, oraclehit}
 	
+	/**
+	 * Fields that will always be reflected back if included in the original message
+	 */
+	private static final String [] REFLECT_FIELDS = {"eventData", "originalEventTarget"};
+	
 	private long index = -1;
 	private JSONObject json;
 	private String clientId;
@@ -134,6 +139,14 @@ public class ClientMessage implements Message {
 		if (this.getEndpointId() != null) {
 			map.put("endpointId", this.getEndpointId());
 		}
+		// Reflect these fields if they are present
+		for (String field : REFLECT_FIELDS) {
+			Object eventData = this.json.get(field);
+			if (eventData != null) {
+				map.put(field, eventData);
+			}
+		}
+		// Include anything else we've been told to add
 		for (Entry<String, Object> entry : this.extraFields.entrySet()) {
 			map.put(entry.getKey(), entry.getValue());
 		}
