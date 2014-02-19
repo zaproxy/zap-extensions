@@ -150,6 +150,9 @@ public class ClientMessage implements Message {
 		for (Entry<String, Object> entry : this.extraFields.entrySet()) {
 			map.put(entry.getKey(), entry.getValue());
 		}
+		if (changed) {
+			map.put("changed", true);
+		}
 		return map;
 	}
 
