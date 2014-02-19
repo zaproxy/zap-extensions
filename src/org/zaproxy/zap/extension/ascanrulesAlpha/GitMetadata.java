@@ -30,6 +30,7 @@ import java.util.zip.Inflater;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.HostProcess;
 import org.parosproxy.paros.network.HttpMessage;
@@ -82,6 +83,8 @@ public class GitMetadata {
 	 * how many URIs have we recorded so far?
 	 */
 	private int uriCount = 0;
+
+	private int tempbytesread;
 	
 	/**
 	 * gets the Git URIs that were successfully queried to get the Source Code Disclosure 
@@ -155,18 +158,18 @@ public class GitMetadata {
 	}
 
 	/**
-	 * get data for a given SHA1 blob, trying both the unpacked (loose) and packed formats
+	 * get data for a given SHA1 object, trying both the unpacked (loose) and packed formats
 	 * @param basemsg the base message to use when retrieving additional resources   
 	 * @param gitbasepath the Git base path 
 	 * @param filesha1 the SHA1 associated with the file in Git 
 	 * @return the binary data associated with the file in Git, as specified by the filesha1 parameter 
 	 * @throws Exception
 	 */
-	public byte [] getBlobData (HttpMessage basemsg, String gitbasepath, String filesha1) throws Exception {
+	public byte [] getObjectData (HttpMessage basemsg, String gitbasepath, String filesha1) throws Exception {
 		//try the unpacked first, cos it's simpler and quicker. (It might not be the common case, however)
 		//but if that fails, try to get the data from the packed files.
 		try {
-			return getBlobData (basemsg, gitbasepath, filesha1, false);
+			return getObjectData (basemsg, gitbasepath, filesha1, false);
 		}
 		catch (FileNotFoundException e) {
 			//try the packed format instead
@@ -174,12 +177,12 @@ public class GitMetadata {
 
 			//and re-initialise the URIs that we record, because the file in unpacked format did not work out for us 
 			this.uriCount=0;
-			return getBlobData (basemsg, gitbasepath, filesha1, true);
+			return getObjectData (basemsg, gitbasepath, filesha1, true);
 		}
 	}
 
 	/**
-	 * get data for a given SHA1 blob, using either the loose or packed formats
+	 * get data for a given SHA1 object, using either the loose or packed formats
 	 * @param basemsg the base message to use when retrieving additional resources
 	 * @param gitbasepath the Git base path
 	 * @param filesha1 the SHA1 associated with the file in Git
@@ -187,7 +190,7 @@ public class GitMetadata {
 	 * @return the binary data associated with the file in Git, as specified by the filesha1 parameter
 	 * @throws Exception
 	 */
-	public byte [] getBlobData (HttpMessage basemsg, String gitbasepath, String filesha1, boolean trypacked) throws Exception {
+	public byte [] getObjectData (HttpMessage basemsg, String gitbasepath, String filesha1, boolean trypacked) throws Exception {
 
 		URI originaluri = basemsg.getRequestHeader().getURI();
 		if (! trypacked) {
@@ -364,7 +367,7 @@ public class GitMetadata {
 			}
 
 			//try to parse the "pack index" as a version 1 "pack index" file, which has a different layout to subsequent versions.
-			//use a separate ByteBuffer for this, in case things don't work out (becuase they probably will not work out) :)
+			//use a separate ByteBuffer for this, in case things don't work out (because they probably will not work out) :)
 			try {
 				ByteBuffer packindexfileV1dataBuffer = ByteBuffer.wrap(packfileindexdata);
 				byte packEntrySizeArray [] = new byte [256*4];
@@ -434,7 +437,7 @@ public class GitMetadata {
 					throw new Exception ("The pack index file header does not appear to be valid for pack index file version 2, 3, or 4: '"+ new String (packindexfileheaderSignatureArray)+ "' was found" );
 				}
 
-				//Note: version 1 is hanled separately, so need to check for it here.
+				//Note: version 1 is handled separately, so need to check for it here.
 				int packindexFileVersion = packindexfiledataBuffer.getInt();
 				if (packindexFileVersion !=2 && packindexFileVersion != 3 ) {   				
 					throw new Exception ("Pack index file version("+ packindexFileVersion + ") is not supported");
@@ -517,52 +520,68 @@ public class GitMetadata {
 				log.debug("The deflated entry length, based on offset differences, is " + entryLength);
 			}
 
-			//No need to read the remainder of the "pack index" file at this point.. (for either version 1, or versions 2/3)
-			//so start reading the pack file again.
+			//get the data from the pack file and return it.
+			byte [] inflatedData = getPackedObjectData(packfiledata, packEntryOffsetArray[sha1Index], entryLength, packFileVersion);				
+			return inflatedData;
+		}
+	}
+	
+	/**
+	 * gets the data for the object in the pack file data with the version specified, at the specified offset 
+	 * @param packfiledata byte array containing the raw data associated with the pack file 
+	 * @param packfiledataoffset the offset for the specified intry into the raw pack file data
+	 * @param entryLength the deflated length of the packfile object entry 
+	 * @param packFileVersion  the version of the pack file. The version determines the file format, and thus the object extraction logic.
+	 * @return the inflated binary data associated with the entry extracted from the pack file
+	 * @throws Exception
+	 */
+	private byte[] getPackedObjectData(byte[] packfiledata, int packfiledataoffset, int entryLength, int packFileVersion) throws Exception {
+		
+		try {
 			//wrap the entry we are interested in in a ByteBuffer (using the offsets to calculate the length)
 			//Note: the offset is from the start of the "pack" file, not from after the header.
-			ByteBuffer entryBuffer = ByteBuffer.wrap(packfiledata, packEntryOffsetArray[sha1Index], entryLength);
+			if ( packfiledataoffset > (packfiledata.length -1) ) {
+				throw new Exception ("The offset "+ packfiledataoffset+ " into the pack file is not valid given pack file data length:"+ packfiledata.length);
+			}
+			if ( (packfiledataoffset + entryLength) > packfiledata.length) {
+				throw new Exception ("The offset "+ packfiledataoffset+ " into the pack file and the entry length "+entryLength+" is not valid given pack file data length:"+ packfiledata.length);
+			}
+			ByteBuffer entryBuffer = ByteBuffer.wrap(packfiledata, packfiledataoffset, entryLength);
 			byte typeandsize = entryBuffer.get(); //size byte #1: 4 bits of size data available
 			//get bits 6,5,4 into a byte, as the least significant bits. So if  typeandsize = bXYZbbbbb, then entryType = 00000XYZ
 			//TODO: there may be a change required here for version 4 "pack" files, which use a 4 bit type, rather than a 3 bit type in earlier versions.
 			//but maybe not, because we only handle one type (for blobs), which probably does not set the highest bit in the "type" nibble.			
-			//The valid Object Types Bit Patterns for Version 2/3 are   
-			//#	0 0 0	invalid: Reserved 
-			//#	0 0 1	COMMIT object
-			//#	0 1 0	TREE object
-			//#	0 1 1	BLOB object
-			//#	1 0 0	TAG object
-			//#	1 0 1	invalid: Reserved
-			//#	1 1 0	DELTA_ENCODED object w/ offset to base
-			//#	1 1 1	DELTA_ENCODED object w/ base BINARY_OBJ_ID			
+			//The valid Object Type Bit Patterns for Version 2/3 are   
+			//#	000	- invalid: Reserved 
+			//#	001	- COMMIT object
+			//#	010	- TREE object
+			//#	011	- BLOB object
+			//#	100	- TAG object
+			//#	101	- invalid: Reserved
+			//#	110	- DELTA_ENCODED object w/ offset to base
+			//#	111	- DELTA_ENCODED object w/ base BINARY_OBJ_ID			
 			byte entryType = (byte)((typeandsize & (byte)0x70) >> 4);
 			if (log.isDebugEnabled()) log.debug("The pack file entry is of type "+ entryType);
-			if ( entryType == 0x6 ) {
-				//TODO :support Packed Objects of type 'DELTA_ENCODED object with offset to base'
-				throw new Exception ("Packed Objects of type 'DELTA_ENCODED object with offset to base' are not yet supported");
-			}
+			
+	
 			if ( entryType == 0x7 ) {
 				//TODO :support Packed Objects of type 'DELTA_ENCODED object with base BINARY_OBJ_ID'
-				throw new Exception ("Packed Objects of type 'DELTA_ENCODED object with base BINARY_OBJ_ID' are not yet supported");
-			}
-			if ( entryType != 0x3 ) { 
-				//handle the case where the object is not stored as a delta to some other object (that object might in turn be a delta) 
-				throw new Exception ("This logic only handles SHA1 values which correspond to Git BLOBs (0x3). We found un-expected type: "+ entryType);
+				throw new Exception ("Packed Objects of type 'DELTA_ENCODED object with base BINARY_OBJ_ID' are not yet supported. If you have a test case, please let the OWASP Zap dev team know!");
 			}
 			
 			//Note that 0x7F is 0111 1111 in binary. Useful to mask off all but the top bit of a byte
 			// and that 0x80 is 1000 0000 in binary. Useful to mask off the lower bits of a byte
 			// and that 0x70 is 0111 0000 in binary. Used above to mask off 3 bits of a byte
 			// and that  0xF is 0000 1111 in binary.
-
+	
 			//get bits 2,1,0 into a byte, as the least significant bits. So if  typeandsize = bbbbbbXYZ, then entrySizeNibble = 00000XYZ
 			//get the lower 4 bits of the byte as the first size byte				  
 			byte entrySizeNibble = (byte)((typeandsize & (byte)0xF) ); 
 			int entrySizeWhenInflated = (int)entrySizeNibble;
-
+	
 			//set up to check if the "more" flag is set on the entry+size byte, then look at the next byte for size..
 			byte nextsizebyte =  (byte) (typeandsize & (byte)0x80);
-
+	
 			//the next piece of logic decodes the variable length "size" information, which comes in an initial 4 bit, followed by potentially multiple additional 7 bit chunks.
 			//(3 bits type for versions < 4, or 4 bits for version 4 "pack" files)
 			int sizebytescounted = 1; 
@@ -576,29 +595,207 @@ public class GitMetadata {
 				entrySizeWhenInflated = ( (((int)(nextsizebyte & 0x7F))<<(4+(7*(sizebytescounted-1)))) | entrySizeWhenInflated);
 				sizebytescounted++;
 			}
-
-			if (log.isDebugEnabled()) log.debug("The size of the inflated entry should be " + entrySizeWhenInflated + ", binary: " + Integer.toBinaryString(entrySizeWhenInflated) );
-
-			//extract the data from the "pack" file, taking into account its total size, based on the offsets, and the number of type and size bytes already read.
-			int entryDataBytesToRead = entryLength - sizebytescounted;
-			if (log.isDebugEnabled()) log.debug("Read " + sizebytescounted + " size bytes, so will read " + entryDataBytesToRead + " bytes of entry data from the 'pack' file");
-
-			byte deflatedSource [] = new byte [entryDataBytesToRead];
-			entryBuffer.get(deflatedSource);
-			byte []  inflatedData = inflate (deflatedSource, 1024);
-
-			//validate that entrySizeWhenInflated == the actual size of the inflated data 
-			//not much point in doing this, since the inflate will (in all probability) fail if the length were wrong
-			if ( entrySizeWhenInflated != inflatedData.length )
-				throw new Exception ("The predicted inflated length of the entry was "+ entrySizeWhenInflated + ", when we inflated the entry, we got data of length " + inflatedData.length);
-
-			//finally..
-			return inflatedData;
+			
+			//handle each object type
+			byte []  inflatedObjectData=null;
+			if ( entryType == 0x0 ) {
+				throw new Exception ("Invalid packed Git Object type 0x0: Reserved");
+				}
+			else if ( entryType == 0x5 ) {
+				throw new Exception ("Invalid packed Git Object type 0x5: Reserved");
+				}
+			else if ( entryType == 0x1 || entryType == 0x2 || entryType == 0x3 || entryType == 0x4) {
+				//for non-deltified objects - this is the simple and common case (in small repositories, at least)
+				//this includes Commits, Trees, Blobs, and Tags 
+				if (log.isDebugEnabled()) log.debug("The size of the un-deltified inflated entry should be " + entrySizeWhenInflated + ", binary: " + Integer.toBinaryString(entrySizeWhenInflated) );
+	
+				//extract the data from the "pack" file, taking into account its total size, based on the offsets, and the number of type and size bytes already read.
+				int entryDataBytesToRead = entryLength - sizebytescounted;
+				//if (log.isDebugEnabled()) log.debug("Read " + sizebytescounted + " size bytes, so will read " + entryDataBytesToRead + " bytes of entry data from the 'pack' file");
+	
+				byte deflatedSource [] = new byte [entryDataBytesToRead];
+				entryBuffer.get(deflatedSource);
+				//since it's undeltified, it's probably not a very big file, so no need to specify a very large buffer size.
+				inflatedObjectData = inflate (deflatedSource, 1024);  				
+				} 
+			else if  ( entryType == 0x6 ) {
+				//for 'DELTA_ENCODED object with offset to base'
+				//this object type is not common in small repos. it will get more common in larger Git repositorie.
+				int deltabaseoffset = readBigEndianModifiedBase128Number (entryBuffer);
+				int deltaoffsetBytesRead = this.tempbytesread;
+				if (log.isDebugEnabled()) log.debug("DELTA_ENCODED object with offset to base: got a delta base offset of "+ deltabaseoffset + ", by reading " + deltaoffsetBytesRead + " bytes");
+											
+				//the data after the delta base offset is deflated. so read it, deflate it, and decode it. 
+				int deflatedDeltaDataBytesToRead = entryLength - sizebytescounted - deltaoffsetBytesRead;
+				byte deflatedDeltaData [] = new byte [deflatedDeltaDataBytesToRead];
+				entryBuffer.get(deflatedDeltaData);
+				byte [] inflatedDeltaData = inflate (deflatedDeltaData, 1024);
+				
+				ByteBuffer inflateddeltadataBuffer = ByteBuffer.wrap(inflatedDeltaData);
+				
+				//read the base object length and result object length as little-endian base 128 numbers from the inflated delta data   
+				int baseobjectlength = readLittleEndianBase128Number (inflateddeltadataBuffer);
+				int resultobjectlength = readLittleEndianBase128Number (inflateddeltadataBuffer);
+				
+				//now that we have the offset into the pack data for the base object (relative to the entry we're looking at), 
+				//and the length of the base object, go and get the base object 
+				//note that the base entry could be another deltified object, in which case, we will need to recurse.
+				if (log.isDebugEnabled()) log.debug("Getting a packed object from pack file offset "+ packfiledataoffset + ", delta base offset " + deltabaseoffset + ", with inflated base object length "+ deltabaseoffset + ", and deflated base object length "+ baseobjectlength);
+				//TODO: calculate the actual length of the entry for the base object.  This will be <= deltabaseoffset, so for now, use that..
+				//Note: this is an optimisation, rather than a functional issue..
+				byte[] inflateddeltabasedata = getPackedObjectData(packfiledata, packfiledataoffset - deltabaseoffset, deltabaseoffset, packFileVersion);
+				if ( inflateddeltabasedata.length != baseobjectlength) {
+					throw new Exception ("The length of the delta base data extracted ("+ inflateddeltabasedata.length + ") does not match the expected length ("+ baseobjectlength + ")");
+				}
+							
+				//apply the deltas from inflateddeltadataBuffer to inflateddeltabasedataBuffer, to create an object of length resultobjectlength
+				//now read the chunks, until there is no more data to be read
+				while (inflateddeltadataBuffer.hasRemaining()) {
+					byte chunkByte = inflateddeltadataBuffer.get();
+					//log.debug("The delta chunk leading byte (in binary) is "+ Integer.toBinaryString(chunkByte & 0xFF) );
+					
+					if ( (chunkByte & 0x80) == 0 ) {
+						//log.debug("The delta chunk leading byte indicates an INSERT");
+								
+						//this is an insert chunk, so get its length					
+						byte chunkInsertLength =  chunkByte; //the top bit is NOT set, so just use the entire chunkByte
+						if (chunkInsertLength <0)
+							throw new Exception("The insert chunk length ("+chunkInsertLength +") should be positive.");
+						if ( chunkInsertLength > inflateddeltadataBuffer.remaining() )
+							throw new Exception ("The insert chunk requests "+ chunkInsertLength + " bytes, but only "+ inflateddeltadataBuffer.remaining() + " are available");
+						if (chunkInsertLength > resultobjectlength)
+							throw new Exception("The insert chunk of length ("+chunkInsertLength +") should be no bigger than the resulting object, which is of expected length ("+ resultobjectlength + ")");
+						
+						byte [] insertdata = new byte [chunkInsertLength];
+						inflateddeltadataBuffer.get(insertdata,0,chunkInsertLength);
+						chunkByte=insertdata[insertdata.length -1];
+						
+						//if it passed the checks, append the insert chunk to the result buffer.
+						inflatedObjectData = ArrayUtils.addAll(inflatedObjectData, insertdata);					
+					} else {
+						//log.debug("The delta chunk leading byte indicates a COPY");
+						
+						//this is a copy chunk (where bit 7 is set on the byte)
+						//so bits 6-0 specify how the remainder of the chunk determine the copy base offset and length					
+						int chunkCopyOffset = 0;
+						int chunkCopyLength = 0;
+						int bitshift=0;
+						
+						byte chunkCopyOpcode = chunkByte;
+						
+						bitshift=0;
+						for (int i=0; i<4; i++) {						
+							//is the lsb set in the opcode (after we've shifted it right)? 
+							if ( (chunkCopyOpcode & 0x01) > 0) {
+								chunkByte = inflateddeltadataBuffer.get();
+								chunkCopyOffset |= ((((int)chunkByte & 0xFF) << bitshift));							
+							}
+							chunkCopyOpcode >>=1;
+							bitshift += 8;
+						}
+						//get the length
+						bitshift=0;
+						//the length is determined by the pack file version. For Version 3, use 4 bytes (0..3). For Version 2, use 3 bytes (0..2)
+						//support V3 as well here..
+						for (int i=0; i<(packFileVersion==3?3:(packFileVersion==2?2:0)); i++) {
+							//is the lsb set in the opcode (after we've shifted it right)??
+							if ( (chunkCopyOpcode & 0x01) > 0) {
+								chunkByte = inflateddeltadataBuffer.get();
+								chunkCopyLength |= ((((int)chunkByte & 0xFF) << bitshift));							
+							}
+							chunkCopyOpcode >>=1;
+							bitshift += 8;
+						}
+						if (chunkCopyLength==0){
+							chunkCopyLength = 1<<16;
+						}
+						if ( packFileVersion==2) {
+							//Version 2 gave the ability to switch the source and target if a flag was set.
+							//we do not yet support it, because it doesn't seem to occur in the wild. If you have examples, please let us know!
+							boolean switchDirection = ((chunkCopyOpcode & 0x01)> 0);
+							if ( switchDirection ) 
+								throw new Exception ("Git Pack File Version 2 chunk copy direction switching (copy from result) is not yet supported");
+						}
+						
+						if (chunkCopyOffset < 0)
+							throw new Exception("The copy chunk offset ("+chunkCopyOffset +") should be positive.");
+						if (chunkCopyLength <0)
+							throw new Exception("The copy chunk length ("+chunkCopyLength +") should be positive.");
+						if (chunkCopyLength > resultobjectlength)
+							throw new Exception("The copy chunk of length ("+chunkCopyLength +") should be no than the resulting object, which is of expected length ("+ resultobjectlength + ")");					
+						byte [] copydata = new byte [chunkCopyLength];
+						copydata = Arrays.copyOfRange(inflateddeltabasedata, chunkCopyOffset, chunkCopyOffset + chunkCopyLength);
+						
+						//if it passed the checks, append the copy chunk to the result buffer.
+						inflatedObjectData = ArrayUtils.addAll(inflatedObjectData, copydata);
+					}
+				}
+				//all the delta chunks have been handled
+				return inflatedObjectData;
+			}
+		//validate that entrySizeWhenInflated == the actual size of the inflated data 
+		//there may not be much point in doing this, since the inflate will (in all probability) fail if the length were wrong
+		if ( entrySizeWhenInflated != inflatedObjectData.length )
+			throw new Exception ("The predicted inflated length of the entry was "+ entrySizeWhenInflated + ", when we inflated the entry, we got data of length " + inflatedObjectData.length);
+		
+		return inflatedObjectData;
 		}
+	catch (Exception e) {
+		log.error("Some error occurred extracting a packed object", e);
+		throw e;
+		}
+
 	}
 
 	/**
-	 * gets a Map of relative file paths to SHA1s using raw Git index file data
+	 * gets a Big Endian Modified Base 128 number from the Byte Buffer. This is a form of variable length encoded int value.
+	 * @param bb the ByteBuffer containing the data 
+	 * @return an integer value
+	 */
+	private int readBigEndianModifiedBase128Number (ByteBuffer bb) {
+		int i = 0;
+		
+		this.tempbytesread = 0;
+		byte b = bb.get(); tempbytesread++;		
+		//get the lower 7 bits of b into i
+		i = b & 0x7F; 
+		while ((b & 0x80) > 0) {  
+			//while the top bit of b is set (the "more" bit)
+			//get another byte
+			b = bb.get();  tempbytesread++;
+			//left shift i by 7 bits, making sure the top bit ends up being set, and bitwise OR this with the lower 7 bits of i. Put the result in i.
+			//in other words, left shift in 7 more bits of data from b into i!
+			i = ((i+1) <<7) | (b& 0x7F);  
+		}		
+		return i;
+	}
+	
+	/**
+	 * gets a Little Endian Base 128 number from the Byte Buffer. This is a form of variable length encoded int value.
+	 * @param bb the ByteBuffer containing the data 
+	 * @return an integer value
+	 */
+	private int readLittleEndianBase128Number (ByteBuffer bb) {
+		int i = 0;
+		
+		this.tempbytesread = 0;
+		byte b = bb.get(); tempbytesread++;		
+		//get the lower 7 bits of b into i
+		i = b & 0x7F; 
+		while ((b & 0x80) > 0) {  
+			//while the top bit of b is set (the "more" bit)
+			//get another byte
+			b = bb.get();  tempbytesread++;
+			//left shift the lower 7 bits of b onto the left of the bits of data we have already placed in i  
+			//i = ((i+1) <<7) | (b& 0x7F);
+			i = ((b & 0x7F) << (7*(tempbytesread-1))) | i;  
+		}
+		return i;
+	}
+
+
+	/**
+	 * gets a Map of relative file paths to SHA1s using raw Git index file data (which is not verified here)
 	 * @param data the raw binary data from a valid Git index file (Versions 2,3,4 are supported)
 	 * @return a Map of relative file paths to SHA1s using raw Git index file data
 	 * @todo consider sharing this method between the Git Spider, and the SourceCodeDisclosure scanner. 

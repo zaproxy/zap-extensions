@@ -322,7 +322,7 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
 				return false;
 			}
 			//get the data from Git, using its SHA1 value.
-			disclosedData = git.getBlobData (this.getBaseMsg(), gitbasepath, gitsha1);  //look for data for the file's Git SHA1, and inflate it
+			disclosedData = git.getObjectData (this.getBaseMsg(), gitbasepath, gitsha1);  //look for data for the file's Git SHA1, and inflate it
 			String gitURIs = git.getGitURIs();
 
 			//so we have the data from Git for the sha1/file in questions.. does it match the original data?
