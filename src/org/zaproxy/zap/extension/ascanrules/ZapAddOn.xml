@@ -8,7 +8,8 @@
 	<![CDATA[            
         Fix for TestRemoteFileInclude failing if Google return localized page. 
         Moved PXXS tests from beta. 
-        Moved Command Injection from beta
+        Moved Command Injection from beta.
+        Reviewed and enforced the External Redirect plugin.
 	]]>
         </changes>
 	<dependson/>
