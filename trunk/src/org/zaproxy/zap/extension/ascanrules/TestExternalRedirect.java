@@ -1,178 +1,503 @@
 /*
+ * Zed Attack Proxy (ZAP) and its related class files.
  *
- * Paros and its related class files.
- * 
- * Paros is an HTTP/HTTPS proxy for assessing web application security.
- * Copyright (C) 2003-2004 Chinotec Technologies Company
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the Clarified Artistic License
- * as published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * Clarified Artistic License for more details.
- * 
- * You should have received a copy of the Clarified Artistic License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-// ZAP: 2011/08/02 No longer switched on -sp flag
-// ZAP: 2012/01/02 Separate param and attack
-// ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
-// ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
 package org.zaproxy.zap.extension.ascanrules;
 
-import org.apache.commons.httpclient.URI;
+import java.io.IOException;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.zap.model.Vulnerabilities;
+import org.zaproxy.zap.model.Vulnerability;
 
+/**
+ * Reviewed plugin for External Redirect
+ * 
+ * @author yhawke (2014)
+ */
 public class TestExternalRedirect extends AbstractAppParamPlugin {
+    
+    // ZAP: Added multiple redirection types 
+    public static final int NO_REDIRECT              = 0x00;
+    public static final int REDIRECT_LOCATION_HEADER = 0x01;
+    public static final int REDIRECT_REFRESH_HEADER  = 0x02;
+    public static final int REDIRECT_LOCATION_META   = 0x03;
+    public static final int REDIRECT_REFRESH_META    = 0x04;
+    public static final int REDIRECT_HREF_BASE       = 0x05;
+    public static final int REDIRECT_JAVASCRIPT      = 0x06;
+    
+    private static final String REDIRECT_SITE = "www.owasp.org";
+    
+    /**
+     * The various (prioritised) payload to try
+     */
+    private static final String[] REDIRECT_TARGETS = {
+        "http://" + REDIRECT_SITE,
+        "https://" + REDIRECT_SITE,
+        REDIRECT_SITE,
+        "http:\\\\" + REDIRECT_SITE,
+        "https:\\\\" + REDIRECT_SITE,
+        "//" + REDIRECT_SITE,
+        "\\\\" + REDIRECT_SITE,
+        "HtTp://" + REDIRECT_SITE,
+        "HtTpS://" + REDIRECT_SITE,
+        "URL='http://" + REDIRECT_SITE + "'", 
+        "5;URL='http://" + REDIRECT_SITE + "'",
+        
+        // http://kotowicz.net/absolute/
+        // I never met real cases for these
+        // to be evaluated in the future
+        /*
+        "/\\" + REDIRECT_SITE,
+        "\\/" + REDIRECT_SITE,
+        "\r \t//" + REDIRECT_SITE,
+        "/ /" + REDIRECT_SITE, 
+        "http:" + REDIRECT_SITE, "https:" + REDIRECT_SITE,
+        "http:/" + REDIRECT_SITE, "https:/" + REDIRECT_SITE,
+        "http:////" + REDIRECT_SITE, "https:////" + REDIRECT_SITE,
+        "://" + REDIRECT_SITE,
+        ".:." + REDIRECT_SITE
+        */
+    };
+    
+    // Get WASC Vulnerability description
+    private static final Vulnerability vuln 
+            = Vulnerabilities.getVulnerability("wasc_38");
+    
+    // The logger object
+    private static final Logger logger 
+            = Logger.getLogger(TestExternalRedirect.class);
 
-    // ZAP: Changed to use owasp.org
-    private String redirect1 = "http://www.owasp.org";
-    private String redirect2 = "www.owasp.org";
-
+    /**
+     * Get the unique identifier of this plugin
+     * @return this plugin identifier
+     */
     @Override
     public int getId() {
         return 30000;
     }
 
+    /**
+     * Get the name of this plugin
+     * @return the plugin name
+     */
     @Override
     public String getName() {
         return "External redirect";
     }
 
+    /**
+     * Give back specific pugin dependancies (none for this)
+     * @return the list of plugins that need to be executed before
+     */
     @Override
     public String[] getDependency() {
         return null;
     }
 
+    /**
+     * Get the description of the vulnerbaility when found
+     * @return the vulnerability description
+     */
     @Override
     public String getDescription() {
-
-        String msg = "Arbitrary external redirection can be.  A phishing email can make use of this to entice readers to click on the link to redirect readers to bogus sites.";
-        return msg;
+    	if (vuln != null) {
+    		return vuln.getDescription();
+    	}
+    	return "Failed to load vulnerability description from file";
     }
 
+    /**
+     * Give back the categorization of the vulnerability 
+     * checked by this plugin (it's a misc in this case)
+     * @return a category from the Category enum list 
+     */    
     @Override
     public int getCategory() {
         return Category.MISC;
     }
 
+    /**
+     * Give back a general solution for the found vulnerability
+     * @return the solution that can be put in place
+     */
     @Override
     public String getSolution() {
-        return "Only allow redirection within the same web sites; or only allow redirection to designated external URLs.";
-
+    	if (vuln != null) {
+    		return vuln.getSolution();
+        }
+        return "Failed to load vulnerability solution from file";
     }
 
+    /**
+     * Reports all links and documentation which refers to this vulnerability
+     *
+     * @return a string based list of references
+     */
     @Override
     public String getReference() {
-        return "";
+        if (vuln != null) {
+            StringBuilder sb = new StringBuilder();
+            for (String ref : vuln.getReferences()) {
+                if (sb.length() > 0) {
+                    sb.append('\n');
+                }
+                
+                sb.append(ref);
+            }
+            
+            return sb.toString();
+        }
+
+        return "Failed to load vulnerability reference from file";
     }
 
+    /**
+     * Initialize the plugin according to
+     * the overall environment configuration
+     */
     @Override
     public void init() {
     }
 
+    /**
+     * Scan for External Redirect vulnerabilties
+     * @param msg a request only copy of the original message (the response isn't copied)
+     * @param param the parameter name that need to be exploited
+     * @param value the original parameter value
+     */
     @Override
     public void scan(HttpMessage msg, String param, String value) {
 
-        String locationHeader = null;
-        String locationHeader2 = null;
-        String redirect = "";
+        // Number of targets to try
+        int targetCount = 0;
 
-        URI uri = null;
+        // Debug only
+        if (logger.isDebugEnabled()) {
+            logger.debug("Attacking at Attack Strength: " + this.getAttackStrength());
+        }
 
-        msg = getNewMsg();
-        try {
-            sendAndReceive(msg, false);
-            if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.MOVED_PERMANENTLY
-                    && msg.getResponseHeader().getStatusCode() != HttpStatusCode.FOUND) {
-                // not redirect page, return;
-                return;
+        // Figure out how aggressively we should test
+        switch (this.getAttackStrength()) {
+            case LOW:
+                // Check only for baseline targets (2 reqs / param)
+                targetCount = 3;
+                break;
+
+            case MEDIUM:
+                // This works out as a total of 9 reqs / param
+                targetCount = 9;
+                break;
+
+            case HIGH:
+                // This works out as a total of 15 reqs / param
+                targetCount = REDIRECT_TARGETS.length;
+                break;
+
+            case INSANE:
+                // This works out as a total of 15 reqs / param
+                targetCount = REDIRECT_TARGETS.length;
+                break;
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Checking [" + getBaseMsg().getRequestHeader().getMethod()
+                    + "][" + getBaseMsg().getRequestHeader().getURI()
+                    + "], parameter [" + param
+                    + "] for Open Redirect Vulnerabilities");
+        }
+
+        // For each target in turn
+        // note that depending on the AttackLevel, 
+        // the number of elements that we will try changes.
+        String payload;
+        String redirectUrl;
+        
+        for (int h = 0; h < targetCount; h++) {
+
+            payload = REDIRECT_TARGETS[h];
+
+            // Get a new copy of the original message (request only) for each parameter value to try
+            msg = getNewMsg();
+            setParameter(msg, param, payload);
+            
+            if (logger.isDebugEnabled()) {
+                logger.debug("Testing [" + param + "] = [" + payload + "]");
             }
+            
+            try {
+                // Send the request and retrieve the response
+                // Be careful: we haven't to follow redirect
+                sendAndReceive(msg, false);
 
-            locationHeader = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
-            if (locationHeader == null) {
-                return;
+                // If it's a meta based injection the use the base url
+                redirectUrl = (payload.startsWith("5;") || payload.startsWith("URL=")) ? 
+                        "http://" + REDIRECT_SITE : 
+                        payload;
+                
+                // Get back if a redirection occurs
+                int redirectType = isRedirected(redirectUrl, msg);
+                
+                if (redirectType != NO_REDIRECT) {
+                    // We Found IT!                    
+                    // First do logging
+                    logger.info("[External Redirection Found] on parameter [" + param 
+                            + "] with payload [" + payload 
+                            + "]");
+                    
+                    // Now create the alert message
+                    this.bingo(
+                            Alert.RISK_HIGH, 
+                            Alert.WARNING, 
+                            null,
+                            param,
+                            payload, 
+                            getRedirectionReason(redirectType),
+                            redirectUrl,
+                            msg);
+
+                    // All done. No need to look for vulnerabilities on subsequent 
+                    // parameters on the same request (to reduce performance impact)
+                    return;                 
+                }
+
+                // Check if the scan has been stopped
+                // if yes dispose resources and exit
+                if (isStop()) {
+                    return;
+                }
+                
+            } catch (IOException ex) {
+                //Do not try to internationalise this.. we need an error message in any event..
+                //if it's in English, it's still better than not having it at all.
+                logger.error("External Redirect vulnerability check failed for parameter ["
+                        + param + "] and payload [" + payload + "] due to an I/O error", ex);
             }
+        }
+    }
+    
+    // Inner pattern used to extract the url value from a refresh content element
+    private static final Pattern REFRESH_PATTERN = Pattern.compile("(?i)\\s*\\d+;\\s*url\\s*=\\s*(.*)");
+    
+    private String getRefreshUrl(String value) {
+        Matcher matcher = REFRESH_PATTERN.matcher(value);
+        return (matcher.matches()) ? matcher.group(1) : null;
+    }
 
-            if (locationHeader.compareToIgnoreCase(value) == 0) {
-                // URI found in param 
-                redirect = redirect1;
+    /**
+     * Check if the payload is a redirect
+     * @param value the value retrieved
+     * @param payload the url that should perform external redirect
+     * @return true if it's a valid open redirect
+     */
+    private boolean checkPayload(String value, String payload) {
+        // Check both the payolad and the standard url format
+        return (value != null) && (StringUtils.startsWithIgnoreCase(value, payload) ||
+                StringUtils.startsWithIgnoreCase(value, "http://" + REDIRECT_SITE));
+    }
+    
+    /**
+     * Check if the evil payload has been reflected in the retrieved response
+     * inside one of the possible redirection points.
+     * For a (quite) complete list of the possible redirection attacks please refer to 
+     * http://code.google.com/p/html5security/wiki/RedirectionMethods
+     * 
+     * @param payload the payload that should be reflected inside a redirection point
+     * @param msg the current message where reflected redirection should be check into
+     * @return get back the redirection type if exists
+     */
+    private int isRedirected(String payload, HttpMessage msg) {
+        
+        // (1) Check if redirection by "Location" header
+        // http://en.wikipedia.org/wiki/HTTP_location
+        // HTTP/1.1 302 Found
+        // Location: http://www.example.org/index.php
+        //
+        String value = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
+        if (checkPayload(value, payload)) {            
+            return REDIRECT_LOCATION_HEADER;
+        }
 
-            //ZAP: Removed getURLDecode()
-            } else if (locationHeader.compareToIgnoreCase(value) == 0) {
-                redirect = getURLEncode(redirect1);
+        // (2) Check if redirection by "Refresh" header
+        // http://en.wikipedia.org/wiki/URL_redirection
+        // HTTP/1.1 200 ok
+        // Refresh: 0; url=http://www.example.com/
+        //
+        value = msg.getResponseHeader().getHeader("Refresh");
+        if (value != null) {
+                // Usually redirect content is configured with a delay
+            // so extract the url component
+            value = getRefreshUrl(value);
+
+            if (checkPayload(value, payload)) {
+                return REDIRECT_REFRESH_HEADER;
             }
+        }
 
-            if (redirect != null) {
-                uri = new URI(locationHeader, true);
-                locationHeader2 = uri.getPathQuery();
-                if (locationHeader2.compareToIgnoreCase(value) == 0) {
-                    // path and query found in param
-                    redirect = redirect2;
+        // (3) Check if redirection occurs by "Meta" content header
+        // http://code.google.com/p/html5security/wiki/RedirectionMethods
+        // <meta http-equiv="location" content="URL=http://evil.com" />
+        // <meta http-equiv="refresh" content="0;url=http://evil.com/" />
+        //
+        String content = msg.getResponseBody().toString();
+        Source htmlSrc = new Source(content);
+        List<Element> metaElements = htmlSrc.getAllElements(HTMLElementName.META);
+        for (Element el : metaElements) {
 
-                //ZAP: Removed getURLDecode()
-                } else if (locationHeader2.compareToIgnoreCase(value) == 0) {
-                    redirect = getURLEncode(redirect2);
+            value = el.getAttributeValue("http-equiv");
+
+            if (value != null) {
+                if (value.equalsIgnoreCase("location")) {
+                    // Get the content attribute value
+                    value = el.getAttributeValue("content");
+
+                    // Check if the payload is inside the location attribute
+                    if (checkPayload(value, payload)) {
+                        return REDIRECT_LOCATION_META;
+                    }
+
+                } else if (value.equalsIgnoreCase("refresh")) {
+                    // Get the content attribute value                        
+                    value = el.getAttributeValue("content");
+
+                    // If the content attribute isn't set go away
+                    if (value != null) {
+                            // Usually redirect content is configured with a delay
+                        // so extract the url component                            
+                        value = getRefreshUrl(value);
+
+                        // Check if the payload is inside the location attribute
+                        if (checkPayload(value, payload)) {
+                            return REDIRECT_REFRESH_META;
+                        }
+                    }
                 }
             }
-
-            if (redirect == null) {
-                return;
-            }
-
-        } catch (Exception e) {
         }
+        
+        // (4) Check if redirection occurs by Base Tag
+        // http://code.google.com/p/html5security/wiki/RedirectionMethods
+        // <base href="http://evil.com/" />
+        // 
+        
+        // (5) Check if redirection occurs by Javascript
+        // http://code.google.com/p/html5security/wiki/RedirectionMethods
+        // location='http://evil.com/';
+        // location.href='http://evil.com/';
+        // location.reload('http://evil.com/');
+        // location.replace('http://evil.com/');
+        // location.assign('http://evil.com/');
+        // window.open('http://evil.com/');
+        // window.navigate('http://evil.com/');
+        // 
+        if (StringUtils.indexOfIgnoreCase(content, payload) != -1) {
+            List<Element> jsElements = htmlSrc.getAllElements(HTMLElementName.SCRIPT);
+            String matchingUrl = "(\\Q" + payload + "\\E|\\Qhttp://" + REDIRECT_SITE + "\\E)";
+            Pattern pattern;
+            
+            for (Element el : jsElements) {
+                value = el.getContent().toString();
 
-        msg = getNewMsg();
-        setParameter(msg, param, redirect);
-        try {
-            sendAndReceive(msg, false);
-            if (checkResult(msg, param, redirect)) {
-                return;
+                // location='http://evil.com/';
+                // location.href='http://evil.com/';
+                pattern = Pattern.compile("(?i)location(\\.href)?\\s*=\\s*('|\")\\s*" + matchingUrl);
+                if (pattern.matcher(value).find()) {
+                    return REDIRECT_JAVASCRIPT;
+                }
+                
+                // location.reload('http://evil.com/');
+                // location.replace('http://evil.com/');
+                // location.assign('http://evil.com/');
+                pattern = Pattern.compile("(?i)location\\.(replace|reload|assign)\\s*\\(\\s*('|\")\\s*" + matchingUrl);
+                if (pattern.matcher(value).find()) {
+                    return REDIRECT_JAVASCRIPT;
+                }
+                
+                // window.open('http://evil.com/');
+                // window.navigate('http://evil.com/');
+                pattern = Pattern.compile("(?i)window\\.(open|navigate)\\s*\\(\\s*('|\")\\s*" + matchingUrl);
+                if (pattern.matcher(value).find()) {
+                    return REDIRECT_JAVASCRIPT;
+                }
             }
-
-        } catch (Exception e) {
         }
-
-
+        
+        return NO_REDIRECT;
     }
 
-    private boolean checkResult(HttpMessage msg, String param, String attack) {
-        if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.MOVED_PERMANENTLY
-                && msg.getResponseHeader().getStatusCode() != HttpStatusCode.FOUND) {
-            // not redirect page, return;
-            return false;
+    /**
+     * Get a readable reason for the found redirection
+     * @param type the redirection type
+     * @return a string representing the reason of this redirection
+     */
+    private String getRedirectionReason(int type) {
+        switch (type) {
+            case REDIRECT_LOCATION_HEADER:
+                return Constant.messages.getString("ascanrules.extredirect.reason.location.header");
+            
+            case REDIRECT_LOCATION_META:
+                return Constant.messages.getString("ascanrules.extredirect.reason.location.meta");
+                
+            case REDIRECT_REFRESH_HEADER:
+                return Constant.messages.getString("ascanrules.extredirect.reason.refresh.header");
+                
+            case REDIRECT_REFRESH_META:
+                return Constant.messages.getString("ascanrules.extredirect.reason.refresh.meta");
+   
+            case REDIRECT_JAVASCRIPT:
+                return Constant.messages.getString("ascanrules.extredirect.reason.javascript");
         }
-
-        String locationHeader = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
-        if (locationHeader != null && locationHeader.startsWith(redirect1)) {
-            bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, param, attack, "", msg);
-            return true;
-        }
-
-        return false;
-
+        
+        return Constant.messages.getString("ascanrules.extredirect.reason.notfound");
     }
 
+    /**
+     * Give back the risk associated to this vulnerability (high)
+     * @return the risk according to the Alert enum
+     */    
     @Override
     public int getRisk() {
         return Alert.RISK_MEDIUM;
     }
 
+    /**
+     * http://cwe.mitre.org/data/definitions/601.html
+     * @return the official CWE id
+     */
     @Override
     public int getCweId() {
         return 601;
     }
 
+    /**
+     * http://projects.webappsec.org/w/page/13246981/URL%20Redirector%20Abuse
+     * @return the official WASC id
+     */
     @Override
     public int getWascId() {
         return 38;

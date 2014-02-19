@@ -12,11 +12,12 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * See the Licenzse for the specific language governing permissions and
  * limitations under the License.
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -96,7 +97,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         "FILE:///c:\\",     //Windows
         "fiLe:///c:/",      //Windows
         "FILE:///c:/",      //Windows
-        // Colm please check these last one on *Nix because seems not working on Windows...
+        // Colm please check these ones on *Nix because seems not working on Windows...
         //"file://",
         //"fiLe://",
         //"file:",
@@ -141,15 +142,16 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     /**
      * details of the vulnerability which we are attempting to find
      */
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
+    private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
     
     /**
      * the logger object
      */
-    private static Logger log = Logger.getLogger(TestPathTraversal.class);
+    private static final Logger log = Logger.getLogger(TestPathTraversal.class);
 
     /**
      * returns the plugin id
+     * @return the id of the plugin
      */
     @Override
     public int getId() {
@@ -158,6 +160,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 
     /**
      * returns the name of the plugin
+     * @return the name of the plugin
      */
     @Override
     public String getName() {
@@ -400,7 +403,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             //request to find the vulnerability 
             //but it would be foiled by simple input validation on "..", for instance.
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error("Error scanning parameters for Path Traversal: " + e.getMessage(), e);
         }
     }
