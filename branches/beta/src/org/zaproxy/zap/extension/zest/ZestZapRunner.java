@@ -312,7 +312,9 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		this.alerts = new ArrayList<Alert>();
 		
 		ScannerParam scannerParam = new ScannerParam();
-		Scanner scanner = new Scanner(scannerParam, Model.getSingleton().getOptionsParam().getConnectionParam());
+		Scanner scanner = new Scanner(scannerParam, 
+							Model.getSingleton().getOptionsParam().getConnectionParam(),
+							Control.getSingleton().getPluginFactory());
 		scanner.setScanChildren(false);
 		scanner.addScannerListener(this);
 		
