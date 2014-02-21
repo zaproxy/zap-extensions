@@ -43,7 +43,7 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 
 	@Override
 	public String[] getRequiredParamsNames() {
-		return new String[] {"LoginURL", "Method"};
+		return new String[] { "LoginURL", "Method" };
 	}
 
 	@Override
@@ -53,40 +53,39 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 
 	@Override
 	public String[] getCredentialsParamsNames() {
-		return new String[] {"Username", "Password"};
+		return new String[] { "Username", "Password" };
 	}
 
 	@Override
-	public HttpMessage authenticate(AuthenticationHelper helper,
-			Map<String, String> paramsValues,
+	public HttpMessage authenticate(AuthenticationHelper helper, Map<String, String> paramsValues,
 			GenericAuthenticationCredentials credentials) throws ScriptException {
-		
+
 		try {
 			paramsValues.put("Username", credentials.getParam("Username"));
 			paramsValues.put("Password", credentials.getParam("Password"));
 
 			// Use a custom HttpClient so we can set the proper HttpState and CookiePolicy, in order
 			// to properly remember any cookie changes during the authentication
-			HttpClient newClient=new HttpClient();
+			HttpClient newClient = new HttpClient();
 			newClient.setState(helper.getCorrespondingHttpState());
 			newClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 			this.setHttpClient(newClient);
-			
+
 			this.run(script.getZestScript(), paramsValues);
-			
+
 			String respUrl = this.getVariable(ZestVariables.RESPONSE_URL);
 			HttpMessage msg = new HttpMessage(new URI(respUrl, true));
-			msg.setRequestHeader(
-					this.getVariable(ZestVariables.REQUEST_METHOD) + " " +
-						this.getVariable(ZestVariables.REQUEST_URL) + " " + 
-							msg.getRequestHeader().getVersion() + HttpHeader.CRLF + 
-								this.getVariable(ZestVariables.REQUEST_HEADER));
+			msg.setRequestHeader(this.getVariable(ZestVariables.REQUEST_METHOD) + " "
+					+ this.getVariable(ZestVariables.REQUEST_URL) + " " + msg.getRequestHeader().getVersion()
+					+ HttpHeader.CRLF + this.getVariable(ZestVariables.REQUEST_HEADER));
 			msg.setRequestBody(this.getVariable(ZestVariables.REQUEST_BODY));
 			msg.setResponseHeader(this.getVariable(ZestVariables.RESPONSE_HEADER));
 			msg.setResponseBody(this.getVariable(ZestVariables.RESPONSE_BODY));
+			// Make sure the proper requesting user is set on the returned message
+			msg.setRequestingUser(helper.getRequestingUser());
 
 			return msg;
-			
+
 		} catch (Exception e) {
 			throw new ScriptException(e);
 		}
