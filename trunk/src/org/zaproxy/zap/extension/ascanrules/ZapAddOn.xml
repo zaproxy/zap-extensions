@@ -10,6 +10,7 @@
         Moved PXXS tests from beta. 
         Moved Command Injection from beta.
         Reviewed and enforced the External Redirect plugin.
+        Removed duplicated TestRedirect plugin (it was a subset of the TestExternalRedirect one)
 	]]>
         </changes>
 	<dependson/>
@@ -28,7 +29,6 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPersistentXSSAttack</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPersistentXSSPrime</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestPersistentXSSSpider</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRedirect</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestRemoteFileInclude</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestServerSideInclude</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestSQLInjection</ascanrule>

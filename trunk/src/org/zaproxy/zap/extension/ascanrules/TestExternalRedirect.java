@@ -253,7 +253,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
             try {
                 // Send the request and retrieve the response
                 // Be careful: we haven't to follow redirect
-                sendAndReceive(msg, false);
+                sendAndReceive(msg, false, false);
 
                 // If it's a meta based injection the use the base url
                 redirectUrl = (payload.startsWith("5;") || payload.startsWith("URL=")) ? 
