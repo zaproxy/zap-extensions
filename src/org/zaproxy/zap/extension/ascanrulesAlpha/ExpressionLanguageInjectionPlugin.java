@@ -20,6 +20,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import java.io.IOException;
 import java.util.Random;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -52,7 +53,7 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        return "Expression Language Injection";
+        return Constant.messages.getString("ascanalpha.elinjection.name");
     }
 
     /**
@@ -70,16 +71,7 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getDescription() {
-        return "The software constructs all or part of an expression language (EL) "
-                + "statement in a Java Server Page (JSP) using externally-influenced "
-                + "input from an upstream component, but it does not neutralize or "
-                + "incorrectly neutralizes special elements that could modify the "
-                + "intended EL statement before it is executed. In certain versions "
-                + "of Spring 3.0.5 and earlier, there was a vulnerability "
-                + "(CVE-2011-2730) in which Expression Language tags would be "
-                + "evaluated twice, which effectively exposed any application "
-                + "to EL injection. However, even for later versions, this "
-                + "weakness is still possible depending on configuration.";
+        return Constant.messages.getString("ascanalpha.elinjection.desc");
     }
 
     /**
@@ -98,19 +90,12 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getSolution() {
-        return "Perform data validation best practice against untrusted "
-                + "input and to ensure that output encoding is applied when "
-                + "data arrives on the EL layer, so that no metacharacter is "
-                + "found by the interpreter within the user content before "
-                + "evaluation. The most obvious patterns to detect include "
-                + "${ and #{, but it may be possible to encode or fragment "
-                + "this data.";
+        return Constant.messages.getString("ascanalpha.elinjection.soln");
     }
 
     @Override
     public String getReference() {
-        return "https://www.owasp.org/index.php/Expression_Language_Injection\n"
-                + "http://cwe.mitre.org/data/definitions/917.html";
+        return Constant.messages.getString("ascanalpha.elinjection.refs");
     }
 
     /**

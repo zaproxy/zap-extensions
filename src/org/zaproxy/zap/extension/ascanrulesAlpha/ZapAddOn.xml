@@ -8,6 +8,7 @@
 	<![CDATA[
 	Promoted to beta XXE and Padding Oracle Plugins</br>
         Added a new Expression Language Plugin
+        Implemented Internazionalization for ELInjection
 	]]>
 	</changes>
 	<dependson/>
