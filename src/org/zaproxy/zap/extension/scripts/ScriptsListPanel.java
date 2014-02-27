@@ -437,9 +437,9 @@ public class ScriptsListPanel extends AbstractPanel {
 				    }
 				    
 				    if (e.getClickCount() > 1) {
-				    	// Its a double click - edit a script if selected
+				    	// Its a double click - edit a script if selected (but not a template)
 				    	ScriptNode node = getSelectedNode();
-					    if (node != null && node.getUserObject() != null) {
+					    if (node != null && !node.isTemplate() && node.getUserObject() != null) {
 					    	if (node.getUserObject() instanceof ScriptWrapper) {
 					    		boolean edit = true;
 					    		// Only show edit dialog if another add-on hasnt disabled it for the class(es)
@@ -452,7 +452,6 @@ public class ScriptsListPanel extends AbstractPanel {
 					    		}
 						    	if (edit) {
 						    		showEditScriptDialog((ScriptWrapper)node.getUserObject());
-						    		
 						    	}
 					    	}
 					    }

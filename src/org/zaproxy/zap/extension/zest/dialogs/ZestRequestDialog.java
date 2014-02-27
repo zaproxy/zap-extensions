@@ -26,6 +26,7 @@ import java.net.URL;
 
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestVariables;
+import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
@@ -42,7 +43,9 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 	private static final long serialVersionUID = 1L;
 
 	private ExtensionZest extension = null;
+	private ScriptNode parent = null;
 	private ScriptNode node = null;
+	private boolean add = false;
 	
 	private ZestRequest request = null;
 
@@ -51,15 +54,25 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 		this.extension = ext;
 	}
 
-	public void init (ScriptNode node) {
-		this.node = node;
-		this.request = (ZestRequest) ZestZapUtils.getElement(node);
+	public void init (ScriptNode parent, ScriptNode node) {
+		this.parent = parent;
+		if (node == null) {
+			this.node = new ScriptNode();
+			request = new ZestRequest();
+			this.node.setUserObject(request);
+			add = true;
+		} else {
+			this.node = node;
+			this.request = (ZestRequest) ZestZapUtils.getElement(node);
+			add = false;
+		}
 
 		this.removeAllFields();
+		this.addNodeSelectField(FIELD_URL, null, true, false);
 		if (request.getUrl() != null) {
-			this.addTextField(FIELD_URL, request.getUrl().toString());
+			this.setFieldValue(FIELD_URL, request.getUrl().toString());
 		} else {
-			this.addTextField(FIELD_URL, request.getUrlToken());
+			this.setFieldValue(FIELD_URL, request.getUrlToken());
 		}
 		this.addComboField(FIELD_METHOD, new String[] {"GET", "POST", "{{" + ZestVariables.REQUEST_METHOD + "}}"}, request.getMethod());
 		this.addMultilineField(FIELD_HEADERS, request.getHeaders());
@@ -70,6 +83,13 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 		this.addFieldListener(FIELD_HEADERS, ZestZapUtils.stdMenuAdapter()); 
 		this.addFieldListener(FIELD_BODY, ZestZapUtils.stdMenuAdapter()); 
 
+	}
+
+	@Override
+	public void siteNodeSelected(String field, SiteNode node) {
+		if (node != null) {
+			this.setFieldValue(FIELD_METHOD, node.getHistoryReference().getMethod());
+		}
 	}
 
 	public void save() {
@@ -83,8 +103,12 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 		this.request.setHeaders(this.getStringValue(FIELD_HEADERS));
 		this.request.setData(this.getStringValue(FIELD_BODY));
 		
-		this.extension.updated(node);
-		this.extension.display(node, false);
+		if (add) {
+			this.extension.addToParent(this.parent, this.request);
+		} else {
+			this.extension.updated(node);
+			this.extension.display(node, false);
+		}
 
 	}
 

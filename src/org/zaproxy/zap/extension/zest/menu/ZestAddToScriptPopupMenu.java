@@ -28,6 +28,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
@@ -99,6 +100,14 @@ public class ZestAddToScriptPopupMenu extends PopupMenuHistoryReference {
 			View.getSingleton().getPopupMenu().addMenu(piicm);
 			this.subMenus.add(piicm);
 		}
+		// TODO handle auth scripts... is there a better way to do this??
+		for (ScriptNode node : extension.getZestScriptNodes(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH)) {
+        	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
+        	piicm.setMenuIndex(this.getMenuIndex());
+			View.getSingleton().getPopupMenu().addMenu(piicm);
+			this.subMenus.add(piicm);
+		}
+		
         // Add the 'new zest' menu
         ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu();
 		View.getSingleton().getPopupMenu().addMenu(piicm);
