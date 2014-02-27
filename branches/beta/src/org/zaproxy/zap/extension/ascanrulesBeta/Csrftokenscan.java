@@ -50,10 +50,9 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	private static Logger log = Logger.getLogger(Csrftokenscan.class);
 
 	/**
-     * Constructor of the class, sets the logging level
+     * Constructor of the class
      */
 	public Csrftokenscan() {
-		AscanUtils.registerI18N();
 	}
 
 	/**
