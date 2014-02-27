@@ -67,7 +67,6 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 
 	public CSRFCountermeasures() {
 		super();
-		PscanUtils.registerI18N();
 	}
 
 	@Override

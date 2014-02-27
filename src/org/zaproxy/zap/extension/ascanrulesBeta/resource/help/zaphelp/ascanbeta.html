@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Active Scan Rules - beta
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1>Active Scan Rules - beta</H1>
+The following beta quality active scan rules are included in this add-on:
+
+<H2>CSRF Token</H2>
+
+<H2>HPP</H2>
+
+<H2>LDAP Injection</H2>
+
+<H2>Session Fixation</H2>
+
+<H2>SQL Injection - Hypersonic, time based</H2>
+
+This scanner uses Hypersonic-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
+If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
+it is indicative of a time-based SQL Injection vulnerability in a Hypersonic SQL database. <br>
+This scanner is time sensitive, and should only be used in an attempt find find stubborn and un-obvious SQL 
+injection vulnerabilities in a suspected Hypersonic database. <br>
+For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
+to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
+load delays rather than by SQL injection delays. <br>
+The scanner tests only for time-based SQL injection vulnerabilities. 
+
+<H2>SQL Injection - MySQL, time based</H2>
+
+Similar to the Hypersonic scanner, but specific to the MySQL RDBMS and SQL syntax. 
+
+<H2>SQL Injection - Oracle, time based</H2>
+
+Similar to the Hypersonic scanner, but specific to the Oracle RDBMS and SQL syntax. 
+
+<H2>SQL Injection - Postgresql, time based</H2>
+
+Similar to the Hypersonic scanner, but specific to the PostgreSQL RDBMS and SQL syntax. 
+
+<H2>Username Enumeration</H2>
+
+<H2>Xpath Injection</H2>
+
+<H2>XXE</H2>
+
+<H2>Padding Oracle</H2>
+
+</BODY>
+</HTML>
