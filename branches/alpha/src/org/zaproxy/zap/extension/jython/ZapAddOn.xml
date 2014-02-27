@@ -6,7 +6,9 @@
 	<url></url>
 	<changes>Added help and extra templates</changes>
 	<dependson/>
-	<extensions>org.zaproxy.zap.extension.jython.ExtensionJython</extensions>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.jython.ExtensionJython</extension>
+	</extensions>
 	<ascanrules/>
 	<pscanrules/>
 	<filters/>
