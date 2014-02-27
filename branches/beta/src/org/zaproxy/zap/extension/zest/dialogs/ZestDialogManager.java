@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAction;
@@ -51,6 +52,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestElementWrapper;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.extension.zest.ZestZapRunner;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
 public class ZestDialogManager extends AbstractPanel {
@@ -73,6 +75,7 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestRedactDialog redactDialog = null;
 	private ZestControlDialog controlDialog = null;
 	private ZestParameterizeDialog paramDialog = null;
+	private ZestRunScriptWithParamsDialog runScriptDialog = null;
 
 	// private ZestComplexConditionDialog complexConditionDialog = null;
 
@@ -218,7 +221,7 @@ public class ZestDialogManager extends AbstractPanel {
 		scriptDialog.setVisible(true);
 	}
 
-	private void showZestEditRequestDialog(ScriptNode script, ScriptNode request) {
+	public void showZestEditRequestDialog(ScriptNode parent, ScriptNode request) {
 		if (requestDialog == null) {
 			requestDialog = new ZestRequestDialog(extension, View
 					.getSingleton().getMainFrame(), new Dimension(500, 700));
@@ -227,7 +230,7 @@ public class ZestDialogManager extends AbstractPanel {
 			return;
 		} else {
 		}
-		requestDialog.init(request);
+		requestDialog.init(parent, request);
 		requestDialog.setVisible(true);
 	}
 
@@ -358,13 +361,22 @@ public class ZestDialogManager extends AbstractPanel {
 	
 	public ZestParameterizeDialog showZestParameterizeDialog(
             ZestScriptWrapper script, ScriptNode node, ZestRequest request, String replace) {
-    if (paramDialog == null) {
-            paramDialog = new ZestParameterizeDialog(extension, View.getSingleton()
-                            .getMainFrame(), new Dimension(400, 200));
-    }
-    paramDialog.init(script, node, request, replace);
-    paramDialog.setVisible(true);
-    return paramDialog;
-}
+	    if (paramDialog == null) {
+	    	paramDialog = new ZestParameterizeDialog(extension, View.getSingleton()
+	                            .getMainFrame(), new Dimension(400, 200));
+	    }
+	    paramDialog.init(script, node, request, replace);
+	    paramDialog.setVisible(true);
+	    return paramDialog;
+	}
 
+	public Map<String, String> showRunScriptDialog(ZestZapRunner runner, ZestScript  script, Map<String, String> params) {
+		if (runScriptDialog == null) {
+			runScriptDialog = new ZestRunScriptWithParamsDialog(extension, View.getSingleton()
+                    .getMainFrame(), new Dimension(400, 200));
+		}
+		runScriptDialog.init(runner, script, params);
+		runScriptDialog.setVisible(true);
+		return runScriptDialog.getParams();
+	}
 }

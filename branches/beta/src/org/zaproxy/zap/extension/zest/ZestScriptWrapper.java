@@ -174,6 +174,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		this.recording = recording;
 	}
 	
+	@Override
 	public boolean isRunableStandalone() {
 		// We can always prompt for parameters :)
 		return true;

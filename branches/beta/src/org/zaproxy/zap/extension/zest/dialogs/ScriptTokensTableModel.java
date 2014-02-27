@@ -36,8 +36,9 @@ public class ScriptTokensTableModel extends AbstractTableModel {
 		Constant.messages.getString("zest.tokens.table.value")};
 
 	private List<String[]> values = new ArrayList<String[]>();
+	private boolean directlyEditable = false;
 
-    /**
+	/**
      * 
      */
     public ScriptTokensTableModel() {
@@ -62,6 +63,9 @@ public class ScriptTokensTableModel extends AbstractTableModel {
     
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
+    	if (this.isDirectlyEditable() && columnIndex == 1) {
+    		return true;
+    	}
     	return false;
     }
     
@@ -88,10 +92,37 @@ public class ScriptTokensTableModel extends AbstractTableModel {
 		return values;
 	}
 
+	public String getValue(String name) {
+		return this.getValue(name, null);
+	}
+
+	public String getValue(String name, String defaultValue) {
+		for (String [] nvPair : this.values) {
+			if (nvPair[0].equals(name)) {
+				return nvPair[1];
+			}
+		}
+		return defaultValue;
+	}
+
 	public void setValues(List<String[]> values) {
 		this.values = values;
 	}
-	
+
+	public void setValue(String name, String value) {
+		int i=0;
+		for (String [] nvPair : this.values) {
+			if (nvPair[0].equals(name)) {
+				nvPair[1] = value;
+				this.fireTableCellUpdated(i, 1);
+				return;
+			}
+			i++;
+		}
+		this.values.add(new String[] {name, value});
+		this.fireTableRowsInserted(this.values.size()-1, this.values.size()-1);
+	}
+
 	public void add(String name, String value) {
 		this.values.add(new String[] {name, value});
 		this.fireTableRowsInserted(this.values.size()-1, this.values.size()-1);
@@ -111,5 +142,12 @@ public class ScriptTokensTableModel extends AbstractTableModel {
 			this.fireTableRowsDeleted(index, index);
 		}
 	}
-	
+
+    public boolean isDirectlyEditable() {
+		return directlyEditable;
+	}
+
+	public void setDirectlyEditable(boolean directlyEditable) {
+		this.directlyEditable = directlyEditable;
+	}
 }

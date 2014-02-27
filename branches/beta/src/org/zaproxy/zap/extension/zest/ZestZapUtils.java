@@ -531,13 +531,15 @@ public class ZestZapUtils {
 		msg.getRequestHeader().setMethod(request.getMethod());
 		msg.setRequestBody(request.getData());
 
-		try {
-			msg.setResponseHeader(new HttpResponseHeader(response.getHeaders()));
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+		if (response != null) {
+			try {
+				msg.setResponseHeader(new HttpResponseHeader(response.getHeaders()));
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
+			msg.setResponseBody(response.getBody());
+			msg.setTimeElapsedMillis((int) response.getResponseTimeInMs());
 		}
-		msg.setResponseBody(response.getBody());
-		msg.setTimeElapsedMillis((int) response.getResponseTimeInMs());
 
 		return msg;
 	}

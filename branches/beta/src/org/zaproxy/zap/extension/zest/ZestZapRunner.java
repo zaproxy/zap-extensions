@@ -95,18 +95,30 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	    	this.setProxy(connParams.getProxyChainName(), connParams.getProxyChainPort());
 	    }
     }
-    
-	@Override
+
+    @Override
 	public String run(ZestScript script, Map<String, String> params) throws ZestAssertFailException, ZestActionFailException, 
 			IOException, ZestInvalidCommonTestException, ZestAssignFailException {
     	log.debug("Run script " + script.getTitle());
-
-		this.target = null;
-		super.setOutputWriter(writer);
-		this.setDebug(this.wrapper.isDebug());
-		String result = super.run(script, params);
-		this.notifyComplete();
-		return result;
+		// Check for any missing parameters
+		boolean missingParams = false;
+		for (String[] vars : script.getParameters().getVariables()) {
+			if (vars[1].length() == 0 && params.get(vars[0]) == null) {
+	        	missingParams = true;
+			}
+		}
+    	if (missingParams) {
+    		// Prompt for them
+    		params = extension.getDialogManager().showRunScriptDialog(this, script, params);
+    		return "";
+    	} else {
+			this.target = null;
+			super.setOutputWriter(writer);
+			this.setDebug(this.wrapper.isDebug());
+			String result = super.run(script, params);
+			this.notifyComplete();
+			return result;
+    	}
 	}
 
 	@Override
