@@ -332,8 +332,6 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			log.debug("Initialising");
 		}
 
-		AscanUtils.registerI18N();
-
 		//DEBUG only
 		//this.debugEnabled=true;
 		//this.setAttackStrength(AttackStrength.LOW);		

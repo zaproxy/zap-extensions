@@ -35,7 +35,6 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
 
     @Override
     public String getName() {
-        AscanUtils.registerI18N();
         return Constant.messages.getString("ascanrules.pxss.spider.name");
     }
 
