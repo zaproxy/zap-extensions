@@ -6,7 +6,9 @@
 	<url></url>
 	<changes>Fixed bug where non ruby scripts were treated as ruby scripts (issue 810)</changes>
 	<dependson/>
-	<extensions>org.zaproxy.zap.extension.jruby.ExtensionJruby</extensions>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.jruby.ExtensionJruby</extension>
+	</extensions>
 	<ascanrules/>
 	<pscanrules/>
 	<filters/>
