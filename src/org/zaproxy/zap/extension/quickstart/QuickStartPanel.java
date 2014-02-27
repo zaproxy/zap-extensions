@@ -37,11 +37,14 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.border.EtchedBorder;
 
+import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.brk.BreakPanel;
 import org.zaproxy.zap.extension.search.SearchPanel;
@@ -49,6 +52,7 @@ import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.zap.view.NodeSelectDialog;
 
 public class QuickStartPanel extends AbstractPanel implements Tab {
 
@@ -112,8 +116,34 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	
 		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.url")), 
 				LayoutHelper.getGBC(0, 1, 1, 0.0D, new Insets(5,5,5,5)));
-	
-		panelContent.add(this.getUrlField(), LayoutHelper.getGBC(1, 1, 3, 0.25D));
+
+		JPanel urlSelectPanel = new JPanel(new GridBagLayout());
+		JButton selectButton = new JButton(Constant.messages.getString("all.button.select"));
+		selectButton.setIcon(new ImageIcon(View.class.getResource("/resource/icon/16/094.png"))); // Globe icon
+		selectButton.addActionListener(new java.awt.event.ActionListener() { 
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				NodeSelectDialog nsd = new NodeSelectDialog(View.getSingleton().getMainFrame());
+				SiteNode node = null; 
+				try {
+					node = Model.getSingleton().getSession().getSiteTree().findNode(new URI(getUrlField().getText(), false));
+				} catch (Exception e2) {
+					// Ignore
+				}
+				node = nsd.showDialog(node);
+				if (node != null && node.getHistoryReference() != null) {
+					try {
+						getUrlField().setText(node.getHistoryReference().getURI().toString());
+					} catch (Exception e1) {
+						// Ignore
+					}
+				}
+			}
+		});
+		
+		urlSelectPanel.add(this.getUrlField(), LayoutHelper.getGBC(0, 0, 1, 1.0D));
+		urlSelectPanel.add(selectButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
+		panelContent.add(urlSelectPanel, LayoutHelper.getGBC(1, 1, 3, 0.25D));
 		
 		panelContent.add(this.getAttackButton(), LayoutHelper.getGBC(1, 2, 1, 0.0D));
 		panelContent.add(this.getStopButton(), LayoutHelper.getGBC(2, 2, 1, 0.0D));
