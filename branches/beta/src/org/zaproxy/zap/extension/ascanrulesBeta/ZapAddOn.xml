@@ -18,6 +18,7 @@
 	</changes>
 	<dependson/>
 	<extensions>
+		<extension>org.zaproxy.zap.extension.ascanrulesBeta.ExtensionAscanRulesBeta</extension>
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>

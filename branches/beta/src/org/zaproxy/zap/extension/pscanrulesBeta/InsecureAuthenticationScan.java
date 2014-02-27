@@ -58,7 +58,6 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 
 	public InsecureAuthenticationScan() {
 		super();
-		PscanUtils.registerI18N();
 	}
 
 	@Override
