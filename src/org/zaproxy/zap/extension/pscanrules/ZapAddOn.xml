@@ -7,6 +7,7 @@
 	<changes>NOT YET RELEASED! Added reference for X-Content-Type-Options header missing</changes>
 	<dependson/>
 	<extensions>
+		<extension>org.zaproxy.zap.extension.pscanrules.ExtensionPscanRules</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules>

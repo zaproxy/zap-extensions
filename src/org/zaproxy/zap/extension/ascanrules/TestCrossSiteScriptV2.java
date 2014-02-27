@@ -44,7 +44,6 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-		AscanUtils.registerI18N();
     	return Constant.messages.getString("ascanrules.rxss.name");
     }
 

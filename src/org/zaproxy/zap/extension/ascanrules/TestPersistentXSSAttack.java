@@ -45,7 +45,6 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-    	AscanUtils.registerI18N();
     	return Constant.messages.getString("ascanrules.pxss.attack.name");
     }
 
