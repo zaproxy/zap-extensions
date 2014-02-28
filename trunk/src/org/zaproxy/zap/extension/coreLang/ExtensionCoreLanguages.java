@@ -45,6 +45,11 @@ public class ExtensionCoreLanguages extends ExtensionAdaptor {
 	}
 	
     @Override
+	public boolean canUnload() {
+    	return true;
+    }
+
+    @Override
     public void postInstall() {
     	// Import the language file
     	LangImporter.importLanguagePack(Constant.getZapHome() + "/lang/ZAP_2.3.0_language_pack.1.zaplang");
