@@ -13,7 +13,8 @@
 	Promoted new XXE Plugin to test for remotr and local XML External Entity Vulnerability.</br>
 	Promoted new PaddingOracle plugin to test for possible encryption padding errors.</br> 
 	Promoted PXSS tests to beta.</br>
-        Promoted Command Injection release.</br> 
+        Promoted Command Injection release.</br>
+        Promoted new Expression Language Plugin to test JSP EL Injection.</br> 
 	]]>
 	</changes>
 	<dependson/>
@@ -33,6 +34,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.XpathInjectionPlugin</ascanrule>                
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.XXEPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.PaddingOraclePlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.ExpressionLanguageInjectionPlugin</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
