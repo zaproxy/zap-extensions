@@ -16,7 +16,6 @@
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosure</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExpressionLanguageInjectionPlugin</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
