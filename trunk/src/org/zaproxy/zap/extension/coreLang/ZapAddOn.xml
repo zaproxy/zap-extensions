@@ -1,0 +1,21 @@
+
+<zapaddon>
+	<name>Core Language Files</name>
+	<description>Translations of the core language files</description>
+	<author>ZAP Dev Team</author>
+	<version>1</version>
+	<url>https://crowdin.net/project/owasp-zap</url>
+	<changes>These are the language files included with the 2.3.0 release</changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.coreLang.ExtensionCoreLanguages</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
+		<file>lang/ZAP_2.3.0_language_pack.1.zaplang</file>
+	</files>
+	<not-before-version>2.3.0</not-before-version>
+	<not-from-version/>
+</zapaddon>
