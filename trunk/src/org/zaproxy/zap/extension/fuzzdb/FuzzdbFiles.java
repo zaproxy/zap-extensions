@@ -28,7 +28,7 @@ import java.util.Comparator;
  */
 public class FuzzdbFiles {
 	
-	public static final String ROOT = "src/org/zaproxy/zap/extension/fuzzdb/files/"; 
+	public static final String ROOT = "src/org/zaproxy/zap/extension/fuzzdb/files/fuzzers/fuzzdb-1.09"; 
 	
 	public static void listDir(File dir) {
 		if (! dir.exists()) {
