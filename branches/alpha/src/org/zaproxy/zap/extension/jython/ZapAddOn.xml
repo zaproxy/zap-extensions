@@ -20,5 +20,7 @@
 		<file>scripts/templates/standalone/Standalone default template.py</file>
 		<file>scripts/templates/standalone/Traverse sites tree.py</file>
 		<file>scripts/templates/targeted/Targeted default template.py</file>
+		<file>scripts/templates/authentication/Authentication default template.py</file>
+		<file>scripts/templates/authentication/Simple Form-Based Authentication.py</file>
 	</files>
 </zapaddon>
