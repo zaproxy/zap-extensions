@@ -9,6 +9,7 @@ java_import 'org.zaproxy.zap.extension.pscan.PassiveScript'
 java_import 'org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner'
 java_import 'org.parosproxy.paros.network.HttpMessage'
 java_import 'net.htmlparser.jericho.Source'
+java_import 'org.parosproxy.paros.view.View'
 
 class JRubyPassiveScript 
   include Java::org.zaproxy.zap.extension.pscan.PassiveScript
