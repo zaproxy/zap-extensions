@@ -20,5 +20,6 @@
 		<file>scripts/templates/standalone/Standalone default template.rb</file>
 		<file>scripts/templates/standalone/Traverse sites tree.rb</file>
 		<file>scripts/templates/targeted/Targeted default template.rb</file>
+		<file>scripts/templates/authentication/Authentication default template.rb</file>
 	</files>
 </zapaddon>
