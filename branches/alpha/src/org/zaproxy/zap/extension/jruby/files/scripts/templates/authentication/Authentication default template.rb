@@ -5,7 +5,13 @@
 #
 require 'java'
 java_package 'org.zaproxy.zap.authentication'
+
 java_import 'org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.AuthenticationScript'
+java_import 'java.util.Map'
+java_import 'java.lang.String'
+java_import 'org.zaproxy.zap.authentication.AuthenticationHelper'
+java_import 'org.zaproxy.zap.authentication.GenericAuthenticationCredentials'
+
 
 class JRubyAuthenticationScript 
   include Java::org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.AuthenticationScript
