@@ -254,6 +254,7 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="ascanrules-${status}-*.zap"/>
+				<include name="coreLang-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="websocket-${status}-*.zap"/>
