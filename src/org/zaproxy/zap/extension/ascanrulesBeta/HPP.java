@@ -39,6 +39,8 @@ import org.parosproxy.paros.network.HttpMessage;
 /**
  * HPP is an effort to improve the anti-CSRF token detection of ZAP It is based
  * on previous plugins such as csrfcountermeasuresscan and sessionfixation
+ * 
+ * TODO note that this should extend AbstractAppParamPlugin rather than find parameters internally
  */
 public class HPP extends AbstractAppPlugin {
 
@@ -171,7 +173,7 @@ public class HPP extends AbstractAppPlugin {
 				log.debug("Page not vulnerable to HPP attacks");
 			}
 		} catch (Exception e) {
-			log.error(e);
+			log.error(e.getMessage(), e);
 		}
 	}
 	
@@ -256,26 +258,28 @@ public class HPP extends AbstractAppPlugin {
 	 * @param url found in the body of the targeted page
 	 * @return a hashmap of the query string
 	 */
-	public Map<String, List<String>> getUrlParameters(String url) {
+	private Map<String, List<String>> getUrlParameters(String url) {
 		Map<String, List<String>> params = new HashMap<String, List<String>>();
 
-		String[] urlParts = url.split("\\?");
-		if (urlParts.length > 1) {
-			String query = urlParts[1];
-			for (String param : query.split("&")) {
-				String pair[] = param.split("=");
-				String key;
-				key = pair[0];
-				String value = "";
-				if (pair.length > 1) {
-					value = pair[1];
+		if (url != null) {
+			String[] urlParts = url.split("\\?");
+			if (urlParts.length > 1) {
+				String query = urlParts[1];
+				for (String param : query.split("&")) {
+					String pair[] = param.split("=");
+					String key;
+					key = pair[0];
+					String value = "";
+					if (pair.length > 1) {
+						value = pair[1];
+					}
+					List<String> values = params.get(key);
+					if (values == null) {
+						values = new ArrayList<String>();
+						params.put(key, values);
+					}
+					values.add(value);
 				}
-				List<String> values = params.get(key);
-				if (values == null) {
-					values = new ArrayList<String>();
-					params.put(key, values);
-				}
-				values.add(value);
 			}
 		}
 		return params;
@@ -296,7 +300,7 @@ public class HPP extends AbstractAppPlugin {
 		try {
 			bingo(Alert.RISK_MEDIUM, Alert.WARNING, attack, getDescription(),getBaseMsg().getRequestHeader().getURI().getURI(), vulnParams, attack, getReference(), getSolution(), getBaseMsg());
 		} catch (URIException e) {
-			log.error(e);
+			log.error(e.getMessage(), e);
 		}
 	}
 
