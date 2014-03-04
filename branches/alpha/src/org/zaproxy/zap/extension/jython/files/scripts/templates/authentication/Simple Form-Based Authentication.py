@@ -29,17 +29,18 @@ def authenticate(helper, paramsValues, credentials):
 	
 	# Build the request body using the credentials values
 	extraPostData = paramsValues["Extra POST data"];
-	requestBody = paramsValues["Username field"]+"="+quote(credentials.getParam("Username"),'');
-	requestBody = requestBody + "&"+paramsValues["Password field"]+"="+quote(credentials.getParam("Password"),'');
-	if len(extraPostData.strip())>0:
-		requestBody = requestBody + "&"+extraPostData.trim();
+	requestBody = paramsValues["Username field"] + "=" + quote(credentials.getParam("Username"), '');
+	requestBody = requestBody + "&" + paramsValues["Password field"] + "=" + quote(credentials.getParam("Password"), '');
+	if len(extraPostData.strip()) > 0:
+		requestBody = requestBody + "&" + extraPostData.strip();
 
 	# Build the actual message to be sent
-	msg=helper.prepareMessage();
+	msg = helper.prepareMessage();
 	msg.setRequestHeader(HttpRequestHeader(requestMethod, requestUri, HttpHeader.HTTP10));
 	msg.setRequestBody(requestBody);
 
 	# Send the authentication message and return it
+	print "Sending %s request to %s with body: %s" % (requestMethod, requestUri, requestBody);
 	helper.sendAndReceive(msg);
 	print "Received response status code for authentication request: %d" % msg.getResponseHeader().getStatusCode();
 	
@@ -49,7 +50,7 @@ def authenticate(helper, paramsValues, credentials):
 def getRequiredParamsNames():
 	"""Obtain the name of the mandatory/required parameters needed by the script.
 
-	This function is called during the script loading to obtain a list of the names of the required configuration parameters, that will be shown in the Session Properties -> Authentication panel for configuration. They can be usedto input dynamic data into the script, from the user interface (e.g. a login URL, name of POST parameters etc.)
+	This function is called during the script loading to obtain a list of the names of the required configuration parameters, that will be shown in the Session Properties -> Authentication panel for configuration. They can be used to input dynamic data into the script, from the user interface (e.g. a login URL, name of POST parameters etc.)
 	"""
 	return jarray.array(["Target URL","Username field","Password field"], java.lang.String);
 
