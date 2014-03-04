@@ -5,6 +5,9 @@
 #
 require 'java'
 java_package 'org.zaproxy.zap.authentication'
+import org.parosproxy.paros.network.HttpRequestHeader
+import org.parosproxy.paros.network.HttpHeader
+import org.apache.commons.httpclient.URI
 
 # The authenticate function will be called for authentications made via ZAP.
 # 	
@@ -17,13 +20,29 @@ java_package 'org.zaproxy.zap.authentication'
 # credentials : an object containing the credentials values, as configured in the Session Properties -> Users panel. The credential values can be obtained via calls to the getParam(paramName) method. The param names are the ones returned by the getCredentialsParamsNames() below
 java_signature 'authenticate(AuthenticationHelper, Map<String, String>, GenericAuthenticationCredentials)'
 def authenticate(helper, paramsValues, credentials)
+
 	puts("Authenticating via JRuby script...")
-	msg = helper.prepareMessage();
+	# Prepare the login request details
+	requestUri = URI.new(paramsValues["Target URL"], false);
+	requestMethod = HttpRequestHeader::POST;
 	
-	# TODO: Process message to match the authentication needs
+	# Build the request body using the credentials values
+	extraPostData = paramsValues["Extra POST data"];
+	requestBody = paramsValues["Username field"] + "=" + java.net.URLEncoder.encode(credentials.getParam("Username"), 'UTF-8');
+	requestBody = requestBody + "&" + paramsValues["Password field"] + "=" + java.net.URLEncoder.encode(credentials.getParam("Password"), 'UTF-8');
+	if extraPostData.strip.empty? == false
+		requestBody = requestBody + "&" + extraPostData.strip;
+	end
+	
+	# Build the actual message to be sent
+	puts("Sending " + requestMethod + " request to " + paramsValues["Target URL"] + " with body: " + requestBody);
+	msg=helper.prepareMessage();
+	msg.setRequestHeader(HttpRequestHeader.new(requestMethod, requestUri, HttpHeader::HTTP10));
+	msg.setRequestBody(requestBody);
 
+	# Send the authentication message and return it
 	helper.sendAndReceive(msg);
-
+	puts("Received response status code for authentication request: " + msg.getResponseHeader().getStatusCode().to_s);
 	return msg;
 end
 
@@ -32,7 +51,7 @@ end
 # This function is called during the script loading to obtain a list of the names of the required configuration parameters, that will be shown in the Session Properties -> Authentication panel for configuration. They can be used to input dynamic data into the script, from the user interface (e.g. a login URL, name of POST parameters etc.)
 java_signature 'getRequiredParamsNames()'
 def getRequiredParamsNames()
-	return ["exampleTargetURL", "exampleField2"]
+	return ["Target URL", "Username field", "Password field"]
 end
 
 # Obtain the name of the optional parameters needed by the script.
@@ -40,7 +59,7 @@ end
 # This function is called during the script loading to obtain a list of the names of the optional configuration parameters, that will be shown in the Session Properties -> Authentication panel for configuration. They can be used to input dynamic data into the script, from the user interface (e.g. a login URL, name of POST parameters etc.).
 java_signature 'getOptionalParamsNames()'
 def getOptionalParamsNames()
-	return ["exampleField3"]
+	return ["Extra POST data"]
 end
 
 # Obtain the name of the credential parameters needed by the script for each User.
@@ -48,5 +67,5 @@ end
 # This function is called during the script loading to obtain a list of the names of the parameters that are required, as credentials, for each User configured corresponding to an Authentication using this script.
 java_signature 'getCredentialsParamsNames()'
 def getCredentialsParamsNames()
-	return ["username", "password"]
+	return ["Username", "Password"]
 end
