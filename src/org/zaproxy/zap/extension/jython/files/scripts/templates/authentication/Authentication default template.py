@@ -17,7 +17,7 @@ def authenticate(helper, paramsValues, credentials):
 		credentials - an object containing the credentials values, as configured in the Session Properties -> Users panel. The credential values can be obtained via calls to the getParam(paramName) method. The param names are the ones returned by the getCredentialsParamsNames() below
 	"""
 	print "Authenticating via Jython script..."
-	msg=helper.prepareMessage();
+	msg = helper.prepareMessage();
 	
 	# TODO: Process message to match the authentication needs
 
@@ -29,7 +29,7 @@ def authenticate(helper, paramsValues, credentials):
 def getRequiredParamsNames():
 	"""Obtain the name of the mandatory/required parameters needed by the script.
 
-	This function is called during the script loading to obtain a list of the names of the required configuration parameters, that will be shown in the Session Properties -> Authentication panel for configuration. They can be usedto input dynamic data into the script, from the user interface (e.g. a login URL, name of POST parameters etc.)
+	This function is called during the script loading to obtain a list of the names of the required configuration parameters, that will be shown in the Session Properties -> Authentication panel for configuration. They can be used to input dynamic data into the script, from the user interface (e.g. a login URL, name of POST parameters etc.)
 	"""
 	return jarray.array(["exampleTargetURL", "exampleField2"], java.lang.String);
 
