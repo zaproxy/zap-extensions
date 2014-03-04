@@ -46,6 +46,7 @@ public class AttackThread extends Thread {
     private static final Logger logger = Logger.getLogger(AttackThread.class);
 
 	public AttackThread(ExtensionQuickStart ext) {
+		super("ZAP-QuickStart-AttackThread");
 		this.extension = ext;
 	}
 	
@@ -59,14 +60,8 @@ public class AttackThread extends Thread {
         try {
     		SiteNode startNode = null;
     		String urlString = url.toString();
-    		/*
-    		if (! urlString.endsWith("/")) {
-    			// TODO very hacky!
-    			// If it doesnt end with a slash, add one 
-    			startNode = this.accessNode(new URL(urlString + "/"));
-    		}
-    		*/
-			if (startNode == null) {
+
+    		if (startNode == null) {
     			startNode = this.accessNode(this.url);
 			}
 			
@@ -120,12 +115,14 @@ public class AttackThread extends Thread {
 				extension.notifyProgress(Progress.stopped);
 				return;
 			}
-/*
-	        if (startNode.isLeaf() && !((SiteNode)startNode.getParent()).isRoot()) {
-	        	// Go one level up 
+
+			if (startNode.isLeaf() && !((SiteNode)startNode.getParent()).isRoot()
+	        		 && !((SiteNode)startNode.getParent().getParent()).isRoot()) {
+	        	// Start node is a leaf and isnt root or a top level app (eg www.example.com/app1)
+	        	// Go up a level
 	        	startNode = (SiteNode)startNode.getParent();
 	        }
-*/			
+			
 			ExtensionActiveScan extAscan = (ExtensionActiveScan) Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.NAME);
 			if (extAscan == null) {
 				logger.error("No active scanner");
@@ -178,7 +175,7 @@ public class AttackThread extends Thread {
 	        }
 	        
 	        ExtensionHistory extHistory = ((ExtensionHistory)Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.NAME));
-	        extHistory.addHistory(msg, HistoryReference.TYPE_MANUAL);
+	        extHistory.addHistory(msg, HistoryReference.TYPE_PROXIED);
 	        
 	        Model.getSingleton().getSession().getSiteTree().addPath(msg.getHistoryRef());
 			
