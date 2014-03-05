@@ -39,12 +39,12 @@ public class PopupRemoveScript extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
 
-	private ExtensionScripts extension = null;
+	private ExtensionScriptsUI extension = null;
 
     /**
      * 
      */
-    public PopupRemoveScript(ExtensionScripts extension) {
+    public PopupRemoveScript(ExtensionScriptsUI extension) {
         super();
         this.extension = extension;
  		initialize();

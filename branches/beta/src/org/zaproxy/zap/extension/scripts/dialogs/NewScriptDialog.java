@@ -30,7 +30,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.extension.scripts.ExtensionScripts;
+import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class NewScriptDialog extends StandardFieldsDialog {
@@ -44,9 +44,9 @@ public class NewScriptDialog extends StandardFieldsDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private ExtensionScripts extension = null;
+	private ExtensionScriptsUI extension = null;
 	
-	public NewScriptDialog(ExtensionScripts ext, Frame owner, Dimension dim) {
+	public NewScriptDialog(ExtensionScriptsUI ext, Frame owner, Dimension dim) {
 		super(owner, "scripts.dialog.script.new.title", dim);
 		this.extension = ext;
 		init();

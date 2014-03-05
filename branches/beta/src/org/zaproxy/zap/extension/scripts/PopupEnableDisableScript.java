@@ -41,12 +41,12 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
 
 	private static final Logger logger = Logger.getLogger(PopupEnableDisableScript.class);
 
-	private ExtensionScripts extension = null;
+	private ExtensionScriptsUI extension = null;
 
     /**
      * 
      */
-    public PopupEnableDisableScript(ExtensionScripts extension) {
+    public PopupEnableDisableScript(ExtensionScriptsUI extension) {
         super();
         this.extension = extension;
  		initialize();

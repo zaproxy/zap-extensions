@@ -35,14 +35,14 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuSiteNode {
 
 	private static final long serialVersionUID = 2282358266003940700L;
 
-	private ExtensionScripts extension;
+	private ExtensionScriptsUI extension;
     private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
 	/**
 	 * This method initializes 
 	 * 
 	 */
-	public InvokeScriptWithNodePopupMenu(ExtensionScripts extension) {
+	public InvokeScriptWithNodePopupMenu(ExtensionScriptsUI extension) {
 		super("ScriptsInvokeX", true);
 		this.extension = extension;
 	}

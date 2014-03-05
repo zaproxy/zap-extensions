@@ -44,7 +44,10 @@ import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
-public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventListener, ScriptUI {
+/**
+ * The Extension that adds the UI for managing Scripts: scripts tree, scripts console.
+ */
+public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventListener, ScriptUI {
 	
 	public static final String NAME = "ExtensionScripts";
 	public static final ImageIcon ICON = new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")); // Script icon
@@ -71,7 +74,7 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
 		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
 	}
 
-    public ExtensionScripts() {
+    public ExtensionScriptsUI() {
         super();
  		initialize();
     }
@@ -79,7 +82,7 @@ public class ExtensionScripts extends ExtensionAdaptor implements ScriptEventLis
     /**
      * @param name
      */
-    public ExtensionScripts(String name) {
+    public ExtensionScriptsUI(String name) {
         super(name);
     }
 
