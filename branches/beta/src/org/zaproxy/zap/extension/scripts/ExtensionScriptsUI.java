@@ -33,6 +33,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
@@ -43,6 +44,8 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.stdmenus.PopupContextMenuItemFactory;
+import org.zaproxy.zap.model.Context;
 
 /**
  * The Extension that adds the UI for managing Scripts: scripts tree, scripts console.
@@ -62,6 +65,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	private PopupEnableDisableScript popupEnableDisableScript = null;
 	private PopupRemoveScript popupRemoveScript = null;
 	private PopupInstantiateTemplate popupInstantiateTemplate = null;
+	private PopupContextMenuItemFactory popupFactoryUseScriptForAuthentication = null;
 	
 	private ExtensionScript extScript = null;
 	private ScriptsTreeCellRenderer renderer = null;
@@ -106,6 +110,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             extensionHook.getHookMenu().addPopupMenuItem(getPopupEnableDisableScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupRemoveScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupInstantiateTemplate());
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupFactoryUseScriptForAuthentication());
             
             ExtensionHelp.enableHelpKey(getConsolePanel(), "addon.scripts.console");
             ExtensionHelp.enableHelpKey(getScriptsPanel(), "addon.scripts.tree");
@@ -175,6 +180,23 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 			popupInstantiateTemplate = new PopupInstantiateTemplate(this); 
 		}
 		return popupInstantiateTemplate;
+	}
+	
+	private PopupContextMenuItemFactory getPopupFactoryUseScriptForAuthentication() {
+		if (popupFactoryUseScriptForAuthentication == null) {
+			popupFactoryUseScriptForAuthentication = new PopupContextMenuItemFactory(
+					Constant.messages.getString("scripts.popup.useForContextAs")) {
+
+				private static final long serialVersionUID = 2158469059590381956L;
+
+				@Override
+				public ExtensionPopupMenuItem getContextMenu(Context context, String parentMenu) {
+					return new PopupUseScriptAsAuthenticationScript(ExtensionScriptsUI.this, context);
+				}
+			};
+		}
+
+		return popupFactoryUseScriptForAuthentication;
 	}
 
 	@Override
