@@ -68,7 +68,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(ScriptsListPanel.class);
 	
-	private ExtensionScripts extension = null;
+	private ExtensionScriptsUI extension = null;
 
 	private javax.swing.JPanel listPanel = null;
 	private javax.swing.JToolBar panelToolbar = null;
@@ -87,7 +87,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	
 	private List<Class<?>> disabledScriptDialogs = new ArrayList<Class<?>>(); 
 
-	public ScriptsListPanel(ExtensionScripts extension) {
+	public ScriptsListPanel(ExtensionScriptsUI extension) {
 		super();
 		this.extension = extension;
 		initialize();
@@ -96,7 +96,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	private void initialize() {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("scripts.list.panel.title"));
-		this.setIcon(ExtensionScripts.ICON);
+		this.setIcon(ExtensionScriptsUI.ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
 				KeyEvent.VK_S, Event.CTRL_MASK | Event.ALT_MASK | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("scripts.list.panel.mnemonic"));

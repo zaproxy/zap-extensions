@@ -45,7 +45,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 
 	private static final long serialVersionUID = 1L;
 
-	private ExtensionScripts extension;
+	private ExtensionScriptsUI extension;
 	private JPanel panelContent = null;
 	private JToolBar panelToolbar = null;
 	private JButton runButton = null;
@@ -62,7 +62,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 
 	//private static final Logger logger = Logger.getLogger(ConsolePanel.class);
 
-	public ConsolePanel(ExtensionScripts extension) {
+	public ConsolePanel(ExtensionScriptsUI extension) {
 		super();
 		this.extension = extension;
 		initialize();

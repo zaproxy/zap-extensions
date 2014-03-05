@@ -52,14 +52,14 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 	private static final ImageIcon WARNING_OVERLAY_ICON = 
 			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "exclamation-overlay.png"));
 
-	private ExtensionScripts extension = null;
+	private ExtensionScriptsUI extension = null;
 	
 	private static final long serialVersionUID = -4278691012245035225L;
 	
 	@SuppressWarnings("rawtypes")
 	private Map<Class, TreeCellRenderer> renderers = new HashMap<Class, TreeCellRenderer>();
 
-	public ScriptsTreeCellRenderer(ExtensionScripts ext) {
+	public ScriptsTreeCellRenderer(ExtensionScriptsUI ext) {
 		this.extension = ext;
 	}
 	
@@ -96,7 +96,7 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 			
 			if (node.isRoot() || node.getParent().isRoot()) {
 				// Top 2 levels use same icon .. for now ;)
-				setIcon(ExtensionScripts.ICON);
+				setIcon(ExtensionScriptsUI.ICON);
 				
 			} else if (userObject != null && userObject instanceof ScriptWrapper) {
 				OverlayIcon icon;
@@ -115,7 +115,7 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 					icon = new OverlayIcon(engine.getIcon());
 				} else {
 					// Default to the blank script
-					icon = new OverlayIcon(ExtensionScripts.ICON);
+					icon = new OverlayIcon(ExtensionScriptsUI.ICON);
 				}
 				if (script.isChanged() && ! node.isTemplate()) {
 					icon.add(PENCIL_OVERLAY_ICON);

@@ -37,12 +37,12 @@ public class PopupInstantiateTemplate extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
 
-	private ExtensionScripts extension = null;
+	private ExtensionScriptsUI extension = null;
 
     /**
      * 
      */
-    public PopupInstantiateTemplate(ExtensionScripts extension) {
+    public PopupInstantiateTemplate(ExtensionScriptsUI extension) {
         super();
         this.extension = extension;
  		initialize();

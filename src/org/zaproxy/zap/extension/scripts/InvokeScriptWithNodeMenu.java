@@ -31,10 +31,10 @@ public class InvokeScriptWithNodeMenu extends PopupMenuSiteNode {
 	private static final long serialVersionUID = 2282358266003940700L;
     private static Logger logger = Logger.getLogger(InvokeScriptWithNodeMenu.class);
 
-	private ExtensionScripts extension;
+	private ExtensionScriptsUI extension;
 	private ScriptWrapper script;
 	
-	public InvokeScriptWithNodeMenu(ExtensionScripts extension, ScriptWrapper script) {
+	public InvokeScriptWithNodeMenu(ExtensionScriptsUI extension, ScriptWrapper script) {
 		super(script.getName(), true);
 		this.extension = extension;
 		this.script = script;

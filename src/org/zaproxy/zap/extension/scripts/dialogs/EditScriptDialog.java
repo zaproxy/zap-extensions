@@ -24,7 +24,7 @@ import java.awt.Frame;
 
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.extension.scripts.ExtensionScripts;
+import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class EditScriptDialog extends StandardFieldsDialog {
@@ -35,10 +35,10 @@ public class EditScriptDialog extends StandardFieldsDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private ExtensionScripts extension = null;
+	private ExtensionScriptsUI extension = null;
 	private ScriptWrapper script = null;
 	
-	public EditScriptDialog(ExtensionScripts ext, Frame owner, Dimension dim) {
+	public EditScriptDialog(ExtensionScriptsUI ext, Frame owner, Dimension dim) {
 		super(owner, "scripts.dialog.script.edit.title", dim);
 		this.extension = ext;
 	}
