@@ -29,6 +29,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.tree.TreeCellRenderer;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -37,6 +38,7 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
@@ -95,7 +97,13 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	 */
 	private void initialize() {
         this.setName(NAME);
-        this.setOrder(61);	// TODO ok?
+		// Make sure this extension is loaded after the ExtensionScript and after the
+		// ExtensionAuthentication, so the Popup for using the scripts as authentication is properly
+		// enabled (it needs the authentication method types to already be registered).
+        this.setOrder(ExtensionScript.EXTENSION_ORDER + 1);	
+		if (this.getOrder() < ExtensionAuthentication.EXTENSION_ORDER)
+			Logger.getLogger(getClass()).error(
+					"Scripts UI extension's order is not higher than Authentication extension's");
 	}
 	
 	@Override
@@ -110,7 +118,8 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             extensionHook.getHookMenu().addPopupMenuItem(getPopupEnableDisableScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupRemoveScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupInstantiateTemplate());
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupFactoryUseScriptForAuthentication());
+            if(PopupUseScriptAsAuthenticationScript.arePrerequisitesSatisfied())
+            	extensionHook.getHookMenu().addPopupMenuItem(getPopupFactoryUseScriptForAuthentication());
             
             ExtensionHelp.enableHelpKey(getConsolePanel(), "addon.scripts.console");
             ExtensionHelp.enableHelpKey(getScriptsPanel(), "addon.scripts.tree");
@@ -192,6 +201,11 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 				@Override
 				public ExtensionPopupMenuItem getContextMenu(Context context, String parentMenu) {
 					return new PopupUseScriptAsAuthenticationScript(ExtensionScriptsUI.this, context);
+				}
+
+				@Override
+				public int getMenuIndex() {
+					return 1000;
 				}
 			};
 		}

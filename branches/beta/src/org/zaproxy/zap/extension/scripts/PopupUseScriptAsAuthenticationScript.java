@@ -33,45 +33,81 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.SessionDialog;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.ScriptBasedAuthenticationMethod;
 import org.zaproxy.zap.extension.authentication.ContextAuthenticationPanel;
+import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 
+/**
+ * The Popup that allows users to set, for a Context, the authentication method to Script-Based
+ * Authentication and directly load the Authentication script.
+ */
 public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem {
 
 	private static final Logger log = Logger.getLogger(PopupUseScriptAsAuthenticationScript.class);
-	private static final String MENU_NAME = Constant.messages.getString("scripts.popup.scriptBasedAuth");
 	private static final long serialVersionUID = -9073920896139520588L;
+
+	/** The Constant menu name. */
+	private static final String MENU_NAME = Constant.messages.getString("scripts.popup.scriptBasedAuth");
+	private static final String PARENT_MENU_NAME = Constant.messages
+			.getString("scripts.popup.useForContextAs");
+
+	/** The scripts UI extension. */
 	private ExtensionScriptsUI extension = null;
+
+	/** The users extension. */
+	private static ExtensionUserManagement usersExtension;
+
+	/** The context id. */
 	private int contextId;
-	private ExtensionUserManagement usersExtension;
-	private Context uiSharedContext;
 
 	/**
-     * 
-     */
+	 * Checks whether the prerequisites for enabling this Popup are satisfied.
+	 * 
+	 * @return true, if they are satisfied
+	 */
+	public static boolean arePrerequisitesSatisfied() {
+		// Make sure the AuthenticationMethod extension is registered
+		ExtensionAuthentication authExtension = (ExtensionAuthentication) Control.getSingleton()
+				.getExtensionLoader().getExtension(ExtensionAuthentication.NAME);
+		if (authExtension == null) {
+			log.info("Use Script For Authentication Popup disabled: The Authentication extension is not enabled.");
+			return false;
+		}
+
+		// Make sure the ScriptBasedAuthenticationMethodType is registered
+		AuthenticationMethodType scriptType = authExtension
+				.getAuthenticationMethodTypeForIdentifier(ScriptBasedAuthenticationMethodType.METHOD_IDENTIFIER);
+		if (scriptType == null) {
+			log.info("Use Script For Authentication Popup disabled: The ScriptBasedAuthentication method type is not registered.");
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Instantiates a new popup.
+	 * 
+	 * @param extension the scripts UI extension
+	 * @param ctx the context
+	 */
 	public PopupUseScriptAsAuthenticationScript(ExtensionScriptsUI extension, Context ctx) {
 		super();
 		this.extension = extension;
 		this.contextId = ctx.getIndex();
-		initialize(ctx);
-	}
 
-	/**
-	 * This method initializes this
-	 */
-	private void initialize(Context ctx) {
 		this.setText(MessageFormat.format(MENU_NAME, ctx.getName()));
-
 		this.addActionListener(new java.awt.event.ActionListener() {
-
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
-				ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
+				ScriptWrapper script = PopupUseScriptAsAuthenticationScript.this.extension.getScriptsPanel()
+						.getSelectedScript();
 				if (script != null) {
 					performAction(script);
 				}
@@ -80,15 +116,27 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 	}
 
 	/**
+	 * Gets the Users extension.
+	 * 
+	 * @return the users extension
+	 */
+	private ExtensionUserManagement getUsersExtension() {
+		if (usersExtension == null) {
+			usersExtension = (ExtensionUserManagement) Control.getSingleton().getExtensionLoader()
+					.getExtension(ExtensionUserManagement.NAME);
+		}
+		return usersExtension;
+	}
+
+	/**
 	 * Make sure the user acknowledges the Users corresponding to this context will be deleted.
 	 * 
+	 * @param uiSharedContext the ui shared context
 	 * @return true, if successful
 	 */
 	private boolean confirmUsersDeletion(Context uiSharedContext) {
-		usersExtension = (ExtensionUserManagement) Control.getSingleton().getExtensionLoader()
-				.getExtension(ExtensionUserManagement.NAME);
-		if (usersExtension != null) {
-			if (usersExtension.getSharedContextUsers(uiSharedContext).size() > 0) {
+		if (getUsersExtension() != null) {
+			if (getUsersExtension().getSharedContextUsers(uiSharedContext).size() > 0) {
 				int choice = JOptionPane.showConfirmDialog(this,
 						Constant.messages.getString("authentication.dialog.confirmChange.label"),
 						Constant.messages.getString("authentication.dialog.confirmChange.title"),
@@ -101,12 +149,17 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 		return true;
 	}
 
+	/**
+	 * Perform the actual action.
+	 * 
+	 * @param script the script
+	 */
 	private void performAction(ScriptWrapper script) {
 		// Manually create the UI shared contexts so any modifications are done
 		// on an UI shared Context, so changes can be undone by pressing Cancel
 		SessionDialog sessionDialog = View.getSingleton().getSessionDialog();
 		sessionDialog.recreateUISharedContexts(Model.getSingleton().getSession());
-		uiSharedContext = sessionDialog.getUISharedContext(this.contextId);
+		final Context uiSharedContext = sessionDialog.getUISharedContext(this.contextId);
 
 		// Do the work/changes on the UI shared context
 		if (uiSharedContext.getAuthenticationMethod() instanceof ScriptBasedAuthenticationMethod) {
@@ -131,6 +184,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 					+ this.contextId);
 			ScriptBasedAuthenticationMethod method = new ScriptBasedAuthenticationMethodType()
 					.createAuthenticationMethod(contextId);
+
 			try {
 				method.loadScript(script);
 			} catch (Exception ex) {
@@ -143,14 +197,13 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 				log.debug("Cancelled change of authentication type.");
 				return;
 			}
+
 			uiSharedContext.setAuthenticationMethod(method);
 
 			// Show the session dialog without recreating UI Shared contexts
-			// NOTE: First init the panels of the dialog so old users data gets
-			// loaded and just then delete the users
-			// from the UI data model, otherwise the 'real' users from the
-			// non-shared context would be loaded
-			// and would override any deletions made.
+			// NOTE: First init the panels of the dialog so old users data gets loaded and just then
+			// delete the users from the UI data model, otherwise the 'real' users from the
+			// non-shared context would be loaded and would override any deletions made.
 			View.getSingleton().showSessionDialog(Model.getSingleton().getSession(),
 					ContextAuthenticationPanel.buildName(this.contextId), false, new Runnable() {
 
@@ -159,8 +212,8 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 							// Removing the users from the 'shared context' (the UI)
 							// will cause their removal at
 							// save as well
-							if (usersExtension != null)
-								usersExtension.removeSharedContextUsers(uiSharedContext);
+							if (getUsersExtension() != null)
+								getUsersExtension().removeSharedContextUsers(uiSharedContext);
 						}
 					});
 		}
@@ -168,18 +221,21 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 
 	@Override
 	public boolean isEnableForComponent(Component invoker) {
+		// Enable the popup just for the scripts tree
 		if (invoker.getName() != null && invoker.getName().equals(ScriptsListPanel.TREE)) {
 			try {
+
 				JTree tree = (JTree) invoker;
 				ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
 
+				// And only for a script node
 				if (node == null || node.isTemplate() || node.getUserObject() == null
 						|| !(node.getUserObject() instanceof ScriptWrapper)) {
 					return false;
 				}
 
+				// And only if the script's type is Authentication
 				ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
-
 				return script != null
 						&& script.getTypeName().equals(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH);
 			} catch (Exception e) {
@@ -196,11 +252,6 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 
 	@Override
 	public String getParentMenuName() {
-		return Constant.messages.getString("scripts.popup.useForContextAs");
-	}
-
-	@Override
-	public int getParentMenuIndex() {
-		return 1000;
+		return PARENT_MENU_NAME;
 	}
 }
