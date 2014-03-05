@@ -7,7 +7,7 @@
 	<changes>Changed to add an output console toolbar, depend on core ExtensionScript to avoid NullPointerException (Issue 847)</changes>
 	<dependson/>
 	<extensions>
-		<extension>org.zaproxy.zap.extension.scripts.ExtensionScripts</extension>
+		<extension>org.zaproxy.zap.extension.scripts.ExtensionScriptsUI</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
