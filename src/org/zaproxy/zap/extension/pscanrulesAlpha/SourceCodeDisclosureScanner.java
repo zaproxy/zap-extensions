@@ -101,7 +101,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		languagePatterns.put(Pattern.compile("@RenderPage\\s*\\(\\s*\".*?\"\\)", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
 		languagePatterns.put(Pattern.compile("@RenderBody\\s*\\(\\s*\\)", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
 		languagePatterns.put(Pattern.compile("@RenderSection\\s*\\(\\s*\".+?\"\\s*\\)", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
-		languagePatterns.put(Pattern.compile("@\\{[\\u0000-\\u007F]+?\\}", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
+		//languagePatterns.put(Pattern.compile("@\\{[\\u0000-\\u007F]{5,}?\\}", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");  //Too many false positives
 		languagePatterns.put(Pattern.compile("@if\\s*\\(.+?\\)\\s*\\{", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
 		languagePatterns.put(Pattern.compile("Request\\s*\\[\".+?\"\\]", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
 		languagePatterns.put(Pattern.compile("@foreach\\s*", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
@@ -184,9 +184,9 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		languagePatterns.put(Pattern.compile("@implementation\\s+[a-z]"), "Objective C");
 		languagePatterns.put(Pattern.compile("@interface\\s+[a-zA-Z0-9]+\\s*:\\s*[a-zA-Z0-9]+\\s*<[a-zA-Z0-9]+>"), "Objective C");
 		languagePatterns.put(Pattern.compile("@protocol\\s+[a-zA-Z0-9]+"), "Objective C");
-		languagePatterns.put(Pattern.compile("@public"), "Objective C");
-		languagePatterns.put(Pattern.compile("@private"), "Objective C");
-		languagePatterns.put(Pattern.compile("@property"), "Objective C");
+		//languagePatterns.put(Pattern.compile("@public"), "Objective C");	//prone to false positives
+		//languagePatterns.put(Pattern.compile("@private"), "Objective C"); //prone to false positives
+		//languagePatterns.put(Pattern.compile("@property"), "Objective C");  //prone to false positives
 		languagePatterns.put(Pattern.compile("@end\\s*$"), "Objective C");  //anchor to $ to reduce false positives in C++ code comments.
 		languagePatterns.put(Pattern.compile("@synthesize"), "Objective C");
 		
@@ -245,11 +245,16 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		languagePatterns.put(Pattern.compile("component\\s*\\{"), "Cold Fusion");		
 		
 		//Visual FoxPro / ActiveVFP
-		languagePatterns.put(Pattern.compile("oRequest\\.querystring\\s*\\(\\s*\"[a-z0-9]+\"\\s*\\)", Pattern.CASE_INSENSITIVE),"ActiveVFP");
-		languagePatterns.put(Pattern.compile("DEFINE\\s+CLASS\\s+[a-z0-9]+\\s+AS\\s+[a-z0-9]+", Pattern.CASE_INSENSITIVE),"ActiveVFP");
-		languagePatterns.put(Pattern.compile("oRequest"),"ActiveVFP"); 
-		languagePatterns.put(Pattern.compile("oResponse"),"ActiveVFP");
-		languagePatterns.put(Pattern.compile("oSession"),"ActiveVFP");
+		languagePatterns.put(Pattern.compile("oRequest\\.querystring\\s*\\(\\s*\"[a-z0-9]+\"\\s*\\)", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE),"ActiveVFP");
+		languagePatterns.put(Pattern.compile("define\\s+class\\s+[a-z0-9]+\\s+as\\s+[a-z0-9]+", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE),"ActiveVFP");
+		languagePatterns.put(Pattern.compile("for\\s+[a-z0-9]+\\s*=\\s*[0-9]+\\s+to\\s+[0-9]+.+?\\s+endfor", Pattern.CASE_INSENSITIVE),"ActiveVFP");
+		languagePatterns.put(Pattern.compile("do\\s+while\\s+.+?\\s+enddo", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE),"ActiveVFP");
+		languagePatterns.put(Pattern.compile("if\\s+.+?\\s+endif", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE),"ActiveVFP");
+		languagePatterns.put(Pattern.compile("do\\s+case\\s+case\\s+.+?\\s+endcase", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE),"ActiveVFP");
+		languagePatterns.put(Pattern.compile("for\\s+each\\s+.+?\\s+endfor", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE),"ActiveVFP");
+		//languagePatterns.put(Pattern.compile("oRequest"),"ActiveVFP");  //prone to false positives  
+		//languagePatterns.put(Pattern.compile("oResponse"),"ActiveVFP"); //prone to false positives
+		//languagePatterns.put(Pattern.compile("oSession"),"ActiveVFP");  //prone to false positives
 		
 		//Pascal
 		languagePatterns.put(Pattern.compile("^program\\s+[a-z0-9]+;.*?begin.+?end", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE), "Pascal");
