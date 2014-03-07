@@ -1,0 +1,16 @@
+<zapaddon>
+	<name>Import files containing URLs</name>
+	<version>1</version>
+	<description>Adds an option to import a file of URLs. The file must be plain text with one URL per line.</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>First version</changes>
+	<dependson/>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.importurls.ExtensionImportUrls</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+</zapaddon>
