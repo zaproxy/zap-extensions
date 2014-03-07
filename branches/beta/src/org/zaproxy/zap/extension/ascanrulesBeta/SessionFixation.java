@@ -48,7 +48,8 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.auth.ExtensionAuth;
+import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
+import org.zaproxy.zap.model.Context;
 
 /**
  * The SessionFixation plugin identifies Session Fixation vulnerabilities with
@@ -131,27 +132,37 @@ public class SessionFixation extends AbstractAppPlugin {
         try {
         	boolean loginUrl = false;
         	
-        	//are we dealing with the login url? Will be important later
-        	try {
-        		ExtensionAuth extAuth = (ExtensionAuth) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAuth.NAME);
-        		URI loginUri = extAuth.getApi().getLoginRequest(1).getRequestHeader().getURI();
-        		URI requestUri = getBaseMsg().getRequestHeader().getURI();
-        		if (	requestUri.getScheme().equals(loginUri.getScheme()) && 
-        				requestUri.getHost().equals(loginUri.getHost()) &&
-        				requestUri.getPort() == loginUri.getPort() &&
-        				requestUri.getPath().equals(loginUri.getPath()) ) {
-        			//we got this far.. only the method (GET/POST), user details, query params, fragment, and POST params 
-        			//are possibly different from the login page.
-        			loginUrl = true;
-        		}
-        	}
-        	catch (Exception e) {
-        		log.debug("For the Session Fixation scanner to actually do anything, a Login Page *must* be set!");
-        	}
-        	
-        	//For now (from Zap 2.0), the Session Fixation scanner will only run for logon pages
-        	if (loginUrl == false) return;
+			// Are we dealing with a login url in any of the contexts of which this uri is part
+			URI requestUri = getBaseMsg().getRequestHeader().getURI();
+			ExtensionAuthentication extAuth = (ExtensionAuthentication) Control.getSingleton()
+					.getExtensionLoader().getExtension(ExtensionAuthentication.NAME);
 
+			// using the session, get the list of contexts for the url
+			List<Context> contextList = extAuth.getModel().getSession()
+					.getContextsForUrl(requestUri.getURI());
+
+			// now loop, and see if the url is a login url in each of the contexts in turn...
+			for (Context context : contextList) {
+				URI loginUri = extAuth.getLoginRequestURIForContext(context);
+				if (loginUri != null) {
+					if (requestUri.getScheme().equals(loginUri.getScheme())
+							&& requestUri.getHost().equals(loginUri.getHost())
+							&& requestUri.getPort() == loginUri.getPort()
+							&& requestUri.getPath().equals(loginUri.getPath())) {
+						// we got this far.. only the method (GET/POST), user details, query params,
+						// fragment, and POST params
+						// are possibly different from the login page.
+						loginUrl = true;
+						break;
+					}
+				}
+			}
+
+        	//For now (from Zap 2.0), the Session Fixation scanner will only run for login pages
+        	if (loginUrl == false){
+        		log.debug("For the Session Fixation scanner to actually do anything, a Login Page *must* be set!");
+        		return;
+        	}
         	//find all params set in the request (GET/POST/Cookie)
     		//Note: this will be the full set, before we delete anything.
     		
@@ -165,8 +176,6 @@ public class SessionFixation extends AbstractAppPlugin {
     		//as opposed to the url parameters in the following example, which are already picked up by getUrlParams() 
     		//http://www.example.com/someurl?JSESSIONID=abcdefg&x=123&y=456
     		
-    		//get the URL
-    		URI requestUri = getBaseMsg().getRequestHeader().getURI();
     		//convert from org.apache.commons.httpclient.URI to a String
     		String requestUrl= "Unknown URL";
     		try {

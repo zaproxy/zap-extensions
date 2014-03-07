@@ -36,7 +36,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.auth.ExtensionAuth;
+import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
 
 import difflib.Delta;
@@ -138,24 +138,26 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 		try {
 			boolean loginUrl = false;
 
-			//are we dealing with a login url in any of the contexts? 
-			ExtensionAuth extAuth = (ExtensionAuth) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAuth.NAME);				
+			// Are we dealing with a login url in any of the contexts of which this uri is part
 			URI requestUri = getBaseMsg().getRequestHeader().getURI();
-			
-			//using the session, get the list of contexts for the url
-			List<Context> contextList = extAuth.getModel().getSession().getContextsForUrl(requestUri.getURI());
-			
-			//now loop, and see if the url is a login url in each of the contexts in turn..
-			for (Context context: contextList) {
-				HttpMessage loginRequest = extAuth.getApi().getLoginRequest(context.getIndex());
-				if ( loginRequest != null) {
-					URI loginUri = loginRequest.getRequestHeader().getURI();
-					if (	requestUri.getScheme().equals(loginUri.getScheme()) && 
-							requestUri.getHost().equals(loginUri.getHost()) &&
-							requestUri.getPort() == loginUri.getPort() &&
-							requestUri.getPath().equals(loginUri.getPath()) ) {
-						//we got this far.. only the method (GET/POST), user details, query params, fragment, and POST params 
-						//are possibly different from the login page.
+			ExtensionAuthentication extAuth = (ExtensionAuthentication) Control.getSingleton()
+					.getExtensionLoader().getExtension(ExtensionAuthentication.NAME);
+
+			// using the session, get the list of contexts for the url
+			List<Context> contextList = extAuth.getModel().getSession()
+					.getContextsForUrl(requestUri.getURI());
+
+			// now loop, and see if the url is a login url in each of the contexts in turn...
+			for (Context context : contextList) {
+				URI loginUri = extAuth.getLoginRequestURIForContext(context);
+				if (loginUri != null) {
+					if (requestUri.getScheme().equals(loginUri.getScheme())
+							&& requestUri.getHost().equals(loginUri.getHost())
+							&& requestUri.getPort() == loginUri.getPort()
+							&& requestUri.getPath().equals(loginUri.getPath())) {
+						// we got this far.. only the method (GET/POST), user details, query params,
+						// fragment, and POST params
+						// are possibly different from the login page.
 						loginUrl = true;
 						break;
 					}
@@ -164,7 +166,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 						
 			//the Username Enumeration scanner will only run for logon pages
 			if (loginUrl == false) {
-				log.warn("For the Username Enumeration scanner to actually scan this URL, the URL *must* be added to a context, and flagged as the login request in that context!");
+				log.info("For the Username Enumeration scanner to actually scan this URL, the URL *must* be added to a context, and flagged as the login request in that context!");
 				return;
 			}
 
