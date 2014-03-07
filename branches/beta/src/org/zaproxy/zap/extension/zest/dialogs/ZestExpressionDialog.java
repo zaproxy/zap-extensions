@@ -125,6 +125,9 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 			this.addTextField(FIELD_VALUE, za.getValue());
 			this.addCheckBoxField(FIELD_EXACT, za.isCaseExact());
 			this.addCheckBoxField(FIELD_INVERSE, za.isInverse());
+			
+			// Enable right click menus
+			this.addFieldListener(FIELD_VALUE, ZestZapUtils.stdMenuAdapter()); 
 
 		} else if (expression instanceof ZestExpressionStatusCode) {
 			ZestExpressionStatusCode za = (ZestExpressionStatusCode) expression;
