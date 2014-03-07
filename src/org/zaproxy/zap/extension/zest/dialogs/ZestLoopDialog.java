@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestLoopFile;
@@ -198,7 +197,7 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 
 	@Override
 	public String validateFields() {
-		if (this.isEmptyField(VARIABLE_NAME)  || (! StringUtils.isAlphanumeric(this.getStringValue(VARIABLE_NAME)))) {
+		if (! ZestZapUtils.isValidVariableName(this.getStringValue(VARIABLE_NAME))) {
 			return Constant.messages.getString("zest.dialog.loop.string.error.variable");
 		}
 

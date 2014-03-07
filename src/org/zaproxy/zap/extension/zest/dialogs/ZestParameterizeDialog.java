@@ -22,12 +22,12 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import java.awt.Dimension;
 import java.awt.Frame;
 
-import org.apache.commons.lang.StringUtils;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class ZestParameterizeDialog extends StandardFieldsDialog {
@@ -74,7 +74,7 @@ public class ZestParameterizeDialog extends StandardFieldsDialog {
 
 	@Override
 	public String validateFields() {
-		if (this.isEmptyField(FIELD_TOKEN) || (! StringUtils.isAlphanumeric(this.getStringValue(FIELD_TOKEN)))) {
+		if (! ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_TOKEN))) {
 			return Constant.messages.getString("zest.dialog.parameterize.error.token");
 		}
 		if (this.isEmptyField(FIELD_REPLACE_STRING)) {

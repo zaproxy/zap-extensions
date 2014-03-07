@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
@@ -255,8 +254,8 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 	public String validateFields() {
 		
 		
-		if (this.isEmptyField(FIELD_VARIABLE) || (! StringUtils.isAlphanumeric(this.getStringValue(FIELD_VARIABLE)) &&
-				! this.getVariableNames(false).contains(this.getStringValue(FIELD_VARIABLE)))) {
+		if (! ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_VARIABLE)) &&
+				! this.getVariableNames(false).contains(this.getStringValue(FIELD_VARIABLE))) {
 			return Constant.messages.getString("zest.dialog.assign.error.variable");
 		}
 

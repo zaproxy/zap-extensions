@@ -74,6 +74,8 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 
 public class ZestZapUtils {
 
+	private static final String ZEST_VAR_VALID_CHRS = "-:.";
+	
 	private static final Logger log = Logger.getLogger(ZestZapUtils.class);
 
 	public static String toUiString(ZestElement za) {
@@ -707,5 +709,22 @@ public class ZestZapUtils {
 				}
 			}
 		};
+	}
+	
+	public static boolean isValidVariableName(String name) {
+		if (name == null || name.length() == 0) {
+			return false;
+		}
+		if (!Character.isLetter(name.charAt(0))) {
+			// Seams reasonable to require it starts with a character
+			return false;
+		}
+		for (char chr : name.toCharArray()) {
+			if (!Character.isLetterOrDigit(chr) &&
+					ZEST_VAR_VALID_CHRS.indexOf(chr) == -1) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
