@@ -36,7 +36,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.auth.ExtensionAuth;
+import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
 
 import difflib.Delta;
@@ -1007,32 +1007,34 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				//log.debug("### A SQL Injection may lead to auth bypass..");
 
 				//are we dealing with a login url in any of the contexts? 
-				ExtensionAuth extAuth = (ExtensionAuth) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAuth.NAME);
-				URI requestUri = getBaseMsg().getRequestHeader().getURI();
+				ExtensionAuthentication extAuth = (ExtensionAuthentication) Control.getSingleton()
+						.getExtensionLoader().getExtension(ExtensionAuthentication.NAME);
+				if (extAuth != null) {
+					URI requestUri = getBaseMsg().getRequestHeader().getURI();
 
-				//using the session, get the list of contexts for the url
-				List<Context> contextList = extAuth.getModel().getSession().getContextsForUrl(requestUri.getURI());
-
-				//now loop, and see if the url is a login url in each of the contexts in turn..
-				for (Context context : contextList) {
-					HttpMessage loginRequest = extAuth.getApi().getLoginRequest(context.getIndex());
-					if (loginRequest != null) {
-						URI loginUri = loginRequest.getRequestHeader().getURI();
-						if (requestUri.getScheme().equals(loginUri.getScheme())
-								&& requestUri.getHost().equals(loginUri.getHost())
-								&& requestUri.getPort() == loginUri.getPort()
-								&& requestUri.getPath().equals(loginUri.getPath())) {
-							//we got this far.. only the method (GET/POST), user details, query params, fragment, and POST params 
-							//are possibly different from the login page.
-							loginUrl = true;
-							//DEBUG only
-							//log.debug("##### The right login page was found");
-							break;
+					//using the session, get the list of contexts for the url
+					List<Context> contextList = extAuth.getModel().getSession().getContextsForUrl(requestUri.getURI());
+	
+					//now loop, and see if the url is a login url in each of the contexts in turn..
+					for (Context context : contextList) {
+						URI loginUri = extAuth.getLoginRequestURIForContext(context);
+						if (loginUri != null) {
+							if (requestUri.getScheme().equals(loginUri.getScheme())
+									&& requestUri.getHost().equals(loginUri.getHost())
+									&& requestUri.getPort() == loginUri.getPort()
+									&& requestUri.getPath().equals(loginUri.getPath())) {
+								//we got this far.. only the method (GET/POST), user details, query params, fragment, and POST params 
+								//are possibly different from the login page.
+								loginUrl = true;
+								//DEBUG only
+								//log.debug("##### The right login page was found");
+								break;
+							} else {
+								//log.debug("#### This is not the login page you're looking for");
+							}
 						} else {
-							//log.debug("#### This is not the login page you're looking for");
+							//log.debug("### This context has no login page set");
 						}
-					} else {
-						//log.debug("### This context has no login page set");
 					}
 				}
 				if (loginUrl) {
