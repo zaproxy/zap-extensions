@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.net.URL;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
@@ -162,7 +164,7 @@ public class AttackThread extends Thread {
 		SiteNode startNode = null;
     	// Request the URL
 		try {
-			HttpMessage msg = new HttpMessage(new URI(url.toString(), true));
+			final HttpMessage msg = new HttpMessage(new URI(url.toString(), true));
 			getHttpSender().sendAndReceive(msg,true);
 		
 	        if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
@@ -177,7 +179,12 @@ public class AttackThread extends Thread {
 	        ExtensionHistory extHistory = ((ExtensionHistory)Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.NAME));
 	        extHistory.addHistory(msg, HistoryReference.TYPE_PROXIED);
 	        
-	        Model.getSingleton().getSession().getSiteTree().addPath(msg.getHistoryRef());
+	        SwingUtilities.invokeAndWait(new Runnable(){
+				@Override
+				public void run() {
+					// Needs to be done on the EDT
+			        Model.getSingleton().getSession().getSiteTree().addPath(msg.getHistoryRef());
+				}});
 			
 			for (int i=0; i < 10; i++) {
 				startNode = Model.getSingleton().getSession().getSiteTree().findNode(new URI(url.toString(), false));
