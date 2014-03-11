@@ -1,4 +1,4 @@
-<project name="ZAP-Extensions" default="build-all" basedir=".">
+<project name="ZAP-Extensions (Beta)" default="build-all" basedir=".">
 	<description>Build ZAP extensions</description>
 
 	<property name="src" location="../src" />
