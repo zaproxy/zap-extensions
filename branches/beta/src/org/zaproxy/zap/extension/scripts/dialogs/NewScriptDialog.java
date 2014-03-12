@@ -46,19 +46,54 @@ public class NewScriptDialog extends StandardFieldsDialog {
 
 	private ExtensionScriptsUI extension = null;
 	
-	public NewScriptDialog(ExtensionScriptsUI ext, Frame owner, Dimension dim) {
+	public NewScriptDialog(ExtensionScriptsUI ext, Frame owner, Dimension dim, ScriptWrapper template) {
 		super(owner, "scripts.dialog.script.new.title", dim);
 		this.extension = ext;
-		init();
+		init(template);
 	}
 
-	private void init () {
+	public void init (ScriptType type) {
+		this.setFieldValue(FIELD_NAME, "");
+		this.setFieldValue(FIELD_DESC, "");
+		this.setFieldValue(FIELD_ENGINE, "");
+		this.setFieldValue(FIELD_TEMPLATE, "");
+		
+		if (type == null) {
+			this.setFieldValue(FIELD_TYPE, "");
+		} else {
+			this.setFieldValue(FIELD_TYPE, Constant.messages.getString(type.getI18nKey()));
+		}
+	}
+
+	public void init (ScriptWrapper template) {
+		String name = "";
+		String desc = "";
+		String type = "";
+		String engine = "";
+		String templateName = "";
+
+		if (template != null) {
+			name = template.getName();
+			desc = template.getDescription();
+			type = Constant.messages.getString(template.getType().getI18nKey());
+			engine = template.getEngineName();
+			try {
+				// Nasty, but it works ;)
+				engine = extension.getExtScript().getEngineNameForExtension(template.getEngine().getExtensions().get(0));
+			} catch (Exception e1) {
+				// Ignore
+			}
+			templateName = template.getName();
+		}
+
+		this.removeAllFields();
+		
 		this.setTitle(Constant.messages.getString("scripts.dialog.script.new.title"));
-		this.addTextField(FIELD_NAME, "");
-		this.addComboField(FIELD_TYPE, this.getTypes(), "");
-		this.addComboField(FIELD_ENGINE, this.getEngines(), "");
-		this.addComboField(FIELD_TEMPLATE, this.getTemplates(), "");
-		this.addMultilineField(FIELD_DESC, "");
+		this.addTextField(FIELD_NAME, name);
+		this.addComboField(FIELD_TYPE, this.getTypes(), type);
+		this.addComboField(FIELD_ENGINE, this.getEngines(), engine);
+		this.addComboField(FIELD_TEMPLATE, this.getTemplates(), templateName);
+		this.addMultilineField(FIELD_DESC, desc);
 		this.addCheckBoxField(FIELD_LOAD, false);
 
 		this.addFieldListener(FIELD_TYPE, new ActionListener() {
@@ -199,15 +234,5 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		return null;
 	}
 
-	public void reset(ScriptWrapper template) {
-		if (template == null) {
-			this.setFieldValue(FIELD_NAME, "");
-			this.setFieldValue(FIELD_DESC, "");
-		} else {
-			this.setFieldValue(FIELD_NAME, template.getName());
-			this.setFieldValue(FIELD_DESC, template.getDescription());
-			this.setFieldValue(FIELD_TEMPLATE, template.getName());
-		}
-	}
 
 }
