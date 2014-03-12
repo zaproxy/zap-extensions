@@ -55,6 +55,7 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptTreeModel;
+import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.dialogs.EditScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.LoadScriptDialog;
@@ -190,7 +191,7 @@ public class ScriptsListPanel extends AbstractPanel {
 
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					showNewScriptDialog(null);
+					showNewScriptDialog((ScriptWrapper)null);
 				}
 
 			});
@@ -200,9 +201,20 @@ public class ScriptsListPanel extends AbstractPanel {
 
 	public void showNewScriptDialog(ScriptWrapper template) {
 		if (newScriptDialog == null) {
-			newScriptDialog = new NewScriptDialog(extension, View.getSingleton().getMainFrame(), new Dimension(500, 400));
+			newScriptDialog = new NewScriptDialog(extension, View.getSingleton().getMainFrame(), 
+					new Dimension(500, 400), template);
+		} else {
+			newScriptDialog.init(template);
 		}
-		newScriptDialog.reset(template);
+		newScriptDialog.setVisible(true);
+	}
+
+	public void showNewScriptDialog(ScriptType type) {
+		if (newScriptDialog == null) {
+			newScriptDialog = new NewScriptDialog(extension, View.getSingleton().getMainFrame(), 
+					new Dimension(500, 400), null);
+		}
+		newScriptDialog.init(type);
 		newScriptDialog.setVisible(true);
 	}
 
@@ -390,7 +402,7 @@ public class ScriptsListPanel extends AbstractPanel {
 			
 			TreeNode firstChild = extension.getExtScript().getTreeModel().getRoot().getFirstChild();
 			if (firstChild != null && firstChild instanceof ScriptNode) {
-				// Nasty way of expanding the Scripts node - should tydy up
+				// Nasty way of expanding the Scripts node - should tidy up
 				TreeNode[] path = ((ScriptNode)firstChild).getPath();
 				TreePath tp = new TreePath(path);
 				getTree().setExpandsSelectedPaths(true);
