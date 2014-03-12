@@ -21,7 +21,6 @@
 package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +64,6 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	private HttpMessage target = null;
 	private ZestResultWrapper lastResult = null;
 	private HistoryReference lastHref = null;
-	private StringWriter writer = new StringWriter();
 
 	private boolean pause = false;
     private boolean isStop = false;
@@ -113,11 +111,13 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     		return "";
     	} else {
 			this.target = null;
-			super.setOutputWriter(writer);
+			if (wrapper.getWriter() != null) {
+				super.setOutputWriter(wrapper.getWriter());
+			} else if (extension.getExtScript().getScriptUI() != null) {
+				super.setOutputWriter(extension.getExtScript().getScriptUI().getOutputWriter());
+			}
 			this.setDebug(this.wrapper.isDebug());
-			String result = super.run(script, params);
-			this.notifyComplete();
-			return result;
+			return super.run(script, params);
     	}
 	}
 
@@ -126,10 +126,13 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			throws ZestAssertFailException, ZestActionFailException, IOException,
 			ZestInvalidCommonTestException, ZestAssignFailException {
     	log.debug("Run script " + script.getTitle());
-		super.setOutputWriter(writer);
+		if (wrapper.getWriter() != null) {
+			super.setOutputWriter(wrapper.getWriter());
+		} else if (extension.getExtScript().getScriptUI() != null) {
+			super.setOutputWriter(extension.getExtScript().getScriptUI().getOutputWriter());
+		}
 		this.setDebug(this.wrapper.isDebug());
 		String result = super.run(script, target, params);
-		this.notifyComplete();
 		return result;
 	}
     
@@ -137,24 +140,6 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         isStop = true;
     }
    
-	private void notifyComplete() {
-		if (wrapper != null) {
-			wrapper.setLastOutput(writer.toString());
-		}
-
-		if (View.isInitialised()) {
-			if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
-				// TODO Should be an easier way to just update output
-				try {
-					scriptUI.displayScript(wrapper);
-				} catch (Exception e) {
-					System.err.println(e.getMessage());
-				}
-			}
-		}
-	
-	}
-
 	private void notifyResponse(ZestResultWrapper href) {
 		this.lastHref = href;
 		if (View.isInitialised()) {
