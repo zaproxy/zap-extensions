@@ -44,7 +44,7 @@
       "elseStatements": [
         {
           "comment": "Called for the response - do nothing.",
-          "index": 6,
+          "index": 5,
           "elementType": "ZestComment"
         }
       ],
