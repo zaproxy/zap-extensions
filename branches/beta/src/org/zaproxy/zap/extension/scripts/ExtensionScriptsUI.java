@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.event.MouseAdapter;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -61,7 +62,8 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
 	private ScriptsListPanel scriptsPanel = null;
 	private ConsolePanel consolePanel = null;
-	private OutputPanelWriter outputPanelWriter = null;
+	private OutputPanelWriter stdOutputPanelWriter = null;
+	private OutputPanelWriter displayedScriptOutputPanelWriter = null;
 
 	private InvokeScriptWithNodePopupMenu popupInvokeScriptWithNodeMenu = null;
 	private PopupEnableDisableScript popupEnableDisableScript = null;
@@ -71,6 +73,9 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	
 	private ExtensionScript extScript = null;
 	private ScriptsTreeCellRenderer renderer = null;
+	
+	private ScriptWrapper currentLockedScript = null;
+	private boolean lockOutputToDisplayedScript = false;
 
 	//private static final Logger logger = Logger.getLogger(ExtensionScripts.class);
 
@@ -147,7 +152,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		if (extScript == null) {
 			extScript = (ExtensionScript) Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.NAME);
 			if (View.isInitialised()) {
-				extScript.addWriter(getOutputPanelWriter());
+				extScript.addWriter(getStdOutputPanelWriter());
 				extScript.setScriptUI(this);
 			}
 		}
@@ -219,6 +224,16 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 			return;
 		}
 		
+		if (this.lockOutputToDisplayedScript) {
+			// switch writers..
+			if (this.currentLockedScript != null) {
+				// Unset the script specific writer
+				this.currentLockedScript.setWriter(null);
+			}
+			this.currentLockedScript = script;
+			script.setWriter(this.getDisplayedScriptOutputPanelWriter());
+		}
+		
 		if (script.getEngine() == null) {
 			// Scripts loaded from the configs my have loaded before all of the engines
 			script.setEngine(getExtScript().getEngineWrapper(script.getEngineName()));
@@ -236,22 +251,21 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 				this.getScriptsPanel().showInTree(node);
 			}
 			
-			// Show last result
-			boolean noOutput = true;
-			this.getConsolePanel().getOutputPanel().clear();
-			if (script.getLastOutput() != null && script.getLastOutput().length() > 0) {
-				this.getConsolePanel().getOutputPanel().append(script.getLastOutput());
-				noOutput = false;
+			if (this.getConsolePanel().getOutputPanel().isClearOnRun()) {
+				this.getConsolePanel().getOutputPanel().clear();
+				
+				if (script.getLastOutput() != null && script.getLastOutput().length() > 0) {
+					this.getConsolePanel().getOutputPanel().append(script.getLastOutput());
+				}
+				if (script.getLastException() != null) {
+					this.showError(script.getLastException());
+				} else if (script.getLastErrorDetails() != null && script.getLastErrorDetails().length() > 0) {
+					this.showError(script.getLastErrorDetails());
+				}
 			}
-			if (script.getLastException() != null) {
-				this.showError(script.getLastException());
-				noOutput = false;
-			} else if (script.getLastErrorDetails() != null && script.getLastErrorDetails().length() > 0) {
-				this.showError(script.getLastErrorDetails());
-				noOutput = false;
-			}
-			if (! script.getEngine().isTextBased() && noOutput) {
-				// Output message to explain about non test based scriopts
+
+			if (! script.getEngine().isTextBased() && this.getConsolePanel().getOutputPanel().isEmpty()) {
+				// Output message to explain about non test based scripts
 				this.getConsolePanel().getOutputPanel().append(Constant.messages.getString("scripts.welcome.nontest"));
 			}
 		}
@@ -337,12 +351,25 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 			return null;
 		}
 	}
-	
-	protected OutputPanelWriter getOutputPanelWriter() {
-		if (View.isInitialised() && outputPanelWriter == null) {
-			outputPanelWriter = new OutputPanelWriter(this.getConsolePanel().getOutputPanel());
+
+	/*
+	 * The writer that will get output from all scripts run
+	 */
+	private OutputPanelWriter getStdOutputPanelWriter() {
+		if (View.isInitialised() && stdOutputPanelWriter == null) {
+			stdOutputPanelWriter = new OutputPanelWriter(this.getConsolePanel().getOutputPanel());
 		}
-		return outputPanelWriter;
+		return stdOutputPanelWriter;
+	}
+
+	/*
+	 * The writer which will get output only for the script currently being displayed
+	 */
+	private OutputPanelWriter getDisplayedScriptOutputPanelWriter() {
+		if (View.isInitialised() && displayedScriptOutputPanelWriter == null) {
+			displayedScriptOutputPanelWriter = new OutputPanelWriter(this.getConsolePanel().getOutputPanel());
+		}
+		return this.displayedScriptOutputPanelWriter;
 	}
 
     public void invokeTargetedScript(ScriptWrapper script, HttpMessage msg) {
@@ -501,4 +528,36 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	public List<Class<?>> getDependencies() {
 		return EXTENSION_DEPENDENCIES;
 	}
+
+	public boolean isLockOutputToDisplayedScript() {
+		return lockOutputToDisplayedScript;
+	}
+
+	public void setLockOutputToDisplayedScript(boolean lockOutputToDisplayedScript) {
+		this.lockOutputToDisplayedScript = lockOutputToDisplayedScript;
+		
+		this.getStdOutputPanelWriter().setEnabled(!lockOutputToDisplayedScript);
+		this.getDisplayedScriptOutputPanelWriter().setEnabled(lockOutputToDisplayedScript);
+
+		if (this.currentLockedScript != null) {
+			this.currentLockedScript.setWriter(null);
+		}
+
+		ScriptWrapper script = this.getScriptsPanel().getSelectedScript();
+		if (script != null) {
+			if (this.lockOutputToDisplayedScript) {
+				script.setWriter(this.getDisplayedScriptOutputPanelWriter());
+				this.currentLockedScript = script;
+			} else {
+				script.setWriter(null);
+				this.currentLockedScript = null;
+			}
+		}
+	}
+
+	@Override
+	public Writer getOutputWriter() {
+		return this.getStdOutputPanelWriter();
+	}
+	
 }
