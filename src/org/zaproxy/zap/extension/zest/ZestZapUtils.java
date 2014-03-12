@@ -532,6 +532,7 @@ public class ZestZapUtils {
 		}
 		msg.getRequestHeader().setMethod(request.getMethod());
 		msg.setRequestBody(request.getData());
+		msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 
 		if (response != null) {
 			try {

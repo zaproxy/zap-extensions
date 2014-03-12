@@ -79,6 +79,7 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 					+ this.getVariable(ZestVariables.REQUEST_URL) + " " + msg.getRequestHeader().getVersion()
 					+ HttpHeader.CRLF + this.getVariable(ZestVariables.REQUEST_HEADER));
 			msg.setRequestBody(this.getVariable(ZestVariables.REQUEST_BODY));
+			msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 			msg.setResponseHeader(this.getVariable(ZestVariables.RESPONSE_HEADER));
 			msg.setResponseBody(this.getVariable(ZestVariables.RESPONSE_BODY));
 			// Make sure the proper requesting user is set on the returned message
