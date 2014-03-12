@@ -243,7 +243,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 
 	protected OutputPanel getOutputPanel() {
 		if (outputPanel == null) {
-			outputPanel = new OutputPanel();
+			outputPanel = new OutputPanel(extension);
 			outputPanel.append(Constant.messages.getString("scripts.welcome.results"));
 		}
 		return outputPanel;
@@ -270,6 +270,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		getCommandPanel().setEditable(false);
         getCommandPanel().clear();
         getCommandPanel().appendToCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
+    	getRunButton().setEnabled(false);
         getScriptTitle().setText("");
 	}
 

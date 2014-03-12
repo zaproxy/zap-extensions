@@ -25,6 +25,7 @@ import java.io.Writer;
 public class OutputPanelWriter extends Writer {
 	
 	private OutputPanel outputPanel;
+	private boolean enabled = true;
 
 	public OutputPanelWriter (OutputPanel outputPanel) {
 		this.outputPanel = outputPanel;
@@ -32,7 +33,9 @@ public class OutputPanelWriter extends Writer {
 	
 	@Override
 	public void write(char[] cbuf, int off, int len) throws IOException {
-		outputPanel.append(new String(cbuf, off, len));
+		if (enabled) {
+			outputPanel.append(new String(cbuf, off, len));
+		}
 	}
 
 	@Override
@@ -43,6 +46,14 @@ public class OutputPanelWriter extends Writer {
 	@Override
 	public void close() throws IOException {
 		// Ignore
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 }

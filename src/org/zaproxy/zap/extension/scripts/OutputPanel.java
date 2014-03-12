@@ -55,6 +55,7 @@ public class OutputPanel extends AbstractPanel {
 	private static final ImageIcon SCROLL_LOCK_ENABLED_ICON = new ImageIcon(OutputPanel.class.getResource(
     		"/org/zaproxy/zap/extension/scripts/resource/icons/ui-scroll-lock-pane.png"));
 
+	private ExtensionScriptsUI extension;
 	private JPanel mainPanel;
 	private JToolBar mainToolBar;
 	private JScrollPane jScrollPane = null;
@@ -62,10 +63,12 @@ public class OutputPanel extends AbstractPanel {
 	private boolean clearOnRun = false;
 
 	/**
+	 * @param extension 
      * 
      */
-    public OutputPanel() {
+    public OutputPanel(ExtensionScriptsUI extension) {
         super();
+        this.extension = extension;
  		initialize();
     }
 
@@ -153,9 +156,28 @@ public class OutputPanel extends AbstractPanel {
                 };
             });
 
+            final JToggleButton scriptLockButton = new JToggleButton();
+            scriptLockButton.setToolTipText(
+            		Constant.messages.getString("scripts.output.scriptLock.button.disabled.toolTip"));
+            scriptLockButton.setIcon(ExtensionScriptsUI.ICON);
+            scriptLockButton.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                	extension.setLockOutputToDisplayedScript(scriptLockButton.isSelected());
+                    if (scriptLockButton.isSelected()) {
+                    	scriptLockButton.setToolTipText(
+                        		Constant.messages.getString("scripts.output.scriptLock.button.enabled.toolTip"));
+                    } else {
+                    	scriptLockButton.setToolTipText(
+                        		Constant.messages.getString("scripts.output.scriptLock.button.disabled.toolTip"));
+                    }
+                };
+            });
+
             mainToolBar.add(clearButton);
             mainToolBar.add(clearOnRunButton);
             mainToolBar.add(scrollLockButton);
+            mainToolBar.add(scriptLockButton);
         }
         return mainToolBar;
     }
@@ -267,9 +289,17 @@ public class OutputPanel extends AbstractPanel {
 			clear();
 		}
 	}
+	
+	protected boolean isClearOnRun() {
+		return this.clearOnRun;
+	}
 
 	public void clear() {
 	    getTxtOutput().setText("");
 	    getTxtOutput().setForeground(Color.BLACK);
+	}
+	
+	public boolean isEmpty() {
+		return getTxtOutput().getText().length() == 0;
 	}
 }
