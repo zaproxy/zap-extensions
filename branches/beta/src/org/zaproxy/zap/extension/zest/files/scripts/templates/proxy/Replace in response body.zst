@@ -35,7 +35,7 @@
       "elseStatements": [
         {
           "comment": "Called for the response - perform the replacement",
-          "index": 6,
+          "index": 4,
           "elementType": "ZestComment"
         },
         {
@@ -44,7 +44,7 @@
           "regex": false,
           "caseExact": false,
           "variableName": "response.body",
-          "index": 7,
+          "index": 5,
           "elementType": "ZestAssignReplace"
         }
       ],
