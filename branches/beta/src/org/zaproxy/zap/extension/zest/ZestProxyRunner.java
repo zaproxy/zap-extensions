@@ -82,6 +82,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 								reqHeader);
 			
 			msg.setRequestBody(this.getVariable(ZestVariables.REQUEST_BODY));
+			msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 
 		} catch (Exception e) {
 			throw new ScriptException(e);
