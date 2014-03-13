@@ -51,7 +51,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 	static {
 		//PHP
 		languagePatterns.put(Pattern.compile("<\\?php\\s*.+?;\\s*\\?>", Pattern.MULTILINE | Pattern.DOTALL), "PHP");
-		languagePatterns.put(Pattern.compile("phpinfo\\s*\\(\\s*\\)"), "PHP");
+		//languagePatterns.put(Pattern.compile("phpinfo\\s*\\(\\s*\\)"), "PHP");  //features in "/index.php?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000", which is not a Source Code Disclosure issue.  
 		languagePatterns.put(Pattern.compile("\\$_POST\\s*\\["), "PHP");
 		languagePatterns.put(Pattern.compile("\\$_GET\\s*\\["), "PHP");
 		
