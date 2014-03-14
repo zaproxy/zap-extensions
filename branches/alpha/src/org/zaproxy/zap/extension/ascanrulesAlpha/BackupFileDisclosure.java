@@ -264,7 +264,17 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 		try {
 			URI uri = this.getBaseMsg().getRequestHeader().getURI();
 			String filename = uri.getName();
-
+			
+			int statusCode = this.getBaseMsg().getResponseHeader().getStatusCode();
+			if (log.isDebugEnabled()) log.debug("About to look for a backup for '"+ uri.getURI() + "', which returned "+ statusCode);
+			
+			//is it worth looking for a copy of the file?
+			//why do we even get a status code of 0? 
+			//eliminate it from our enquiries, because it causes nothing but false positives.			
+			if ( statusCode == HttpStatus.SC_NOT_FOUND || statusCode == 0 ) {
+				if (log.isDebugEnabled())  log.debug ("The original file request was not successfuly retrieved (status = "+ statusCode +"), so there is not much point in looking for a backup of a non-existent file!");
+				return;
+			}
 			if ( filename != null && filename.length() > 0) {
 				//there is a file name at the end of the path, so look for a backup file for the file
 				findBackupFile (this.getBaseMsg());
@@ -492,9 +502,16 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 				//Do not follow redirects. They're evil. Yep.
 				sendAndReceive(requestmsg, false);
 				disclosedData = requestmsg.getResponseBody().getBytes();
+				int requestStatusCode = requestmsg.getResponseHeader().getStatusCode();
 
-				if ( 	(gives404s && requestmsg.getResponseHeader().getStatusCode() != HttpStatus.SC_NOT_FOUND) || 
-						((!gives404s) && (! Arrays.equals(disclosedData, nonexistfilemsgdata)))) {
+				//just to complicate things.. I have a test case which for the random file, does NOT give a 404 (so gives404s == false) 
+				//but for a "Copy of" file, actually gives a 404 (for some unknown reason). We need to handle this case.
+				if ( 	( gives404s && requestStatusCode != HttpStatus.SC_NOT_FOUND) || 
+						(	(!gives404s) &&
+							requestStatusCode != HttpStatus.SC_NOT_FOUND &&
+							(! Arrays.equals(disclosedData, nonexistfilemsgdata)) 
+						)
+					) {
 					bingo(	Alert.RISK_MEDIUM, 
 							Alert.WARNING,
 							Constant.messages.getString("ascanalpha.backupfiledisclosure.name"),
@@ -530,9 +547,13 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 				//Do not follow redirects. They're evil. Yep.
 				sendAndReceive(requestmsg, false);
 				disclosedData = requestmsg.getResponseBody().getBytes();
+				int requestStatusCode = requestmsg.getResponseHeader().getStatusCode();
 
-				if ( 	(parentgives404s && requestmsg.getResponseHeader().getStatusCode() != HttpStatus.SC_NOT_FOUND) || 
-						((!parentgives404s) && (! Arrays.equals(disclosedData, nonexistparentmsgdata)))) {
+				if ( 	( parentgives404s && requestStatusCode != HttpStatus.SC_NOT_FOUND) || 
+						(	(!parentgives404s) && 
+							requestStatusCode != HttpStatus.SC_NOT_FOUND && 
+							(! Arrays.equals(disclosedData, nonexistparentmsgdata)))
+					) {
 					bingo(	Alert.RISK_MEDIUM, 
 							Alert.WARNING,
 							Constant.messages.getString("ascanalpha.backupfiledisclosure.name"),
