@@ -164,7 +164,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 	 */
 	@Override
 	public int getId() {
-		return 43;
+		return 10095;
 	}
 
 	/**
