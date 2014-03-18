@@ -1,0 +1,14 @@
+<zapaddon>
+	<name>Multi-Fuzzing</name>
+	<version>1</version>
+	<description>Adds a multi-fuzz tool</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>First version</changes>
+	<dependson/>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.multiFuzz.ExtensionFuzz</extension>
+	</extensions>
+	<filters/>
+	<files/>
+</zapaddon>
