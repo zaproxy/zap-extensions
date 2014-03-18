@@ -119,7 +119,15 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 				Matcher matcher = timestampPattern.matcher(haystack);
 		        while (matcher.find()) {
 		            String evidence = matcher.group();
-		            java.util.Date timestamp=new java.util.Date((long)Integer.parseInt(evidence) *1000);
+		            java.util.Date timestamp=null;
+            		try {
+            			//parse the number as a Unix timestamp
+	            		timestamp = new java.util.Date((long)Integer.parseInt(evidence) *1000);
+	            	}
+		            catch (NumberFormatException nfe) {
+		            	//the number is not formatted correctly to be a timestamp. Skip it.
+		            	continue;
+		            }
 		            if (log.isDebugEnabled()) log.debug("Found a match for timestamp type "+ timestampType +":" + evidence);
 		            
 			        if ( evidence!=null && evidence.length() > 0) {
