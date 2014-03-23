@@ -200,6 +200,8 @@
 		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="plugnhack"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="portscan"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
@@ -238,7 +240,15 @@
 		<antcall target="deploy-extension"> <param name="extension" value="diff"/> </antcall>
 	</target>
 
-	<target name="deploy-plugnhack" depends="build-all" description="deploy the plug-n-hack extension">
+	<target name="deploy-jruby" depends="build-all" description="deploy the jruby extension">
+		<antcall target="deploy-extension"> <param name="extension" value="jruby"/> </antcall>
+	</target>
+
+  	<target name="deploy-jython" depends="build-all" description="deploy the jython extension">
+		<antcall target="deploy-extension"> <param name="extension" value="jython"/> </antcall>
+	</target>
+
+  	<target name="deploy-plugnhack" depends="build-all" description="deploy the plug-n-hack extension">
 		<antcall target="deploy-extension"> <param name="extension" value="plugnhack"/> </antcall>
 	</target>
 	
@@ -276,6 +286,8 @@
 		<antcall target="deploy-alertReport"/>
 		<antcall target="deploy-ascanrules"/>
 		<antcall target="deploy-diff"/>
+	    <antcall target="deploy-jruby"/>
+	    <antcall target="deploy-jython"/>
 		<antcall target="deploy-plugnhack"/>
 		<antcall target="deploy-portscan"/>
 		<antcall target="deploy-pscanrules"/>

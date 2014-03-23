@@ -227,8 +227,7 @@
 		<antcall target="build-addon"><param name="addon" value="cmss"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="importurls"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="multiFuzz"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
@@ -271,12 +270,8 @@
 		<antcall target="deploy-extension"> <param name="extension" value="httpsInfo"/> </antcall>
 	</target>
 
-  	<target name="deploy-jruby" depends="build-all" description="deploy the jruby extension">
-		<antcall target="deploy-extension"> <param name="extension" value="jruby"/> </antcall>
-	</target>
-
-  	<target name="deploy-jython" depends="build-all" description="deploy the jython extension">
-		<antcall target="deploy-extension"> <param name="extension" value="jython"/> </antcall>
+  	<target name="deploy-importurls" depends="build-all" description="deploy the importurls extension">
+		<antcall target="deploy-extension"> <param name="extension" value="importurls"/> </antcall>
 	</target>
 
 	<target name="deploy-multiFuzz" depends="build-all" description="deploy the passive scan rules">
@@ -306,8 +301,7 @@
 		<antcall target="deploy-cmss"/>
 		<antcall target="deploy-highlighter"/>
 	    <antcall target="deploy-httpsInfo"/>
-	    <antcall target="deploy-jruby"/>
-	    <antcall target="deploy-jython"/>
+	    <antcall target="deploy-importurls"/>
 		<antcall target="deploy-multiFuzz"/>
 		<antcall target="deploy-pscanrulesAlpha"/>
 		<antcall target="deploy-serverSentEvents"/>
