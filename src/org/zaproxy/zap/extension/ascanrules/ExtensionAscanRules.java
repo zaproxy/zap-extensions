@@ -42,4 +42,9 @@ public class ExtensionAscanRules extends ExtensionAdaptor {
 	public String getDescription() {
 		return Constant.messages.getString("ascanrules.desc");
 	}
+	
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
 }
