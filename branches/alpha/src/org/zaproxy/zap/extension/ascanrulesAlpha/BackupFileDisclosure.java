@@ -47,12 +47,6 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 	int numPrefixesToTry = 0;
 	boolean doSwitchFileExtension = false;
 	
-	static {
-		//register for internationalisation.  
-		//this also needs to be done before the class is initialised, since the name of the scanner itself is i18ned
-		AscanUtils.registerI18N();
-	}
-
 	/**
 	 * the ordered set of (lowercase) file extensions to try 
 	 */

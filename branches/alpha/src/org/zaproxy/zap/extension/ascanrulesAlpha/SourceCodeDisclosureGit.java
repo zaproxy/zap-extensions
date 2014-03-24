@@ -21,9 +21,10 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
+
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -41,12 +42,6 @@ import org.zaproxy.zap.model.Vulnerability;
  *
  */
 public class SourceCodeDisclosureGit extends AbstractAppPlugin {
-
-	static {
-		//register for internationalisation.  
-		//this also needs to be done before the class is initialised, since the name of the scanner itself is i18ned
-		AscanUtils.registerI18N();	
-	}
 
 	/**
 	 * details of the vulnerability which we are attempting to find 

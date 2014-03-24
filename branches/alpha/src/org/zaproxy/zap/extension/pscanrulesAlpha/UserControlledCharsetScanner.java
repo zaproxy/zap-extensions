@@ -51,11 +51,6 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 	 */
 	private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledcharset.";
 
-	public UserControlledCharsetScanner() {
-		super();
-		PscanUtils.registerI18N();
-	}
-	
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");

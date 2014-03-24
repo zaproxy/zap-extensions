@@ -19,6 +19,8 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
+
+import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -26,10 +28,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.ascanrulesAlpha.AscanUtils;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
-import org.apache.commons.httpclient.URI;
 
 /**
  * a scanner that looks for application source code disclosure using SVN metadata/file disclosure
@@ -38,13 +38,6 @@ import org.apache.commons.httpclient.URI;
  *
  */
 public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
-
-	static {
-		//register for internationalisation.  
-		//this also needs to be done before the class is initialised, since the name of the scanner itself is i18ned
-		AscanUtils.registerI18N();	
-	}
-
 
 	/**
 	 * details of the vulnerability which we are attempting to find 

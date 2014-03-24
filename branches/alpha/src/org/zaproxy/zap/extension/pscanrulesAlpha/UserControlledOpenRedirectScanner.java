@@ -48,11 +48,6 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 	 */
 	private static final String MESSAGE_PREFIX = "pscanalpha.usercontrolledopenredirect.";
 
-	public UserControlledOpenRedirectScanner() {
-		super();
-		PscanUtils.registerI18N();
-	}
-	
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");

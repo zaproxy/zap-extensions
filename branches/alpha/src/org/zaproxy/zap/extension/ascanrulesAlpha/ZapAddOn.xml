@@ -13,12 +13,16 @@
 	</changes>
 	<dependson/>
 	<extensions>
+		<extension>org.zaproxy.zap.extension.ascanrulesAlpha.ExtensionAscanRulesAlpha</extension>
 	</extensions>
 	<ascanrules>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosure</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BackupFileDisclosure</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureSVN</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 </zapaddon>

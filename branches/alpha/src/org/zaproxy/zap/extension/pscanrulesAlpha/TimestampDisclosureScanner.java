@@ -65,14 +65,6 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 	private static final String MESSAGE_PREFIX = "pscanalpha.timestampdisclosure.";
 
 	/**
-	 * construct the class, and register for i18n
-	 */
-	public TimestampDisclosureScanner() {
-		super();
-		PscanUtils.registerI18N();
-	}
-
-	/**
 	 * gets the name of the scanner
 	 * @return
 	 */
