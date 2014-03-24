@@ -7,18 +7,21 @@
 	<changes>Updated for ZAP 2.2.0</changes>
 	<dependson/>
 	<extensions>
+		<extension>org.zaproxy.zap.extension.pscanrulesAlpha.ExtensionPscanRulesAlpha</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules>
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormLoadScanner</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormPostScanner</pscanrule>	
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCharsetScanner</pscanrule>		
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCookieScanner</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledJavascriptEventScanner</pscanrule>		
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledHTMLAttributes</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>		
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.Base64Disclosure</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HashDisclosureScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.SourceCodeDisclosureScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.TimestampDisclosureScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCharsetScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCookieScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledHTMLAttributesScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledJavascriptEventScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>
 	</pscanrules>
 	<filters/>
 	<files/>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 </zapaddon>

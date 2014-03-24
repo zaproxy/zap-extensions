@@ -275,11 +275,6 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 	/**
 	 * construct the class, and register for i18n
 	 */
-	public SourceCodeDisclosureScanner() {
-		super();
-		PscanUtils.registerI18N();
-	}
-
 	/**
 	 * gets the name of the scanner
 	 * @return

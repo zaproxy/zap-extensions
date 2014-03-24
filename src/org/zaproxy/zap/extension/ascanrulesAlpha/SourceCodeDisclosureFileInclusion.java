@@ -18,16 +18,16 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.util.regex.Pattern;
+
+import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.ascanrulesAlpha.AscanUtils;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
-import org.apache.commons.httpclient.URI;
 
 /**
  * a scanner that looks for application source code disclosure using path traversal techniques
@@ -36,12 +36,6 @@ import org.apache.commons.httpclient.URI;
  *
  */
 public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
-
-	static {
-		//register for internationalisation.  
-		//this also needs to be done before the class is initialised, since the name of the scanner itself is i18ned
-		AscanUtils.registerI18N();	
-	}
 
 	//TODO: replace this with an actual random value, or someone will decide to play with our heads by creating actual files with this name.
 	private static final String NON_EXISTANT_FILENAME = "thishouldnotexistandhopefullyitwillnot";

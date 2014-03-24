@@ -135,14 +135,6 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 	private static final String MESSAGE_PREFIX = "pscanalpha.hashdisclosure.";
 
 	/**
-	 * construct the class, and register for i18n
-	 */
-	public HashDisclosureScanner() {
-		super();
-		PscanUtils.registerI18N();
-	}
-
-	/**
 	 * gets the name of the scanner
 	 * @return
 	 */

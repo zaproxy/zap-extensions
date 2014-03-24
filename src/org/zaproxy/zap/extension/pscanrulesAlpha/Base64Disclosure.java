@@ -60,14 +60,6 @@ public class Base64Disclosure extends PluginPassiveScanner {
 	private static final String MESSAGE_PREFIX = "pscanalpha.base64disclosure.";
 
 	/**
-	 * construct the class, and register for i18n
-	 */
-	public Base64Disclosure() {
-		super();
-		PscanUtils.registerI18N();
-	}
-
-	/**
 	 * gets the name of the scanner
 	 * @return
 	 */
