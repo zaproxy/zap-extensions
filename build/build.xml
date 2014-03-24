@@ -60,6 +60,7 @@
 		&lt;status>${status}&lt;/status>
 		&lt;changes>${changes}&lt;/changes>
 		&lt;url>http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download&lt;/url>
+		&lt;info>${url}&lt;/info>
 		&lt;size>${length}&lt;/size>
 		&lt;date>${yyyymmdd}&lt;/date>
 		&lt;not-before-version>${not-before-version}&lt;/not-before-version>
