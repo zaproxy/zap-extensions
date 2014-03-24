@@ -47,4 +47,9 @@ public class ExtensionAscanRulesBeta extends ExtensionAdaptor {
 	public String getDescription() {
 		return Constant.messages.getString("ascanbeta.desc");
 	}
+
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
 }
