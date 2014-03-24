@@ -47,4 +47,9 @@ public class ExtensionPscanRulesBeta extends ExtensionAdaptor {
 	public String getDescription() {
 		return Constant.messages.getString("pscanbeta.desc");
 	}
+
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
 }

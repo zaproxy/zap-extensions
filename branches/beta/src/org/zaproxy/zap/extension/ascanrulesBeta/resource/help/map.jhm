@@ -4,6 +4,6 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-	<mapID target="ascanbeta-icon" url="zaphelp/images/ascan.png" />
+	<mapID target="ascanbeta-icon" url="zaphelp/images/ascan-beta.png" />
     <mapID target="ascanbeta" url="zaphelp/ascanbeta.html" />
 </map>

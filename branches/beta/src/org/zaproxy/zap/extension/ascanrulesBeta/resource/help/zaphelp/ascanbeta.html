@@ -14,8 +14,10 @@ The following beta quality active scan rules are included in this add-on:
 <H2>HPP</H2>
 
 <H2>LDAP Injection</H2>
+LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
 
 <H2>Session Fixation</H2>
+Session Fixation may be possible. If this issue occurs with a login URL (where the user authenticates themselves to the application), then the URL may be given by an attacker, along with a fixed session id, to a victim, in order to later assume the identity of the victim using the given session id. If the issue occurs with a non-login page, the URL and fixed session id may only be used by an attacker to track an unauthenticated user's actions. If the vulnerability occurs on a cookie field or a form field (POST parameter) rather than on a URL (GET) parameter, then some other vulnerability may also be required in order to set the cookie field on the victim's browser, to allow the vulnerability to be exploited.
 
 <H2>SQL Injection - Hypersonic, time based</H2>
 
@@ -42,6 +44,7 @@ Similar to the Hypersonic scanner, but specific to the Oracle RDBMS and SQL synt
 Similar to the Hypersonic scanner, but specific to the PostgreSQL RDBMS and SQL syntax. 
 
 <H2>Username Enumeration</H2>
+It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
 
 <H2>Xpath Injection</H2>
 

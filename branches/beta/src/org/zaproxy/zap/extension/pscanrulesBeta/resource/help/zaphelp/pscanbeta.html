@@ -10,8 +10,10 @@ Passive Scan Rules - Beta
 The following beta quality passive scan rules are included in this add-on:
 
 <H2>Charset Mismatch</H2>
+This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.
 
 <H2>Cookie - Loosely Scoped</H2>
+Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.
 
 <H2>CSRF Countermeasures</H2>
 
@@ -24,8 +26,10 @@ The following beta quality passive scan rules are included in this add-on:
 <H2>Information Disclosure: Suspicious Comments</H2>
 
 <H2>Insecure Authentication</H2>
+HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
 
 <H2>Insecure JSF View State</H2>
+The response at the following URL contains a ViewState value that has no cryptographic protections.
 
 <H2>Servlet Parameter Pollution</H2>
 
