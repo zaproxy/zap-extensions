@@ -42,4 +42,9 @@ public class ExtensionPscanRules extends ExtensionAdaptor {
 	public String getDescription() {
 		return Constant.messages.getString("pscanrules.desc");
 	}
+	
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
 }
