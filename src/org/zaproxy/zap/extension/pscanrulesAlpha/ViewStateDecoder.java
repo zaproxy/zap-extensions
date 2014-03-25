@@ -328,6 +328,7 @@ public class ViewStateDecoder {
 		ByteBuffer dataBuffer = ByteBuffer.wrap(decodeddata);
 		byte [] preamble = new byte [2];
 		dataBuffer.get (preamble);
+		//why are bytes signed in Java??
 		if ( preamble[0]!=-1 || preamble[1]!=0x01 ) {
 			throw new Exception("Invalid Viewstate preamble");
 		}
@@ -336,6 +337,8 @@ public class ViewStateDecoder {
 		representation.append ("<viewstate>\n");
 		this.indentationlevel++;
 
+		//if the viewstate were encrypted, we would not have been able to decode it at all.
+		//because we don't attempt to decrypt it, because we don't have the shared secret key to do so. 
 		representation.append(getIndentation(this.indentationlevel));
 		representation.append("<encrypted>false</encrypted>\n");
 
@@ -348,7 +351,7 @@ public class ViewStateDecoder {
 		}
 
 		//Look at whether the ViewState is protected by a MAC
-		//we can tell by looing at how many bytes remain at the end of the data, once 
+		//we can tell by looking at how many bytes remain at the end of the data, once 
 		//the ViewState data has been read out.
 		int bytesremainingtoberead = dataBuffer.remaining();
 		if ( bytesremainingtoberead > 0 ) {
