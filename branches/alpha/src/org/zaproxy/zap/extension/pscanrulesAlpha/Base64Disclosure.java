@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import net.htmlparser.jericho.Source;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -50,8 +51,24 @@ public class Base64Disclosure extends PluginPassiveScanner {
 	 * If we do not include this condition, however, we will have a very large number of false positives.
 	 * TODO: find a different way to reduce false positives without causing false negatives.
 	 */
-	static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={1,2}");
+	//static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={1,2}");
+	//static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={0,2}");
+	static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={0,2}");
+	
+	/**
+	 * patterns used to identify strings withut each of the given character sets
+	 * which is used to calculate the probability of this occuring, and eliminate
+	 * potential Base64 strings which are extremely improbable  
+	 */
+	static Pattern digitPattern = Pattern.compile("[0-9]");
+	static Pattern alphaPattern = Pattern.compile("[a-zA-Z]");	
+	static Pattern otherPattern = Pattern.compile("[\\+\\\\/]");
+	static Pattern lowercasePattern = Pattern.compile("[a-z]");
+	static Pattern uppercasePattern = Pattern.compile("[A-Z]");
 
+	/**
+	 * the logger. logs stuff. strange that!
+	 */
 	private static Logger log = Logger.getLogger(Base64Disclosure.class);
 	
 	/**
@@ -87,6 +104,9 @@ public class Base64Disclosure extends PluginPassiveScanner {
 	 */
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		
+		//DEBUG only
+		//log.setLevel(Level.DEBUG);
 
 		if (log.isDebugEnabled()) log.debug("Checking message "+ msg + " for Base64 encoded data");
 
@@ -99,17 +119,73 @@ public class Base64Disclosure extends PluginPassiveScanner {
 		for (String haystack: responseparts) {
 			Matcher matcher = base64Pattern.matcher(haystack);
 			while (matcher.find()) {
-				String evidence = matcher.group();
+				String base64evidence = matcher.group();
 				byte[] decodeddata=null;
 				try {
 					//decode the data
-					decodeddata = Base64.decode(evidence);             	
+					decodeddata = Base64.decode(base64evidence);             	
 				} catch (IOException e) {
 					//it's not actually Base64. so skip it.
-					if (log.isDebugEnabled()) log.debug("["+evidence + "] could not be decoded as Base64 data");
+					if (log.isDebugEnabled()) log.debug("["+base64evidence + "] could not be decoded as Base64 data");
 					continue;
 				}
-				if (log.isDebugEnabled()) log.debug("Found a match for Base64:" + evidence);
+			
+				//does the base 64 encoded string actually contain the various characters that we might expect?
+				//(note: we may not care, depending on the threshold set by the user)
+				String base64evidenceString = new String(base64evidence);
+				boolean noDigitInString = ! digitPattern.matcher(base64evidenceString).find();
+				boolean noAlphaInString = ! alphaPattern.matcher(base64evidenceString).find();
+				boolean noOtherInString = ! otherPattern.matcher(base64evidenceString).find();
+				boolean noLowerInString = ! lowercasePattern.matcher(base64evidenceString).find();
+				boolean noUpperInString = ! uppercasePattern.matcher(base64evidenceString).find();
+			
+				//calculate the actual probability of a Base64 string of this length *not* containing a given character class (digit/alphabetic/other Base64 character)
+				//right about now, I expect to get flamed by the statistics geeks in our midst.. wait for it! :)
+				float probabilityOfNoDigitInString = (float)Math.pow(((float)64-10)/64, base64evidence.length());
+				float probabilityOfNoAlphaInString = (float)Math.pow(((float)64-52)/64, base64evidence.length());
+				float probabilityOfNoOtherInString = (float)Math.pow(((float)64-2)/64, base64evidence.length());
+				float probabilityOfNoLowerInString = (float)Math.pow(((float)64-26)/64, base64evidence.length());
+				float probabilityOfNoUpperInString = probabilityOfNoLowerInString; 
+				
+				//set the threshold percentage based on what threshold was set by the user
+				float probabilityThreshold = 0.0F; //0% probability threshold
+				switch (this.getLevel()) {
+				//50% probability threshold (ie, "on balance of probability")
+				case HIGH:	probabilityThreshold = 0.50F; break;  
+				//25% probability threshold
+				case MEDIUM: 					
+				case DEFAULT: probabilityThreshold = 0.25F; break;	
+				//10% probability threshold
+				case LOW: probabilityThreshold = 0.10F; break;		
+				//0% probability threshold (all structurally valid Base64 data is considered, regardless of how improbable  it is given character frequencies, etc)
+				case OFF: probabilityThreshold = 0.00F; break;		 
+				}
+				
+				//if the String is unlikely to be Base64, given the distribution of the characters
+				//ie, less probable than the threshold probability controlled by the user, then do not process it.				
+				if ( 	(noDigitInString && probabilityOfNoDigitInString < probabilityThreshold) || 
+						(noAlphaInString && probabilityOfNoAlphaInString < probabilityThreshold)||
+						(noOtherInString && probabilityOfNoOtherInString < probabilityThreshold) ||
+						(noLowerInString && probabilityOfNoLowerInString < probabilityThreshold) ||
+						(noUpperInString && probabilityOfNoUpperInString < probabilityThreshold)
+						) {
+					if (log.isDebugEnabled()) { 
+						log.debug("The following candidate Base64 has been excluded on probabilistic grounds: ["+base64evidence + "] ");
+						if (noDigitInString)
+							log.debug("The candidate Base64 has no digit characters, and the the probability of this occuring for a string of this length is "+ (probabilityOfNoDigitInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
+						if (noAlphaInString)
+							log.debug("The candidate Base64 has no alphabetic characters, and the the probability of this occuring for a string of this length is "+ (probabilityOfNoAlphaInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
+						if (noOtherInString)
+							log.debug("The candidate Base64 has no 'other' characters, and the the probability of this occuring for a string of this length is "+ (probabilityOfNoOtherInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
+						if (noLowerInString)
+							log.debug("The candidate Base64 has no lowercase characters, and the the probability of this occuring for a string of this length is "+ (probabilityOfNoLowerInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
+						if (noUpperInString)
+							log.debug("The candidate Base64 has no uppercase characters, and the the probability of this occuring for a string of this length is "+ (probabilityOfNoUpperInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
+					}
+					continue;
+				}
+				
+				if (log.isDebugEnabled()) log.debug("Found a match for Base64:" + base64evidence);
 
 				//so it's valid Base64.  Is it valid .NET ViewState data?
 				//This will be true for both __VIEWSTATE and __EVENTVALIDATION data, although currently, we can only interpret/decode __VIEWSTATE.
@@ -120,8 +196,8 @@ public class Base64Disclosure extends PluginPassiveScanner {
 					//TODO: decode __EVENTVALIDATION data
 					ViewStateDecoder viewstatedecoded = new ViewStateDecoder ();					
 					try {
-						if (log.isDebugEnabled()) log.debug("The following Base64 string has a ViewState preamble: ["+evidence + "]");
-						viewstatexml = viewstatedecoded.decode(evidence.getBytes());
+						if (log.isDebugEnabled()) log.debug("The following Base64 string has a ViewState preamble: ["+base64evidence + "]");
+						viewstatexml = viewstatedecoded.decode(base64evidence.getBytes());
 						if (log.isDebugEnabled()) log.debug("The data was successfully decoded as ViewState data");
 						validviewstate = true;
 
@@ -132,8 +208,8 @@ public class Base64Disclosure extends PluginPassiveScanner {
 						if (log.isDebugEnabled()) log.debug("MACles??? "+ macless);
 					} catch (Exception e) {
 						//no need to do anything here.. just don't set "validviewstate" to true :)
-						e.printStackTrace();
-						if (log.isDebugEnabled()) log.debug("The Base64 value ["+ evidence+"] has a valid ViewState pre-amble, but is not a valid viewstate. It may be an EVENTVALIDATION value, is not yet decodable.");
+						//e.printStackTrace();
+						if (log.isDebugEnabled()) log.debug("The Base64 value ["+ base64evidence+"] has a valid ViewState pre-amble, but is not a valid viewstate. It may be an EVENTVALIDATION value, is not yet decodable.");
 					} 
 				} 
 
@@ -184,17 +260,17 @@ public class Base64Disclosure extends PluginPassiveScanner {
 					
 					//the Base64 decoded data is not a valid ViewState (even though it may have a valid ViewStatet pre-amble) 
 					//so treat it as normal Base64 data, and raise an informational alert.
-					if ( evidence!=null && evidence.length() > 0) {
+					if ( base64evidence!=null && base64evidence.length() > 0) {
 						Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.WARNING, getName() );
 						alert.setDetail(
 								getDescription(), 
 								msg.getRequestHeader().getURI().toString(), 
 								"", //param
-								evidence, //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
-								getExtraInfo(msg, evidence, decodeddata),  //other info
+								base64evidence, //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+								getExtraInfo(msg, base64evidence, decodeddata),  //other info
 								getSolution(), 
 								getReference(), 
-								evidence,
+								base64evidence,
 								200, //Information Exposure, 
 								13, //Information Leakage
 								msg);  
