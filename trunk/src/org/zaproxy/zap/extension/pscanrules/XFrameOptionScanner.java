@@ -40,7 +40,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 			Vector<String> xFrameOption = msg.getResponseHeader().getHeaders(HttpHeader.X_FRAME_OPTION);
 			if (xFrameOption != null) {
 				for (String xFrameOptionParam : xFrameOption) {
-					if (xFrameOptionParam.toLowerCase().indexOf("deny") < 0 && xFrameOptionParam.toLowerCase().indexOf("sameorigin") < 0) {
+					if (xFrameOptionParam.toLowerCase().indexOf("deny") < 0 && xFrameOptionParam.toLowerCase().indexOf("sameorigin") < 0 && xFrameOptionParam.toLowerCase().indexOf("allow-from") < 0) {
 						this.raiseAlert(msg, id, xFrameOptionParam, false);
 					}
 				}
@@ -63,7 +63,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 		    	    xFrameOption,
 		    	    "", 
 		    	    "",
-		    	    "Most modern Web browsers support the X-Frame-Options HTTP header, ensure it's set on all web pages returned by your site (if you expect the page to be framed only by pages on your server (e.g. it's part of a FRAMESET) then you'll want to use SAMEORIGIN, otherwise if you never expect the page to be framed, you should use DENY).",
+		    	    "Most modern Web browsers support the X-Frame-Options HTTP header. Ensure it's set on all web pages returned by your site (if you expect the page to be framed only by pages on your server (e.g. it's part of a FRAMESET) then you'll want to use SAMEORIGIN, otherwise if you never expect the page to be framed, you should use DENY.  ALLOW-FROM allows specific websites to frame the web page in supported web browsers).",
 		            "http://blogs.msdn.com/b/ieinternals/archive/2010/03/30/combating-clickjacking-with-x-frame-options.aspx?Redirected=true", 
 		            "", // No evidence
 		            0,	// TODO CWE Id
