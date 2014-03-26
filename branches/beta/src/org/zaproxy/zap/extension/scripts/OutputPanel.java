@@ -119,15 +119,11 @@ public class OutputPanel extends AbstractPanel {
                         		Constant.messages.getString("scripts.output.clearOnRun.button.enabled.toolTip"));
                         clearOnRunButton.setIcon(CLEAR_ON_RUN_ENABLED_ICON);
                     	clearOnRun = true;
-                    	// Disable the clear button to make the distinction between the buttons more obvious 
-                    	clearButton.setEnabled(false);
                     } else {
                         clearOnRunButton.setToolTipText(
                         		Constant.messages.getString("scripts.output.clearOnRun.button.disabled.toolTip"));
                         clearOnRunButton.setIcon(CLEAR_ON_RUN_DISABLED_ICON);
                     	clearOnRun = false;
-                    	// Enable the clear button to make the distinction between the buttons more obvious 
-                    	clearButton.setEnabled(true);
                     }
                 };
             });

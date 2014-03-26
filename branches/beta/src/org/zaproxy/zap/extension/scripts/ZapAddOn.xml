@@ -11,7 +11,8 @@
 	Changed help file structure to support internationalisation (Issue 981).<br>
 	Fixed inconsistencies in run/stop buttons (Issue 1023).<br>
 	Fixed a NullPointerException (Issue 1025).<br>
-	Added content-type to help pages (Issue 1080).
+	Added content-type to help pages (Issue 1080).<br>
+	Changed to allow to clear the output panel even if "clear on run" is enabled (Issue 1103).
 	]]>
 	</changes>
 	<dependson/>
