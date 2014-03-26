@@ -7,7 +7,7 @@
 	<changes>
 	<![CDATA[
 	Moved templates from core<br>
-	Updated to use the latest core changes, other minor code changes (Issues 416, 609,  503 and 1085).<br>
+	Updated to use the latest core changes, other minor code changes (Issues 416, 609,  503, 1085 and 1104).<br>
 	Changed help file structure to support internationalisation (Issue 981).<br>
 	Added content-type to help pages (Issue 1080).
 	]]>
