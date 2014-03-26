@@ -20,73 +20,228 @@
 package org.zaproxy.zap.extension.zest;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.ZAP;
-import org.zaproxy.zap.view.HistoryReferenceTableModel;
+import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableModel;
+import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
+import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
 
-public class ZestResultsTableModel extends HistoryReferenceTableModel {
+public class ZestResultsTableModel extends
+        AbstractCustomColumnHistoryReferencesTableModel<ZestResultsTableModel.ZestResultsTableEntry> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ZestResultsTableModel(COLUMN[] columns) {
-		super(columns);
-	}
+    private static final String RESULT_COLUMN_NAME = Constant.messages.getString("zest.results.table.header.result");
 
-	@Override
-	public String getColumnName(int column) {
-		COLUMN col = this.getColumn(column);
-		switch (col) {
-		case CUSTOM_1:	return "";
-		case CUSTOM_2:	return Constant.messages.getString("zest.results.table.header.result");
-		default:	return super.getColumnName(column);
-		}
-	}
+    private List<ZestResultsTableEntry> results;
+    private SortedMap<Integer, Integer> historyIdToRow;
 
-	@Override
-	public Object getValueAt(int row, int column) {
-		COLUMN col = this.getColumn(column);
-		switch (col) {
-		case CUSTOM_1:
-			ZestResultWrapper zrw = (ZestResultWrapper)this.getHistoryReference(row);
-			if (zrw.getType().equals(ZestResultWrapper.Type.scanAction)) {
-				return new ImageIcon(ZAP.class.getResource("/resource/icon/16/093.png"));	// Flame
-			} else if (zrw.isPassed()) {
-				return new ImageIcon(ZAP.class.getResource("/resource/icon/16/102.png"));	// Red cross
-			} else {
-				return new ImageIcon(ZAP.class.getResource("/resource/icon/16/101.png"));	// Green tick
-			}
-		case CUSTOM_2:	return ((ZestResultWrapper)this.getHistoryReference(row)).getMessage();
-		default:	return super.getValueAt(row, column);
-		}
-		
-	}
+    public ZestResultsTableModel() {
+        super(new Column[] {
+                Column.HREF_ID,
+                Column.METHOD,
+                Column.URL,
+                Column.STATUS_CODE,
+                Column.STATUS_REASON,
+                Column.RTT,
+                Column.SIZE_RESPONSE_BODY,
+                Column.CUSTOM,
+                Column.CUSTOM });
 
-	@Override
-	public Class<?> getColumnClass(int columnIndex) {
-		COLUMN col = this.getColumn(columnIndex);
-		switch (col) {
-		case CUSTOM_1:	return ImageIcon.class;
-		case CUSTOM_2:	return String.class;
-		default:	return super.getColumnClass(columnIndex);
-		}
-	}
+        results = new ArrayList<>();
+        historyIdToRow = new TreeMap<>();
+    }
 
-	public int getIndex(HttpMessage message) {
-		for (int i=0; i < this.getRowCount(); i++) {
-			ZestResultWrapper zrw = ((ZestResultWrapper)this.getHistoryReference(i));
-			try {
-				if (zrw.getHttpMessage().hashCode() == message.hashCode()) {
-					return i;
-				}
-			} catch (HttpMalformedHeaderException | SQLException e) {
-				// Ignore
-			}
-		}
-		return -1;
-	}
+    @Override
+    public void clear() {
+        results = new ArrayList<>();
+        historyIdToRow = new TreeMap<>();
+
+        fireTableDataChanged();
+    }
+
+    @Override
+    public int getRowCount() {
+        return results.size();
+    }
+
+    @Override
+    protected Class<?> getColumnClass(Column column) {
+        return AbstractHistoryReferencesTableEntry.getColumnClass(column);
+    }
+
+    @Override
+    protected Object getPrototypeValue(Column column) {
+        return AbstractHistoryReferencesTableEntry.getPrototypeValue(column);
+    }
+
+    @Override
+    protected Object getCustomValueAt(ZestResultsTableEntry zrw, int columnIndex) {
+        switch (getCustomColumnIndex(columnIndex)) {
+        case 0:
+            return zrw.getIcon();
+        case 1:
+            return zrw.getMessage();
+        }
+        return null;
+    }
+
+    @Override
+    protected String getCustomColumnName(int columnIndex) {
+        switch (getCustomColumnIndex(columnIndex)) {
+        case 0:
+            return "";
+        case 1:
+            return RESULT_COLUMN_NAME;
+        }
+        return null;
+    }
+
+    @Override
+    protected Class<?> getCustomColumnClass(int columnIndex) {
+        switch (getCustomColumnIndex(columnIndex)) {
+        case 0:
+            return Icon.class;
+        case 1:
+            return String.class;
+        }
+        return null;
+    }
+
+    @Override
+    protected Object getCustomPrototypeValue(int columnIndex) {
+        if (getCustomColumnIndex(columnIndex) == 1) {
+            return "Some long message with some long text and variable length";
+        }
+        return null;
+    }
+
+    public void add(ZestResultWrapper href) {
+        addEntry(new ZestResultsTableEntry(href, getColumns()));
+    }
+
+    @Override
+    public void addEntry(ZestResultsTableEntry entry) {
+        int index = results.size();
+        results.add(entry);
+        historyIdToRow.put(entry.getHistoryId(), Integer.valueOf(index));
+        fireTableRowsInserted(index, index);
+    }
+
+    @Override
+    public void refreshEntryRow(int historyReferenceId) {
+        // Nothing to do.
+    }
+
+    @Override
+    public void removeEntry(int historyReferenceId) {
+        Integer key = Integer.valueOf(historyReferenceId);
+        Integer row = historyIdToRow.get(key);
+        if (row != null) {
+            final int rowIndex = row.intValue();
+
+            results.remove(rowIndex);
+            historyIdToRow.remove(key);
+
+            for (Entry<Integer, Integer> mapping : historyIdToRow.subMap(
+                    Integer.valueOf(key.intValue() + 1),
+                    Integer.valueOf(Integer.MAX_VALUE)).entrySet()) {
+                mapping.setValue(Integer.valueOf(mapping.getValue().intValue() - 1));
+            }
+
+            fireTableRowsDeleted(rowIndex, rowIndex);
+        }
+    }
+
+    @Override
+    public ZestResultsTableEntry getEntry(int rowIndex) {
+        return results.get(rowIndex);
+    }
+
+    @Override
+    public ZestResultsTableEntry getEntryWithHistoryId(int historyReferenceId) {
+        final int row = getEntryRowIndex(historyReferenceId);
+        if (row != -1) {
+            return results.get(row);
+        }
+        return null;
+    }
+
+    @Override
+    public int getEntryRowIndex(int historyReferenceId) {
+        final Integer row = historyIdToRow.get(Integer.valueOf(historyReferenceId));
+        if (row != null) {
+            return row.intValue();
+        }
+        return -1;
+    }
+
+    public ZestResultWrapper getHistoryReference(int row) {
+        return getEntry(row).getHistoryReference();
+    }
+
+    public int getIndex(HttpMessage message) {
+        for (int i = 0; i < results.size(); i++) {
+            ZestResultWrapper zrw = getHistoryReference(i);
+            try {
+                if (zrw.getHttpMessage().hashCode() == message.hashCode()) {
+                    return i;
+                }
+            } catch (HttpMalformedHeaderException | SQLException e) {
+                // Ignore
+            }
+        }
+        return -1;
+    }
+
+    public static class ZestResultsTableEntry extends DefaultHistoryReferencesTableEntry {
+
+        private static final Icon SCAN_ACTION = new ImageIcon(ZAP.class.getResource("/resource/icon/16/093.png"));// Flame
+
+        private static final Icon PASSED = new ImageIcon(ZAP.class.getResource("/resource/icon/16/102.png")); // Red cross
+
+        private static final Icon GREEN_TICK = new ImageIcon(ZAP.class.getResource("/resource/icon/16/101.png")); // Green tick
+
+        private final Icon icon;
+
+        private final String message;
+
+        public ZestResultsTableEntry(ZestResultWrapper zrw, Column[] columns) {
+            super(zrw, columns);
+
+            if (zrw.getType().equals(ZestResultWrapper.Type.scanAction)) {
+                icon = SCAN_ACTION;
+            } else if (zrw.isPassed()) {
+                icon = PASSED;
+            } else {
+                icon = GREEN_TICK;
+            }
+
+            this.message = zrw.getMessage();
+        }
+
+        @Override
+        public ZestResultWrapper getHistoryReference() {
+            return (ZestResultWrapper) super.getHistoryReference();
+        }
+
+        public Icon getIcon() {
+            return icon;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
 }

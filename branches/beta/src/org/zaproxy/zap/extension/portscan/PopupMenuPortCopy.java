@@ -64,21 +64,17 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
         	@Override
         	public void actionPerformed(java.awt.event.ActionEvent e) {
                 
-                if (extension.getPortScanPanel().getPortList().isSelectionEmpty()) {
+                if (extension.getPortScanPanel().isResultsSelectionEmpty()) {
                     return;
                 }
                 
-                List<Integer> values = extension.getPortScanPanel().getPortList().getSelectedValuesList();
+                List<PortScanResultEntry> results = extension.getPortScanPanel().getSelectedResults();
                 
                 StringBuilder sb = new StringBuilder();
-                for (Integer port : values) {
-                	sb.append(port);
+                for (PortScanResultEntry result : results) {
+                	sb.append(result.getPort());
                 	sb.append('\t');
-            		if (Constant.messages.containsKey("port." + port)) {
-            			sb.append(Constant.messages.getString("port." + port));
-            		} else {
-            			sb.append(Constant.messages.getString("port.unknown"));
-            		}
+            		sb.append(result.getDescription());
 
                 	sb.append('\n');
                 }
@@ -94,9 +90,9 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
 	
     @Override
     public boolean isEnableForComponent(Component invoker) {
-        if (invoker.getName() != null && invoker.getName().equals(PortScanPanel.PANEL_NAME)) {
+        if (PortScanPanel.RESULTS_TABLE_NAME.equals(invoker.getName())) {
             try {
-                if (extension.getPortScanPanel().getPortList().isSelectionEmpty()) {
+                if (extension.getPortScanPanel().isResultsSelectionEmpty()) {
                     this.setEnabled(false);
                 } else {
                     this.setEnabled(true);

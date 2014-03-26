@@ -19,19 +19,15 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.BorderLayout;
 import java.awt.Event;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -45,39 +41,38 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.history.HistoryFilter;
-import org.parosproxy.paros.extension.history.LogPanelCellRenderer;
-import org.parosproxy.paros.model.HistoryList;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.view.ScanStatus;
-import org.zaproxy.zap.view.messagecontainer.http.DefaultSelectableHistoryReferencesContainer;
-import org.zaproxy.zap.view.messagecontainer.http.SelectableHistoryReferencesContainer;
+import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
 /**
  * This class creates the Spider AJAX Panel where the found URLs are displayed
  * It has a button to stop the crawler and another one to open the options.
  *
  */
-public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListener {
+public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SpiderPanel.class);
+	
+	private static final String RESULTS_TABLE_NAME = "AjaxSpiderResultsTable";
+
 	private javax.swing.JScrollPane scrollLog = null;
-	private javax.swing.JList<HistoryReference> listLog = null;
 	private javax.swing.JPanel AJAXSpiderPanel = null;
 	private javax.swing.JToolBar panelToolbar = null;
 	private JLabel filterStatus = null;
-	private HttpPanel requestPanel = null;
-	private HttpPanel responsePanel = null;
     private ExtensionAjax extension = null;
 	private SpiderThread runnable = null;
-	private HistoryList list = null;
 	private JButton stopScanButton;
 	private JButton startScanButton;
 	private JButton optionsButton = null;
 	
+	private HistoryReferencesTable spiderResultsTable;
+	private AjaxSpiderResultsTableModel spiderResultsTableModel = new AjaxSpiderResultsTableModel();
+	private SortedSet<String> visitedUrls = new TreeSet<>();
+
 	private ScanStatus scanStatus = null;
 
 	private JLabel activeScansNameLabel = null;
@@ -100,7 +95,6 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 	 * 
 	 */
 	private  void initialize() {
-		this.list = new HistoryList();
 		this.setLayout(new BorderLayout());
 	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
 	    	this.setSize(600, 200);
@@ -130,10 +124,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 	private javax.swing.JScrollPane getScrollLog() {
 		if (scrollLog == null) {
 			scrollLog = new javax.swing.JScrollPane();
-			scrollLog.setViewportView(getListLog());
-			scrollLog.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			scrollLog.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			scrollLog.setPreferredSize(new java.awt.Dimension(800,200));
+			scrollLog.setViewportView(getSpiderResultsTable());
 			scrollLog.setName("scrollLog");
 		}
 		return scrollLog;
@@ -256,21 +247,13 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 	
 	/**
 	 * 
-	 * @return the History List
-	 */
-	public HistoryList getHistList(){
-		return this.list;
-	}
-	
-	/**
-	 * 
 	 * @param r history reference
 	 * @param msg the http message
 	 * @param url the targeted url
 	 */
 	private void addHistoryUrl(HistoryReference r, HttpMessage msg, String url){
 			if(isNewUrl(r, msg) && msg.getRequestHeader().getURI().toString().contains(url)){
-				this.getHistList().addElement(r);
+				this.spiderResultsTableModel.addHistoryReference(r);
 			}
 		}
 	
@@ -281,13 +264,7 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 	 * @return if the url is new or not
 	 */
 	private boolean isNewUrl(HistoryReference r, HttpMessage msg){
-		Enumeration<?> e = this.getHistList().elements();
-		while (e.hasMoreElements()) {
-			if (e.nextElement().toString().contains(msg.getRequestHeader().getURI().toString())) {
-				return false;
-			}
-		}
-		return true;
+		return !visitedUrls.contains(msg.getRequestHeader().getURI().toString());
 	}
 	
 	/**
@@ -386,234 +363,12 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 		return panelToolbar;
 	}
 
-	/**
-	 * This method initializes listLog
-	 * 
-	 * @return javax.swing.JList
-	 */
-	private javax.swing.JList<HistoryReference> getListLog() {
-		if (listLog == null) {
-			listLog = new javax.swing.JList<>(getHistList());
-			listLog.setDoubleBuffered(true);
-			listLog.setCellRenderer(getLogPanelCellRenderer());
-			listLog.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-			listLog.setName("ListLog");
-			listLog.setFont(new java.awt.Font("Default", java.awt.Font.PLAIN,
-					12));
-			listLog.setFixedCellHeight(16); // Significantly speeds up rendering
-			listLog.addMouseListener(new java.awt.event.MouseAdapter() {
-				@Override
-				public void mousePressed(java.awt.event.MouseEvent e) {
-					mouseClicked(e);
-				}
-
-				@Override
-				public void mouseReleased(java.awt.event.MouseEvent e) {
-					mouseClicked(e);
-				}
-
-				@Override
-				public void mouseClicked(java.awt.event.MouseEvent e) {
-					// right mouse button action
-					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0
-							|| e.isPopupTrigger()) {
-
-						// ZAP: Select history list item on right click
-						int Idx = listLog.locationToIndex(e.getPoint());
-						if (Idx >= 0) {
-							Rectangle Rect = listLog.getCellBounds(Idx, Idx);
-							Idx = Rect.contains(e.getPoint().x, e.getPoint().y) ? Idx
-									: -1;
-						}
-						if (Idx < 0
-								|| !listLog.getSelectionModel()
-										.isSelectedIndex(Idx)) {
-							listLog.getSelectionModel().clearSelection();
-							if (Idx >= 0) {
-								listLog.getSelectionModel()
-										.setSelectionInterval(Idx, Idx);
-							}
-						}
-
-						final List<HistoryReference> historyReferences = listLog.getSelectedValuesList();
-						SelectableHistoryReferencesContainer messageContainer = new DefaultSelectableHistoryReferencesContainer(
-								listLog.getName(),
-								listLog,
-								Collections.<HistoryReference> emptyList(),
-								historyReferences);
-						View.getSingleton().getPopupMenu().show(messageContainer, e.getX(), e.getY());
-						return;
-					}
-
-					if ((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0
-							&& e.getClickCount() > 1) { // double click
-						requestPanel.setTabFocus();
-						return;
-					}
-				}
-			});
-
-			listLog.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-
-				
-				@Override
-				public void valueChanged(javax.swing.event.ListSelectionEvent e) {
-					// ZAP: Changed to only display the message when there are
-					// no more selection changes.
-					if (!e.getValueIsAdjusting()) {
-						if (listLog.getSelectedValue() == null) {
-							return;
-						}
-
-						final HistoryReference historyRef = listLog
-								.getSelectedValue();
-
-						readAndDisplay(historyRef);
-					}
-				}
-			});
-		}
-		return listLog;
-	}
-
-	private Vector<HistoryReference> displayQueue = new Vector<>();
-	private Thread thread = null;
-	private LogPanelCellRenderer logPanelCellRenderer = null;
-	
-	/**
-	 * @param  the history reference to display
-	 */
-	protected void display(final HistoryReference historyRef) {
-		this.readAndDisplay(historyRef);
-		for (int i = 0; i < listLog.getModel().getSize(); i++) {
-			if (listLog.getModel().getElementAt(i)
-					.getHistoryId() == historyRef.getHistoryId()) {
-				listLog.setSelectedIndex(i);
-				listLog.ensureIndexIsVisible(i);
-				break;
-			}
-		}
-	}
-	
-	
-	/**
-	 * clear and displays the queue
-	 */
-	public void clearDisplayQueue() {
-		synchronized (displayQueue) {
-			displayQueue.clear();
-		}
-	}
-	
-	
-	/**
-	 * @param 
-	 */
-	private void readAndDisplay(final HistoryReference historyRef) {
-
-		synchronized (displayQueue) {
-
-			if (displayQueue.size() > 0) {
-				displayQueue.clear();
-			}
-			displayQueue.add(historyRef);
-		}
-
-		if (thread != null && thread.isAlive()) {
-			return;
-		}
-		thread = new Thread(this);
-		thread.setPriority(Thread.NORM_PRIORITY);
-		thread.start();
-	}
-
-	/**
-	 * @param
-	 */
-	public void setDisplayPanel(HttpPanel requestPanel, HttpPanel responsePanel) {
-		this.requestPanel = requestPanel;
-		this.responsePanel = responsePanel;
-
-	}    
-
-	
-	/**
-	 * 
-	 * @param msg the httpmessage to display
-	 */
-	private void displayMessage(HttpMessage msg) {
-
-		if (msg.getRequestHeader().isEmpty()) {
-			requestPanel.clearView(true);
-		} else {
-			requestPanel.setMessage(msg);
-		}
-
-		if (msg.getResponseHeader().isEmpty()) {
-			responsePanel.clearView(false);
-		} else {
-			responsePanel.setMessage(msg, true);
-		}
-	}
-	
-	/**
-	 *
-	 */
-	@Override
-	public void run() {
-		HistoryReference ref = null;
-		int count = 0;
-		do {
-			synchronized (displayQueue) {
-				count = displayQueue.size();
-				if (count == 0) {
-					break;
-				}
-
-				ref = displayQueue.get(0);
-				displayQueue.remove(0);
-			}
-			try {
-				final HttpMessage msg = ref.getHttpMessage();
-				EventQueue.invokeAndWait(new Runnable() {
-					@Override
-					public void run() {
-						displayMessage(msg);
-						listLog.requestFocus();
-					}
-				});
-
-			} catch (Exception e) {
-				// ZAP: Added logging.
-				logger.error(e.getMessage(), e);
-			}
-			// wait some time to allow another selection event to be triggered
-			try {
-				Thread.sleep(200);
-			} catch (Exception e) {
-			}
-		} while (true);
-
-	}
-
-	
-	/**
-	 * This method initializes logPanelCellRenderer
-	 * 
-	 * @return org.parosproxy.paros.extension.history.LogPanelCellRenderer
-	 */
-	private LogPanelCellRenderer getLogPanelCellRenderer() {
-		if (logPanelCellRenderer == null) {
-			logPanelCellRenderer = new LogPanelCellRenderer();
-			if (Model.getSingleton().getOptionsParam().getViewParam()
-					.getWmUiHandlingOption() == 0) {
-				logPanelCellRenderer.setSize(new java.awt.Dimension(328, 21));
-			}
-			logPanelCellRenderer.setBackground(java.awt.Color.white);
-			logPanelCellRenderer.setFont(new java.awt.Font("MS Sans Serif",
-					java.awt.Font.PLAIN, 12));
-		}
-		return logPanelCellRenderer;
+	private HistoryReferencesTable getSpiderResultsTable() {
+	    if (spiderResultsTable == null) {
+	        spiderResultsTable = new HistoryReferencesTable(spiderResultsTableModel);
+	        spiderResultsTable.setName(RESULTS_TABLE_NAME);
+	    }
+	    return spiderResultsTable;
 	}
 
 	/**
@@ -642,7 +397,8 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 		this.getStopScanButton().setEnabled(true);
 		this.activeScans.add(site);
 		this.setActiveScanLabels();
-		this.getHistList().clear();
+		spiderResultsTableModel.clear();
+		visitedUrls.clear();
 		this.targetSite = site;
 		try {
 			new Thread(runnable).start();
@@ -703,7 +459,8 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 	
 	public void reset() {
 		stopScan();
-		this.getHistList().clear();
+		spiderResultsTableModel.clear();
+		visitedUrls.clear();
 	}
 	
 	

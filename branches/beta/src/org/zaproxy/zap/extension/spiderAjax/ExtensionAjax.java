@@ -106,7 +106,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			@SuppressWarnings("unused")
 			ExtensionHookView pv = extensionHook.getHookView();
 			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
-			this.getSpiderPanel().setDisplayPanel(getView().getRequestPanel(), getView().getResponsePanel());
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
 			//scope control
 			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpider());

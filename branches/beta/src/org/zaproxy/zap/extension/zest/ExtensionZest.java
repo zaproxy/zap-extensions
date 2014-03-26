@@ -1219,7 +1219,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	public void failLastResult(Exception e) {
 		int lastRow = this.getZestResultsPanel().getModel().getRowCount() - 1;
-		ZestResultWrapper zrw = (ZestResultWrapper) this.getZestResultsPanel()
+		ZestResultWrapper zrw = this.getZestResultsPanel()
 				.getModel().getHistoryReference(lastRow);
 		zrw.setPassed(false);
 		// TODO use toUiFailureString varient?
@@ -1254,7 +1254,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	public void clearResults() {
 		if (View.isInitialised()) {
 			// Clear the previous results
-			this.getZestResultsPanel().getModel().removeAllElements();
+			this.getZestResultsPanel().getModel().clear();
 		}
 	}
 

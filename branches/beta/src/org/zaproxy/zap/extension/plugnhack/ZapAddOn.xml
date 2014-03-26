@@ -7,7 +7,7 @@
 	<changes>
 	<![CDATA[
 	Phase 2 support - intercepting, resending and fuzzing postMessages - TODO<br>
-	Updated to use the latest core changes (Issue 609).
+	Updated to use the latest core changes (Issues 609 and 503).
 	]]>
 	</changes>
 	<dependson/>

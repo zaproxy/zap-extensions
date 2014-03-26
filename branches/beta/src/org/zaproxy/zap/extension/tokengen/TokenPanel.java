@@ -28,12 +28,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -41,8 +39,6 @@ import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.ListCellRenderer;
-import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -56,19 +52,28 @@ public class TokenPanel extends AbstractPanel {
 	
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @deprecated (7) Replaced by {@link #RESULTS_TABLE_NAME}, the results are shown in a table. It will be removed in a future
+	 *             release.
+	 */
+	@Deprecated
 	public static final String PANEL_NAME = "tokenpanel";
 	
+	/**
+	 * The name of the table that shows the token get messages.
+	 */
+	public static final String RESULTS_TABLE_NAME = "TokenGenMessagesTable";
+
 	private ExtensionTokenGen extension = null;
 	private JPanel panelCommand = null;
 	private JToolBar panelToolbar = null;
 	private JScrollPane jScrollPane = null;
-    private TokenPanelCellRenderer portPanelCellRenderer = null;
-	private DefaultListModel<MessageSummary> resultsModel  = new DefaultListModel<MessageSummary>();
+	private TokenGenMessagesTableModel resultsModel  = new TokenGenMessagesTableModel();
 	private JTextPane initialMessage = null;
 
 	private JButton stopScanButton = null;
 	private JToggleButton pauseScanButton = null;
-	private JList<MessageSummary> tokenResultList = null;
+	private TokenGenMessagesTable tokenGenMessagesTable = null;
 	private JProgressBar progressBar = null;
 	private JButton loadButton = null;
 	private JButton saveButton = null;
@@ -303,7 +308,6 @@ public class TokenPanel extends AbstractPanel {
 			jScrollPane = new JScrollPane();
 			jScrollPane.setViewportView(getInitialMessage());
 			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
-			jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		}
 		return jScrollPane;
 	}
@@ -321,18 +325,17 @@ public class TokenPanel extends AbstractPanel {
 	}
 
 	private void resetTokenResultList() {
-		resultsModel = new DefaultListModel<>();
-		getTokenResultList().setModel(resultsModel);
+		resultsModel.clear();
 	}
 	
 	public int getTokenResultsSize() {
-		return this.resultsModel.getSize();
+		return this.resultsModel.getRowCount();
 	}
 	
 	protected void addTokenResult(final MessageSummary msg) {
 		
 		if (EventQueue.isDispatchThread()) {
-			resultsModel.addElement(msg);
+			resultsModel.addMessage(msg);
 			getProgressBar().setValue(getProgressBar().getValue() + 1);
 		    return;
 		}
@@ -340,97 +343,25 @@ public class TokenPanel extends AbstractPanel {
 			EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					resultsModel.addElement(msg);
-					getProgressBar().setValue(getProgressBar().getValue() + 1);
+					addTokenResult(msg);
 				}
 			});
 		} catch (Exception e) {
 		}
 	}
 
-	private JList<MessageSummary> getTokenResultList() {
-		if (tokenResultList == null) {
-			tokenResultList = new JList<>();
-			tokenResultList.setDoubleBuffered(true);
-			tokenResultList.setCellRenderer(getPortPanelCellRenderer());
-			tokenResultList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-			tokenResultList.setName(PANEL_NAME);
-			tokenResultList.setFont(new java.awt.Font("Default", java.awt.Font.PLAIN, 12));
+	private TokenGenMessagesTable getTokenGenMessagesTable() {
+		if (tokenGenMessagesTable == null) {
+			tokenGenMessagesTable = new TokenGenMessagesTable(resultsModel);
+			tokenGenMessagesTable.setName(RESULTS_TABLE_NAME);
 			
-			tokenResultList.setFixedCellHeight(16);	// Significantly speeds up rendering
-
-	        tokenResultList.addMouseListener(new java.awt.event.MouseAdapter() { 
-				@Override
-				public void mousePressed(java.awt.event.MouseEvent e) {    
-				    if (SwingUtilities.isRightMouseButton(e)) {
-				        View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
-				    }	
-				}
-			});
-
-	        // Disabled - we would either have to cache all the messages (which is expensive in memory)
-	        // or store all the messages in the db, which is slow
-	        /*
-			tokenResultList.addListSelectionListener(new javax.swing.event.ListSelectionListener() { 
-
-				@Override
-				public void valueChanged(javax.swing.event.ListSelectionEvent e) {
-				    if (tokenResultList.getSelectedValue() == null) {
-				        return;
-				    }
-                    
-				    displayMessage(tokenResultList.getSelectedValue());
-				}
-			});
-			*/
-			
-			resetTokenResultList();
+			// TODO Allow to show the messages in the request/response panels?
+			// we would either have to cache all the messages (which is expensive in memory)
+			// or store all the messages in the db, which is slow
 		}
-		return tokenResultList;
+		return tokenGenMessagesTable;
 	}
-
-	/*
-    private void displayMessage(HttpMessage msg) {
-		try {
-			requestPanel.setMessage(msg);
-			responsePanel.setMessage(msg);
-			
-	        String note = msg.getNote();
-	        if (note != null && note.length() > 0) {
-	        	int startIndex = msg.getResponseHeader().toString().indexOf(note);
-	        	if (startIndex >= 0) {
-	        		// Found the exact pattern - highlight it
-	        		SearchMatch sm = new SearchMatch(msg, SearchMatch.Location.RESPONSE_HEAD, startIndex, startIndex + note.length());
-	        		responsePanel.setTabFocus();
-	        		responsePanel.requestFocus();
-					responsePanel.highlightHeader(sm);
-	        	} else {
-		        	startIndex = msg.getResponseBody().toString().indexOf(note);
-		        	if (startIndex >= 0) {
-		        		// Found the exact pattern - highlight it
-		        		SearchMatch sm = new SearchMatch(msg, SearchMatch.Location.RESPONSE_BODY, startIndex, startIndex + note.length());
-		        		responsePanel.setTabFocus();
-		        		responsePanel.requestFocus();
-						responsePanel.highlightBody(sm);
-		        	}
-	        	}
-	        }
-		} catch (Exception e) {
-			log.error("Failed to access message ", e);
-		}
-    }
-    */
-
-	private ListCellRenderer<MessageSummary> getPortPanelCellRenderer() {
-        if (portPanelCellRenderer == null) {
-            portPanelCellRenderer = new TokenPanelCellRenderer();
-            portPanelCellRenderer.setSize(new java.awt.Dimension(328,21));
-            portPanelCellRenderer.setBackground(java.awt.Color.white);
-            portPanelCellRenderer.setFont(new java.awt.Font("MS Sans Serif", java.awt.Font.PLAIN, 12));
-        }
-        return portPanelCellRenderer;
-	}
-
+	
 	private void stopScan() {
 		log.debug("Stopping token generation");
 		extension.stopTokenGeneration ();
@@ -472,8 +403,8 @@ public class TokenPanel extends AbstractPanel {
 		
 				CharacterFrequencyMap cfm = new CharacterFrequencyMap();
 		
-				for (int i=0; i < this.resultsModel.getSize(); i++) {
-					MessageSummary msg = this.resultsModel.get(i);
+				for (int i=0; i < this.resultsModel.getRowCount(); i++) {
+					MessageSummary msg = this.resultsModel.getMessage(i);
 					if (msg.getToken() != null) {
 						cfm.addToken(msg.getToken());
 					}
@@ -505,7 +436,7 @@ public class TokenPanel extends AbstractPanel {
 		getProgressBar().setValue(0);
 		getProgressBar().setMaximum(reqCount);
 		
-		this.getJScrollPane().setViewportView(getTokenResultList());
+		this.getJScrollPane().setViewportView(getTokenGenMessagesTable());
 		this.setTabFocus();
 		resetTokenResultList();
 
