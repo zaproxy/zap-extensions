@@ -66,7 +66,8 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
      *
      * @return the ZAP id
      */
-    private int getId() {
+    @Override
+    public int getPluginId() {
         return 00003;
     }
 
@@ -186,7 +187,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                 // Raise an alert according to Passive Scan Rule model
                 // description, uri, param, attack, otherInfo, 
                 // solution, reference, evidence, cweId, wascId, msg
-                Alert alert = new Alert(getId(), getRisk(), Alert.WARNING, getName());
+                Alert alert = new Alert(getPluginId(), getRisk(), Alert.WARNING, getName());
                 alert.setDetail(
                         getDescription(),
                         uri,
@@ -279,7 +280,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                     // Raise an alert according to Passive Scan Rule model
                     // description, uri, param, attack, otherInfo, 
                     // solution, reference, evidence, cweId, wascId, msg
-                    Alert alert = new Alert(getId(), risk, Alert.WARNING, getRefererAlert());
+                    Alert alert = new Alert(getPluginId(), risk, Alert.WARNING, getRefererAlert());
                     alert.setDetail(
                             getRefererDescription(),
                             msg.getRequestHeader().getURI().getURI(),

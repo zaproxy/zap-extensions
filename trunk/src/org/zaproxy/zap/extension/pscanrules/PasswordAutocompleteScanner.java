@@ -46,7 +46,8 @@ public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 		// Ignore
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10012;
 	}
 
@@ -77,7 +78,7 @@ public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 								autoComplete = inputElement.getAttributeValue("AUTOCOMPLETE");
 								if (autoComplete == null || ! autoComplete.equalsIgnoreCase("OFF")) {
 									
-									Alert alert = new Alert(getId(), Alert.RISK_LOW, Alert.WARNING, 
+									Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
 										"Password Autocomplete in browser");
 										alert.setDetail(
 											"AUTOCOMPLETE attribute is not disabled in HTML FORM/INPUT element containing password type input.  Passwords may be stored in browsers and retrieved.", 

@@ -55,7 +55,7 @@ public class HeaderXssProtectionScanner extends PluginPassiveScanner {
 	}
 	
 	private void raiseAlert(HttpMessage msg, int id, String xssHeaderProtection) {
-		Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
 		    			"The x-xss-protection header has been disabled by the web application", 
@@ -73,7 +73,8 @@ public class HeaderXssProtectionScanner extends PluginPassiveScanner {
     	parent.raiseAlert(id, alert);
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10016;
 	}
 	

@@ -116,7 +116,7 @@ public class MixedContentScanner extends PluginPassiveScanner {
 			name = "Secure page includes mixed content, including scripts";
 			risk = Alert.RISK_MEDIUM;
 		}
-	    Alert alert = new Alert(getId(), risk, Alert.WARNING, name);
+	    Alert alert = new Alert(getPluginId(), risk, Alert.WARNING, name);
     	alert.setDetail(
     	    "The page includes mixed content, ie content accessed via http instead of https.", 
     	    msg.getRequestHeader().getURI().toString(),
@@ -134,7 +134,8 @@ public class MixedContentScanner extends PluginPassiveScanner {
 
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10011;
 	}
 

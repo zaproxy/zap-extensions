@@ -67,7 +67,7 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 	}
 	
 	private void raiseAlert(HttpMessage msg, int id, String cookie) {
-	    Alert alert = new Alert(getId(), Alert.RISK_LOW, Alert.WARNING, 
+	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
 		    	"Cookie set without HttpOnly flag");
 		    	alert.setDetail(
 		    		"A cookie has been set without the HttpOnly flag, which means that the cookie can be accessed by JavaScript. " +
@@ -86,7 +86,8 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10010;
 	}
 
