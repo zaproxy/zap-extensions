@@ -126,7 +126,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 	
 	private void raiseAlert(HttpMessage msg, int id, String paramName, String paramValue, 
 			String responseLocation) {
-		Alert alert = new Alert(getId(), Alert.RISK_HIGH, Alert.WARNING,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.WARNING,
 				getName());		
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
@@ -141,7 +141,8 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 		parent.raiseAlert(id, alert);
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10028;
 	}
 

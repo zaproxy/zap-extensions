@@ -185,7 +185,7 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 		            
 			        if ( evidence!=null && evidence.length() > 0) {
 						//we found something
-						Alert alert = new Alert(getId(), Alert.RISK_MEDIUM, Alert.WARNING, getName() + " - "+ hashType );
+						Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING, getName() + " - "+ hashType );
 						alert.setDetail(
 								getDescription() + " - "+ hashType, 
 								msg.getRequestHeader().getURI().toString(), 
@@ -219,7 +219,8 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 	 * get the id of the scanner
 	 * @return
 	 */
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10097;
 	}
 
