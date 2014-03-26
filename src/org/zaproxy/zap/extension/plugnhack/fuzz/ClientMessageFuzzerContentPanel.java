@@ -21,10 +21,10 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
 import org.zaproxy.zap.extension.fuzz.FuzzResult;
 import org.zaproxy.zap.extension.fuzz.FuzzerContentPanel;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
@@ -38,16 +38,17 @@ public class ClientMessageFuzzerContentPanel implements FuzzerContentPanel {
 	private JPanel panel = null;
 
 	private MessageListTableModel msgTableModel = null;
-	private JTable msgTable = null;
+	private JXTable msgTable = null;
 
 	public ClientMessageFuzzerContentPanel() {
 		
-		this.msgTable = new JTable(getMessageModel ());
+		this.msgTable = new JXTable(getMessageModel ());
 		//this.msgTable.setName(CLIENTS_MESSAGE_TABLE_NAME);
 		this.setMessageTableColumnSizes();
 		//this.msgTable.setFont(new Font("Dialog", Font.PLAIN, 11));
 		this.msgTable.setDoubleBuffered(true);
 		this.msgTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		this.msgTable.setColumnControlVisible(true);
 
 		panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
@@ -64,23 +65,18 @@ public class ClientMessageFuzzerContentPanel implements FuzzerContentPanel {
 	private void setMessageTableColumnSizes() {
 		
 		msgTable.getColumnModel().getColumn(0).setMinWidth(50);
-		msgTable.getColumnModel().getColumn(0).setMaxWidth(200);
 		msgTable.getColumnModel().getColumn(0).setPreferredWidth(100);	// Received
 		
 		msgTable.getColumnModel().getColumn(1).setMinWidth(20);
-		msgTable.getColumnModel().getColumn(1).setMaxWidth(20);
 		msgTable.getColumnModel().getColumn(1).setPreferredWidth(20);	// Changed icon
 		
 		msgTable.getColumnModel().getColumn(2).setMinWidth(50);
-		msgTable.getColumnModel().getColumn(2).setMaxWidth(200);
 		msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);	// Client
 		
 		msgTable.getColumnModel().getColumn(3).setMinWidth(100);
-		msgTable.getColumnModel().getColumn(3).setMaxWidth(200);
 		msgTable.getColumnModel().getColumn(3).setPreferredWidth(200);	// Type
 		
 		msgTable.getColumnModel().getColumn(4).setMinWidth(100);
-		//msgTable.getColumnModel().getColumn(4).setMaxWidth(200);
 		msgTable.getColumnModel().getColumn(4).setPreferredWidth(400);	// Data
 	}
 

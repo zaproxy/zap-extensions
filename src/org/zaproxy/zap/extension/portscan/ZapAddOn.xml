@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Changed to clear the results when the option "--Select Site--" is selected (Issue 606).<br>
-	Updated to use the latest core changes (Issue 609).
+	Updated to use the latest core changes (Issue 609).<br>
+	Changed to display the port scan results in a table (Issue 503).
 	]]>
 	</changes>
 	<dependson/>

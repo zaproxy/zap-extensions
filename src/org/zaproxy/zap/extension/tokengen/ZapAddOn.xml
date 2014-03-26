@@ -4,7 +4,12 @@
 	<description>Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated to use the latest core changes (Issue 609).</changes>
+	<changes>
+	<![CDATA[
+	Updated to use the latest core changes (Issue 609).<br>
+	Changed to display the messages generated in a table (Issue 503).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.tokengen.ExtensionTokenGen</extension>

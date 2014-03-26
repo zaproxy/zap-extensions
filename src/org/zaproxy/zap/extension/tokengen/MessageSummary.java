@@ -17,25 +17,29 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
+import java.util.Date;
+
 import org.parosproxy.paros.network.HttpMessage;
 
 public class MessageSummary {
 
-    private String method;
-    private String uriString;
-    private String statusCodeStr;
-    private String reasonPhrase;
-    private String timeElapsedMillis;
-    private String lengthStr;
-    private String token;
+    private final Date requestTimestamp;
+    private final String method;
+    private final String uriString;
+    private final Integer statusCodeStr;
+    private final String reasonPhrase;
+    private final Long timeElapsedMillis;
+    private final Long responseBodyLength;
+    private final String token;
 
 	public MessageSummary(HttpMessage msg) {
+	    this.requestTimestamp = new Date(msg.getTimeSentMillis());
 		this.method = msg.getRequestHeader().getMethod();
         this.uriString = msg.getRequestHeader().getURI().toString();
-        this.statusCodeStr = Integer.toString(msg.getResponseHeader().getStatusCode());
+        this.statusCodeStr = Integer.valueOf(msg.getResponseHeader().getStatusCode());
         this.reasonPhrase = msg.getResponseHeader().getReasonPhrase();
-        this.timeElapsedMillis = Integer.toString(msg.getTimeElapsedMillis());
-        this.lengthStr = Integer.toString(msg.getResponseBody().toString().length());
+        this.timeElapsedMillis = Long.valueOf(msg.getTimeElapsedMillis());
+        this.responseBodyLength = Long.valueOf(msg.getResponseBody().toString().length());
         this.token = msg.getNote();        // The note is used to store the token 
 	}
 
@@ -43,11 +47,11 @@ public class MessageSummary {
 		return method;
 	}
 
-	public String getUriString() {
+	public String getUri() {
 		return uriString;
 	}
 
-	public String getStatusCodeStr() {
+	public Integer getStatusCode() {
 		return statusCodeStr;
 	}
 
@@ -55,17 +59,21 @@ public class MessageSummary {
 		return reasonPhrase;
 	}
 
-	public String getTimeElapsedMillis() {
+	public Long getTimeElapsedMillis() {
 		return timeElapsedMillis;
 	}
 
-	public String getLengthStr() {
-		return lengthStr;
+	public Long getResponseBodyLength() {
+		return responseBodyLength;
 	}
 
 	public String getToken() {
 		return token;
 	}
+
+    public Date getRequestTimestamp() {
+        return requestTimestamp;
+    }
 
     
 }

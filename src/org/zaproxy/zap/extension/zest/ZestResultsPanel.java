@@ -28,15 +28,13 @@ import java.util.List;
 
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.view.HistoryReferenceTable;
-import org.zaproxy.zap.view.HistoryReferenceTableModel.COLUMN;
 import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
 public class ZestResultsPanel extends AbstractPanel {
 
@@ -44,16 +42,12 @@ public class ZestResultsPanel extends AbstractPanel {
 
 	public static final String TABLE_NAME = "ZestResultsTable";
 	
-	private static COLUMN[] COLS = 
-		{COLUMN.HREF_ID, COLUMN.METHOD, COLUMN.URL, COLUMN.CODE, COLUMN.REASON, COLUMN.RTT, COLUMN.SIZE, COLUMN.CUSTOM_1, COLUMN.CUSTOM_2};
-	private static int[] SIZES = {20, 20, 400, 20, 80, 20, 40, 20, 400};
-	
 	@SuppressWarnings("unused")
 	private ExtensionZest extension = null;
 
 	private javax.swing.JPanel zestPanel = null;
 	private JScrollPane jScrollPane = null;
-	private HistoryReferenceTable resultsTable = null;
+	private HistoryReferencesTable resultsTable = null;
 	private ZestResultsTableModel model = null;
 
 	public ZestResultsPanel(ExtensionZest extension) {
@@ -97,24 +91,11 @@ public class ZestResultsPanel extends AbstractPanel {
 		return jScrollPane;
 	}
 
-	private HistoryReferenceTable getResultsTable () {
+	private HistoryReferencesTable getResultsTable () {
 		if (this.resultsTable == null) {
-			this.model = new ZestResultsTableModel(COLS);
-			this.resultsTable = new HistoryReferenceTable(model) {
-
-				private static final long serialVersionUID = 557191363644673221L;
-
-				@Override
-				public HistoryReference getSelectedValue() {
-					if (this.getSelectedRow() >= 0) {
-						return model.getHistoryReference(resultsTable.convertRowIndexToModel(this.getSelectedRow()));
-					}
-					return null;
-				}
-			};
+			this.model = new ZestResultsTableModel();
+			this.resultsTable = new HistoryReferencesTable(model);
 			this.resultsTable.setName(TABLE_NAME);
-			this.resultsTable.setColumnSizes(SIZES);
-			this.resultsTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		}
 		return this.resultsTable;
 	}
@@ -124,7 +105,7 @@ public class ZestResultsPanel extends AbstractPanel {
 	}
 
 	public boolean isSelectedMessage(Message message) {
-		List<HistoryReference> hrefs = this.getResultsTable().getSelectedValues();
+		List<HistoryReference> hrefs = this.getResultsTable().getSelectedHistoryReferences();
 
 		if (hrefs.size() == 1) {
 			try {

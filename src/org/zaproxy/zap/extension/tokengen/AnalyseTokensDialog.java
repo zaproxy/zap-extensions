@@ -36,9 +36,9 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
@@ -53,7 +53,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 	private JPanel jTabPanel2 = null;
 	private JPanel jTabPanel3 = null;
 
-	private JTable tableTests = null;
+	private JXTable tableTests = null;
 	private TokenAnalysisResultsTableModel testTableModel = null;
 	private JScrollPane testsScrollPane = null;
 	private JScrollPane detailsScrollPane = null;
@@ -129,12 +129,13 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 		return jPanel;
 	}
 	
-	private JTable getTableTests() {
+	private JXTable getTableTests() {
 		if (tableTests == null) {
-			tableTests = new JTable();
+			tableTests = new JXTable();
 			tableTests.setModel(getTokenAnalysisResultsTableModel());
 			tableTests.setRowHeight(18);
 			tableTests.setIntercellSpacing(new java.awt.Dimension(1,1));
+			tableTests.setColumnControlVisible(true);
 			
 			tableTests.getColumnModel().getColumn(0).setPreferredWidth(300);
 			tableTests.getColumnModel().getColumn(1).setPreferredWidth(20);

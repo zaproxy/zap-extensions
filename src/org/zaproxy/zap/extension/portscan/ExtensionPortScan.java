@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
@@ -253,11 +251,11 @@ public class ExtensionPortScan extends ExtensionAdaptor
         String siteName = PortScanPanel.cleanSiteName(site, false);
         PortScan scan = (PortScan) getPortScanPanel().getScanThread(siteName);
         if (scan != null) {
-            DefaultListModel<Integer> portListModel = scan.getList();
-            int size = portListModel.getSize();
+            PortScanResultsTableModel portScanResults = scan.getResultsTableModel();
+            int size = portScanResults.getRowCount();
             List<Integer> ports = new ArrayList<>(size);
             for(int i=0; i<size; i++) {
-                ports.add(portListModel.get(i));
+                ports.add(portScanResults.getResult(i).getPort());
             }
             return ports;
         }

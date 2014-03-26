@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
+import java.awt.EventQueue;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -303,12 +304,18 @@ public class SpiderThread implements Runnable {
 		}
 
 		@Override
-		public boolean onHttpResponseReceived(HttpMessage httpMessage) {
+		public boolean onHttpResponseReceived(final HttpMessage httpMessage) {
 			try {
-				HistoryReference historyRef = new HistoryReference(session, HistoryReference.TYPE_SPIDER_AJAX, httpMessage);
+				final HistoryReference historyRef = new HistoryReference(session, HistoryReference.TYPE_SPIDER_AJAX, httpMessage);
 				historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
-				session.getSiteTree().addPath(historyRef, httpMessage);
-				notifySpiderListenersFoundMessage(historyRef, httpMessage);
+				EventQueue.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						session.getSiteTree().addPath(historyRef, httpMessage);
+						notifySpiderListenersFoundMessage(historyRef, httpMessage);
+					}
+				});
 			} catch (Exception e) {
 				logger.error(e);
 			}

@@ -36,7 +36,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -45,6 +44,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
@@ -74,7 +74,7 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 	private JList<MonitoredPage> clientsList = null;
 	
 	private MessageListTableModel msgTableModel = null;
-	private JTable msgTable = null;
+	private JXTable msgTable = null;
 	
 	private HttpPanelRequest requestPanel = null;
 	private HttpPanelResponse responsePanel = null;
@@ -261,14 +261,15 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 		return this.msgTableModel;
 	}
 
-	private JTable getMessageTable() {
+	private JXTable getMessageTable() {
 		if (this.msgTable == null) {
-			this.msgTable = new JTable(this.getMessageModel());
+			this.msgTable = new JXTable(this.getMessageModel());
 			this.msgTable.setName(CLIENTS_MESSAGE_TABLE_NAME);
 			this.setMessageTableColumnSizes();
 			//this.msgTable.setFont(new Font("Dialog", Font.PLAIN, 11));
 			this.msgTable.setDoubleBuffered(true);
 			this.msgTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			this.msgTable.setColumnControlVisible(true);
 			
 			this.msgTable.addMouseListener(new MouseAdapter() { 
 			    @Override
@@ -308,23 +309,18 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 	private void setMessageTableColumnSizes() {
 		
 		msgTable.getColumnModel().getColumn(0).setMinWidth(50);
-		msgTable.getColumnModel().getColumn(0).setMaxWidth(200);
 		msgTable.getColumnModel().getColumn(0).setPreferredWidth(100);	// Received
 		
 		msgTable.getColumnModel().getColumn(1).setMinWidth(20);
-		msgTable.getColumnModel().getColumn(1).setMaxWidth(20);
 		msgTable.getColumnModel().getColumn(1).setPreferredWidth(20);	// Changed icon
 		
 		msgTable.getColumnModel().getColumn(2).setMinWidth(50);
-		msgTable.getColumnModel().getColumn(2).setMaxWidth(200);
 		msgTable.getColumnModel().getColumn(2).setPreferredWidth(100);	// Client
 		
 		msgTable.getColumnModel().getColumn(3).setMinWidth(100);
-		msgTable.getColumnModel().getColumn(3).setMaxWidth(200);
 		msgTable.getColumnModel().getColumn(3).setPreferredWidth(200);	// Type
 		
 		msgTable.getColumnModel().getColumn(4).setMinWidth(100);
-		//msgTable.getColumnModel().getColumn(4).setMaxWidth(200);
 		msgTable.getColumnModel().getColumn(4).setPreferredWidth(400);	// Data
 	}
 

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.portscan;
 
+import java.awt.EventQueue;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -39,291 +40,333 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ScanListenner;
 import org.zaproxy.zap.model.ScanThread;
 import org.zaproxy.zap.users.User;
-import org.zaproxy.zap.utils.SortedListModel;
 
 public class PortScan extends ScanThread implements ScanListenner {
 
-	private String site;
-	private SortedListModel<Integer> list = new SortedListModel<>();
-	private boolean stopScan = false;
-	private boolean pauseScan = false;
-	private boolean unpauseScan = false;
-	private boolean isPaused = false;
-	private ScanListenner listenner;
-	private int maxPort = 0;
-	private int threads = 0;
-	private int threadIndex = -1;
-	private int port = 0;
-	private int progress = 0;
-	private int timeout = 0;
-	private boolean useProxy = true;
-	private List<PortScan> subThreads = new ArrayList<>();
-	
+    private String site;
+    private PortScanResultsTableModel resultsTableModel = new PortScanResultsTableModel();
+    private boolean stopScan = false;
+    private boolean pauseScan = false;
+    private boolean unpauseScan = false;
+    private boolean isPaused = false;
+    private ScanListenner listenner;
+    private int maxPort = 0;
+    private int threads = 0;
+    private int threadIndex = -1;
+    private int port = 0;
+    private int progress = 0;
+    private int timeout = 0;
+    private boolean useProxy = true;
+    private List<PortScan> subThreads = new ArrayList<>();
+
     private static Logger log = Logger.getLogger(PortScan.class);
 
-	public PortScan (String site, ScanListenner listenner, PortScanParam portScanParam) {
-		super(site, listenner);
-		this.site = site;
-		this.listenner = listenner;
-		this.maxPort = portScanParam.getMaxPort();
-		this.threads = portScanParam.getThreadPerScan();
-		this.timeout = portScanParam.getTimeoutInMs();
-		this.useProxy = portScanParam.isUseProxy();
+    public PortScan(String site, ScanListenner listenner, PortScanParam portScanParam) {
+        super(site, listenner);
+        this.site = site;
+        this.listenner = listenner;
+        this.maxPort = portScanParam.getMaxPort();
+        this.threads = portScanParam.getThreadPerScan();
+        this.timeout = portScanParam.getTimeoutInMs();
+        this.useProxy = portScanParam.isUseProxy();
 
-		log.debug("PortScan : " + site + " threads: " + threads);
-	}
-	
-	private PortScan (String site, ScanListenner listenner, SortedListModel<Integer> list, int maxPort, int threads, int threadIndex) {
-		super(site, listenner);
-		this.site = site;
-		this.listenner = listenner;
-		this.maxPort = maxPort;
-		this.threads = threads;
-		this.threadIndex = threadIndex;
+        log.debug("PortScan : " + site + " threads: " + threads);
+    }
 
-		this.list = list;
-		log.debug("PortScan : " + site + " threads: " + threads + " threadIndex: " + threadIndex);
-	}
-	
-	@Override
-	public void run() {
-		if (threads > 1 && threadIndex == -1) {
-			// Start the sub threads
-			runSubThreads();
-		} else {
-			// This is a sub thread
-			runScan();
-		}
-		if (this.listenner != null) {
-			this.listenner.scanFinshed(site);
-		}
-		stopScan = true;
-	}
-	
-	private void runScan() {
-		// Do the scan
-		// If there are multiple sub threads then they will start at a different point
-		Date start = new Date();
-		log.debug("Starting scan on " + site + " at " + start);
-		list.clear();
+    private PortScan(
+            String site,
+            ScanListenner listenner,
+            PortScanResultsTableModel resultsTableModel,
+            int maxPort,
+            int threads,
+            int threadIndex) {
+        super(site, listenner);
+        this.site = site;
+        this.listenner = listenner;
+        this.maxPort = maxPort;
+        this.threads = threads;
+        this.threadIndex = threadIndex;
 
-		stopScan = false;
-		int startPort = threadIndex;
-		if (startPort < 1) {
-			startPort = 1;
-		}
+        this.resultsTableModel = resultsTableModel;
+        log.debug("PortScan : " + site + " threads: " + threads + " threadIndex: " + threadIndex);
+    }
 
-		ConnectionParam connParams = Model.getSingleton().getOptionsParam().getConnectionParam();
-		SocketAddress sa = new InetSocketAddress(connParams.getProxyChainName(), connParams.getProxyChainPort());
-		final java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.SOCKS, sa);
+    @Override
+    public void run() {
+        if (threads > 1 && threadIndex == -1) {
+            // Start the sub threads
+            runSubThreads();
+        } else {
+            // This is a sub thread
+            runScan();
+        }
+        if (this.listenner != null) {
+            this.listenner.scanFinshed(site);
+        }
+        stopScan = true;
+    }
 
-		for (port = startPort; port < maxPort; port += threads) {
-			try {
-				if (pauseScan) {
-					pauseScan = false;
-					isPaused = true;
-					for (PortScan ps : subThreads) {
-						ps.pauseScan();
-					}
-					while (! stopScan && ! unpauseScan) {
-						try {
-							sleep (500);
-						} catch (InterruptedException e) {
-							// Ignore
-						}
-					}
-					isPaused = false;
-					for (PortScan ps : subThreads) {
-						ps.resumeScan();
-					}
-				}
-				if (stopScan) {
-					log.debug("Scanned stopped");
-					break;
-				}
-				if (this.listenner != null) {
-					this.listenner.scanProgress(site, port, maxPort);
-				}
+    private void runScan() {
+        // Do the scan
+        // If there are multiple sub threads then they will start at a different point
+        Date start = new Date();
+        log.debug("Starting scan on " + site + " at " + start);
+        reset();
 
-				Socket s = null;
-				if (useProxy && Model.getSingleton().getOptionsParam().getConnectionParam().isUseProxy(site)) {
-					
-					FutureTask<Integer> ft = new FutureTask<>(new Callable<Integer>() {
-						@Override
-						public Integer call() {
-							Socket s = new Socket(proxy);
-							SocketAddress endpoint = new InetSocketAddress(site, port);
-							try {
-								s.connect(endpoint, timeout);
-								s.close();
-							} catch (IOException e) {
-								return null;
-							}
-							return port;
-							
-						}});
-					new Thread(ft).start();
-					try {
-						ft.get(2, TimeUnit.SECONDS);
-					} catch (Exception e) {
-						ft.cancel(true);
-						throw new IOException();
-					}
-					
-				} else {
-					// Not using a proxy
-					s = new Socket();
-					s.connect(new InetSocketAddress(site, port), timeout);
-					s.close();
-				}
-				log.debug("Site : " + site + " open port: " + port);
-				synchronized (list) {
-					list.addElement(port);
-				}
-			} catch (IOException ex) {
-				// The host is not listening on this port
-			}
-		}
-		Date stop = new Date();
-		log.debug("Finished scan on " + site + " at " + stop);
-		log.debug("Took " + ((stop.getTime() - start.getTime())/60000) + " mins " );
-	}
+        stopScan = false;
+        int startPort = threadIndex;
+        if (startPort < 1) {
+            startPort = 1;
+        }
 
-	private void runSubThreads() {
-		for (int i=0; i < threads; i++) {
-			PortScan ps = new PortScan(site, this, list, maxPort, threads, i+1);
-			subThreads.add(ps);
-			ps.start();
-		}
-		boolean running = true;
-		while (running) {
-			running = false;
-			for (PortScan st : subThreads) {
-				if (stopScan) {
-					st.stopScan();
-				}
-				if (pauseScan) {
-					unpauseScan = false;
-					st.pauseScan();
-				}
-				if (unpauseScan) {
-					pauseScan = false;
-					st.resumeScan();
-				}
-				if (st.isAlive()) {
-					running = true;
-				}
-			}
-			if (running) {
-				try {
-					sleep (500);
-				} catch (InterruptedException e) {
-					// Ignore
-				}
-			}
-		}
-	}
+        ConnectionParam connParams = Model.getSingleton().getOptionsParam().getConnectionParam();
+        SocketAddress sa = new InetSocketAddress(connParams.getProxyChainName(), connParams.getProxyChainPort());
+        final java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.SOCKS, sa);
 
-	@Override
-	public void stopScan() {
-		stopScan = true;
-	}
+        for (port = startPort; port < maxPort; port += threads) {
+            try {
+                if (pauseScan) {
+                    pauseScan = false;
+                    isPaused = true;
+                    for (PortScan ps : subThreads) {
+                        ps.pauseScan();
+                    }
+                    while (!stopScan && !unpauseScan) {
+                        try {
+                            sleep(500);
+                        } catch (InterruptedException e) {
+                            // Ignore
+                        }
+                    }
+                    isPaused = false;
+                    for (PortScan ps : subThreads) {
+                        ps.resumeScan();
+                    }
+                }
+                if (stopScan) {
+                    log.debug("Scanned stopped");
+                    break;
+                }
+                if (this.listenner != null) {
+                    this.listenner.scanProgress(site, port, maxPort);
+                }
 
-	@Override
-	public boolean isStopped() {
-		return stopScan;
-	}
-	
-	@Override
-	public boolean isRunning() {
-		return this.isAlive();
-	}
+                Socket s = null;
+                if (useProxy && Model.getSingleton().getOptionsParam().getConnectionParam().isUseProxy(site)) {
 
-	@Override
-	public String getSite() {
-		return site;
-	}
-	
-	@Override
-	public int getProgress () {
-		return progress;
-	}
+                    FutureTask<Integer> ft = new FutureTask<>(new Callable<Integer>() {
 
-	 int getMaxPort() {
-		return this.maxPort;
-	}
+                        @Override
+                        public Integer call() {
+                            Socket s = new Socket(proxy);
+                            SocketAddress endpoint = new InetSocketAddress(site, port);
+                            try {
+                                s.connect(endpoint, timeout);
+                                s.close();
+                            } catch (IOException e) {
+                                return null;
+                            }
+                            return port;
 
-	@Override
-	public DefaultListModel<Integer> getList() {
-		return list;
-	}
+                        }
+                    });
+                    new Thread(ft).start();
+                    try {
+                        ft.get(2, TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        ft.cancel(true);
+                        throw new IOException();
+                    }
 
-	@Override
-	public void scanFinshed(String host) {
-		// Ignore
-	}
+                } else {
+                    // Not using a proxy
+                    s = new Socket();
+                    s.connect(new InetSocketAddress(site, port), timeout);
+                    s.close();
+                }
+                log.debug("Site : " + site + " open port: " + port);
 
-	@Override
-	public void scanProgress(String host, int progress, int maximum) {
-		if (progress > this.progress) {
-			this.progress = progress;
-			this.listenner.scanProgress(site, progress, maximum);
-		}
-	}
+                addResult(port);
+            } catch (IOException ex) {
+                // The host is not listening on this port
+            }
+        }
+        Date stop = new Date();
+        log.debug("Finished scan on " + site + " at " + stop);
+        log.debug("Took " + ((stop.getTime() - start.getTime()) / 60000) + " mins ");
+    }
 
-	@Override
-	public void pauseScan() {
-		this.pauseScan = true;
-		this.unpauseScan = false;
-		this.isPaused = true;
-	}
+    private void addResult(final int port) {
+        if (EventQueue.isDispatchThread()) {
+            resultsTableModel.addPort(port);
+        } else {
+            EventQueue.invokeLater(new Runnable() {
 
-	@Override
-	public void resumeScan() {
-		this.unpauseScan = true;
-		this.pauseScan = false;
-		this.isPaused = false;
-	}
-	
-	@Override
-	public boolean isPaused() {
-		return this.isPaused;
-	}
+                @Override
+                public void run() {
+                    addResult(port);
+                }
+            });
+        }
+    }
 
-	@Override
-	public int getMaximum() {
-		return maxPort;
-	}
+    private void runSubThreads() {
+        for (int i = 0; i < threads; i++) {
+            PortScan ps = new PortScan(site, this, resultsTableModel, maxPort, threads, i + 1);
+            subThreads.add(ps);
+            ps.start();
+        }
+        boolean running = true;
+        while (running) {
+            running = false;
+            for (PortScan st : subThreads) {
+                if (stopScan) {
+                    st.stopScan();
+                }
+                if (pauseScan) {
+                    unpauseScan = false;
+                    st.pauseScan();
+                }
+                if (unpauseScan) {
+                    pauseScan = false;
+                    st.resumeScan();
+                }
+                if (st.isAlive()) {
+                    running = true;
+                }
+            }
+            if (running) {
+                try {
+                    sleep(500);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+            }
+        }
+    }
 
-	@Override
-	public void reset() {
-		this.list = new SortedListModel<>();
-	}
+    @Override
+    public void stopScan() {
+        stopScan = true;
+    }
 
-	@Override
-	public void setJustScanInScope(boolean scanInScope) {
-		// Dont support
-	}
+    @Override
+    public boolean isStopped() {
+        return stopScan;
+    }
 
-	@Override
-	public boolean getJustScanInScope() {
-		// Dont support
-		return false;
-	}
+    @Override
+    public boolean isRunning() {
+        return this.isAlive();
+    }
 
-	@Override
-	public void setScanChildren(boolean scanChildren) {
-		// Dont support
-	}
+    @Override
+    public String getSite() {
+        return site;
+    }
 
-	@Override
-	public void setScanContext(Context context) {
-		// Don't support			
-	}
+    @Override
+    public int getProgress() {
+        return progress;
+    }
 
-	@Override
-	public void setScanAsUser(User user) {
-		// Don't support			
-	}
+    int getMaxPort() {
+        return this.maxPort;
+    }
+
+    /**
+     * @deprecated (7) No longer supported, throws UnsupportedOperationException. Use {@code getResultsTableModel()} instead.
+     *             Port Scan results are shown in a table thus it uses a {@code TableModel} ({@code PortScanResultsTableModel}).
+     * @throws UnsupportedOperationException to indicate that is no longer supported.
+     * @see PortScanResultsTableModel
+     * @see #getResultsTableModel()
+     */
+    @Override
+    @Deprecated
+    public DefaultListModel<Integer> getList() {
+        throw new UnsupportedOperationException("");
+    }
+
+    public PortScanResultsTableModel getResultsTableModel() {
+        return resultsTableModel;
+    }
+
+    @Override
+    public void scanFinshed(String host) {
+        // Ignore
+    }
+
+    @Override
+    public void scanProgress(String host, int progress, int maximum) {
+        if (progress > this.progress) {
+            this.progress = progress;
+            this.listenner.scanProgress(site, progress, maximum);
+        }
+    }
+
+    @Override
+    public void pauseScan() {
+        this.pauseScan = true;
+        this.unpauseScan = false;
+        this.isPaused = true;
+    }
+
+    @Override
+    public void resumeScan() {
+        this.unpauseScan = true;
+        this.pauseScan = false;
+        this.isPaused = false;
+    }
+
+    @Override
+    public boolean isPaused() {
+        return this.isPaused;
+    }
+
+    @Override
+    public int getMaximum() {
+        return maxPort;
+    }
+
+    @Override
+    public void reset() {
+        if (EventQueue.isDispatchThread()) {
+            resultsTableModel.clear();
+        } else {
+            EventQueue.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    reset();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void setJustScanInScope(boolean scanInScope) {
+        // Dont support
+    }
+
+    @Override
+    public boolean getJustScanInScope() {
+        // Dont support
+        return false;
+    }
+
+    @Override
+    public void setScanChildren(boolean scanChildren) {
+        // Dont support
+    }
+
+    @Override
+    public void setScanContext(Context context) {
+        // Don't support
+    }
+
+    @Override
+    public void setScanAsUser(User user) {
+        // Don't support
+    }
 
 }
