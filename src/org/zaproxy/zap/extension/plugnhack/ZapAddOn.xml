@@ -8,7 +8,8 @@
 	<![CDATA[
 	Phase 2 support - intercepting, resending and fuzzing postMessages - TODO<br>
 	Updated to use the latest core changes (Issues 609 and 503).<br>
-	Changed help file structure to support internationalisation (Issue 981).
+	Changed help file structure to support internationalisation (Issue 981).<br>
+	Added content-type to help pages (Issue 1080).
 	]]>
 	</changes>
 	<dependson/>

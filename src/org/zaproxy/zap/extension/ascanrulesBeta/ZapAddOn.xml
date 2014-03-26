@@ -11,7 +11,8 @@
 	Promoted PXSS tests to beta.</br>
 	Promoted Command Injection release.</br>
 	Promoted new Expression Language Plugin to test JSP EL Injection.</br> 
-	Changed help file structure to support internationalisation (Issue 981).
+	Changed help file structure to support internationalisation (Issue 981).<br>
+	Added content-type to help pages (Issue 1080).
 	]]>
 	</changes>
 	<dependson/>
