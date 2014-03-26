@@ -293,7 +293,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	 */
 	@Override
 	public String getHelpIndex() {
-		return "ui.dialogs.options.spiderAjax";
+		return "addon.spiderajax.options";
 	}
 	
   }  //  @jve:decl-index=0:visual-constraint="10,10"
