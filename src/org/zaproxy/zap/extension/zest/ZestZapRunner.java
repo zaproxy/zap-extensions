@@ -166,7 +166,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	}
 
 	private void notifyActionFailed(ZestActionFailException e) {
-    	log.debug("notifyActionFailed " + e);
+    	log.debug("notifyActionFailed", e);
 		if (e.getAction() instanceof ZestActionFail) {
 			int risk = Alert.RISK_LOW;
 			ZestActionFail zaf = (ZestActionFail)e.getAction();
@@ -214,7 +214,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	}
 
 	private void notifyAssignFailed(ZestAssignFailException e) {
-    	log.debug("notifyAssignFailed " + e);
+    	log.debug("notifyAssignFailed", e);
 		if (View.isInitialised()) {
 			if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
 				if (! ZestScript.Type.Passive.equals(wrapper.getZestScript().getType())) {
