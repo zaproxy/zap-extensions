@@ -81,6 +81,7 @@ import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.dialogs.ZestDialogManager;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		ScriptEventListener {
@@ -102,7 +103,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
 
 	private ZestResultsPanel zestResultsPanel = null;
-	private JToggleButton recordButton = null;
+	private ZapToggleButton recordButton = null;
 
 
 	private ZestTreeModel zestTreeModel = null;
@@ -262,9 +263,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	
 	private JToggleButton getRecordButton() {
 		if (recordButton == null) {
-			recordButton = new JToggleButton();
+			recordButton = new ZapToggleButton();
 			recordButton.setIcon(RECORD_OFF_ICON);
 			recordButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.record.off"));
+			recordButton.setSelectedToolTipText(Constant.messages.getString("zest.toolbar.button.record.on"));
 			
 			recordButton.addActionListener(new java.awt.event.ActionListener() {
 				@Override
@@ -272,7 +274,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 					if (recordButton.isSelected()) {
 						getDialogManager().showZestEditScriptDialog(null, null, true, true);
 						recordButton.setIcon(RECORD_ON_ICON);
-						recordButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.record.on"));
 					} else {
 						cancelScriptRecording();
 					}
@@ -291,7 +292,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		}
 		getRecordButton().setSelected(false);
 		getRecordButton().setIcon(RECORD_OFF_ICON);
-		getRecordButton().setToolTipText(Constant.messages.getString("zest.toolbar.button.record.off"));
 	}
 
 	public void setRecording(ScriptNode node, boolean record) {

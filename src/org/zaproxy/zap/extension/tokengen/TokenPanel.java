@@ -47,6 +47,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.view.ScanStatus;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 public class TokenPanel extends AbstractPanel {
 	
@@ -72,7 +73,7 @@ public class TokenPanel extends AbstractPanel {
 	private JTextPane initialMessage = null;
 
 	private JButton stopScanButton = null;
-	private JToggleButton pauseScanButton = null;
+	private ZapToggleButton pauseScanButton = null;
 	private TokenGenMessagesTable tokenGenMessagesTable = null;
 	private JProgressBar progressBar = null;
 	private JButton loadButton = null;
@@ -257,8 +258,9 @@ public class TokenPanel extends AbstractPanel {
 
 	private JToggleButton getPauseScanButton() {
 		if (pauseScanButton == null) {
-			pauseScanButton = new JToggleButton();
+			pauseScanButton = new ZapToggleButton();
 			pauseScanButton.setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.pause"));
+			pauseScanButton.setSelectedToolTipText(extension.getMessages().getString("tokengen.toolbar.button.unpause"));
 			pauseScanButton.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/141.png")));
 			pauseScanButton.setEnabled(false);
 			pauseScanButton.addActionListener(new ActionListener () {
@@ -423,11 +425,9 @@ public class TokenPanel extends AbstractPanel {
 		if (getPauseScanButton().getModel().isSelected()) {
 			log.debug("Pausing token generation");
 			extension.pauseTokenGeneration();
-			getPauseScanButton().setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.unpause"));
 		} else {
 			log.debug("Resuming token generation");
 			extension.resumeTokenGeneration();
-			getPauseScanButton().setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.pause"));
 
 		}
 	}
@@ -451,7 +451,6 @@ public class TokenPanel extends AbstractPanel {
 		getStopScanButton().setEnabled(false);
 		getPauseScanButton().setEnabled(false);
 		getPauseScanButton().setSelected(false);
-		getPauseScanButton().setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.pause"));
 		if (getTokenResultsSize() > 0) {
 			getSaveButton().setEnabled(true);
 		}

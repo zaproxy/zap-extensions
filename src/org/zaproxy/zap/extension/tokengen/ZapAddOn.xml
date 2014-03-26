@@ -6,7 +6,7 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Updated to use the latest core changes (Issue 609).<br>
+	Updated to use the latest core changes (Issues 609 and 1104).<br>
 	Changed to display the messages generated in a table (Issue 503).
 	]]>
 	</changes>

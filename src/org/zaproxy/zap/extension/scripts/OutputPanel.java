@@ -29,7 +29,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.text.DefaultCaret;
 
@@ -38,6 +37,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.ZapTextArea;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 public class OutputPanel extends AbstractPanel {
 
@@ -107,43 +107,39 @@ public class OutputPanel extends AbstractPanel {
                 };
             });
             
-            final JToggleButton clearOnRunButton = new JToggleButton();
+            final ZapToggleButton clearOnRunButton = new ZapToggleButton();
             clearOnRunButton.setToolTipText(
             		Constant.messages.getString("scripts.output.clearOnRun.button.disabled.toolTip"));
+            clearOnRunButton.setSelectedToolTipText(
+                    Constant.messages.getString("scripts.output.clearOnRun.button.enabled.toolTip"));
             clearOnRunButton.setIcon(CLEAR_ON_RUN_DISABLED_ICON);
             clearOnRunButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     if (clearOnRunButton.isSelected()) {
-                        clearOnRunButton.setToolTipText(
-                        		Constant.messages.getString("scripts.output.clearOnRun.button.enabled.toolTip"));
                         clearOnRunButton.setIcon(CLEAR_ON_RUN_ENABLED_ICON);
                     	clearOnRun = true;
                     } else {
-                        clearOnRunButton.setToolTipText(
-                        		Constant.messages.getString("scripts.output.clearOnRun.button.disabled.toolTip"));
                         clearOnRunButton.setIcon(CLEAR_ON_RUN_DISABLED_ICON);
                     	clearOnRun = false;
                     }
                 };
             });
             
-            final JToggleButton scrollLockButton = new JToggleButton();
+            final ZapToggleButton scrollLockButton = new ZapToggleButton();
             scrollLockButton.setToolTipText(
             		Constant.messages.getString("scripts.output.scrolllock.button.disabled.toolTip"));
+            scrollLockButton.setSelectedToolTipText(
+                    Constant.messages.getString("scripts.output.scrolllock.button.enabled.toolTip"));
             scrollLockButton.setIcon(SCROLL_LOCK_DISABLED_ICON);
             scrollLockButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     if (scrollLockButton.isSelected()) {
-                    	scrollLockButton.setToolTipText(
-                        		Constant.messages.getString("scripts.output.scrolllock.button.enabled.toolTip"));
                     	scrollLockButton.setIcon(SCROLL_LOCK_ENABLED_ICON);
                     	DefaultCaret caret = (DefaultCaret) getTxtOutput().getCaret();
                     	caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
                     } else {
-                    	scrollLockButton.setToolTipText(
-                        		Constant.messages.getString("scripts.output.scrolllock.button.disabled.toolTip"));
                     	scrollLockButton.setIcon(SCROLL_LOCK_DISABLED_ICON);
                     	DefaultCaret caret = (DefaultCaret) getTxtOutput().getCaret();
                     	caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
@@ -152,21 +148,16 @@ public class OutputPanel extends AbstractPanel {
                 };
             });
 
-            final JToggleButton scriptLockButton = new JToggleButton();
+            final ZapToggleButton scriptLockButton = new ZapToggleButton();
             scriptLockButton.setToolTipText(
             		Constant.messages.getString("scripts.output.scriptLock.button.disabled.toolTip"));
+            scriptLockButton.setSelectedToolTipText(
+                    Constant.messages.getString("scripts.output.scriptLock.button.enabled.toolTip"));
             scriptLockButton.setIcon(ExtensionScriptsUI.ICON);
             scriptLockButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                 	extension.setLockOutputToDisplayedScript(scriptLockButton.isSelected());
-                    if (scriptLockButton.isSelected()) {
-                    	scriptLockButton.setToolTipText(
-                        		Constant.messages.getString("scripts.output.scriptLock.button.enabled.toolTip"));
-                    } else {
-                    	scriptLockButton.setToolTipText(
-                        		Constant.messages.getString("scripts.output.scriptLock.button.disabled.toolTip"));
-                    }
                 };
             });
 
