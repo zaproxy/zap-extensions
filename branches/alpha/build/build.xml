@@ -306,7 +306,6 @@
 		<antcall target="deploy-multiFuzz"/>
 		<antcall target="deploy-pscanrulesAlpha"/>
 		<antcall target="deploy-serverSentEvents"/>
-		<antcall target="deploy-serverSentEvents"/>
         <antcall target="deploy-saml"/>
         <antcall target="deploy-wappalyzer"/>
 	</target>
