@@ -764,6 +764,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 		if (scopeButton == null) {
 			scopeButton = new ZapToggleButton();
 			scopeButton.setIcon(new ImageIcon(LogPanel.class.getResource("/resource/icon/fugue/target-grey.png")));
+			scopeButton.setSelectedIcon(new ImageIcon(LogPanel.class.getResource("/resource/icon/fugue/target.png")));
 			scopeButton.setToolTipText(Constant.messages.getString("history.scope.button.unselected"));
 			scopeButton.setSelectedToolTipText(Constant.messages.getString("history.scope.button.selected"));
 
@@ -784,11 +785,6 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 					getFilterDialog().getFilter().setShowJustInScope(isShowJustInScope);
 					applyFilter();
 					
-					if (scopeButton.isSelected()) {
-						scopeButton.setIcon(new ImageIcon(WebSocketPanel.class.getResource("/resource/icon/fugue/target.png")));
-					} else {
-						scopeButton.setIcon(new ImageIcon(WebSocketPanel.class.getResource("/resource/icon/fugue/target-grey.png")));
-					}
 				}
 			});
 		}
