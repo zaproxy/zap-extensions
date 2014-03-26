@@ -4,7 +4,12 @@
 	<description>Supports all JRS 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/ScriptConsole</url>
-	<changes>Updated to use the latest core changes (Issue 609).</changes>
+	<changes>
+	<![CDATA[
+	Updated to use the latest core changes (Issue 609).<br>
+	Fixed an InvalidParameterException during add-on uninstallation (Issue 967).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.scripts.ExtensionScriptsUI</extension>
