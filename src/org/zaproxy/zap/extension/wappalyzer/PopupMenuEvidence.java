@@ -55,11 +55,6 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
 	public void setExtension(ExtensionWappalyzer extension) {
 		this.extension = extension;
 	}
-	
-	@Override
-	public boolean isSuperMenu() {
-		return true;
-	}
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
