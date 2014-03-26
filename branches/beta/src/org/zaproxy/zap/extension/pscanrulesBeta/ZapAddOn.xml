@@ -1,12 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>8</version>
+	<version>9</version>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
 	Fixed the plug-in ID of Viewstate scanner.<br>
+	Changed help file structure to support internationalisation (Issue 981).
 	]]>
 	</changes>
 	<dependson/>
@@ -33,6 +34,6 @@
 		<file>xml/suspicious-comments.txt</file>
 		<file>xml/URL-information-disclosure-messages.txt</file>
 	</files>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

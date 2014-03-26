@@ -4,7 +4,12 @@
 	<description>Provides a BeanShell Console</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Fixed an issue in HTML help page (missing end tag).</changes>
+	<changes>
+	<![CDATA[
+	Fixed an issue in HTML help page (missing end tag).<br>
+	Changed help file structure to support internationalisation (Issue 981).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.beanshell.ExtensionBeanShell</extension>
@@ -15,6 +20,6 @@
 	<files>
 		<file>scripts/example.tree.bsh</file>
 	</files>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

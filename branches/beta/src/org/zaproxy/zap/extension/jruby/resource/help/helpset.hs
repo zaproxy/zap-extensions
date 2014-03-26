@@ -1,8 +1,8 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE helpset
   PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN"
          "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
-<helpset version="2.0">
+<helpset version="2.0" xml:lang="en-GB">
   <title>Ruby Scripting</title>
 
   <maps>
@@ -13,7 +13,7 @@
   <view>
     <name>TOC</name>
     <label>Contents</label>
-    <type>javax.help.TOCView</type>
+    <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>
 
