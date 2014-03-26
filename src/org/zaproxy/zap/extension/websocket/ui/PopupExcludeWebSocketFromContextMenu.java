@@ -29,12 +29,12 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.stdmenus.PopupExcludeFromContextMenu;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.ContextExcludePanel;
+import org.zaproxy.zap.view.popup.PopupMenuItemExcludeFromContext;
 
-public class PopupExcludeWebSocketFromContextMenu extends PopupExcludeFromContextMenu {
+public class PopupExcludeWebSocketFromContextMenu extends PopupMenuItemExcludeFromContext {
 
 	private static final long serialVersionUID = -2345060529128495874L;
 
@@ -44,6 +44,8 @@ public class PopupExcludeWebSocketFromContextMenu extends PopupExcludeFromContex
 
 	public PopupExcludeWebSocketFromContextMenu(Context context) {
 		super(context);
+		
+		initialize();
 	}
 	
     @Override
@@ -51,8 +53,7 @@ public class PopupExcludeWebSocketFromContextMenu extends PopupExcludeFromContex
     	return PopupExcludeWebSocketContextMenu.MENU_NAME;
     }
     
-    @Override
-    protected void initialize() {
+    private void initialize() {
     	addActionListener(new java.awt.event.ActionListener() {
 	    	@Override
 	    	public void actionPerformed(java.awt.event.ActionEvent evt) {

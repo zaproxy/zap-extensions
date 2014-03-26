@@ -4,7 +4,7 @@
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Minor code changes (Issue 503).</changes>
+	<changes>Minor code changes (Issues 503 and 609).</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.websocket.ExtensionWebSocket</extension>
@@ -13,6 +13,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

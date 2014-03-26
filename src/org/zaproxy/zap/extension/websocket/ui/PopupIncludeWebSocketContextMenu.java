@@ -23,13 +23,13 @@ import java.awt.Component;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.zaproxy.zap.extension.stdmenus.PopupContextIncludeMenu;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.view.popup.PopupMenuItemContextInclude;
 
 /**
  * Allows to reuse the existing 'Include in Context' menu for WebSocket URLs.
  */
-public class PopupIncludeWebSocketContextMenu extends PopupContextIncludeMenu {
+public class PopupIncludeWebSocketContextMenu extends PopupMenuItemContextInclude {
 	
 	private static final long serialVersionUID = -5195960463302710531L;
 	
