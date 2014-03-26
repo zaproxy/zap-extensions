@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.swing.JMenuItem;
+
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
@@ -58,9 +60,10 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
+    	final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
     	// Remove any old submenus
     	for (PopupMenuEvidenceSearch menu : this.subMenus) {
-			View.getSingleton().getPopupMenu().removeMenu(menu);
+			mainPopupMenuItems.remove(menu);
     	}
     	this.subMenus.clear();
     	
@@ -92,7 +95,7 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
 		PopupMenuEvidenceSearch menu = new PopupMenuEvidenceSearch(label, p, type);
 		menu.setExtension(extension);
 		menu.setMenuIndex(this.getMenuIndex());
-		View.getSingleton().getPopupMenu().addMenu(menu);
+		View.getSingleton().getPopupList().add(menu);
 		this.subMenus.add(menu);
     }
 
