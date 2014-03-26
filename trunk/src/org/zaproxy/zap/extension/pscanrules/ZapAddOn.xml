@@ -9,7 +9,8 @@
 	NOT YET RELEASED! Added reference for X-Content-Type-Options header missing.<br>
 	Changed help file structure to support internationalisation (Issue 981).<br>
 	Added content-type to help pages (Issue 1080).<br>
-	Changed passive scanners to expose its IDs (Issue Issue 1101).
+	Changed passive scanners to expose its IDs (Issue Issue 1101).<br>
+	Updated add-on dir structure (Issue 1113).
 	]]>
 	</changes>
 	<dependson/>

@@ -4,6 +4,6 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-	<mapID target="pscanrules-icon" url="zaphelp/images/pscan.png" />
-    <mapID target="pscanrules" url="zaphelp/pscanrules.html" />
+	<mapID target="ascanrules-icon" url="contents/images/ascan.png" />
+    <mapID target="ascanrules" url="contents/ascanrules.html" />
 </map>
