@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.zaproxy.zap.extension.fuzz.FuzzableComponent;
 import org.zaproxy.zap.extension.search.SearchResult;
 
 public interface FuzzerHandler {

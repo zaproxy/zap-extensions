@@ -31,14 +31,10 @@ import edu.stanford.ejalbert.BrowserLauncher;
 
 import java.awt.Desktop;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -72,33 +68,11 @@ import org.zaproxy.zap.view.ScanPanel;
 import org.eclipse.birt.core.exception.BirtException;
 import org.eclipse.birt.core.framework.Platform;
 import org.eclipse.birt.report.engine.api.EngineConfig;
-import org.eclipse.birt.report.engine.api.EngineConstants;
 import org.eclipse.birt.report.engine.api.EngineException;
 import org.eclipse.birt.report.engine.api.IReportRunnable;
 import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.PDFRenderOption;
 import org.eclipse.birt.report.engine.api.impl.ReportEngine;
-import org.jdom.JDOMException;
-import org.jdom.filter.ElementFilter;
-import org.jdom.Element;
-import org.jdom.filter.Filter;
-import org.jdom.input.SAXBuilder;
-//namespaces for documentbuilder and XPath
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-//import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import java.io.IOException;
-import org.xml.sax.SAXException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.Node;
 
 public class ReportLastScan {
 

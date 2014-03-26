@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.JTextArea;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter;
 
 import org.parosproxy.paros.control.Control;

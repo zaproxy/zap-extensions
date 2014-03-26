@@ -22,16 +22,12 @@ package org.zaproxy.zap.extension.birtreports;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.awt.Cursor;
 
 import javax.swing.JMenuItem;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.view.View;
-
-import com.lowagie.toolbox.Toolbox.Console;
 
 /*
  * An example ZAP extension which adds a top level menu item.

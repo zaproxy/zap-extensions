@@ -51,7 +51,6 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
 import org.owasp.jbrofuzz.core.NoSuchFuzzerException;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.multiFuzz.MFuzzableMessage;
