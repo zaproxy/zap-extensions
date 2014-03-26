@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Zest - Scripting Security Tests</name>
-	<version>11</version>
+	<version>12</version>
 	<description>A graphical security scripting language..</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Changed to depend on core ExtensionScript to avoid NullPointerException (Issue 848)<br>
-	Fixed to allow Loops to use Custom fuzzers (Issue 916)<br>
-	Changed to show the correct selected message when the results are sorted in "Zest Results" tab (Issue 942)<br>
-	Added a 'Record new Zest script' toolbar button (Issue 953)
-	Moved templates from core
+	Moved templates from core<br>
+	Minor code change (Issue 416)
 	]]>
 	</changes>
 	<dependson/>
@@ -35,6 +32,6 @@
 		<file>scripts/templates/targeted/Resend as a GET request.zst</file>
 		<file>scripts/templates/targeted/Targeted default template.zst</file>
 	</files>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
