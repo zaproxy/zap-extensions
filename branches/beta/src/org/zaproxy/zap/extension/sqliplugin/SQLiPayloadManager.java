@@ -75,7 +75,7 @@ public class SQLiPayloadManager {
     public static final String charsHash = ":" + randomString(4, true, null) + ":";
     public static final String charsDelimiter = randomString(6, true, null);
         
-    private static final String PAYLOAD_FILE = "resource/payloads.xml";
+    private static final String PAYLOAD_FILE = "resources/payloads.xml";
     private static final String TAG_BOUNDARY = "boundary";
     private static final String TAG_TEST = "test";
 

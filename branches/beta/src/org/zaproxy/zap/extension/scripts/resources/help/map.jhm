@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="addon.scripts.icon" url="contents/images/059.png" />
+
+	<mapID target="addon.scripts.scripts" url="contents/scripts.html" />
+	<mapID target="addon.scripts.console" url="contents/console.html" />
+	<mapID target="addon.scripts.tree" url="contents/tree.html" />
+</map>

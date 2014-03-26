@@ -63,54 +63,54 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 	private static final ImageIcon ACTION_SCAN_ICON = 
 			new ImageIcon(Constant.class.getResource("/resource/icon/16/093.png"));	// Flame
 	private static final ImageIcon ACTION_SLEEP_ICON =
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/hourglass.png"));
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/hourglass.png"));
 	private static final ImageIcon ACTION_PRINT_ICON =
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/printer.png"));
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/printer.png"));
 	private static final ImageIcon ASSIGNMENT_ICON = new ImageIcon(
 			ZestTreeCellRenderer.class
-					.getResource("/org/zaproxy/zap/extension/zest/resource/pin.png"));
+					.getResource("/org/zaproxy/zap/extension/zest/resources/icons/pin.png"));
 	private static final ImageIcon ASSERT_ICON = new ImageIcon(
 			ZestTreeCellRenderer.class
-					.getResource("/org/zaproxy/zap/extension/zest/resource/balance.png"));
+					.getResource("/org/zaproxy/zap/extension/zest/resources/icons/balance.png"));
 	private static final ImageIcon CONDITION_ELSE_ICON = new ImageIcon(
 			ZestTreeCellRenderer.class
-					.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-down-right.png"));
+					.getResource("/org/zaproxy/zap/extension/zest/resources/icons/diamond-arrow-down-right.png"));
 	private static final ImageIcon CONDITION_THEN_ICON = new ImageIcon(
 			ZestTreeCellRenderer.class
-					.getResource("/org/zaproxy/zap/extension/zest/resource/diamond-arrow-up-right.png"));
+					.getResource("/org/zaproxy/zap/extension/zest/resources/icons/diamond-arrow-up-right.png"));
 	private static final ImageIcon CONDITION_IF_ICON = new ImageIcon(
 			ZestTreeCellRenderer.class
-					.getResource("/org/zaproxy/zap/extension/zest/resource/condition_if.png"));
+					.getResource("/org/zaproxy/zap/extension/zest/resources/icons/condition_if.png"));
 	private static final ImageIcon LOOP_ICON = new ImageIcon(
 			ZestTreeCellRenderer.class
-					.getResource("/org/zaproxy/zap/extension/zest/resource/loop.png"));
+					.getResource("/org/zaproxy/zap/extension/zest/resources/icons/loop.png"));
 	private static final ImageIcon EXPRESSION_ICON = new ImageIcon(
 			ZestTreeCellRenderer.class
-					.getResource("/org/zaproxy/zap/extension/zest/resource/expression.png"));
+					.getResource("/org/zaproxy/zap/extension/zest/resources/icons/expression.png"));
 	private static final ImageIcon COMMENT_ICON =
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/balloon.png"));
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/balloon.png"));
 	private static final ImageIcon CONTROL_RETURN_ICON =
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/arrow-return-180.png"));
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/arrow-return-180.png"));
 	private static final ImageIcon CONTROL_LOOP_BREAK_ICON =
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/arrow-turn-180.png"));
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/arrow-turn-180.png"));
 	private static final ImageIcon CONTROL_LOOP_NEXT_ICON =
-			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resource/arrow-turn-180-left.png"));
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/arrow-turn-180-left.png"));
 
 	private static final ImageIcon CROSS_OVERLAY_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource(
-					"/org/zaproxy/zap/extension/zest/resource/cross-overlay.png"));
+					"/org/zaproxy/zap/extension/zest/resources/icons/cross-overlay.png"));
 	private static final ImageIcon PENCIL_OVERLAY_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource(
-					"/org/zaproxy/zap/extension/zest/resource/pencil-overlay.png"));
+					"/org/zaproxy/zap/extension/zest/resources/icons/pencil-overlay.png"));
 	private static final ImageIcon TICK_OVERLAY_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource(
-					"/org/zaproxy/zap/extension/zest/resource/tick-overlay.png"));
+					"/org/zaproxy/zap/extension/zest/resources/icons/tick-overlay.png"));
 	private static final ImageIcon WARNING_OVERLAY_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource(
-					"/org/zaproxy/zap/extension/zest/resource/exclamation-overlay.png"));
+					"/org/zaproxy/zap/extension/zest/resources/icons/exclamation-overlay.png"));
 	private static final ImageIcon RECORD_OVERLAY_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource(
-					"/org/zaproxy/zap/extension/zest/resource/cassette-red-small-overlay.png"));
+					"/org/zaproxy/zap/extension/zest/resources/icons/cassette-red-small-overlay.png"));
 
 	private static final long serialVersionUID = -4278691012245035225L;
 

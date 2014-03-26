@@ -88,12 +88,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	public static final String NAME = "ExtensionZest";
 	public static final ImageIcon ZEST_ICON = new ImageIcon(
-			ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resource/fruit-orange.png"));
+			ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/fruit-orange.png"));
 	
 	private static final ImageIcon RECORD_OFF_ICON = new ImageIcon(
-			ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resource/cassette.png"));
+			ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/cassette.png"));
 	private static final ImageIcon RECORD_ON_ICON = new ImageIcon(
-			ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resource/cassette-red.png"));
+			ExtensionZest.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/cassette-red.png"));
 
 	public static final String HTTP_HEADER_X_SECURITY_PROXY = "X-Security-Proxy";
 	public static final String VALUE_RECORD = "record";

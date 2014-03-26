@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>TreeTools</name>
-	<version>4</version>
+	<version>5</version>
 	<description>Tools to add functionality to the tree view.</description>
 	<author>Carl Sampson</author>
 	<url/>
-	<changes>Updated for ZAP 2.2.0</changes>
+	<changes>Updated add-on dir structure (Issue 1113).</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.treetools.ExtensionTreeTools</extension>
@@ -13,6 +13,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

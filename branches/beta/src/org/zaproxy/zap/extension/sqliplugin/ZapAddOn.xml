@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>SQLMap Injection Engine</name>
-	<version>5</version>
+	<version>6</version>
 	<description>An advanced active injection bundle for SQLi (derived by SQLMap)</description>
 	<author>Andrea Pompili (Yhawke)</author>
 	<url/>
 	<changes>
 	<![CDATA[
-        Resolved some race conditions related to slow and not responding sites<br>
-        Resolved some issues related to CircularExceptions to avoid infinite loops and allow plugin exiting
+    Updated add-on dir structure (Issue 1113).
 	]]>
         </changes>
 	<dependson/>
@@ -19,6 +18,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
