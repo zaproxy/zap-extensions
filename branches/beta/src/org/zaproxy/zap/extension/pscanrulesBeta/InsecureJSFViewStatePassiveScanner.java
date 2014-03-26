@@ -78,7 +78,8 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 		// caveats as below.
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 90001; // This is be changed if included in the ZAP code base
 	}
 
@@ -214,7 +215,7 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String viewState) {
-		Alert alert = new Alert(getId(), Alert.RISK_MEDIUM, Alert.SUSPICIOUS,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.SUSPICIOUS,
 				getName());
 		alert.setDetail(
 				getDescription(),

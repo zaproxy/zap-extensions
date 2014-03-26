@@ -86,7 +86,7 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 	}
 	
 	private void raiseAlert(HttpMessage msg, int id, String evidence, String other) {
-		Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
 		    			"The HTTP Header may have leaked a potentially sensitive parameter to another domain. This can violate PCI and most organizational compliance policies. You can configure the list of strings for this check to add or remove values specific to your environment", 
@@ -156,7 +156,8 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10025;
 	}
 	

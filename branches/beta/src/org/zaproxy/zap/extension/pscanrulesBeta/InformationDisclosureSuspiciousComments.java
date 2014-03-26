@@ -104,7 +104,7 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
 	}
 	
 	private void raiseAlert(HttpMessage msg, int id, String detail) {
-		Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
 		    		"The response appears to contain suspicious comments which may help an attacker", 
@@ -161,7 +161,8 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
 		return "Information disclosure - suspicious comments";
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10027;
 	}
 }

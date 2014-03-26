@@ -66,7 +66,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
     
     private void alertViewstateAnalyzerResult(HttpMessage msg, int id, ViewstateAnalyzerResult var) {
         Alert alert = new Alert(
-                getId(),
+                getPluginId(),
                 Alert.RISK_MEDIUM,
                 Alert.WARNING,
                 var.pattern.getAlertHeader()
@@ -90,7 +90,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
 
     private void alertOldAspVersion(HttpMessage msg, int id) {
         Alert alert = new Alert(
-                getId(),
+                getPluginId(),
                 Alert.RISK_LOW,
                 Alert.WARNING,
                 "Old Asp.Net version in use"
@@ -113,7 +113,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
     //TODO: see if this alert triggers too often, as the detection rule is far from being robust for the moment
     private void alertNoMACUnsure(HttpMessage msg, int id) {
         Alert alert = new Alert(
-                                getId(),
+                                getPluginId(),
                                 Alert.RISK_HIGH,
                                 Alert.SUSPICIOUS,
                                 "Viewstate without MAC signature (Unsure)"
@@ -134,7 +134,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
 
     private void alertNoMACforSure(HttpMessage msg, int id) {
         Alert alert = new Alert(
-                                getId(),
+                                getPluginId(),
                                 Alert.RISK_HIGH,
                                 Alert.WARNING,
                                 "Viewstate without MAC signature (Sure)"
@@ -155,7 +155,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
     
     private void alertSplitViewstate(HttpMessage msg, int id) {
         Alert alert = new Alert(
-                                getId(),
+                                getPluginId(),
                                 Alert.RISK_INFO,
                                 Alert.RISK_INFO,
                                 "Split viewstate in use"
@@ -174,7 +174,8 @@ public class ViewstateScanner extends PluginPassiveScanner {
         parent.raiseAlert(id, alert);
     }
 
-    private int getId() {
+    @Override
+    public int getPluginId() {
         return 10032;
     }
 

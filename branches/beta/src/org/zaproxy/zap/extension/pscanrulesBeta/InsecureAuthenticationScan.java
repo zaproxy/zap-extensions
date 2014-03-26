@@ -171,7 +171,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 						digestInfo=authValues[1]; //info to output in the logging message.
 					}
 
-					Alert alert = new Alert(getId(), alertRisk, alertLevel, Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.name"));
+					Alert alert = new Alert(getPluginId(), alertRisk, alertLevel, Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.name"));
 					alert.setDetail(Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.desc"), 
 							uri,
 							"",  //No specific parameter. It's in the header.
@@ -197,7 +197,8 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 	 * gets the plugin id
 	 * @return
 	 */
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 40017;  
 	}
 
@@ -235,7 +236,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 		if (authHeaders != null) {
 			for (String auth : authHeaders) {
 				if (auth.toLowerCase().indexOf("basic") > -1 || auth.toLowerCase().indexOf("digest") > -1) {
-					Alert alert = new Alert(getId(), Alert.RISK_MEDIUM, Alert.WARNING,
+					Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING,
 							getName());
 					alert.setDetail(getDescription(),
 							msg.getRequestHeader().getURI().toString(),

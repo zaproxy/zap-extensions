@@ -86,7 +86,8 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 	 * gets the plugin id for this extension
 	 * @return the plugin id for this extension
 	 */
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 40014;
 	}
 
@@ -182,7 +183,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				String attack = Constant.messages.getString("pscanbeta.noanticsrftokens.alert.attack");
 				String extraInfo = Constant.messages.getString("pscanbeta.noanticsrftokens.alert.extrainfo", tokenNamesFlattened, formDetails);
 				
-			    Alert alert = new Alert(getId(), Alert.RISK_LOW, Alert.WARNING,  getName());
+			    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING,  getName());
 			    alert.setDetail(
 			    			desc + "\n"+getDescription(), 
 				    		msg.getRequestHeader().getURI().toString(),

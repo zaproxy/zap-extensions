@@ -128,7 +128,7 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String host, List<HttpCookie> looselyScopedCookies) {
-		Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.SUSPICIOUS,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.SUSPICIOUS,
 				getName());
 		StringBuilder sbCookies = new StringBuilder();
 		for (HttpCookie cookie: looselyScopedCookies) {
@@ -147,7 +147,8 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 		parent.raiseAlert(id, alert);
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 90033;
 	}
 
