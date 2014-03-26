@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.scripts;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JMenuItem;
+
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.SiteNode;
@@ -74,8 +76,9 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuItemSiteNodeContaine
     }
 	
     private void reCreateSubMenu() {
+    	final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
     	for (ExtensionPopupMenuItem menu : subMenus) {
-			View.getSingleton().getPopupMenu().removeMenu(menu);
+			mainPopupMenuItems.remove(menu);
 			
 		}
 		subMenus.clear();
@@ -83,7 +86,7 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuItemSiteNodeContaine
 		for (ScriptWrapper script : extension.getExtScript().getScripts(ExtensionScript.TYPE_TARGETED)) {
         	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(script);
         	piicm.setMenuIndex(this.getMenuIndex());
-			View.getSingleton().getPopupMenu().addMenu(piicm);
+			mainPopupMenuItems.add(piicm);
 			this.subMenus.add(piicm);
 		}
 	}
