@@ -27,6 +27,7 @@ import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 public class InvokeParam extends AbstractParam {
     
@@ -140,10 +141,12 @@ public class InvokeParam extends AbstractParam {
         this.listInvokeEnabled = enabledApps;
     }
     
+    @ZapApiIgnore
     public boolean isConfirmRemoveApp() {
         return this.confirmRemoveApp;
     }
     
+    @ZapApiIgnore
     public void setConfirmRemoveApp(boolean confirmRemove) {
         this.confirmRemoveApp = confirmRemove;
         getConfig().setProperty(CONFIRM_REMOVE_APP_KEY, Boolean.valueOf(confirmRemoveApp));
