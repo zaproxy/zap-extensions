@@ -62,7 +62,7 @@ public class BirtScriptMenu extends ExtensionAdaptor {
         this.setName("BirtScriptMenu");
         // Load extension specific language files - these are held in the extension jar
         messages = ResourceBundle.getBundle(
-                        this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+                        this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());
         }
        
         @Override
@@ -95,8 +95,8 @@ public class BirtScriptMenu extends ExtensionAdaptor {
                 	//System.out.println("Class Key = " + EngineConstants.APPCONTEXT_CLASSLOADER_KEY);
                 	//reportgen.generateXmlforBirtPdf(getView(), getModel());
                 	// pass the path of .rptdesign file
-                	//reportgen.executeBirtPdfReport(getView(),"org/zaproxy/zap/extension/birtreports/reportdesignfiles/AlertsZap_scripted.rptdesign", getMessageString("birt.report.title"));
-                	reportgen.executeBirtScriptReport(getView(),"org/zaproxy/zap/extension/birtreports/reportdesignfiles/AlertsZap_scripted.rptdesign", getMessageString("birt.report.title"));                
+                	//reportgen.executeBirtPdfReport(getView(),"org/zaproxy/zap/extension/birtreports/resources/reportdesignfiles/AlertsZap_scripted.rptdesign", getMessageString("birt.report.title"));
+                	reportgen.executeBirtScriptReport(getView(),"org/zaproxy/zap/extension/birtreports/resources/reportdesignfiles/AlertsZap_scripted.rptdesign", getMessageString("birt.report.title"));                
                 	/*
                 	AlertReport rpt = new AlertReport();
                 	rpt.getAlertsReport();

@@ -4,6 +4,5 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-	<mapID target="ascanalpha-icon" url="zaphelp/images/ascan-alpha.png" />
-    <mapID target="ascanalpha" url="zaphelp/ascanalpha.html" />
+    <mapID target="browserView" url="contents/browserView.html" />
 </map>

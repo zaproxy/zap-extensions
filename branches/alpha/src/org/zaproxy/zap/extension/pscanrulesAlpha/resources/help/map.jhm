@@ -4,7 +4,6 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-	<mapID target="addon.wappalyzer.icon" url="zaphelp/images/wappalyzer.png" />
-
-	<mapID target="addon.wappalyzer.wappalyzer" url="zaphelp/wappalyzer.html" />
+	<mapID target="pscanalpha-icon" url="contents/images/pscan-alpha.png" />
+    <mapID target="pscanalpha" url="contents/pscanalpha.html" />
 </map>

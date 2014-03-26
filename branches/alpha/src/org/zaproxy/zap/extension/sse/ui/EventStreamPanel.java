@@ -88,7 +88,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 	static {
 		connectedStreamIds = new HashSet<>();
 		
-		icon = new ImageIcon(ExtensionServerSentEvents.class.getResource("resource/download-cloud.png"));
+		icon = new ImageIcon(ExtensionServerSentEvents.class.getResource("resources/download-cloud.png"));
 	};
 
 	private JToolBar panelToolbar = null;

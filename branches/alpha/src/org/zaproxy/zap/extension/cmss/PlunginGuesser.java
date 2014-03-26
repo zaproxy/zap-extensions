@@ -29,10 +29,10 @@ public class PlunginGuesser {
 		try{
 			InputStream flux = null;
 			if(componentType.compareTo("plugin")==0){
-				flux=new FileInputStream("pluginEnum/joomla_plugins.txt"); 
+				flux=new FileInputStream("resources/pluginEnum/joomla_plugins.txt"); 
 			}
 			if(componentType.compareTo("theme")==0){
-				flux=new FileInputStream("pluginEnum/joomla_themes.txt"); 
+				flux=new FileInputStream("resources/pluginEnum/joomla_themes.txt"); 
 			}
 			
 			InputStreamReader lecture=new InputStreamReader(flux);
@@ -85,14 +85,14 @@ public class PlunginGuesser {
 		URL website = new URL("https://fuzzdb.googlecode.com/svn/trunk/Discovery/PredictableRes/CMS/joomla_plugins.fuzz.txt");
 	    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
 	    @SuppressWarnings("resource") 
-		FileOutputStream fos = new FileOutputStream("pluginEnum/joomla_plugins.txt");
+		FileOutputStream fos = new FileOutputStream("resources/pluginEnum/joomla_plugins.txt");
 	    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 	}
 	public static void getJoomlaThemeDB() throws IOException{
 		URL website = new URL("https://fuzzdb.googlecode.com/svn/trunk/Discovery/PredictableRes/CMS/joomla_themes.fuzz.txt");
 	    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
 	    @SuppressWarnings("resource") 
-		FileOutputStream fos = new FileOutputStream("pluginEnum/joomla_themes.txt");
+		FileOutputStream fos = new FileOutputStream("resources/pluginEnum/joomla_themes.txt");
 	    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 	}
 	
@@ -105,10 +105,10 @@ public class PlunginGuesser {
 		try{
 			InputStream flux = null;
 			if(componentType.compareTo("plugin")==0){
-				flux=new FileInputStream("pluginEnum/wp_plugins.txt"); 
+				flux=new FileInputStream("resources/pluginEnum/wp_plugins.txt"); 
 			}
 			if(componentType.compareTo("theme")==0){
-				flux=new FileInputStream("pluginEnum/wp_themes.txt"); 
+				flux=new FileInputStream("resources/pluginEnum/wp_themes.txt"); 
 			}
 			
 			InputStreamReader lecture=new InputStreamReader(flux);
@@ -153,14 +153,14 @@ public class PlunginGuesser {
 		URL website = new URL("https://fuzzdb.googlecode.com/svn/trunk/Discovery/PredictableRes/CMS/wp_plugins.fuzz.txt");
 	    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
 	    @SuppressWarnings("resource") 
-		FileOutputStream fos = new FileOutputStream("pluginEnum/wp_plugins.txt");
+		FileOutputStream fos = new FileOutputStream("resources/pluginEnum/wp_plugins.txt");
 	    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 	}
 	public static void getWordpressThemeDB() throws IOException{
 		URL website = new URL("https://fuzzdb.googlecode.com/svn/trunk/Discovery/PredictableRes/CMS/wp_themes.fuzz.txt");
 	    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
 	    @SuppressWarnings("resource") 
-		FileOutputStream fos = new FileOutputStream("pluginEnum/wp_themes.txt");
+		FileOutputStream fos = new FileOutputStream("resources/pluginEnum/wp_themes.txt");
 	    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 	}
 	
@@ -169,10 +169,10 @@ public class PlunginGuesser {
 		try{
 			InputStream flux = null;
 			if(componentType.compareTo("plugin")==0){
-				flux=new FileInputStream("pluginEnum/drupal_plugins.txt"); 
+				flux=new FileInputStream("resources/pluginEnum/drupal_plugins.txt"); 
 			}
 			if(componentType.compareTo("theme")==0){
-				flux=new FileInputStream("pluginEnum/drupal_themes.txt"); 
+				flux=new FileInputStream("resources/pluginEnum/drupal_themes.txt"); 
 			}
 			
 			InputStreamReader lecture=new InputStreamReader(flux);
@@ -209,14 +209,14 @@ public class PlunginGuesser {
 		URL website = new URL("https://fuzzdb.googlecode.com/svn/trunk/Discovery/PredictableRes/CMS/drupal_plugins.fuzz.txt");
 	    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
 	    @SuppressWarnings("resource") 
-		FileOutputStream fos = new FileOutputStream("pluginEnum/drupal_plugins.txt");
+		FileOutputStream fos = new FileOutputStream("resources/pluginEnum/drupal_plugins.txt");
 	    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 	}
 	public static void getDrupalThemeDB() throws IOException{
 		URL website = new URL("https://fuzzdb.googlecode.com/svn/trunk/Discovery/PredictableRes/CMS/drupal_themes.fuzz.txt");
 	    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
 	    @SuppressWarnings("resource") 
-		FileOutputStream fos = new FileOutputStream("pluginEnum/drupal_themes.txt");
+		FileOutputStream fos = new FileOutputStream("resources/pluginEnum/drupal_themes.txt");
 	    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 	}
 	

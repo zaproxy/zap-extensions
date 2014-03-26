@@ -91,8 +91,8 @@
 		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
 		
 		<generatejavahelpsearchindexes jhalljar="${dist.lib.dir}/jhall.jar"
-			helpcontentsdirname="zaphelp" helpsetfilename="helpset*.hs">
-			<dirset dir="${src}/org/zaproxy/zap/extension/${addon}/resource/">
+			helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
+			<dirset dir="${src}/org/zaproxy/zap/extension/${addon}/resources/">
 				<include name="help" />
 				<include name="help_*_*" />
 			</dirset>
@@ -114,7 +114,7 @@
 				<include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
 			</zipfileset>
 			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/${addon}/resource/**"/>
+				<include name="org/zaproxy/zap/extension/${addon}/resources/**"/>
 			</zipfileset>
 			<zipfileset src="${addon.libs.zip}">
 				<exclude name="META-INF/*.DSA" />
@@ -125,8 +125,8 @@
 		<delete file="${addon.libs.zip}" />
 
 		<!-- Remove search indexes previously generated, no longer needed. -->
-		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resource/help/JavaHelpSearch" />
-		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resource/help_*_*/JavaHelpSearch" />
+		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resources/help/JavaHelpSearch" />
+		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resources/help_*_*/JavaHelpSearch" />
 
 		<antcall target="include-files"> 
 			<param name="addon" value="${addon}"/>

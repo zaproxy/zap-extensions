@@ -23,6 +23,6 @@
         <files>                                         <!-- Optional, to be used if this addon includes raw files -->
                 <file/>                                 <!-- Relative file name (to this package, and the users directory) - can be multiple of these -->
         </files>
-        <not-before-version/>           <!-- Optional, to be used if this addon can only be run from the specified version e.g. 2.1.0 -->
+        <not-before-version>2.3.0</not-before-version>
         <not-from-version/>                     <!-- Optional, to be used if this addon can not run from the specified version e.g. 2.4.0 -->
 </zapaddon>

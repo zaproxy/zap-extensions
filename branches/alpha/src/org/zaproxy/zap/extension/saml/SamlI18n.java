@@ -9,7 +9,7 @@ public class SamlI18n {
 
     public static void init(){
         message = ResourceBundle.getBundle(SamlI18n.class.getPackage().getName()
-                + ".Messages", Constant.getLocale());
+                + ".resources.Messages", Constant.getLocale());
     }
 
     public static String getMessage(String key) {

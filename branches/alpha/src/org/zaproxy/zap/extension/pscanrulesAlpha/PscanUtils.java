@@ -33,7 +33,7 @@ public final class PscanUtils {
 	public static synchronized void registerI18N() {
 		if (messages == null) {
 			messages = ResourceBundle.getBundle(
-					PscanUtils.class.getPackage().getName() + ".Messages", Constant.getLocale());
+					PscanUtils.class.getPackage().getName() + ".resources.Messages", Constant.getLocale());
 			Constant.messages.addMessageBundle("pscanalpha", messages);
 		}
 	}

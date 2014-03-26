@@ -32,7 +32,7 @@ public class Wappalyzer {
     public static void initJsonObject() throws Exception {
     	JSONParser parser = new JSONParser();
         try {
-            Object obj = parser.parse(new FileReader("fastGuess/apps.json"));
+            Object obj = parser.parse(new FileReader("resources/fastGuess/apps.json"));
             jsonObject = (JSONObject) obj;         
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -59,7 +59,7 @@ public class Wappalyzer {
     	JSONParser parser = new JSONParser();
     	initJsonObject();// must take place here before the next instruction
    	    ArrayList<String> categTofIngerPrint = categoryNameToNumber(whatToFingerPrint);
-        Object obj = parser.parse(new FileReader("fastGuess/apps.json"));
+        Object obj = parser.parse(new FileReader("resources/fastGuess/apps.json"));
         jsonObject = (JSONObject) obj;
         
         JSONObject apps =  (JSONObject) jsonObject.get("apps");
@@ -270,7 +270,7 @@ public class Wappalyzer {
 		URL website = new URL("https://raw.github.com/ElbertF/Wappalyzer/master/share/apps.json");
 	    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
 	    @SuppressWarnings("resource")
-		FileOutputStream fos = new FileOutputStream("fastGuess/apps.json");
+		FileOutputStream fos = new FileOutputStream("resources/fastGuess/apps.json");
 	    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
     }
     

@@ -55,7 +55,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 
 	public static final String NAME = "ExtensionWappalyzer";
 	
-	private static final String RESOURCE = "/org/zaproxy/zap/extension/wappalyzer/resource";
+	private static final String RESOURCE = "/org/zaproxy/zap/extension/wappalyzer/resources";
 	
 	public static final ImageIcon WAPPALYZER_ICON = new ImageIcon(
 			ExtensionWappalyzer.class.getResource( RESOURCE + "/wappalyzer.png"));

@@ -50,7 +50,7 @@ public class SAMLConfiguration implements AttributeListener {
         File confFile = new File(confPath);
 
         if (!confFile.exists()) {
-            URL confURL = getClass().getResource("resource/"+SAML_CONF_FILE);
+            URL confURL = getClass().getResource("resources/"+SAML_CONF_FILE);
             if (confURL ==null) {
                 log.error("Configuration file not found ");
                 throw new SAMLException("Configuration file not found");

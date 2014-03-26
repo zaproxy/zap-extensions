@@ -31,7 +31,7 @@ public class WebAppGuesser {
 	 * the fast guessing consists on use a number of detector files (those of BlinElephant)
 	 * to check the name of the webapp, and not the version 
 	 */
-	private static String fastAppGuessBD = "fastGuess/fastGuess.xml"; 
+	private static String fastAppGuessBD = "resources/fastGuess/fastGuess.xml"; 
 	
 	
 	
@@ -204,7 +204,7 @@ public class WebAppGuesser {
 		/**
 		 * here is defined a naming and locating convention for webapps DBs
 		 */
-		return "CMSSdb/"+appName+"/"+appName+".xml";
+		return "resources/CMSSdb/"+appName+"/"+appName+".xml";
 	}
 	
 	
