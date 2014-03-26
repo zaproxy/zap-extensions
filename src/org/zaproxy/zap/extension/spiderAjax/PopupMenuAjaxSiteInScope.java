@@ -22,11 +22,11 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.SiteNode;
-import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
-import org.zaproxy.zap.view.PopupMenuSiteNode;
+import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
+import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
 
-public class PopupMenuAjaxSiteInScope extends PopupMenuSiteNode {
+public class PopupMenuAjaxSiteInScope extends PopupMenuItemSiteNodeContainer {
 
 	private static final long serialVersionUID = 1L;
     private ExtensionAjax extension = null;
@@ -85,7 +85,7 @@ public class PopupMenuAjaxSiteInScope extends PopupMenuSiteNode {
      * 
      */
 	@Override
-	public void performAction(SiteNode node) throws Exception {
+	public void performAction(SiteNode node) {
 	    if (node != null) {
 	    	extension.spiderSite(node, true);
 	    }
@@ -96,8 +96,8 @@ public class PopupMenuAjaxSiteInScope extends PopupMenuSiteNode {
      * 
      */	
 	@Override
-    public boolean isEnabledForSiteNode (SiteNode node) {
-        return (!extension.isSpiderRunning() && node != null && node.isIncludedInScope());
+    public boolean isButtonEnabledForSiteNode (SiteNode node) {
+        return (!extension.isSpiderRunning() && node.isIncludedInScope());
     }
   
 	
@@ -105,19 +105,19 @@ public class PopupMenuAjaxSiteInScope extends PopupMenuSiteNode {
      * 
      */
 	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
+	public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
 	    if (getExtensionSpider() == null) {
 			return false;
 		}
 		switch (invoker) {
-		case alerts:
-		case ascan:
-		case bruteforce:
-		case fuzz:
+		case ALERTS_PANEL:
+		case ACTIVE_SCANNER_PANEL:
+		case FORCED_BROWSE_PANEL:
+		case FUZZER_PANEL:
 			return false;
-		case history:
-		case sites:
-		case search:
+		case HISTORY_PANEL:
+		case SITES_PANEL:
+		case SEARCH_PANEL:
 		default:
 			return true;
 		}

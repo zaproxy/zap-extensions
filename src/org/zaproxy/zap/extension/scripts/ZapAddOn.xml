@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>10</version>
+	<version>11</version>
 	<description>Supports all JRS 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/ScriptConsole</url>
-	<changes>Changed to add an output console toolbar, depend on core ExtensionScript to avoid NullPointerException (Issue 847)</changes>
+	<changes>Updated to use the latest core changes (Issue 609).</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.scripts.ExtensionScriptsUI</extension>
@@ -13,6 +13,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

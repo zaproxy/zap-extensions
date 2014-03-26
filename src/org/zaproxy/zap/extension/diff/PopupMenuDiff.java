@@ -19,10 +19,13 @@ package org.zaproxy.zap.extension.diff;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
-import org.zaproxy.zap.view.PopupMenuHistoryReference;
+import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
 
-public class PopupMenuDiff extends PopupMenuHistoryReference {
+public class PopupMenuDiff extends PopupMenuItemHistoryReferenceContainer {
+
+    private static final Logger LOGGER = Logger.getLogger(PopupMenuDiff.class);
 
 	private static final long serialVersionUID = 1L;
     private ExtensionDiff ext = null;
@@ -44,7 +47,7 @@ public class PopupMenuDiff extends PopupMenuHistoryReference {
     }
 
 	@Override
-    public boolean isEnabledForHistoryReferences (List<HistoryReference> hrefs) {
+    protected boolean isButtonEnabledForSelectedHistoryReferences(List<HistoryReference> hrefs) {
 	    if (hrefs.size() != 2) {
 	        return false;
 	    }
@@ -59,15 +62,19 @@ public class PopupMenuDiff extends PopupMenuHistoryReference {
     }
 
 	@Override
-    public void performActions (List<HistoryReference> hrefs) throws Exception {
+    protected void performHistoryReferenceActions(List<HistoryReference> hrefs) {
     	if (hrefs.size() == 2) {
-    		this.ext.showDiffDialog(hrefs.get(0).getHttpMessage(), hrefs.get(1).getHttpMessage(), this.request);
+    		try {
+                this.ext.showDiffDialog(hrefs.get(0).getHttpMessage(), hrefs.get(1).getHttpMessage(), this.request);
+            } catch (Exception e) {
+                LOGGER.error("Failed to show diff dialogue: " + e.getMessage(), e);
+            }
     	}
     }
 
 
 	@Override
-	public void performAction(HistoryReference href) throws Exception {
+	public void performAction(HistoryReference href) {
 		// Ignore
 	}
 }

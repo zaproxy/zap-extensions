@@ -18,9 +18,9 @@
 package org.zaproxy.zap.extension.tokengen;
 
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.view.PopupMenuHttpMessage;
+import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
-public class TokenGenPopupMenu extends PopupMenuHttpMessage {
+public class TokenGenPopupMenu extends PopupMenuItemHttpMessageContainer {
 
 	private static final long serialVersionUID = 1L;
 	private ExtensionTokenGen extension = null;
@@ -33,17 +33,11 @@ public class TokenGenPopupMenu extends PopupMenuHttpMessage {
     }
 	
 	@Override
-	public void performAction(HttpMessage msg) throws Exception {
+	public void performAction(HttpMessage msg) {
 		this.extension.showGenerateTokensDialog(msg);
 	}
 
 	public void setExtension(ExtensionTokenGen extension) {
 		this.extension = extension;
-	}
-
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
-		// This is enabled for all tabs which list messages
-		return true;
 	}
 }

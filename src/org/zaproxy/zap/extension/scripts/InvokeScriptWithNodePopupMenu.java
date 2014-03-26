@@ -24,14 +24,13 @@ import java.util.List;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.view.PopupMenuSiteNode;
+import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
-public class InvokeScriptWithNodePopupMenu extends PopupMenuSiteNode {
+public class InvokeScriptWithNodePopupMenu extends PopupMenuItemSiteNodeContainer {
 
 	private static final long serialVersionUID = 2282358266003940700L;
 
@@ -63,21 +62,12 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuSiteNode {
     }
 	    
 	@Override
-	public void performAction(SiteNode sn) throws Exception {
+	public void performAction(SiteNode sn) {
 		// Do nothing
 	}
 
 	@Override
-    public void performActions (List<HistoryReference> hrefs) throws Exception {
-	}
-
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
-		return true;
-	}
-
-	@Override
-    public boolean isEnabledForSiteNode (SiteNode sn) {
+    public boolean isButtonEnabledForSiteNode (SiteNode sn) {
 		reCreateSubMenu();
 		
     	return false;

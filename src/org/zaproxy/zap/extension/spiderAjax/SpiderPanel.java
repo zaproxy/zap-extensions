@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -52,6 +53,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.view.ScanStatus;
+import org.zaproxy.zap.view.messagecontainer.http.DefaultSelectableHistoryReferencesContainer;
+import org.zaproxy.zap.view.messagecontainer.http.SelectableHistoryReferencesContainer;
 
 /**
  * This class creates the Spider AJAX Panel where the found URLs are displayed
@@ -432,8 +435,13 @@ public class SpiderPanel extends AbstractPanel implements Runnable, SpiderListen
 							}
 						}
 
-						View.getSingleton().getPopupMenu()
-								.show(e.getComponent(), e.getX(), e.getY());
+						final List<HistoryReference> historyReferences = listLog.getSelectedValuesList();
+						SelectableHistoryReferencesContainer messageContainer = new DefaultSelectableHistoryReferencesContainer(
+								listLog.getName(),
+								listLog,
+								Collections.<HistoryReference> emptyList(),
+								historyReferences);
+						View.getSingleton().getPopupMenu().show(messageContainer, e.getX(), e.getY());
 						return;
 					}
 

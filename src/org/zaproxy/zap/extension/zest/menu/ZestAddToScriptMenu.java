@@ -22,12 +22,12 @@ package org.zaproxy.zap.extension.zest.menu;
 import java.util.List;
 
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
-import org.zaproxy.zap.view.PopupMenuHistoryReference;
+import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
-public class ZestAddToScriptMenu extends PopupMenuHistoryReference {
+public class ZestAddToScriptMenu extends PopupMenuItemHttpMessageContainer {
 
 	private static final long serialVersionUID = 2282358266003940700L;
 	
@@ -63,20 +63,20 @@ public class ZestAddToScriptMenu extends PopupMenuHistoryReference {
     }
 
 	@Override
-	public void performAction(HistoryReference href) throws Exception {
-		if (href.getHttpMessage() == null) {
-			return;
-		}
-		extension.addToParent(parent, href.getHttpMessage(), prefix);
+	public void performAction(HttpMessage httpMessage) {
+		extension.addToParent(parent, httpMessage, prefix);
 	}
 	
 	@Override
-    public void performActions (List<HistoryReference> hrefs) throws Exception {
+    public void performActions (List<HttpMessage> messages) {
 		// Work out common root??
 		String prefix2 = null;
 		String url = null;
-		for (HistoryReference href : hrefs) {
-			url = href.getURI().toString();
+		for (HttpMessage message : messages) {
+		    if (message == null) {
+		        continue;
+		    }
+			url = message.getRequestHeader().getURI().toString();
 			if (prefix2 == null) {
 				// First one - select up to the last /
 				prefix2 = url.substring(0, url.lastIndexOf("/"));
@@ -87,13 +87,7 @@ public class ZestAddToScriptMenu extends PopupMenuHistoryReference {
 			}
 		}
 		this.prefix = prefix2;
-		super.performActions(hrefs);
-	}
-
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
-		this.setEnabled(true);
-		return true;
+		super.performActions(messages);
 	}
 	
     @Override

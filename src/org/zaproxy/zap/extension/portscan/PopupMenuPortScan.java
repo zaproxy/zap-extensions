@@ -23,9 +23,10 @@ import javax.swing.ImageIcon;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
-import org.zaproxy.zap.view.PopupMenuSiteNode;
+import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
+import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
-public class PopupMenuPortScan extends PopupMenuSiteNode {
+public class PopupMenuPortScan extends PopupMenuItemSiteNodeContainer {
 
 	private static final long serialVersionUID = 1L;
 	private ExtensionPortScan extension = null;
@@ -58,7 +59,7 @@ public class PopupMenuPortScan extends PopupMenuSiteNode {
     }
     
 	@Override
-	public void performAction(SiteNode node) throws Exception {
+	public void performAction(SiteNode node) {
 	    if (node != null) {
 	    	// Loop up to get the top parent
 			while (node.getParent() != null && node.getParent().getParent() != null) {
@@ -69,7 +70,7 @@ public class PopupMenuPortScan extends PopupMenuSiteNode {
 	}
 
 	@Override
-    public boolean isEnabledForSiteNode (SiteNode node) {
+    public boolean isButtonEnabledForSiteNode (SiteNode node) {
 	    if (node != null && ! node.isRoot() && ! extension.isScanning(node)) {
 	        this.setEnabled(true);
 	    } else {
@@ -79,16 +80,16 @@ public class PopupMenuPortScan extends PopupMenuSiteNode {
     }
 
 	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
+	public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
 		switch (invoker) {
-		case alerts:
-		case ascan:
-		case bruteforce:
-		case fuzz:
+		case ALERTS_PANEL:
+		case ACTIVE_SCANNER_PANEL:
+		case FORCED_BROWSE_PANEL:
+		case FUZZER_PANEL:
 			return false;
-		case history:
-		case sites:
-		case search:
+		case HISTORY_PANEL:
+		case SITES_PANEL:
+		case SEARCH_PANEL:
 		default:
 			return true;
 		}

@@ -21,9 +21,9 @@ package org.zaproxy.zap.extension.plugnhack;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.view.PopupMenuHttpMessage;
+import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
-public class PopupMenuMonitorScope extends PopupMenuHttpMessage {
+public class PopupMenuMonitorScope extends PopupMenuItemHttpMessageContainer {
 
 	private static final long serialVersionUID = 1L;
 	private MonitoredPagesManager mpm = null;
@@ -37,25 +37,24 @@ public class PopupMenuMonitorScope extends PopupMenuHttpMessage {
         this.mpm = mpm;
     }
     
+    @Override
     public String getParentMenuName() {
     	return Constant.messages.getString("plugnhack.menu.monitor");
     }
 
+    @Override
     public boolean isSubMenu() {
     	return true;
     }
 
     
 	@Override
-	public void performAction(HttpMessage msg) throws Exception {
+	public void performAction(HttpMessage msg) {
 		this.mpm.setMonitorAllInScope(! monitored);
 	}
 	
 	@Override
-    public boolean isEnabledForHttpMessage (HttpMessage msg) {
-		if (msg == null) {
-			return false;
-		}
+	protected boolean isButtonEnabledForSelectedHttpMessage(HttpMessage msg) {
 		if (this.mpm.isMonitorAllInScope()) {
 			this.monitored = true;
 			this.setText(Constant.messages.getString("plugnhack.menu.monitor.exscope"));
@@ -66,12 +65,6 @@ public class PopupMenuMonitorScope extends PopupMenuHttpMessage {
     	return true;
     }
 
-	
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
-		return true;
-	}
-	
     @Override
     public boolean isSafe() {
     	return true;

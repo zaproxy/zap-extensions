@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.zest.menu;
 
-import java.awt.Component;
 import java.lang.reflect.Method;
 
+import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestStatement;
@@ -34,11 +34,14 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestResultWrapper;
 import org.zaproxy.zap.extension.zest.ZestResultsPanel;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
-import org.zaproxy.zap.view.PopupMenuHistoryReference;
+import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
+import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
 
-public class ZestCompareReqRespPopupMenu extends PopupMenuHistoryReference {
+public class ZestCompareReqRespPopupMenu extends PopupMenuItemHistoryReferenceContainer {
 
 	private static final long serialVersionUID = 2282358266003940700L;
+
+	private static final Logger LOGGER = Logger.getLogger(ZestCompareReqRespPopupMenu.class);
 
 	private ExtensionZest extension;
 	private boolean request = false;
@@ -57,17 +60,14 @@ public class ZestCompareReqRespPopupMenu extends PopupMenuHistoryReference {
 	}
 	
 	@Override
-    public boolean isEnableForComponent(Component invoker) {
-		// Call super method to set up 'lastInvoker' but ignore the result
-		super.isEnableForComponent(invoker);
+    public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
 		if (Control.getSingleton().getExtensionLoader().getExtension("ExtensionDiff") == null) {
 			// Diff extension has not been installed
 			return false;
 		}
 		// TODO check to see if its an 'action' node
         return (extension.getLastRunScript() != null && 
-        		invoker.getName() != null && 
-        		invoker.getName().equals(ZestResultsPanel.TABLE_NAME));
+        		ZestResultsPanel.TABLE_NAME.equals(httpMessageContainer.getComponent().getName()));
     }
 
 	@Override
@@ -76,7 +76,7 @@ public class ZestCompareReqRespPopupMenu extends PopupMenuHistoryReference {
     }
 
 	@Override
-	public void performAction(HistoryReference href) throws Exception {
+	public void performAction(HistoryReference href) {
     	ZestResultWrapper newRes = (ZestResultWrapper)href;
     	if (extension.getLastRunScript() != null && newRes != null && newRes.getScriptRequestIndex() >= 0) {
     		ZestStatement stmt = extension.getLastRunScript().getStatement(newRes.getScriptRequestIndex());
@@ -87,19 +87,18 @@ public class ZestCompareReqRespPopupMenu extends PopupMenuHistoryReference {
 				// loaded using a different class loader
 				Extension ext = Control.getSingleton().getExtensionLoader().getExtension("ExtensionDiff");
 				if (ext != null) {
-					Method method = ext.getClass().getMethod("showDiffDialog", 
-							new Class<?>[]{HttpMessage.class, HttpMessage.class, boolean.class});
-					if (method != null) {
-						method.invoke(ext, ZestZapUtils.toHttpMessage(zr, resp), newRes.getHttpMessage(), this.request);
-					}
+				    try {
+    					Method method = ext.getClass().getMethod("showDiffDialog", 
+    							new Class<?>[]{HttpMessage.class, HttpMessage.class, boolean.class});
+    					if (method != null) {
+    						method.invoke(ext, ZestZapUtils.toHttpMessage(zr, resp), newRes.getHttpMessage(), this.request);
+    					}
+				    } catch (Exception e) {
+				        LOGGER.error("Failed to show diff dialogue: " + e.getMessage(), e);
+                    }
 				}
     		}
     	}
 	}
 
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
-		// Not used
-		return false;
-	}
 }

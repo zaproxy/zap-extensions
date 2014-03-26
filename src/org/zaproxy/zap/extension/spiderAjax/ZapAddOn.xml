@@ -1,25 +1,12 @@
 <zapaddon>
 	<name>Ajax Spider</name>
-	<version>9</version>
+	<version>10</version>
 	<description>Allows you to spider sites that make heavy use of javascript using crawljax</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/AJAXSpider_getStarted</url>
 	<changes>
 	<![CDATA[
-	Added support for modes and scope (Issue 334).<br>
-	Added API to control the Ajax Spider (Issue 369).<br>
-	AJAX Spider will now use the HTTP authentication credentials set in "Options" > "Authentication" (Issue 584).<br>
-	AJAX Spider will now use the options set in "Options" > "Connection".<br>
-	Changed to persist the configurations (Issue 678).<br>
-	Changed to proxy SSL traffic (Firefox) (Issue 824).<br>
-	Fixed a ChromeDriver process leak that occurred after closing the "Options" with Chrome browser selected (Issue 831).<br>
-	Changed to verify and deny all requests outside of spider scope (Issue 833).<br>
-	Updated Crawljax library (version 3.4) and dependencies (Issue 834).<br>
-	Changed to allow to set ChromeDriver's path through the "AJAX Spider" options (Issue 835).<br>
-	Changed to automatically configure the proxy settings (Issue 836).<br>
-	Changed to clear the results tab when a new spider process is started (Issue 926).<br>
-	Changed to not allow to start a new spider process if one is already running (Issue 927).<br>
-	Changed the AJAX Spider to listen to session changes (Issue 928).
+	Updated to use the latest core changes (Issue 609).
 	]]>
 	</changes>
 	<dependson/>
@@ -30,7 +17,7 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
 
