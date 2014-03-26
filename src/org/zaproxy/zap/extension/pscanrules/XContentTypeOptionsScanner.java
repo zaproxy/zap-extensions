@@ -37,7 +37,7 @@ public class XContentTypeOptionsScanner  extends PluginPassiveScanner {
 	}
 		
 	private void raiseAlert(HttpMessage msg, int id, String xContentTypeOption) {
-		Alert alert = new Alert(getId(), Alert.RISK_LOW, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
 		    		"The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'",
@@ -66,7 +66,8 @@ public class XContentTypeOptionsScanner  extends PluginPassiveScanner {
 		return "X-Content-Type-Options header missing";
 	}
 	
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10021;
 	}
 

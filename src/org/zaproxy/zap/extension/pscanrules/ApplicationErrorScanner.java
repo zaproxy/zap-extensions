@@ -49,7 +49,8 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
      *
      * @return the ZAP id
      */
-    private int getId() {
+    @Override
+    public int getPluginId() {
         return 90022;
     }
 
@@ -146,7 +147,7 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
         // Raise an alert according to Passive Scan Rule model
         // description, uri, param, attack, otherInfo, 
         // solution, reference, evidence, cweId, wascId, msg
-        Alert alert = new Alert(getId(), getRisk(), Alert.WARNING, getName());
+        Alert alert = new Alert(getPluginId(), getRisk(), Alert.WARNING, getName());
         alert.setDetail(
                 getDescription(),
                 msg.getRequestHeader().getURI().toString(),

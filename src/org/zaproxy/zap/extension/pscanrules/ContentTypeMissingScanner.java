@@ -57,7 +57,7 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
 			issue = "Content-Type header missing";
 		}
 		
-		Alert alert = new Alert(getId(), Alert.RISK_LOW, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
 		    		issue,
@@ -86,7 +86,8 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
 		return "Content-Type header missing";
 	}
 	
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10019;
 	}
 

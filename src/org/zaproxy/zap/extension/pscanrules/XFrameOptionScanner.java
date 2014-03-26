@@ -55,7 +55,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 		if (isXFrameOptionsMissing){
 			issue = "X-Frame-Options header is not included in the HTTP response to protect against 'ClickJacking' attacks";
 		}
-		Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
 		    			issue, 
@@ -83,7 +83,8 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 		return "X-Frame-Options header not set";
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10020;
 	}
 }

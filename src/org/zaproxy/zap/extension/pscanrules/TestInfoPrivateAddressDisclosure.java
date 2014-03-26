@@ -67,7 +67,8 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
     
     private PassiveScanThread parent = null;
 
-    private int getId() {
+    @Override
+    public int getPluginId() {
         return 00002;
     }
 
@@ -111,7 +112,7 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
         }
 
         if (sbTxtFound.length() != 0) {
-            Alert alert = new Alert(getId(), this.getRisk(), Alert.WARNING, this.getName());
+            Alert alert = new Alert(getPluginId(), this.getRisk(), Alert.WARNING, this.getName());
 
             alert.setDetail(
                     this.getDescription(),
