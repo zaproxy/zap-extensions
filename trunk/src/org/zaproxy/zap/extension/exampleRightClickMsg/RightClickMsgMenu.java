@@ -19,7 +19,8 @@ package org.zaproxy.zap.extension.exampleRightClickMsg;
 
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.view.PopupMenuHttpMessage;
+import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
+import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 /*
  * An example ZAP extension which adds a right click menu item to all of the main
@@ -27,7 +28,7 @@ import org.zaproxy.zap.view.PopupMenuHttpMessage;
  * 
  * This class is defines the popup menu item.
  */
-public class RightClickMsgMenu extends PopupMenuHttpMessage {
+public class RightClickMsgMenu extends PopupMenuItemHttpMessageContainer {
 
 	private static final long serialVersionUID = 1L;
 	private ExtensionRightClickMsgMenu extension = null;
@@ -40,7 +41,7 @@ public class RightClickMsgMenu extends PopupMenuHttpMessage {
     }
 	
 	@Override
-	public void performAction(HttpMessage msg) throws Exception {
+	public void performAction(HttpMessage msg) {
 		// This is where you do what you want to do.
 		// In this case we'll just show a popup message.
 		View.getSingleton().showMessageDialog(extension.getMessageString("ext.popupmsg.msg.example"));
@@ -51,7 +52,7 @@ public class RightClickMsgMenu extends PopupMenuHttpMessage {
 	}
 
 	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
+	public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
 		// This is enabled for all tabs which list messages
 		// You can examine the invoker is you wish to restrict this to specific tabs
 		return true;

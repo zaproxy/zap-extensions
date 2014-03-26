@@ -26,11 +26,11 @@ import java.util.regex.Pattern;
 import javax.swing.JTable;
 
 import org.apache.log4j.Logger;
-import org.zaproxy.zap.extension.stdmenus.PopupIncludeInContextMenu;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.view.popup.PopupMenuItemIncludeInContext;
 
-public class PopupIncludeWebSocketInContextMenu extends PopupIncludeInContextMenu {
+public class PopupIncludeWebSocketInContextMenu extends PopupMenuItemIncludeInContext {
 
 	private static final long serialVersionUID = -2345060529128495874L;
 	
@@ -40,10 +40,14 @@ public class PopupIncludeWebSocketInContextMenu extends PopupIncludeInContextMen
 
 	public PopupIncludeWebSocketInContextMenu(Context context) {
 		super(context);
+
+		initialize();
 	}
 
 	public PopupIncludeWebSocketInContextMenu() {
 		super();
+
+		initialize();
 	}
 	
     @Override
@@ -51,8 +55,7 @@ public class PopupIncludeWebSocketInContextMenu extends PopupIncludeInContextMen
     	return PopupIncludeWebSocketContextMenu.MENU_NAME;
     }
     
-    @Override
-    protected void initialize() {
+    private void initialize() {
     	addActionListener(new java.awt.event.ActionListener() {
 	    	@Override
 	    	public void actionPerformed(java.awt.event.ActionEvent evt) {

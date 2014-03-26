@@ -23,13 +23,13 @@ import java.awt.Component;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.zaproxy.zap.extension.stdmenus.PopupContextExcludeMenu;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.view.popup.PopupMenuItemContextExclude;
 
 /**
  * Allows to reuse the existing 'Exclude in Context' menu for WebSocket URLs.
  */
-public class PopupExcludeWebSocketContextMenu extends PopupContextExcludeMenu {
+public class PopupExcludeWebSocketContextMenu extends PopupMenuItemContextExclude {
 	
 	private static final long serialVersionUID = -5195960463302710531L;
 	
