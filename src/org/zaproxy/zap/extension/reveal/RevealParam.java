@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.reveal;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 public class RevealParam extends AbstractParam {
 
@@ -92,10 +93,12 @@ public class RevealParam extends AbstractParam {
 		getConfig().setProperty(PARAM_REVEAL_VERSION, Long.valueOf(PARAM_CURRENT_VERSION));
 	}
 
+	@ZapApiIgnore
 	public boolean isReveal() {
 		return reveal;
 	}
 
+	@ZapApiIgnore
 	public void setReveal(boolean reveal) {
 		if (this.reveal != reveal) {
 			this.reveal = reveal;
