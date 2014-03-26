@@ -28,11 +28,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.SiteNode;
@@ -56,7 +56,7 @@ public class TechPanel extends AbstractPanel {
 	private SortedComboBoxModel<String> siteModel = new SortedComboBoxModel<>();
 	//private JButton optionsButton = null;
 
-	private JTable techTable = null;
+	private JXTable techTable = null;
 	private TechTableModel techModel = new TechTableModel();
 	
     //private static Log log = LogFactory.getLog(ParamsPanel.class);
@@ -178,7 +178,6 @@ public class TechPanel extends AbstractPanel {
 			jScrollPane = new JScrollPane();
 			jScrollPane.setViewportView(getTechTable());
 			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
-			jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		}
 		return jScrollPane;
 	}
@@ -186,7 +185,6 @@ public class TechPanel extends AbstractPanel {
 	private void setParamsTableColumnSizes() {
 		// Just set the 2 columns that dont need much space and let the rest autosize
 		techTable.getColumnModel().getColumn(0).setMinWidth(25);
-		techTable.getColumnModel().getColumn(0).setMaxWidth(25);
 		techTable.getColumnModel().getColumn(0).setPreferredWidth(25);	// icon
 
 		/* Dont currently support confidence
@@ -196,14 +194,15 @@ public class TechPanel extends AbstractPanel {
 		*/
 	}
 	
-	protected JTable getTechTable() {
+	protected JXTable getTechTable() {
 		if (techTable == null) {
-			techTable = new JTable(techModel);
+			techTable = new JXTable(techModel);
 
 			techTable.setColumnSelectionAllowed(false);
 			techTable.setCellSelectionEnabled(false);
 			techTable.setRowSelectionAllowed(true);
 			techTable.setAutoCreateRowSorter(true);
+			techTable.setColumnControlVisible(true);
 
 			this.setParamsTableColumnSizes();
 
