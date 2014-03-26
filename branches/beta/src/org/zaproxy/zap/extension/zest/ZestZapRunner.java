@@ -89,7 +89,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	    this.setStopOnTestFail(false);
 	    
 	    ConnectionParam connParams = Model.getSingleton().getOptionsParam().getConnectionParam();
-	    if (connParams.getProxyChainName() != null && connParams.getProxyChainName().length() > 0) {
+	    if (connParams.isUseProxyChain()) {
 	    	this.setProxy(connParams.getProxyChainName(), connParams.getProxyChainPort());
 	    }
     }
