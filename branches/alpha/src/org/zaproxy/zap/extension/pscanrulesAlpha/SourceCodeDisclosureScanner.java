@@ -175,12 +175,12 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		languagePatterns.put(Pattern.compile("die\\s+\".*?\\$!.*?\""), "Perl");
 		
 		//Objective C (probably an iPhone app)
-		languagePatterns.put(Pattern.compile("^#\\s+import\\s+<[a-zA-Z0-9/.]+>"), "Objective C");
-		languagePatterns.put(Pattern.compile("^#\\s+import\\s+\"[a-zA-Z0-9/.]+\""), "Objective C");
-		languagePatterns.put(Pattern.compile("^\\[+[a-zA-Z0-9 :]\\]"), "Objective C");
+		languagePatterns.put(Pattern.compile("^#\\s+import\\s+<[a-zA-Z0-9/.]+>", Pattern.MULTILINE), "Objective C");
+		languagePatterns.put(Pattern.compile("^#\\s+import\\s+\"[a-zA-Z0-9/.]+\"", Pattern.MULTILINE), "Objective C");
+		languagePatterns.put(Pattern.compile("^\\[+[a-zA-Z0-9 :]{5,}\\]", Pattern.MULTILINE), "Objective C");
 		languagePatterns.put(Pattern.compile("@interface\\s*[a-zA-Z0-9]+\\s*:\\s*[a-zA-Z0-9]+\\s*\\{"), "Objective C");		
-		languagePatterns.put(Pattern.compile("\\+\\s*\\(\\s*[a-z]+\\s*\\)"), "Objective C");
-		languagePatterns.put(Pattern.compile("\\-\\s*\\(\\s*[a-z]+\\s*\\)"), "Objective C");
+		languagePatterns.put(Pattern.compile("\\+\\s*\\(\\s*[a-z]{5,}\\s*\\)"), "Objective C");
+		languagePatterns.put(Pattern.compile("\\-\\s*\\(\\s*[a-z]{5,}\\s*\\)"), "Objective C");
 		languagePatterns.put(Pattern.compile("@implementation\\s+[a-z]"), "Objective C");
 		languagePatterns.put(Pattern.compile("@interface\\s+[a-zA-Z0-9]+\\s*:\\s*[a-zA-Z0-9]+\\s*<[a-zA-Z0-9]+>"), "Objective C");
 		languagePatterns.put(Pattern.compile("@protocol\\s+[a-zA-Z0-9]+"), "Objective C");
