@@ -415,8 +415,6 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 			// updates viewport only when scrollbar is released
 			
 			scrollPanel = new JScrollPane(messagesView.getViewComponent());
-			scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			scrollPanel.setPreferredSize(new Dimension(800,200));
 			scrollPanel.setName("WebSocketPanelActions");
 			

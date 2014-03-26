@@ -25,7 +25,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
 
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -33,6 +32,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
@@ -40,7 +40,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.utils.TableColumnManager;
 
 /**
- * Wraps a {@link JTable} that is used to display WebSocket
+ * Wraps a {@link JXTable} that is used to display WebSocket
  * messages.
  */
 public class WebSocketMessagesView implements Runnable {
@@ -49,7 +49,7 @@ public class WebSocketMessagesView implements Runnable {
 
 	private static final Logger logger = Logger.getLogger(WebSocketMessagesView.class);
 
-	protected JTable view;
+	protected JXTable view;
 	protected WebSocketMessagesViewModel model;
 
 	private HttpPanel requestPanel;
@@ -69,15 +69,16 @@ public class WebSocketMessagesView implements Runnable {
 	 * 
 	 * @return messages view
 	 */
-	public JTable getViewComponent() {
+	public JXTable getViewComponent() {
 		if (view == null) {			
-			view = new JTable();
+			view = new JXTable();
 			view.setName(getViewComponentName());
 			view.setModel(model);
 			view.setColumnSelectionAllowed(false);
 			view.setCellSelectionEnabled(false);
 			view.setRowSelectionAllowed(true);
 			view.setAutoCreateRowSorter(false);
+			view.setColumnControlVisible(true);
 			
 			// prevents columns to loose their width when switching models
 			view.setAutoCreateColumnsFromModel(false);
@@ -140,7 +141,7 @@ public class WebSocketMessagesView implements Runnable {
 				    
 				    WebSocketMessagesViewModel model = (WebSocketMessagesViewModel) view.getModel();
 				    
-				    // as we use a JTable here, that can be sorted, we have to
+				    // as we use a JXTable here, that can be sorted, we have to
 				    // transform the row index to the appropriate model row
                     int modelRow = view.convertRowIndexToModel(rowIndex);
 					final WebSocketMessageDTO message = model.getDTO(modelRow);
@@ -152,22 +153,22 @@ public class WebSocketMessagesView implements Runnable {
 
 	protected void setColumnWidths() {
 		// channel + consecutive number
-		setColumnWidth(0, 50, 100, 70);
+		setColumnWidth(0, 50, 70);
 
 		// direction
-		setColumnWidth(1, 25, 100, 25);
+		setColumnWidth(1, 25, 25);
 		
 		// timestamp
-		setColumnWidth(2, 160, 200, 160);
+		setColumnWidth(2, 160, 160);
 		
 		// opcode
-		setColumnWidth(3, 70, 120, 75);
+		setColumnWidth(3, 70, 75);
 		
 		// payload length
-		setColumnWidth(4, 45, 100, 45);
+		setColumnWidth(4, 45, 45);
 		
-		// payload (do not set max & preferred size => stretches to maximum)
-		setColumnWidth(5, 100, -1, -1);
+		// payload (do not set preferred size => stretches to maximum)
+		setColumnWidth(5, 100, -1);
 	}
 	
 	/**
@@ -175,18 +176,13 @@ public class WebSocketMessagesView implements Runnable {
 	 * 
 	 * @param index
 	 * @param min
-	 * @param max
 	 * @param preferred
 	 */
-	protected void setColumnWidth(int index, int min, int max, int preferred) {
+	protected void setColumnWidth(int index, int min, int preferred) {
 		TableColumn column = view.getColumnModel().getColumn(index);
 		
 		if (min != -1) {
 			column.setMinWidth(min);
-		}
-		
-		if (max != -1) {
-			column.setMaxWidth(max);
 		}
 		
 		if (preferred != -1) {

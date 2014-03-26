@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>7</version>
+	<version>8</version>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for 2.2.0.</changes>
+	<changes>Minor code changes (Issue 503).</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.websocket.ExtensionWebSocket</extension>
