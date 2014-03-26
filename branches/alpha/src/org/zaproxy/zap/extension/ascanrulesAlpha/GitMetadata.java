@@ -354,8 +354,8 @@ public class GitMetadata {
 				for (int i=0; i< packEntryCount; i++) {
 					byte [] packTableData = new byte [20];
 					packfileTablesBuffer.get(packTableData);
-					String packTableSha1 = Hex.encodeHexString( packTableData );
-					//TODO :use more efficient byte based comparison to find the SHA1 here (and in similar code in pack index version 2 logic, later..
+					String packTableSha1 = Hex.encodeHexString( packTableData );					
+					//TODO: use more efficient byte based comparison to find the SHA1 here (and in similar code in pack index version 2 logic, later..
 					if ( packTableSha1.equals(filesha1) ) {
 						if (log.isDebugEnabled()) log.debug("FOUND our SHA1 "+ packTableSha1+ " at entry " + i + " in the v4 pack tables");
 						sha1Index=i;
