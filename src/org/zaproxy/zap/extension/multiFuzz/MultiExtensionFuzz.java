@@ -90,7 +90,7 @@ public class MultiExtensionFuzz extends ExtensionAdaptor implements SessionChang
 	private void initialize() {
 		this.setName(NAME);
 	    messages = ResourceBundle.getBundle(
-	            this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+	            this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());
 		// Force JBroFuzz to use the ZAP user directory
 		Preferences PREFS = Preferences.userRoot().node("owasp/jbrofuzz");
 		PREFS.putBoolean(JBroFuzzPrefs.DIRS[1].getId(), true);

@@ -4,5 +4,7 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-    <mapID target="browserView" url="zaphelp/browserView.html" />
+	<mapID target="addon.wappalyzer.icon" url="contents/images/wappalyzer.png" />
+
+	<mapID target="addon.wappalyzer.wappalyzer" url="contents/wappalyzer.html" />
 </map>

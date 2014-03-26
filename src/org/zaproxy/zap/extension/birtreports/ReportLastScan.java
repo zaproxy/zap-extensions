@@ -199,7 +199,7 @@ public class ReportLastScan {
                     try {
              
                         image = ImageIO.read(new File(fileNameLogo));
-                        File logo = new File("reportdesignfiles/logo.jpg");
+                        File logo = new File("resources/reportdesignfiles/logo.jpg");
                         ImageIO.write(image, "jpg", logo);
                         fileNameLogo = logo.getAbsolutePath().substring(0,logo.getAbsolutePath().lastIndexOf(File.separator));
              
@@ -351,7 +351,7 @@ public class ReportLastScan {
     	try
     	{
     		//generate xml file
-    		File birtfile = new File("reportdesignfiles/xmloutput/xmloutputzap.xml");
+    		File birtfile = new File("resources/reportdesignfiles/xmloutput/xmloutputzap.xml");
     		File report = generate(birtfile.getAbsolutePath(), model, "xml/report.xml.xsl");
     		 if (report == null) {
                  view.showMessageDialog(

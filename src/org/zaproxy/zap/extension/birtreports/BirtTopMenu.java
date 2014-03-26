@@ -62,7 +62,7 @@ public class BirtTopMenu extends ExtensionAdaptor {
         this.setName("BirtTopMenu");
         // Load extension specific language files - these are held in the extension jar
         messages = ResourceBundle.getBundle(
-                        this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+                        this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());
         }
        
         @Override
@@ -94,7 +94,7 @@ public class BirtTopMenu extends ExtensionAdaptor {
                 	reportgen.setCount(count); 
                 	reportgen.generateXmlforBirtPdf(getView(), getModel());
                 	// pass the path of .rptdesign file
-                	reportgen.executeBirtPdfReport(getView(),"org/zaproxy/zap/extension/birtreports/reportdesignfiles/AlertsOwaspZap.rptdesign", getMessageString("birt.report.title"));
+                	reportgen.executeBirtPdfReport(getView(),"org/zaproxy/zap/extension/birtreports/resources/reportdesignfiles/AlertsOwaspZap.rptdesign", getMessageString("birt.report.title"));
                     //View.getSingleton().showMessageDialog(getMessageString("birt.report.title"));
                 }
             });
