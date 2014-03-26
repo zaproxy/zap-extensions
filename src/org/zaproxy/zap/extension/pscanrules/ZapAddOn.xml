@@ -4,7 +4,12 @@
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>NOT YET RELEASED! Added reference for X-Content-Type-Options header missing</changes>
+	<changes>
+	<![CDATA[
+	NOT YET RELEASED! Added reference for X-Content-Type-Options header missing.<br>
+	Changed help file structure to support internationalisation (Issue 981).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.pscanrules.ExtensionPscanRules</extension>
@@ -27,6 +32,6 @@
 	</pscanrules>
 	<filters/>
 	<files/>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
