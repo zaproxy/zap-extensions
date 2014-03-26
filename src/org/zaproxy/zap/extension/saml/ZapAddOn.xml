@@ -4,7 +4,7 @@
     <description>Detect, Show, Edit, Fuzz SAML requests</description>
     <author>ZAP Dev Team</author>
     <url>http://code.google.com/p/zaproxy/</url>
-    <changes>Updated to latest core changes.</changes>
+    <changes>Updated to latest core changes and other minor code changes (Issue 609).</changes>
     <dependson/>
     <extensions>
         <extension>org.zaproxy.zap.extension.saml.SAMLExtension</extension>
