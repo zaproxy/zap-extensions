@@ -265,6 +265,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		if (recordButton == null) {
 			recordButton = new ZapToggleButton();
 			recordButton.setIcon(RECORD_OFF_ICON);
+			recordButton.setSelectedIcon(RECORD_ON_ICON);
 			recordButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.record.off"));
 			recordButton.setSelectedToolTipText(Constant.messages.getString("zest.toolbar.button.record.on"));
 			
@@ -273,7 +274,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				public void actionPerformed(ActionEvent e) {
 					if (recordButton.isSelected()) {
 						getDialogManager().showZestEditScriptDialog(null, null, true, true);
-						recordButton.setIcon(RECORD_ON_ICON);
 					} else {
 						cancelScriptRecording();
 					}
@@ -291,7 +291,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			scriptNodeRecording = null;
 		}
 		getRecordButton().setSelected(false);
-		getRecordButton().setIcon(RECORD_OFF_ICON);
 	}
 
 	public void setRecording(ScriptNode node, boolean record) {

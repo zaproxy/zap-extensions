@@ -113,16 +113,11 @@ public class OutputPanel extends AbstractPanel {
             clearOnRunButton.setSelectedToolTipText(
                     Constant.messages.getString("scripts.output.clearOnRun.button.enabled.toolTip"));
             clearOnRunButton.setIcon(CLEAR_ON_RUN_DISABLED_ICON);
+            clearOnRunButton.setSelectedIcon(CLEAR_ON_RUN_ENABLED_ICON);
             clearOnRunButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
-                    if (clearOnRunButton.isSelected()) {
-                        clearOnRunButton.setIcon(CLEAR_ON_RUN_ENABLED_ICON);
-                    	clearOnRun = true;
-                    } else {
-                        clearOnRunButton.setIcon(CLEAR_ON_RUN_DISABLED_ICON);
-                    	clearOnRun = false;
-                    }
+                    clearOnRun = clearOnRunButton.isSelected();
                 };
             });
             
@@ -132,15 +127,14 @@ public class OutputPanel extends AbstractPanel {
             scrollLockButton.setSelectedToolTipText(
                     Constant.messages.getString("scripts.output.scrolllock.button.enabled.toolTip"));
             scrollLockButton.setIcon(SCROLL_LOCK_DISABLED_ICON);
+            scrollLockButton.setSelectedIcon(SCROLL_LOCK_ENABLED_ICON);
             scrollLockButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                     if (scrollLockButton.isSelected()) {
-                    	scrollLockButton.setIcon(SCROLL_LOCK_ENABLED_ICON);
                     	DefaultCaret caret = (DefaultCaret) getTxtOutput().getCaret();
                     	caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
                     } else {
-                    	scrollLockButton.setIcon(SCROLL_LOCK_DISABLED_ICON);
                     	DefaultCaret caret = (DefaultCaret) getTxtOutput().getCaret();
                     	caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
                     	getTxtOutput().setCaretPosition(getTxtOutput().getDocument().getLength());
