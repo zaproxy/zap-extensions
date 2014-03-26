@@ -143,6 +143,11 @@ public class PortScanPanel extends ScanPanel implements ScanListenner {
 
 	@Override
 	protected void switchView(String site) {
+		if (site == null || site.isEmpty()) {
+			resetPortList();
+			return;
+		}
+
 		if (site.indexOf(":") >= 0) {
 			// Strip off port
 			site = site.substring(0, site.indexOf(":"));
