@@ -176,6 +176,20 @@
         <!-- delete the indexes, generated previously, as they are no longer needed. -->
         <delete dir="${src}/org/zaproxy/zap/extension/${addon}/resource/help/JavaHelpSearch" />
 	</target>
+
+	<target name="build-bruteforce" description="build the bruteforce extension">
+		<antcall target="build-addon"><param name="addon" value="bruteforce"/></antcall>
+	
+		<!-- Add the extra classes needed -->
+		<property name="addon" value="bruteforce" /> <!-- Set this to make cut-n-pasting safer ;) -->
+		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${build}" prefix="">
+				<include name="com/sittinglittleduck/DirBuster/**"/>
+			</zipfileset>
+		</jar>
+	</target>
 	
 	<target name="build-tokengen" description="build the tokengen extension">
 		<antcall target="build-addon"><param name="addon" value="tokengen"/></antcall>
@@ -214,6 +228,7 @@
 		<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
 
 		<!-- Special case due to dependencies - need to fix this sometime;) -->
+		<antcall target="build-bruteforce"/>
 		<antcall target="build-tokengen"/>
 		
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
@@ -235,6 +250,10 @@
 	
 	<target name="deploy-beanshell" depends="build-all" description="deploy the beanshell">
 		<antcall target="deploy-extension"> <param name="extension" value="beanshell"/> </antcall>
+	</target>
+
+	<target name="deploy-bruteforce" depends="build-all" description="deploy the bruteforce extension">
+		<antcall target="deploy-extension"> <param name="extension" value="bruteforce"/> </antcall>
 	</target>
 	
 	<target name="deploy-diff" depends="build-all" description="deploy the diff extension">
@@ -286,6 +305,7 @@
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-alertReport"/>
 		<antcall target="deploy-ascanrules"/>
+		<antcall target="deploy-bruteforce"/>
 		<antcall target="deploy-diff"/>
 	    <antcall target="deploy-jruby"/>
 	    <antcall target="deploy-jython"/>
@@ -305,6 +325,7 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="ascanrulesBeta-${status}-*.zap"/>
+				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="portscan-${status}-*.zap"/>
@@ -322,6 +343,7 @@
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
+				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
