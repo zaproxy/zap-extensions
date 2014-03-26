@@ -189,6 +189,7 @@
 		<antcall target="build-addon"><param name="addon" value="fuzzdb"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrules"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="quickstart"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="reveal"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="websocket"/></antcall>
 		
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
@@ -231,6 +232,10 @@
 	<target name="deploy-quickstart" description="deploy the quick start extension" depends="build-all">
 		<antcall target="deploy-extension"> <param name="extension" value="quickstart"/> </antcall>
 	</target>
+
+	<target name="deploy-reveal" description="deploy the Reveal extension">
+		<antcall target="deploy-extension"> <param name="extension" value="reveal"/> </antcall>
+	</target>
 	
 	<target name="deploy-websockets" description="deploy the WebSockets extension">
 		<antcall target="deploy-extension"> <param name="extension" value="websocket"/> </antcall>
@@ -245,6 +250,7 @@
 		<antcall target="deploy-exampleTopMenu"/>
 		<antcall target="deploy-pscanrules"/>
 		<antcall target="deploy-quickstart"/>
+		<antcall target="deploy-reveal"/>
 		<antcall target="deploy-websockets"/>
 	</target>
 
@@ -258,6 +264,7 @@
 				<include name="coreLang-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
+				<include name="reveal-${status}-*.zap"/>
 				<include name="websocket-${status}-*.zap"/>
 			</fileset>
 		</copy>
@@ -274,6 +281,7 @@
 				<include name="coreLang-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
+				<include name="reveal-${status}-*.zap"/>
 				<include name="websocket-${status}-*.zap"/>
 			</fileset>
 		</copy>
