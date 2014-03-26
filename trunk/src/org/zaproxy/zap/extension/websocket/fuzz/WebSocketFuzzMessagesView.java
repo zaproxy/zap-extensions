@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.fuzz.FuzzResult;
 import org.zaproxy.zap.extension.fuzz.FuzzerContentPanel;
@@ -65,15 +65,15 @@ public class WebSocketFuzzMessagesView extends WebSocketMessagesView implements 
     	super.setColumnWidths();
 
         // state
-        setColumnWidth(6, 75, 100, 80);
+        setColumnWidth(6, 75, 80);
         
-        // fuzz part (do not set max & preferred size => stretches to maximum)
-        setColumnWidth(7, 50, -1, -1);
+        // fuzz part (do not set preferred size => stretches to maximum)
+        setColumnWidth(7, 50, -1);
     }
 
     @Override
 	protected MouseListener getMouseListener() {
-    	final JTable view = this.view;
+    	final JXTable view = this.view;
     	
 		return new MouseAdapter() { 
 		    @Override
