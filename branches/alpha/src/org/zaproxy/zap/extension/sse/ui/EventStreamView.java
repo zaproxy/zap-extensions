@@ -26,7 +26,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -34,6 +33,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
 import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.sse.EventStreamException;
@@ -41,7 +41,7 @@ import org.zaproxy.zap.extension.sse.ServerSentEvent;
 import org.zaproxy.zap.utils.TableColumnManager;
 
 /**
- * Wraps a {@link JTable} that is used to display Server-Sent Events.
+ * Wraps a {@link JXTable} that is used to display Server-Sent Events.
  */
 public class EventStreamView implements Runnable {
 
@@ -49,7 +49,7 @@ public class EventStreamView implements Runnable {
 
 	private static final Logger logger = Logger.getLogger(EventStreamView.class);
 
-	protected JTable view;
+	protected JXTable view;
 	protected EventStreamViewModel model;
 
 	private HttpPanel requestPanel;
@@ -69,15 +69,16 @@ public class EventStreamView implements Runnable {
 	 * 
 	 * @return events view
 	 */
-	public JTable getViewComponent() {
+	public JXTable getViewComponent() {
 		if (view == null) {			
-			view = new JTable();
+			view = new JXTable();
 			view.setName(getViewComponentName());
 			view.setModel(model);
 			view.setColumnSelectionAllowed(false);
 			view.setCellSelectionEnabled(false);
 			view.setRowSelectionAllowed(true);
 			view.setAutoCreateRowSorter(false);
+			view.setColumnControlVisible(true);
 			
 			// prevents columns to loose their width when switching models
 			view.setAutoCreateColumnsFromModel(false);
@@ -152,19 +153,19 @@ public class EventStreamView implements Runnable {
 
 	protected void setColumnWidths() {
 		// channel + consecutive number
-		setColumnWidth(0, 50, 100, 70);
+		setColumnWidth(0, 50, 70);
 		
 		// timestamp
-		setColumnWidth(1, 140, 200, 140);
+		setColumnWidth(1, 140, 140);
 		
 		// last event id
-		setColumnWidth(2, 95, 120, 95);
+		setColumnWidth(2, 95, 95);
 		
 		// event type
-		setColumnWidth(3, 80, 120, 90);
+		setColumnWidth(3, 80, 90);
 		
 		// data (do not set max & preferred size => stretches to maximum)
-		setColumnWidth(4, 100, -1, -1);
+		setColumnWidth(4, 100, -1);
 	}
 	
 	/**
@@ -172,18 +173,13 @@ public class EventStreamView implements Runnable {
 	 * 
 	 * @param index
 	 * @param min
-	 * @param max
 	 * @param preferred
 	 */
-	protected void setColumnWidth(int index, int min, int max, int preferred) {
+	protected void setColumnWidth(int index, int min, int preferred) {
 		TableColumn column = view.getColumnModel().getColumn(index);
 		
 		if (min != -1) {
 			column.setMinWidth(min);
-		}
-		
-		if (max != -1) {
-			column.setMaxWidth(max);
 		}
 		
 		if (preferred != -1) {

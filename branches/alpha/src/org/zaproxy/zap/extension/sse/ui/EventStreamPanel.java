@@ -393,8 +393,6 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 			// updates viewport only when scrollbar is released
 			
 			scrollPanel = new JScrollPane(eventsView.getViewComponent());
-			scrollPanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			scrollPanel.setPreferredSize(new Dimension(800,200));
 			scrollPanel.setName("EventStreamPanelActions");
 			
