@@ -67,6 +67,7 @@ import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
 import org.zaproxy.zap.extension.websocket.filter.WebSocketFilter;
 import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 /**
  * Represents the WebSockets tab. It listens to all WebSocket channels and
@@ -107,7 +108,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
 	private JToolBar panelToolbar = null;
 
-	private JToggleButton scopeButton;
+	private ZapToggleButton scopeButton;
 
 	private JComboBox<WebSocketChannelDTO> channelSelect;
 	private ChannelSortedListModel channelsModel;
@@ -761,9 +762,10 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 	
 	private JToggleButton getScopeButton() {
 		if (scopeButton == null) {
-			scopeButton = new JToggleButton();
+			scopeButton = new ZapToggleButton();
 			scopeButton.setIcon(new ImageIcon(LogPanel.class.getResource("/resource/icon/fugue/target-grey.png")));
 			scopeButton.setToolTipText(Constant.messages.getString("history.scope.button.unselected"));
+			scopeButton.setSelectedToolTipText(Constant.messages.getString("history.scope.button.selected"));
 
 			scopeButton.addActionListener(new java.awt.event.ActionListener() { 
 
@@ -784,10 +786,8 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 					
 					if (scopeButton.isSelected()) {
 						scopeButton.setIcon(new ImageIcon(WebSocketPanel.class.getResource("/resource/icon/fugue/target.png")));
-						scopeButton.setToolTipText(Constant.messages.getString("history.scope.button.selected"));
 					} else {
 						scopeButton.setIcon(new ImageIcon(WebSocketPanel.class.getResource("/resource/icon/fugue/target-grey.png")));
-						scopeButton.setToolTipText(Constant.messages.getString("history.scope.button.unselected"));
 					}
 				}
 			});
