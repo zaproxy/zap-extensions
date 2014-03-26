@@ -6,7 +6,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes (Issues 503, 609 and 1104).<br>
+	Minor code changes (Issues 503, 609, 1104 and 1105).<br>
 	Changed help file structure to support internationalisation (Issue 981).<br>
 	Added content-type to help pages (Issue 1080).
 	]]>
