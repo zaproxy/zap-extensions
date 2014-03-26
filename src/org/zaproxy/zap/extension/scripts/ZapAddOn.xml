@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Updated to use the latest core changes (Issue 609).<br>
-	Fixed an InvalidParameterException during add-on uninstallation (Issue 967).
+	Fixed an InvalidParameterException during add-on uninstallation (Issue 967).<br>
+	Changed help file structure to support internationalisation (Issue 981).
 	]]>
 	</changes>
 	<dependson/>

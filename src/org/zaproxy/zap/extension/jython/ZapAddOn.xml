@@ -4,7 +4,12 @@
 	<description>Allows Python to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Moved to beta</changes>
+	<changes>
+	<![CDATA[
+	Moved to beta<br>
+	Changed help file structure to support internationalisation (Issue 981).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jython.ExtensionJython</extension>
