@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>BeanShell Console</name>
-	<version>3</version>
+	<version>4</version>
 	<description>Provides a BeanShell Console</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for ZAP 2.2.0</changes>
+	<changes>Fixed an issue in HTML help page (missing end tag).</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.beanshell.ExtensionBeanShell</extension>
