@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.apache.commons.httpclient.HttpException;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.extension.encoder.Encoder;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
@@ -34,7 +33,6 @@ import org.zaproxy.zap.extension.multiFuzz.FuzzLocation;
 import org.zaproxy.zap.extension.multiFuzz.FuzzResult;
 import org.zaproxy.zap.extension.multiFuzz.FuzzResult.State;
 import org.zaproxy.zap.extension.multiFuzz.MFuzzableMessage;
-import org.zaproxy.zap.extension.httppanel.view.FuzzableMessage;
 
 public class HttpFuzzProcess extends AbstractFuzzProcess {
 

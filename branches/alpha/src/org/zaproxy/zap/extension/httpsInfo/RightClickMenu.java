@@ -19,7 +19,6 @@ package org.zaproxy.zap.extension.httpsInfo;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ResourceBundle;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;

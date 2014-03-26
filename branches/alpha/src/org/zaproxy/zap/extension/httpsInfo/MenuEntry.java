@@ -17,19 +17,11 @@
  */
 package org.zaproxy.zap.extension.httpsInfo;
 
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.util.*;
+import java.awt.Component;
 
-import javax.swing.*;
+import javax.swing.JTree;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.view.PopupMenuHttpMessage;
+
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.SiteNode;
 

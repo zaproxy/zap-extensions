@@ -39,7 +39,6 @@ import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;

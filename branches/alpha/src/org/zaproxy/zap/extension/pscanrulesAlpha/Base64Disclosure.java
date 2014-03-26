@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 import net.htmlparser.jericho.Source;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;

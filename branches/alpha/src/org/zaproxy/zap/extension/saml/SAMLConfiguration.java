@@ -9,7 +9,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.Set;
 
 public class SAMLConfiguration implements AttributeListener {
