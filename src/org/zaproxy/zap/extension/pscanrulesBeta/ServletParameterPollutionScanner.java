@@ -55,7 +55,8 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 		// Ignore
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10026;
 	}
 
@@ -83,7 +84,7 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 				}
 				
 				if (!actionFound) {
-				    Alert alert = new Alert(getId(), Alert.RISK_MEDIUM, Alert.SUSPICIOUS, 
+				    Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.SUSPICIOUS, 
 					    	getName());
 					    	alert.setDetail(
 					    		getDescription(), 

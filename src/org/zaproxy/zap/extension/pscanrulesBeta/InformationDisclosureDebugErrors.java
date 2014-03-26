@@ -57,7 +57,7 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String infoDisclosureDBError) {
-		Alert alert = new Alert(getId(), Alert.RISK_LOW, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
 		    			"The response request appeared to contain common error messages returned by platforms such as ASP.NET, and Web-servers such as IIS and Apache. You can configure the list of common debug messages", 
@@ -131,7 +131,8 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 		return "Information disclosure - debug error messages";
 	}
 	
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10023;
 	}
 }
