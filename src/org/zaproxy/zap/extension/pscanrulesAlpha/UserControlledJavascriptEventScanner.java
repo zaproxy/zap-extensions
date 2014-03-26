@@ -140,7 +140,7 @@ public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
 	
 	private void raiseAlert(HttpMessage msg, int id, Element htmlElement, 
 			Attribute htmlAttribute, HtmlParameter param) {
-		Alert alert = new Alert(getId(), Alert.RISK_MEDIUM, Alert.WARNING,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING,
 				getName());				    
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
@@ -155,7 +155,8 @@ public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
 		parent.raiseAlert(id, alert);
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10028;
 	}
 

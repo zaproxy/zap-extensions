@@ -124,7 +124,7 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 		            
 			        if ( evidence!=null && evidence.length() > 0) {
 						//we found something
-						Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.WARNING, getName() + " - "+ timestampType );
+						Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, getName() + " - "+ timestampType );
 						alert.setDetail(
 								getDescription() + " - "+ timestampType, 
 								msg.getRequestHeader().getURI().toString(), 
@@ -158,7 +158,8 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 	 * get the id of the scanner
 	 * @return
 	 */
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10096;
 	}
 

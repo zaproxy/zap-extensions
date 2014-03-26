@@ -157,7 +157,7 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
 	
 	private void raiseAlert(HttpMessage msg, int id, HtmlParameter param,
 			String cookie) {
-		Alert alert = new Alert(getId(), Alert.RISK_MEDIUM, Alert.WARNING,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING,
 				getName());		
 		     
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
@@ -172,7 +172,8 @@ public class UserControlledCookieScanner extends PluginPassiveScanner {
 		parent.raiseAlert(id, alert);
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10029;
 	}
 

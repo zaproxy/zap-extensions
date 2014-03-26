@@ -216,7 +216,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 					if (log.isDebugEnabled()) log.debug("Raising a ViewState informational alert");
 					
 					//raise an (informational) Alert with the human readable ViewState data
-					Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.WARNING, Constant.messages.getString("pscanalpha.base64disclosure.viewstate.name"));
+					Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, Constant.messages.getString("pscanalpha.base64disclosure.viewstate.name"));
 					alert.setDetail(
 							Constant.messages.getString("pscanalpha.base64disclosure.viewstate.desc"), 
 							msg.getRequestHeader().getURI().toString(), 
@@ -234,7 +234,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 					
 					//if the ViewState is not protected by a MAC, alert it as a High, cos we can mess with the parameters for sure..
 					if ( macless ) {
-						Alert alertmacless = new Alert(getId(), Alert.RISK_HIGH, Alert.WARNING, Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.name"));
+						Alert alertmacless = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.WARNING, Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.name"));
 						alertmacless.setDetail(
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.desc"), 
 								msg.getRequestHeader().getURI().toString(), 
@@ -260,7 +260,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 					//the Base64 decoded data is not a valid ViewState (even though it may have a valid ViewStatet pre-amble) 
 					//so treat it as normal Base64 data, and raise an informational alert.
 					if ( base64evidence!=null && base64evidence.length() > 0) {
-						Alert alert = new Alert(getId(), Alert.RISK_INFO, Alert.WARNING, getName() );
+						Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, getName() );
 						alert.setDetail(
 								getDescription(), 
 								msg.getRequestHeader().getURI().toString(), 
@@ -295,7 +295,8 @@ public class Base64Disclosure extends PluginPassiveScanner {
 	 * get the id of the scanner
 	 * @return
 	 */
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 10094;
 	}
 
