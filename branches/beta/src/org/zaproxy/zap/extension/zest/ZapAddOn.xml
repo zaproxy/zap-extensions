@@ -7,7 +7,7 @@
 	<changes>
 	<![CDATA[
 	Moved templates from core<br>
-	Minor code change (Issue 416)
+	Updated to use the latest core changes (Issues 416 and 609).
 	]]>
 	</changes>
 	<dependson/>

@@ -32,9 +32,10 @@ import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
-import org.zaproxy.zap.view.PopupMenuHistoryReference;
+import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
+import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
 
-public class ZestAddToScriptPopupMenu extends PopupMenuHistoryReference {
+public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceContainer {
 
 	private static final long serialVersionUID = 2282358266003940700L;
 
@@ -67,11 +68,11 @@ public class ZestAddToScriptPopupMenu extends PopupMenuHistoryReference {
 	    
 
 	@Override
-    public void performActions (List<HistoryReference> hrefs) throws Exception {
+    public void performHistoryReferenceActions (List<HistoryReference> hrefs) {
 	}
 
 	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
+	public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
 		reCreateSubMenu();
 		return true;
 	}
@@ -128,7 +129,7 @@ public class ZestAddToScriptPopupMenu extends PopupMenuHistoryReference {
     }
 
 	@Override
-	public void performAction(HistoryReference href) throws Exception {
+	public void performAction(HistoryReference href) {
 		// Do nothing
 	}
 }

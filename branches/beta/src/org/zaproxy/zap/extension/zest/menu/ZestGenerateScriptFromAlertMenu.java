@@ -19,13 +19,13 @@
  */
 package org.zaproxy.zap.extension.zest.menu;
 
-import java.awt.Component;
 import java.text.MessageFormat;
 import java.util.regex.Pattern;
 
 import javax.swing.JTree;
 
 import org.apache.commons.httpclient.URI;
+import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
@@ -35,7 +35,7 @@ import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -43,11 +43,14 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
-import org.zaproxy.zap.view.PopupMenuHistoryReference;
+import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
+import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
-public class ZestGenerateScriptFromAlertMenu extends PopupMenuHistoryReference {
+public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageContainer {
 
 	private static final long serialVersionUID = 2282358266003940700L;
+
+	private static final Logger LOGGER = Logger.getLogger(ZestGenerateScriptFromAlertMenu.class);
 	
 	private ExtensionZest extension;
 
@@ -69,17 +72,23 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuHistoryReference {
 	}
 	
 	@Override
-	public void performAction(HistoryReference href) throws Exception {
-		if (href.getHttpMessage() == null) {
-			return;
-		}
+	public void performAction(HttpMessage msg) {
 		if (this.lastAlert == null) {
 			return;
-		} else {
+		}
+
+		try {
+			performActionImpl(msg);
+		} catch (Exception e) {
+			LOGGER.error("Failer to generate script from alert menu: " + e.getMessage(), e);
+		}
+	}
+
+	private void performActionImpl(HttpMessage msg) throws Exception {
 			// Build up a Zest script...
 			ZestScript sz = new ZestScript();
 			// Build up the default tile
-			URI uri = href.getHttpMessage().getRequestHeader().getURI();
+			URI uri = msg.getRequestHeader().getURI();
 			String pathEnd = uri.getPath();
 			if (pathEnd.lastIndexOf("/") > 0) {
 				pathEnd = pathEnd.substring(pathEnd.lastIndexOf("/")+1);
@@ -164,16 +173,12 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuHistoryReference {
 			
 			ZestScriptWrapper zsw = new ZestScriptWrapper(sw);
 			extension.add(zsw , true);
-		}
 	}
 	
 	@Override
-    public boolean isEnableForComponent(Component invoker) {
-		// Need to call this to set up various variables, even though we ignore the result
-		super.isEnableForComponent(invoker);
-        this.setEnabled(false);
-		if (invoker.getName() != null && invoker.getName().equals("treeAlert")) {
-        	this.alertInvoker = (JTree) invoker;
+    public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
+		if ("treeAlert".equals(httpMessageContainer.getComponent().getName())) {
+        	this.alertInvoker = (JTree) httpMessageContainer.getComponent();
             if (alertInvoker.getLastSelectedPathComponent() != null) {
             	if (alertInvoker.getSelectionCount() == 1) {
                 	// Note - the Alerts tree only supports single selections
@@ -181,7 +186,6 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuHistoryReference {
             	    if (aNode.getUserObject() != null) {
             	        if (aNode.getUserObject() instanceof Alert) {
             	            lastAlert = (Alert) aNode.getUserObject();
-    	                    this.setEnabled(true);
             	        }
             	    }
             	}
@@ -196,10 +200,4 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuHistoryReference {
     public boolean isSafe() {
     	return true;
     }
-
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
-		// Not used as isEnableForComponent is overriden 
-		return false;
-	}
 }

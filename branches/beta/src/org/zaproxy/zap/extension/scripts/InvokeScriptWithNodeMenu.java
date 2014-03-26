@@ -24,9 +24,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.view.PopupMenuSiteNode;
+import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
-public class InvokeScriptWithNodeMenu extends PopupMenuSiteNode {
+public class InvokeScriptWithNodeMenu extends PopupMenuItemSiteNodeContainer {
 
 	private static final long serialVersionUID = 2282358266003940700L;
     private static Logger logger = Logger.getLogger(InvokeScriptWithNodeMenu.class);
@@ -51,7 +51,7 @@ public class InvokeScriptWithNodeMenu extends PopupMenuSiteNode {
     }
 
 	@Override
-	public void performAction(SiteNode sn) throws Exception {
+	public void performAction(SiteNode sn) {
 		if (sn != null && sn.getHistoryReference() != null) {
 			logger.debug("Invoke script with " + sn.getNodeName());
 			try {
@@ -65,16 +65,6 @@ public class InvokeScriptWithNodeMenu extends PopupMenuSiteNode {
 		}
 	}
 	
-	@Override
-	public boolean isEnableForInvoker(Invoker invoker) {
-		return true;
-	}
-	
-	@Override
-    public boolean isEnabledForSiteNode (SiteNode sn) {
-    	return true;
-    }
-
     @Override
     public boolean isSafe() {
     	return true;
