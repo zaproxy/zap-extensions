@@ -75,7 +75,7 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
 	 */
 	private void initialize() {
 		this.setName(NAME);
-		this.setOrder(150);
+		this.setOrder(157);
 	}
 
 	@Override
