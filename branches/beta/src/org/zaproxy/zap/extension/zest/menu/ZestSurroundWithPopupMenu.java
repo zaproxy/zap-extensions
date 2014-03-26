@@ -194,6 +194,7 @@ public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
 							ZestStatement ifStmt=(ZestStatement)ZestZapUtils.getElement(node);
 							zc.addIf(ifStmt);
 						}
+						// TODO should add at end
 						extension.addToParent(parent,zc);
 //						extension.setCnpNodes(children);
 //						extension.setCut(true);
