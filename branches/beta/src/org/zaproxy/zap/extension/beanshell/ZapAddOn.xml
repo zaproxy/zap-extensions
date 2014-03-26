@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Fixed an issue in HTML help page (missing end tag).<br>
-	Changed help file structure to support internationalisation (Issue 981).
+	Changed help file structure to support internationalisation (Issue 981).<br>
+	Added content-type to help pages (Issue 1080).
 	]]>
 	</changes>
 	<dependson/>
