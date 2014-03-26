@@ -729,6 +729,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 		if (scopeButton == null) {
 			scopeButton = new ZapToggleButton();
 			scopeButton.setIcon(new ImageIcon(LogPanel.class.getResource("/resource/icon/fugue/target-grey.png")));
+			scopeButton.setSelectedIcon(new ImageIcon(EventStreamPanel.class.getResource("/resource/icon/fugue/target.png")));
 			scopeButton.setToolTipText(Constant.messages.getString("history.scope.button.unselected"));
 			scopeButton.setSelectedToolTipText(Constant.messages.getString("history.scope.button.selected"));
 
@@ -749,11 +750,6 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 					getFilterDialog().getFilter().setShowJustInScope(isShowJustInScope);
 					applyFilter();
 					
-					if (scopeButton.isSelected()) {
-						scopeButton.setIcon(new ImageIcon(EventStreamPanel.class.getResource("/resource/icon/fugue/target.png")));
-					} else {
-						scopeButton.setIcon(new ImageIcon(EventStreamPanel.class.getResource("/resource/icon/fugue/target-grey.png")));
-					}
 				}
 			});
 		}
