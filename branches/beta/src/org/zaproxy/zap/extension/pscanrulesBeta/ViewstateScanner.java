@@ -174,9 +174,8 @@ public class ViewstateScanner extends PluginPassiveScanner {
         parent.raiseAlert(id, alert);
     }
 
-    // TODO: is this ID OK?
     private int getId() {
-        return 40001;
+        return 10032;
     }
 
     @Override

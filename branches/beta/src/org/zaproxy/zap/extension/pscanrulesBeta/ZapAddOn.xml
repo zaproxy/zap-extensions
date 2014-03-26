@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>7</version>
+	<version>8</version>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Restored the name of "Loosely Scoped Cookie" alert/scanner (Issue 850).<br>
-	Restored the name of "Charset Mismatch" alert/scanner (Issue 851).<br>
-	Cope with ZAP running from dir other than the one its installed in (Issue 933)
+	Fixed the plug-in ID of Viewstate scanner.<br>
 	]]>
 	</changes>
 	<dependson/>
