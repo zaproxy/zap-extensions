@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.swing.JMenuItem;
 import javax.swing.text.JTextComponent;
 
 import org.parosproxy.paros.Constant;
@@ -95,8 +96,9 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 	}
 
     private void clearSubMenus() {
+    	final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
     	for (ExtensionPopupMenuItem menu : subMenus) {
-			View.getSingleton().getPopupMenu().removeMenu(menu);
+			mainPopupMenuItems.remove(menu);
 			
 		}
 		subMenus.clear();
@@ -104,11 +106,12 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 
     private void reCreateSubMenu() {
 		if (script != null) {
+			final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
 			TreeSet<String> sortedSet = new TreeSet<String>(script.getZestScript().getVariableNames());
 			for (String var : sortedSet) {
 	        	ExtensionPopupMenuItem piicm = new ZestPasteVariableMenu(script, lastInvoker, var);
 	        	piicm.setMenuIndex(this.getMenuIndex());
-				View.getSingleton().getPopupMenu().addMenu(piicm);
+				mainPopupMenuItems.add(piicm);
 				this.subMenus.add(piicm);
 			}
 		}

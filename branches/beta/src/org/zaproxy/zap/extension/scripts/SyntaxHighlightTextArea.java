@@ -20,9 +20,11 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Action;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JViewport;
 
@@ -201,35 +203,37 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 			deleteAction = new TextAreaMenuItem(RTextArea.DELETE_ACTION, false, true);
 			
 			selectAllAction = new TextAreaMenuItem(RTextArea.SELECT_ALL_ACTION, false, false);
+			final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
 			
-			View.getSingleton().getPopupMenu().addMenu(syntaxMenu);
-			View.getSingleton().getPopupMenu().addMenu(viewMenu);
+			mainPopupMenuItems.add(syntaxMenu);
+			mainPopupMenuItems.add(viewMenu);
 			
-			View.getSingleton().getPopupMenu().addMenu(undoAction);
-			View.getSingleton().getPopupMenu().addMenu(redoAction);
+			mainPopupMenuItems.add(undoAction);
+			mainPopupMenuItems.add(redoAction);
 			
-			View.getSingleton().getPopupMenu().addMenu(cutAction);
-			View.getSingleton().getPopupMenu().addMenu(copyAction);
-			View.getSingleton().getPopupMenu().addMenu(pasteAction);
-			View.getSingleton().getPopupMenu().addMenu(deleteAction);
+			mainPopupMenuItems.add(cutAction);
+			mainPopupMenuItems.add(copyAction);
+			mainPopupMenuItems.add(pasteAction);
+			mainPopupMenuItems.add(deleteAction);
 			
-			View.getSingleton().getPopupMenu().addMenu(selectAllAction);
+			mainPopupMenuItems.add(selectAllAction);
 		}
 	}
 	
 	void unload() {
-		View.getSingleton().getPopupMenu().removeMenu(syntaxMenu);
-		View.getSingleton().getPopupMenu().removeMenu(viewMenu);
+	    final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
+		mainPopupMenuItems.remove(syntaxMenu);
+		mainPopupMenuItems.remove(viewMenu);
 		
-		View.getSingleton().getPopupMenu().removeMenu(undoAction);
-		View.getSingleton().getPopupMenu().removeMenu(redoAction);
+		mainPopupMenuItems.remove(undoAction);
+		mainPopupMenuItems.remove(redoAction);
 		
-		View.getSingleton().getPopupMenu().removeMenu(cutAction);
-		View.getSingleton().getPopupMenu().removeMenu(copyAction);
-		View.getSingleton().getPopupMenu().removeMenu(pasteAction);
-		View.getSingleton().getPopupMenu().removeMenu(deleteAction);
+		mainPopupMenuItems.remove(cutAction);
+		mainPopupMenuItems.remove(copyAction);
+		mainPopupMenuItems.remove(pasteAction);
+		mainPopupMenuItems.remove(deleteAction);
 		
-		View.getSingleton().getPopupMenu().removeMenu(selectAllAction);
+		mainPopupMenuItems.remove(selectAllAction);
 	}
 	
 	public static class SyntaxStyle {

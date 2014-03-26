@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.zest.menu;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JMenuItem;
+
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.parosproxy.paros.Constant;
@@ -78,8 +80,9 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
 	}
 
     private void reCreateSubMenu() {
+    	final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
     	for (ExtensionPopupMenuItem menu : subMenus) {
-			View.getSingleton().getPopupMenu().removeMenu(menu);
+			mainPopupMenuItems.remove(menu);
 			
 		}
 		subMenus.clear();
@@ -90,7 +93,7 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
 			if (ze instanceof ZestConditional) {
 	        	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(selNode);
 	        	piicm.setMenuIndex(this.getMenuIndex());
-				View.getSingleton().getPopupMenu().addMenu(piicm);
+				mainPopupMenuItems.add(piicm);
 				this.subMenus.add(piicm);
 			}
 		}
@@ -98,20 +101,20 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
 		for (ScriptNode node : extension.getZestScriptNodes(ExtensionScript.TYPE_STANDALONE)) {
         	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
         	piicm.setMenuIndex(this.getMenuIndex());
-			View.getSingleton().getPopupMenu().addMenu(piicm);
+			mainPopupMenuItems.add(piicm);
 			this.subMenus.add(piicm);
 		}
 		// TODO handle auth scripts... is there a better way to do this??
 		for (ScriptNode node : extension.getZestScriptNodes(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH)) {
         	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
         	piicm.setMenuIndex(this.getMenuIndex());
-			View.getSingleton().getPopupMenu().addMenu(piicm);
+			mainPopupMenuItems.add(piicm);
 			this.subMenus.add(piicm);
 		}
 		
         // Add the 'new zest' menu
         ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu();
-		View.getSingleton().getPopupMenu().addMenu(piicm);
+		mainPopupMenuItems.add(piicm);
 		this.subMenus.add(piicm);
 	}
 

@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.swing.JMenuItem;
+
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
@@ -77,9 +79,10 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
     }
 	    
     public boolean isEnableForComponent(Component invoker) {
+    	final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
     	// Remove previous submenus
     	for (ExtensionPopupMenuItem menu : subMenus) {
-			View.getSingleton().getPopupMenu().removeMenu(menu);
+			mainPopupMenuItems.remove(menu);
 		}
 		subMenus.clear();
 		if (extension.isScriptTree(invoker)) {
@@ -141,7 +144,7 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
 				extension.getDialogManager().showZestAssignDialog(parent, child, req, za, true);
 			}});
     	menu.setMenuIndex(this.getMenuIndex());
-		View.getSingleton().getPopupMenu().addMenu(menu);
+		View.getSingleton().getPopupList().add(menu);
 		this.subMenus.add(menu);
 	}
 

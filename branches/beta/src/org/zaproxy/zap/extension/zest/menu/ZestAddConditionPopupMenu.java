@@ -27,6 +27,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.swing.JMenuItem;
+
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
@@ -89,9 +91,10 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 	}
 
 	public boolean isEnableForComponent(Component invoker) {
+		final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
 		// Remove previous submenus
 		for (ExtensionPopupMenuItem menu : subMenus) {
-			View.getSingleton().getPopupMenu().removeMenu(menu);
+			mainPopupMenuItems.remove(menu);
 		}
 		subMenus.clear();
 		if (extension.isScriptTree(invoker)) {
@@ -264,8 +267,9 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 				}
 			}
 		});
+		final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
 		menu.setMenuIndex(this.getMenuIndex());
-		View.getSingleton().getPopupMenu().addMenu(menu);
+		mainPopupMenuItems.add(menu);
 		this.subMenus.add(menu);
 		if (menu2 != null) {
 			menu2.addActionListener(new ActionListener() {
@@ -291,7 +295,7 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 				}
 			});
 			menu2.setMenuIndex(this.getMenuIndex());
-			View.getSingleton().getPopupMenu().addMenu(menu2);
+			mainPopupMenuItems.add(menu2);
 			this.subMenus.add(menu2);
 		}
 	}

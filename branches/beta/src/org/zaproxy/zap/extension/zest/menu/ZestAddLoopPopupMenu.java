@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JMenuItem;
+
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestContainer;
@@ -69,9 +71,10 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 	}
 
 	public boolean isEnableForComponent(Component invoker) {
+		final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
 		// Remove previous submenus
 		for (ExtensionPopupMenuItem menu : subMenus) {
-			View.getSingleton().getPopupMenu().removeMenu(menu);
+			mainPopupMenuItems.remove(menu);
 		}
 		subMenus.clear();
 		if (extension.isScriptTree(invoker)) {
@@ -147,7 +150,7 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 			}
 		});
 		menu.setMenuIndex(this.getMenuIndex());
-		View.getSingleton().getPopupMenu().addMenu(menu);
+		View.getSingleton().getPopupList().add(menu);
 		this.subMenus.add(menu);
 	}
 
