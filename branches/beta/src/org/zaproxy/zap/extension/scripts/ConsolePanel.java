@@ -218,7 +218,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 			listener = new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent e) {
-					if (! script.isChanged()) {
+					if (script != null && ! script.isChanged()) {
 						extension.getExtScript().setChanged(script, true);
 					}
 				}
