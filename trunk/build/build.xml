@@ -186,6 +186,9 @@
 		
 		<antcall target="build-addon"><param name="addon" value="ascanrules"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="coreLang"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="directorylistv1"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="directorylistv2_3"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="directorylistv2_3_lc"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="fuzzdb"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrules"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="quickstart"/></antcall>
@@ -208,6 +211,18 @@
 
 	<target name="deploy-ascanrules" description="deploy the active scan rules">
 		<antcall target="deploy-extension"> <param name="extension" value="ascanrules"/> </antcall>
+	</target>
+
+	<target name="deploy-directorylistv1" description="deploys Directory List v1.0 add-on">
+		<antcall target="deploy-extension"> <param name="extension" value="directorylistv1"/> </antcall>
+	</target>
+
+	<target name="deploy-directorylistv2_3" description="deploys Directory List v2.3 add-on">
+		<antcall target="deploy-extension"> <param name="extension" value="directorylistv2_3"/> </antcall>
+	</target>
+
+	<target name="deploy-directorylistv2_3_lc" description="deploys Directory List v2.3 lower case add-on">
+		<antcall target="deploy-extension"> <param name="extension" value="directorylistv2_3_lc"/> </antcall>
 	</target>
 
 	<target name="deploy-exampleActiveScan" description="deploy the exampleActiveScan extension">
@@ -249,6 +264,9 @@
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
 		<!-- Keep in alphabetical order ;) -->
 		<antcall target="deploy-ascanrules"/>
+		<antcall target="deploy-directorylistv1"/>
+		<antcall target="deploy-directorylistv2_3"/>
+		<antcall target="deploy-directorylistv2_3_lc"/>
 		<antcall target="deploy-exampleActiveScan"/>
 		<antcall target="deploy-examplePassiveScan"/>
 		<antcall target="deploy-exampleRightClickMsg"/>
@@ -268,6 +286,7 @@
 			<fileset dir="${dist}">
 				<include name="ascanrules-${status}-*.zap"/>
 				<include name="coreLang-${status}-*.zap"/>
+				<include name="directorylistv1-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
@@ -286,6 +305,7 @@
 			<fileset dir="${dist}">
 				<include name="ascanrules-${status}-*.zap"/>
 				<include name="coreLang-${status}-*.zap"/>
+				<include name="directorylistv1-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
