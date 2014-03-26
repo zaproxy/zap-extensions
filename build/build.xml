@@ -188,6 +188,7 @@
 		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="invoke"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="plugnhack"/></antcall>
@@ -231,6 +232,10 @@
 	
 	<target name="deploy-diff" depends="build-all" description="deploy the diff extension">
 		<antcall target="deploy-extension"> <param name="extension" value="diff"/> </antcall>
+	</target>
+
+	<target name="deploy-invoke" depends="build-all" description="deploy the invoke extension">
+		<antcall target="deploy-extension"> <param name="extension" value="invoke"/> </antcall>
 	</target>
 
 	<target name="deploy-jruby" depends="build-all" description="deploy the jruby extension">
@@ -280,6 +285,7 @@
 		<antcall target="deploy-ascanrules"/>
 		<antcall target="deploy-bruteforce"/>
 		<antcall target="deploy-diff"/>
+		<antcall target="deploy-invoke"/>
 	    <antcall target="deploy-jruby"/>
 	    <antcall target="deploy-jython"/>
 		<antcall target="deploy-plugnhack"/>
@@ -300,6 +306,7 @@
 				<include name="ascanrulesBeta-${status}-*.zap"/>
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
+				<include name="invoke-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="portscan-${status}-*.zap"/>
 				<include name="pscanrulesBeta-${status}-*.zap"/>
@@ -318,6 +325,7 @@
 			<fileset dir="${dist}">
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
+				<include name="invoke-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="spiderAjax-${status}-*.zap"/>
