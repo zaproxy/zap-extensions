@@ -4,7 +4,12 @@
 	<description>Technology detection using Wappalyzer: wappalyzer.com</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Minor code changes (Issue 503).</changes>
+	<changes>
+	<![CDATA[
+	Minor code changes (Issue 503).<br>
+	Changed help file structure to support internationalisation (Issue 981).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer</extension>
@@ -15,4 +20,5 @@
 	</pscanrules>
 	<filters/>
 	<files/>
+	<not-before-version>2.3.0</not-before-version>
 </zapaddon>

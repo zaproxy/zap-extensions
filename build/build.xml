@@ -4,6 +4,7 @@
 	<property name="src" location="../src" />
 	<property name="src.version" value="1.7" />
 	<property name="build" location="build" />
+	<property name="build.lib.dir" location="lib" />
 	<property name="temp" location="temp" />
 	<property name="dist" location="zap-exts" />
 	<property name="dist.lib.dir" location="../lib" />
@@ -11,6 +12,13 @@
 	<property name="versions.file" location="${dist}/ZapVersions.xml" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
+
+	<path id="build.classpath">
+		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
+	</path>
+
+	<!-- Ant task to generate JavaHelp search indexes -->
+	<taskdef name="generatejavahelpsearchindexes" classname="org.zaproxy.ant.javahelp.taskdefs.GenerateJavaHelpSearchIndexes" classpathref="build.classpath" />
 	
 	<target name="clean">
 		<delete dir="${dist}" includeEmptyDirs="true" />
@@ -82,9 +90,13 @@
 		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
 		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
 		
-		<antcall target="build-addon-help"> 
-			<param name="addon" value="${addon}"/>
-		</antcall>
+		<generatejavahelpsearchindexes jhalljar="${dist.lib.dir}/jhall.jar"
+			helpcontentsdirname="zaphelp" helpsetfilename="helpset*.hs">
+			<dirset dir="${src}/org/zaproxy/zap/extension/${addon}/resource/">
+				<include name="help" />
+				<include name="help_*_*" />
+			</dirset>
+		</generatejavahelpsearchindexes>
 
 		<local name="addon.libs.zip" />
 		<property name="addon.libs.zip" value="${temp}/libs-${addon}.zip" />
@@ -112,13 +124,13 @@
 		</jar>
 		<delete file="${addon.libs.zip}" />
 
+		<!-- Remove search indexes previously generated, no longer needed. -->
+		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resource/help/JavaHelpSearch" />
+		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resource/help_*_*/JavaHelpSearch" />
+
 		<antcall target="include-files"> 
 			<param name="addon" value="${addon}"/>
 			<param name="file" value="${file}"/>
-		</antcall>
-
-		<antcall target="cleanup-addon-help"> 
-			<param name="addon" value="${addon}"/>
 		</antcall>
 
 		<antcall target="append-to-versions-file"> 
@@ -141,81 +153,10 @@
 		</jar>
 	</target>
 
-	<target name="build-addon-help" depends="is-help-available" if="help.available" description="generates the help file and copies it to the right place">
-	    <!--
-	    	- runs if "help" directory is present
-	    	- creates help.jar which is included in the extension-jar file
-	    	- help.jar is dynamically merged into core help pages on ZAP start
-	    -->
-		<local name="help.jar" />
-        <property name="help.jar" value="help.jar" />
-        
-        <local name="help.package" />
-	    <property name="help.package" value="org/zaproxy/zap/extension/${addon}/resource/help" />
-		
-        <local name="help.target" />
-        <property name="help.target" value="${build}/${help.package}/" />
-        
-        <!-- generate the indexes -->
-        <java classname="com.sun.java.help.search.Indexer" fork="true" dir="${src}/${help.package}">
-            <arg value="zaphelp"/>
-            <classpath>
-                <pathelement location="${dist.lib.dir}/jhall.jar" />
-            </classpath>
-        </java>
-        
-        <!-- delete the previous jar in the help directory (if present) -->
-        <delete dir="${build}/${help.package}" />
-        <mkdir dir="${build}/${help.package}" />
-
-        <!-- as files reside in resource/ they are copied later -->
-    </target>
-
 	<target name="is-files-available">
 	    <available property="files.available" type="dir" file="${src}/org/zaproxy/zap/extension/${addon}/files"/>
 	</target>
 	
-
-	<target name="is-help-available">
-	    <available property="help.available" type="dir" file="${src}/org/zaproxy/zap/extension/${addon}/resource/help"/>
-	</target>
-	
-	<target name="cleanup-addon-help">
-        <!-- delete the indexes, generated previously, as they are no longer needed. -->
-        <delete dir="${src}/org/zaproxy/zap/extension/${addon}/resource/help/JavaHelpSearch" />
-	</target>
-	
-	
-	<target name="build-extension-help" depends="is-help-available" if="help.available" description="generates the help file and copies it to the right place">
-	    <!--
-	    	- runs if "help" directory is present
-	    	- creates help.jar which is included in the extension-jar file
-	    	- help.jar is dynamically merged into core help pages on ZAP start
-	    -->
-		<local name="help.jar" />
-        <property name="help.jar" value="help.jar" />
-        
-        <local name="help.package" />
-	    <property name="help.package" value="org/zaproxy/zap/extension/${extension}/resource/help" />
-		
-        <local name="help.target" />
-        <property name="help.target" value="${build}/${help.package}/" />
-        
-        <!-- generate the indexes -->
-        <java classname="com.sun.java.help.search.Indexer" fork="true" dir="${src}/${help.package}">
-            <arg value="zaphelp"/>
-            <classpath>
-                <pathelement location="${dist.lib.dir}/jhall.jar" />
-            </classpath>
-        </java>
-        
-        <!-- delete the previous jar in the help directory (if present) -->
-        <delete dir="${build}/${help.package}" />
-        <mkdir dir="${build}/${help.package}" />
-
-        <!-- as files reside in resource/ they are copied later -->
-    </target>
-    
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 		
