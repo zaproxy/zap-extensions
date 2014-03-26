@@ -24,6 +24,10 @@ import java.awt.Event;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.lang.ref.WeakReference;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -45,6 +49,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String BASE_NAME_SCRIPT_EXECUTOR_THREAD = "ZAP-ScriptExecutor-";
+
 	private ExtensionScriptsUI extension;
 	private JPanel panelContent = null;
 	private JToolBar panelToolbar = null;
@@ -58,7 +64,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private ScriptWrapper script = null;
 	private ScriptWrapper template = null;
 
-	private Thread thread = null;
+	private Map<ScriptWrapper, WeakReference<ScriptExecutorThread>> runnableScriptsToThreadMap;
 
 	//private static final Logger logger = Logger.getLogger(ConsolePanel.class);
 
@@ -74,6 +80,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 				KeyEvent.VK_C, Event.CTRL_MASK | Event.ALT_MASK | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("scripts.panel.mnemonic"));
 		this.setLayout(new BorderLayout());
+
+		runnableScriptsToThreadMap = Collections.synchronizedMap(new HashMap<ScriptWrapper, WeakReference<ScriptExecutorThread>>());
 
 		panelContent = new JPanel(new GridBagLayout());
 		this.add(panelContent, BorderLayout.CENTER);
@@ -173,42 +181,36 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	}
 
 	private void runScript () {
+		if (runnableScriptsToThreadMap.containsKey(script)) {
+			return;
+		}
+
 		getRunButton().setEnabled(false);
-		getStopButton().setEnabled(true);
 		
 		getOutputPanel().preScriptInvoke();
-		
-		thread = new Thread() {
-			@Override
-			public void run() {
-				try {
-					// Update it, in case its been changed
-					script.setContents(getCommandScript());
-					extension.getExtScript().invokeScript(script);
-				} catch (Exception e) {
-					getOutputPanel().append(e);
-				}
-				getRunButton().setEnabled(true);
-				getStopButton().setEnabled(false);
-			}
-		};
-		thread.start();
+
+		// Update it, in case its been changed
+		script.setContents(getCommandScript());
+
+		ScriptExecutorThread scriptExecutorThead = new ScriptExecutorThread(script);
+		runnableScriptsToThreadMap.put(script, new WeakReference<>(scriptExecutorThead));
+		scriptExecutorThead.start();
+		getStopButton().setEnabled(true);
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void stopScript() {
-		if (thread != null && thread.isAlive()) {
-			thread.interrupt();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// Ignore
-			}
-			// Yes, its deprecated, but there are no alternatives, and we have to be able to stop scripts
-			thread.stop();
-			getRunButton().setEnabled(true);
-			getStopButton().setEnabled(false);
+		WeakReference<ScriptExecutorThread> refScriptExecutorThread = runnableScriptsToThreadMap.get(script);
+		if (refScriptExecutorThread == null) {
+			return;
 		}
+
+		ScriptExecutorThread thread = refScriptExecutorThread.get();
+		refScriptExecutorThread.clear();
+		if (thread != null) {
+			thread.terminate();
+		}
+		runnableScriptsToThreadMap.remove(script);
+		updateButtonsState();
 	}
 
 	private KeyListener getKeyListener () {
@@ -270,7 +272,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		getCommandPanel().setEditable(false);
         getCommandPanel().clear();
         getCommandPanel().appendToCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
-    	getRunButton().setEnabled(false);
+        setButtonsAllowRunScript(false);
         getScriptTitle().setText("");
 	}
 
@@ -279,16 +281,31 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		this.template = null;
 		
 		getCommandPanel().setEditable(script.getEngine().isTextBased());
+		updateButtonsState();
+		updateCommandPanelState(script);
+	}
+	
+	/**
+	 * Updates the state of the command panel for the given {@code script}.
+	 * <p>
+	 * It clears and updates the command panel with the contents of the given {@code script}, sets the syntax style to match the
+	 * syntax of the {@code script} and updates the title of the panel with the name of the script engine and name of the
+	 * {@code script}. Finally it request focus to this tab.
+	 * </p>
+	 * 
+	 * @param script the script whose state will be used to update the command panel
+	 * @see #getCommandPanel()
+	 */
+	private void updateCommandPanelState(ScriptWrapper script) {
         getCommandPanel().clear();
         getCommandPanel().appendToCommandScript(script.getContents());
         getCommandPanel().setCommandCursorPosition(0);
         if (script.getEngine().getSyntaxStyle() != null) {
-        	getCommandPanel().setSyntax(script.getEngine().getSyntaxStyle());
+            getCommandPanel().setSyntax(script.getEngine().getSyntaxStyle());
         } else {
-        	getCommandPanel().setSyntax(getSyntaxForScript(script.getEngine().getEngineName()));
+            getCommandPanel().setSyntax(getSyntaxForScript(script.getEngine().getEngineName()));
         }
         this.getScriptTitle().setText(script.getEngine().getLanguageName() + " : " + script.getName());
-    	this.getRunButton().setEnabled(script.isRunableStandalone());
         setTabFocus();
 	}
 	
@@ -297,17 +314,131 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		this.script = null;
 		
 		getCommandPanel().setEditable(false);
-        getCommandPanel().clear();
-        getCommandPanel().appendToCommandScript(template.getContents());
-        getCommandPanel().setCommandCursorPosition(0);
-        if (template.getEngine().getSyntaxStyle() != null) {
-        	getCommandPanel().setSyntax(template.getEngine().getSyntaxStyle());
-        } else {
-        	getCommandPanel().setSyntax(getSyntaxForScript(template.getEngine().getEngineName()));
-        }
-        this.getScriptTitle().setText(template.getEngine().getLanguageName() + " : " + template.getName());
-       	this.getRunButton().setEnabled(false);
-        setTabFocus();
+		setButtonsAllowRunScript(false);
+		updateCommandPanelState(template);
 	}
-	
+
+    /**
+     * Updates the state of the run and stop buttons for the current script.
+     * <p>
+     * If the current script is not runnable ({@code ScriptWrapper#isRunableStandalone()} returns {@code false}) the run and
+     * stop buttons are disabled. If the current script is runnable the state of the buttons will be updated depending whether
+     * the script is already running or not. If the script is already running the run button is disabled and the stop enabled,
+     * otherwise the run button will be enabled and the stop button disabled.
+     * </p>
+     * 
+     * @see #script
+     * @see #getRunButton()
+     * @see #getStopButton()
+     * @see #setButtonsAllowRunScript(boolean)
+     * @see #updateButtonsStateScriptRunning()
+     * @see ScriptWrapper#isRunableStandalone()
+     */
+    private void updateButtonsState() {
+        // The only type that can be run directly from the console
+        if (script == null || !script.isRunableStandalone()) {
+            setButtonsAllowRunScript(false);
+            return;
+        }
+
+        WeakReference<ScriptExecutorThread> refScriptExecutorThread = runnableScriptsToThreadMap.get(script);
+        if (refScriptExecutorThread == null) {
+            setButtonsAllowRunScript(true);
+            return;
+        }
+
+        ScriptExecutorThread thread = refScriptExecutorThread.get();
+        refScriptExecutorThread.clear();
+        if (thread != null && thread.isAlive()) {
+            updateButtonsStateScriptRunning();
+        } else {
+            runnableScriptsToThreadMap.remove(script);
+            setButtonsAllowRunScript(true);
+        }
+    }
+
+    /**
+     * Sets whether or not the state of the buttons should allow to run a script.
+     * <p>
+     * It enables the run button if {@code allow} is {@code true}, disables it otherwise. The stop button is set always to be
+     * disabled.
+     * </p>
+     * 
+     * @param allow {@code true} to allow to run a script, {@code false} otherwise
+     * @see #getRunButton()
+     * @see #getStopButton()
+     * @see #updateButtonsState()
+     * @see #updateButtonsStateScriptRunning()
+     */
+    private void setButtonsAllowRunScript(boolean allow) {
+        getRunButton().setEnabled(allow);
+        getStopButton().setEnabled(false);
+
+    }
+
+    /**
+     * Updates the run and stop buttons to the state of a running script.
+     * <p>
+     * It disables the run button and enables the stop button.
+     * </p>
+     * 
+     * @see #getRunButton()
+     * @see #getStopButton()
+     * @see #setButtonsAllowRunScript(boolean)
+     * @see #updateButtonsState()
+     */
+    private void updateButtonsStateScriptRunning() {
+        getRunButton().setEnabled(false);
+        getStopButton().setEnabled(true);
+    }
+
+    private class ScriptExecutorThread extends Thread {
+
+        private final ScriptWrapper script;
+
+        public ScriptExecutorThread(ScriptWrapper script) {
+            super();
+
+            if (script == null) {
+                throw new IllegalArgumentException("Parameter script must not be null.");
+            }
+            this.script = script;
+
+            String name = script.getName();
+            if (name.length() > 25) {
+                name = name.substring(0, 25);
+            }
+
+            setName(BASE_NAME_SCRIPT_EXECUTOR_THREAD + name);
+        }
+
+        @Override
+        public void run() {
+            try {
+                extension.getExtScript().invokeScript(script);
+            } catch (Exception e) {
+                getOutputPanel().append(e);
+            } finally {
+                WeakReference<ScriptExecutorThread> refScriptExecutorThread = runnableScriptsToThreadMap.remove(script);
+                if (refScriptExecutorThread != null) {
+                    refScriptExecutorThread.clear();
+                }
+                updateButtonsState();
+            }
+        }
+
+        @SuppressWarnings("deprecation")
+        public void terminate() {
+            if (isAlive()) {
+                interrupt();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
+                // Yes, its deprecated, but there are no alternatives, and we have to be able to stop scripts
+                stop();
+            }
+        }
+    }
 }

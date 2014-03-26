@@ -8,7 +8,8 @@
 	<![CDATA[
 	Updated to use the latest core changes (Issue 609).<br>
 	Fixed an InvalidParameterException during add-on uninstallation (Issue 967).<br>
-	Changed help file structure to support internationalisation (Issue 981).
+	Changed help file structure to support internationalisation (Issue 981).<br>
+	Fixed inconsistencies in run/stop buttons (Issue 1023).
 	]]>
 	</changes>
 	<dependson/>
