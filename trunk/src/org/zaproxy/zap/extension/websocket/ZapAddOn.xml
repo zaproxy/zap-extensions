@@ -4,7 +4,12 @@
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Minor code changes (Issues 503 and 609).</changes>
+	<changes>
+	<![CDATA[
+	Minor code changes (Issues 503 and 609).<br>
+	Changed help file structure to support internationalisation (Issue 981).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.websocket.ExtensionWebSocket</extension>

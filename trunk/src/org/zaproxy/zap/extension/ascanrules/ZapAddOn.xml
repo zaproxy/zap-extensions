@@ -5,14 +5,15 @@
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
-	<![CDATA[            
-        Fix for TestRemoteFileInclude failing if Google return localized page. 
-        Moved PXXS tests from beta. 
-        Moved Command Injection from beta.
-        Reviewed and enforced the External Redirect plugin.
-        Removed duplicated TestRedirect plugin (it was a subset of the TestExternalRedirect one)
+	<![CDATA[
+        Fix for TestRemoteFileInclude failing if Google return localized page.<br>
+        Moved PXXS tests from beta.<br>
+        Moved Command Injection from beta.<br>
+        Reviewed and enforced the External Redirect plugin.<br>
+        Removed duplicated TestRedirect plugin (it was a subset of the TestExternalRedirect one)<br>
+        Changed help file structure to support internationalisation (Issue 981).
 	]]>
-        </changes>
+    </changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.ascanrules.ExtensionAscanRules</extension>
@@ -37,6 +38,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
