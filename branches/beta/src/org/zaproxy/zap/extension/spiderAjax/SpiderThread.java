@@ -35,6 +35,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.parosproxy.paros.core.proxy.ProxyServer;
+import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -42,8 +44,6 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.Browser;
-import org.zaproxy.zap.extension.spiderAjax.proxy.OverwriteMessageProxyListener;
-import org.zaproxy.zap.extension.spiderAjax.proxy.ProxyServer;
 import org.zaproxy.zap.network.HttpResponseBody;
 
 import com.crawljax.browser.EmbeddedBrowser;
@@ -103,7 +103,7 @@ public class SpiderThread implements Runnable {
 
 		proxy = new ProxyServer();
 		proxy.setConnectionParam(extension.getModel().getOptionsParam().getConnectionParam());
-		proxy.addOverwriteMessageProxyListener(new SpiderProxyListener());
+		proxy.addOverrideMessageProxyListener(new SpiderProxyListener());
 	}
 
 	private void createOutOfScopeResponse(String response) {
@@ -257,7 +257,7 @@ public class SpiderThread implements Runnable {
 		}
 	}
 
-	private class SpiderProxyListener implements OverwriteMessageProxyListener {
+	private class SpiderProxyListener implements OverrideMessageProxyListener {
 
 		@Override
 		public int getArrangeableListenerOrder() {
