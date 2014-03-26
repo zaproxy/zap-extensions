@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Minor code changes (Issues 503 and 609).<br>
-	Changed help file structure to support internationalisation (Issue 981).
+	Changed help file structure to support internationalisation (Issue 981).<br>
+	Added content-type to help pages (Issue 1080).
 	]]>
 	</changes>
 	<dependson/>
