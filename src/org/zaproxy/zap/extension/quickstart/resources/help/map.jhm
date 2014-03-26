@@ -4,6 +4,6 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-	<mapID target="icon147" url="zaphelp/images/147.png" />
-    <mapID target="quickstart" url="zaphelp/quickstart.html" />
+	<mapID target="icon147" url="contents/images/147.png" />
+    <mapID target="quickstart" url="contents/quickstart.html" />
 </map>

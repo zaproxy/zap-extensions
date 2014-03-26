@@ -59,7 +59,7 @@ public class ExtensionRightClickMsgMenu extends ExtensionAdaptor {
         this.setName("ExtensionPopupMsgMenu");
         // Load extension specific language files - these are held in the extension jar
         messages = ResourceBundle.getBundle(
-        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+        		this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());
 	}
 	
 	@Override

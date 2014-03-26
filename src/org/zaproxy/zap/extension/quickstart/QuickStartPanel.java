@@ -107,7 +107,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 				LayoutHelper.getGBC(0, 0, 4, 1.0D, new Insets(5,5,5,5)));
 		if (Constant.isDevBuild()) {
 			panelContent.add(new JLabel(new ImageIcon(QuickStartPanel.class.getResource(
-					"/org/zaproxy/zap/extension/quickstart/resource/zap128x128dark.png"))),
+					"/org/zaproxy/zap/extension/quickstart/resources/zap128x128dark.png"))),
 					LayoutHelper.getGBC(4, 0, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
 		} else {
 			panelContent.add(new JLabel(new ImageIcon(SearchPanel.class.getResource("/resource/zap128x128.png"))),
@@ -253,7 +253,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 			confButton.setText(Constant.messages.getString("quickstart.button.label.mitm"));
 			confButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.mitm"));
 			confButton.setIcon(new ImageIcon(
-					QuickStartPanel.class.getResource("/org/zaproxy/zap/extension/quickstart/resource/plug.png")));
+					QuickStartPanel.class.getResource("/org/zaproxy/zap/extension/quickstart/resources/plug.png")));
 
 			confButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
