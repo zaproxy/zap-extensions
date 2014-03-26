@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>2</version>
+	<version>3</version>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated for ZAP 2.2.0</changes>
+	<changes>Changed help file structure to support internationalisation (Issue 981).</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.pscanrulesAlpha.ExtensionPscanRulesAlpha</extension>

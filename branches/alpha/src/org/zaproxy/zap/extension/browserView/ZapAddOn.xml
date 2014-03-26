@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Browser View</name>
-	<version>1</version>
+	<version>2</version>
 	<description>Adds an option to render HTML responses like a browser</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>Changed help file structure to support internationalisation (Issue 981).</changes>
 	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.browser.ExtensionHttpPanelBrowserView</extension>
@@ -13,6 +13,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
 </zapaddon>
 
