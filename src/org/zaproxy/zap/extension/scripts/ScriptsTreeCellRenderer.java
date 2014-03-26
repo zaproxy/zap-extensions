@@ -41,7 +41,7 @@ import org.zaproxy.zap.view.OverlayIcon;
  */
 public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 	
-	private static final String RESOURCE_ROOT = "/org/zaproxy/zap/extension/scripts/resource/icons/";
+	private static final String RESOURCE_ROOT = "/org/zaproxy/zap/extension/scripts/resources/icons/";
 	
 	private static final ImageIcon CROSS_OVERLAY_ICON = 
 			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "cross-overlay.png"));

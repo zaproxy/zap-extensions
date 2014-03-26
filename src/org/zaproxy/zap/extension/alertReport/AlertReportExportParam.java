@@ -90,7 +90,7 @@ public class AlertReportExportParam extends AbstractParam {
     @Override
     protected void parse(){
     	ResourceBundle messages = ResourceBundle.getBundle(
-        		this.getClass().getPackage().getName() + ".Messages", Constant.getLocale());
+        		this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());
 		titleReport = getConfig().getString(TITLE_REPORT, messages.getString("alertreport.export.report.title.default"));
 		logoFileName = getConfig().getString(LOGO_FILE_NAME, DEFAULT_LOGO_FILE_NAME);
 		workingDirImages = getConfig().getString(WORKING_DIR_IMAGES, DEFAULT_WORKING_DIR_IMAGES);

@@ -9,7 +9,8 @@
 	Fixed the plug-in ID of Viewstate scanner.<br>
 	Changed help file structure to support internationalisation (Issue 981).<br>
 	Added content-type to help pages (Issue 1080).<br>
-	Changed all plug-ins to expose its IDs (Issue 1101).
+	Changed all plug-ins to expose its IDs (Issue 1101).<br>
+	Updated add-on dir structure (Issue 1113).
 	]]>
 	</changes>
 	<dependson/>

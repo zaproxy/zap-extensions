@@ -184,7 +184,7 @@ public class ScriptsListPanel extends AbstractPanel {
 		if (newScriptButton == null) {
 			newScriptButton = new JButton();
 			newScriptButton.setIcon(new ImageIcon(
-					ScriptsListPanel.class.getResource("/org/zaproxy/zap/extension/scripts/resource/icons/script-add.png")));
+					ScriptsListPanel.class.getResource("/org/zaproxy/zap/extension/scripts/resources/icons/script-add.png")));
 			newScriptButton.setToolTipText(Constant.messages.getString("scripts.list.toolbar.button.new"));
 			
 			newScriptButton.addActionListener(new java.awt.event.ActionListener() { 

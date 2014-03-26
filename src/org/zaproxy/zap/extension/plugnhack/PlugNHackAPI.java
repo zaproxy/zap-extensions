@@ -147,7 +147,7 @@ public class PlugNHackAPI extends ApiImplementor {
 
         if (OTHER_PNH.equals(name)) {
             try {
-                String welcomePage = ExtensionPlugNHack.getStringReource("resource/welcome.html");
+                String welcomePage = ExtensionPlugNHack.getStringReource("resources/welcome.html");
                 // Replace the dynamic parts
                 welcomePage = welcomePage.replace("{{ROOT}}", root).replace("{{APIKEY}}", API.getInstance().getApiKey());
                 // Replace the i18n strings
@@ -192,7 +192,7 @@ public class PlugNHackAPI extends ApiImplementor {
 
         } else if (OTHER_MANIFEST.equals(name)) {
             try {
-                String manifest = ExtensionPlugNHack.getStringReource("resource/manifest.json");
+                String manifest = ExtensionPlugNHack.getStringReource("resources/manifest.json");
                 // Replace the dynamic parts
                 manifest = manifest.replace("{{ROOT}}", root).replace("{{APIKEY}}", API.getInstance().getApiKey());
 
@@ -216,7 +216,7 @@ public class PlugNHackAPI extends ApiImplementor {
 
         } else if (OTHER_SERVICE.equals(name)) {
             try {
-                String service = ExtensionPlugNHack.getStringReource("resource/service.json");
+                String service = ExtensionPlugNHack.getStringReource("resources/service.json");
                 // Replace the dynamic parts
                 service = service.replace("{{ROOT}}", root).replace("{{APIKEY}}", API.getInstance().getApiKey());
 
@@ -241,7 +241,7 @@ public class PlugNHackAPI extends ApiImplementor {
         } else if (OTHER_FIREFOX_ADDON.equals(name)) {
             InputStream in = null;
             try {
-                in = this.getClass().getResourceAsStream("resource/" + OTHER_FIREFOX_ADDON);
+                in = this.getClass().getResourceAsStream("resources/" + OTHER_FIREFOX_ADDON);
 
                 int numRead = 0;
                 int length = 0;
@@ -310,12 +310,12 @@ public class PlugNHackAPI extends ApiImplementor {
         // Sanity check the json config files are valid!
         JSON json;
 
-        String manifest = ExtensionPlugNHack.getStringReource("resource/manifest.json");
+        String manifest = ExtensionPlugNHack.getStringReource("resources/manifest.json");
         //System.out.println("Manifest = " + manifest);
         json = JSONSerializer.toJSON(manifest);
         System.out.println("Manifest OK? " + json);
 
-        String service = ExtensionPlugNHack.getStringReource("resource/service.json");
+        String service = ExtensionPlugNHack.getStringReource("resources/service.json");
         //System.out.println("Service = " + service);
         json = JSONSerializer.toJSON(service);
         System.out.println("Service OK? " + json);
@@ -324,7 +324,7 @@ public class PlugNHackAPI extends ApiImplementor {
 
         InputStream in = null;
         try {
-            in = ExtensionPlugNHack.class.getResourceAsStream("resource/" + OTHER_FIREFOX_ADDON);
+            in = ExtensionPlugNHack.class.getResourceAsStream("resources/" + OTHER_FIREFOX_ADDON);
             MessageDigest md = MessageDigest.getInstance("SHA1");
             //FileInputStream fis = new FileInputStream(in);
             byte[] dataBytes = new byte[1024];

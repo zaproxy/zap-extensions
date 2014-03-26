@@ -40,7 +40,7 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 
 	public static final String NAME = "ExtensionJruby";
 	public static final ImageIcon RUBY_ICON = new ImageIcon(
-			ExtensionJruby.class.getResource("/org/zaproxy/zap/extension/jruby/resource/ruby.png"));
+			ExtensionJruby.class.getResource("/org/zaproxy/zap/extension/jruby/resources/ruby.png"));
 
 	private ExtensionScript extScript = null;
 	private ScriptEngine rubyScriptEngine = null;

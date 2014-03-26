@@ -104,23 +104,23 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     public static final String CLIENT_ACTIVE_ICON_RESOURCE = "/resource/icon/16/029.png";
     public static final String CLIENT_INACTIVE_ICON_RESOURCE = "/resource/icon/16/030.png";
 
-    public static final String FIREFOX_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resource/icons/firefox-icon.png";
-    public static final String CHROME_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resource/icons/chrome-icon.png";
-    public static final String IE_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resource/icons/ie-icon.png";
-    public static final String OPERA_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resource/icons/opera-icon.png";
-    public static final String SAFARI_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resource/icons/safari-icon.png";    
+    public static final String FIREFOX_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resources/icons/firefox-icon.png";
+    public static final String CHROME_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resources/icons/chrome-icon.png";
+    public static final String IE_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resources/icons/ie-icon.png";
+    public static final String OPERA_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resources/icons/opera-icon.png";
+    public static final String SAFARI_ICON_RESOURCE = "/org/zaproxy/zap/extension/plugnhack/resources/icons/safari-icon.png";    
 
 	public static final ImageIcon CLIENT_ACTIVE_ICON = new ImageIcon(ZAP.class.getResource(CLIENT_ACTIVE_ICON_RESOURCE));
 	public static final ImageIcon CLIENT_INACTIVE_ICON = new ImageIcon(ZAP.class.getResource(CLIENT_INACTIVE_ICON_RESOURCE));
 	
 	public static final ImageIcon CHANGED_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
-			"/org/zaproxy/zap/extension/plugnhack/resource/icons/screwdriver.png"));
+			"/org/zaproxy/zap/extension/plugnhack/resources/icons/screwdriver.png"));
 	public static final ImageIcon DROPPED_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
-			"/org/zaproxy/zap/extension/plugnhack/resource/icons/bin-metal.png"));
+			"/org/zaproxy/zap/extension/plugnhack/resources/icons/bin-metal.png"));
 	public static final ImageIcon PENDING_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
-			"/org/zaproxy/zap/extension/plugnhack/resource/icons/hourglass.png"));
+			"/org/zaproxy/zap/extension/plugnhack/resources/icons/hourglass.png"));
 	public static final ImageIcon ORACLE_ICON = new ImageIcon(ExtensionPlugNHack.class.getResource(
-			"/org/zaproxy/zap/extension/plugnhack/resource/icons/burn.png"));
+			"/org/zaproxy/zap/extension/plugnhack/resources/icons/burn.png"));
 	
 	private static final int poll = 3000;
 	
@@ -600,7 +600,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 
     private String getPnhScript() throws ApiException {
         if (pnhScript == null) {
-            pnhScript = ExtensionPlugNHack.getStringReource("resource/pnh_probe.js");
+            pnhScript = ExtensionPlugNHack.getStringReource("resources/pnh_probe.js");
         }
         
         return pnhScript;

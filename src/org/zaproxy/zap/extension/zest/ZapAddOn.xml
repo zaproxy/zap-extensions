@@ -9,7 +9,8 @@
 	Moved templates from core<br>
 	Updated to use the latest core changes, other minor code changes (Issues 416, 609,  503, 1085, 1104 and 1105).<br>
 	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).
+	Added content-type to help pages (Issue 1080).<br>
+	Updated add-on dir structure (Issue 1113).
 	]]>
 	</changes>
 	<dependson/>

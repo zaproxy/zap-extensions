@@ -10,7 +10,8 @@
 	Updated to use the latest core changes (Issue 609).<br>
 	Changed to display the port scan results in a table (Issue 503).<br>
 	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).
+	Added content-type to help pages (Issue 1080).<br>
+	Updated add-on dir structure (Issue 1113).
 	]]>
 	</changes>
 	<dependson/>

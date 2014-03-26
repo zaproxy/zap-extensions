@@ -45,15 +45,15 @@ public class OutputPanel extends AbstractPanel {
 	private static final Logger logger = Logger.getLogger(OutputPanel.class);
 
 	private static final ImageIcon CLEAR_ICON = new ImageIcon(OutputPanel.class.getResource(
-    		"/org/zaproxy/zap/extension/scripts/resource/icons/broom.png"));
+    		"/org/zaproxy/zap/extension/scripts/resources/icons/broom.png"));
 	private static final ImageIcon CLEAR_ON_RUN_DISABLED_ICON = new ImageIcon(OutputPanel.class.getResource(
-    		"/org/zaproxy/zap/extension/scripts/resource/icons/broom-play-disabled.png"));
+    		"/org/zaproxy/zap/extension/scripts/resources/icons/broom-play-disabled.png"));
 	private static final ImageIcon CLEAR_ON_RUN_ENABLED_ICON = new ImageIcon(OutputPanel.class.getResource(
-    		"/org/zaproxy/zap/extension/scripts/resource/icons/broom-play-enabled.png"));
+    		"/org/zaproxy/zap/extension/scripts/resources/icons/broom-play-enabled.png"));
 	private static final ImageIcon SCROLL_LOCK_DISABLED_ICON = new ImageIcon(OutputPanel.class.getResource(
-    		"/org/zaproxy/zap/extension/scripts/resource/icons/ui-scroll-pane.png"));
+    		"/org/zaproxy/zap/extension/scripts/resources/icons/ui-scroll-pane.png"));
 	private static final ImageIcon SCROLL_LOCK_ENABLED_ICON = new ImageIcon(OutputPanel.class.getResource(
-    		"/org/zaproxy/zap/extension/scripts/resource/icons/ui-scroll-lock-pane.png"));
+    		"/org/zaproxy/zap/extension/scripts/resources/icons/ui-scroll-lock-pane.png"));
 
 	private ExtensionScriptsUI extension;
 	private JPanel mainPanel;
