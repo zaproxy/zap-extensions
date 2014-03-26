@@ -60,6 +60,7 @@ import org.zaproxy.zap.extension.sse.db.TableEventStream;
 import org.zaproxy.zap.extension.sse.ui.filter.EventStreamViewFilter;
 import org.zaproxy.zap.extension.sse.ui.filter.EventStreamViewFilterDialog;
 import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 /**
  * Represents the Server-Sent Events tab. It listens to all Event Streams and
@@ -92,7 +93,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 
 	private JToolBar panelToolbar = null;
 
-	private JToggleButton scopeButton;
+	private ZapToggleButton scopeButton;
 
 //	private JComboBox<SSE> channelSelect;
 //	private ChannelSortedListModel channelsModel;
@@ -726,9 +727,10 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 	
 	private JToggleButton getScopeButton() {
 		if (scopeButton == null) {
-			scopeButton = new JToggleButton();
+			scopeButton = new ZapToggleButton();
 			scopeButton.setIcon(new ImageIcon(LogPanel.class.getResource("/resource/icon/fugue/target-grey.png")));
 			scopeButton.setToolTipText(Constant.messages.getString("history.scope.button.unselected"));
+			scopeButton.setSelectedToolTipText(Constant.messages.getString("history.scope.button.selected"));
 
 			scopeButton.addActionListener(new java.awt.event.ActionListener() { 
 
@@ -749,10 +751,8 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 					
 					if (scopeButton.isSelected()) {
 						scopeButton.setIcon(new ImageIcon(EventStreamPanel.class.getResource("/resource/icon/fugue/target.png")));
-						scopeButton.setToolTipText(Constant.messages.getString("history.scope.button.selected"));
 					} else {
 						scopeButton.setIcon(new ImageIcon(EventStreamPanel.class.getResource("/resource/icon/fugue/target-grey.png")));
-						scopeButton.setToolTipText(Constant.messages.getString("history.scope.button.unselected"));
 					}
 				}
 			});
