@@ -32,7 +32,7 @@ public class SAMLResender {
                 final ExtensionHistory extension = (ExtensionHistory) Control.getSingleton()
                         .getExtensionLoader().getExtension(ExtensionHistory.NAME);
 
-                final int finalType = HistoryReference.TYPE_MANUAL;
+                final int finalType = HistoryReference.TYPE_ZAP_USER;
                 extension.addHistory(msg, finalType);
             }
 
