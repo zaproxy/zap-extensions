@@ -54,7 +54,9 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 	static Map <Pattern, String> timestampPatterns = new HashMap <Pattern, String> ();
 	
 	static {
-		timestampPatterns.put(Pattern.compile("\\b[0-9]{10}\\b", Pattern.CASE_INSENSITIVE), "Unix");
+		//8 - 10 digits is unlikely to cause many false positives, but covers most of the range of possible Unix time values 
+		//as well as all of the current Unix time value (beyond the range for a valid Unix time, in fact)
+		timestampPatterns.put(Pattern.compile("\\b[0-9]{8,10}\\b", Pattern.CASE_INSENSITIVE), "Unix");
 	}
 	
 	private static Logger log = Logger.getLogger(TimestampDisclosureScanner.class);
