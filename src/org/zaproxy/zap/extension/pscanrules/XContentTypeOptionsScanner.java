@@ -28,6 +28,7 @@ public class XContentTypeOptionsScanner  extends PluginPassiveScanner {
 				this.raiseAlert(msg, id, "");
 			} else {
 				for (String xContentTypeOptionsDirective : xContentTypeOptions) {
+					//'nosniff' is currently the only defined value for this header, so this logic is ok
 					if (xContentTypeOptionsDirective.toLowerCase().indexOf("nosniff") < 0) {
 						this.raiseAlert(msg, id, xContentTypeOptionsDirective);
 					}
@@ -40,12 +41,12 @@ public class XContentTypeOptionsScanner  extends PluginPassiveScanner {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
-		    		"The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'",
+		    		"The Anti-MIME-Sniffing header "+HttpHeader.X_CONTENT_TYPE_OPTIONS +" was not set to 'nosniff'.\nThis allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared content type.\nCurrent (early 2014) and legacy versions of Firefox will use the declared content type (if one is set), rather than performing MIME-sniffing.",
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    xContentTypeOption,
 		    	    "", 
 		    	    "", 
-		    	    "This check is specific to Internet Explorer 8 and Google Chrome. Ensure each page sets a Content-Type header and the X-CONTENT-TYPE-OPTIONS if the Content-Type header is unknown", 
+		    	    "Ensure that the application/web server sets the "+HttpHeader.CONTENT_TYPE +" header appropriately, and that it sets the "+HttpHeader.X_CONTENT_TYPE_OPTIONS + " header to 'nosniff' for all web pages.\nIf possible, ensure that the end user uses a standards-compliant and modern web browser that does not perform MIME-sniffing at all, or that can be directed by the web application/web server to not perform MIME-sniffing.", 
 		            "", 
 		            "", // No evidence
 		            0,	// TODO CWE Id
