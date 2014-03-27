@@ -37,7 +37,9 @@ import org.zaproxy.zap.extension.httppanel.view.HttpPanelDefaultViewSelector;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
+import org.zaproxy.zap.extension.plugnhack.httppanel.models.JsonClientPanelViewModel;
 import org.zaproxy.zap.extension.plugnhack.httppanel.models.StringClientPanelViewModel;
+import org.zaproxy.zap.extension.plugnhack.httppanel.views.ClientPanelJsonView;
 import org.zaproxy.zap.extension.plugnhack.httppanel.views.ClientPanelTextView;
 import org.zaproxy.zap.extension.search.SearchMatch;
 import org.zaproxy.zap.extension.search.SearchableHttpPanelComponent;
@@ -132,6 +134,7 @@ public class ClientComponent implements HttpPanelComponentInterface, SearchableH
 	
 	protected void initViews() {
 		views.addView(new ClientPanelTextView(new StringClientPanelViewModel()));
+		views.addView(new ClientPanelJsonView(new JsonClientPanelViewModel()));
 	}
 
 	@Override

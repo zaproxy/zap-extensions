@@ -42,10 +42,10 @@ public class ClientSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTextV
 	
 	@Override
 	protected HttpPanelSyntaxHighlightTextArea createHttpPanelTextArea() {
-		return new WebSocketSyntaxHighlightTextArea();
+		return new ClientSyntaxHighlightTextArea();
 	}
 	
-	protected static class WebSocketSyntaxHighlightTextArea extends HttpPanelSyntaxHighlightTextArea implements FuzzableComponent {
+	protected static class ClientSyntaxHighlightTextArea extends HttpPanelSyntaxHighlightTextArea implements FuzzableComponent {
 
         private static final long serialVersionUID = -6469629120424801024L;
 
@@ -59,7 +59,7 @@ public class ClientSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTextV
 
 		private final ExtensionPlugNHack extension;
 		
-		public WebSocketSyntaxHighlightTextArea() {
+		public ClientSyntaxHighlightTextArea() {
             addSyntaxStyle(CSS, SyntaxConstants.SYNTAX_STYLE_CSS);
             addSyntaxStyle(HTML, SyntaxConstants.SYNTAX_STYLE_HTML);
             addSyntaxStyle(JAVASCRIPT, SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
