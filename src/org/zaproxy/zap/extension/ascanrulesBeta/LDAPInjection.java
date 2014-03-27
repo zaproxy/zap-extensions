@@ -28,6 +28,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
@@ -173,6 +174,17 @@ public class LDAPInjection extends AbstractAppParamPlugin {
 	        	this.andRequests=2;
 	        	break;
 	        }
+    }
+
+    public void scan(HttpMessage msg, NameValuePair originalParam) {
+    	/*
+    	 * Scan everything _except_ URL path parameters.
+    	 * URL Path parameters are problematic for the matching based scanners, because changing the URL path
+    	 * "parameter" generates output that is wildly different from the unmodified URL path "parameter" 
+    	 */
+    	if (originalParam.getType() != NameValuePair.TYPE_URL_PATH) {
+    		super.scan(msg, originalParam);
+    	}
     }
 
     /**
