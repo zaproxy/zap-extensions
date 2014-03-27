@@ -144,13 +144,21 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 	}
 
 	/**
-	 * scans the HTTP request sent (in fact, does nothing)
+	 * scans the HTTP request for Hash signatures
 	 * @param msg
 	 * @param id
 	 */
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		//TODO: implement this as well! We may be generating a hash on the client side, and uploading it to the server.
+		
+		if (log.isDebugEnabled()) log.debug("Checking request of message "+ msg + " for Hashes");
+		
+		//get the request contents as an array of Strings, so we can match against them
+		String requestheader = msg.getRequestHeader().getHeadersAsString();
+		String requestbody = new String (msg.getRequestBody().getBytes());
+		String [] requestparts = {requestheader, requestbody};
+		
+		checkForHashes (msg, id, requestparts);
 	}
 
 	/**
@@ -162,13 +170,23 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		
-		if (log.isDebugEnabled()) log.debug("Checking message "+ msg + " for Hashes");
+		if (log.isDebugEnabled()) log.debug("Checking response of message "+ msg + " for Hashes");
 		
-		//get the body contents as a String, so we can match against it
+		//get the response contents as an array of Strings, so we can match against them
 		String responseheader = msg.getResponseHeader().getHeadersAsString();
 		String responsebody = new String (msg.getResponseBody().getBytes());
 		String [] responseparts = {responseheader, responsebody};
 		
+		checkForHashes (msg, id, responseparts);
+	}
+	
+	/**
+	 * checks for hashes in the given array of strings, which relate to the parameter message
+	 * @param msg
+	 * @param id
+	 * @param haystacks
+	 */
+	public void checkForHashes (HttpMessage msg, int id, String [] haystacks) {
 		//try each of the patterns in turn against the response.				
 		String hashType = null;
 		Iterator<Pattern> patternIterator = hashPatterns.keySet().iterator();		
@@ -177,7 +195,7 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 			Pattern hashPattern = patternIterator.next();
 			hashType = hashPatterns.get(hashPattern);
 			if (log.isDebugEnabled()) log.debug("Trying Hash Pattern: "+ hashPattern + " for hash type "+ hashType);
-			for (String haystack: responseparts) {
+			for (String haystack: haystacks) {
 				Matcher matcher = hashPattern.matcher(haystack);
 		        while (matcher.find()) {
 		            String evidence = matcher.group();
