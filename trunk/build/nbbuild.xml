@@ -81,19 +81,16 @@
         
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
 		<antcall target="build-addon"><param name="addon" value="ascanrules"/></antcall>
-		<!--antcall target="build-addon"><param name="addon" value="bruteforce"/></antcall-->
+		<antcall target="build-addon"><param name="addon" value="coreLang"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="directorylistv1"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="directorylistv2_3"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="directorylistv2_3_lc"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="fuzzdb"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrules"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="quickstart"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="reveal"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="saverawmessage"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="websocket"/></antcall>
-
-		<!-- 'Non-Standard' addons, ie which require additional files (keep in alphabetical order ;) -->
-		<antcall target="build-fuzzdb"/>
-		
-		<!-- Examples, which havnt been made into addons yet -->
-		<antcall target="build-exampleActiveScan"/>
-		<antcall target="build-examplePassiveScan"/>
-		<antcall target="build-exampleRightClickMsg"/>
-		<antcall target="build-exampleTopMenu"/>
 						
         <echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 		
