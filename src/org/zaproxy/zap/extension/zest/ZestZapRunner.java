@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestActionFailException;
+import org.mozilla.zest.core.v1.ZestActionIntercept;
 import org.mozilla.zest.core.v1.ZestActionScan;
 import org.mozilla.zest.core.v1.ZestAssertFailException;
 import org.mozilla.zest.core.v1.ZestAssertion;
@@ -253,6 +254,10 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     	log.debug("handleAction " + action.getElementType());
 		if (action instanceof ZestActionScan) {
 			this.invokeScan(script, (ZestActionScan)action);
+		} else if (action instanceof ZestActionIntercept) {
+			// Use a script variable, which we check in ZestProxyRunner
+			script.getParameters().setVariable(
+					ZestScriptWrapper.ZAP_BREAK_VARIABLE_NAME, ZestScriptWrapper.ZAP_BREAK_VARIABLE_VALUE);
 		} else {
 			try {
 				return super.handleAction(script, action, lastResponse);

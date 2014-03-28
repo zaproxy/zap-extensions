@@ -83,6 +83,12 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 			
 			msg.setRequestBody(this.getVariable(ZestVariables.REQUEST_BODY));
 			msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
+			
+			if (ZestScriptWrapper.ZAP_BREAK_VARIABLE_VALUE.equals(
+					script.getZestScript().getParameters().getVariable(ZestScriptWrapper.ZAP_BREAK_VARIABLE_NAME))) {
+				// The intercept action was invoked
+				msg.setForceIntercept(true);
+			}
 
 		} catch (Exception e) {
 			throw new ScriptException(e);
@@ -98,6 +104,9 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 			// Create the previous request so the script has something to run against
 			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true);
 			req.setResponse(ZestZapUtils.toZestResponse(msg));
+			
+			// Unset the 'break' flag (in case it was set in the request path
+			msg.setForceIntercept(false);
 
 			this.run(script.getZestScript(), req, null);
 			

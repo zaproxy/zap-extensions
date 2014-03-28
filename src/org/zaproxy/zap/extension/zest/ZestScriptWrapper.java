@@ -34,6 +34,9 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ZestScriptWrapper extends ScriptWrapper {
+	
+	public static final String ZAP_BREAK_VARIABLE_NAME = "zap.break";
+	public static final String ZAP_BREAK_VARIABLE_VALUE = "set";
 
 	private boolean incStatusCodeAssertion = true;
 	private boolean incLengthAssertion = true;
@@ -118,20 +121,21 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	
 	@SuppressWarnings("unchecked")
 	public <T> T getInterface(Class<T> class1) throws ScriptException, IOException {
+		// Clone the wrapper so that we get a new instance every time
 		if (class1.isAssignableFrom(ZestPassiveRunner.class)) {
-			return (T) new ZestPassiveRunner(this.getExtension(), this);
+			return (T) new ZestPassiveRunner(this.getExtension(), this.clone());
 			
 		} else if (class1.isAssignableFrom(ZestActiveRunner.class)) {
-			return (T) new ZestActiveRunner(this.getExtension(), this);
+			return (T) new ZestActiveRunner(this.getExtension(), this.clone());
 			
 		} else if (class1.isAssignableFrom(ZestTargetedRunner.class)) {
-			return (T) new ZestTargetedRunner(this.getExtension(), this);
+			return (T) new ZestTargetedRunner(this.getExtension(), this.clone());
 			
 		} else if (class1.isAssignableFrom(ZestProxyRunner.class)) {
-			return (T) new ZestProxyRunner(this.getExtension(), this);
+			return (T) new ZestProxyRunner(this.getExtension(), this.clone());
 			
 		} else if (class1.isAssignableFrom(ZestAuthenticationRunner.class)) {
-			return (T) new ZestAuthenticationRunner(this.getExtension(), this);
+			return (T) new ZestAuthenticationRunner(this.getExtension(), this.clone());
 		}
 		return null;
 	}
@@ -141,6 +145,14 @@ public class ZestScriptWrapper extends ScriptWrapper {
 			extension = (ExtensionZest) Control.getSingleton().getExtensionLoader().getExtension(ExtensionZest.NAME);
 		}
 		return extension;
+	}
+	
+	protected ZestScriptWrapper clone() {
+		ZestScriptWrapper clone = new ZestScriptWrapper(this.original);
+		clone.setWriter(this.getWriter());
+		clone.setDebug(this.isDebug());
+		clone.setRecording(this.isRecording());
+		return clone;
 	}
 
 	@Override
