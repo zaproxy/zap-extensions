@@ -30,11 +30,12 @@ import javax.swing.JMenuItem;
 
 import org.mozilla.zest.core.v1.ZestAction;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionIntercept;
 import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
-import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestActionSleep;
+import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpression;
@@ -44,8 +45,10 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
 public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
@@ -131,15 +134,19 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
     }
 
     private void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestRequest req, String text) {
-    	ZestScript script = extension.getZestTreeModel().getScriptWrapper(parent).getZestScript();
+    	ZestScriptWrapper wrapper = extension.getZestTreeModel().getScriptWrapper(parent);
+    	ZestScript script = wrapper.getZestScript();
     	String type = script.getType();
     	if (ZestScript.Type.StandAlone.name().equals(type) ||
     			ZestScript.Type.Targeted.name().equals(type)) {
-    		// Doenst really make sense for passive or active scripts 
+    		// Doesnt really make sense for passive or active scripts 
     		createPopupAddActionMenu (parent, child, req, new ZestActionScan(text));
     	}
     	if (!script.isPassive()) {
     		createPopupAddActionMenu (parent, child, req, new ZestActionInvoke());
+    	}
+    	if (ExtensionScript.TYPE_PROXY.equals(wrapper.getType().getName())) {
+    		createPopupAddActionMenu (parent, child, req, new ZestActionIntercept());
     	}
     	
 		createPopupAddActionMenu (parent, child, req, new ZestActionPrint(text));
@@ -154,7 +161,16 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
 		menu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				extension.getDialogManager().showZestActionDialog(parent, child, req, za, true);
+				if (za instanceof ZestActionIntercept) {
+					// No params so can just add straight away
+					if (req == null) {
+						extension.addToParent(parent, za);
+					} else {
+						extension.addAfterRequest(parent, child, req, za);
+					}
+				} else {
+					extension.getDialogManager().showZestActionDialog(parent, child, req, za, true);
+				}
 			}});
     	menu.setMenuIndex(this.getMenuIndex());
 		View.getSingleton().getPopupList().add(menu);

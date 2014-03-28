@@ -32,6 +32,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionIntercept;
 import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
@@ -397,6 +398,10 @@ public class ZestZapUtils {
 				return indexStr + Constant.messages
 						.getString("zest.element.action.fail.title");
 			}
+		} else if (za instanceof ZestActionIntercept) {
+			// No parameters
+			return indexStr + Constant.messages
+					.getString("zest.element.action.intercept.title");
 		} else if (za instanceof ZestActionInvoke) {
 			ZestActionInvoke zsa = (ZestActionInvoke) za;
 			if (incParams) {

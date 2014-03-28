@@ -28,6 +28,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
+import org.mozilla.zest.core.v1.ZestActionIntercept;
 import org.mozilla.zest.core.v1.ZestActionInvoke;
 import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
@@ -58,6 +59,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(Constant.class.getResource("/resource/icon/16/105.png"));		// Blue right arrow
 	private static final ImageIcon ACTION_FAIL_ICON = 
 			new ImageIcon(Constant.class.getResource("/resource/icon/16/050.png"));	// Warning triangle
+	private static final ImageIcon ACTION_INTERCEPT_ICON = 
+			new ImageIcon(Constant.class.getResource("/resource/icon/16/101.png"));	// Red X
 	private static final ImageIcon ACTION_INVOKE_ICON = 
 			new ImageIcon(Constant.class.getResource("/resource/icon/16/059.png"));	// Script
 	private static final ImageIcon ACTION_SCAN_ICON = 
@@ -190,6 +193,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 						setIcon(ASSERT_ICON);
 					} else if (za instanceof ZestActionFail) {
 						setIcon(ACTION_FAIL_ICON);
+					} else if (za instanceof ZestActionIntercept) {
+						setIcon(ACTION_INTERCEPT_ICON);
 					} else if (za instanceof ZestActionInvoke) {
 						setIcon(ACTION_INVOKE_ICON);
 					} else if (za instanceof ZestActionPrint) {
