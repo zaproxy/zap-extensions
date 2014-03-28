@@ -52,4 +52,9 @@ public class JythonEngineWrapper extends DefaultEngineWrapper {
 		return list;
 	}
 
+	@Override
+	public boolean isRawEngine() {
+		return false;
+	}
+
 }

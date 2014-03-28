@@ -51,5 +51,10 @@ public class JrubyEngineWrapper extends DefaultEngineWrapper {
 		list.add("rb");
 		return list;
 	}
+	
+	@Override
+	public boolean isRawEngine() {
+		return false;
+	}
 
 }
