@@ -625,7 +625,7 @@ public class GitMetadata {
 				int deltaoffsetBytesRead = this.tempbytesread;
 				if (log.isDebugEnabled()) log.debug("DELTA_ENCODED object with offset to base: got a delta base offset of "+ deltabaseoffset + ", by reading " + deltaoffsetBytesRead + " bytes");
 											
-				//the data after the delta base offset is deflated. so read it, deflate it, and decode it. 
+				//the data after the delta base offset is deflated. so read it, inflate it, and decode it. 
 				int deflatedDeltaDataBytesToRead = entryLength - sizebytescounted - deltaoffsetBytesRead;
 				byte deflatedDeltaData [] = new byte [deflatedDeltaDataBytesToRead];
 				entryBuffer.get(deflatedDeltaData);
@@ -837,7 +837,7 @@ public class GitMetadata {
 			int indexEntrySize = dataBuffer.getInt(); entryBytesRead+=4;	
 			//if ( log.isDebugEnabled() ) log.debug("Entry "+ entryIndex + " has size "+ indexEntrySize);
 
-			//size is unspecified for the entry id, but it seems to be 40 bytes SHA-1 string
+			//size is unspecified for the entry id, but it seems to be a 40 hex character, SHA-1 string
 			//stored as 20 bytes, network order
 			byte [] indexEntryIdBuffer = new byte [20];
 			dataBuffer.get(indexEntryIdBuffer);	entryBytesRead+=20;
