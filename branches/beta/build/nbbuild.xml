@@ -79,11 +79,14 @@
                 
         <echo file="${versions.file}" append="true">&lt;ZAP></echo>
         
-        <!-- 'Standard' addons (keep in alphabetical order ;) -->
+		<!-- Keep in alphabetical order ;) -->
 		<antcall target="build-addon"><param name="addon" value="alertReport"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="invoke"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="plugnhack"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="portscan"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
