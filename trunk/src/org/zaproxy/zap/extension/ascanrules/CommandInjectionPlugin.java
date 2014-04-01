@@ -110,7 +110,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        return Constant.messages.getString("ascanbeta.cmdinjection.name");
+        return Constant.messages.getString("ascanrules.cmdinjection.name");
     }
     
     /**
@@ -128,7 +128,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getDescription() {
-        return Constant.messages.getString("ascanbeta.cmdinjection.desc");
+        return Constant.messages.getString("ascanrules.cmdinjection.desc");
     }
 
     /**
