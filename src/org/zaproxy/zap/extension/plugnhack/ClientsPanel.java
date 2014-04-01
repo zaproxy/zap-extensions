@@ -36,6 +36,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -209,9 +210,19 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 		if (msgScrollPane == null) {
 			msgScrollPane = new JScrollPane();
 			msgScrollPane.setName("pnhMsgScrollPane");
-			msgScrollPane.setViewportView(this.getMessageTable());
+			// Display instructions until the first message is received
+			msgScrollPane.setViewportView(getInitialMessage());
 		}
 		return msgScrollPane;
+	}
+
+	private JTextPane getInitialMessage() {
+		JTextPane initialMessage = new JTextPane();
+		initialMessage.setEditable(false);
+		initialMessage.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+		initialMessage.setContentType("text/html");
+		initialMessage.setText(Constant.messages.getString("plugnhack.label.initialMessage"));
+		return initialMessage;
 	}
 
 
@@ -380,7 +391,12 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 			@Override
 			public void run() {
 				try {
+					if (getMessageModel().getRowCount() == 0) {
+						// First message, switch from the instructions
+						msgScrollPane.setViewportView(getMessageTable());
+					}
 					getMessageModel().addClientMessage(message);
+
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
 				}

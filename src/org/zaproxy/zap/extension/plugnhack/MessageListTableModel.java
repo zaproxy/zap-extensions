@@ -122,6 +122,7 @@ public class MessageListTableModel extends AbstractTableModel {
 
 	public void removeAllElements() {
 		messages.clear();
+		this.fireTableDataChanged();
 	}
 
 }
