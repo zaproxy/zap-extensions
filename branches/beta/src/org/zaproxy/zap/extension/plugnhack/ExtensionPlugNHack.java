@@ -373,17 +373,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
         viewFactory = new SyntaxHighlightTextViewFactory();
         manager.addRequestViewFactory(ClientComponent.NAME, viewFactory);
         manager.addResponseViewFactory(ClientComponent.NAME, viewFactory);
-
-        // support large payloads on incoming and outgoing messages
-		/* TODO
-         viewFactory = new ClientLargePayloadViewFactory();
-         manager.addRequestViewFactory(ClientComponent.NAME, viewFactory);
-         manager.addResponseViewFactory(ClientComponent.NAME, viewFactory);
-		
-         viewSelectorFactory = new ClientLargePayloadDefaultViewSelectorFactory();
-         manager.addRequestDefaultViewSelectorFactory(ClientComponent.NAME, viewSelectorFactory);
-         manager.addResponseDefaultViewSelectorFactory(ClientComponent.NAME, viewSelectorFactory);
-         */
     }
 
     private void clearupClientsForWorkPanel() {
@@ -407,15 +396,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
         // replace the normal Text views with the ones that use syntax highlighting
         manager.removeRequestViewFactory(ClientComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
         manager.removeResponseViewFactory(ClientComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
-
-        // support large payloads on incoming and outgoing messages
-		/* TODO
-         manager.removeRequestViewFactory(ClientComponent.NAME, ClientLargePayloadViewFactory.NAME);
-         manager.removeResponseViewFactory(ClientComponent.NAME, ClientLargePayloadViewFactory.NAME);
-		
-         manager.removeRequestDefaultViewSelectorFactory(ClientComponent.NAME, ClientLargePayloadDefaultViewSelectorFactory.NAME);
-         manager.removeResponseDefaultViewSelectorFactory(ClientComponent.NAME, ClientLargePayloadDefaultViewSelectorFactory.NAME);
-         */
     }
 
     private ClientsPanel getClientsPanel() {
@@ -950,86 +930,4 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 		cmsg.set("value", value);
 		this.mpm.send(cmsg);
 	}
-
-    /* TODO
-     private static final class ClientLargePayloadViewFactory implements HttpPanelViewFactory {
-		
-     public static final String NAME = "ClientLargePayloadViewFactory";
-
-     @Override
-     public String getName() {
-     return NAME;
-     }
-
-     @Override
-     public HttpPanelView getNewView() {
-     return new ClientLargePayloadView(new ClientLargetPayloadViewModel());
-     }
-
-     @Override
-     public Object getOptions() {
-     return null;
-     }
-     }
-	
-     private static final class ClientLargePayloadDefaultViewSelectorFactory implements HttpPanelDefaultViewSelectorFactory {
-		
-     public static final String NAME = "ClientLargePayloadDefaultViewSelectorFactory";
-     private static HttpPanelDefaultViewSelector defaultViewSelector = null;
-		
-     private HttpPanelDefaultViewSelector getDefaultViewSelector() {
-     if (defaultViewSelector == null) {
-     createViewSelector();
-     }
-     return defaultViewSelector;
-     }
-		
-     private synchronized void createViewSelector() {
-     if (defaultViewSelector == null) {
-     defaultViewSelector = new ClientLargePayloadDefaultViewSelector();
-     }
-     }
-		
-     @Override
-     public String getName() {
-     return NAME;
-     }
-		
-     @Override
-     public HttpPanelDefaultViewSelector getNewDefaultViewSelector() {
-     return getDefaultViewSelector();
-     }
-		
-     @Override
-     public Object getOptions() {
-     return null;
-     }
-     }
-
-     private static final class ClientLargePayloadDefaultViewSelector implements HttpPanelDefaultViewSelector {
-
-     public static final String NAME = "ClientLargePayloadDefaultViewSelector";
-		
-     @Override
-     public String getName() {
-     return NAME;
-     }
-		
-     @Override
-     public boolean matchToDefaultView(Message aMessage) {
-     return ClientLargePayloadUtil.isLargePayload(aMessage);
-     }
-
-     @Override
-     public String getViewName() {
-     return ClientLargePayloadView.NAME;
-     }
-        
-     @Override
-     public int getOrder() {
-     // has to come before HexDefaultViewSelector
-     return 15;
-     }
-     }
-     */
 }
