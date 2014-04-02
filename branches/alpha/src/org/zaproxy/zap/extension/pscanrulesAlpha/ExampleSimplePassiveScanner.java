@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.examplePassiveScan;
+package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.Random;
 
@@ -33,12 +33,12 @@ import org.zaproxy.zap.model.Vulnerability;
 /*
  * An example passive scanner.
  */
-public class ExamplePassiveScanner extends PluginPassiveScanner {
+public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 
 	// wasc_10 is Denial of Service - well, its just an example ;)
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
 	private PassiveScanThread parent = null;
-	private static Logger logger = Logger.getLogger(ExamplePassiveScanner.class);
+	private static Logger logger = Logger.getLogger(ExampleSimplePassiveScanner.class);
 	
 	private Random rnd = new Random();
 

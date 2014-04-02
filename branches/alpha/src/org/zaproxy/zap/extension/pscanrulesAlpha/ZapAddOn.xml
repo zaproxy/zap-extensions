@@ -8,7 +8,8 @@
 	<![CDATA[
 	Changed help file structure to support internationalisation (Issue 981).<br>
 	Changed passive scanners to expose its IDs (Issue Issue 1101).<br>
-	Updated add-on dir structure (Issue 1113).
+	Updated add-on dir structure (Issue 1113).<br>
+	Added example rules.
 	]]>
 	</changes>
 	<dependson/>
@@ -18,6 +19,7 @@
 	<ascanrules/>
 	<pscanrules>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.Base64Disclosure</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ExampleSimplePassiveScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HashDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.SourceCodeDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.TimestampDisclosureScanner</pscanrule>
