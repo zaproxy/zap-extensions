@@ -4,6 +4,7 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-	<mapID target="plug" url="contents/images/plug.png" />
-    <mapID target="plugnhack" url="contents/plugnhack.html" />
+	<mapID target="addon.plugnhack.plug" url="contents/images/plug.png" />
+    <mapID target="addon.plugnhack.plugnhack" url="contents/plugnhack.html" />
+    <mapID target="addon.plugnhack.pnhclients" url="contents/clientstab.html" />
 </map>
