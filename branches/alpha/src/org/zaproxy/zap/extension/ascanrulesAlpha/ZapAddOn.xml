@@ -7,8 +7,9 @@
 	<changes>
 	<![CDATA[
 	Promoted to beta XXE and Padding Oracle Plugins</br>
-        Added a new Expression Language Plugin
-        Implemented Internazionalization for ELInjection
+        Added a new Expression Language Plugin</br>
+        Implemented Internazionalization for ELInjection</br>
+        Added ExampleSimpleActiveScanner
 	]]>
 	</changes>
 	<dependson/>
@@ -17,6 +18,7 @@
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BackupFileDisclosure</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureSVN</ascanrule>

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.exampleActiveScan;
+package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.util.Random;
 
@@ -28,14 +28,14 @@ import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
 
-public class ExampleActiveScanner extends AbstractAppParamPlugin {
+public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
 
 	// wasc_10 is Denial of Service - well, its just an example ;)
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
 
 	private Random rnd = new Random();
 
-    private static Logger log = Logger.getLogger(ExampleActiveScanner.class);
+    private static Logger log = Logger.getLogger(ExampleSimpleActiveScanner.class);
 	
     @Override
     public int getId() {
