@@ -54,7 +54,11 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		return 90001;	// This is be changed if included in the ZAP code base  
+		/*
+		 * This should be unique across all active and passive rules.
+		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
+		 */
+		return 60000;
 	}
 
 	@Override
