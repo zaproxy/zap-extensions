@@ -506,6 +506,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 		if (bruteForceTable == null) {
 		    bruteForceTable = new HistoryReferencesTable();
 		    bruteForceTable.setName(MESSAGE_CONTAINER_NAME);
+		    bruteForceTable.setAutoCreateColumnsFromModel(false);
 
 			resetBruteForceTable();
 		}

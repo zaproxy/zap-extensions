@@ -49,6 +49,7 @@ public class PortScanResultsTable extends JXTable {
         setCellSelectionEnabled(false);
         setRowSelectionAllowed(true);
         setColumnControlVisible(true);
+        setAutoCreateColumnsFromModel(false);
 
         setDoubleBuffered(true);
         
