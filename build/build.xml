@@ -198,14 +198,6 @@
 		<antcall target="deploy-extension"> <param name="extension" value="directorylistv2_3_lc"/> </antcall>
 	</target>
 
-	<target name="deploy-exampleActiveScan" description="deploy the exampleActiveScan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="exampleActiveScan"/> </antcall>
-	</target>
-
-	<target name="deploy-examplePassiveScan" description="deploy the examplePassiveScan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="examplePassiveScan"/> </antcall>
-	</target>
-
 	<target name="deploy-exampleRightClickMsg" description="deploy the exampleRightClickMsg extension">
 		<antcall target="deploy-extension"> <param name="extension" value="exampleRightClickMsg"/> </antcall>
 	</target>
@@ -240,8 +232,6 @@
 		<antcall target="deploy-directorylistv1"/>
 		<antcall target="deploy-directorylistv2_3"/>
 		<antcall target="deploy-directorylistv2_3_lc"/>
-		<antcall target="deploy-exampleActiveScan"/>
-		<antcall target="deploy-examplePassiveScan"/>
 		<antcall target="deploy-exampleRightClickMsg"/>
 		<antcall target="deploy-exampleTopMenu"/>
 		<antcall target="deploy-pscanrules"/>
