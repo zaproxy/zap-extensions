@@ -504,11 +504,9 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
 	protected HistoryReferencesTable getBruteForceTable() {
 		if (bruteForceTable == null) {
-		    bruteForceTable = new HistoryReferencesTable();
+		    bruteForceTable = new HistoryReferencesTable(EMPTY_RESULTS_MODEL);
 		    bruteForceTable.setName(MESSAGE_CONTAINER_NAME);
 		    bruteForceTable.setAutoCreateColumnsFromModel(false);
-
-			resetBruteForceTable();
 		}
 		return bruteForceTable;
 	}
