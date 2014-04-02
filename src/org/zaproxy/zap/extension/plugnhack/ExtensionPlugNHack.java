@@ -58,6 +58,7 @@ import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
+import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.component.HttpPanelComponentInterface;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelDefaultViewSelector;
@@ -185,7 +186,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 		} catch (SQLException e) {
 			logger.warn(e.getMessage(), e);
 		}
-
     }
 
     private void startTimeoutThread() {
@@ -254,6 +254,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
             monitoredClientsPanel = new SessionMonitoredClientsPanel(this.mpm);
             getView().getSessionDialog().addParamPanel(new String[]{}, monitoredClientsPanel, false);
             
+	    	ExtensionHelp.enableHelpKey(getClientsPanel(), "addon.plugnhack.pnhclients");
+
 			extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuConfigureClient(this));
 
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
