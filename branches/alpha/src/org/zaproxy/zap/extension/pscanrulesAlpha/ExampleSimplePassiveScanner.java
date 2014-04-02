@@ -52,7 +52,8 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 		// You can also detect potential vulnerabilities here, with the same caveats as below.
 	}
 
-	private int getId() {
+	@Override
+	public int getPluginId() {
 		return 90001;	// This is be changed if included in the ZAP code base  
 	}
 
@@ -67,7 +68,7 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 		// For this example we're just going to raise the alert at random!
 		
 		if (rnd.nextInt(10) == 0) {
-		    Alert alert = new Alert(getId(), Alert.RISK_MEDIUM, Alert.WARNING, 
+		    Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING, 
 			    	getName());
 			    	alert.setDetail(
 			    		getDescription(), 
