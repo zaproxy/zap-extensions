@@ -30,8 +30,10 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
-/*
- * An example passive scanner.
+/**
+ * An example passive scan rule, for more details see 
+ * http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+ * @author psiinon
  */
 public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 

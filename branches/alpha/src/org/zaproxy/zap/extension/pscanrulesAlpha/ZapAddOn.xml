@@ -19,6 +19,7 @@
 	<ascanrules/>
 	<pscanrules>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.Base64Disclosure</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ExampleFilePassiveScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ExampleSimplePassiveScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HashDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.SourceCodeDisclosureScanner</pscanrule>
@@ -30,6 +31,8 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>
 	</pscanrules>
 	<filters/>
-	<files/>
+	<files>
+		<file>xml/example-pscan-file.txt</file>
+	</files>
 	<not-before-version>2.3.0</not-before-version>
 </zapaddon>
