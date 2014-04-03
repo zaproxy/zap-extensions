@@ -73,7 +73,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
 		    	alert.setDetail(
 	    			this.getDescription(), 
 		    	    msg.getRequestHeader().getURI().toString(),
-		    	    "",	// Param, not elevant for this example vulnerability
+		    	    "",	// Param, not relevant for this example vulnerability
 		    	    "", // Attack, not relevant for passive vulnerabilities
 		    	    this.getOtherInfo(),
 		    	    this.getSolution(), 
@@ -101,7 +101,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
 
 		for (String str : this.strings) {
 	        if (! Plugin.AlertThreshold.HIGH.equals(this.getLevel())) {
-	        	// Use case ignore unless a high threashold has been specified
+	        	// Use case ignore unless a high threshold has been specified
 	        	str = str.toLowerCase();
 	        }
 			int start = sBody.indexOf(str);
