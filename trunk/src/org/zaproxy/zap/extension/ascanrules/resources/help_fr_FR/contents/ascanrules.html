@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Règles d'analyse active
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Active Scan Rules</h1>
+The following release quality active scan rules are included in this add-on:
+
+<h2>Code Injection</h2>
+
+<h2>Command Injection</h2>
+
+<h2>Client Browser Cache</h2>
+
+This rule checks the headers of secure pages and reports an alert if they allow a browser to cache the page.
+
+<h2>Cross Site Scripting (reflected)</h2>
+
+This rule starts by submitting a 'safe' value and analyzing all of the locations in which this value occurs in the response (if any). <br>
+It then performs a series of attacks specifically targeted at the location in which each of the instances occurs, 
+including tag attributes, URL attributes, attributes in tags which support src attributes, html comments etc. 
+
+<h2>Cross Site Scripting (persistent)</h2>
+
+This rule starts by submitting a unique 'safe' value and then spiders the whole application to find all of the locations in which the value occurs.<br>
+It then performs a series of attacks in the same way that the 'reflected' version does but in this case checks all of the 
+target locations in other pages. 
+
+<h2>Directory Browsing</h2>
+
+<h2>External Redirect</h2>
+
+<h2>CRLF Injection</h2>
+
+<h2>Parameter Tampering</h2>
+
+<h2>Path Traversal</h2>
+
+<h2>Remote File Include</h2>
+
+<h2>Server Side Include</h2>
+
+<h2>SQL Injection</h2>
+
+This scanner scans for SQL Injection vulnerabilities in an RDBMS-independent fashion, 
+by attacking url parameters and form parameters with fragments of valid and invalid SQL syntax, using error based, 
+boolean based, Union based, and stacked query SQL Injection techniques. <br>
+This scanner may be able to fingerprint the RDBMS if the application throws a known RDBMS specific SQL error message. <br>
+This scanner does not exploit any RDBMS specific techniques, and so is the best SQL injection scanner to use as a starting point. 
+
+</body>
+</html>
