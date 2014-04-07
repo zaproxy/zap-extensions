@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Passive Scan Rules - Beta
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Passive Scan Rules - Beta</h1>
+The following beta quality passive scan rules are included in this add-on:
+
+<h2>Charset Mismatch</h2>
+This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.
+
+<h2>Cookie - Loosely Scoped</h2>
+Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.
+
+<h2>CSRF Countermeasures</h2>
+
+<h2>Information Disclosure: Debug Errors</h2>
+
+<h2>Information Disclosure: In URL</h2>
+
+<h2>Information Disclosure: Referrer</h2>
+
+<h2>Information Disclosure: Suspicious Comments</h2>
+
+<h2>Insecure Authentication</h2>
+HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
+
+<h2>Insecure JSF View State</h2>
+The response at the following URL contains a ViewState value that has no cryptographic protections.
+
+<h2>Servlet Parameter Pollution</h2>
+
+<h2>Viewstate</h2>
+
+</body>
+</html>
