@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scripts</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Scripts</h1>
+<p>
+The ZAP Script Add-on allows you to run scripts that can be embedded within ZAP and can access internal ZAP data structures.<br/>
+It supports any scripting language that supports JSR 223 (http://www.jcp.org/en/jsr/detail?id=223) , including:
+<ul>
+<li>ECMAScript / Javascript (included by default)</li>
+<li>Zest https://developer.mozilla.org/en-US/docs/zest (included by default)</li>
+<li>Groovy http://groovy.codehaus.org/</li>
+<li>Python http://www.jython.org</li>
+<li>Ruby - http://jruby.org/</li>
+<li>and many more...</li> 
+</ul>
+
+<b>WARNING - scripts run with the same permissions as ZAP, so do not run any scripts that you do not trust!</b>
+
+<h2>Script types</h2>
+Different types of scripts are supported:
+<ul>
+<li>Stand Alone - scripts that are self contained and are only run when your start them manually</li>
+<li>Active Rules - these run as part of the Active Scanner and can be individually enabled</li>
+<li>Passive Rules - these run as part of the Passive Scanner and can be individually enabled</li> 
+<li>Proxy Rules - these run 'inline', can change every request and response and can be individually enabled</li> 
+<li>Targeted Rules - scripts that invoked with a target URL and are only run when your start them manually</li>
+<li>Authentication - scripts that invoked when authentication is performed for a Context. To be used, they need to
+be selected when configuring the Script-Based Authentication Method for a Context. </li> 
+</ul>
+All scripts that are run automatically are initially 'disabled' - you much enable them via the <a href="tree.html">The Scripts 'tree' tab</a>
+before they will run.<br/>
+If an error occurs when they run then they will be disabled.<br/>
+When you select the script then the last error will be shown in the <a href="console.html">Script Console tab</a>.<br/>
+Targeted scripts can be invoked by right clicking on a record in the Sites or History tabs and selecting the 'Invoke with script...' menu item.
+</p>
+<p>
+
+All scripting languages can be used for all script types, but only those languages that have been downloaded from the ZAP Marketplace
+will typically have templates. However you may well be able to adapt a template for another language.<br/>
+If your favourite language is not available on the Marketplace then please raise a new issue via the "Online/Report an issue" menu item.<br/>
+In the meantime you can just place the relevant jars in the 'lib' directory (not the 'plugin' directory) and restart ZAP.<br/>
+</p>
+
+<h2>See also</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="console.html">The Script Console tab</a></td><td></td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="tree.html">The Scripts 'tree' tab</a></td><td></td>
+</tr>
+</table>
+
+<h2>External links</h2>
+<table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td>http://code.google.com/p/zaproxy/wiki/InternalDetails</td>
+	<td>ZAP internal objects</td></tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td>http://code.google.com/p/zaproxy/wiki/JavaDocs</td>
+	<td>ZAP javadocs</td>
+</tr>
+</table>
+
+</body>
+</html>
