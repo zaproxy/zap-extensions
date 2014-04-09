@@ -9,7 +9,8 @@
 	Minor code changes (Issues 503, 609, 1104 and 1105).<br>
 	Changed help file structure to support internationalisation (Issue 981).<br>
 	Added content-type to help pages (Issue 1080).<br>
-	Updated add-on dir structure (Issue 1113).
+	Updated add-on dir structure (Issue 1113).<br>
+	Restored the rendering of a custom icon for "handshake" messages shown in "Sites" tab.
 	]]>
 	</changes>
 	<dependson/>
