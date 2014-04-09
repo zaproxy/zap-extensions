@@ -25,6 +25,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -180,6 +181,19 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 		case DEFAULT:
 			this.thresholdPercentage = 75; // == medium
 			break;
+		}
+	}
+	
+	/**
+	 * scan everything except URL path parameters, if these were enabled
+	 */
+	public void scan(HttpMessage msg, NameValuePair originalParam) {
+		/*
+		 * Scan everything _except_ URL path parameters, if these were enabled.
+		 * Changing the URL path parameter *typically* causes a completely different file to be loaded, which causes false positives for this scanner.   
+		 */
+		if (originalParam.getType() != NameValuePair.TYPE_URL_PATH) {
+			super.scan(msg, originalParam);
 		}
 	}
 
