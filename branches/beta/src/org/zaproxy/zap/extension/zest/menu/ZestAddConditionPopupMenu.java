@@ -163,15 +163,15 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 					panel.getSelectedText().length() > 0) {
 				if (ze instanceof ZestRequest) {
 					ZestRequest req = (ZestRequest) ze;
-					String loc = "BODY";
+					String var = ZestVariables.RESPONSE_BODY;
 					if (req.getResponse() != null
 							&& req.getResponse().getHeaders() != null
 							&& req.getResponse().getHeaders().indexOf(panel.getSelectedText()) >= 0) {
-						loc = "HEAD";
+						var = ZestVariables.RESPONSE_HEADER;
 					}
 
 					reCreateSubMenu(node.getParent(), node, (ZestRequest) ze,
-							loc, Pattern.quote(panel.getSelectedText()));
+							var, Pattern.quote(panel.getSelectedText()));
 					return true;
 				}
 				if (node == null || node.isTemplate()) {
@@ -181,15 +181,15 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 						panel.getSelectedText().length() > 0) {
 					if (ze instanceof ZestRequest) {
 						ZestRequest req = (ZestRequest) ze;
-						String loc = "BODY";
+						String var = ZestVariables.RESPONSE_BODY;
 						if (req.getResponse() != null &&
 								req.getResponse().getHeaders() != null &&
 								req.getResponse().getHeaders().indexOf(panel.getSelectedText()) >= 0) {
-							loc = "HEAD";
+							var = ZestVariables.RESPONSE_HEADER;
 						}
 
 						reCreateSubMenu(node.getParent(), node,
-								(ZestRequest) ze, loc,
+								(ZestRequest) ze, var,
 								Pattern.quote(panel.getSelectedText()));
 						return true;
 					}
