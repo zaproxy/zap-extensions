@@ -81,13 +81,14 @@ public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
 			mainPopupMenuItems.remove(menu);
 		}
 		subMenus.clear();
+		String var = ZestVariables.RESPONSE_BODY;
 		if (extension.isScriptTree(invoker)) {
     		ScriptNode node = extension.getSelectedZestNode();
     		ZestElement ze = extension.getSelectedZestElement();
     		if (node == null || node.isTemplate()) {
     			return false;
     		} else if (ze != null && ze instanceof ZestRequest) {
-            	reCreateSubMenu(node, (ZestRequest) ZestZapUtils.getElement(node), null);
+            	reCreateSubMenu(node, (ZestRequest) ZestZapUtils.getElement(node), var, null);
             	return true;
     		}
         } else if (invoker instanceof HttpPanelSyntaxHighlightTextArea && extension.getExtScript().getScriptUI() != null) {
@@ -100,7 +101,14 @@ public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
 					panel.getSelectedText() != null && panel.getSelectedText().length() > 0) {
 
                 if (ZestZapUtils.getElement(node) instanceof ZestRequest) {
-                	reCreateSubMenu(node, (ZestRequest) ZestZapUtils.getElement(node), Pattern.quote(panel.getSelectedText()));
+					ZestRequest req = (ZestRequest) ZestZapUtils.getElement(node);
+					if (req.getResponse() != null
+							&& req.getResponse().getHeaders() != null
+							&& req.getResponse().getHeaders().indexOf(panel.getSelectedText()) >= 0) {
+						var = ZestVariables.RESPONSE_HEADER;
+					}
+
+                	reCreateSubMenu(node, req, var, Pattern.quote(panel.getSelectedText()));
                 	return true;
                 }
 			}
@@ -108,7 +116,7 @@ public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
         return false;
     }
 
-    private void reCreateSubMenu(ScriptNode parent, ZestRequest req, String text) {
+    private void reCreateSubMenu(ScriptNode parent, ZestRequest req, String variable, String text) {
 		boolean incStatusCode = true;
 		for (ZestAssertion za : req.getAssertions()) {
 			if (za.getRootExpression() instanceof ZestExpressionStatusCode) {
@@ -121,7 +129,7 @@ public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
 		}
 		// Can be any number of these
 		createPopupAddAssertionMenu (parent, new ZestAssertion(new ZestExpressionLength()));
-		createPopupAddAssertionMenu (parent, new ZestAssertion(new ZestExpressionRegex(ZestVariables.RESPONSE_BODY, text)));
+		createPopupAddAssertionMenu (parent, new ZestAssertion(new ZestExpressionRegex(variable, text)));
 	}
 
     private void createPopupAddAssertionMenu(final ScriptNode req, final ZestAssertion za2) {
