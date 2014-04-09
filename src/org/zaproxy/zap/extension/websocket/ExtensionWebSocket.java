@@ -236,6 +236,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		extensionHook.addSessionListener(this);
 		
+		extensionHook.addSiteMapListener(this);
+
 		// setup configuration
 		extensionHook.addOptionsParamSet(config);
 		
