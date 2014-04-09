@@ -79,6 +79,7 @@ import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.zest.ZestResultsTableModel.ZestResultsTableEntry;
 import org.zaproxy.zap.extension.zest.dialogs.ZestDialogManager;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
 import org.zaproxy.zap.view.ZapToggleButton;
@@ -744,13 +745,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			int row = this.getZestResultsPanel().getModel()
 					.getIndex(alert.getMessage());
 			if (row >= 0) {
-				ZestResultWrapper zrw = (ZestResultWrapper) this
-						.getZestResultsPanel().getModel()
-						.getHistoryReference(row);
-				zrw.setMessage(alert.getAlert());
-				zrw.setPassed(false);
-				this.getZestResultsPanel().getModel()
-						.fireTableRowsUpdated(row, row);
+				ZestResultsTableEntry entry = this.getZestResultsPanel().getModel().getEntry(row);
+				if (entry != null) {
+					entry.setMessage(alert.getAlert());
+					entry.setPassed(false);
+					this.getZestResultsPanel().getModel().fireTableRowsUpdated(row, row);
+				}
 			}
 		}
 	}
