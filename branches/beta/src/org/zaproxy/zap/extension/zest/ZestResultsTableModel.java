@@ -195,9 +195,11 @@ public class ZestResultsTableModel extends
         for (int i = 0; i < results.size(); i++) {
             ZestResultWrapper zrw = getHistoryReference(i);
             try {
-                if (zrw.getHttpMessage().hashCode() == message.hashCode()) {
-                    return i;
-                }
+				if (zrw.getHttpMessage().getHistoryRef() != null && message.getHistoryRef() != null) {
+	                if (zrw.getHttpMessage().getHistoryRef().getHistoryId() ==  message.getHistoryRef().getHistoryId()) {
+	                    return i;
+	                }
+				}
             } catch (HttpMalformedHeaderException | SQLException e) {
                 // Ignore
             }
@@ -209,13 +211,12 @@ public class ZestResultsTableModel extends
 
         private static final Icon SCAN_ACTION = new ImageIcon(ZAP.class.getResource("/resource/icon/16/093.png"));// Flame
 
-        private static final Icon PASSED = new ImageIcon(ZAP.class.getResource("/resource/icon/16/102.png")); // Red cross
+        private static final Icon PASSED = new ImageIcon(ZAP.class.getResource("/resource/icon/16/102.png")); // Green tick
+        private static final Icon FAILED = new ImageIcon(ZAP.class.getResource("/resource/icon/16/101.png")); // Red cross
 
-        private static final Icon GREEN_TICK = new ImageIcon(ZAP.class.getResource("/resource/icon/16/101.png")); // Green tick
+        private Icon icon;
 
-        private final Icon icon;
-
-        private final String message;
+        private String message;
 
         public ZestResultsTableEntry(ZestResultWrapper zrw, Column[] columns) {
             super(zrw, columns);
@@ -225,7 +226,7 @@ public class ZestResultsTableModel extends
             } else if (zrw.isPassed()) {
                 icon = PASSED;
             } else {
-                icon = GREEN_TICK;
+                icon = FAILED;
             }
 
             this.message = zrw.getMessage();
@@ -242,6 +243,18 @@ public class ZestResultsTableModel extends
 
         public String getMessage() {
             return message;
+        }
+        
+        public void setMessage(String msg) {
+        	message = msg;
+        }
+        
+        public void setPassed(boolean passed) {
+        	if (passed) {
+                icon = PASSED;
+            } else {
+                icon = FAILED;
+        	}
         }
     }
 }
