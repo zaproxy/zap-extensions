@@ -21,6 +21,14 @@ Base64 encoded data was disclosed by the application/web server
 <h2>Cookie poisoning</h2>
 This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
 
+<h2>Example File Passive Scanner</h2>
+This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
+For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+
+<h2>Example Simple Passive Scanner</h2>
+This implements a very simple example passive scan rule.<br>
+For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+
 <h2>Hash Disclosure</h2>
 A hash was disclosed by the web server
 
