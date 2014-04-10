@@ -13,5 +13,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-\t<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.3.0</not-before-version>
+	<not-from-version></not-from-version>
 </zapaddon>
