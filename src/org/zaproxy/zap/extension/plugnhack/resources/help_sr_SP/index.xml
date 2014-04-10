@@ -5,5 +5,6 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="plug-n-hack" target="plugnhack" />
+	<indexitem text="clients tab" target="addon.plugnhack.pnhclients" />
+	<indexitem text="plug-n-hack" target="addon.plugnhack.plugnhack" />
 </index>

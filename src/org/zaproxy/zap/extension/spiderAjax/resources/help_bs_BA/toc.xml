@@ -4,9 +4,9 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+	<tocitem text="ZAP Korisničko Upustvo" tocid="toplevelitem">
 		<tocitem text="Dodaci" tocid="addons">
-			<tocitem text="Ajax Spider" image="addon.spiderajax.icon" target="addon.spiderajax.concepts">
+			<tocitem text="Ajax Pauk" image="addon.spiderajax.icon" target="addon.spiderajax.concepts">
 				<tocitem text="Opcije" target="addon.spiderajax.options" />
 				<tocitem text="Tab" target="addon.spiderajax.tab" />
 			</tocitem>

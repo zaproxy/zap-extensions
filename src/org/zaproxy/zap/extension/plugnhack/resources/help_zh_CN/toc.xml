@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Plug-n-Hack" image="plug" target="plugnhack"/>
+			<tocitem text="Plug-n-Hack" image="addon.plugnhack.plug" target="addon.plugnhack.plugnhack">
+				<tocitem text="Clients tab" target="addon.plugnhack.pnhclients"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

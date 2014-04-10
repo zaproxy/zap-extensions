@@ -4,6 +4,6 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-    <indexitem text="AJAX Pauka" target="addon.spiderajax.concepts" />
-    <indexitem text="AJAX Spider taba" target="addon.spiderajax.tab"/>
+    <indexitem text="AJAX Pauk" target="addon.spiderajax.concepts" />
+    <indexitem text="AJAX Pauk tab" target="addon.spiderajax.tab"/>
 </index>
