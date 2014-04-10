@@ -28,7 +28,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,7 +60,6 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FilenameExtensionFilter;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
@@ -629,12 +627,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
 			HistoryReference hRef = node.getHistoryReference();
 			if (hRef != null) {
-				try {
-					return new ScanTarget(hRef.getURI());
-				} catch (HttpMalformedHeaderException | SQLException e) {
-					logger.warn("Failed to create scan target: " + e.getMessage(), e);
-					return null;
-				}
+				return new ScanTarget(hRef.getURI());
 			}
 		}
 		return null;
