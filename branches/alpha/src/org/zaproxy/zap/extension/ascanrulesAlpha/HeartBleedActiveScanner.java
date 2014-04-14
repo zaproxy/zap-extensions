@@ -56,14 +56,14 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 	static final byte handshakeRecordBuffer[] = {0x16};
 
 	/** 
-	 * all the various SSL, TLS, and DTLS versions that we will try
+	 * all the various TLS versions that we will try
 	 */
-	static final String [] tlsNames =     { "SSL 2.0",    "SSL 3.0",     "TLS 1.0",   "TLS 1.1",    "TLS 1.2",     "DTLS 1.0"};
+	static final String [] tlsNames =     { "TLS 1.0",   "TLS 1.1",    "TLS 1.2"};
 
 	/**
-	 * the binary codes for the various SSL, TLS, and DTLS versions that we will try
+	 * the binary codes for the various TLS versions that we will try
 	 */
-	static final byte [] [] tlsBuffers = {{0x00, 0x02}, {0x03, 0x00}, {0x03, 0x01}, {0x03, 0x02}, {0x03, 0x03}, {(byte)0xfe, (byte)0xff}};
+	static final byte [] [] tlsBuffers = {{0x03, 0x01}, {0x03, 0x02}, {0x03, 0x03}};
 
 	/**
 	 * the HELLO request that we wills end to say "Hello" to the SSL server
@@ -99,7 +99,7 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 		0x18, 			// Typ = 0x18 = HEARTBEAT_RECORD_TYPE 
 		0x03, 0x02, 	// ?? (Looks like TLS version numbers, but is not)
 		0x00, 0x03,		// Len = 0x00 0x03 = 3 in decimal
-		0x01, 			// ???
+		0x01, 			// heartbeat request (rather than response)
 		0x40, 0x00		// 0x40 0x00 = 16384 in decimal (the length of data we get back)
 	};
 
