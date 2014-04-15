@@ -1,15 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>5</version>
+	<version>6</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Promoted to beta XXE and Padding Oracle Plugins</br>
-        Added a new Expression Language Plugin</br>
-        Implemented Internazionalization for ELInjection</br>
-        Added ExampleSimpleActiveScanner
+        Added a Heartbleed scanner
 	]]>
 	</changes>
 	<dependson/>
@@ -19,6 +16,7 @@
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BackupFileDisclosure</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HeartBleedActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureSVN</ascanrule>
