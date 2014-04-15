@@ -10,7 +10,7 @@ Active Scan Rules - alpha
 The following alpha quality active scan rules are included in this add-on:
 
 <H2>Backup File Disclosure</H2>
-A backup of the file was disclosed by the web server
+Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information 
 
 <H2>Example Simple Active Scanner</H2>
 This implements a very simple example active scan rule.<br>
@@ -20,13 +20,16 @@ For more details see: TBA
 The software constructs all or part of an expression language (EL) statement in a Java Server Page (JSP) using externally-influenced input from an upstream component, but it does not neutralize or incorrectly neutralizes special elements that could modify the intended EL statement before it is executed. In certain versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) in which Expression Language tags would be evaluated twice, which effectively exposed any application to EL injection. However, even for later versions, this weakness is still possible depending on configuration.
 
 <H2>Source Code Disclosure - File Inclusion</H2>
-The source code for the current page was disclosed by the web server
+Uses local file inclusion techniques to scan for files containing source code on the web server  
 
 <H2>Source Code Disclosure - SVN</H2>
-The source code for the current page was disclosed by the web server
+Uses Subversion source code repository metadata to scan for files containing source code on the web server
 
-<H2>Source Code Disclosure - Git </H2>
-The source code for the current page was disclosed by the web server
+<H2>Source Code Disclosure - Git</H2>
+Uses Git source code repository metadata to scan for files containing source code on the web server
+
+<H2>Heartbleed OpenSSL Vulnerability</H2>
+Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability
 
 </BODY>
 </HTML>
