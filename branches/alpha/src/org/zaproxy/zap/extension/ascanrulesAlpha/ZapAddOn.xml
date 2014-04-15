@@ -3,7 +3,7 @@
 	<version>6</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
-	<url/>
+	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
         Added a Heartbleed scanner
