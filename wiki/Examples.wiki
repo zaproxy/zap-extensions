@@ -1,5 +1,9 @@
 This project contains example templates to help you get started when developing new ones:
-  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleActiveScan/ExampleActiveScanner.java Active Scanner rule]
-  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/examplePassiveScan/ExamplePassiveScanner.java Passive Scanner rule]
-  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleRightClickMsg/ExtensionRightClickMsgMenu.java Extension including a right click menu item]
-  * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleTopMenu/ExtensionTopMenu.java Extension including a top level menu item]
+  * Active scanners:
+   * [https://code.google.com/p/zap-extensions/source/browse/branches/alpha/src/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanner.java Simple scanner]
+  * Passive Scanners:
+   * [https://code.google.com/p/zap-extensions/source/browse/branches/alpha/src/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanner.java Simple scanner]
+   * [https://code.google.com/p/zap-extensions/source/browse/branches/alpha/src/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanner.java File based rules scanner]
+  * Extensions with:
+   * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleRightClickMsg/ExtensionRightClickMsgMenu.java Right click menu item]
+   * [https://code.google.com/p/zap-extensions/source/browse/trunk/src/org/zaproxy/zap/extension/exampleTopMenu/ExtensionTopMenu.java Top level menu item]
