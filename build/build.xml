@@ -166,6 +166,7 @@
 		<antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="birtreports"/></antcall>
         <antcall target="build-addon"><param name="addon" value="browserView"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="callgraph"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="cmss"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
@@ -199,7 +200,11 @@
     <target name="deploy-browserView" depends="build-all" description="deploy the browser extension">
         <antcall target="deploy-extension"> <param name="extension" value="browserView"/> </antcall>
     </target>
-		
+    
+	<target name="deploy-callgraph" depends="build-all" description="deploy the callgraph extension">
+		<antcall target="deploy-extension"> <param name="extension" value="callgraph"/> </antcall>
+	</target>
+	
 	<target name="deploy-cmss" depends="build-all" description="deploy the cmss extension">
 		<antcall target="deploy-extension"> <param name="extension" value="cmss"/> </antcall>
 	</target>
@@ -240,6 +245,7 @@
 		<antcall target="deploy-ascanrulesAlpha"/>
 		<antcall target="deploy-birtreports"/>
 		<antcall target="deploy-browserView"/>
+		<antcall target="deploy-callgraph"/>
 		<antcall target="deploy-cmss"/>
 		<antcall target="deploy-highlighter"/>
 	    <antcall target="deploy-httpsInfo"/>
