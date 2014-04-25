@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>6</version>
+	<version>7</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-        Added a Heartbleed scanner
+        Added a Example File scanner
 	]]>
 	</changes>
 	<dependson/>
@@ -16,6 +16,7 @@
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BackupFileDisclosure</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HeartBleedActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
@@ -23,6 +24,8 @@
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
-	<files/>
+	<files>
+		<file>xml/example-ascan-file.txt</file>
+	</files>
 	<not-before-version>2.3.0</not-before-version>
 </zapaddon>
