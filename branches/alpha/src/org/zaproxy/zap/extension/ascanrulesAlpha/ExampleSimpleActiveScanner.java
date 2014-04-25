@@ -43,7 +43,11 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
 	
 	@Override
 	public int getId() {
-		return 20010;
+		/*
+		 * This should be unique across all active and passive rules.
+		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
+		 */
+		return 60100;
 	}
 
 	@Override
