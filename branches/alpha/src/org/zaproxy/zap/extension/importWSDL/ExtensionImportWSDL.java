@@ -202,7 +202,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 				        String endpointLocation = port.getAddress().getLocation().toString();
 					    sb.append("|-- Port detected: "+port.getName()+" ("+endpointLocation+")\n");
 					    
-			    	    /* Identifies operations for each endpoint. */
+			    	    /* Identifies operations for each endpoint.. */
 		    	        for(BindingOperation bindOp : operations){
 		    	        	sb.append("|\t|-- SOAP 1."+soapVersion+" Operation: "+bindOp.getName());
 		    	        	
