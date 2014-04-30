@@ -1,0 +1,189 @@
+<project name="ZAP-Extensions (Alpha)" default="build-all" basedir=".">
+	<description>Build ZAP extensions</description>
+
+	<property name="src" location="../src" />
+	<property name="src.version" value="1.7" />
+	<property name="build" location="build" />
+	<property name="build.lib.dir" location="lib" />
+	<property name="temp" location="temp" />
+	<property name="dist" location="zap-exts" />
+	<property name="dist.lib.dir" location="../lib" />
+	<property name="status" value="alpha" />
+	<property name="versions.file" location="${dist}/ZapVersions.xml" />
+	<!-- This assumes you also have the zaproxy project -->
+	<property name="zap.plugin.dir" location="../../ZAP-SVN/src/plugin" />
+
+	<path id="build.classpath">
+		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
+	</path>
+
+	<!-- Ant task to generate JavaHelp search indexes -->
+	<taskdef name="generatejavahelpsearchindexes" classname="org.zaproxy.ant.javahelp.taskdefs.GenerateJavaHelpSearchIndexes" classpathref="build.classpath" />
+	
+	<target name="clean">
+		<delete dir="${dist}" includeEmptyDirs="true" />
+		<delete dir="${build}" includeEmptyDirs="true" />
+		<delete dir="${temp}" includeEmptyDirs="true" />
+	</target>
+
+	<target name="init">
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${dist}" />
+		<mkdir dir="${build}" />
+		<mkdir dir="${temp}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source">
+		<echo message="Compiling the source..." />
+		
+		<!-- Compile with debug information if the property "javac.debug" is set to true -->
+		<local name="debug" />
+		<condition property="debug" value="true" else="true">
+			<istrue value="${javac.debug}" />
+		</condition>
+
+		<property name="debug" value="true" />
+		<echo message="Debug = ${debug}" />
+
+		<!-- Compile the java code from ${src} into ${build} -->
+		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
+			<classpath>
+				<fileset dir="${dist.lib.dir}">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<!--
+	 Build the specified extension
+	 version should be an integer that increments on each release, starting at 1
+	 -->
+
+	<target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
+		<length file="${dist}/${file}" property="length" />
+        <tstamp>
+            <format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+        </tstamp>
+		<echo file="${versions.file}" append="true">
+	&lt;addon>${extension}&lt;/addon>
+	&lt;addon_${extension}>
+		&lt;name>${name}&lt;/name>
+		&lt;description>${description}&lt;/description>
+		&lt;author>${author}&lt;/author>
+		&lt;version>${version}&lt;/version>
+		&lt;file>${file}&lt;/file>
+		&lt;status>${status}&lt;/status>
+		&lt;changes>${changes}&lt;/changes>
+		&lt;url>http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download&lt;/url>
+		&lt;info>${url}&lt;/info>
+		&lt;size>${length}&lt;/size>
+		&lt;date>${yyyymmdd}&lt;/date>
+		&lt;not-before-version>${not-before-version}&lt;/not-before-version>
+		&lt;not-from-version>${not-from-version}&lt;/not-from-version>
+	&lt;/addon_${extension}>
+</echo>
+	</target>
+	
+	<target name="build-addon" description="build the specified addon">
+		
+		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+		
+		<generatejavahelpsearchindexes jhalljar="${dist.lib.dir}/jhall.jar"
+			helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
+			<dirset dir="${src}/org/zaproxy/zap/extension/${addon}/resources/">
+				<include name="help" />
+				<include name="help_*_*" />
+			</dirset>
+		</generatejavahelpsearchindexes>
+
+		<local name="addon.libs.zip" />
+		<property name="addon.libs.zip" value="${temp}/libs-${addon}.zip" />
+
+		<delete file="${addon.libs.zip}" failonerror="true" />
+		<zip destfile="${addon.libs.zip}" whenempty="create">
+			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false" />
+		</zip>
+
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${build}" prefix="">
+				<include name="org/zaproxy/zap/extension/${addon}/**"/>
+			</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
+			</zipfileset>
+			<zipfileset dir="${src}" prefix="">
+				<include name="org/zaproxy/zap/extension/${addon}/resources/**"/>
+			</zipfileset>
+			<zipfileset src="${addon.libs.zip}">
+				<exclude name="META-INF/*.DSA" />
+				<exclude name="META-INF/*.SF" />
+			</zipfileset>
+			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+		</jar>
+		<delete file="${addon.libs.zip}" />
+
+		<!-- Remove search indexes previously generated, no longer needed. -->
+		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resources/help/JavaHelpSearch" />
+		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resources/help_*_*/JavaHelpSearch" />
+
+		<antcall target="include-files"> 
+			<param name="addon" value="${addon}"/>
+			<param name="file" value="${file}"/>
+		</antcall>
+
+		<antcall target="append-to-versions-file"> 
+			<param name="extension" value="${addon}"/> 
+			<param name="name" value="${zapaddon.name}"/> 
+			<param name="version" value="${zapaddon.version}"/> 
+			<param name="description" value="${zapaddon.description}"/> 
+			<param name="author" value="${zapaddon.author}"/> 
+			<param name="url" value="${zapaddon.url}"/> 
+			<param name="changes" value="${zapaddon.changes}"/> 
+			<param name="file" value="${file}"/> 
+			<param name="not-before-version" value="${zapaddon.not-before-version}"/> 
+			<param name="not-from-version" value="${zapaddon.not-from-version}"/> 
+		</antcall>
+	</target>
+
+	<target name="include-files" depends="is-files-available" if="files.available"> 
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${src}/org/zaproxy/zap/extension/${addon}/files/" prefix=""/>
+		</jar>
+	</target>
+
+	<target name="is-files-available">
+	    <available property="files.available" type="dir" file="${src}/org/zaproxy/zap/extension/${addon}/files"/>
+	</target>
+	
+	<target name="build-all" depends="clean,compile" description="build all of the extensions">
+		<delete file="${versions.file}"/>
+		
+		<echo file="${versions.file}" append="true">&lt;ZAP></echo>
+		
+		<!-- 'Standard' addons (keep in alphabetical order ;) -->
+		<antcall target="build-addon"><param name="addon" value="importWSDL"/></antcall>
+
+		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
+
+	</target>
+
+	<target name="deploy-extension" description="deploy the specified extension">
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+			<include name="${extension}-*.zap"/>
+			</fileset>
+		</copy>
+	</target>
+
+  	<target name="deploy-importWSDL" depends="build-all" description="deploy the importurls extension">
+		<antcall target="deploy-extension"> <param name="extension" value="importWSDL"/> </antcall>
+	</target>
+
+	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
+		<!-- Keep in alphabetical order ;) -->
+	    <antcall target="deploy-importWSDL"/>
+	</target>
+
+</project>
