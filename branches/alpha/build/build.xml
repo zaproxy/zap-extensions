@@ -168,6 +168,7 @@
         <antcall target="build-addon"><param name="addon" value="browserView"/></antcall>
         <antcall target="build-addon"><param name="addon" value="callgraph"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="cmss"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="importurls"/></antcall>
@@ -209,6 +210,11 @@
 		<antcall target="deploy-extension"> <param name="extension" value="cmss"/> </antcall>
 	</target>
 
+	<target name="deploy-gettingStarted" depends="clean,compile" description="deploy the gettingStarted extension">
+		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
+		<antcall target="deploy-extension"> <param name="extension" value="gettingStarted"/> </antcall>
+	</target>
+  
 	<target name="deploy-highlighter" depends="build-all" description="deploy the highlighter extension">
 		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
 	</target>
@@ -247,6 +253,7 @@
 		<antcall target="deploy-browserView"/>
 		<antcall target="deploy-callgraph"/>
 		<antcall target="deploy-cmss"/>
+		<antcall target="deploy-gettingStarted"/>
 		<antcall target="deploy-highlighter"/>
 	    <antcall target="deploy-httpsInfo"/>
 	    <antcall target="deploy-importurls"/>
