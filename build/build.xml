@@ -173,72 +173,70 @@
 
 	</target>
 
-	<target name="deploy-extension" description="deploy the specified extension">
+	<target name="deploy-addon" description="deploy the specified extension">
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-			<include name="${extension}-*.zap"/>
+			<include name="${addon}-*.zap"/>
 			</fileset>
 		</copy>
-		<!--copy file="${dist}/${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
 	</target>
 
-	<target name="deploy-ascanrules" description="deploy the active scan rules">
-		<antcall target="deploy-extension"> <param name="extension" value="ascanrules"/> </antcall>
+	<target name="build-deploy-addon" depends="clean,compile" description="build and deploy the specified addon">
+		<antcall target="build-addon"><param name="addon" value="${addon}"/></antcall>
+		<antcall target="deploy-addon"> <param name="addon" value="${addon}"/> </antcall>
 	</target>
 
-	<target name="deploy-directorylistv1" description="deploys Directory List v1.0 add-on">
-		<antcall target="deploy-extension"> <param name="extension" value="directorylistv1"/> </antcall>
+	
+	<target name="deploy-ascanrules" depends="clean,compile" description="deploy the active scan rules">
+		<antcall target="build-deploy-addon"> <param name="addon" value="ascanrules"/> </antcall>
 	</target>
 
-	<target name="deploy-directorylistv2_3" description="deploys Directory List v2.3 add-on">
-		<antcall target="deploy-extension"> <param name="extension" value="directorylistv2_3"/> </antcall>
+	<target name="deploy-directorylistv1" depends="clean,compile" description="deploys Directory List v1.0 add-on">
+		<antcall target="build-deploy-addon"> <param name="addon" value="directorylistv1"/> </antcall>
 	</target>
 
-	<target name="deploy-directorylistv2_3_lc" description="deploys Directory List v2.3 lower case add-on">
-		<antcall target="deploy-extension"> <param name="extension" value="directorylistv2_3_lc"/> </antcall>
+	<target name="deploy-directorylistv2_3" depends="clean,compile" description="deploys Directory List v2.3 add-on">
+		<antcall target="build-deploy-addon"> <param name="addon" value="directorylistv2_3"/> </antcall>
 	</target>
 
-	<target name="deploy-exampleRightClickMsg" description="deploy the exampleRightClickMsg extension">
-		<antcall target="deploy-extension"> <param name="extension" value="exampleRightClickMsg"/> </antcall>
+	<target name="deploy-directorylistv2_3_lc" depends="clean,compile" description="deploys Directory List v2.3 lower case add-on">
+		<antcall target="build-deploy-addon"> <param name="addon" value="directorylistv2_3_lc"/> </antcall>
 	</target>
 
-	<target name="deploy-exampleTopMenu" description="deploy the exampleTopMenu extension">
-		<antcall target="deploy-extension"> <param name="extension" value="exampleTopMenu"/> </antcall>
+	<target name="deploy-exampleRightClickMsg" depends="clean,compile" description="deploy the exampleRightClickMsg extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="exampleRightClickMsg"/> </antcall>
 	</target>
 
-	<target name="deploy-pscanrules" description="deploy the passive scan rules">
-		<antcall target="deploy-extension"> <param name="extension" value="pscanrules"/> </antcall>
+	<target name="deploy-exampleTopMenu" depends="clean,compile" description="deploy the exampleTopMenu extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="exampleTopMenu"/> </antcall>
 	</target>
 
-	<target name="deploy-quickstart" description="deploy the quick start extension" depends="build-all">
-		<antcall target="deploy-extension"> <param name="extension" value="quickstart"/> </antcall>
+	<target name="deploy-pscanrules" depends="clean,compile" description="deploy the passive scan rules">
+		<antcall target="build-deploy-addon"> <param name="addon" value="pscanrules"/> </antcall>
 	</target>
 
-	<target name="deploy-reveal" description="deploy the Reveal extension">
-		<antcall target="deploy-extension"> <param name="extension" value="reveal"/> </antcall>
+	<target name="deploy-quickstart" depends="clean,compile" description="deploy the quick start extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="quickstart"/> </antcall>
+	</target>
+
+	<target name="deploy-reveal" depends="clean,compile" description="deploy the Reveal extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="reveal"/> </antcall>
 	</target>
 	
-	<target name="deploy-saverawmessage" description="deploy the Save Raw Message extension">
-		<antcall target="deploy-extension"> <param name="extension" value="saverawmessage"/> </antcall>
+	<target name="deploy-saverawmessage" depends="clean,compile" description="deploy the Save Raw Message extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="saverawmessage"/> </antcall>
 	</target>
 
-	<target name="deploy-websockets" description="deploy the WebSockets extension">
-		<antcall target="deploy-extension"> <param name="extension" value="websocket"/> </antcall>
+	<target name="deploy-websockets" depends="clean,compile" description="deploy the WebSockets extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="websocket"/> </antcall>
 	</target>
 	
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
-		<!-- Keep in alphabetical order ;) -->
-		<antcall target="deploy-ascanrules"/>
-		<antcall target="deploy-directorylistv1"/>
-		<antcall target="deploy-directorylistv2_3"/>
-		<antcall target="deploy-directorylistv2_3_lc"/>
-		<antcall target="deploy-exampleRightClickMsg"/>
-		<antcall target="deploy-exampleTopMenu"/>
-		<antcall target="deploy-pscanrules"/>
-		<antcall target="deploy-quickstart"/>
-		<antcall target="deploy-reveal"/>
-		<antcall target="deploy-saverawmessage"/>
-		<antcall target="deploy-websockets"/>
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+			<include name="*.zap"/>
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="deploy-weekly" description="deploy all of the extension to be included in a weekly release">
