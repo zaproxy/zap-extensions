@@ -209,92 +209,86 @@
 
 	</target>
 
-	<target name="deploy-extension" description="deploy the specified extension">
+	<target name="deploy-addon" description="deploy the specified extension">
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-			<include name="${extension}-*.zap"/>
+			<include name="${addon}-*.zap"/>
 			</fileset>
 		</copy>
-		<!--copy file="${dist}/${extension}.jar" toDir="${zap.plugin.dir}" overwrite="true" /-->
 	</target>
 
-	<target name="deploy-ascanrules" depends="build-all" description="deploy the active scan rules">
-		<antcall target="deploy-extension"> <param name="extension" value="ascanrulesBeta"/> </antcall>
+	<target name="build-deploy-addon" depends="clean,compile" description="build and deploy the specified addon">
+		<antcall target="build-addon"><param name="addon" value="${addon}"/></antcall>
+		<antcall target="deploy-addon"> <param name="addon" value="${addon}"/> </antcall>
+	</target>
+
+
+	<target name="deploy-alertReport" depends="clean,compile" description="deploy the Alert Report ZAP extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="alertReport"/> </antcall>
+	</target>
+
+	<target name="deploy-ascanrules" depends="clean,compile" description="deploy the active scan rules">
+		<antcall target="build-deploy-addon"> <param name="addon" value="ascanrulesBeta"/> </antcall>
 	</target>
 	
-	<target name="deploy-beanshell" depends="build-all" description="deploy the beanshell">
-		<antcall target="deploy-extension"> <param name="extension" value="beanshell"/> </antcall>
+	<target name="deploy-beanshell" depends="clean,compile" description="deploy the beanshell">
+		<antcall target="build-deploy-addon"> <param name="addon" value="beanshell"/> </antcall>
 	</target>
 
-	<target name="deploy-bruteforce" depends="build-all" description="deploy the bruteforce extension">
-		<antcall target="deploy-extension"> <param name="extension" value="bruteforce"/> </antcall>
+	<target name="deploy-bruteforce" depends="clean,compile" description="deploy the bruteforce extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="bruteforce"/> </antcall>
 	</target>
 	
-	<target name="deploy-diff" depends="build-all" description="deploy the diff extension">
-		<antcall target="deploy-extension"> <param name="extension" value="diff"/> </antcall>
+	<target name="deploy-diff" depends="clean,compile" description="deploy the diff extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="diff"/> </antcall>
 	</target>
 
-	<target name="deploy-invoke" depends="build-all" description="deploy the invoke extension">
-		<antcall target="deploy-extension"> <param name="extension" value="invoke"/> </antcall>
+	<target name="deploy-invoke" depends="clean,compile" description="deploy the invoke extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="invoke"/> </antcall>
 	</target>
 
-	<target name="deploy-jruby" depends="build-all" description="deploy the jruby extension">
-		<antcall target="deploy-extension"> <param name="extension" value="jruby"/> </antcall>
+	<target name="deploy-jruby" depends="clean,compile" description="deploy the jruby extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="jruby"/> </antcall>
 	</target>
 
-  	<target name="deploy-jython" depends="build-all" description="deploy the jython extension">
-		<antcall target="deploy-extension"> <param name="extension" value="jython"/> </antcall>
+  	<target name="deploy-jython" depends="clean,compile" description="deploy the jython extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="jython"/> </antcall>
 	</target>
 
-  	<target name="deploy-plugnhack" depends="build-all" description="deploy the plug-n-hack extension">
-		<antcall target="deploy-extension"> <param name="extension" value="plugnhack"/> </antcall>
+  	<target name="deploy-plugnhack" depends="clean,compile" description="deploy the plug-n-hack extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="plugnhack"/> </antcall>
 	</target>
 	
-	<target name="deploy-portscan" depends="build-all" description="deploy the port scan extension">
-		<antcall target="deploy-extension"> <param name="extension" value="portscan"/> </antcall>
+	<target name="deploy-portscan" depends="clean,compile" description="deploy the port scan extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="portscan"/> </antcall>
 	</target>
 	
-	<target name="deploy-pscanrules" depends="build-all" description="deploy the passive scan rules">
-		<antcall target="deploy-extension"> <param name="extension" value="pscanrulesBeta"/> </antcall>
+	<target name="deploy-pscanrules" depends="clean,compile" description="deploy the passive scan rules">
+		<antcall target="build-deploy-addon"> <param name="addon" value="pscanrulesBeta"/> </antcall>
 	</target>
 	
-	<target name="deploy-scripts" depends="build-all" description="deploy the scripts extension">
-		<antcall target="deploy-extension"> <param name="extension" value="scripts"/> </antcall>
+	<target name="deploy-scripts" depends="clean,compile" description="deploy the scripts extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="scripts"/> </antcall>
 	</target>
 	
-	<target name="deploy-spiderAjax" depends="build-all" description="deploy the spiderAjax extension">
-		<antcall target="deploy-extension"> <param name="extension" value="spiderAjax"/> </antcall>
+	<target name="deploy-spiderAjax" depends="clean,compile" description="deploy the spiderAjax extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="spiderAjax"/> </antcall>
 	</target>
 
-	<target name="deploy-tokengen" depends="build-all" description="deploy the tokengen extension">
-		<antcall target="deploy-extension"> <param name="extension" value="tokengen"/> </antcall>
+	<target name="deploy-tokengen" depends="clean,compile" description="deploy the tokengen extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="tokengen"/> </antcall>
 	</target>
 
-	<target name="deploy-alertReport" depends="build-all" description="deploy the Alert Report ZAP extension">
-			<antcall target="deploy-extension"> <param name="extension" value="alertReport"/> </antcall>
-		</target>
-
-	<target name="deploy-zest" depends="build-all" description="deploy the zest extension">
-		<antcall target="deploy-extension"> <param name="extension" value="zest"/> </antcall>
+	<target name="deploy-zest" depends="clean,compile" description="deploy the zest extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="zest"/> </antcall>
 	</target>
-	
 
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
-		<!-- Keep in alphabetical order ;) -->
-		<antcall target="deploy-alertReport"/>
-		<antcall target="deploy-ascanrules"/>
-		<antcall target="deploy-bruteforce"/>
-		<antcall target="deploy-diff"/>
-		<antcall target="deploy-invoke"/>
-	    <antcall target="deploy-jruby"/>
-	    <antcall target="deploy-jython"/>
-		<antcall target="deploy-plugnhack"/>
-		<antcall target="deploy-portscan"/>
-		<antcall target="deploy-pscanrules"/>
-		<antcall target="deploy-scripts"/>
-		<antcall target="deploy-spiderAjax"/>
-		<antcall target="deploy-tokengen"/>
-		<antcall target="deploy-zest"/>
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+			<include name="*.zap"/>
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="deploy-weekly" description="deploy extensions to be included in weekly releases">
