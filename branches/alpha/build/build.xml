@@ -190,78 +190,83 @@
 		</copy>
 	</target>
 
-	<target name="deploy-ascanrulesAlpha" depends="build-all" description="deploy the active scan rules">
+	<target name="deploy-ascanrulesAlpha" depends="clean,compile" description="deploy the active scan rules">
+		<antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="ascanrulesAlpha"/> </antcall>
 	</target>
 
-	<target name="deploy-birtreports" depends="build-all" description="deploy the birtreports extension">
+	<target name="deploy-birtreports" depends="clean,compile" description="deploy the birtreports extension">
+		<antcall target="build-addon"><param name="addon" value="birtreports"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="birtreports"/> </antcall>
 	</target>
 
-    <target name="deploy-browserView" depends="build-all" description="deploy the browser extension">
+    <target name="deploy-browserView" depends="clean,compile" description="deploy the browser extension">
+		<antcall target="build-addon"><param name="addon" value="browserView"/></antcall>
         <antcall target="deploy-extension"> <param name="extension" value="browserView"/> </antcall>
     </target>
     
-	<target name="deploy-callgraph" depends="build-all" description="deploy the callgraph extension">
+	<target name="deploy-callgraph" depends="clean,compile" description="deploy the callgraph extension">
+		<antcall target="build-addon"><param name="addon" value="callgraph"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="callgraph"/> </antcall>
 	</target>
 	
-	<target name="deploy-cmss" depends="build-all" description="deploy the cmss extension">
+	<target name="deploy-cmss" depends="clean,compile" description="deploy the cmss extension">
+		<antcall target="build-addon"><param name="addon" value="cmss"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="cmss"/> </antcall>
 	</target>
 
 	<target name="deploy-gettingStarted" depends="clean,compile" description="deploy the gettingStarted extension">
 		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="gettingStarted"/> </antcall>
 	</target>
   
-	<target name="deploy-highlighter" depends="build-all" description="deploy the highlighter extension">
+	<target name="deploy-highlighter" depends="clean,compile" description="deploy the highlighter extension">
+		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="highlighter"/> </antcall>
 	</target>
   
-  	<target name="deploy-httpsInfo" depends="build-all" description="deploy the httpsInfo extension">
+  	<target name="deploy-httpsInfo" depends="clean,compile" description="deploy the httpsInfo extension">
+		<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="httpsInfo"/> </antcall>
 	</target>
 
-  	<target name="deploy-importurls" depends="build-all" description="deploy the importurls extension">
+  	<target name="deploy-importurls" depends="clean,compile" description="deploy the importurls extension">
+		<antcall target="build-addon"><param name="addon" value="importurls"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="importurls"/> </antcall>
 	</target>
 
-	<target name="deploy-multiFuzz" depends="build-all" description="deploy the passive scan rules">
+	<target name="deploy-multiFuzz" depends="clean,compile" description="deploy the passive scan rules">
+		<antcall target="build-addon"><param name="addon" value="multiFuzz"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="multiFuzz"/> </antcall>
 	</target>
 
-	<target name="deploy-pscanrulesAlpha" depends="build-all" description="deploy the passive scan rules">
+	<target name="deploy-pscanrulesAlpha" depends="clean,compile" description="deploy the passive scan rules">
+		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="pscanrulesAlpha"/> </antcall>
 	</target>
-	<target name="deploy-serverSentEvents" depends="build-all" description="deploy the Server-Sent Events extension">
+
+	<target name="deploy-serverSentEvents" depends="clean,compile" description="deploy the Server-Sent Events extension">
+		<antcall target="build-addon"><param name="addon" value="serverSentEvents"/></antcall>
 		<antcall target="deploy-extension"> <param name="extension" value="serverSentEvents"/> </antcall>
 	</target>
 
     <target name="deploy-saml" description="deploy the SAML extension">
+		<antcall target="build-addon"><param name="addon" value="saml"/></antcall>
         <antcall target="deploy-extension"> <param name="extension" value="saml"/> </antcall>
     </target>
 		
-    <target name="deploy-wappalyzer" depends="build-all" description="deploy the Wappalyzer extension">
+    <target name="deploy-wappalyzer" depends="clean,compile" description="deploy the Wappalyzer extension">
+		<antcall target="build-addon"><param name="addon" value="wappalyzer"/></antcall>
         <antcall target="deploy-extension"> <param name="extension" value="wappalyzer"/> </antcall>
     </target>
 
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
-		<!-- Keep in alphabetical order ;) -->
-		<antcall target="deploy-ascanrulesAlpha"/>
-		<antcall target="deploy-birtreports"/>
-		<antcall target="deploy-browserView"/>
-		<antcall target="deploy-callgraph"/>
-		<antcall target="deploy-cmss"/>
-		<antcall target="deploy-gettingStarted"/>
-		<antcall target="deploy-highlighter"/>
-	    <antcall target="deploy-httpsInfo"/>
-	    <antcall target="deploy-importurls"/>
-		<antcall target="deploy-multiFuzz"/>
-		<antcall target="deploy-pscanrulesAlpha"/>
-		<antcall target="deploy-serverSentEvents"/>
-        <antcall target="deploy-saml"/>
-        <antcall target="deploy-wappalyzer"/>
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+			<include name="*.zap"/>
+			</fileset>
+		</copy>
 	</target>
 
 </project>
