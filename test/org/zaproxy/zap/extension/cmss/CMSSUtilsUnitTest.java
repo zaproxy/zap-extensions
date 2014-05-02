@@ -1,11 +1,10 @@
 package org.zaproxy.zap.extension.cmss;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.zaproxy.zap.extension.cmss.CMSSUtils.*;
+import static org.zaproxy.zap.extension.cmss.CMSSUtils.checksum;
 
 public class CMSSUtilsUnitTest {
 
