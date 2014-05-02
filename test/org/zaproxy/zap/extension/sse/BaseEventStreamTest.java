@@ -12,7 +12,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.utils.I18N;
 
-public class BaseEventStreamTest {
+public abstract class BaseEventStreamTest {
 
     @BeforeClass
     public static void beforeClass() {
