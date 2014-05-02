@@ -1,3 +1,74 @@
+EventUtils = {
+  findNodeIndex:function(node, parent) {
+    for(i=0; i< parent.childNodes.length; i++) {
+      if(node === parent.childNodes[i]) {
+        return i;
+      }
+    }
+    return -1;
+  },
+  findPath:function(node) {
+    if(node.id) {
+      return [node.id];
+    } else {
+      // find index on parent
+      if(node.parentNode) {
+        var parent = node.parentNode;
+        var index = this.findNodeIndex(node, parent);
+        // find path for parent
+        var parentPath =  this.findPath(parent);
+        parentPath.push(index);
+        return parentPath;
+      } else {
+        return [];
+      }
+    }
+  },
+  elementFromPath:function(path) {
+    var element;
+    for(idx in path) {
+      if(!element) {
+        if('string' === typeof path[idx]) {
+          // we've got a node with an id, start the path with that
+          element = document.getElementById(path[idx]);
+        } else {
+          // our start node is maybe a child of document
+          element = document.childNodes[path[idx]];
+        }
+      } else {
+        element = element.childNodes[path[idx]];
+      }
+    }
+    return element;
+  },
+  makeEventJSON:function(evt) {
+    var obj = {};
+    for(key in evt) {
+      var value = evt[key];
+      var type = typeof value;
+      // we don't do object or array attrs yet
+      if('string' === type || 'number' === type || 'boolean' === type) {
+        obj[key] = value;
+      }
+    }
+    return JSON.stringify(obj);
+  },
+  synthesizeEvent:function(eventData) {
+    var evt = document.createEvent('Events');
+    evt.initEvent(eventData.type, true, false);
+    // TODO: Copy attrs
+    for(key in eventData) {
+      try {
+        evt[key] = eventData[key];
+      } catch(e) {
+        console.log('oops');
+        console.log(e);
+      }
+    }
+    return evt;
+  }
+}
+
 var template_string = atob('PCFET0NUWVBFIGh0bWw+PGh0bWw+PGhlYWQ+PG1ldGEgY29udGVudD0idGV4dC9odG1sO2NoYXJzZXQ9dXRmLTgiIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSI+PG1ldGEgY29udGVudD0idXRmLTgiIGh0dHAtZXF1aXY9ImVuY29kaW5nIj48dGl0bGU+TWlkZGxlPC90aXRsZT48L2hlYWQ+PHNjcmlwdD4Kd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoIm1lc3NhZ2UiLGZ1bmN0aW9uKGUpewp2YXIgZGVzdCA9IHdpbmRvdy5wYXJlbnQ7CmlmKGUuc291cmNlID09PSB3aW5kb3cucGFyZW50KSB7CmRlc3QgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgiaW5uZXIiKS5jb250ZW50V2luZG93Owp9CmRlc3QucG9zdE1lc3NhZ2UoZS5kYXRhLCIqIik7Cn0sdHJ1ZSk7Cjwvc2NyaXB0PjxzdHlsZT4KYm9keSwgaHRtbCB7IHdpZHRoOjEwMCUgOwpoZWlnaHQ6MTAwJSA7Cm92ZXJmbG93OmhpZGRlbiA7Cn0KaWZyYW1lIHsgd2lkdGg6MTAwJSA7CmhlaWdodDoxMDAlIDsKYm9yZGVyOm5vbmUgOwp9Cjwvc3R5bGU+PGJvZHk+PGlmcmFtZSBpZD0iaW5uZXIiIG5hbWU9ImlubmVyV2luZG93IiBzcmM9IiN7c3JjfSIgaGVpZ2h0PSIxMDAlIj48L2lmcmFtZT48L2JvZHk+PC9odG1sPgo=');
 
 function Template(str) {
@@ -166,7 +237,9 @@ function getActorsListener(messagePeer, clientConfig) {
     var endpointId = zapGuidGen();
     //console.log("hooking "+endpointId+" for events that are "+type);
     endpoints[endpointId] = function (response) {
-      args[1](response.evt);
+      var evt = EventUtils.synthesizeEvent(response.eventData);
+      // TODO: if originalTargetPath is set, dispatch event there
+      args[1](evt);
     };
     var onEventProxy = makeProxy(args[1], function() {
       var messageId = zapGuidGen();
@@ -178,13 +251,14 @@ function getActorsListener(messagePeer, clientConfig) {
         // TODO: do a better job of marshalling events to the PnH provider
         var pMsg = {
           to:clientConfig.endpointName,
-        type:'eventInfoMessage',
-        from:'TODO: we need a from',
-        target:'someTarget',
-        data:message,
-        evt:evt,
-        messageId:messageId,
-        endpointId:endpointId
+          type:'eventInfoMessage',
+          from:'TODO: we need a from',
+          target:'someTarget',
+          data:message,
+          eventData:EventUtils.makeEventJSON(evt),
+          originalTargetPath:EventUtils.findPath(evt.originalTarget),
+          messageId:messageId,
+          endpointId:endpointId
         };
         messagePeer.sendMessage(pMsg);
       }
