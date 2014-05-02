@@ -150,6 +150,8 @@ public class PlugNHackAPI extends ApiImplementor {
                 String welcomePage = ExtensionPlugNHack.getStringReource("resources/welcome.html");
                 // Replace the dynamic parts
                 welcomePage = welcomePage.replace("{{ROOT}}", root).replace("{{APIKEY}}", API.getInstance().getApiKey());
+                welcomePage = welcomePage.replace("{{HASH}}", getHash(OTHER_FIREFOX_ADDON));
+                
                 // Replace the i18n strings
                 welcomePage = welcomePage.replace("{{MSG.TITLE}}", Constant.messages.getString("plugnhack.title"));
                 welcomePage = welcomePage.replace("{{MSG.HEADER}}", Constant.messages.getString("plugnhack.header"));
@@ -299,6 +301,45 @@ public class PlugNHackAPI extends ApiImplementor {
         }
         
         throw new ApiException(ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
+    }
+    
+    private static String getHash(String resource) throws ApiException {
+        InputStream in = null;
+        try {
+            in = ExtensionPlugNHack.class.getResourceAsStream("resources/" + resource);
+            MessageDigest md = MessageDigest.getInstance("SHA1");
+            //FileInputStream fis = new FileInputStream(in);
+            byte[] dataBytes = new byte[1024];
+            int nread = 0;
+
+            while ((nread = in.read(dataBytes)) != -1) {
+                md.update(dataBytes, 0, nread);
+            }
+
+            byte[] mdbytes = md.digest();
+
+            //convert the byte to hex format
+            StringBuilder sb = new StringBuilder("");
+            for (int i = 0; i < mdbytes.length; i++) {
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+
+            return sb.toString();
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ApiException(ApiException.Type.INTERNAL_ERROR);
+            
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
+        }
+	
     }
 
     /**
