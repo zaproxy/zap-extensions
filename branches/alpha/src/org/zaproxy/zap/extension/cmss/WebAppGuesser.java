@@ -105,7 +105,7 @@ public class WebAppGuesser {
 					Element hashNode = (Element) file.getChildren().get(j);
 					String hash = hashNode.getAttributeValue("md5");
 					/*String chksum = 
-							CMSFingerprinter.checkUrlContentChecksoms(
+							CMSFingerprinter.checkUrlContentChecksums(
 									new URL(urlToGuess.toString()+path));*/
 					/*String chksum = CMSFingerprinter.
 							checksum(wp.getDocument()+urlToGuess.toString()+path);*/

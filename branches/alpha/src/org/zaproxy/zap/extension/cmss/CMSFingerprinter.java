@@ -29,7 +29,7 @@ public class CMSFingerprinter {
 				System.out.println("path == "+urlF+path);
 				URLConnection con = filePath.openConnection();
 				if (con.getContentLength()!= -1){
-					String chksum = checkUrlContentChecksoms(filePath);
+					String chksum = checkUrlContentChecksums(filePath);
 					System.out.println(chksum);
 					for (int j=0;j<file.getChildren().size();j++){
 						Element hashNode = (Element) file.getChildren().get(j);
