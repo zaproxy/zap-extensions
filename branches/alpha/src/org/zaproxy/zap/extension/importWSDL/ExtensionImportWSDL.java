@@ -67,7 +67,7 @@ import com.predic8.wsdl.Port;
 import com.predic8.wsdl.PortType;
 import com.predic8.wsdl.Service;
 import com.predic8.wsdl.WSDLParser;
-import com.predic8.wstool.creator.RequestTemplateCreator;
+import com.predic8.wstool.creator.RequestCreator;
 import com.predic8.wstool.creator.SOARequestCreator;
 
 public class ExtensionImportWSDL extends ExtensionAdaptor {
@@ -216,7 +216,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		    	        		}
 		    	        	}	    	        	   	        	
 		    	        	
-		    	        	/* Set values to parameters. [MARK] It still does not work. */
+		    	        	/* Set values to parameters. */
 		    	        	HashMap<String, String> formParams = new HashMap<String, String>();
 		    	        	for(Part part : requestParts){
 		    	        		if (part.getName().equals("parameters")){
@@ -244,9 +244,11 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		    	        	/* Basic message creation. */
 		    	        	StringWriter writerSOAPReq = new StringWriter();
 		    	        	
-		    	        	SOARequestCreator creator = new SOARequestCreator(wsdl,
-		    		                new RequestTemplateCreator(), new MarkupBuilder(writerSOAPReq));
-		    	        	creator.setFormParams(formParams);
+		    	        	SOARequestCreator creator = new SOARequestCreator(wsdl, new RequestCreator(), new MarkupBuilder(writerSOAPReq));
+		    	            creator.setBuilder(new MarkupBuilder(writerSOAPReq));
+		    	            creator.setDefinitions(wsdl);
+		    	            creator.setFormParams(formParams);
+		    	            creator.setCreator(new RequestCreator());
 		    	        	
 		    	        	try{
 			    		        creator.createRequest(binding.getPortType().getName(),
