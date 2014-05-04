@@ -7,7 +7,7 @@
 	<changes>First version</changes>
 	<dependson/>
 	<extensions>
-	    <extension>org.zaproxy.zap.extension.albTest.ExtensionImportUrls</extension>
+	    <extension>org.zaproxy.zap.extension.importWSDL.ExtensionImportWSDL</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
