@@ -17,17 +17,13 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
-import java.util.Random;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
+import org.parosproxy.paros.network.HttpRequestHeader;
 
 /**
  * SOAP Action Spoofing Active Scanner
@@ -36,8 +32,6 @@ import org.zaproxy.zap.model.Vulnerability;
 public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 
 	private static final String MESSAGE_PREFIX = "ascanalpha.soapactionspoofing.";
-	
-	private Random rnd = new Random();
 
 	private static Logger log = Logger.getLogger(SOAPActionSpoofingActiveScanner.class);
 	
@@ -57,10 +51,6 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 
 	public String getDescription() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
-
-	private String getOtherInfo() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "other");
 	}
 
 	public String getSolution() {
@@ -95,6 +85,13 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 		try {
 			/* Retrieves a good request. */
 			HttpMessage msg = getNewMsg();
+			
+			/* Modifies the request to try an attack. */
+			String actionOp = "action";
+			
+			HttpRequestHeader header = msg.getRequestHeader();
+			/* Available ops should be known here from the imported WSDL file. */
+			header.setHeader("SOAPAction", actionOp);
 			
 			/* Sends the modified request. */
 			sendAndReceive(msg);
