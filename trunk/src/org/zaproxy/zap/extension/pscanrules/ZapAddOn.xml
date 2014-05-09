@@ -1,16 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>9</version>
+	<version>10</version>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Added reference for X-Content-Type-Options header missing.<br>
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).<br>
-	Changed passive scanners to expose its IDs (Issue Issue 1101).<br>
-	Updated add-on dir structure (Issue 1113).
+	Fixed an issue with search of strings that affected "Application Error disclosure" scanner (Issue 1186).
 	]]>
 	</changes>
 	<dependson/>
