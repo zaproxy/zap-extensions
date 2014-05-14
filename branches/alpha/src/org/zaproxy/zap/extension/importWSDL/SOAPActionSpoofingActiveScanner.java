@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.importWSDL;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -34,6 +34,9 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 	private static final String MESSAGE_PREFIX = "ascanalpha.soapactionspoofing.";
 
 	private static Logger log = Logger.getLogger(SOAPActionSpoofingActiveScanner.class);
+	
+
+	
 	
 	@Override
 	public int getId() {
@@ -88,6 +91,11 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 			
 			/* Modifies the request to try an attack. */
 			String actionOp = "action";
+			try{
+        		System.out.println(org.zaproxy.zap.extension.importWSDL.ExtensionImportWSDL.getShared());
+        	}catch (NoClassDefFoundError e){
+        		System.out.println("CLASS NOT FOUND: "+e.getMessage());
+        	}	
 			
 			HttpRequestHeader header = msg.getRequestHeader();
 			/* Available ops should be known here from the imported WSDL file. */
@@ -126,5 +134,4 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 		// The WASC ID
 		return 0;
 	}
-
 }
