@@ -80,7 +80,9 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     private int threadId = 1;
 
 	private static Logger log = Logger.getLogger(ExtensionImportWSDL.class);
-
+	private static String shared = "Nothing";
+	
+	
 	public ExtensionImportWSDL() {
 		super();
 		initialize();
@@ -205,6 +207,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 			    	    /* Identifies operations for each endpoint.. */
 		    	        for(BindingOperation bindOp : operations){
 		    	        	sb.append("|\t|-- SOAP 1."+soapVersion+" Operation: "+bindOp.getName());
+		    	        	shared += " "+bindOp.getName();	    	        	
 		    	        	
 		    	        	/* Identifies operation's parameters. */
 		    	        	List<Part> requestParts = null;    	        	
@@ -356,5 +359,9 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		} catch (MalformedURLException e) {
 			return null;
 		}
+	}
+	
+	public static String getShared(){
+		return shared;
 	}
 }

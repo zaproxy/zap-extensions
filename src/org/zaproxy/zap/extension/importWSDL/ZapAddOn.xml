@@ -9,7 +9,9 @@
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.importWSDL.ExtensionImportWSDL</extension>
 	</extensions>
-	<ascanrules/>
+	<ascanrules>
+	  	<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SOAPActionSpoofingActiveScanner</ascanrule>
+	</ascanrules>
 	<pscanrules/>
 	<filters/>
 	<files/>
