@@ -502,7 +502,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						}
 					} //end of the loop to check for RDBMS specific error messages
 					
-					if (this.doGenericErrorBased) {
+					if (this.doGenericErrorBased && !sqlInjectionFoundForUrl) {
 						errorPatternIterator = SQL_ERROR_TO_GENERIC_DBMS.keySet().iterator();
 
 						while (errorPatternIterator.hasNext() && !sqlInjectionFoundForUrl) {
