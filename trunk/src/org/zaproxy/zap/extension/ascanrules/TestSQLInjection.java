@@ -72,7 +72,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 	//what do we do at each attack strength?
 	//(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
-	private boolean doErrorBased = false;
+	private boolean doSpecificErrorBased = false;
+	private boolean doGenericErrorBased = false;
 	private boolean doBooleanBased = false;
 	private boolean doUnionBased = false;
 	private boolean doExpressionBased = false;
@@ -105,99 +106,100 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	 * actual (driver level) error messages for things like syntax error,
 	 * otherwise we are simply guessing that the string should/might occur.
 	 */
-	private static final Map<String, String> SQL_ERROR_TO_DBMS = new LinkedHashMap<>();
+	private static final Map<String, String> SQL_ERROR_TO_SPECIFIC_DBMS = new LinkedHashMap<>();
+	private static final Map<String, String> SQL_ERROR_TO_GENERIC_DBMS = new LinkedHashMap<>();
 
 	static {
 		//DONE: we have implemented a MySQL specific scanner. See SQLInjectionMySQL
-		SQL_ERROR_TO_DBMS.put("com.mysql.jdbc.exceptions", "MySQL");
-		SQL_ERROR_TO_DBMS.put("org.gjt.mm.mysql", "MySQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.mysql.jdbc.exceptions", "MySQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.gjt.mm.mysql", "MySQL");
 
 		//TODO: implement a plugin that uses Microsoft SQL specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("com.microsoft.sqlserver.jdbc", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("com.microsoft.jdbc", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("com.inet.tds", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("com.microsoft.sqlserver.jdbc", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("com.ashna.jturbo", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("weblogic.jdbc.mssqlserver", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("[Microsoft]", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("[SQLServer]", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("[SQLServer 2000 Driver for JDBC]", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("net.sourceforge.jtds.jdbc", "Microsoft SQL Server"); 		//see also be Sybase. could be either!
-		SQL_ERROR_TO_DBMS.put("80040e14", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("800a0bcd", "Microsoft SQL Server");
-		SQL_ERROR_TO_DBMS.put("80040e57", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.microsoft.sqlserver.jdbc", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.microsoft.jdbc", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.inet.tds", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.microsoft.sqlserver.jdbc", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.ashna.jturbo", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("weblogic.jdbc.mssqlserver", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("[Microsoft]", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("[SQLServer]", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("[SQLServer 2000 Driver for JDBC]", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("net.sourceforge.jtds.jdbc", "Microsoft SQL Server"); 		//see also be Sybase. could be either!
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("80040e14", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("800a0bcd", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("80040e57", "Microsoft SQL Server");
 
 		//DONE: we have implemented an Oracle specific scanner. See SQLInjectionOracle
-		SQL_ERROR_TO_DBMS.put("oracle.jdbc", "Oracle");
-		SQL_ERROR_TO_DBMS.put("SQLSTATE[HY", "Oracle");
-		SQL_ERROR_TO_DBMS.put("ORA-00933", "Oracle");
-		SQL_ERROR_TO_DBMS.put("ORA-06512", "Oracle");  //indicates the line number of an error
-		SQL_ERROR_TO_DBMS.put("SQL command not properly ended", "Oracle");
-		SQL_ERROR_TO_DBMS.put("ORA-00942", "Oracle");  //table or view does not exist
-		SQL_ERROR_TO_DBMS.put("ORA-29257", "Oracle");  //host unknown
-		SQL_ERROR_TO_DBMS.put("ORA-00932", "Oracle");  //inconsistent datatypes
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("oracle.jdbc", "Oracle");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("SQLSTATE[HY", "Oracle");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("ORA-00933", "Oracle");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("ORA-06512", "Oracle");  //indicates the line number of an error
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("SQL command not properly ended", "Oracle");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("ORA-00942", "Oracle");  //table or view does not exist
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("ORA-29257", "Oracle");  //host unknown
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("ORA-00932", "Oracle");  //inconsistent datatypes
 
 		//TODO: implement a plugin that uses DB2 specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("com.ibm.db2.jcc", "IBM DB2");
-		SQL_ERROR_TO_DBMS.put("COM.ibm.db2.jdbc", "IBM DB2");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.ibm.db2.jcc", "IBM DB2");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("COM.ibm.db2.jdbc", "IBM DB2");
 
 		//DONE: we have implemented a PostgreSQL specific scanner. See SQLInjectionPostgresql
-		SQL_ERROR_TO_DBMS.put("org.postgresql.util.PSQLException", "PostgreSQL");
-		SQL_ERROR_TO_DBMS.put("org.postgresql", "PostgreSQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.postgresql.util.PSQLException", "PostgreSQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.postgresql", "PostgreSQL");
 
 		//TODO: implement a plugin that uses Sybase specific functionality to detect SQL Injection vulnerabilities
 		//Note: this plugin would also detect Microsoft SQL Server vulnerabilities, due to common syntax. 
-		SQL_ERROR_TO_DBMS.put("com.sybase.jdbc", "Sybase");
-		SQL_ERROR_TO_DBMS.put("com.sybase.jdbc2.jdbc", "Sybase");
-		SQL_ERROR_TO_DBMS.put("com.sybase.jdbc3.jdbc", "Sybase");
-		SQL_ERROR_TO_DBMS.put("net.sourceforge.jtds.jdbc", "Sybase");  //see also Microsoft SQL Server. could be either!
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.sybase.jdbc", "Sybase");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.sybase.jdbc2.jdbc", "Sybase");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.sybase.jdbc3.jdbc", "Sybase");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("net.sourceforge.jtds.jdbc", "Sybase");  //see also Microsoft SQL Server. could be either!
 
 		//TODO: implement a plugin that uses Informix specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("com.informix.jdbc", "Informix");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.informix.jdbc", "Informix");
 
 		//TODO: implement a plugin that uses Firebird specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("org.firebirdsql.jdbc", "Firebird");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.firebirdsql.jdbc", "Firebird");
 
 		//TODO: implement a plugin that uses IDS Server specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("ids.sql", "IDS Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("ids.sql", "IDS Server");
 
 		//TODO: implement a plugin that uses InstantDB specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("org.enhydra.instantdb.jdbc", "InstantDB");
-		SQL_ERROR_TO_DBMS.put("jdbc.idb", "InstantDB");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.enhydra.instantdb.jdbc", "InstantDB");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("jdbc.idb", "InstantDB");
 
 		//TODO: implement a plugin that uses Interbase specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("interbase.interclient", "Interbase");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("interbase.interclient", "Interbase");
 
 		//DONE: we have implemented a Hypersonic specific scanner. See SQLInjectionHypersonic
-		SQL_ERROR_TO_DBMS.put("org.hsql", "Hypersonic SQL");
-		SQL_ERROR_TO_DBMS.put("hSql.", "Hypersonic SQL");
-		SQL_ERROR_TO_DBMS.put("Unexpected token , requires FROM in statement", "Hypersonic SQL");
-		SQL_ERROR_TO_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");
-		SQL_ERROR_TO_DBMS.put("Column count does not match in statement", "Hypersonic SQL");  //TODO: too generic to leave in???
-		SQL_ERROR_TO_DBMS.put("Table not found in statement", "Hypersonic SQL"); //TODO: too generic to leave in???
-		SQL_ERROR_TO_DBMS.put("Unexpected token:", "Hypersonic SQL"); //TODO: too generic to leave in??? Works very nicely in Hypersonic cases, however
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.hsql", "Hypersonic SQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("hSql.", "Hypersonic SQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("Unexpected token , requires FROM in statement", "Hypersonic SQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("Column count does not match in statement", "Hypersonic SQL");  //TODO: too generic to leave in???
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("Table not found in statement", "Hypersonic SQL"); //TODO: too generic to leave in???
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("Unexpected token:", "Hypersonic SQL"); //TODO: too generic to leave in??? Works very nicely in Hypersonic cases, however
 
 		//TODO: implement a plugin that uses Sybase SQL Anywhere specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("sybase.jdbc.sqlanywhere", "Sybase SQL Anywhere");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("sybase.jdbc.sqlanywhere", "Sybase SQL Anywhere");
 
 		//TODO: implement a plugin that uses PointBase specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("com.pointbase.jdbc", "Pointbase");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.pointbase.jdbc", "Pointbase");
 
 		//TODO: implement a plugin that uses Cloudbase specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("db2j.", "Cloudscape");
-		SQL_ERROR_TO_DBMS.put("COM.cloudscape", "Cloudscape");
-		SQL_ERROR_TO_DBMS.put("RmiJdbc.RJDriver", "Cloudscape");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("db2j.", "Cloudscape");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("COM.cloudscape", "Cloudscape");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("RmiJdbc.RJDriver", "Cloudscape");
 
 		//TODO: implement a plugin that uses Ingres specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_DBMS.put("com.ingres.jdbc", "Ingres");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.ingres.jdbc", "Ingres");
 
 		//generic error message fragments that do not fingerprint the RDBMS, but that may indicate SQL Injection, nonetheless
-		SQL_ERROR_TO_DBMS.put("com.ibatis.common.jdbc", "Generic SQL RDBMS");
-		SQL_ERROR_TO_DBMS.put("org.hibernate", "Generic SQL RDBMS");
-		SQL_ERROR_TO_DBMS.put("sun.jdbc.odbc", "Generic SQL RDBMS");
-		SQL_ERROR_TO_DBMS.put("[ODBC Driver Manager]", "Generic SQL RDBMS");
-		SQL_ERROR_TO_DBMS.put("System.Data.OleDb", "Generic SQL RDBMS");   //System.Data.OleDb.OleDbException
-		SQL_ERROR_TO_DBMS.put("java.sql.SQLException", "Generic SQL RDBMS");  //in case more specific messages were not detected!
+		SQL_ERROR_TO_GENERIC_DBMS.put("com.ibatis.common.jdbc", "Generic SQL RDBMS");
+		SQL_ERROR_TO_GENERIC_DBMS.put("org.hibernate", "Generic SQL RDBMS");
+		SQL_ERROR_TO_GENERIC_DBMS.put("sun.jdbc.odbc", "Generic SQL RDBMS");
+		SQL_ERROR_TO_GENERIC_DBMS.put("[ODBC Driver Manager]", "Generic SQL RDBMS");
+		SQL_ERROR_TO_GENERIC_DBMS.put("System.Data.OleDb", "Generic SQL RDBMS");   //System.Data.OleDb.OleDbException
+		SQL_ERROR_TO_GENERIC_DBMS.put("java.sql.SQLException", "Generic SQL RDBMS");  //in case more specific messages were not detected!
 	}
 	/**
 	 * always true statement for comparison in boolean based SQL injection check
@@ -339,7 +341,6 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		//set up what we are allowed to do, depending on the attack strength that was set.
 		if (this.getAttackStrength() == AttackStrength.LOW) {
 			//do error based (if Threshold allows), and some expression based
-			doErrorBased = true;
 			doErrorMaxRequests = 4;
 			doExpressionBased = true;
 			doExpressionMaxRequests = 4;
@@ -354,7 +355,6 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 		} else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
 			//do some more error based (if Threshold allows), some more expression based, some boolean based, and some Union based
-			doErrorBased = true;
 			doErrorMaxRequests = 8;
 			doExpressionBased = true;
 			doExpressionMaxRequests = 8;
@@ -369,7 +369,6 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 		} else if (this.getAttackStrength() == AttackStrength.HIGH) {
 			//do some more error based (if Threshold allows), some more expression based, some more boolean based, some union based, and some order by based
-			doErrorBased = true;
 			doErrorMaxRequests = 16;
 			doExpressionBased = true;
 			doExpressionMaxRequests = 16;
@@ -384,7 +383,6 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 		} else if (this.getAttackStrength() == AttackStrength.INSANE) {
 			//do some more error based (if Threshold allows), some more expression based, some more boolean based, some more union based, and some more order by based
-			doErrorBased = true;
 			doErrorMaxRequests = 100;
 			doExpressionBased = true;
 			doExpressionMaxRequests = 100;
@@ -399,11 +397,18 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		}
 
 		//if a high threshold is in place, turn off the error based, which are more prone to false positives
-		if (this.getAlertThreshold() == AlertThreshold.HIGH || this.getAlertThreshold() == AlertThreshold.MEDIUM) {
+		doSpecificErrorBased = true;
+		doGenericErrorBased = true;
+
+		if (this.getAlertThreshold() == AlertThreshold.MEDIUM ) {
+			doSpecificErrorBased = true;
+			doGenericErrorBased = false;
+		} else if (this.getAlertThreshold() == AlertThreshold.HIGH) {
 			if (this.debugEnabled) {
 				log.debug("Disabling the Error Based checking, since the Alert Threshold is set to High or Medium, and this type of check is notably prone to false positives");
 			}
-			doErrorBased = false;
+			doSpecificErrorBased = false;
+			doGenericErrorBased = false;
 			doErrorMaxRequests = 0;
 		}
 
@@ -435,7 +440,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//Check 1: Check for Error Based SQL Injection (actual error messages).
 			//for each SQL metacharacter combination to try
 			for (int sqlErrorStringIndex = 0;
-					sqlErrorStringIndex < SQL_CHECK_ERR.length && !sqlInjectionFoundForUrl && doErrorBased && countErrorBasedRequests < doErrorMaxRequests;
+					sqlErrorStringIndex < SQL_CHECK_ERR.length && !sqlInjectionFoundForUrl && doSpecificErrorBased && countErrorBasedRequests < doErrorMaxRequests;
 					sqlErrorStringIndex++) {
 
 				//work through the attack using each of the following strings as a prefix: the empty string, and the original value
@@ -462,11 +467,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 					//now check the results against each pattern in turn, to try to identify a database, or even better: a specific database.
 					//Note: do NOT check the HTTP error code just yet, as the result could come back with one of various codes.
-					Iterator<String> errorPatternIterator = SQL_ERROR_TO_DBMS.keySet().iterator();
+					Iterator<String> errorPatternIterator = SQL_ERROR_TO_SPECIFIC_DBMS.keySet().iterator();
 
 					while (errorPatternIterator.hasNext() && !sqlInjectionFoundForUrl) {
 						String errorPatternKey = errorPatternIterator.next();
-						String errorPatternRDBMS = SQL_ERROR_TO_DBMS.get(errorPatternKey);
+						String errorPatternRDBMS = SQL_ERROR_TO_SPECIFIC_DBMS.get(errorPatternKey);
 
 						//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
 						Pattern errorPattern = Pattern.compile("\\Q" + errorPatternKey + "\\E", PATTERN_PARAM);
@@ -482,7 +487,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - " + errorPatternRDBMS, getDescription(),
 									null,
 									param, sqlInjectionAttack,
-									extraInfo, getSolution(), msg1);
+									extraInfo, getSolution(), sb.toString(), msg1);
 
 							//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
 							getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/" + errorPatternRDBMS, Boolean.TRUE);
@@ -496,6 +501,44 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							return;
 						}
 					} //end of the loop to check for RDBMS specific error messages
+					
+					if (this.doGenericErrorBased) {
+						errorPatternIterator = SQL_ERROR_TO_GENERIC_DBMS.keySet().iterator();
+
+						while (errorPatternIterator.hasNext() && !sqlInjectionFoundForUrl) {
+							String errorPatternKey = errorPatternIterator.next();
+							String errorPatternRDBMS = SQL_ERROR_TO_GENERIC_DBMS.get(errorPatternKey);
+
+							//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
+							Pattern errorPattern = Pattern.compile("\\Q" + errorPatternKey + "\\E", PATTERN_PARAM);
+
+							//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
+							//then we may may have a SQL Injection vulnerability
+							StringBuilder sb = new StringBuilder();
+							if (!matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
+								//Likely a SQL Injection. Raise it
+								String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPatternKey);
+								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
+								sqlInjectionAttack = sqlErrValue;
+								bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - " + errorPatternRDBMS, getDescription(),
+										null,
+										param, sqlInjectionAttack,
+										extraInfo, getSolution(), sb.toString(), msg1);
+
+								//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
+								getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/" + errorPatternRDBMS, Boolean.TRUE);
+
+								sqlInjectionFoundForUrl = true;
+								continue;
+							}
+							//bale out if we were asked nicely
+							if (isStop()) { 
+								log.debug("Stopping the scan due to a user request");
+								return;
+							}
+						} //end of the loop to check for RDBMS specific error messages
+						
+					}
 
 				}  //for each of the SQL_CHECK_ERR values (SQL metacharacters)
 			}
@@ -595,7 +638,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 								bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
 										null, //url
 										param, sqlInjectionAttack,
-										extraInfo, getSolution(), msg4);
+										extraInfo, getSolution(), "", msg4);
 
 								sqlInjectionFoundForUrl = true;
 							}
@@ -732,7 +775,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
 									null, //url
 									param, sqlInjectionAttack,
-									extraInfo, getSolution(), msg2);
+									extraInfo, getSolution(), "", msg2);
 
 							sqlInjectionFoundForUrl = true;
 
@@ -785,7 +828,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 								bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
 										null, //url
 										param, sqlInjectionAttack,
-										extraInfo, getSolution(), msg2);
+										extraInfo, getSolution(), "", msg2);
 
 								sqlInjectionFoundForUrl = true;
 								//booleanBasedSqlInjectionFoundForParam = true;  //causes us to skip past the other entries in SQL_AND.  Only one will expose a vuln for a given param, since the database column is of only 1 type
@@ -882,7 +925,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - " + errorPatternRDBMS, getDescription(),
 								refreshedmessage.getRequestHeader().getURI().getURI(), //url
 								param, sqlInjectionAttack,
-								extraInfo, getSolution(), msg3);
+								extraInfo, getSolution(), matcherSQLUnion.group(), msg3);
 
 						//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
 						getKb().add(refreshedmessage.getRequestHeader().getURI(), "sql/" + errorPatternRDBMS, Boolean.TRUE);
@@ -985,7 +1028,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
 									null, //url
 									param, sqlInjectionAttack,
-									extraInfo, getSolution(), msg5);
+									extraInfo, getSolution(), "", msg5);
 
 							sqlInjectionFoundForUrl = true;
 						}
@@ -1047,7 +1090,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					bingo(Alert.RISK_HIGH, Alert.WARNING, vulnname, vulndesc,
 							refreshedmessage.getRequestHeader().getURI().getURI(), //url
 							param, sqlInjectionAttack,
-							"", getSolution(), getBaseMsg());
+							"", getSolution(), "", getBaseMsg());
 
 				} //not a login page
 			} //no sql Injection Found For Url
