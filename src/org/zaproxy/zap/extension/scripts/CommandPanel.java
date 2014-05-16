@@ -68,7 +68,6 @@ public class CommandPanel extends AbstractPanel {
 			((RTextScrollPane)jScrollPane).setLineNumbersEnabled(true);
 
 			jScrollPane.setName("ConsoleCommandjScrollPane");
-			jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
 		}
 		return jScrollPane;

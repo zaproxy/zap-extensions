@@ -1,19 +1,12 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>11</version>
+	<version>12</version>
 	<description>Supports all JRS 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Updated to use the latest core changes, other minor code changes (Issues 609, 1085, 1104 and 1105).<br>
-	Fixed an InvalidParameterException during add-on uninstallation (Issue 967).<br>
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Fixed inconsistencies in run/stop buttons (Issue 1023).<br>
-	Fixed a NullPointerException (Issue 1025).<br>
-	Added content-type to help pages (Issue 1080).<br>
-	Changed to allow to clear the output panel even if "clear on run" is enabled (Issue 1103).<br>
-	Updated add-on dir structure (Issue 1113).
+	Disabled "Word Wrap" by default to avoid scrolling performance degradation due to long lines (Issue 1160).
 	]]>
 	</changes>
 	<dependson/>
