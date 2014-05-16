@@ -100,7 +100,8 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 
 		setAntiAliasingEnabled(true);
 
-		setLineWrap(true);
+		// XXX Changed to `false` to avoid scrolling performance degradation due to wrapped text (Issue 1160).
+		setLineWrap(false);
 		
 		setHighlightCurrentLine(false);
 		setFadeCurrentLineHighlight(false);
