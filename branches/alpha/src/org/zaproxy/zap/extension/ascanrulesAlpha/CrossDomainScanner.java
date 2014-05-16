@@ -20,8 +20,6 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
@@ -31,18 +29,21 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import javax.xml.xpath.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathFactory;
+
 
 /**
  * A class to actively check if the web server is configured to allow Cross Domain access, from a malicious 
  * third party service, for instance. Currently checks for wildcards in Adobe's crossdomain.xml. 
  * TODO: check for SilverLight's clientaccesspolicy.xml 
  * 
- * @author 70pointer
+ * @author 70pointer@gmail.com
  *
  */
 public class CrossDomainScanner extends AbstractHostPlugin {
@@ -59,6 +60,7 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 	private static final String MESSAGE_PREFIX_ADOBE = "ascanalpha.crossdomain.adobe.";
 	private static final String MESSAGE_PREFIX_ADOBE_READ = "ascanalpha.crossdomain.adobe.read.";
 	private static final String MESSAGE_PREFIX_ADOBE_SEND = "ascanalpha.crossdomain.adobe.send.";
+	private static final String MESSAGE_PREFIX_SILVERLIGHT = "ascanalpha.crossdomain.silverlight.";
 
 	/**
 	 * Adobe's cross domain policy file name
@@ -125,95 +127,105 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 			//get the network details for the attack
 			URI originalURI = this.getBaseMsg().getRequestHeader().getURI();
 			
-			//retrieve the file
+			//retrieve the Adobe cross domain policy file, and assess it
 			HttpMessage crossdomainmessage= new HttpMessage (new URI(originalURI.getScheme(), originalURI.getAuthority(), "/"+ADOBE_CROSS_DOMAIN_POLICY_FILE, null, null));
 			sendAndReceive(crossdomainmessage, false);
 			byte [] crossdomainmessagebytes = crossdomainmessage.getResponseBody().getBytes();
 			
 			//parse the file. If it's not parseable, it might have been because of a 404
-			DocumentBuilderFactory docBuilderFactory;
-			DocumentBuilder docBuilder;
-			Document xmldoc;
-			try {
-				docBuilderFactory = DocumentBuilderFactory.newInstance();
-				docBuilder = docBuilderFactory.newDocumentBuilder();
-				//work around the "no protocol" issue by wrapping the content in a ByteArrayInputStream
-				xmldoc = docBuilder.parse(new InputSource(new ByteArrayInputStream(crossdomainmessagebytes)));
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();;
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();;
+			XPath xpath = (XPath) XPathFactory.newInstance().newXPath();
 				
-				NodeList nodelist = xmldoc.getElementsByTagName("cross-domain-policy");				
-				for ( int i=0; i< nodelist.getLength(); i++) {
-					Node policyNode = nodelist.item(i);
-					NodeList policyChildNodes  = policyNode.getChildNodes();
-					for ( int j = 0; j < policyChildNodes.getLength(); j++) {
-						//for each child node of cross-domain-policy
-						Node policyChildNode = policyChildNodes.item(j);
-						String nodeName = policyChildNode.getNodeName();
-						if ( nodeName == null) {
-							continue; //to the next node..
-						} else if (nodeName.equals ("allow-access-from")) {
-							//are "data load" (read) requests allowed from components hosted on arbitrary third party sites?
-							//TODO: also raise alert if too many "allow-access-from" domains are allowed? (even if not wildcarded)							
-							NamedNodeMap policyChildNodeAttribs = policyChildNode.getAttributes();
-							for (int k = 0; k < policyChildNodeAttribs.getLength(); k++) {
-								//for each attribute of cross-domain-policy >> allow-access-from
-								Node policyChildNodeAttribute = policyChildNodeAttribs.item(k);
-								if ( policyChildNodeAttribute.getNodeName().equals("domain")) {									
-									String domainValue = policyChildNodeAttribute.getNodeValue();
-									if ( domainValue.equals("*")) {
-										//oh dear me.
-										if (log.isInfoEnabled()) log.info("Bingo!  <allow-access-from domain=\"*\"");
-										bingo(	getRisk(), 
-												Alert.WARNING,
-												Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "name"),
-												Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"), 
-												crossdomainmessage.getRequestHeader().getURI().getURI(), //the url field 
-												"", //parameter being attacked: none.
-												"", //attack
-												Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ+ "extrainfo", "/"+ADOBE_CROSS_DOMAIN_POLICY_FILE),  //extrainfo
-												Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ +"soln"),  //solution
-												"<allow-access-from domain=\"*\"" ,     // evidence
-												crossdomainmessage   //the message on which to place the alert
-												);
-									}
-								}
-							}							
-						} else if (nodeName.equals ("allow-http-request-headers-from")) {
-							//are send requests allowed from components hosted on arbitrary third party sites? 
-							NamedNodeMap policyChildNodeAttribs = policyChildNode.getAttributes();
-							for (int k = 0; k < policyChildNodeAttribs.getLength(); k++) {
-								//for each attribute of cross-domain-policy >> allow-access-from
-								Node policyChildNodeAttribute = policyChildNodeAttribs.item(k);
-								if ( policyChildNodeAttribute.getNodeName().equals("domain")) {									
-									String domainValue = policyChildNodeAttribute.getNodeValue();
-									if ( domainValue.equals("*")) {
-										//oh dear, dear me.
-										if (log.isInfoEnabled()) log.info("Bingo!  <allow-http-request-headers-from domain=\"*\"");
-										bingo(	getRisk(), 
-												Alert.WARNING,
-												Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "name"),
-												Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"), 
-												crossdomainmessage.getRequestHeader().getURI().getURI(), //the url field 
-												"", //parameter being attacked: none.
-												"", //attack
-												Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND+ "extrainfo", "/"+ADOBE_CROSS_DOMAIN_POLICY_FILE),  //extrainfo
-												Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND +"soln"),  //solution
-												"<allow-http-request-headers-from domain=\"*\"" ,     // evidence
-												crossdomainmessage   //the message on which to place the alert
-												);
-									}
-								}
-							}
-						}
+			try {
+				//work around the "no protocol" issue by wrapping the content in a ByteArrayInputStream
+				Document adobeXmldoc = docBuilder.parse(new InputSource(new ByteArrayInputStream(crossdomainmessagebytes)));
+				
+				//check for cross domain read (data load) access
+				XPathExpression exprAllowAccessFromDomain = xpath.compile("/cross-domain-policy/allow-access-from/@domain"); 	//gets the domain attributes
+				NodeList exprAllowAccessFromDomainNodes = (NodeList) exprAllowAccessFromDomain.evaluate(adobeXmldoc, XPathConstants.NODESET);
+			    for (int i = 0; i < exprAllowAccessFromDomainNodes.getLength(); i++) {
+			    	String domain = exprAllowAccessFromDomainNodes.item(i).getNodeValue();
+			    	if ( domain.equals("*")) {
+						//oh dear me.
+						if (log.isInfoEnabled()) log.info("Bingo!  <allow-access-from domain=\"*\"");
+						bingo(	getRisk(), 
+								Alert.WARNING,
+								Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "name"),
+								Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"), 
+								crossdomainmessage.getRequestHeader().getURI().getURI(), //the url field 
+								"", //parameter being attacked: none.
+								"", //attack
+								Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ+ "extrainfo", "/"+ADOBE_CROSS_DOMAIN_POLICY_FILE),  //extrainfo
+								Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ +"soln"),  //solution
+								"<allow-access-from domain=\"*\"" ,     // evidence
+								crossdomainmessage   //the message on which to place the alert
+								);
 					}
-				}			
-			
+			    }
+			    //check for cross domain send (upload) access
+		    	XPathExpression exprRequestHeadersFromDomain = xpath.compile("/cross-domain-policy/allow-http-request-headers-from/@domain"); 	//gets the domain attributes
+		    	NodeList exprRequestHeadersFromDomainNodes = (NodeList) exprRequestHeadersFromDomain.evaluate(adobeXmldoc, XPathConstants.NODESET);
+			    for (int i = 0; i < exprRequestHeadersFromDomainNodes.getLength(); i++) {
+			    	String domain = exprRequestHeadersFromDomainNodes.item(i).getNodeValue();
+			    	if ( domain.equals("*")) {
+						//oh dear, dear me.
+						if (log.isInfoEnabled()) log.info("Bingo!  <allow-http-request-headers-from domain=\"*\"");
+						bingo(	getRisk(), 
+								Alert.WARNING,
+								Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "name"),
+								Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"), 
+								crossdomainmessage.getRequestHeader().getURI().getURI(), //the url field 
+								"", //parameter being attacked: none.
+								"", //attack
+								Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND+ "extrainfo", "/"+ADOBE_CROSS_DOMAIN_POLICY_FILE),  //extrainfo
+								Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND +"soln"),  //solution
+								"<allow-http-request-headers-from domain=\"*\"" ,     // evidence
+								crossdomainmessage   //the message on which to place the alert
+								);
+					}
+			    }			
 			} catch (SAXException | IOException e) {
 				log.error("An error occurred trying to parse "+ADOBE_CROSS_DOMAIN_POLICY_FILE+" as XML: "+ e);
-				return;
 			}
 			
+
+			//retrieve the Silverlight client access policy file, and assess it.
+			HttpMessage clientaccesspolicymessage= new HttpMessage (new URI(originalURI.getScheme(), originalURI.getAuthority(), "/"+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE, null, null));
+			sendAndReceive(clientaccesspolicymessage, false);
+			byte [] clientaccesspolicymessagebytes = clientaccesspolicymessage.getResponseBody().getBytes();
 			
+			//parse the file. If it's not parseable, it might have been because of a 404			
+			try {
+				//work around the "no protocol" issue by wrapping the content in a ByteArrayInputStream
+				Document silverlightXmldoc = docBuilder.parse(new InputSource(new ByteArrayInputStream(clientaccesspolicymessagebytes)));				
+				XPathExpression exprAllowFromUri = xpath.compile("/access-policy/cross-domain-access/policy/allow-from/domain/@uri"); 	//gets the uri attributes
+				//check the "allow-from" policies
+				NodeList exprAllowFromUriNodes = (NodeList) exprAllowFromUri.evaluate(silverlightXmldoc, XPathConstants.NODESET);
+			    for (int i = 0; i < exprAllowFromUriNodes.getLength(); i++) {
+			    	String uri = exprAllowFromUriNodes.item(i).getNodeValue();
+			    	if (uri.equals ("*")) {
+			    		//tut, tut, tut.
+						if (log.isInfoEnabled()) log.info("Bingo! "+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE+", at /access-policy/cross-domain-access/policy/allow-from/domain/@uri");
+						bingo(	getRisk(), 
+								Alert.WARNING,
+								Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "name"),
+								Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "desc"), 
+								clientaccesspolicymessage.getRequestHeader().getURI().getURI(), //the url field 
+								"", //parameter being attacked: none.
+								"", //attack
+								Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT+ "extrainfo"),  //extrainfo
+								Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT +"soln"),  //solution
+								"<domain uri=\"*\"" ,     // evidence
+								clientaccesspolicymessage   //the message on which to place the alert
+								);
+			    	}
+			    }			    
 			
+			} catch (SAXException | IOException e) {
+				log.error("An error occurred trying to parse "+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE+" as XML: "+ e);
+			}
+
 			
 		} catch (Exception e) {
 			//needed to catch exceptions from the "finally" statement 
