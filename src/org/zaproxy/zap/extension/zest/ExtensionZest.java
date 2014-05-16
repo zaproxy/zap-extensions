@@ -448,6 +448,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		ZestScriptWrapper sw = this.getZestTreeModel().getScriptWrapper(node);
 		sw.setContents(ZestJSON.toString(sw.getZestScript()));
 		sw.setChanged(true);
+		
+		if (this.getExtScript().getScriptUI() != null && this.getExtScript().getScriptUI().isScriptDisplayed(sw)) {
+			// We need to do this to prevent the UI slating any changes
+			this.getExtScript().getScriptUI().displayScript(sw);
+		}
+
 	}
 
 	public List<ScriptNode> getAllZestScriptNodes() {
