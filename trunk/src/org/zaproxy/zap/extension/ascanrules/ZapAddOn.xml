@@ -1,19 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>14</version>
+	<version>15</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-        Fix for TestRemoteFileInclude failing if Google return localized page.<br>
-        Moved PXXS tests from beta.<br>
-        Moved Command Injection from beta.<br>
-        Reviewed and enforced the External Redirect plugin.<br>
-        Removed duplicated TestRedirect plugin (it was a subset of the TestExternalRedirect one)<br>
-        Changed help file structure to support internationalisation (Issue 981).<br>
-    Added content-type to help pages (Issue 1080).<br>
-    Updated add-on dir structure (Issue 1113).
+        Tweaked the SQLi rule to maximize vuln detection and minimize fps (Issue 1195)<br>
 	]]>
     </changes>
 	<dependson/>
