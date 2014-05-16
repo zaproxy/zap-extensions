@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Zest - Scripting Security Tests</name>
-	<version>12</version>
+	<version>13</version>
 	<description>A graphical security scripting language..</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Moved templates from core<br>
-	Updated to use the latest core changes, other minor code changes (Issues 416, 609,  503, 1085, 1104 and 1105).<br>
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).<br>
-	Updated add-on dir structure (Issue 1113).
+	Zest issue 57 Variables not always replaced in assignments<br>
+	ZAP issue 1200 Zest script changes get overwritten by the UI
 	]]>
 	</changes>
 	<dependson/>

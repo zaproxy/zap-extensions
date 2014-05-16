@@ -159,6 +159,14 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	public String getContents() {
 		return ZestJSON.toString(this.zestScript);
 	}
+	
+	@Override
+	public void setContents(String script) {
+		super.setContents(script);
+		original.setContents(script);	// This gets cloned when the script is run
+		zestScript = (ZestScript) ZestJSON.fromString(script);
+	}
+
 
 	@Override
 	public boolean equals (Object script) {
