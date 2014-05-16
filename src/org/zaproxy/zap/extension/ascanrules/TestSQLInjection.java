@@ -452,7 +452,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				} else {
 					prefixStrings = new String[]{""};
 				}
-				for (int prefixIndex = 0; prefixIndex < prefixStrings.length; prefixIndex++) {
+				for (int prefixIndex = 0; prefixIndex < prefixStrings.length && !sqlInjectionFoundForUrl; prefixIndex++) {
 
 					//new message for each value we attack with
 					HttpMessage msg1 = getNewMsg();
@@ -595,7 +595,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					String expressionBodyOutput[] = {modifiedExpressionOutputUnstripped, modifiedExpressionOutputStripped};
 					boolean strippedOutput[] = {false, true};
 
-					for (int booleanStrippedUnstrippedIndex = 0; booleanStrippedUnstrippedIndex < 2; booleanStrippedUnstrippedIndex++) {
+					 for (int booleanStrippedUnstrippedIndex = 0; booleanStrippedUnstrippedIndex < 2 && !sqlInjectionFoundForUrl; booleanStrippedUnstrippedIndex++) {
 						//if the results of the modified request match the original query, we may be onto something. 
 						if (expressionBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) == 0) {
 							if (this.debugEnabled) {
