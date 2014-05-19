@@ -170,20 +170,24 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		        	            if (!attackWorked) {
 		        	            	log.debug("Failed to find vuln in script attribute on " + sourceMsg.getRequestHeader().getURI());
 		        	            }
-		
+
 		        			} else if (context.isInUrlAttribute()) {
 		        				// Its a url attribute
 		        	            List<HtmlContext> contexts2 = performAttack (sourceMsg, param, "javascript:alert(1);", sinkMsg, context, 0);
-		
-		        	            if (contexts2.size() > 0) {
-		    	            		// Yep, its vulnerable
-		    						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
-		    								otherInfo, contexts2.get(0).getMsg());
-		    						attackWorked = true;
+
+		        	            for (HtmlContext ctx : contexts2) {
+		        	            	if (ctx.isInUrlAttribute()) {
+		        	            		// Yep, its vulnerable
+		        						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, ctx.getTarget(), 
+		            							"", ctx.getTarget(), ctx.getMsg());
+		        						attackWorked = true;
+		        	            		break;
+		        	            	}
 		        	            }
 		        	            if (!attackWorked) {
 		        	            	log.debug("Failed to find vuln in url attribute on " + sourceMsg.getRequestHeader().getURI());
 		        	            }
+
 		        			}
 		            		if (! attackWorked && context.isInTagWithSrc()) {
 		            			// Its in an attribute in a tag which supports src attributes
