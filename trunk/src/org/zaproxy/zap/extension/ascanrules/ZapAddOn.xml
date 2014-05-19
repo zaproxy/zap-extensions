@@ -7,6 +7,7 @@
 	<changes>
 	<![CDATA[
         Tweaked the SQLi rule to maximize vuln detection and minimize fps (Issue 1195)<br>
+        Fixed XSS false positive in non URL tag attributes (Issue 964)
 	]]>
     </changes>
 	<dependson/>
