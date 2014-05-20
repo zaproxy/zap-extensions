@@ -29,7 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * An example ZAP extension which adds a top level menu item.
+ * A short Getting Started with ZAP Guide.
  */
 public class ExtensionGettingStarted extends ExtensionAdaptor {
 
@@ -49,7 +49,6 @@ public class ExtensionGettingStarted extends ExtensionAdaptor {
     }
 
     private void initialize() {
-        // TODO Initialize extension upon creation. If no initialization is required, delete method
     }
 
     @Override
