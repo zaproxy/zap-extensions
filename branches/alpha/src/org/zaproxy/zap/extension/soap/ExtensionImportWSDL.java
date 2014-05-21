@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.importWSDL;
+package org.zaproxy.zap.extension.soap;
 
 import groovy.xml.MarkupBuilder;
 
@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -80,8 +81,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     private int threadId = 1;
 
 	private static Logger log = Logger.getLogger(ExtensionImportWSDL.class);
-	private static String shared = "Nothing";
-	
+	//Dynamic table filled with all SOAP operations detected from multiple WSDL files.
+	private static HashMap<String, ArrayList<String>> soapOperations = new HashMap<String, ArrayList<String>>(); 
 	
 	public ExtensionImportWSDL() {
 		super();
@@ -124,9 +125,9 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
 	private ZapMenuItem getMenuImportWSDL() {
         if (menuImportWSDL == null) {
-        	menuImportWSDL = new ZapMenuItem("importWSDL.topmenu.tools.importWSDL",
+        	menuImportWSDL = new ZapMenuItem("soap.topmenu.tools.importWSDL",
         			KeyStroke.getKeyStroke(KeyEvent.VK_I, Event.CTRL_MASK, false));
-        	menuImportWSDL.setToolTipText(Constant.messages.getString("importWSDL.topmenu.tools.importWSDL.tooltip"));
+        	menuImportWSDL.setToolTipText(Constant.messages.getString("soap.topmenu.tools.importWSDL.tooltip"));
 
         	menuImportWSDL.addActionListener(new java.awt.event.ActionListener() {
                 @Override
@@ -175,6 +176,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	        StringBuilder sb = new StringBuilder();
 	        List<Service> services = wsdl.getServices();
 	        
+	        soapOperations.put(file.getName(), new ArrayList<String>());
+	        
 	        /* Endpoint identification. */
 	        for(Service service : services){
 	        	for(Port port: service.getPorts()){
@@ -207,7 +210,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 			    	    /* Identifies operations for each endpoint.. */
 		    	        for(BindingOperation bindOp : operations){
 		    	        	sb.append("|\t|-- SOAP 1."+soapVersion+" Operation: "+bindOp.getName());
-		    	        	shared += " "+bindOp.getName();	    	        	
+		    	        	/* Adds this operation to the global operatons table. */
+		    	        	soapOperations.get(file.getName()).add(bindOp.getName());	    	        	
 		    	        	
 		    	        	/* Identifies operation's parameters. */
 		    	        	List<Part> requestParts = null;    	        	
@@ -361,7 +365,18 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		}
 	}
 	
-	public static String getShared(){
-		return shared;
+	/* Returns all detected SOAP operations as a fixed bidimensional array. Each row represents a different WSDL file. */
+	public static String[][] getSoapOperations(){
+		String[][] operationsTable = new String[soapOperations.size()][];
+		int i = 0;
+		for(ArrayList<String> ops : soapOperations.values()){
+			String[] row = new String[ops.size()];
+			ops.toArray(row);
+			operationsTable[i] = row;
+			i++;
+		}
+		return operationsTable;
 	}
+	
+	
 }
