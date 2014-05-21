@@ -7,10 +7,10 @@
 	<changes>First version</changes>
 	<dependson/>
 	<extensions>
-	    <extension>org.zaproxy.zap.extension.importWSDL.ExtensionImportWSDL</extension>
+	    <extension>org.zaproxy.zap.extension.soap.ExtensionImportWSDL</extension>
 	</extensions>
 	<ascanrules>
-	  	<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SOAPActionSpoofingActiveScanner</ascanrule>
+	  	<ascanrule>org.zaproxy.zap.extension.soap.SOAPActionSpoofingActiveScanner</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>

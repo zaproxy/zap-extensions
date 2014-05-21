@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.importWSDL;
+package org.zaproxy.zap.extension.soap;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
  */
 public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 
-	private static final String MESSAGE_PREFIX = "ascanalpha.soapactionspoofing.";
+	private static final String MESSAGE_PREFIX = "soap.soapactionspoofing.";
 
 	private static Logger log = Logger.getLogger(SOAPActionSpoofingActiveScanner.class);
 	
@@ -90,27 +90,35 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 			HttpMessage msg = getNewMsg();
 			
 			/* Modifies the request to try an attack. */
-			String actionOp = "action";
-			try{
-        		System.out.println(org.zaproxy.zap.extension.importWSDL.ExtensionImportWSDL.getShared());
-        	}catch (NoClassDefFoundError e){
-        		System.out.println("CLASS NOT FOUND: "+e.getMessage());
-        	}	
 			
-			HttpRequestHeader header = msg.getRequestHeader();
-			/* Available ops should be known here from the imported WSDL file. */
-			header.setHeader("SOAPAction", actionOp);
-			
-			/* Sends the modified request. */
-			sendAndReceive(msg);
-			
-			/* Checks the response. */
-			String responseContent = new String(msg.getResponseBody().getBytes());
-			
-			/* Raises an alert when necessary. */
-			if (responseContent.contains("soapenv")) {
-		   		bingo(Alert.RISK_LOW, Alert.WARNING, null, null, "soapenv", null, msg);
+			/*ExtensionImportWSDL wsdlHandler = (ExtensionImportWSDL) Control.getSingleton().getExtensionLoader().getExtension(ExtensionImportWSDL.NAME);		
+			if(wsdlHandler == null){
+				log.warn(this.getName()+" could not load the wsdlHandler extension");
 				return;
+			}
+			String[][] soapOperations = wsdlHandler.getSoapOperations();*/	
+			
+			String[][] soapOperations = ExtensionImportWSDL.getSoapOperations();
+			
+			for(int i = 0; i < soapOperations.length; i++){
+				boolean vulnerable = false;
+				for(int j = 0; j < soapOperations[i].length && !vulnerable; j++){
+					HttpRequestHeader header = msg.getRequestHeader();
+					/* Available ops should be known here from the imported WSDL file. */
+					header.setHeader("SOAPAction", soapOperations[i][j]);
+					
+					/* Sends the modified request. */
+					sendAndReceive(msg);
+					
+					/* Checks the response. */
+					String responseContent = new String(msg.getResponseBody().getBytes());
+					
+					/* Raises an alert when necessary. */
+					if (responseContent.contains("soapenv")) {
+				   		bingo(Alert.RISK_LOW, Alert.WARNING, null, null, "soapenv", null, msg);
+						vulnerable = true;
+					}
+				}
 			}
 			
 		} catch (Exception e) {
