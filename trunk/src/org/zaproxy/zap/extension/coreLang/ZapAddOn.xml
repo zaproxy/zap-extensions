@@ -3,7 +3,7 @@
 	<name>Core Language Files</name>
 	<description>Translations of the core language files</description>
 	<author>ZAP Dev Team</author>
-	<version>1</version>
+	<version>2</version>
 	<url>https://crowdin.net/project/owasp-zap</url>
 	<changes>These are the language files included with the 2.3.1 release</changes>
 	<dependson/>
