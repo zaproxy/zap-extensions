@@ -82,11 +82,20 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
 	private static Logger log = Logger.getLogger(ExtensionImportWSDL.class);
 	//Dynamic table filled with all SOAP operations detected from multiple WSDL files.
-	private static HashMap<String, ArrayList<String>> soapOperations = new HashMap<String, ArrayList<String>>(); 
+	private HashMap<String, ArrayList<String>> soapOperations = new HashMap<String, ArrayList<String>>(); 
+	
+	private volatile static ExtensionImportWSDL singleton = null;
 	
 	public ExtensionImportWSDL() {
 		super();
 		initialize();
+		if (singleton == null){
+			synchronized (ExtensionImportWSDL.class){
+				if (singleton == null){
+					singleton = this;
+				}
+			}
+		}
 	}
 
 	/**
@@ -366,7 +375,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	}
 	
 	/* Returns all detected SOAP operations as a fixed bidimensional array. Each row represents a different WSDL file. */
-	public static String[][] getSoapOperations(){
+	public String[][] getSoapOperations(){
 		String[][] operationsTable = new String[soapOperations.size()][];
 		int i = 0;
 		for(ArrayList<String> ops : soapOperations.values()){
@@ -378,5 +387,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		return operationsTable;
 	}
 	
+	public static ExtensionImportWSDL getInstance(){
+		return singleton;
+	}
 	
 }
