@@ -27,19 +27,18 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
- * Strict-Transport-Security Header Not Set passive scan rule 
+ * X-Powered-By Information Leak passive scan rule 
  * https://code.google.com/p/zaproxy/issues/detail?id=1169
  * @author kingthorin+owaspzap@gmail.com
  */
-public class StrictTransportSecurityScanner extends PluginPassiveScanner{
+public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 
-	private static final String MESSAGE_PREFIX = "pscanalpha.stricttransportsecurity.";
-	private static final int PLUGIN_ID = 10035;
+	private static final String MESSAGE_PREFIX = "pscanalpha.xpoweredbyheaderinfoleak.";
+	private static final int PLUGIN_ID = 10037;
 	
 	private PassiveScanThread parent = null;
 	private static Logger logger = Logger.getLogger(StrictTransportSecurityScanner.class);
@@ -57,30 +56,30 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
-		if (msg.getResponseBody().length() > 0 && 
-				msg.getResponseHeader().isText() &&
-				msg.getRequestHeader().getURI().getScheme().equals(HttpHeader.HTTPS)){ //No point reporting for non-SSL resources
-			//Content available via both HTTPS and HTTP is a separate though related issue
-			Vector<String> STSOption = msg.getResponseHeader().getHeaders("Strict-Transport-Security");
-			if (STSOption == null) { // Header NOT found
-				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
-						getName()); //Name
+	
+		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()){
+		Vector<String> xpbOptions = msg.getResponseHeader().getHeaders("X-Powered-By");
+			if (xpbOptions != null) { //Header Found
+				for (String xpbDirective : xpbOptions) {
+					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
+						getName()); 
 			    		alert.setDetail(
-			    			getDescription(), //Description
-			    			msg.getRequestHeader().getURI().toString(), //URI
-			    			"",	// Param
-			    			"", // Attack
-			    			"", // Other info
-			    			getSolution(), //Solution
-			    			getReference(), //References
-			    			"",	// Evidence
-			    			0,	// CWE Id
-			    			0,	// WASC Id
-			    			msg); //HttpMessage
-			    		parent.raiseAlert(id, alert);
+			    				getDescription(), //Description
+			    				msg.getRequestHeader().getURI().toString(), //URI
+			    				"",	// Param
+			    				"", // Attack
+			    				"", // Other info
+			    				getSolution(), //Solution
+			    				getReference(), //References
+			    				xpbDirective,	// Evidence - Return the X-Powered-By Header info
+			    				200, // CWE Id //TODO: Why don't these come from messages.properties? Add getInt?
+			    				13,	// WASC Id //TODO: Why don't these come from messages.properties? Add getInt?
+			    				msg); //HttpMessage
+			    	parent.raiseAlert(id, alert);
+					}
 				}
-		}
-	    if (logger.isDebugEnabled()) {
+			}
+		    if (logger.isDebugEnabled()) {
 	    	logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
 	    }
 	}
@@ -94,7 +93,7 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 		return PLUGIN_ID;
 	}
 	
-	public String getName() {
+	public String getName(){
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
@@ -109,9 +108,9 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 	private String getReference() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
-
+	
     public int getCategory() {
         return Category.MISC;
     }
-
 }
+

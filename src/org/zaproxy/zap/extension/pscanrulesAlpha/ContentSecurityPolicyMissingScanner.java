@@ -27,19 +27,18 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
- * Strict-Transport-Security Header Not Set passive scan rule 
+ * Content Security Policy Header Missing passive scan rule 
  * https://code.google.com/p/zaproxy/issues/detail?id=1169
  * @author kingthorin+owaspzap@gmail.com
  */
-public class StrictTransportSecurityScanner extends PluginPassiveScanner{
+public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 
-	private static final String MESSAGE_PREFIX = "pscanalpha.stricttransportsecurity.";
-	private static final int PLUGIN_ID = 10035;
+	private static final String MESSAGE_PREFIX = "pscanalpha.contentsecuritypolicymissing.";
+	private static final int PLUGIN_ID = 10038;
 	
 	private PassiveScanThread parent = null;
 	private static Logger logger = Logger.getLogger(StrictTransportSecurityScanner.class);
@@ -57,31 +56,39 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
-		if (msg.getResponseBody().length() > 0 && 
-				msg.getResponseHeader().isText() &&
-				msg.getRequestHeader().getURI().getScheme().equals(HttpHeader.HTTPS)){ //No point reporting for non-SSL resources
-			//Content available via both HTTPS and HTTP is a separate though related issue
-			Vector<String> STSOption = msg.getResponseHeader().getHeaders("Strict-Transport-Security");
-			if (STSOption == null) { // Header NOT found
+	
+		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
+			//Get the various CSP headers
+			Vector<String> cspOptions = msg.getResponseHeader().getHeaders("Content-Security-Policy");
+			Vector<String> xcspOptions = msg.getResponseHeader().getHeaders("X-Content-Security-Policy");
+			Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders("X-WebKit-CSP");
+			//If it's not null or empty add it to a single collection
+			if (xcspOptions != null && xcspOptions.isEmpty() == false) 
+				cspOptions.addAll(xcspOptions);
+			//If it's not null or empty add it to a single collection
+			if (xwkcspOptions !=null && xwkcspOptions.isEmpty() == false) 
+				cspOptions.addAll(xwkcspOptions);
+
+			if (cspOptions == null || cspOptions.isEmpty() == true) { //Header NOT Found (was null or empty)
 				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
-						getName()); //Name
-			    		alert.setDetail(
-			    			getDescription(), //Description
-			    			msg.getRequestHeader().getURI().toString(), //URI
-			    			"",	// Param
-			    			"", // Attack
-			    			"", // Other info
-			    			getSolution(), //Solution
-			    			getReference(), //References
-			    			"",	// Evidence
-			    			0,	// CWE Id
-			    			0,	// WASC Id
-			    			msg); //HttpMessage
-			    		parent.raiseAlert(id, alert);
-				}
+					getName()); 
+		   			alert.setDetail(
+		   				getDescription(), //Description
+		   				msg.getRequestHeader().getURI().toString(), //URI
+		   				"",	// Param
+		   				"", // Attack
+		   				"", // Other info
+		   				getSolution(), //Solution
+		   				getReference(), //References
+		   				"",	// Evidence
+		   				0, // 
+		   				0,	//
+		   				msg); //HttpMessage
+		   	parent.raiseAlert(id, alert);
+			}
 		}
-	    if (logger.isDebugEnabled()) {
-	    	logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
+		if (logger.isDebugEnabled()) {
+			logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
 	    }
 	}
 
@@ -94,7 +101,7 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 		return PLUGIN_ID;
 	}
 	
-	public String getName() {
+	public String getName(){
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
@@ -109,9 +116,8 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 	private String getReference() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
-
+	
     public int getCategory() {
         return Category.MISC;
     }
-
 }
