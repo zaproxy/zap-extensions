@@ -98,7 +98,7 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 			}
 			String[][] soapOperations = wsdlHandler.getSoapOperations();*/	
 			
-			String[][] soapOperations = ExtensionImportWSDL.getInstance().getSoapOperations();
+			String[][] soapOperations = ImportWSDL.getInstance().getSoapOperations();
 			
 			for(int i = 0; i < soapOperations.length; i++){
 				boolean vulnerable = false;
