@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -81,21 +80,12 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     private int threadId = 1;
 
 	private static Logger log = Logger.getLogger(ExtensionImportWSDL.class);
-	//Dynamic table filled with all SOAP operations detected from multiple WSDL files.
-	private HashMap<String, ArrayList<String>> soapOperations = new HashMap<String, ArrayList<String>>(); 
-	
-	private volatile static ExtensionImportWSDL singleton = null;
+	private ImportWSDL wsdlImporter= null;
 	
 	public ExtensionImportWSDL() {
 		super();
 		initialize();
-		if (singleton == null){
-			synchronized (ExtensionImportWSDL.class){
-				if (singleton == null){
-					singleton = this;
-				}
-			}
-		}
+		wsdlImporter = ImportWSDL.getInstance();
 	}
 
 	/**
@@ -185,8 +175,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	        StringBuilder sb = new StringBuilder();
 	        List<Service> services = wsdl.getServices();
 	        
-	        soapOperations.put(file.getName(), new ArrayList<String>());
-	        
 	        /* Endpoint identification. */
 	        for(Service service : services){
 	        	for(Port port: service.getPorts()){
@@ -220,7 +208,15 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		    	        for(BindingOperation bindOp : operations){
 		    	        	sb.append("|\t|-- SOAP 1."+soapVersion+" Operation: "+bindOp.getName());
 		    	        	/* Adds this operation to the global operatons table. */
-		    	        	soapOperations.get(file.getName()).add(bindOp.getName());	    	        	
+		    	        	String soapActionName = "";
+		    	        	try{
+		    	        		soapActionName = bindOp.getOperation().getSoapAction();    	        			
+		    	        	}catch(NullPointerException e){
+		    	        		// SOAP Action not defined for this operation.
+		    	        	}
+		    	        	if(!soapActionName.trim().equals("")){
+		    	        		wsdlImporter.putOperation(file.getName(),soapActionName);
+		    	        	}	    	        	
 		    	        	
 		    	        	/* Identifies operation's parameters. */
 		    	        	List<Part> requestParts = null;    	        	
@@ -372,23 +368,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		} catch (MalformedURLException e) {
 			return null;
 		}
-	}
-	
-	/* Returns all detected SOAP operations as a fixed bidimensional array. Each row represents a different WSDL file. */
-	public String[][] getSoapOperations(){
-		String[][] operationsTable = new String[soapOperations.size()][];
-		int i = 0;
-		for(ArrayList<String> ops : soapOperations.values()){
-			String[] row = new String[ops.size()];
-			ops.toArray(row);
-			operationsTable[i] = row;
-			i++;
-		}
-		return operationsTable;
-	}
-	
-	public static ExtensionImportWSDL getInstance(){
-		return singleton;
 	}
 	
 }
