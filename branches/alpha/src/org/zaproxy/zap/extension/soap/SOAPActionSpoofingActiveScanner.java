@@ -17,6 +17,17 @@
  */
 package org.zaproxy.zap.extension.soap;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPMessage;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -24,6 +35,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 /**
  * SOAP Action Spoofing Active Scanner
@@ -88,41 +101,101 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 		try {
 			/* Retrieves a good request. */
 			HttpMessage msg = getNewMsg();
-			
-			/* Modifies the request to try an attack. */
-			
-			/*ExtensionImportWSDL wsdlHandler = (ExtensionImportWSDL) Control.getSingleton().getExtensionLoader().getExtension(ExtensionImportWSDL.NAME);		
-			if(wsdlHandler == null){
-				log.warn(this.getName()+" could not load the wsdlHandler extension");
-				return;
-			}
-			String[][] soapOperations = wsdlHandler.getSoapOperations();*/	
-			
-			String[][] soapOperations = ImportWSDL.getInstance().getSoapOperations();
-			
-			for(int i = 0; i < soapOperations.length; i++){
-				boolean vulnerable = false;
-				for(int j = 0; j < soapOperations[i].length && !vulnerable; j++){
-					HttpRequestHeader header = msg.getRequestHeader();
-					/* Available ops should be known here from the imported WSDL file. */
-					header.setHeader("SOAPAction", soapOperations[i][j]);
-					
-					/* Sends the modified request. */
-					sendAndReceive(msg);
-					
-					/* Checks the response. */
-					String responseContent = new String(msg.getResponseBody().getBytes());
-					
-					/* Raises an alert when necessary. */
-					if (responseContent.contains("soapenv")) {
-				   		bingo(Alert.RISK_LOW, Alert.WARNING, null, null, "soapenv", null, msg);
-						vulnerable = true;
+			/* This scan is only applied to SOAP 1.1 messages. */
+			if(msg.getRequestHeader().getHeader("SOAPAction") != null &&
+			   msg.getRequestBody().length() > 0){
+				
+				HttpMessage originalMsg = msg;
+				
+				/* Modifies the request to try attacks. */
+				String[][] soapOperations = ImportWSDL.getInstance().getSoapOperations();
+				
+				for(int i = 0; i < soapOperations.length; i++){
+					String[] soapOpsFile = soapOperations[i];
+					boolean vulnerable = false;
+					for(int j = 0; j < soapOpsFile.length && !vulnerable; j++){
+						HttpRequestHeader header = msg.getRequestHeader();
+						/* Available ops should be known here from the imported WSDL file. */				
+						header.setHeader("SOAPAction", soapOpsFile[j]);
+						msg.setRequestHeader(header);
+						
+						/* Sends the modified request. */
+						sendAndReceive(msg);
+						
+						/* Checks the response. */
+						vulnerable = scanResponse(msg, originalMsg);
 					}
 				}
 			}
-			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
+		}	
+	}
+
+	private boolean scanResponse(HttpMessage msg, HttpMessage originalMsg){
+		String responseContent = new String(msg.getResponseBody().getBytes());
+		responseContent = responseContent.trim();
+		
+		if (responseContent.length() <= 0){
+			bingo(Alert.RISK_LOW, Alert.WARNING, null, null, "Response is empty.", null, msg);
+			return false;
+		}
+		
+  
+	    SOAPMessage soapMsg = null;
+		try {
+			MessageFactory factory = MessageFactory.newInstance();
+			soapMsg = factory.createMessage(
+			        new MimeHeaders(),
+			        new ByteArrayInputStream(responseContent.getBytes(Charset
+			                .forName(msg.getResponseBody().getCharset()))));	
+			
+			/* Looks for fault code. */
+			SOAPBody body = soapMsg.getSOAPBody();
+			SOAPFault fault = body.getFault();
+			if (fault != null){
+				/* A fault code is what is expected from a secured configuration. */
+				return false;
+			}
+			
+			// Body child.
+			NodeList bodyList = body.getChildNodes();
+			if (bodyList.getLength() <= 0) return false;
+			
+			/* Prepares original request to compare it. */
+			String originalContent = originalMsg.getResponseBody().toString();
+			SOAPMessage originalSoapMsg = factory.createMessage(
+			        new MimeHeaders(),
+			        new ByteArrayInputStream(originalContent.getBytes(Charset
+			                .forName(originalMsg.getResponseBody().getCharset()))));
+			
+			/* Comparison between original response body and attack response body. */
+			SOAPBody originalBody = originalSoapMsg.getSOAPBody();
+			NodeList originalBodyList = originalBody.getChildNodes();
+			if(bodyList.getLength() == originalBodyList.getLength()){
+				boolean match = true;
+				for(int i = 0; i < bodyList.getLength() && match; i++){
+					Node node = bodyList.item(i);
+					Node oNode = originalBodyList.item(i);
+					if (node.getNodeName() != oNode.getNodeName()) match = false;
+				}
+				if (match){
+					/* Both responses have the same content. The SOAPAction header has been probably ignored. */
+					bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, null, "The SOAPAction header has been probably ignored.", null, msg);
+					return true;
+				}else{
+					/* The SOAPAction header has been processed and an operation which is not the original one has been executed. */
+					bingo(Alert.RISK_HIGH, Alert.WARNING, null, null, "The SOAPAction operation has been executed.", null, msg);
+					return true;
+				}				
+			}else{
+				/* The SOAPAction header has been processed and an operation which is not the original one has been executed. */
+				bingo(Alert.RISK_HIGH, Alert.WARNING, null, null, "The SOAPAction operation has been executed.", null, msg);
+				return true;
+			}
+		} catch (IOException | SOAPException e) {
+			bingo(Alert.RISK_LOW, Alert.WARNING, null, null, "Response has an invalid format.", null, msg);
+			return false;
 		}	
 	}
 
