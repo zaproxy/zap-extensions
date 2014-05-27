@@ -41,7 +41,7 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 	private static final int PLUGIN_ID = 10038;
 	
 	private PassiveScanThread parent = null;
-	private static Logger logger = Logger.getLogger(StrictTransportSecurityScanner.class);
+	private static Logger logger = Logger.getLogger(ContentSecurityPolicyMissingScanner.class);
 	
 	@Override
 	public void setParent(PassiveScanThread parent) {
