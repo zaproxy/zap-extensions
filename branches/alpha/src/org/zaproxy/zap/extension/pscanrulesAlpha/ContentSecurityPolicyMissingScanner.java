@@ -59,17 +59,23 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 	
 		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
 			//Get the various CSP headers
+			boolean headerFound = false;
 			Vector<String> cspOptions = msg.getResponseHeader().getHeaders("Content-Security-Policy");
+			//If it's not null or empty then we found one
+			if (cspOptions != null && cspOptions.isEmpty() == false) 
+				headerFound = true;
+			
 			Vector<String> xcspOptions = msg.getResponseHeader().getHeaders("X-Content-Security-Policy");
-			Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders("X-WebKit-CSP");
-			//If it's not null or empty add it to a single collection
+			//If it's not null or empty then we found one
 			if (xcspOptions != null && xcspOptions.isEmpty() == false) 
-				cspOptions.addAll(xcspOptions);
-			//If it's not null or empty add it to a single collection
+				headerFound = true;
+			
+			Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders("X-WebKit-CSP");
+			//If it's not null or empty then we found one
 			if (xwkcspOptions !=null && xwkcspOptions.isEmpty() == false) 
-				cspOptions.addAll(xwkcspOptions);
+				headerFound = true;
 
-			if (cspOptions == null || cspOptions.isEmpty() == true) { //Header NOT Found (was null or empty)
+			if (!headerFound) { //NOT Header Found 
 				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
 					getName()); 
 		   			alert.setDetail(
