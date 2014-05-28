@@ -102,28 +102,31 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 			/* Retrieves a good request. */
 			HttpMessage msg = getNewMsg();
 			/* This scan is only applied to SOAP 1.1 messages. */
-			if(msg.getRequestHeader().getHeader("SOAPAction") != null &&
-			   msg.getRequestBody().length() > 0){
+			String currentHeader = msg.getRequestHeader().getHeader("SOAPAction").trim();
+			if(currentHeader != null && msg.getRequestBody().length() > 0){
 				
 				HttpMessage originalMsg = msg;
 				
-				/* Modifies the request to try attacks. */
+				/* Retrieves available operations to try attacks. */
 				String[][] soapOperations = ImportWSDL.getInstance().getSoapOperations();
 				
 				for(int i = 0; i < soapOperations.length; i++){
 					String[] soapOpsFile = soapOperations[i];
 					boolean vulnerable = false;
 					for(int j = 0; j < soapOpsFile.length && !vulnerable; j++){
-						HttpRequestHeader header = msg.getRequestHeader();
-						/* Available ops should be known here from the imported WSDL file. */				
-						header.setHeader("SOAPAction", soapOpsFile[j]);
-						msg.setRequestHeader(header);
-						
-						/* Sends the modified request. */
-						sendAndReceive(msg);
-						
-						/* Checks the response. */
-						vulnerable = scanResponse(msg, originalMsg);
+						/* Skips the original case. */
+						if(!currentHeader.equals(soapOpsFile[j])){
+							HttpRequestHeader header = msg.getRequestHeader();
+							/* Available ops should be known here from the imported WSDL file. */				
+							header.setHeader("SOAPAction", soapOpsFile[j]);
+							msg.setRequestHeader(header);
+							
+							/* Sends the modified request. */
+							sendAndReceive(msg);
+							
+							/* Checks the response. */
+							vulnerable = scanResponse(msg, originalMsg);
+						}
 					}
 				}
 			}
