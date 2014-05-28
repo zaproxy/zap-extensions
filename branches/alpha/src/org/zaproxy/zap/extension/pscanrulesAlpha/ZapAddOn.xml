@@ -1,15 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>3</version>
+	<version>4</version>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Changed passive scanners to expose its IDs (Issue Issue 1101).<br>
-	Updated add-on dir structure (Issue 1113).<br>
-	Added example rules.
+	Added various checks per Issue 1169.<br>
 	]]>
 	</changes>
 	<dependson/>
@@ -19,9 +16,17 @@
 	<ascanrules/>
 	<pscanrules>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.Base64Disclosure</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ContentSecurityPolicyMissingScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CrossDomainMisconfiguration</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.DirectoryBrowsingScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ExampleFilePassiveScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ExampleSimplePassiveScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HashDisclosureScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HeartBleedScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormLoadScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormPostScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ServerHeaderInfoLeakScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.SourceCodeDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.SourceCodeDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.TimestampDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledCharsetScanner</pscanrule>
@@ -29,6 +34,9 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledHTMLAttributesScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledJavascriptEventScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ViewStateDecoder</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XBackendServerInformationLeak</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XPoweredByHeaderInfoLeakScanner</pscanrule>
 	</pscanrules>
 	<filters/>
 	<files>
