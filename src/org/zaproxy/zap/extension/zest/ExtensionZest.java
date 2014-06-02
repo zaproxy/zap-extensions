@@ -51,7 +51,6 @@ import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
 import org.mozilla.zest.core.v1.ZestFieldDefinition;
-import org.mozilla.zest.core.v1.ZestJSON;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
@@ -446,7 +445,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		logger.debug("Updated node=" + node.getNodeName());
 		this.getZestTreeModel().update(node);
 		ZestScriptWrapper sw = this.getZestTreeModel().getScriptWrapper(node);
-		sw.setContents(ZestJSON.toString(sw.getZestScript()));
 		sw.setChanged(true);
 		
 		if (this.getExtScript().getScriptUI() != null && this.getExtScript().getScriptUI().isScriptDisplayed(sw)) {
@@ -527,14 +525,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 					script.add(req);
 				} else if (parentZe instanceof ZestConditional) {
 					if (ZestZapUtils.getShadowLevel(parent) == 2) {
-						((ZestConditional) ZestZapUtils.getElement(parent))
-								.addElse(req);
-					} else if (ZestZapUtils.getShadowLevel(parent) == 1) {
-						((ZestConditional) ZestZapUtils.getElement(parent))
-								.addIf(req);
+						((ZestConditional) ZestZapUtils.getElement(parent)).addElse(req);
 					} else {
-						// TODO ((ZestExpression)
-						// ZestZapUtils.getElement(parent))
+						((ZestConditional) ZestZapUtils.getElement(parent)).addIf(req);
 					}
 				} else if (parentZe instanceof ZestLoop<?>) {
 					((ZestLoop<?>) ZestZapUtils.getElement(parent))
@@ -686,8 +679,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			if (ZestZapUtils.getShadowLevel(parent) == 0) {
 				parent = (ScriptNode) parent.getParent().getChildAfter(parent);
 			}
-			ZestConditional zc = (ZestConditional) ZestZapUtils
-					.getElement(parent);
+			ZestConditional zc = (ZestConditional) ZestZapUtils.getElement(parent);
 			if (ZestZapUtils.getShadowLevel(parent) == 2) {
 				zc.addElse(newChild);
 			} else {
