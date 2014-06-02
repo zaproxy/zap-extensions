@@ -86,7 +86,6 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		this.setType(script.getType());
 		this.setEnabled(script.isEnabled());
 		this.setFile(script.getFile());
-		this.setContents(script.getContents());
 		this.setLoadOnStart(script.isLoadOnStart());
 		this.setChanged(false);
 	}
@@ -148,6 +147,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	}
 	
 	protected ZestScriptWrapper clone() {
+		this.original.setContents(this.getContents());
 		ZestScriptWrapper clone = new ZestScriptWrapper(this.original);
 		clone.setWriter(this.getWriter());
 		clone.setDebug(this.isDebug());
@@ -162,9 +162,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	
 	@Override
 	public void setContents(String script) {
-		super.setContents(script);
-		original.setContents(script);	// This gets cloned when the script is run
-		zestScript = (ZestScript) ZestJSON.fromString(script);
+		// Do nothing - its all handled elsewhere
 	}
 
 
@@ -173,11 +171,6 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		return super.equals(script) || this.original.equals(script);
 	}
 	
-	@Override
-	public int hashCode() {
-		return this.original.hashCode();
-	}
-
 	public boolean isDebug() {
 		return debug;
 	}
