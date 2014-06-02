@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Zest - Scripting Security Tests</name>
-	<version>13</version>
+	<version>14</version>
 	<description>A graphical security scripting language..</description>
 	<author>ZAP Dev Team</author>
-	<url></url>
+	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Zest issue 57 Variables not always replaced in assignments<br>
-	ZAP issue 1200 Zest script changes get overwritten by the UI
+	ZAP issue 1218: ZEST Record button broken in Toolbar<br>
+	ZAP issue 1230: Changes to Zest scripts lost after the top level script node is changed
 	]]>
 	</changes>
 	<dependson/>
