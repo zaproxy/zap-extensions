@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.accessControl;
 
+import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,9 +29,13 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.ascan.CustomScanDialog;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.authorization.ExtensionAuthorization;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
+import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.scan.BaseScannerThreadManager;
 
 /**
  * An extension that adds a set of tools that allows users to test Access Control issues in web
@@ -55,6 +60,9 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 	}
 
 	private AccessControlStatusPanel statusPanel;
+	private AccessControlScannerThreadManager threadManager;
+
+	private AccessControlScanOptionsDialog customScanDialog;
 
 	public ExtensionAccessControl() {
 		super(NAME);
@@ -76,8 +84,20 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 
 	private AccessControlStatusPanel getStatusPanel() {
 		if (statusPanel == null)
-			statusPanel = new AccessControlStatusPanel();
+			statusPanel = new AccessControlStatusPanel(this, threadManager);
 		return statusPanel;
+	}
+
+	public void showScanOptionsDialog(Context context) {
+		if (customScanDialog == null) {
+			customScanDialog = new AccessControlScanOptionsDialog(this, View.getSingleton().getMainFrame(),
+					new Dimension(700, 500));
+		}
+		if (customScanDialog.isVisible()) {
+			return;
+		}
+		customScanDialog.init(context);
+		customScanDialog.setVisible(true);
 	}
 
 	@Override
@@ -107,6 +127,16 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 	@Override
 	public List<Class<?>> getDependencies() {
 		return EXTENSION_DEPENDENCIES;
+	}
+
+	private static class AccessControlScannerThreadManager extends
+			BaseScannerThreadManager<AccessControlScanThread> {
+
+		@Override
+		public AccessControlScanThread createNewScannerThread(int contextId) {
+			return new AccessControlScanThread();
+		}
+
 	}
 
 }
