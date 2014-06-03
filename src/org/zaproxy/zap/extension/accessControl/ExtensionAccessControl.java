@@ -30,7 +30,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.ascan.CustomScanDialog;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.authorization.ExtensionAuthorization;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -67,6 +67,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 	public ExtensionAccessControl() {
 		super(NAME);
 		this.setOrder(601);
+		this.threadManager = new AccessControlScannerThreadManager();
 	}
 
 	@Override
@@ -100,6 +101,21 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 		customScanDialog.setVisible(true);
 	}
 
+	public void startScan(AccessControlScanStartOptions startOptions) {
+		int contextId = startOptions.targetContext.getIndex();
+		AccessControlScannerThread scannerThread = threadManager.getScannerThread(contextId);
+		if (scannerThread.isRunning()) {
+			log.warn("Access control scan already running for context: " + contextId);
+			throw new IllegalStateException("A scan is already running for context: " + contextId);
+		}
+
+		scannerThread = threadManager.recreateScannerThreadIfHasRun(contextId);
+		if (getView() != null)
+			scannerThread.addScanListener(getStatusPanel());
+		scannerThread.setStartOptions(startOptions);
+		scannerThread.start();
+	}
+
 	@Override
 	public boolean canUnload() {
 		return true;
@@ -130,11 +146,11 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 	}
 
 	private static class AccessControlScannerThreadManager extends
-			BaseScannerThreadManager<AccessControlScanThread> {
+			BaseScannerThreadManager<AccessControlScannerThread> {
 
 		@Override
-		public AccessControlScanThread createNewScannerThread(int contextId) {
-			return new AccessControlScanThread();
+		public AccessControlScannerThread createNewScannerThread(int contextId) {
+			return new AccessControlScannerThread(contextId);
 		}
 
 	}

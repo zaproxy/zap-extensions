@@ -3,8 +3,8 @@ package org.zaproxy.zap.extension.accessControl;
 import java.awt.Dimension;
 import java.awt.Frame;
 
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 import org.zaproxy.zap.view.widgets.ContextSelectComboBox;
@@ -24,8 +24,6 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 
 	public void init(Context context) {
 		this.removeAllFields();
-
-		Logger.getRootLogger().info("Initing for: " + context);
 		this.addContextSelectField(FIELD_CONTEXT, context);
 		this.addPadding();
 	}
@@ -38,6 +36,10 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 	@Override
 	public void save() {
 		// In this case, the 'Save' action corresponds to starting a scan with the specified options
+		AccessControlScanStartOptions startOptions = new AccessControlScanStartOptions();
+		startOptions.targetContext = ((ContextSelectComboBox) getField(FIELD_CONTEXT)).getSelectedContext();
+
+		extension.startScan(startOptions);
 	}
 
 	@Override
