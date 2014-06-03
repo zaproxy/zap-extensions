@@ -1,0 +1,17 @@
+<zapaddon>
+	<name>Access Control Testing</name>
+	<version>1</version>
+	<description>Adds a set of tools for testing access control in web applications.</description>
+	<author>ZAP Dev Team</author>
+	<url/>
+	<changes>Initial version</changes>
+	<dependson/>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.accessControl.ExtensionAccessControl</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.4.0</not-before-version>
+</zapaddon>
