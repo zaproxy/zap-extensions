@@ -7,13 +7,11 @@ import javax.swing.JLabel;
 
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.scan.ScannerThreadManager;
+import org.zaproxy.zap.scan.BaseScannerThreadManager;
 import org.zaproxy.zap.view.panels.AbstractScanToolbarStatusPanel;
 
 /**
  * Under development...
- * 
- * @deprecated
  */
 public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel {
 
@@ -24,7 +22,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel {
 	private ExtensionAccessControl extension;
 
 	public AccessControlStatusPanel(ExtensionAccessControl extension,
-			ScannerThreadManager<AccessControlScanThread> threadManager) {
+			BaseScannerThreadManager<AccessControlScannerThread> threadManager) {
 
 		super("accessControl", new ImageIcon(
 				AccessControlStatusPanel.class.getResource("/resource/icon/16/accessControl.png")),
