@@ -202,7 +202,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 			        	
 				        List<BindingOperation> operations = binding.getOperations();
 				        String endpointLocation = port.getAddress().getLocation().toString();
-					    sb.append("|-- Port detected: "+port.getName()+" ("+endpointLocation+")\n");
+					    sb.append("\n|-- Port detected: "+port.getName()+" ("+endpointLocation+")\n");
 					    
 			    	    /* Identifies operations for each endpoint.. */
 		    	        for(BindingOperation bindOp : operations){
@@ -215,7 +215,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		    	        		// SOAP Action not defined for this operation.
 		    	        	}
 		    	        	if(!soapActionName.trim().equals("")){
-		    	        		wsdlImporter.putOperation(file.getName(),soapActionName);
+		    	        		wsdlImporter.putAction(file.getName(),soapActionName);
 		    	        	}	    	        	
 		    	        	
 		    	        	/* Identifies operation's parameters. */
@@ -296,6 +296,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 			    						true,
 			    						HttpSender.MANUAL_REQUEST_INITIATOR);
 			    		        sender.sendAndReceive(httpRequest, true);
+								ImportWSDL.getInstance().putRequest(file.getName(), httpRequest);
 								persistMessage(httpRequest);
 								sb.append(" (Status code: "+ httpRequest.getResponseHeader().getStatusCode() +")\n");
 		    	        	}catch (Exception e){
@@ -327,7 +328,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		final HistoryReference historyRef;
 
 		try {
-			historyRef = new HistoryReference(Model.getSingleton().getSession(), HistoryReference.TYPE_ZAP_USER, message);
+			historyRef = new HistoryReference(Model.getSingleton().getSession(), HistoryReference.TYPE_ZAP_USER, message);			
 		} catch (Exception e) {
 			log.warn(e.getMessage(), e);
 			return;
@@ -340,7 +341,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 				@Override
 				public void run() {
 					extHistory.addHistory(historyRef);
-					Model.getSingleton().getSession().getSiteTree().addPath(historyRef, message);
+					Model.getSingleton().getSession().getSiteTree().addPath(historyRef, message);	
 				}
 			});
 		}

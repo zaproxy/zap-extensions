@@ -40,7 +40,7 @@ import org.w3c.dom.Node;
 
 /**
  * SOAP Action Spoofing Active Scanner
- * @author Alberto
+ * @author Albertov91
  */
 public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 
@@ -99,34 +99,30 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 	@Override
 	public void scan() {
 		try {
-			/* Retrieves a good request. */
-			HttpMessage msg = getNewMsg();
+			/* Retrieves the original request-response pair. */			
+			final HttpMessage originalMsg = getBaseMsg();
 			/* This scan is only applied to SOAP 1.1 messages. */
-			String currentHeader = msg.getRequestHeader().getHeader("SOAPAction").trim();
-			if(currentHeader != null && msg.getRequestBody().length() > 0){
+			String currentHeader = originalMsg.getRequestHeader().getHeader("SOAPAction");
+			if(currentHeader != null && originalMsg.getRequestBody().length() > 0){
+				currentHeader = currentHeader.trim();				
+				/* Retrieves available actions to try attacks. */
+				String[] soapActions = ImportWSDL.getInstance().getFileSoapActions(originalMsg);
 				
-				HttpMessage originalMsg = msg;
-				
-				/* Retrieves available operations to try attacks. */
-				String[][] soapOperations = ImportWSDL.getInstance().getSoapOperations();
-				
-				for(int i = 0; i < soapOperations.length; i++){
-					String[] soapOpsFile = soapOperations[i];
-					boolean vulnerable = false;
-					for(int j = 0; j < soapOpsFile.length && !vulnerable; j++){
-						/* Skips the original case. */
-						if(!currentHeader.equals(soapOpsFile[j])){
-							HttpRequestHeader header = msg.getRequestHeader();
-							/* Available ops should be known here from the imported WSDL file. */				
-							header.setHeader("SOAPAction", soapOpsFile[j]);
-							msg.setRequestHeader(header);
-							
-							/* Sends the modified request. */
-							sendAndReceive(msg);
-							
-							/* Checks the response. */
-							vulnerable = scanResponse(msg, originalMsg);
-						}
+				boolean endScan = false;
+				for(int j = 0; j < soapActions.length && !endScan; j++){
+					HttpMessage msg = getNewMsg();
+					/* Skips the original case. */
+					if(!currentHeader.equals(soapActions[j])){
+						HttpRequestHeader header = msg.getRequestHeader();
+						/* Available actions should be known here from the imported WSDL file. */				
+						header.setHeader("SOAPAction", soapActions[j]);
+						msg.setRequestHeader(header);
+						
+						/* Sends the modified request. */
+						sendAndReceive(msg);
+						
+						/* Checks the response. */
+						endScan = scanResponse(msg, originalMsg);
 					}
 				}
 			}
@@ -157,7 +153,8 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 			SOAPBody body = soapMsg.getSOAPBody();
 			SOAPFault fault = body.getFault();
 			if (fault != null){
-				/* A fault code is what is expected from a secured configuration. */
+				/* The web service server has detected something was wrong
+				 * with the SOAPAction header so it rejects the request. */
 				return false;
 			}
 			
@@ -183,8 +180,9 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 					if (node.getNodeName() != oNode.getNodeName()) match = false;
 				}
 				if (match){
-					/* Both responses have the same content. The SOAPAction header has been probably ignored. */
-					bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, null, "The SOAPAction header has been probably ignored.", null, msg);
+					/* Both responses have the same content. The SOAPAction header has been ignored.
+					 * SOAPAction Spoofing attack cannot be done if this happens. */
+					bingo(Alert.RISK_INFO, Alert.WARNING, null, null, "The SOAPAction header has been ignored.", null, msg);
 					return true;
 				}else{
 					/* The SOAPAction header has been processed and an operation which is not the original one has been executed. */
