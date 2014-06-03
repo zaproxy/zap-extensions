@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ExtensionHookView;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.authorization.ExtensionAuthorization;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -53,6 +54,8 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
 	}
 
+	private AccessControlStatusPanel statusPanel;
+
 	public ExtensionAccessControl() {
 		super(NAME);
 		this.setOrder(601);
@@ -63,10 +66,18 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 		super.hook(extensionHook);
 		// Register this where needed
 		// Model.getSingleton().addContextDataFactory(this);
-
+		log.warn("Hooking up....");
 		if (getView() != null) {
+			ExtensionHookView viewHook = extensionHook.getHookView();
 			// getView().addContextPanelFactory(this);
+			viewHook.addStatusPanel(getStatusPanel());
 		}
+	}
+
+	private AccessControlStatusPanel getStatusPanel() {
+		if (statusPanel == null)
+			statusPanel = new AccessControlStatusPanel();
+		return statusPanel;
 	}
 
 	@Override
