@@ -29,13 +29,12 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.fuzz.FuzzableComponent;
+
 public class PopupFuzzMenu extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
 	private Component lastInvoker = null;
     private JFrame parentFrame = null;
-    private MultiExtensionFuzz extension;
     
 	/**
      * @return Returns the lastInvoker.
@@ -48,10 +47,9 @@ public class PopupFuzzMenu extends ExtensionPopupMenuItem {
 	 * This method initializes 
 	 * 
 	 */
-	public PopupFuzzMenu(MultiExtensionFuzz extension) {
+	public PopupFuzzMenu(ExtensionFuzz extension) {
 		super();
 		initialize();
-		this.extension = extension;
 	}
 	
 	/**
@@ -60,16 +58,43 @@ public class PopupFuzzMenu extends ExtensionPopupMenuItem {
 	private void initialize() {
         this.setText(Constant.messages.getString("fuzz.tools.menu.fuzz"));
 	}
+
 	@Override
 	public boolean isEnableForComponent(Component invoker) {
 		boolean visible = false;
 
-		if ( invoker instanceof FuzzableComponent ) {
+		if (invoker instanceof FuzzableComponent) {
 			visible = true;
 			
-			FuzzableComponent fuzzableComponent = (FuzzableComponent)invoker;
+			FuzzableComponent<?> fuzzableComponent = (FuzzableComponent<?>)invoker;
 			
-        	if (!fuzzableComponent.canFuzz() || extension.isFuzzing()) {
+        	if (!fuzzableComponent.canFuzz()) {
+        		this.setEnabled(false);
+        	} else {
+        		this.setEnabled(true);
+        	}
+        	if (Control.getSingleton().getMode().equals(Mode.protect)) {
+        		// In protected mode, so disable if not in scope
+        		Message aMessage = fuzzableComponent.getFuzzableMessage();
+        		
+        		if (!aMessage.isInScope()) {
+        			this.setEnabled(false);
+        		}
+        	}
+        	
+            setLastInvoker(invoker);
+            Container c = getLastInvoker().getParent();
+            while (!(c instanceof JFrame)) {
+                c = c.getParent();
+            }
+            setParentFrame((JFrame) c);
+        }
+		else if (invoker instanceof org.zaproxy.zap.extension.fuzz.FuzzableComponent){
+			visible = true;
+			
+			org.zaproxy.zap.extension.fuzz.FuzzableComponent fuzzableComponent = (org.zaproxy.zap.extension.fuzz.FuzzableComponent)invoker;
+			
+        	if (!fuzzableComponent.canFuzz()) {
         		this.setEnabled(false);
         	} else {
         		this.setEnabled(true);
@@ -89,7 +114,8 @@ public class PopupFuzzMenu extends ExtensionPopupMenuItem {
                 c = c.getParent();
             }
             setParentFrame((JFrame) c);
-        } else {
+        }
+		else {
         	// Its not fuzzable
             setLastInvoker(null);
         }

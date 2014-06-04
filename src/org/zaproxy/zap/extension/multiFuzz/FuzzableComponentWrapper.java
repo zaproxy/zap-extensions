@@ -3,6 +3,8 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
+ * Copyright 2010 psiinon@gmail.com
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -16,36 +18,31 @@
  * limitations under the License. 
  */
 package org.zaproxy.zap.extension.multiFuzz;
-
 import org.zaproxy.zap.extension.httppanel.Message;
 
-public class FuzzResult<M extends Message, L extends FuzzLocation<M>> {
+public class FuzzableComponentWrapper implements FuzzableComponent {
 
-    public enum State {
-        SUCCESSFUL, REFLECTED, ERROR
+    private org.zaproxy.zap.extension.fuzz.FuzzableComponent oldComponent;
+
+    public FuzzableComponentWrapper(org.zaproxy.zap.extension.fuzz.FuzzableComponent oldComponent) {
+        this.oldComponent = oldComponent;
     }
 
-    private State state;
-    private Message message;
-
-    public FuzzResult() {
-        state = State.SUCCESSFUL;
+    @Override
+    public boolean canFuzz() {
+        return oldComponent.canFuzz();
     }
 
-    public void setState(State aState) {
-        state = aState;
+    @Override
+    public Class<? extends Message> getMessageClass() {
+        return oldComponent.getMessageClass();
     }
 
-    public State getState() {
-        return state;
+    @Override
+    public Message getFuzzableMessage() {
+        return oldComponent.getFuzzableMessage().getMessage();
     }
-
-    public void setMessage(Message aMessage) {
-        this.message = aMessage;
+    public org.zaproxy.zap.extension.fuzz.FuzzableComponent getOldComponent(){
+    	return oldComponent;
     }
-
-    public Message getMessage() {
-        return message;
-    }
-
 }

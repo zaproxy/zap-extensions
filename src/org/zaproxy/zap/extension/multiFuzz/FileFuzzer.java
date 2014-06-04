@@ -27,41 +27,60 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
-public class FileFuzzer {
-
+public class FileFuzzer<P extends Payload>{
+	
+	private String name = null;
 	private File file = null;
 	private int length = -1;
-	private List<String> fuzzStrs = new ArrayList<>();
-	private Iterator<String> iter = null;
+	private ArrayList<P> payloads = new ArrayList<>();
+	private PayloadFactory<P> factory;
     private static Logger log = Logger.getLogger(FileFuzzer.class);
 
-	protected FileFuzzer(File file) {
+    public FileFuzzer(String s, PayloadFactory<P> f){
+    	this.file = null;
+    	this.name = s;
+    	this.factory = f;
+    }
+	public FileFuzzer(File file, PayloadFactory<P> f) {
 		this.file = file;
+		this.name = file.getName();
+		this.factory = f;
+		init();
 	}
 	
 	private void init() {
 		BufferedReader in = null;
-		
 		try {
 			in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-
-			String line;
-
-			while ((line = in.readLine()) != null) {
-				if (line.trim().length() > 0 && ! line.startsWith("#")) {
-					fuzzStrs.add(line);
+			
+			String line = in.readLine();
+			if(line.startsWith("#<type=\"") && line.endsWith("\">")){
+				String type = line.substring(8, (line.length() - 2));
+				do  {
+					if (line.trim().length() > 0 && ! line.startsWith("#")) {
+						payloads.add(factory.createPayload(type, line));
+					}
 				}
+				while((line = in.readLine()) != null);	
+			}
+			else{
+				do  {
+					if (line.trim().length() > 0 && ! line.startsWith("#")) {
+						payloads.add(factory.createPayload(line));
+					}
+				}
+				while((line = in.readLine()) != null);
 			}
 			
 		} catch (FileNotFoundException e) {
 			log.error(e.getMessage(), e);
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
-		} finally {
+		}
+		finally {
 			if (in != null) {
 				try {
 					in.close();
@@ -71,37 +90,34 @@ public class FileFuzzer {
 			}
 		}
 		
-		length = fuzzStrs.size();
-		iter = fuzzStrs.iterator();
+		length = payloads.size();
 	}
-	public List<String> getList(){
-		return this.fuzzStrs;
+	public ArrayList<P> getList(){
+		return this.payloads;
 	}
-	public Iterator<String> getIterator() {
+	public Iterator<P> getIterator() {
 		if (length == -1) {
 			init();
-		} else {
-			iter = fuzzStrs.iterator();
 		}
-		return iter;
+		return payloads.iterator();
 	}
 	
 	public int getLength() {
 		if (length == -1) {
 			init();
 		}
-		return length;
+		return payloads.size();
 	}
 	
 	public boolean hasNext() {
-		if (length == -1) {
-			init();
-		}
-		return iter.hasNext();
+		return getIterator().hasNext();
 	}
 	
 	public String getFileName() {
-		return this.file.getName();
+		return this.name;
+	}
+	public void setLength(int maximumValue) {
+		this.length = maximumValue;
 	}
 
 }

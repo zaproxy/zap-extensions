@@ -17,18 +17,19 @@
  */
 package org.zaproxy.zap.extension.multiFuzz;
 
-import java.awt.Component;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.search.SearchResult;
 
-public interface FuzzerHandler {
-
-    void showFuzzDialog(Component fuzzableComponent);
-    
+public interface FuzzerHandler<M extends Message, D extends FuzzDialog<?,?,?,?>> {
+	ExtensionFuzz getExtension();
+    void showFuzzDialog(FuzzableComponent<M> fc);
     FuzzerContentPanel getFuzzerContentPanel();
-    
     List<SearchResult> searchResults(Pattern pattern, boolean inverse);
-    
+	public void startFuzzers();
+	public void stopFuzzers();
+	public void pauseFuzzers();
+	public void resumeFuzzers();
 }

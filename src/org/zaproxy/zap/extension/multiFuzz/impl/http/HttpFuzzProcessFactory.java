@@ -21,27 +21,24 @@ import java.util.HashMap;
 
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
-import org.zaproxy.zap.extension.multiFuzz.FuzzLocation;
-import org.zaproxy.zap.extension.multiFuzz.FuzzProcess;
 import org.zaproxy.zap.extension.multiFuzz.FuzzProcessFactory;
-import org.zaproxy.zap.extension.multiFuzz.MFuzzableMessage;
 
-public class HttpFuzzProcessFactory implements FuzzProcessFactory {
+public class HttpFuzzProcessFactory implements FuzzProcessFactory<HttpFuzzProcess, HttpPayload, HttpFuzzLocation> {
 
     private HttpSender httpSender;
-    private MFuzzableMessage fuzzableHttpMessage;
+    private HttpMessage msg;
     private boolean showTokenRequests;
     private AntiCsrfToken acsrfToken;
     private ExtensionAntiCSRF extAntiCSRF; 
     
     
-    public HttpFuzzProcessFactory(MFuzzableMessage fuzzableMessage, AntiCsrfToken acsrfToken, boolean showTokenRequests, boolean followRedirects) {
+    public HttpFuzzProcessFactory(HttpMessage fuzzableMessage, AntiCsrfToken acsrfToken, boolean showTokenRequests, boolean followRedirects) {
         
-        fuzzableHttpMessage = fuzzableMessage;
-        
+        msg = fuzzableMessage;
         this.acsrfToken = acsrfToken;
         this.showTokenRequests = showTokenRequests;
         extAntiCSRF = (ExtensionAntiCSRF) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.NAME);
@@ -52,9 +49,19 @@ public class HttpFuzzProcessFactory implements FuzzProcessFactory {
     
 
 	@Override
-	public FuzzProcess getFuzzProcess(HashMap<FuzzLocation, String> subs) {
-        FuzzProcess fuzzProcess = new HttpFuzzProcess(httpSender, fuzzableHttpMessage, extAntiCSRF, acsrfToken, showTokenRequests);
-        fuzzProcess.setPayload(subs);
+	public HttpFuzzProcess getFuzzProcess(HashMap<HttpFuzzLocation, HttpPayload> subs) {
+		HttpFuzzProcess fuzzProcess = new HttpFuzzProcess(httpSender, msg, extAntiCSRF, acsrfToken, showTokenRequests);
+		fuzzProcess.setPayload(subs);
         return fuzzProcess;
+	}
+	
+	public HttpMessage getMessage(){
+		return this.msg;
+	}
+	public HttpSender getSender(){
+		return this.httpSender;
+	}
+	public AntiCsrfToken getToken(){
+		return this.acsrfToken;
 	}
 }

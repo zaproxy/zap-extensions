@@ -19,15 +19,21 @@
  */
 package org.zaproxy.zap.extension.multiFuzz;
 
-import java.util.HashMap;
+import java.util.Map;
 
-
-public interface FuzzProcess extends Runnable {
+public interface FuzzProcess<R extends FuzzResult<?,?>, P extends Payload, L extends FuzzLocation<?>> extends Runnable {
+	@Override
+	public void run();
 	
-	void setPayload(HashMap<FuzzLocation, String> payload);
+	public void stop();
 	
-	void addFuzzerListener(FuzzerListener listener);
+	public void pause();
+	
+	public void resume();
+	
+	public void addFuzzerListener(FuzzerListener<Integer, R> listener);
 
-	void removeFuzzerListener(FuzzerListener listener);
+	public void removeFuzzerListener(FuzzerListener<Integer, R> listener);
 
+	void setPayload(Map<L, P> subs);
 }

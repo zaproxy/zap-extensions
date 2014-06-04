@@ -25,5 +25,6 @@ public interface FuzzerContentPanel {
 
     void clear();
     
-    void addFuzzResult(FuzzResult fuzzResult);
+    void addFuzzResult(FuzzResult<?,?> fuzzResult);
+    
 }

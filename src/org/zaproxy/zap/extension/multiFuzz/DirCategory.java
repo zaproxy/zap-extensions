@@ -17,14 +17,15 @@
  */
 package org.zaproxy.zap.extension.multiFuzz;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DirCategory {
 	private String name;
-	private List<FileFuzzer> fuzzers = new ArrayList<>();
+	private List<File> fuzzers = new ArrayList<>();
 	
-	public List<FileFuzzer> getFuzzers() {
+	public List<File> getFuzzers() {
 		return fuzzers;
 	}
 	public DirCategory(String name) {
@@ -32,7 +33,7 @@ public class DirCategory {
 		this.name = name;
 	}
 	
-	public void addFuzzer(FileFuzzer fileFuzzer) {
+	public void addFuzzer(File fileFuzzer) {
 		this.fuzzers.add(fileFuzzer);
 	}
 	
@@ -40,9 +41,9 @@ public class DirCategory {
 		return this.name;
 	}
 	
-	public FileFuzzer getFileFuzzer(String name) {
-		for (FileFuzzer ff : fuzzers) {
-			if (ff.getFileName().equals(name)) {
+	public File getFuzzerFile(String name) {
+		for (File ff : fuzzers) {
+			if (ff.getName().equals(name)) {
 				return ff;
 			}
 		}

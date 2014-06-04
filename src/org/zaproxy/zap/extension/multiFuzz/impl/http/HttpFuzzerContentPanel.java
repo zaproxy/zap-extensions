@@ -84,7 +84,7 @@ public class HttpFuzzerContentPanel implements FuzzerContentPanel {
         this.responsePanel = responsePanel;
     }
 
-    private JTable getFuzzResultTable() {
+    public JTable getFuzzResultTable() {
         if (fuzzResultTable == null) {
             fuzzResultTable = new JTable(resultsModel);
             fuzzResultTable.setDoubleBuffered(true);

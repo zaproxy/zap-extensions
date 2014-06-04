@@ -19,33 +19,11 @@ package org.zaproxy.zap.extension.multiFuzz;
 
 import org.zaproxy.zap.extension.httppanel.Message;
 
-public class FuzzResult<M extends Message, L extends FuzzLocation<M>> {
+public interface FuzzableComponent<M extends Message> {
 
-    public enum State {
-        SUCCESSFUL, REFLECTED, ERROR
-    }
+    Class<? extends Message> getMessageClass();
 
-    private State state;
-    private Message message;
-
-    public FuzzResult() {
-        state = State.SUCCESSFUL;
-    }
-
-    public void setState(State aState) {
-        state = aState;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setMessage(Message aMessage) {
-        this.message = aMessage;
-    }
-
-    public Message getMessage() {
-        return message;
-    }
-
+    M getFuzzableMessage();
+    
+    boolean canFuzz();
 }

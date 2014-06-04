@@ -22,107 +22,118 @@ package org.zaproxy.zap.extension.multiFuzz;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
-import org.owasp.jbrofuzz.core.Fuzzer;
-import org.parosproxy.paros.common.ThreadPool;
+import org.zaproxy.zap.extension.httppanel.Message;
 
-public class FuzzerThread implements Runnable {
+public class FuzzerThread<PL extends Payload, M extends Message,  L extends FuzzLocation<M>, R extends FuzzResult<M, L>, G extends FuzzGap<M, L, PL>, P extends FuzzProcess<R, PL, L>>
+		implements Runnable {
 
 	private static final Logger log = Logger.getLogger(FuzzerThread.class);
 
-	private List<FuzzerListener> listenerList = new ArrayList<>();
-	private ArrayList<FuzzGap> gaps;
-
-	FuzzProcessFactory fuzzProcessFactory;
+	private List<FuzzerListener<Integer, R>> listenerList = new ArrayList<>();
+	private FuzzerListener<Integer, Boolean> handlerListener;
+	private ArrayList<G> gaps;
+	private ArrayList<FuzzMessageProcessor<M>> preprocessors;
+	private ArrayList<FuzzMessageProcessor<M>> postprocessors;
+	FuzzProcessFactory<P, PL, L> fuzzProcessFactory;
+	private ThreadPoolExe threadPool;
 
 	private boolean pause = false;
 	private boolean isStop = false;
 
-	private ThreadPool pool = null;
 	private int delayInMs = 0;
 
 	public FuzzerThread(FuzzerParam fuzzerParam) {
-		pool = new ThreadPool(fuzzerParam.getThreadPerScan());
 		delayInMs = fuzzerParam.getDelayInMs();
 	}
 
 	public void start() {
 		isStop = false;
 		Thread thread = new Thread(this, "ZAP-FuzzerThread");
-		thread.setPriority(Thread.NORM_PRIORITY-2);
+		thread.setPriority(Thread.NORM_PRIORITY - 2);
 		thread.start();
 	}
 
 	public void stop() {
+		threadPool.shutdown();
 		isStop = true;
 	}
-
-	public void addFuzzerListener(FuzzerListener listener) {
-		listenerList.add(listener);		
+	public void addHandlerListener(FuzzerListener<Integer, Boolean> listener) {
+		this.handlerListener = listener;
+	}
+	public void addFuzzerListener(FuzzerListener<Integer, R> listener) {
+		listenerList.add(listener);
 	}
 
-	public void removeFuzzerListener(FuzzerListener listener) {
+	public void removeFuzzerListener(FuzzerListener<Integer, R> listener) {
 		listenerList.remove(listener);
 	}
 
-	private void notifyFuzzerComplete() {
-		for (FuzzerListener listener : listenerList) {
-			listener.notifyFuzzerComplete();
-		}
+	public void addPreprocessor(FuzzMessageProcessor<M> pre) {
+		this.preprocessors.add(pre);
 	}
 
-	public void setTarget(ArrayList<FuzzGap> gaps, FuzzProcessFactory fuzzProcessFactory) {
+	public void addPostprocessor(FuzzMessageProcessor<M> post) {
+		this.postprocessors.add(post);
+	}
+
+	public void setTarget(ArrayList<G> gaps,
+			FuzzProcessFactory<P, PL, L> fuzzProcessFactory) {
 		this.gaps = gaps;
 		this.fuzzProcessFactory = fuzzProcessFactory;
 	}
 
 	@Override
 	public void run() {
-		log.info("fuzzer started");
+		while(!isStop){
+			log.info("fuzzer started");
 
-		this.fuzz(gaps);
-
-		pool.waitAllThreadComplete(0);
-		notifyFuzzerComplete();
-
-		log.info("fuzzer stopped");
+			this.fuzz(gaps);
+			
+			while(threadPool.getCompletedTaskCount() < threadPool.getMaximumPoolSize()){
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					log.info(e.getMessage());
+				}
+			}
+			
+			handlerListener.notifyFuzzerComplete(true);
+			log.info("fuzzer stopped");
+			isStop = true;
+		}
 	}
 
-	private void fuzz(ArrayList<FuzzGap> gaps) {
+	private void fuzz(ArrayList<G> gaps) {
 		int total = 1;
-		int[] lens = new int[gaps.size()]; 
-		for(int i = 0; i < gaps.size(); i++){
-			int subtotal = 0;
-			for(Fuzzer f : gaps.get(i).getFuzzers()){
-				subtotal += (int)f.getMaximumValue();
-			}
-			for(FileFuzzer f : gaps.get(i).getFileFuzzers()){
-				subtotal += (int)f.getLength();
-			}
-			total *= subtotal;
-			lens[i] = subtotal;
-		}
-		
+		int[] lens = new int[gaps.size()];
 		int[] mod = new int[gaps.size()];
-		for(int i = 0; i < mod.length; i++){
-			mod[i] = 1;
+		for (G gap : gaps) {
+			total *= gap.getPayloads().size();
 		}
-		for(int i = lens.length - 1; i >= 0; i --){
-			for(int j = 0; j < i; j++){
+
+		for (int i = 0; i < mod.length; i++) {
+			mod[i] = 1;
+			lens[i] = gaps.get(i).getPayloads().size();
+		}
+		for (int i = lens.length - 1; i >= 0; i--) {
+			for (int j = 0; j < i; j++) {
 				mod[j] *= lens[i];
 			}
 		}
-
-		for (FuzzerListener listener : listenerList) {
+		this.threadPool = new ThreadPoolExe(total, total, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<P>());
+		for (FuzzerListener<Integer, R> listener : listenerList) {
 			listener.notifyFuzzerStarted(total);
 		}
-
+		log.info(total + "Fuzz Combinations");
 		for (int nr = 0; nr < total; nr++) {
-			HashMap<FuzzLocation, String> subs = new HashMap<FuzzLocation,String>();
-			for(int g = 0; g < gaps.size(); g++){
-				FuzzLocation fl = gaps.get(g).getFuzzLoc();
-				String sub = gaps.get(g).getSubstitution((nr/mod[g]) % lens[g]);
+			HashMap<L, PL> subs = new HashMap<L, PL>();
+			for (int g = 0; g < gaps.size(); g++) {
+				L fl = gaps.get(g).getLocation();
+				PL sub = gaps.get(g).getPayloads().get((nr / mod[g]) % lens[g]);
 				subs.put(fl, sub);
 			}
 			fuzz(subs);
@@ -132,8 +143,8 @@ public class FuzzerThread implements Runnable {
 		}
 	}
 
-	private void fuzz(HashMap<FuzzLocation,String> subs) {
-		while (pause && ! isStop()) {
+	private void fuzz(HashMap<L, PL> subs) {
+		while (pause && !isStop()) {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
@@ -149,23 +160,25 @@ public class FuzzerThread implements Runnable {
 			}
 		}
 
-		FuzzProcess fp = fuzzProcessFactory.getFuzzProcess(subs);
+		P fp = fuzzProcessFactory.getFuzzProcess(subs);
 
-		for (FuzzerListener listener : listenerList) {
-			fp.addFuzzerListener(listener);
-		}
+		fp.addFuzzerListener(new FuzzerListener<Integer, R>() {
+			@Override
+			public void notifyFuzzerStarted(Integer process) {
+			}
 
-		Thread thread;
-		do { 
-			thread = pool.getFreeThreadAndRun(fp);
-			if (thread == null) {
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// Ignore
+			@Override
+			public void notifyFuzzerPaused(Integer process) {
+			}
+
+			@Override
+			public void notifyFuzzerComplete(R result) {
+				for (FuzzerListener<Integer, R> f : listenerList) {
+					f.notifyFuzzerComplete(result);
 				}
 			}
-		} while (thread == null && !isStop());
+		});
+		threadPool.execute(fp);
 
 	}
 
@@ -174,10 +187,12 @@ public class FuzzerThread implements Runnable {
 	}
 
 	public void pause() {
+		this.threadPool.pause();
 		this.pause = true;
 	}
 
-	public void resume () {
+	public void resume() {
+		this.threadPool.resume();
 		this.pause = false;
 	}
 

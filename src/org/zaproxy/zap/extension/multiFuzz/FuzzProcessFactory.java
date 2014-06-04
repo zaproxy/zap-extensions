@@ -19,7 +19,9 @@ package org.zaproxy.zap.extension.multiFuzz;
 
 import java.util.HashMap;
 
-public interface FuzzProcessFactory {
 
-    FuzzProcess getFuzzProcess(HashMap<FuzzLocation, String> subs);
+public interface FuzzProcessFactory<P extends FuzzProcess<?,?,?>, PL extends Payload, L extends FuzzLocation<?>> {
+
+    P getFuzzProcess(HashMap<L, PL> hm);
+
 }
