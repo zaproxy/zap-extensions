@@ -17,117 +17,185 @@
  */
 package org.zaproxy.zap.extension.multiFuzz.impl.http;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.httpclient.HttpException;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
-import org.zaproxy.zap.extension.multiFuzz.AbstractFuzzProcess;
-import org.zaproxy.zap.extension.multiFuzz.FuzzLocation;
-import org.zaproxy.zap.extension.multiFuzz.FuzzResult;
+import org.zaproxy.zap.extension.multiFuzz.FuzzMessageProcessor;
+import org.zaproxy.zap.extension.multiFuzz.FuzzProcess;
 import org.zaproxy.zap.extension.multiFuzz.FuzzResult.State;
-import org.zaproxy.zap.extension.multiFuzz.MFuzzableMessage;
+import org.zaproxy.zap.extension.multiFuzz.FuzzerListener;
 
-public class HttpFuzzProcess extends AbstractFuzzProcess {
+public class HttpFuzzProcess implements FuzzProcess< HttpFuzzResult, HttpPayload, HttpFuzzLocation > {
 
-    private static final Logger logger = Logger.getLogger(HttpFuzzProcess.class);
+	private static final Logger logger = Logger.getLogger(HttpFuzzProcess.class);
+	private HashMap<HttpFuzzLocation, HttpPayload> payloads;
+	private HttpSender httpSender;
+	private HttpMessage orig;
+	private HttpFuzzResult result;
+	private ArrayList<FuzzMessageProcessor<HttpMessage>> preprocessors;
+	private ArrayList<FuzzMessageProcessor<HttpMessage>> postprocessors;
+	private boolean paused = false;
+	private ArrayList<FuzzerListener<Integer, HttpFuzzResult>> listeners;
 
-    private HttpSender httpSender;
-    private MFuzzableMessage fuzzableHttpMessage;
-    private ExtensionAntiCSRF extAntiCSRF;
-    private AntiCsrfToken acsrfToken;
-    private boolean showTokenRequests;
+	public HttpFuzzProcess(HttpSender httpSender, HttpMessage msg, 
+			ExtensionAntiCSRF extAntiCSRF, AntiCsrfToken acsrfToken, 
+			boolean showTokenRequests) {
+		this.httpSender = httpSender;
+		this.orig = msg;
+		listeners = new ArrayList<FuzzerListener<Integer, HttpFuzzResult>>();
+		preprocessors = new ArrayList<FuzzMessageProcessor<HttpMessage>>();
+		postprocessors = new ArrayList<FuzzMessageProcessor<HttpMessage>>();
+	}
 
-    public HttpFuzzProcess(HttpSender httpSender, MFuzzableMessage fuzzableHttpMessage, 
-            ExtensionAntiCSRF extAntiCSRF, AntiCsrfToken acsrfToken, 
-            boolean showTokenRequests) {
-        this.httpSender = httpSender;
-        this.fuzzableHttpMessage = fuzzableHttpMessage;
-        this.acsrfToken = acsrfToken;
-        this.showTokenRequests = showTokenRequests;
-        this.extAntiCSRF = extAntiCSRF;
-    }
+	private boolean isFuzzStringReflected(HttpMessage msg, HashMap<HttpFuzzLocation, HttpPayload> subs) {
+		HttpMessage originalMessage = msg;
+		boolean reflected = false;
+		for(HttpFuzzLocation fuzzLoc: subs.keySet()){
+			final int pos = originalMessage.getResponseBody().toString().indexOf(subs.get(fuzzLoc).getData());
+			reflected |= msg.getResponseBody().toString().indexOf(subs.get(fuzzLoc).getData(), pos) != -1;
+		}
+		return reflected;
+	}
 
-    @Override
-	protected FuzzResult fuzz(HashMap<FuzzLocation, String> fuzz) {
-        String tokenValue = null;
-        HttpFuzzResult fuzzResult = new HttpFuzzResult();
-        
-        if (this.acsrfToken != null) {
-            // This currently just supports a single token in one page
-            // To support wizards etc need to loop back up the messages for previous tokens
-            try {
-                HttpMessage tokenMsg = this.acsrfToken.getMsg().cloneAll();
-                httpSender.sendAndReceive(tokenMsg);
+	@Override
+	public void setPayload(Map<HttpFuzzLocation, HttpPayload> subs) {
+		this.payloads = (HashMap<HttpFuzzLocation, HttpPayload>) subs;		
+	}
 
-                // If we've got a token value here then the AntiCSRF extension must have been registered
-                tokenValue = extAntiCSRF.getTokenValue(tokenMsg, acsrfToken.getName());
+	@Override
+	public void run() {
+		for (FuzzerListener<Integer, HttpFuzzResult> listener : listeners) {
+			listener.notifyFuzzerStarted(null);
+		}
+		HttpMessage request = orig.cloneRequest();
+		for(FuzzMessageProcessor<HttpMessage> pre : preprocessors){
+			request = pre.process(request);
+		}
+		request = inject(request);
+		for(FuzzMessageProcessor<HttpMessage> post : postprocessors){
+			request = post.process(request);
+		}
 
-                if (showTokenRequests) {
-                    List<HttpMessage> tokenRequests = new ArrayList<>();
-                    tokenRequests.add(tokenMsg);
-                    fuzzResult.setTokenRequestMessages(tokenRequests);
-                }
-            } catch (HttpException e) {
-                logger.error(e.getMessage(), e);
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-        
-        HttpMessage msg;
-        try {
-            // Inject the payload
-            msg = (HttpMessage) fuzzableHttpMessage.fuzz(fuzz);
-        } catch(Exception e) {
-            msg = ((HttpMessage)fuzzableHttpMessage.getMessage()).cloneRequest();
-            msg.setNote("Could not fuzz");
-            fuzzResult.setMessage(msg);
+		HttpFuzzResult fuzzResult = new HttpFuzzResult();
 
-            fuzzResult.setState(State.ERROR);
-            return fuzzResult;
-        }
-        
-        if (tokenValue != null) {
-            // Replace token value - only supported in the body right now
-        }
-        // Correct the content length for the above changes
-        msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
-        
-        try {
-            httpSender.sendAndReceive(msg);
-            
-            if (isFuzzStringReflected(msg, fuzz)) {
-                fuzzResult.setState(State.REFLECTED);
-            }
-        } catch (HttpException e) {
-            logger.error(e.getMessage(), e);
-            fuzzResult.setState(State.ERROR);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            fuzzResult.setState(State.ERROR);
-        }
-        
-        fuzzResult.setMessage(msg);
-        
-        return fuzzResult;
-    }
-    
-    private boolean isFuzzStringReflected(HttpMessage msg, HashMap<FuzzLocation, String> subs) {
-        HttpMessage originalMessage = (HttpMessage)fuzzableHttpMessage.getMessage();
-        boolean reflected = false;
-        for(FuzzLocation fuzzLoc: subs.keySet()){
-        	final int pos = originalMessage.getResponseBody().toString().indexOf(subs.get(fuzzLoc));
-        	reflected |= msg.getResponseBody().toString().indexOf(subs.get(fuzzLoc), pos) != -1;
-        }
-        return reflected;
-    }
+		request.getRequestHeader().setContentLength(request.getRequestBody().length());
 
+		try {
+			httpSender.sendAndReceive(request);
+
+			if (isFuzzStringReflected(request, payloads)) {
+				fuzzResult.setState(State.REFLECTED);
+			}
+		} catch (HttpException e) {
+			logger.error(e.getMessage(), e);
+			fuzzResult.setState(State.ERROR);
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			fuzzResult.setState(State.ERROR);
+		}
+		fuzzResult.setMessage(request);
+		this.result = fuzzResult;
+		this.stop();
+	}
+	public void addPreprocessor(FuzzMessageProcessor<HttpMessage> pre){
+		this.preprocessors.add(pre);
+	}
+	public void addPostprocessor(FuzzMessageProcessor<HttpMessage> post){
+		this.postprocessors.add(post);
+	}
+	private HttpMessage inject(HttpMessage request) {
+		ArrayList<HttpFuzzLocation> intervals = new ArrayList<HttpFuzzLocation>();
+		for(HttpFuzzLocation fl : payloads.keySet()){
+			intervals.add((HttpFuzzLocation) fl);
+		}
+		Collections.sort(intervals);
+		HttpMessage fuzzedHttpMessage = request.cloneRequest();
+
+		String origHead = fuzzedHttpMessage.getRequestHeader().toString();
+		String origBody = fuzzedHttpMessage.getRequestBody().toString();
+		StringBuilder head = new StringBuilder();
+		StringBuilder body = new StringBuilder();
+		int currPosHead = 0;
+		int currPosBody = 0;
+		String note = "";
+		for(HttpFuzzLocation fuzzLoc : intervals)
+		{
+			if(fuzzLoc.begin() <= origHead.length()){
+				if(fuzzLoc.begin() >= currPosHead){
+					int hl = 0;
+					int pos = 0;
+					while (((pos = origHead.indexOf("\r\n", pos)) != -1) && (pos <= fuzzLoc.start + hl)) {
+						pos += 2;
+						++hl;
+					}
+					head.append(origHead.substring(currPosHead, fuzzLoc.begin() + hl));
+					head.append(payloads.get(fuzzLoc).getData());
+					currPosHead = fuzzLoc.end + hl;
+				}
+			}
+			else{
+				int start = fuzzLoc.begin();
+				int end = fuzzLoc.end();
+				if(start > origBody.length()){
+					start -= origHead.length();
+					end -= origHead.length();
+				}
+				body.append(origBody.substring(currPosBody, start));
+				body.append(payloads.get(fuzzLoc).getData());
+				currPosBody = end;
+			}
+			note += payloads.get(fuzzLoc).getData();
+		}
+		head.append(origHead.substring(currPosHead));
+		body.append(origBody.substring(currPosBody));
+
+		try {
+			fuzzedHttpMessage.setRequestHeader(head.toString());
+		} catch (HttpMalformedHeaderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fuzzedHttpMessage.setRequestBody(body.toString());
+		fuzzedHttpMessage.setNote(note);
+		return fuzzedHttpMessage;
+	}
+
+	@Override
+	public void stop() {
+		for(FuzzerListener<Integer, HttpFuzzResult> f: listeners){
+			f.notifyFuzzerComplete(this.result);
+		}
+	}
+
+	@Override
+	public void pause() {
+		this.paused = true;
+	}
+
+	@Override
+	public void resume() {
+		this.paused = false;
+	}
+
+	@Override
+	public void addFuzzerListener(FuzzerListener<Integer, HttpFuzzResult> listener) {
+		listeners.add(listener);
+	}
+
+	@Override
+	public void removeFuzzerListener(FuzzerListener<Integer, HttpFuzzResult> listener) {
+		listeners.remove(listener);
+	}
 
 }

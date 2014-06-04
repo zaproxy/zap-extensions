@@ -43,13 +43,13 @@ import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
 import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapToggleButton;
 
-public class FuzzerPanel extends AbstractPanel implements FuzzerListener {
+public class FuzzerPanel extends AbstractPanel{
 	
 	public static final String PANEL_NAME = "fuzzpanel";
     private static final long serialVersionUID = 1L;
     private static final Logger logger = Logger.getLogger(FuzzerPanel.class);
 	
-	private MultiExtensionFuzz extension = null;
+	private ExtensionFuzz extension = null;
 	private JPanel panelCommand = null;
 	private JToolBar panelToolbar = null;
 	private JScrollPane jScrollPane = null;
@@ -64,7 +64,7 @@ public class FuzzerPanel extends AbstractPanel implements FuzzerListener {
 
     private FuzzerContentPanel contentPanel;
     
-    public FuzzerPanel(MultiExtensionFuzz extension) {
+    public FuzzerPanel(ExtensionFuzz extension) {
         super();
         this.extension = extension;
  		initialize();
@@ -308,13 +308,13 @@ public class FuzzerPanel extends AbstractPanel implements FuzzerListener {
 		return initialMessage;
 	}
 
-	protected void setContentPanel(FuzzerContentPanel aContentPanel) {
+	public void setContentPanel(FuzzerContentPanel aContentPanel) {
 	    contentPanel = aContentPanel;
 	}
 	
 	private void stopScan() {
 		logger.debug("Stopping fuzzing");
-		extension.stopFuzzers ();
+		extension.stopFuzzers();
 	}
 
 	private void pauseScan() {
@@ -342,7 +342,7 @@ public class FuzzerPanel extends AbstractPanel implements FuzzerListener {
 		scanStatus.incScanCount();
 	}
 
-	private void scanFinshed() {
+	public void scanFinished() {
 		getStopScanButton().setEnabled(false);
 		getPauseScanButton().setEnabled(false);
 		getPauseScanButton().setSelected(false);
@@ -356,7 +356,6 @@ public class FuzzerPanel extends AbstractPanel implements FuzzerListener {
 	}
 
 	public void reset() {
-		this.stopScan();
 		
 		if (contentPanel != null) {
 		    contentPanel.clear();
@@ -370,24 +369,13 @@ public class FuzzerPanel extends AbstractPanel implements FuzzerListener {
         this.getJScrollPane().setViewportView(getInitialMessage());
 	}
 	
-	@Override
-    public void notifyFuzzerStarted(int total) {
+    public void newScan(Integer total) {
         this.scanStarted();
         scanProgress(0, total);
     }
     
-    @Override
-    public void notifyFuzzProcessStarted(FuzzProcess fp) {
-    }
-
-    @Override
-    public void notifyFuzzProcessComplete(FuzzResult fuzzResult) {
+    public void inComingResult(FuzzResult<?,?> fuzzResult) {
         contentPanel.addFuzzResult(fuzzResult);
         getProgressBar().setValue(getProgressBar().getValue() + 1);
-    }
-
-    @Override
-    public void notifyFuzzerComplete() {
-        this.scanFinshed();
     }
 }

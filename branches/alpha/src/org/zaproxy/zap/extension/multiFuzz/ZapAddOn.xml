@@ -1,16 +1,19 @@
 <zapaddon>
-	<name>Multi-Fuzzing</name>
-	<version>1</version>
-	<description>Adds a multi-fuzz tool</description>
+	<name>HttpsMultiFuzz</name>
+	<version>2</version>
+	<description>Provides multi-fuzzing capabilities and their HTTP implementations.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>Updated fuzzing mechanisms, dialog, resources and introduced user-defined payloads</changes>
 	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.multiFuzz.ExtensionFuzz</extension>
+	    <extension>org.zaproxy.zap.extension.multiFuzz.impl.http.ExtensionRegister</extension>
 	</extensions>
+	<ascanrules/>
+	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
+

@@ -1,76 +1,51 @@
 package org.zaproxy.zap.extension.multiFuzz;
 
 import java.util.ArrayList;
+import org.zaproxy.zap.extension.httppanel.Message;
 
-import org.owasp.jbrofuzz.core.Fuzzer;
+public class FuzzGap<M extends Message, L extends FuzzLocation<M>, P extends Payload> {
+	private ArrayList<P> payloads;
+	private ArrayList<String> payloadSign;
+	private L fuzzLoc;
+	private M msg;
 
-public class FuzzGap {
-	private String orig;
-	private MFuzzableMessage fuzzMessage;
-	private FuzzLocation fuzzLoc;
-	private ArrayList<Fuzzer> fuzzers;
-	private ArrayList<FileFuzzer> fileFuzzers;
-	private ArrayList<Integer> indices;
-
-	public FuzzGap(FuzzLocation fl, MFuzzableMessage fm){
-		this.fuzzLoc = fl;
-		this.fuzzMessage = fm;
-		this.orig = fuzzMessage.representName(fuzzLoc);
-		this.fuzzers = new ArrayList<Fuzzer>();
-		this.fileFuzzers = new ArrayList<FileFuzzer>();
-		this.indices = new ArrayList<Integer>();
+	protected FuzzGap( M msg, L loc) {
+		fuzzLoc = loc;
+		this.msg = msg;
+		payloads = new ArrayList<P>();
+		payloadSign = new ArrayList<String>();
 	}
-	public FuzzLocation getFuzzLoc() {
+
+	public String orig() {
+		return fuzzLoc.getRepresentation(msg);
+	}
+
+	public void addPayload(P p) {
+		if(p != null){
+			payloads.add(p);
+			payloadSign.add(p.toString());
+		}
+	}
+
+	public void removePayload(P p) {
+		payloads.remove(p);
+		payloadSign.remove(p.toString());
+	}
+
+	public L getLocation() {
 		return fuzzLoc;
 	}
-	public void setFuzzLoc(FuzzLocation fuzzLoc) {
-		this.fuzzLoc = fuzzLoc;
-		this.orig = fuzzMessage.representName(fuzzLoc);
+
+	public ArrayList<P> getPayloads(){
+		return this.payloads;
 	}
-	public String getOrig(){
-		return this.orig;
-	}
-	public ArrayList<Integer> getIndices() {
-		return indices;
-	}
-	public ArrayList<FileFuzzer> getFileFuzzers(){
-		return this.fileFuzzers;
-	}
-	public ArrayList<Fuzzer> getFuzzers(){
-		return this.fuzzers;
-	}
-	public void resetFuzzers(){
-		fileFuzzers.clear();
-		fuzzers.clear();
-	}
-	public void addFuzzer(FileFuzzer f){
-		fileFuzzers.add(f);
-	}
-	public void addFuzzer(Fuzzer f){
-		fuzzers.add(f);
-	}
-	public String getSubstitution(int nr){
-		int n = nr;
-		for(Fuzzer f : getFuzzers()){
-			if(f.getMaximumValue() < n){
-				n -= f.getMaximumValue();
-			}
-			else{
-				f.resetCurrentValue();
-				while(f.getCurrentValue() < n){
-					f.next();
-				}
-				return ""+f.next();
+	public ArrayList<String> getPayloadSignatures() {
+		if(payloadSign == null){
+			ArrayList<String> payloadSign = new ArrayList<String>();
+			for(P pay : payloads){
+				payloadSign.add(pay.toString());
 			}
 		}
-		for(FileFuzzer f : getFileFuzzers()){
-			if(f.getLength() < n){
-				n -= f.getLength();
-			}
-			else{
-				return f.getList().get(n);
-			}
-		}
-		return null;
+		return payloadSign;
 	}
 }

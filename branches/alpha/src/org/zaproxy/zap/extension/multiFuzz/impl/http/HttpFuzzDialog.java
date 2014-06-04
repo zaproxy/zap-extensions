@@ -19,42 +19,56 @@ package org.zaproxy.zap.extension.multiFuzz.impl.http;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.owasp.jbrofuzz.core.Fuzzer;
+import org.owasp.jbrofuzz.core.NoSuchFuzzerException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
-import org.zaproxy.zap.extension.multiFuzz.MultiExtensionFuzz;
+import org.zaproxy.zap.extension.multiFuzz.ExtensionFuzz;
+import org.zaproxy.zap.extension.multiFuzz.FileFuzzer;
 import org.zaproxy.zap.extension.multiFuzz.FuzzDialog;
 import org.zaproxy.zap.extension.multiFuzz.FuzzProcessFactory;
-import org.zaproxy.zap.extension.multiFuzz.MFuzzableComponent;
+import org.zaproxy.zap.extension.multiFuzz.PayloadFactory;
 
-public class HttpFuzzDialog extends FuzzDialog {
+public class HttpFuzzDialog extends FuzzDialog<HttpMessage, HttpFuzzLocation, HttpPayload, HttpFuzzGap> {
 
 	private static final long serialVersionUID = -6286527080805168790L;
 
+	private HttpFuzzComponent fuzzComponent;
 	private JCheckBox enableTokens;
 	private JCheckBox showTokenRequests;
 	private JCheckBox followRedirects;
 	private JCheckBox urlEncode;	
 	private boolean incAcsrfToken = false;
-
+	private HttpPayloadFactory factory;
 	private HttpFuzzerDialogTokenPane tokenPane;
 
-	public HttpFuzzDialog(HttpFuzzerHandler handler, MultiExtensionFuzz extension, MFuzzableComponent fuzzableComponent) {
-		super(extension, fuzzableComponent);
-		this.handler = handler;
-		
+	@Override
+	public FuzzProcessFactory<HttpFuzzProcess, HttpPayload, HttpFuzzLocation> getFuzzProcessFactory() {
+		AntiCsrfToken token = null;
+		if (getEnableTokens().isSelected() && getTokensPane().isEnable()) {
+			token = getTokensPane().getToken();
+		}
+		return new HttpFuzzProcessFactory(fuzzableMessage, token, getShowTokenRequests().isSelected(), getFollowRedirects().isSelected());
+	}
+	public HttpFuzzDialog(ExtensionFuzz ext, HttpMessage msg, HttpFuzzLocation loc) {
+		super(ext, loc, msg);
+		fuzzableMessage = msg;
 		ExtensionAntiCSRF extAntiCSRF = (ExtensionAntiCSRF) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.NAME);
 		List<AntiCsrfToken> tokens = null;
 		if (extAntiCSRF != null) {
-			tokens = extAntiCSRF.getTokens((HttpMessage) fuzzableMessage.getMessage());
+			tokens = extAntiCSRF.getTokens(msg);
 		}
 		if (tokens == null || tokens.size() == 0) {
 			incAcsrfToken = false;
@@ -65,6 +79,7 @@ public class HttpFuzzDialog extends FuzzDialog {
 			setAntiCsrfTokens(tokens);
 			this.setSize(500, 550);
 		}
+		this.factory = new HttpPayloadFactory();
 	}
 
 	@Override
@@ -74,7 +89,7 @@ public class HttpFuzzDialog extends FuzzDialog {
 			currentRow++;
 			panel.add(getEnableTokens(), getGBC(0, currentRow, 6, 0.0D));
 			currentRow++;
-			panel.add( getTokensPane().getPane(), getGBC(0, currentRow, 6, 1.0D, 0.0D));
+			panel.add( getTokensPane().getPane(), getGBC(0, currentRow, 6, 1.0D, 0.0D, java.awt.GridBagConstraints.NONE));
 			currentRow++;
 
 			panel.add(new JLabel(Constant.messages.getString("fuzz.label.showtokens")), getGBC(0, currentRow, 2, 1.0D));
@@ -90,19 +105,6 @@ public class HttpFuzzDialog extends FuzzDialog {
 		currentRow++;
 		return currentRow;
 	}
-	@Override
-	protected FuzzProcessFactory getFuzzProcessFactory() {
-		AntiCsrfToken token = null;
-		if (getEnableTokens().isSelected() && getTokensPane().isEnable()) {
-			token = getTokensPane().getToken();
-		}
-		return new HttpFuzzProcessFactory(fuzzableMessage, token, getShowTokenRequests().isSelected(), getFollowRedirects().isSelected());
-	}
-	@Override
-	protected StartFuzzAction getStartFuzzAction() {
-		return new HttpStartFuzzAction();
-	}
-
 	private HttpFuzzerDialogTokenPane getTokensPane() {
 		if (tokenPane == null) {
 			tokenPane = new HttpFuzzerDialogTokenPane();
@@ -155,18 +157,92 @@ public class HttpFuzzDialog extends FuzzDialog {
 		}
 		return urlEncode;
 	}
-
-	private class HttpStartFuzzAction extends StartFuzzAction {
-
-		private static final long serialVersionUID = 1002081490933064015L;
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (incAcsrfToken && getShowTokenRequests().isSelected()) {
-				((HttpFuzzerHandler) handler).setShowTokenRequests(true);
-				handler = null;
-			}
-			super.actionPerformed(e);;
+	@Override
+	protected HttpFuzzComponent getMessageContent() {
+		if(fuzzComponent == null){
+			fuzzComponent = new HttpFuzzComponent(fuzzableMessage);
 		}
+		return fuzzComponent;
+	}
+	@Override
+	public FileFuzzer<HttpPayload> convertToFileFuzzer( Fuzzer jBroFuzzer) {
+		FileFuzzer<HttpPayload> ff = new FileFuzzer<HttpPayload>(jBroFuzzer.getName(), factory);
+		jBroFuzzer.resetCurrentValue();
+		while(jBroFuzzer.hasNext()){
+			ff.getList().add(factory.createPayload(jBroFuzzer.next()));
+		}
+		ff.setLength((int)jBroFuzzer.getMaximumValue());
+		return ff;
+	}
+	@Override
+	protected StartFuzzAction getStartFuzzAction(){
+		return new HttpStartFuzzAction();
+	} 
+	@Override
+	protected AddFuzzAction getAddFuzzAction() {
+		return new HttpAddFuzzAction();
 	}
 
+	private class HttpAddFuzzAction extends AddFuzzAction{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(adding){
+				if(isValidLocation(getMessageContent().selection())){
+					gaps.add(new HttpFuzzGap(getMessage(), getMessageContent().selection()));
+					super.actionPerformed(e);
+				}
+				else{
+					JOptionPane.showMessageDialog(null, Constant.messages.getString("fuzz.warning.intervalOverlap"));
+				}
+			}
+			else{
+				super.actionPerformed(e);
+			}
+		}
+	}
+	private class HttpStartFuzzAction extends StartFuzzAction{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			for(HttpFuzzGap g : gaps){
+				ArrayList<HttpPayload> files = new ArrayList<HttpPayload>();
+				for(HttpPayload p : g.getPayloads()){
+					if(p.getType().equals("FILE")){
+						files.add(p);
+						}
+				}
+				for(HttpPayload p : files){
+						FileFuzzer<HttpPayload> fileFuzzer;
+						String cat = p.getData().split(" --> ")[0];
+						String choice = p.getData().split(" --> ")[1];
+						try {
+							if(isCustomCategory()){
+								fileFuzzer = new FileFuzzer<HttpPayload>(new File(Constant.getInstance().FUZZER_CUSTOM_DIR + File.separator + choice), getPayloadFactory());
+							}
+							else if(isJBroFuzzCategory()){
+
+								fileFuzzer = convertToFileFuzzer(res.getJBroFuzzer(choice));
+
+							}
+							else{
+								fileFuzzer = new FileFuzzer<HttpPayload>(res.getFuzzFile(cat, choice), getPayloadFactory());
+							}
+							for(HttpPayload pn : fileFuzzer.getList()){
+								g.addPayload(pn);
+							}
+							g.removePayload(p);
+						} catch (NoSuchFuzzerException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+			super.actionPerformed(e);
+		}
+	}
+	@Override
+	protected PayloadFactory<HttpPayload> getPayloadFactory() {
+		if(factory == null){
+			factory = new HttpPayloadFactory();
+		}
+		return factory;
+	}
 }

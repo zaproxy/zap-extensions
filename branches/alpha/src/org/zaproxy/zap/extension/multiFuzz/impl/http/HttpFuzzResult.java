@@ -22,7 +22,7 @@ import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.multiFuzz.FuzzResult;
 
-public class HttpFuzzResult extends FuzzResult {
+public class HttpFuzzResult extends FuzzResult<HttpMessage, HttpFuzzLocation> {
 
     private List<HttpMessage> tokenRequestMessages;
 
