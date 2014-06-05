@@ -93,6 +93,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	 */
 	public ExtensionImportWSDL(String name) {
 		super(name);
+		initialize();
+		wsdlImporter = ImportWSDL.getInstance();
 	}
 
 	/**
@@ -196,7 +198,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 			        	innerBinding.getProperty("transport");
 			        	hasStyle = true;
 			        }catch (MissingPropertyExceptionNoStack e){
-			        	// It has no style nor transport, so it is not a SOAP binding.
+			        	// It has no style or transport property, so it is not a SOAP binding.
+			        	log.info("No style or transport property detected", e);
 			        }
 			        if(hasStyle && (bindingStyle.toString().equals("document") || bindingStyle.toString().equals("rpc")) ){
 			        	
@@ -245,14 +248,14 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 			    	        			final String paramType = e.getType().getQualifiedName().trim();
 			    	        			if(paramType.trim().equals("xsd:string")){
 				    	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "paramValue");
-				    	        			System.out.println("Param: "+"xpath:/"+elementName.trim()+"/"+paramName);
+				    	        			log.info("[ExtensionImportWSDL] Param: "+"xpath:/"+elementName.trim()+"/"+paramName);
 				    	        		}    
 			    	        		}
 		    	        		}
 		    	        	}
 		    	        	        
 		    	        	
-		    	        	/* Connection test for each operation. [MARK] It does not work over HTTPS. */
+		    	        	/* Connection test for each operation. [MARK] It has not been tested over HTTPS. */
 		    	        	/* Basic message creation. */
 		    	        	StringWriter writerSOAPReq = new StringWriter();
 		    	        	
@@ -266,7 +269,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 			    		        creator.createRequest(binding.getPortType().getName(),
 			    		               bindOp.getName(), binding.getName());
 			    		            	        	
-			    		        System.out.println(writerSOAPReq);
+			    		        log.info("[ExtensionImportWSDL] "+writerSOAPReq);
 			    		        /* HTTP Request. */
 			    		        HttpMessage httpRequest = new HttpMessage(new URI(endpointLocation, false));
 			    		        /* Body. */
