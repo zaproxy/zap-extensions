@@ -187,47 +187,47 @@
 	</target>
 
 	
-	<target name="deploy-ascanrules" depends="clean,compile" description="deploy the active scan rules">
+	<target name="deploy-ascanrules" description="deploy the active scan rules">
 		<antcall target="build-deploy-addon"> <param name="addon" value="ascanrules"/> </antcall>
 	</target>
 
-	<target name="deploy-directorylistv1" depends="clean,compile" description="deploys Directory List v1.0 add-on">
+	<target name="deploy-directorylistv1" description="deploys Directory List v1.0 add-on">
 		<antcall target="build-deploy-addon"> <param name="addon" value="directorylistv1"/> </antcall>
 	</target>
 
-	<target name="deploy-directorylistv2_3" depends="clean,compile" description="deploys Directory List v2.3 add-on">
+	<target name="deploy-directorylistv2_3" description="deploys Directory List v2.3 add-on">
 		<antcall target="build-deploy-addon"> <param name="addon" value="directorylistv2_3"/> </antcall>
 	</target>
 
-	<target name="deploy-directorylistv2_3_lc" depends="clean,compile" description="deploys Directory List v2.3 lower case add-on">
+	<target name="deploy-directorylistv2_3_lc" description="deploys Directory List v2.3 lower case add-on">
 		<antcall target="build-deploy-addon"> <param name="addon" value="directorylistv2_3_lc"/> </antcall>
 	</target>
 
-	<target name="deploy-exampleRightClickMsg" depends="clean,compile" description="deploy the exampleRightClickMsg extension">
+	<target name="deploy-exampleRightClickMsg" description="deploy the exampleRightClickMsg extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="exampleRightClickMsg"/> </antcall>
 	</target>
 
-	<target name="deploy-exampleTopMenu" depends="clean,compile" description="deploy the exampleTopMenu extension">
+	<target name="deploy-exampleTopMenu" description="deploy the exampleTopMenu extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="exampleTopMenu"/> </antcall>
 	</target>
 
-	<target name="deploy-pscanrules" depends="clean,compile" description="deploy the passive scan rules">
+	<target name="deploy-pscanrules" description="deploy the passive scan rules">
 		<antcall target="build-deploy-addon"> <param name="addon" value="pscanrules"/> </antcall>
 	</target>
 
-	<target name="deploy-quickstart" depends="clean,compile" description="deploy the quick start extension">
+	<target name="deploy-quickstart" description="deploy the quick start extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="quickstart"/> </antcall>
 	</target>
 
-	<target name="deploy-reveal" depends="clean,compile" description="deploy the Reveal extension">
+	<target name="deploy-reveal" description="deploy the Reveal extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="reveal"/> </antcall>
 	</target>
 	
-	<target name="deploy-saverawmessage" depends="clean,compile" description="deploy the Save Raw Message extension">
+	<target name="deploy-saverawmessage" description="deploy the Save Raw Message extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="saverawmessage"/> </antcall>
 	</target>
 
-	<target name="deploy-websockets" depends="clean,compile" description="deploy the WebSockets extension">
+	<target name="deploy-websockets" description="deploy the WebSockets extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="websocket"/> </antcall>
 	</target>
 	
