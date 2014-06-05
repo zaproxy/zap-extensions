@@ -18,6 +18,9 @@ The application does not use a Message Authentication Code (MAC) to protect the 
 <H2>Base64 Disclosure</H2>
 Base64 encoded data was disclosed by the application/web server
 
+<H2>Missing Content Security Policy Header</H2>
+This checks response headers for the presence of a Content Security Policy header.
+
 <H2>Cookie poisoning</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
 
@@ -41,8 +44,14 @@ This check identifies secure HTTPS pages that host insecure HTTP forms. The issu
 <H2>Open redirect</H2>
 Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
 
+<H2>Server Header Version Information Leak</H2>
+This checks response headers for the presence of a server header that contains version details.
+
 <H2>Source Code Disclosure</H2>
 Application Source Code was disclosed by the web server
+
+<H2>Missing Strict Transport Security Header</H2>
+This checks HTTPS response headers for the presence of a HTTP Strict Transport Security header.
 
 <H2>Timestamp Disclosure</H2>
 A timestamp was disclosed by the application/web server
@@ -58,6 +67,12 @@ This check looks at user-supplied input in query string parameters and POST data
 
 <H2>User controllable javascript property (XSS)</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+
+<H2>X-Powered-By Header Information Leak</H2>
+This checks response headers for the presence of X-Powered-By details.
+
+<H2>X-Backend-Server Header Information Leak</H2>
+This checks response headers for the presence of X-Backend-Server details.
 
 </BODY>
 </HTML>
