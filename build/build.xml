@@ -176,6 +176,7 @@
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
         <antcall target="build-addon"><param name="addon" value="saml"/></antcall>
+        <antcall target="build-addon"><param name="addon" value="soap"/></antcall>
         <antcall target="build-addon"><param name="addon" value="wappalyzer"/></antcall>
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
@@ -247,6 +248,10 @@
     <target name="deploy-saml" description="deploy the SAML extension">
         <antcall target="build-deploy-addon"> <param name="addon" value="saml"/> </antcall>
     </target>
+    
+    <target name="deploy-soap" depends="build-all" description="deploy the SOAP scanning extension">
+		<antcall target="deploy-extension"> <param name="extension" value="soap"/> </antcall>
+	</target>
 		
     <target name="deploy-wappalyzer" description="deploy the Wappalyzer extension">
         <antcall target="build-deploy-addon"> <param name="addon" value="wappalyzer"/> </antcall>
