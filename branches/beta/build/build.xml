@@ -236,7 +236,8 @@
 	</target>
 
 	<target name="deploy-bruteforce" depends="clean,compile" description="deploy the bruteforce extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="bruteforce"/> </antcall>
+		<antcall target="build-bruteforce"/>
+		<antcall target="deploy-addon"> <param name="addon" value="bruteforce"/> </antcall>
 	</target>
 	
 	<target name="deploy-diff" depends="clean,compile" description="deploy the diff extension">
@@ -276,7 +277,8 @@
 	</target>
 
 	<target name="deploy-tokengen" depends="clean,compile" description="deploy the tokengen extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="tokengen"/> </antcall>
+		<antcall target="build-tokengen"/>
+		<antcall target="deploy-addon"> <param name="addon" value="tokengen"/> </antcall>
 	</target>
 
 	<target name="deploy-zest" depends="clean,compile" description="deploy the zest extension">
