@@ -3,9 +3,9 @@
 	<name>Core Language Files</name>
 	<description>Translations of the core language files</description>
 	<author>ZAP Dev Team</author>
-	<version>2</version>
+	<version>3</version>
 	<url>https://crowdin.net/project/owasp-zap</url>
-	<changes>These are the language files included with the 2.3.1 release</changes>
+	<changes>Updated language files for the 2.3.1 release</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.coreLang.ExtensionCoreLanguages</extension>
@@ -14,7 +14,7 @@
 	<pscanrules/>
 	<filters/>
 	<files>
-		<file>lang/ZAP_2.3.1_language_pack.1.zaplang</file>
+		<file>lang/ZAP_2.3.1_language_pack.2.zaplang</file>
 	</files>
 	<not-before-version>2.3.1</not-before-version>
 	<not-from-version/>
