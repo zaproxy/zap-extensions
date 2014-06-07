@@ -249,8 +249,8 @@
         <antcall target="build-deploy-addon"> <param name="addon" value="saml"/> </antcall>
     </target>
     
-    <target name="deploy-soap" depends="build-all" description="deploy the SOAP scanning extension">
-		<antcall target="deploy-extension"> <param name="extension" value="soap"/> </antcall>
+    <target name="deploy-soap" description="deploy the SOAP scanning extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="soap"/> </antcall>
 	</target>
 		
     <target name="deploy-wappalyzer" description="deploy the Wappalyzer extension">
