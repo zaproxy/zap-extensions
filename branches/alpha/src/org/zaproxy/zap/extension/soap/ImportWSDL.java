@@ -7,10 +7,10 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class ImportWSDL {
 
-	//Dynamic table filled with all SOAP actions detected from multiple WSDL files.
+	//Dynamic chart filled with all SOAP actions detected from multiple WSDL files.
 	private HashMap<String, ArrayList<String>> soapActions = new HashMap<String, ArrayList<String>>(); 
 	
-	//Dynamic table filled with all SOAP requests sended.
+	//Dynamic chart filled with all sended SOAP requests.
 	private HashMap<String, ArrayList<HttpMessage>> requestsList = new HashMap<String, ArrayList<HttpMessage>>(); 
 	
 	private volatile static ImportWSDL singleton = null;
@@ -51,15 +51,15 @@ public class ImportWSDL {
 	
 	/* Returns all detected SOAP actions as a fixed bidimensional array. Each row represents a different WSDL file. */
 	public synchronized String[][] getSoapActions(){
-		String[][] operationsTable = new String[soapActions.size()][];
+		String[][] operationsChart = new String[soapActions.size()][];
 		int i = 0;
 		for(ArrayList<String> ops : soapActions.values()){
 			String[] row = new String[ops.size()];
 			ops.toArray(row);
-			operationsTable[i] = row;
+			operationsChart[i] = row;
 			i++;
 		}
-		return operationsTable;
+		return operationsChart;
 	}
 	
 	/* Returns all SOAP Actions available in the WSDL file explored, given a valid request. */
