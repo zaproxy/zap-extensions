@@ -362,7 +362,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
 	@Override
 	public String getDescription() {
-		return Constant.messages.getString("importWSDL.desc");
+		return Constant.messages.getString("soap.desc");
 	}
 
 	@Override
