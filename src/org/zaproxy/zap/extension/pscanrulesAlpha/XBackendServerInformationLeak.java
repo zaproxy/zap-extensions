@@ -73,8 +73,8 @@ public class XBackendServerInformationLeak extends PluginPassiveScanner{
 			    					getSolution(), //Solution
 			    					getReference(), //References
 			    					xbsDirective,	// Evidence - Return the Server Header info
-			    					200, // CWE Id //TODO: Why don't these come from messages.properties? Add getInt?
-			    					13,	// WASC Id //TODO: Why don't these come from messages.properties? Add getInt?
+			    					200, // CWE Id 
+			    					13,	// WASC Id 
 			    					msg); //HttpMessage
 			    		parent.raiseAlert(id, alert);
 					}
