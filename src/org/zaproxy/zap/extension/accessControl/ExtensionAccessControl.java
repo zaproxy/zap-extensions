@@ -75,7 +75,6 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 		super.hook(extensionHook);
 		// Register this where needed
 		// Model.getSingleton().addContextDataFactory(this);
-		log.warn("Hooking up....");
 		if (getView() != null) {
 			ExtensionHookView viewHook = extensionHook.getHookView();
 			// getView().addContextPanelFactory(this);
