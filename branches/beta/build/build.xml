@@ -188,6 +188,7 @@
 		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="invoke"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
@@ -244,6 +245,10 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="diff"/> </antcall>
 	</target>
 
+	<target name="deploy-gettingStarted" description="deploy the gettingStarted extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="gettingStarted"/> </antcall>
+	</target>
+  
 	<target name="deploy-invoke" description="deploy the invoke extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="invoke"/> </antcall>
 	</target>
@@ -302,6 +307,7 @@
 				<include name="ascanrulesBeta-${status}-*.zap"/>
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
+				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="portscan-${status}-*.zap"/>
@@ -321,6 +327,7 @@
 			<fileset dir="${dist}">
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
+				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
