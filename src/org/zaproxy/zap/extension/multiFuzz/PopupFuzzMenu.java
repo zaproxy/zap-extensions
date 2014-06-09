@@ -56,7 +56,7 @@ public class PopupFuzzMenu extends ExtensionPopupMenuItem {
 	 * This method initializes this
 	 */
 	private void initialize() {
-        this.setText(Constant.messages.getString("fuzz.tools.menu.fuzz"));
+        this.setText(Constant.messages.getString("fuzz.tools.menu.multiFuzz"));
 	}
 
 	@Override
