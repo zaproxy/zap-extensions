@@ -168,7 +168,6 @@
         <antcall target="build-addon"><param name="addon" value="browserView"/></antcall>
         <antcall target="build-addon"><param name="addon" value="callgraph"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="cmss"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="importurls"/></antcall>
@@ -217,10 +216,6 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="cmss"/> </antcall>
 	</target>
 
-	<target name="deploy-gettingStarted" description="deploy the gettingStarted extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="gettingStarted"/> </antcall>
-	</target>
-  
 	<target name="deploy-highlighter" description="deploy the highlighter extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="highlighter"/> </antcall>
 	</target>
