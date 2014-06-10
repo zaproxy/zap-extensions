@@ -178,7 +178,6 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzDia
 	@Override
 	public void stopFuzzers() {
 		fuzzerThread.stop();
-		ext.getFuzzerPanel().scanFinished();
 	}
 
 	@Override

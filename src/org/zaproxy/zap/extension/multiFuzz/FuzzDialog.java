@@ -93,7 +93,7 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 	private JTextArea payloadText;
 	private JList<String> payloads;
 	private ArrayList<FuzzerListener<?, ArrayList<G>>> listeners = new ArrayList<FuzzerListener<?,ArrayList<G>>>();
-	
+
 	public abstract FileFuzzer<P> convertToFileFuzzer(Fuzzer jBroFuzzer);
 	public abstract FuzzProcessFactory getFuzzProcessFactory();
 	protected abstract PayloadFactory<P> getPayloadFactory();
@@ -102,7 +102,7 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 	}
 	protected abstract int addCustomComponents(JPanel panel, int currentRow);
 	protected abstract FuzzComponent<L, G> getMessageContent();
-	
+
 	/**
 	 * 
 	 * @param extension
@@ -125,6 +125,7 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 	 */
 	protected void initialize() {
 		this.setContentPane(getJPanel());
+
 		this.setSize(800, 400);
 	}
 	/**
@@ -240,7 +241,7 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 		}
 		return info;
 	}
-	
+
 	// Left Panel
 	private JPanel getSearchBar(){
 		if(searchBar == null){
@@ -332,11 +333,11 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 			}
 			catMenus.add( cat );
 			JMenu menu = ComboMenuBar.createMenu(res.getDefaultCategory());
-		    for(JMenu c : catMenus){
-		    	MenuScroll.setScrollerFor(c, 10, 125, 0, 0);
-		    	menu.add( c );
-		    }
-		    MenuScroll.setScrollerFor(menu, 10, 125, 0, 0);
+			for(JMenu c : catMenus){
+				MenuScroll.setScrollerFor(c, 10, 125, 0, 0);
+				menu.add( c );
+			}
+			MenuScroll.setScrollerFor(menu, 10, 125, 0, 0);
 			categoryField = new ComboMenuBar(menu);
 		}
 		return categoryField;
@@ -364,7 +365,7 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 	public void removeFuzzerListener(FuzzerListener< ? , ArrayList<G>> listener){
 		listeners.remove(listener);
 	}
-	
+
 	protected void setSelection(int index){
 		currentIndex = (index + gaps.size()) % gaps.size();
 		getGapNrField().setText(""+(currentIndex + 1));
@@ -384,7 +385,6 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 		}
 		return chosen;
 	}
-	
 
 	protected boolean isCustomCategory() {
 		return Constant.messages.getString("fuzz.category.custom").equals(getCategoryField().getSelectedCategory());
@@ -392,7 +392,7 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 	protected boolean isJBroFuzzCategory() {
 		return getCategoryField().getSelectedCategory().startsWith(ExtensionFuzz.JBROFUZZ_CATEGORY_PREFIX);
 	}
-	
+
 	protected JButton getAddComponentButton(){
 		if (addComponentButton == null) {
 			addComponentButton = new JButton();
@@ -481,7 +481,7 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 		}
 		return cancelButton;
 	}
-	
+
 	protected Action getSearchAction() {
 		return new SearchAction();
 	}
@@ -544,13 +544,15 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 		public void actionPerformed(ActionEvent e) {
 			String choice = getCategoryField().getSelectedItem();
 			String cat = getCategoryField().getSelectedCategory();
-			P pay = getPayloadFactory().createPayload("FILE", cat + " --> " + choice);
+			if(res.getFileFuzzerCategories().contains(cat) && res.getFileFuzzerNames(cat).contains(choice)){
+				P pay = getPayloadFactory().createPayload("FILE", cat + " --> " + choice);
 				gaps.get(currentIndex).addPayload( pay );
 				payloadModel.addElement(pay.toString());
 				getStartButton().setEnabled(check());
+			}
 		}
 	}
-	
+
 	protected class StartFuzzAction extends AbstractAction {
 
 		private static final long serialVersionUID = -961522394390805325L;
@@ -600,12 +602,12 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if(adding){
-					setSelection(gaps.size() - 1);
-					getAddComponentButton().setText(Constant.messages.getString("fuzz.button.add.add"));
-					getInfo().setText(Constant.messages.getString("fuzz.info.gen"));
-					getStartButton().setEnabled(false);
-					getDelComponentButton().setEnabled(true);
-					adding = false;
+				setSelection(gaps.size() - 1);
+				getAddComponentButton().setText(Constant.messages.getString("fuzz.button.add.add"));
+				getInfo().setText(Constant.messages.getString("fuzz.info.gen"));
+				getStartButton().setEnabled(false);
+				getDelComponentButton().setEnabled(true);
+				adding = false;
 			}
 			else{
 				getStartButton().setEnabled(false);
@@ -645,98 +647,98 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 	}
 	private static class ComboMenuBar extends JMenuBar {
 
-		  JMenu menu;
-		  String cat;
-		  Dimension preferredSize;
+		JMenu menu;
+		String cat;
+		Dimension preferredSize;
 
-		  public ComboMenuBar(JMenu menu) {
-		    this.menu = menu;
-		    MenuItemListener listener = new MenuItemListener();
-		    setListener(menu, listener);
-		    add(menu);
-		    this.setMinimumSize(new Dimension(50,28));
-		  }
-
-		  class MenuItemListener implements ActionListener {
-			  @Override
-			  public void actionPerformed(ActionEvent e) {
-		      JMenuItem item = (JMenuItem) e.getSource();
-		      menu.setText(item.getText());
-		      JPopupMenu popUp = ((JPopupMenu)item.getParent());
-		      cat = ((JMenu)popUp.getInvoker()).getText();
-		      menu.requestFocus();
-		    }
-		  }
-
-		  private void setListener(JMenuItem item, ActionListener listener) {
-		    if (item instanceof JMenu) {
-		      JMenu menu = (JMenu) item;
-		      int n = menu.getItemCount();
-		      for (int i = 0; i < n; i++) {
-		        setListener(menu.getItem(i), listener);
-		      }
-		    } else if (item != null) { // null means separator
-		      item.addActionListener(listener);
-		    }
-		  }
-		  public String getSelectedCategory(){
-			  return cat;
-		  }
-		  public String getSelectedItem() {
-		    return menu.getText();
-		  }
-		  @Override
-		  public void setPreferredSize(Dimension size) {
-		    preferredSize = size;
-		  }
-		  @Override
-		  public Dimension getPreferredSize() {
-		    if (preferredSize == null) {
-		      Dimension sd = super.getPreferredSize();
-		      Dimension menuD = getItemSize(menu);
-		      Insets margin = menu.getMargin();
-		      Dimension retD = new Dimension(menuD.width, margin.top
-		          + margin.bottom + menuD.height);
-		      menu.setPreferredSize(retD);
-		      preferredSize = retD;
-		    }
-		    return preferredSize;
-		  }
-
-		  private Dimension getItemSize(JMenu menu) {
-		    Dimension d = new Dimension(0, 0);
-		    int n = menu.getItemCount();
-		    for (int i = 0; i < n; i++) {
-		      Dimension itemD;
-		      JMenuItem item = menu.getItem(i);
-		      if (item instanceof JMenu) {
-		        itemD = getItemSize((JMenu) item);
-		      } else if (item != null) {
-		        itemD = item.getPreferredSize();
-		      } else {
-		        itemD = new Dimension(0, 0); // separator
-		      }
-		      d.width = Math.max(d.width, itemD.width);
-		      d.height = Math.max(d.height, itemD.height);
-		    }
-		    return d;
-		  }
-
-		  private static class ComboMenu extends JMenu {
-
-		    public ComboMenu(String label) {
-		      super(label);
-		      setBorder(new EtchedBorder());
-		      setHorizontalTextPosition(JButton.LEFT);
-		      setFocusPainted(true);
-		    }
-		  }
-
-		  public static JMenu createMenu(String label) {
-		    return new ComboMenu(label);
-		  }
-
+		public ComboMenuBar(JMenu menu) {
+			this.menu = menu;
+			MenuItemListener listener = new MenuItemListener();
+			setListener(menu, listener);
+			add(menu);
+			this.setMinimumSize(new Dimension(50,28));
 		}
+
+		class MenuItemListener implements ActionListener {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JMenuItem item = (JMenuItem) e.getSource();
+				menu.setText(item.getText());
+				JPopupMenu popUp = ((JPopupMenu)item.getParent());
+				cat = ((JMenu)popUp.getInvoker()).getText();
+				menu.requestFocus();
+			}
+		}
+
+		private void setListener(JMenuItem item, ActionListener listener) {
+			if (item instanceof JMenu) {
+				JMenu menu = (JMenu) item;
+				int n = menu.getItemCount();
+				for (int i = 0; i < n; i++) {
+					setListener(menu.getItem(i), listener);
+				}
+			} else if (item != null) { // null means separator
+				item.addActionListener(listener);
+			}
+		}
+		public String getSelectedCategory(){
+			return cat;
+		}
+		public String getSelectedItem() {
+			return menu.getText();
+		}
+		@Override
+		public void setPreferredSize(Dimension size) {
+			preferredSize = size;
+		}
+		@Override
+		public Dimension getPreferredSize() {
+			if (preferredSize == null) {
+				Dimension sd = super.getPreferredSize();
+				Dimension menuD = getItemSize(menu);
+				Insets margin = menu.getMargin();
+				Dimension retD = new Dimension(menuD.width, margin.top
+						+ margin.bottom + menuD.height);
+				menu.setPreferredSize(retD);
+				preferredSize = retD;
+			}
+			return preferredSize;
+		}
+
+		private Dimension getItemSize(JMenu menu) {
+			Dimension d = new Dimension(0, 0);
+			int n = menu.getItemCount();
+			for (int i = 0; i < n; i++) {
+				Dimension itemD;
+				JMenuItem item = menu.getItem(i);
+				if (item instanceof JMenu) {
+					itemD = getItemSize((JMenu) item);
+				} else if (item != null) {
+					itemD = item.getPreferredSize();
+				} else {
+					itemD = new Dimension(0, 0); // separator
+				}
+				d.width = Math.max(d.width, itemD.width);
+				d.height = Math.max(d.height, itemD.height);
+			}
+			return d;
+		}
+
+		private static class ComboMenu extends JMenu {
+
+			public ComboMenu(String label) {
+				super(label);
+				setBorder(new EtchedBorder());
+				setHorizontalTextPosition(JButton.LEFT);
+				setFocusPainted(true);
+			}
+		}
+
+		public static JMenu createMenu(String label) {
+			return new ComboMenu(label);
+		}
+
+	}
 	private class ColorLine extends JPanel {
 		@Override
 		public void paintComponent(Graphics g) {

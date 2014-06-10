@@ -61,7 +61,12 @@ public class FuzzerThread<PL extends Payload, M extends Message,  L extends Fuzz
 	}
 
 	public void stop() {
-		threadPool.shutdown();
+		threadPool.shutdownNow();
+		try {
+			threadPool.awaitTermination(5, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		isStop = true;
 	}
 	public void addHandlerListener(FuzzerListener<Integer, Boolean> listener) {
@@ -91,12 +96,11 @@ public class FuzzerThread<PL extends Payload, M extends Message,  L extends Fuzz
 
 	@Override
 	public void run() {
-		while(!isStop){
 			log.info("fuzzer started");
 
 			this.fuzz(gaps);
 			
-			while(threadPool.getCompletedTaskCount() < comb_count){
+			while(threadPool.getCompletedTaskCount() < comb_count && !isStop){
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -107,7 +111,6 @@ public class FuzzerThread<PL extends Payload, M extends Message,  L extends Fuzz
 			handlerListener.notifyFuzzerComplete(true);
 			log.info("fuzzer stopped");
 			isStop = true;
-		}
 	}
 
 	private void fuzz(ArrayList<G> gaps) {
