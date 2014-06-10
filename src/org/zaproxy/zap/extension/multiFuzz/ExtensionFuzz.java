@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
@@ -89,6 +90,8 @@ public class ExtensionFuzz extends ExtensionAdaptor implements SessionChangedLis
 	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
+	    ResourceBundle messages = ResourceBundle.getBundle("org.zaproxy.zap.extension.multiFuzz.resources.Messages", Constant.getLocale());
+    	Constant.messages.addMessageBundle("fuzz", messages);
 	    if (getView() != null) {
 	        extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuFuzz());
 	        extensionHook.getHookView().addStatusPanel(getFuzzerPanel());
@@ -121,7 +124,9 @@ public class ExtensionFuzz extends ExtensionAdaptor implements SessionChangedLis
 		addFileFuzzers(new File(Constant.getZapHome(), Constant.getInstance().FUZZER_DIR), null);
         Collections.sort(fuzzerCategories);
 	}
-    
+    public boolean canFuzz(Class<? extends Message> clazz) {
+        return fuzzableMessageHandlers.containsKey(clazz);
+    }
     public void addFuzzerHandler(Class<? extends Message> clazz, FuzzerHandler handler) {
         fuzzableMessageHandlers.put(clazz, handler);
     }
@@ -172,7 +177,6 @@ public class ExtensionFuzz extends ExtensionAdaptor implements SessionChangedLis
     public PopupFuzzMenu getPopupMenuFuzz() {
         if (popupFuzzMenu == null) {
             popupFuzzMenu = new PopupFuzzMenu(this);
-            popupFuzzMenu.setText(Constant.messages.getString("fuzz.tools.menu.fuzz"));
             popupFuzzMenu.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
