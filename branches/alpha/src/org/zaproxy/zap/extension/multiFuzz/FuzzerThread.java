@@ -43,11 +43,14 @@ public class FuzzerThread<PL extends Payload, M extends Message,  L extends Fuzz
 
 	private boolean pause = false;
 	private boolean isStop = false;
-
+	
+	private int comb_count  = 0;
+	private int threadCount = 1;
 	private int delayInMs = 0;
 
 	public FuzzerThread(FuzzerParam fuzzerParam) {
 		delayInMs = fuzzerParam.getDelayInMs();
+		threadCount = fuzzerParam.getThreadPerScan();
 	}
 
 	public void start() {
@@ -93,7 +96,7 @@ public class FuzzerThread<PL extends Payload, M extends Message,  L extends Fuzz
 
 			this.fuzz(gaps);
 			
-			while(threadPool.getCompletedTaskCount() < threadPool.getMaximumPoolSize()){
+			while(threadPool.getCompletedTaskCount() < comb_count){
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
@@ -124,7 +127,9 @@ public class FuzzerThread<PL extends Payload, M extends Message,  L extends Fuzz
 				mod[j] *= lens[i];
 			}
 		}
-		this.threadPool = new ThreadPoolExe(total, total, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<P>());
+		comb_count = total;
+		int core = (total < threadCount) ? total : threadCount ;
+		this.threadPool = new ThreadPoolExe( core, threadCount, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<P>());
 		for (FuzzerListener<Integer, R> listener : listenerList) {
 			listener.notifyFuzzerStarted(total);
 		}
@@ -148,7 +153,6 @@ public class FuzzerThread<PL extends Payload, M extends Message,  L extends Fuzz
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				// Ignore
 			}
 		}
 
@@ -156,7 +160,6 @@ public class FuzzerThread<PL extends Payload, M extends Message,  L extends Fuzz
 			try {
 				Thread.sleep(delayInMs);
 			} catch (InterruptedException e) {
-				// Ignore
 			}
 		}
 

@@ -49,9 +49,7 @@ public class ExtensionRegister extends ExtensionAdaptor {
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
 	    ExtensionFuzz anchor = ((ExtensionFuzz) Control.getSingleton().getExtensionLoader().getExtension("MultiExtensionFuzz"));
-	    ResourceBundle messages = ResourceBundle.getBundle("org.zaproxy.zap.extension.multiFuzz.resources.Messages", Constant.getLocale());
 	    anchor.addFuzzerHandler(HttpMessage.class, new HttpFuzzerHandler(anchor));
-    	Constant.messages.addMessageBundle("fuzz", messages);
 	}
 	
 	@Override
@@ -61,7 +59,7 @@ public class ExtensionRegister extends ExtensionAdaptor {
 
 	@Override
 	public String getDescription() {
-		return Constant.messages.getString("httpsInfo.httpsInfo.desc");
+		return Constant.messages.getString("fuzz.desc");
 	}
 
 	@Override

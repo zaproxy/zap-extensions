@@ -35,7 +35,7 @@ public class PopupFuzzMenu extends ExtensionPopupMenuItem {
 	private static final long serialVersionUID = 1L;
 	private Component lastInvoker = null;
     private JFrame parentFrame = null;
-    
+    private ExtensionFuzz ext;
 	/**
      * @return Returns the lastInvoker.
      */
@@ -50,6 +50,7 @@ public class PopupFuzzMenu extends ExtensionPopupMenuItem {
 	public PopupFuzzMenu(ExtensionFuzz extension) {
 		super();
 		initialize();
+		this.ext = extension;
 	}
 	
 	/**
@@ -67,8 +68,7 @@ public class PopupFuzzMenu extends ExtensionPopupMenuItem {
 			visible = true;
 			
 			FuzzableComponent<?> fuzzableComponent = (FuzzableComponent<?>)invoker;
-			
-        	if (!fuzzableComponent.canFuzz()) {
+        	if (!fuzzableComponent.canFuzz() || !ext.canFuzz(fuzzableComponent.getMessageClass())) {
         		this.setEnabled(false);
         	} else {
         		this.setEnabled(true);
@@ -94,7 +94,7 @@ public class PopupFuzzMenu extends ExtensionPopupMenuItem {
 			
 			org.zaproxy.zap.extension.fuzz.FuzzableComponent fuzzableComponent = (org.zaproxy.zap.extension.fuzz.FuzzableComponent)invoker;
 			
-        	if (!fuzzableComponent.canFuzz()) {
+        	if (!fuzzableComponent.canFuzz()  || !ext.canFuzz(fuzzableComponent.getMessageClass())) {
         		this.setEnabled(false);
         	} else {
         		this.setEnabled(true);
