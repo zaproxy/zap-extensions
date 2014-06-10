@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>10</version>
+	<version>11</version>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Fixed an issue with search of strings that affected "Application Error disclosure" scanner (Issue 1186).
+	Improved scanner "Web Browser XSS Protection Not Enabled" (former "IE8's XSS protection filter not disabled").
 	]]>
 	</changes>
 	<dependson/>
