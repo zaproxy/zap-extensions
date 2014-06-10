@@ -6,7 +6,8 @@
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-        Added a Example File scanner
+        Added a Example File scanner;<br>
+        Added "Cross-Domain Misconfiguration" scanner.
 	]]>
 	</changes>
 	<dependson/>
@@ -15,6 +16,7 @@
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BackupFileDisclosure</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.CrossDomainScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HeartBleedActiveScanner</ascanrule>
