@@ -6,7 +6,13 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Added various checks per Issue 1169.<br>
+	Added various checks per Issue 1169;<br>
+	Added "Heartbleed OpenSSL Vulnerability (Indicative)" scanner;<br>
+	Added "Directory Browsing" scanner;<br>
+	Added "Cross-Domain Misconfiguration" scanner;<br>
+	Improved "Source Code Disclosure" scanner;<br>
+	Improved "Base64 Disclosure" scanner;<br>
+	Improved "Hash Disclosure" scanner.
 	]]>
 	</changes>
 	<dependson/>
