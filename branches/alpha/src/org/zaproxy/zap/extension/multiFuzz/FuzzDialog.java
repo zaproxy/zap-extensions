@@ -544,7 +544,7 @@ public abstract class FuzzDialog<M extends Message, L extends FuzzLocation<M>, P
 		public void actionPerformed(ActionEvent e) {
 			String choice = getCategoryField().getSelectedItem();
 			String cat = getCategoryField().getSelectedCategory();
-			if(res.getFileFuzzerCategories().contains(cat) && res.getFileFuzzerNames(cat).contains(choice)){
+			if((res.getFileFuzzerCategories().contains(cat) && res.getFileFuzzerNames(cat).contains(choice) ) || (res.getJBroFuzzCategories().contains(cat) && res.getJBroFuzzFuzzerNames(cat).contains(choice)) ){
 				P pay = getPayloadFactory().createPayload("FILE", cat + " --> " + choice);
 				gaps.get(currentIndex).addPayload( pay );
 				payloadModel.addElement(pay.toString());
