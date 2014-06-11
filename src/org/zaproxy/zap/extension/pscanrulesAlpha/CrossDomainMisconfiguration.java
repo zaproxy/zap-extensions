@@ -79,44 +79,60 @@ public class CrossDomainMisconfiguration extends PluginPassiveScanner {
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
 		try {
-		if (log.isDebugEnabled()) log.debug("Checking message "+ msg.getRequestHeader().getURI().getURI() + " for Cross-Domain misconfigurations");
+			if (log.isDebugEnabled()) log.debug("Checking message "+ msg.getRequestHeader().getURI().getURI() + " for Cross-Domain misconfigurations");
 
-		//TODO: replace with equivalent names in HttpHeaders, once these headers are available there 
-		String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
-		//String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
-		//String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
-		//String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
-		
-		String corsAllowOriginValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_ALLOW_ORIGIN);
-		//String corsAllowHeadersValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_ALLOW_HEADERS);
-		//String corsAllowMethodsValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_ALLOW_METHODS);
-		//String corsExposeHeadersValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_EXPOSE_HEADERS);
-		
-		if ( corsAllowOriginValue!= null && corsAllowOriginValue.equals("*")) {
-			if (log.isDebugEnabled()) log.debug("Raising a Cross Domain alert on "+ ACCESS_CONTROL_ALLOW_ORIGIN);
-			Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.WARNING, getName() );
-			alert.setDetail(
-					getDescription(), 
-					msg.getRequestHeader().getURI().toString(), 
-					"", //param
-					"", //attack 
-					Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"),  //other info
-					Constant.messages.getString(MESSAGE_PREFIX + "soln"), 
-					Constant.messages.getString(MESSAGE_PREFIX + "refs"), 
-					ACCESS_CONTROL_ALLOW_ORIGIN + ": "+ corsAllowOriginValue,
-					264, //CWE 264: Permissions, Privileges, and Access Controls 
-					14,  //WASC-14: Server Misconfiguration
-					msg);  
-			parent.raiseAlert(id, alert);
-		}
+			//TODO: replace with equivalent names in HttpHeader, once these headers are available there 
+			String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";			
+			//String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
+			//String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
+			//String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
+
+			String corsAllowOriginValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_ALLOW_ORIGIN);
+			//String corsAllowHeadersValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_ALLOW_HEADERS);
+			//String corsAllowMethodsValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_ALLOW_METHODS);
+			//String corsExposeHeadersValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_EXPOSE_HEADERS);
+
+			if ( corsAllowOriginValue!= null && corsAllowOriginValue.equals("*")) {
+				if (log.isDebugEnabled()) log.debug("Raising a Low risk Cross Domain alert on "+ ACCESS_CONTROL_ALLOW_ORIGIN + ": "+corsAllowOriginValue);
+				//Its a Medium, rather than a High (as originally thought), for the following reasons:
+				//Assumption: if an API is accessible in an unauthenticated manner, it doesn't need to be protected 
+				//  (if it should be protected, its a Missing Function Level Access Control issue, not a Cross Domain Misconfiguration)
+				//
+				//Case 1) Request sent using XHR
+				// - cookies will not be sent with the request at all unless withCredentials = true on the XHR request;
+				// - If a cookie was sent with the request, the browser will not give access to the response body via JavaScript unless the response headers say "Access-Control-Allow-Credentials: true"
+				// - If "Access-Control-Allow-Credentials: true" and "Access-Control-Allow-Origin: *" in the response, the browser will not give access to the response body. 
+				//	  (this is an edge case, but is actually really important, because it blocks all the useful attacks, and is well supported by modern browsers)
+				//Case 2) Request sent using HTML Form POST with an iframe, for instance, and attempting to access the iframe body (ie, the Cross Domain response) using JavaScript
+				// - the cookie will be sent by the web browser (possibly leading to CSRF, but with no impact from the point of view of the Same Origin Policy / Cross Domain Misconfiguration
+				// - the HTML response is not accessible in JavaScript, regardless of the CORS headers sent in the response (in all my trials, at least) 
+				//   (this is even more restrictive than the equivalent request sent by XHR)
+				
+				//The CORS misconfig could still allow an attacker to access the data returned from an unauthenticated API, which is protected by some other form of security, such as IP address white-listing, for instance.				
+				Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING, getName() );
+				alert.setDetail(
+						getDescription(), 
+						msg.getRequestHeader().getURI().toString(), 
+						"", //param
+						"", //attack 
+						Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"),  //other info
+						Constant.messages.getString(MESSAGE_PREFIX + "soln"), 
+						Constant.messages.getString(MESSAGE_PREFIX + "refs"), 
+						ACCESS_CONTROL_ALLOW_ORIGIN + ": "+ corsAllowOriginValue,
+						264, //CWE 264: Permissions, Privileges, and Access Controls 
+						14,  //WASC-14: Server Misconfiguration
+						msg);  
+				parent.raiseAlert(id, alert);
+			}
+
 		}
 		catch (Exception e) {
 			log.error("An error occurred trying to passively scan a message for Cross Domain Misconfigurations");
 		}
-		
+
 	}
-		
-	
+
+
 
 	/**
 	 * sets the parent
