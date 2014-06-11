@@ -3,6 +3,8 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
+ * Copyright 2014 The ZAP Development Team
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -25,7 +27,6 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -41,7 +42,7 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 	private static final int PLUGIN_ID = 10038;
 	
 	private PassiveScanThread parent = null;
-	private static Logger logger = Logger.getLogger(ContentSecurityPolicyMissingScanner.class);
+	private final static Logger logger = Logger.getLogger(ContentSecurityPolicyMissingScanner.class);
 	
 	@Override
 	public void setParent(PassiveScanThread parent) {
@@ -57,42 +58,41 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
 	
-		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
-			//Get the various CSP headers
-			boolean headerFound = false;
-			Vector<String> cspOptions = msg.getResponseHeader().getHeaders("Content-Security-Policy");
-			//If it's not null or empty then we found one
-			if (cspOptions != null && cspOptions.isEmpty() == false) 
-				headerFound = true;
-			
-			Vector<String> xcspOptions = msg.getResponseHeader().getHeaders("X-Content-Security-Policy");
-			//If it's not null or empty then we found one
-			if (xcspOptions != null && xcspOptions.isEmpty() == false) 
-				headerFound = true;
-			
-			Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders("X-WebKit-CSP");
-			//If it's not null or empty then we found one
-			if (xwkcspOptions !=null && xwkcspOptions.isEmpty() == false) 
-				headerFound = true;
+		//Get the various CSP headers
+		boolean headerFound = false;
+		Vector<String> cspOptions = msg.getResponseHeader().getHeaders("Content-Security-Policy");
+		//If it's not null or empty then we found one
+		if (cspOptions != null && cspOptions.isEmpty() == false) 
+			headerFound = true;
+		
+		Vector<String> xcspOptions = msg.getResponseHeader().getHeaders("X-Content-Security-Policy");
+		//If it's not null or empty then we found one
+		if (xcspOptions != null && xcspOptions.isEmpty() == false) 
+			headerFound = true;
+	
+		Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders("X-WebKit-CSP");
+		//If it's not null or empty then we found one
+		if (xwkcspOptions !=null && xwkcspOptions.isEmpty() == false) 
+			headerFound = true;
 
-			if (!headerFound) { //NOT Header Found 
-				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
-					getName()); 
-		   			alert.setDetail(
-		   				getDescription(), //Description
-		   				msg.getRequestHeader().getURI().toString(), //URI
-		   				"",	// Param
-		   				"", // Attack
-		   				"", // Other info
-		   				getSolution(), //Solution
-		   				getReference(), //References
-		   				"",	// Evidence
-		   				0, // 
-		   				0,	//
-		   				msg); //HttpMessage
+		if (!headerFound) { //NOT Header Found 
+			Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
+				getName()); 
+				alert.setDetail(
+						getDescription(), //Description
+						msg.getRequestHeader().getURI().toString(), //URI
+						"",	// Param
+						"", // Attack
+						"", // Other info
+						getSolution(), //Solution
+						getReference(), //References
+						"",	// Evidence
+						0, // 
+						0,	//
+						msg); //HttpMessage
 		   	parent.raiseAlert(id, alert);
-			}
 		}
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
 	    }
@@ -100,13 +100,10 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 
 	@Override
 	public int getPluginId() {
-		/*
-		 * This should be unique across all active and passive rules.
-		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
-		 */
 		return PLUGIN_ID;
 	}
 	
+	@Override
 	public String getName(){
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
@@ -122,8 +119,5 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 	private String getReference() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
-	
-    public int getCategory() {
-        return Category.MISC;
-    }
+
 }

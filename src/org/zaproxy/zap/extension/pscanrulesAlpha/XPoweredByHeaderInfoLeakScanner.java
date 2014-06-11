@@ -3,6 +3,8 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
+ * Copyright 2014 The ZAP Development Team
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -25,7 +27,6 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -41,7 +42,7 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 	private static final int PLUGIN_ID = 10037;
 	
 	private PassiveScanThread parent = null;
-	private static Logger logger = Logger.getLogger(XPoweredByHeaderInfoLeakScanner.class);
+	private final static Logger logger = Logger.getLogger(XPoweredByHeaderInfoLeakScanner.class);
 	
 	@Override
 	public void setParent(PassiveScanThread parent) {
@@ -57,42 +58,37 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
 	
-		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()){
 		Vector<String> xpbOptions = msg.getResponseHeader().getHeaders("X-Powered-By");
-			if (xpbOptions != null) { //Header Found
-				for (String xpbDirective : xpbOptions) {
-					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
-						getName()); 
-			    		alert.setDetail(
-			    				getDescription(), //Description
-			    				msg.getRequestHeader().getURI().toString(), //URI
-			    				"",	// Param
-			    				"", // Attack
-			    				"", // Other info
-			    				getSolution(), //Solution
-			    				getReference(), //References
-			    				xpbDirective,	// Evidence - Return the X-Powered-By Header info
-			    				200, // CWE Id
-			    				13,	// WASC Id
-			    				msg); //HttpMessage
-			    	parent.raiseAlert(id, alert);
-					}
+		if (xpbOptions != null) { //Header Found
+			for (String xpbDirective : xpbOptions) {
+				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
+					getName()); 
+		    		alert.setDetail(
+		    				getDescription(), //Description
+		    				msg.getRequestHeader().getURI().toString(), //URI
+		    				"",	// Param
+		    				"", // Attack
+		    				"", // Other info
+		    				getSolution(), //Solution
+		    				getReference(), //References
+		    				xpbDirective,	// Evidence - Return the X-Powered-By Header info
+		    				200, // CWE Id
+		    				13,	// WASC Id
+		    				msg); //HttpMessage
+		    	parent.raiseAlert(id, alert);
 				}
 			}
 		    if (logger.isDebugEnabled()) {
-	    	logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
+		    	logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
 	    }
 	}
 
 	@Override
 	public int getPluginId() {
-		/*
-		 * This should be unique across all active and passive rules.
-		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
-		 */
 		return PLUGIN_ID;
 	}
 	
+	@Override
 	public String getName(){
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
@@ -108,9 +104,6 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 	private String getReference() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
-	
-    public int getCategory() {
-        return Category.MISC;
-    }
+
 }
 
