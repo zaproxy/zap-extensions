@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Zest - Scripting Security Tests</name>
-	<version>14</version>
+	<version>15</version>
 	<description>A graphical security scripting language..</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	ZAP issue 1218: ZEST Record button broken in Toolbar<br>
-	ZAP issue 1230: Changes to Zest scripts lost after the top level script node is changed
+	ZAP issue 1235: Support client side scripting<br>
 	]]>
 	</changes>
 	<dependson/>

@@ -19,8 +19,19 @@
  */
 package org.zaproxy.zap.extension.zest.menu;
 
+import org.mozilla.zest.core.v1.ZestClientAssignCookie;
+import org.mozilla.zest.core.v1.ZestClientElementAssign;
+import org.mozilla.zest.core.v1.ZestClientElementClear;
+import org.mozilla.zest.core.v1.ZestClientElementClick;
+import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
+import org.mozilla.zest.core.v1.ZestClientElementSubmit;
+import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientWindowClose;
+import org.mozilla.zest.core.v1.ZestClientWindowHandle;
+import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 
 public class ZestMenuManager {
@@ -56,7 +67,17 @@ public class ZestMenuManager {
 	
 	private ZestRecordOnOffPopupMenu popupZestRecordOn = null;
 	private ZestRecordOnOffPopupMenu popupZestRecordOff= null;
-	
+
+	private ZestAddClientPopupMenu popupAddClientAssignCookieMenu = null;
+	private ZestAddClientPopupMenu popupAddClientLaunchMenu = null;
+	private ZestAddClientPopupMenu popupAddClientElementAssignMenu = null;
+	private ZestAddClientPopupMenu popupAddClientElementClearMenu = null;
+	private ZestAddClientPopupMenu popupAddClientElementClickMenu = null;
+	private ZestAddClientPopupMenu popupAddClientElementSendKeysMenu = null;
+	private ZestAddClientPopupMenu popupAddClientElementSubmitMenu = null;
+	private ZestAddClientPopupMenu popupAddClientWindowMenu = null;
+	private ZestAddClientPopupMenu popupAddClientWindowCloseMenu = null;
+
 	private ExtensionZest extension = null;
 	
 	public ZestMenuManager(ExtensionZest extension, ExtensionHook extensionHook) {
@@ -70,6 +91,18 @@ public class ZestMenuManager {
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddActionMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddAssertionMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddAssignMenu());
+
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientAssignCookieMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientLaunchMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementAssignMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementClearMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementClickMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementSendKeysMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementSubmitMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowMenu());
+		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowCloseMenu());
+
+
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddConditionMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddExpressionMenu());
 		extensionHook.getHookMenu().addPopupMenuItem(getPopupAddLoopMenu());
@@ -93,7 +126,7 @@ public class ZestMenuManager {
         
         extensionHook.getHookMenu().addPopupMenuItem(getPopupZestRecordOn());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupZestRecordOff());
-
+        
 	}
 	
 	private ZestAddExpressionPopupMenu getPopupAddExpressionMenu(){
@@ -151,12 +184,6 @@ public class ZestMenuManager {
 		}
 		return popupSurroundWithMenu;
 	}
-//	private List<ExtensionPopupMenuItem> getSurroundOptions(){// TODO maybe store as a field.
-//		LinkedList<ExtensionPopupMenuItem> options=new LinkedList<>();
-//		options.add(getPopupAddConditionMenu());
-//		options.add(getPopupAddConditionMenu());
-//		return options;
-//	}
 
 	private ZestAddToScriptPopupMenu getPopupZestAddToMenu() {
 		if (popupZestAddToMenu == null) {
@@ -277,4 +304,120 @@ public class ZestMenuManager {
 		return popupAddRequestMenu;
 	}
 
+	private ZestAddClientPopupMenu getPopupAddClientAssignCookieMenu() {
+		if (popupAddClientAssignCookieMenu == null) {
+			popupAddClientAssignCookieMenu = new ZestAddClientPopupMenu(this.extension, "zest.clientAssignCookie.popup", true){
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request) {
+					extension.getDialogManager().showZestClientAssignCookieDialog(
+							parent, child, request, new ZestClientAssignCookie(), true);
+				}};
+		}
+		return popupAddClientAssignCookieMenu;
+	}
+
+	private ZestAddClientPopupMenu getPopupAddClientLaunchMenu() {
+		if (popupAddClientLaunchMenu == null) {
+			popupAddClientLaunchMenu = new ZestAddClientPopupMenu(this.extension, "zest.clientLaunch.popup", false){
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request) {
+					extension.getDialogManager().showZestClientLaunchDialog(
+							parent, child, request, new ZestClientLaunch(), true);
+				}};
+		}
+		return popupAddClientLaunchMenu;
+	}
+
+	private ZestAddClientPopupMenu getPopupAddClientElementAssignMenu() {
+		if (popupAddClientElementAssignMenu == null) {
+			popupAddClientElementAssignMenu = new ZestAddClientPopupMenu(this.extension, "zest.clientElementAssign.popup", true){
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request) {
+					extension.getDialogManager().showZestClientElementAssignDialog(
+							parent, child, request, new ZestClientElementAssign(), true);
+				}};
+		}
+		return popupAddClientElementAssignMenu;
+	}
+
+	private ZestAddClientPopupMenu getPopupAddClientElementClearMenu() {
+		if (popupAddClientElementClearMenu == null) {
+			popupAddClientElementClearMenu = new ZestAddClientPopupMenu(this.extension, "zest.clientElementClear.popup", true){
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request) {
+					extension.getDialogManager().showZestClientElementClearDialog(
+							parent, child, request, new ZestClientElementClear(), true);
+				}};
+		}
+		return popupAddClientElementClearMenu;
+	}
+
+	private ZestAddClientPopupMenu getPopupAddClientElementClickMenu() {
+		if (popupAddClientElementClickMenu == null) {
+			popupAddClientElementClickMenu = new ZestAddClientPopupMenu(this.extension, "zest.clientElementClick.popup", true){
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request) {
+					extension.getDialogManager().showZestClientElementClickDialog(
+							parent, child, request, new ZestClientElementClick(), true);
+				}};
+		}
+		return popupAddClientElementClickMenu;
+	}
+
+	private ZestAddClientPopupMenu getPopupAddClientElementSendKeysMenu() {
+		if (popupAddClientElementSendKeysMenu == null) {
+			popupAddClientElementSendKeysMenu = new ZestAddClientPopupMenu(this.extension, "zest.clientElementSendKeys.popup", true){
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request) {
+					extension.getDialogManager().showZestClientElementSendKeysDialog(
+							parent, child, request, new ZestClientElementSendKeys(), true);
+				}};
+		}
+		return popupAddClientElementSendKeysMenu;
+	}
+
+	private ZestAddClientPopupMenu getPopupAddClientElementSubmitMenu() {
+		if (popupAddClientElementSubmitMenu == null) {
+			popupAddClientElementSubmitMenu = new ZestAddClientPopupMenu(this.extension, "zest.clientElementSubmit.popup", true){
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request) {
+					extension.getDialogManager().showZestClientElementSubmitDialog(
+							parent, child, request, new ZestClientElementSubmit(), true);
+				}};
+		}
+		return popupAddClientElementSubmitMenu;
+	}
+	
+	private ZestAddClientPopupMenu getPopupAddClientWindowMenu() {
+		if (popupAddClientWindowMenu == null) {
+			popupAddClientWindowMenu = new ZestAddClientPopupMenu(this.extension, "zest.clientWindow.popup", false){
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request) {
+					extension.getDialogManager().showZestClientWindowHandleDialog(
+							parent, child, request, new ZestClientWindowHandle(), true);
+				}};
+		}
+		return popupAddClientWindowMenu;
+	}
+	
+	private ZestAddClientPopupMenu getPopupAddClientWindowCloseMenu() {
+		if (popupAddClientWindowCloseMenu == null) {
+			popupAddClientWindowCloseMenu = new ZestAddClientPopupMenu(this.extension, "zest.clientWindowClose.popup", true){
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request) {
+					extension.getDialogManager().showZestClientWindowCloseDialog(
+							parent, child, request, new ZestClientWindowClose(), true);
+				}};
+		}
+		return popupAddClientWindowCloseMenu;
+	}
 }

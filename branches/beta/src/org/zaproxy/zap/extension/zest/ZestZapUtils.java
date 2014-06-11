@@ -44,6 +44,15 @@ import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignReplace;
 import org.mozilla.zest.core.v1.ZestAssignString;
 import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
+import org.mozilla.zest.core.v1.ZestClientAssignCookie;
+import org.mozilla.zest.core.v1.ZestClientElementAssign;
+import org.mozilla.zest.core.v1.ZestClientElementClear;
+import org.mozilla.zest.core.v1.ZestClientElementClick;
+import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
+import org.mozilla.zest.core.v1.ZestClientElementSubmit;
+import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientWindowClose;
+import org.mozilla.zest.core.v1.ZestClientWindowHandle;
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestControlLoopBreak;
@@ -463,6 +472,96 @@ public class ZestZapUtils {
 			return indexStr + Constant.messages.getString("zest.element.control.loopbrk.title");
 		} else if (za instanceof ZestControlLoopNext) {
 			return indexStr + Constant.messages.getString("zest.element.control.loopnext.title");
+		} else if (za instanceof ZestClientAssignCookie) {
+			ZestClientAssignCookie zcl = (ZestClientAssignCookie) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientAssignCookie"), 
+						zcl.getWindowHandle(), zcl.getVariableName(), zcl.getCookieName());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientAssignCookie.title");
+			}
+		} else if (za instanceof ZestClientLaunch) {
+			ZestClientLaunch zcl = (ZestClientLaunch) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientLaunch"), 
+						zcl.getWindowHandle(), zcl.getBrowserType(), zcl.getUrl());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientLaunch.title");
+			}
+		} else if (za instanceof ZestClientElementAssign) {
+			ZestClientElementAssign zcl = (ZestClientElementAssign) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientElementAssign"), 
+						zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientElementAssign.title");
+			}
+		} else if (za instanceof ZestClientElementClear) {
+			ZestClientElementClear zcl = (ZestClientElementClear) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientElementClear"), 
+						zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientElementClear.title");
+			}
+		} else if (za instanceof ZestClientElementClick) {
+			ZestClientElementClick zcl = (ZestClientElementClick) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientElementClick"), 
+						zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientElementClick.title");
+			}
+		} else if (za instanceof ZestClientElementSendKeys) {
+			ZestClientElementSendKeys zcl = (ZestClientElementSendKeys) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientElementSendKeys"), 
+						zcl.getWindowHandle(), zcl.getType(), zcl.getElement(), zcl.getValue());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientElementSendKeys.title");
+			}
+		} else if (za instanceof ZestClientElementSubmit) {
+			ZestClientElementSubmit zcl = (ZestClientElementSubmit) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientElementSubmit"), 
+						zcl.getWindowHandle(), zcl.getType(), zcl.getElement());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientElementSubmit.title");
+			}
+		} else if (za instanceof ZestClientWindowHandle) {
+			ZestClientWindowHandle zcl = (ZestClientWindowHandle) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientWindowHandle"), 
+						zcl.getWindowHandle(), zcl.getUrl());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientWindow.title");
+			}
+		} else if (za instanceof ZestClientWindowClose) {
+			ZestClientWindowClose zcl = (ZestClientWindowClose) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientWindowClose"), 
+						zcl.getWindowHandle());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientWindowClose.title");
+			}
 		}
 
 		return indexStr + MessageFormat.format(Constant.messages

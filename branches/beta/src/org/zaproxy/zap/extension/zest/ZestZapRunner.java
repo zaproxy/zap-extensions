@@ -35,6 +35,7 @@ import org.mozilla.zest.core.v1.ZestAssertFailException;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignFailException;
 import org.mozilla.zest.core.v1.ZestAssignment;
+import org.mozilla.zest.core.v1.ZestClientFailException;
 import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
@@ -97,7 +98,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     @Override
 	public String run(ZestScript script, Map<String, String> params) throws ZestAssertFailException, ZestActionFailException, 
-			IOException, ZestInvalidCommonTestException, ZestAssignFailException {
+			IOException, ZestInvalidCommonTestException, ZestAssignFailException, ZestClientFailException {
     	log.debug("Run script " + script.getTitle());
 		// Check for any missing parameters
 		boolean missingParams = false;
@@ -118,14 +119,22 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 				super.setOutputWriter(extension.getExtScript().getScriptUI().getOutputWriter());
 			}
 			this.setDebug(this.wrapper.isDebug());
+			
+			this.setProxy();
 			return super.run(script, params);
     	}
+	}
+
+	private void setProxy() {
+		// Always forward all requests through ZAP
+		this.setProxy(Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
+				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
 	}
 
 	@Override
 	public String run (ZestScript script, ZestRequest target, Map<String, String> params) 
 			throws ZestAssertFailException, ZestActionFailException, IOException,
-			ZestInvalidCommonTestException, ZestAssignFailException {
+			ZestInvalidCommonTestException, ZestAssignFailException, ZestClientFailException {
     	log.debug("Run script " + script.getTitle());
 		if (wrapper.getWriter() != null) {
 			super.setOutputWriter(wrapper.getWriter());
@@ -133,6 +142,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			super.setOutputWriter(extension.getExtScript().getScriptUI().getOutputWriter());
 		}
 		this.setDebug(this.wrapper.isDebug());
+		this.setProxy();
 		String result = super.run(script, target, params);
 		return result;
 	}
@@ -148,14 +158,6 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 				// Add to the Zest results tab
 				this.extension.addResultToList(href);
 			}
-			// Add to history tab
-			/* TODO wont work until ExtensionHistory changed to display non MANUAL requests
-			ExtensionHistory extHist = (ExtensionHistory) Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.NAME);
-			if (extHist != null) {
-				extHist.addHistory(href);
-			}
-			*/
-			
 		} else {
 			// TODO i18n for cmdline??
 			try {
@@ -234,7 +236,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	@Override
 	public ZestResponse runStatement(ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
 			throws ZestAssertFailException, ZestActionFailException, 
-			ZestInvalidCommonTestException, IOException, ZestAssignFailException {
+			ZestInvalidCommonTestException, IOException, ZestAssignFailException, ZestClientFailException {
     	log.debug("runStatement " + stmt.getElementType());
 		while (this.isPaused() && ! this.isStop) {
 			try {

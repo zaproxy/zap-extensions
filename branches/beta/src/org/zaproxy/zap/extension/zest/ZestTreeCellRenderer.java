@@ -35,6 +35,15 @@ import org.mozilla.zest.core.v1.ZestActionScan;
 import org.mozilla.zest.core.v1.ZestActionSleep;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignment;
+import org.mozilla.zest.core.v1.ZestClientAssignCookie;
+import org.mozilla.zest.core.v1.ZestClientElementAssign;
+import org.mozilla.zest.core.v1.ZestClientElementClear;
+import org.mozilla.zest.core.v1.ZestClientElementClick;
+import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
+import org.mozilla.zest.core.v1.ZestClientElementSubmit;
+import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientWindowClose;
+import org.mozilla.zest.core.v1.ZestClientWindowHandle;
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestControlLoopBreak;
@@ -98,6 +107,28 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/arrow-turn-180.png"));
 	private static final ImageIcon CONTROL_LOOP_NEXT_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/arrow-turn-180-left.png"));
+
+	
+	private static final ImageIcon CLIENT_COOKIE_PIN_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/cookie-pin.png"));
+	
+	private static final ImageIcon CLIENT_ELEMENT_ASSIGN_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/ui-text-field-pin.png"));
+	private static final ImageIcon CLIENT_ELEMENT_CLEAR_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/ui-text-field.png"));
+	private static final ImageIcon CLIENT_ELEMENT_CLICK_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/mouse.png"));
+	private static final ImageIcon CLIENT_ELEMENT_SEND_KEYS_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/ui-text-field-fill.png"));
+	private static final ImageIcon CLIENT_ELEMENT_SUBMIT_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/ui-text-field-submit.png"));
+	
+	private static final ImageIcon CLIENT_WINDOW_PIN_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/application-pin.png"));
+	private static final ImageIcon CLIENT_WINDOW_OPEN_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/application-plus.png"));
+	private static final ImageIcon CLIENT_WINDOW_CLOSE_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/application-cross.png"));
 
 	private static final ImageIcon CROSS_OVERLAY_ICON = 
 			new ImageIcon(ZestTreeCellRenderer.class.getResource(
@@ -221,6 +252,24 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 						setIcon(CONTROL_LOOP_BREAK_ICON);
 					} else if (za instanceof ZestControlLoopNext) {
 						setIcon(CONTROL_LOOP_NEXT_ICON);
+					} else if (za instanceof ZestClientAssignCookie) {
+						setIcon(CLIENT_COOKIE_PIN_ICON);
+					} else if (za instanceof ZestClientElementAssign) {
+						setIcon(CLIENT_ELEMENT_ASSIGN_ICON);
+					} else if (za instanceof ZestClientElementClear) {
+						setIcon(CLIENT_ELEMENT_CLEAR_ICON);
+					} else if (za instanceof ZestClientElementClick) {
+						setIcon(CLIENT_ELEMENT_CLICK_ICON);
+					} else if (za instanceof ZestClientElementSendKeys) {
+						setIcon(CLIENT_ELEMENT_SEND_KEYS_ICON);
+					} else if (za instanceof ZestClientElementSubmit) {
+						setIcon(CLIENT_ELEMENT_SUBMIT_ICON);
+					} else if (za instanceof ZestClientLaunch) {
+						setIcon(CLIENT_WINDOW_OPEN_ICON);
+					} else if (za instanceof ZestClientWindowHandle) {
+						setIcon(CLIENT_WINDOW_PIN_ICON);
+					} else if (za instanceof ZestClientWindowClose) {
+						setIcon(CLIENT_WINDOW_CLOSE_ICON);
 					} else {
 						logger.error("Unrecognised element element class="
 								+ zew.getElement().getClass()

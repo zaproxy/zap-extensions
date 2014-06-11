@@ -197,9 +197,7 @@ public class ZestTreeModel {
 				+ stmt.getElementType());
 		ScriptNode zestNode = this.getZestNode(stmt);
 		ScriptNode parent = node.getParent();
-		if (ZestZapUtils.getElement(node) instanceof ZestRequest) {
-			parent.insert(zestNode, parent.getIndex(node) + 1);
-		}
+		parent.insert(zestNode, parent.getIndex(node) + 1);
 		if (stmt instanceof ZestConditional) {
 			// adds node for expression
 			zestNode.add((this
