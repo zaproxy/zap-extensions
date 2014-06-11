@@ -118,7 +118,7 @@ public class InsecureFormLoadScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		return 10029;
+		return 10041;
 	}
 
 	@Override

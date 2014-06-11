@@ -157,7 +157,7 @@ public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		return 10028;
+		return 10043;
 	}
 
 	@Override

@@ -12,7 +12,8 @@
 	Added "Cross-Domain Misconfiguration" scanner;<br>
 	Improved "Source Code Disclosure" scanner;<br>
 	Improved "Base64 Disclosure" scanner;<br>
-	Improved "Hash Disclosure" scanner.
+	Improved "Hash Disclosure" scanner;<br>
+	Fixed duplicated plug-in IDs.
 	]]>
 	</changes>
 	<dependson/>
