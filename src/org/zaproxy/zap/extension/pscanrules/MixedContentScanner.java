@@ -136,7 +136,7 @@ public class MixedContentScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		return 10011;
+		return 10040;
 	}
 
 	@Override
