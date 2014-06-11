@@ -3,6 +3,8 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
+ * Copyright 2014 The ZAP Development Team
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -19,13 +21,14 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -41,7 +44,9 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 	private static final int PLUGIN_ID = 10036;
 	
 	private PassiveScanThread parent = null;
-	private static Logger logger = Logger.getLogger(ServerHeaderInfoLeakScanner.class);
+	private final static Logger logger = Logger.getLogger(ServerHeaderInfoLeakScanner.class);
+	
+	private final static Pattern VERSION_PATTERN = Pattern.compile(".*\\d.*");
 	
 	@Override
 	public void setParent(PassiveScanThread parent) {
@@ -57,30 +62,31 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
 	
-		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()){
 		Vector<String> serverOption = msg.getResponseHeader().getHeaders("Server");
-			if (serverOption != null) { //Header Found
-				//It is set so lets check it. Should only be one but it's a vector so iterate to be sure.
-				for (String serverDirective : serverOption) {
-					if (serverDirective.matches(".*\\d.*")) { //See if there's any version info.
-						//While an alpha string might be the server type (Apache, Netscape, IIS, etc) 
-						//that's much less of a head-start than actual version details.
-						Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
-							getName()); 
-			    			alert.setDetail(
-			    					getDescription(), //Description
-			    					msg.getRequestHeader().getURI().toString(), //URI
-			    					"",	// Param
-			    					"", // Attack
-			    					"", // Other info
-			    					getSolution(), //Solution
-			    					getReference(), //References
-			    					serverDirective,	// Evidence - Return the Server Header info
-			    					200, // CWE Id 
-			    					13,	// WASC Id 
-			    					msg); //HttpMessage
-			    		parent.raiseAlert(id, alert);
-					}
+		if (serverOption != null) { //Header Found
+			//It is set so lets check it. Should only be one but it's a vector so iterate to be sure.
+			for (String serverDirective : serverOption) {
+//				if (serverDirective.matches(".*\\d.*")) { //See if there's any version info.
+				Matcher matcher = VERSION_PATTERN.matcher(serverDirective);
+				boolean matched = matcher.matches();
+				if (matched) { //See if there's any version info.
+					//While an alpha string might be the server type (Apache, Netscape, IIS, etc) 
+					//that's much less of a head-start than actual version details.
+					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
+						getName()); 
+		    			alert.setDetail(
+		    					getDescription(), //Description
+		    					msg.getRequestHeader().getURI().toString(), //URI
+		    					"",	// Param
+		    					"", // Attack
+		    					"", // Other info
+		    					getSolution(), //Solution
+		    					getReference(), //References
+		    					serverDirective,	// Evidence - Return the Server Header info
+		    					200, // CWE Id 
+		    					13,	// WASC Id 
+		    					msg); //HttpMessage
+		    		parent.raiseAlert(id, alert);
 				}
 			}
 		}
@@ -91,13 +97,10 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 
 	@Override
 	public int getPluginId() {
-		/*
-		 * This should be unique across all active and passive rules.
-		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
-		 */
 		return PLUGIN_ID;
 	}
 	
+	@Override
 	public String getName(){
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
@@ -113,10 +116,6 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 	private String getReference() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
-	
-    public int getCategory() {
-        return Category.MISC;
-    }
 
 }
 
