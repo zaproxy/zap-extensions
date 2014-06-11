@@ -6,7 +6,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Improved scanner "Web Browser XSS Protection Not Enabled" (former "IE8's XSS protection filter not disabled").
+	Improved scanner "Web Browser XSS Protection Not Enabled" (former "IE8's XSS protection filter not disabled");<br>
+	Fixed duplicated plug-in ID.
 	]]>
 	</changes>
 	<dependson/>
