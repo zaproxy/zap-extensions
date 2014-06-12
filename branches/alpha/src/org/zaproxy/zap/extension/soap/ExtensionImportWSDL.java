@@ -198,7 +198,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		    	        	/* Set values to parameters. */
 		    	        	HashMap<String, String> formParams = new HashMap<String, String>();
 		    	        	fillParameters(requestParts, formParams);		    	        	        	
-		    	        	/* Connection test for each operation. [MARK] It has not been tested over HTTPS. */
+		    	        	/* Connection test for each operation. */
 		    	        	/* Basic message creation. */
 		    	        	HttpMessage requestMessage = createSoapRequest(wsdl, soapVersion, formParams, port, bindOp);
 		    	        	sendSoapRequest(file, requestMessage, sb);	
