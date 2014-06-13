@@ -41,7 +41,6 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledHTMLAttributesScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledJavascriptEventScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ViewStateDecoder</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XBackendServerInformationLeak</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XPoweredByHeaderInfoLeakScanner</pscanrule>
 	</pscanrules>
