@@ -55,7 +55,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	private JXTable resultsTable;
 	private JScrollPane workPane;
 	private Map<Integer, AccessControlResultsTableModel> resultsModels;
-	private AccessControlResultsTableModel currentResultsModel = EMPTY_RESULTS_MODEL;
+	private AccessControlResultsTableModel currentResultsModel;
 	private ExtensionAccessControl extension;
 
 	public AccessControlStatusPanel(ExtensionAccessControl extension,
@@ -66,6 +66,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 				threadManager);
 		this.extension = extension;
 		this.resultsModels = new HashMap<>();
+		this.currentResultsModel = EMPTY_RESULTS_MODEL;
 	}
 
 	@Override
@@ -144,12 +145,19 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	protected void switchViewForContext(Context context) {
 		if (context == null) {
 			this.currentResultsModel = EMPTY_RESULTS_MODEL;
+			this.getScanResultsTable().setModel(this.currentResultsModel);
 			return;
 		}
 
 		this.currentResultsModel = getResultsModel(context.getIndex());
 		this.getScanResultsTable().setModel(this.currentResultsModel);
 		this.setScanResultsTableColumnSizes();
+	}
+
+	public void reset() {
+		this.resultsModels = new HashMap<>();
+		this.currentResultsModel = EMPTY_RESULTS_MODEL;
+		this.getScanResultsTable().setModel(this.currentResultsModel);
 	}
 
 	/**

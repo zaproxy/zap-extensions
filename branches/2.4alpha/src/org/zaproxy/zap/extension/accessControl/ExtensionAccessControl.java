@@ -26,9 +26,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
@@ -41,7 +44,7 @@ import org.zaproxy.zap.scan.BaseScannerThreadManager;
  * An extension that adds a set of tools that allows users to test Access Control issues in web
  * application.
  */
-public class ExtensionAccessControl extends ExtensionAdaptor {
+public class ExtensionAccessControl extends ExtensionAdaptor implements SessionChangedListener {
 
 	private static Logger log = Logger.getLogger(ExtensionAccessControl.class);
 
@@ -75,6 +78,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 		super.hook(extensionHook);
 		// Register this where needed
 		// Model.getSingleton().addContextDataFactory(this);
+		extensionHook.addSessionListener(this);
 		if (getView() != null) {
 			ExtensionHookView viewHook = extensionHook.getHookView();
 			// getView().addContextPanelFactory(this);
@@ -151,6 +155,32 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 		public AccessControlScannerThread createNewScannerThread(int contextId) {
 			return new AccessControlScannerThread(contextId);
 		}
+	}
+
+	@Override
+	public void sessionChanged(Session session) {
+		if (getView() != null) {
+			getStatusPanel().contextsChanged();
+			getStatusPanel().reset();
+		}
+	}
+
+	@Override
+	public void sessionAboutToChange(Session session) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sessionScopeChanged(Session session) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sessionModeChanged(Mode mode) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
