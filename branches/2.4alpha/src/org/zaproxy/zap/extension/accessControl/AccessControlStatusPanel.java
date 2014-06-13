@@ -101,7 +101,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 			resultsTable.setAutoCreateRowSorter(true);
 			resultsTable.setColumnControlVisible(true);
 
-			// this.setScanResultsTableColumnSizes();
+			this.setScanResultsTableColumnSizes();
 
 			resultsTable.setName(PANEL_NAME);
 			resultsTable.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
@@ -149,7 +149,36 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 
 		this.currentResultsModel = getResultsModel(context.getIndex());
 		this.getScanResultsTable().setModel(this.currentResultsModel);
-		// this.setScanResultsTableColumnSizes();
+		this.setScanResultsTableColumnSizes();
+	}
+
+	/**
+	 * Sets the results table column sizes.
+	 */
+	private void setScanResultsTableColumnSizes() {
+		resultsTable.getColumnModel().getColumn(0).setMinWidth(40);
+		resultsTable.getColumnModel().getColumn(0).setPreferredWidth(50); // id
+
+		resultsTable.getColumnModel().getColumn(1).setMinWidth(40);
+		resultsTable.getColumnModel().getColumn(1).setPreferredWidth(50); // method
+
+		resultsTable.getColumnModel().getColumn(2).setMinWidth(240);
+		resultsTable.getColumnModel().getColumn(2).setPreferredWidth(800);// url
+
+		resultsTable.getColumnModel().getColumn(3).setMinWidth(40);
+		resultsTable.getColumnModel().getColumn(3).setPreferredWidth(50); // code
+
+		resultsTable.getColumnModel().getColumn(4).setMinWidth(70);
+		resultsTable.getColumnModel().getColumn(4).setPreferredWidth(100); // user
+
+		resultsTable.getColumnModel().getColumn(5).setMinWidth(40);
+		resultsTable.getColumnModel().getColumn(5).setPreferredWidth(50); // authorized
+
+		resultsTable.getColumnModel().getColumn(6).setMinWidth(60);
+		resultsTable.getColumnModel().getColumn(6).setPreferredWidth(100); // access rule
+
+		resultsTable.getColumnModel().getColumn(7).setMinWidth(60);
+		resultsTable.getColumnModel().getColumn(7).setPreferredWidth(100); // result
 	}
 
 	@Override
