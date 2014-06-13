@@ -84,6 +84,9 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
 		this.addComboField(FIELD_BROWSER_TYPE, getBrowserTypes(), 
 				Constant.messages.getString(BROWSER_TYPE_PREFIX + browserType));
 		this.addTextField(FIELD_URL, client.getUrl());
+		
+		// Enable right click menus
+		this.addFieldListener(FIELD_URL, ZestZapUtils.stdMenuAdapter()); 
 	}
 	
 	private List<String> getBrowserTypes() {

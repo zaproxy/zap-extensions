@@ -70,6 +70,9 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 
 		this.addTextField(FIELD_WINDOW_HANDLE, client.getWindowHandle());
 		this.addTextField(FIELD_URL, client.getUrl());
+		
+		// Enable right click menus
+		this.addFieldListener(FIELD_URL, ZestZapUtils.stdMenuAdapter()); 
 	}
 
 	public void save() {

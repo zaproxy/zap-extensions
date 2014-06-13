@@ -22,12 +22,14 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import java.awt.Dimension;
 import java.awt.Frame;
 
+import org.mozilla.zest.core.v1.ZestClientElement;
 import org.mozilla.zest.core.v1.ZestClientElementAssign;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.extension.zest.ZestZapUtils;
 
 public class ZestClientElementAssignDialog extends ZestClientElementDialog implements ZestDialog {
 
@@ -37,17 +39,20 @@ public class ZestClientElementAssignDialog extends ZestClientElementDialog imple
 		super(ext, owner, "zest.dialog.clientElementAssign.add.title", dim);
 	}
 
+	@Override
 	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestStatement req, ZestClientElementAssign client, boolean add) {
+			ZestStatement req, ZestClientElement client, boolean add) {
 		super.init(script, parent, child, req, client, add);
 		
-		this.addTextField(FIELD_ATTRIBUTE, client.getAttribute());
+		this.addTextField(FIELD_ATTRIBUTE, ((ZestClientElementAssign)this.getClient()).getAttribute());
 
 		if (add) {
 			this.setTitle(Constant.messages.getString("zest.dialog.clientElementAssign.add.title"));
 		} else {
 			this.setTitle(Constant.messages.getString("zest.dialog.clientElementAssign.edit.title"));
 		}
+		// Enable right click menus
+		this.addFieldListener(FIELD_ATTRIBUTE, ZestZapUtils.stdMenuAdapter()); 
 	}
 
 	public void saveFields() {
