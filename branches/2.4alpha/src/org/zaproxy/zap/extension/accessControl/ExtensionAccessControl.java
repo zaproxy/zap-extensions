@@ -151,7 +151,6 @@ public class ExtensionAccessControl extends ExtensionAdaptor {
 		public AccessControlScannerThread createNewScannerThread(int contextId) {
 			return new AccessControlScannerThread(contextId);
 		}
-
 	}
 
 }

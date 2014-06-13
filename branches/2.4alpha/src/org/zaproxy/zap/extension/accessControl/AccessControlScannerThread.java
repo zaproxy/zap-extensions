@@ -20,8 +20,16 @@ package org.zaproxy.zap.extension.accessControl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanListener;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
+import org.zaproxy.zap.extension.authorization.AuthorizationDetectionMethod;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.scan.BaseContextScannerThread;
+import org.zaproxy.zap.scan.ScanListener;
 import org.zaproxy.zap.scan.ScanStartOptions;
 import org.zaproxy.zap.users.User;
 
@@ -32,42 +40,85 @@ import org.zaproxy.zap.users.User;
  * @see ExtensionAccessControl
  * @see AccessControlScanStartOptions
  */
-public class AccessControlScannerThread extends BaseContextScannerThread<ScanStartOptions> {
+public class AccessControlScannerThread extends
+		BaseContextScannerThread<AccessControlScanStartOptions, AccessControlScanListener> {
+
+	private static final Logger log = Logger.getLogger(AccessControlScannerThread.class);
+
+	private List<User> targetUsers;
+	private AuthorizationDetectionMethod authorizationDetection;
 
 	public AccessControlScannerThread(int contextId) {
 		super(contextId);
 	}
 
 	@Override
-	protected void scan() {
-		setScanMaximumProgress(10);
-		setRunning(true);
-		notifyScanStarted();
-		for (int i = 1; i <= 10; i++) {
-			setScanProgress(i);
+	public void startScan() {
+		this.targetUsers = getStartOptions().targetUsers;
+		this.authorizationDetection = getStartOptions().targetContext.getAuthorizationDetectionMethod();
 
-			// Do the actual work
-			try {
-				Thread.sleep(500 + i * 20);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		super.startScan();
+	}
+
+	@Override
+	protected void scan() {
+
+		notifyScanStarted();
+
+		// Build the list of urls' which will be attacked
+		List<SiteNode> targetNodes = getTargetUrlsList();
+
+		// And set up the state accordingly
+		this.setScanMaximumProgress(targetNodes.size() + 1);
+		log.debug(String.format("Starting Access Control scan for %d URLs and %d users", targetNodes.size(),
+				targetUsers.size()));
+
+		int progress = 0;
+		for (SiteNode sn : targetNodes) {
+			// Check if it's paused
+			checkPausedAndWait();
 
 			// Check if it's stopped
 			if (!isRunning())
 				break;
 
-			// Check if it's paused
-			while (isPaused()) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			// Actually do the attack
+			HttpMessage originalMessage = null;
+			try {
+				originalMessage = sn.getHistoryReference().getHttpMessage();
+			} catch (Exception ex) {
+				log.error("An error has occurred while loading history reference message:" + ex.getMessage(),
+						ex);
 			}
+			if (originalMessage != null)
+				attackNode(sn, originalMessage);
+
+			// Make sure we update the progress
+			setScanProgress(++progress);
 		}
-		setRunning(false);
+
+		log.debug("Access control scan finished.");
+		setScanProgress(getScanMaximumProgress());
+		setRunningState(false);
 		notifyScanFinished();
+	}
+
+	private void attackNode(SiteNode sn, HttpMessage originalMessage) {
+		log.debug("Attacking node: " + originalMessage.getRequestHeader().getURI());
+		for (User user : targetUsers) {
+			notifyScanResultObtained(originalMessage, user, "OK", "Should access");
+		}
+
+	}
+
+	private List<SiteNode> getTargetUrlsList() {
+		return Model.getSingleton().getSession()
+				.getNodesInContextFromSiteTree(getStartOptions().targetContext);
+	}
+
+	private void notifyScanResultObtained(HttpMessage msg, User user, String result, String accessRule) {
+		for (AccessControlScanListener l : listeners)
+			l.scanResultObtained(contextId, msg, user, result, accessRule);
 	}
 
 	/**
@@ -75,13 +126,23 @@ public class AccessControlScannerThread extends BaseContextScannerThread<ScanSta
 	 * testing.
 	 */
 	public static class AccessControlScanStartOptions implements ScanStartOptions {
-		Context targetContext;
-		List<User> targetUsers;
+		protected Context targetContext;
+		protected List<User> targetUsers;
 
 		public AccessControlScanStartOptions() {
 			super();
 			this.targetUsers = new LinkedList<User>();
 		}
 
+	}
+
+	public interface AccessControlScanListener extends ScanListener {
+
+		/**
+		 * Callback method called when a scan result has been obtained.
+		 *
+		 * @param contextId the context id
+		 */
+		void scanResultObtained(int contextId, HttpMessage msg, User user, String result, String accessRule);
 	}
 }

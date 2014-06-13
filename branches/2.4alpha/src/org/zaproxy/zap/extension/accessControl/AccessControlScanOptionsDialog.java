@@ -83,7 +83,7 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 		if (selectedContext == null) {
 			return Constant.messages.getString("accessControl.scanOptions.error.noContext");
 		}
-		if (usersSelectTable.getSelectedUsersCount() < 2) {
+		if (usersSelectTable.getSelectedUsersCount() < 1) {
 			return Constant.messages.getString("accessControl.scanOptions.error.noUsers");
 		}
 		return null;
