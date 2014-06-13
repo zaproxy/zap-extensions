@@ -17,13 +17,18 @@
  */
 package org.zaproxy.zap.extension.accessControl;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanListener;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.extension.authorization.AuthorizationDetectionMethod;
@@ -47,6 +52,8 @@ public class AccessControlScannerThread extends
 
 	private List<User> targetUsers;
 	private AuthorizationDetectionMethod authorizationDetection;
+	/** The HTTP sender used to effectively send the data. */
+	private HttpSender httpSender;
 
 	public AccessControlScannerThread(int contextId) {
 		super(contextId);
@@ -56,6 +63,11 @@ public class AccessControlScannerThread extends
 	public void startScan() {
 		this.targetUsers = getStartOptions().targetUsers;
 		this.authorizationDetection = getStartOptions().targetContext.getAuthorizationDetectionMethod();
+		// Initialize the HTTP sender
+		this.httpSender = new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(), true,
+				HttpSender.ACCESS_CONTROL_SCANNER_INITIATOR);
+		// Do not follow redirections because we want to check the initial response
+		httpSender.setFollowRedirect(false);
 
 		super.startScan();
 	}
@@ -74,6 +86,10 @@ public class AccessControlScannerThread extends
 				targetUsers.size()));
 
 		int progress = 0;
+
+		// For each of the users, attack each of the nodes in the context
+		// NOTE: In order to minimize the number of database reads for the 'original' message, cycle
+		// through the messages first and then through the users
 		for (SiteNode sn : targetNodes) {
 			// Check if it's paused
 			checkPausedAndWait();
@@ -90,25 +106,70 @@ public class AccessControlScannerThread extends
 				log.error("An error has occurred while loading history reference message:" + ex.getMessage(),
 						ex);
 			}
-			if (originalMessage != null)
-				attackNode(sn, originalMessage);
 
+			// Check whether we should attack the node
+			if (!shouldAttackNode(originalMessage))
+				continue;
+
+			// For each of the users, attack the node
+			for (User user : targetUsers) {
+				attackNode(sn, originalMessage, user);
+
+			}
 			// Make sure we update the progress
 			setScanProgress(++progress);
 		}
 
+		// Setup the finished status properly
 		log.debug("Access control scan finished.");
 		setScanProgress(getScanMaximumProgress());
 		setRunningState(false);
 		notifyScanFinished();
 	}
 
-	private void attackNode(SiteNode sn, HttpMessage originalMessage) {
-		log.debug("Attacking node: " + originalMessage.getRequestHeader().getURI());
-		for (User user : targetUsers) {
-			notifyScanResultObtained(originalMessage, user, "OK", "Should access");
+	/**
+	 * Check whether we should attack the node.
+	 */
+	private boolean shouldAttackNode(HttpMessage originalMessage) {
+		// Do not attack nodes which don't have a response as they might correspond to places in the
+		// application not accessible via exploration (they are probably folders)
+		return originalMessage != null && !originalMessage.getResponseHeader().isEmpty();
+	}
+
+	private void attackNode(SiteNode sn, HttpMessage originalMessage, User user) {
+		log.info("" + user);
+		if (log.isDebugEnabled())
+			log.debug("Attacking node: '" + originalMessage.getRequestHeader().getURI() + "' as user: "
+					+ (user != null ? user.getName() : "unauthenticated"));
+		// Clone the original message and send it from the point of view of the user
+		HttpMessage scanMessage = originalMessage.cloneRequest();
+		scanMessage.setRequestingUser(user);
+
+		try {
+			httpSender.sendAndReceive(scanMessage);
+		} catch (IOException e) {
+			log.error("Error occurred while sending/receiving access control testing message to:"
+					+ scanMessage.getRequestHeader().getURI(), e);
+			return;
 		}
 
+		// Analyze the message and check if the access control rules are matched
+		boolean authorized = !authorizationDetection.isResponseForUnauthorizedRequest(scanMessage);
+
+		// Save the message in a history reference
+		HistoryReference hRef;
+		try {
+			hRef = new HistoryReference(Model.getSingleton().getSession(),
+					HistoryReference.TYPE_ACCESS_CONTROL, scanMessage);
+		} catch (HttpMalformedHeaderException | SQLException e) {
+			log.error(
+					"An error has occurred while saving AccessControl testing message in HistoryReference: "
+							+ e.getMessage(), e);
+			return;
+		}
+
+		// And notify any listeners of the obtained result
+		notifyScanResultObtained(hRef, user, authorized, "N/A", "N/A");
 	}
 
 	private List<SiteNode> getTargetUrlsList() {
@@ -116,9 +177,10 @@ public class AccessControlScannerThread extends
 				.getNodesInContextFromSiteTree(getStartOptions().targetContext);
 	}
 
-	private void notifyScanResultObtained(HttpMessage msg, User user, String result, String accessRule) {
+	private void notifyScanResultObtained(HistoryReference msg, User user, boolean requestAuthorized,
+			String result, String accessRule) {
 		for (AccessControlScanListener l : listeners)
-			l.scanResultObtained(contextId, msg, user, result, accessRule);
+			l.scanResultObtained(contextId, msg, user, requestAuthorized, result, accessRule);
 	}
 
 	/**
@@ -142,7 +204,10 @@ public class AccessControlScannerThread extends
 		 * Callback method called when a scan result has been obtained.
 		 *
 		 * @param contextId the context id
+		 * @param user the user for which the result was obtained. Can be {@code null}, for results
+		 *            obtained for scanning as 'un-authenticated'
 		 */
-		void scanResultObtained(int contextId, HttpMessage msg, User user, String result, String accessRule);
+		void scanResultObtained(int contextId, HistoryReference historyReference, User user,
+				boolean requestAuthorized, String result, String accessRule);
 	}
 }

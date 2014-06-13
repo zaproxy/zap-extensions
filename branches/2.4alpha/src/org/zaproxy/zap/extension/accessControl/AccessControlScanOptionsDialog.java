@@ -45,6 +45,8 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 	private ExtensionAccessControl extension;
 	private UsersMultiSelectTable usersSelectTable;
 
+	private User unauthenticatedUser;
+
 	public AccessControlScanOptionsDialog(ExtensionAccessControl extension, Frame owner, Dimension dim) {
 		super(owner, "accessControl.scanOptions.title", dim);
 		this.extension = extension;
@@ -54,9 +56,8 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 		this.removeAllFields();
 
 		usersSelectTable = new UsersMultiSelectTable(context.getIndex());
-		// We add a 'custom' user that corresponds to sending unauthenticated user so that ZAP users
-		// can select this option as well
-		usersSelectTable.addCustomUser(new User(context.getIndex(), UNAUTHENTICATED_USER_NAME));
+		unauthenticatedUser = new User(context.getIndex(), UNAUTHENTICATED_USER_NAME);
+		usersSelectTable.addCustomUser(unauthenticatedUser);
 
 		this.addContextSelectField(FIELD_CONTEXT, context);
 		this.addTableField(FIELD_USERS, usersSelectTable);
@@ -74,6 +75,10 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 		AccessControlScanStartOptions startOptions = new AccessControlScanStartOptions();
 		startOptions.targetContext = ((ContextSelectComboBox) getField(FIELD_CONTEXT)).getSelectedContext();
 		startOptions.targetUsers = usersSelectTable.getSelectedUsers();
+		// If the un-authenticated user was selected, replace it with a 'null' user
+		if (startOptions.targetUsers.remove(unauthenticatedUser)) {
+			startOptions.targetUsers.add(null);
+		}
 		extension.startScan(startOptions);
 	}
 

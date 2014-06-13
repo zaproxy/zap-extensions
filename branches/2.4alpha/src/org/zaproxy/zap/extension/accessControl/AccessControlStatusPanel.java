@@ -24,13 +24,15 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.accessControl.AccessControlResultsTableModel.AccessControlResultsTableEntry;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanListener;
 import org.zaproxy.zap.model.Context;
@@ -67,14 +69,10 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	}
 
 	@Override
-	public void scanResultObtained(int contextId, HttpMessage msg, User user, String result, String accessRule) {
-		try {
-			getResultsModel(contextId).addEntry(
-					new AccessControlResultsTableEntry(new HistoryReference(
-							Model.getSingleton().getSession(), 0, msg), user, result, accessRule));
-		} catch (HttpMalformedHeaderException | SQLException e) {
-			e.printStackTrace();
-		}
+	public void scanResultObtained(int contextId, HistoryReference hRef, User user,
+			boolean requestAuthorized, String result, String accessRule) {
+		getResultsModel(contextId).addEntry(
+				new AccessControlResultsTableEntry(hRef, user, requestAuthorized, result, accessRule));
 	}
 
 	@Override
@@ -109,6 +107,8 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 			resultsTable.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
 			resultsTable.setDoubleBuffered(true);
 			resultsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+			resultsTable.getSelectionModel().addListSelectionListener(
+					new DisplayMessageOnSelectionValueChange());
 		}
 		return resultsTable;
 	}
@@ -120,6 +120,24 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 			resultsModels.put(contextId, model);
 		}
 		return model;
+	}
+
+	protected void displayMessageInHttpPanel(final HttpMessage msg) {
+		if (msg == null) {
+			return;
+		}
+
+		if (msg.getRequestHeader().isEmpty()) {
+			View.getSingleton().getRequestPanel().clearView(true);
+		} else {
+			View.getSingleton().getRequestPanel().setMessage(msg);
+		}
+
+		if (msg.getResponseHeader().isEmpty()) {
+			View.getSingleton().getResponsePanel().clearView(false);
+		} else {
+			View.getSingleton().getResponsePanel().setMessage(msg, true);
+		}
 	}
 
 	@Override
@@ -144,6 +162,35 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	protected void startScan(Context context) {
 		log.info("Access Control start on Context: " + context);
 		extension.showScanOptionsDialog(context);
+	}
+
+	public HistoryReference getSelectedHistoryReference() {
+		final int selectedRow = resultsTable.getSelectedRow();
+		if (selectedRow != -1 && currentResultsModel != null) {
+			return currentResultsModel.getEntry(selectedRow).getHistoryReference();
+		}
+		return null;
+	}
+
+	/**
+	 * Utility class used to display the currently selected message in the HttpRequest/Response
+	 * panels.
+	 */
+	protected class DisplayMessageOnSelectionValueChange implements ListSelectionListener {
+
+		@Override
+		public void valueChanged(final ListSelectionEvent evt) {
+			if (!evt.getValueIsAdjusting()) {
+				HistoryReference hRef = getSelectedHistoryReference();
+				if (hRef != null) {
+					try {
+						displayMessageInHttpPanel(hRef.getHttpMessage());
+					} catch (HttpMalformedHeaderException | SQLException e) {
+						log.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
 	}
 
 }

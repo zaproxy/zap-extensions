@@ -34,11 +34,16 @@ public class AccessControlResultsTableModel extends
 	private static final long serialVersionUID = -272409439940285996L;
 
 	private static final short COLUMN_INDEX_USER = 4;
-	private static final short COLUMN_INDEX_ACCESS_RULE = 5;
-	private static final short COLUMN_INDEX_RESULT = 6;
+	private static final short COLUMN_INDEX_AUTHORIZED = 5;
+	private static final short COLUMN_INDEX_ACCESS_RULE = 6;
+	private static final short COLUMN_INDEX_RESULT = 7;
 
+	private static final String UNAUTHENTICATED_USER_NAME = Constant.messages
+			.getString("accessControl.scanOptions.unauthenticatedUser");
 	private static final String COLUMN_NAME_USER = Constant.messages
 			.getString("accessControl.results.table.header.user");
+	private static final String COLUMN_NAME_AUTHORIZED = Constant.messages
+			.getString("accessControl.results.table.header.authorized");
 	private static final String COLUMN_NAME_ACCESS_RULE = Constant.messages
 			.getString("accessControl.results.table.header.rule");
 	private static final String COLUMN_NAME_RESULT = Constant.messages
@@ -48,7 +53,7 @@ public class AccessControlResultsTableModel extends
 
 	public AccessControlResultsTableModel() {
 		super(new Column[] { Column.HREF_ID, Column.METHOD, Column.URL, Column.STATUS_CODE, Column.CUSTOM,
-				Column.CUSTOM, Column.CUSTOM });
+				Column.CUSTOM, Column.CUSTOM, Column.CUSTOM });
 		this.entries = new ArrayList<>();
 	}
 
@@ -58,8 +63,10 @@ public class AccessControlResultsTableModel extends
 		fireTableRowsInserted(entries.size() - 1, entries.size() - 1);
 	}
 
-	public void addEntry(HistoryReference historyReference, User user, String accessRule, String result) {
-		addEntry(new AccessControlResultsTableEntry(historyReference, user, result, accessRule));
+	public void addEntry(HistoryReference historyReference, User user, boolean requestAuthorized,
+			String accessRule, String result) {
+		addEntry(new AccessControlResultsTableEntry(historyReference, user, requestAuthorized, result,
+				accessRule));
 	}
 
 	@Override
@@ -121,7 +128,10 @@ public class AccessControlResultsTableModel extends
 	protected Object getCustomValueAt(AccessControlResultsTableEntry entry, int columnIndex) {
 		switch (columnIndex) {
 		case COLUMN_INDEX_USER:
-			return entry.getUser().getName();
+			User user = entry.getUser();
+			return user == null ? UNAUTHENTICATED_USER_NAME : user.getName();
+		case COLUMN_INDEX_AUTHORIZED:
+			return entry.isRequestAuthorized();
 		case COLUMN_INDEX_ACCESS_RULE:
 			return entry.getAccessRule();
 		case COLUMN_INDEX_RESULT:
@@ -136,6 +146,8 @@ public class AccessControlResultsTableModel extends
 		switch (columnIndex) {
 		case COLUMN_INDEX_USER:
 			return COLUMN_NAME_USER;
+		case COLUMN_INDEX_AUTHORIZED:
+			return COLUMN_NAME_AUTHORIZED;
 		case COLUMN_INDEX_ACCESS_RULE:
 			return COLUMN_NAME_ACCESS_RULE;
 		case COLUMN_INDEX_RESULT:
@@ -147,7 +159,13 @@ public class AccessControlResultsTableModel extends
 
 	@Override
 	protected Class<?> getCustomColumnClass(int columnIndex) {
-		return String.class;
+		switch (columnIndex) {
+		case COLUMN_INDEX_AUTHORIZED:
+			return Boolean.class;
+		default:
+			return String.class;
+		}
+
 	}
 
 	@Override
@@ -155,6 +173,8 @@ public class AccessControlResultsTableModel extends
 		switch (columnIndex) {
 		case COLUMN_INDEX_USER:
 			return "LongUserName";
+		case COLUMN_INDEX_AUTHORIZED:
+			return false;
 		case COLUMN_INDEX_RESULT:
 			return "ERROR";
 		case COLUMN_INDEX_ACCESS_RULE:
@@ -167,14 +187,16 @@ public class AccessControlResultsTableModel extends
 	public static class AccessControlResultsTableEntry extends AbstractHistoryReferencesTableEntry {
 
 		private User user;
+		private boolean requestAuthorized;
 		private String result;
 		private String accessRule;
 
-		public AccessControlResultsTableEntry(HistoryReference historyReference, User user, String result,
-				String accessRule) {
+		public AccessControlResultsTableEntry(HistoryReference historyReference, User user,
+				boolean requestAuthorized, String result, String accessRule) {
 			super(historyReference);
 			this.user = user;
 			this.result = result;
+			this.requestAuthorized = requestAuthorized;
 			this.accessRule = accessRule;
 		}
 
@@ -208,6 +230,10 @@ public class AccessControlResultsTableModel extends
 
 		public String getAccessRule() {
 			return accessRule;
+		}
+
+		public boolean isRequestAuthorized() {
+			return requestAuthorized;
 		}
 
 	}
