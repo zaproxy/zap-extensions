@@ -22,8 +22,8 @@ package org.zaproxy.zap.extension.zest.dialogs;
 import java.awt.Dimension;
 import java.awt.Frame;
 
-import org.mozilla.zest.core.v1.ZestClientElementSubmit;
-import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestClientElement;
+import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
@@ -37,8 +37,9 @@ public class ZestClientElementSubmitDialog extends ZestClientElementDialog imple
 		super(ext, owner, "zest.dialog.clientElementSubmit.add.title", dim);
 	}
 
+	@Override
 	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestRequest req, ZestClientElementSubmit client, boolean add) {
+			ZestStatement req, ZestClientElement client, boolean add) {
 		super.init(script, parent, child, req, client, add);
 		
 		if (add) {
