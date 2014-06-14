@@ -82,6 +82,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
 	private static Logger log = Logger.getLogger(ExtensionImportWSDL.class);
 	private ImportWSDL wsdlImporter= null;
+	private static int keyIndex = -1;
 	
 	public ExtensionImportWSDL() {
 		super();
@@ -170,59 +171,55 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	        WSDLParser parser = new WSDLParser();
 			final String path = file.getAbsolutePath();
 	        Definitions wsdl = parser.parse(path);
-	        StringBuilder sb = new StringBuilder();
-	        List<Service> services = wsdl.getServices();
+			parseWSDL(wsdl);
 	        
-	        /* Endpoint identification. */
-	        for(Service service : services){
-	        	for(Port port: service.getPorts()){
-			        Binding binding = port.getBinding();
-			        AbstractBinding innerBinding = binding.getBinding();
-			        String soapPrefix = innerBinding.getPrefix();
-			        int soapVersion = detectSoapVersion(wsdl, soapPrefix); // SOAP 1.X, where X is represented by this variable.			        
-			        /* If the binding is not a SOAP binding, it is ignored. */
-			        String style = detectStyle(innerBinding);
-			        if(style != null && (style.equals("document") || style.equals("rpc")) ){
-			        	
-				        List<BindingOperation> operations = binding.getOperations();
-				        String endpointLocation = port.getAddress().getLocation().toString();
-					    sb.append("\n|-- Port detected: "+port.getName()+" ("+endpointLocation+")\n");
-					    
-			    	    /* Identifies operations for each endpoint.. */
-		    	        for(BindingOperation bindOp : operations){
-		    	        	sb.append("|\t|-- SOAP 1."+soapVersion+" Operation: "+bindOp.getName());
-		    	        	/* Adds this operation to the global operations chart. */
-		    	        	recordOperation(file, bindOp);	    	        	
-		    	        	/* Identifies operation's parameters. */
-		    	        	List<Part> requestParts = detectParameters(wsdl, bindOp);    	        			    	        	    	        	   	        			    	        	
-		    	        	/* Set values to parameters. */
-		    	        	HashMap<String, String> formParams = new HashMap<String, String>();
-		    	        	fillParameters(requestParts, formParams);		    	        	        	
-		    	        	/* Connection test for each operation. */
-		    	        	/* Basic message creation. */
-		    	        	HttpMessage requestMessage = createSoapRequest(wsdl, soapVersion, formParams, port, bindOp);
-		    	        	sendSoapRequest(file, requestMessage, sb);	
-		    	        } //bindingOperations loop
-			        } //Binding check if
-	        	}// Ports loop
-	        }
-	        
-	        if (View.isInitialised()) {
-				final String str = sb.toString();
-				EventQueue.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						View.getSingleton().getOutputPanel().append(str);
-					}}
-				);
-			}			
-			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		} 
 		return null;
 	}
 
+	private void parseWSDL(Definitions wsdl){
+        StringBuilder sb = new StringBuilder();
+        List<Service> services = wsdl.getServices();
+        keyIndex++;
+        
+        /* Endpoint identification. */
+        for(Service service : services){
+        	for(Port port: service.getPorts()){
+		        Binding binding = port.getBinding();
+		        AbstractBinding innerBinding = binding.getBinding();
+		        String soapPrefix = innerBinding.getPrefix();
+		        int soapVersion = detectSoapVersion(wsdl, soapPrefix); // SOAP 1.X, where X is represented by this variable.			        
+		        /* If the binding is not a SOAP binding, it is ignored. */
+		        String style = detectStyle(innerBinding);
+		        if(style != null && (style.equals("document") || style.equals("rpc")) ){
+		        	
+			        List<BindingOperation> operations = binding.getOperations();
+			        String endpointLocation = port.getAddress().getLocation().toString();
+				    sb.append("\n|-- Port detected: "+port.getName()+" ("+endpointLocation+")\n");
+				    
+		    	    /* Identifies operations for each endpoint.. */
+	    	        for(BindingOperation bindOp : operations){
+	    	        	sb.append("|\t|-- SOAP 1."+soapVersion+" Operation: "+bindOp.getName());
+	    	        	/* Adds this operation to the global operations chart. */
+	    	        	recordOperation(keyIndex, bindOp);	    	        	
+	    	        	/* Identifies operation's parameters. */
+	    	        	List<Part> requestParts = detectParameters(wsdl, bindOp);    	        			    	        	    	        	   	        			    	        	
+	    	        	/* Set values to parameters. */
+	    	        	HashMap<String, String> formParams = new HashMap<String, String>();
+	    	        	fillParameters(requestParts, formParams);		    	        	        	
+	    	        	/* Connection test for each operation. */
+	    	        	/* Basic message creation. */
+	    	        	HttpMessage requestMessage = createSoapRequest(wsdl, soapVersion, formParams, port, bindOp);
+	    	        	sendSoapRequest(keyIndex, requestMessage, sb);	
+	    	        } //bindingOperations loop
+		        } //Binding check if
+        	}// Ports loop
+        }        
+        printOutput(sb);
+	}
+	
 	private static void persistMessage(final HttpMessage message) {
 		// Add the message to the history panel and sites tree
 		final HistoryReference historyRef;
@@ -270,15 +267,17 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	}
 	
 	/* Record the given operation in the global chart. */
-	private void recordOperation(File file, BindingOperation bindOp){
+	private void recordOperation(int wsdlID, BindingOperation bindOp){
     	String soapActionName = "";
     	try{
     		soapActionName = bindOp.getOperation().getSoapAction();    	        			
     	}catch(NullPointerException e){
     		// SOAP Action not defined for this operation.
+    		log.info("No SOAP Action defined for this operation.");
+    		return;
     	}
     	if(!soapActionName.trim().equals("")){
-    		wsdlImporter.putAction(file.getName(),soapActionName);
+    		wsdlImporter.putAction(wsdlID,soapActionName);
     	}	
 	}
 	
@@ -368,7 +367,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	/* Sends a given SOAP request. File is needed to record its associated ops, and stringBuilder logs
 	 * the output message.
 	 */
-	private void sendSoapRequest(File file, HttpMessage httpRequest, StringBuilder sb){
+	private void sendSoapRequest(int wsdlID, HttpMessage httpRequest, StringBuilder sb){
 		if (httpRequest == null) return;
         /* Connection. */
         HttpSender sender = new HttpSender(
@@ -380,9 +379,22 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		} catch (IOException e) {
 			log.error("Unable to send SOAP request.", e);
 		}
-		ImportWSDL.getInstance().putRequest(file.getName(), httpRequest);
+		wsdlImporter.putRequest(wsdlID, httpRequest);
 		persistMessage(httpRequest);
 		if (sb != null) sb.append(" (Status code: "+ httpRequest.getResponseHeader().getStatusCode() +")\n");
+	}
+	
+	/* Prints output string in output panel. */
+	private void printOutput(StringBuilder sb){
+        if (View.isInitialised()) {
+			final String str = sb.toString();
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					View.getSingleton().getOutputPanel().append(str);
+				}}
+			);
+		}	
 	}
 	
 	@Override

@@ -106,7 +106,7 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 			if(currentHeader != null && originalMsg.getRequestBody().length() > 0){
 				currentHeader = currentHeader.trim();				
 				/* Retrieves available actions to try attacks. */
-				String[] soapActions = ImportWSDL.getInstance().getFileSoapActions(originalMsg);
+				String[] soapActions = ImportWSDL.getInstance().getSourceSoapActions(originalMsg);
 				
 				boolean endScan = false;
 				for(int j = 0; j < soapActions.length && !endScan; j++){

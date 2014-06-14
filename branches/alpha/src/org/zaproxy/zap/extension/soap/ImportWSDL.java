@@ -8,10 +8,10 @@ import org.parosproxy.paros.network.HttpMessage;
 public class ImportWSDL {
 
 	//Dynamic chart filled with all SOAP actions detected from multiple WSDL files.
-	private HashMap<String, ArrayList<String>> soapActions = new HashMap<String, ArrayList<String>>(); 
+	private HashMap<Integer, ArrayList<String>> soapActions = new HashMap<Integer, ArrayList<String>>(); 
 	
 	//Dynamic chart filled with all sended SOAP requests.
-	private HashMap<String, ArrayList<HttpMessage>> requestsList = new HashMap<String, ArrayList<HttpMessage>>(); 
+	private HashMap<Integer, ArrayList<HttpMessage>> requestsList = new HashMap<Integer, ArrayList<HttpMessage>>(); 
 	
 	private volatile static ImportWSDL singleton = null;
 	
@@ -31,21 +31,21 @@ public class ImportWSDL {
 	}
 	
 	
-	public void putAction(String fileName, String opName){
-		if (fileName == null || opName == null) return;
+	public void putAction(int wsdlKey, String opName){
+		if (wsdlKey < 0 || opName == null) return;
 		synchronized (this){
-			ArrayList<String> opsInFile = soapActions.get(fileName);
-			if (opsInFile == null) soapActions.put(fileName, new ArrayList<String>());
-			soapActions.get(fileName).add(opName);	
+			ArrayList<String> opsInFile = soapActions.get(wsdlKey);
+			if (opsInFile == null) soapActions.put(wsdlKey, new ArrayList<String>());
+			soapActions.get(wsdlKey).add(opName);	
 		}	
 	}
 	
-	public void putRequest(String fileName, HttpMessage request){
-		if (fileName == null || request == null) return;
+	public void putRequest(int wsdlKey, HttpMessage request){
+		if (wsdlKey < 0 || request == null) return;
 		synchronized (this){
-			ArrayList<HttpMessage> opsInFile = requestsList.get(fileName);
-			if (opsInFile == null) requestsList.put(fileName, new ArrayList<HttpMessage>());
-			requestsList.get(fileName).add(request);	
+			ArrayList<HttpMessage> opsInFile = requestsList.get(wsdlKey);
+			if (opsInFile == null) requestsList.put(wsdlKey, new ArrayList<HttpMessage>());
+			requestsList.get(wsdlKey).add(request);	
 		}	
 	}
 	
@@ -62,11 +62,11 @@ public class ImportWSDL {
 		return operationsChart;
 	}
 	
-	/* Returns all SOAP Actions available in the WSDL file explored, given a valid request. */
-	public synchronized String[] getFileSoapActions(final HttpMessage request){
+	/* Returns all SOAP Actions available in the WSDL source explored, given a valid request. */
+	public synchronized String[] getSourceSoapActions(final HttpMessage request){
 		if (requestsList == null || requestsList.size() <= 0) return null;
 		/* List of WSDL files. */
-		String[] keys = new String[requestsList.size()];
+		Integer[] keys = new Integer[requestsList.size()];
 		requestsList.keySet().toArray(keys);
 		/* Looks for the file that is referenced by the history reference. */
 		for(int i = 0; i < requestsList.size(); i++){
@@ -74,8 +74,8 @@ public class ImportWSDL {
 			for(int j = 0; j < index.size(); j++){
 				if(index.get(j).equals(request)){
 					/* File has been found. */
-					String fileName = keys[i];
-					ArrayList<String> actions = soapActions.get(fileName);
+					int key = keys[i];
+					ArrayList<String> actions = soapActions.get(key);
 					String[] actionsList = new String[actions.size()];
 					return actions.toArray(actionsList);
 				}
