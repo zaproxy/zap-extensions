@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>7</version>
+	<version>8</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-        Added a Example File scanner;<br>
-        Added "Cross-Domain Misconfiguration" scanner.
+        Added "Cookie Slack Detector" scanner.
 	]]>
 	</changes>
 	<dependson/>
