@@ -55,9 +55,9 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
+//import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.network.HttpRequestBody;
-import org.zaproxy.zap.spider.parser.SpiderParser;
+//import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 import com.predic8.schema.ComplexType;
@@ -121,15 +121,15 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportLocalWSDL());
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrlWSDL());
 	        
-			/* Custom spider is added in order to explore not only WSDL files, but also their WSDL endpoints. */
-			ExtensionSpider spider = (ExtensionSpider) Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.NAME);
-			SpiderParser customSpider = new WSDLSpider();
-			if (spider != null){
-				spider.addCustomParser(customSpider);
-				log.info("Added custom WSDL spider.");
-			}else{
-				log.info("Custom WSDL spider could not be added.");
-			}
+//			/* Custom spider is added in order to explore not only WSDL files, but also their WSDL endpoints. */
+//			ExtensionSpider spider = (ExtensionSpider) Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.NAME);
+//			SpiderParser customSpider = new WSDLSpider();
+//			if (spider != null){
+//				spider.addCustomParser(customSpider);
+//				log.info("Added custom WSDL spider.");
+//			}else{
+//				log.info("Custom WSDL spider could not be added.");
+//			}
 	    }
 	}
 
