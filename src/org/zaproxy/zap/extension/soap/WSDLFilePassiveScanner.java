@@ -47,6 +47,7 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
+			/* Alerts that a public WSDL file has been found. */
 			HttpResponseHeader header = msg.getResponseHeader();
 			String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
 			if(contentType.equals("application/wsdl+xml")){

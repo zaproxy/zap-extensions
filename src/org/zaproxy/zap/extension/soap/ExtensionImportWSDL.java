@@ -55,7 +55,9 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.network.HttpRequestBody;
+import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 import com.predic8.schema.ComplexType;
@@ -91,7 +93,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	public ExtensionImportWSDL() {
 		super();
 		initialize();
-		wsdlImporter = ImportWSDL.getInstance();
 	}
 
 	/**
@@ -100,7 +101,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	public ExtensionImportWSDL(String name) {
 		super(name);
 		initialize();
-		wsdlImporter = ImportWSDL.getInstance();
 	}
 
 	/**
@@ -109,6 +109,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	private void initialize() {
 		this.setName(NAME);
 		this.setOrder(157);
+		wsdlImporter = ImportWSDL.getInstance();
+		wsdlImporter.setExtensionInstance(this);
 	}
 
 	@Override
@@ -118,6 +120,16 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	    if (getView() != null) {
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportLocalWSDL());
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrlWSDL());
+	        
+			/* Custom spider is added in order to explore not only WSDL files, but also their WSDL endpoints. */
+			ExtensionSpider spider = (ExtensionSpider) Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.NAME);
+			SpiderParser customSpider = new WSDLSpider();
+			if (spider != null){
+				spider.addCustomParser(customSpider);
+				log.info("Added custom WSDL spider.");
+			}else{
+				log.info("Custom WSDL spider could not be added.");
+			}
 	    }
 	}
 
@@ -190,18 +202,23 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     }
 	
 	/* Method called from import dialog when import button is pressed. */
-	public void extUrlWSDLImport(final String url){
+	public void extUrlWSDLImport(final String url, boolean threaded){
 		if (url == null || url.trim().length() <= 0 ) return;
 		//log.debug("Importing WSDL file from URL: "+url);
-		Thread t = new Thread(){
-			@Override
-			public void run() {
-				this.setName(THREAD_PREFIX + threadId++);
-	    		parseWSDLUrl(url);
-			}
-    		
-    	};
-    	t.start();
+		if(threaded){
+			Thread t = new Thread(){
+				@Override
+				public void run() {
+					this.setName(THREAD_PREFIX + threadId++);
+		    		parseWSDLUrl(url);
+				}
+	    		
+	    	};
+	    	t.start();
+		}else{
+			parseWSDLUrl(url);
+		}
+			
 	}
 	
 	/* Generates WSDL definitions from a WSDL file and then it calls parsing functions. */
@@ -464,7 +481,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         try {
 			sender.sendAndReceive(httpRequest, true);
 		} catch (IOException e) {
-			log.error("Unable to communicate with SOAP server. Server may be not available.", e);
+			log.error("Unable to communicate with SOAP server. Server may be not available.");
+			log.debug("Trace:", e);
 		}
 		wsdlImporter.putRequest(wsdlID, httpRequest);
 		persistMessage(httpRequest);
