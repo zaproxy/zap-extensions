@@ -7,6 +7,8 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class ImportWSDL {
 
+	private ExtensionImportWSDL extensionInstance = null;
+	
 	//Dynamic chart filled with all SOAP actions detected from multiple WSDL files.
 	private HashMap<Integer, ArrayList<String>> soapActions = new HashMap<Integer, ArrayList<String>>(); 
 	
@@ -82,5 +84,13 @@ public class ImportWSDL {
 			}
 		}
 		return null;
+	}
+
+	public ExtensionImportWSDL getExtensionInstance() {
+		return extensionInstance;
+	}
+
+	public void setExtensionInstance(ExtensionImportWSDL extensionInstance) {
+		this.extensionInstance = extensionInstance;
 	}
 }
