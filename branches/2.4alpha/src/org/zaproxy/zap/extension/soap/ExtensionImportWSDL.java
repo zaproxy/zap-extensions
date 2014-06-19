@@ -24,8 +24,10 @@ import groovy.xml.MarkupBuilder;
 import java.awt.Event;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,6 +36,7 @@ import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.httpclient.URI;
@@ -52,7 +55,9 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.network.HttpRequestBody;
+import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 import com.predic8.schema.ComplexType;
@@ -77,16 +82,17 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
 	private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";
 
-    private ZapMenuItem menuImportWSDL = null;
+    private ZapMenuItem menuImportLocalWSDL = null;
+    private ZapMenuItem menuImportUrlWSDL = null;
     private int threadId = 1;
 
-	private static Logger log = Logger.getLogger(ExtensionImportWSDL.class);
+	private static final Logger log = Logger.getLogger(ExtensionImportWSDL.class);
 	private ImportWSDL wsdlImporter= null;
+	private static int keyIndex = -1;
 	
 	public ExtensionImportWSDL() {
 		super();
 		initialize();
-		wsdlImporter = ImportWSDL.getInstance();
 	}
 
 	/**
@@ -95,7 +101,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	public ExtensionImportWSDL(String name) {
 		super(name);
 		initialize();
-		wsdlImporter = ImportWSDL.getInstance();
 	}
 
 	/**
@@ -104,6 +109,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	private void initialize() {
 		this.setName(NAME);
 		this.setOrder(157);
+		wsdlImporter = ImportWSDL.getInstance();
+		wsdlImporter.setExtensionInstance(this);
 	}
 
 	@Override
@@ -111,7 +118,18 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		super.hook(extensionHook);
 
 	    if (getView() != null) {
-	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportWSDL());
+	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportLocalWSDL());
+	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrlWSDL());
+	        
+			/* Custom spider is added in order to explore not only WSDL files, but also their WSDL endpoints. */
+			ExtensionSpider spider = (ExtensionSpider) Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.NAME);
+			SpiderParser customSpider = new WSDLSpider();
+			if (spider != null){
+				spider.addCustomParser(customSpider);
+				log.info("Added custom WSDL spider.");
+			}else{
+				log.info("Custom WSDL spider could not be added.");
+			}
 	    }
 	}
 
@@ -121,17 +139,19 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		Control control = Control.getSingleton();
 		ExtensionLoader extLoader = control.getExtensionLoader();
 	    if (getView() != null) {
-	    	extLoader.removeToolsMenuItem(getMenuImportWSDL());
+	    	extLoader.removeToolsMenuItem(getMenuImportLocalWSDL());
+	    	extLoader.removeToolsMenuItem(getMenuImportUrlWSDL());
 	    }
 	}
 
-	private ZapMenuItem getMenuImportWSDL() {
-        if (menuImportWSDL == null) {
-        	menuImportWSDL = new ZapMenuItem("soap.topmenu.tools.importWSDL",
+	/* Menu option to import a local WSDL file. */
+	private ZapMenuItem getMenuImportLocalWSDL() {
+        if (menuImportLocalWSDL == null) {
+        	menuImportLocalWSDL = new ZapMenuItem("soap.topmenu.tools.importWSDL",
         			KeyStroke.getKeyStroke(KeyEvent.VK_I, Event.CTRL_MASK, false));
-        	menuImportWSDL.setToolTipText(Constant.messages.getString("soap.topmenu.tools.importWSDL.tooltip"));
+        	menuImportLocalWSDL.setToolTipText(Constant.messages.getString("soap.topmenu.tools.importWSDL.tooltip"));
 
-        	menuImportWSDL.addActionListener(new java.awt.event.ActionListener() {
+        	menuImportLocalWSDL.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                 	// Prompt for a WSDL file.
@@ -145,7 +165,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 							@Override
 							public void run() {
 								this.setName(THREAD_PREFIX + threadId++);
-		        	    		importWSDLFile(chooser.getSelectedFile());
+		        	    		parseWSDLFile(chooser.getSelectedFile());
 							}
             	    		
             	    	};
@@ -155,11 +175,55 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
                 }
             });
         }
-        return menuImportWSDL;
+        return menuImportLocalWSDL;
     }
 	
-	public String importWSDLFile(File file) {
-		if (file == null) return "";
+	/* Menu option to import a WSDL file from a given URL. */
+	private ZapMenuItem getMenuImportUrlWSDL() {
+        if (menuImportUrlWSDL == null) {
+        	menuImportUrlWSDL = new ZapMenuItem("soap.topmenu.tools.importRemoteWSDL",
+        			KeyStroke.getKeyStroke(KeyEvent.VK_J, Event.CTRL_MASK, false));
+        	menuImportUrlWSDL.setToolTipText(Constant.messages.getString("soap.topmenu.tools.importRemoteWSDL.tooltip"));
+
+        	final ExtensionImportWSDL shadowCopy = this;
+        	menuImportUrlWSDL.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                	SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            new ImportFromUrlDialog(View.getSingleton().getMainFrame(), shadowCopy);
+                        }
+                    });
+                }
+            });
+        }
+        return menuImportUrlWSDL;
+    }
+	
+	/* Method called from import dialog when import button is pressed. */
+	public void extUrlWSDLImport(final String url, boolean threaded){
+		if (url == null || url.trim().length() <= 0 ) return;
+		//log.debug("Importing WSDL file from URL: "+url);
+		if(threaded){
+			Thread t = new Thread(){
+				@Override
+				public void run() {
+					this.setName(THREAD_PREFIX + threadId++);
+		    		parseWSDLUrl(url);
+				}
+	    		
+	    	};
+	    	t.start();
+		}else{
+			parseWSDLUrl(url);
+		}
+			
+	}
+	
+	/* Generates WSDL definitions from a WSDL file and then it calls parsing functions. */
+	private void parseWSDLFile(File file) {
+		if (file == null) return ;
 		try {
 			if (View.isInitialised()) {
 				// Switch to the output panel, if in GUI mode
@@ -170,59 +234,96 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	        WSDLParser parser = new WSDLParser();
 			final String path = file.getAbsolutePath();
 	        Definitions wsdl = parser.parse(path);
-	        StringBuilder sb = new StringBuilder();
-	        List<Service> services = wsdl.getServices();
+			parseWSDL(wsdl);
 	        
-	        /* Endpoint identification. */
-	        for(Service service : services){
-	        	for(Port port: service.getPorts()){
-			        Binding binding = port.getBinding();
-			        AbstractBinding innerBinding = binding.getBinding();
-			        String soapPrefix = innerBinding.getPrefix();
-			        int soapVersion = detectSoapVersion(wsdl, soapPrefix); // SOAP 1.X, where X is represented by this variable.			        
-			        /* If the binding is not a SOAP binding, it is ignored. */
-			        String style = detectStyle(innerBinding);
-			        if(style != null && (style.equals("document") || style.equals("rpc")) ){
-			        	
-				        List<BindingOperation> operations = binding.getOperations();
-				        String endpointLocation = port.getAddress().getLocation().toString();
-					    sb.append("\n|-- Port detected: "+port.getName()+" ("+endpointLocation+")\n");
-					    
-			    	    /* Identifies operations for each endpoint.. */
-		    	        for(BindingOperation bindOp : operations){
-		    	        	sb.append("|\t|-- SOAP 1."+soapVersion+" Operation: "+bindOp.getName());
-		    	        	/* Adds this operation to the global operations chart. */
-		    	        	recordOperation(file, bindOp);	    	        	
-		    	        	/* Identifies operation's parameters. */
-		    	        	List<Part> requestParts = detectParameters(wsdl, bindOp);    	        			    	        	    	        	   	        			    	        	
-		    	        	/* Set values to parameters. */
-		    	        	HashMap<String, String> formParams = new HashMap<String, String>();
-		    	        	fillParameters(requestParts, formParams);		    	        	        	
-		    	        	/* Connection test for each operation. [MARK] It has not been tested over HTTPS. */
-		    	        	/* Basic message creation. */
-		    	        	HttpMessage requestMessage = createSoapRequest(wsdl, soapVersion, formParams, port, bindOp);
-		    	        	sendSoapRequest(file, requestMessage, sb);	
-		    	        } //bindingOperations loop
-			        } //Binding check if
-	        	}// Ports loop
-	        }
-	        
-	        if (View.isInitialised()) {
-				final String str = sb.toString();
-				EventQueue.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						View.getSingleton().getOutputPanel().append(str);
-					}}
-				);
-			}			
-			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		} 
-		return null;
+	}
+	
+	/* Generates WSDL definitions from a WSDL string and then it calls parsing functions. */
+	private void parseWSDLUrl(String url){
+		if (url == null || url.trim().equals("")) return;
+		try {
+			if (View.isInitialised()) {
+				// Switch to the output panel, if in GUI mode
+				View.getSingleton().getOutputPanel().setTabFocus();
+			}
+			/* Sends a request to retrieve remote WSDL file's content. */
+			HttpMessage httpRequest = new HttpMessage(new URI(url, false));
+	        HttpSender sender = new HttpSender(
+					Model.getSingleton().getOptionsParam().getConnectionParam(),
+					true,
+					HttpSender.MANUAL_REQUEST_INITIATOR);
+	        try {
+				sender.sendAndReceive(httpRequest, true);
+			} catch (IOException e) {
+				log.error("Unable to send WSDL request.", e);
+				return;
+			}
+	        
+	        /* Checks response content. */
+	        if (httpRequest.getResponseBody() != null){      	
+		        String content = httpRequest.getResponseBody().toString();	
+		        if (content == null || content.trim().length() <= 0){
+		        	//log.warn("URL response from WSDL file request has no body content.");
+		        }else{
+		        	// WSDL parsing.
+			        WSDLParser parser = new WSDLParser();
+			        InputStream contentI = new ByteArrayInputStream(content.getBytes("UTF-8"));
+			        Definitions wsdl = parser.parse(contentI);
+			        contentI.close();
+					parseWSDL(wsdl);
+		        }  
+	        }
+		} catch (Exception e) {
+			log.error("There was an error while parsing WSDL from URL. ", e);
+		} 
 	}
 
+
+	/* Parses WSDL definitions and identifies endpoints and operations. */
+	private void parseWSDL(Definitions wsdl){
+        StringBuilder sb = new StringBuilder();
+        List<Service> services = wsdl.getServices();
+        keyIndex++;
+        
+        /* Endpoint identification. */
+        for(Service service : services){
+        	for(Port port: service.getPorts()){
+		        Binding binding = port.getBinding();
+		        AbstractBinding innerBinding = binding.getBinding();
+		        String soapPrefix = innerBinding.getPrefix();
+		        int soapVersion = detectSoapVersion(wsdl, soapPrefix); // SOAP 1.X, where X is represented by this variable.			        
+		        /* If the binding is not a SOAP binding, it is ignored. */
+		        String style = detectStyle(innerBinding);
+		        if(style != null && (style.equals("document") || style.equals("rpc")) ){
+		        	
+			        List<BindingOperation> operations = binding.getOperations();
+			        String endpointLocation = port.getAddress().getLocation().toString();
+				    sb.append("\n|-- Port detected: "+port.getName()+" ("+endpointLocation+")\n");
+				    
+		    	    /* Identifies operations for each endpoint.. */
+	    	        for(BindingOperation bindOp : operations){
+	    	        	sb.append("|\t|-- SOAP 1."+soapVersion+" Operation: "+bindOp.getName());
+	    	        	/* Adds this operation to the global operations chart. */
+	    	        	recordOperation(keyIndex, bindOp);	    	        	
+	    	        	/* Identifies operation's parameters. */
+	    	        	List<Part> requestParts = detectParameters(wsdl, bindOp);    	        			    	        	    	        	   	        			    	        	
+	    	        	/* Set values to parameters. */
+	    	        	HashMap<String, String> formParams = new HashMap<String, String>();
+	    	        	fillParameters(requestParts, formParams);		    	        	        	
+	    	        	/* Connection test for each operation. */
+	    	        	/* Basic message creation. */
+	    	        	HttpMessage requestMessage = createSoapRequest(wsdl, soapVersion, formParams, port, bindOp);
+	    	        	sendSoapRequest(keyIndex, requestMessage, sb);	
+	    	        } //bindingOperations loop
+		        } //Binding check if
+        	}// Ports loop
+        }        
+        printOutput(sb);
+	}
+	
 	private static void persistMessage(final HttpMessage message) {
 		// Add the message to the history panel and sites tree
 		final HistoryReference historyRef;
@@ -270,15 +371,17 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	}
 	
 	/* Record the given operation in the global chart. */
-	private void recordOperation(File file, BindingOperation bindOp){
+	private void recordOperation(int wsdlID, BindingOperation bindOp){
     	String soapActionName = "";
     	try{
     		soapActionName = bindOp.getOperation().getSoapAction();    	        			
     	}catch(NullPointerException e){
     		// SOAP Action not defined for this operation.
+    		log.info("No SOAP Action defined for this operation.", e);
+    		return;
     	}
     	if(!soapActionName.trim().equals("")){
-    		wsdlImporter.putAction(file.getName(),soapActionName);
+    		wsdlImporter.putAction(wsdlID,soapActionName);
     	}	
 	}
 	
@@ -310,7 +413,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         			/* Parameter value depends on parameter type. */
         			if(paramType.trim().equals("xsd:string")){
 	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "paramValue");
-	        			log.info("[ExtensionImportWSDL] Param: "+"xpath:/"+elementName.trim()+"/"+paramName);
+	        			//log.info("[ExtensionImportWSDL] Param: "+"xpath:/"+elementName.trim()+"/"+paramName);
 	        		}    
         		}
     		}
@@ -334,7 +437,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	        creator.createRequest(binding.getPortType().getName(),
 	               bindOp.getName(), binding.getName());
 	            	        	
-	        log.info("[ExtensionImportWSDL] "+writerSOAPReq);
+	        //log.info("[ExtensionImportWSDL] "+writerSOAPReq);
 	        /* HTTP Request. */
 	        String endpointLocation = port.getAddress().getLocation().toString();
 	        HttpMessage httpRequest = new HttpMessage(new URI(endpointLocation, false));
@@ -368,7 +471,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	/* Sends a given SOAP request. File is needed to record its associated ops, and stringBuilder logs
 	 * the output message.
 	 */
-	private void sendSoapRequest(File file, HttpMessage httpRequest, StringBuilder sb){
+	private void sendSoapRequest(int wsdlID, HttpMessage httpRequest, StringBuilder sb){
 		if (httpRequest == null) return;
         /* Connection. */
         HttpSender sender = new HttpSender(
@@ -378,11 +481,25 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         try {
 			sender.sendAndReceive(httpRequest, true);
 		} catch (IOException e) {
-			log.error("Unable to send SOAP request.", e);
+			log.error("Unable to communicate with SOAP server. Server may be not available.");
+			log.debug("Trace:", e);
 		}
-		ImportWSDL.getInstance().putRequest(file.getName(), httpRequest);
+		wsdlImporter.putRequest(wsdlID, httpRequest);
 		persistMessage(httpRequest);
 		if (sb != null) sb.append(" (Status code: "+ httpRequest.getResponseHeader().getStatusCode() +")\n");
+	}
+	
+	/* Prints output string in output panel. */
+	private void printOutput(StringBuilder sb){
+        if (View.isInitialised()) {
+			final String str = sb.toString();
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					View.getSingleton().getOutputPanel().append(str);
+				}}
+			);
+		}	
 	}
 	
 	@Override
