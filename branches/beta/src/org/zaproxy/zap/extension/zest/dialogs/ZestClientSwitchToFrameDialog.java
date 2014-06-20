@@ -21,8 +21,13 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import org.mozilla.zest.core.v1.ZestClientWindowHandle;
+import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -31,11 +36,12 @@ import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
-public class ZestClientWindowHandleDialog extends StandardFieldsDialog implements ZestDialog {
+public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implements ZestDialog {
 
 	private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle"; 
-	private static final String FIELD_URL = "zest.dialog.client.label.url"; 
-	private static final String FIELD_REGEX = "zest.dialog.client.label.regex"; 
+	private static final String FIELD_FRAME_INDEX = "zest.dialog.client.label.frameindex"; 
+	private static final String FIELD_FRAME_NAME = "zest.dialog.client.label.framename"; 
+	private static final String FIELD_PARENT_FRAME = "zest.dialog.client.label.parentframe"; 
 
 	private static final long serialVersionUID = 1L;
 
@@ -44,16 +50,16 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 	private ScriptNode child = null;
 	private ZestScriptWrapper script = null;
 	private ZestStatement request = null;
-	private ZestClientWindowHandle client = null;
+	private ZestClientSwitchToFrame client = null;
 	private boolean add = false;
 
-	public ZestClientWindowHandleDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+	public ZestClientSwitchToFrameDialog(ExtensionZest ext, Frame owner, Dimension dim) {
 		super(owner, "zest.dialog.clientWindow.add.title", dim);
 		this.extension = ext;
 	}
 
 	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestStatement req, ZestClientWindowHandle client, boolean add) {
+			ZestStatement req, ZestClientSwitchToFrame client, boolean add) {
 		this.script = script;
 		this.add = add;
 		this.parent = parent;
@@ -69,18 +75,49 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 			this.setTitle(Constant.messages.getString("zest.dialog.clientWindow.edit.title"));
 		}
 
-		this.addTextField(FIELD_WINDOW_HANDLE, client.getWindowHandle());
-		this.addTextField(FIELD_URL, client.getUrl());
-		this.addCheckBoxField(FIELD_REGEX, client.isRegex());
+		// Pull down of all the valid window ids
+		List <String> windowIds = new ArrayList<String>(script.getZestScript().getClientWindowHandles());
+		Collections.sort(windowIds);
+		this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
+
+		this.addTextField(FIELD_FRAME_NAME, client.getFrameName());
+		this.addNumberField(FIELD_FRAME_INDEX, -1, 1024, client.getFrameIndex());
+		this.addCheckBoxField(FIELD_PARENT_FRAME, client.isParent());
 		
 		// Enable right click menus
-		this.addFieldListener(FIELD_URL, ZestZapUtils.stdMenuAdapter()); 
+		this.addFieldListener(FIELD_FRAME_NAME, ZestZapUtils.stdMenuAdapter());
+		
+		// Only allow one choice to be selected
+		this.addFieldListener(FIELD_FRAME_NAME, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (! isEmptyField(FIELD_FRAME_NAME)) {
+					setFieldValue(FIELD_FRAME_INDEX, -1);			
+				}
+			}});
+		this.addFieldListener(FIELD_FRAME_INDEX, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (getIntValue(FIELD_FRAME_INDEX) >= 0) {
+					setFieldValue(FIELD_FRAME_NAME, "");			
+				}
+			}});
+		this.addFieldListener(FIELD_PARENT_FRAME, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (getBoolValue(FIELD_PARENT_FRAME)) {
+					setFieldValue(FIELD_FRAME_NAME, "");			
+					setFieldValue(FIELD_FRAME_INDEX, -1);			
+				}
+			}});
+		
 	}
 
 	public void save() {
 		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
-		client.setUrl(this.getStringValue(FIELD_URL));
-		client.setRegex(this.getBoolValue(FIELD_REGEX));
+		client.setFrameName(this.getStringValue(FIELD_FRAME_NAME));
+		client.setFrameIndex(this.getIntValue(FIELD_FRAME_INDEX));
+		client.setParent(this.getBoolValue(FIELD_PARENT_FRAME));
 
 		if (add) {
 			if (request == null) {
@@ -96,8 +133,18 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 
 	@Override
 	public String validateFields() {
-		if (! ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_WINDOW_HANDLE))) {
-			return Constant.messages.getString("zest.dialog.client.error.windowHandle");
+		int setFields = 0;
+		if (! isEmptyField(FIELD_FRAME_NAME)) {
+			setFields++;
+		}
+		if (getIntValue(FIELD_FRAME_INDEX) >= 0) {
+			setFields++;
+		}
+		if (getBoolValue(FIELD_PARENT_FRAME)) {
+			setFields++;
+		}
+		if (setFields != 1) {
+			return Constant.messages.getString("zest.dialog.client.error.switchToFrame");
 		}
 		return null;
 	}

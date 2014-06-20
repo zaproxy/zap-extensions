@@ -34,6 +34,7 @@ import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestExpressionAnd;
+import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionOr;
@@ -207,6 +208,8 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 		createPopupAddConditionMenu(parent, child, stmt, new ZestExpressionStatusCode());
 		createPopupAddConditionMenu(parent, child, stmt, new ZestExpressionResponseTime());
 		createPopupAddConditionMenu(parent, child, stmt, new ZestExpressionURL());
+		// TODO only if window handle exists
+		createPopupAddConditionMenu(parent, child, stmt, new ZestExpressionClientElementExists());
 		// createPopupAddActionMenu(parent, child, stmt, new
 		// ZestExpressionOr());
 		createPopupAddConditionMenu(parent, child, stmt, null);

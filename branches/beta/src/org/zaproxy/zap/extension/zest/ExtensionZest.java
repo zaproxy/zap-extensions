@@ -39,11 +39,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 
 import net.htmlparser.jericho.Source;
+import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
+import org.mozilla.zest.core.v1.ZestClientElementClick;
+import org.mozilla.zest.core.v1.ZestClientLaunch;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
@@ -1232,6 +1235,64 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	public void addMouseListener(MouseAdapter adapter) {
+	}
+	
+	private void addWindowLaunch(ScriptNode node, String handle, String url) {
+		ZestScriptWrapper sw = this.getZestTreeModel().getScriptWrapper(node);
+		if (! sw.getZestScript().getClientWindowHandles().contains(handle)) {
+			final ZestClientLaunch launch = new ZestClientLaunch(handle, "firefox", url); 
+			
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						addToParent(getDefaultStandAloneScript(), launch);
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+			});
+			
+		}
+	}
+	
+	public void clientMessageReceived (JSONObject clientMessage, String url) {
+		/*
+		 * TODO This is work in progress!
+		 * In any case, it requires pnh changes to enable it...
+		 */
+		ZestStatement stmt = null;
+		
+		try {
+			String data = clientMessage.getString("data");
+			if ("a click event happened!".equals(data)) {
+				String handle = clientMessage.getString("endpointId");
+				this.addWindowLaunch(getDefaultStandAloneScript(), handle, url);
+				ZestClientElementClick clientStmt = new ZestClientElementClick();
+				clientStmt.setWindowHandle(handle);
+				clientStmt.setType("xpath");
+				clientStmt.setElement((String) clientMessage.getString("originalTargetPath"));
+				stmt = clientStmt;
+			}
+		} catch (Exception e1) {
+			// TODO Ignore for now - need to handle better (JSONException)
+			logger.debug(e1.getMessage(), e1);
+		}
+
+		if (stmt != null) {
+			final ZestStatement stmtFinal = stmt;
+	
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						addToParent(getDefaultStandAloneScript(), stmtFinal);
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+			});
+		}
 	}
 
 	@Override

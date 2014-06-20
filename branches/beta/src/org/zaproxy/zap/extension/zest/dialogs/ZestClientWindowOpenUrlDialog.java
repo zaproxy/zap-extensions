@@ -21,21 +21,22 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import org.mozilla.zest.core.v1.ZestClientWindowHandle;
+import org.mozilla.zest.core.v1.ZestClientWindowOpenUrl;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
-public class ZestClientWindowHandleDialog extends StandardFieldsDialog implements ZestDialog {
+public class ZestClientWindowOpenUrlDialog extends StandardFieldsDialog implements ZestDialog {
 
 	private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle"; 
 	private static final String FIELD_URL = "zest.dialog.client.label.url"; 
-	private static final String FIELD_REGEX = "zest.dialog.client.label.regex"; 
 
 	private static final long serialVersionUID = 1L;
 
@@ -44,16 +45,16 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 	private ScriptNode child = null;
 	private ZestScriptWrapper script = null;
 	private ZestStatement request = null;
-	private ZestClientWindowHandle client = null;
+	private ZestClientWindowOpenUrl client = null;
 	private boolean add = false;
 
-	public ZestClientWindowHandleDialog(ExtensionZest ext, Frame owner, Dimension dim) {
-		super(owner, "zest.dialog.clientWindow.add.title", dim);
+	public ZestClientWindowOpenUrlDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+		super(owner, "zest.dialog.clientWindowOpenUrl.add.title", dim);
 		this.extension = ext;
 	}
 
 	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestStatement req, ZestClientWindowHandle client, boolean add) {
+			ZestStatement req, ZestClientWindowOpenUrl client, boolean add) {
 		this.script = script;
 		this.add = add;
 		this.parent = parent;
@@ -64,23 +65,22 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 		this.removeAllFields();
 		
 		if (add) {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindow.add.title"));
+			this.setTitle(Constant.messages.getString("zest.dialog.clientWindowOpenUrl.add.title"));
 		} else {
-			this.setTitle(Constant.messages.getString("zest.dialog.clientWindow.edit.title"));
+			this.setTitle(Constant.messages.getString("zest.dialog.clientWindowOpenUrl.edit.title"));
 		}
 
-		this.addTextField(FIELD_WINDOW_HANDLE, client.getWindowHandle());
-		this.addTextField(FIELD_URL, client.getUrl());
-		this.addCheckBoxField(FIELD_REGEX, client.isRegex());
+		// Pull down of all the valid window ids
+		List <String> windowIds = new ArrayList<String>(script.getZestScript().getClientWindowHandles());
+		Collections.sort(windowIds);
+		this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
 		
-		// Enable right click menus
-		this.addFieldListener(FIELD_URL, ZestZapUtils.stdMenuAdapter()); 
+		this.addTextField(FIELD_URL, client.getUrl());
 	}
 
 	public void save() {
 		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
 		client.setUrl(this.getStringValue(FIELD_URL));
-		client.setRegex(this.getBoolValue(FIELD_REGEX));
 
 		if (add) {
 			if (request == null) {
@@ -96,9 +96,7 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 
 	@Override
 	public String validateFields() {
-		if (! ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_WINDOW_HANDLE))) {
-			return Constant.messages.getString("zest.dialog.client.error.windowHandle");
-		}
+		// Nothing to do
 		return null;
 	}
 

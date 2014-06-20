@@ -20,6 +20,7 @@ import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestExpressionAnd;
+import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionOr;
@@ -110,6 +111,7 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
 		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionStatusCode());
 		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionResponseTime());
 		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionURL());
+		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionClientElementExists());
 		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionOr(), true);
 		createPopupAddExprMenu(parent, child, stmt, new ZestExpressionAnd(), true);
 	}

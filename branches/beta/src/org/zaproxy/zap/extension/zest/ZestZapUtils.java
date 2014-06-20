@@ -51,8 +51,10 @@ import org.mozilla.zest.core.v1.ZestClientElementClick;
 import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
 import org.mozilla.zest.core.v1.ZestClientElementSubmit;
 import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestClientWindowClose;
 import org.mozilla.zest.core.v1.ZestClientWindowHandle;
+import org.mozilla.zest.core.v1.ZestClientWindowOpenUrl;
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestControlLoopBreak;
@@ -60,6 +62,7 @@ import org.mozilla.zest.core.v1.ZestControlLoopNext;
 import org.mozilla.zest.core.v1.ZestControlReturn;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpressionAnd;
+import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionOr;
@@ -268,6 +271,17 @@ public class ZestZapUtils {
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.expression.url.title");
+			}
+
+		} else if (za instanceof ZestExpressionClientElementExists) {
+			ZestExpressionClientElementExists sla = (ZestExpressionClientElementExists) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.expression.clientelement"), 
+						sla.getWindowHandle(), sla.getType(), sla.getElement());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.expression.clientelement.title");
 			}
 
 		} else if (za instanceof ZestLoopString) {
@@ -542,6 +556,24 @@ public class ZestZapUtils {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientElementSubmit.title");
 			}
+		} else if (za instanceof ZestClientSwitchToFrame) {
+			ZestClientSwitchToFrame zcl = (ZestClientSwitchToFrame) za;
+			if (incParams) {
+				String frame;
+				if (zcl.getFrameIndex() >= 0) {
+					frame = Integer.toString(zcl.getFrameIndex());
+				} else if (zcl.isParent()) {
+					frame = Constant.messages.getString("zest.element.clientSwitchToFrame.parent");
+				} else {
+					frame = zcl.getFrameName();
+				}
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientSwitchToFrame"), 
+						zcl.getWindowHandle(), frame);
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientSwitchToFrame.title");
+			}
 		} else if (za instanceof ZestClientWindowHandle) {
 			ZestClientWindowHandle zcl = (ZestClientWindowHandle) za;
 			if (incParams) {
@@ -561,6 +593,16 @@ public class ZestZapUtils {
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.clientWindowClose.title");
+			}
+		} else if (za instanceof ZestClientWindowOpenUrl) {
+			ZestClientWindowOpenUrl zcl = (ZestClientWindowOpenUrl) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.clientWindowOpenUrl"), 
+						zcl.getWindowHandle(), zcl.getUrl());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.clientWindowOpenUrl.title");
 			}
 		}
 

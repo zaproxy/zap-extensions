@@ -42,8 +42,10 @@ import org.mozilla.zest.core.v1.ZestClientElementClick;
 import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
 import org.mozilla.zest.core.v1.ZestClientElementSubmit;
 import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestClientWindowClose;
 import org.mozilla.zest.core.v1.ZestClientWindowHandle;
+import org.mozilla.zest.core.v1.ZestClientWindowOpenUrl;
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestControlLoopBreak;
@@ -123,10 +125,14 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 	private static final ImageIcon CLIENT_ELEMENT_SUBMIT_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/ui-text-field-submit.png"));
 	
+	private static final ImageIcon CLIENT_FRAME_SWITCH_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/applications-blue.png"));
 	private static final ImageIcon CLIENT_WINDOW_PIN_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/application-pin.png"));
 	private static final ImageIcon CLIENT_WINDOW_OPEN_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/application-plus.png"));
+	private static final ImageIcon CLIENT_WINDOW_OPEN_URL_ICON =
+			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/application-arrow.png"));
 	private static final ImageIcon CLIENT_WINDOW_CLOSE_ICON =
 			new ImageIcon(ZestTreeCellRenderer.class.getResource("/org/zaproxy/zap/extension/zest/resources/icons/application-cross.png"));
 
@@ -266,10 +272,14 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 						setIcon(CLIENT_ELEMENT_SUBMIT_ICON);
 					} else if (za instanceof ZestClientLaunch) {
 						setIcon(CLIENT_WINDOW_OPEN_ICON);
+					} else if (za instanceof ZestClientSwitchToFrame) {
+						setIcon(CLIENT_FRAME_SWITCH_ICON);
 					} else if (za instanceof ZestClientWindowHandle) {
 						setIcon(CLIENT_WINDOW_PIN_ICON);
 					} else if (za instanceof ZestClientWindowClose) {
 						setIcon(CLIENT_WINDOW_CLOSE_ICON);
+					} else if (za instanceof ZestClientWindowOpenUrl) {
+						setIcon(CLIENT_WINDOW_OPEN_URL_ICON);
 					} else {
 						logger.error("Unrecognised element element class="
 								+ zew.getElement().getClass()
