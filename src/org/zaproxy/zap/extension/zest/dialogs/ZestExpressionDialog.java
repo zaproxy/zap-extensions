@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestExpression;
+import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
@@ -151,8 +152,46 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 			this.addComboField(FIELD_VARIABLE, this.getVariableNames(), zc.getVariableName());
 			this.addNumberField(FIELD_LENGTH, 0, Integer.MAX_VALUE, zc.getLength());
 			this.addNumberField(FIELD_APPROX, 0, 100, zc.getApprox());
+			
+		} else if (expression instanceof ZestExpressionClientElementExists) {
+			ZestExpressionClientElementExists zc = (ZestExpressionClientElementExists) expression;
+			
+			// Pull down of all the valid window ids
+			List <String> windowIds = new ArrayList<String>(script.getClientWindowHandles());
+			Collections.sort(windowIds);
+			this.addComboField(ZestClientElementDialog.FIELD_WINDOW_HANDLE, windowIds, zc.getWindowHandle());
+			
+			String clientType = zc.getType();
+			if (clientType != null) {
+				clientType = Constant.messages.getString(ZestClientElementDialog.ELEMENT_TYPE_PREFIX + clientType.toLowerCase());
+			}
+			this.addComboField(ZestClientElementDialog.FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
+			this.addTextField(ZestClientElementDialog.FIELD_ELEMENT, zc.getElement());
+			
+			// Enable right click menus
+			this.addFieldListener(ZestClientElementDialog.FIELD_ELEMENT, ZestZapUtils.stdMenuAdapter()); 
+
 		}
 		this.addPadding();
+	}
+
+	private List<String> getElementTypeFields() {
+		List<String> list = new ArrayList<String>();
+		for (String type : ZestClientElementDialog.ELEMENT_TYPES) {
+			list.add(Constant.messages.getString(ZestClientElementDialog.ELEMENT_TYPE_PREFIX + type));
+		}
+		Collections.sort(list);
+		return list;
+	}
+
+	private String getSelectedElementType() {
+		String selectedType = this.getStringValue(ZestClientElementDialog.FIELD_ELEMENT_TYPE);
+		for (String type : ZestClientElementDialog.ELEMENT_TYPES) {
+			if (Constant.messages.getString(ZestClientElementDialog.ELEMENT_TYPE_PREFIX + type).equals(selectedType)) {
+				return type;
+			}
+		}
+		return null;
 	}
 
 	public boolean isAddingExpressionToNewCondition() {
@@ -221,6 +260,13 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 			za.setVariableName(this.getStringValue(FIELD_VARIABLE));
 			za.setLength(this.getIntValue(FIELD_LENGTH));
 			za.setApprox(this.getIntValue(FIELD_APPROX));
+
+		} else if (expression instanceof ZestExpressionClientElementExists) {
+			ZestExpressionClientElementExists zc = (ZestExpressionClientElementExists) expression;
+			zc.setWindowHandle(this.getStringValue(ZestClientElementDialog.FIELD_WINDOW_HANDLE));
+			zc.setType(getSelectedElementType());
+			zc.setElement(this.getStringValue(ZestClientElementDialog.FIELD_ELEMENT));
+
 		}
 		if (addToNewConditional) {
 			ZestConditional condition = new ZestConditional(expression);
@@ -295,6 +341,11 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 			} catch (Exception e) {
 				return Constant.messages
 						.getString("zest.dialog.condition.error.regexes");
+			}
+
+		} else if (expression instanceof ZestExpressionClientElementExists) {
+			if (this.isEmptyField(ZestClientElementDialog.FIELD_ELEMENT)) {
+				return Constant.messages.getString("zest.dialog.client.error.element");
 			}
 
 		}

@@ -41,8 +41,8 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
 	protected static final String FIELD_ELEMENT = "zest.dialog.client.label.element"; 
 	protected static final String FIELD_ATTRIBUTE = "zest.dialog.client.label.attribute"; 
 	
-	private static String ELEMENT_TYPE_PREFIX = "zest.dialog.client.elementType.label.";
-	private static String[] ELEMENT_TYPES = 
+	protected static String ELEMENT_TYPE_PREFIX = "zest.dialog.client.elementType.label.";
+	protected static String[] ELEMENT_TYPES = 
 		{"classname", "cssselector", "id", "linktext", "name", "partiallinktext", "tagname", "xpath" };
 
 	private static final long serialVersionUID = 1L;

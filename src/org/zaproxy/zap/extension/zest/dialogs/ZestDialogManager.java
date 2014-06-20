@@ -37,8 +37,10 @@ import org.mozilla.zest.core.v1.ZestClientElementClick;
 import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
 import org.mozilla.zest.core.v1.ZestClientElementSubmit;
 import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
 import org.mozilla.zest.core.v1.ZestClientWindowClose;
 import org.mozilla.zest.core.v1.ZestClientWindowHandle;
+import org.mozilla.zest.core.v1.ZestClientWindowOpenUrl;
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestControl;
 import org.mozilla.zest.core.v1.ZestControlReturn;
@@ -96,6 +98,8 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestClientElementSubmitDialog clientElementSubmitDialog = null;
 	private ZestClientWindowHandleDialog clientWindowDialog = null;
 	private ZestClientWindowCloseDialog clientWindowCloseDialog = null;
+	private ZestClientWindowOpenUrlDialog clientWindowOpenUrlDialog = null;
+	private ZestClientSwitchToFrameDialog clientSwitchToFrameDialog = null;
 
 	public ZestDialogManager(ExtensionZest extension, ScriptUI scriptUI) {
 		super();
@@ -203,6 +207,12 @@ public class ZestDialogManager extends AbstractPanel {
 							} else if (obj instanceof ZestClientWindowClose) {
 								showZestClientWindowCloseDialog(parent, sn, null,
 										(ZestClientWindowClose) obj, false);
+							} else if (obj instanceof ZestClientWindowOpenUrl) {
+								showZestClientWindowOpenUrlDialog(parent, sn, null,
+										(ZestClientWindowOpenUrl) obj, false);
+							} else if (obj instanceof ZestClientSwitchToFrame) {
+								showZestClientSwitchToFrameDialog(parent, sn, null,
+										(ZestClientSwitchToFrame) obj, false);
 							}
 						}
 					}
@@ -577,7 +587,39 @@ public class ZestDialogManager extends AbstractPanel {
 		clientWindowCloseDialog.init(script, parent, child, req, client, add);
 		clientWindowCloseDialog.setVisible(true);
 	}
-	
+
+	public void showZestClientWindowOpenUrlDialog(ScriptNode parent, ScriptNode child,
+			ZestStatement req, ZestClientWindowOpenUrl client, boolean add) {
+		if (clientWindowOpenUrlDialog == null) {
+			clientWindowOpenUrlDialog = new ZestClientWindowOpenUrlDialog(extension, View
+					.getSingleton().getMainFrame(), new Dimension(300, 200));
+		} else if (clientWindowOpenUrlDialog.isVisible()) {
+			// Already being displayed, bring to the front but dont overwrite anything
+			bringToFront(clientWindowOpenUrlDialog);
+			return;
+		}
+		ZestScriptWrapper script = extension.getZestTreeModel()
+				.getScriptWrapper(parent);
+		clientWindowOpenUrlDialog.init(script, parent, child, req, client, add);
+		clientWindowOpenUrlDialog.setVisible(true);
+	}
+
+	public void showZestClientSwitchToFrameDialog(ScriptNode parent, ScriptNode child,
+			ZestStatement req, ZestClientSwitchToFrame client, boolean add) {
+		if (clientSwitchToFrameDialog == null) {
+			clientSwitchToFrameDialog = new ZestClientSwitchToFrameDialog(extension, View
+					.getSingleton().getMainFrame(), new Dimension(300, 200));
+		} else if (clientSwitchToFrameDialog.isVisible()) {
+			// Already being displayed, bring to the front but dont overwrite anything
+			bringToFront(clientSwitchToFrameDialog);
+			return;
+		}
+		ZestScriptWrapper script = extension.getZestTreeModel()
+				.getScriptWrapper(parent);
+		clientSwitchToFrameDialog.init(script, parent, child, req, client, add);
+		clientSwitchToFrameDialog.setVisible(true);
+	}
+
 	private void bringToFront(StandardFieldsDialog dialog) {
 		dialog.toFront();
 		dialog.requestFocus();
