@@ -21,9 +21,9 @@ import org.zaproxy.zap.extension.httppanel.Message;
 
 public interface FuzzableComponent<M extends Message> {
 
-    Class<? extends Message> getMessageClass();
+	Class<? extends Message> getMessageClass();
 
-    M getFuzzableMessage();
-    
-    boolean canFuzz();
+	M getFuzzableMessage();
+
+	boolean canFuzz();
 }

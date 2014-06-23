@@ -18,31 +18,34 @@
  * limitations under the License. 
  */
 package org.zaproxy.zap.extension.multiFuzz;
+
 import org.zaproxy.zap.extension.httppanel.Message;
 
 public class FuzzableComponentWrapper implements FuzzableComponent {
 
-    private org.zaproxy.zap.extension.fuzz.FuzzableComponent oldComponent;
+	private org.zaproxy.zap.extension.fuzz.FuzzableComponent oldComponent;
 
-    public FuzzableComponentWrapper(org.zaproxy.zap.extension.fuzz.FuzzableComponent oldComponent) {
-        this.oldComponent = oldComponent;
-    }
+	public FuzzableComponentWrapper(
+			org.zaproxy.zap.extension.fuzz.FuzzableComponent oldComponent) {
+		this.oldComponent = oldComponent;
+	}
 
-    @Override
-    public boolean canFuzz() {
-        return oldComponent.canFuzz();
-    }
+	@Override
+	public boolean canFuzz() {
+		return oldComponent.canFuzz();
+	}
 
-    @Override
-    public Class<? extends Message> getMessageClass() {
-        return oldComponent.getMessageClass();
-    }
+	@Override
+	public Class<? extends Message> getMessageClass() {
+		return oldComponent.getMessageClass();
+	}
 
-    @Override
-    public Message getFuzzableMessage() {
-        return oldComponent.getFuzzableMessage().getMessage();
-    }
-    public org.zaproxy.zap.extension.fuzz.FuzzableComponent getOldComponent(){
-    	return oldComponent;
-    }
+	@Override
+	public Message getFuzzableMessage() {
+		return oldComponent.getFuzzableMessage().getMessage();
+	}
+
+	public org.zaproxy.zap.extension.fuzz.FuzzableComponent getOldComponent() {
+		return oldComponent;
+	}
 }
