@@ -31,6 +31,8 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -311,8 +313,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	    	        	/* Identifies operation's parameters. */
 	    	        	List<Part> requestParts = detectParameters(wsdl, bindOp);    	        			    	        	    	        	   	        			    	        	
 	    	        	/* Set values to parameters. */
-	    	        	HashMap<String, String> formParams = new HashMap<String, String>();
-	    	        	fillParameters(requestParts, formParams);		    	        	        	
+	    	        	HashMap<String, String> formParams = fillParameters(requestParts);    	        		    	        	        	
 	    	        	/* Connection test for each operation. */
 	    	        	/* Basic message creation. */
 	    	        	HttpMessage requestMessage = createSoapRequest(wsdl, soapVersion, formParams, port, bindOp);
@@ -396,7 +397,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 		return null;
 	}
 	
-	private void fillParameters(List<Part> requestParts, HashMap<String, String> formParams){
+	private HashMap<String, String> fillParameters(List<Part> requestParts){
+		HashMap<String, String> formParams = new HashMap<String, String>();
     	for(Part part : requestParts){
     		if (part.getName().equals("parameters")){
     			final String elementName = part.getElement().getName();
@@ -409,15 +411,29 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         		}			    	        			
         		for (Element e : ct.getSequence().getElements()) {
         			final String paramName = e.getName().trim();
+        			log.info("Detected parameter name: "+paramName);
         			final String paramType = e.getType().getQualifiedName().trim();
         			/* Parameter value depends on parameter type. */
-        			if(paramType.trim().equals("xsd:string")){
+        			if(paramType.equals("xsd:string")){
 	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "paramValue");
-	        			//log.info("[ExtensionImportWSDL] Param: "+"xpath:/"+elementName.trim()+"/"+paramName);
-	        		}    
+	        		}else if(paramType.equals("xsd:int") || paramType.equals("xsd:double") ||
+	        				paramType.equals("xsd:long")){
+	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "0");
+	        		}else if(paramType.equals("xsd:date")){
+	        			Date date = new Date();
+	        			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DD");
+	        			String dateS = dt1.format(date);
+	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, dateS);
+	        		}else if(paramType.equals("xsd:dateTime")){
+	        			Date date = new Date();
+	        			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DDThh:mm:ssZ");
+	        			String dateS = dt1.format(date);
+	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, dateS);
+	        		}
         		}
     		}
     	}
+    	return formParams;
 	}
 
 	/* Generates a SOAP request associated to the specified binding operation. */
