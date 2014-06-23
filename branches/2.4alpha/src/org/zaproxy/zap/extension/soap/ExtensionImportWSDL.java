@@ -313,7 +313,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	    	        	/* Identifies operation's parameters. */
 	    	        	List<Part> requestParts = detectParameters(wsdl, bindOp);    	        			    	        	    	        	   	        			    	        	
 	    	        	/* Set values to parameters. */
-	    	        	HashMap<String, String> formParams = fillParameters(requestParts);    	        		    	        	        	
+	    	        	HashMap<String, String> formParams = fillParameters(requestParts); 
 	    	        	/* Connection test for each operation. */
 	    	        	/* Basic message creation. */
 	    	        	HttpMessage requestMessage = createSoapRequest(wsdl, soapVersion, formParams, port, bindOp);
@@ -412,19 +412,23 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         		for (Element e : ct.getSequence().getElements()) {
         			final String paramName = e.getName().trim();
         			log.info("Detected parameter name: "+paramName);
-        			final String paramType = e.getType().getQualifiedName().trim();
+        			String paramType = e.getType().getQualifiedName().trim();
+        			if(paramType.contains(":")){
+        				String[] stringParts = paramType.split(":");
+        				paramType = stringParts[stringParts.length-1];
+        			}
         			/* Parameter value depends on parameter type. */
-        			if(paramType.equals("xsd:string")){
+        			if(paramType.equals("string")){
 	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "paramValue");
-	        		}else if(paramType.equals("xsd:int") || paramType.equals("xsd:double") ||
-	        				paramType.equals("xsd:long")){
+	        		}else if(paramType.equals("int") || paramType.equals("double") ||
+	        				paramType.equals("long")){
 	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "0");
-	        		}else if(paramType.equals("xsd:date")){
+	        		}else if(paramType.equals("date")){
 	        			Date date = new Date();
 	        			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DD");
 	        			String dateS = dt1.format(date);
 	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, dateS);
-	        		}else if(paramType.equals("xsd:dateTime")){
+	        		}else if(paramType.equals("dateTime")){
 	        			Date date = new Date();
 	        			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DDThh:mm:ssZ");
 	        			String dateS = dt1.format(date);
