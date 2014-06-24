@@ -259,7 +259,7 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 	 */
 	@Override
 	public int getId() {
-		return 99999; // TODO get ID assigned
+		return 90027;
 	}
 
 	@Override
