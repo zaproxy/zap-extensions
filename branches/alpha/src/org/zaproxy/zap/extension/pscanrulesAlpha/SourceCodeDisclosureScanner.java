@@ -104,7 +104,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		languagePatterns.put(Pattern.compile("@RenderBody\\s*\\(\\s*\\)", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
 		languagePatterns.put(Pattern.compile("@RenderSection\\s*\\(\\s*\".+?\"\\s*\\)", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
 		//languagePatterns.put(Pattern.compile("@\\{[\\u0000-\\u007F]{5,}?\\}", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");  //Too many false positives
-		languagePatterns.put(Pattern.compile("@if\\s*\\(.+?\\)\\s*\\{", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
+		//languagePatterns.put(Pattern.compile("@if\\s*\\(.+?\\)\\s*\\{", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");        //false positives with IE conditional compilation directives in JavaScript
 		languagePatterns.put(Pattern.compile("Request\\s*\\[\".+?\"\\]", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
 		languagePatterns.put(Pattern.compile("@foreach\\s*", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
 		languagePatterns.put(Pattern.compile("Database.Open\\s*\\(\\s*\"", Pattern.MULTILINE | Pattern.DOTALL), "ASP.NET");
