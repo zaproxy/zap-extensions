@@ -91,6 +91,7 @@
 		<antcall target="build-addon"><param name="addon" value="reveal"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="saverawmessage"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="websocket"/></antcall>
+
 						
         <echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 		
