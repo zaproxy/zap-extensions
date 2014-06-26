@@ -93,7 +93,7 @@ public class CrossDomainMisconfiguration extends PluginPassiveScanner {
 			//String corsExposeHeadersValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_EXPOSE_HEADERS);
 
 			if ( corsAllowOriginValue!= null && corsAllowOriginValue.equals("*")) {
-				if (log.isDebugEnabled()) log.debug("Raising a Low risk Cross Domain alert on "+ ACCESS_CONTROL_ALLOW_ORIGIN + ": "+corsAllowOriginValue);
+				if (log.isDebugEnabled()) log.debug("Raising a Medium risk Cross Domain alert on "+ ACCESS_CONTROL_ALLOW_ORIGIN + ": "+corsAllowOriginValue);
 				//Its a Medium, rather than a High (as originally thought), for the following reasons:
 				//Assumption: if an API is accessible in an unauthenticated manner, it doesn't need to be protected 
 				//  (if it should be protected, its a Missing Function Level Access Control issue, not a Cross Domain Misconfiguration)
