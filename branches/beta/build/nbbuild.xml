@@ -84,6 +84,7 @@
 		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="invoke"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
@@ -96,6 +97,7 @@
 		<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="treetools"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
+
 				
         <echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 		
