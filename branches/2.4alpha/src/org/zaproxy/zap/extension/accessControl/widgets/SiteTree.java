@@ -4,25 +4,31 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ParameterParser;
 
-public class UriNodeTreeModel extends DefaultTreeModel {
+public class SiteTree {
 
-	private static final long serialVersionUID = 688700980476792716L;
-	private static final Logger log = Logger.getLogger(UriNodeTreeModel.class);
+	protected static final Logger log = Logger.getLogger(SiteTree.class);
 
-	public UriNodeTreeModel(TreeNode root) {
-		super(root);
+	private SiteTreeNode root;
+
+	public SiteTree() {
+		this.root = new SiteTreeNode("Sites", null);
 	}
 
-	public UriNode addPath(Context context, URI uri, String method) {
+	public SiteTree(SiteTreeNode root) {
+		this.root = root;
+	}
+
+	public SiteTreeNode getRoot() {
+		return root;
+	}
+
+	public SiteTreeNode addPath(Context context, URI uri, String method) {
 		Collection<String> urlParams = null;
 		try {
 			urlParams = context.getUrlParamParser().parse(uri.getQuery()).keySet();
@@ -31,12 +37,10 @@ public class UriNodeTreeModel extends DefaultTreeModel {
 		return addPath(context, uri, method, urlParams, null, null);
 	}
 
-	public UriNode addPath(Context context, URI uri, String method, Collection<String> urlParameters,
+	public SiteTreeNode addPath(Context context, URI uri, String method, Collection<String> urlParameters,
 			Collection<String> formParameters, String contentType) {
-		log.debug("addPath " + uri.toString());
-
-		UriNode parent = (UriNode) getRoot();
-		UriNode leaf = null;
+		SiteTreeNode parent = this.root;
+		SiteTreeNode leaf = null;
 		String pathSegment = "";
 		URI pathSegmentUri;
 
@@ -79,41 +83,37 @@ public class UriNodeTreeModel extends DefaultTreeModel {
 		return leaf;
 	}
 
-	private UriNode findOrAddPathSegmentNode(UriNode parent, String nodeName, URI path) {
-		// ZAP: Added debug
-		log.debug("findOrAddPathSegmentNode " + parent.getNodeName() + " / " + nodeName);
-		UriNode result = findChild(parent, nodeName);
+	private SiteTreeNode findOrAddPathSegmentNode(SiteTreeNode parent, String nodeName, URI path) {
+		SiteTreeNode result = findChild(parent, nodeName);
 
 		// If we don't already have a path node for the given name, create it now
 		if (result == null) {
-			result = new UriNode(nodeName, path);
+			result = new SiteTreeNode(nodeName, path);
 
 			// Find the position to insert the child note so that it keeps alphabetical ordering
 			int pos = parent.getChildCount();
 			for (int i = 0; i < parent.getChildCount(); i++) {
-				UriNode child = (UriNode) parent.getChildAt(i);
+				SiteTreeNode child = (SiteTreeNode) parent.getChildAt(i);
 				if (child.getNodeName().compareTo(nodeName) < 0) {
 					pos = i;
 					break;
 				}
 			}
-			insertNodeInto(result, parent, pos);
+			parent.insert(result, pos);
 		}
 		return result;
 	}
 
-	private UriNode findChild(UriNode parent, String nodeName) {
+	private SiteTreeNode findChild(SiteTreeNode parent, String nodeName) {
 		@SuppressWarnings("unchecked")
-		Enumeration<UriNode> children = parent.children();
+		Enumeration<SiteTreeNode> children = parent.children();
 
 		while (children.hasMoreElements()) {
-			UriNode child = children.nextElement();
+			SiteTreeNode child = children.nextElement();
 			if (child.getNodeName().equals(nodeName)) {
-				log.debug("Found child in parent " + parent.getNodeName() + ": " + nodeName);
 				return child;
 			}
 		}
-		log.debug("Did not find child in parent " + parent.getNodeName() + ": " + nodeName);
 		return null;
 	}
 }

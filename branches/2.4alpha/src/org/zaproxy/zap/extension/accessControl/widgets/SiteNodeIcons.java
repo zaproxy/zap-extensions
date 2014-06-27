@@ -3,7 +3,7 @@ package org.zaproxy.zap.extension.accessControl.widgets;
 import javax.swing.ImageIcon;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-public class UriNodeIcons {
+public class SiteNodeIcons {
 	public static final ImageIcon ROOT_ICON = new ImageIcon(DefaultTreeCellRenderer.class
 			.getResource("/resource/icon/16/094.png"));
 	public static final ImageIcon LEAF_ICON = new ImageIcon(DefaultTreeCellRenderer.class

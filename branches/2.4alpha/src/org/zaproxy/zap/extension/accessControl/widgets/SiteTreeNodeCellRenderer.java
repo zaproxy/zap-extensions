@@ -26,7 +26,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 /**
  * Custom renderer for {@link UriNodeTreeModel} to set custom icons.
  */
-public class UriNodeTreeCellRenderer extends DefaultTreeCellRenderer {
+public class SiteTreeNodeCellRenderer extends DefaultTreeCellRenderer {
 
 	private static final long serialVersionUID = -6714631438207624613L;
 
@@ -48,10 +48,10 @@ public class UriNodeTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
-		if (!(value instanceof UriNode))
+		if (!(value instanceof SiteTreeNode))
 			return this;
 
-		UriNode node = (UriNode) value;
+		SiteTreeNode node = (SiteTreeNode) value;
 		if (node != null) {
 			if (node.isRoot()) {
 				setIcon(ROOT_ICON); // 'World' icon

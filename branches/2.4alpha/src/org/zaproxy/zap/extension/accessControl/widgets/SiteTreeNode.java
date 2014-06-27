@@ -6,14 +6,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.apache.commons.httpclient.URI;
 
-public class UriNode extends DefaultMutableTreeNode {
+public class SiteTreeNode extends DefaultMutableTreeNode {
 
 	private static final long serialVersionUID = -1543727391908747535L;
 
 	private String nodeName;
 	private URI uri;
 
-	public UriNode(String nodeName, URI uri) {
+	public SiteTreeNode(String nodeName, URI uri) {
 		super();
 		this.nodeName = nodeName;
 		this.uri = uri;
@@ -27,15 +27,15 @@ public class UriNode extends DefaultMutableTreeNode {
 		return uri;
 	}
 
-	public UriNode findChild(String nodeName) {
+	public SiteTreeNode findChild(String nodeName) {
 		if (nodeName == null)
 			return null;
 
 		@SuppressWarnings("unchecked")
-		Enumeration<UriNode> children = this.children();
+		Enumeration<SiteTreeNode> children = this.children();
 
 		while (children.hasMoreElements()) {
-			UriNode child = children.nextElement();
+			SiteTreeNode child = children.nextElement();
 			if (child.getNodeName().equals(nodeName)) {
 				return child;
 			}
@@ -65,7 +65,7 @@ public class UriNode extends DefaultMutableTreeNode {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UriNode other = (UriNode) obj;
+		SiteTreeNode other = (SiteTreeNode) obj;
 		if (nodeName == null) {
 			if (other.nodeName != null)
 				return false;

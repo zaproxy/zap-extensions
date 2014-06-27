@@ -23,33 +23,36 @@ import java.util.Map;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.model.Model;
-import org.zaproxy.zap.extension.accessControl.widgets.UriNode;
+import org.zaproxy.zap.extension.accessControl.widgets.ContextSiteTree;
+import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
 import org.zaproxy.zap.extension.accessControl.widgets.UriUtils;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 
 public class ContextAccessRulesManager {
 	private Context context;
-	private Map<Integer, Map<UriNode, AccessRule>> rules;
+	private Map<Integer, Map<SiteTreeNode, AccessRule>> rules;
 	private static final Logger log = Logger.getLogger(ContextAccessRulesManager.class);
+	private ContextSiteTree contextSiteTree;
 
-	public ContextAccessRulesManager(int contextId) {
-		this.context = Model.getSingleton().getSession().getContext(contextId);
+	public ContextAccessRulesManager(Context context) {
+		this.context = context;
 		this.rules = new HashMap<>();
+		this.contextSiteTree = new ContextSiteTree();
 	}
 
 	/**
 	 * Instantiates a new context access rules manager by performing a copy of the provided
 	 * ContextAccessRulesManager.
 	 *
-	 * @param rulesManager the rules manager
+	 * @param sourceManager the rules manager
 	 */
-	public ContextAccessRulesManager(Context context, ContextAccessRulesManager rulesManager) {
+	public ContextAccessRulesManager(Context context, ContextAccessRulesManager sourceManager) {
 		this.context = context;
-		this.rules = new HashMap<>(rulesManager.rules.size());
-		Map<UriNode, AccessRule> userRules;
-		for (Map.Entry<Integer, Map<UriNode, AccessRule>> entry : rulesManager.rules.entrySet()) {
+		this.contextSiteTree = sourceManager.contextSiteTree;
+		this.rules = new HashMap<>(sourceManager.rules.size());
+		Map<SiteTreeNode, AccessRule> userRules;
+		for (Map.Entry<Integer, Map<SiteTreeNode, AccessRule>> entry : sourceManager.rules.entrySet()) {
 			userRules = new HashMap<>(entry.getValue());
 			this.rules.put(entry.getKey(), userRules);
 		}
@@ -61,8 +64,8 @@ public class ContextAccessRulesManager {
 	 * @param userId the user id
 	 * @return the user rules
 	 */
-	private Map<UriNode, AccessRule> getUserRules(int userId) {
-		Map<UriNode, AccessRule> userRules = rules.get(userId);
+	private Map<SiteTreeNode, AccessRule> getUserRules(int userId) {
+		Map<SiteTreeNode, AccessRule> userRules = rules.get(userId);
 		if (userRules == null) {
 			userRules = new HashMap<>();
 			this.rules.put(userId, userRules);
@@ -77,7 +80,7 @@ public class ContextAccessRulesManager {
 	 * @param node the node
 	 * @return the rule
 	 */
-	public AccessRule getDefinedRule(int userId, UriNode node) {
+	public AccessRule getDefinedRule(int userId, SiteTreeNode node) {
 		AccessRule rule = getUserRules(userId).get(node);
 		return rule == null ? AccessRule.INHERIT : rule;
 	}
@@ -90,7 +93,7 @@ public class ContextAccessRulesManager {
 	 * @param rule the rule
 	 * @return the access rule
 	 */
-	public void addRule(int userId, UriNode node, AccessRule rule) {
+	public void addRule(int userId, SiteTreeNode node, AccessRule rule) {
 		// If the rule is INHERIT (default), remove it from the rules mapping as there's no need to
 		// store it there
 		if (rule == AccessRule.INHERIT)
@@ -99,8 +102,8 @@ public class ContextAccessRulesManager {
 			getUserRules(userId).put(node, rule);
 	}
 
-	public AccessRule inferRule(UriNode contextTreeRoot, int userId, UriNode node) {
-		Map<UriNode, AccessRule> userRules = getUserRules(userId);
+	public AccessRule inferRule(int userId, SiteTreeNode node) {
+		Map<SiteTreeNode, AccessRule> userRules = getUserRules(userId);
 		List<String> path = null;
 		try {
 			path = context.getUrlParamParser().getTreePath(node.getUri());
@@ -119,7 +122,7 @@ public class ContextAccessRulesManager {
 		}
 
 		AccessRule rule, inferredRule = AccessRule.UNKNOWN;
-		UriNode parent = contextTreeRoot.findChild(hostname);
+		SiteTreeNode parent = contextSiteTree.getRoot().findChild(hostname);
 		if (parent != null) {
 			rule = userRules.get(parent);
 			if (rule != null && rule != AccessRule.INHERIT)
@@ -130,8 +133,6 @@ public class ContextAccessRulesManager {
 			return inferredRule;
 
 		// Replace the last 'segment' of the path with the actual node name
-		log.debug("Inferring rule for: " + node + ". Path: " + path);
-		// if (path.size() > 0)
 		path.set(path.size() - 1, node.getNodeName());
 
 		String pathSegment;
@@ -154,7 +155,6 @@ public class ContextAccessRulesManager {
 					inferredRule = rule;
 			}
 		}
-		log.debug("Inferred rule for " + node + ": " + inferredRule);
 		return inferredRule;
 	}
 
@@ -167,11 +167,16 @@ public class ContextAccessRulesManager {
 	 */
 	public void copyRulesFrom(ContextAccessRulesManager sourceManager, List<User> users) {
 		this.rules.clear();
-		Map<UriNode, AccessRule> userRules;
+		Map<SiteTreeNode, AccessRule> userRules;
 		for (User user : users) {
-			userRules = sourceManager.rules.get(user.getId());
+			userRules = new HashMap<>(sourceManager.rules.get(user.getId()));
 			if (userRules != null)
 				this.rules.put(user.getId(), userRules);
 		}
+		this.contextSiteTree = sourceManager.contextSiteTree;
+	}
+
+	public ContextSiteTree getContextSiteTree() {
+		return contextSiteTree;
 	}
 }

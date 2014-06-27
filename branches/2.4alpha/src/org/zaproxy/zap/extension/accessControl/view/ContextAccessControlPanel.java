@@ -1,15 +1,15 @@
 package org.zaproxy.zap.extension.accessControl.view;
 
-import static org.zaproxy.zap.extension.accessControl.widgets.UriNodeIcons.FOLDER_CLOSED_ICON;
-import static org.zaproxy.zap.extension.accessControl.widgets.UriNodeIcons.FOLDER_CLOSED_ICON_CHECK;
-import static org.zaproxy.zap.extension.accessControl.widgets.UriNodeIcons.FOLDER_CLOSED_ICON_CROSS;
-import static org.zaproxy.zap.extension.accessControl.widgets.UriNodeIcons.FOLDER_OPEN_ICON;
-import static org.zaproxy.zap.extension.accessControl.widgets.UriNodeIcons.FOLDER_OPEN_ICON_CHECK;
-import static org.zaproxy.zap.extension.accessControl.widgets.UriNodeIcons.FOLDER_OPEN_ICON_CROSS;
-import static org.zaproxy.zap.extension.accessControl.widgets.UriNodeIcons.LEAF_ICON;
-import static org.zaproxy.zap.extension.accessControl.widgets.UriNodeIcons.LEAF_ICON_CHECK;
-import static org.zaproxy.zap.extension.accessControl.widgets.UriNodeIcons.LEAF_ICON_CROSS;
-import static org.zaproxy.zap.extension.accessControl.widgets.UriNodeIcons.ROOT_ICON;
+import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.FOLDER_CLOSED_ICON;
+import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.FOLDER_CLOSED_ICON_CHECK;
+import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.FOLDER_CLOSED_ICON_CROSS;
+import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.FOLDER_OPEN_ICON;
+import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.FOLDER_OPEN_ICON_CHECK;
+import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.FOLDER_OPEN_ICON_CROSS;
+import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.LEAF_ICON;
+import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.LEAF_ICON_CHECK;
+import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.LEAF_ICON_CROSS;
+import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.ROOT_ICON;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -35,14 +35,12 @@ import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.accessControl.AccessRule;
 import org.zaproxy.zap.extension.accessControl.ContextAccessRulesManager;
 import org.zaproxy.zap.extension.accessControl.ExtensionAccessControl;
-import org.zaproxy.zap.extension.accessControl.widgets.UriNode;
-import org.zaproxy.zap.extension.accessControl.widgets.UriNodeTreeModel;
+import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
@@ -60,10 +58,9 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 	private ExtensionAccessControl extension;
 	private JXTreeTable tree;
 	private JScrollPane treePane;
-	private UriNodeTreeModel treeModel;
-	private Map<Integer, ContextUserAccessControlModel> userModels;
+	private Map<Integer, ContextUserAccessRulesModel> userModels;
 	private int selectedUserId = 0;
-	private ContextAccessRulesManager tempRulesManager;
+	private ContextAccessRulesManager internalRulesManager;
 	private ContextPanelUsersSelectComboBox usersComboBox;
 	private static ExtensionUserManagement usersExtension;
 
@@ -94,6 +91,11 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 		// The site tree for the access rules of each context
 		this.add(getContextSiteTreePane(), LayoutHelper.getGBC(0, 2, 2, 1.0D, 1.0D, GridBagConstraints.BOTH,
 				new Insets(10, 0, 0, 5)));
+
+		// The warning regarding changing structure parameters
+		this.add(new JLabel(Constant.messages
+				.getHtmlWrappedString("accessControl.contextPanel.label.warning")), LayoutHelper.getGBC(0, 3,
+				2, 1.0D));
 	}
 
 	private JScrollPane getContextSiteTreePane() {
@@ -112,21 +114,17 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 			JComboBox<AccessRule> comboBox = new JComboBox<>(new AccessRule[] { AccessRule.ALLOWED,
 					AccessRule.DENIED, AccessRule.INHERIT });
 			tree.setDefaultEditor(AccessRule.class, new DefaultCellEditor(comboBox));
-
-			// Initialize the tree
-			treeModel = new UriNodeTreeModel(new UriNode("Sites", null));
 		}
 		return treePane;
 	}
 
-	private ContextUserAccessControlModel getUserModel(int userId) {
-		ContextUserAccessControlModel model = userModels.get(userId);
+	private ContextUserAccessRulesModel getUserAccessRulesModel(int userId) {
+		log.debug("Getting user model for: " + userId);
+		ContextUserAccessRulesModel model = userModels.get(userId);
 		if (model == null) {
-			model = new ContextUserAccessControlModel(userId, treeModel, tempRulesManager);
+			model = new ContextUserAccessRulesModel(userId, internalRulesManager);
 			userModels.put(userId, model);
 		}
-		// Make sure the model has the proper rules manager
-		model.setRulesManager(tempRulesManager);
 		return model;
 	}
 
@@ -141,7 +139,8 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 					if (selectedUser != null) {
 						selectedUserId = selectedUser.getId();
 						tree.setVisible(true);
-						tree.setTreeTableModel(getUserModel(selectedUserId));
+						if (internalRulesManager != null)
+							tree.setTreeTableModel(getUserAccessRulesModel(selectedUserId));
 						tree.expandAll();
 					} else {
 						tree.setVisible(false);
@@ -161,22 +160,41 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
 	@Override
 	public void initContextData(Session session, Context uiSharedContext) {
-		// Re-generate the context tree so we are up-to-date
-		((UriNode) treeModel.getRoot()).removeAllChildren();
-		loadTree(session, uiSharedContext);
+		log.debug("Initing panel for context: " + uiSharedContext.getIndex());
 
-		// Clone the Access Rules Manager so we can support canceling any changes
-		ContextAccessRulesManager originalManager = extension.getUserAccessRules(uiSharedContext.getIndex());
-		this.tempRulesManager = new ContextAccessRulesManager(uiSharedContext, originalManager);
-		// And make sure we set the new rules manager on the existing table model
-		if (tree.getTreeTableModel() instanceof ContextUserAccessControlModel) {
-			ContextUserAccessControlModel selectedModel = (ContextUserAccessControlModel) tree
-					.getTreeTableModel();
-			selectedModel.setRulesManager(tempRulesManager);
+		// Clone the Access Rules Manager so we can support canceling any changes. If the internal
+		// manager already existed, just copy the rules, otherwise create a cloned one.
+
+		// NOTE: We are setting the internal context in the ContextAccessRulesManager as the 'real'
+		// Context instead of the UI one, as the ContextSiteTree is, currently, reloaded only in
+		// here and with the field separators that have been already defined. If any changes are
+		// done to the the field separators in the currently open SessionProperties Dialog, they
+		// will not be visible in the tree. Thus, in order to keep consistency, we stick to also
+		// using the 'real' Context in the internal Rules Manager so any rules are inferred
+		// according to the 'old' field separators.
+		// TODO: Eventually we should find a better solution for the above issue
+		ContextAccessRulesManager originalManager = extension.getContextAccessRulesManager(uiSharedContext
+				.getIndex());
+		if (internalRulesManager == null) {
+			Context context = Model.getSingleton().getSession().getContext(getContextIndex());
+			this.internalRulesManager = new ContextAccessRulesManager(context, originalManager);
+		} else {
+			internalRulesManager.copyRulesFrom(originalManager, getUsersManagementExtension()
+					.getUIConfiguredUsers(getContextIndex()));
 		}
 
-		// Expand the tree
-		tree.expandAll();
+		// Re-generate the context tree so we are up-to-date
+		this.internalRulesManager.getContextSiteTree().reloadTree(session, uiSharedContext);
+
+		// Clear the cache of the previous models so the models get recreated just for the users
+		// that need it
+		this.userModels.clear();
+
+		// Re-set the tree table model for the selected user, forcing a reloading
+		if (getUsersComboBox().getSelectedUser() != null) {
+			tree.setTreeTableModel(getUserAccessRulesModel(usersComboBox.getSelectedUser().getId()));
+			tree.expandAll();
+		}
 	}
 
 	@Override
@@ -194,7 +212,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 	@Override
 	public void saveContextData(Session session) throws Exception {
 		List<User> users = getUsersManagementExtension().getUIConfiguredUsers(getContextIndex());
-		extension.getUserAccessRules(getContextIndex()).copyRulesFrom(tempRulesManager, users);
+		extension.getContextAccessRulesManager(getContextIndex()).copyRulesFrom(internalRulesManager, users);
 	}
 
 	@Override
@@ -212,17 +230,6 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 						"The required Users Management extension could not be loaded.");
 		}
 		return usersExtension;
-	}
-
-	private void loadTree(Session session, Context context) {
-		log.debug("Reloading tree for context: " + context.getIndex());
-		List<SiteNode> contextNodes = session.getNodesInContextFromSiteTree(context);
-		for (SiteNode node : contextNodes) {
-			HistoryReference ref = node.getHistoryReference();
-			if (ref != null)
-				treeModel.addPath(context, ref.getURI(), ref.getMethod());
-		}
-		treeModel.reload();
 	}
 
 	private static final Color COLOR_DENIED = Color.RED;
@@ -246,19 +253,18 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
-			if (!(value instanceof UriNode))
+			if (!(value instanceof SiteTreeNode))
 				return this;
 
 			// Depending on the state of the node and the infer rule, set the icon and color
 			// accordingly
-			UriNode node = (UriNode) value;
+			SiteTreeNode node = (SiteTreeNode) value;
 			if (node != null) {
 				if (node.isRoot()) {
 					setIcon(ROOT_ICON); // 'World' icon
 				} else {
 					// Infer the rule so we can draw accordinglyF
-					AccessRule rule = tempRulesManager.inferRule((UriNode) treeModel.getRoot(),
-							selectedUserId, node);
+					AccessRule rule = internalRulesManager.inferRule(selectedUserId, node);
 					switch (rule) {
 					case ALLOWED:
 						// Text color

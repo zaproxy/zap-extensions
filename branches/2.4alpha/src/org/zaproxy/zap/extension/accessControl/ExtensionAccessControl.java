@@ -21,14 +21,10 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -37,6 +33,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
@@ -185,31 +182,6 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 			getStatusPanel().contextsChanged();
 			getStatusPanel().reset();
 		}
-
-		session.getSiteTree().addTreeModelListener(new TreeModelListener() {
-
-			@Override
-			public void treeStructureChanged(TreeModelEvent e) {
-				log.info("TreeStructureChanged: " + e.getTreePath() + "/" + Arrays.toString(e.getChildren()));
-				log.info("Tree size:" + e.getPath());
-			}
-
-			@Override
-			public void treeNodesRemoved(TreeModelEvent e) {
-				log.info("TreeNodesRemoved: " + e.getTreePath() + "/" + Arrays.toString(e.getChildren()));
-
-			}
-
-			@Override
-			public void treeNodesInserted(TreeModelEvent e) {
-				log.info("TreeNodesInserted: " + e.getTreePath() + "/" + Arrays.toString(e.getChildren()));
-			}
-
-			@Override
-			public void treeNodesChanged(TreeModelEvent e) {
-				log.info("TreeNodesChanged: " + e.getTreePath() + "/" + Arrays.toString(e.getChildren()));
-			}
-		});
 	}
 
 	@Override
@@ -251,10 +223,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	 * @param contextId the context id
 	 * @return the user access rules manager
 	 */
-	public ContextAccessRulesManager getUserAccessRules(int contextId) {
+	public ContextAccessRulesManager getContextAccessRulesManager(int contextId) {
 		ContextAccessRulesManager manager = contextManagers.get(contextId);
 		if (manager == null) {
-			manager = new ContextAccessRulesManager(contextId);
+			manager = new ContextAccessRulesManager(Model.getSingleton().getSession().getContext(contextId));
 			contextManagers.put(contextId, manager);
 		}
 		return manager;
