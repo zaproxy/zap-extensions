@@ -254,12 +254,12 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
                     // if the pattern was found in the new response, 
                     // but not in the original response (for the unmodified request) 
                     // then we have a match.. XPATH injection!
-                    if ((responseContent.indexOf(errorString) != -1)) {
+                    if ((responseContent.contains(errorString))) {
                         
                         // Go to the next, it's a false positive
                         // Done separately because a good choice
                         // could be also to break the loop for this
-                        if (originalContent.indexOf(errorString) == -1) {
+                        if (originalContent.contains(errorString)) {
                             continue;
                         }
 
