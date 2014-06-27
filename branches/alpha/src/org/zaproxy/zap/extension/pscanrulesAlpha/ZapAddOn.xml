@@ -13,7 +13,8 @@
 	Improved "Source Code Disclosure" scanner;<br>
 	Improved "Base64 Disclosure" scanner;<br>
 	Improved "Hash Disclosure" scanner;<br>
-	Fixed duplicated plug-in IDs.
+	Fixed duplicated plug-in IDs;<br>
+	Tweaked "Source Code Disclosure" scanner to reduce false positives. 
 	]]>
 	</changes>
 	<dependson/>
