@@ -188,8 +188,8 @@ public class AccessControlScannerThread extends
 	 * testing.
 	 */
 	public static class AccessControlScanStartOptions implements ScanStartOptions {
-		protected Context targetContext;
-		protected List<User> targetUsers;
+		public Context targetContext;
+		public List<User> targetUsers;
 
 		public AccessControlScanStartOptions() {
 			super();

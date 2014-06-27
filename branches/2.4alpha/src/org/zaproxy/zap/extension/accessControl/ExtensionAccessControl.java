@@ -21,8 +21,14 @@ import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -34,17 +40,23 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
+import org.zaproxy.zap.extension.accessControl.view.AccessControlScanOptionsDialog;
+import org.zaproxy.zap.extension.accessControl.view.AccessControlStatusPanel;
+import org.zaproxy.zap.extension.accessControl.view.ContextAccessControlPanel;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.authorization.ExtensionAuthorization;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.scan.BaseScannerThreadManager;
+import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
+import org.zaproxy.zap.view.ContextPanelFactory;
 
 /**
  * An extension that adds a set of tools that allows users to test Access Control issues in web
  * application.
  */
-public class ExtensionAccessControl extends ExtensionAdaptor implements SessionChangedListener {
+public class ExtensionAccessControl extends ExtensionAdaptor implements SessionChangedListener,
+		ContextPanelFactory {
 
 	private static Logger log = Logger.getLogger(ExtensionAccessControl.class);
 
@@ -65,12 +77,20 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	private AccessControlStatusPanel statusPanel;
 	private AccessControlScannerThreadManager threadManager;
 
+	/** The map of context panels. */
+	private Map<Integer, ContextAccessControlPanel> contextPanelsMap;
+
+	/** The mapping of Access Rules Managers to Contexts. */
+	private Map<Integer, ContextAccessRulesManager> contextManagers;
+
 	private AccessControlScanOptionsDialog customScanDialog;
 
 	public ExtensionAccessControl() {
 		super(NAME);
 		this.setOrder(601);
 		this.threadManager = new AccessControlScannerThreadManager();
+		this.contextPanelsMap = new HashMap<>();
+		this.contextManagers = new HashMap<>();
 	}
 
 	@Override
@@ -78,11 +98,13 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		super.hook(extensionHook);
 		// Register this where needed
 		// Model.getSingleton().addContextDataFactory(this);
+
 		extensionHook.addSessionListener(this);
 		if (getView() != null) {
 			ExtensionHookView viewHook = extensionHook.getHookView();
-			// getView().addContextPanelFactory(this);
 			viewHook.addStatusPanel(getStatusPanel());
+
+			getView().addContextPanelFactory(this);
 		}
 	}
 
@@ -163,6 +185,31 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 			getStatusPanel().contextsChanged();
 			getStatusPanel().reset();
 		}
+
+		session.getSiteTree().addTreeModelListener(new TreeModelListener() {
+
+			@Override
+			public void treeStructureChanged(TreeModelEvent e) {
+				log.info("TreeStructureChanged: " + e.getTreePath() + "/" + Arrays.toString(e.getChildren()));
+				log.info("Tree size:" + e.getPath());
+			}
+
+			@Override
+			public void treeNodesRemoved(TreeModelEvent e) {
+				log.info("TreeNodesRemoved: " + e.getTreePath() + "/" + Arrays.toString(e.getChildren()));
+
+			}
+
+			@Override
+			public void treeNodesInserted(TreeModelEvent e) {
+				log.info("TreeNodesInserted: " + e.getTreePath() + "/" + Arrays.toString(e.getChildren()));
+			}
+
+			@Override
+			public void treeNodesChanged(TreeModelEvent e) {
+				log.info("TreeNodesChanged: " + e.getTreePath() + "/" + Arrays.toString(e.getChildren()));
+			}
+		});
 	}
 
 	@Override
@@ -181,6 +228,36 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	public void sessionModeChanged(Mode mode) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public AbstractContextPropertiesPanel getContextPanel(Context context) {
+		ContextAccessControlPanel panel = this.contextPanelsMap.get(context.getIndex());
+		if (panel == null) {
+			panel = new ContextAccessControlPanel(this, context.getIndex());
+			this.contextPanelsMap.put(context.getIndex(), panel);
+		}
+		return panel;
+	}
+
+	@Override
+	public void discardContexts() {
+		this.contextPanelsMap.clear();
+	}
+
+	/**
+	 * Gets the access rules manager for a Context.
+	 *
+	 * @param contextId the context id
+	 * @return the user access rules manager
+	 */
+	public ContextAccessRulesManager getUserAccessRules(int contextId) {
+		ContextAccessRulesManager manager = contextManagers.get(contextId);
+		if (manager == null) {
+			manager = new ContextAccessRulesManager(contextId);
+			contextManagers.put(contextId, manager);
+		}
+		return manager;
 	}
 
 }
