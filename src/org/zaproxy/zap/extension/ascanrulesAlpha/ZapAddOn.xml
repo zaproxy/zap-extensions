@@ -7,6 +7,7 @@
 	<changes>
 	<![CDATA[
         Added "Cookie Slack Detector" scanner.
+        Added "Insecure HTTP Method" scanner.
 	]]>
 	</changes>
 	<dependson/>
@@ -23,6 +24,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureSVN</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.InsecureHTTPMethod</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
