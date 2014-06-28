@@ -469,6 +469,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	        /* Header. */    		       
 	        HttpRequestHeader httpReqHeader = httpRequest.getRequestHeader();
 	        httpReqHeader.setMethod("POST");
+	        /* Sets headers according to SOAP version. */
 	        if(soapVersion == 1){
 		        httpReqHeader.setHeader(HttpHeader.CONTENT_TYPE, "text/xml; charset=UTF-8");
 		        httpReqHeader.setHeader("SOAPAction", bindOp.getOperation().getSoapAction());
