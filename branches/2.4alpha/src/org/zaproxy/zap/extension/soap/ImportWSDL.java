@@ -13,6 +13,9 @@ public class ImportWSDL {
 	//Dynamic chart filled with all sended SOAP requests.
 	private HashMap<Integer, ArrayList<HttpMessage>> requestsList = new HashMap<Integer, ArrayList<HttpMessage>>(); 
 	
+	//Chart filled with all SOAP requests' configuration objects.
+	private HashMap<HttpMessage, SOAPMsgConfig> configurationsList = new HashMap<HttpMessage, SOAPMsgConfig>();
+	
 	private volatile static ImportWSDL singleton = null;
 	
 	private ImportWSDL(){
@@ -49,6 +52,14 @@ public class ImportWSDL {
 		}	
 	}
 	
+	public void putConfiguration(HttpMessage request, SOAPMsgConfig config){
+		if (request == null || !config.isComplete()) return;
+		synchronized (this){
+			if (configurationsList.get(request) == null)
+				configurationsList.put(request, config);
+		}	
+	}
+	
 	/* Returns all detected SOAP actions as a fixed bidimensional array. Each row represents a different WSDL file. */
 	public synchronized String[][] getSoapActions(){
 		String[][] operationsChart = new String[soapActions.size()][];
@@ -82,6 +93,11 @@ public class ImportWSDL {
 			}
 		}
 		return null;
+	}
+	
+	/* Returns a SOAP configuration object from a given HttpMessage request. */
+	public synchronized SOAPMsgConfig getSoapConfig(final HttpMessage request){
+		return configurationsList.get(request);
 	}
 
 }

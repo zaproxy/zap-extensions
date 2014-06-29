@@ -47,7 +47,7 @@ public class WSDLCustomParser {
 
 	private static final Logger log = Logger.getLogger(WSDLCustomParser.class);
 	private static int keyIndex = -1;
-	private ImportWSDL wsdlImporter=ImportWSDL.getInstance();
+	private ImportWSDL wsdlSingleton=ImportWSDL.getInstance();
 	
 	public WSDLCustomParser(){
 		
@@ -180,7 +180,8 @@ public class WSDLCustomParser {
 	    	        	HashMap<String, String> formParams = fillParameters(requestParts); 
 	    	        	/* Connection test for each operation. */
 	    	        	/* Basic message creation. */
-	    	        	HttpMessage requestMessage = createSoapRequest(wsdl, soapVersion, formParams, port, bindOp);
+	    	        	SOAPMsgConfig soapConfig = new SOAPMsgConfig(wsdl, soapVersion, formParams, port, bindOp);
+	    	        	HttpMessage requestMessage = createSoapRequest(soapConfig);
 	    	        	sendSoapRequest(keyIndex, requestMessage, sb);	
 	    	        } //bindingOperations loop
 		        } //Binding check if
@@ -222,7 +223,7 @@ public class WSDLCustomParser {
     		return;
     	}
     	if(!soapActionName.trim().equals("")){
-    		wsdlImporter.putAction(wsdlID,soapActionName);
+    		wsdlSingleton.putAction(wsdlID,soapActionName);
     	}	
 	}
 	
@@ -281,9 +282,16 @@ public class WSDLCustomParser {
 	}
 
 	/* Generates a SOAP request associated to the specified binding operation. */
-	private HttpMessage createSoapRequest(Definitions wsdl, int soapVersion, HashMap<String, String> formParams, 
-			Port port, BindingOperation bindOp){
+	public HttpMessage createSoapRequest(SOAPMsgConfig soapConfig){
 		
+		/* Retrieving configuration variables. */
+		Definitions wsdl = soapConfig.getWsdl();
+		HashMap<String,String> formParams= soapConfig.getParams();
+		Port port = soapConfig.getPort();
+		int soapVersion = soapConfig.getSoapVersion();
+		BindingOperation bindOp = soapConfig.getBindOp();
+		
+		/* Start message crafting. */
     	StringWriter writerSOAPReq = new StringWriter();
     	
     	SOARequestCreator creator = new SOARequestCreator(wsdl, new RequestCreator(), new MarkupBuilder(writerSOAPReq));
@@ -322,6 +330,8 @@ public class WSDLCustomParser {
 	        }
 	        httpReqHeader.setContentLength(httpReqBody.length());
 	        httpRequest.setRequestHeader(httpReqHeader);
+	        /* Saves the message and its configuration. */
+	        wsdlSingleton.putConfiguration(httpRequest, soapConfig);
 	        return httpRequest;
     	}catch (Exception e){
     		log.error("Unable to generate request for operation '"+bindOp.getName()+"'\n"+ e.getMessage(), e);
@@ -345,7 +355,7 @@ public class WSDLCustomParser {
 			log.error("Unable to communicate with SOAP server. Server may be not available.");
 			log.debug("Trace:", e);
 		}
-		wsdlImporter.putRequest(wsdlID, httpRequest);
+		wsdlSingleton.putRequest(wsdlID, httpRequest);
 		persistMessage(httpRequest);
 		if (sb != null) sb.append(" (Status code: "+ httpRequest.getResponseHeader().getStatusCode() +")\n");
 	}
