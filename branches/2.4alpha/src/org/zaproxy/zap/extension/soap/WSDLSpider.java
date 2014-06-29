@@ -23,9 +23,9 @@ public class WSDLSpider extends SpiderParser{
 		/* New WSDL detected. */
 		log.info("WSDL spider has detected a new resource");
 		String baseURL = getURIfromMessage(message);
-		ExtensionImportWSDL extension = importer.getExtensionInstance();
+		WSDLCustomParser parser = new WSDLCustomParser();
 		/* Calls extension to parse it and to fill the sites tree. */
-		extension.extUrlWSDLImport(baseURL,false);
+		parser.extUrlWSDLImport(baseURL);
 		return true;
 	}
 	

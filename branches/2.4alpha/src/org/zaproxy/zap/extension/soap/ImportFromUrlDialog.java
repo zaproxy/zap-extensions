@@ -80,7 +80,7 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener{
     	if (caller != null){
     		String url = fieldURL.getText();
     		/* Calls a parsing task in a new thread. */
-    		caller.extUrlWSDLImport(url, true);
+    		caller.extUrlWSDLImport(url);
     	}
         setVisible(false); 
         dispose(); 

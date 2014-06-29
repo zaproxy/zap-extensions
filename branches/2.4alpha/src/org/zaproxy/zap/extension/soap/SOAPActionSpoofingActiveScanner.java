@@ -124,6 +124,7 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 						/* Checks the response. */
 						endScan = scanResponse(msg, originalMsg);
 					}
+					endScan = this.isStop();
 				}
 			}
 		} catch (Exception e) {
@@ -195,6 +196,7 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 				return true;
 			}
 		} catch (IOException | SOAPException e) {
+			log.info("Exception thrown when scanning: ",e);
 			bingo(Alert.RISK_LOW, Alert.WARNING, null, null, "Response has an invalid format.", null, msg);
 			return false;
 		}	
