@@ -6,14 +6,15 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Promoted new XXE Plugin to test for remotr and local XML External Entity Vulnerability.</br>
+	Promoted new XXE Plugin to test for remote and local XML External Entity Vulnerability.</br>
 	Promoted new PaddingOracle plugin to test for possible encryption padding errors.</br> 
 	Promoted PXSS tests to beta.</br>
 	Promoted Command Injection release.</br>
 	Promoted new Expression Language Plugin to test JSP EL Injection.</br> 
 	Changed help file structure to support internationalisation (Issue 981).<br>
 	Added content-type to help pages (Issue 1080).<br>
-	Updated add-on dir structure (Issue 1113).
+	Updated add-on dir structure (Issue 1113).<br>
+        Solved Comparison operator in XpathInjectionPlugin (Issue 1189).
 	]]>
 	</changes>
 	<dependson/>
