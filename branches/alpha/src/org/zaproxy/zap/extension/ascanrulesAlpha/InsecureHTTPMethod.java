@@ -17,14 +17,22 @@
 */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.ProxyClient;
 import org.apache.commons.httpclient.ProxyClient.ConnectResponse;
+import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -138,7 +146,8 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 			String allowedmethods = null;
 			String publicmethods = null;			
 			String thirdpartyHost = "www.google.com";
-			int thirdpartyPort = 80;			
+			int thirdpartyPort = 80;
+			Pattern thirdPartyContentPattern = Pattern.compile("<title.*Google.*/title>", Pattern.CASE_INSENSITIVE);
 			
 			AttackStrength attackStrength = getAttackStrength();
 			if (attackStrength == AttackStrength.HIGH || attackStrength == AttackStrength.INSANE) {
@@ -179,7 +188,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 					}
 				
 				//use a CONNECT method to try establish a socket connection to a third party, via the server being tested
-				boolean connectWorks = testConnect (this.getBaseMsg(), thirdpartyHost, thirdpartyPort);
+				boolean connectWorks = testConnect (this.getBaseMsg(), thirdpartyHost, thirdpartyPort, thirdPartyContentPattern);
 				if (connectWorks) {
 					bingo(	Alert.RISK_MEDIUM, 
 							Alert.WARNING,
@@ -266,7 +275,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 									if (log.isDebugEnabled ())  log.debug("Verifying a CONNECT");
 																		
 									//use a CONNECT method to establish a socket connection to a third party, via the server being tested
-									boolean connectWorks = testConnect (this.getBaseMsg(), thirdpartyHost, thirdpartyPort);
+									boolean connectWorks = testConnect (this.getBaseMsg(), thirdpartyHost, thirdpartyPort, thirdPartyContentPattern);
 									if (connectWorks) {
 										evidence = "";
 										alertMessage = optionsmsg;  //there is no connectmessage, since the HttpSender does not support CONNECT
@@ -352,8 +361,8 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 		
 		HttpMessage tracemsg = getNewMsg();
 		tracemsg.setRequestHeader(traceRequestHeader);								
-		String randomcookiename=RandomStringUtils.random(10, "abcdefghijklmoopqrstuvwxyz9123456789");
-		String randomcookievalue=RandomStringUtils.random(40, "abcdefghijklmoopqrstuvwxyz9123456789");
+		String randomcookiename=RandomStringUtils.random(15, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
+		String randomcookievalue=RandomStringUtils.random(40, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
 		TreeSet<HtmlParameter> cookies = tracemsg.getCookieParams();
 		cookies.add(new HtmlParameter(HtmlParameter.Type.cookie, randomcookiename, randomcookievalue));
 		tracemsg.setCookieParams(cookies);
@@ -366,7 +375,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 			return null;
 	}
 	
-	private boolean testConnect (HttpMessage baseMsg, String thirdpartyHost, int thirdpartyPort) throws Exception {
+	private boolean testConnect (HttpMessage baseMsg, String thirdpartyHost, int thirdpartyPort, Pattern thirdPartyContentPattern) throws Exception {
 		String connecthost = baseMsg.getRequestHeader().getURI().getHost();
 		int connectport = baseMsg.getRequestHeader().getURI().getPort();
 		 
@@ -378,15 +387,64 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 			client.getHostConfiguration().setProxy(connecthost,connectport);								
 			client.getHostConfiguration().setHost(thirdpartyHost,thirdpartyPort);
 			ConnectResponse connectResponse = client.connect();
+			StatusLine statusLine = connectResponse.getConnectMethod().getStatusLine();
+						
+			if (log.isDebugEnabled()) log.debug ("The status line returned: "+statusLine);
+			
+			int statusCode = statusLine.getStatusCode();
 			socket = connectResponse.getSocket();
-			if ( socket == null) {
-				if (log.isDebugEnabled()) log.debug ("Could not establish a socket connection to a third party using the CONNECT HTTP method: NULL socket returned");
-				return false;
-			} else {
-				if (log.isDebugEnabled()) log.debug("Raw Socket established to "+thirdpartyHost);
+			if ( socket != null && statusCode == HttpStatus.SC_OK ) {				
+				//we have a socket and a 200 status. 
+				//Could still be a false positive though, if the server ignored the method, 
+				//and did not recognise the URL, so redirected to a login page, for instance
+				//Remediation: Check the contents match the expected third party contents.
+				if (log.isDebugEnabled()) log.debug("Raw Socket established, in theory to "+thirdpartyHost);
+				
+				OutputStream os = socket.getOutputStream();
+				InputStream is = socket.getInputStream();
+				
+				PrintWriter pw = new PrintWriter(os, false);
+				pw.write("GET http://"+thirdpartyHost + ":"+thirdpartyPort + "/ HTTP/1.1\n");
+				pw.write("Host: "+thirdpartyHost+"\n\n");
+				pw.flush();
+				
+				//read the response via a 4k buffer
+				ByteArrayOutputStream bos = new ByteArrayOutputStream ();
+				byte [] buffer = new byte [1024*4];
+				int bytesRead = is.read(buffer);
+				int totalBytesRead = 0;
+				while (bytesRead > -1) {
+					totalBytesRead+= bytesRead;					
+					bos.write(buffer, 0, bytesRead);					
+					bytesRead = is.read(buffer);
+				}
+				String response = new String (bos.toByteArray());				
+				if (log.isDebugEnabled()) log.debug("Response is "+totalBytesRead+" bytes: \n"+response);
+				
+				Matcher m = thirdPartyContentPattern.matcher(response);
+				if (m.matches()) {
+					if (log.isDebugEnabled()) log.debug("Response matches expected third party pattern!");
+					is.close();
+					os.close();
+					bos.close();
+					socket.close();
+					return true;
+				} else { 
+					if (log.isDebugEnabled()) log.debug("Response does *not* match expected third party pattern");
+				}
+				is.close();
+				os.close();
+				bos.close();
 				socket.close();
-				return true;
+				return false;				
 			}
+			else  {
+				if (log.isDebugEnabled()) { 
+					log.debug ("Could not establish a socket connection to a third party using the CONNECT HTTP method: NULL socket returned, or non-200 response");
+					log.debug ("The status line returned: "+statusLine);
+				}
+				return false;
+			} 
 		}
 		catch (Exception e) {
 			if (log.isDebugEnabled()) log.debug ("Could not establish a socket connection to a third party using the CONNECT HTTP method", e);
