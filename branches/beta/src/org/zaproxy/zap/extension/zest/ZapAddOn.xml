@@ -1,12 +1,13 @@
 <zapaddon>
-	<name>Zest - Scripting Security Tests</name>
+	<name>Zest - Graphical Security Scripting Language</name>
 	<version>15</version>
-	<description>A graphical security scripting language..</description>
+	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
 	ZAP issue 1235: Support client side scripting<br>
+	ZAP issue 1250: Zest proxy scripts can break binary content<br>
 	]]>
 	</changes>
 	<dependson/>
@@ -27,6 +28,7 @@
 		<file>scripts/templates/proxy/Replace in request header.zst</file>
 		<file>scripts/templates/proxy/Replace in response body.zst</file>
 		<file>scripts/templates/proxy/Replace in response header.zst</file>
+		<file>scripts/templates/standalone/Persona Create Account.zst</file>
 		<file>scripts/templates/standalone/Standalone default template.zst</file>
 		<file>scripts/templates/targeted/Resend as a GET request.zst</file>
 		<file>scripts/templates/targeted/Targeted default template.zst</file>
