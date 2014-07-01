@@ -123,7 +123,11 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 				return false;
 			}
 			msg.setResponseHeader(respHeader);
-			msg.setResponseBody(this.getVariable(ZestVariables.RESPONSE_BODY));
+			
+			if (msg.getResponseHeader().isText()) {
+				// Dont currently support changing binary response body
+				msg.setResponseBody(this.getVariable(ZestVariables.RESPONSE_BODY));
+			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
