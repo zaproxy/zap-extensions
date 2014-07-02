@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 
 import org.mozilla.zest.core.v1.ZestComment;
-import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -41,7 +40,7 @@ public class ZestCommentDialog extends StandardFieldsDialog implements ZestDialo
 	private ScriptNode parent = null;
 	private ScriptNode child = null;
 	private ZestScriptWrapper script = null;
-	private ZestStatement request = null;
+	private ZestStatement stmt = null;
 	private ZestComment comment = null;
 	private boolean add = false;
 
@@ -51,12 +50,12 @@ public class ZestCommentDialog extends StandardFieldsDialog implements ZestDialo
 	}
 
 	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestRequest req, ZestComment comment, boolean add) {
+			ZestStatement stmt, ZestComment comment, boolean add) {
 		this.script = script;
 		this.add = add;
 		this.parent = parent;
 		this.child = child;
-		this.request = req;
+		this.stmt = stmt;
 		this.comment = comment;
 
 		this.removeAllFields();
@@ -75,10 +74,10 @@ public class ZestCommentDialog extends StandardFieldsDialog implements ZestDialo
 		comment.setComment(this.getStringValue(FIELD_COMMENT));
 
 		if (add) {
-			if (request == null) {
+			if (stmt == null) {
 				extension.addToParent(parent, comment);
 			} else {
-				extension.addAfterRequest(parent, child, request, comment);
+				extension.addAfterRequest(parent, child, stmt, comment);
 			}
 		} else {
 			extension.updated(child);

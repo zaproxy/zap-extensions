@@ -37,6 +37,7 @@ import org.mozilla.zest.core.v1.ZestAssignStringDelimiters;
 import org.mozilla.zest.core.v1.ZestAssignment;
 import org.mozilla.zest.core.v1.ZestFieldDefinition;
 import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
@@ -67,7 +68,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 	private ZestScriptWrapper script = null;
 	private ScriptNode parent = null;
 	private ScriptNode child = null;
-	private ZestRequest request = null;
+	private ZestStatement stmt = null;
 	private ZestAssignment assign = null;
 	private boolean add = false;
 
@@ -77,12 +78,12 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 	}
 
 	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestRequest req, ZestAssignment assign, boolean add) {
+			ZestStatement stmt, ZestAssignment assign, boolean add) {
 		this.add = add;
 		this.script = script;
 		this.parent = parent;
 		this.child = child;
-		this.request = req;
+		this.stmt = stmt;
 		this.assign = assign;
 
 		this.removeAllFields();
@@ -170,13 +171,16 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 	
 	private void initFormField(String value) {
 		List <String> list = new ArrayList<String>();
-		if (request != null && request.getResponse() != null) {
-			List<String> forms = org.mozilla.zest.impl.ZestUtils.getForms(request.getResponse());
-			for (String form : forms) {
-				list.add(form);
+		if (stmt instanceof ZestRequest) {
+			ZestRequest req = (ZestRequest) stmt;
+			if (stmt != null && req.getResponse() != null) {
+				List<String> forms = org.mozilla.zest.impl.ZestUtils.getForms(req.getResponse());
+				for (String form : forms) {
+					list.add(form);
+				}
+				this.setComboFields(FIELD_REPLACE_FORM, list, value);
+				initFieldField(null);
 			}
-			this.setComboFields(FIELD_REPLACE_FORM, list, value);
-			initFieldField(null);
 		}
 	}
 
@@ -189,9 +193,12 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 		
 		if (formIndex >= 0) {
 			// TODO support form names too
-			if (request != null && request.getResponse() != null) {
-				List<String> fields = org.mozilla.zest.impl.ZestUtils.getFields(request.getResponse(), formIndex);
-				this.setComboFields(FIELD_REPLACE_FIELD, fields, value);
+			if (stmt instanceof ZestRequest) {
+				ZestRequest req = (ZestRequest) stmt;
+				if (stmt != null && req.getResponse() != null) {
+					List<String> fields = org.mozilla.zest.impl.ZestUtils.getFields(req.getResponse(), formIndex);
+					this.setComboFields(FIELD_REPLACE_FIELD, fields, value);
+				}
 			}
 		}
 
@@ -239,10 +246,10 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 		}
 
 		if (add) {
-			if (request == null) {
+			if (stmt == null) {
 				extension.addToParent(parent, assign);
 			} else {
-				extension.addAfterRequest(parent, child, request, assign);
+				extension.addAfterRequest(parent, child, stmt, assign);
 			}
 		} else {
 			extension.updated(child);

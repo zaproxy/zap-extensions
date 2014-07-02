@@ -26,6 +26,8 @@ import javax.swing.JTree;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestContainer;
+import org.mozilla.zest.core.v1.ZestElement;
+import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -70,8 +72,13 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
         	@Override
         	public void actionPerformed(java.awt.event.ActionEvent e) {
 			    ScriptNode node = extension.getSelectedZestNode();
+                ZestElement elmt = ZestZapUtils.getElement(node);
 			    if (node != null) {
-			    	extension.pasteToNode(node);
+			    	if (elmt instanceof ZestContainer) {
+			    		extension.pasteToNode(node);
+			    	} else {
+			    		extension.pasteToNode(node.getParent(), node);
+			    	}
 			    }
         	}
         });
@@ -89,16 +96,16 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
                 		return false;
                 	}
                     ScriptNode node = (ScriptNode) extension.getSelectedZestNode();
+                    ZestElement elmt = ZestZapUtils.getElement(node);
             		this.setEnabled(false);
             		
-                    if (node == null || node.isRoot()) {
+                    if (node == null || node.isRoot() || elmt == null) {
                     	return false;
-                    	
-                    } else if ( ! (ZestZapUtils.getElement(node) instanceof ZestContainer) /* TODO && 
-                    		! (ZestZapUtils.getElement(node) instanceof ZestTreeElement)*/) {
-                    	// TODO also want to paste after statements, but its a start
 
-                    } else if (extension.canPasteNodesTo(node)) {
+                    } else if (elmt instanceof ZestContainer && extension.canPasteNodesTo(node)) {
+               			this.setEnabled(true);
+                    
+                    } else if (elmt instanceof ZestStatement && extension.canPasteNodesTo(node.getParent())) {
                			this.setEnabled(true);
                     }
                     

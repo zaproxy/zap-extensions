@@ -41,6 +41,7 @@ import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestScript;
+import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -95,16 +96,16 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
     		if (node == null || node.isTemplate()) {
     			return false;
     		} else if (ze != null) {
-	    		if (ze instanceof ZestRequest) {
-	            	reCreateSubMenu(node.getParent(), node, (ZestRequest) ZestZapUtils.getElement(node), null);
-	            	return true;
-	    		} else if (ze instanceof ZestContainer) {
+	    		if (ze instanceof ZestContainer) {
 	    			if(ze instanceof ZestConditional){
 	    				if(ZestZapUtils.getShadowLevel(node)==0){
 	    					return false;
 	    				}
 	    			}
 	            	reCreateSubMenu(node, null, null, null);
+	            	return true;
+	    		} else if (ze instanceof ZestStatement) {
+	            	reCreateSubMenu(node.getParent(), node, (ZestStatement) ZestZapUtils.getElement(node), null);
 	            	return true;
 	    		} else if (ze instanceof ZestExpression){
 	    			return false;
@@ -133,28 +134,28 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
         return false;
     }
 
-    private void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestRequest req, String text) {
+    private void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestStatement stmt, String text) {
     	ZestScriptWrapper wrapper = extension.getZestTreeModel().getScriptWrapper(parent);
     	ZestScript script = wrapper.getZestScript();
     	String type = script.getType();
     	if (ZestScript.Type.StandAlone.name().equals(type) ||
     			ZestScript.Type.Targeted.name().equals(type)) {
     		// Doesnt really make sense for passive or active scripts 
-    		createPopupAddActionMenu (parent, child, req, new ZestActionScan(text));
+    		createPopupAddActionMenu (parent, child, stmt, new ZestActionScan(text));
     	}
     	if (!script.isPassive()) {
-    		createPopupAddActionMenu (parent, child, req, new ZestActionInvoke());
+    		createPopupAddActionMenu (parent, child, stmt, new ZestActionInvoke());
     	}
     	if (ExtensionScript.TYPE_PROXY.equals(wrapper.getType().getName())) {
-    		createPopupAddActionMenu (parent, child, req, new ZestActionIntercept());
+    		createPopupAddActionMenu (parent, child, stmt, new ZestActionIntercept());
     	}
     	
-		createPopupAddActionMenu (parent, child, req, new ZestActionPrint(text));
-		createPopupAddActionMenu (parent, child, req, new ZestActionFail(text));
-		createPopupAddActionMenu (parent, child, req, new ZestActionSleep());
+		createPopupAddActionMenu (parent, child, stmt, new ZestActionPrint(text));
+		createPopupAddActionMenu (parent, child, stmt, new ZestActionFail(text));
+		createPopupAddActionMenu (parent, child, stmt, new ZestActionSleep());
 	}
 
-    private void createPopupAddActionMenu(final ScriptNode parent, final ScriptNode child, final ZestRequest req, final ZestAction za) {
+    private void createPopupAddActionMenu(final ScriptNode parent, final ScriptNode child, final ZestStatement stmt, final ZestAction za) {
 		ZestPopupMenu menu = new ZestPopupMenu(
 				Constant.messages.getString("zest.action.add.popup"),
 				ZestZapUtils.toUiString(za, false));
@@ -163,13 +164,13 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
 			public void actionPerformed(ActionEvent e) {
 				if (za instanceof ZestActionIntercept) {
 					// No params so can just add straight away
-					if (req == null) {
+					if (stmt == null) {
 						extension.addToParent(parent, za);
 					} else {
-						extension.addAfterRequest(parent, child, req, za);
+						extension.addAfterRequest(parent, child, stmt, za);
 					}
 				} else {
-					extension.getDialogManager().showZestActionDialog(parent, child, req, za, true);
+					extension.getDialogManager().showZestActionDialog(parent, child, stmt, za, true);
 				}
 			}});
     	menu.setMenuIndex(this.getMenuIndex());
