@@ -25,7 +25,7 @@ import java.awt.Component;
 import org.mozilla.zest.core.v1.ZestComment;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -42,7 +42,7 @@ public class ZestAddCommentPopupMenu extends ExtensionPopupMenuItem {
 	private ExtensionZest extension = null;
 	private ScriptNode parent = null;
 	private ScriptNode child = null;
-	private ZestRequest req = null; 
+	private ZestStatement stmt = null; 
 
 	/**
      * 
@@ -70,7 +70,7 @@ public class ZestAddCommentPopupMenu extends ExtensionPopupMenuItem {
 
         	@Override
         	public void actionPerformed(java.awt.event.ActionEvent e) {
-				extension.getDialogManager().showZestCommentDialog(parent, child, req, new ZestComment(), true);
+				extension.getDialogManager().showZestCommentDialog(parent, child, stmt, new ZestComment(), true);
         	}
         });
 	}
@@ -83,15 +83,15 @@ public class ZestAddCommentPopupMenu extends ExtensionPopupMenuItem {
     		if (node == null || node.isTemplate()) {
     			return false;
     		} else if (ze != null) {
-	    		if (ze instanceof ZestRequest) {
-	    			parent = node.getParent();
-	    			child = node;
-	    			req = (ZestRequest) ze;
-	            	return true;
-	    		} else if (ze instanceof ZestContainer) {
+	    		if (ze instanceof ZestContainer) {
 	    			parent = node;
 	    			child = null;
-	    			req = null;
+	    			stmt = null;
+	            	return true;
+	    		} else if (ze instanceof ZestStatement) {
+	    			parent = node.getParent();
+	    			child = node;
+	    			stmt = (ZestStatement) ze;
 	            	return true;
 	    		}
     		}

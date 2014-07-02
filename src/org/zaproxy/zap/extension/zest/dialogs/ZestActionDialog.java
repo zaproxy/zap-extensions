@@ -68,7 +68,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 	private ScriptNode parent = null;
 	private ScriptNode child = null;
 	private ZestScriptWrapper script = null;
-	private ZestStatement request = null;
+	private ZestStatement stmt = null;
 	private ZestAction action = null;
 	private boolean add = false;
 
@@ -86,12 +86,12 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 	}
 
 	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, 
-			ZestRequest req, ZestAction action, boolean add) {
+			ZestStatement stmt, ZestAction action, boolean add) {
 		this.script = script;
 		this.add = add;
 		this.parent = parent;
 		this.child = child;
-		this.request = req;
+		this.stmt = stmt;
 		this.action = action;
 
 		this.removeAllFields();
@@ -105,7 +105,8 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 		if (action instanceof ZestActionScan) {
 			ZestActionScan za = (ZestActionScan) action;
 			List<String> namesList = new ArrayList<String>();
-			if (req != null) {
+			if (stmt != null && stmt instanceof ZestRequest) {
+				ZestRequest req = (ZestRequest) stmt;
 				namesList = this.getParamNames(req.getUrl().getQuery());
 				if (req.getData() != null) {
 					namesList.addAll(this.getParamNames(req.getData()));
@@ -319,10 +320,10 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 		}
 
 		if (add) {
-			if (request == null) {
+			if (stmt == null) {
 				extension.addToParent(parent, action);
 			} else {
-				extension.addAfterRequest(parent, child, request, action);
+				extension.addAfterRequest(parent, child, stmt, action);
 			}
 		} else {
 			extension.updated(child);

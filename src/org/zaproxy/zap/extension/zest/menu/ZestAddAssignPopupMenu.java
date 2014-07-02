@@ -39,6 +39,7 @@ import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
@@ -91,15 +92,16 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
     		if (node == null || node.isTemplate()) {
     			return false;
     		} else if (ze != null) {
-	    		if (ze instanceof ZestRequest) {
-	            	reCreateSubMenu(node.getParent(), node, (ZestRequest) ZestZapUtils.getElement(node), null);
-	            	return true;
-	    		} else if (ze instanceof ZestContainer) {
+	    		 
+	    		if (ze instanceof ZestContainer) {
 	            	if(ze instanceof ZestConditional && ZestZapUtils.getShadowLevel(node)==0){
 	            		return false;
 	            	}
 	    			reCreateSubMenu(node, null, null, null);
-	    		}
+	    		} else if (ze instanceof ZestStatement) {
+	            	reCreateSubMenu(node.getParent(), node, (ZestStatement) ZestZapUtils.getElement(node), null);
+	            	return true;
+	    		} 
     		}
     		
         } else if (invoker instanceof HttpPanelSyntaxHighlightTextArea && extension.getExtScript().getScriptUI() != null) {
@@ -124,7 +126,7 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
         return false;
     }
 
-    private void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestRequest req, String text) {
+    private void reCreateSubMenu(ScriptNode parent, ScriptNode child, ZestStatement req, String text) {
 		createPopupAddActionMenu (parent, child, req, new ZestAssignString());
 		createPopupAddActionMenu (parent, child, req, new ZestAssignFieldValue());
 		createPopupAddActionMenu (parent, child, req, new ZestAssignRegexDelimiters());
@@ -133,7 +135,7 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
 		createPopupAddActionMenu (parent, child, req, new ZestAssignReplace());
 	}
 
-    private void createPopupAddActionMenu(final ScriptNode parent, final ScriptNode child, final ZestRequest req, 
+    private void createPopupAddActionMenu(final ScriptNode parent, final ScriptNode child, final ZestStatement stmt, 
     		final ZestAssignment za) {
 		ZestPopupMenu menu = new ZestPopupMenu(
 				Constant.messages.getString("zest.assign.add.popup"),
@@ -141,7 +143,7 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
 		menu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				extension.getDialogManager().showZestAssignDialog(parent, child, req, za, true);
+				extension.getDialogManager().showZestAssignDialog(parent, child, stmt, za, true);
 			}});
     	menu.setMenuIndex(this.getMenuIndex());
 		View.getSingleton().getPopupList().add(menu);

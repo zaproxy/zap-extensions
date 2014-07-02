@@ -214,6 +214,35 @@ public class ZestTreeModel {
 		return zestNode;
 	}
 
+	public ScriptNode addAfterNode(ScriptNode parent, ZestStatement existingChild, ZestStatement stmt) {
+		logger.debug("addAfterNode parent=" + parent.getNodeName() + " " + stmt.getElementType());
+		ScriptNode zestNode = this.getZestNode(stmt);
+		
+		int index = -1;
+		for (int i=0; i < parent.getChildCount(); i++) {
+			ScriptNode c = (ScriptNode) parent.getChildAt(i);
+			if (existingChild.equals(ZestZapUtils.getElement(c))) {
+				index = i;
+				break;
+			}
+		}
+		parent.insert(zestNode, index + 1);
+		if (stmt instanceof ZestConditional) {
+			// adds node for expression
+			zestNode.add((this
+					.getZestNode((ZestElement) ((ZestConditional) stmt)
+							.getRootExpression())));
+			// 'Shadow' node for then path
+			ScriptNode thenNode = this.getZestNode(stmt, 1);
+			parent.insert(thenNode, parent.getIndex(zestNode) + 1);
+			// 'Shadow' node for else path
+			ScriptNode elseNode = this.getZestNode(stmt, 2);
+			parent.insert(elseNode, parent.getIndex(zestNode) + 2);
+		}
+		model.nodeStructureChanged(parent);
+		return zestNode;
+	}
+
 	public void delete(ScriptNode node) {
 		if (node == null) {
 			return;

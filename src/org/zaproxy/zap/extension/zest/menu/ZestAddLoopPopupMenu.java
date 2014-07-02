@@ -17,16 +17,14 @@ import java.util.List;
 
 import javax.swing.JMenuItem;
 
-import org.mozilla.zest.core.v1.ZestConditional;
 import org.apache.log4j.Logger;
+import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestLoopFile;
 import org.mozilla.zest.core.v1.ZestLoopInteger;
 import org.mozilla.zest.core.v1.ZestLoopString;
-import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -81,41 +79,16 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 			ScriptNode node = extension.getSelectedZestNode();
 			ZestElement ze = extension.getSelectedZestElement();
 
-			if (node != null) {
-				if (ze instanceof ZestRequest) {
-					reCreateSubMenu(node.getParent(), node, (ZestRequest) ze);
-					return true;
-				} else if (ze instanceof ZestContainer /*
-														 * && TODO !
-														 * ZestTreeElement
-														 * .isSubclass
-														 * (node.getParent
-														 * ().getZestElement(),
-														 * ZestTreeElement
-														 * .Type.PASSIVE_SCRIPT)
-														 */) {
+			if (node != null && ! node.isTemplate()) {
+				if (ze instanceof ZestContainer) {
 					if (ze instanceof ZestConditional
 							&& ZestZapUtils.getShadowLevel(node) == 0) {
 						return false;
 					}
 					reCreateSubMenu(node, null, null);
 					return true;
-					/*
-					 * TODO } else if
-					 * (ZestTreeElement.Type.COMMON_TESTS.equals(node
-					 * .getTreeType())) { reCreateSubMenu(node, null, "BODY",
-					 * ""); return true;
-					 */
-				} else if (ze instanceof ZestExpression) {
-					return false;
-				}
-				if (node == null || node.isTemplate()) {
-					return false;
-				} else if (ze instanceof ZestRequest) {
-					reCreateSubMenu(node.getParent(), node, (ZestRequest) ze);
-					return true;
-				} else if (ze instanceof ZestContainer) {
-					reCreateSubMenu(node, null, null);
+				} else if (ze instanceof ZestStatement) {
+					reCreateSubMenu(node.getParent(), node, (ZestStatement) ze);
 					return true;
 				}
 			}

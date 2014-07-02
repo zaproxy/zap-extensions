@@ -103,11 +103,7 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 			ZestElement ze = extension.getSelectedZestElement();
 
 			if (node != null) {
-				if (ze instanceof ZestRequest) {
-					reCreateSubMenu(node.getParent(), node, (ZestRequest) ze,
-							ZestVariables.RESPONSE_BODY, "");
-					return true;
-				} else if (ze instanceof ZestContainer) {
+				if (ze instanceof ZestContainer) {
 					if (!(ze instanceof ZestConditional)
 							|| (ze instanceof ZestConditional && ZestZapUtils
 									.getShadowLevel(node) > 0)) {
@@ -118,6 +114,10 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 							&& ZestZapUtils.getShadowLevel(node) == 0) {
 						return false;
 					}
+					return true;
+				} else if (ze instanceof ZestStatement) {
+					reCreateSubMenu(node.getParent(), node, (ZestStatement) ze,
+							ZestVariables.RESPONSE_BODY, "");
 					return true;
 				}
 			}

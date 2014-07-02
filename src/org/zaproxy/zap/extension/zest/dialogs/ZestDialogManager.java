@@ -308,7 +308,7 @@ public class ZestDialogManager extends AbstractPanel {
 	}
 
 	public void showZestActionDialog(ScriptNode parent, ScriptNode child,
-			ZestRequest req, ZestAction action, boolean add) {
+			ZestStatement req, ZestAction action, boolean add) {
 		if (actionDialog == null) {
 			actionDialog = new ZestActionDialog(extension,
 					View.getSingleton().getMainFrame(), new Dimension(400, 300));
@@ -325,7 +325,7 @@ public class ZestDialogManager extends AbstractPanel {
 	}
 
 	public void showZestAssignDialog(ScriptNode parent, ScriptNode child,
-			ZestRequest req, ZestAssignment assign, boolean add) {
+			ZestStatement req, ZestAssignment assign, boolean add) {
 		if (assignmentDialog == null) {
 			assignmentDialog = new ZestAssignmentDialog(extension, View
 					.getSingleton().getMainFrame(), new Dimension(300, 200));
@@ -341,7 +341,7 @@ public class ZestDialogManager extends AbstractPanel {
 	}
 
 	public void showZestCommentDialog(ScriptNode parent, ScriptNode child,
-			ZestRequest req, ZestComment comment, boolean add) {
+			ZestStatement req, ZestComment comment, boolean add) {
 		if (commentDialog == null) {
 			commentDialog = new ZestCommentDialog(extension, View
 					.getSingleton().getMainFrame(), new Dimension(300, 200));
