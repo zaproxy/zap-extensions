@@ -2,7 +2,9 @@
  * Zed Attack Proxy (ZAP) and its related class files.
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- *
+ * 
+ * Copyright 2014 The ZAP Development Team
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +20,10 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.Vector;
+
 import net.htmlparser.jericho.Source;
+
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -28,6 +33,11 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 public class XFrameOptionScanner extends PluginPassiveScanner {
 
 	private PassiveScanThread parent = null;
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.xframeoptionsscanner.";
+	private final int PLUGIN_ID = 10020;
 	
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -51,23 +61,19 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String xFrameOption, boolean isXFrameOptionsMissing) {
-		String issue = "X-Frame-Options header was not set for defense against 'ClickJacking' attacks";
-		if (isXFrameOptionsMissing){
-			issue = "X-Frame-Options header is not included in the HTTP response to protect against 'ClickJacking' attacks";
-		}
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
-		    			issue, 
+		    		getDescription(isXFrameOptionsMissing), 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    xFrameOption,
 		    	    "", 
 		    	    "",
-		    	    "Most modern Web browsers support the X-Frame-Options HTTP header. Ensure it's set on all web pages returned by your site (if you expect the page to be framed only by pages on your server (e.g. it's part of a FRAMESET) then you'll want to use SAMEORIGIN, otherwise if you never expect the page to be framed, you should use DENY.  ALLOW-FROM allows specific websites to frame the web page in supported web browsers).",
-		            "http://blogs.msdn.com/b/ieinternals/archive/2010/03/30/combating-clickjacking-with-x-frame-options.aspx?Redirected=true", 
+		    	    getSolution(),
+		            getReference(), 
 		            "", // No evidence
-		            0,	// TODO CWE Id
-		            0,	// TODO WASC Id
+		            0,	
+		            0,	
 		            msg);
 	
     	parent.raiseAlert(id, alert);
@@ -80,11 +86,26 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "X-Frame-Options header not set";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
-
+	
 	@Override
 	public int getPluginId() {
-		return 10020;
+		return PLUGIN_ID;
+	}
+	
+	private String getDescription(boolean isMissing) {
+		if (isMissing) //Not set at all
+			return Constant.messages.getString(MESSAGE_PREFIX + "missing.desc");
+		else //Set improperly?
+			return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
+
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
+
+	private String getReference() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
 }
