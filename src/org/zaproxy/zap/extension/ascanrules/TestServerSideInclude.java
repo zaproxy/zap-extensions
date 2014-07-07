@@ -31,6 +31,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
 
 
 public class TestServerSideInclude extends AbstractAppParamPlugin {
@@ -102,57 +103,60 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
         
 		StringBuilder evidence = new StringBuilder();
 
-		try {
-			setParameter(msg, param, SSI_UNIX);
-            sendAndReceive(msg);
-    		//result = msg.getResponseBody().toString();
-    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {
-    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_UNIX, msg);
-    			return;
-    		}
+		if (this.inScope(Tech.Linux) || this.inScope(Tech.MacOS)) {
+			try {
+				setParameter(msg, param, SSI_UNIX);
+	            sendAndReceive(msg);
+	    		//result = msg.getResponseBody().toString();
+	    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {
+	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_UNIX, msg);
+	    			return;
+	    		}
+	
+	        } catch (Exception e) {
+	        }
 
-        } catch (Exception e) {
-        }	
+			try {
+			    msg = getNewMsg();
+				setParameter(msg, param, SSI_UNIX2);
+	            sendAndReceive(msg);
+	    		//result = msg.getResponseBody().toString();
+	    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {    		    
+	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_UNIX2, msg);
+	    			return;
+	    		}
+	
+	        } catch (Exception e) {
+	        }	
+		}
 
-		try {
-		    msg = getNewMsg();
-			setParameter(msg, param, SSI_UNIX2);
-            sendAndReceive(msg);
-    		//result = msg.getResponseBody().toString();
-    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {    		    
-    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_UNIX2, msg);
-    			return;
-    		}
-
-        } catch (Exception e) {
-        }	
-
-
-		try {
-		    msg = getNewMsg();
-			setParameter(msg, param, SSI_WIN);
-            sendAndReceive(msg);
-    		//result = msg.getResponseBody().toString();
-    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
-    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_WIN, msg);
-    			return;
-    		}
-
-        } catch (Exception e) {
-        }	
-
-		try {
-		    msg = getNewMsg();
-			setParameter(msg, param, SSI_WIN2);
-            sendAndReceive(msg);
-    		//result = msg.getResponseBody().toString();
-    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
-    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_WIN2, msg);
-    			return;
-    		}
-
-        } catch (Exception e) {
-        }	
+		if (this.inScope(Tech.Windows)) {
+			try {
+			    msg = getNewMsg();
+				setParameter(msg, param, SSI_WIN);
+	            sendAndReceive(msg);
+	    		//result = msg.getResponseBody().toString();
+	    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
+	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_WIN, msg);
+	    			return;
+	    		}
+	
+	        } catch (Exception e) {
+	        }	
+	
+			try {
+			    msg = getNewMsg();
+				setParameter(msg, param, SSI_WIN2);
+	            sendAndReceive(msg);
+	    		//result = msg.getResponseBody().toString();
+	    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
+	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_WIN2, msg);
+	    			return;
+	    		}
+	
+	        } catch (Exception e) {
+	        }	
+		}
 
 	}
 
