@@ -44,7 +44,8 @@ import com.strobel.decompiler.PlainTextOutput;
 
 /**
 * a scanner that looks for Java classes disclosed via the WEB-INF folder
-* and that decompiles them to give the Java source code    
+* and that decompiles them to give the Java source code. 
+* The scanner also looks for easy pickings in the form of properties files loaded by the Java class. 
 * 
 * @author 70pointer
 *
@@ -52,8 +53,7 @@ import com.strobel.decompiler.PlainTextOutput;
 public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 	
 	//TODO: for imported classes that we do not find in the classes folder, map to jar file names, which we might find in WEB-INF/lib/ ?
-	//TODO: pull referenced properties files from WEB-INF? 
-	 
+	//TODO: pull referenced properties files from WEB-INF?
 
 	/**
 	 * the set of files that commonly occur in the WEB-INF folder
@@ -73,6 +73,11 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 	 * match on imports in the decompiled Java source, to find the names of more classes to pull
 	 */
 	private static final Pattern JAVA_IMPORT_CLASSNAME_PATTERN = Pattern.compile("^import\\s+([0-9a-zA-Z_.]+\\.[a-zA-Z0-9_]+);", Pattern.MULTILINE);
+	
+	/**
+	 * find references to properties files in the Java source code  
+	 */
+	private static final Pattern PROPERTIES_FILE_PATTERN = Pattern.compile ("\"([/a-zA-Z0-9_-]+.properties)\"");
 	
 	/**
 	 * details of the vulnerability which we are attempting to find 
@@ -174,18 +179,13 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 			//for ( String classname: javaClassesFound) {
 			while(javaClassesFound.size() > 0) {
 				String classname = javaClassesFound.get(0); 
-			
 				URI classURI = getClassURI (originalURI, classname);
-				if ( log.isDebugEnabled() ) {
-					log.debug("Looking for a potential Java class: "+ classname + " at "+classURI.getURI());					
-				}
+				
+				if (log.isDebugEnabled()) log.debug("Looking for Class file: "+ classURI.getURI());
 				
 				HttpMessage classfilemsg = new HttpMessage(classURI);
 				sendAndReceive(classfilemsg, false); //do not follow redirects
 				if (classfilemsg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK ) {
-					if ( log.isDebugEnabled() ) {
-						log.debug(classname + " is accessible :)");
-					}
 					//to decompile the class file, we need to write it to disk..
 					//under the current version of the library, at least
 					File classFile = null;
@@ -232,17 +232,40 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 							//we have another possible class name.  
 							//Next: See if the class file lives in the expected location in the WEB-INF folder
 							String importClassname = importMatcher.group(1);
-							if (log.isDebugEnabled()) log.debug("Imported class: "+importClassname);
 							
 							if ( (! javaClassesFound.contains(importClassname)) &&
 								 (! javaClassesHandled.contains(importClassname))) {
-								if (log.isDebugEnabled()) log.debug("Adding imported class "+importClassname + " to the list of classes to handle");
 								javaClassesFound.add(importClassname);
 							}
 						}
-						
+
+						//attempt to find properties files within the Java source, and try get them						
+						Matcher propsFileMatcher = PROPERTIES_FILE_PATTERN.matcher(javaSourceCode);
+						while (propsFileMatcher.find()) {
+							String propsFilename = propsFileMatcher.group(1);
+							if (log.isDebugEnabled()) log.debug("Found props file: "+propsFilename);
+							
+							URI propsFileURI = getPropsFileURI (originalURI, propsFilename);
+							HttpMessage propsfilemsg = new HttpMessage(propsFileURI);
+							sendAndReceive(propsfilemsg, false); //do not follow redirects
+							if (propsfilemsg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK ) {
+								//Holy sheet.. we found a properties file
+								bingo(	Alert.RISK_HIGH, 
+										Alert.WARNING,
+										Constant.messages.getString("ascanalpha.sourcecodedisclosurewebinf.propertiesfile.name"),
+										Constant.messages.getString("ascanalpha.sourcecodedisclosurewebinf.propertiesfile.desc"), 
+										null, // originalMessage.getRequestHeader().getURI().getURI(),
+										null, // parameter being attacked: none.
+										"",  // attack
+										Constant.messages.getString("ascanalpha.sourcecodedisclosurewebinf.propertiesfile.extrainfo", classURI), //extrainfo
+										Constant.messages.getString("ascanalpha.sourcecodedisclosurewebinf.propertiesfile.soln"),
+										"",		//evidence, highlighted in the message
+										propsfilemsg
+										);
+								}
+							}
 						//do not return at this point.. there may be multiple classes referenced. We want to see as many of them as possible.							
-						}						
+						}					
 					finally {	
 						//delete the temp file.
 						//this will be deleted when the VM is shut down anyway, but just in case!				
@@ -266,7 +289,11 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 	 * @throws URIException 
 	 */
 	private URI getClassURI(URI hostURI, String classname) throws URIException {
-		return new URI (hostURI.getScheme() + "://"+ hostURI.getAuthority() + "/WEB-INF/classes/"+classname.replaceAll("\\.", "/")+".class", false);
+		return new URI (hostURI.getScheme() + "://"+ hostURI.getAuthority() + "/WEB-INF/classes/"+classname.replaceAll("\\.", "/")+ ".class", false);
+	}
+	
+	private URI getPropsFileURI(URI hostURI, String propsfilename) throws URIException {
+		return new URI (hostURI.getScheme() + "://"+ hostURI.getAuthority() + "/WEB-INF/classes/"+propsfilename, false);
 	}
 
 	@Override
