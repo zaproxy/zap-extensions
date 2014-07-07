@@ -6,8 +6,9 @@
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-        Added "Cookie Slack Detector" scanner.
-        Added "Insecure HTTP Method" scanner.
+        Added "Cookie Slack Detector" scanner.</br>
+        Added "Insecure HTTP Method" scanner.</br>
+        Added "Source Code Disclosure - WEB-INF folder" scanner.
 	]]>
 	</changes>
 	<dependson/>
@@ -25,6 +26,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureSVN</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.InsecureHTTPMethod</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureWEBINF</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
