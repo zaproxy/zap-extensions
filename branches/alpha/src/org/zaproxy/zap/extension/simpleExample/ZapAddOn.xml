@@ -1,0 +1,19 @@
+<zapaddon>
+	<name>Simple Example</name>
+	<version>1</version>
+	<description>A simple extension example.</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>First version</changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.simpleExample.ExtensionsimpleExample</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
+		<file>example/ExampleFile.txt</file>
+	</files>
+	<not-before-version>2.3.0</not-before-version>
+</zapaddon>
