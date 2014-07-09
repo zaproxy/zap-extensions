@@ -2,6 +2,7 @@ package org.zaproxy.zap.extension.soap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -97,7 +98,26 @@ public class ImportWSDL {
 	
 	/* Returns a SOAP configuration object from a given HttpMessage request. */
 	public synchronized SOAPMsgConfig getSoapConfig(final HttpMessage request){
-		return configurationsList.get(request);
+		Set<HttpMessage> keys = configurationsList.keySet();
+		final String content = new String(request.getRequestBody().getBytes());
+		final String header = request.getRequestHeader().getHeadersAsString();
+		for(HttpMessage key : keys){
+			final String keyContent = new String(key.getRequestBody().getBytes());
+			final String keyHeader = key.getRequestHeader().getHeadersAsString();
+			if(keyHeader.equals(header) && keyContent.equals(content)) return configurationsList.get(key);
+		}
+		return null;
+	}
+	
+	/* Returns a SOAP configuration object from a given HttpMessage request. */
+	public synchronized SOAPMsgConfig getSoapConfigByBody(final HttpMessage request){
+		Set<HttpMessage> keys = configurationsList.keySet();
+		final String content = new String(request.getRequestBody().getBytes());
+		for(HttpMessage key : keys){
+			final String keyContent = new String(key.getRequestBody().getBytes());
+			if(keyContent.equals(content)) return configurationsList.get(key);
+		}
+		return null;
 	}
 
 }

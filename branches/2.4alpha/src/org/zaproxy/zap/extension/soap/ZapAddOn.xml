@@ -11,6 +11,7 @@
 	</extensions>
 	<ascanrules>
 	  	<ascanrule>org.zaproxy.zap.extension.soap.SOAPActionSpoofingActiveScanner</ascanrule>
+	  	<ascanrule>org.zaproxy.zap.extension.soap.SOAPXMLInjectionActiveScanner</ascanrule>
 	</ascanrules>
 	<pscanrules>
 	    <pscanrule>org.zaproxy.zap.extension.soap.WSDLFilePassiveScanner</pscanrule>

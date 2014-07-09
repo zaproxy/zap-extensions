@@ -30,6 +30,7 @@ import org.zaproxy.zap.network.HttpRequestBody;
 import com.predic8.schema.ComplexType;
 import com.predic8.schema.Element;
 import com.predic8.schema.Schema;
+import com.predic8.schema.SimpleType;
 import com.predic8.wsdl.AbstractBinding;
 import com.predic8.wsdl.Binding;
 import com.predic8.wsdl.BindingOperation;
@@ -241,42 +242,59 @@ public class WSDLCustomParser {
 	private HashMap<String, String> fillParameters(List<Part> requestParts){
 		HashMap<String, String> formParams = new HashMap<String, String>();
     	for(Part part : requestParts){
-    		if (part.getName().equals("parameters")){
-    			final String elementName = part.getElement().getName();
-        		ComplexType ct = (ComplexType) part.getElement().getEmbeddedType();
-        		/* Handles when ComplexType is not embedded but referenced by 'type'. */
-        		if (ct == null){
-        			Element element = part.getElement();
-        			Schema currentSchema = element.getSchema();
-        			ct = (ComplexType) currentSchema.getType(element.getType());
-        		}			    	        			
-        		for (Element e : ct.getSequence().getElements()) {
-        			final String paramName = e.getName().trim();
-        			log.info("Detected parameter name: "+paramName);
-        			String paramType = e.getType().getQualifiedName().trim();
-        			if(paramType.contains(":")){
-        				String[] stringParts = paramType.split(":");
-        				paramType = stringParts[stringParts.length-1];
-        			}
-        			/* Parameter value depends on parameter type. */
-        			if(paramType.equals("string")){
-	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "paramValue");
-	        		}else if(paramType.equals("int") || paramType.equals("double") ||
-	        				paramType.equals("long")){
-	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "0");
-	        		}else if(paramType.equals("date")){
-	        			Date date = new Date();
-	        			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DD");
-	        			String dateS = dt1.format(date);
-	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, dateS);
-	        		}else if(paramType.equals("dateTime")){
-	        			Date date = new Date();
-	        			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DDThh:mm:ssZ");
-	        			String dateS = dt1.format(date);
-	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, dateS);
+    		try{
+	    		if (part.getName().equals("parameters")){
+	    			final String elementName = part.getElement().getName();
+	        		ComplexType ct = (ComplexType) part.getElement().getEmbeddedType();
+	        		/* Handles when ComplexType is not embedded but referenced by 'type'. */
+	        		if (ct == null){
+	        			Element element = part.getElement();
+	        			Schema currentSchema = element.getSchema();
+	        			ct = (ComplexType) currentSchema.getType(element.getType());
+	        		}			    	        			
+	        		for (Element e : ct.getSequence().getElements()) {
+	        			String paramName = e.getName();
+	        			if(paramName != null) paramName = paramName.trim();
+	        			else{
+	        				/* Handles simple types. */
+	        				Schema currentSchema = e.getSchema();
+	        				SimpleType simpleType = (SimpleType) currentSchema.getType(e.getType());
+	        				paramName = simpleType.getName();
+	        				if (paramName != null) paramName = paramName.trim();
+	        				else{
+	        					/* Handles simple types restrictions. */
+	        					paramName = simpleType.getRestriction().getBase().getQualifiedName().trim();
+	        				}
+	        						
+	        			}
+	        			log.info("Detected parameter name: "+paramName);
+	        			String paramType = e.getType().getQualifiedName().trim();
+	        			if(paramType.contains(":")){
+	        				String[] stringParts = paramType.split(":");
+	        				paramType = stringParts[stringParts.length-1];
+	        			}
+	        			/* Parameter value depends on parameter type. */
+	        			if(paramType.equals("string")){
+		        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "paramValue");
+		        		}else if(paramType.equals("int") || paramType.equals("double") ||
+		        				paramType.equals("long")){
+		        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "0");
+		        		}else if(paramType.equals("date")){
+		        			Date date = new Date();
+		        			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DD");
+		        			String dateS = dt1.format(date);
+		        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, dateS);
+		        		}else if(paramType.equals("dateTime")){
+		        			Date date = new Date();
+		        			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DDThh:mm:ssZ");
+		        			String dateS = dt1.format(date);
+		        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, dateS);
+		        		}
 	        		}
-        		}
-    		}
+	    		}
+    		}catch(Exception e){
+        		log.warn("There was an error when trying to parse part "+part.getName()+" from WSDL file.");
+        	}
     	}
     	return formParams;
 	}
