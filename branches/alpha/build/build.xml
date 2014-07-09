@@ -173,9 +173,10 @@
 		<antcall target="build-addon"><param name="addon" value="importurls"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="multiFuzz"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
         <antcall target="build-addon"><param name="addon" value="saml"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="simpleExample"/></antcall>
         <antcall target="build-addon"><param name="addon" value="soap"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
         <antcall target="build-addon"><param name="addon" value="wappalyzer"/></antcall>
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
@@ -236,12 +237,16 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="pscanrulesAlpha"/> </antcall>
 	</target>
 
+    <target name="deploy-saml" description="deploy the SAML extension">
+        <antcall target="build-deploy-addon"> <param name="addon" value="saml"/> </antcall>
+    </target>
+    
 	<target name="deploy-serverSentEvents" description="deploy the Server-Sent Events extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="serverSentEvents"/> </antcall>
 	</target>
 
-    <target name="deploy-saml" description="deploy the SAML extension">
-        <antcall target="build-deploy-addon"> <param name="addon" value="saml"/> </antcall>
+    <target name="deploy-simpleExample" description="deploy the simple example extension">
+        <antcall target="build-deploy-addon"> <param name="addon" value="simpleExample"/> </antcall>
     </target>
     
     <target name="deploy-soap" description="deploy the SOAP scanning extension">
