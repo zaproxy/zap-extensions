@@ -170,17 +170,21 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 				while (matcher.find()) {
 					//we have a possible class *name*.  
 					//Next: See if the class file lives in the expected location in the WEB-INF folder
+					//skip Java built-in classes
 					String classname = matcher.group();
-					if (! javaClassesFound.contains(classname)) javaClassesFound.add(classname);
+					if (	! classname.startsWith("java.") 
+							&& ! classname.startsWith("javax.") 
+							&& ! javaClassesFound.contains(classname)) { 
+								javaClassesFound.add(classname);
+							}
 				}
 			}
 			
 			//for each class name found, try download the actual class file..
 			//for ( String classname: javaClassesFound) {
 			while(javaClassesFound.size() > 0) {
-				String classname = javaClassesFound.get(0); 
-				URI classURI = getClassURI (originalURI, classname);
-				
+				String classname = javaClassesFound.get(0);				
+				URI classURI = getClassURI (originalURI, classname);				
 				if (log.isDebugEnabled()) log.debug("Looking for Class file: "+ classURI.getURI());
 				
 				HttpMessage classfilemsg = new HttpMessage(classURI);
