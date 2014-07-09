@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>15</version>
+	<version>16</version>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	ZAP issue 1235: Support client side scripting<br>
-	ZAP issue 1250: Zest proxy scripts can break binary content<br>
-	ZAP Issue 1254:	Allow adding and pasting statements after other statements<br>
+	ZAP Issue 1259: Zest exception when adding request to Zest script<br>
 	]]>
 	</changes>
 	<dependson/>
