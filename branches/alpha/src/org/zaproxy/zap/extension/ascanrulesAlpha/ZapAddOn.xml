@@ -8,7 +8,8 @@
 	<![CDATA[
         Added "Cookie Slack Detector" scanner.</br>
         Added "Insecure HTTP Method" scanner.</br>
-        Added "Source Code Disclosure - WEB-INF folder" scanner.
+        Added "Source Code Disclosure - WEB-INF folder" scanner.</br>
+        Added "Source Code Disclosure - CVE-2012-1823.
 	]]>
 	</changes>
 	<dependson/>
@@ -27,6 +28,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureSVN</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.InsecureHTTPMethod</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureWEBINF</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureCVE20121823</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
