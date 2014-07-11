@@ -20,10 +20,16 @@ package org.zaproxy.zap.extension.accessControl.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanResult;
+import org.zaproxy.zap.extension.accessControl.AccessRule;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlResultsTableModel.AccessControlResultsTableEntry;
+import org.zaproxy.zap.extension.spider.SpiderPanelTableModel;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableModel;
 import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
@@ -49,6 +55,19 @@ public class AccessControlResultsTableModel extends
 	private static final String COLUMN_NAME_RESULT = Constant.messages
 			.getString("accessControl.results.table.header.result");
 
+	private static final ImageIcon resultUnknownIcon;
+	private static final ImageIcon resultValidIcon;
+	private static final ImageIcon resultIllegalIcon;
+
+	static {
+		resultUnknownIcon = new ImageIcon(
+				AccessControlResultsTableModel.class.getResource("/resource/icon/20/info.png"));
+		resultValidIcon = new ImageIcon(
+				AccessControlResultsTableModel.class.getResource("/resource/icon/20/valid.png"));
+		resultIllegalIcon = new ImageIcon(
+				AccessControlResultsTableModel.class.getResource("/resource/icon/20/error.png"));
+	}
+
 	private List<AccessControlResultsTableEntry> entries;
 
 	public AccessControlResultsTableModel() {
@@ -64,7 +83,7 @@ public class AccessControlResultsTableModel extends
 	}
 
 	public void addEntry(HistoryReference historyReference, User user, boolean requestAuthorized,
-			String accessRule, String result) {
+			AccessRule accessRule, AccessControlScanResult result) {
 		addEntry(new AccessControlResultsTableEntry(historyReference, user, requestAuthorized, result,
 				accessRule));
 	}
@@ -133,9 +152,16 @@ public class AccessControlResultsTableModel extends
 		case COLUMN_INDEX_AUTHORIZED:
 			return entry.isRequestAuthorized();
 		case COLUMN_INDEX_ACCESS_RULE:
-			return entry.getAccessRule();
+			return entry.getAccessRule().getLocalizedString();
 		case COLUMN_INDEX_RESULT:
-			return entry.getResult();
+			switch (entry.getResult()) {
+			case ILLEGAL:
+				return resultIllegalIcon;
+			case VALID:
+				return resultValidIcon;
+			case UNKNOWN:
+				return resultUnknownIcon;
+			}
 		default:
 			return null;
 		}
@@ -162,6 +188,8 @@ public class AccessControlResultsTableModel extends
 		switch (columnIndex) {
 		case COLUMN_INDEX_AUTHORIZED:
 			return Boolean.class;
+		case COLUMN_INDEX_RESULT:
+			return ImageIcon.class;
 		default:
 			return String.class;
 		}
@@ -188,11 +216,11 @@ public class AccessControlResultsTableModel extends
 
 		private User user;
 		private boolean requestAuthorized;
-		private String result;
-		private String accessRule;
+		private AccessControlScanResult result;
+		private AccessRule accessRule;
 
 		public AccessControlResultsTableEntry(HistoryReference historyReference, User user,
-				boolean requestAuthorized, String result, String accessRule) {
+				boolean requestAuthorized, AccessControlScanResult result, AccessRule accessRule) {
 			super(historyReference);
 			this.user = user;
 			this.result = result;
@@ -224,11 +252,11 @@ public class AccessControlResultsTableModel extends
 			return user;
 		}
 
-		public String getResult() {
+		public AccessControlScanResult getResult() {
 			return result;
 		}
 
-		public String getAccessRule() {
+		public AccessRule getAccessRule() {
 			return accessRule;
 		}
 

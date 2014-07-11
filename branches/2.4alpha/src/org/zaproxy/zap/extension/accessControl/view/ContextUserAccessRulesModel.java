@@ -43,7 +43,8 @@ public class ContextUserAccessRulesModel extends DefaultTreeModel implements Tre
 			return uriNode.getNodeName();
 		case COLUMN_INDEX_RULE:
 			// For the root return
-			return uriNode.isRoot() ? null : rulesManager.getDefinedRule(userId, uriNode);
+			return uriNode.isRoot() ? null : rulesManager.getDefinedRule(userId, uriNode)
+					.getLocalizedString();
 		}
 		return null;
 	}

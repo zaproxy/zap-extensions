@@ -34,13 +34,15 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread;
-import org.zaproxy.zap.extension.accessControl.ExtensionAccessControl;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanListener;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanResult;
+import org.zaproxy.zap.extension.accessControl.ExtensionAccessControl;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlResultsTableModel.AccessControlResultsTableEntry;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.scan.BaseScannerThreadManager;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.view.panels.AbstractScanToolbarStatusPanel;
+import org.zaproxy.zap.extension.accessControl.AccessRule;
 
 /**
  * Under development...
@@ -73,7 +75,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 
 	@Override
 	public void scanResultObtained(int contextId, HistoryReference hRef, User user,
-			boolean requestAuthorized, String result, String accessRule) {
+			boolean requestAuthorized, AccessControlScanResult result, AccessRule accessRule) {
 		getResultsModel(contextId).addEntry(
 				new AccessControlResultsTableEntry(hRef, user, requestAuthorized, result, accessRule));
 	}
@@ -187,8 +189,8 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 		resultsTable.getColumnModel().getColumn(6).setMinWidth(60);
 		resultsTable.getColumnModel().getColumn(6).setPreferredWidth(100); // access rule
 
-		resultsTable.getColumnModel().getColumn(7).setMinWidth(60);
-		resultsTable.getColumnModel().getColumn(7).setPreferredWidth(100); // result
+		resultsTable.getColumnModel().getColumn(7).setMinWidth(40);
+		resultsTable.getColumnModel().getColumn(7).setPreferredWidth(50); // result
 	}
 
 	@Override

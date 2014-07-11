@@ -48,6 +48,10 @@ import org.zaproxy.zap.users.User;
 public class AccessControlScannerThread extends
 		BaseContextScannerThread<AccessControlScanStartOptions, AccessControlScanListener> {
 
+	public enum AccessControlScanResult {
+		VALID, ILLEGAL, UNKNOWN
+	};
+
 	private static final Logger log = Logger.getLogger(AccessControlScannerThread.class);
 
 	private List<User> targetUsers;
@@ -169,7 +173,7 @@ public class AccessControlScannerThread extends
 		}
 
 		// And notify any listeners of the obtained result
-		notifyScanResultObtained(hRef, user, authorized, "N/A", "N/A");
+		notifyScanResultObtained(hRef, user, authorized, AccessControlScanResult.UNKNOWN, AccessRule.UNKNOWN);
 	}
 
 	private List<SiteNode> getTargetUrlsList() {
@@ -178,7 +182,7 @@ public class AccessControlScannerThread extends
 	}
 
 	private void notifyScanResultObtained(HistoryReference msg, User user, boolean requestAuthorized,
-			String result, String accessRule) {
+			AccessControlScanResult result, AccessRule accessRule) {
 		for (AccessControlScanListener l : listeners)
 			l.scanResultObtained(contextId, msg, user, requestAuthorized, result, accessRule);
 	}
@@ -208,6 +212,6 @@ public class AccessControlScannerThread extends
 		 *            obtained for scanning as 'un-authenticated'
 		 */
 		void scanResultObtained(int contextId, HistoryReference historyReference, User user,
-				boolean requestAuthorized, String result, String accessRule);
+				boolean requestAuthorized, AccessControlScanResult result, AccessRule accessRule);
 	}
 }
