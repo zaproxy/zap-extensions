@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -41,6 +42,7 @@ import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.Access
 import org.zaproxy.zap.extension.accessControl.view.AccessControlScanOptionsDialog;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlStatusPanel;
 import org.zaproxy.zap.extension.accessControl.view.ContextAccessControlPanel;
+import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.authorization.ExtensionAuthorization;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -96,9 +98,9 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 		// Register this where needed
-		// Model.getSingleton().addContextDataFactory(this);
-
+		Model.getSingleton().addContextDataFactory(this);
 		extensionHook.addSessionListener(this);
+
 		if (getView() != null) {
 			ExtensionHookView viewHook = extensionHook.getHookView();
 			viewHook.addStatusPanel(getStatusPanel());
@@ -217,6 +219,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	@Override
 	public void discardContexts() {
 		this.contextPanelsMap.clear();
+		this.contextManagers.clear();
 	}
 
 	/**
@@ -236,36 +239,42 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 	@Override
 	public void loadContextData(Session session, Context context) {
-		// try {
-		// // Load the forced user id for this context
-		// List<String> forcedUserS = session.getContextDataStrings(context.getIndex(),
-		// RecordContext.TYPE_FORCED_USER_ID);
-		// if (forcedUserS != null && forcedUserS.size() > 0) {
-		// int forcedUserId = Integer.parseInt(forcedUserS.get(0));
-		// setForcedUser(context.getIndex(), forcedUserId);
-		// }
-		// } catch (Exception e) {
-		// log.error("Unable to load forced user.", e);
-		// }
+		// Read the serialized rules for this context
+		List<String> serializedRules = null;
+		try {
+			serializedRules = session.getContextDataStrings(context.getIndex(),
+					RecordContext.TYPE_ACCESS_CONTROL_RULE);
+		} catch (Exception e) {
+			log.error("Unable to load access control rules for context: " + context.getIndex(), e);
+			return;
+		}
+
+		// Load the rules for this context
+		if (serializedRules != null) {
+			ContextAccessRulesManager contextManager = getContextAccessRulesManager(context.getIndex());
+			for (String serializedRule : serializedRules)
+				contextManager.importSerializedRule(serializedRule);
+		}
 	}
 
 	@Override
 	public void persistContextData(Session session, Context context) {
 		try {
-			log.debug("Saving AccessControl data");
-//			// Save only if we have anything to save
-//			if (getForcedUser(context.getIndex()) != null) {
-//				session.setContextData(context.getIndex(), RecordContext.TYPE_FORCED_USER_ID,
-//						Integer.toString(getForcedUser(context.getIndex()).getId()));
-//				// Note: Do not persist whether the 'Forced User Mode' is enabled as there's no need
-//				// for this and the mode can be easily enabled/disabled directly
-//			} else {
-//				// If we don't have a forced user, force deletion of any previous values
-//				session.clearContextDataForType(context.getIndex(), RecordContext.TYPE_FORCED_USER_ID);
-//			}
+			ContextAccessRulesManager contextManager = contextManagers.get(context.getIndex());
+			if (contextManager != null) {
+				List<String> serializedRules = contextManager.exportSerializedRules();
+				// Save only if we have anything to save
+				if (!serializedRules.isEmpty()) {
+					session.setContextData(context.getIndex(), RecordContext.TYPE_ACCESS_CONTROL_RULE,
+							serializedRules);
+					return;
+				}
+			}
+
+			// If we don't have any rules, force delete any previous values
+			session.clearContextDataForType(context.getIndex(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
 		} catch (Exception e) {
-			log.error("Unable to persist forced user.", e);
+			log.error("Unable to persist access rules for context: " + context.getIndex(), e);
 		}
 	}
-
 }

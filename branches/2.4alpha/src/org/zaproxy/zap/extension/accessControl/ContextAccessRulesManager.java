@@ -18,9 +18,13 @@
 package org.zaproxy.zap.extension.accessControl;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.accessControl.widgets.ContextSiteTree;
@@ -34,6 +38,7 @@ public class ContextAccessRulesManager {
 	private Map<Integer, Map<SiteTreeNode, AccessRule>> rules;
 	private static final Logger log = Logger.getLogger(ContextAccessRulesManager.class);
 	private ContextSiteTree contextSiteTree;
+	private static final char SERIALIZATION_SEPARATOR = '`';
 
 	public ContextAccessRulesManager(Context context) {
 		this.context = context;
@@ -181,5 +186,60 @@ public class ContextAccessRulesManager {
 
 	public ContextSiteTree getContextSiteTree() {
 		return contextSiteTree;
+	}
+
+	/**
+	 * Generates a list of string representations (serialization) of the rules contained in this
+	 * rules manager. Each of the entries can later be imported using the
+	 * {@link #importSerializedRule(String)} method.
+	 *
+	 * @return the list of representations
+	 */
+	protected List<String> exportSerializedRules() {
+		List<String> exported = new LinkedList<>();
+
+		StringBuilder serializedRule;
+		for (Entry<Integer, Map<SiteTreeNode, AccessRule>> userRulesEntry : rules.entrySet()) {
+			for (Entry<SiteTreeNode, AccessRule> ruleEntry : userRulesEntry.getValue().entrySet()) {
+				serializedRule = new StringBuilder(50);
+				serializedRule.append(userRulesEntry.getKey().toString());
+				serializedRule.append(SERIALIZATION_SEPARATOR);
+				serializedRule.append(ruleEntry.getValue().toString()).append(SERIALIZATION_SEPARATOR);
+				// Note: encode the name as it may contain special characters
+				serializedRule.append(Base64.encodeBase64String(ruleEntry.getKey().getNodeName().getBytes()));
+				serializedRule.append(SERIALIZATION_SEPARATOR);
+				// Note: there's no need to escape the URI as it's the last value of the
+				// serialization string and as we're using the URL escaped version (which cannot
+				// contain the separator)
+				serializedRule.append(ruleEntry.getKey().getUri().getEscapedURI());
+				exported.add(serializedRule.toString());
+			}
+		}
+		return exported;
+	}
+
+	/**
+	 * Import a rule from a serialized representation. The rule should have been exported via the
+	 * {@link #exportSerializedRules()} method.
+	 *
+	 * @param serializedRule the serialized rule
+	 */
+	protected void importSerializedRule(String serializedRule) {
+		try {
+			String[] values = serializedRule.split(Character.toString(SERIALIZATION_SEPARATOR), 4);
+			int userId = Integer.parseInt(values[0]);
+			AccessRule rule = AccessRule.valueOf(values[1]);
+			String nodeName = new String(Base64.decodeBase64(values[2]));
+			URI uri = new URI(values[3], true);
+			SiteTreeNode node = new SiteTreeNode(nodeName, uri);
+			getUserRules(userId).put(node, rule);
+			if (log.isDebugEnabled())
+				log.debug(String.format(
+						"Imported access control rule (context, userId, node, rule): (%d, %d, %s, %s) ",
+						context.getIndex(), userId, uri.toString(), rule));
+		} catch (Exception ex) {
+			log.error("Unable to import serialized rule for context " + context.getIndex() + ":"
+					+ serializedRule, ex);
+		}
 	}
 }
