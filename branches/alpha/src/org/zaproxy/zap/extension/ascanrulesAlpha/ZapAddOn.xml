@@ -29,6 +29,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.InsecureHTTPMethod</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureWEBINF</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureCVE20121823</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RemoteCodeExecutionCVE20121823</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
