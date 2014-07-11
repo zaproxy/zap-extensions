@@ -113,6 +113,7 @@ public class ContextAccessRulesManager {
 	 * @return the access rule
 	 */
 	public void addRule(int userId, SiteTreeNode node, AccessRule rule) {
+		log.debug("Adding rule for user " + userId + ": " + rule);
 		// If the rule is INHERIT (default), remove it from the rules mapping as there's no need to
 		// store it there
 		if (rule == AccessRule.INHERIT)
@@ -179,7 +180,7 @@ public class ContextAccessRulesManager {
 
 	/**
 	 * Clear any existing rules and copies the access rules from another rules manager for the
-	 * provided list of users.
+	 * provided list of users (to which the "Unauthenticated user" is added).
 	 *
 	 * @param sourceManager the source manager
 	 * @param users the users for which to copy rules
@@ -187,6 +188,7 @@ public class ContextAccessRulesManager {
 	public void copyRulesFrom(ContextAccessRulesManager sourceManager, List<User> users) {
 		this.rules.clear();
 		Map<SiteTreeNode, AccessRule> userRules;
+		// Copy the user rules for the provided users
 		for (User user : users) {
 			Map<SiteTreeNode, AccessRule> sourceRules = sourceManager.rules.get(user.getId());
 			if (sourceRules == null)
@@ -195,6 +197,14 @@ public class ContextAccessRulesManager {
 			if (userRules != null)
 				this.rules.put(user.getId(), userRules);
 		}
+		// Also copy the rules for the unauthenticated user, which will always be there
+		Map<SiteTreeNode, AccessRule> sourceRules = sourceManager.rules.get(UNAUTHENTICATED_USER_ID);
+		if (sourceRules != null) {
+			userRules = new HashMap<>(sourceManager.rules.get(UNAUTHENTICATED_USER_ID));
+			if (userRules != null)
+				this.rules.put(UNAUTHENTICATED_USER_ID, userRules);
+		}
+
 		this.contextSiteTree = sourceManager.contextSiteTree;
 	}
 
