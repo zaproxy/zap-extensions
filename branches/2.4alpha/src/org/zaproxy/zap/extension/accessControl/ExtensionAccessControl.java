@@ -171,12 +171,12 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		return EXTENSION_DEPENDENCIES;
 	}
 
-	private static class AccessControlScannerThreadManager extends
+	private class AccessControlScannerThreadManager extends
 			BaseScannerThreadManager<AccessControlScannerThread> {
 
 		@Override
 		public AccessControlScannerThread createNewScannerThread(int contextId) {
-			return new AccessControlScannerThread(contextId);
+			return new AccessControlScannerThread(contextId, ExtensionAccessControl.this);
 		}
 	}
 

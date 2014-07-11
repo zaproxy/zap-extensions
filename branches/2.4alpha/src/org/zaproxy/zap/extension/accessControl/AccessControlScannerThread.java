@@ -31,6 +31,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanListener;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
+import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
 import org.zaproxy.zap.extension.authorization.AuthorizationDetectionMethod;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.scan.BaseContextScannerThread;
@@ -58,14 +59,20 @@ public class AccessControlScannerThread extends
 	private AuthorizationDetectionMethod authorizationDetection;
 	/** The HTTP sender used to effectively send the data. */
 	private HttpSender httpSender;
+	private ContextAccessRulesManager accessRulesManager;
 
-	public AccessControlScannerThread(int contextId) {
+	private ExtensionAccessControl extension;
+
+	public AccessControlScannerThread(int contextId, ExtensionAccessControl extension) {
 		super(contextId);
+		this.extension = extension;
 	}
 
 	@Override
 	public void startScan() {
 		this.targetUsers = getStartOptions().targetUsers;
+		this.accessRulesManager = extension.getContextAccessRulesManager(getStartOptions().targetContext
+				.getIndex());
 		this.authorizationDetection = getStartOptions().targetContext.getAuthorizationDetectionMethod();
 		// Initialize the HTTP sender
 		this.httpSender = new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(), true,
@@ -115,11 +122,14 @@ public class AccessControlScannerThread extends
 			if (!shouldAttackNode(originalMessage))
 				continue;
 
+			// Convert the SiteNode to a SiteTreNode (for now, before we merge things)
+			SiteTreeNode stn = new SiteTreeNode(sn.getNodeName(), originalMessage.getRequestHeader().getURI());
+
 			// For each of the users, attack the node
 			for (User user : targetUsers) {
-				attackNode(sn, originalMessage, user);
-
+				attackNode(stn, originalMessage, user);
 			}
+
 			// Make sure we update the progress
 			setScanProgress(++progress);
 		}
@@ -140,7 +150,7 @@ public class AccessControlScannerThread extends
 		return originalMessage != null && !originalMessage.getResponseHeader().isEmpty();
 	}
 
-	private void attackNode(SiteNode sn, HttpMessage originalMessage, User user) {
+	private void attackNode(SiteTreeNode stn, HttpMessage originalMessage, User user) {
 		log.info("" + user);
 		if (log.isDebugEnabled())
 			log.debug("Attacking node: '" + originalMessage.getRequestHeader().getURI() + "' as user: "
@@ -172,8 +182,27 @@ public class AccessControlScannerThread extends
 			return;
 		}
 
+		// Infer the access rule that should apply for the node and the user, taking into
+		// consideration the 'unauthenticated' case
+		AccessRule rule = accessRulesManager.inferRule(user != null ? user.getId()
+				: ContextAccessRulesManager.UNAUTHENTICATED_USER_ID, stn);
+
+		// Compute the result based on whether the request was authorized and the access rule
+		AccessControlScanResult result = AccessControlScanResult.UNKNOWN;
+		switch (rule) {
+		case ALLOWED:
+			result = authorized ? AccessControlScanResult.VALID : AccessControlScanResult.ILLEGAL;
+			break;
+		case DENIED:
+			result = !authorized ? AccessControlScanResult.VALID : AccessControlScanResult.ILLEGAL;
+			break;
+		default:
+			result = AccessControlScanResult.UNKNOWN;
+			break;
+		}
+
 		// And notify any listeners of the obtained result
-		notifyScanResultObtained(hRef, user, authorized, AccessControlScanResult.UNKNOWN, AccessRule.UNKNOWN);
+		notifyScanResultObtained(hRef, user, authorized, result, rule);
 	}
 
 	private List<SiteNode> getTargetUrlsList() {
