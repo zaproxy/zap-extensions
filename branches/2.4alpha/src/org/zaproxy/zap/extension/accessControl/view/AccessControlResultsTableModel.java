@@ -152,7 +152,7 @@ public class AccessControlResultsTableModel extends
 		case COLUMN_INDEX_AUTHORIZED:
 			return entry.isRequestAuthorized();
 		case COLUMN_INDEX_ACCESS_RULE:
-			return entry.getAccessRule().getLocalizedString();
+			return entry.getAccessRule().toString();
 		case COLUMN_INDEX_RESULT:
 			switch (entry.getResult()) {
 			case ILLEGAL:
