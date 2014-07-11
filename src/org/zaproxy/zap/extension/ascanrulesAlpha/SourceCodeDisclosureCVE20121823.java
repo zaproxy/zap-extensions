@@ -127,14 +127,16 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
 			URI originalURI = getBaseMsg().getRequestHeader().getURI();
 			
 			//construct a new URL based on the original URL, but without any of the original parameters
-			URI attackURI = new URI(originalURI.getScheme() + "://" + originalURI.getAuthority() + originalURI.getPath() + "?-s", false);
+			String attackParam = "?-s";
+			URI attackURI = new URI(originalURI.getScheme() + "://" + originalURI.getAuthority() + (originalURI.getPath() != null?originalURI.getPath():"/") + attackParam, true);
 			//and send it as a GET, unauthorised.
 			HttpMessage attackmsg = new HttpMessage(attackURI);
 			sendAndReceive(attackmsg, false); //do not follow redirects
 			
 			if (attackmsg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK ) {
 				//double-check: does the response contain HTML encoded PHP? 
-				//Ignore the case where it contains encoded HTML for now, since thats not a source code disclosure anyway (it is always sent back to the web browser)
+				//Ignore the case where it contains encoded HTML for now, since thats not a source code disclosure anyway 
+				//(HTML is always sent back to the web browser)
 				String responseBody = new String(attackmsg.getResponseBody().getBytes());
 				String responseBodyDecoded = new Source (responseBody).getRenderer().toString(); 
 								
@@ -163,7 +165,7 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
 						Constant.messages.getString("ascanalpha.sourcecodedisclosurecve-2012-1823.desc"), 
 						null, // originalMessage.getRequestHeader().getURI().getURI(),
 						null, // parameter being attacked: none.
-						"",  // attack: none (it's not a paremeter being attacked)
+						"",  // attack: none (it's not a parameter being attacked)
 						sourceCode, //extrainfo
 						Constant.messages.getString("ascanalpha.sourcecodedisclosurecve-2012-1823.soln"),
 						"",		//evidence, highlighted in the message  (cannot use the source code here, since it is encoded in the message response, and so will not match up)
@@ -174,7 +176,6 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
 		} catch (Exception e) {
 			log.error("Error scanning a Host for Source Code Disclosure via CVE-2012-1823: " + e.getMessage(), e);
 		}
-		
 	}
 	
 	@Override
@@ -191,5 +192,4 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
 	public int getWascId() {
 		return 20;  //Improper Input Handling
 	}
-
 }
