@@ -33,12 +33,26 @@ import org.zaproxy.zap.extension.accessControl.widgets.UriUtils;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Note: In order to store access rules for unauthenticated visitors, we'll use -1 as the id, which
+ * is an id that should not be generated for normal users.
+ */
 public class ContextAccessRulesManager {
 	private Context context;
 	private Map<Integer, Map<SiteTreeNode, AccessRule>> rules;
 	private static final Logger log = Logger.getLogger(ContextAccessRulesManager.class);
 	private ContextSiteTree contextSiteTree;
 	private static final char SERIALIZATION_SEPARATOR = '`';
+	/**
+	 * In order to store access rules for unauthenticated visitors, we'll use -1 as the id, which is
+	 * an id that should not be generated for normal users.
+	 */
+	public static final int UNAUTHENTICATED_USER_ID = -1;
 
 	public ContextAccessRulesManager(Context context) {
 		this.context = context;

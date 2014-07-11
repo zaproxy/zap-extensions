@@ -47,6 +47,7 @@ import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.widgets.ContextPanelUsersSelectComboBox;
+import static org.zaproxy.zap.extension.accessControl.ContextAccessRulesManager.UNAUTHENTICATED_USER_ID;
 
 public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
@@ -54,6 +55,8 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 	private static final long serialVersionUID = -7569788230643264454L;
 
 	private static final String PANEL_NAME = Constant.messages.getString("accessControl.contextPanel.title");
+	private static final String UNAUTHENTICATED_USER_NAME = Constant.messages
+			.getString("accessControl.contextPanel.user.unauthenticated");
 
 	private ExtensionAccessControl extension;
 	private JXTreeTable tree;
@@ -79,9 +82,10 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 		this.setName(getContextIndex() + ": " + PANEL_NAME);
 		this.setLayout(new GridBagLayout());
 
-		this.add(new JLabel(Constant.messages
-				.getHtmlWrappedString("accessControl.contextPanel.label.description")), LayoutHelper.getGBC(
-				0, 0, 2, 1.0D, new Insets(0, 0, 10, 0)));
+		this.add(
+				new JLabel(Constant.messages
+						.getHtmlWrappedString("accessControl.contextPanel.label.description")), LayoutHelper
+						.getGBC(0, 0, 2, 1.0D, new Insets(0, 0, 10, 0)));
 
 		// The user selection box
 		this.add(new JLabel(Constant.messages.getString("accessControl.contextPanel.label.user")),
@@ -89,13 +93,13 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 		this.add(getUsersComboBox(), LayoutHelper.getGBC(1, 1, 1, 1.0D, new Insets(0, 5, 0, 5)));
 
 		// The site tree for the access rules of each context
-		this.add(getContextSiteTreePane(), LayoutHelper.getGBC(0, 2, 2, 1.0D, 1.0D, GridBagConstraints.BOTH,
-				new Insets(10, 0, 0, 5)));
+		this.add(getContextSiteTreePane(),
+				LayoutHelper.getGBC(0, 2, 2, 1.0D, 1.0D, GridBagConstraints.BOTH, new Insets(10, 0, 0, 5)));
 
 		// The warning regarding changing structure parameters
-		this.add(new JLabel(Constant.messages
-				.getHtmlWrappedString("accessControl.contextPanel.label.warning")), LayoutHelper.getGBC(0, 3,
-				2, 1.0D));
+		this.add(
+				new JLabel(Constant.messages.getHtmlWrappedString("accessControl.contextPanel.label.warning")),
+				LayoutHelper.getGBC(0, 3, 2, 1.0D));
 	}
 
 	private JScrollPane getContextSiteTreePane() {
@@ -131,6 +135,15 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 	private ContextPanelUsersSelectComboBox getUsersComboBox() {
 		if (usersComboBox == null) {
 			usersComboBox = new ContextPanelUsersSelectComboBox(getContextIndex());
+
+			// We need to add a 'custom' user for allowing setting access rules for unauthenticated
+			// visitors. The custom user will have the id '-1' which is an id that should not be
+			// generated for normal users.
+			User unauthenticatedUser = new User(getContextIndex(), UNAUTHENTICATED_USER_NAME,
+					UNAUTHENTICATED_USER_ID);
+			unauthenticatedUser.setEnabled(true);
+			usersComboBox.setCustomUsers(new User[] { unauthenticatedUser });
+
 			usersComboBox.addActionListener(new ActionListener() {
 
 				@Override
