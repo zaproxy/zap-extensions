@@ -169,6 +169,9 @@ public class ContextAccessRulesManager {
 		this.rules.clear();
 		Map<SiteTreeNode, AccessRule> userRules;
 		for (User user : users) {
+			Map<SiteTreeNode, AccessRule> sourceRules = sourceManager.rules.get(user.getId());
+			if (sourceRules == null)
+				continue;
 			userRules = new HashMap<>(sourceManager.rules.get(user.getId()));
 			if (userRules != null)
 				this.rules.put(user.getId(), userRules);

@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
@@ -44,6 +45,7 @@ import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.authorization.ExtensionAuthorization;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.model.ContextDataFactory;
 import org.zaproxy.zap.scan.BaseScannerThreadManager;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.ContextPanelFactory;
@@ -53,7 +55,7 @@ import org.zaproxy.zap.view.ContextPanelFactory;
  * application.
  */
 public class ExtensionAccessControl extends ExtensionAdaptor implements SessionChangedListener,
-		ContextPanelFactory {
+		ContextPanelFactory, ContextDataFactory {
 
 	private static Logger log = Logger.getLogger(ExtensionAccessControl.class);
 
@@ -230,6 +232,40 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 			contextManagers.put(contextId, manager);
 		}
 		return manager;
+	}
+
+	@Override
+	public void loadContextData(Session session, Context context) {
+		// try {
+		// // Load the forced user id for this context
+		// List<String> forcedUserS = session.getContextDataStrings(context.getIndex(),
+		// RecordContext.TYPE_FORCED_USER_ID);
+		// if (forcedUserS != null && forcedUserS.size() > 0) {
+		// int forcedUserId = Integer.parseInt(forcedUserS.get(0));
+		// setForcedUser(context.getIndex(), forcedUserId);
+		// }
+		// } catch (Exception e) {
+		// log.error("Unable to load forced user.", e);
+		// }
+	}
+
+	@Override
+	public void persistContextData(Session session, Context context) {
+		try {
+			log.debug("Saving AccessControl data");
+//			// Save only if we have anything to save
+//			if (getForcedUser(context.getIndex()) != null) {
+//				session.setContextData(context.getIndex(), RecordContext.TYPE_FORCED_USER_ID,
+//						Integer.toString(getForcedUser(context.getIndex()).getId()));
+//				// Note: Do not persist whether the 'Forced User Mode' is enabled as there's no need
+//				// for this and the mode can be easily enabled/disabled directly
+//			} else {
+//				// If we don't have a forced user, force deletion of any previous values
+//				session.clearContextDataForType(context.getIndex(), RecordContext.TYPE_FORCED_USER_ID);
+//			}
+		} catch (Exception e) {
+			log.error("Unable to persist forced user.", e);
+		}
 	}
 
 }
