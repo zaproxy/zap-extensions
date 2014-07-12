@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>MultiFuzz</name>
-	<version>3</version>
+	<version>4</version>
 	<description>Provides multi-fuzzing capabilities and their HTTP implementations.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated fuzzing mechanisms, dialog, resources and introduced regex and script payloads</changes>
+	<changes>New UI and result presentation added</changes>
 	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.multiFuzz.ExtensionFuzz</extension>
@@ -14,6 +14,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-from-version>2.3.0</not-from-version>
+	<not-from-version>2.4.0</not-from-version>
 </zapaddon>
 
