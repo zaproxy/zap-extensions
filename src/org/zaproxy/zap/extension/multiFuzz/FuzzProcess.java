@@ -39,9 +39,11 @@ public interface FuzzProcess<R extends FuzzResult<?, ?>, P extends Payload, M ex
 
 	public void removeFuzzerListener(FuzzerListener<Integer, R> listener);
 
-	public void setPreProcessors(ArrayList<FuzzMessageProcessor<M>> post);
+	public void setPayloadProcessors(ArrayList<PayloadProcessor<P>> post);
+	
+	public void setPreProcessors(ArrayList<FuzzMessagePreProcessor<M,L,P>> post);
 
-	public void setPostProcessors(ArrayList<FuzzMessageProcessor<M>> post);
+	public void setPostProcessors(ArrayList<FuzzResultProcessor<R>> post);
 
 	void setPayload(Map<L, P> subs);
 }
