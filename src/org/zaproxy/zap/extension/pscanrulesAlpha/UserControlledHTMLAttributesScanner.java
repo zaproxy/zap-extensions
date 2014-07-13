@@ -231,7 +231,7 @@ public class UserControlledHTMLAttributesScanner extends PluginPassiveScanner {
 	
 	private void raiseAlert(HttpMessage msg, int id, Element htmlElement, 
 			Attribute htmlAttribute, HtmlParameter param, String userControlledValue) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.SUSPICIOUS,
 				getName());				    
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()

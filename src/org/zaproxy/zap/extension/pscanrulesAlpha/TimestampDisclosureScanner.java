@@ -126,7 +126,7 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 		            
 			        if ( evidence!=null && evidence.length() > 0) {
 						//we found something
-						Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, getName() + " - "+ timestampType );
+						Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.SUSPICIOUS, getName() + " - "+ timestampType );
 						alert.setDetail(
 								getDescription() + " - "+ timestampType, 
 								msg.getRequestHeader().getURI().toString(), 
