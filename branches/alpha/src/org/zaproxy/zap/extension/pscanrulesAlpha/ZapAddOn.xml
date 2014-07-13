@@ -7,6 +7,7 @@
 	<changes>
 	<![CDATA[	
 	Tweaked "Source Code Disclosure" scanner to reduce false positives 
+	Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')
 	]]>
 	</changes>
 	<dependson/>
