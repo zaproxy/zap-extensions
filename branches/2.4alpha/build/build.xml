@@ -163,6 +163,7 @@
 		<echo file="${versions.file}" append="true">&lt;ZAP></echo>
 		
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
+		<antcall target="build-addon"><param name="addon" value="accessControl"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="birtreports"/></antcall>
         <antcall target="build-addon"><param name="addon" value="browserView"/></antcall>
@@ -195,6 +196,9 @@
 		<antcall target="deploy-addon"> <param name="addon" value="${addon}"/> </antcall>
 	</target>
 
+	<target name="deploy-accessControl" description="deploy the Access Control Testing extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="accessControl"/> </antcall>
+	</target>
 
 	<target name="deploy-ascanrulesAlpha" description="deploy the active scan rules">
 		<antcall target="build-deploy-addon"> <param name="addon" value="ascanrulesAlpha"/> </antcall>
@@ -259,5 +263,17 @@
 			</fileset>
 		</copy>
 	</target>
+	
+	<target name="deploy-weekly" description="deploy extensions to be included in weekly releases">
+            <!-- Set to compile with debug information -->
+            <property name="javac.debug" value="true" />
+            <antcall target="build-all" />
+            <copy todir="${zap.plugin.dir}">
+                    <fileset dir="${dist}">
+                            <include name="accessControl-${status}-*.zap"/>
+                    </fileset>
+            </copy>
+    </target>
+
 
 </project>
