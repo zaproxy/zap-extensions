@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
-
+import java.util.ResourceBundle;
 import javax.swing.ImageIcon;
 
 import org.owasp.jbrofuzz.core.Database;
@@ -57,12 +57,12 @@ public class ExtensionFuzz extends ExtensionAdaptor implements
 
 	public static final String NAME = "MultiExtensionFuzz";
 	public static final String JBROFUZZ_CATEGORY_PREFIX = "jbrofuzz / ";
-	public static final String SCRIPT_TYPE_FUZZ = "Fuzz";
+	public static final String SCRIPT_TYPE_FUZZ = "fuzz";
 	public static final String SCRIPT_TYPE_PAYLOAD = "payload";
 	private static final ImageIcon FUZZ_SCRIPT_ICON = new ImageIcon(
-			ZAP.class.getResource("/resource/script-fuzz.png"));
+			ExtensionFuzz.class.getResource("/resources/script-fuzz.png"));
 	private static final ImageIcon PAYLOAD_SCRIPT_ICON = new ImageIcon(
-			ZAP.class.getResource("/resource/script-payload.png"));
+			ExtensionFuzz.class.getResource("/resource/script-payload.png"));
 	private PopupFuzzMenu popupFuzzMenu = null;
 	private FuzzerParam fuzzerParam = null;
 	private FuzzerPanel fuzzerPanel = null;
@@ -75,6 +75,8 @@ public class ExtensionFuzz extends ExtensionAdaptor implements
 
 	public ExtensionFuzz() {
 		super();
+		ResourceBundle messages = ResourceBundle.getBundle("org.zaproxy.zap.extension.multiFuzz.resources.Messages", Constant.getLocale());
+		Constant.messages.addMessageBundle("fuzz", messages);
 		initialize();
 	}
 
