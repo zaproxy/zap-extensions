@@ -60,9 +60,9 @@ public class ExtensionFuzz extends ExtensionAdaptor implements
 	public static final String SCRIPT_TYPE_FUZZ = "fuzz";
 	public static final String SCRIPT_TYPE_PAYLOAD = "payload";
 	private static final ImageIcon FUZZ_SCRIPT_ICON = new ImageIcon(
-			ExtensionFuzz.class.getResource("/resources/script-fuzz.png"));
+			ExtensionFuzz.class.getResource("resources/script-fuzz.png"));
 	private static final ImageIcon PAYLOAD_SCRIPT_ICON = new ImageIcon(
-			ExtensionFuzz.class.getResource("/resource/script-payload.png"));
+			ExtensionFuzz.class.getResource("resources/script-payload.png"));
 	private PopupFuzzMenu popupFuzzMenu = null;
 	private FuzzerParam fuzzerParam = null;
 	private FuzzerPanel fuzzerPanel = null;
