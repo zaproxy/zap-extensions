@@ -228,7 +228,7 @@ public class ContextAccessRulesManager {
 				serializedRule = new StringBuilder(50);
 				serializedRule.append(userRulesEntry.getKey().toString());
 				serializedRule.append(SERIALIZATION_SEPARATOR);
-				serializedRule.append(ruleEntry.getValue().toString()).append(SERIALIZATION_SEPARATOR);
+				serializedRule.append(ruleEntry.getValue().name()).append(SERIALIZATION_SEPARATOR);
 				// Note: encode the name as it may contain special characters
 				serializedRule.append(Base64.encodeBase64String(ruleEntry.getKey().getNodeName().getBytes()));
 				serializedRule.append(SERIALIZATION_SEPARATOR);

@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
@@ -45,10 +47,12 @@ import org.zaproxy.zap.extension.accessControl.view.ContextAccessControlPanel;
 import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.authorization.ExtensionAuthorization;
+import org.zaproxy.zap.extension.users.ContextUserAuthManager;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ContextDataFactory;
 import org.zaproxy.zap.scan.BaseScannerThreadManager;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.ContextPanelFactory;
 
@@ -58,6 +62,9 @@ import org.zaproxy.zap.view.ContextPanelFactory;
  */
 public class ExtensionAccessControl extends ExtensionAdaptor implements SessionChangedListener,
 		ContextPanelFactory, ContextDataFactory {
+
+	public static final String CONTEXT_CONFIG_ACCESS_RULES = Context.CONTEXT_CONFIG + ".accessControl.rules";
+	public static final String CONTEXT_CONFIG_ACCESS_RULES_RULE = CONTEXT_CONFIG_ACCESS_RULES + ".rule";
 
 	private static Logger log = Logger.getLogger(ExtensionAccessControl.class);
 
@@ -275,6 +282,26 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 			session.clearContextDataForType(context.getIndex(), RecordContext.TYPE_ACCESS_CONTROL_RULE);
 		} catch (Exception e) {
 			log.error("Unable to persist access rules for context: " + context.getIndex(), e);
+		}
+	}
+
+	@Override
+	public void exportContextData(Context ctx, Configuration config) {
+		ContextAccessRulesManager contextManager = contextManagers.get(ctx.getIndex());
+		if (contextManager != null) {
+			List<String> serializedRules = contextManager.exportSerializedRules();
+			config.setProperty(CONTEXT_CONFIG_ACCESS_RULES_RULE, serializedRules);
+		}
+	}
+
+	@Override
+	public void importContextData(Context ctx, Configuration config) throws ConfigurationException {
+		List<Object> serializedRules = config.getList(CONTEXT_CONFIG_ACCESS_RULES_RULE);
+		if (serializedRules != null) {
+			ContextAccessRulesManager contextManager = getContextAccessRulesManager(ctx.getIndex());
+			for (Object serializedRule : serializedRules) {
+				contextManager.importSerializedRule(serializedRule.toString());
+			}
 		}
 	}
 }
