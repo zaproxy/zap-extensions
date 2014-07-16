@@ -31,6 +31,8 @@ import com.predic8.schema.ComplexType;
 import com.predic8.schema.Element;
 import com.predic8.schema.Schema;
 import com.predic8.schema.SimpleType;
+import com.predic8.schema.restriction.BaseRestriction;
+import com.predic8.schema.restriction.facet.EnumerationFacet;
 import com.predic8.wsdl.AbstractBinding;
 import com.predic8.wsdl.Binding;
 import com.predic8.wsdl.BindingOperation;
@@ -182,7 +184,11 @@ public class WSDLCustomParser {
 	    	        	/* Identifies operation's parameters. */
 	    	        	List<Part> requestParts = detectParameters(wsdl, bindOp);    	        			    	        	    	        	   	        			    	        	
 	    	        	/* Set values to parameters. */
-	    	        	HashMap<String, String> formParams = fillParameters(requestParts); 
+	    	        	HashMap<String, String> formParams = new HashMap<String, String>();
+	    	        	for(Part part : requestParts){
+	    	        		Element element = part.getElement();
+	    	        		formParams.putAll(fillParameters(element, null)); 
+	    	        	}   	        	
 	    	        	/* Connection test for each operation. */
 	    	        	/* Basic message creation. */
 	    	        	SOAPMsgConfig soapConfig = new SOAPMsgConfig(wsdl, soapVersion, formParams, port, bindOp);
@@ -243,62 +249,96 @@ public class WSDLCustomParser {
 		return null;
 	}
 	
-	private HashMap<String, String> fillParameters(List<Part> requestParts){
+	private HashMap<String, String> fillParameters(Element element, String parent){
 		HashMap<String, String> formParams = new HashMap<String, String>();
-    	for(Part part : requestParts){
-    		try{
-    			final String elementName = part.getElement().getName();
-        		ComplexType ct = (ComplexType) part.getElement().getEmbeddedType();
-        		/* Handles when ComplexType is not embedded but referenced by 'type'. */
-        		if (ct == null){
-        			Element element = part.getElement();
-        			Schema currentSchema = element.getSchema();
-        			ct = (ComplexType) currentSchema.getType(element.getType());
-        		}			    	        			
-        		for (Element e : ct.getSequence().getElements()) {
-        			String paramName = e.getName();
-        			if(paramName != null) paramName = paramName.trim();
-        			else{
-        				/* Handles simple types. */
-        				Schema currentSchema = e.getSchema();
-        				SimpleType simpleType = (SimpleType) currentSchema.getType(e.getType());
-        				paramName = simpleType.getName();
-        				if (paramName != null) paramName = paramName.trim();
-        				else{
-        					/* Handles simple types restrictions. */
-        					paramName = simpleType.getRestriction().getBase().getQualifiedName().trim();
-        				}
-        						
-        			}
-        			log.info("Detected parameter name: "+paramName);
-        			String paramType = e.getType().getQualifiedName().trim();
-        			if(paramType.contains(":")){
-        				String[] stringParts = paramType.split(":");
-        				paramType = stringParts[stringParts.length-1];
-        			}
-        			/* Parameter value depends on parameter type. */
-        			if(paramType.equals("string")){
-	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "paramValue");
-	        		}else if(paramType.equals("int") || paramType.equals("double") ||
-	        				paramType.equals("long")){
-	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, "0");
-	        		}else if(paramType.equals("date")){
-	        			Date date = new Date();
-	        			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DD");
-	        			String dateS = dt1.format(date);
-	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, dateS);
-	        		}else if(paramType.equals("dateTime")){
-	        			Date date = new Date();
-	        			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DDThh:mm:ssZ");
-	        			String dateS = dt1.format(date);
-	        			formParams.put("xpath:/"+elementName.trim()+"/"+paramName, dateS);
-	        		}
-        		}
-    		}catch(Exception e){
-        		log.warn("There was an error when trying to parse part "+part.getName()+" from WSDL file.");
-        	}
-    	}
+		try{
+			/* Tries to parse it as a complex type first. */
+			String xpath = null;
+			if (parent != null) xpath = parent + "/" +element.getName();
+			else xpath = element.getName();
+    		ComplexType ct = (ComplexType) element.getEmbeddedType();
+    		/* Handles when ComplexType is not embedded but referenced by 'type'. */
+    		if (ct == null){
+    			Schema currentSchema = element.getSchema();
+    			ct = (ComplexType) currentSchema.getType(element.getType());
+    			if (ct == null) throw new ClassCastException("Complex Type is null after cast."); //Hashmap is empty here.
+    		}			    	        			
+    		for (Element e : ct.getSequence().getElements()) {
+    			/* Recursive parsing for nested complex types. */
+    			formParams.putAll(fillParameters(e,xpath));
+    		}	
+		}catch(ClassCastException cce){
+			/* Simple element treatment. */
+			if(element == null) return formParams;
+			/* Handles simple types. */
+			SimpleType simpleType = null;
+			try{
+				simpleType = (SimpleType) element.getEmbeddedType();
+				if(simpleType == null){
+					Schema currentSchema = element.getSchema();
+					simpleType = (SimpleType) currentSchema.getType(element.getType());
+					if(simpleType == null){
+						/* It is not simple type, so it is treated as a plain element. */
+						String xpath = "";
+						if (parent != null) xpath = parent + "/" +element.getName();
+						else xpath = element.getName();
+						if(element.getType() != null) return addParameter(xpath,element.getType().getQualifiedName(),null);
+						else return formParams;
+					}
+				}
+			}catch(ClassCastException cce2){
+				/* It is not simple type, so it is treated as a plain element. */
+				String xpath = "";
+				if (parent != null) xpath = parent + "/" +element.getName();
+				else xpath = element.getName();
+				return addParameter(xpath,element.getType().getQualifiedName(),null);
+			}
+			/* Handles enumeration restriction. */
+			BaseRestriction br = simpleType.getRestriction();
+			if (br != null){
+				List<EnumerationFacet> enums = br.getEnumerationFacets();
+				if(enums != null && enums.size() > 0){
+					String defaultValue = enums.get(0).getValue();
+					formParams.putAll(addParameter(parent+"/"+element.getName(),"string",defaultValue));
+				}
+			}
+			return formParams;	
+		}catch(Exception e){
+			log.warn("There was an error when trying to parse element "+element.getName()+" from WSDL file.",e);
+		}
     	return formParams;
+	}
+	
+	private HashMap<String, String> addParameter(String path, String paramType, String value){
+		HashMap<String,String> formParams = new HashMap<String,String> ();
+		log.debug("Detected parameter: "+path);
+		if(paramType.contains(":")){
+			String[] stringParts = paramType.split(":");
+			paramType = stringParts[stringParts.length-1];
+		}
+		/* If value is specified, it is directly set. */
+		if(value != null){
+			formParams.put("xpath:/"+path, value);
+			return formParams;
+		}
+		/* Parameter value depends on parameter type. */
+		if(paramType.equals("string")){
+			formParams.put("xpath:/"+path, "paramValue");
+		}else if(paramType.equals("int") || paramType.equals("double") ||
+				paramType.equals("long")){
+			formParams.put("xpath:/"+path, "0");
+		}else if(paramType.equals("date")){
+			Date date = new Date();
+			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DD");
+			String dateS = dt1.format(date);
+			formParams.put("xpath:/"+path, dateS);
+		}else if(paramType.equals("dateTime")){
+			Date date = new Date();
+			SimpleDateFormat dt1 = new SimpleDateFormat("CCYY-MM-DDThh:mm:ssZ");
+			String dateS = dt1.format(date);
+			formParams.put("xpath:/"+path, dateS);
+		}
+		return formParams;
 	}
 
 	/* Generates a SOAP request associated to the specified binding operation. */
