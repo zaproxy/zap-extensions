@@ -44,7 +44,6 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
-import org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -234,6 +233,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 
     @Override
     public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
+
         API.getInstance().registerApiImplementor(api);
         extensionHook.addProxyListener(this);
         extensionHook.addSessionListener(this);
@@ -302,7 +303,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 
     @Override
     public boolean canUnload() {
-        // TODO need to check everything is stopped / unloaded
         return true;
     }
 
@@ -310,37 +310,42 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     public void unload() {
         super.unload();
 
-        Control control = Control.getSingleton();
-        ExtensionLoader extLoader = control.getExtensionLoader();
+        // Explicitly call "stop()" as it's not being called by the core during/after the unloading.
+        // TODO Remove once the bug is fixed in core.
+        stop();
 
         if (View.isInitialised()) {
             // clear up Session Properties
             getView().getSessionDialog().removeParamPanel(monitoredClientsPanel);
-        }
 
-        // clear up Breakpoints
-		/*
-         ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
-         if (extBreak != null) {
-         extBreak.removeBreakpointsUiManager(getBrkManager());
-         }
-         */
+            ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
 
-        // clear up fuzzable extension
-        ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
-        if (extFuzz != null) {
-            extFuzz.removeFuzzerHandler(ClientMessage.class);
-        }
+            // clear up Breakpoints
+            ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
+            if (extBreak != null) {
+                extBreak.removeBreakpointsUiManager(getBrkManager());
+            }
 
-        // clear up manualrequest extension
-        ExtensionManualRequestEditor extManReqEdit = (ExtensionManualRequestEditor) extLoader.getExtension(ExtensionManualRequestEditor.NAME);
-        if (extManReqEdit != null) {
-            extManReqEdit.removeManualSendEditor(ClientMessage.class);
-        }
+            // clear up fuzzable extension
+            ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
+            if (extFuzz != null) {
+                extFuzz.removeFuzzerHandler(ClientMessage.class);
+            }
 
-        if (getView() != null) {
+            // clear up manualrequest extension
+            // ExtensionManualRequestEditor extManReqEdit = (ExtensionManualRequestEditor) extLoader.getExtension(ExtensionManualRequestEditor.NAME);
+            // if (extManReqEdit != null) {
+            //     extManReqEdit.removeManualSendEditor(ClientMessage.class);
+            // }
+
             clearupClientsForWorkPanel();
         }
+
+        Database db = Model.getSingleton().getDb();
+        db.removeDatabaseListener(clientTable);
+        db.removeDatabaseListener(messageTable);
+
+        API.getInstance().removeApiImplementor(api);
     }
 
     private PopupMenuResend getPopupMenuResend() {
