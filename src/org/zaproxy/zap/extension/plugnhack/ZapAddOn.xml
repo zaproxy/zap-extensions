@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Plug-n-Hack Configuration</name>
-	<version>7</version>
+	<version>8</version>
 	<description>Supports the Mozilla Plug-n-Hack standard: https://developer.mozilla.org/en-US/docs/Plug-n-Hack.</description>
 	<author>ZAP Dev Team</author>
 	<url>https://developer.mozilla.org/en-US/docs/Plug-n-Hack</url>
-	<changes>Updated to latest version of Ringleader</changes>
+	<changes>Fixed uninstallation issue (Issue 1261)</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack</extension>
