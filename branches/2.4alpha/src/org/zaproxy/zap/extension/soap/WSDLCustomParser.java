@@ -72,6 +72,11 @@ public class WSDLCustomParser {
     	t.start();
 	}	
 	
+	/* Method called from external classes to import a WSDL file specifying content. */
+	public void extContentWSDLImport(final String content){
+		parseWSDLContent(content);
+	}
+	
 	/* Method called from external classes to import a WSDL file from an URL. */
 	public void extUrlWSDLImport(final String url){
 		parseWSDLUrl(url);
@@ -88,6 +93,23 @@ public class WSDLCustomParser {
     		
     	};
     	t.start();
+	}
+	
+	public boolean canBeWSDLparsed(String content){
+		if (content == null || content.trim().length() <= 0){
+        	return false;
+        }else{
+        	// WSDL parsing.
+	        WSDLParser parser = new WSDLParser();
+	        try{
+		        InputStream contentI = new ByteArrayInputStream(content.getBytes("UTF-8"));
+		        parser.parse(contentI);
+		        contentI.close();
+				return true;
+	        }catch(Exception e){
+	        	return false;
+	        }
+        } 
 	}
 	
 	/* Generates WSDL definitions from a WSDL file and then it calls parsing functions. */
@@ -142,16 +164,29 @@ public class WSDLCustomParser {
 		        	//log.warn("URL response from WSDL file request has no body content.");
 		        }else{
 		        	// WSDL parsing.
-			        WSDLParser parser = new WSDLParser();
-			        InputStream contentI = new ByteArrayInputStream(content.getBytes("UTF-8"));
-			        Definitions wsdl = parser.parse(contentI);
-			        contentI.close();
-					parseWSDL(wsdl);
+			        parseWSDLContent(content);
 		        }  
 	        }
 		} catch (Exception e) {
 			log.error("There was an error while parsing WSDL from URL. ", e);
 		} 
+	}
+	
+	private void parseWSDLContent(String content){
+		if (content == null || content.trim().length() <= 0){
+        	return;
+        }else{
+        	// WSDL parsing.
+	        WSDLParser parser = new WSDLParser();
+	        try{
+		        InputStream contentI = new ByteArrayInputStream(content.getBytes("UTF-8"));
+		        Definitions wsdl = parser.parse(contentI);
+		        contentI.close();
+		        parseWSDL(wsdl);
+	        }catch(Exception e){
+	        	log.error("There was an error while parsing WSDL content. ", e);
+	        }
+        } 
 	}
 
 

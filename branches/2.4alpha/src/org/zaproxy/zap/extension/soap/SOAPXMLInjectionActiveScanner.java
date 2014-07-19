@@ -121,9 +121,10 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 				/* Analyzes the response. */
 				final String response = new String(attackMsg.getResponseBody().getBytes());
 				final String resCharset = attackMsg.getResponseBody().getCharset();
+				final HttpMessage originalMsg = getBaseMsg();
 				if(!isSoapMessage(response,resCharset)){
 					bingo(Alert.RISK_LOW, Alert.WARNING, null, null, finalValue,Constant.messages.getString(MESSAGE_PREFIX + "warn1"), attackMsg);
-				}else if(responsesAreEqual(modifiedMsg, attackMsg)){
+				}else if(responsesAreEqual(modifiedMsg, attackMsg) && !(responsesAreEqual(originalMsg, modifiedMsg))){
 					/* The attack message has achieved the same result as the modified message, so XML injection attack worked. */
 					bingo(Alert.RISK_HIGH, Alert.WARNING, null, null, finalValue,Constant.messages.getString(MESSAGE_PREFIX + "warn2") , attackMsg);
 				}
@@ -134,15 +135,15 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 	}
 	
 	/* Checks whether server response follows a SOAP message format. */
-	private boolean isSoapMessage(String responseContent, String charset){
+	private boolean isSoapMessage(String content, String charset){
 		SOAPMessage soapMsg = null;
-		if(responseContent.length() <= 0) return false;
+		if(content.length() <= 0) return false;
 		MessageFactory factory;
 		try {
 			factory = MessageFactory.newInstance();
 			soapMsg = factory.createMessage(
 			        new MimeHeaders(),
-			        new ByteArrayInputStream(responseContent.getBytes(Charset
+			        new ByteArrayInputStream(content.getBytes(Charset
 			                .forName(charset))));
 			/* Content has been parsed correctly as SOAP content. */
 			if (soapMsg != null) return true;
