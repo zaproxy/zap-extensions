@@ -6,7 +6,8 @@
 	<url/>
 	<changes>
 	<![CDATA[	
-	Tweaked "Source Code Disclosure" scanner to reduce false positives 
+	Tweaked "Source Code Disclosure" scanner to reduce false positives</br> 
+	Added "Insecure Component" scanner</br>
 	Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')
 	]]>
 	</changes>
@@ -24,6 +25,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ExampleSimplePassiveScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HashDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HeartBleedScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureComponent</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormLoadScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormPostScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ServerHeaderInfoLeakScanner</pscanrule>
@@ -41,6 +43,7 @@
 	<filters/>
 	<files>
 		<file>xml/example-pscan-file.txt</file>
+		<file>vulnerabilities.db</file>
 	</files>
 	<not-before-version>2.3.0</not-before-version>
 	<not-from-version></not-from-version>
