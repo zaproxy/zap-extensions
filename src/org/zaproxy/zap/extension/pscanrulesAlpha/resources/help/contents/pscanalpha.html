@@ -24,6 +24,13 @@ This checks response headers for the presence of a Content Security Policy heade
 <H2>Cookie poisoning</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
 
+<H2>Cross Domain Misconfiguration</H2>
+Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
+The current implementation looks at excessively permissive CORS headers.
+
+<H2>Directory Browsing</H2>
+Passively scan responses for signatures that are indicative that Directory Browsing is possible.
+
 <H2>Example File Passive Scanner</H2>
 This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
 For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
@@ -33,13 +40,48 @@ This implements a very simple example passive scan rule.<br>
 For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
 <H2>Hash Disclosure</H2>
-A hash was disclosed by the web server
+Passively scan for password hashes disclosed by the web server. <br>
+Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
+
+<H2>HeartBleed</H2>
+Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
 
 <H2>HTTP to HTTPS insecure transition in form post</H2>
 This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
 
 <H2>HTTPS to HTTP insecure transition in form post</H2>
 This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
+
+<H2>Insecure Component</H2>
+Passively scans the server response headers for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs.<br>
+A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable.<br>
+Currently, the following server side products are supported:<br>
+Apache web server<br>
+Microsoft IIS web server<br>
+Sun One web server<br>
+Sun Java System Web Server<br>
+Oracle Application Server<br>
+Oracle Web Cache<br>
+Nginx web server<br>
+Lighttpd web server<br>
+Jetty web server / application server<br>
+Netscape Enterprise web server<br>
+TornadoServer web server<br>
+OpenCMS<br>
+IBM HTTP Server<br>
+LiteSpeed web server<br>
+mod_perl Apache module<br>
+mod_jk Apache module<br>
+mod_ssl Apache module<br>
+Perl Apache module<br>
+OpenSSL Apache module<br>
+mod_auth_radius Apache module<br>
+mod_fcgid Apache module<br>
+mod_imap Apache module<br>
+mod_python Apache module<br>
+Phusion_Passenger<br>
+PHP<br>
+Squid proxy server<br>
 
 <H2>Open redirect</H2>
 Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
