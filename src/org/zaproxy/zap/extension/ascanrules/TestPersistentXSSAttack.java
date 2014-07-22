@@ -138,7 +138,6 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 	            // Check each sink
 	            for (HttpMessage sinkMsg : sinks) {
 	            	sinkMsg = sinkMsg.cloneRequest();
-		            setParameter(sinkMsg, param, Constant.getEyeCatcher());
 		            sendAndReceive(sinkMsg);
 		            
 		            HtmlContextAnalyser hca = new HtmlContextAnalyser(sinkMsg);

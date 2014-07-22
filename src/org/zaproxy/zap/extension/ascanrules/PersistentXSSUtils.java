@@ -43,7 +43,7 @@ public class PersistentXSSUtils {
     public static void testForSink(HttpMessage msg) {
         String body = msg.getResponseBody().toString();
         int start = body.indexOf(PXSS_PREFIX);
-        if (start > 0) {
+        while (start > 0) {
             int end = body.indexOf(PXSS_POSTFIX, start);
             if (end > 0) {
                 String uniqueVal = body.substring(start, end + PXSS_POSTFIX.length());
@@ -51,19 +51,22 @@ public class PersistentXSSUtils {
                 if (source != null) {
                     setSinkForSource(source, msg);
                 }
+                start = body.indexOf(PXSS_PREFIX, end);
+            } else {
+            	break;
             }
         }
     }
 
     public static void setSinkForSource(HttpMessage sourceMsg, String param, HttpMessage sinkMsg) {
-        if (log.isDebugEnabled()) {
-            log.debug("setSinkForSource src=" + sourceMsg.getRequestHeader().getURI()
-                    + " param=" + param + " sink=" + sinkMsg.getRequestHeader().getURI());
-        }
         setSinkForSource(new UserDataSource(sourceMsg, param), sinkMsg);
     }
 
     public static void setSinkForSource(UserDataSource source, HttpMessage sinkMsg) {
+        if (log.isDebugEnabled()) {
+            log.debug("setSinkForSource src=" + source.getMsg().getRequestHeader().getURI()
+                    + " param=" + source.getParam() + " sink=" + sinkMsg.getRequestHeader().getURI());
+        }
         HashSet<HttpMessage> sinks = sourceToSinks.get(source);
         if (sinks == null) {
             sinks = new HashSet<HttpMessage>();
