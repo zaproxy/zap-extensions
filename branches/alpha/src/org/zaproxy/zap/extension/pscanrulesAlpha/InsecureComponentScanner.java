@@ -62,6 +62,11 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 	 */
 	private Pattern SERVER_HEADER_PATTERN_JETTY = Pattern.compile("^([^ ]+)\\(([^ ]+)\\).*$");
 
+	/**
+	 * used to match JBoss headers, since these are non-standard
+	 */
+	private Pattern SERVER_HEADER_PATTERN_JBOSS = Pattern.compile("^Servlet [^ ]+[ ]+(JBoss)-([^ /]+).*$");
+
 
 	private PassiveScanThread parent = null;
 
@@ -134,6 +139,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 				Matcher matcher = SERVER_HEADER_PATTERN.matcher(header);
 				Matcher matcherOracle = SERVER_HEADER_PATTERN_ORACLE.matcher (header);					
 				Matcher matcherJetty = SERVER_HEADER_PATTERN_JETTY.matcher (header);
+				Matcher matcherJBoss = SERVER_HEADER_PATTERN_JBOSS.matcher(header);
 
 				//for generic (mostly compliant with the rfc) products
 				if (matcher.matches()) {
@@ -169,6 +175,13 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					String product = null, version = null;
 					product = matcherJetty.group(1);
 					version = matcherJetty.group(2);
+					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+				}
+				//for JBoss
+				while (matcherJBoss.find()) { 
+					String product = null, version = null;
+					product = matcherJBoss.group(1);
+					version = matcherJBoss.group(2);
 					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
 				}
 
