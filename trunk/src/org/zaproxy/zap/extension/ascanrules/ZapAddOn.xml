@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>15</version>
+	<version>16</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-        Tweaked the SQLi rule to maximize vuln detection and minimize fps (Issue 1195)<br>
-        Fixed XSS false positive in non URL tag attributes (Issue 964)
+        Fixed bug in Persistent XSS rule (Issue 1273)
 	]]>
     </changes>
 	<dependson/>
