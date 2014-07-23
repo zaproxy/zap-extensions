@@ -1,15 +1,17 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>8</version>
+	<version>9</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-        Added "Cookie Slack Detector" scanner.</br>
         Added "Insecure HTTP Method" scanner.</br>
         Added "Source Code Disclosure - WEB-INF folder" scanner.</br>
-        Added "Source Code Disclosure - CVE-2012-1823.
+        Added "Source Code Disclosure - CVE-2012-1823.</br>
+        Updated Source Code Disclosure - Git" scanner to not scan 404 URLs unless Attack Strength = High or Insane.</br>
+        Updated Source Code Disclosure - SVN" scanner to not scan 404 URLs unless Attack Strength = High or Insane.</br>
+        Updated Source Code Disclosure - CVE-2012-1823" scanner to not scan 404 URLs unless Attack Strength = High or Insane.</br>
 	]]>
 	</changes>
 	<dependson/>
