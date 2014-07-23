@@ -10,6 +10,7 @@
         Added "Insecure HTTP Method" scanner.</br>
         Added "Source Code Disclosure - WEB-INF folder" scanner.</br>
         Added "Source Code Disclosure - CVE-2012-1823.</br>
+        Added "Remote Code Execution - CVE-2012-1823.</br>
         Updated Source Code Disclosure - Git" scanner to not scan 404 URLs unless Attack Strength = High or Insane.</br>
         Updated Source Code Disclosure - SVN" scanner to not scan 404 URLs unless Attack Strength = High or Insane.</br>
         Updated Source Code Disclosure - CVE-2012-1823" scanner to not scan 404 URLs unless Attack Strength = High or Insane.</br>
