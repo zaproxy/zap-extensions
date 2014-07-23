@@ -23,9 +23,11 @@ import java.net.URL;
 import org.apache.log4j.Logger;
 import org.computerist.zap.ZAPSNITerminator;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.view.View;
 
 /*
  * An example ZAP extension which adds a top level menu item. 
@@ -93,6 +95,19 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
 	}
 
 	@Override
+	public void unload() {
+		Control.getSingleton().getExtensionLoader().removeOptionsParamSet(getParams());
+		if (View.isInitialised()) {
+			Control.getSingleton().getExtensionLoader().removeOptionsPanel(getOptionsPanel());
+		}
+	}
+
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
+
+	@Override
     public void optionsLoaded() {
         if (sniEnabled) {
 			initSniTerminator();
@@ -104,11 +119,8 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
 			String serverAddressString = this.getParams().getServerAddress();
 			int serverPort = this.getParams().getServerPort();
 			
-			log.info("initSniTerminator(" + serverAddressString + ", " + serverPort + ")");
-			if (zst != null) {
-				// TODO need fixed jar for this to work
-				//zst.stop();
-			}
+			log.info("Initialize SNI Terminator " + serverAddressString + ":" + serverPort);
+
 			// Read from other configs
 			String proxyAddressString = Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp();
 			int proxyPort = Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort();
