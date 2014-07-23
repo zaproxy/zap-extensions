@@ -175,6 +175,7 @@
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
         <antcall target="build-addon"><param name="addon" value="saml"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="simpleExample"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="sniTerminator"/></antcall>
         <antcall target="build-addon"><param name="addon" value="soap"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
         <antcall target="build-addon"><param name="addon" value="wappalyzer"/></antcall>
@@ -247,6 +248,10 @@
 
     <target name="deploy-simpleExample" description="deploy the simple example extension">
         <antcall target="build-deploy-addon"> <param name="addon" value="simpleExample"/> </antcall>
+    </target>
+    
+    <target name="deploy-sniTerminator" description="deploy the sniTerminator extension">
+        <antcall target="build-deploy-addon"> <param name="addon" value="sniTerminator"/> </antcall>
     </target>
     
     <target name="deploy-soap" description="deploy the SOAP scanning extension">
