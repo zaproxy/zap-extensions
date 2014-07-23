@@ -147,6 +147,16 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					product = matcher.group(1);
 					version = matcher.group(2);
 					dregs = matcher.group(3);
+					
+					//tweak for PHP (for which the general format is RFC compliant), since the the product information stored in the 
+					//database is limited to 3 levels of decimal digits, separated by dots, possibly followed directly by
+					//Alpha, Beta, RC, Patch, PL (ie, alphabetic), possibly followed by some decimal digits
+					if (product.equalsIgnoreCase("PHP")) {
+						String oldversion = version;
+						version = version.replaceAll("^([0-9]+)\\.([0-9]+)\\.([0-9]+)([a-zA-Z]+[0-9]+)?.*$", "$1.$2.$3$4");
+						if (log.isDebugEnabled()) log.debug("For PHP, extracted version " + version +" from "+ oldversion);
+					}
+					//record it..
 					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
 
 					//look for Apache web server modules, if any
@@ -162,7 +172,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 							}
 						}
 					}
-				}					
+				}
 				//for Oracle webserver...
 				while (matcherOracle.find()) { 
 					String product = null, version = null;
