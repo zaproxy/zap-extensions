@@ -25,12 +25,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -127,6 +129,12 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
 
 	@Override
 	public void scan() {
+		//at Low or Medium strength, do not attack URLs which returned "Not Found"
+		AttackStrength attackStrength = getAttackStrength();
+		if ( (attackStrength==AttackStrength.LOW||attackStrength==AttackStrength.MEDIUM) 
+				&& (getBaseMsg().getResponseHeader().getStatusCode() == HttpStatus.SC_NOT_FOUND))
+			return;
+		
 		// scan the node itself (ie, at URL level, rather than at parameter level)
 		if (log.isDebugEnabled()) {
 			log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
