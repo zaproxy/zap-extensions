@@ -124,6 +124,12 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
 	@Override
 	public void scan() {
 		try {
+			//at Low or Medium strength, do not attack URLs which returned "Not Found"
+			AttackStrength attackStrength = getAttackStrength();
+			if ( (attackStrength==AttackStrength.LOW||attackStrength==AttackStrength.MEDIUM) 
+					&& (getBaseMsg().getResponseHeader().getStatusCode() == HttpStatus.SC_NOT_FOUND))
+				return;
+			
 			URI originalURI = getBaseMsg().getRequestHeader().getURI();
 			
 			//construct a new URL based on the original URL, but without any of the original parameters
