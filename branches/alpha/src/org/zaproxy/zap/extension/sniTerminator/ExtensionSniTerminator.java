@@ -93,13 +93,19 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
 	    }
         extensionHook.addOptionsParamSet(getParams());
 	}
+	
+	@Override
+	public void postInstall() {
+        if (sniEnabled) {
+			initSniTerminator();
+        }
+	}
 
 	@Override
 	public void unload() {
-		Control.getSingleton().getExtensionLoader().removeOptionsParamSet(getParams());
-		if (View.isInitialised()) {
-			Control.getSingleton().getExtensionLoader().removeOptionsPanel(getOptionsPanel());
-		}
+		super.unload();
+		// TODO uncomment when bug in underlying jar that NPEs on this is fixed ;)
+		// stopTerminator();
 	}
 
 	@Override
