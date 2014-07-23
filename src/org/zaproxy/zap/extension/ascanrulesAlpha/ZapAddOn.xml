@@ -1,11 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>9</version>
+	<version>8</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
+		Added "Cookie Slack Detector" scanner.</br>
         Added "Insecure HTTP Method" scanner.</br>
         Added "Source Code Disclosure - WEB-INF folder" scanner.</br>
         Added "Source Code Disclosure - CVE-2012-1823.</br>
