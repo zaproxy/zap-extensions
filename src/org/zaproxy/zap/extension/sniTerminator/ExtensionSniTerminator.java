@@ -23,11 +23,9 @@ import java.net.URL;
 import org.apache.log4j.Logger;
 import org.computerist.zap.ZAPSNITerminator;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.view.View;
 
 /*
  * An example ZAP extension which adds a top level menu item. 
@@ -104,8 +102,7 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
 	@Override
 	public void unload() {
 		super.unload();
-		// TODO uncomment when bug in underlying jar that NPEs on this is fixed ;)
-		// stopTerminator();
+		stopTerminator();
 	}
 
 	@Override
