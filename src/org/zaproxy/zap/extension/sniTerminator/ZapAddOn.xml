@@ -1,9 +1,9 @@
 <zapaddon>
 	<name>SNI Terminator</name>
 	<version>1</version>
-	<description>SNI Terminator - requires Java 8!</description>
+	<description>Transparent HTTP proxying - requires Java 8!</description>
 	<author>ZAP Dev Team</author>
-	<url></url>
+	<url>http://www.computerist.org/blog/2014/07/23/Transparent-HTTPS-proxying-with-ZAP/</url>
 	<changes>First version</changes>
 	<dependson/>
 	<extensions>
