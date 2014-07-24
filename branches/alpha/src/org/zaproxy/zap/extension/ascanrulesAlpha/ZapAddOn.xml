@@ -41,4 +41,5 @@
 		<file>xml/example-ascan-file.txt</file>
 	</files>
 	<not-before-version>2.3.0</not-before-version>
+	<not-from-version></not-from-version>
 </zapaddon>

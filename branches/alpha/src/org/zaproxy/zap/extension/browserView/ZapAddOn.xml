@@ -20,5 +20,6 @@
 	<filters/>
 	<files/>
 	<not-before-version>2.3.0</not-before-version>
+	<not-from-version></not-from-version>
 </zapaddon>
 
