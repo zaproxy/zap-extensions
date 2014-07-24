@@ -131,6 +131,8 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
 			String rootcastr = Model.getSingleton().getOptionsParam().getConfig().getString(PARAM_ROOT_CA, null);
 		
 			zst = new ZAPSNITerminator(rootcastr, serverAddressString, serverPort, proxyAddressString, proxyPort);
+			
+			zst.start();
 		}
 	}
 	
