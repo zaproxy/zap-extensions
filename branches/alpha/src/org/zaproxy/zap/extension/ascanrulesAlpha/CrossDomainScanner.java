@@ -40,8 +40,8 @@ import javax.xml.xpath.XPathFactory;
 
 /**
  * A class to actively check if the web server is configured to allow Cross Domain access, from a malicious 
- * third party service, for instance. Currently checks for wildcards in Adobe's crossdomain.xml. 
- * TODO: check for SilverLight's clientaccesspolicy.xml 
+ * third party service, for instance. Currently checks for wildcards in Adobe's crossdomain.xml, and in 
+ * SilverLight's clientaccesspolicy.xml 
  * 
  * @author 70pointer@gmail.com
  *
