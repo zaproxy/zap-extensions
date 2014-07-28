@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.callgraph;
 
+import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.view.AbstractFrame;
@@ -27,6 +28,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.awt.*;
@@ -55,14 +58,25 @@ public class CallGraphFrame extends AbstractFrame {
 
 	private static final Logger log = Logger.getLogger(CallGraphFrame.class);
 	private FontMetrics fontmetrics = null;
-	private mxGraph graph = new mxGraph();
+	private mxGraph graph = new mxGraph() {
+		public String getToolTipForCell(Object cell)
+		{
+			if (model.isEdge(cell))	{
+				//the value is truncated, so get the id, which is the full URL instead
+				mxCell cellSource = (mxCell) model.getTerminal(cell, true);
+				mxCell cellTarget = (mxCell) model.getTerminal(cell, false);
+				return cellSource.getId() + " --> " + cellTarget.getId();				
+			} else if (model.isVertex(cell)) {
+				mxCell cellVertex = (mxCell) cell;				
+				return cellVertex.getId();
+			} else 
+				return "Unknown cell type";
+		}
+	};
 	Object parent = graph.getDefaultParent();
-	//Pattern urlStripPattern = Pattern.compile ("^[^/]+(/.*)$");
-
 
 	public CallGraphFrame(Pattern urlPattern)
 	{
-		//super("Call Graph");
 		//visibility needs to be temporarily set, so we can get the font metrics
 		this.setVisible(true);
 		Graphics graphics = this.getGraphics();
@@ -91,6 +105,10 @@ public class CallGraphFrame extends AbstractFrame {
 		Connection conn = null;        	
 		Statement st = null;
 		ResultSet rs = null;
+		Map <String,String> schemaAuthorityToColor = new HashMap<String, String> ();
+		//some fairly random colors. Don't judge me!
+		String [] colors ={"#999999", "#CC9999", "#FF6633", "#CC9966", "#FFCC33", "#CCCC66", "#CCFF00", "#99CC99", "#669999", "#99FFFF", "#666699", "#9999FF", "#6633CC", "#9933FF", "#996699"};
+		int colorsUsed = 0;
 		try {
 			//Create a pattern for the specified 
 
@@ -105,7 +123,7 @@ public class CallGraphFrame extends AbstractFrame {
 			//prepare to add the vertices to the graph
 			//this must include all URLs references as vertices, even if those URLs did not feature in the history table in their own right
 
-			//include entries of type 1 (proxied), 2 (Ajax spidered), 10 (spidered) from the history
+			//include entries of type 1 (proxied), 2 (spidered), 10 (Ajax spidered) from the history
 			st = conn.createStatement();
 			rs = st.executeQuery("select distinct URI from HISTORY where histtype in (1,2,10) union distinct select distinct  RIGHT(REGEXP_SUBSTRING (REQHEADER, 'Referer:.+') , LENGTH(REGEXP_SUBSTRING (REQHEADER, 'Referer:.+'))-LENGTH('Referer: ')) from HISTORY where REQHEADER like '%Referer%' and histtype in (1,2,10) order by 1");
 			for (; rs.next(); ) {
@@ -114,7 +132,26 @@ public class CallGraphFrame extends AbstractFrame {
 				//remove urls that do not match the pattern specified (all sites / one site) 
 				Matcher urlmatcher = urlPattern.matcher (url);
 				if (urlmatcher.find()) {
-					addVertex(url , url);
+					//addVertex(url , url);					
+					try {
+						URI uri = new URI (url, false);
+						String schemaAuthority = uri.getScheme() + "://" + uri.getAuthority();
+						String path = uri.getPathQuery();
+						if ( path == null) path = "/";
+						String color = schemaAuthorityToColor.get(schemaAuthority);
+						if ( color == null ) {
+							//not found already.. so assign this scheme and authority a color.
+							if (colorsUsed >= colors.length) {
+								throw new Exception ("Too many scheme/authority combinations. Ne need more colours");
+							}
+							color = colors[colorsUsed++];
+							schemaAuthorityToColor.put(schemaAuthority, color);
+							}
+						addVertex(path, url, "fillColor="+color);
+					}
+					catch (Exception e) {
+						log.error("Error graphing node for URL "+ url, e);
+					}
 				} else {
 					if (log.isDebugEnabled()) log.debug("URL "+ url + " does not match the specified pattern "+ urlPattern + ", so not adding it as a vertex");
 				}
@@ -181,13 +218,12 @@ public class CallGraphFrame extends AbstractFrame {
 	}
 	
 	private void setupFrame() {
-
 		// define a visual layout on the graph
 		mxHierarchicalLayout layout = new com.mxgraph.layout.hierarchical.mxHierarchicalLayout (graph, SwingConstants.WEST);
 
 		final mxGraphComponent graphComponent = new mxGraphComponent(graph);			
 		graphComponent.setConnectable(false);
-		graphComponent.setToolTips(false);
+		graphComponent.setToolTips(true);
 		graphComponent.setAutoExtend(true);
 		graphComponent.setAutoScroll(true);	
 
@@ -302,9 +338,10 @@ public class CallGraphFrame extends AbstractFrame {
 		return size;
 	}
 
-	public Object addVertex (String vertexName, String id) {
+	public Object addVertex (String vertexName, String id, String style) {
 		Dimension textsize = this.getTextDimension (vertexName, this.fontmetrics);
-		Object ob = this.graph.insertVertex(this.parent, id, vertexName, 0, 0, textsize.width, textsize.height);
+		Object ob = this.graph.insertVertex(this.parent, id, vertexName, 0, 0, textsize.width, textsize.height, style);
+		
 		return ob;
 	}	
 
