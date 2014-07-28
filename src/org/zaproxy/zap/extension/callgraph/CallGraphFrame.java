@@ -105,8 +105,9 @@ public class CallGraphFrame extends AbstractFrame {
 			//prepare to add the vertices to the graph
 			//this must include all URLs references as vertices, even if those URLs did not feature in the history table in their own right
 
+			//include entries of type 1 (proxied), 2 (Ajax spidered), 10 (spidered) from the history
 			st = conn.createStatement();
-			rs = st.executeQuery("select distinct URI from HISTORY where histtype = 1 union distinct select distinct  RIGHT(REGEXP_SUBSTRING (REQHEADER, 'Referer:.+') , LENGTH(REGEXP_SUBSTRING (REQHEADER, 'Referer:.+'))-LENGTH('Referer: ')) from HISTORY where REQHEADER like '%Referer%'and histtype = 1 order by 1");
+			rs = st.executeQuery("select distinct URI from HISTORY where histtype in (1,2,10) union distinct select distinct  RIGHT(REGEXP_SUBSTRING (REQHEADER, 'Referer:.+') , LENGTH(REGEXP_SUBSTRING (REQHEADER, 'Referer:.+'))-LENGTH('Referer: ')) from HISTORY where REQHEADER like '%Referer%' and histtype in (1,2,10) order by 1");
 			for (; rs.next(); ) {
 				String url = rs.getString(1);	
 
@@ -124,7 +125,7 @@ public class CallGraphFrame extends AbstractFrame {
 
 			//set up the edges in the graph
 			st = conn.createStatement();
-			rs = st.executeQuery("select distinct RIGHT(REGEXP_SUBSTRING (REQHEADER, 'Referer:.+') , LENGTH(REGEXP_SUBSTRING (REQHEADER, 'Referer:.+'))-LENGTH('Referer: ')), URI from HISTORY where REQHEADER like '%Referer%'and histtype = 1 order by 2");
+			rs = st.executeQuery("select distinct RIGHT(REGEXP_SUBSTRING (REQHEADER, 'Referer:.+') , LENGTH(REGEXP_SUBSTRING (REQHEADER, 'Referer:.+'))-LENGTH('Referer: ')), URI from HISTORY where REQHEADER like '%Referer%' and histtype in (1,2,10) order by 2");
 
 			mxGraphModel graphmodel = (mxGraphModel) graph.getModel();
 			for (; rs.next(); ) {
