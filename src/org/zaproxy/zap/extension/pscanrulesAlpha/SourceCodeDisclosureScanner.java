@@ -162,7 +162,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		languagePatterns.put(Pattern.compile("drop\\s+procedure\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("drop\\s+function\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("grant\\s+[a-z]+\\s+on\\s+[a-z0-9._]+\\s+to\\s+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("revoke\\s+[a-z]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("revoke\\s+[a-z0-9 (),]+\\s+on\\s+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 				
 		//Perl
 		languagePatterns.put(Pattern.compile("^#!/usr/bin/perl"), "Perl");
