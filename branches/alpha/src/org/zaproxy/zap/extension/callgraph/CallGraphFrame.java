@@ -106,8 +106,8 @@ public class CallGraphFrame extends AbstractFrame {
 		Statement st = null;
 		ResultSet rs = null;
 		Map <String,String> schemaAuthorityToColor = new HashMap<String, String> ();
-		//some fairly random colors. Don't judge me!
-		String [] colors ={"#999999", "#CC9999", "#FF6633", "#CC9966", "#FFCC33", "#CCCC66", "#CCFF00", "#99CC99", "#669999", "#99FFFF", "#666699", "#9999FF", "#6633CC", "#9933FF", "#996699"};
+		//use some web safe colours. Currently, there are 24 colours.
+		String [] colors ={"#FFFF00", "#FFCC00", "#FF9900", "#FF6600", "#FF3300", "#CCFF00", "#CCCC00", "#CC9900", "#CC6600", "#99FF00", "#999900", "#996600", "#CCFFCC", "#CCCCCC", "#99CCCC", "#9999CC", "#9966CC", "#66FFCC", "#6699CC", "#6666CC", "#33FFCC", "#33CCCC", "#3399CC", "#00FFCC"};
 		int colorsUsed = 0;
 		try {
 			//Create a pattern for the specified 
