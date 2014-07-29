@@ -247,7 +247,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		languagePatterns.put(Pattern.compile("<cfelseif"), "Cold Fusion");
 		languagePatterns.put(Pattern.compile("<cfelse"), "Cold Fusion");
 		languagePatterns.put(Pattern.compile("writeOutput\\s*\\("), "Cold Fusion");
-		languagePatterns.put(Pattern.compile("component\\s*\\{"), "Cold Fusion");		
+		//languagePatterns.put(Pattern.compile("component\\s*\\{"), "Cold Fusion");  //cannot find original example, and too prone to false positives.		
 		
 		//Visual FoxPro / ActiveVFP
 		languagePatterns.put(Pattern.compile("oRequest\\.querystring\\s*\\(\\s*\"[a-z0-9]+\"\\s*\\)", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE),"ActiveVFP");
