@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import net.htmlparser.jericho.Source;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -42,6 +43,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 
 	private PassiveScanThread parent = null;
+	
+	private static final Logger log = Logger.getLogger(SourceCodeDisclosureScanner.class);
 	
 	/**
 	 * a consistently ordered map of: a regular expression pattern to the Programming language (string) to which the pattern most likely corresponds
@@ -133,7 +136,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		//languagePatterns.put(Pattern.compile("end\\s+select", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "VB.NET");  //False positives. Insufficiently anchored.
 		
 		//SQL (ie, generic Structured Query Language, not "Microsoft SQL Server", which some incorrectly refer to as just "SQL")  
-		languagePatterns.put(Pattern.compile("select\\s+.+?\\s+from\\s+[a-z0-9.]+\\s+where\\s+", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("select\\s+[a-z0-9., \"\'()*]+\\s+from\\s+[a-z0-9., ]+\\s+where\\s+", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("select\\s+@@[a-z]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("insert\\s+into\\s+[a-z0-9._]+\\s+values\\s+\\(", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("insert\\s+into\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
@@ -316,13 +319,16 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 			Pattern languagePattern = patternIterator.next();
 			programminglanguage = languagePatterns.get(languagePattern);
 			Matcher matcher = languagePattern.matcher(responsebody);
-	        if (matcher.find()) {
+	        if (matcher.find()) {	        	
 	            evidence = matcher.group();
+	            if (log.isDebugEnabled()) {
+	        		log.debug("Passive Source Code Disclosure on pattern "+ languagePattern + ", evidence: "+ evidence);
+	        	}
 	            break;	//use the first match
 	        }	    
 		}
 		if (evidence!=null && evidence.length() > 0) {
-			//we found something
+			//we found something			
 			Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.WARNING, getName() + " - "+ programminglanguage );		
 			     
 			alert.setDetail(
