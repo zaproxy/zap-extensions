@@ -41,6 +41,7 @@ import javax.swing.SwingConstants;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
@@ -91,7 +92,7 @@ public class CallGraphFrame extends AbstractFrame {
 		} catch (SQLException e) {
 			log.error("Failed to setup the graph", e);
 		}
-		
+
 	}
 
 
@@ -115,7 +116,7 @@ public class CallGraphFrame extends AbstractFrame {
 			//get a new connection to the database to query it, since the existing database classes do not cater for 
 			//ad-hoc queries on the table
 			conn = Database.getSingleton().getDatabaseServer().getNewConnection();
-			
+
 			//we begin adding stuff to the graph, so begin a "transaction" on it.
 			//we will close this after we add all the vertexes and edges to the graph 
 			graph.getModel().beginUpdate();
@@ -146,7 +147,7 @@ public class CallGraphFrame extends AbstractFrame {
 							}
 							color = colors[colorsUsed++];
 							schemaAuthorityToColor.put(schemaAuthority, color);
-							}
+						}
 						addVertex(path, url, "fillColor="+color);
 					}
 					catch (Exception e) {
@@ -178,8 +179,8 @@ public class CallGraphFrame extends AbstractFrame {
 				//if (urlmatcher.find()) {
 				//	url =  urlmatcher.group(1);
 				//	}
-				
-				
+
+
 				//remove urls that do not match the pattern specified (all sites / one site) 
 				Matcher urlmatcher1 = urlPattern.matcher (predecessor);
 				if (! urlmatcher1.find()) {
@@ -191,7 +192,7 @@ public class CallGraphFrame extends AbstractFrame {
 					if (log.isDebugEnabled()) log.debug("URL "+ url + " does not match the specified pattern "+ urlPattern + ", so not adding it as a vertex");
 					continue;  //to the next iteration
 				}
-				
+
 				//check that we have added the url as a vertex in its own right.. definitely should have happened..
 				mxCell predecessorVertex = (mxCell)graphmodel.getCell(predecessor); 
 				mxCell postdecessorVertex = (mxCell)graphmodel.getCell(url); 
@@ -202,13 +203,32 @@ public class CallGraphFrame extends AbstractFrame {
 				//add the edge (ie, add the dependency between 2 URLs)
 				graph.insertEdge(parent, predecessorVertex.getId()+"-->"+postdecessorVertex.getId(), null, predecessorVertex, postdecessorVertex);
 			}
+
+			//once all the vertices and edges are drawn, look for root nodes (nodes with no incoming edges)
+			//we will display the full URl for these, rather than just the path, to aid viewing the graph
+			Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
+			for (Object vertex : vertices) {
+				Object [] incomingEdgesForVertex = graph.getIncomingEdges(vertex);
+				if ( incomingEdgesForVertex == null || (incomingEdgesForVertex!=null && incomingEdgesForVertex.length == 0) ) {
+					//it's a root node. Set it's value (displayed label) to the same as it's id (the full URL)
+					mxCell vertextCasted = (mxCell) vertex;
+					vertextCasted.setValue(vertextCasted.getId());
+					
+					//now sort out the text metrics for the vertex, since the size of the displayed text has been changed
+					Dimension textsize = this.getTextDimension ((String) vertextCasted.getValue(), this.fontmetrics);
+					mxGeometry cellGeometry = vertextCasted.getGeometry();
+					cellGeometry.setHeight(textsize.getHeight());
+					cellGeometry.setWidth(textsize.getWidth());
+					vertextCasted.setGeometry(cellGeometry);
+				} 
+			}
 		}
 		catch (SQLException e) {
 			log.error("Error trying to setup the graph", e);
 			throw e;
 		}
 		finally {
-			
+
 			if (rs != null && ! rs.isClosed()) rs.close();
 			if (st != null && ! st.isClosed()) st.close();			
 			if (conn !=null && ! conn.isClosed()) conn.close();
@@ -216,7 +236,7 @@ public class CallGraphFrame extends AbstractFrame {
 			graph.getModel().endUpdate();	
 		}
 	}
-	
+
 	private void setupFrame() {
 		// define a visual layout on the graph
 		mxHierarchicalLayout layout = new com.mxgraph.layout.hierarchical.mxHierarchicalLayout (graph, SwingConstants.WEST);
@@ -229,7 +249,7 @@ public class CallGraphFrame extends AbstractFrame {
 
 		//add the graph component to the frame in the centre.
 		getContentPane().add(graphComponent, BorderLayout.CENTER);
-		
+
 		//and set up a panel below that
 		JPanel toolBar = new JPanel();
 		toolBar.setLayout(new BorderLayout());
@@ -245,85 +265,85 @@ public class CallGraphFrame extends AbstractFrame {
 		// zoom to fit button
 		JButton btZoomToFit = new JButton("Zoom To Fit");
 		btZoomToFit.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				double newScale = 1;
+				Dimension graphSize = graphComponent.getGraphControl().getSize();
+				Dimension viewPortSize = graphComponent.getViewport().getSize();
+				int gw = (int) graphSize.getWidth();
+				int gh = (int) graphSize.getHeight();
+				if (gw > 0 && gh > 0) {
+					int w = (int) viewPortSize.getWidth();
+					int h = (int) viewPortSize.getHeight();
+
+					newScale = Math.min((double) w / gw, (double) h / gh);
+				} 
+				graphComponent.zoomTo(newScale, true);
+			}
+		});
+		buttonBar.add(btZoomToFit);
+
+
+		// center graph
+		JButton btCenter = new JButton("Center The Graph");
+		btCenter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Dimension graphSize = graphComponent.getGraphControl().getSize();
+				Dimension viewPortSize = graphComponent.getViewport().getSize();
+				int x = graphSize.width/2 - viewPortSize.width/2;
+				int y = graphSize.height/2 - viewPortSize.height/2;
+				int w = viewPortSize.width;
+				int h = viewPortSize.height;
+				graphComponent.getGraphControl().scrollRectToVisible( new Rectangle( x, y, w, h));
+			}
+		});
+		buttonBar.add(btCenter);
+
+		// add a rubberband zoom on the mouse selection event 
+		new mxRubberband(graphComponent) {
+
+			public void mouseReleased(MouseEvent e)
+			{
+				// get bounds before they are reset
+				Rectangle rect = bounds;
+				// invoke usual behaviour
+				super.mouseReleased(e);
+
+				if( rect != null) {
+
 					double newScale = 1;
-					Dimension graphSize = graphComponent.getGraphControl().getSize();
+					Dimension graphSize = new Dimension( rect.width, rect.height);
 					Dimension viewPortSize = graphComponent.getViewport().getSize();
 					int gw = (int) graphSize.getWidth();
 					int gh = (int) graphSize.getHeight();
 					if (gw > 0 && gh > 0) {
 						int w = (int) viewPortSize.getWidth();
 						int h = (int) viewPortSize.getHeight();
-
 						newScale = Math.min((double) w / gw, (double) h / gh);
-					} 
-					graphComponent.zoomTo(newScale, true);
-				}
-			});
-			buttonBar.add(btZoomToFit);
-
-
-			// center graph
-			JButton btCenter = new JButton("Center The Graph");
-			btCenter.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					Dimension graphSize = graphComponent.getGraphControl().getSize();
-					Dimension viewPortSize = graphComponent.getViewport().getSize();
-					int x = graphSize.width/2 - viewPortSize.width/2;
-					int y = graphSize.height/2 - viewPortSize.height/2;
-					int w = viewPortSize.width;
-					int h = viewPortSize.height;
-					graphComponent.getGraphControl().scrollRectToVisible( new Rectangle( x, y, w, h));
-				}
-			});
-			buttonBar.add(btCenter);
-
-			// add a rubberband zoom on the mouse selection event 
-			new mxRubberband(graphComponent) {
-
-				public void mouseReleased(MouseEvent e)
-				{
-					// get bounds before they are reset
-					Rectangle rect = bounds;
-					// invoke usual behaviour
-					super.mouseReleased(e);
-
-					if( rect != null) {
-
-						double newScale = 1;
-						Dimension graphSize = new Dimension( rect.width, rect.height);
-						Dimension viewPortSize = graphComponent.getViewport().getSize();
-						int gw = (int) graphSize.getWidth();
-						int gh = (int) graphSize.getHeight();
-						if (gw > 0 && gh > 0) {
-							int w = (int) viewPortSize.getWidth();
-							int h = (int) viewPortSize.getHeight();
-							newScale = Math.min((double) w / gw, (double) h / gh);
-						}
-						// zoom to fit the selected area on screen
-						graphComponent.zoom(newScale);
-						// make the selected area visible 
-						graphComponent.getGraphControl().scrollRectToVisible( new Rectangle( (int) (rect.x * newScale), (int) (rect.y * newScale),  (int) (rect.width * newScale),  (int) (rect.height * newScale )));
 					}
+					// zoom to fit the selected area on screen
+					graphComponent.zoom(newScale);
+					// make the selected area visible 
+					graphComponent.getGraphControl().scrollRectToVisible( new Rectangle( (int) (rect.x * newScale), (int) (rect.y * newScale),  (int) (rect.width * newScale),  (int) (rect.height * newScale )));
 				}
-			};
-
-			// put the components on frame
-			toolBar.add(buttonBar, BorderLayout.CENTER);
-			getContentPane().add(toolBar, BorderLayout.SOUTH);
-			
-			//TODO: Do we need this here?
-			//frame.setVisible(true);
-
-			//lay it out
-			graph.getModel().beginUpdate();
-			try {
-				layout.execute(graph.getDefaultParent());
-			} finally {
-				graph.getModel().endUpdate();
 			}
+		};
+
+		// put the components on frame
+		toolBar.add(buttonBar, BorderLayout.CENTER);
+		getContentPane().add(toolBar, BorderLayout.SOUTH);
+
+		//TODO: Do we need this here?
+		//frame.setVisible(true);
+
+		//lay it out
+		graph.getModel().beginUpdate();
+		try {
+			layout.execute(graph.getDefaultParent());
+		} finally {
+			graph.getModel().endUpdate();
+		}
 
 		//setDefaultCloseOperation(JFrame.);
 		//setSize(400, 400);
@@ -341,7 +361,7 @@ public class CallGraphFrame extends AbstractFrame {
 	public Object addVertex (String vertexName, String id, String style) {
 		Dimension textsize = this.getTextDimension (vertexName, this.fontmetrics);
 		Object ob = this.graph.insertVertex(this.parent, id, vertexName, 0, 0, textsize.width, textsize.height, style);
-		
+
 		return ob;
 	}	
 
