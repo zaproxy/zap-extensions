@@ -23,15 +23,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.htmlparser.jericho.Source;
 
+import org.apache.commons.httpclient.URIException;
+import org.apache.http.HttpHeaders;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -65,6 +70,11 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 	 * Prefix for internationalized messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanalpha.timestampdisclosure.";
+	
+	/**
+	 * ignore the following response headers for the purposes of the comparison, since they cause false positives
+	 */
+	private static final String [] RESPONSE_HEADERS_TO_IGNORE = {HttpHeader._KEEP_ALIVE, HttpHeaders.CACHE_CONTROL, HttpHeaders.ETAG, HttpHeaders.AGE};  
 
 	/**
 	 * gets the name of the scanner
@@ -93,57 +103,76 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 	 */
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		
-		if (log.isDebugEnabled()) log.debug("Checking message "+ msg + " for timestamps");
-		
-		//get the body contents as a String, so we can match against it
-		String responseheader = msg.getResponseHeader().getHeadersAsString();
-		String responsebody = new String (msg.getResponseBody().getBytes());
-		String [] responseparts = {responseheader, responsebody};
-		
-		//try each of the patterns in turn against the response.				
-		String timestampType = null;
-		Iterator<Pattern> patternIterator = timestampPatterns.keySet().iterator();		
-		
-		while (patternIterator.hasNext()) {
-			Pattern timestampPattern = patternIterator.next();
-			timestampType = timestampPatterns.get(timestampPattern);
-			if (log.isDebugEnabled()) log.debug("Trying Timestamp Pattern: "+ timestampPattern + " for timestamp type "+ timestampType);
-			for (String haystack: responseparts) {
-				Matcher matcher = timestampPattern.matcher(haystack);
-		        while (matcher.find()) {
-		            String evidence = matcher.group();
-		            java.util.Date timestamp=null;
-            		try {
-            			//parse the number as a Unix timestamp
-	            		timestamp = new java.util.Date((long)Integer.parseInt(evidence) *1000);
-	            	}
-		            catch (NumberFormatException nfe) {
-		            	//the number is not formatted correctly to be a timestamp. Skip it.
-		            	continue;
-		            }
-		            if (log.isDebugEnabled()) log.debug("Found a match for timestamp type "+ timestampType +":" + evidence);
-		            
-			        if ( evidence!=null && evidence.length() > 0) {
-						//we found something
-						Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.SUSPICIOUS, getName() + " - "+ timestampType );
-						alert.setDetail(
-								getDescription() + " - "+ timestampType, 
-								msg.getRequestHeader().getURI().toString(), 
-								"", //param
-								evidence, //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
-								getExtraInfo(msg, evidence, timestamp),  //other info
-								getSolution(), 
-								getReference(), 
-								evidence,
-								200, //Information Exposure, 
-								13, //Information Leakage
-								msg);  
-						parent.raiseAlert(id, alert);
-						//do NOT break at this point.. we need to find *all* the potential timestamps in the response..
-			        }
-		        }
-			}	
+		try {
+			if (log.isDebugEnabled())			
+				log.debug("Checking message "+ msg.getRequestHeader().getURI().getURI() + " for timestamps");
+
+			List <HttpHeaderField> responseheaders = msg.getResponseHeader().getHeaders();
+			StringBuffer filteredResponseheaders = new StringBuffer ();
+			for (HttpHeaderField responseheader: responseheaders) {
+				boolean ignoreHeader = false;
+				for (String headerToIgnore: RESPONSE_HEADERS_TO_IGNORE) {					
+					if (responseheader.getName().equalsIgnoreCase(headerToIgnore)) {
+						if (log.isDebugEnabled()) log.debug ("Ignoring header "+ responseheader.getName());
+						ignoreHeader = true;
+						break; //out of inner loop 
+					}
+				}
+				if (!ignoreHeader) {
+					filteredResponseheaders.append("\n");
+					filteredResponseheaders.append(responseheader.getName() + ": "+ responseheader.getValue());
+				} 
+			}
+
+			String responsebody = new String (msg.getResponseBody().getBytes());
+			String [] responseparts = {filteredResponseheaders.toString(), responsebody};
+
+			//try each of the patterns in turn against the response.				
+			String timestampType = null;
+			Iterator<Pattern> patternIterator = timestampPatterns.keySet().iterator();		
+
+			while (patternIterator.hasNext()) {
+				Pattern timestampPattern = patternIterator.next();
+				timestampType = timestampPatterns.get(timestampPattern);
+				if (log.isDebugEnabled()) log.debug("Trying Timestamp Pattern: "+ timestampPattern + " for timestamp type "+ timestampType);
+				for (String haystack: responseparts) {
+					Matcher matcher = timestampPattern.matcher(haystack);
+					while (matcher.find()) {
+						String evidence = matcher.group();
+						java.util.Date timestamp=null;
+						try {
+							//parse the number as a Unix timestamp
+							timestamp = new java.util.Date((long)Integer.parseInt(evidence) *1000);
+						}
+						catch (NumberFormatException nfe) {
+							//the number is not formatted correctly to be a timestamp. Skip it.
+							continue;
+						}
+						if (log.isDebugEnabled()) log.debug("Found a match for timestamp type "+ timestampType +":" + evidence);
+
+						if ( evidence!=null && evidence.length() > 0) {
+							//we found something
+							Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.SUSPICIOUS, getName() + " - "+ timestampType );
+							alert.setDetail(
+									getDescription() + " - "+ timestampType, 
+									msg.getRequestHeader().getURI().toString(), 
+									"", //param
+									evidence, //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+									getExtraInfo(msg, evidence, timestamp),  //other info
+									getSolution(), 
+									getReference(), 
+									evidence,
+									200, //Information Exposure, 
+									13, //Information Leakage
+									msg);  
+							parent.raiseAlert(id, alert);
+							//do NOT break at this point.. we need to find *all* the potential timestamps in the response..
+						}
+					}
+				}	
+			}
+		} catch (URIException e) {
+			log.error ("An exception occurrred passively scanning for timestamps");
 		}
 	}
 
