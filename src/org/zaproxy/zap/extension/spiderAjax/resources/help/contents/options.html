@@ -16,9 +16,6 @@
 	<h3>Number of Browser Windows</h3>
 	You can configure the number of windows to be used by AJAX Spider. The more windows, the
 	faster the process will be.
-	<h3>Crawl in depth</h3>
-	If you enable this option, more HTML tags will be analyzed to find new links. It usually
-	improve the overall results but it also slows down the process.
 	<h3>Browser</h3>
 	<p>AJAX Spider relies on an external browser to crawl the targeted site. You can
 		specify which one you want to use: Firefox, Chrome or HtmlUnit.</p>
@@ -31,6 +28,23 @@
 	</p>
 	<h3>Select ChromeDriver</h3>
 	<p>Allows to select the location of the Chrome Driver.</p>
+	<h3>Crawl in depth</h3>
+	If you enable this option, more HTML tags will be analyzed to find new links. Following tags will be analyzed: a, button, td, 
+	span, div, tr, ol, li, radio, form, select, input, option, img, p, abbr, address, area, article, aside, audio, canvas, details, 
+	footer, header, label, nav, section, summary, table, textarea, th, ul, video. This usually improves overall results but slows down the process.
+	<h3>Maximum crawl depth</h3>
+	The maximum depth that the crawler can reach. The default is 10. Unlimited depth is zero.
+	<h3>Maximum crawl states</h3>
+	The maximum number of states that the crawler should crawl. The default is unlimited. Unlimited crawl states is zero.
+	<h3>Maximum duration</h3>
+	The maximum time that the crawler should run. Default is one hour. Unlimited running time is zero. Crawler will stop if one of other limiting conditions is reached.
+	<h3>Event wait time</h3>
+	The time to wait after an event is fired.  Default is 1000 milliseconds.
+	<h3>Reload wait time</h3>
+	The time to wait after URL is loaded. Default is 1000 milliseconds.
+	<h3>Click elements once</h3>
+	Sets the crawler to interact with any element only once. Default is true.
+	
 
 	<H2>See also</H2>
 	<table>
