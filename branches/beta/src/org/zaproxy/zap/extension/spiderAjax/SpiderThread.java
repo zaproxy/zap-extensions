@@ -65,7 +65,6 @@ public class SpiderThread implements Runnable {
 
 	// crawljax config
 	private static final boolean RAND_INPUT_FORMS = true;
-	private static final int MAX_DEPTH = 10;	// TODO - make this configurable by the user
 	private String url = null;
 	private ExtensionAjax extension = null;
 	private CrawljaxRunner crawljax;
@@ -165,29 +164,48 @@ public class SpiderThread implements Runnable {
 			crawlRulesBuilder.click("ol");
 			crawlRulesBuilder.click("li");
 			crawlRulesBuilder.click("radio");
-			crawlRulesBuilder.click("non");
-			crawlRulesBuilder.click("meta");
-			crawlRulesBuilder.click("refresh");
-			crawlRulesBuilder.click("xhr");
-			crawlRulesBuilder.click("relative");
-			crawlRulesBuilder.click("link");
-			crawlRulesBuilder.click("self");
 			crawlRulesBuilder.click("form");
 			crawlRulesBuilder.click("select");
 			crawlRulesBuilder.click("input");
 			crawlRulesBuilder.click("option");
 			crawlRulesBuilder.click("img");
 			crawlRulesBuilder.click("p");
+			crawlRulesBuilder.click("abbr");
+			crawlRulesBuilder.click("address");
+			crawlRulesBuilder.click("area");
+			crawlRulesBuilder.click("article");
+			crawlRulesBuilder.click("aside");
+			crawlRulesBuilder.click("audio");
+			crawlRulesBuilder.click("canvas");
+			crawlRulesBuilder.click("details");
+			crawlRulesBuilder.click("footer");
+			crawlRulesBuilder.click("header");
+			crawlRulesBuilder.click("label");
+			crawlRulesBuilder.click("nav");
+			crawlRulesBuilder.click("section");
+			crawlRulesBuilder.click("summary");
+			crawlRulesBuilder.click("table");
+			crawlRulesBuilder.click("textarea");
+			crawlRulesBuilder.click("th");
+			crawlRulesBuilder.click("ul");
+			crawlRulesBuilder.click("video");
 		}
 
 		configurationBuilder.crawlRules().insertRandomDataInInputForms(RAND_INPUT_FORMS);
-		// TODO - make this configurable by the user
-		configurationBuilder.crawlRules().waitAfterEvent(1000, TimeUnit.MILLISECONDS);
+		
+		configurationBuilder.crawlRules().waitAfterEvent(this.extension.getAjaxSpiderParam().getEventWait(),TimeUnit.MILLISECONDS);
+		configurationBuilder.crawlRules().waitAfterReloadUrl(this.extension.getAjaxSpiderParam().getReloadWait(),TimeUnit.MILLISECONDS);
 
-		// TODO - make this configurable by the user
-		configurationBuilder.setUnlimitedStates();
-		configurationBuilder.setMaximumDepth(MAX_DEPTH);
-
+		if (this.extension.getAjaxSpiderParam().getMaxCrawlStates() == 0) {
+			configurationBuilder.setUnlimitedStates();
+		} else {
+			configurationBuilder.setMaximumStates(this.extension.getAjaxSpiderParam().getMaxCrawlStates());
+		}
+				
+		configurationBuilder.setMaximumDepth(this.extension.getAjaxSpiderParam().getMaxCrawlDepth());
+		configurationBuilder.setMaximumRunTime(this.extension.getAjaxSpiderParam().getMaxDuration(),TimeUnit.MINUTES);
+		configurationBuilder.crawlRules().clickOnce(this.extension.getAjaxSpiderParam().isClickOnce());
+				
 		return configurationBuilder.build();
 	}
 	
