@@ -57,23 +57,54 @@ public class AjaxSpiderParam extends AbstractParam {
     private static final String CONFIG_VERSION_KEY = AJAX_SPIDER_BASE_KEY + ".configVersion";
 
     private static final String NUMBER_OF_BROWSERS_KEY = AJAX_SPIDER_BASE_KEY + ".numberOfBrowsers";
+    
+    private static final String MAX_CRAWL_DEPTH_KEY = AJAX_SPIDER_BASE_KEY + ".MaxCrawlDepth";
+    
+    private static final String MAX_CRAWL_STATES_KEY = AJAX_SPIDER_BASE_KEY + ".MaxCrawlStates";
+    
+    private static final String MAX_DURATION_KEY = AJAX_SPIDER_BASE_KEY + ".MaxDuration";
+    
+    private static final String EVENT_WAIT_TIME_KEY = AJAX_SPIDER_BASE_KEY + ".EventWaitTime";
+    
+    private static final String RELOAD_WAIT_TIME_KEY = AJAX_SPIDER_BASE_KEY + ".ReloadWaitTime";
 
     private static final String BROWSER_ID_KEY = AJAX_SPIDER_BASE_KEY + ".browserId";
 
     private static final String CRAWL_IN_DEPTH_KEY = AJAX_SPIDER_BASE_KEY + ".crawlInDepth";
+    
+    private static final String CLICK_ONCE_KEY = AJAX_SPIDER_BASE_KEY + ".ClickOnce";
 
     private static final int DEFAULT_NUMBER_OF_BROWSERS = 1;
+    
+    private static final int DEFAULT_MAX_CRAWL_DEPTH = 10;
+    
+    private static final int DEFAULT_CRAWL_STATES = 0;
+    
+    private static final int DEFAULT_MAX_DURATION = 60;
+    
+    private static final int DEFAULT_EVENT_WAIT_TIME = 1000;
+    
+    private static final int DEFAULT_RELOAD_WAIT_TIME = 1000;
 
     private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
-
-    private static final boolean DEFAULT_CRAWL_IN_DEPTH = false;
+ 
+    private static final boolean DEFAULT_CRAWL_IN_DEPTH = true;
+    
+    private static final boolean DEFAULT_CLICK_ONCE = true;
 
     private int numberOfBrowsers;
     private int numberOfThreads;
+    private int MaxCrawlDepth;
+    private int MaxCrawlStates;
+    private int MaxDuration;
+    private int EventWait;
+    private int ReloadWait;
 
     private Browser browser;
 
     private boolean crawlInDepth;
+    
+    private boolean ClickOnce;
 
     @Override
     protected void parse() {
@@ -94,6 +125,38 @@ public class AjaxSpiderParam extends AbstractParam {
         } catch (ConversionException e) {
             logger.error("Error while loading the number of browsers: " + e.getMessage(), e);
         }
+        
+        try {
+            this.MaxCrawlDepth = getConfig().getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
+        } catch (ConversionException e) {
+            logger.error("Error while loading the max crawl depth: " + e.getMessage(), e);
+        }
+        
+        try {
+            this.MaxCrawlStates = getConfig().getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
+        } catch (ConversionException e) {
+            logger.error("Error while loading max crawl states: " + e.getMessage(), e);
+        }
+        
+        try {
+            this.MaxDuration = getConfig().getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
+        } catch (ConversionException e) {
+            logger.error("Error while loading the crawl duration: " + e.getMessage(), e);
+        }
+        
+        try {
+            this.EventWait = getConfig().getInt(EVENT_WAIT_TIME_KEY, DEFAULT_EVENT_WAIT_TIME);
+        } catch (ConversionException e) {
+            logger.error("Error while loading the event wait time: " + e.getMessage(), e);
+        }
+        
+        try {
+            this.ReloadWait = getConfig().getInt(RELOAD_WAIT_TIME_KEY, DEFAULT_RELOAD_WAIT_TIME);
+        } catch (ConversionException e) {
+            logger.error("Error while loading the reload wait time: " + e.getMessage(), e);
+        }
+        
+        
 
         String browserId;
         try {
@@ -114,20 +177,84 @@ public class AjaxSpiderParam extends AbstractParam {
         } catch (ConversionException e) {
             logger.error("Error while loading the crawl in depth option: " + e.getMessage(), e);
         }
+        
+        try {
+            this.ClickOnce = getConfig().getBoolean(CLICK_ONCE_KEY, DEFAULT_CLICK_ONCE);
+        } catch (ConversionException e) {
+            logger.error("Error while loading the click once option: " + e.getMessage(), e);
+        }
+        
+        
+        
     }
 
     public int getNumberOfBrowsers() {
         return numberOfBrowsers;
     }
-
+    
+    
     public void setNumberOfBrowsers(int numberOfBrowsers) {
         this.numberOfBrowsers = numberOfBrowsers;
         getConfig().setProperty(NUMBER_OF_BROWSERS_KEY, Integer.valueOf(numberOfBrowsers));
     }
+    
+  
 
     public int getNumberOfThreads() {
         return numberOfThreads;
     }
+    
+    
+    public int getMaxCrawlDepth() {
+    	return MaxCrawlDepth; 
+    }
+    
+    public void setMaxCrawlDepth(int MaxCrawlDepth) {
+        this.MaxCrawlDepth = MaxCrawlDepth;
+        getConfig().setProperty(MAX_CRAWL_DEPTH_KEY, Integer.valueOf(MaxCrawlDepth));
+    }
+    
+    
+    
+    public int getMaxCrawlStates() {
+    	return MaxCrawlStates; 
+    }
+    
+    public void setMaxCrawlStates(int MaxCrawlStates) {
+        this.MaxCrawlStates = MaxCrawlStates;
+        getConfig().setProperty(MAX_CRAWL_STATES_KEY, Integer.valueOf(MaxCrawlStates));
+    }
+    
+    
+    public int getMaxDuration() {
+    	return MaxDuration; 
+    }
+    
+    public void setMaxDuration(int MaxDuration) {
+        this.MaxDuration = MaxDuration;
+        getConfig().setProperty(MAX_DURATION_KEY, Integer.valueOf(MaxDuration));
+    }
+    
+    public int getEventWait() {
+    	return EventWait; 
+    }
+    
+    
+    public void setEventWait(int EventWait) {
+        this.EventWait = EventWait;
+        getConfig().setProperty(EVENT_WAIT_TIME_KEY, Integer.valueOf(EventWait));
+    }
+    
+    
+    public int getReloadWait() {
+    	return ReloadWait; 
+    }
+    
+    public void setReloadWait(int ReloadWait) {
+        this.ReloadWait = ReloadWait;
+        getConfig().setProperty(RELOAD_WAIT_TIME_KEY, Integer.valueOf(ReloadWait));
+    }
+    
 
     public Browser getBrowser() {
         return browser;
@@ -146,4 +273,16 @@ public class AjaxSpiderParam extends AbstractParam {
         this.crawlInDepth = crawlInDepth;
         getConfig().setProperty(CRAWL_IN_DEPTH_KEY, Boolean.valueOf(crawlInDepth));
     }
+    
+    public boolean isClickOnce() {
+        return ClickOnce;
+    }
+
+    public void setClickOnce(boolean ClickOnce) {
+        this.ClickOnce = ClickOnce;
+        getConfig().setProperty(CLICK_ONCE_KEY, Boolean.valueOf(ClickOnce));
+    }
+    
+  
+    
 }
