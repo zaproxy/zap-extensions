@@ -46,14 +46,26 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private ExtensionAjax extension=null;
 	private JPanel panelCrawljax = null;
 	private ZapNumberSpinner txtNumBro = null;
+	private ZapNumberSpinner txtNumDpth = null;
+	private ZapNumberSpinner txtNumStates = null;
+	private ZapNumberSpinner txtNumDuration = null;
+	private ZapNumberSpinner txtNumEventWait = null;
+	private ZapNumberSpinner txtNumReloadWait = null;
+	
     
 	private JCheckBox ClickAllElems = null;
+	private JCheckBox ClickOnce = null;
 	private JRadioButton firefox = null;
 	private JRadioButton chrome = null;
 	private JRadioButton ie = null;
 	private JRadioButton htmlunit = null;
 	private JButton selectChromeDriverButton;
 	private JLabel browsers = null;
+	private JLabel depth = null;
+	private JLabel crawlstates = null;
+	private JLabel maxduration = null;
+	private JLabel eventwait = null;
+	private JLabel reloadwait = null;
 	private static final Logger logger = Logger.getLogger(OptionsAjaxSpider.class);
 
 	/**
@@ -91,7 +103,69 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		return txtNumBro;
 	}
 	
-
+	/**
+	 * This method initializes txtNumDpth	
+	 * 	
+	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
+	 */    
+	private ZapNumberSpinner getTxtNumDpth() {
+		if (txtNumDpth == null) {
+			txtNumDpth = new ZapNumberSpinner(0, 10, Integer.MAX_VALUE);
+		}
+		return txtNumDpth;
+	}
+	
+	
+	/**
+	 * This method initializes txtNumStates	
+	 * 	
+	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
+	 */    
+	private ZapNumberSpinner getNumStates() {
+		if (txtNumStates == null) {
+			txtNumStates = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
+		}
+		return txtNumStates;
+	}
+	
+	/**
+	 * This method initializes txtNumDuration	
+	 * 	
+	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
+	 */    
+	private ZapNumberSpinner getNumDuration() {
+		if (txtNumDuration == null) {
+			txtNumDuration = new ZapNumberSpinner(0, 60, Integer.MAX_VALUE);
+		}
+		return txtNumDuration;
+	}
+	
+	
+	/**
+	 * This method initializes txtNumEventWait	
+	 * 	
+	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
+	 */    
+	private ZapNumberSpinner getNumWait() {
+		if (txtNumEventWait == null) {
+			txtNumEventWait = new ZapNumberSpinner(1, 1000, Integer.MAX_VALUE);
+		}
+		return txtNumEventWait;
+	}
+	
+	
+	/**
+	 * This method initializes txtNumReloadWait	
+	 * 	
+	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
+	 */    
+	private ZapNumberSpinner getNumReloadWait() {
+		if (txtNumReloadWait == null) {
+			txtNumReloadWait = new ZapNumberSpinner(1, 1000, Integer.MAX_VALUE);
+		}
+		return txtNumReloadWait;
+	}
+	
 	/**
 	 * 
 	 * @return
@@ -103,6 +177,15 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			}
 			return ClickAllElems;
 		}
+	
+	private JCheckBox getClickOnce() {
+		if (ClickOnce == null) {
+			ClickOnce = new JCheckBox();
+			ClickOnce.setText(this.extension.getMessages().getString("spiderajax.options.label.clickonce"));
+		}
+		return ClickOnce;
+	}
+	
 
 	/**
 	 * 
@@ -162,7 +245,17 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
 
 	    txtNumBro.setValue(Integer.valueOf(ajaxSpiderParam.getNumberOfBrowsers()));
+	    txtNumDpth.setValue(Integer.valueOf(ajaxSpiderParam.getMaxCrawlDepth()));
+	    txtNumStates.setValue(Integer.valueOf(ajaxSpiderParam.getMaxCrawlStates()));
+	    txtNumDuration.setValue(Integer.valueOf(ajaxSpiderParam.getMaxDuration()));
+	    txtNumEventWait.setValue(Integer.valueOf(ajaxSpiderParam.getEventWait()));
+	    txtNumReloadWait.setValue(Integer.valueOf(ajaxSpiderParam.getReloadWait()));
+	   
 	    getClickAllElems().setSelected(ajaxSpiderParam.isCrawlInDepth());
+	    getClickOnce().setSelected(ajaxSpiderParam.isClickOnce());
+	    
+	    
+	    
 	    
 	    switch (ajaxSpiderParam.getBrowser()) {
 	    case FIREFOX:
@@ -197,8 +290,18 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		OptionsParam optionsParam = (OptionsParam) obj;
 		AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
 
+		ajaxSpiderParam.setClickOnce(getClickOnce().isSelected());
 		ajaxSpiderParam.setCrawlInDepth(getClickAllElems().isSelected());
 		ajaxSpiderParam.setNumberOfBrowsers(txtNumBro.getValue().intValue());
+		ajaxSpiderParam.setMaxCrawlDepth(txtNumDpth.getValue().intValue());
+		ajaxSpiderParam.setMaxCrawlStates(txtNumStates.getValue().intValue());
+		ajaxSpiderParam.setMaxDuration(txtNumDuration.getValue().intValue());
+		ajaxSpiderParam.setEventWait(txtNumEventWait.getValue().intValue());
+		ajaxSpiderParam.setReloadWait(txtNumReloadWait.getValue().intValue());
+		
+		
+		
+		
 		
 		if(getFirefox().isSelected()){
 			ajaxSpiderParam.setBrowser(Browser.FIREFOX);
@@ -251,38 +354,113 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			browsersButtonGroup.add(getHtmlunit());
 			
 			browsers = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.browsers"));
-
-			GridBagConstraints gbc = new GridBagConstraints();
-			gbc.gridx = 0;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new java.awt.Insets(2,2,2,2);
-			gbc.anchor = GridBagConstraints.LINE_START;
-			gbc.weightx = 0.5D;
-
-			panelCrawljax.add(browsers, gbc);
-			gbc.gridx++;
-			gbc.anchor = GridBagConstraints.LINE_END;
+			depth = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.depth"));
+			crawlstates = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.crawlstates"));
+			maxduration  = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.maxduration"));
+			eventwait = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.eventwait"));
+			reloadwait = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.reloadwait"));
 			
-			panelCrawljax.add(getTxtNumBro(), gbc);
+			GridBagConstraints gbc = new GridBagConstraints();
+						
+			//Number of Browsers option
 			gbc.gridx = 0;
+			gbc.gridy = 2;
+			gbc.weightx = 1.0;
+			gbc.weighty = 1.0;
+			gbc.insets = new java.awt.Insets(2,2,2,2);
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.LINE_START;
+			panelCrawljax.add(browsers, gbc);
+			
+			gbc.gridx = 1;
+			gbc.anchor = GridBagConstraints.LINE_END;
+			panelCrawljax.add(getTxtNumBro(), gbc);
+								
+			//Browser Type Option
+			gbc.gridx = 0;
+			gbc.gridy = 3;
 			gbc.gridwidth = 2;
 			gbc.anchor = GridBagConstraints.LINE_START;
-			gbc.weightx = 1.0D;
-
-			panelCrawljax.add(getClickAllElems(), gbc);
-
 			panelCrawljax.add(new JLabel(this.extension.getMessages().getString("spiderajax.proxy.local.label.browsers")), gbc);
+			
+			gbc.gridy = 4;
 			gbc.gridwidth = 1;
-
 			panelCrawljax.add(getFirefox(), gbc);
 
+			gbc.gridy = 5;
 			panelCrawljax.add(getChrome(), gbc);
-
+			
+			gbc.gridy = 6;
 			panelCrawljax.add(getHtmlunit(), gbc);
-
+			
+			gbc.gridy = 7;
 			gbc.fill = GridBagConstraints.NONE;
-			gbc.insets = new java.awt.Insets(8,2,2,2);
+			gbc.insets = new java.awt.Insets(8,2,16,2);
 			panelCrawljax.add(getSelectChromeDriverButton(), gbc);
+			
+			//Crawl In Depth Option
+			gbc.gridy = 10;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new java.awt.Insets(2,2,2,2);
+			panelCrawljax.add(getClickAllElems(), gbc);
+			
+			//Max Crawl Depth Option
+			gbc.gridy++;
+			gbc.anchor = GridBagConstraints.LINE_START;
+			panelCrawljax.add(depth, gbc);
+				
+			gbc.gridx = 1;
+			gbc.anchor = GridBagConstraints.LINE_END;
+			panelCrawljax.add(getTxtNumDpth(), gbc);
+			
+			//Max Crawl States Option
+			gbc.gridx = 0;
+			gbc.gridy++;
+			gbc.anchor = GridBagConstraints.LINE_START;
+			panelCrawljax.add(crawlstates, gbc);
+			
+			gbc.gridx = 1;
+			gbc.anchor = GridBagConstraints.LINE_END;
+			panelCrawljax.add(getNumStates(), gbc);
+			
+			
+			//Max Crawl Duration Option
+			gbc.gridx = 0;
+			gbc.gridy++;
+			gbc.anchor = GridBagConstraints.LINE_START;
+			panelCrawljax.add(maxduration, gbc);
+			
+			gbc.gridx = 1;
+			gbc.anchor = GridBagConstraints.LINE_END;
+			panelCrawljax.add(getNumDuration(), gbc);
+		
+				
+			//Max Event Wait Option
+			gbc.gridx = 0;
+			gbc.gridy++;
+			gbc.anchor = GridBagConstraints.LINE_START;
+			panelCrawljax.add(eventwait, gbc);
+									
+			gbc.gridx = 1;
+			gbc.anchor = GridBagConstraints.LINE_END;
+			panelCrawljax.add(getNumWait(), gbc);
+			
+			//Max Reload Wait Option
+			gbc.gridx = 0;
+			gbc.gridy++;
+			gbc.anchor = GridBagConstraints.LINE_START;
+			panelCrawljax.add(reloadwait , gbc);
+			
+			gbc.gridx = 1;
+			gbc.anchor = GridBagConstraints.LINE_END;
+			panelCrawljax.add(getNumReloadWait(), gbc);
+			
+			//Click Once Option
+			gbc.gridx = 0;
+			gbc.gridy++;
+			gbc.anchor = GridBagConstraints.LINE_START;
+			panelCrawljax.add(getClickOnce(), gbc);
+
 		}
 		
 		return panelCrawljax;
