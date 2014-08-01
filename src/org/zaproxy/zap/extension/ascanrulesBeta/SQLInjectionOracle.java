@@ -17,18 +17,15 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeSet;
 
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 
 
@@ -63,7 +60,7 @@ import org.parosproxy.paros.network.HttpMessage;
  * 
  *  @author 70pointer
  */
-public class SQLInjectionOracle extends AbstractAppPlugin {
+public class SQLInjectionOracle extends AbstractAppParamPlugin {
 	
 	private boolean doUnionBased = false;   //TODO: use in Union based, when we implement it
 	private boolean doTimeBased = false;
@@ -72,7 +69,6 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 	private int doTimeMaxRequests = 0;
 
 	
-
 	/**
 	 * Oracle one-line comment
 	 */
@@ -104,20 +100,11 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 	 * the 5 second sleep function in Oracle SQL
 	 */
 	private static String SQL_ORACLE_TIME_SELECT = "SELECT  UTL_INADDR.get_host_name('10.0.0.1') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.2') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.3') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.4') from dual union SELECT  UTL_INADDR.get_host_name('10.0.0.5') from dual";
-
 	
 	/**
 	 * Oracle specific time based injection strings. each for 5 seconds
 	 */
 	
-	//issue with "+" symbols in here: 
-	//we cannot encode them here as %2B, as then the database gets them double encoded as %252B
-	//we cannot leave them as unencoded '+' characters either, as then they are NOT encoded by the HttpMessage.setGetParams (x) or by AbstractPlugin.sendAndReceive (HttpMessage)
-	//and are seen by the database as spaces :(
-	//in short, we cannot use the "+" character in parameters, unless we mean to use it as a space character!!!! Particularly Nasty.
-	//Workaround: use RDBMS specific functions like "CONCAT(a,b,c)" which mean parsing the original value into the middle of the parameter value to be passed, 
-	//rather than just appending to it
-	//Issue: this technique does not close the open ' or " in the query.. so do not use it..
 	//Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these examples below (see * comment)
 	//TODO: maybe add support for ')' after the original value, before the sleeps
 	private static String[] SQL_ORACLE_TIME_REPLACEMENTS = {
@@ -213,21 +200,12 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 		}
 	}
 
-
 	/**
 	 * scans for SQL Injection vulnerabilities, using Oracle specific syntax.  If it doesn't use specifically Oracle syntax, it does not belong in here, but in SQLInjection 
 	 */
 	@Override
-	public void scan() {
-
-		//as soon as we find a single SQL injection on the url, skip out. Do not look for SQL injection on a subsequent parameter on the same URL
-		//for performance reasons.
-		boolean sqlInjectionFoundForUrl = false;
+	public void scan(HttpMessage arg0, String paramName, String paramValue) {
 		
-		//DEBUG only
-		//log.setLevel(org.apache.log4j.Level.DEBUG);
-		//this.debugEnabled = true;
-
 		try {
 			//Timing Baseline check: we need to get the time that it took the original query, to know if the time based check is working correctly..
 			HttpMessage msgTimeBaseline = getNewMsg();
@@ -241,83 +219,50 @@ public class SQLInjectionOracle extends AbstractAppPlugin {
 			long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
 			//end of timing baseline check
 			
+			int countUnionBasedRequests = 0;
+			int countTimeBasedRequests = 0;	
 			
-			TreeSet<HtmlParameter> htmlParams = new TreeSet<> (); 
-			htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
-			htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
-
-			//for each parameter in turn
-			for (Iterator<HtmlParameter> iter = htmlParams.iterator(); iter.hasNext() && ! sqlInjectionFoundForUrl; ) {
-				
-				int countUnionBasedRequests = 0;
-				int countTimeBasedRequests = 0;	
-
-				HtmlParameter currentHtmlParameter = iter.next();
-				if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], ["+ currentHtmlParameter.getType()+"] field ["+ currentHtmlParameter.getName() + "] with value ["+currentHtmlParameter.getValue()+"] for SQL Injection");    			
-				
-				//Check 3: check for time based SQL Injection
-				//Oracle specific time based SQL injection checks
-
-				for (int timeBasedSQLindex = 0; 
-						timeBasedSQLindex < SQL_ORACLE_TIME_REPLACEMENTS.length && ! sqlInjectionFoundForUrl && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
-						timeBasedSQLindex ++) {
-					HttpMessage msg3 = getNewMsg();
-					String newTimeBasedInjectionValue = SQL_ORACLE_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", currentHtmlParameter.getValue());
-					
-					if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getUrlParams(); //get parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue)); 
-						msg3.setGetParams(requestParams); //url parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.form)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getFormParams(); //form parameters
-						requestParams.remove(currentHtmlParameter);
-						//new HtmlParameter ();
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue));
-						msg3.setFormParams(requestParams); //form parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.cookie)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getCookieParams(); //cookie parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue));
-						msg3.setCookieParams(requestParams); //cookie parameters
+			if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], field ["+ paramName + "] with value ["+paramValue+"] for Oracle SQL Injection");    			
+			
+			//Check for time based SQL Injection, using Oracle specific syntax 
+			for (int timeBasedSQLindex = 0; 
+					timeBasedSQLindex < SQL_ORACLE_TIME_REPLACEMENTS.length && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
+					timeBasedSQLindex ++) {
+				HttpMessage msgAttack = getNewMsg();
+				String newTimeBasedInjectionValue = SQL_ORACLE_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", paramValue);
+				setParameter(msgAttack, paramName, newTimeBasedInjectionValue);				
+				//send it.
+				long modifiedTimeStarted = System.currentTimeMillis();
+				try {
+					sendAndReceive(msgAttack);
+					countTimeBasedRequests++;
 					}
+				catch (java.net.SocketTimeoutException e) {
+					//this is to be expected, if we start sending slow queries to the database.  ignore it in this case.. and just get the time.
+					if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+				}
+				long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
 
-					//send it.
-					long modifiedTimeStarted = System.currentTimeMillis();
-					try {
-						sendAndReceive(msg3);
-						countTimeBasedRequests++;
-						}
-					catch (java.net.SocketTimeoutException e) {
-						//this is to be expected, if we start sending slow queries to the database.  ignore it in this case.. and just get the time.
-						if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] on ["+currentHtmlParameter.getType()+"] field: ["+currentHtmlParameter.getName()+"]");
-					}
-					long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
+				if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on field: ["+paramName+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
 
-					if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on ["+currentHtmlParameter.getType()+"] field: ["+currentHtmlParameter.getName()+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
+				if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
+					//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
+					String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, paramValue, originalTimeUsed);
+					String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", paramName, newTimeBasedInjectionValue);
 
-					if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
-						//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
-						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, currentHtmlParameter.getValue(), originalTimeUsed);
-						String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue);
+					//raise the alert
+					bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Time Based", getDescription(), 
+							getBaseMsg().getRequestHeader().getURI().getURI(), //url
+							paramName,  attack, 
+							extraInfo, getSolution(), msgAttack);
 
-						//raise the alert
-						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Time Based", getDescription(), 
-								getBaseMsg().getRequestHeader().getURI().getURI(), //url
-								"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
-								extraInfo, getSolution(), msg3);
+					log.info("A likely Time Based SQL Injection Vulnerability has been found with ["+msgAttack.getRequestHeader().getMethod()+"] URL ["+msgAttack.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");					 
+					return;
+				} //query took longer than the amount of time we attempted to retard it by						
+			}  //for each time based SQL index
+			//end of Check 3: end of check for time based SQL Injection
 
-						log.info("A likely Time Based SQL Injection Vulnerability has been found with ["+msg3.getRequestHeader().getMethod()+"] URL ["+msg3.getRequestHeader().getURI().getURI()+"] on "+currentHtmlParameter.getType()+" field: ["+currentHtmlParameter.getName()+"]");
-
-						sqlInjectionFoundForUrl = true; 
-						continue;
-					} //query took longer than the amount of time we attempted to retard it by						
-				}  //for each time based SQL index
-				//end of Check 3: end of check for time based SQL Injection
-
-			} //end of the for loop around the parameter list
+			
 
     	} catch (InvalidRedirectLocationException e) {
     		// Not an error, just means we probably attacked the redirect location
