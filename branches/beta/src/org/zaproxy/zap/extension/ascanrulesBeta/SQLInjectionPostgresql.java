@@ -288,7 +288,7 @@ public class SQLInjectionPostgresql extends AbstractAppPlugin {
 					if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
 						//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
 						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, currentHtmlParameter.getValue(), originalTimeUsed);
-						String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue);
+						String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", currentHtmlParameter.getName(), newTimeBasedInjectionValue);
 
 						//raise the alert
 						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Time Based", getDescription(), 
