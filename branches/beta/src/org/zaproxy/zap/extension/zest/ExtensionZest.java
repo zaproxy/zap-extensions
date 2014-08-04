@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -39,11 +40,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 
 import net.htmlparser.jericho.Source;
+import net.sf.json.JSONObject;
 
+import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFail;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
+import org.mozilla.zest.core.v1.ZestClientElementClick;
+import org.mozilla.zest.core.v1.ZestClientElementSendKeys;
+import org.mozilla.zest.core.v1.ZestClientLaunch;
+import org.mozilla.zest.core.v1.ZestClientWindowHandle;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
@@ -63,11 +70,13 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -105,7 +114,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	private ZestResultsPanel zestResultsPanel = null;
 	private ZapToggleButton recordButton = null;
 
-
 	private ZestTreeModel zestTreeModel = null;
 	private ZestDialogManager dialogManager = null;
 	private ZestEngineWrapper zestEngineWrapper = null;
@@ -123,6 +131,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	// Cut-n-paste stuff
 	private List<ScriptNode> cnpNodes = null;
 	private boolean cutNodes = false;
+
+	// Client side recording
+	private Map<String, String> clientUrlToWindowHandle = new HashMap<String,String>();
+	private String startRecordingUrl = null;
+	private int recordingWinId = 0;
+	private ScriptNode recordingNode = null;
 
 	static {
 		List<Class<?>> dependencies = new ArrayList<>(1);
@@ -192,6 +206,32 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			this.getExtScript().getScriptUI().addRenderer(ZestScriptWrapper.class, renderer);
 			this.getExtScript().getScriptUI().disableScriptDialog(ZestScriptWrapper.class);
 		}
+		
+	}
+	
+	public boolean isPlugNHackInstalled() {
+		return Control.getSingleton().getExtensionLoader().getExtension("ExtensionPlugNHack") != null;
+	}
+	
+	public void recordClientScript(String url) {
+        Extension extPnh = Control.getSingleton().getExtensionLoader().getExtension("ExtensionPlugNHack");
+        if (extPnh != null) {
+        	Method method = null;
+    		try {
+    			URI uri = new URI(url, true);
+    			
+    			startClientRecording(url);
+
+    			method = extPnh.getClass().getMethod("launchAndRecordClient", URI.class);
+
+    			method.invoke(extPnh, uri);
+    			
+    		} catch (Exception e) {
+    			// Its an older version, so just dont try to use it
+    			e.printStackTrace();
+    		}
+        }
+
 	}
 	
 	protected ZestScriptEngineFactory getZestScriptEngineFactory() {
@@ -273,7 +313,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					if (recordButton.isSelected()) {
-						getDialogManager().showZestEditScriptDialog(null, null, true, true);
+						getDialogManager().showZestRecordScriptDialog(null);
 					} else {
 						cancelScriptRecording();
 					}
@@ -282,7 +322,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		}
 		return recordButton;
 	}
-	
+
 	public void cancelScriptRecording() {
 		if (scriptNodeRecording != null) {
 			// Turn recording off for the 'current' script being recording
@@ -290,6 +330,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			getZestTreeModel().nodeChanged(scriptNodeRecording);
 			scriptNodeRecording = null;
 		}
+		recordingNode = null;
 		getRecordButton().setSelected(false);
 	}
 
@@ -439,6 +480,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	public void updated(ScriptNode node) {
+		this.updated(node, false);
+	}
+
+	public void updated(ScriptNode node, boolean hack) {
 		if (node == null) {
 			return;
 		}
@@ -504,8 +549,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			// They're gone for the 'new script' option...
 			logger.debug("addToParent parent=null msg="
 					+ msg.getRequestHeader().getURI());
-			this.dialogManager.showZestEditScriptDialog(null, null, prefix,
-					true, false);
+			this.dialogManager.showZestEditScriptDialog(null, null, prefix, true);
 			if (msg != null) {
 				this.dialogManager.addDeferedMessage(msg);
 			}
@@ -669,6 +713,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	public final ScriptNode addToParent(ScriptNode parent,
 			ZestStatement newChild) {
+		return this.addToParent(parent, newChild, true);
+	}
+
+	public final ScriptNode addToParent(ScriptNode parent,
+			ZestStatement newChild, boolean display) {
 		logger.debug("addToParent parent=" + parent.getNodeName() + " new="
 				+ newChild.getElementType());
 		ScriptNode node;
@@ -697,8 +746,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 					+ ZestZapUtils.getElement(parent) + " "
 					+ parent.getNodeName());
 		}
-		this.updated(node);
-		this.display(node, false);
+		this.updated(node, true);
+		if (display) {
+			this.display(node, false);
+		}
 		return node;
 	}
 
@@ -999,7 +1050,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 						@Override
 						public void run() {
 							try {
-								addToParent(getDefaultStandAloneScript(), msg, null);
+								addToParent(getRecordingNode(), msg, null);
 							} catch (Exception e) {
 								logger.error(e.getMessage(), e);
 							}
@@ -1010,8 +1061,26 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				}
 			}
 		}
-		// Check to see if any standalone scripts are recording
+		// Check to see if any standalone or authentication scripts are recording
 		for (final ScriptNode node : getZestScriptNodes(ExtensionScript.TYPE_STANDALONE)) {
+			ZestScriptWrapper zsw = (ZestScriptWrapper) node.getUserObject();
+			if (zsw.isRecording()) {
+				if (msg.getRequestHeader().getURI().toString().startsWith(zsw.getZestScript().getPrefix())) {
+					EventQueue.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								addToParent(node, msg, null);
+							} catch (Exception e) {
+								logger.error(e.getMessage(), e);
+							}
+						}
+					});
+					
+				}
+			}
+		}
+		for (final ScriptNode node : getZestScriptNodes(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH)) {
 			ZestScriptWrapper zsw = (ZestScriptWrapper) node.getUserObject();
 			if (zsw.isRecording()) {
 				if (msg.getRequestHeader().getURI().toString().startsWith(zsw.getZestScript().getPrefix())) {
@@ -1244,9 +1313,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	public void addMouseListener(MouseAdapter adapter) {
 	}
 	
-	/* TODO This is work in progress and is not currently working
-	 * In any case, it requires pnh changes to enable it...
-	 * 
 	private void addWindowLaunch(ScriptNode node, String handle, String url) {
 		ZestScriptWrapper sw = this.getZestTreeModel().getScriptWrapper(node);
 		if (! sw.getZestScript().getClientWindowHandles().contains(handle)) {
@@ -1256,7 +1322,26 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				@Override
 				public void run() {
 					try {
-						addToParent(getDefaultStandAloneScript(), launch);
+						addToParent(getRecordingNode(), launch);
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+			});
+			
+		}
+	}
+
+	private void addWindowHandle(ScriptNode node, String handle, String url) {
+		ZestScriptWrapper sw = this.getZestTreeModel().getScriptWrapper(node);
+		if (! sw.getZestScript().getClientWindowHandles().contains(handle)) {
+			final ZestClientWindowHandle winHandle = new ZestClientWindowHandle(handle, url, false); 
+			
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						addToParent(getRecordingNode(), winHandle);
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 					}
@@ -1266,28 +1351,51 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		}
 	}
 	
-	private Map<String, String> clientUrlToWindowHandle = new HashMap<String,String>();
-	private int winId = 0;
-	
 	private String getWindowHandle(JSONObject clientMessage, ScriptNode node, String windowId, String url) {
 		String windowHandle = this.clientUrlToWindowHandle.get(url);
 		if (windowHandle != null) {
 			return windowHandle;
 		}
-		windowHandle = "WIN-" + winId++;
+		windowHandle = "WIN-" + recordingWinId++;
+		if (startRecordingUrl != null && startRecordingUrl.equals(url)) {
+			this.addWindowLaunch(node, windowHandle, url);
+			startRecordingUrl = null;
+		} else {
+			this.addWindowHandle(node, windowHandle, url);
+		}
 		this.clientUrlToWindowHandle.put(url, windowHandle);
-		this.addWindowLaunch(node, windowHandle, url);
 		return windowHandle;
+	}
+	
+	public void startClientRecording(String uri) {
+		clientUrlToWindowHandle.clear();
+		startRecordingUrl = uri;
+		recordingWinId = 0;
+		// And turn off the recording button, at least for now
+		this.getRecordButton().setSelected(false);
+	}
+	
+	public void setRecordingNode (ScriptNode node) {
+		recordingNode = node;
+	}
+	
+	private ScriptNode getRecordingNode() {
+		if (recordingNode != null) {
+			return recordingNode;
+		}
+		return this.getDefaultStandAloneScript();
 	}
 	
 	public void clientMessageReceived (JSONObject clientMessage, String windowId, String url) {
 		ZestStatement stmt = null;
 		String windowHandle;
+		final ScriptNode clientRecordingNode = getRecordingNode();
 		
-		/ * TODO for windowOpenMessage I need to add a a window handle
-		 * If a message contains a probeURL I need to inject into it - shouldnt pnh do this??
-		 * Need to record which window handles about to follow click eg probeURL but no windowOpenMessages
-		 * /
+		if (clientMessage.getString("type").equals("heartbeat")) {
+			// If this is a new window, get a handle to it
+			this.getWindowHandle(clientMessage,	getRecordingNode(), windowId, url);
+			return;
+		}
 		
 		if (! clientMessage.containsKey("data")) {
 			return;
@@ -1295,10 +1403,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		
 		try {
 			String data = clientMessage.getString("data");
-			windowHandle = this.getWindowHandle(clientMessage,	getDefaultStandAloneScript(), windowId, url);
+			windowHandle = this.getWindowHandle(clientMessage,	clientRecordingNode, windowId, url);
 
 			if ("a click event happened!".equals(data)) {
-				//this.addWindowLaunch(getDefaultStandAloneScript(), windowId, url);
 				ZestClientElementClick clientStmt = new ZestClientElementClick();
 				clientStmt.setWindowHandle(windowHandle);
 				clientStmt.setType("xpath");
@@ -1311,34 +1418,35 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				String key = eventDataObj.getString("key");
 				boolean appended = false;
 
-				if (getDefaultStandAloneScript().getChildCount() > 0) {
-					// We get key presses one at a time - try to combine them up where possible
-					ScriptNode lastChild = (ScriptNode) getDefaultStandAloneScript().getLastChild();
-					ZestElement lastElement = ZestZapUtils.getElement(lastChild);
-					if (lastElement != null && lastElement instanceof ZestClientElementSendKeys) {
-						ZestClientElementSendKeys sk = (ZestClientElementSendKeys) lastElement;
-						if (sk.getWindowHandle().equals(windowHandle) &&
-								sk.getType().equals("xpath") &&
-								sk.getElement().equals(element)) {
-							sk.setValue(sk.getValue() + key);
-							getZestTreeModel().nodeChanged(lastChild);
-							this.refreshNode(getDefaultStandAloneScript());
-							appended = true;
+				if (key.length() > 1) {
+					// Ignore all 'control' keys, at least initially
+					logger.debug("Client recording, ignoring " + key);
+				} else {
+					if (getRecordingNode().getChildCount() > 0) {
+						// We get key presses one at a time - try to combine them up where possible
+						ScriptNode lastChild = (ScriptNode) clientRecordingNode.getLastChild();
+						ZestElement lastElement = ZestZapUtils.getElement(lastChild);
+						if (lastElement != null && lastElement instanceof ZestClientElementSendKeys) {
+							ZestClientElementSendKeys sk = (ZestClientElementSendKeys) lastElement;
+							if (sk.getWindowHandle().equals(windowHandle) &&
+									sk.getType().equals("xpath") &&
+									sk.getElement().equals(element)) {
+								sk.setValue(sk.getValue() + key);
+								getZestTreeModel().nodeChanged(lastChild);
+								this.refreshNode(clientRecordingNode);
+								appended = true;
+							}
 						}
-						
 					}
-				}
-				
-				if (! appended) {
-					//this.addWindowLaunch(getDefaultStandAloneScript(), windowId, url);
-					//this.addWindowLaunch(getDefaultStandAloneScript(), windowId, url);
-
-					ZestClientElementSendKeys sk = new ZestClientElementSendKeys();
-					sk.setWindowHandle(windowHandle);
-					sk.setType("xpath");
-					sk.setElement(clientMessage.getString("originalTargetPath"));
-					sk.setValue(key);
-					stmt = sk;
+					
+					if (! appended) {
+						ZestClientElementSendKeys sk = new ZestClientElementSendKeys();
+						sk.setWindowHandle(windowHandle);
+						sk.setType("xpath");
+						sk.setElement(clientMessage.getString("originalTargetPath"));
+						sk.setValue(key);
+						stmt = sk;
+					}
 				}
 			}
 		} catch (Exception e1) {
@@ -1352,7 +1460,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				@Override
 				public void run() {
 					try {
-						addToParent(getDefaultStandAloneScript(), stmtFinal);
+						addToParent(clientRecordingNode, stmtFinal, false);
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 					}
@@ -1360,7 +1468,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			});
 		}
 	}
-*/
+/**/
 	@Override
 	public void preInvoke(ScriptWrapper script) {
 		ScriptEngineWrapper ewrap = this.getExtScript().getEngineWrapper(
@@ -1418,8 +1526,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			if (display) {
 				this.updated(parentNode);
 				this.display(zsw, parentNode, true);
-				this.dialogManager.showZestEditScriptDialog(
-						parentNode, zsw, false, false);
+				this.dialogManager.showZestEditScriptDialog(parentNode, zsw, false);
 			}
 		}
 	}

@@ -27,6 +27,7 @@ import javax.swing.JTree;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
@@ -87,9 +88,10 @@ public class ZestRecordOnOffPopupMenu extends ExtensionPopupMenuItem {
             		ScriptNode node = extension.getSelectedZestNode();
             		if (node != null && node.getUserObject() instanceof ZestScriptWrapper) {
             			ZestScriptWrapper script = (ZestScriptWrapper) node.getUserObject();
-	    			    if (ExtensionScript.TYPE_STANDALONE.equals(script.getType().getName()) && 
+	    			    if ((ExtensionScript.TYPE_STANDALONE.equals(script.getType().getName()) || 
+	    			    		ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH.equals(script.getType().getName())) && 
 	    			    		record != script.isRecording()) {
-	    			    	// Only valid for Standalone Zest scripts
+	    			    	// Only valid for Standalone and authentication Zest scripts
 	    			    	this.setEnabled(true);
 	    			    	return true;
 	    			    } else {
