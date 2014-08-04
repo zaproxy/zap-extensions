@@ -54,6 +54,7 @@ import org.mozilla.zest.core.v1.ZestStructuredExpression;
 import org.mozilla.zest.impl.ZestScriptEngineFactory;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -77,6 +78,7 @@ public class ZestDialogManager extends AbstractPanel {
 	private ScriptUI scriptUI = null;
 
 	private ZestScriptsDialog scriptDialog = null;
+	private ZestRecordScriptDialog recordDialog = null;
 	private ZestRequestDialog requestDialog = null;
 	private ZestAssertionsDialog assertionsDialog = null;
 	private ZestAssignmentDialog assignmentDialog = null;
@@ -136,8 +138,7 @@ public class ZestDialogManager extends AbstractPanel {
 
 					if (sn.getUserObject() instanceof ZestScriptWrapper) {
 						showZestEditScriptDialog(sn,
-								(ZestScriptWrapper) sn.getUserObject(), null,
-								false, false);
+								(ZestScriptWrapper) sn.getUserObject(), null, false);
 
 					} else if (sn.getUserObject() instanceof ZestElementWrapper) {
 						ZestElementWrapper zew = (ZestElementWrapper) sn
@@ -235,18 +236,18 @@ public class ZestDialogManager extends AbstractPanel {
 	}
 
 	public void showZestEditScriptDialog(ScriptNode parentNode,
-			ZestScriptWrapper script, boolean add, boolean record) {
-		this.showZestEditScriptDialog(parentNode, script, null, add, record);
+			ZestScriptWrapper script, boolean add) {
+		this.showZestEditScriptDialog(parentNode, script, null, add);
 	}
 
 	public void showZestEditScriptDialog(ScriptNode parentNode,
 			ZestScriptWrapper script, boolean add, int showtab) {
-		this.showZestEditScriptDialog(parentNode, script, null, add, false);
+		this.showZestEditScriptDialog(parentNode, script, null, add);
 		this.scriptDialog.requestTabFocus(showtab);
 	}
 
 	public void showZestEditScriptDialog(ScriptNode parentNode,
-			ZestScriptWrapper script, String prefix, boolean add, boolean record) {
+			ZestScriptWrapper script, String prefix, boolean add) {
 		if (scriptDialog == null) {
 			scriptDialog = new ZestScriptsDialog(extension, View.getSingleton()
 					.getMainFrame(), new Dimension(500, 500));
@@ -263,18 +264,28 @@ public class ZestDialogManager extends AbstractPanel {
 			sw.setType(extension.getExtScript().getScriptType(
 					ExtensionScript.TYPE_STANDALONE));
 			script = new ZestScriptWrapper(sw);
-			script.setRecording(record);
 			try {
 				script.getZestScript().setPrefix(prefix);
 			} catch (MalformedURLException e) {
 				logger.error(e.getMessage(), e);
 			}
-			scriptDialog.init(parentNode, script, add);
-
-		} else {
-			scriptDialog.init(parentNode, script, add);
 		}
+		scriptDialog.init(parentNode, script, add);
 		scriptDialog.setVisible(true);
+	}
+
+	public void showZestRecordScriptDialog(SiteNode node) {
+		if (recordDialog == null) {
+			recordDialog = new ZestRecordScriptDialog(extension, View.getSingleton()
+					.getMainFrame(), new Dimension(500, 500));
+		} else if (recordDialog.isVisible()) {
+			// Already being displayed, bring to the front but dont overwrite anything
+			bringToFront(recordDialog);
+			return;
+		}
+
+		recordDialog.init(node);
+		recordDialog.setVisible(true);
 	}
 
 	public void showZestEditRequestDialog(ScriptNode parent, ScriptNode request) {
