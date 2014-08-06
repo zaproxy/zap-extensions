@@ -104,4 +104,27 @@ public class SOAPMsgConfig {
 	public void setBindOp(BindingOperation bindOp) {
 		this.bindOp = bindOp;
 	}
+	
+	public boolean equals(SOAPMsgConfig other){
+		if(this.getHash() == other.getHash()){
+				return true;
+		}else{
+				return false;
+		}
+	}
+	
+	private int getHash(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("InitialContent"); // Just in case all parameters are null.
+		if(this.wsdl != null) sb.append(this.wsdl.getAsString());
+		sb.append(this.soapVersion);
+		if(params != null){
+			for(String value : params.values()){
+				sb.append(value);
+			}
+		}
+		if(port != null && port.getAddress() != null) sb.append(this.port.getAddress().getLocation());
+		if(bindOp != null) sb.append(bindOp.getName());
+		return sb.toString().hashCode();
+	}
 }

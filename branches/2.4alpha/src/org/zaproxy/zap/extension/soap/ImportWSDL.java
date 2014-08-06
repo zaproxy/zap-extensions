@@ -63,6 +63,7 @@ public class ImportWSDL {
 	
 	/* Returns all detected SOAP actions as a fixed bidimensional array. Each row represents a different WSDL file. */
 	public synchronized String[][] getSoapActions(){
+		if(soapActions.size() < 1) return null;
 		String[][] operationsChart = new String[soapActions.size()][];
 		int i = 0;
 		for(ArrayList<String> ops : soapActions.values()){
