@@ -48,8 +48,12 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 
 	private static Logger log = Logger.getLogger(SOAPActionSpoofingActiveScanner.class);
 	
-
-	
+	public static final int INVALID_FORMAT = -3;
+	public static final int FAULT_CODE = -2;
+	public static final int EMPTY_RESPONSE = -1;
+	public static final int SOAPACTION_IGNORED = 1;
+	public static final int SOAPACTION_EXECUTED = 2;
+		
 	
 	@Override
 	public int getId() {
@@ -122,7 +126,9 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 						sendAndReceive(msg);
 						
 						/* Checks the response. */
-						endScan = scanResponse(msg, originalMsg);
+						int code = scanResponse(msg, originalMsg);
+						if (code > 0) endScan = true;
+						raiseAlert(msg, code);
 					}
 					endScan = this.isStop();
 				}
@@ -132,13 +138,13 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 		}	
 	}
 
-	private boolean scanResponse(HttpMessage msg, HttpMessage originalMsg){
+	private int scanResponse(HttpMessage msg, HttpMessage originalMsg){
+		if (msg.getResponseBody() == null) return EMPTY_RESPONSE;
 		String responseContent = new String(msg.getResponseBody().getBytes());
 		responseContent = responseContent.trim();
 		
 		if (responseContent.length() <= 0){
-			bingo(Alert.RISK_LOW, Alert.WARNING, null, null, "Response is empty.", null, msg);
-			return false;
+			return EMPTY_RESPONSE;
 		}
 		
   
@@ -156,12 +162,12 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 			if (fault != null){
 				/* The web service server has detected something was wrong
 				 * with the SOAPAction header so it rejects the request. */
-				return false;
+				return FAULT_CODE;
 			}
 			
 			// Body child.
 			NodeList bodyList = body.getChildNodes();
-			if (bodyList.getLength() <= 0) return false;
+			if (bodyList.getLength() <= 0) return EMPTY_RESPONSE;
 			
 			/* Prepares original request to compare it. */
 			String originalContent = originalMsg.getResponseBody().toString();
@@ -178,28 +184,48 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 				for(int i = 0; i < bodyList.getLength() && match; i++){
 					Node node = bodyList.item(i);
 					Node oNode = originalBodyList.item(i);
-					if (node.getNodeName() != oNode.getNodeName()) match = false;
+					String nodeName = node.getNodeName().trim();
+					String oNodeName = oNode.getNodeName().trim();
+					if (!nodeName.equals(oNodeName)){
+						match = false;
+					}
 				}
 				if (match){
 					/* Both responses have the same content. The SOAPAction header has been ignored.
 					 * SOAPAction Spoofing attack cannot be done if this happens. */
-					bingo(Alert.RISK_INFO, Alert.WARNING, null, null, "The SOAPAction header has been ignored.", null, msg);
-					return true;
+					return SOAPACTION_IGNORED;
 				}else{
 					/* The SOAPAction header has been processed and an operation which is not the original one has been executed. */
-					bingo(Alert.RISK_HIGH, Alert.WARNING, null, null, "The SOAPAction operation has been executed.", null, msg);
-					return true;
+					return SOAPACTION_EXECUTED;
 				}				
 			}else{
 				/* The SOAPAction header has been processed and an operation which is not the original one has been executed. */
-				bingo(Alert.RISK_HIGH, Alert.WARNING, null, null, "The SOAPAction operation has been executed.", null, msg);
-				return true;
+				return SOAPACTION_EXECUTED;
 			}
 		} catch (IOException | SOAPException e) {
 			log.info("Exception thrown when scanning: ",e);
-			bingo(Alert.RISK_LOW, Alert.WARNING, null, null, "Response has an invalid format.", null, msg);
-			return false;
+			return INVALID_FORMAT;
 		}	
+	}
+	
+	private void raiseAlert(HttpMessage msg, int code){
+		switch(code){
+			case INVALID_FORMAT:
+				bingo(Alert.RISK_LOW, Alert.WARNING, null, null, null, "Response has an invalid format.", msg);
+				break;
+			case FAULT_CODE:
+				bingo(Alert.RISK_LOW, Alert.WARNING, null, null, null, "Server returned a fault code.", msg);
+				break;
+			case EMPTY_RESPONSE:
+				bingo(Alert.RISK_LOW, Alert.WARNING, null, null, null, "Response is empty.", msg);
+				break;
+			case SOAPACTION_IGNORED:
+				bingo(Alert.RISK_INFO, Alert.WARNING, null, null, null, "The SOAPAction header has been ignored.", msg);
+				break;
+			case SOAPACTION_EXECUTED:
+				bingo(Alert.RISK_HIGH, Alert.WARNING, null, null, null, "The SOAPAction operation has been executed.", msg);
+				break;		
+		}
 	}
 
 	@Override
