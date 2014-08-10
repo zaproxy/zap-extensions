@@ -19,6 +19,7 @@ package org.zaproxy.zap.extension.soap;
 
 import net.htmlparser.jericho.Source;
 
+import org.jfree.util.Log;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -46,14 +47,25 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		if (isWsdl(msg)){
+			HttpResponseHeader header = msg.getResponseHeader();
+			String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
+			raiseAlert(msg, id, contentType);
+		}
+	}
+	
+	public boolean isWsdl(HttpMessage msg){
+		if(msg == null) return false;
 		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
 			/* Alerts that a public WSDL file has been found. */
 			HttpResponseHeader header = msg.getResponseHeader();
+			String baseURL = msg.getRequestHeader().getURI().toString().trim();
 			String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
-			if(contentType.equals("application/wsdl+xml")){
-				raiseAlert(msg, id, contentType);
+			if(baseURL.endsWith(".wsdl") || contentType.equals("text/xml") || contentType.equals("application/wsdl+xml")){
+				return true;
 			}
 		}
+		return false;
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String evidence) {

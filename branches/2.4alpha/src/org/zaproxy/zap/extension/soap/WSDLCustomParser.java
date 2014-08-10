@@ -78,6 +78,10 @@ public class WSDLCustomParser {
 		parseWSDLContent(content);
 	}
 	
+	public void extContentWSDLImport(final String content, final boolean sendMessages){
+		parseWSDLContent(content, sendMessages);
+	}
+	
 	/* Method called from external classes to import a WSDL file from an URL. */
 	public void extUrlWSDLImport(final String url){
 		parseWSDLUrl(url);

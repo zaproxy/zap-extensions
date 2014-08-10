@@ -16,6 +16,11 @@ public class WSDLSpider extends SpiderParser{
 	
 	@Override
 	public boolean parseResource(HttpMessage message, Source source, int depth) {
+		return parseResourceWSDL(message, source, depth, true);
+	}
+	
+	public boolean parseResourceWSDL(HttpMessage message, Source source, int depth, boolean sendRequests) {
+		if (message == null) return false;
 		/* Only applied to wsdl files. */
 		log.info("WSDL custom spider called.");
 		if (!canParseResource(message)) return false;
@@ -27,19 +32,22 @@ public class WSDLSpider extends SpiderParser{
 		log.info("WSDL spider has detected a new resource");
 		String content = getContentFromMessage(message);	
 		/* Calls extension to parse it and to fill the sites tree. */
-		parser.extContentWSDLImport(content);
+		parser.extContentWSDLImport(content, sendRequests);
 		return true;
 	}
 	
 	public boolean canParseResource(final HttpMessage message){
-		// Get the context (base url)
-		String baseURL = getURIfromMessage(message);
-		if(baseURL.endsWith(".wsdl")) return true;
-		log.info("Resource has not wsdl extension.");
-		if(message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE).equals("text/xml")){
-			String content =  message.getResponseBody().toString();
-			if(parser.canBeWSDLparsed(content)) return true;
-			log.info("Content is not wsdl: "+content);
+		try{
+			// Get the context (base url)
+			String baseURL = getURIfromMessage(message);
+			String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
+			if(baseURL.endsWith(".wsdl") || contentType.equals("text/xml") || contentType.equals("application/wsdl+xml")){
+				String content =  message.getResponseBody().toString();
+				if(parser.canBeWSDLparsed(content)) return true;
+				log.info("Content is not wsdl: "+content);
+			}
+		}catch(Exception e){
+			return false;
 		}
 		return false;
 	}
@@ -48,7 +56,11 @@ public class WSDLSpider extends SpiderParser{
 		if (message == null) {
 			return "";
 		} else {
-			return message.getRequestHeader().getURI().toString();
+			try{
+				return message.getRequestHeader().getURI().toString();
+			}catch(Exception e){
+				return "";
+			}
 		}
 	}
 	
@@ -56,7 +68,7 @@ public class WSDLSpider extends SpiderParser{
 		if (message == null) {
 			return "";
 		} else {
-			return message.getResponseBody().toString();
+			return message.getResponseBody().toString().trim();
 		}
 	}
 
