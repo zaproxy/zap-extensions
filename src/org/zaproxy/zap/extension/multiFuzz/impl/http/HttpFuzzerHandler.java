@@ -1,30 +1,28 @@
 /*
-+
-
- * 
  * Zed Attack Proxy (ZAP) and its related class files.
- * 
+ *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0 
- *   
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
- */
+ *
+ * Copyright 2014 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */ 
 package org.zaproxy.zap.extension.multiFuzz.impl.http;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import javax.swing.JTextArea;
 
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
@@ -33,12 +31,12 @@ import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.multiFuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.multiFuzz.FuzzableComponent;
-import org.zaproxy.zap.extension.multiFuzz.FuzzableComponentWrapper;
 import org.zaproxy.zap.extension.multiFuzz.FuzzerContentPanel;
 import org.zaproxy.zap.extension.multiFuzz.FuzzerHandler;
 import org.zaproxy.zap.extension.multiFuzz.FuzzerListener;
 import org.zaproxy.zap.extension.multiFuzz.FuzzerParam;
 import org.zaproxy.zap.extension.multiFuzz.FuzzerThread;
+import org.zaproxy.zap.extension.multiFuzz.SubComponent;
 import org.zaproxy.zap.extension.search.SearchResult;
 
 public class HttpFuzzerHandler implements
@@ -47,48 +45,22 @@ public class HttpFuzzerHandler implements
 	private ExtensionFuzz ext;
 	private HttpFuzzDialog dia;
 	private HttpFuzzerContentPanel fuzzerPanel;
-	private boolean showTokenRequests;
 	private ArrayList<HttpFuzzGap> payloads;
 	private FuzzerParam fuzzerParam;
 	private FuzzerThread<HttpPayload, HttpMessage, HttpFuzzLocation, HttpFuzzResult, HttpFuzzGap, HttpFuzzProcess> fuzzerThread;
+	private AntiCSRFComponent antiCSRF;
 
 	public HttpFuzzerHandler(ExtensionFuzz parent) {
 		this.ext = parent;
-		showTokenRequests = false;
-	}
-
-	void setShowTokenRequests(boolean showTokenRequests) {
-		this.showTokenRequests = showTokenRequests;
 	}
 
 	@Override
 	public void showFuzzDialog(FuzzableComponent<HttpMessage> comp) {
-		final JTextArea compbase;
-		if (comp instanceof FuzzableComponentWrapper) {
-			compbase = (JTextArea) ((FuzzableComponentWrapper) comp)
-					.getOldComponent();
-		} else {
-			compbase = (JTextArea) comp;
-		}
-		int s = compbase.getSelectionStart();
-		int e = compbase.getSelectionEnd();
-		String header = comp.getFuzzableMessage().getRequestHeader().toString();
-		int hl = 0;
-		int pos = 0;
-		while (((pos = header.indexOf("\r\n", pos)) != -1) && (pos <= s + hl)) {
-			pos += 2;
-			++hl;
-		}
-		if (!comp.getFuzzableMessage().getRequestHeader().toString()
-				.substring(s + hl, e + hl)
-				.equals(compbase.getText().substring(s, e))) {
-			s += comp.getFuzzableMessage().getRequestHeader().toString()
-					.length();
-			e += comp.getFuzzableMessage().getRequestHeader().toString()
-					.length();
-		}
+		antiCSRF = new AntiCSRFComponent(comp.getFuzzableMessage());
+		ArrayList<SubComponent> httpSubs = new ArrayList<>();
+		httpSubs.add(antiCSRF);
 		dia = new HttpFuzzDialog(getExtension(), comp.getFuzzableMessage(),
-				new HttpFuzzLocation(s + hl, e + hl));
+				httpSubs);
 		dia.addFuzzerListener(new FuzzerListener<HttpFuzzDialog, ArrayList<HttpFuzzGap>>() {
 			@Override
 			public void notifyFuzzerStarted(HttpFuzzDialog process) {
@@ -120,29 +92,35 @@ public class HttpFuzzerHandler implements
 			fuzzerPanel.setDisplayPanel(View.getSingleton().getRequestPanel(),
 					View.getSingleton().getResponsePanel());
 		}
-		fuzzerPanel.setShowTokenRequests(showTokenRequests);
 		return fuzzerPanel;
 	}
 
 	@Override
 	public List<SearchResult> searchResults(Pattern pattern, boolean inverse) {
+		if(fuzzerPanel == null){
+			return Collections.emptyList();
+		}
 		return fuzzerPanel.searchResults(pattern, inverse);
 	}
 
 	@Override
 	public void startFuzzers() {
-		fuzzerThread = new FuzzerThread<HttpPayload, HttpMessage, HttpFuzzLocation, HttpFuzzResult, HttpFuzzGap, HttpFuzzProcess>(
+		fuzzerThread = new FuzzerThread<>(
 				getFuzzerParam());
 		HttpFuzzProcessFactory factory = (HttpFuzzProcessFactory) dia
 				.getFuzzProcessFactory();
-		ExtensionAntiCSRF extAntiCSRF = (ExtensionAntiCSRF) Control
-				.getSingleton().getExtensionLoader()
-				.getExtension(ExtensionAntiCSRF.NAME);
-		List<AntiCsrfToken> tokens = null;
-		tokens = extAntiCSRF.getTokens(dia.getMessage());
-		if (tokens != null && tokens.size() > 0) {
-			fuzzerThread.addPreprocessor(new AntiCSRFProcessor(factory
-					.getSender(), extAntiCSRF, tokens.get(0)));
+		if (antiCSRF.getTokensEnabled()) {
+			ExtensionAntiCSRF extAntiCSRF = (ExtensionAntiCSRF) Control
+					.getSingleton().getExtensionLoader()
+					.getExtension(ExtensionAntiCSRF.NAME);
+			List<AntiCsrfToken> tokens = extAntiCSRF
+					.getTokens(dia.getMessage());
+			if (tokens != null && tokens.size() > 0) {
+				fuzzerThread.addPreprocessor(new AntiCSRFProcessor(factory
+						.getSender(), extAntiCSRF, tokens.get(0)));
+				fuzzerThread.addPostprocessor(new AntiCSRFResultProcessor(
+						tokens.get(0), antiCSRF.getShowTokens()));
+			}
 		}
 		if (dia.getScripting()) {
 			fuzzerThread.importScripts();
@@ -212,6 +190,11 @@ public class HttpFuzzerHandler implements
 	@Override
 	public ExtensionFuzz getExtension() {
 		return ext;
+	}
+
+	@Override
+	public void reset() {
+		fuzzerPanel = null;
 	}
 
 }
