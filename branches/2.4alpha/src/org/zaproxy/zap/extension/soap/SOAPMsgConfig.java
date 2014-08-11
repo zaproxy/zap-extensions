@@ -43,6 +43,7 @@ public class SOAPMsgConfig {
 	/* Changes a parameter value given its simple name (it can include namespace prefix). 
 	 * Returns true if value has been changed correctly.*/
 	public boolean changeParam(String paramName, String paramValue){
+		if(paramName == null || paramValue == null) return false;
 		String xpath = null;
 		Set<String> xpaths = params.keySet();
 		if(paramName.contains(":")){
