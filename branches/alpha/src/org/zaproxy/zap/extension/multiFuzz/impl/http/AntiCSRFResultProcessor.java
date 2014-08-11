@@ -16,31 +16,35 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.zaproxy.zap.extension.multiFuzz.impl.http;
 
+import java.util.ArrayList;
 import java.util.List;
-
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.multiFuzz.FuzzResult;
+import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
+import org.zaproxy.zap.extension.multiFuzz.FuzzResultProcessor;
 
-public class HttpFuzzResult extends FuzzResult<HttpMessage, HttpFuzzLocation> {
-	
-	public static final String STATE_ANTICSRF = "ANTICSRF";
-	public static final String STATE_REFLECTED = "REFLECTED";
-	
-	private List<HttpMessage> tokenRequestMessages;
+public class AntiCSRFResultProcessor implements
+		FuzzResultProcessor<HttpFuzzResult> {
 
-	public HttpFuzzResult() {
-		super();
+	private AntiCsrfToken acsrfToken;
+	private boolean showTokenRequests;
+
+	public AntiCSRFResultProcessor(AntiCsrfToken token, boolean show) {
+		this.acsrfToken = token;
+		this.showTokenRequests = show;
 	}
 
-	public void setTokenRequestMessages(List<HttpMessage> messages) {
-		this.tokenRequestMessages = messages;
-	}
-
-	public List<HttpMessage> getTokenRequestMessages() {
-		return tokenRequestMessages;
+	@Override
+	public HttpFuzzResult process(HttpFuzzResult result) {
+		if (showTokenRequests) {
+			HttpMessage tokenMsg = this.acsrfToken.getMsg().cloneAll();
+			List<HttpMessage> tokenRequests = new ArrayList<>();
+			tokenRequests.add(tokenMsg);
+			result.setTokenRequestMessages(tokenRequests);
+		}
+		return result;
 	}
 
 }

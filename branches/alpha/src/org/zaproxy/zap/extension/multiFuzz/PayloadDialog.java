@@ -1,3 +1,22 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2014 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.multiFuzz;
 
 import java.awt.Dimension;
@@ -9,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -43,22 +63,24 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 	private FuzzerListener<PayloadDialog<G, P, F>, G> listen;
 	private G target;
 	private JTable payloads;
-	private PayloadTableModel payloadModel = null;
+	private PayloadTableModel<P> payloadModel;
 
 	private JPanel background;
+
+	private JButton deletePayloadButton;
 
 	private JButton addSinglePayloadButton;
 	private JTextArea payloadText;
 
 	private JButton addFuzzerFileButton;
-	private ComboMenuBar categoryField = null;
+	private ComboMenuBar categoryField;
 
 	private JButton addRegExPayloadButton;
 	private JTextArea regExText;
 	private JFormattedTextField regExLimit;
 
 	private JButton addScriptButton;
-	private JComboBox<String> payloadScripts = null;
+	private JComboBox<String> payloadScripts;
 
 	private JButton cancelButton;
 	private JButton doneButton;
@@ -69,7 +91,11 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 		this.factory = factory;
 		this.res = ext;
 		initialize();
-		getDoneButton().setEnabled( target.getPayloads().size() > 0 );
+		getDoneButton().setEnabled(target.getPayloads().size() > 0);
+		if (getCancelButton().getAction() instanceof PayloadDialog.CancelAction) {
+			((CancelAction) getCancelButton().getAction())
+					.setPayloads((ArrayList<P>) target.getPayloads().clone());
+		}
 	}
 
 	protected void initialize() {
@@ -88,78 +114,71 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 					Constant.messages.getString("fuzz.payloadDia.title")
 							+ target.orig());
 			headL.setFont(headLine);
-			GridBagConstraints h = getGBC(0, currentRow, 4, 1.0, 0.0,
+			GridBagConstraints h = Util.getGBC(0, currentRow, 4, 1.0, 0.0,
 					java.awt.GridBagConstraints.HORIZONTAL);
 			h.anchor = java.awt.GridBagConstraints.PAGE_START;
 			background.add(headL, h);
 			currentRow++;
-			background.add(
-					new JScrollPane(getPayloadField()),
-					getGBC(0, currentRow, 4, 1.0, 1.0,
-							java.awt.GridBagConstraints.BOTH));
+			background.add(new JScrollPane(getPayloadField()), Util.getGBC(0,
+					currentRow, 4, 1.0, 1.0, java.awt.GridBagConstraints.BOTH));
+			currentRow++;
+			background.add(getDeletePayloadButton(),
+					Util.getGBC(3, currentRow, 1, 0.25));
 			currentRow++;
 			JLabel addSinglePayload = new JLabel(
 					Constant.messages.getString("fuzz.add.singlePayload"));
-			background.add(addSinglePayload, getGBC(0, currentRow, 4, 1.0));
+			background
+					.add(addSinglePayload, Util.getGBC(0, currentRow, 4, 1.0));
 			currentRow++;
 			JLabel singlePayloadContent = new JLabel(
 					Constant.messages.getString("fuzz.payloadDia.content"));
-			background
-					.add(singlePayloadContent, getGBC(0, currentRow, 1, 0.25));
-			background.add(
-					getPayloadText(),
-					getGBC(1, currentRow, 2, 0.5, 0.0,
-							java.awt.GridBagConstraints.HORIZONTAL));
+			background.add(singlePayloadContent,
+					Util.getGBC(0, currentRow, 1, 0.25));
+			background.add(getPayloadText(), Util.getGBC(1, currentRow, 2, 0.5,
+					0.0, java.awt.GridBagConstraints.HORIZONTAL));
 			background.add(getAddSinglePayloadButton(),
-					getGBC(3, currentRow, 1, 0.25));
+					Util.getGBC(3, currentRow, 1, 0.25));
 			currentRow++;
 
 			JLabel addRegExPayload = new JLabel(
 					Constant.messages.getString("fuzz.add.regExPayload"));
-			background.add(addRegExPayload, getGBC(0, currentRow, 1, 1.0));
+			background.add(addRegExPayload, Util.getGBC(0, currentRow, 1, 1.0));
 			currentRow++;
 			JLabel RegExContent = new JLabel("Content:");
-			background.add(RegExContent, getGBC(0, currentRow, 1, 0.25));
-			background.add(
-					getRegExText(),
-					getGBC(1, currentRow, 1, 0.25, 0.0,
-							java.awt.GridBagConstraints.HORIZONTAL));
-			background.add(
-					getRegExLimitField(),
-					getGBC(2, currentRow, 1, 0.25, 0.0,
-							java.awt.GridBagConstraints.HORIZONTAL));
+			background.add(RegExContent, Util.getGBC(0, currentRow, 1, 0.25));
+			background.add(getRegExText(), Util.getGBC(1, currentRow, 1, 0.25,
+					0.0, java.awt.GridBagConstraints.HORIZONTAL));
+			background.add(getRegExLimitField(), Util.getGBC(2, currentRow, 1,
+					0.25, 0.0, java.awt.GridBagConstraints.HORIZONTAL));
 			background.add(getAddRegExPayloadButton(),
-					getGBC(3, currentRow, 1, 0.25));
+					Util.getGBC(3, currentRow, 1, 0.25));
 			currentRow++;
 
 			JLabel addFuzzerFile = new JLabel(
 					Constant.messages.getString("fuzz.add.fuzzerFile"));
-			background.add(addFuzzerFile, getGBC(0, currentRow, 1, 1.0));
+			background.add(addFuzzerFile, Util.getGBC(0, currentRow, 1, 1.0));
 			currentRow++;
 			JLabel FileContent = new JLabel(
 					Constant.messages.getString("fuzz.payloadDia.files"));
-			background.add(FileContent, getGBC(0, currentRow, 1, 0.25));
-			background.add(
-					getCategoryField(),
-					getGBC(1, currentRow, 2, 0.5, 0.0,
-							java.awt.GridBagConstraints.HORIZONTAL));
+			background.add(FileContent, Util.getGBC(0, currentRow, 1, 0.25));
+			background.add(getCategoryField(), Util.getGBC(1, currentRow, 2,
+					0.5, 0.0, java.awt.GridBagConstraints.HORIZONTAL));
 			background.add(getAddFuzzerFileButton(),
-					getGBC(3, currentRow, 1, 0.25));
+					Util.getGBC(3, currentRow, 1, 0.25));
 			currentRow++;
 
 			JLabel addFuzzScript = new JLabel(
 					Constant.messages.getString("fuzz.add.fuzzScript"));
-			background.add(addFuzzScript, getGBC(0, currentRow, 1, 0.2));
-			background.add(
-					getPayloadScripts(),
-					getGBC(1, currentRow, 2, 0.6, 0.0,
-							java.awt.GridBagConstraints.HORIZONTAL));
+			background.add(addFuzzScript, Util.getGBC(0, currentRow, 1, 0.2));
+			background.add(getPayloadScripts(), Util.getGBC(1, currentRow, 2,
+					0.6, 0.0, java.awt.GridBagConstraints.HORIZONTAL));
 			background.add(getAddFuzzScriptButton(),
-					getGBC(3, currentRow, 3, 0.2));
+					Util.getGBC(3, currentRow, 3, 0.2));
 			currentRow++;
 
-			background.add(getDoneButton(), getGBC(0, currentRow, 1, 0.5));
-			background.add(getCancelButton(), getGBC(3, currentRow, 1, 0.5));
+			background.add(getDoneButton(), Util.getGBC(0, currentRow, 1, 0.5));
+			background.add(getCancelButton(),
+					Util.getGBC(3, currentRow, 1, 0.5));
 		}
 		return background;
 	}
@@ -202,23 +221,58 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 
 	private ComboMenuBar getCategoryField() {
 		if (categoryField == null) {
-			ArrayList<JMenu> catMenus = new ArrayList<JMenu>();
+			JMenu menu = ComboMenuBar.createMenu(res.getDefaultCategory());
 			// Add File based fuzzers (fuzzdb)
 			for (String category : res.getFileFuzzerCategories()) {
-				JMenu cat = new JMenu(category);
-				for (String fuzzer : res.getFileFuzzerNames(category)) {
-					cat.add(new JMenuItem(fuzzer));
+				ArrayList<String> entries = new ArrayList<>(
+						Arrays.asList(category.split(" / ")));
+				JMenu parent = menu;
+				while (entries.size() > 0) {
+					boolean exists = false;
+					for (int i = 0; i < parent.getItemCount(); i++) {
+						if (parent.getItem(i).getText().equals(entries.get(0))) {
+							parent = (JMenu) parent.getItem(i);
+							exists = true;
+							break;
+						}
+					}
+					if (!exists) {
+						JMenu i = new JMenu(entries.get(0));
+						MenuScroll.setScrollerFor(i, 10, 125, 0, 0);
+						parent.add(i);
+						parent = i;
+					}
+					entries.remove(0);
 				}
-				catMenus.add(cat);
+				for (String fuzzer : res.getFileFuzzerNames(category)) {
+					parent.add(new JMenuItem(fuzzer));
+				}
 			}
 
 			// Add jbrofuzz fuzzers
 			for (String category : res.getJBroFuzzCategories()) {
-				JMenu cat = new JMenu(category);
-				for (String fuzzer : res.getJBroFuzzFuzzerNames(category)) {
-					cat.add(new JMenuItem(fuzzer));
+				ArrayList<String> entries = new ArrayList<>(
+						Arrays.asList(category.split(" / ")));
+				JMenu parent = menu;
+				while (entries.size() > 0) {
+					boolean exists = false;
+					for (int i = 0; i < parent.getItemCount(); i++) {
+						if (parent.getItem(i).getText().equals(entries.get(0))) {
+							parent = (JMenu) parent.getItem(i);
+							exists = true;
+							break;
+						}
+					}
+					if (!exists) {
+						JMenu i = new JMenu(entries.get(0));
+						parent.add(i);
+						parent = i;
+					}
+					entries.remove(0);
 				}
-				catMenus.add(cat);
+				for (String fuzzer : res.getJBroFuzzFuzzerNames(category)) {
+					parent.add(new JMenuItem(fuzzer));
+				}
 			}
 
 			// Custom category
@@ -227,13 +281,8 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 			for (String fuzzer : res.getCustomFileList()) {
 				cat.add(new JMenuItem(fuzzer));
 			}
-			catMenus.add(cat);
-			JMenu menu = ComboMenuBar.createMenu(res.getDefaultCategory());
-			for (JMenu c : catMenus) {
-				MenuScroll.setScrollerFor(c, 10, 125, 0, 0);
-				menu.add(c);
-			}
-			MenuScroll.setScrollerFor(menu, 10, 125, 0, 0);
+			menu.add(cat);
+			// MenuScroll.setScrollerFor(menu, 10, 125, 0, 0);
 			categoryField = new ComboMenuBar(menu);
 		}
 		return categoryField;
@@ -263,25 +312,6 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 		this.listen = l;
 	}
 
-	protected GridBagConstraints getGBC(int x, int y, int width, double weightx) {
-		return getGBC(x, y, width, weightx, 0.0,
-				java.awt.GridBagConstraints.NONE);
-	}
-
-	protected GridBagConstraints getGBC(int x, int y, int width,
-			double weightx, double weighty, int fill) {
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = x;
-		gbc.gridy = y;
-		gbc.insets = new java.awt.Insets(1, 5, 1, 5);
-		gbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
-		gbc.fill = fill;
-		gbc.weightx = weightx;
-		gbc.weighty = weighty;
-		gbc.gridwidth = width;
-		return gbc;
-	}
-
 	protected boolean isCustomCategory() {
 		return Constant.messages.getString("fuzz.category.custom").equals(
 				getCategoryField().getSelectedCategory());
@@ -290,6 +320,10 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 	protected boolean isJBroFuzzCategory() {
 		return getCategoryField().getSelectedCategory().startsWith(
 				ExtensionFuzz.JBROFUZZ_CATEGORY_PREFIX);
+	}
+
+	protected DeletePayloadAction getDeletePayloadAction() {
+		return new DeletePayloadAction();
 	}
 
 	protected AddSinglePayloadAction getAddSinglePayloadAction() {
@@ -314,6 +348,14 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 
 	protected CancelAction getCancelAction() {
 		return new CancelAction();
+	}
+
+	protected JButton getDeletePayloadButton() {
+		if (deletePayloadButton == null) {
+			deletePayloadButton = new JButton();
+			deletePayloadButton.setAction(getDeletePayloadAction());
+		}
+		return deletePayloadButton;
 	}
 
 	protected JButton getAddFuzzScriptButton() {
@@ -364,28 +406,65 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 		return cancelButton;
 	}
 
+	protected class DeletePayloadAction extends AbstractAction {
+		public DeletePayloadAction() {
+			super(Constant.messages.getString("fuzz.add.deletePayload"));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int[] sel = getPayloadField().getSelectedRows();
+			for (int i = 0; i < sel.length; i++) {
+				payloadModel.deleteEntry(sel[i] - i);
+				target.getPayloads().remove(sel[i] - i);
+			}
+			if (getPayloadField().getRowCount() == 0) {
+				getDoneButton().setEnabled(false);
+			}
+		}
+	}
+
 	protected class AddSinglePayloadAction extends AbstractAction {
 		public AddSinglePayloadAction() {
 			super(Constant.messages.getString("fuzz.add.singlePayload"));
-			setEnabled(true);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String input = getPayloadText().getText();
-			if (input.startsWith("#<type=\"")) {
-				int i = input.indexOf("\">");
+			if (input.startsWith(FileFuzzer.TYPE_SIG_BEG)) {
+				int i = input.indexOf(FileFuzzer.TYPE_SIG_END);
 				if (i > 0) {
-					String type = input.substring(8, i);
+					Payload.Type type;
+					switch (input.substring(8, i)) {
+					case "REGEX":
+						type = Payload.Type.REGEX;
+						break;
+					case "FILE":
+						type = Payload.Type.FILE;
+						break;
+					case "SCRIPT":
+						type = Payload.Type.SCRIPT;
+						break;
+					default:
+						type = Payload.Type.STRING;
+						break;
+					}
 					String data = input.substring(i + 2);
-					target.getPayloads().add(factory.createPayload(type, data));
+					P pay = factory.createPayload(type, data);
+					if (pay != null) {
+						target.getPayloads().add(pay);
+						payloadModel.addEntry(pay);
+						getDoneButton().setEnabled(true);
+					}
 				}
-			}
-			P newP = factory.createPayload(input);
-			if (newP != null) {
-				target.getPayloads().add(newP);
-				payloadModel.addEntry(newP);
-				getDoneButton().setEnabled( true );
+			} else {
+				P newP = factory.createPayload(input);
+				if (newP != null) {
+					target.getPayloads().add(newP);
+					payloadModel.addEntry(newP);
+					getDoneButton().setEnabled(true);
+				}
 			}
 		}
 	}
@@ -393,18 +472,17 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 	protected class AddRegExAction extends AbstractAction {
 		public AddRegExAction() {
 			super(Constant.messages.getString("fuzz.add.regExPayload"));
-			setEnabled(true);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String input = getRegExText().getText();
-			P newP = factory.createPayload("REGEX", input,
+			P newP = factory.createPayload(Payload.Type.REGEX, input,
 					((Number) getRegExLimitField().getValue()).intValue() - 1);
 			if (newP != null) {
 				target.getPayloads().add(newP);
 				payloadModel.addEntry(newP);
-				getDoneButton().setEnabled( true );
+				getDoneButton().setEnabled(true);
 			}
 		}
 	}
@@ -412,7 +490,6 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 	protected class AddFuzzerFileAction extends AbstractAction {
 		public AddFuzzerFileAction() {
 			super(Constant.messages.getString("fuzz.add.fuzzerFile"));
-			setEnabled(true);
 		}
 
 		@Override
@@ -423,10 +500,11 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 					.getFileFuzzerNames(cat).contains(choice))
 					|| (res.getJBroFuzzCategories().contains(cat) && res
 							.getJBroFuzzFuzzerNames(cat).contains(choice))) {
-				P pay = factory.createPayload("FILE", cat + " --> " + choice);
+				P pay = factory.createPayload(Payload.Type.FILE, cat + " --> "
+						+ choice);
 				target.getPayloads().add(pay);
 				payloadModel.addEntry(pay);
-				getDoneButton().setEnabled( true );
+				getDoneButton().setEnabled(true);
 			}
 		}
 	}
@@ -434,18 +512,17 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 	protected class AddScriptAction extends AbstractAction {
 		public AddScriptAction() {
 			super(Constant.messages.getString("fuzz.add.fuzzScript"));
-			setEnabled(true);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (payloadScripts.getSelectedItem() != null) {
 				String name = (String) payloadScripts.getSelectedItem();
-				P newP = factory.createPayload("SCRIPT", name);
+				P newP = factory.createPayload(Payload.Type.SCRIPT, name);
 				if (newP != null) {
 					target.getPayloads().add(newP);
 					payloadModel.addEntry(newP);
-					getDoneButton().setEnabled( true );
+					getDoneButton().setEnabled(true);
 				}
 			}
 		}
@@ -469,14 +546,20 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 	protected class CancelAction extends AbstractAction {
 
 		private static final long serialVersionUID = -6716179197963523133L;
+		private ArrayList<P> payloads;
 
 		public CancelAction() {
-			super(Constant.messages.getString("fuzz.button.del"));
+			super(Constant.messages.getString("fuzz.button.cancel"));
+			payloads = new ArrayList<>();
+		}
+
+		public void setPayloads(ArrayList<P> p) {
+			payloads = p;
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			target.setPayloads(new ArrayList<P>());
+			target.setPayloads(payloads);
 			listen.notifyFuzzerComplete(target);
 			setVisible(false);
 		}
@@ -502,7 +585,13 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 				JMenuItem item = (JMenuItem) e.getSource();
 				menu.setText(item.getText());
 				JPopupMenu popUp = ((JPopupMenu) item.getParent());
-				cat = ((JMenu) popUp.getInvoker()).getText();
+				cat = "";
+				while (popUp.getInvoker() instanceof JMenu
+						&& popUp.getInvoker().getParent() instanceof JPopupMenu) {
+					cat = ((JMenu) popUp.getInvoker()).getText() + " / " + cat;
+					popUp = (JPopupMenu) popUp.getInvoker().getParent();
+				}
+				cat = cat.substring(0, cat.length() - 3);
 				menu.requestFocus();
 			}
 		}
@@ -535,7 +624,6 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 		@Override
 		public Dimension getPreferredSize() {
 			if (preferredSize == null) {
-				Dimension sd = super.getPreferredSize();
 				Dimension menuD = getItemSize(menu);
 				Insets margin = menu.getMargin();
 				Dimension retD = new Dimension(menuD.width, margin.top
@@ -581,12 +669,13 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 
 	}
 
-	private class PayloadTableModel extends AbstractTableModel {
-		private String[] columnNames = {
+	private static class PayloadTableModel<P extends Payload> extends
+			AbstractTableModel {
+		private static String[] columnNames = {
 				Constant.messages.getString("fuzz.table.payload"),
 				Constant.messages.getString("fuzz.table.length"),
 				Constant.messages.getString("fuzz.table.recursive") };
-		private ArrayList<P> payloads = new ArrayList<P>();
+		private ArrayList<P> payloads = new ArrayList<>();
 
 		@Override
 		public int getColumnCount() {
@@ -609,23 +698,31 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 				return payloads.get(row).toString();
 			} else if (col == 1) {
 				return payloads.get(row).getLength();
-			} else {
+			} else if (col == 2) {
 				return payloads.get(row).getRecursive();
+			} else {
+				return "";
 			}
 		}
 
 		@Override
 		public Class<?> getColumnClass(int c) {
-			return getValueAt(0, c).getClass();
+			switch (c) {
+			case 1:
+				return Integer.class;
+			case 2:
+				return Boolean.class;
+			default:
+				return String.class;
+			}
 		}
 
 		@Override
 		public boolean isCellEditable(int row, int col) {
 			if (col != 0) {
 				return true;
-			} else {
-				return false;
 			}
+			return false;
 		}
 
 		public void addEntries(ArrayList<P> pays) {
@@ -639,25 +736,20 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 			fireTableRowsInserted(payloads.size() - 1, payloads.size() - 1);
 		}
 
-		@Override
-		public void setValueAt(Object value, int row, int col) {
-			try {
-				if (col == 1) {
-					payloads.get(row).setLength((int) value);
-					fireTableCellUpdated(row, col);
-				}
-				if (col == 2) {
-					payloads.get(row).setRecursive((boolean) value);
-					fireTableCellUpdated(row, col);
-				}
-			} catch (ClassCastException e) {
-
-			}
+		public void deleteEntry(int i) {
+			payloads.remove(i);
+			fireTableRowsDeleted(i, i);
 		}
 
-		public void reset() {
-			payloads = new ArrayList<P>();
-			fireTableDataChanged();
+		@Override
+		public void setValueAt(Object value, int row, int col) {
+			if (col == 1 && value instanceof Integer) {
+				payloads.get(row).setLength((int) value);
+				fireTableCellUpdated(row, col);
+			} else if (col == 2 && value instanceof Boolean) {
+				payloads.get(row).setRecursive((boolean) value);
+				fireTableCellUpdated(row, col);
+			}
 		}
 	}
 }

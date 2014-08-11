@@ -19,11 +19,8 @@
  */ 
 package org.zaproxy.zap.extension.multiFuzz;
 
-import javax.script.ScriptException;
+import javax.swing.JComponent;
 
-public interface PayloadScript {
-
-	void insertPayloads(FuzzGap<?, ?, ?> g, PayloadFactory<?> pf)
-			throws ScriptException;
-
+public interface SubComponent {
+	public JComponent addOptions();
 }
