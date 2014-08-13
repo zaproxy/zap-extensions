@@ -19,7 +19,6 @@ package org.zaproxy.zap.extension.soap;
 
 import net.htmlparser.jericho.Source;
 
-import org.jfree.util.Log;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -98,7 +97,7 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 		 * This should be unique across all active and passive rules.
 		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
 		 */
-		return 90027;
+		return 90030;
 	}
 	
 	@Override

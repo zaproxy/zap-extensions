@@ -18,27 +18,19 @@
 package org.zaproxy.zap.extension.soap;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 
 /**
  * SOAP XML Injection Active Scanner
@@ -59,7 +51,7 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 		 * This should be unique across all active and passive rules.
 		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
 		 */
-		return 90028;
+		return 90029;
 	}
 
 	@Override
