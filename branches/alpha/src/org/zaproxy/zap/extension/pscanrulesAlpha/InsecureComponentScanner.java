@@ -66,6 +66,11 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 	 * used to match JBoss headers, since these are non-standard
 	 */
 	private Pattern SERVER_HEADER_PATTERN_JBOSS = Pattern.compile("^Servlet [^ ]+[ ]+(JBoss)-([^ /]+).*$");
+	
+	/**
+	 * used to match Apache Tomcat version information, which is not leaked in the headers, but in error pages only
+	 */
+	private Pattern SERVER_BODY_PATTERN_TOMCAT = Pattern.compile("<html><head><title>Apache (Tomcat)/([.0-9]+) -.*</title>");
 
 
 	private PassiveScanThread parent = null;
@@ -119,9 +124,12 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 		if ( serverHeaderVector!= null ) headerVector.addAll(serverHeaderVector); 
 		Vector<String> poweredByHeaderVector = msg.getResponseHeader().getHeaders("X-Powered-By");
 		if ( poweredByHeaderVector!= null ) headerVector.addAll(poweredByHeaderVector);
-
+		String responseBody = msg.getResponseBody().toString();
+		
 		//for each header (there could be multiple, or none)
 		for (String header : headerVector) {
+			//the evidence is in the header, unless specified as being in the body... (Tomcat!) 
+			String evidence = header;
 			if (header != null) {
 				Set <Product> matchingProducts = new HashSet<Product> ();
 				//per rfc2616, the server token can contain multiple product tokens, delimited by a space character
@@ -140,6 +148,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 				Matcher matcherOracle = SERVER_HEADER_PATTERN_ORACLE.matcher (header);					
 				Matcher matcherJetty = SERVER_HEADER_PATTERN_JETTY.matcher (header);
 				Matcher matcherJBoss = SERVER_HEADER_PATTERN_JBOSS.matcher(header);
+				Matcher matcherTomcat = SERVER_BODY_PATTERN_TOMCAT.matcher(responseBody);
 
 				//for generic (mostly compliant with the rfc) products
 				if (matcher.matches()) {
@@ -194,6 +203,14 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					version = matcherJBoss.group(2);
 					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
 				}
+				//For Apache Tomcat
+				while (matcherTomcat.find()) { 
+					String product = null, version = null;
+					product = matcherTomcat.group(1);
+					version = matcherTomcat.group(2);
+					evidence = matcherTomcat.group(0);  //the evidence is not in the header, so grab it from here instead
+					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+				}
 
 				//for each of the product matches.
 				for ( Product matchingProduct : matchingProducts) {						
@@ -203,7 +220,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 
 					if ( product!= null && version != null) {
 						//TODO: handle special cases of web server software here that does not follow rfc2616						
-						if (log.isDebugEnabled()) log.debug("Found '"+product + "' version '"+ version+ "'");						
+						if (log.isDebugEnabled()) log.debug("Found '"+product + "' version '"+ version+ "'");
 						LinkedList<CVE> vulnlist;
 						try {
 							//get the cached vulnerabilities (or retrieve them and cache them)
@@ -251,7 +268,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 										extraInfo,  //other info
 										Constant.messages.getString(MESSAGE_PREFIX + "soln", product, version), 
 										Constant.messages.getString(MESSAGE_PREFIX + "refs", refs), 
-										header,		//evidence	
+										evidence,		//evidence	
 										829,	//CWE 829: Inclusion of Functionality from Untrusted Control Sphere
 										0,		//There is no CWE for "Components with Known Vulnerabilities!"
 										msg);  
