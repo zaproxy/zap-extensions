@@ -14,12 +14,15 @@ public class WSDLSpider extends SpiderParser{
 	
 	private static final Logger log = Logger.getLogger(WSDLSpider.class);
 	
+	private static boolean isEnabled = false;
+	
 	@Override
 	public boolean parseResource(HttpMessage message, Source source, int depth) {
 		return parseResourceWSDL(message, source, depth, true);
 	}
 	
 	public boolean parseResourceWSDL(HttpMessage message, Source source, int depth, boolean sendRequests) {
+		if (!isEnabled) return false;
 		if (message == null) return false;
 		/* Only applied to wsdl files. */
 		log.info("WSDL custom spider called.");
@@ -79,5 +82,13 @@ public class WSDLSpider extends SpiderParser{
 		String baseURL = getURIfromMessage(message);
 		if(baseURL.endsWith(".wsdl")) return true;
 		else return false;
+	}
+	
+	public static void enable(){
+		isEnabled = true;
+	}
+	
+	public static void disable(){
+		isEnabled = false;
 	}
 }

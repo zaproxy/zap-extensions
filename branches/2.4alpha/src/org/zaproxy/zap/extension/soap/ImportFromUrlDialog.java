@@ -32,13 +32,13 @@ public class ImportFromUrlDialog extends JDialog implements ActionListener{
 
 	private ExtensionImportWSDL caller = null;
 	
-	private JLabel labelURL = new JLabel("URL pointing to .wsdl file: ");
+	private JLabel labelURL = new JLabel(Constant.messages.getString(MESSAGE_PREFIX+"labelURL"));
     private JTextField fieldURL = new JTextField(30);
     
-    private JButton buttonImport = new JButton("Import");
+    private JButton buttonImport = new JButton(Constant.messages.getString(MESSAGE_PREFIX+"importButton"));
     
     public ImportFromUrlDialog(JFrame parent, ExtensionImportWSDL caller){	
-    	super(parent, "Import WSDL file from URL", true);
+    	super(parent, Constant.messages.getString(MESSAGE_PREFIX+"actionName"), true);
     	if (caller != null){
     		this.caller = caller;
     	}

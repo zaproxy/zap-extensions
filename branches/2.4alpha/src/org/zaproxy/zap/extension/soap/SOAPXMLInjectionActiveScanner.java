@@ -96,6 +96,7 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 			/* This scan is only applied to SOAP messages. */
 			final String request = new String(msg.getRequestBody().getBytes());
 			final String reqCharset = msg.getRequestBody().getCharset();
+			if (this.isStop()) return;
 			if(isSoapMessage(request,reqCharset)){
 				String paramValue2 = paramValue+"_modified";
 				String finalValue = paramValue+"</"+paramName+"><"+paramName+">"+paramValue2;
@@ -108,13 +109,18 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 				final String unescapedContent = StringEscapeUtils.unescapeXml(escapedContent);
 				attackMsg.setRequestBody(unescapedContent);
 				/* Sends the modified request. */
+				if (this.isStop()) return;
 				sendAndReceive(modifiedMsg);
+				if (this.isStop()) return;
 				sendAndReceive(attackMsg);
+				if (this.isStop()) return;
 				/* Analyzes the response. */
 				final String response = new String(attackMsg.getResponseBody().getBytes());
 				final String resCharset = attackMsg.getResponseBody().getCharset();
 				final HttpMessage originalMsg = getBaseMsg();
+				if (this.isStop()) return;
 				if(!isSoapMessage(response,resCharset)){
+					/* Response has no SOAP format. It is still notified since it is an unexpected result. */
 					bingo(Alert.RISK_LOW, Alert.WARNING, null, null, finalValue,Constant.messages.getString(MESSAGE_PREFIX + "warn1"), attackMsg);
 				}else if(responsesAreEqual(modifiedMsg, attackMsg) && !(responsesAreEqual(originalMsg, modifiedMsg))){
 					/* The attack message has achieved the same result as the modified message, so XML injection attack worked. */

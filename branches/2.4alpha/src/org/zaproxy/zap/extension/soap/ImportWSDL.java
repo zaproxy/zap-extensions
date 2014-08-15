@@ -120,5 +120,15 @@ public class ImportWSDL {
 		}
 		return null;
 	}
+	
+	/* Destroys current instance. */
+	public static synchronized void destroy(){
+		if(singleton != null){
+			singleton.soapActions = null;
+			singleton.requestsList = null;
+			singleton.configurationsList = null;
+			singleton = null;
+		}
+	}
 
 }

@@ -84,6 +84,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrlWSDL());
 	        
 			/* Custom spider is added in order to explore not only WSDL files, but also their WSDL endpoints. */
+	        WSDLSpider.enable();
 			ExtensionSpider spider = (ExtensionSpider) Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.NAME);
 			SpiderParser customSpider = new WSDLSpider();
 			if (spider != null){
@@ -98,12 +99,17 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	@Override
 	public void unload() {
 		super.unload();
+		/* Disables menu options. */
 		Control control = Control.getSingleton();
 		ExtensionLoader extLoader = control.getExtensionLoader();
 	    if (getView() != null) {
 	    	extLoader.removeToolsMenuItem(getMenuImportLocalWSDL());
 	    	extLoader.removeToolsMenuItem(getMenuImportUrlWSDL());
 	    }
+	    /* Destroys current ImportWSDL singleton instance. */
+	    ImportWSDL.destroy();
+	    /* Disables custom spider. */
+		WSDLSpider.disable();
 	}
 
 	/* Menu option to import a local WSDL file. */

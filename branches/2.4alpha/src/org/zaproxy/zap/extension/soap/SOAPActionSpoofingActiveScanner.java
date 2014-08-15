@@ -123,14 +123,16 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 						msg.setRequestHeader(header);
 						
 						/* Sends the modified request. */
+						if (this.isStop()) return;
 						sendAndReceive(msg);
+						if (this.isStop()) return;
 						
 						/* Checks the response. */
 						int code = scanResponse(msg, originalMsg);
 						if (code > 0) endScan = true;
 						raiseAlert(msg, code);
 					}
-					endScan = this.isStop();
+					if (this.isStop()) return;
 				}
 			}
 		} catch (Exception e) {
@@ -211,19 +213,19 @@ public class SOAPActionSpoofingActiveScanner extends AbstractAppPlugin {
 	private void raiseAlert(HttpMessage msg, int code){
 		switch(code){
 			case INVALID_FORMAT:
-				bingo(Alert.RISK_LOW, Alert.WARNING, null, null, null, "Response has an invalid format.", msg);
+				bingo(Alert.RISK_LOW, Alert.WARNING, null, null, null, Constant.messages.getString(MESSAGE_PREFIX + "invalidFormatMsg"), msg);
 				break;
 			case FAULT_CODE:
-				bingo(Alert.RISK_LOW, Alert.WARNING, null, null, null, "Server returned a fault code.", msg);
+				bingo(Alert.RISK_LOW, Alert.WARNING, null, null, null, Constant.messages.getString(MESSAGE_PREFIX + "faultCodeMsg"), msg);
 				break;
 			case EMPTY_RESPONSE:
-				bingo(Alert.RISK_LOW, Alert.WARNING, null, null, null, "Response is empty.", msg);
+				bingo(Alert.RISK_LOW, Alert.WARNING, null, null, null, Constant.messages.getString(MESSAGE_PREFIX + "emptyResponseMsg"), msg);
 				break;
 			case SOAPACTION_IGNORED:
-				bingo(Alert.RISK_INFO, Alert.WARNING, null, null, null, "The SOAPAction header has been ignored.", msg);
+				bingo(Alert.RISK_INFO, Alert.WARNING, null, null, null, Constant.messages.getString(MESSAGE_PREFIX + "soapactionIgnoredMsg"), msg);
 				break;
 			case SOAPACTION_EXECUTED:
-				bingo(Alert.RISK_HIGH, Alert.WARNING, null, null, null, "The SOAPAction operation has been executed.", msg);
+				bingo(Alert.RISK_HIGH, Alert.WARNING, null, null, null, Constant.messages.getString(MESSAGE_PREFIX + "soapactionExecutedMsg"), msg);
 				break;		
 		}
 	}
