@@ -27,7 +27,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -52,7 +51,6 @@ import org.parosproxy.paros.view.View;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlResultEntry;
-import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanResult;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlScanOptionsDialog;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlStatusPanel;
@@ -224,10 +222,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 	}
 
-	public void generateAccessControlReport(int contextId, File outputFile)
-			throws ParserConfigurationException {
-		log.debug("Generating report for context " + contextId + " to: " + outputFile);
-
+	private Document generateLastScanXMLReport(int contextId) throws ParserConfigurationException {
 		// Prepare the document and the root element
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -240,13 +235,17 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		Element localizationElement = doc.createElement("localization");
 		rootElement.appendChild(localizationElement);
 		ReportGenerator.addChildTextNode(doc, localizationElement, "title", "ZAP Access Control Report");
-		ReportGenerator.addChildTextNode(doc, localizationElement, "uri", "URI");
+		ReportGenerator.addChildTextNode(doc, localizationElement, "url", "URI");
 		ReportGenerator.addChildTextNode(doc, localizationElement, "method", "Method");
 		ReportGenerator.addChildTextNode(doc, localizationElement, "authorization", "Authorization");
 		ReportGenerator.addChildTextNode(doc, localizationElement, "access-control", "Access Control");
 
 		AccessControlScannerThread scanThread = threadManager.getScannerThread(contextId);
 		List<AccessControlResultEntry> scanResults = scanThread.getLastScanResults();
+		// If there are no scan results (i.e. hasn't run yet, return the document as is
+		if (scanResults == null) {
+			return doc;
+		}
 
 		// Create a sorted list of users based on id (null/unauthenticated user first)
 		ArrayList<User> users = new ArrayList<>(scanThread.getStartOptions().targetUsers);
@@ -319,12 +318,20 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 			e.printStackTrace();
 		}
 
+		return doc;
+	}
+
+	public File generateAccessControlReport(int contextId, File outputFile)
+			throws ParserConfigurationException {
+		log.debug("Generating report for context " + contextId + " to: " + outputFile);
+
 		// The path for the XSL file
 		String xslFile = Constant.getZapInstall() + File.separator + "xml" + File.separator
 				+ "reportAccessControl.xsl";
 
 		// Generate the report
-		ReportGenerator.XMLToHtml(doc, xslFile, outputFile);
+		return ReportGenerator.XMLToHtml(generateLastScanXMLReport(contextId), xslFile, outputFile);
+		
 	}
 
 	@Override

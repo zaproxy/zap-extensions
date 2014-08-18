@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.collections.ListUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -223,6 +222,8 @@ public class AccessControlScannerThread extends
 	}
 
 	public List<AccessControlResultEntry> getLastScanResults() {
+		if (scanResults == null)
+			return null;
 		return Collections.unmodifiableList(scanResults);
 	}
 

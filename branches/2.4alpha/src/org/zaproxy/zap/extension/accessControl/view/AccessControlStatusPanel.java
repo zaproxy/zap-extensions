@@ -27,16 +27,19 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
@@ -48,8 +51,10 @@ import org.zaproxy.zap.extension.accessControl.view.AccessControlResultsTableMod
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsPanel;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.scan.BaseScannerThreadManager;
+import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.panels.AbstractScanToolbarStatusPanel;
+import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 /**
  * Under development...
@@ -217,17 +222,61 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 			reportButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					try {
-						extension.generateAccessControlReport(getSelectedContext().getIndex(), new File(
-								"/home/theone/test_zap.html"));
-					} catch (ParserConfigurationException e1) {
-						e1.printStackTrace();
+					File targetFile = selectReportLocation();
+					File generatedFile = null;
+					if (targetFile != null)
+						try {
+							generatedFile = extension.generateAccessControlReport(getSelectedContext()
+									.getIndex(), targetFile);
+						} catch (ParserConfigurationException e1) {
+							e1.printStackTrace();
+						}
+					// Check if the generation was ok
+					if (generatedFile == null) {
+						View.getSingleton().showMessageDialog(
+								Constant.messages.getString("report.unknown.error", targetFile.getName()));
+						return;
 					}
+
+					// Try to show the report in the default browser
+					DesktopUtils.openUrlInBrowser(generatedFile.toURI());
 				}
 			});
 			toolbar.add(reportButton, LayoutHelper.getGBC(gridX++, 0, 1, 0));
 		}
 		return gridX;
+	}
+
+	private File selectReportLocation() {
+		// create a file chooser that requires writable files and starts in the user directory
+		JFileChooser chooser = new WritableFileChooser(Model.getSingleton().getOptionsParam()
+				.getUserDirectory());
+
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setFileFilter(new FileFilter() {
+			@Override
+			public boolean accept(File file) {
+				String lcFileName = file.getName().toLowerCase();
+				return (lcFileName.endsWith(".htm") || lcFileName.endsWith(".html"));
+			}
+
+			@Override
+			public String getDescription() {
+				return Constant.messages.getString("file.format.html");
+			}
+		});
+
+		File file = null;
+		// Default the filename to a reasonable extension
+		chooser.setSelectedFile(new File("ZAP Access Control Report.html"));
+
+		int rc = chooser.showSaveDialog(View.getSingleton().getMainFrame());
+		if (rc == JFileChooser.APPROVE_OPTION) {
+			file = chooser.getSelectedFile();
+			return file;
+		}
+		return null;
 	}
 
 	@Override
