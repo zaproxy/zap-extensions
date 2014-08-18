@@ -206,8 +206,12 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		// managers
 		// NOTE: if https://code.google.com/p/zaproxy/issues/detail?id=1316 is fixed, this could
 		// move to the "loadContextData()" method
-		for (ContextAccessRulesManager m : contextManagers.values()) {
-			m.reloadContextSiteTree(session);
+		if (session != null) {
+			for (Context c : session.getContexts()) {
+				ContextAccessRulesManager m = contextManagers.get(c.getIndex());
+				if (m != null)
+					m.reloadContextSiteTree(session);
+			}
 		}
 	}
 
@@ -386,6 +390,21 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		}
 		return manager;
 	}
+	
+	/**
+	 * Gets the access rules manager for a Context.
+	 *
+	 * @param context the context
+	 * @return the user access rules manager
+	 */
+	public ContextAccessRulesManager getContextAccessRulesManager(Context context) {
+		ContextAccessRulesManager manager = contextManagers.get(context.getIndex());
+		if (manager == null) {
+			manager = new ContextAccessRulesManager(context);
+			contextManagers.put(context.getIndex(), manager);
+		}
+		return manager;
+	}
 
 	@Override
 	public void loadContextData(Session session, Context context) {
@@ -401,7 +420,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 		// Load the rules for this context
 		if (serializedRules != null) {
-			ContextAccessRulesManager contextManager = getContextAccessRulesManager(context.getIndex());
+			ContextAccessRulesManager contextManager = getContextAccessRulesManager(context);
 			for (String serializedRule : serializedRules)
 				contextManager.importSerializedRule(serializedRule);
 		}
@@ -441,7 +460,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	public void importContextData(Context ctx, Configuration config) throws ConfigurationException {
 		List<Object> serializedRules = config.getList(CONTEXT_CONFIG_ACCESS_RULES_RULE);
 		if (serializedRules != null) {
-			ContextAccessRulesManager contextManager = getContextAccessRulesManager(ctx.getIndex());
+			ContextAccessRulesManager contextManager = getContextAccessRulesManager(ctx);
 			// Make sure we reload the context tree
 			contextManager.reloadContextSiteTree(Model.getSingleton().getSession());
 			for (Object serializedRule : serializedRules) {
