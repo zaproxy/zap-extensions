@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,6 +67,11 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 	 */
 	private Pattern SERVER_HEADER_PATTERN_JBOSS = Pattern.compile("^Servlet [^ ]+[ ]+(JBoss)-([^ /]+).*$");
 	
+	/**
+	 * a pattern for identifying and parsing the Generator tag in the body (normal case)
+	 */
+	private Pattern BODY_GENERATOR_PATTERN = Pattern.compile("<\\s*meta\\s+name\\s*=\\s*\"generator\"\\s+content\\s*=\\s*\"([^\\\"]+)\\s+([0-9.]+)\"\\s*/>");
+
 	/**
 	 * used to match Apache Tomcat version information, which is not leaked in the headers, but in error pages only
 	 */
@@ -129,9 +134,11 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 		//for each header (there could be multiple, or none)
 		for (String header : headerVector) {
 			//the evidence is in the header, unless specified as being in the body... (Tomcat!) 
-			String evidence = header;
+			//String evidence = header;
 			if (header != null) {
-				Set <Product> matchingProducts = new HashSet<Product> ();
+				//ordered list, so we can pull the items out in the order they were added
+				List <Product> matchingProducts = new LinkedList<Product> ();
+				List <String> matchingProductsEvidence = new LinkedList<String> ();
 				//per rfc2616, the server token can contain multiple product tokens, delimited by a space character
 				//and each product token takes the form: "token" or "token/product-version".
 				//in practice, we only see one of the following: 
@@ -148,14 +155,16 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 				Matcher matcherOracle = SERVER_HEADER_PATTERN_ORACLE.matcher (header);					
 				Matcher matcherJetty = SERVER_HEADER_PATTERN_JETTY.matcher (header);
 				Matcher matcherJBoss = SERVER_HEADER_PATTERN_JBOSS.matcher(header);
+				Matcher matcherGenerator = BODY_GENERATOR_PATTERN.matcher(responseBody);
 				Matcher matcherTomcat = SERVER_BODY_PATTERN_TOMCAT.matcher(responseBody);
 
 				//for generic (mostly compliant with the rfc) products
 				if (matcher.matches()) {
-					String product = null, version = null, dregs = null;
+					String product = null, version = null, dregs = null, evidence =null;
 					product = matcher.group(1);
 					version = matcher.group(2);
 					dregs = matcher.group(3);
+					evidence = matcher.group(0);
 					
 					//tweak for PHP (for which the general format is RFC compliant), since the the product information stored in the 
 					//database is limited to 3 levels of decimal digits, separated by dots, possibly followed directly by
@@ -167,6 +176,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					}
 					//record it..
 					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+					matchingProductsEvidence.add(evidence);
 
 					//look for Apache web server modules, if any
 					if ( dregs!= null && dregs.length() > 0 && header.startsWith("Apache")) {
@@ -178,49 +188,73 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 								//remove the leading "v" in the version for the Apache Perl module (not for mod_perl though)
 								if (product.equals("Perl")) version = version.replaceFirst("^v(.*)$", "$1");
 								matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_APACHE_MODULE, product, version));
+								//use the full module info as the evidence for now.
+								matchingProductsEvidence.add(evidence);
 							}
 						}
 					}
 				}
+								
+				//handle the "Generator" matches here
+				//According to the following page, the generator is "one of the software packages used to generate the document"
+				//http://www.w3.org/TR/html5/document-metadata.html#standard-metadata-names
+				while (matcherGenerator.find()) {
+					String product = null, version = null;
+					product = matcherGenerator.group(1);
+					version = matcherGenerator.group(2);
+					String evidence = matcherGenerator.group(0);  //the evidence is not in the header, so grab it from here instead
+					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_CONTENT_GENERATOR, product, version));
+					matchingProductsEvidence.add(evidence);
+				}
+				
 				//for Oracle webserver...
 				while (matcherOracle.find()) { 
 					String product = null, version = null;
 					product = matcherOracle.group(1);
 					version = matcherOracle.group(2);
+					String evidence = matcherOracle.group(0);
 					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+					matchingProductsEvidence.add(evidence);
 				}
 				//for Jetty
 				while (matcherJetty.find()) { 
 					String product = null, version = null;
 					product = matcherJetty.group(1);
 					version = matcherJetty.group(2);
+					String evidence = matcherJetty.group(0);
 					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+					matchingProductsEvidence.add(evidence);
 				}
 				//for JBoss
 				while (matcherJBoss.find()) { 
 					String product = null, version = null;
 					product = matcherJBoss.group(1);
 					version = matcherJBoss.group(2);
+					String evidence = matcherJBoss.group(0);
 					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+					matchingProductsEvidence.add(evidence);
 				}
 				//For Apache Tomcat
 				while (matcherTomcat.find()) { 
 					String product = null, version = null;
 					product = matcherTomcat.group(1);
 					version = matcherTomcat.group(2);
-					evidence = matcherTomcat.group(0);  //the evidence is not in the header, so grab it from here instead
+					String evidence = matcherTomcat.group(0);  //the evidence is not in the header, so grab it from here instead
 					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+					matchingProductsEvidence.add(evidence);
 				}
 
 				//for each of the product matches.
+				Iterator <String> matchingProductsEvidenceIterator = matchingProductsEvidence.iterator();				
 				for ( Product matchingProduct : matchingProducts) {						
-
+					String evidence = matchingProductsEvidenceIterator.next();
 					String product = matchingProduct.getProductName();
 					String version = matchingProduct.getProductVersion();
+					Product.ProductType productType = matchingProduct.getProductType();
 
 					if ( product!= null && version != null) {
 						//TODO: handle special cases of web server software here that does not follow rfc2616						
-						if (log.isDebugEnabled()) log.debug("Found '"+product + "' version '"+ version+ "'");
+						if (log.isDebugEnabled()) log.debug("Found '" + productType + "' '"+product + "' version '"+ version+ "'");
 						LinkedList<CVE> vulnlist;
 						try {
 							//get the cached vulnerabilities (or retrieve them and cache them)
@@ -228,7 +262,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 
 							//if we found vulnerabilities, raise them (by throwing a single alert, using the highest risk noted)
 							if (vulnlist != null && vulnlist.size() > 0) {
-								if (log.isDebugEnabled()) log.debug("Found vulnerabilities");
+								if (log.isDebugEnabled()) log.debug("Found "+vulnlist.size()+" vulnerabilities");
 
 								StringBuffer sb = new StringBuffer ();
 								StringBuffer sbRefs = new StringBuffer ();
