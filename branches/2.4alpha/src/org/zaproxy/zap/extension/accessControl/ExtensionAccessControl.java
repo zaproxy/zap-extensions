@@ -234,14 +234,26 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		// Localization
 		Element localizationElement = doc.createElement("localization");
 		rootElement.appendChild(localizationElement);
-		ReportGenerator.addChildTextNode(doc, localizationElement, "title", "ZAP Access Control Report");
-		ReportGenerator.addChildTextNode(doc, localizationElement, "url", "URI");
-		ReportGenerator.addChildTextNode(doc, localizationElement, "method", "Method");
-		ReportGenerator.addChildTextNode(doc, localizationElement, "authorization", "Authorization");
-		ReportGenerator.addChildTextNode(doc, localizationElement, "access-control", "Access Control");
+		ReportGenerator.addChildTextNode(doc, localizationElement, "title",
+				Constant.messages.getString("accessControl.report.title"));
+		ReportGenerator.addChildTextNode(doc, localizationElement, "url",
+				Constant.messages.getString("accessControl.report.table.header.url"));
+		ReportGenerator.addChildTextNode(doc, localizationElement, "method",
+				Constant.messages.getString("accessControl.report.table.header.method"));
+		ReportGenerator.addChildTextNode(doc, localizationElement, "authorization",
+				Constant.messages.getString("accessControl.report.table.header.authorization"));
+		ReportGenerator.addChildTextNode(doc, localizationElement, "access-control",
+				Constant.messages.getString("accessControl.report.table.header.accessControl"));
+		final String UNAUTHENICATED_USER_NAME = Constant.messages
+				.getString("accessControl.scanOptions.unauthenticatedUser");
+		final String AUTHORIZED_STRING = Constant.messages
+				.getString("accessControl.report.table.field.authorized");
+		final String UNAUTHORIZED_STRING = Constant.messages
+				.getString("accessControl.report.table.field.unauthorized");
 
 		AccessControlScannerThread scanThread = threadManager.getScannerThread(contextId);
 		List<AccessControlResultEntry> scanResults = scanThread.getLastScanResults();
+		
 		// If there are no scan results (i.e. hasn't run yet, return the document as is
 		if (scanResults == null) {
 			return doc;
@@ -266,7 +278,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		for (User user : users) {
 			Element userElement = doc.createElement("user");
 			usersElement.appendChild(userElement);
-			userElement.setAttribute("name", user == null ? "<<Unauthenticated>>" : user.getName());
+			userElement.setAttribute("name", user == null ? UNAUTHENICATED_USER_NAME : user.getName());
 		}
 
 		// Prepare a comparator that keeps scan results in order based on the user id
@@ -292,7 +304,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 			}
 			uriResultsSet.add(result);
 		}
-
+		
 		Element resultsElement = doc.createElement("results");
 		rootElement.appendChild(resultsElement);
 		for (TreeSet<AccessControlResultEntry> uriResultSet : uriResults.values()) {
@@ -305,10 +317,11 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 				Element userElement = doc.createElement("userResult");
 				uriElement.appendChild(userElement);
 				if (result.getUser() == null)
-					userElement.setAttribute("name", "<<Unauthenticated>>");
+					userElement.setAttribute("name", UNAUTHENICATED_USER_NAME);
 				else
 					userElement.setAttribute("name", result.getUser().getName());
-				userElement.setAttribute("authorization", result.isRequestAuthorized() ? "Yes" : "No");
+				userElement.setAttribute("authorization", result.isRequestAuthorized() ? AUTHORIZED_STRING
+						: UNAUTHORIZED_STRING);
 				userElement.setAttribute("access-control", result.getResult().toString());
 			}
 		}
@@ -331,7 +344,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 		// Generate the report
 		return ReportGenerator.XMLToHtml(generateLastScanXMLReport(contextId), xslFile, outputFile);
-		
+
 	}
 
 	@Override

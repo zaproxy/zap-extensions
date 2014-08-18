@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
@@ -51,7 +52,20 @@ public class AccessControlScannerThread extends
 		BaseContextScannerThread<AccessControlScanStartOptions, AccessControlScanListener> {
 
 	public enum AccessControlScanResult {
-		VALID, ILLEGAL, UNKNOWN
+		VALID(Constant.messages.getString("accessControl.scanResult.valid")), ILLEGAL(Constant.messages
+				.getString("accessControl.scanResult.illegal")), UNKNOWN(Constant.messages
+				.getString("accessControl.scanResult.unknown"));
+
+		private final String localizedName;
+
+		private AccessControlScanResult(String localizedName) {
+			this.localizedName = localizedName;
+		}
+
+		@Override
+		public String toString() {
+			return localizedName;
+		}
 	};
 
 	private static final Logger log = Logger.getLogger(AccessControlScannerThread.class);
