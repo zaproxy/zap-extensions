@@ -30,6 +30,7 @@ public class Product {
 	public enum ProductType {
 		   PRODUCTTYPE_WEBSERVER
 		   ,PRODUCTTYPE_APACHE_MODULE
+		   ,PRODUCTTYPE_CONTENT_GENERATOR
 		 }
 	
 	ProductType productType ;
