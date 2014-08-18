@@ -52,7 +52,7 @@ public class ExtensionCoreLanguages extends ExtensionAdaptor {
     @Override
     public void postInstall() {
     	// Import the language file
-    	LangImporter.importLanguagePack(Constant.getZapHome() + "/lang/ZAP_2.3.1_language_pack.2.zaplang");
+    	LangImporter.importLanguagePack(Constant.getZapHome() + "/lang/ZAP_2.3.1_language_pack.3.zaplang");
     }
 
 }
