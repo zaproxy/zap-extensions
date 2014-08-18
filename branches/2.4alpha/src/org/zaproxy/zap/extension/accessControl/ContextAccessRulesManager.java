@@ -27,6 +27,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.extension.accessControl.widgets.ContextSiteTree;
 import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
 import org.zaproxy.zap.extension.accessControl.widgets.UriUtils;
@@ -210,6 +211,10 @@ public class ContextAccessRulesManager {
 
 	public ContextSiteTree getContextSiteTree() {
 		return contextSiteTree;
+	}
+	
+	public void reloadContextSiteTree(Session session){
+		this.contextSiteTree.reloadTree(session, context);
 	}
 
 	/**

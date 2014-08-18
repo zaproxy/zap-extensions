@@ -202,12 +202,19 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 			getStatusPanel().contextsChanged();
 			getStatusPanel().reset();
 		}
+		// If the session has changed, make sure we reload any ContextTrees for the existing context
+		// managers
+		// NOTE: if https://code.google.com/p/zaproxy/issues/detail?id=1316 is fixed, this could
+		// move to the "loadContextData()" method
+		for (ContextAccessRulesManager m : contextManagers.values()) {
+			m.reloadContextSiteTree(session);
+		}
 	}
 
 	@Override
 	public void sessionAboutToChange(Session session) {
 		// TODO Auto-generated method stub
-
+		log.info("About to Change session");
 	}
 
 	@Override
@@ -253,7 +260,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 		AccessControlScannerThread scanThread = threadManager.getScannerThread(contextId);
 		List<AccessControlResultEntry> scanResults = scanThread.getLastScanResults();
-		
+
 		// If there are no scan results (i.e. hasn't run yet, return the document as is
 		if (scanResults == null) {
 			return doc;
@@ -304,7 +311,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 			}
 			uriResultsSet.add(result);
 		}
-		
+
 		Element resultsElement = doc.createElement("results");
 		rootElement.appendChild(resultsElement);
 		for (TreeSet<AccessControlResultEntry> uriResultSet : uriResults.values()) {
@@ -435,6 +442,8 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		List<Object> serializedRules = config.getList(CONTEXT_CONFIG_ACCESS_RULES_RULE);
 		if (serializedRules != null) {
 			ContextAccessRulesManager contextManager = getContextAccessRulesManager(ctx.getIndex());
+			// Make sure we reload the context tree
+			contextManager.reloadContextSiteTree(Model.getSingleton().getSession());
 			for (Object serializedRule : serializedRules) {
 				contextManager.importSerializedRule(serializedRule.toString());
 			}
