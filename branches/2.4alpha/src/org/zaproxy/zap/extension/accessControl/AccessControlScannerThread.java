@@ -19,9 +19,11 @@ package org.zaproxy.zap.extension.accessControl;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections.ListUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -60,6 +62,7 @@ public class AccessControlScannerThread extends
 	/** The HTTP sender used to effectively send the data. */
 	private HttpSender httpSender;
 	private ContextAccessRulesManager accessRulesManager;
+	private List<AccessControlResultEntry> scanResults;
 
 	private ExtensionAccessControl extension;
 
@@ -70,6 +73,7 @@ public class AccessControlScannerThread extends
 
 	@Override
 	public void startScan() {
+		this.scanResults = new LinkedList<>();
 		this.targetUsers = getStartOptions().targetUsers;
 		this.accessRulesManager = extension.getContextAccessRulesManager(getStartOptions().targetContext
 				.getIndex());
@@ -202,7 +206,10 @@ public class AccessControlScannerThread extends
 		}
 
 		// And notify any listeners of the obtained result
-		notifyScanResultObtained(hRef, user, authorized, result, rule);
+		AccessControlResultEntry resultEntry = new AccessControlResultEntry(hRef, user, authorized, result,
+				rule);
+		notifyScanResultObtained(resultEntry);
+		this.scanResults.add(resultEntry);
 	}
 
 	private List<SiteNode> getTargetUrlsList() {
@@ -210,10 +217,13 @@ public class AccessControlScannerThread extends
 				.getNodesInContextFromSiteTree(getStartOptions().targetContext);
 	}
 
-	private void notifyScanResultObtained(HistoryReference msg, User user, boolean requestAuthorized,
-			AccessControlScanResult result, AccessRule accessRule) {
+	private void notifyScanResultObtained(AccessControlResultEntry scanResult) {
 		for (AccessControlScanListener l : listeners)
-			l.scanResultObtained(contextId, msg, user, requestAuthorized, result, accessRule);
+			l.scanResultObtained(contextId, scanResult);
+	}
+
+	public List<AccessControlResultEntry> getLastScanResults() {
+		return Collections.unmodifiableList(scanResults);
 	}
 
 	/**
@@ -237,10 +247,64 @@ public class AccessControlScannerThread extends
 		 * Callback method called when a scan result has been obtained.
 		 *
 		 * @param contextId the context id
-		 * @param user the user for which the result was obtained. Can be {@code null}, for results
-		 *            obtained for scanning as 'un-authenticated'
+		 * @param result the result obtained during the scan. The user contained can be {@code null}
+		 *            , for results obtained when scanning as 'un-authenticated'
 		 */
-		void scanResultObtained(int contextId, HistoryReference historyReference, User user,
-				boolean requestAuthorized, AccessControlScanResult result, AccessRule accessRule);
+		void scanResultObtained(int contextId, AccessControlResultEntry result);
+	}
+
+	public static final class AccessControlResultEntry {
+
+		private HistoryReference reference;
+		private User user;
+		private boolean requestAuthorized;
+		private AccessControlScanResult result;
+		private AccessRule accessRule;
+
+		public AccessControlResultEntry(HistoryReference historyReference, User user,
+				boolean requestAuthorized, AccessControlScanResult result, AccessRule accessRule) {
+			this.reference = historyReference;
+			this.user = user;
+			this.result = result;
+			this.requestAuthorized = requestAuthorized;
+			this.accessRule = accessRule;
+		}
+
+		public HistoryReference getHistoryReference() {
+			return reference;
+		}
+
+		public Integer getHistoryId() {
+			return reference.getHistoryId();
+		}
+
+		public String getMethod() {
+			return reference.getMethod();
+		}
+
+		public String getUri() {
+			return reference.getURI().toString();
+		}
+
+		public Integer getStatusCode() {
+			return reference.getStatusCode();
+		}
+
+		public User getUser() {
+			return user;
+		}
+
+		public AccessControlScanResult getResult() {
+			return result;
+		}
+
+		public AccessRule getAccessRule() {
+			return accessRule;
+		}
+
+		public boolean isRequestAuthorized() {
+			return requestAuthorized;
+		}
+
 	}
 }

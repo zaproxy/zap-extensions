@@ -18,31 +18,38 @@
 package org.zaproxy.zap.extension.accessControl.view;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlResultEntry;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanListener;
-import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanResult;
 import org.zaproxy.zap.extension.accessControl.ExtensionAccessControl;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlResultsTableModel.AccessControlResultsTableEntry;
+import org.zaproxy.zap.extension.httpsessions.HttpSessionsPanel;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.scan.BaseScannerThreadManager;
-import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.panels.AbstractScanToolbarStatusPanel;
-import org.zaproxy.zap.extension.accessControl.AccessRule;
 
 /**
  * Under development...
@@ -62,6 +69,8 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	private AccessControlResultsTableModel currentResultsModel;
 	private ExtensionAccessControl extension;
 
+	private JButton reportButton;
+
 	public AccessControlStatusPanel(ExtensionAccessControl extension,
 			BaseScannerThreadManager<AccessControlScannerThread> threadManager) {
 
@@ -74,10 +83,8 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	}
 
 	@Override
-	public void scanResultObtained(int contextId, HistoryReference hRef, User user,
-			boolean requestAuthorized, AccessControlScanResult result, AccessRule accessRule) {
-		getResultsModel(contextId).addEntry(
-				new AccessControlResultsTableEntry(hRef, user, requestAuthorized, result, accessRule));
+	public void scanResultObtained(int contextId, AccessControlResultEntry result) {
+		getResultsModel(contextId).addEntry(new AccessControlResultsTableEntry(result));
 	}
 
 	@Override
@@ -197,6 +204,40 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	public void scanStarted(int contextId) {
 		super.scanStarted(contextId);
 		getResultsModel(contextId).clear();
+	}
+
+	@Override
+	protected int addToolBarElements(JToolBar toolbar, short location, int gridX) {
+		if (location == TOOLBAR_LOCATION_AFTER_PROGRESS_BAR) {
+			reportButton = new JButton();
+			reportButton.setText(Constant.messages.getString("accessControl.toolbar.button.report"));
+			reportButton.setIcon(new ImageIcon(HttpSessionsPanel.class
+					.getResource("/resource/icon/16/177.png")));
+			reportButton.setEnabled(false);
+			reportButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try {
+						extension.generateAccessControlReport(getSelectedContext().getIndex(), new File(
+								"/home/theone/test_zap.html"));
+					} catch (ParserConfigurationException e1) {
+						e1.printStackTrace();
+					}
+				}
+			});
+			toolbar.add(reportButton, LayoutHelper.getGBC(gridX++, 0, 1, 0));
+		}
+		return gridX;
+	}
+
+	@Override
+	protected void contextSelected(Context context) {
+		// Just enable the reportButton if something's selected
+		if (context != null)
+			reportButton.setEnabled(true);
+		else
+			reportButton.setEnabled(false);
+		super.contextSelected(context);
 	}
 
 	@Override

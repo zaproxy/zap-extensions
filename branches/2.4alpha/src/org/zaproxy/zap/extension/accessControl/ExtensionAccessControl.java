@@ -18,14 +18,22 @@
 package org.zaproxy.zap.extension.accessControl;
 
 import java.awt.Dimension;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeSet;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -37,17 +45,20 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.extension.report.ReportGenerator;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlResultEntry;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanResult;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlScanOptionsDialog;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlStatusPanel;
 import org.zaproxy.zap.extension.accessControl.view.ContextAccessControlPanel;
-import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.authorization.ExtensionAuthorization;
-import org.zaproxy.zap.extension.users.ContextUserAuthManager;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ContextDataFactory;
@@ -213,6 +224,109 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 	}
 
+	public void generateAccessControlReport(int contextId, File outputFile)
+			throws ParserConfigurationException {
+		log.debug("Generating report for context " + contextId + " to: " + outputFile);
+
+		// Prepare the document and the root element
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		Document doc = docBuilder.newDocument();
+
+		Element rootElement = doc.createElement("report");
+		doc.appendChild(rootElement);
+
+		// Localization
+		Element localizationElement = doc.createElement("localization");
+		rootElement.appendChild(localizationElement);
+		ReportGenerator.addChildTextNode(doc, localizationElement, "title", "ZAP Access Control Report");
+		ReportGenerator.addChildTextNode(doc, localizationElement, "uri", "URI");
+		ReportGenerator.addChildTextNode(doc, localizationElement, "method", "Method");
+		ReportGenerator.addChildTextNode(doc, localizationElement, "authorization", "Authorization");
+		ReportGenerator.addChildTextNode(doc, localizationElement, "access-control", "Access Control");
+
+		AccessControlScannerThread scanThread = threadManager.getScannerThread(contextId);
+		List<AccessControlResultEntry> scanResults = scanThread.getLastScanResults();
+
+		// Create a sorted list of users based on id (null/unauthenticated user first)
+		ArrayList<User> users = new ArrayList<>(scanThread.getStartOptions().targetUsers);
+		Collections.sort(users, new Comparator<User>() {
+			@Override
+			public int compare(User o1, User o2) {
+				if (o1 == o2)
+					return 0;
+				if (o1 == null)
+					return -1;
+				if (o2 == null)
+					return 1;
+				return o1.getId() - o2.getId();
+			}
+		});
+		Element usersElement = doc.createElement("users");
+		rootElement.appendChild(usersElement);
+		for (User user : users) {
+			Element userElement = doc.createElement("user");
+			usersElement.appendChild(userElement);
+			userElement.setAttribute("name", user == null ? "<<Unauthenticated>>" : user.getName());
+		}
+
+		// Prepare a comparator that keeps scan results in order based on the user id
+		Comparator<AccessControlResultEntry> comparator = new Comparator<AccessControlScannerThread.AccessControlResultEntry>() {
+			@Override
+			public int compare(AccessControlResultEntry o1, AccessControlResultEntry o2) {
+				if (o1.getUser() == o2.getUser())
+					return 0;
+				if (o1.getUser() == null)
+					return -1;
+				if (o2.getUser() == null)
+					return 1;
+				return o1.getUser().getId() - o2.getUser().getId();
+			}
+		};
+		Map<String, TreeSet<AccessControlResultEntry>> uriResults = new HashMap<>(scanResults.size());
+		TreeSet<AccessControlResultEntry> uriResultsSet;
+		for (AccessControlResultEntry result : scanResults) {
+			uriResultsSet = uriResults.get(result.getUri());
+			if (uriResultsSet == null) {
+				uriResultsSet = new TreeSet<>(comparator);
+				uriResults.put(result.getUri(), uriResultsSet);
+			}
+			uriResultsSet.add(result);
+		}
+
+		Element resultsElement = doc.createElement("results");
+		rootElement.appendChild(resultsElement);
+		for (TreeSet<AccessControlResultEntry> uriResultSet : uriResults.values()) {
+			Element uriElement = doc.createElement("result");
+			resultsElement.appendChild(uriElement);
+			AccessControlResultEntry firstEntry = uriResultSet.first();
+			uriElement.setAttribute("uri", firstEntry.getUri());
+			uriElement.setAttribute("method", firstEntry.getMethod());
+			for (AccessControlResultEntry result : uriResultSet) {
+				Element userElement = doc.createElement("userResult");
+				uriElement.appendChild(userElement);
+				if (result.getUser() == null)
+					userElement.setAttribute("name", "<<Unauthenticated>>");
+				else
+					userElement.setAttribute("name", result.getUser().getName());
+				userElement.setAttribute("authorization", result.isRequestAuthorized() ? "Yes" : "No");
+				userElement.setAttribute("access-control", result.getResult().toString());
+			}
+		}
+		try {
+			log.debug("Result: " + ReportGenerator.getDebugXMLString(doc));
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		}
+
+		// The path for the XSL file
+		String xslFile = Constant.getZapInstall() + File.separator + "xml" + File.separator
+				+ "reportAccessControl.xsl";
+
+		// Generate the report
+		ReportGenerator.XMLToHtml(doc, xslFile, outputFile);
+	}
+
 	@Override
 	public AbstractContextPropertiesPanel getContextPanel(Context context) {
 		ContextAccessControlPanel panel = this.contextPanelsMap.get(context.getIndex());
@@ -227,6 +341,8 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	public void discardContexts() {
 		this.contextPanelsMap.clear();
 		this.contextManagers.clear();
+		this.threadManager.stopAllScannerThreads();
+		this.threadManager.clearThreads();
 	}
 
 	/**

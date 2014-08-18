@@ -24,12 +24,10 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.HistoryReference;
-import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlResultEntry;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanResult;
 import org.zaproxy.zap.extension.accessControl.AccessRule;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlResultsTableModel.AccessControlResultsTableEntry;
-import org.zaproxy.zap.extension.spider.SpiderPanelTableModel;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableModel;
 import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
@@ -82,10 +80,8 @@ public class AccessControlResultsTableModel extends
 		fireTableRowsInserted(entries.size() - 1, entries.size() - 1);
 	}
 
-	public void addEntry(HistoryReference historyReference, User user, boolean requestAuthorized,
-			AccessRule accessRule, AccessControlScanResult result) {
-		addEntry(new AccessControlResultsTableEntry(historyReference, user, requestAuthorized, result,
-				accessRule));
+	public void addEntry(AccessControlResultEntry result) {
+		addEntry(new AccessControlResultsTableEntry(result));
 	}
 
 	@Override
@@ -214,18 +210,11 @@ public class AccessControlResultsTableModel extends
 
 	public static class AccessControlResultsTableEntry extends AbstractHistoryReferencesTableEntry {
 
-		private User user;
-		private boolean requestAuthorized;
-		private AccessControlScanResult result;
-		private AccessRule accessRule;
+		private AccessControlResultEntry result;
 
-		public AccessControlResultsTableEntry(HistoryReference historyReference, User user,
-				boolean requestAuthorized, AccessControlScanResult result, AccessRule accessRule) {
-			super(historyReference);
-			this.user = user;
+		public AccessControlResultsTableEntry(AccessControlResultEntry result) {
+			super(result.getHistoryReference());
 			this.result = result;
-			this.requestAuthorized = requestAuthorized;
-			this.accessRule = accessRule;
 		}
 
 		@Override
@@ -249,21 +238,20 @@ public class AccessControlResultsTableModel extends
 		}
 
 		public User getUser() {
-			return user;
+			return result.getUser();
 		}
 
 		public AccessControlScanResult getResult() {
-			return result;
+			return result.getResult();
 		}
 
 		public AccessRule getAccessRule() {
-			return accessRule;
+			return result.getAccessRule();
 		}
 
 		public boolean isRequestAuthorized() {
-			return requestAuthorized;
+			return result.isRequestAuthorized();
 		}
-
 	}
 
 }
