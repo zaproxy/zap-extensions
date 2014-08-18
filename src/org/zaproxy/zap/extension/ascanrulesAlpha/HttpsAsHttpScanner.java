@@ -19,14 +19,13 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.Constant;
 
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class HttpsAsHttpScanner extends AbstractAppPlugin {
 	private static final String MESSAGE_PREFIX = "ascanalpha.httpsashttpscanner.";
 	private static final int PLUGIN_ID = 10047;
 
-	private static Logger log = Logger.getLogger(HttpsAsHttpScanner.class);
+	private static final Logger log = Logger.getLogger(HttpsAsHttpScanner.class);
 	
 	@Override
 	public int getId() {
@@ -110,73 +109,54 @@ public class HttpsAsHttpScanner extends AbstractAppPlugin {
 		
 		if (!this.getBaseMsg().getRequestHeader().isSecure()) { //Base request isn't HTTPS
 			if (log.isDebugEnabled())  log.debug ("The original request was not HTTPS, so there is not much point in looking further.");
-			return;	
+			return;	//Get out
 		}
 		
 		int originalStatusCode = this.getBaseMsg().getResponseHeader().getStatusCode();
-		if (originalStatusCode == HttpStatus.SC_NOT_FOUND || originalStatusCode == 0) {
+		if (originalStatusCode == HttpStatusCode.NOT_FOUND || originalStatusCode == 0) {
 			if (log.isDebugEnabled())  log.debug ("The original request was not successfuly completed (status = "+ originalStatusCode +"), so there is not much point in looking further.");
-			return;				
+			return;	//Get out		
 		}
 		
 		if (log.isDebugEnabled()) {
 			log.debug("Checking if " + this.getBaseMsg().getRequestHeader().getURI() + " is available via HTTP.");
 		}
 		
-		HttpMessage newRequest = doRequest();
-		
-		int newStatusCode = newRequest.getResponseHeader().getStatusCode();
-		
-		if (newStatusCode == HttpStatus.SC_OK) { // 200 Success
-
-			URI uri = newRequest.getRequestHeader().getURI();
-			
-			try {
-				bingo(this.getRisk(), //Risk
-						Alert.WARNING, //Confidence/Reliability
-						this.getName(), //Name
-						this.getDescription(), //Description
-						uri.toString(), //URI
-						null, //Param
-						"", //Attack
-						uri.toString(), //OtherInfo 
-						this.getSolution(), //Solution
-						uri.toString(), //Evidence
-						this.getCweId(), //CWE ID
-						this.getWascId(), //WASC ID
-						newRequest); //HTTPMessage
-			} catch (Exception e) {
-				log.error("Error raising alert" + e.getMessage(), e);
-			}
-		}
-	}
-	
-	private HttpMessage doRequest() {
-		
 		HttpMessage newRequest = this.getNewMsg();
-				
-		try{
-		URI newURI = new URI("http",
-			newRequest.getRequestHeader().getURI().getUserinfo(),
-			newRequest.getRequestHeader().getURI().getHost(),
-			newRequest.getRequestHeader().getURI().getPort(),
-			newRequest.getRequestHeader().getURI().getPath(),
-			newRequest.getRequestHeader().getURI().getPathQuery(),
-			newRequest.getRequestHeader().getURI().getFragment());
 		
-			newRequest.getRequestHeader().setURI(newURI); //Set the URI based on the newly built URL
-		} catch (URIException e)
-		{
-			log.error("Error creating HTTP URL from HTTPS URL.");
-			log.error(e.getMessage(), e);
+		try{
+			newRequest.getRequestHeader().setSecure(false); //https becomes http
+			log.info("**"+newRequest.getRequestHeader().getURI());
+		} catch (URIException e) {
+			log.error("Error creating HTTP URL from HTTPS URL:", e);
+			return; //Get out
 		}
 
-		newRequest.setCookieParams(this.getBaseMsg().getCookieParams());
 		try {
 			sendAndReceive(newRequest, false);
 		} catch (IOException e) {
-			log.error("Error scanning a request via HTTP when the original was HTTPS.");
+			log.error("Error scanning a request via HTTP when the original was HTTPS:", e);
+			return; //Get out
 		}
-		return(newRequest);
+		
+		if (newRequest.getResponseHeader().getStatusCode() == HttpStatusCode.OK) { // 200 Success
+
+			String newUri = newRequest.getRequestHeader().getURI().toString();
+			
+			bingo(this.getRisk(), //Risk
+					Alert.WARNING, //Confidence/Reliability
+					this.getName(), //Name
+					this.getDescription(), //Description
+					this.getBaseMsg().getRequestHeader().getURI().toString(), //Original URI
+					null, //Param
+					"", //Attack
+					newUri, //OtherInfo 
+					this.getSolution(), //Solution
+					newUri, //Evidence
+					this.getCweId(), //CWE ID
+					this.getWascId(), //WASC ID
+					newRequest); //HTTPMessage
+		}
 	}
+	
 }
