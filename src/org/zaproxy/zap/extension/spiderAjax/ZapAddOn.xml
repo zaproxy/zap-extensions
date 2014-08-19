@@ -1,22 +1,17 @@
 <zapaddon>
 	<name>Ajax Spider</name>
-	<version>10</version>
+	<version>11</version>
 	<description>Allows you to spider sites that make heavy use of javascript using crawljax</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/AJAXSpider_getStarted</url>
 	<changes>
-	<![CDATA[
-	Updated to use the latest core changes (Issues 609 and 1102).<br>
-	Changed to display the spider results in a table (Issue 503).<br>
-	Moved the Ajax Spider help pages from ZAP core to the add-on (Issue 1098).<br>
-	Updated add-on dir structure (Issue 1113).
-	]]>
+	<![CDATA[In addition to Maximum crawl depth and Event wait time, added Max Crawl states, max duration, reload wait time and 'click elements once' as options to be configurable by a user (Issue 945) Added table to choose which elements to click and added 'click default only' option (issue 1177).]]>
 	</changes>
-	<dependson/>
+	<dependson></dependson>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.spiderAjax.ExtensionAjax</extension>
 	</extensions>
-	<ascanrules/>
+	<ascanrules></ascanrules>
 	<pscanrules/>
 	<filters/>
 	<files/>
