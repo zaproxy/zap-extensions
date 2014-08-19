@@ -8,45 +8,91 @@
 
 	This screen allows you to configure the
 	<a href="concepts.html">AJAX Spider</a> options. The AJAX Spider is an add-on for a
-	crawler called Crawljax. The add-on sets up a local proxy in ZAP to talk to Cralwjax.
-	Therefore, you can configure the crawler.
-
-	<h2>AJAX Spider Crawler Configuration</h2>
-	You can configure the following parameters of Crawljax.
-	<h3>Number of Browser Windows</h3>
-	You can configure the number of windows to be used by AJAX Spider. The more windows, the
-	faster the process will be.
-	<h3>Browser</h3>
-	<p>AJAX Spider relies on an external browser to crawl the targeted site. You can
-		specify which one you want to use: Firefox, Chrome or HtmlUnit.</p>
-	<p>HtmlUnit is an embedded java based browser included in AJAX Spider.</p>
-	<p>If you use Firefox or Chrome, you must have it installed in your system.</p>
-	<p>
-		Chrome requires a specific package to run, called Chrome Driver. <br> If you want
-		to use Chrome, you should install it. For more information refer to
+	crawler called Crawljax. The add-on sets up a local proxy in ZAP to talk to Crawljax.
+	The AJAX Spider allows you to crawl web applications written in AJAX in far more depth than
+	the native Spider. Use the AJAX Spider if you may have web applications written in AJAX. You should also use
+	the native Spider as well for complete coverage of a web application (e.g., to cover HTML comments). 
+    <br/>
+    <br/>
+    <h2>Configuration option explanation</h2>
+    <br/>
+	<table border ="2">
+		<tr>
+			<th colspan = "3"><br>Configuration Options</th>
+		</tr>
+		<tr>
+			<th>Field</th>
+			<th>Details</th>
+			<th>Default</th>
+		</tr>
+		<tr><td>Browser</td>
+	    <td>AJAX Spider relies on an external browser to crawl the targeted site. You can
+		specify which one you want to use: Firefox, Chrome or HtmlUnit.
+		If you use Firefox or Chrome, you must have it installed in your system.
+	    HtmlUnit is an embedded Java based browser included in AJAX Spider.
+	    Chrome requires a specific package called Chrome Driver to be installed.
+	    For more information on Chrome Driver refer to
 		http://code.google.com/p/chromedriver/downloads/list
-	</p>
-	<h3>Select ChromeDriver</h3>
-	<p>Allows to select the location of the Chrome Driver.</p>
-	<h3>Crawl in depth</h3>
-	If you enable this option, more HTML tags will be analyzed to find new links. Following tags will be analyzed: a, button, td, 
-	span, div, tr, ol, li, radio, form, select, input, option, img, p, abbr, address, area, article, aside, audio, canvas, details, 
-	footer, header, label, nav, section, summary, table, textarea, th, ul, video. This usually improves overall results but slows down the process.
-	<h3>Maximum crawl depth</h3>
-	The maximum depth that the crawler can reach. The default is 10. Unlimited depth is zero.
-	<h3>Maximum crawl states</h3>
-	The maximum number of states that the crawler should crawl. The default is unlimited. Unlimited crawl states is zero.
-	<h3>Maximum duration</h3>
-	The maximum time that the crawler should run. Default is one hour. Unlimited running time is zero. Crawler will stop if one of other limiting conditions is reached.
-	<h3>Event wait time</h3>
-	The time to wait after an event is fired.  Default is 1000 milliseconds.
-	<h3>Reload wait time</h3>
-	The time to wait after URL is loaded. Default is 1000 milliseconds.
-	<h3>Click elements once</h3>
-	Sets the crawler to interact with any element only once. Default is true.
+		</td><td align = "center">Firefox</td></tr>
+		<tr><td>Select ChromeDriver</td>
+	    <td>This allows you to select the location of Chrome Driver.  Chrome Driver is required to use Chrome.</td>
+		<td align = "center">(None)</td>
+		</tr>
+		<tr>
+			<td>Number of browser windows to open</td>
+			<td>You can configure the number of windows to be used by AJAX Spider.
+				 The more windows, the faster the process will be.</td>
+			<td align = "center">1</td>
+		</tr>
+		<tr>
+			<td>Maximum crawl depth</td>
+			<td>The maximum depth that the crawler can reach. Zero means unlimited depth.</td>
+			<td align = "center">10</td>
+		</tr>
+		<tr>
+		    <td>Maximum crawl states</td>
+			<td>The maximum number of states that the crawler should crawl. Zero means unlimited crawl states. </td>
+			<td align = "center"> 0 (unlimited)</td>
+		</tr>
+		<tr>
+			<td>Maximum duration</td>
+			<td>The maximum time that the crawler is allowed to run. Zero means unlimited running time.</td>
+			<td align = "center">60 minutes</td>
+		</tr>
+		<tr>
+			<td>Event wait time</td>
+			<td>The time to wait after a client side event is fired.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Reload wait time</td>
+			<td>The time to wait after URL is loaded.</td>
+			<td align = "center">1000 ms</td>
+		</tr>
+		<tr>
+			<td>Click elements once</td>
+			<td>When enabled, the crawler attempts to interact with each element (e.g., by clicking) only once.  If this is not set, the crawler will attempt to click multiple times. Unsetting this option is more rigorous but may take considerably more time.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
+			<td>Use random values in form fields</td>
+			<td>When enabled, inserts random values into form fields. Otherwise, it uses empty values.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
+			<td>Click default elements only</td>
+			<td>When enabled, only elements "a", "button" and "input" will be clicked during crawl. Otherwise, it uses the table below to determine which elements will be clicked.  For more in depth analysis, disable this and configure the clickable elements in the table.</td>
+			<td align = "center">True</td>
+		</tr>
+		<tr>
+			<td>Select elements to click during crawl (table)</td>
+			<td>The list of elements to crawl.  This table only applies when "click default elements only" is not enabled.  Use "enable all" for a more in depth analysis, though it may take somewhat longer.</td>
+			<td align = "center">All enabled</td>
+		</tr>
+		
+	</table>
 	
-
-	<H2>See also</H2>
+	<h2>See also</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
