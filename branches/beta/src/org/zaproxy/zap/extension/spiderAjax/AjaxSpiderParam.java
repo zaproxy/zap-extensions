@@ -19,9 +19,14 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.configuration.ConversionException;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 public class AjaxSpiderParam extends AbstractParam {
 
@@ -50,30 +55,44 @@ public class AjaxSpiderParam extends AbstractParam {
         }
     };
 
-    private static final int CONFIG_VERSION = 1;
+    private static final int CONFIG_VERSION = 2;
 
     private static final String AJAX_SPIDER_BASE_KEY = "ajaxSpider";
 
     private static final String CONFIG_VERSION_KEY = AJAX_SPIDER_BASE_KEY + ".configVersion";
 
     private static final String NUMBER_OF_BROWSERS_KEY = AJAX_SPIDER_BASE_KEY + ".numberOfBrowsers";
+
+    private static final String MAX_CRAWL_DEPTH_KEY = AJAX_SPIDER_BASE_KEY + ".maxCrawlDepth";
+
+    private static final String MAX_CRAWL_STATES_KEY = AJAX_SPIDER_BASE_KEY + ".maxCrawlStates";
+ 
+    private static final String MAX_DURATION_KEY = AJAX_SPIDER_BASE_KEY + ".maxDuration";
     
-    private static final String MAX_CRAWL_DEPTH_KEY = AJAX_SPIDER_BASE_KEY + ".MaxCrawlDepth";
+    private static final String EVENT_WAIT_TIME_KEY = AJAX_SPIDER_BASE_KEY + ".eventWait";
     
-    private static final String MAX_CRAWL_STATES_KEY = AJAX_SPIDER_BASE_KEY + ".MaxCrawlStates";
-    
-    private static final String MAX_DURATION_KEY = AJAX_SPIDER_BASE_KEY + ".MaxDuration";
-    
-    private static final String EVENT_WAIT_TIME_KEY = AJAX_SPIDER_BASE_KEY + ".EventWaitTime";
-    
-    private static final String RELOAD_WAIT_TIME_KEY = AJAX_SPIDER_BASE_KEY + ".ReloadWaitTime";
+    private static final String RELOAD_WAIT_TIME_KEY = AJAX_SPIDER_BASE_KEY + ".reloadWait";
 
     private static final String BROWSER_ID_KEY = AJAX_SPIDER_BASE_KEY + ".browserId";
 
-    private static final String CRAWL_IN_DEPTH_KEY = AJAX_SPIDER_BASE_KEY + ".crawlInDepth";
+    private static final String CLICK_DEFAULT_ELEMS_KEY = AJAX_SPIDER_BASE_KEY + ".clickDefaultElems";
     
-    private static final String CLICK_ONCE_KEY = AJAX_SPIDER_BASE_KEY + ".ClickOnce";
-
+    private static final String CLICK_ELEMS_ONCE_KEY = AJAX_SPIDER_BASE_KEY + ".clickElemsOnce";
+    
+    private static final String RANDOM_INPUTS_KEY = AJAX_SPIDER_BASE_KEY + ".randomInputs";
+    
+    private static final String ALL_ELEMS_KEY = AJAX_SPIDER_BASE_KEY + ".elems.elem";
+    
+    private static final String ELEM_NAME_KEY = "name";
+    
+    private static final String ELEM_ENABLED_KEY = "enabled";
+    
+    private static final String CONFIRM_REMOVE_ELEM_KEY = AJAX_SPIDER_BASE_KEY + ".confirmRemoveElem";
+    
+    private static final String[] DEFAULT_ELEMS_NAMES = {"a","button","td","span","div","tr","ol","li","radio",
+    	"form","select","input","option","img","p","abbr","address","area","article","aside","audio","canvas",
+    	"details","footer","header","label","nav","section","summary","table","textarea","th","ul","video"};
+    
     private static final int DEFAULT_NUMBER_OF_BROWSERS = 1;
     
     private static final int DEFAULT_MAX_CRAWL_DEPTH = 10;
@@ -87,24 +106,31 @@ public class AjaxSpiderParam extends AbstractParam {
     private static final int DEFAULT_RELOAD_WAIT_TIME = 1000;
 
     private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
- 
-    private static final boolean DEFAULT_CRAWL_IN_DEPTH = true;
+
+    private static final boolean DEFAULT_CLICK_DEFAULT_ELEMS = true;
+
+    private static final boolean DEFAULT_CLICK_ELEMS_ONCE = true;
     
-    private static final boolean DEFAULT_CLICK_ONCE = true;
+    private static final boolean DEFAULT_RANDOM_INPUTS = true;
 
     private int numberOfBrowsers;
     private int numberOfThreads;
-    private int MaxCrawlDepth;
-    private int MaxCrawlStates;
-    private int MaxDuration;
-    private int EventWait;
-    private int ReloadWait;
+    private int maxCrawlDepth;
+    private int maxCrawlStates;
+    private int maxDuration;
+    private int eventWait;
+    private int reloadWait;
+    
+    private List<AjaxSpiderParamElem> elems = null;
+    private List<String> enabledElemsNames = null;
 
     private Browser browser;
 
-    private boolean crawlInDepth;
+    private boolean clickDefaultElems;
+    private boolean clickElemsOnce;
+    private boolean randomInputs;
+    private boolean confirmRemoveElem = true;
     
-    private boolean ClickOnce;
 
     @Override
     protected void parse() {
@@ -127,37 +153,35 @@ public class AjaxSpiderParam extends AbstractParam {
         }
         
         try {
-            this.MaxCrawlDepth = getConfig().getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
+            this.maxCrawlDepth = getConfig().getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
         } catch (ConversionException e) {
             logger.error("Error while loading the max crawl depth: " + e.getMessage(), e);
         }
         
         try {
-            this.MaxCrawlStates = getConfig().getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
+            this.maxCrawlStates = getConfig().getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
         } catch (ConversionException e) {
             logger.error("Error while loading max crawl states: " + e.getMessage(), e);
         }
         
         try {
-            this.MaxDuration = getConfig().getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
+            this.maxDuration = getConfig().getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
         } catch (ConversionException e) {
             logger.error("Error while loading the crawl duration: " + e.getMessage(), e);
         }
         
         try {
-            this.EventWait = getConfig().getInt(EVENT_WAIT_TIME_KEY, DEFAULT_EVENT_WAIT_TIME);
+            this.eventWait = getConfig().getInt(EVENT_WAIT_TIME_KEY, DEFAULT_EVENT_WAIT_TIME);
         } catch (ConversionException e) {
             logger.error("Error while loading the event wait time: " + e.getMessage(), e);
         }
         
         try {
-            this.ReloadWait = getConfig().getInt(RELOAD_WAIT_TIME_KEY, DEFAULT_RELOAD_WAIT_TIME);
+            this.reloadWait = getConfig().getInt(RELOAD_WAIT_TIME_KEY, DEFAULT_RELOAD_WAIT_TIME);
         } catch (ConversionException e) {
             logger.error("Error while loading the reload wait time: " + e.getMessage(), e);
         }
         
-        
-
         String browserId;
         try {
             browserId = getConfig().getString(BROWSER_ID_KEY, DEFAULT_BROWSER.id);
@@ -173,88 +197,116 @@ public class AjaxSpiderParam extends AbstractParam {
         }
 
         try {
-            this.crawlInDepth = getConfig().getBoolean(CRAWL_IN_DEPTH_KEY, DEFAULT_CRAWL_IN_DEPTH);
+            this.clickDefaultElems = getConfig().getBoolean(CLICK_DEFAULT_ELEMS_KEY, DEFAULT_CLICK_DEFAULT_ELEMS);
         } catch (ConversionException e) {
-            logger.error("Error while loading the crawl in depth option: " + e.getMessage(), e);
+            logger.error("Error while loading the click default option: " + e.getMessage(), e);
         }
         
         try {
-            this.ClickOnce = getConfig().getBoolean(CLICK_ONCE_KEY, DEFAULT_CLICK_ONCE);
+            this.clickElemsOnce = getConfig().getBoolean(CLICK_ELEMS_ONCE_KEY, DEFAULT_CLICK_ELEMS_ONCE);
         } catch (ConversionException e) {
             logger.error("Error while loading the click once option: " + e.getMessage(), e);
+        }      
+        
+        try {
+            this.randomInputs = getConfig().getBoolean(RANDOM_INPUTS_KEY, DEFAULT_RANDOM_INPUTS);
+        } catch (ConversionException e) {
+            logger.error("Error while loading the random inputs option: " + e.getMessage(), e);
+        }    
+        
+        try {
+            List<HierarchicalConfiguration> fields = ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_ELEMS_KEY);
+            this.elems = new ArrayList<>(fields.size());
+            enabledElemsNames = new ArrayList<>(fields.size());
+            List<String> tempElemsNames = new ArrayList<>(fields.size());
+            for (HierarchicalConfiguration sub : fields) {
+                String name = sub.getString(ELEM_NAME_KEY, "");
+                if (!"".equals(name) && !tempElemsNames.contains(name)) {
+                    boolean enabled = sub.getBoolean(ELEM_ENABLED_KEY, true);
+                    this.elems.add(new AjaxSpiderParamElem(name, enabled));
+                    tempElemsNames.add(name);
+                    if (enabled) {
+                        enabledElemsNames.add(name);
+                    }
+                }
+            }
+        } catch (ConversionException e) {
+            logger.error("Error while loading clickable elements: " + e.getMessage(), e);
+            this.elems = new ArrayList<>(DEFAULT_ELEMS_NAMES.length);
+            this.enabledElemsNames = new ArrayList<>(DEFAULT_ELEMS_NAMES.length);
         }
         
+        if (this.elems.size() == 0) {
+            for (String elemName : DEFAULT_ELEMS_NAMES) {
+                this.elems.add(new AjaxSpiderParamElem(elemName));
+                this.enabledElemsNames.add(elemName);
+            }
+        }
         
-        
+        try {
+            this.confirmRemoveElem = getConfig().getBoolean(CONFIRM_REMOVE_ELEM_KEY, true);
+        } catch (ConversionException e) {
+            logger.error("Error while loading the confirm remove element option: " + e.getMessage(), e);
+        }
     }
 
     public int getNumberOfBrowsers() {
         return numberOfBrowsers;
     }
     
-    
     public void setNumberOfBrowsers(int numberOfBrowsers) {
         this.numberOfBrowsers = numberOfBrowsers;
         getConfig().setProperty(NUMBER_OF_BROWSERS_KEY, Integer.valueOf(numberOfBrowsers));
     }
     
-  
-
     public int getNumberOfThreads() {
         return numberOfThreads;
     }
-    
-    
+        
     public int getMaxCrawlDepth() {
-    	return MaxCrawlDepth; 
+    	return maxCrawlDepth; 
     }
     
-    public void setMaxCrawlDepth(int MaxCrawlDepth) {
-        this.MaxCrawlDepth = MaxCrawlDepth;
-        getConfig().setProperty(MAX_CRAWL_DEPTH_KEY, Integer.valueOf(MaxCrawlDepth));
+    public void setMaxCrawlDepth(int maxCrawlDepth) {
+        this.maxCrawlDepth = maxCrawlDepth;
+        getConfig().setProperty(MAX_CRAWL_DEPTH_KEY, Integer.valueOf(maxCrawlDepth));
     }
-    
-    
-    
+
     public int getMaxCrawlStates() {
-    	return MaxCrawlStates; 
+    	return maxCrawlStates; 
     }
     
-    public void setMaxCrawlStates(int MaxCrawlStates) {
-        this.MaxCrawlStates = MaxCrawlStates;
-        getConfig().setProperty(MAX_CRAWL_STATES_KEY, Integer.valueOf(MaxCrawlStates));
+    public void setMaxCrawlStates(int maxCrawlStates) {
+        this.maxCrawlStates = maxCrawlStates;
+        getConfig().setProperty(MAX_CRAWL_STATES_KEY, Integer.valueOf(maxCrawlStates));
     }
-    
     
     public int getMaxDuration() {
-    	return MaxDuration; 
+    	return maxDuration; 
     }
     
-    public void setMaxDuration(int MaxDuration) {
-        this.MaxDuration = MaxDuration;
-        getConfig().setProperty(MAX_DURATION_KEY, Integer.valueOf(MaxDuration));
+    public void setMaxDuration(int maxDuration) {
+        this.maxDuration = maxDuration;
+        getConfig().setProperty(MAX_DURATION_KEY, Integer.valueOf(maxDuration));
     }
     
     public int getEventWait() {
-    	return EventWait; 
+    	return eventWait; 
     }
     
-    
-    public void setEventWait(int EventWait) {
-        this.EventWait = EventWait;
-        getConfig().setProperty(EVENT_WAIT_TIME_KEY, Integer.valueOf(EventWait));
+    public void setEventWait(int eventWait) {
+        this.eventWait = eventWait;
+        getConfig().setProperty(EVENT_WAIT_TIME_KEY, Integer.valueOf(eventWait));
     }
-    
     
     public int getReloadWait() {
-    	return ReloadWait; 
+    	return reloadWait; 
     }
     
-    public void setReloadWait(int ReloadWait) {
-        this.ReloadWait = ReloadWait;
-        getConfig().setProperty(RELOAD_WAIT_TIME_KEY, Integer.valueOf(ReloadWait));
+    public void setReloadWait(int reloadWait) {
+        this.reloadWait = reloadWait;
+        getConfig().setProperty(RELOAD_WAIT_TIME_KEY, Integer.valueOf(reloadWait));
     }
-    
 
     public Browser getBrowser() {
         return browser;
@@ -265,24 +317,71 @@ public class AjaxSpiderParam extends AbstractParam {
         getConfig().setProperty(BROWSER_ID_KEY, browser.id);
     }
 
-    public boolean isCrawlInDepth() {
-        return crawlInDepth;
+    public boolean isClickDefaultElems() {
+        return clickDefaultElems;
     }
 
-    public void setCrawlInDepth(boolean crawlInDepth) {
-        this.crawlInDepth = crawlInDepth;
-        getConfig().setProperty(CRAWL_IN_DEPTH_KEY, Boolean.valueOf(crawlInDepth));
+    public void setClickDefaultElems(boolean clickDefaultElems) {
+        this.clickDefaultElems = clickDefaultElems;
+        getConfig().setProperty(CLICK_DEFAULT_ELEMS_KEY, Boolean.valueOf(clickDefaultElems));
     }
     
-    public boolean isClickOnce() {
-        return ClickOnce;
+    public boolean isClickElemsOnce() {
+        return clickElemsOnce;
     }
 
-    public void setClickOnce(boolean ClickOnce) {
-        this.ClickOnce = ClickOnce;
-        getConfig().setProperty(CLICK_ONCE_KEY, Boolean.valueOf(ClickOnce));
+    public void setClickElemsOnce(boolean clickElemsOnce) {
+        this.clickElemsOnce = clickElemsOnce;
+        getConfig().setProperty(CLICK_ELEMS_ONCE_KEY, Boolean.valueOf(clickElemsOnce));
     }
     
-  
+    public boolean isRandomInputs() {
+    	return randomInputs;
+    }
     
+    public void setRandomInputs(boolean randomInputs){
+    	this.randomInputs = randomInputs;
+    	getConfig().setProperty(RANDOM_INPUTS_KEY, Boolean.valueOf(randomInputs));
+    }
+    
+    protected List<AjaxSpiderParamElem> getElems() {
+        return elems;
+    }
+    
+    protected void setElems(List<AjaxSpiderParamElem> elems) {
+        this.elems = new ArrayList<>(elems);
+        
+        ((HierarchicalConfiguration) getConfig()).clearTree(ALL_ELEMS_KEY);
+
+        ArrayList<String> enabledElems = new ArrayList<>(elems.size());
+        for (int i = 0, size = elems.size(); i < size; ++i) {
+            String elementBaseKey = ALL_ELEMS_KEY + "(" + i + ").";
+            AjaxSpiderParamElem elem = elems.get(i);
+            
+            getConfig().setProperty(elementBaseKey + ELEM_NAME_KEY, elem.getName());
+            getConfig().setProperty(elementBaseKey + ELEM_ENABLED_KEY, Boolean.valueOf(elem.isEnabled()));
+            
+            if (elem.isEnabled()) {
+                enabledElems.add(elem.getName());
+            }
+        }
+        
+        enabledElems.trimToSize();
+        this.enabledElemsNames = enabledElems;
+    }
+    
+    protected List<String> getElemsNames() {
+        return enabledElemsNames;
+    }
+    
+    @ZapApiIgnore
+    public boolean isConfirmRemoveElem() {
+        return this.confirmRemoveElem;
+    }
+    
+    @ZapApiIgnore
+    public void setConfirmRemoveElem(boolean confirmRemove) {
+        this.confirmRemoveElem = confirmRemove;
+        getConfig().setProperty(CONFIRM_REMOVE_ELEM_KEY, Boolean.valueOf(confirmRemoveElem));
+    }
 }

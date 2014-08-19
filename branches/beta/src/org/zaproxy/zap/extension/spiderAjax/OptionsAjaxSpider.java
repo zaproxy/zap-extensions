@@ -18,43 +18,58 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.io.File;
+
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.SortOrder;
+
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.Browser;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
+import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
 public class OptionsAjaxSpider extends AbstractParamPanel {
 
 	private static final String WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY = "webdriver.chrome.driver";
 
 	private static final long serialVersionUID = -1350537974139536669L;
+	
+	private AjaxSpiderMultipleOptionsPanel elemsOptionsPanel;
+	
+	private OptionsAjaxSpiderTableModel ajaxSpiderClickModel = null;
 
 	private ExtensionAjax extension=null;
 	private JPanel panelCrawljax = null;
 	private ZapNumberSpinner txtNumBro = null;
-	private ZapNumberSpinner txtNumDpth = null;
-	private ZapNumberSpinner txtNumStates = null;
-	private ZapNumberSpinner txtNumDuration = null;
-	private ZapNumberSpinner txtNumEventWait = null;
-	private ZapNumberSpinner txtNumReloadWait = null;
-	
-    
-	private JCheckBox ClickAllElems = null;
-	private JCheckBox ClickOnce = null;
+	private ZapNumberSpinner maximumDepthNumberSpinner = null;
+	private ZapNumberSpinner maximumStatesNumberSpinner = null;
+	private ZapNumberSpinner durationNumberSpinner = null;
+	private ZapNumberSpinner eventWaitNumberSpinner = null;
+	private ZapNumberSpinner reloadWaitNumberSpinner = null;
+	    
+	private JCheckBox clickDefaultElems = null;
+	private JCheckBox clickElemsOnce = null;
+	private JCheckBox randomInputs = null;
 	private JRadioButton firefox = null;
 	private JRadioButton chrome = null;
 	private JRadioButton ie = null;
@@ -62,10 +77,10 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JButton selectChromeDriverButton;
 	private JLabel browsers = null;
 	private JLabel depth = null;
-	private JLabel crawlstates = null;
-	private JLabel maxduration = null;
-	private JLabel eventwait = null;
-	private JLabel reloadwait = null;
+	private JLabel crawlStates = null;
+	private JLabel maxDuration = null;
+	private JLabel eventWait = null;
+	private JLabel reloadWait = null;
 	private static final Logger logger = Logger.getLogger(OptionsAjaxSpider.class);
 
 	/**
@@ -83,12 +98,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	 * 
 	 */
 	private void initialize() {
-        this.setLayout(new BorderLayout());
+        this.setLayout(new CardLayout());
         this.setName(this.extension.getMessages().getString("spiderajax.options.title"));
 	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
 	    	this.setSize(391, 320);
 	    }
-        this.add(getPanelCrawljax(), BorderLayout.PAGE_START); 
+        this.add(getPanelCrawljax(), getPanelCrawljax().getName()); 
 	}
 	
 	/**
@@ -102,88 +117,72 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		}
 		return txtNumBro;
 	}
-	
-	/**
-	 * This method initializes txtNumDpth	
-	 * 	
-	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
-	 */    
-	private ZapNumberSpinner getTxtNumDpth() {
-		if (txtNumDpth == null) {
-			txtNumDpth = new ZapNumberSpinner(0, 10, Integer.MAX_VALUE);
+   
+	private ZapNumberSpinner getMaximumDepthNumberSpinner() {
+		if (maximumDepthNumberSpinner == null) {
+			maximumDepthNumberSpinner = new ZapNumberSpinner(0, 10, Integer.MAX_VALUE);
 		}
-		return txtNumDpth;
+		return maximumDepthNumberSpinner;
 	}
 	
-	
-	/**
-	 * This method initializes txtNumStates	
-	 * 	
-	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
-	 */    
-	private ZapNumberSpinner getNumStates() {
-		if (txtNumStates == null) {
-			txtNumStates = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
+	 private ZapNumberSpinner getMaximumStatesNumberSpinner() {
+		if (maximumStatesNumberSpinner == null) {
+			maximumStatesNumberSpinner = new ZapNumberSpinner(0, 0, Integer.MAX_VALUE);
 		}
-		return txtNumStates;
+		return maximumStatesNumberSpinner;
 	}
 	
-	/**
-	 * This method initializes txtNumDuration	
-	 * 	
-	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
-	 */    
-	private ZapNumberSpinner getNumDuration() {
-		if (txtNumDuration == null) {
-			txtNumDuration = new ZapNumberSpinner(0, 60, Integer.MAX_VALUE);
+	private ZapNumberSpinner getDurationNumberSpinner() {
+		if (durationNumberSpinner == null) {
+			durationNumberSpinner = new ZapNumberSpinner(0, 60, Integer.MAX_VALUE);
 		}
-		return txtNumDuration;
+		return durationNumberSpinner;
 	}
 	
-	
-	/**
-	 * This method initializes txtNumEventWait	
-	 * 	
-	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
-	 */    
-	private ZapNumberSpinner getNumWait() {
-		if (txtNumEventWait == null) {
-			txtNumEventWait = new ZapNumberSpinner(1, 1000, Integer.MAX_VALUE);
+
+	private ZapNumberSpinner getEventWaitNumberSpinner() {
+		if (eventWaitNumberSpinner == null) {
+			eventWaitNumberSpinner = new ZapNumberSpinner(1, 1000, Integer.MAX_VALUE);
 		}
-		return txtNumEventWait;
+		return eventWaitNumberSpinner;
+	}
+ 
+	private ZapNumberSpinner getReloadWaitNumberSpinner() {
+		if (reloadWaitNumberSpinner == null) {
+			reloadWaitNumberSpinner = new ZapNumberSpinner(1, 1000, Integer.MAX_VALUE);
+		}
+		return reloadWaitNumberSpinner;
 	}
 	
-	
-	/**
-	 * This method initializes txtNumReloadWait	
-	 * 	
-	 * @return org.zaproxy.zap.utils.ZapNumberSpinner	
-	 */    
-	private ZapNumberSpinner getNumReloadWait() {
-		if (txtNumReloadWait == null) {
-			txtNumReloadWait = new ZapNumberSpinner(1, 1000, Integer.MAX_VALUE);
-		}
-		return txtNumReloadWait;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	private JCheckBox getClickAllElems() {
-			if (ClickAllElems == null) {
-				ClickAllElems = new JCheckBox();
-				ClickAllElems.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.allElems"));
+
+	private JCheckBox getClickDefaultElems() {
+			if (clickDefaultElems == null) {
+				clickDefaultElems = new JCheckBox();
+				clickDefaultElems.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.defaultElems"));
+				clickDefaultElems.addItemListener(new java.awt.event.ItemListener() {
+					@Override
+					public void itemStateChanged(java.awt.event.ItemEvent e) {
+						setClickElemsEnabled(ItemEvent.DESELECTED == e.getStateChange());
+					}
+				});
 			}
-			return ClickAllElems;
+			return clickDefaultElems;
 		}
 	
-	private JCheckBox getClickOnce() {
-		if (ClickOnce == null) {
-			ClickOnce = new JCheckBox();
-			ClickOnce.setText(this.extension.getMessages().getString("spiderajax.options.label.clickonce"));
+	private JCheckBox getClickElemsOnce() {
+		if (clickElemsOnce == null) {
+			clickElemsOnce = new JCheckBox();
+			clickElemsOnce.setText(this.extension.getMessages().getString("spiderajax.options.label.clickonce"));
 		}
-		return ClickOnce;
+		return clickElemsOnce;
+	}
+	
+	private JCheckBox getRandomInputs() {
+		if (randomInputs == null) {
+			randomInputs = new JCheckBox();
+			randomInputs.setText(this.extension.getMessages().getString("spiderajax.options.label.randominputs"));
+		}
+		return randomInputs;
 	}
 	
 
@@ -243,20 +242,22 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    
 	    OptionsParam optionsParam = (OptionsParam) obj;
 	    AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
-
+	    getAjaxSpiderClickModel().setElems(ajaxSpiderParam.getElems());
+	    elemsOptionsPanel.setRemoveWithoutConfirmation(!ajaxSpiderParam.isConfirmRemoveElem());
+	    
 	    txtNumBro.setValue(Integer.valueOf(ajaxSpiderParam.getNumberOfBrowsers()));
-	    txtNumDpth.setValue(Integer.valueOf(ajaxSpiderParam.getMaxCrawlDepth()));
-	    txtNumStates.setValue(Integer.valueOf(ajaxSpiderParam.getMaxCrawlStates()));
-	    txtNumDuration.setValue(Integer.valueOf(ajaxSpiderParam.getMaxDuration()));
-	    txtNumEventWait.setValue(Integer.valueOf(ajaxSpiderParam.getEventWait()));
-	    txtNumReloadWait.setValue(Integer.valueOf(ajaxSpiderParam.getReloadWait()));
+	    maximumDepthNumberSpinner.setValue(Integer.valueOf(ajaxSpiderParam.getMaxCrawlDepth()));
+	    maximumStatesNumberSpinner.setValue(Integer.valueOf(ajaxSpiderParam.getMaxCrawlStates()));
+	    durationNumberSpinner.setValue(Integer.valueOf(ajaxSpiderParam.getMaxDuration()));
+	    eventWaitNumberSpinner.setValue(Integer.valueOf(ajaxSpiderParam.getEventWait()));
+	    reloadWaitNumberSpinner.setValue(Integer.valueOf(ajaxSpiderParam.getReloadWait()));
 	   
-	    getClickAllElems().setSelected(ajaxSpiderParam.isCrawlInDepth());
-	    getClickOnce().setSelected(ajaxSpiderParam.isClickOnce());
+	    getClickDefaultElems().setSelected(ajaxSpiderParam.isClickDefaultElems());
+	    getClickElemsOnce().setSelected(ajaxSpiderParam.isClickElemsOnce());
+	    getRandomInputs().setSelected(ajaxSpiderParam.isRandomInputs());
 	    
-	    
-	    
-	    
+	    setClickElemsEnabled(!ajaxSpiderParam.isClickDefaultElems());
+	    	       
 	    switch (ajaxSpiderParam.getBrowser()) {
 	    case FIREFOX:
 	    	this.getFirefox().setSelected(true);
@@ -289,20 +290,18 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	public void saveParam(Object obj) throws Exception  {; 
 		OptionsParam optionsParam = (OptionsParam) obj;
 		AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
-
-		ajaxSpiderParam.setClickOnce(getClickOnce().isSelected());
-		ajaxSpiderParam.setCrawlInDepth(getClickAllElems().isSelected());
+		
+		ajaxSpiderParam.setClickElemsOnce(getClickElemsOnce().isSelected());
+		ajaxSpiderParam.setClickDefaultElems(getClickDefaultElems().isSelected());
+		ajaxSpiderParam.setRandomInputs(getRandomInputs().isSelected());
 		ajaxSpiderParam.setNumberOfBrowsers(txtNumBro.getValue().intValue());
-		ajaxSpiderParam.setMaxCrawlDepth(txtNumDpth.getValue().intValue());
-		ajaxSpiderParam.setMaxCrawlStates(txtNumStates.getValue().intValue());
-		ajaxSpiderParam.setMaxDuration(txtNumDuration.getValue().intValue());
-		ajaxSpiderParam.setEventWait(txtNumEventWait.getValue().intValue());
-		ajaxSpiderParam.setReloadWait(txtNumReloadWait.getValue().intValue());
-		
-		
-		
-		
-		
+		ajaxSpiderParam.setMaxCrawlDepth(maximumDepthNumberSpinner.getValue().intValue());
+		ajaxSpiderParam.setMaxCrawlStates(maximumStatesNumberSpinner.getValue().intValue());
+		ajaxSpiderParam.setMaxDuration(durationNumberSpinner.getValue().intValue());
+		ajaxSpiderParam.setEventWait(eventWaitNumberSpinner.getValue().intValue());
+		ajaxSpiderParam.setReloadWait(reloadWaitNumberSpinner.getValue().intValue());
+		ajaxSpiderParam.setElems(getAjaxSpiderClickModel().getElements());
+
 		if(getFirefox().isSelected()){
 			ajaxSpiderParam.setBrowser(Browser.FIREFOX);
 		} else if(getChrome().isSelected()){
@@ -346,7 +345,11 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	 */    
 	private JPanel getPanelCrawljax() {
 		if (panelCrawljax == null) {
-			panelCrawljax = new JPanel(new GridBagLayout());
+			panelCrawljax = new JPanel(new BorderLayout());
+			
+			panelCrawljax.setSize(75,100);
+			
+			panelCrawljax.setName("");
 			
 			ButtonGroup browsersButtonGroup = new ButtonGroup();
 			browsersButtonGroup.add(getFirefox());
@@ -355,115 +358,145 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			
 			browsers = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.browsers"));
 			depth = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.depth"));
-			crawlstates = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.crawlstates"));
-			maxduration  = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.maxduration"));
-			eventwait = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.eventwait"));
-			reloadwait = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.reloadwait"));
-			
+			crawlStates = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.crawlstates"));
+			maxDuration  = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.maxduration"));
+			eventWait = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.eventwait"));
+			reloadWait = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.reloadwait"));
+
 			GridBagConstraints gbc = new GridBagConstraints();
-						
-			//Number of Browsers option
-			gbc.gridx = 0;
-			gbc.gridy = 2;
-			gbc.weightx = 1.0;
-			gbc.weighty = 1.0;
-			gbc.insets = new java.awt.Insets(2,2,2,2);
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.anchor = GridBagConstraints.LINE_START;
-			panelCrawljax.add(browsers, gbc);
 			
-			gbc.gridx = 1;
-			gbc.anchor = GridBagConstraints.LINE_END;
-			panelCrawljax.add(getTxtNumBro(), gbc);
-								
+			JPanel innerPanel = new JPanel(new GridBagLayout());
+
 			//Browser Type Option
 			gbc.gridx = 0;
-			gbc.gridy = 3;
+			gbc.gridy =0;
+			gbc.weightx = 1.0;
+			gbc.weighty = 1.0;
 			gbc.gridwidth = 2;
+			gbc.insets = new java.awt.Insets(2,2,2,2);
 			gbc.anchor = GridBagConstraints.LINE_START;
-			panelCrawljax.add(new JLabel(this.extension.getMessages().getString("spiderajax.proxy.local.label.browsers")), gbc);
+			innerPanel.add(new JLabel(this.extension.getMessages().getString("spiderajax.proxy.local.label.browsers")), gbc);
 			
-			gbc.gridy = 4;
+			gbc.gridy++;
 			gbc.gridwidth = 1;
-			panelCrawljax.add(getFirefox(), gbc);
+			innerPanel.add(getFirefox(), gbc);
 
-			gbc.gridy = 5;
-			panelCrawljax.add(getChrome(), gbc);
+			gbc.gridy++;
+			innerPanel.add(getChrome(), gbc);
 			
-			gbc.gridy = 6;
-			panelCrawljax.add(getHtmlunit(), gbc);
+			gbc.gridy++;
+			innerPanel.add(getHtmlunit(), gbc);
 			
-			gbc.gridy = 7;
+			gbc.gridy++;
 			gbc.fill = GridBagConstraints.NONE;
 			gbc.insets = new java.awt.Insets(8,2,16,2);
-			panelCrawljax.add(getSelectChromeDriverButton(), gbc);
+			innerPanel.add(getSelectChromeDriverButton(), gbc);
 			
-			//Crawl In Depth Option
-			gbc.gridy = 10;
+			//Number of browsers Option
+			gbc.gridy++;
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new java.awt.Insets(2,2,2,2);
-			panelCrawljax.add(getClickAllElems(), gbc);
+			gbc.anchor = GridBagConstraints.LINE_START;
+			gbc.insets = new java.awt.Insets(2,2,2,2);		
+			innerPanel.add(browsers, gbc);
+
+			gbc.gridx = 1;
+			gbc.anchor = GridBagConstraints.LINE_END;
+			innerPanel.add(getTxtNumBro(), gbc);
 			
 			//Max Crawl Depth Option
+			gbc.gridx = 0;
 			gbc.gridy++;
+			
 			gbc.anchor = GridBagConstraints.LINE_START;
-			panelCrawljax.add(depth, gbc);
+			innerPanel.add(depth, gbc);
 				
 			gbc.gridx = 1;
 			gbc.anchor = GridBagConstraints.LINE_END;
-			panelCrawljax.add(getTxtNumDpth(), gbc);
+			innerPanel.add(getMaximumDepthNumberSpinner(), gbc);
 			
 			//Max Crawl States Option
 			gbc.gridx = 0;
 			gbc.gridy++;
 			gbc.anchor = GridBagConstraints.LINE_START;
-			panelCrawljax.add(crawlstates, gbc);
+			innerPanel.add(crawlStates, gbc);
 			
 			gbc.gridx = 1;
 			gbc.anchor = GridBagConstraints.LINE_END;
-			panelCrawljax.add(getNumStates(), gbc);
+			innerPanel.add(getMaximumStatesNumberSpinner(), gbc);
 			
 			
 			//Max Crawl Duration Option
 			gbc.gridx = 0;
 			gbc.gridy++;
 			gbc.anchor = GridBagConstraints.LINE_START;
-			panelCrawljax.add(maxduration, gbc);
+			innerPanel.add(maxDuration, gbc);
 			
 			gbc.gridx = 1;
 			gbc.anchor = GridBagConstraints.LINE_END;
-			panelCrawljax.add(getNumDuration(), gbc);
+			innerPanel.add(getDurationNumberSpinner(), gbc);
 		
 				
 			//Max Event Wait Option
 			gbc.gridx = 0;
 			gbc.gridy++;
 			gbc.anchor = GridBagConstraints.LINE_START;
-			panelCrawljax.add(eventwait, gbc);
+			innerPanel.add(eventWait, gbc);
 									
 			gbc.gridx = 1;
 			gbc.anchor = GridBagConstraints.LINE_END;
-			panelCrawljax.add(getNumWait(), gbc);
+			innerPanel.add(getEventWaitNumberSpinner(), gbc);
 			
 			//Max Reload Wait Option
 			gbc.gridx = 0;
 			gbc.gridy++;
 			gbc.anchor = GridBagConstraints.LINE_START;
-			panelCrawljax.add(reloadwait , gbc);
+			innerPanel.add(reloadWait , gbc);
 			
 			gbc.gridx = 1;
 			gbc.anchor = GridBagConstraints.LINE_END;
-			panelCrawljax.add(getNumReloadWait(), gbc);
+			innerPanel.add(getReloadWaitNumberSpinner(), gbc);
 			
 			//Click Once Option
 			gbc.gridx = 0;
 			gbc.gridy++;
 			gbc.anchor = GridBagConstraints.LINE_START;
-			panelCrawljax.add(getClickOnce(), gbc);
+			innerPanel.add(getClickElemsOnce(), gbc);
+			
+			//Random Inputs Option
+			gbc.gridy++;
+			gbc.anchor = GridBagConstraints.LINE_START;
+			innerPanel.add(getRandomInputs(), gbc);
+			
+			//Click Default Elements
+			gbc.gridy++;
+			gbc.gridwidth = 2;
+			innerPanel.add(getClickDefaultElems(), gbc);
+			
+			//Select Elements to Click
+			gbc.gridy++;
+			gbc.insets = new java.awt.Insets(16,2,2,2);
+			innerPanel.add(new JLabel(this.extension.getMessages().getString("spiderajax.options.label.clickelems")),gbc);
+			
+			elemsOptionsPanel = new AjaxSpiderMultipleOptionsPanel(getAjaxSpiderClickModel());
+			gbc.gridy++;
+			gbc.insets = new java.awt.Insets(2,2,2,2);
+			innerPanel.add(elemsOptionsPanel, gbc);
+			
+			JScrollPane scrollPane = new JScrollPane(innerPanel);
+			scrollPane.setBorder(BorderFactory.createEmptyBorder());
+			
+			panelCrawljax.add(scrollPane,BorderLayout.CENTER);
 
 		}
 		
 		return panelCrawljax;
+	}
+	
+	private OptionsAjaxSpiderTableModel getAjaxSpiderClickModel() {
+		if (ajaxSpiderClickModel == null) {
+			ajaxSpiderClickModel = new OptionsAjaxSpiderTableModel();
+		}
+		return ajaxSpiderClickModel;
 	}
 	
 	/**
@@ -472,6 +505,98 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	@Override
 	public String getHelpIndex() {
 		return "addon.spiderajax.options";
+	}
+	
+	
+	private AjaxSpiderMultipleOptionsPanel getAjaxSpiderClickPanel() {
+		if (elemsOptionsPanel == null) {
+			elemsOptionsPanel = new AjaxSpiderMultipleOptionsPanel(getAjaxSpiderClickModel());
+		}
+		return elemsOptionsPanel;
+	}
+
+	private void setClickElemsEnabled(boolean isEnabled) {
+		getAjaxSpiderClickPanel().setComponentEnabled(isEnabled);
+	}
+	
+	private static class AjaxSpiderMultipleOptionsPanel extends AbstractMultipleOptionsTablePanel<AjaxSpiderParamElem> {
+       
+        private static final long serialVersionUID = -115340627058929308L;
+        
+        private static final String REMOVE_DIALOG_TITLE = Constant.messages.getString("spiderajax.options.dialog.elem.remove.title");
+	    private static final String REMOVE_DIALOG_TEXT = Constant.messages.getString("spiderajax.options.dialog.elem.remove.text");
+	    
+	    private static final String REMOVE_DIALOG_CONFIRM_BUTTON_LABEL = Constant.messages.getString("spiderajax.options.dialog.elem.remove.button.confirm");
+	    private static final String REMOVE_DIALOG_CANCEL_BUTTON_LABEL = Constant.messages.getString("spiderajax.options.dialog.elem.remove.button.cancel");
+	    
+	    private static final String REMOVE_DIALOG_CHECKBOX_LABEL = Constant.messages.getString("spiderajax.options.dialog.elem.remove.checkbox.label");
+	    
+	    private DialogAddElem addDialog = null;
+        private DialogModifyElem modifyDialog = null;
+        
+        private OptionsAjaxSpiderTableModel model;
+        
+        public AjaxSpiderMultipleOptionsPanel(OptionsAjaxSpiderTableModel model) {
+            super(model);
+            
+            this.model = model;
+            
+            getTable().getColumnExt(0).setPreferredWidth(5);
+            getTable().setSortOrder(1, SortOrder.ASCENDING);
+            getTable().setVisibleRowCount(5);
+        }
+
+        @Override
+        public AjaxSpiderParamElem showAddDialogue() {
+            if (addDialog == null) {
+                addDialog = new DialogAddElem(View.getSingleton().getOptionsDialog(null));
+                addDialog.pack();
+            }
+            addDialog.setElems(model.getElements());
+            addDialog.setVisible(true);
+            
+            AjaxSpiderParamElem elem = addDialog.getElem();
+            addDialog.clear();
+            
+            return elem;
+        }
+        
+        @Override
+        public AjaxSpiderParamElem showModifyDialogue(AjaxSpiderParamElem e) {
+            if (modifyDialog == null) {
+                modifyDialog = new DialogModifyElem(View.getSingleton().getOptionsDialog(null));
+                modifyDialog.pack();
+            }
+            modifyDialog.setElems(model.getElements());
+            modifyDialog.setElem(e);
+            modifyDialog.setVisible(true);
+            
+            AjaxSpiderParamElem elem = modifyDialog.getElem();
+            modifyDialog.clear();
+            
+            if (!elem.equals(e)) {
+                return elem;
+            }
+            
+            return null;
+        }
+        
+        @Override
+        public boolean showRemoveDialogue(AjaxSpiderParamElem e) {
+            JCheckBox removeWithoutConfirmationCheckBox = new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
+            Object[] messages = {REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox};
+            int option = JOptionPane.showOptionDialog(View.getSingleton().getMainFrame(), messages, REMOVE_DIALOG_TITLE,
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null, new String[] { REMOVE_DIALOG_CONFIRM_BUTTON_LABEL, REMOVE_DIALOG_CANCEL_BUTTON_LABEL }, null);
+
+            if (option == JOptionPane.OK_OPTION) {
+                setRemoveWithoutConfirmation(removeWithoutConfirmationCheckBox.isSelected());
+                
+                return true;
+            }
+            
+            return false;
+        }
 	}
 	
   }  //  @jve:decl-index=0:visual-constraint="10,10"

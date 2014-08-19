@@ -50,7 +50,6 @@ import com.crawljax.browser.EmbeddedBrowser;
 import com.crawljax.browser.WebDriverBackedEmbeddedBrowser;
 import com.crawljax.core.CrawljaxRunner;
 import com.crawljax.core.configuration.BrowserConfiguration;
-import com.crawljax.core.configuration.CrawlRules.CrawlRulesBuilder;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurationBuilder;
 import com.crawljax.core.configuration.ProxyConfiguration;
@@ -64,7 +63,6 @@ public class SpiderThread implements Runnable {
 	private static final String LOCAL_PROXY_IP = "127.0.0.1";
 
 	// crawljax config
-	private static final boolean RAND_INPUT_FORMS = true;
 	private String url = null;
 	private ExtensionAjax extension = null;
 	private CrawljaxRunner crawljax;
@@ -153,46 +151,15 @@ public class SpiderThread implements Runnable {
 				this.extension.getAjaxSpiderParam().getNumberOfBrowsers(),
 				new AjaxSpiderBrowserBuilder(extension.getAjaxSpiderParam().getBrowser())));
 
-		if (this.extension.getAjaxSpiderParam().isCrawlInDepth()) {
-			CrawlRulesBuilder crawlRulesBuilder = configurationBuilder.crawlRules();
-			crawlRulesBuilder.click("a");
-			crawlRulesBuilder.click("button");
-			crawlRulesBuilder.click("td");
-			crawlRulesBuilder.click("span");
-			crawlRulesBuilder.click("div");
-			crawlRulesBuilder.click("tr");
-			crawlRulesBuilder.click("ol");
-			crawlRulesBuilder.click("li");
-			crawlRulesBuilder.click("radio");
-			crawlRulesBuilder.click("form");
-			crawlRulesBuilder.click("select");
-			crawlRulesBuilder.click("input");
-			crawlRulesBuilder.click("option");
-			crawlRulesBuilder.click("img");
-			crawlRulesBuilder.click("p");
-			crawlRulesBuilder.click("abbr");
-			crawlRulesBuilder.click("address");
-			crawlRulesBuilder.click("area");
-			crawlRulesBuilder.click("article");
-			crawlRulesBuilder.click("aside");
-			crawlRulesBuilder.click("audio");
-			crawlRulesBuilder.click("canvas");
-			crawlRulesBuilder.click("details");
-			crawlRulesBuilder.click("footer");
-			crawlRulesBuilder.click("header");
-			crawlRulesBuilder.click("label");
-			crawlRulesBuilder.click("nav");
-			crawlRulesBuilder.click("section");
-			crawlRulesBuilder.click("summary");
-			crawlRulesBuilder.click("table");
-			crawlRulesBuilder.click("textarea");
-			crawlRulesBuilder.click("th");
-			crawlRulesBuilder.click("ul");
-			crawlRulesBuilder.click("video");
+		if (this.extension.getAjaxSpiderParam().isClickDefaultElems()) {
+			configurationBuilder.crawlRules().clickDefaultElements();
+		} else {
+			for (String elem : this.extension.getAjaxSpiderParam().getElemsNames()) {
+				configurationBuilder.crawlRules().click(elem);
+			}
 		}
 
-		configurationBuilder.crawlRules().insertRandomDataInInputForms(RAND_INPUT_FORMS);
-		
+		configurationBuilder.crawlRules().insertRandomDataInInputForms(this.extension.getAjaxSpiderParam().isRandomInputs());
 		configurationBuilder.crawlRules().waitAfterEvent(this.extension.getAjaxSpiderParam().getEventWait(),TimeUnit.MILLISECONDS);
 		configurationBuilder.crawlRules().waitAfterReloadUrl(this.extension.getAjaxSpiderParam().getReloadWait(),TimeUnit.MILLISECONDS);
 
@@ -204,7 +171,7 @@ public class SpiderThread implements Runnable {
 				
 		configurationBuilder.setMaximumDepth(this.extension.getAjaxSpiderParam().getMaxCrawlDepth());
 		configurationBuilder.setMaximumRunTime(this.extension.getAjaxSpiderParam().getMaxDuration(),TimeUnit.MINUTES);
-		configurationBuilder.crawlRules().clickOnce(this.extension.getAjaxSpiderParam().isClickOnce());
+		configurationBuilder.crawlRules().clickOnce(this.extension.getAjaxSpiderParam().isClickElemsOnce());
 				
 		return configurationBuilder.build();
 	}
