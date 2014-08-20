@@ -53,35 +53,39 @@ This check looks for insecure HTTP pages that host HTTPS forms. The issue is tha
 This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
 
 <H2>Insecure Component</H2>
-Passively scans the server response headers for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs.<br>
+Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs.<br>
 A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable.<br>
 Currently, the following server side products are supported:<br>
+Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
 Apache web server<br>
-Microsoft IIS web server<br>
-Sun One web server<br>
-Sun Java System Web Server<br>
-Oracle Application Server<br>
-Oracle Web Cache<br>
-Nginx web server<br>
-Lighttpd web server<br>
-Jetty web server / application server<br>
-Netscape Enterprise web server<br>
-TornadoServer web server<br>
-OpenCMS<br>
-IBM HTTP Server<br>
-LiteSpeed web server<br>
-mod_perl Apache module<br>
-mod_jk Apache module<br>
-mod_ssl Apache module<br>
-Perl Apache module<br>
-OpenSSL Apache module<br>
 mod_auth_radius Apache module<br>
 mod_fcgid Apache module<br>
 mod_imap Apache module<br>
+mod_jk Apache module<br>
+mod_perl Apache module<br>
 mod_python Apache module<br>
-Phusion_Passenger<br>
+mod_ssl Apache module<br>
+OpenSSL Apache module<br>
+Perl Apache module<br>
+Python Apache module<br>
+IBM HTTP Server<br>
+JBoss application server<br>
+Jetty web server / application server<br>
+LiteSpeed web server<br>
+Lighttpd web server<br>
+Microsoft IIS web server<br>
+Netscape Enterprise web server<br>
+Nginx web server<br>
+OpenCMS<br>
+Oracle Application Server<br>
+Oracle Web Cache<br>
 PHP<br>
+Phusion_Passenger<br>
 Squid proxy server<br>
+Sun One web server<br>
+Sun Java System Web Server<br>
+TornadoServer web server<br>
+WordPress<br>
 
 <H2>Open redirect</H2>
 Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
