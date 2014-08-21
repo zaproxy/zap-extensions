@@ -21,8 +21,11 @@ import java.awt.Dimension;
 import java.awt.Frame;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.extension.accessControl.ExtensionAccessControl;
 import org.zaproxy.zap.model.Context;
@@ -43,6 +46,7 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 	private static final String FIELD_CONTEXT = "accessControl.scanOptions.label.context";
 	private static final String FIELD_USERS = "accessControl.scanOptions.label.users";
 	private static final String FIELD_RAISE_ALERTS = "accessControl.scanOptions.label.raiseAlerts";
+	private static final String FIELD_ALERTS_RISK = "accessControl.scanOptions.label.alertsRisk";
 	private static final String UNAUTHENTICATED_USER_NAME = Constant.messages
 			.getString("accessControl.scanOptions.unauthenticatedUser");
 
@@ -66,6 +70,7 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 		this.addContextSelectField(FIELD_CONTEXT, context);
 		this.addTableField(FIELD_USERS, usersSelectTable);
 		this.addCheckBoxField(FIELD_RAISE_ALERTS, true);
+		this.addComboField(FIELD_ALERTS_RISK, Alert.MSG_RISK, Alert.MSG_RISK[Alert.RISK_HIGH]);
 		this.addPadding();
 	}
 
@@ -85,6 +90,13 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 			startOptions.targetUsers.add(null);
 		}
 		startOptions.raiseAlerts = ((JCheckBox) getField(FIELD_RAISE_ALERTS)).isSelected();
+		// Just to make sure we have a reference here to MSG_RISK for taking care when refactoring
+		// and that this still works if somehow the connection between index and value is lost, we
+		// perform a quick search
+		@SuppressWarnings("unchecked")
+		String selectedAlertRisk = (String) ((JComboBox<String>) getField(FIELD_ALERTS_RISK))
+				.getSelectedItem();
+		startOptions.alertRiskLevel = ArrayUtils.indexOf(Alert.MSG_RISK, selectedAlertRisk);
 		extension.startScan(startOptions);
 	}
 

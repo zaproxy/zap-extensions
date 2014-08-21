@@ -26,11 +26,13 @@ public class AccessControlAlertsProcessor {
 
 	private ExtensionAlert alertExtension;
 	private boolean shouldRun;
+	private int alertRiskLevel;
 
 	public AccessControlAlertsProcessor(AccessControlScanStartOptions scanOptions) {
 		this.alertExtension = (ExtensionAlert) Control.getSingleton().getExtensionLoader()
 				.getExtension(ExtensionAlert.NAME);
 		this.shouldRun = alertExtension != null && scanOptions.raiseAlerts;
+		this.alertRiskLevel = scanOptions.alertRiskLevel;
 	}
 
 	public void processScanResult(AccessControlResultEntry result) {
@@ -51,7 +53,7 @@ public class AccessControlAlertsProcessor {
 	}
 
 	private void raiseAuthorizationAlert(AccessControlResultEntry result) {
-		Alert alert = new Alert(10102, Alert.RISK_MEDIUM, Alert.HIGH, AUTHORIZATION_ALERT_TITLE);
+		Alert alert = new Alert(10102, alertRiskLevel, Alert.HIGH, AUTHORIZATION_ALERT_TITLE);
 
 		HttpMessage msg = null;
 		try {
@@ -77,7 +79,7 @@ public class AccessControlAlertsProcessor {
 	}
 
 	private void raiseAuthenticationAlert(AccessControlResultEntry result) {
-		Alert alert = new Alert(10101, Alert.RISK_MEDIUM, Alert.HIGH, AUTHENTICATION_ALERT_TITLE);
+		Alert alert = new Alert(10101, alertRiskLevel, Alert.HIGH, AUTHENTICATION_ALERT_TITLE);
 
 		HttpMessage msg = null;
 		try {

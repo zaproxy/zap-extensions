@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
@@ -252,6 +253,11 @@ public class AccessControlScannerThread extends
 		public Context targetContext;
 		public List<User> targetUsers;
 		public boolean raiseAlerts;
+		/**
+		 * Corresponds to the alert levels from {@link Alert#MSG_RISK}, such as
+		 * {@link Alert#RISK_HIGH}.
+		 */
+		public int alertRiskLevel;
 
 		public AccessControlScanStartOptions() {
 			super();
