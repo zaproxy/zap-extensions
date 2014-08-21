@@ -273,7 +273,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 			// accordingly
 			SiteTreeNode node = (SiteTreeNode) value;
 			if (node != null) {
-				if (node.isRoot()) {
+				if (node.isRoot() || node.getUri() == null) {
 					setIcon(ROOT_ICON); // 'World' icon
 				} else {
 					// Infer the rule so we can draw accordinglyF

@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.accessControl;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -125,6 +126,12 @@ public class ContextAccessRulesManager {
 
 	public AccessRule inferRule(int userId, SiteTreeNode node) {
 		Map<SiteTreeNode, AccessRule> userRules = getUserRules(userId);
+		// First of all, check if we have a rule for the node
+		AccessRule rule;
+		rule = userRules.get(node);
+		if (rule != null)
+			return rule;
+
 		List<String> path = null;
 		try {
 			path = context.getUrlParamParser().getTreePath(node.getUri());
@@ -142,7 +149,7 @@ public class ContextAccessRulesManager {
 			return AccessRule.UNKNOWN;
 		}
 
-		AccessRule rule, inferredRule = AccessRule.UNKNOWN;
+		AccessRule inferredRule = AccessRule.UNKNOWN;
 		SiteTreeNode parent = contextSiteTree.getRoot().findChild(hostname);
 		if (parent != null) {
 			rule = userRules.get(parent);
@@ -212,8 +219,8 @@ public class ContextAccessRulesManager {
 	public ContextSiteTree getContextSiteTree() {
 		return contextSiteTree;
 	}
-	
-	public void reloadContextSiteTree(Session session){
+
+	public void reloadContextSiteTree(Session session) {
 		this.contextSiteTree.reloadTree(session, context);
 	}
 
@@ -270,5 +277,35 @@ public class ContextAccessRulesManager {
 			log.error("Unable to import serialized rule for context " + context.getIndex() + ":"
 					+ serializedRule, ex);
 		}
+	}
+
+	/**
+	 * Generates and returns the map of rules that are associated to SiteTreeNodes which don't exist
+	 * in the current {@link ContextSiteTree}.
+	 *
+	 * @param userId the user id
+	 * @return the map of rules which are associated to nodes not in the context tree
+	 */
+	public Map<SiteTreeNode, AccessRule> computeHangingRules(int userId) {
+		Map<SiteTreeNode, AccessRule> rules = new HashMap<>(getUserRules(userId));
+		if (rules.isEmpty()) {
+			return rules;
+		}
+
+		// We make a traversal of the context site tree and remove all nodes from the map
+		@SuppressWarnings("unchecked")
+		Enumeration<SiteTreeNode> en = contextSiteTree.getRoot().depthFirstEnumeration();
+		while (en.hasMoreElements()) {
+			// Unfortunately the enumeration isn't genericized so we need to downcast when calling
+			// nextElement():
+			SiteTreeNode node = (SiteTreeNode) en.nextElement();
+			rules.remove(node);
+		}
+
+		if (log.isDebugEnabled())
+			log.debug(String.format("Identified hanging rules for context %d and user %d: %s",
+					context.getIndex(), userId, rules));
+		return rules;
+
 	}
 }

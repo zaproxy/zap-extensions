@@ -1,8 +1,11 @@
 package org.zaproxy.zap.extension.accessControl.view;
 
+import java.util.Map;
+
 import javax.swing.tree.DefaultTreeModel;
 
 import org.jdesktop.swingx.treetable.TreeTableModel;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.accessControl.AccessRule;
 import org.zaproxy.zap.extension.accessControl.ContextAccessRulesManager;
 import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
@@ -19,11 +22,27 @@ public class ContextUserAccessRulesModel extends DefaultTreeModel implements Tre
 
 	private int userId;
 	private ContextAccessRulesManager rulesManager;
+	private SiteTreeNode hangingNodesRoot;
+	private SiteTreeNode root;
 
 	public ContextUserAccessRulesModel(int userId, ContextAccessRulesManager rulesManager) {
 		super(rulesManager.getContextSiteTree().getRoot());
 		this.rulesManager = rulesManager;
 		this.userId = userId;
+		this.root = rulesManager.getContextSiteTree().getRoot();
+		prepareHangingRules(rulesManager.computeHangingRules(userId));
+	}
+
+	private void prepareHangingRules(Map<SiteTreeNode, AccessRule> hangingRules) {
+		if (hangingRules == null || hangingRules.isEmpty())
+			return;
+
+		hangingNodesRoot = new SiteTreeNode(Constant.messages.getString("accessControl.contextTree.hanging"),
+				null);
+		for (SiteTreeNode node : hangingRules.keySet()) {
+			hangingNodesRoot.add(node);
+		}
+		root.add(hangingNodesRoot);
 	}
 
 	public void setRulesManager(ContextAccessRulesManager rulesManager) {
@@ -43,7 +62,8 @@ public class ContextUserAccessRulesModel extends DefaultTreeModel implements Tre
 			return uriNode.getNodeName();
 		case COLUMN_INDEX_RULE:
 			// For the root return
-			return uriNode.isRoot() ? null : rulesManager.getDefinedRule(userId, uriNode).toString();
+			return (uriNode.isRoot() || uriNode == hangingNodesRoot) ? null : rulesManager.getDefinedRule(
+					userId, uriNode).toString();
 		}
 		return null;
 	}
@@ -90,7 +110,7 @@ public class ContextUserAccessRulesModel extends DefaultTreeModel implements Tre
 
 	@Override
 	public boolean isCellEditable(Object node, int column) {
-		return column == COLUMN_INDEX_RULE && !((SiteTreeNode) node).isRoot();
+		return column == COLUMN_INDEX_RULE && !((SiteTreeNode) node).isRoot() && (node != hangingNodesRoot);
 	}
 
 	@Override

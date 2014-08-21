@@ -218,7 +218,6 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	@Override
 	public void sessionAboutToChange(Session session) {
 		// TODO Auto-generated method stub
-		log.info("About to Change session");
 	}
 
 	@Override
