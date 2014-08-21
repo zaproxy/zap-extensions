@@ -254,6 +254,12 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 				Constant.messages.getString("accessControl.report.table.header.authorization"));
 		ReportGenerator.addChildTextNode(doc, localizationElement, "access-control",
 				Constant.messages.getString("accessControl.report.table.header.accessControl"));
+		ReportGenerator.addChildTextNode(doc, localizationElement, "show-all",
+				Constant.messages.getString("accessControl.report.button.all"));
+		ReportGenerator.addChildTextNode(doc, localizationElement, "show-valid",
+				Constant.messages.getString("accessControl.report.button.valid"));
+		ReportGenerator.addChildTextNode(doc, localizationElement, "show-illegal",
+				Constant.messages.getString("accessControl.report.button.illegal"));
 		final String UNAUTHENICATED_USER_NAME = Constant.messages
 				.getString("accessControl.scanOptions.unauthenticatedUser");
 		final String AUTHORIZED_STRING = Constant.messages
@@ -332,7 +338,8 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 					userElement.setAttribute("name", result.getUser().getName());
 				userElement.setAttribute("authorization", result.isRequestAuthorized() ? AUTHORIZED_STRING
 						: UNAUTHORIZED_STRING);
-				userElement.setAttribute("access-control", result.getResult().toString());
+				userElement.setAttribute("access-control-localized", result.getResult().toString());
+				userElement.setAttribute("access-control", result.getResult().name());
 			}
 		}
 		try {
@@ -389,7 +396,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		}
 		return manager;
 	}
-	
+
 	/**
 	 * Gets the access rules manager for a Context.
 	 *
