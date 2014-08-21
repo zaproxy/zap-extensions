@@ -4,7 +4,7 @@
   "title": "Persona Create Account",
   "description": "Create a new Persona account using a random Mailinator email address.\nThe script logs into Mailinator to click on the confirmation email.",
   "prefix": "",
-  "type": "Standalone",
+  "type": "StandAlone",
   "parameters": {
     "tokenStart": "{{",
     "tokenEnd": "}}",
