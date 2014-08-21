@@ -3,6 +3,8 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
+ * Copyright 2014 The ZAP Development Team.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -26,7 +28,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 /**
  * An utility class with various methods related to URIs and URLs used throughout ZAP.
  */
-public class UriUtils {
+public final class UriUtils {
 
 	/**
 	 * Returns a representation of the host name as used throughout ZAP. The representation contains
@@ -48,7 +50,7 @@ public class UriUtils {
 		String scheme = uri.getScheme().toLowerCase();
 		host.append(scheme).append("://").append(uri.getHost());
 		int port = uri.getPort();
-		if (port != -1
+		if ((port != -1)
 				&& ((port == 80 && !"http".equals(scheme)) || (port == 443 && !"https".equals(scheme)) || (port != 80 && port != 443))) {
 			host.append(":").append(port);
 		}
@@ -70,8 +72,9 @@ public class UriUtils {
 	 * @return the query params node representation
 	 */
 	public static String getQueryParamsNodeRepresentation(Collection<String> params) {
-		if (params == null || params.isEmpty())
+		if (params == null || params.isEmpty()) {
 			return "";
+		}
 
 		StringBuilder sb = new StringBuilder();
 		for (String name : params) {
@@ -121,12 +124,14 @@ public class UriUtils {
 			Collection<String> urlParameters, Collection<String> formParameters, String contentType) {
 
 		StringBuilder leafName = new StringBuilder();
-		if (method != null)
+		if (method != null) {
 			leafName.append(method).append(':');
+		}
 		leafName.append(nodeName);
 
-		if (urlParameters != null)
+		if (urlParameters != null) {
 			leafName.append(getQueryParamsNodeRepresentation(urlParameters));
+		}
 
 		if (method != null
 				&& (method.equalsIgnoreCase(HttpRequestHeader.POST) || method
@@ -138,5 +143,9 @@ public class UriUtils {
 			}
 		}
 		return leafName.toString();
+	}
+
+	private UriUtils() {
+		// Utility class
 	}
 }

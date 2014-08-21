@@ -3,6 +3,8 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
+ * Copyright 2014 The ZAP Development Team.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -24,14 +26,18 @@ import javax.swing.ImageIcon;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlNodeResult;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlResultEntry;
-import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanResult;
 import org.zaproxy.zap.extension.accessControl.AccessRule;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlResultsTableModel.AccessControlResultsTableEntry;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableModel;
 import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
 
+/**
+ * The table model for access control testing results. This table is used in the status panel of the
+ * Access Control extension.
+ */
 public class AccessControlResultsTableModel extends
 		AbstractCustomColumnHistoryReferencesTableModel<AccessControlResultsTableEntry> {
 
@@ -112,9 +118,11 @@ public class AccessControlResultsTableModel extends
 	@Override
 	public int getEntryRowIndex(int historyReferenceId) {
 		Logger.getLogger(getClass()).warn("Non optimal implemented method should not be called...");
-		for (int i = 0; i < entries.size(); i++)
-			if (entries.get(i).getHistoryId() == historyReferenceId)
+		for (int i = 0; i < entries.size(); i++) {
+			if (entries.get(i).getHistoryId() == historyReferenceId) {
 				return i;
+			}
+		}
 		return -1;
 	}
 
@@ -241,7 +249,7 @@ public class AccessControlResultsTableModel extends
 			return result.getUser();
 		}
 
-		public AccessControlScanResult getResult() {
+		public AccessControlNodeResult getResult() {
 			return result.getResult();
 		}
 

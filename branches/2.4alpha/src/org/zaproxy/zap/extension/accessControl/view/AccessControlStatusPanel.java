@@ -3,6 +3,8 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
+ * Copyright 2014 The ZAP Development Team.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -57,7 +59,8 @@ import org.zaproxy.zap.view.panels.AbstractScanToolbarStatusPanel;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 /**
- * Under development...
+ * The status panel used for the Access Control extension. It allows ZAP users to control and
+ * configure the scans, generate a report and see the scan results.
  */
 public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel implements
 		AccessControlScanListener {
@@ -70,11 +73,11 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 
 	private JXTable resultsTable;
 	private JScrollPane workPane;
+	private JButton reportButton;
+
 	private Map<Integer, AccessControlResultsTableModel> resultsModels;
 	private AccessControlResultsTableModel currentResultsModel;
 	private ExtensionAccessControl extension;
-
-	private JButton reportButton;
 
 	public AccessControlStatusPanel(ExtensionAccessControl extension,
 			BaseScannerThreadManager<AccessControlScannerThread> threadManager) {
@@ -219,19 +222,23 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 			reportButton.setIcon(new ImageIcon(HttpSessionsPanel.class
 					.getResource("/resource/icon/16/177.png")));
 			reportButton.setEnabled(false);
+
+			// Add the proper behavior for the generate report button: allow users to select a
+			// report location, generate the report and open it in the browser
 			reportButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					File targetFile = selectReportLocation();
 					File generatedFile = null;
-					if (targetFile != null)
+					if (targetFile != null) {
 						try {
 							generatedFile = extension.generateAccessControlReport(getSelectedContext()
 									.getIndex(), targetFile);
 						} catch (ParserConfigurationException e1) {
 							e1.printStackTrace();
 						}
-					// Check if the generation was ok
+					}
+					// Check if the generation was OK
 					if (generatedFile == null) {
 						View.getSingleton().showMessageDialog(
 								Constant.messages.getString("report.unknown.error", targetFile.getName()));
@@ -247,6 +254,12 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 		return gridX;
 	}
 
+	/**
+	 * Show a File Chooser dialog allowing users to select the location where to save the generated
+	 * report.
+	 *
+	 * @return the file in which to save, or <code>null</code>, if the user cancelled the process
+	 */
 	private File selectReportLocation() {
 		// create a file chooser that requires writable files and starts in the user directory
 		JFileChooser chooser = new WritableFileChooser(Model.getSingleton().getOptionsParam()
@@ -282,16 +295,17 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	@Override
 	protected void contextSelected(Context context) {
 		// Just enable the reportButton if something's selected
-		if (context != null)
+		if (context != null) {
 			reportButton.setEnabled(true);
-		else
+		} else {
 			reportButton.setEnabled(false);
+		}
 		super.contextSelected(context);
 	}
 
 	@Override
 	protected void startScan(Context context) {
-		log.info("Access Control start on Context: " + context);
+		log.debug("Access Control start on Context: " + context);
 		extension.showScanOptionsDialog(context);
 	}
 

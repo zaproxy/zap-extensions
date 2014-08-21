@@ -1,5 +1,25 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ * 
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ * 
+ * Copyright 2014 The ZAP Development Team.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ */
 package org.zaproxy.zap.extension.accessControl.view;
 
+import static org.zaproxy.zap.extension.accessControl.ContextAccessRulesManager.UNAUTHENTICATED_USER_ID;
 import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.FOLDER_CLOSED_ICON;
 import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.FOLDER_CLOSED_ICON_CHECK;
 import static org.zaproxy.zap.extension.accessControl.widgets.SiteNodeIcons.FOLDER_CLOSED_ICON_CROSS;
@@ -47,8 +67,10 @@ import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.widgets.ContextPanelUsersSelectComboBox;
-import static org.zaproxy.zap.extension.accessControl.ContextAccessRulesManager.UNAUTHENTICATED_USER_ID;
 
+/**
+ * The context configuration panel used for specifying the Access Control rules.
+ */
 public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
 	private static final Logger log = Logger.getLogger(ContextAccessControlPanel.class);
@@ -59,13 +81,15 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 			.getString("accessControl.contextPanel.user.unauthenticated");
 
 	private ExtensionAccessControl extension;
+	private static ExtensionUserManagement usersExtension;
+
 	private JXTreeTable tree;
 	private JScrollPane treePane;
-	private Map<Integer, ContextUserAccessRulesModel> userModels;
-	private int selectedUserId = 0;
-	private ContextAccessRulesManager internalRulesManager;
 	private ContextPanelUsersSelectComboBox usersComboBox;
-	private static ExtensionUserManagement usersExtension;
+
+	private int selectedUserId = 0;
+	private Map<Integer, ContextUserAccessRulesModel> userModels;
+	private ContextAccessRulesManager internalRulesManager;
 
 	public ContextAccessControlPanel(ExtensionAccessControl extensionAccessControl, int contextId) {
 		super(contextId);
@@ -152,8 +176,9 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 					if (selectedUser != null) {
 						selectedUserId = selectedUser.getId();
 						tree.setVisible(true);
-						if (internalRulesManager != null)
+						if (internalRulesManager != null) {
 							tree.setTreeTableModel(getUserAccessRulesModel(selectedUserId));
+						}
 						tree.expandAll();
 					} else {
 						tree.setVisible(false);
@@ -211,19 +236,17 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 	}
 
 	@Override
-	public void validateContextData(Session session) throws Exception {
+	public void validateContextData(Session session) {
 		// Nothing to validate
-
 	}
 
 	@Override
 	public void saveTemporaryContextData(Context uiSharedContext) {
 		// Nothing to save as the data is already saved in the 'tempRulesManager'
-
 	}
 
 	@Override
-	public void saveContextData(Session session) throws Exception {
+	public void saveContextData(Session session) {
 		List<User> users = getUsersManagementExtension().getUIConfiguredUsers(getContextIndex());
 		extension.getContextAccessRulesManager(getContextIndex()).copyRulesFrom(internalRulesManager, users);
 	}
@@ -238,9 +261,10 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 		if (usersExtension == null) {
 			usersExtension = (ExtensionUserManagement) Control.getSingleton().getExtensionLoader()
 					.getExtension(ExtensionUserManagement.class);
-			if (usersExtension == null)
+			if (usersExtension == null) {
 				throw new IllegalStateException(
 						"The required Users Management extension could not be loaded.");
+			}
 		}
 		return usersExtension;
 	}
@@ -261,10 +285,10 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 		private static final long serialVersionUID = 5863120297397993899L;
 
 		@Override
-		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
-				boolean expanded, boolean leaf, int row, boolean hasFocus) {
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
+				boolean expanded, boolean isLeaf, int row, boolean hasFocus) {
 
-			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+			super.getTreeCellRendererComponent(tree, value, selected, expanded, isLeaf, row, hasFocus);
 
 			if (!(value instanceof SiteTreeNode))
 				return this;
@@ -281,48 +305,54 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 					switch (rule) {
 					case ALLOWED:
 						// Text color
-						if (sel)
+						if (selected) {
 							this.setForeground(COLOR_ALLOWED_FOCUS);
-						else
+						} else {
 							this.setForeground(COLOR_ALLOWED);
+						}
 
 						// Icon
-						if (leaf)
+						if (isLeaf) {
 							setIcon(LEAF_ICON_CHECK);
-						else if (expanded)
+						} else if (expanded) {
 							setIcon(FOLDER_OPEN_ICON_CHECK);
-						else
+						} else {
 							setIcon(FOLDER_CLOSED_ICON_CHECK);
+						}
 						break;
 					case DENIED:
 						// Text color
-						if (sel)
+						if (selected) {
 							this.setForeground(COLOR_DENIED_FOCUS);
-						else
+						} else {
 							this.setForeground(COLOR_DENIED);
+						}
 
 						// Icon
-						if (leaf)
+						if (isLeaf) {
 							setIcon(LEAF_ICON_CROSS);
-						else if (expanded)
+						} else if (expanded) {
 							setIcon(FOLDER_OPEN_ICON_CROSS);
-						else
+						} else {
 							setIcon(FOLDER_CLOSED_ICON_CROSS);
+						}
 						break;
 					default:
 						// Text color
-						if (sel)
+						if (selected) {
 							this.setForeground(COLOR_UNKNOWN_FOCUS);
-						else
+						} else {
 							this.setForeground(COLOR_UNKNOWN);
+						}
 
 						// Icon
-						if (leaf)
+						if (isLeaf) {
 							setIcon(LEAF_ICON);
-						else if (expanded)
+						} else if (expanded) {
 							setIcon(FOLDER_OPEN_ICON);
-						else
+						} else {
 							setIcon(FOLDER_CLOSED_ICON);
+						}
 						break;
 					}
 				}

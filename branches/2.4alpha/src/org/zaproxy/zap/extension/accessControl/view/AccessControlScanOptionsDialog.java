@@ -3,6 +3,8 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
+ * Copyright 2014 The ZAP Development Team.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -38,6 +40,11 @@ import org.zaproxy.zap.view.widgets.UsersMultiSelectTable;
 /**
  * The dialog shown to allow users to configure {@link ScanStartOptions} for the Access Control
  * testing.
+ * 
+ * <p>
+ * If the un-authenticated user was selected, it is returned in the {@link ScanStartOptions} as
+ * <code>null</code>.
+ * </p>
  */
 public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 
@@ -53,6 +60,7 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 	private ExtensionAccessControl extension;
 	private UsersMultiSelectTable usersSelectTable;
 
+	/** This is the "custom" user that will allow scanning also as an "unauthenticated" user. */
 	private User unauthenticatedUser;
 
 	public AccessControlScanOptionsDialog(ExtensionAccessControl extension, Frame owner, Dimension dim) {

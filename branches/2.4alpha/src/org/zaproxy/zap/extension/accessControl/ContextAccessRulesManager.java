@@ -3,6 +3,8 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
+ * Copyright 2014 The ZAP Development Team.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -36,25 +38,30 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 
 /**
+ * An object that manages the access rules that have been configured for a {@link Context}.
  * 
+ * Note: In order to store access rules for unauthenticated visitors, we'll use
+ * {@link #UNAUTHENTICATED_USER_ID} as the id, which is an id that should not be generated for
+ * normal users.
  * 
- * 
- * 
- * 
- * Note: In order to store access rules for unauthenticated visitors, we'll use -1 as the id, which
- * is an id that should not be generated for normal users.
+ * @author cosminstefanxp
  */
 public class ContextAccessRulesManager {
-	private Context context;
-	private Map<Integer, Map<SiteTreeNode, AccessRule>> rules;
+
 	private static final Logger log = Logger.getLogger(ContextAccessRulesManager.class);
-	private ContextSiteTree contextSiteTree;
-	private static final char SERIALIZATION_SEPARATOR = '`';
 	/**
 	 * In order to store access rules for unauthenticated visitors, we'll use -1 as the id, which is
 	 * an id that should not be generated for normal users.
 	 */
 	public static final int UNAUTHENTICATED_USER_ID = -1;
+	/**
+	 * The separator used during the serialization of the rules.
+	 */
+	private static final char SERIALIZATION_SEPARATOR = '`';
+
+	private Context context;
+	private Map<Integer, Map<SiteTreeNode, AccessRule>> rules;
+	private ContextSiteTree contextSiteTree;
 
 	public ContextAccessRulesManager(Context context) {
 		this.context = context;
@@ -115,50 +122,68 @@ public class ContextAccessRulesManager {
 	 * @return the access rule
 	 */
 	public void addRule(int userId, SiteTreeNode node, AccessRule rule) {
-		log.debug("Adding rule for user " + userId + ": " + rule);
+		if (log.isDebugEnabled()) {
+			log.debug("Adding rule for user " + userId + " and node " + node + ": " + rule);
+		}
+
 		// If the rule is INHERIT (default), remove it from the rules mapping as there's no need to
 		// store it there
-		if (rule == AccessRule.INHERIT)
+		if (rule == AccessRule.INHERIT) {
 			getUserRules(userId).remove(node);
-		else
+		} else {
 			getUserRules(userId).put(node, rule);
+		}
 	}
 
+	/**
+	 * Infers the rule that corresponds to a site tree node.
+	 * <p>
+	 * If a rule was explicitly defined for the specified node, it is returned directly. Otherwise,
+	 * an inference algorithm is used to detect the matching rules for each node based on its
+	 * ancestors in the URL: the rule inferred is the one that has been explicitly defined for the
+	 * closest ancestor.
+	 * </p>
+	 * <p>
+	 * The root has a fixed corresponding value of {@link AccessRule#UNKNOWN}, so if no rules are
+	 * specified for any of the ancestors of a node, it defaults to {@link AccessRule#UNKNOWN}.
+	 * </p>
+	 *
+	 * @param userId the user id
+	 * @param node the node
+	 * @return the access rule inferred
+	 */
 	public AccessRule inferRule(int userId, SiteTreeNode node) {
 		Map<SiteTreeNode, AccessRule> userRules = getUserRules(userId);
-		// First of all, check if we have a rule for the node
+		// First of all, check if we have an explicit rule for the node
 		AccessRule rule;
 		rule = userRules.get(node);
-		if (rule != null)
+		if (rule != null && rule != AccessRule.INHERIT) {
 			return rule;
+		}
 
+		String hostname;
 		List<String> path = null;
 		try {
 			path = context.getUrlParamParser().getTreePath(node.getUri());
-		} catch (URIException e) {
-			e.printStackTrace();
-
-		}
-
-		// Check the hostname
-		String hostname;
-		try {
 			hostname = UriUtils.getHostName(node.getUri());
 		} catch (URIException e) {
-			e.printStackTrace();
+			log.error("An error occurred while infering access rules: " + e.getMessage(), e);
 			return AccessRule.UNKNOWN;
 		}
 
+		// Find the node corresponding to the hostname of the url
 		AccessRule inferredRule = AccessRule.UNKNOWN;
 		SiteTreeNode parent = contextSiteTree.getRoot().findChild(hostname);
 		if (parent != null) {
 			rule = userRules.get(parent);
-			if (rule != null && rule != AccessRule.INHERIT)
+			if (rule != null && rule != AccessRule.INHERIT) {
 				inferredRule = rule;
+			}
 		}
 
-		if (parent == null || path == null || path.isEmpty())
+		if (parent == null || path == null || path.isEmpty()) {
 			return inferredRule;
+		}
 
 		// Replace the last 'segment' of the path with the actual node name
 		path.set(path.size() - 1, node.getNodeName());
@@ -174,13 +199,15 @@ public class ContextAccessRulesManager {
 				// Find the child node that matches the segment
 				parent = parent.findChild(pathSegment);
 				if (parent == null) {
-					log.info("Unable to find path segment while infering rule: " + pathSegment);
+					log.warn("Unable to find path segment while infering rule for " + node + ": "
+							+ pathSegment);
 					break;
 				}
 				// Save it's access rule, if anything relevant
 				rule = userRules.get(parent);
-				if (rule != null && rule != AccessRule.INHERIT)
+				if (rule != null && rule != AccessRule.INHERIT) {
 					inferredRule = rule;
+				}
 			}
 		}
 		return inferredRule;
@@ -199,18 +226,21 @@ public class ContextAccessRulesManager {
 		// Copy the user rules for the provided users
 		for (User user : users) {
 			Map<SiteTreeNode, AccessRule> sourceRules = sourceManager.rules.get(user.getId());
-			if (sourceRules == null)
+			if (sourceRules == null) {
 				continue;
+			}
 			userRules = new HashMap<>(sourceManager.rules.get(user.getId()));
-			if (userRules != null)
+			if (userRules != null) {
 				this.rules.put(user.getId(), userRules);
+			}
 		}
 		// Also copy the rules for the unauthenticated user, which will always be there
 		Map<SiteTreeNode, AccessRule> sourceRules = sourceManager.rules.get(UNAUTHENTICATED_USER_ID);
 		if (sourceRules != null) {
 			userRules = new HashMap<>(sourceManager.rules.get(UNAUTHENTICATED_USER_ID));
-			if (userRules != null)
+			if (userRules != null) {
 				this.rules.put(UNAUTHENTICATED_USER_ID, userRules);
+			}
 		}
 
 		this.contextSiteTree = sourceManager.contextSiteTree;
@@ -269,10 +299,11 @@ public class ContextAccessRulesManager {
 			URI uri = new URI(values[3], true);
 			SiteTreeNode node = new SiteTreeNode(nodeName, uri);
 			getUserRules(userId).put(node, rule);
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				log.debug(String.format(
 						"Imported access control rule (context, userId, node, rule): (%d, %d, %s, %s) ",
 						context.getIndex(), userId, uri.toString(), rule));
+			}
 		} catch (Exception ex) {
 			log.error("Unable to import serialized rule for context " + context.getIndex() + ":"
 					+ serializedRule, ex);
@@ -302,9 +333,10 @@ public class ContextAccessRulesManager {
 			rules.remove(node);
 		}
 
-		if (log.isDebugEnabled())
+		if (log.isDebugEnabled()) {
 			log.debug(String.format("Identified hanging rules for context %d and user %d: %s",
 					context.getIndex(), userId, rules));
+		}
 		return rules;
 
 	}

@@ -3,6 +3,8 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
+ * Copyright 2014 The ZAP Development Team.
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -25,7 +27,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
@@ -48,21 +49,45 @@ import org.zaproxy.zap.users.User;
  * 
  * @see ExtensionAccessControl
  * @see AccessControlScanStartOptions
+ * 
+ * @author cosminstefanxp
  */
 public class AccessControlScannerThread extends
 		BaseContextScannerThread<AccessControlScanStartOptions, AccessControlScanListener> {
 
-	public enum AccessControlScanResult {
-		VALID(Constant.messages.getString("accessControl.scanResult.valid")), ILLEGAL(Constant.messages
-				.getString("accessControl.scanResult.illegal")), UNKNOWN(Constant.messages
-				.getString("accessControl.scanResult.unknown"));
+	/**
+	 * The access control testing result that can be associated with a node to assess the validity
+	 * of the access to the resource
+	 */
+	public enum AccessControlNodeResult {
+		/**
+		 * This result is associated to nodes that have been accessed according to the corresponding
+		 * {@link AccessRule}: was authorized and should have been or wasn't authorized and
+		 * shouldn't have been.
+		 */
+		VALID(Constant.messages.getString("accessControl.scanResult.valid")),
+		/**
+		 * This result is associated to nodes that have not been accessed according to the
+		 * corresponding {@link AccessRule}: was authorized and shouldn't have been or wasn't
+		 * authorized and should have been.
+		 */
+		ILLEGAL(Constant.messages.getString("accessControl.scanResult.illegal")),
+		/**
+		 * This result is associated to nodes whose corresponding corresponding {@link AccessRule}
+		 * is {@link AccessRule#UNKNOWN} so we cannot make any assumption regarding the validity of
+		 * the access to the resource.
+		 */
+		UNKNOWN(Constant.messages.getString("accessControl.scanResult.unknown"));
 
 		private final String localizedName;
 
-		private AccessControlScanResult(String localizedName) {
+		private AccessControlNodeResult(String localizedName) {
 			this.localizedName = localizedName;
 		}
 
+		/**
+		 * Returns a localized name of the access rule.
+		 */
 		@Override
 		public String toString() {
 			return localizedName;
@@ -71,15 +96,16 @@ public class AccessControlScannerThread extends
 
 	private static final Logger log = Logger.getLogger(AccessControlScannerThread.class);
 
-	private List<User> targetUsers;
-	private AuthorizationDetectionMethod authorizationDetection;
 	/** The HTTP sender used to effectively send the data. */
 	private HttpSender httpSender;
+	private ExtensionAccessControl extension;
+
+	private List<User> targetUsers;
+	private AuthorizationDetectionMethod authorizationDetection;
 	private ContextAccessRulesManager accessRulesManager;
 	private List<AccessControlResultEntry> scanResults;
-	private AccessControlAlertsProcessor alertsProcessor;
 
-	private ExtensionAccessControl extension;
+	private AccessControlAlertsProcessor alertsProcessor;
 
 	public AccessControlScannerThread(int contextId, ExtensionAccessControl extension) {
 		super(contextId);
@@ -113,8 +139,10 @@ public class AccessControlScannerThread extends
 
 		// And set up the state accordingly
 		this.setScanMaximumProgress(targetNodes.size() + 1);
-		log.debug(String.format("Starting Access Control scan for %d URLs and %d users", targetNodes.size(),
-				targetUsers.size()));
+		if (log.isDebugEnabled()) {
+			log.debug(String.format("Starting Access Control scan for %d URLs and %d users",
+					targetNodes.size(), targetUsers.size()));
+		}
 
 		int progress = 0;
 
@@ -126,8 +154,9 @@ public class AccessControlScannerThread extends
 			checkPausedAndWait();
 
 			// Check if it's stopped
-			if (!isRunning())
+			if (!isRunning()) {
 				break;
+			}
 
 			// Actually do the attack
 			HttpMessage originalMessage = null;
@@ -139,8 +168,9 @@ public class AccessControlScannerThread extends
 			}
 
 			// Check whether we should attack the node
-			if (!shouldAttackNode(originalMessage))
+			if (!shouldAttackNode(originalMessage)) {
 				continue;
+			}
 
 			// Convert the SiteNode to a SiteTreNode (for now, before we merge things)
 			SiteTreeNode stn = new SiteTreeNode(sn.getNodeName(), originalMessage.getRequestHeader().getURI());
@@ -155,7 +185,7 @@ public class AccessControlScannerThread extends
 		}
 
 		// Setup the finished status properly
-		log.debug("Access control scan finished.");
+		log.debug("Access control scan succesfully completed.");
 		setScanProgress(getScanMaximumProgress());
 		setRunningState(false);
 		notifyScanFinished();
@@ -171,9 +201,10 @@ public class AccessControlScannerThread extends
 	}
 
 	private void attackNode(SiteTreeNode stn, HttpMessage originalMessage, User user) {
-		if (log.isDebugEnabled())
+		if (log.isDebugEnabled()) {
 			log.debug("Attacking node: '" + originalMessage.getRequestHeader().getURI() + "' as user: "
 					+ (user != null ? user.getName() : "unauthenticated"));
+		}
 		// Clone the original message and send it from the point of view of the user
 		HttpMessage scanMessage = originalMessage.cloneRequest();
 		scanMessage.setRequestingUser(user);
@@ -207,16 +238,16 @@ public class AccessControlScannerThread extends
 				: ContextAccessRulesManager.UNAUTHENTICATED_USER_ID, stn);
 
 		// Compute the result based on whether the request was authorized and the access rule
-		AccessControlScanResult result = AccessControlScanResult.UNKNOWN;
+		AccessControlNodeResult result = AccessControlNodeResult.UNKNOWN;
 		switch (rule) {
 		case ALLOWED:
-			result = authorized ? AccessControlScanResult.VALID : AccessControlScanResult.ILLEGAL;
+			result = authorized ? AccessControlNodeResult.VALID : AccessControlNodeResult.ILLEGAL;
 			break;
 		case DENIED:
-			result = !authorized ? AccessControlScanResult.VALID : AccessControlScanResult.ILLEGAL;
+			result = !authorized ? AccessControlNodeResult.VALID : AccessControlNodeResult.ILLEGAL;
 			break;
 		default:
-			result = AccessControlScanResult.UNKNOWN;
+			result = AccessControlNodeResult.UNKNOWN;
 			break;
 		}
 
@@ -235,13 +266,15 @@ public class AccessControlScannerThread extends
 	}
 
 	private void notifyScanResultObtained(AccessControlResultEntry scanResult) {
-		for (AccessControlScanListener l : listeners)
+		for (AccessControlScanListener l : listeners) {
 			l.scanResultObtained(contextId, scanResult);
+		}
 	}
 
 	public List<AccessControlResultEntry> getLastScanResults() {
-		if (scanResults == null)
+		if (scanResults == null) {
 			return null;
+		}
 		return Collections.unmodifiableList(scanResults);
 	}
 
@@ -254,8 +287,8 @@ public class AccessControlScannerThread extends
 		public List<User> targetUsers;
 		public boolean raiseAlerts;
 		/**
-		 * Corresponds to the alert levels from {@link Alert#MSG_RISK}, such as
-		 * {@link Alert#RISK_HIGH}.
+		 * Defines the risk level with which alerts should be raised and corresponds to the alert
+		 * levels from {@link Alert#MSG_RISK}, such as {@link Alert#RISK_HIGH}.
 		 */
 		public int alertRiskLevel;
 
@@ -266,6 +299,11 @@ public class AccessControlScannerThread extends
 
 	}
 
+	/**
+	 * The listener interface for receiving events related to a access control scan.
+	 *
+	 * @see AccessControlScannerThread
+	 */
 	public interface AccessControlScanListener extends ScanListener {
 
 		/**
@@ -278,16 +316,20 @@ public class AccessControlScannerThread extends
 		void scanResultObtained(int contextId, AccessControlResultEntry result);
 	}
 
+	/**
+	 * A container for a result that was obtained, during an access control scan, for a website
+	 * node.
+	 */
 	public static final class AccessControlResultEntry {
 
 		private HistoryReference reference;
 		private User user;
 		private boolean requestAuthorized;
-		private AccessControlScanResult result;
+		private AccessControlNodeResult result;
 		private AccessRule accessRule;
 
 		public AccessControlResultEntry(HistoryReference historyReference, User user,
-				boolean requestAuthorized, AccessControlScanResult result, AccessRule accessRule) {
+				boolean requestAuthorized, AccessControlNodeResult result, AccessRule accessRule) {
 			this.reference = historyReference;
 			this.user = user;
 			this.result = result;
@@ -315,11 +357,17 @@ public class AccessControlScannerThread extends
 			return reference.getStatusCode();
 		}
 
+		/**
+		 * Gets the user for which the result was obtained. It can be {@code null}, for results
+		 * obtained when scanning as "un-authenticated".
+		 *
+		 * @return the user
+		 */
 		public User getUser() {
 			return user;
 		}
 
-		public AccessControlScanResult getResult() {
+		public AccessControlNodeResult getResult() {
 			return result;
 		}
 
