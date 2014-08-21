@@ -76,6 +76,7 @@ public class AccessControlScannerThread extends
 	private HttpSender httpSender;
 	private ContextAccessRulesManager accessRulesManager;
 	private List<AccessControlResultEntry> scanResults;
+	private AccessControlAlertsProcessor alertsProcessor;
 
 	private ExtensionAccessControl extension;
 
@@ -87,6 +88,7 @@ public class AccessControlScannerThread extends
 	@Override
 	public void startScan() {
 		this.scanResults = new LinkedList<>();
+		this.alertsProcessor = new AccessControlAlertsProcessor(getStartOptions());
 		this.targetUsers = getStartOptions().targetUsers;
 		this.accessRulesManager = extension.getContextAccessRulesManager(getStartOptions().targetContext
 				.getIndex());
@@ -168,7 +170,6 @@ public class AccessControlScannerThread extends
 	}
 
 	private void attackNode(SiteTreeNode stn, HttpMessage originalMessage, User user) {
-		log.info("" + user);
 		if (log.isDebugEnabled())
 			log.debug("Attacking node: '" + originalMessage.getRequestHeader().getURI() + "' as user: "
 					+ (user != null ? user.getName() : "unauthenticated"));
@@ -218,11 +219,13 @@ public class AccessControlScannerThread extends
 			break;
 		}
 
-		// And notify any listeners of the obtained result
+		// And process the obtained result and notify any listeners
 		AccessControlResultEntry resultEntry = new AccessControlResultEntry(hRef, user, authorized, result,
 				rule);
-		notifyScanResultObtained(resultEntry);
 		this.scanResults.add(resultEntry);
+		this.alertsProcessor.processScanResult(resultEntry);
+
+		notifyScanResultObtained(resultEntry);
 	}
 
 	private List<SiteNode> getTargetUrlsList() {
@@ -248,6 +251,7 @@ public class AccessControlScannerThread extends
 	public static class AccessControlScanStartOptions implements ScanStartOptions {
 		public Context targetContext;
 		public List<User> targetUsers;
+		public boolean raiseAlerts;
 
 		public AccessControlScanStartOptions() {
 			super();
@@ -319,6 +323,13 @@ public class AccessControlScannerThread extends
 
 		public boolean isRequestAuthorized() {
 			return requestAuthorized;
+		}
+
+		@Override
+		public String toString() {
+			return "ACResult [" + getUri() + " - user=" + (user == null ? "Unauthenticated" : user.getName())
+					+ ": authorized=" + requestAuthorized + ", accessRule=" + accessRule + ", result="
+					+ result + "]";
 		}
 
 	}

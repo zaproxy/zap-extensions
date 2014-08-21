@@ -20,6 +20,8 @@ package org.zaproxy.zap.extension.accessControl.view;
 import java.awt.Dimension;
 import java.awt.Frame;
 
+import javax.swing.JCheckBox;
+
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.extension.accessControl.ExtensionAccessControl;
@@ -40,6 +42,7 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 
 	private static final String FIELD_CONTEXT = "accessControl.scanOptions.label.context";
 	private static final String FIELD_USERS = "accessControl.scanOptions.label.users";
+	private static final String FIELD_RAISE_ALERTS = "accessControl.scanOptions.label.raiseAlerts";
 	private static final String UNAUTHENTICATED_USER_NAME = Constant.messages
 			.getString("accessControl.scanOptions.unauthenticatedUser");
 
@@ -62,6 +65,7 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 
 		this.addContextSelectField(FIELD_CONTEXT, context);
 		this.addTableField(FIELD_USERS, usersSelectTable);
+		this.addCheckBoxField(FIELD_RAISE_ALERTS, true);
 		this.addPadding();
 	}
 
@@ -80,6 +84,7 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
 		if (startOptions.targetUsers.remove(unauthenticatedUser)) {
 			startOptions.targetUsers.add(null);
 		}
+		startOptions.raiseAlerts = ((JCheckBox) getField(FIELD_RAISE_ALERTS)).isSelected();
 		extension.startScan(startOptions);
 	}
 
