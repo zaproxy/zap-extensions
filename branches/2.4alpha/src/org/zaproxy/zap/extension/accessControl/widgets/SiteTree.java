@@ -67,11 +67,9 @@ public class SiteTree {
 					}
 				}
 			}
+			// If no leaf found, which means the parent was really the leaf. This happens, for
+			// example, when first adding a node for the top-level node, without any path elements
 			if (leaf == null) {
-				// No leaf found, which means the parent was really the leaf
-				// The parent will have been added with a 'blank' href, so replace it with the real
-				// one
-				log.warn("Why is this warning here??????");
 				leaf = parent;
 			}
 
