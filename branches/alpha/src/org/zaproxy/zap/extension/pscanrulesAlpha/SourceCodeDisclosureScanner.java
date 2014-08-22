@@ -273,7 +273,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		languagePatterns.put(Pattern.compile("\\end\\s*\\{[a-z]+\\}", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "Latex");		
 		
 		//Actionscript 3
-		languagePatterns.put(Pattern.compile("package\\s+[a-z0-9.]+\\s*\\{.*import\\s+[a-z0-9.]+\\s*;.+\\}", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE),"ActionScript 3.0");
+		languagePatterns.put(Pattern.compile("package\\s+[a-z0-9.]+\\s*\\{(.*import\\s+[a-z0-9.]+\\s*;)?.+\\}", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE),"ActionScript 3.0");
 		
 		//TODO: consider sorting the patterns by decreasing pattern length, so more specific patterns are tried before more general patterns
 	}
