@@ -83,7 +83,8 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 			BaseScannerThreadManager<AccessControlScannerThread> threadManager) {
 
 		super("accessControl", new ImageIcon(
-				AccessControlStatusPanel.class.getResource("/resource/icon/16/accessControl.png")),
+				AccessControlStatusPanel.class
+						.getResource("/org/zaproxy/zap/extension/accessControl/resources/icon.png")),
 				threadManager);
 		this.extension = extension;
 		this.resultsModels = new HashMap<>();

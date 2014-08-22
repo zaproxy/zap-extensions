@@ -253,8 +253,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
 	@Override
 	public String getHelpIndex() {
-		// TODO Auto-generated method stub
-		return null;
+		return "accessControl.contextOptions";
 	}
 
 	private static ExtensionUserManagement getUsersManagementExtension() {

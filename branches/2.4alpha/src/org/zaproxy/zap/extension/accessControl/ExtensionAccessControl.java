@@ -398,11 +398,11 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		log.debug("Generating report for context " + contextId + " to: " + outputFile);
 
 		// The path for the XSL file
-		String xslFile = Constant.getZapInstall() + File.separator + "xml" + File.separator
-				+ "reportAccessControl.xsl";
+		File xslFile = new File(Constant.getZapHome(), "xml" + File.separator + "reportAccessControl.html.xsl");
 
 		// Generate the report
-		return ReportGenerator.XMLToHtml(generateLastScanXMLReport(contextId), xslFile, outputFile);
+		return ReportGenerator.XMLToHtml(generateLastScanXMLReport(contextId), xslFile.getAbsolutePath(),
+				outputFile);
 
 	}
 
