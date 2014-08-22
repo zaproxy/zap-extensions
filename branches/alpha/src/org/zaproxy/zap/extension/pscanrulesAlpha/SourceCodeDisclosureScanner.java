@@ -136,31 +136,34 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		//languagePatterns.put(Pattern.compile("end\\s+select", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "VB.NET");  //False positives. Insufficiently anchored.
 		
 		//SQL (ie, generic Structured Query Language, not "Microsoft SQL Server", which some incorrectly refer to as just "SQL")  
-		languagePatterns.put(Pattern.compile("select\\s+[a-z0-9., \"\'()*]+\\s+from\\s+[a-z0-9., ]+\\s+where\\s+", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE), "SQL");
+		//languagePatterns.put(Pattern.compile("select\\s+[a-z0-9., \"\'()*]+\\s+from\\s+[a-z0-9., ]+\\s+where\\s+", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("select\\s+[a-z0-9., \"\'()*]+\\s+from\\s+[a-z0-9._, ]+", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("select\\s+@@[a-z]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("insert\\s+into\\s+[a-z0-9._]+\\s+values\\s+\\(", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("insert\\s+into\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("insert\\s+into\\s+[a-z0-9._]+\\s+values\\s*\\(", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("insert\\s+into\\s+[a-z0-9._]+\\s*\\([a-z0-9_, \\t]+\\)\\s+values\\s*\\(", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		//languagePatterns.put(Pattern.compile("insert\\s+into\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("insert\\s+[a-z0-9._]+\\s+\\(.+?\\)\\s+values\\s*\\(.+?\\)", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("insert\\s+[a-z0-9._]+\\s+values\\s*\\(.+?\\)", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("insert\\s+[a-z0-9._]+\\s+select\\s+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("update\\s+[a-z0-9._]+\\s+set\\s+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("update\\s+[a-z0-9._]+\\s+[a-z0-9_]+\\s+set\\s+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL"); //allow a table alias
-		languagePatterns.put(Pattern.compile("delete\\s+from\\s+[a-z0-9._]+\\s+where", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("delete\\s+from\\s+[a-z0-9._]+(\\s+where\\s+)?", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 		//causes false positives on normal JavaScript: delete B.fn;
-		//languagePatterns.put(Pattern.compile("delete\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("truncate\\s+table\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("create\\s+database\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("create\\s+table\\s+[a-z0-9.]+\\s+\\(.+?\\)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("create\\s+view\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("create\\s+index\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("create\\s+procedure\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("create\\s+function\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");		
-		languagePatterns.put(Pattern.compile("drop\\s+database\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("drop\\s+table\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("drop\\s+view\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("drop\\s+index\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("drop\\s+procedure\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
-		languagePatterns.put(Pattern.compile("drop\\s+function\\s+[a-z0-9.]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		//languagePatterns.put(Pattern.compile("delete\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("truncate\\s+table\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("create\\s+database\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		//languagePatterns.put(Pattern.compile("create\\s+table\\s+[a-z0-9.]+\\s+\\(.+?\\)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("create\\s+table\\s+(if\\s+not\\s+exists\\s+)?[a-z0-9._]+\\s*\\([^)]+\\)", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("create\\s+view\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("create\\s+index\\s+[a-z0-9._]+\\s+on\\s+[a-z0-9._]+\\s*\\(", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("create\\s+procedure\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("create\\s+function\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");		
+		languagePatterns.put(Pattern.compile("drop\\s+database\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("drop\\s+table\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("drop\\s+view\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("drop\\s+index\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("drop\\s+procedure\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
+		languagePatterns.put(Pattern.compile("drop\\s+function\\s+[a-z0-9._]+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("grant\\s+[a-z]+\\s+on\\s+[a-z0-9._]+\\s+to\\s+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 		languagePatterns.put(Pattern.compile("revoke\\s+[a-z0-9 (),]+\\s+on\\s+", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "SQL");
 				
@@ -268,6 +271,9 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		languagePatterns.put(Pattern.compile("\\documentclass\\s*\\{[a-z]+\\}", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "Latex");
 		languagePatterns.put(Pattern.compile("\\begin\\s*\\{[a-z]+\\}", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "Latex");
 		languagePatterns.put(Pattern.compile("\\end\\s*\\{[a-z]+\\}", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE), "Latex");		
+		
+		//Actionscript 3
+		languagePatterns.put(Pattern.compile("package\\s+[a-z0-9.]+\\s*\\{.*import\\s+[a-z0-9.]+\\s*;.+\\}", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE),"ActionScript 3.0");
 		
 		//TODO: consider sorting the patterns by decreasing pattern length, so more specific patterns are tried before more general patterns
 	}
