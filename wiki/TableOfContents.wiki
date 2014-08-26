@@ -9,6 +9,7 @@
     * [AddOn_websockets WebSockets]
    * [AddOnsBeta Add-ons: Beta]
     * https://zap-extensions.googlecode.com/svn/wiki/images/ascan-beta.png [HelpAddonsAscanrulesBetaAscanbeta Active Scan Rules - beta]
+    * https://zap-extensions.googlecode.com/svn/wiki/images/spiderAjax.png [AddOn_spiderAjax Ajax Spider]
     * [HelpAddonsBeanshellBeanshell Bean Shell]
     * [AddOn_diff Diff]
     * https://zap-extensions.googlecode.com/svn/wiki/images/book.png [HelpAddonsGettingStartedGettingStarted Getting Started Guide]

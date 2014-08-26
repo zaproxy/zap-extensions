@@ -1,0 +1,5 @@
+= `Ajax Spider` =
+
+`Ajax Spider` add-on is now included in ZAP by default.
+
+For more details see the [https://code.google.com/p/zaproxy/wiki/HelpAddonsSpiderAjaxConcepts ZAP wiki].
