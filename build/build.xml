@@ -10,12 +10,16 @@
 	<property name="dist.lib.dir" location="../lib" />
 	<property name="status" value="alpha" />
 	<property name="versions.file" location="${dist}/ZapVersions.xml" />
+	<property name="wiki.dir" location="../../zap-extensions-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
 	</path>
+
+	<!-- Ant task to generate the wiki -->
+	<taskdef classpathref="build.classpath" resource="wikitasks.properties" />
 
 	<!-- Ant task to generate JavaHelp search indexes -->
 	<taskdef name="generatejavahelpsearchindexes" classname="org.zaproxy.ant.javahelp.taskdefs.GenerateJavaHelpSearchIndexes" classpathref="build.classpath" />
@@ -54,6 +58,37 @@
 			</classpath>
 		</javac>
 	</target>
+
+	<macrodef name="generate-wiki" description="Generates the wiki of an add-on into zap-extensions wiki dir">
+		<attribute name="addOn"/>
+		<sequential>
+			<local name="addOnCapitalised" />
+			<capitalise name="addOnCapitalised" value="@{addOn}" />
+
+			<generatewiki basesrcdir="${src}/org/zaproxy/zap/extension/@{addOn}/resources" basedestdir="${wiki.dir}"
+				helpcontentsdir="contents/" helpcontentsinclude=".*\.html"
+				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="https://zap-extensions.googlecode.com/svn/wiki/images/"
+				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.wiki"
+				helpfileextension=".html" wikifileextension=".wiki"
+				srctocfile="toc.xml" srcmapfile="map.jhm" wikitocfilename="TableOfContents-${addOnCapitalised}">
+
+				<!-- Default language is at root of dest dir -->
+				<helpdir src="help" dest="" />
+				<!-- Do not generate for now.
+				<helpdir src="help_bs_BA" dest="bs" />
+				<helpdir src="help_de_DE" dest="de" />
+				<helpdir src="help_el_GR" dest="el" />
+				<helpdir src="help_es_ES" dest="es" />
+				<helpdir src="help_fa_IR" dest="fa" />
+				<helpdir src="help_fr_FR" dest="fr" />
+				<helpdir src="help_it_IT" dest="it" />
+				<helpdir src="help_ja_JP" dest="ja" />
+				<helpdir src="help_pl_PL" dest="pl" />
+				<helpdir src="help_pt_BR" dest="pt-BR" />
+				<helpdir src="help_ru_RU" dest="ru" /> -->
+			</generatewiki>
+		</sequential>
+	</macrodef>
 
 	<!--
 	 Build the specified extension
@@ -202,6 +237,10 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="ascanrulesAlpha"/> </antcall>
 	</target>
 
+	<target name="generate-wiki-ascanrulesAlpha" description="Generates the wiki of active scan rules">
+		<generate-wiki addon="ascanrulesAlpha" />
+	</target>
+
 	<target name="deploy-birtreports" description="deploy the birtreports extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="birtreports"/> </antcall>
 	</target>
@@ -210,6 +249,10 @@
         <antcall target="build-deploy-addon"> <param name="addon" value="browserView"/> </antcall>
     </target>
     
+	<target name="generate-wiki-browserView" description="Generates the wiki of browser extension">
+		<generate-wiki addon="browserView" />
+	</target>
+
 	<target name="deploy-callgraph" description="deploy the callgraph extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="callgraph"/> </antcall>
 	</target>
@@ -238,6 +281,10 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="pscanrulesAlpha"/> </antcall>
 	</target>
 
+	<target name="generate-wiki-pscanrulesAlpha" description="Generates the wiki of passive scan rules">
+		<generate-wiki addon="pscanrulesAlpha" />
+	</target>
+
     <target name="deploy-saml" description="deploy the SAML extension">
         <antcall target="build-deploy-addon"> <param name="addon" value="saml"/> </antcall>
     </target>
@@ -246,12 +293,24 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="serverSentEvents"/> </antcall>
 	</target>
 
+    <target name="generate-wiki-serverSentEvents" description="Generates the wiki of Server-Sent Events">
+        <generate-wiki addon="sse" />
+    </target>
+
     <target name="deploy-simpleExample" description="deploy the simple example extension">
         <antcall target="build-deploy-addon"> <param name="addon" value="simpleExample"/> </antcall>
+    </target>
+
+    <target name="generate-wiki-simpleExample" description="Generates the wiki of simple example extension">
+        <generate-wiki addon="simpleExample" />
     </target>
     
     <target name="deploy-sniTerminator" description="deploy the sniTerminator extension">
         <antcall target="build-deploy-addon"> <param name="addon" value="sniTerminator"/> </antcall>
+    </target>
+
+    <target name="generate-wiki-sniTerminator" description="Generates the wiki of SNI terminator">
+        <generate-wiki addon="sniTerminator" />
     </target>
     
     <target name="deploy-soap" description="deploy the SOAP scanning extension">
@@ -261,6 +320,10 @@
     <target name="deploy-wappalyzer" description="deploy the Wappalyzer extension">
         <antcall target="build-deploy-addon"> <param name="addon" value="wappalyzer"/> </antcall>
     </target>
+
+	<target name="generate-wiki-wappalyzer" description="Generates the wiki of wappalyzer">
+		<generate-wiki addon="wappalyzer" />
+	</target>
 
 	<target name="deploy-weekly" description="deploy extensions to be included in weekly releases">
 		<!-- Set to compile with debug information -->
