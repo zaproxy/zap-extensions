@@ -10,12 +10,17 @@
 	<property name="dist.lib.dir" location="../lib" />
 	<property name="status" value="release" />
 	<property name="versions.file" location="${dist}/ZapVersions-${status}.xml" />
+	<property name="wiki.dir" location="../../zapextensions-wiki" />
+	<property name="wiki.zaproxy.dir" location="../../zaproxy-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
 	</path>
+
+	<!-- Ant task to generate the wiki -->
+	<taskdef classpathref="build.classpath" resource="wikitasks.properties" />
 
 	<!-- Ant task to generate JavaHelp search indexes -->
 	<taskdef name="generatejavahelpsearchindexes" classname="org.zaproxy.ant.javahelp.taskdefs.GenerateJavaHelpSearchIndexes" classpathref="build.classpath" />
@@ -51,6 +56,57 @@
 			</classpath>
 		</javac>
 	</target>
+
+	<macrodef name="generate-wiki" description="Generates the wiki of an add-on into zap-extensions wiki dir">
+		<attribute name="addOn"/>
+		<sequential>
+			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.dir}"
+				prefixlinkimages="https://zap-extensions.googlecode.com/svn/wiki/images/" tocpadding="0" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="generate-wiki-core" description="Generates the wiki of an add-on into zaproxy wiki dir (normally for add-ons included in the main release)">
+		<attribute name="addOn"/>
+		<sequential>
+			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.zaproxy.dir}"
+				prefixlinkimages="https://zaproxy.googlecode.com/svn/wiki/images/" tocpadding="2" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="generate-wiki-impl">
+		<attribute name="addOn"/>
+		<attribute name="baseDestDir"/>
+		<attribute name="prefixLinkImages"/>
+		<attribute name="tocpadding"/>
+		<sequential>
+			<local name="addOnCapitalised" />
+			<capitalise name="addOnCapitalised" value="@{addOn}" />
+
+			<generatewiki basesrcdir="${src}/org/zaproxy/zap/extension/@{addOn}/resources" basedestdir="@{baseDestDir}"
+				helpcontentsdir="contents/" helpcontentsinclude=".*\.html"
+				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="@{prefixLinkImages}"
+				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.wiki"
+				helpfileextension=".html" wikifileextension=".wiki"
+				srctocfile="toc.xml" srcmapfile="map.jhm"
+				wikitocfilename="TableOfContents-${addOnCapitalised}" wikitocentryinitpadding="@{tocpadding}">
+
+				<!-- Default language is at root of dest dir -->
+				<helpdir src="help" dest="" />
+				<!-- Do not generate for now.
+				<helpdir src="help_bs_BA" dest="bs" />
+				<helpdir src="help_de_DE" dest="de" />
+				<helpdir src="help_el_GR" dest="el" />
+				<helpdir src="help_es_ES" dest="es" />
+				<helpdir src="help_fa_IR" dest="fa" />
+				<helpdir src="help_fr_FR" dest="fr" />
+				<helpdir src="help_it_IT" dest="it" />
+				<helpdir src="help_ja_JP" dest="ja" />
+				<helpdir src="help_pl_PL" dest="pl" />
+				<helpdir src="help_pt_BR" dest="pt-BR" />
+				<helpdir src="help_ru_RU" dest="ru" /> -->
+			</generatewiki>
+		</sequential>
+	</macrodef>
 
 	<target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
 		<length file="${dist}/${file}" property="length" />
@@ -191,6 +247,10 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="ascanrules"/> </antcall>
 	</target>
 
+	<target name="generate-wiki-ascanrules" description="Generates the wiki of active scan rules">
+		<generate-wiki-core addon="ascanrules" />
+	</target>
+
 	<target name="deploy-directorylistv1" description="deploys Directory List v1.0 add-on">
 		<antcall target="build-deploy-addon"> <param name="addon" value="directorylistv1"/> </antcall>
 	</target>
@@ -215,12 +275,24 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="pscanrules"/> </antcall>
 	</target>
 
+	<target name="generate-wiki-pscanrules" description="Generates the wiki of passive scan rules">
+		<generate-wiki-core addon="pscanrules" />
+	</target>
+
 	<target name="deploy-quickstart" description="deploy the quick start extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="quickstart"/> </antcall>
 	</target>
 
+	<target name="generate-wiki-quickstart" description="Generates the wiki of quickstart">
+		<generate-wiki-core addon="quickstart" />
+	</target>
+
 	<target name="deploy-reveal" description="deploy the Reveal extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="reveal"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-reveal" description="Generates the wiki of reveal">
+		<generate-wiki-core addon="reveal" />
 	</target>
 	
 	<target name="deploy-saverawmessage" description="deploy the Save Raw Message extension">
@@ -229,6 +301,10 @@
 
 	<target name="deploy-websockets" description="deploy the WebSockets extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="websocket"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-websockets" description="Generates the wiki of WebSockets">
+		<generate-wiki-core addon="websocket" />
 	</target>
 	
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
