@@ -1,0 +1,9 @@
+=Server-Sent Events tab=
+
+The Server-Sent Events tab displays all events from event streams. 
+<br><br>
+==See also==
+<table>
+<tr><td></td><td>[HelpAddonsSseIntroduction Basic Server-Sent Events concepts]</td><td>for a short introduction to Server-Sent Events</td></tr>
+
+</table>

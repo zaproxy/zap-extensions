@@ -1,16 +1,5 @@
-= Passive scanner rules =
+= `Passive scanner rules` =
 
-The release quality Passive Scanner rules.
+`Passive scanner rules` add-on is now included in ZAP by default.
 
-The rules include:
-  * Incomplete or no cache-control and pragma HTTPHeader set
-  * Content-Type header missing
-  * Cookie no http-only flag
-  * Cookie without secure flag
-  * Cross-domain JavaScript source file inclusion
-  * IE8's XSS protection filter not disabled
-  * Secure pages including mixed content
-  * Password Autocomplete in browser
-  * Private IP disclosure
-  * X-Content-Type-Options header missing
-  * X-Frame-Options header not set
+For more details see the [https://code.google.com/p/zaproxy/wiki/HelpAddonsPscanrulesPscanrules ZAP wiki].

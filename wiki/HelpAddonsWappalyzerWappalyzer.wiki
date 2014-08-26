@@ -1,0 +1,20 @@
+=Technology Detection using Wappalyzer=
+
+The Technology Detection add-on uses the Wappalyzer (http://wappalyzer.com/) rules to detect the technologies 
+used by applications.
+
+It works in a very similar way to the Wappalyzer browser add-ons with the following exceptions: 
+ * It does not use the 'Global JavaScript variables' as these are difficult to test without a 'full' browser
+ * It does not use the 'meta tags'- this is still todo
+ * It does not not show the versions - this is still todo
+ * It does not not show the confidence - this is still todo
+ * It allows you to see the 'evidence' used to detect the technologies
+==The Technology Tab==
+This tab shows all of the detected technologies for the site selected.<br>Right clicking on a technology 
+will display a 'Show evidence' menu underneight which are all of the regexes used to detect it.<br>Selecting 
+a regex will switch to the 'Search' tab and search through the history for that regex. 
+==External links==
+<table>
+<tr><td></td><td>http://wappalyzer.com/</td><td>The Wappalyzer homepage</td></tr>
+<tr><td></td><td>https://github.com/ElbertF/Wappalyzer/</td><td>The Wappalyzer repository</td></tr>
+</table>

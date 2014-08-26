@@ -1,0 +1,14 @@
+=Port Scan=
+
+Provides a basic port scanner which shows which ports are open on the target sites.<br>
+
+Port scanning is configured using the [HelpAddonsPortscanOptions Options Port Scan screen]. 
+<br>
+==Pop up menu item==
+===Port Scan host===
+This will initiate a port scan of the host for the selected node. <br>The [HelpAddonsPortscanTab Port Scan tab] will be display and will show the progress of the scan. <br><br>
+==Accessed via==
+<table>
+<tr><td></td><td>Port Scan tab</td><td></td></tr>
+<tr><td></td><td>Sites tab</td><td>'Attack/Port Scan host' right click menu item</td></tr>
+</table>
