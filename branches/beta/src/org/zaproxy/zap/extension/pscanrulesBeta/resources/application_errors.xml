@@ -77,7 +77,6 @@ Elaborated by yhawke 2013
   <Pattern type="string">PHP Error</Pattern>
   <Pattern type="string">PHP Parse error</Pattern>
   <Pattern type="string">PHP Warning</Pattern>
-  <Pattern type="string">Parent Directory</Pattern>
   <Pattern type="string">Permission denied: 'GetObject'</Pattern>
   <Pattern type="string">PostgreSQL query failed: ERROR: parser: parse error</Pattern>
   <Pattern type="string">The script whose uid is</Pattern>
