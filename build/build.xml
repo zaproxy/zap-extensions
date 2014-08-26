@@ -10,12 +10,18 @@
 	<property name="dist.lib.dir" location="../lib" />
 	<property name="status" value="beta" />
 	<property name="versions.file" location="${dist}/ZapVersions-${status}.xml" />
+	<property name="wiki.dir" location="../../zap-extensions-wiki" />
+	<property name="wiki.zaproxy.dir" location="../../zaproxy-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
 	</path>
+
+
+	<!-- Ant task to generate the wiki -->
+	<taskdef classpathref="build.classpath" resource="wikitasks.properties" />
 
 	<!-- Ant task to generate JavaHelp search indexes -->
 	<taskdef name="generatejavahelpsearchindexes" classname="org.zaproxy.ant.javahelp.taskdefs.GenerateJavaHelpSearchIndexes" classpathref="build.classpath" />
@@ -51,6 +57,57 @@
 			</classpath>
 		</javac>
 	</target>
+
+	<macrodef name="generate-wiki" description="Generates the wiki of an add-on into zap-extensions wiki dir">
+		<attribute name="addOn"/>
+		<sequential>
+			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.dir}"
+				prefixlinkimages="https://zap-extensions.googlecode.com/svn/wiki/images/" tocpadding="0" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="generate-wiki-core" description="Generates the wiki of an add-on into zaproxy wiki dir (normally for add-ons included in the main release)">
+		<attribute name="addOn"/>
+		<sequential>
+			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.zaproxy.dir}"
+				prefixlinkimages="https://zaproxy.googlecode.com/svn/wiki/images/" tocpadding="2" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="generate-wiki-impl">
+		<attribute name="addOn"/>
+		<attribute name="baseDestDir"/>
+		<attribute name="prefixLinkImages"/>
+		<attribute name="tocpadding"/>
+		<sequential>
+			<local name="addOnCapitalised" />
+			<capitalise name="addOnCapitalised" value="@{addOn}" />
+
+			<generatewiki basesrcdir="${src}/org/zaproxy/zap/extension/@{addOn}/resources" basedestdir="@{baseDestDir}"
+				helpcontentsdir="contents/" helpcontentsinclude=".*\.html"
+				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="@{prefixLinkImages}"
+				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.wiki"
+				helpfileextension=".html" wikifileextension=".wiki"
+				srctocfile="toc.xml" srcmapfile="map.jhm"
+				wikitocfilename="TableOfContents-${addOnCapitalised}" wikitocentryinitpadding="@{tocpadding}">
+
+				<!-- Default language is at root of dest dir -->
+				<helpdir src="help" dest="" />
+				<!-- Do not generate for now.
+				<helpdir src="help_bs_BA" dest="bs" />
+				<helpdir src="help_de_DE" dest="de" />
+				<helpdir src="help_el_GR" dest="el" />
+				<helpdir src="help_es_ES" dest="es" />
+				<helpdir src="help_fa_IR" dest="fa" />
+				<helpdir src="help_fr_FR" dest="fr" />
+				<helpdir src="help_it_IT" dest="it" />
+				<helpdir src="help_ja_JP" dest="ja" />
+				<helpdir src="help_pl_PL" dest="pl" />
+				<helpdir src="help_pt_BR" dest="pt-BR" />
+				<helpdir src="help_ru_RU" dest="ru" /> -->
+			</generatewiki>
+		</sequential>
+	</macrodef>
 
 	<target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
 		<length file="${dist}/${file}" property="length" />
@@ -231,54 +288,106 @@
 	<target name="deploy-ascanrules" description="deploy the active scan rules">
 		<antcall target="build-deploy-addon"> <param name="addon" value="ascanrulesBeta"/> </antcall>
 	</target>
+
+	<target name="generate-wiki-ascanrules" description="Generates the wiki of active scan rules">
+		<generate-wiki addon="ascanrulesBeta" />
+	</target>
 	
 	<target name="deploy-beanshell" description="deploy the beanshell">
 		<antcall target="build-deploy-addon"> <param name="addon" value="beanshell"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-beanshell" description="Generates the wiki of beanshell">
+		<generate-wiki addon="beanshell" />
 	</target>
 
 	<target name="deploy-bruteforce" depends="clean,compile" description="deploy the bruteforce extension">
 		<antcall target="build-bruteforce"/>
 		<antcall target="deploy-addon"> <param name="addon" value="bruteforce"/> </antcall>
 	</target>
+
+	<target name="generate-wiki-bruteforce" description="Generates the wiki of bruteforce">
+		<generate-wiki-core addon="bruteforce" />
+	</target>
 	
 	<target name="deploy-diff" description="deploy the diff extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="diff"/> </antcall>
 	</target>
 
+	<target name="generate-wiki-diff" description="Generates the wiki of diff">
+		<generate-wiki-core addon="diff" />
+	</target>
+
 	<target name="deploy-gettingStarted" description="deploy the gettingStarted extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="gettingStarted"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-gettingStarted" description="Generates the wiki of gettingStarted">
+		<generate-wiki addon="gettingStarted" />
 	</target>
   
 	<target name="deploy-invoke" description="deploy the invoke extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="invoke"/> </antcall>
 	</target>
 
+	<target name="generate-wiki-invoke" description="Generates the wiki of invoke">
+		<generate-wiki-core addon="invoke" />
+	</target>
+
 	<target name="deploy-jruby" description="deploy the jruby extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="jruby"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-jruby" description="Generates the wiki of jruby">
+		<generate-wiki addon="jruby" />
 	</target>
 
   	<target name="deploy-jython" description="deploy the jython extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="jython"/> </antcall>
 	</target>
 
+	<target name="generate-wiki-jython" description="Generates the wiki of jython">
+		<generate-wiki addon="jython" />
+	</target>
+
   	<target name="deploy-plugnhack" description="deploy the plug-n-hack extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="plugnhack"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-plugnhack" description="Generates the wiki of plugnhack">
+		<generate-wiki-core addon="plugnhack" />
 	</target>
 	
 	<target name="deploy-portscan" description="deploy the port scan extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="portscan"/> </antcall>
 	</target>
+
+	<target name="generate-wiki-portscan" description="Generates the wiki of portscan">
+		<generate-wiki addon="portscan" />
+	</target>
 	
 	<target name="deploy-pscanrules" description="deploy the passive scan rules">
 		<antcall target="build-deploy-addon"> <param name="addon" value="pscanrulesBeta"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-pscanrules" description="Generates the wiki of pscanrules">
+		<generate-wiki addon="pscanrulesBeta" />
 	</target>
 	
 	<target name="deploy-scripts" description="deploy the scripts extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="scripts"/> </antcall>
 	</target>
+
+	<target name="generate-wiki-scripts" description="Generates the wiki of scripts">
+		<generate-wiki-core addon="scripts" />
+	</target>
 	
 	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="spiderAjax"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-spiderAjax" description="Generates the wiki of spiderAjax">
+		<generate-wiki-core addon="spiderAjax" />
 	</target>
 
 	<target name="deploy-tokengen" depends="clean,compile" description="deploy the tokengen extension">
@@ -288,6 +397,10 @@
 
 	<target name="deploy-zest" description="deploy the zest extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="zest"/> </antcall>
+	</target>
+
+	 <target name="generate-wiki-zest" description="Generates the wiki of zest">
+		<generate-wiki-core addon="zest" />
 	</target>
 
 	<target name="deploy-all" depends="build-all" description="deploy all of the extensions">
