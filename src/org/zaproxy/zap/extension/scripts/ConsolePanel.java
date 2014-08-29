@@ -283,6 +283,12 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		getCommandPanel().setEditable(script.getEngine().isTextBased());
 		updateButtonsState();
 		updateCommandPanelState(script);
+		
+		if (script.getEngine().isTextBased()) {
+			// This causes a lot of pain when recording client side Zest scripts,
+			// so only do for text based ones
+	        setTabFocus();
+		}
 	}
 	
 	/**
@@ -306,7 +312,6 @@ public class ConsolePanel extends AbstractPanel implements Tab {
             getCommandPanel().setSyntax(getSyntaxForScript(script.getEngine().getEngineName()));
         }
         this.getScriptTitle().setText(script.getEngine().getLanguageName() + " : " + script.getName());
-        setTabFocus();
 	}
 	
 	public void setTemplate(ScriptWrapper template) {
@@ -316,6 +321,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		getCommandPanel().setEditable(false);
 		setButtonsAllowRunScript(false);
 		updateCommandPanelState(template);
+        setTabFocus();
 	}
 
     /**

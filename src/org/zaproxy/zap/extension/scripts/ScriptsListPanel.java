@@ -32,6 +32,7 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.DropMode;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -41,9 +42,11 @@ import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -87,6 +90,8 @@ public class ScriptsListPanel extends AbstractPanel {
 	private HttpMessage lastMessageDisplayed = null;
 	
 	private List<Class<?>> disabledScriptDialogs = new ArrayList<Class<?>>(); 
+
+	private ScriptTreeTransferHandler stth = new ScriptTreeTransferHandler();
 
 	public ScriptsListPanel(ExtensionScriptsUI extension) {
 		super();
@@ -388,6 +393,11 @@ public class ScriptsListPanel extends AbstractPanel {
 		return jScrollPane;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public void addScriptTreeTransferHander (Class c, TransferHandler th) {
+		this.stth.addTransferHander(c, th);
+	}
+
 	JTree getTree() {
 		if (tree == null) {
 			tree = new JTree();
@@ -396,6 +406,11 @@ public class ScriptsListPanel extends AbstractPanel {
 			tree.setShowsRootHandles(true);
 			tree.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,0,0,0));
 			tree.setCellRenderer(this.extension.getScriptsTreeCellRenderer());
+	        tree.setDragEnabled(true);
+	        tree.setDropMode(DropMode.ON_OR_INSERT);
+			tree.setTransferHandler(this.stth);
+	        tree.getSelectionModel().setSelectionMode(
+	                TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
 			
 			// Have to register the tree otherwise tooltips dont work
 			ToolTipManager.sharedInstance().registerComponent(tree);
