@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.TransferHandler;
 import javax.swing.tree.TreeCellRenderer;
 
 import org.apache.log4j.Logger;
@@ -77,6 +78,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	
 	private ScriptWrapper currentLockedScript = null;
 	private boolean lockOutputToDisplayedScript = false;
+	//private ZapMenuItem menuEnableScripts = null;
 
 	//private static final Logger logger = Logger.getLogger(ExtensionScripts.class);
 
@@ -125,6 +127,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             extensionHook.getHookMenu().addPopupMenuItem(getPopupRemoveScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupInstantiateTemplate());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupNewScriptFromType());
+            //extensionHook.getHookMenu().addToolsMenuItem(getMenuEnableScripts());
             if(PopupUseScriptAsAuthenticationScript.arePrerequisitesSatisfied())
             	extensionHook.getHookMenu().addPopupMenuItem(getPopupFactoryUseScriptForAuthentication());
             
@@ -134,7 +137,30 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	    }
 	}
 	
-    @Override
+	/* TODO Work in progress
+    private ZapMenuItem getMenuEnableScripts() {
+		// TODO Auto-generated method stub
+    	if (menuEnableScripts == null) {
+    		menuEnableScripts = new ZapMenuItem("scripts.menu.tools.enable");
+    		final ExtensionScriptsUI ext = this;
+    		menuEnableScripts.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					EnableScriptsDialog dialog = new EnableScriptsDialog(ext); 
+					dialog.setVisible(true);
+				}});
+    	}
+		return menuEnableScripts ;
+	}
+	*/
+
+	public void addScriptTreeTransferHander (@SuppressWarnings("rawtypes") Class c, TransferHandler th) {
+		if (View.isInitialised()) {
+			this.getScriptsPanel().addScriptTreeTransferHander(c, th);
+		}
+	}
+
+	@Override
 	public boolean canUnload() {
     	return true;
     }

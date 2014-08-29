@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>12</version>
+	<version>13</version>
 	<description>Supports all JRS 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Disabled "Word Wrap" by default to avoid scrolling performance degradation due to long lines (Issue 1160).
+	Issue 1327: 	Support drag and drop in the scripts tree.
 	]]>
 	</changes>
 	<dependson/>

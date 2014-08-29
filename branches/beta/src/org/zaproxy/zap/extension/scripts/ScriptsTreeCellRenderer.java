@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
+import it.cnr.imaa.essi.lablib.gui.checkboxtree.CheckboxTreeCellRenderer;
+
 import java.awt.Component;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +41,7 @@ import org.zaproxy.zap.view.OverlayIcon;
  * and tooltips. If you want tooltips you have to enable them via:
  * <code>ToolTipManager.sharedInstance().registerComponent(tree);</code>
  */
-public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
+public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer implements CheckboxTreeCellRenderer {
 	
 	private static final String RESOURCE_ROOT = "/org/zaproxy/zap/extension/scripts/resources/icons/";
 	
@@ -138,5 +140,10 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 		}
 
 		return this;
+	}
+
+	@Override
+	public boolean isOnHotspot(int arg0, int arg1) {
+		return false;
 	}
 }
