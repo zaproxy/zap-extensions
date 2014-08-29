@@ -35,6 +35,7 @@ import org.mozilla.zest.core.v1.ZestAssertFailException;
 import org.mozilla.zest.core.v1.ZestAssertion;
 import org.mozilla.zest.core.v1.ZestAssignFailException;
 import org.mozilla.zest.core.v1.ZestAssignment;
+import org.mozilla.zest.core.v1.ZestClient;
 import org.mozilla.zest.core.v1.ZestClientFailException;
 import org.mozilla.zest.core.v1.ZestInvalidCommonTestException;
 import org.mozilla.zest.core.v1.ZestRequest;
@@ -158,6 +159,14 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 				// Add to the Zest results tab
 				this.extension.addResultToList(href);
 			}
+			// Add to history tab
+			/* TODO wont work until ExtensionHistory changed to display non MANUAL requests
+			ExtensionHistory extHist = (ExtensionHistory) Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.NAME);
+			if (extHist != null) {
+				extHist.addHistory(href);
+			}
+			*/
+			
 		} else {
 			// TODO i18n for cmdline??
 			try {
@@ -310,6 +319,17 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	    	log.error(e.getMessage(), e);
 		}
 	}
+	
+	@Override
+	public String handleClient(ZestScript script, ZestClient client) throws ZestClientFailException {
+		try {
+			return super.handleClient(script, client);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			return null;
+		}
+	}
+
 	
 	private void invokeScan(ZestScript script, ZestActionScan scan) throws ZestActionFailException {
     	log.debug("invokeScan " + scan.getElementType());

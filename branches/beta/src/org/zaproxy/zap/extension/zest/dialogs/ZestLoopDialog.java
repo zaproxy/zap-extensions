@@ -13,16 +13,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestLoop;
+import org.mozilla.zest.core.v1.ZestLoopClientElements;
 import org.mozilla.zest.core.v1.ZestLoopFile;
 import org.mozilla.zest.core.v1.ZestLoopInteger;
 import org.mozilla.zest.core.v1.ZestLoopString;
 import org.mozilla.zest.core.v1.ZestLoopTokenFileSet;
 import org.mozilla.zest.core.v1.ZestLoopTokenIntegerSet;
 import org.mozilla.zest.core.v1.ZestLoopTokenStringSet;
+import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -82,6 +86,8 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 			drawLoopFileDialog((ZestLoopFile) this.loop);
 		} else if (loop instanceof ZestLoopInteger) {
 			drawLoopIntegerDialog((ZestLoopInteger) this.loop);
+		} else if (loop instanceof ZestLoopClientElements) {
+			drawLoopClientElementsDialog((ZestLoopClientElements) this.loop);
 		} else {
 			throw new IllegalStateException("Unknown loop type: "
 					+ this.loop.getClass().getCanonicalName());
@@ -143,6 +149,43 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 				loop.getCurrentToken());
 	}
 
+	private void drawLoopClientElementsDialog(ZestLoopClientElements loop) {
+		// Pull down of all the valid window ids
+		ZestScript script = extension.getZestTreeModel().getScriptWrapper(parent).getZestScript();
+		List <String> windowIds = new ArrayList<String>(script.getClientWindowHandles());
+		Collections.sort(windowIds);
+		this.addComboField(ZestClientElementDialog.FIELD_WINDOW_HANDLE, windowIds, loop.getWindowHandle());
+		
+		String clientType = loop.getType();
+		if (clientType != null) {
+			clientType = Constant.messages.getString(ZestClientElementDialog.ELEMENT_TYPE_PREFIX + clientType.toLowerCase());
+		}
+		this.addComboField(ZestClientElementDialog.FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
+		this.addTextField(ZestClientElementDialog.FIELD_ELEMENT, loop.getElement());
+		
+		// Enable right click menus
+		this.addFieldListener(ZestClientElementDialog.FIELD_ELEMENT, ZestZapUtils.stdMenuAdapter()); 
+	}
+
+	private List<String> getElementTypeFields() {
+		List<String> list = new ArrayList<String>();
+		for (String type : ZestClientElementDialog.ELEMENT_TYPES) {
+			list.add(Constant.messages.getString(ZestClientElementDialog.ELEMENT_TYPE_PREFIX + type));
+		}
+		Collections.sort(list);
+		return list;
+	}
+
+	private String getSelectedElementType() {
+		String selectedType = this.getStringValue(ZestClientElementDialog.FIELD_ELEMENT_TYPE);
+		for (String type : ZestClientElementDialog.ELEMENT_TYPES) {
+			if (Constant.messages.getString(ZestClientElementDialog.ELEMENT_TYPE_PREFIX + type).equals(selectedType)) {
+				return type;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public void save() {
 		if (this.loop instanceof ZestLoopString) {
@@ -170,6 +213,12 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 			ZestLoopTokenIntegerSet newSet=new ZestLoopTokenIntegerSet(start, end);
 			loopInteger.setSet(newSet);
 			loopInteger.setStep(step);
+		} else if (loop instanceof ZestLoopClientElements) {
+			ZestLoopClientElements loopCe = (ZestLoopClientElements) this.loop;
+			loopCe.setType(this.getSelectedElementType());
+			loopCe.setWindowHandle(this.getStringValue(ZestClientElementDialog.FIELD_WINDOW_HANDLE));
+			loopCe.setElement(this.getStringValue(ZestClientElementDialog.FIELD_ELEMENT));
+			loopCe.setAttribute(this.getStringValue(ZestClientElementDialog.FIELD_ATTRIBUTE));
 		}
 		this.loop.setVariableName(this.getStringValue(VARIABLE_NAME));
 		if (add) {
@@ -213,6 +262,10 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 		} else if (this.loop instanceof ZestLoopInteger) {
 			if (this.getIntValue(START_INTEGER) > this.getIntValue(END_INTEGER)) {
 				return Constant.messages.getString("zest.dialog.loop.integer.error.constraints");
+			}
+		} else if (loop instanceof ZestLoopClientElements) {
+			if (this.isEmptyField(ZestClientElementDialog.FIELD_ELEMENT)) {
+				return Constant.messages.getString("zest.dialog.client.error.element");
 			}
 		}
 		return null;

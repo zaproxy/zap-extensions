@@ -23,6 +23,9 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,7 +149,13 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 			
 		} else if (action instanceof ZestActionInvoke) {
 			ZestActionInvoke za = (ZestActionInvoke) action;
-			this.addComboField(FIELD_SCRIPT, this.getScriptNames(), za.getScript());
+			
+			String fileName = "";
+			if (za.getScript() != null) {
+				fileName = new File(za.getScript()).getName();
+			}
+
+			this.addComboField(FIELD_SCRIPT, this.getScriptNames(), fileName);
 			this.addTextField(FIELD_VARIABLE, za.getVariableName());
 
 	        this.getParamsModel().setValues(za.getParameters());
@@ -169,7 +178,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 				public void actionPerformed(ActionEvent e) {
 					ZestParameterDialog dialog = getParamDialog();
 					if (! dialog.isVisible()) {
-						dialog.init("", "", true, -1, true);
+						dialog.init(script, "", "", true, -1, true);
 						dialog.setVisible(true);
 					}
 				}});
@@ -184,18 +193,23 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
     		this.modifyButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					ZestParameterDialog dialog = getParamDialog();
-					if (! dialog.isVisible()) {
-						int row = getParamsTable().getSelectedRow();
-						dialog.init(
-								(String)getParamsModel().getValueAt(row, 0), 
-								(String)getParamsModel().getValueAt(row, 1), 
-								false, row, true);
-						dialog.setVisible(true);
-					}
+					showParamDialog();
 				}});
     	}
     	return this.modifyButton;
+    }
+    
+    private void showParamDialog() {
+		ZestParameterDialog dialog = getParamDialog();
+		if (! dialog.isVisible()) {
+			int row = getParamsTable().getSelectedRow();
+			dialog.init(
+					script,
+					(String)getParamsModel().getValueAt(row, 0), 
+					(String)getParamsModel().getValueAt(row, 1), 
+					false, row, true);
+			dialog.setVisible(true);
+		}
     }
     
     private JButton getRemoveButton () {
@@ -241,6 +255,30 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 			    		// TODO allow multiple deletions?
 			    		removeButton.setEnabled(false);
 					}
+				}});
+    		paramsTable.addMouseListener(new MouseListener() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					// Show param dialog on double click
+					if (e.getClickCount() > 1) {
+						showParamDialog();
+					}
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
 				}});
     	}
     	return paramsTable;

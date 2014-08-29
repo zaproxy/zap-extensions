@@ -104,9 +104,7 @@ public class ZestClientAssignCookieDialog extends StandardFieldsDialog implement
 				! script.getZestScript().getVariableNames().contains(this.getStringValue(FIELD_VARIABLE))) {
 			return Constant.messages.getString("zest.dialog.assign.error.variable");
 		}
-		if (this.isEmptyField(FIELD_COOKIE)) {
-			return Constant.messages.getString("zest.dialog.assign.error.cookie");
-		}
+		// Blank now matches all cookies, so dont check for empty cookies field
 		
 		return null;
 	}

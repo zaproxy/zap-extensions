@@ -38,6 +38,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
+import javax.swing.TransferHandler;
 
 import net.htmlparser.jericho.Source;
 import net.sf.json.JSONObject;
@@ -182,6 +183,28 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			
 			View.getSingleton().addMainToolbarButton(getRecordButton());
 			View.getSingleton().addMainToolbarSeparator();
+
+			// TODO This is a temporary solution until we can be sure the scripts addon supports the required functionality
+			Extension extScUi = Control.getSingleton()
+					.getExtensionLoader().getExtension("ExtensionScripts");
+			if (extScUi != null) {
+				Method m;
+				try {
+					m = extScUi.getClass().getMethod("addScriptTreeTransferHander", Class.class, TransferHandler.class);
+					if (m != null) {
+						ZestTreeTransferHandler th = new ZestTreeTransferHandler(this);
+						m.invoke(extScUi, ZestScriptWrapper.class, th);
+						m.invoke(extScUi, ZestElementWrapper.class, th);
+					} else {
+						logger.debug("SBSB Failed to find scripts UI extension method :(");
+					}
+				} catch (Exception e) {
+					logger.debug(e.getMessage(), e);
+				}
+			} else {
+				logger.debug("Failed to find scripts UI extension");
+			}
+
 		}
 
 		ScriptEngineManager mgr = new ScriptEngineManager();
@@ -294,9 +317,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	public ZestTreeModel getZestTreeModel() {
-		if (zestTreeModel == null) {
-			zestTreeModel = new ZestTreeModel(this.getExtScript()
-					.getTreeModel());
+		if (zestTreeModel == null && getExtScript()!= null) {
+			zestTreeModel = new ZestTreeModel(this.getExtScript().getTreeModel());
 		}
 		return zestTreeModel;
 	}
@@ -672,11 +694,19 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		}
 	}
 
-	public ScriptNode addAfterRequest(ZestScript script, ScriptNode childNode,
+	private ScriptNode addAfterRequest(ZestScript script, ScriptNode parentNode, ScriptNode childNode,
 			ZestStatement existingChild, ZestStatement newChild) {
 		script.add(script.getIndex(existingChild) + 1, newChild);
-		ScriptNode child = this.getZestTreeModel().addAfterNode(childNode,
-				newChild);
+		ScriptNode child = this.getZestTreeModel().addAfterNode(parentNode, childNode, newChild);
+		this.updated(child);
+		this.display(child, false);
+		return child;
+	}
+
+	private ScriptNode addBeforeRequest(ZestScript script, ScriptNode parentNode, ScriptNode childNode,
+			ZestStatement existingChild, ZestStatement newChild) {
+		script.add(script.getIndex(existingChild), newChild);
+		ScriptNode child = this.getZestTreeModel().addBeforeNode(parentNode, childNode, newChild);
 		this.updated(child);
 		this.display(child, false);
 		return child;
@@ -761,25 +791,63 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 		if (ZestZapUtils.getElement(parent) instanceof ZestScript) {
 			return this.addAfterRequest((ZestScript) ZestZapUtils.getElement(parent),
-					childNode, existingChild, newChild);
+					parent, childNode, existingChild, newChild);
 
 		} else if (ZestZapUtils.getElement(parent) instanceof ZestConditional) {
-			ZestConditional zc = (ZestConditional) ZestZapUtils
-					.getElement(parent);
+			ZestConditional zc = (ZestConditional) ZestZapUtils.getElement(parent);
 
 			if (ZestZapUtils.getShadowLevel(parent) == 2) {
 				zc.addElse(zc.getIndex(existingChild) + 1, newChild);
 			} else {// cannot be non shadow
 				zc.addIf(zc.getIndex(existingChild) + 1, newChild);
 			}
-			ScriptNode child = this.getZestTreeModel().addAfterNode(parent, existingChild, newChild);
+			//ScriptNode child = this.getZestTreeModel().addAfterNode(parent, existingChild, newChild);
+			ScriptNode child = this.getZestTreeModel().addToNodeAt(parent, newChild, zc.getIndex(existingChild));
 			this.updated(child);
 			this.display(child, false);
 			return child;
 		} else if (ZestZapUtils.getElement(parent) instanceof ZestLoop<?>) {
 			ZestLoop<?> zl = (ZestLoop<?>) ZestZapUtils.getElement(parent);
 			zl.add(zl.getIndex(existingChild) + 1, newChild);
-			ScriptNode child = this.getZestTreeModel().addAfterNode(parent, existingChild, newChild);
+			//ScriptNode child = this.getZestTreeModel().addAfterNode(parent, existingChild, newChild);
+			ScriptNode child = this.getZestTreeModel().addToNodeAt(parent, newChild, zl.getIndex(existingChild));
+			this.updated(child);
+			this.display(child, false);
+			return child;
+		} else {
+			throw new IllegalArgumentException("Unexpected parent node: "
+					+ ZestZapUtils.getElement(parent) + " "
+					+ parent.getNodeName());
+		}
+	}
+
+	public ScriptNode addBeforeRequest(ScriptNode parent, ScriptNode childNode,
+			ZestStatement existingChild, ZestStatement newChild) {
+		logger.debug("addAfterRequest parent=" + parent.getNodeName()
+				+ " existing=" + existingChild.getElementType() + " new="
+				+ newChild.getElementType());
+
+		if (ZestZapUtils.getElement(parent) instanceof ZestScript) {
+			return this.addBeforeRequest((ZestScript) ZestZapUtils.getElement(parent),
+					parent, childNode, existingChild, newChild);
+
+		} else if (ZestZapUtils.getElement(parent) instanceof ZestConditional) {
+			ZestConditional zc = (ZestConditional) ZestZapUtils
+					.getElement(parent);
+
+			if (ZestZapUtils.getShadowLevel(parent) == 2) {
+				zc.addElse(zc.getIndex(existingChild), newChild);
+			} else {// cannot be non shadow
+				zc.addIf(zc.getIndex(existingChild), newChild);
+			}
+			ScriptNode child = this.getZestTreeModel().addBeforeNode(parent, childNode, newChild);
+			this.updated(child);
+			this.display(child, false);
+			return child;
+		} else if (ZestZapUtils.getElement(parent) instanceof ZestLoop<?>) {
+			ZestLoop<?> zl = (ZestLoop<?>) ZestZapUtils.getElement(parent);
+			zl.add(zl.getIndex(existingChild) + 1, newChild);
+			ScriptNode child = this.getZestTreeModel().addBeforeNode(parent, childNode, newChild);
 			this.updated(child);
 			this.display(child, false);
 			return child;
@@ -1125,7 +1193,15 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	public void pasteToNode(ScriptNode parent, ScriptNode afterChild) {
-		if (this.cnpNodes != null && this.cnpNodes.size() > 0) {
+		this.pasteToNode(parent, this.cnpNodes, this.cutNodes, null, afterChild);
+	}
+	
+	public void pasteToNode(ScriptNode parent, List<ScriptNode> cnpNodes, boolean cutNodes, 
+			ScriptNode beforeChild, ScriptNode afterChild) {
+logger.debug("SBSB TODO pasteToNode " + cnpNodes);
+		if (cnpNodes != null && cnpNodes.size() > 0) {
+			logger.debug("pasteToNode parent=" + parent.getNodeName() + " num children=" + cnpNodes.size() +
+					" cut=" + cutNodes + " before=" + beforeChild + " after = " + afterChild);
 			if (ZestZapUtils.getElement(cnpNodes.get(0)) instanceof ZestExpression) {
 				pasteExpressionsToNode(parent);
 			} else {
@@ -1136,21 +1212,28 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
             		if (cutNodes) {
             			this.delete(cnpNodes.get(i));
             		}
-        	        if (ZestZapUtils.getShadowLevel(cnpNodes.get(i)) == 0 && stmt.isPassive() || ! ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getTypeName())) {
+        	        if (ZestZapUtils.getShadowLevel(cnpNodes.get(i)) == 0 && 
+        	        		(stmt.isPassive() || 
+        	        		! ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getTypeName()))) {
     	                // Dont paste non passive statements into a passive script
         	        	if (afterChild != null) {
         	        		lastNode = this.addAfterRequest(parent, afterChild, 
         	        				(ZestStatement) ZestZapUtils.getElement(afterChild), stmt);
+        	        		// Dont want to reverse the order
+        	        		afterChild = lastNode;
+        	        	} else if (beforeChild != null) {
+        	        		lastNode = this.addBeforeRequest(parent, beforeChild, 
+        	        				(ZestStatement) ZestZapUtils.getElement(beforeChild), stmt);
+        	        		// Deliberately using afterChild here so that subsequent nodes are added after this one
+        	        		afterChild = lastNode;
         	        	} else {
         	                lastNode = this.addToParent(parent, stmt);
         	        	}
         	        }
 				}
-				refreshNode(parent);// refreshes the subtree starting from the
-									// parent
+				refreshNode(parent);// refreshes the subtree starting from the parent
 				// Display the last node, otherwise the parent will be displayed
-				// if
-				// we've done a delete
+				// if we've done a delete
 				this.display(lastNode, false);
 			}
 		}
