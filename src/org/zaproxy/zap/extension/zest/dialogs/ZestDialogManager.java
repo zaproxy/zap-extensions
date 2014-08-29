@@ -322,7 +322,7 @@ public class ZestDialogManager extends AbstractPanel {
 			ZestStatement req, ZestAction action, boolean add) {
 		if (actionDialog == null) {
 			actionDialog = new ZestActionDialog(extension,
-					View.getSingleton().getMainFrame(), new Dimension(400, 300));
+					View.getSingleton().getMainFrame(), new Dimension(400, 400));
 		} else if (actionDialog.isVisible()) {
 			// Already being displayed, bring to the front but dont overwrite anything
 			bringToFront(actionDialog);
@@ -475,7 +475,7 @@ public class ZestDialogManager extends AbstractPanel {
 			ZestStatement req, ZestClientLaunch client, boolean add) {
 		if (clientLaunchDialog == null) {
 			clientLaunchDialog = new ZestClientLaunchDialog(extension, View
-					.getSingleton().getMainFrame(), new Dimension(300, 200));
+					.getSingleton().getMainFrame(), new Dimension(400, 300));
 		} else if (clientLaunchDialog.isVisible()) {
 			// Already being displayed, bring to the front but dont overwrite anything
 			bringToFront(clientLaunchDialog);

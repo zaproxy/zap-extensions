@@ -23,16 +23,18 @@ import java.awt.Dimension;
 import java.awt.Frame;
 
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
-public class ZestParameterDialog extends StandardFieldsDialog {
+public class ZestParameterDialog extends StandardFieldsDialog implements ZestDialog {
 
 	private static final String FIELD_PARAM_NAME = "zest.dialog.param.label.name"; 
 	private static final String FIELD_PARAM_VALUE = "zest.dialog.param.label.value"; 
 
 	private static final long serialVersionUID = 1L;
 
+	private ZestScriptWrapper script = null;
 	private ScriptTokensTableModel model = null;
 	private boolean add = true;
 	private int index = -1;
@@ -42,7 +44,8 @@ public class ZestParameterDialog extends StandardFieldsDialog {
 		this.model = model;
 	}
 
-	public void init (String name, String value, boolean add, int index, boolean canBeEmpty) {
+	public void init (ZestScriptWrapper script, String name, String value, boolean add, int index, boolean canBeEmpty) {
+		this.script = script;
 		this.add = add;
 		this.index = index;
 		if (add) {
@@ -56,6 +59,10 @@ public class ZestParameterDialog extends StandardFieldsDialog {
 		this.addTextField(FIELD_PARAM_NAME, name);
 		this.addTextField(FIELD_PARAM_VALUE, value);
 		this.addPadding();
+		
+		this.addFieldListener(FIELD_PARAM_NAME, ZestZapUtils.stdMenuAdapter()); 
+		this.addFieldListener(FIELD_PARAM_VALUE, ZestZapUtils.stdMenuAdapter()); 
+
 	}
 	
 
@@ -74,6 +81,11 @@ public class ZestParameterDialog extends StandardFieldsDialog {
 			return Constant.messages.getString("zest.dialog.param.error.name");
 		}
 		return null;
+	}
+
+	@Override
+	public ZestScriptWrapper getScript() {
+		return this.script;
 	}
 	
 }

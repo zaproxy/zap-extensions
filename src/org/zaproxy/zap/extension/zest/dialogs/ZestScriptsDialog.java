@@ -110,7 +110,13 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         this.saved = false;
         
         if (scriptWrapper.getZestScript().getType() != null) {
-        	this.type = ZestScript.Type.valueOf(scriptWrapper.getZestScript().getType());
+        	// Loop through all the values so we can do a case ignore match
+        	for (ZestScript.Type t : ZestScript.Type.values()) {
+        		if (t.name().equalsIgnoreCase(scriptWrapper.getZestScript().getType())) {
+        			this.type = t;
+        			break;
+        		}
+        	}
         } else {
         	this.type  = ZestScript.Type.StandAlone;
         }
@@ -179,7 +185,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 				public void actionPerformed(ActionEvent e) {
 					ZestParameterDialog dialog = getParamDialog();
 					if (! dialog.isVisible()) {
-						dialog.init("", "", true, -1, true);
+						dialog.init(scriptWrapper, "", "", true, -1, true);
 						dialog.setVisible(true);
 					}
 				}});
@@ -198,6 +204,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
 					if (! dialog.isVisible()) {
 						int row = getParamsTable().getSelectedRow();
 						dialog.init(
+								scriptWrapper,
 								(String)getParamsModel().getValueAt(row, 0), 
 								(String)getParamsModel().getValueAt(row, 1), 
 								false, row, true);

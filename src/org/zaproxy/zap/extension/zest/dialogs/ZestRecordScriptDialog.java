@@ -216,9 +216,6 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         
         if (!this.isServerSide()) {
         	String url = this.getStringValue(FIELD_CLIENT_NODE);
-        	// TODO clean up!
-        	System.out.println("SBSB url=" + url);
-
 	        Extension extPnh = Control.getSingleton().getExtensionLoader().getExtension("ExtensionPlugNHack");
 	        if (extPnh != null) {
 
