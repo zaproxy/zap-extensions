@@ -10,7 +10,7 @@
 	<property name="dist.lib.dir" location="../lib" />
 	<property name="status" value="release" />
 	<property name="versions.file" location="${dist}/ZapVersions-${status}.xml" />
-	<property name="wiki.dir" location="../../zapextensions-wiki" />
+	<property name="wiki.dir" location="../../zap-extensions-wiki" />
 	<property name="wiki.zaproxy.dir" location="../../zaproxy-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
