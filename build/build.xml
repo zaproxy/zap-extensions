@@ -205,6 +205,7 @@
 		<antcall target="build-addon"><param name="addon" value="cmss"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="importLogFiles"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="importurls"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="multiFuzz"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
@@ -271,6 +272,10 @@
 
   	<target name="deploy-importurls" description="deploy the importurls extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="importurls"/> </antcall>
+	</target>
+
+	<target name="deploy-importLogFiles" description="deploy the importLogFiles extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="importLogFiles"/> </antcall>
 	</target>
 
 	<target name="deploy-multiFuzz" description="deploy the passive scan rules">
