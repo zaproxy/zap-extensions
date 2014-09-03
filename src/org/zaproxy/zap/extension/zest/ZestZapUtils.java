@@ -70,6 +70,7 @@ import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
 import org.mozilla.zest.core.v1.ZestExpressionURL;
+import org.mozilla.zest.core.v1.ZestLoopClientElements;
 import org.mozilla.zest.core.v1.ZestLoopFile;
 import org.mozilla.zest.core.v1.ZestLoopInteger;
 import org.mozilla.zest.core.v1.ZestLoopString;
@@ -329,6 +330,17 @@ public class ZestZapUtils {
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.loop.integer.title");
+			}
+		} else if (za instanceof ZestLoopClientElements) {
+			ZestLoopClientElements zalce = (ZestLoopClientElements) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.loop.clientElements"), 
+						zalce.getVariableName(), zalce.getWindowHandle(), 
+						zalce.getType(), zalce.getElement(), zalce.getAttribute());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.loop.clientElements.title");
 			}
 		} else if (za instanceof ZestAssignFieldValue) {
 			ZestAssignFieldValue zsa = (ZestAssignFieldValue) za;
@@ -734,6 +746,7 @@ public class ZestZapUtils {
 				setHeaders(req, msg, true);
 			}
 			req.setData(correctTokens(msg.getRequestBody().toString()));
+			req.setFollowRedirects(false);
 			req.setResponse(
 					new ZestResponse(
 							req.getUrl(), 
@@ -753,6 +766,7 @@ public class ZestZapUtils {
 				setHeaders(req, msg, true);
 			}
 			req.setData(msg.getRequestBody().toString());
+			req.setFollowRedirects(false);
 			req.setResponse(new ZestResponse(req.getUrl(), msg
 					.getResponseHeader().toString(), msg.getResponseBody()
 					.toString(), msg.getResponseHeader().getStatusCode(), msg
