@@ -54,6 +54,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 	private static final String FIELD_METHOD = "zest.dialog.request.label.method"; 
 	private static final String FIELD_HEADERS = "zest.dialog.request.label.headers"; 
 	private static final String FIELD_BODY = "zest.dialog.request.label.body"; 
+	private static final String FIELD_FOLLOW_REDIR = "zest.dialog.request.label.followredir";
 
 	private static final String FIELD_RESP_STATUS_CODE = "zest.dialog.request.label.respstatus"; 
 	private static final String FIELD_RESP_TIME_MS = "zest.dialog.request.label.resptime"; 
@@ -114,6 +115,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 			this.setFieldValue(FIELD_URL, request.getUrlToken());
 		}
 		this.addComboField(0, FIELD_METHOD, new String[] {"GET", "POST", "{{" + ZestVariables.REQUEST_METHOD + "}}"}, request.getMethod());
+		this.addCheckBoxField(0, FIELD_FOLLOW_REDIR, request.isFollowRedirects());
 		this.addMultilineField(0, FIELD_HEADERS, request.getHeaders());
 		this.addMultilineField(0, FIELD_BODY, request.getData());
 		
@@ -170,6 +172,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 		}
 		this.request.setMethod(this.getStringValue(FIELD_METHOD));
 		this.request.setHeaders(this.getStringValue(FIELD_HEADERS));
+		this.request.setFollowRedirects(this.getBoolValue(FIELD_FOLLOW_REDIR));
 		this.request.setData(this.getStringValue(FIELD_BODY));
 		
 		// handle cookies
