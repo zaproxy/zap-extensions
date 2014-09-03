@@ -52,7 +52,6 @@ import org.parosproxy.paros.core.scanner.ScannerParam;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
@@ -90,11 +89,9 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     	
 	    this.setStopOnAssertFail(false);
 	    this.setStopOnTestFail(false);
-	    
-	    ConnectionParam connParams = Model.getSingleton().getOptionsParam().getConnectionParam();
-	    if (connParams.isUseProxyChain()) {
-	    	this.setProxy(connParams.getProxyChainName(), connParams.getProxyChainPort());
-	    }
+	    // Always proxy via ZAP
+		this.setProxy(Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
+				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
     }
 
     @Override
@@ -121,15 +118,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			}
 			this.setDebug(this.wrapper.isDebug());
 			
-			this.setProxy();
 			return super.run(script, params);
     	}
-	}
-
-	private void setProxy() {
-		// Always forward all requests through ZAP
-		this.setProxy(Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(),
-				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
 	}
 
 	@Override
@@ -143,7 +133,6 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			super.setOutputWriter(extension.getExtScript().getScriptUI().getOutputWriter());
 		}
 		this.setDebug(this.wrapper.isDebug());
-		this.setProxy();
 		String result = super.run(script, target, params);
 		return result;
 	}
