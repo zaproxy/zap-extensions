@@ -157,7 +157,7 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 		this.addComboField(ZestClientElementDialog.FIELD_WINDOW_HANDLE, windowIds, loop.getWindowHandle());
 		
 		String clientType = loop.getType();
-		if (clientType != null) {
+		if (clientType != null && clientType.length() > 0) {
 			clientType = Constant.messages.getString(ZestClientElementDialog.ELEMENT_TYPE_PREFIX + clientType.toLowerCase());
 		}
 		this.addComboField(ZestClientElementDialog.FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
