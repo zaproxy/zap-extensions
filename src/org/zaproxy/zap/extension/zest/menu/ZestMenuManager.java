@@ -60,6 +60,7 @@ public class ZestMenuManager {
 	private ZestPopupNodeCopyOrCut popupNodeCopy = null;
 	private ZestPopupNodeCopyOrCut popupNodeCut = null;
 	private ZestPopupNodePaste popupNodePaste = null;
+	private ZestPopupCommentOnOff popupNodeComment = null;
 
 	private ZestPopupZestDelete popupZestDelete = null;
 	private ZestRedactPopupMenu popupRedact = null;
@@ -120,6 +121,7 @@ public class ZestMenuManager {
         extensionHook.getHookMenu().addPopupMenuItem(getPopupNodeCut ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupNodeCopy ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupNodePaste ());
+        extensionHook.getHookMenu().addPopupMenuItem(getPopupNodeComment ());
 
         extensionHook.getHookMenu().addPopupMenuItem(getPopupZestMoveUp ());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupZestMoveDown ());
@@ -270,6 +272,13 @@ public class ZestMenuManager {
 			popupNodePaste = new ZestPopupNodePaste(this.extension);
 		}
 		return popupNodePaste;
+	}
+
+	private ZestPopupCommentOnOff getPopupNodeComment () {
+		if (popupNodeComment == null) {
+			popupNodeComment = new ZestPopupCommentOnOff(this.extension);
+		}
+		return popupNodeComment;
 	}
 
 	private ZestRedactPopupMenu getPopupRedact() {

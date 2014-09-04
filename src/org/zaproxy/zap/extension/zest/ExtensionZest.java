@@ -502,10 +502,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	public void updated(ScriptNode node) {
-		this.updated(node, false);
-	}
-
-	public void updated(ScriptNode node, boolean hack) {
 		if (node == null) {
 			return;
 		}
@@ -776,7 +772,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 					+ ZestZapUtils.getElement(parent) + " "
 					+ parent.getNodeName());
 		}
-		this.updated(node, true);
+		this.updated(node);
 		if (display) {
 			this.display(node, false);
 		}
@@ -1673,5 +1669,22 @@ logger.debug("SBSB TODO pasteToNode " + cnpNodes);
 	@Override
 	public List<Class<?>> getDependencies() {
 		return EXTENSION_DEPENDENCIES;
+	}
+
+	/**
+	 * Set enabled for the specified node and all of its children
+	 * @param node
+	 * @param enabled
+	 */
+	public void setEnabled(ScriptNode node, boolean enabled) {
+		if (ZestZapUtils.getElement(node) instanceof ZestStatement) {
+			ZestStatement stmt = (ZestStatement) ZestZapUtils.getElement(node);
+			stmt.setEnabled(enabled);
+			for (int i=0; i < node.getChildCount(); i++) {
+				this.setEnabled((ScriptNode)node.getChildAt(i), enabled);
+			}
+			this.updated(node);
+		}
+
 	}
 }

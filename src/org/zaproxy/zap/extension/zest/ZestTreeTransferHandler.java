@@ -32,7 +32,6 @@ import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -131,26 +130,11 @@ public class ZestTreeTransferHandler extends TransferHandler {
     		return false;
     	}
     	if (stmt instanceof ZestContainer) {
-    		if (stmt instanceof ZestConditional) {
-    			ZestConditional zc = (ZestConditional) stmt;
-    			for (ZestStatement zs : zc.getIfStatements()) {
-    		    	if (!isSafe(zs)) {
-    		    		return false;
-    		    	}
-    			}
-    			for (ZestStatement zs : zc.getElseStatements()) {
-    		    	if (!isSafe(zs)) {
-    		    		return false;
-    		    	}
-    			}
-    		} else if (stmt instanceof ZestLoop) {
-    			ZestLoop<?> zl = (ZestLoop<?>) stmt;
-    			for (ZestStatement zs : zl.getStatements()) {
-    		    	if (!isSafe(zs)) {
-    		    		return false;
-    		    	}
-    			}
-    		}
+    		for (ZestStatement child : ((ZestConditional) stmt).getChildren()) {
+		    	if (!isSafe(child)) {
+		    		return false;
+		    	}
+			}
     	}
     	return true;
     }

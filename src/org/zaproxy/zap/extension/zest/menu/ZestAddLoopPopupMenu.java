@@ -22,6 +22,7 @@ import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
 import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestLoop;
+import org.mozilla.zest.core.v1.ZestLoopClientElements;
 import org.mozilla.zest.core.v1.ZestLoopFile;
 import org.mozilla.zest.core.v1.ZestLoopInteger;
 import org.mozilla.zest.core.v1.ZestLoopString;
@@ -107,6 +108,7 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 			logger.debug(e.getMessage(), e);
 		}
 		createPopupAddActionMenu(parent, children, stmt, new ZestLoopInteger());
+		createPopupAddActionMenu(parent, children, stmt, new ZestLoopClientElements());
 	}
 
 	private void createPopupAddActionMenu(final ScriptNode parent,
