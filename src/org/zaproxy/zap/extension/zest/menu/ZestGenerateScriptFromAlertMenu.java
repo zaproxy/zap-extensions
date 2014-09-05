@@ -129,7 +129,7 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
 			}
 			
 			// Add the request
-			sz.add(ZestZapUtils.toZestRequest(this.lastAlert.getMessage(), false));
+			sz.add(ZestZapUtils.toZestRequest(this.lastAlert.getMessage(), false, extension.getParam()));
 			
 			String evidence = this.lastAlert.getEvidence();
 			if (evidence != null && evidence.length() > 0) {

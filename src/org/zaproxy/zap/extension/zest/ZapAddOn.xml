@@ -1,12 +1,16 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>16</version>
+	<version>17</version>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	ZAP Issue 1259: Zest exception when adding request to Zest script<br>
+	ZAP Issue 600: Add option to include response details or not<br>
+	ZAP Issue 658: define which headers to be included by default<br>
+	ZAP Issue 1248: ZestRequest always follow redirects, fails to match redirect responses<br>
+	ZAP Issue 1327: Support drag and drop<br>
+	ZAP Issue 1329: support commenting in/out statements<br>
 	]]>
 	</changes>
 	<dependson/>

@@ -112,6 +112,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
 
+	private ZestParam param = null;
+	private OptionsZestPanel optionsZestPanel = null;
+
 	private ZestResultsPanel zestResultsPanel = null;
 	private ZapToggleButton recordButton = null;
 
@@ -169,13 +172,14 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 
-		// extensionHook.addOptionsParamSet(getScriptParam());
+		extensionHook.addOptionsParamSet(getParam());
 
 		if (getView() != null) {
 			extensionHook.addProxyListener(this);
 
 			extensionHook.getHookView().addStatusPanel(
 					this.getZestResultsPanel());
+			extensionHook.getHookView().addOptionPanel(getOptionsPanel());
 
 			this.dialogManager = new ZestDialogManager(this, this
 					.getExtScript().getScriptUI());
@@ -576,9 +580,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 					+ msg.getRequestHeader().getURI());
 
 			try {
-				ZestRequest req = ZestZapUtils.toZestRequest(msg, false);
-				ZestScriptWrapper zsw = this.getZestTreeModel()
-						.getScriptWrapper(parent);
+				ZestRequest req = ZestZapUtils.toZestRequest(msg, false, this.getParam());
+				ZestScriptWrapper zsw = this.getZestTreeModel().getScriptWrapper(parent);
 
 				ZestScript script = zsw.getZestScript();
 				ZestElement parentZe = ZestZapUtils.getElement(parent);
@@ -1687,4 +1690,19 @@ logger.debug("SBSB TODO pasteToNode " + cnpNodes);
 		}
 
 	}
+	
+	public ZestParam getParam() {
+		if (param == null) {
+			param = new ZestParam();
+		}
+		return param;
+	}
+
+	private OptionsZestPanel getOptionsPanel() {
+		if (optionsZestPanel == null) {
+			optionsZestPanel = new OptionsZestPanel(this);
+		}
+		return optionsZestPanel;
+	}
+
 }

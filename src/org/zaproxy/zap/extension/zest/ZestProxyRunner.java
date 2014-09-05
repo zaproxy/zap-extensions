@@ -39,11 +39,13 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 	
 	private ZestScriptWrapper script = null;
 	private HttpMessage msg = null;
+	private ExtensionZest extension = null;
 
 	private Logger logger = Logger.getLogger(ZestProxyRunner.class);
 
 	public ZestProxyRunner(ExtensionZest extension, ZestScriptWrapper script) {
 		super(extension, script);
+		this.extension = extension;
 		this.script = script;
 	}
 	
@@ -53,7 +55,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 		this.msg = msg;
 		try {
 			// Create the previous request so the script has something to run against
-			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true);
+			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true, extension.getParam());
 			
 			// Set the response url to empty to give us a way to work out this is a request in the script
 			Map<String, String> params = new HashMap<String, String>();
@@ -102,7 +104,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 		this.msg = msg;
 		try {
 			// Create the previous request so the script has something to run against
-			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true);
+			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true, extension.getParam());
 			req.setResponse(ZestZapUtils.toZestResponse(msg));
 			
 			// Unset the 'break' flag (in case it was set in the request path

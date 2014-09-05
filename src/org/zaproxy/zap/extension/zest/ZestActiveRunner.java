@@ -32,11 +32,13 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
 	private ScriptsActiveScanner sas = null;
 	private HttpMessage msg = null;
 	private String param = null;
-	
+	private ExtensionZest extension = null;
+
     private static Logger logger = Logger.getLogger(ZestActiveRunner.class);
 
 	public ZestActiveRunner(ExtensionZest extension, ZestScriptWrapper script) {
 		super(extension, script);
+		this.extension = extension;
 		this.script = script;
 	}
 
@@ -49,7 +51,9 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
 
 		try {
 			sas.setParam(msg, param, "{{target}}");
-			this.run(script.getZestScript(), ZestZapUtils.toZestRequest(msg, false, true), null);
+			this.run(script.getZestScript(), 
+					ZestZapUtils.toZestRequest(msg, false, true, extension.getParam()), 
+					null);
 		} catch (Exception e) {
 			throw new ScriptException(e);
 		}
