@@ -70,6 +70,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	private PopupEnableDisableScript popupEnableDisableScript = null;
 	private PopupRemoveScript popupRemoveScript = null;
 	private PopupInstantiateTemplate popupInstantiateTemplate = null;
+	private PopupDuplicateScript popupDuplicateScript = null;
 	private PopupNewScriptFromType popupNewScriptFromType = null;
 	private PopupContextMenuItemFactory popupFactoryUseScriptForAuthentication = null;
 	
@@ -126,6 +127,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             extensionHook.getHookMenu().addPopupMenuItem(getPopupEnableDisableScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupRemoveScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupInstantiateTemplate());
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupDuplicateScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupNewScriptFromType());
             //extensionHook.getHookMenu().addToolsMenuItem(getMenuEnableScripts());
             if(PopupUseScriptAsAuthenticationScript.arePrerequisitesSatisfied())
@@ -226,6 +228,13 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 			popupInstantiateTemplate = new PopupInstantiateTemplate(this); 
 		}
 		return popupInstantiateTemplate;
+	}
+	
+	private PopupDuplicateScript getPopupDuplicateScript () {
+		if (popupDuplicateScript == null) {
+			popupDuplicateScript = new PopupDuplicateScript(this); 
+		}
+		return popupDuplicateScript;
 	}
 	
 	private PopupNewScriptFromType getPopupNewScriptFromType () {
