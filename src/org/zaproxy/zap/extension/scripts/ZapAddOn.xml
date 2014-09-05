@@ -6,7 +6,8 @@
 	<url>https://code.google.com/p/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Issue 1327: 	Support drag and drop in the scripts tree.
+	Issue 1327: Support drag and drop in the scripts tree.<br>
+	Issue 1330: Add menu for duplicating a script.<br>
 	]]>
 	</changes>
 	<dependson/>
