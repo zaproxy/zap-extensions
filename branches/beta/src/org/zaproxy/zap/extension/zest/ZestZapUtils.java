@@ -27,6 +27,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -723,14 +724,14 @@ public class ZestZapUtils {
 				msg.getTimeElapsedMillis());
 	}
 
-	public static ZestRequest toZestRequest(HttpMessage msg, boolean replaceTokens)
+	public static ZestRequest toZestRequest(HttpMessage msg, boolean replaceTokens, ZestParam params)
 			throws MalformedURLException, HttpMalformedHeaderException,
 			SQLException {
-		return toZestRequest(msg, replaceTokens, false);
+		return toZestRequest(msg, replaceTokens, false, params);
 	}
 
 	public static ZestRequest toZestRequest(HttpMessage msg,
-			boolean replaceTokens, boolean incAllHeaders) throws MalformedURLException,
+			boolean replaceTokens, boolean incAllHeaders, ZestParam params) throws MalformedURLException,
 			HttpMalformedHeaderException, SQLException {
 		if (replaceTokens) {
 			ZestRequest req = new ZestRequest();
@@ -743,17 +744,19 @@ public class ZestZapUtils {
 			if (incAllHeaders) {
 				setAllHeaders(req, msg);
 			} else {
-				setHeaders(req, msg, true);
+				setHeaders(req, msg, true, params.getIgnoredHeaders());
 			}
 			req.setData(correctTokens(msg.getRequestBody().toString()));
 			req.setFollowRedirects(false);
-			req.setResponse(
-					new ZestResponse(
-							req.getUrl(), 
-							msg.getResponseHeader().toString(), 
-							msg.getResponseBody().toString(), 
-							msg.getResponseHeader().getStatusCode(), 
-							msg.getTimeElapsedMillis()));
+			if (params.isIncludeResponses()) {
+				req.setResponse(
+						new ZestResponse(
+								req.getUrl(), 
+								msg.getResponseHeader().toString(), 
+								msg.getResponseBody().toString(), 
+								msg.getResponseHeader().getStatusCode(), 
+								msg.getTimeElapsedMillis()));
+			}
 			return req;
 
 		} else {
@@ -763,26 +766,33 @@ public class ZestZapUtils {
 			if (incAllHeaders) {
 				setAllHeaders(req, msg);
 			} else {
-				setHeaders(req, msg, true);
+				setHeaders(req, msg, true, params.getIgnoredHeaders());
 			}
 			req.setData(msg.getRequestBody().toString());
 			req.setFollowRedirects(false);
-			req.setResponse(new ZestResponse(req.getUrl(), msg
-					.getResponseHeader().toString(), msg.getResponseBody()
-					.toString(), msg.getResponseHeader().getStatusCode(), msg
-					.getTimeElapsedMillis()));
+			if (params.isIncludeResponses()) {
+				req.setResponse(new ZestResponse(req.getUrl(), msg
+						.getResponseHeader().toString(), msg.getResponseBody()
+						.toString(), msg.getResponseHeader().getStatusCode(), msg
+						.getTimeElapsedMillis()));
+			}
 			return req;
 		}
 	}
 
-	private static void setHeaders(ZestRequest req, HttpMessage msg, boolean replaceTokens) {
-		// TODO make the headers included be configurable
-		String[] headers = msg.getRequestHeader().getHeadersAsString()
-				.split(HttpHeader.CRLF);
+	private static void setHeaders(ZestRequest req, HttpMessage msg, boolean replaceTokens, List<String> ignoreHeaders) {
+		String[] headers = msg.getRequestHeader().getHeadersAsString().split(HttpHeader.CRLF);
 		StringBuilder sb = new StringBuilder();
 		for (String header : headers) {
-			if (header.toLowerCase().startsWith(
-					HttpHeader.CONTENT_TYPE.toLowerCase())) {
+			boolean inc = true;
+			for (String ignore : ignoreHeaders) {
+				if (header.toLowerCase().startsWith(
+						ignore.toLowerCase())) {
+					inc = false;
+					break;
+				}
+			}
+			if (inc) {
 				sb.append(header);
 				sb.append(HttpHeader.CRLF);
 			}

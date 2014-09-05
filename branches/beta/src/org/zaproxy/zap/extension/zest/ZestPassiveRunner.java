@@ -35,11 +35,13 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
 	private ZestScriptWrapper script = null;
 	private ScriptsPassiveScanner sps = null;
 	private HttpMessage msg = null;
+	private ExtensionZest extension = null;
 
 	private Logger logger = Logger.getLogger(ZestPassiveRunner.class);
 
 	public ZestPassiveRunner(ExtensionZest extension, ZestScriptWrapper script) {
 		super(extension, script);
+		this.extension = extension;
 		//this.runner = this.getExtension().getRunner(script);
 		this.script = script;
 	}
@@ -52,7 +54,7 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
 
 		try {
 			// Create the previous request so the script has something to run against
-			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true);
+			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true, extension.getParam());
 			req.setResponse(ZestZapUtils.toZestResponse(msg));
 				
 			this.run(script.getZestScript(), req, null);
