@@ -97,7 +97,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	 * each family of characters, in case one family are filtered out, the
 	 * others might still get past
 	 */
-	private static final String[] SQL_CHECK_ERR = {"'", "\"", ")", "(", "NULL", "'\""};
+	private static final String[] SQL_CHECK_ERR = {"'", "\"", ";", ")", "(", "NULL", "'\""};
 	/**
 	 * create a map of SQL related error message fragments, and map them back to
 	 * the RDBMS that they are associated with keep the ordering the same as the
@@ -412,6 +412,19 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			doErrorMaxRequests = 0;
 		}
 
+		if (this.debugEnabled) {
+			log.debug("Doing RDBMS specific error based? "+ doSpecificErrorBased);
+			log.debug("Doing generic RDBMS error based? "+ doGenericErrorBased);
+			log.debug("Using a max of " + doErrorMaxRequests + " requests");			
+			log.debug("Doing expession based? "+ doExpressionBased );
+			log.debug("Using a max of " +doExpressionMaxRequests + " requests");
+			log.debug("Using boolean based? " + doBooleanBased );
+			log.debug("Using a max of " + doBooleanMaxRequests + " requests");
+			log.debug("Doing UNION based? "+ doUnionBased );
+			log.debug("Using a max of " + doUnionMaxRequests + " requests");
+			log.debug("Doing ORDER BY based? "+ doOrderByBased );
+			log.debug("Using a max of " + doOrderByMaxRequests + " requests");
+		}
 	}
 
 	/**
@@ -877,6 +890,71 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				}  //end of boolean logic output index (unstripped + stripped)
 			}
 			//end of check 2
+			
+			
+			//check 2a: boolean based logic, where the original query returned *no* data. Here we append " OR 1=1" in an attempt to extract *more* data
+			//and then verify the results by attempting to reproduce the original results by appending an " AND 1=2" condition (ie "open up first, then restrict to verify")
+			//this differs from the previous logic based check since the previous check assumes that the original query produced data, and tries first to restrict that data 
+			//(ie, it uses "restrict first, open up to verify" ).
+			for (int i = 0;
+					i < SQL_LOGIC_OR_TRUE.length && !sqlInjectionFoundForUrl && doBooleanBased
+					&& countBooleanBasedRequests < doBooleanMaxRequests;
+					i++) {
+				HttpMessage msg2 = getNewMsg();
+				String sqlBooleanOrTrueValue = origParamValue + SQL_LOGIC_OR_TRUE[i];
+				String sqlBooleanAndFalseValue = origParamValue + SQL_LOGIC_AND_FALSE[i];
+
+				setParameter(msg2, param, sqlBooleanOrTrueValue);				
+				sendAndReceive(msg2);
+				countBooleanBasedRequests++;
+
+				String resBodyORTrueUnstripped = msg2.getResponseBody().toString();
+								
+				//if the results of the "OR 1=1" exceed the original query (unstripped, by more than a 20% size difference, say), we may be onto something.
+				//TODO: change the percentage difference threshold based on the alert threshold 				
+				if ((resBodyORTrueUnstripped.length() > ( mResBodyNormalUnstripped.length() * 1.2))) {
+					if (this.debugEnabled) {
+						log.debug("Check 2a, unstripped html output for OR TRUE condition [" + sqlBooleanOrTrueValue + "] produced sufficiently larger results than the original message");
+					}
+					//if we can also restrict it back to the original results by appending a " and 1=2", then "Winner Winner, Chicken Dinner". 
+					HttpMessage msg2_and_false = getNewMsg();
+					setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
+					sendAndReceive(msg2_and_false);
+					countBooleanBasedRequests++;
+
+					String resBodyANDFalseUnstripped = msg2_and_false.getResponseBody().toString();
+					String resBodyANDFalseStripped = this.stripOff(resBodyANDFalseUnstripped, sqlBooleanAndFalseValue);
+					
+					//does the "AND 1=2" version produce the same as the original (for stripped/unstripped versions)
+					boolean verificationUsingUnstripped = resBodyANDFalseUnstripped.compareTo(mResBodyNormalUnstripped) == 0;
+					boolean verificationUsingStripped = resBodyANDFalseStripped.compareTo(mResBodyNormalStripped) == 0;
+					if ( verificationUsingUnstripped || verificationUsingStripped ) {
+						if (this.debugEnabled) {
+							log.debug("Check 2, " + (verificationUsingStripped ? "STRIPPED" : "UNSTRIPPED") + " html output for AND FALSE condition [" + sqlBooleanAndFalseValue + "] matches the (refreshed) original results");
+						}							
+						//Likely a SQL Injection. Raise it
+						String extraInfo = null;
+						if (verificationUsingStripped) {
+							extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanOrTrueValue, sqlBooleanAndFalseValue, "");
+						} else {
+							extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanOrTrueValue, sqlBooleanAndFalseValue, "NOT ");
+						}
+						extraInfo = extraInfo + "\n" + Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo.datanotexists");
+	
+						//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
+						sqlInjectionAttack = sqlBooleanOrTrueValue;
+						bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
+								null, //url
+								param, sqlInjectionAttack,
+								extraInfo, getSolution(), "", msg2);
+	
+						sqlInjectionFoundForUrl = true;
+	
+						continue; //to the next entry
+						}
+					}
+				}	
+			//end of check 2a
 
 
 			//Check 3: UNION based
