@@ -6,7 +6,8 @@
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-		Added "HTTPS Content Available via HTTP" scanner. (Issue 1295)
+		Added "HTTPS Content Available via HTTP" scanner. (Issue 1295)<br>
+		Added "SQLite" SQL Injection scanner. (Issue 734).
 	]]>
 	</changes>
 	<dependson/>
@@ -28,6 +29,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureCVE20121823</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RemoteCodeExecutionCVE20121823</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionSQLite</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
