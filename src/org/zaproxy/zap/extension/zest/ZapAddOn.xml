@@ -11,6 +11,7 @@
 	ZAP Issue 1248: ZestRequest always follow redirects, fails to match redirect responses<br>
 	ZAP Issue 1327: Support drag and drop<br>
 	ZAP Issue 1329: support commenting in/out statements<br>
+	ZAP Issue 1331: Update selenium jar to fix issue working with firefox 32.0<br>
 	]]>
 	</changes>
 	<dependson/>
