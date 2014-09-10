@@ -121,4 +121,9 @@ public class ZestPopupNodeCopyOrCut extends ExtensionPopupMenuItem {
         }
         return false;
     }
+
+    @Override
+    public boolean isSafe() {
+        return true;
+    }
 }

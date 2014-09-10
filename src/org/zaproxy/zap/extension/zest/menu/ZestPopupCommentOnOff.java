@@ -127,4 +127,9 @@ public class ZestPopupCommentOnOff extends ExtensionPopupMenuItem {
         }
         return false;
     }
+
+    @Override
+    public boolean isSafe() {
+        return true;
+    }
 }
