@@ -12,6 +12,7 @@
 	ZAP Issue 1327: Support drag and drop<br>
 	ZAP Issue 1329: support commenting in/out statements<br>
 	ZAP Issue 1331: Update selenium jar to fix issue working with firefox 32.0<br>
+	ZAP Issue 1278: Safe menu items not available in protected and safe modes.
 	]]>
 	</changes>
 	<dependson/>

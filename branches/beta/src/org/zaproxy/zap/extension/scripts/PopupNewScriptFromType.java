@@ -98,4 +98,9 @@ public class PopupNewScriptFromType extends ExtensionPopupMenuItem {
         }
         return false;
     }
+    
+    @Override
+    public boolean isSafe() {
+        return true;
+    }
 }

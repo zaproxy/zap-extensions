@@ -312,6 +312,11 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 		public boolean succeedWithSeparator() {
 			return succeedWithSeparator;
 		}
+		
+		@Override
+		public boolean isSafe() {
+			return true;
+		}
 	}
 
 }

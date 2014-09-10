@@ -126,4 +126,8 @@ public abstract class ZestAddClientPopupMenu extends ExtensionPopupMenuItem {
         }
         return false;
     }
+    @Override
+    public boolean isSafe() {
+        return true;
+    }
 }

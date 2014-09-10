@@ -8,6 +8,7 @@
 	<![CDATA[
 	Issue 1327: Support drag and drop in the scripts tree.<br>
 	Issue 1330: Add menu for duplicating a script.<br>
+	Issue 1278: Safe menu items not available in protected and safe modes.
 	]]>
 	</changes>
 	<dependson/>
