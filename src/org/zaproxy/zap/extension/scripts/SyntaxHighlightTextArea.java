@@ -75,11 +75,6 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 	private TextAreaMenuItem redoAction = null;
 	private TextAreaMenuItem selectAllAction = null;
 	
-	static {
-		//Hack to set the language that is used by ZAP.
-		RTextArea.setLocaleI18n(Constant.getLocale());
-	}
-	
 	public SyntaxHighlightTextArea() {
 		setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
 		
