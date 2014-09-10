@@ -38,6 +38,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import javax.swing.TransferHandler;
 
 import net.htmlparser.jericho.Source;
@@ -117,6 +118,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	private ZestResultsPanel zestResultsPanel = null;
 	private ZapToggleButton recordButton = null;
+	private JToolBar.Separator toolbarSeparator;
 
 	private ZestTreeModel zestTreeModel = null;
 	private ZestDialogManager dialogManager = null;
@@ -186,7 +188,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			new ZestMenuManager(this, extensionHook);
 			
 			View.getSingleton().addMainToolbarButton(getRecordButton());
-			View.getSingleton().addMainToolbarSeparator();
+			View.getSingleton().addMainToolbarSeparator(getToolbarSeparator());
 
 			// TODO This is a temporary solution until we can be sure the scripts addon supports the required functionality
 			Extension extScUi = Control.getSingleton()
@@ -292,6 +294,17 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	public boolean canUnload() {
 		return true;
 	}
+	
+	@Override
+	public void unload() {
+		if (getView() != null) {
+			View view = View.getSingleton();
+			view.removeMainToolbarButton(getRecordButton());
+			view.removeMainToolbarSeparator(getToolbarSeparator());
+		}
+
+		super.unload();
+	}
 
 	public ExtensionScript getExtScript() {
 		if (extScript == null) {
@@ -347,6 +360,13 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			});
 		}
 		return recordButton;
+	}
+
+	private JToolBar.Separator getToolbarSeparator() {
+		if (toolbarSeparator == null) {
+			toolbarSeparator = new JToolBar.Separator();
+		}
+		return toolbarSeparator;
 	}
 
 	public void cancelScriptRecording() {
