@@ -275,6 +275,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		SQL_UNION_ERROR_TO_DBMS.put("ORA-01789", "Oracle");
 		SQL_UNION_ERROR_TO_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");  //needs a table name in a UNION query. Like Oracle?
 		SQL_UNION_ERROR_TO_DBMS.put("Column count does not match in statement", "Hypersonic SQL");
+		SQL_UNION_ERROR_TO_DBMS.put("SELECTs to the left and right of UNION do not have the same number of result columns", "SQLite");
 		//TODO: add other specific UNION based error messages for Union here: PostgreSQL, Sybase, DB2, Informix, etc
 	}
 	/**
