@@ -50,8 +50,6 @@ import difflib.Patch;
  * instance. It's better to put the code here and try it for all RDBMSs as a
  * result. Use the following variables: doStackedBased, doStackedMaxRequests,
  * countStackedBasedRequests 
- * TODO: implement checks in Header fields (currently
- * does Cookie values, form fields, and url parameters) 
  * TODO: change the Alert Titles. 
  * TODO: if the argument is reflected back in the HTML output, the
  * boolean based logic will not detect an alert (because the HTML results of
@@ -106,100 +104,109 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	 * actual (driver level) error messages for things like syntax error,
 	 * otherwise we are simply guessing that the string should/might occur.
 	 */
-	private static final Map<String, String> SQL_ERROR_TO_SPECIFIC_DBMS = new LinkedHashMap<>();
-	private static final Map<String, String> SQL_ERROR_TO_GENERIC_DBMS = new LinkedHashMap<>();
+	private static final Map<Pattern, String> SQL_ERROR_TO_SPECIFIC_DBMS = new LinkedHashMap<>();
+	private static final Map<Pattern, String> SQL_ERROR_TO_GENERIC_DBMS = new LinkedHashMap<>();
 
 	static {
 		//DONE: we have implemented a MySQL specific scanner. See SQLInjectionMySQL
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.mysql.jdbc.exceptions", "MySQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.gjt.mm.mysql", "MySQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.mysql.jdbc.exceptions\\E", PATTERN_PARAM), "MySQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.gjt.mm.mysql\\E", PATTERN_PARAM), "MySQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QThe used SELECT statements have a different number of columns\\E", PATTERN_PARAM), "MySQL");
 
 		//TODO: implement a plugin that uses Microsoft SQL specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.microsoft.sqlserver.jdbc", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.microsoft.jdbc", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.inet.tds", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.microsoft.sqlserver.jdbc", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.ashna.jturbo", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("weblogic.jdbc.mssqlserver", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("[Microsoft]", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("[SQLServer]", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("[SQLServer 2000 Driver for JDBC]", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("net.sourceforge.jtds.jdbc", "Microsoft SQL Server"); 		//see also be Sybase. could be either!
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("80040e14", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("800a0bcd", "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("80040e57", "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.microsoft.sqlserver.jdbc\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.microsoft.jdbc\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.inet.tds\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.microsoft.sqlserver.jdbc\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.ashna.jturbo\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qweblogic.jdbc.mssqlserver\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q[Microsoft]\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q[SQLServer]\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q[SQLServer 2000 Driver for JDBC]\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qnet.sourceforge.jtds.jdbc\\E", PATTERN_PARAM), "Microsoft SQL Server"); 		//see also be Sybase. could be either!
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q80040e14\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q800a0bcd\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q80040e57\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QAll queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QAll queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists\\E", PATTERN_PARAM), "Microsoft SQL Server");
 
 		//DONE: we have implemented an Oracle specific scanner. See SQLInjectionOracle
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("oracle.jdbc", "Oracle");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("SQLSTATE[HY", "Oracle");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("ORA-00933", "Oracle");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("ORA-06512", "Oracle");  //indicates the line number of an error
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("SQL command not properly ended", "Oracle");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("ORA-00942", "Oracle");  //table or view does not exist
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("ORA-29257", "Oracle");  //host unknown
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("ORA-00932", "Oracle");  //inconsistent datatypes
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qoracle.jdbc\\E", PATTERN_PARAM), "Oracle");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QSQLSTATE[HY\\E", PATTERN_PARAM), "Oracle");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-00933\\E", PATTERN_PARAM), "Oracle");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-06512\\E", PATTERN_PARAM), "Oracle");  //indicates the line number of an error
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QSQL command not properly ended\\E", PATTERN_PARAM), "Oracle");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-00942\\E", PATTERN_PARAM), "Oracle");  //table or view does not exist
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-29257\\E", PATTERN_PARAM), "Oracle");  //host unknown
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-00932\\E", PATTERN_PARAM), "Oracle");  //inconsistent datatypes
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qquery block has incorrect number of result columns\\E", PATTERN_PARAM), "Oracle");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-01789\\E", PATTERN_PARAM), "Oracle");
 
 		//TODO: implement a plugin that uses DB2 specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.ibm.db2.jcc", "IBM DB2");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("COM.ibm.db2.jdbc", "IBM DB2");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.ibm.db2.jcc\\E", PATTERN_PARAM), "IBM DB2");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QCOM.ibm.db2.jdbc\\E", PATTERN_PARAM), "IBM DB2");
 
 		//DONE: we have implemented a PostgreSQL specific scanner. See SQLInjectionPostgresql
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.postgresql.util.PSQLException", "PostgreSQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.postgresql", "PostgreSQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.postgresql.util.PSQLException\\E", PATTERN_PARAM), "PostgreSQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.postgresql\\E", PATTERN_PARAM), "PostgreSQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qeach UNION query must have the same number of columns\\E", PATTERN_PARAM), "PostgreSQL");
 
 		//TODO: implement a plugin that uses Sybase specific functionality to detect SQL Injection vulnerabilities
 		//Note: this plugin would also detect Microsoft SQL Server vulnerabilities, due to common syntax. 
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.sybase.jdbc", "Sybase");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.sybase.jdbc2.jdbc", "Sybase");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.sybase.jdbc3.jdbc", "Sybase");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("net.sourceforge.jtds.jdbc", "Sybase");  //see also Microsoft SQL Server. could be either!
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.sybase.jdbc\\E", PATTERN_PARAM), "Sybase");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.sybase.jdbc2.jdbc\\E", PATTERN_PARAM), "Sybase");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.sybase.jdbc3.jdbc\\E", PATTERN_PARAM), "Sybase");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qnet.sourceforge.jtds.jdbc\\E", PATTERN_PARAM), "Sybase");  //see also Microsoft SQL Server. could be either!
 
 		//TODO: implement a plugin that uses Informix specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.informix.jdbc", "Informix");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.informix.jdbc\\E", PATTERN_PARAM), "Informix");
 
 		//TODO: implement a plugin that uses Firebird specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.firebirdsql.jdbc", "Firebird");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.firebirdsql.jdbc\\E", PATTERN_PARAM), "Firebird");
 
 		//TODO: implement a plugin that uses IDS Server specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("ids.sql", "IDS Server");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qids.sql\\E", PATTERN_PARAM), "IDS Server");
 
 		//TODO: implement a plugin that uses InstantDB specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.enhydra.instantdb.jdbc", "InstantDB");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("jdbc.idb", "InstantDB");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.enhydra.instantdb.jdbc\\E", PATTERN_PARAM), "InstantDB");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qjdbc.idb\\E", PATTERN_PARAM), "InstantDB");
 
 		//TODO: implement a plugin that uses Interbase specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("interbase.interclient", "Interbase");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qinterbase.interclient\\E", PATTERN_PARAM), "Interbase");
 
 		//DONE: we have implemented a Hypersonic specific scanner. See SQLInjectionHypersonic
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("org.hsql", "Hypersonic SQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("hSql.", "Hypersonic SQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("Unexpected token , requires FROM in statement", "Hypersonic SQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("Column count does not match in statement", "Hypersonic SQL");  //TODO: too generic to leave in???
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("Table not found in statement", "Hypersonic SQL"); //TODO: too generic to leave in???
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("Unexpected token:", "Hypersonic SQL"); //TODO: too generic to leave in??? Works very nicely in Hypersonic cases, however
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.hsql\\E", PATTERN_PARAM), "Hypersonic SQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QhSql.\\E", PATTERN_PARAM), "Hypersonic SQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QUnexpected token , requires FROM in statement\\E", PATTERN_PARAM), "Hypersonic SQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QUnexpected end of command in statement\\E", PATTERN_PARAM), "Hypersonic SQL");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QColumn count does not match in statement\\E", PATTERN_PARAM), "Hypersonic SQL");  //TODO: too generic to leave in???
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QTable not found in statement\\E", PATTERN_PARAM), "Hypersonic SQL"); //TODO: too generic to leave in???
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QUnexpected token:\\E", PATTERN_PARAM), "Hypersonic SQL"); //TODO: too generic to leave in??? Works very nicely in Hypersonic cases, however	
 
 		//TODO: implement a plugin that uses Sybase SQL Anywhere specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("sybase.jdbc.sqlanywhere", "Sybase SQL Anywhere");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qsybase.jdbc.sqlanywhere\\E", PATTERN_PARAM), "Sybase SQL Anywhere");
 
 		//TODO: implement a plugin that uses PointBase specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.pointbase.jdbc", "Pointbase");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.pointbase.jdbc\\E", PATTERN_PARAM), "Pointbase");
 
 		//TODO: implement a plugin that uses Cloudbase specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("db2j.", "Cloudscape");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("COM.cloudscape", "Cloudscape");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("RmiJdbc.RJDriver", "Cloudscape");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qdb2j.\\E", PATTERN_PARAM), "Cloudscape");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QCOM.cloudscape\\E", PATTERN_PARAM), "Cloudscape");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QRmiJdbc.RJDriver\\E", PATTERN_PARAM), "Cloudscape");
 
 		//TODO: implement a plugin that uses Ingres specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put("com.ingres.jdbc", "Ingres");
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.ingres.jdbc\\E", PATTERN_PARAM), "Ingres");
+		
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("near \".+\": syntax error", PATTERN_PARAM), "SQLite");   //uses a regular expression..
+		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QSELECTs to the left and right of UNION do not have the same number of result columns\\E", PATTERN_PARAM), "SQLite");
 
 		//generic error message fragments that do not fingerprint the RDBMS, but that may indicate SQL Injection, nonetheless
-		SQL_ERROR_TO_GENERIC_DBMS.put("com.ibatis.common.jdbc", "Generic SQL RDBMS");
-		SQL_ERROR_TO_GENERIC_DBMS.put("org.hibernate", "Generic SQL RDBMS");
-		SQL_ERROR_TO_GENERIC_DBMS.put("sun.jdbc.odbc", "Generic SQL RDBMS");
-		SQL_ERROR_TO_GENERIC_DBMS.put("[ODBC Driver Manager]", "Generic SQL RDBMS");
-		SQL_ERROR_TO_GENERIC_DBMS.put("System.Data.OleDb", "Generic SQL RDBMS");   //System.Data.OleDb.OleDbException
-		SQL_ERROR_TO_GENERIC_DBMS.put("java.sql.SQLException", "Generic SQL RDBMS");  //in case more specific messages were not detected!
+		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\Qcom.ibatis.common.jdbc\\E", PATTERN_PARAM), "Generic SQL RDBMS");
+		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\Qorg.hibernate\\E", PATTERN_PARAM), "Generic SQL RDBMS");
+		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\Qsun.jdbc.odbc\\E", PATTERN_PARAM), "Generic SQL RDBMS");
+		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\Q[ODBC Driver Manager]\\E", PATTERN_PARAM), "Generic SQL RDBMS");
+		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\QSystem.Data.OleDb\\E", PATTERN_PARAM), "Generic SQL RDBMS");   //System.Data.OleDb.OleDbException
+		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\Qjava.sql.SQLException\\E", PATTERN_PARAM), "Generic SQL RDBMS");  //in case more specific messages were not detected!
 	}
 	/**
 	 * always true statement for comparison in boolean based SQL injection check
@@ -264,18 +271,18 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	/*
      SQL UNION error messages for various RDBMSs. The more, the merrier.
 	 */
-	private static final Map<String, String> SQL_UNION_ERROR_TO_DBMS = new LinkedHashMap<>();
+	private static final Map<Pattern, String> SQL_UNION_ERROR_TO_DBMS = new LinkedHashMap<>();
 
 	static {
-		SQL_UNION_ERROR_TO_DBMS.put("The used SELECT statements have a different number of columns", "MySQL");
-		SQL_UNION_ERROR_TO_DBMS.put("each UNION query must have the same number of columns", "PostgreSQL");
-		SQL_UNION_ERROR_TO_DBMS.put("All queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists", "Microsoft SQL Server");
-		SQL_UNION_ERROR_TO_DBMS.put("All queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists", "Microsoft SQL Server");
-		SQL_UNION_ERROR_TO_DBMS.put("query block has incorrect number of result columns", "Oracle");
-		SQL_UNION_ERROR_TO_DBMS.put("ORA-01789", "Oracle");
-		SQL_UNION_ERROR_TO_DBMS.put("Unexpected end of command in statement", "Hypersonic SQL");  //needs a table name in a UNION query. Like Oracle?
-		SQL_UNION_ERROR_TO_DBMS.put("Column count does not match in statement", "Hypersonic SQL");
-		SQL_UNION_ERROR_TO_DBMS.put("SELECTs to the left and right of UNION do not have the same number of result columns", "SQLite");
+		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QThe used SELECT statements have a different number of columns\\E", PATTERN_PARAM), "MySQL");
+		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\Qeach UNION query must have the same number of columns\\E", PATTERN_PARAM), "PostgreSQL");
+		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QAll queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QAll queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\Qquery block has incorrect number of result columns\\E", PATTERN_PARAM), "Oracle");
+		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QORA-01789\\E", PATTERN_PARAM), "Oracle");
+		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QUnexpected end of command in statement\\E", PATTERN_PARAM), "Hypersonic SQL");  //needs a table name in a UNION query. Like Oracle?
+		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QColumn count does not match in statement\\E", PATTERN_PARAM), "Hypersonic SQL");
+		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QSELECTs to the left and right of UNION do not have the same number of result columns\\E", PATTERN_PARAM), "SQLite");
 		//TODO: add other specific UNION based error messages for Union here: PostgreSQL, Sybase, DB2, Informix, etc
 	}
 	/**
@@ -481,21 +488,18 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 					//now check the results against each pattern in turn, to try to identify a database, or even better: a specific database.
 					//Note: do NOT check the HTTP error code just yet, as the result could come back with one of various codes.
-					Iterator<String> errorPatternIterator = SQL_ERROR_TO_SPECIFIC_DBMS.keySet().iterator();
+					Iterator<Pattern> errorPatternIterator = SQL_ERROR_TO_SPECIFIC_DBMS.keySet().iterator();
 
 					while (errorPatternIterator.hasNext() && !sqlInjectionFoundForUrl) {
-						String errorPatternKey = errorPatternIterator.next();
-						String errorPatternRDBMS = SQL_ERROR_TO_SPECIFIC_DBMS.get(errorPatternKey);
-
-						//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
-						Pattern errorPattern = Pattern.compile("\\Q" + errorPatternKey + "\\E", PATTERN_PARAM);
+						Pattern errorPattern = errorPatternIterator.next();
+						String errorPatternRDBMS = SQL_ERROR_TO_SPECIFIC_DBMS.get(errorPattern);
 
 						//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
 						//then we may may have a SQL Injection vulnerability
 						StringBuilder sb = new StringBuilder();
 						if (!matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
 							//Likely a SQL Injection. Raise it
-							String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPatternKey);
+							String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
 							//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 							sqlInjectionAttack = sqlErrValue;
 							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - " + errorPatternRDBMS, getDescription(),
@@ -520,18 +524,15 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						errorPatternIterator = SQL_ERROR_TO_GENERIC_DBMS.keySet().iterator();
 
 						while (errorPatternIterator.hasNext() && !sqlInjectionFoundForUrl) {
-							String errorPatternKey = errorPatternIterator.next();
-							String errorPatternRDBMS = SQL_ERROR_TO_GENERIC_DBMS.get(errorPatternKey);
-
-							//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
-							Pattern errorPattern = Pattern.compile("\\Q" + errorPatternKey + "\\E", PATTERN_PARAM);
+							Pattern errorPattern = errorPatternIterator.next();
+							String errorPatternRDBMS = SQL_ERROR_TO_GENERIC_DBMS.get(errorPattern);
 
 							//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
 							//then we may may have a SQL Injection vulnerability
 							StringBuilder sb = new StringBuilder();
 							if (!matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
 								//Likely a SQL Injection. Raise it
-								String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPatternKey);
+								String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
 								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 								sqlInjectionAttack = sqlErrValue;
 								bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - " + errorPatternRDBMS, getDescription(),
@@ -975,14 +976,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				//now check the results.. look first for UNION specific error messages in the output that were not there in the original output
 				//and failing that, look for generic RDBMS specific error messages
 				//TODO: maybe also try looking at a differentiation based approach?? Prone to false positives though.
-				Iterator<String> errorPatternUnionIterator = SQL_UNION_ERROR_TO_DBMS.keySet().iterator();
+				Iterator<Pattern> errorPatternUnionIterator = SQL_UNION_ERROR_TO_DBMS.keySet().iterator();
 
 				while (errorPatternUnionIterator.hasNext() && !sqlInjectionFoundForUrl) {
-					String errorPatternKey = errorPatternUnionIterator.next();
-					String errorPatternRDBMS = SQL_UNION_ERROR_TO_DBMS.get(errorPatternKey);
-
-					//Note: must escape the strings, in case they contain strings like "[Microsoft], which would be interpreted as regular character class regexps"
-					Pattern errorPattern = Pattern.compile("\\Q" + errorPatternKey + "\\E", PATTERN_PARAM);
+					Pattern errorPattern = errorPatternUnionIterator.next();
+					String errorPatternRDBMS = SQL_UNION_ERROR_TO_DBMS.get(errorPattern);
 
 					//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
 					//then we may may have a SQL Injection vulnerability
@@ -997,7 +995,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					//if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg3, errorPattern, sb)) {				
 					if (!patternInOrig && patternInSQLUnion) {
 						//Likely a UNION Based SQL Injection (by error message). Raise it
-						String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.unionbased.extrainfo", errorPatternRDBMS, errorPatternKey);
+						String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.unionbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
 
 						//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 						sqlInjectionAttack = sqlUnionValue;
