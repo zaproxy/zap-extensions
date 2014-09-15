@@ -39,6 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SortOrder;
 
 import org.apache.log4j.Logger;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -50,7 +51,7 @@ import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
 public class OptionsAjaxSpider extends AbstractParamPanel {
 
-	private static final String WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY = "webdriver.chrome.driver";
+	private static final String WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY = ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
 
 	private static final long serialVersionUID = -1350537974139536669L;
 	
