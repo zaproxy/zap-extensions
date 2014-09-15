@@ -10,7 +10,8 @@
 	A warning message is shown if the selected browser was not successfully started.<br>
 	Disable the attack menu item "AJAX Spider Site" when the spider is running (Issue 1289).<br>
 	Updated Crawljax to version 3.5.1 and Selenium which adds support for Firefox 32 (Issue 1336).<br>
-	Error while updating "Ajax Spider" add-on (Issue 1337).
+	Error while updating "Ajax Spider" add-on (Issue 1337).<br>
+	Allow to use PhantomJS (Issue 1338).
 	]]>
 	</changes>
 	<dependson></dependson>

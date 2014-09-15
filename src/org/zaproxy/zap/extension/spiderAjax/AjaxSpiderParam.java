@@ -35,7 +35,8 @@ public class AjaxSpiderParam extends AbstractParam {
     public enum Browser {
         CHROME("chrome"),
         FIREFOX("firefox"),
-        HTML_UNIT("htmlunit");
+        HTML_UNIT("htmlunit"),
+        PHANTOM_JS("phantomjs");
 
         private final String id;
 
@@ -50,6 +51,8 @@ public class AjaxSpiderParam extends AbstractParam {
                 return FIREFOX;
             } else if (HTML_UNIT.id.equals(id)) {
                 return HTML_UNIT;
+            } else if (PHANTOM_JS.id.equals(id)) {
+                return PHANTOM_JS;
             }
             return FIREFOX;
         }

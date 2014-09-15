@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.EventQueue;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,6 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -35,6 +35,9 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.model.HistoryReference;
@@ -96,7 +99,11 @@ public class SpiderThread implements Runnable {
 		spiderListeners.add(spiderListener);
 		this.session = extension.getModel().getSession();
 		this.exclusionList = session.getExcludeFromSpiderRegexs();
-		this.targetHost = new URI(url, true).getHost();
+		try {
+			this.targetHost = new java.net.URI(url).getHost();
+		} catch(URISyntaxException e) {
+			throw new URIException(e.getReason());
+		}
 
 		createOutOfScopeResponse(extension.getMessages().getString("spiderajax.outofscope.response"));
 
@@ -199,6 +206,10 @@ public class SpiderThread implements Runnable {
                 case CHROME:
                     View.getSingleton().showWarningDialog(
                             extension.getMessages().getString("spiderajax.warn.message.failed.start.browser.chrome"));
+                    break;
+                case PHANTOM_JS:
+                    View.getSingleton().showWarningDialog(
+                            extension.getMessages().getString("spiderajax.warn.message.failed.start.browser.phantomjs"));
                     break;
                 default:
                     View.getSingleton().showWarningDialog(
@@ -331,6 +342,7 @@ public class SpiderThread implements Runnable {
 	// - Changed to use the custom browser enum;
 	// - Removed the code of browsers not (yet) supported;
 	// - Added support for HtmlUnit.
+	// - Tweaked the method newPhantomJSDriver to ignore SSL/TLS errors, use any protocol version and properly set all cli args.
 	private static class AjaxSpiderBrowserBuilder implements Provider<EmbeddedBrowser> {
 
 		@Inject
@@ -371,6 +383,9 @@ public class SpiderThread implements Runnable {
 				break;
 			case HTML_UNIT:
 				embeddedBrowser = newHtmlUnitBrowser(filterAttributes, crawlWaitReload, crawlWaitEvent);
+				break;
+			case PHANTOM_JS:
+				embeddedBrowser = newPhantomJSDriver(filterAttributes, crawlWaitReload, crawlWaitEvent);
 				break;
 			default:
 				throw new IllegalStateException("Unrecognized browsertype " + browser);
@@ -451,6 +466,35 @@ public class SpiderThread implements Runnable {
 			}
 
 			return WebDriverBackedEmbeddedBrowser.withDriver(driverHtmlUnit, filterAttributes, crawlWaitEvent, crawlWaitReload);
+		}
+
+		private EmbeddedBrowser newPhantomJSDriver(
+				ImmutableSortedSet<String> filterAttributes,
+				long crawlWaitReload,
+				long crawlWaitEvent) {
+
+			DesiredCapabilities caps = new DesiredCapabilities();
+			caps.setCapability("takesScreenshot", true);
+
+			final ArrayList<String> cliArgs = new ArrayList<>(4);
+			cliArgs.add("--ssl-protocol=any");
+			cliArgs.add("--ignore-ssl-errors=true");
+
+			// TODO Uncomment when Constant.getZapHome() returns (always) an absolute path. 
+			// cliArgs.add("--webdriver-logfile=" + Constant.getZapHome() + "/phantomjsdriver.log");
+			cliArgs.add("--webdriver-loglevel=WARN");
+
+			final ProxyConfiguration proxyConf = configuration.getProxyConfiguration();
+			if (proxyConf != null && proxyConf.getType() != ProxyType.NOTHING) {
+				cliArgs.add("--proxy=" + proxyConf.getHostname() + ":" + proxyConf.getPort());
+				cliArgs.add("--proxy-type=http");
+			}
+
+			caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cliArgs);
+
+			PhantomJSDriver phantomJsDriver = new PhantomJSDriver(caps);
+
+			return WebDriverBackedEmbeddedBrowser.withDriver(phantomJsDriver, filterAttributes, crawlWaitEvent, crawlWaitReload);
 		}
 	}
 }
