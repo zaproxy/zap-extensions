@@ -425,7 +425,7 @@ public class SpiderThread implements Runnable {
 				ChromeOptions optionsChrome = new ChromeOptions();
 				String lang = configuration.getBrowserConfig().getLangOrNull();
 				if (!Strings.isNullOrEmpty(lang)) {
-					optionsChrome.setExperimentalOptions("intl.accept_languages", lang);
+					optionsChrome.addArguments("--lang=" + lang);
 				}
 				optionsChrome.addArguments("--proxy-server=http://" + configuration.getProxyConfiguration().getHostname() + ":"
 						+ configuration.getProxyConfiguration().getPort());
