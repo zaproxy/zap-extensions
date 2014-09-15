@@ -487,7 +487,7 @@ public class SpiderThread implements Runnable {
 			DesiredCapabilities caps = new DesiredCapabilities();
 			caps.setCapability("takesScreenshot", true);
 
-			final ArrayList<String> cliArgs = new ArrayList<>(4);
+			final ArrayList<String> cliArgs = new ArrayList<>(5);
 			cliArgs.add("--ssl-protocol=any");
 			cliArgs.add("--ignore-ssl-errors=true");
 
