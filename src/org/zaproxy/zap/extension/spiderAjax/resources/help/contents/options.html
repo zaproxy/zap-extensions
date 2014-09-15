@@ -38,7 +38,12 @@
 						be set with the option "Select PhantomJS binary". For more information on PhantomJS
 						and how to obtain it refer to http://phantomjs.org/ (see footer note for caveat when
 						using PhantomJS).</li>
-				</ul>If you use Firefox or Chrome, you must have it installed in your system.
+					<li>Internet Explorer - requires IEDriverServer, if not on the system's PATH, it
+						can be set with option "Select IEDriverServer". For more information on
+						IEDriverServer refer to
+						https://code.google.com/p/selenium/wiki/InternetExplorerDriver (see footer note for
+						caveat when using Internet Explorer).</li>
+				</ul>If you use Firefox, Chrome or Internet Explorer, you must have it installed in your system.
 			</td><td align="center">Firefox</td></tr>
 		<tr><td>Select ChromeDriver</td>
 			<td>This allows you to select the location of ChromeDriver. For more information
@@ -49,6 +54,12 @@
 			<td>Select PhantomJS binary</td>
 			<td>This allows you to select the location of PhantomJS binary. For more
 				information refer to the above PhantomJS Browser entry.</td>
+			<td align="center">(None)</td>
+		</tr>
+		<tr>
+			<td>Select IEDriverServer</td>
+			<td>This allows you to select the location of IEDriverServer. For more information
+				refer to the above Internet Explorer Browser entry.</td>
 			<td align="center">(None)</td>
 		</tr>
 		<tr>
@@ -109,6 +120,11 @@
 		spider sites at localhost, 127.0.0.1 and ::1 because of an issue in PhantomJS
 		(https://github.com/ariya/phantomjs/issues/11342 ). Until a fix is issued a warning
 		message will be shown.
+	<p>
+		<strong>Internet Explorer Note:</strong> Not all versions of Internet Explorer work out
+		of the box, refer to
+		https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration
+		for more details on how to configure them.
 	
 	<h2>See also</h2>
 	<table>

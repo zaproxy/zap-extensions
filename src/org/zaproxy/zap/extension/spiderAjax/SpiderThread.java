@@ -30,13 +30,16 @@ import javax.inject.Provider;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
@@ -211,6 +214,10 @@ public class SpiderThread implements Runnable {
                     View.getSingleton().showWarningDialog(
                             extension.getMessages().getString("spiderajax.warn.message.failed.start.browser.phantomjs"));
                     break;
+                case INTERNET_EXPLORER:
+                    View.getSingleton().showWarningDialog(
+                            extension.getMessages().getString("spiderajax.warn.message.failed.start.browser.ie"));
+                    break;
                 default:
                     View.getSingleton().showWarningDialog(
                             extension.getMessages().getString("spiderajax.warn.message.failed.start.browser"));
@@ -340,9 +347,10 @@ public class SpiderThread implements Runnable {
 	// Changes:
 	// - Changed to set the properties to Firefox to enable SSL proxying;
 	// - Changed to use the custom browser enum;
-	// - Removed the code of browsers not (yet) supported;
+	// - Removed the code of browsers not (yet?) supported (REMOTE);
 	// - Added support for HtmlUnit.
-	// - Tweaked the method newPhantomJSDriver to ignore SSL/TLS errors, use any protocol version and properly set all cli args.
+	// - Tweaked the method newPhantomJSDriver to ignore SSL/TLS errors, use any protocol version and properly set all cli args;
+	// - Set the proxy configurations to Internet Explorer.
 	private static class AjaxSpiderBrowserBuilder implements Provider<EmbeddedBrowser> {
 
 		@Inject
@@ -386,6 +394,9 @@ public class SpiderThread implements Runnable {
 				break;
 			case PHANTOM_JS:
 				embeddedBrowser = newPhantomJSDriver(filterAttributes, crawlWaitReload, crawlWaitEvent);
+				break;
+			case INTERNET_EXPLORER:
+				embeddedBrowser = newInternetExplorerDriver(filterAttributes, crawlWaitReload, crawlWaitEvent);
 				break;
 			default:
 				throw new IllegalStateException("Unrecognized browsertype " + browser);
@@ -495,6 +506,26 @@ public class SpiderThread implements Runnable {
 			PhantomJSDriver phantomJsDriver = new PhantomJSDriver(caps);
 
 			return WebDriverBackedEmbeddedBrowser.withDriver(phantomJsDriver, filterAttributes, crawlWaitEvent, crawlWaitReload);
+		}
+
+		private EmbeddedBrowser newInternetExplorerDriver(
+				ImmutableSortedSet<String> filterAttributes,
+				long crawlWaitReload,
+				long crawlWaitEvent) {
+
+			DesiredCapabilities caps = new DesiredCapabilities();
+			caps.setCapability(InternetExplorerDriver.IE_USE_PRE_PROCESS_PROXY, true);
+
+			final ProxyConfiguration proxyConf = configuration.getProxyConfiguration();
+			if (proxyConf != null && proxyConf.getType() != ProxyType.NOTHING) {
+				final String proxy = proxyConf.getHostname() + ":" + proxyConf.getPort();
+				Proxy proxyCap = new org.openqa.selenium.Proxy();
+				proxyCap.setHttpProxy(proxy).setSslProxy(proxy);
+				caps.setCapability(CapabilityType.PROXY, proxyCap);
+			}
+			InternetExplorerDriver ieDriver = new InternetExplorerDriver(caps);
+
+			return WebDriverBackedEmbeddedBrowser.withDriver(ieDriver, filterAttributes, crawlWaitEvent, crawlWaitReload);
 		}
 	}
 }

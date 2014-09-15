@@ -40,6 +40,7 @@ import javax.swing.SortOrder;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.ie.InternetExplorerDriverService;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
@@ -54,6 +55,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 
 	private static final String WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY = ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
 	private static final String PHANTOM_JS_BINARY_SYSTEM_PROPERTY = PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
+	private static final String INTERNET_EXPLORER_DRIVER_SYSTEM_PROPERTY = InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY;
 
 	private static final long serialVersionUID = -1350537974139536669L;
 	
@@ -80,6 +82,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JRadioButton phantomJs;
 	private JButton selectChromeDriverButton;
 	private JButton selectPhantomJsBinaryButton;
+	private JButton selectIeDriverButton;
 	private JLabel browsers = null;
 	private JLabel depth = null;
 	private JLabel crawlStates = null;
@@ -284,6 +287,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    case PHANTOM_JS:
 	    	this.getPhantomJs().setSelected(true);
 	    	break;
+	    case INTERNET_EXPLORER:
+	    	this.getIE().setSelected(true);
+	    	break;
 	    default:
 	    	this.getFirefox().setSelected(true);
 	    }
@@ -320,6 +326,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			ajaxSpiderParam.setBrowser(Browser.HTML_UNIT);
 		} else if(getPhantomJs().isSelected()){
 			ajaxSpiderParam.setBrowser(Browser.PHANTOM_JS);
+		} else if(getIE().isSelected()){
+			ajaxSpiderParam.setBrowser(Browser.INTERNET_EXPLORER);
 		}
 	}
 
@@ -343,6 +351,16 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		return selectPhantomJsBinaryButton;
 	}
 
+	private JButton getSelectIeDriverButton() {
+		if (selectIeDriverButton == null) {
+			selectIeDriverButton = new JButton(this.extension.getMessages().getString(
+					"spiderajax.options.select.ie.driver.button.label"));
+			selectIeDriverButton.addActionListener(new SetSystemPropertyFromFileChooser(
+					INTERNET_EXPLORER_DRIVER_SYSTEM_PROPERTY));
+		}
+		return selectIeDriverButton;
+	}
+
 	/**
 	 * This method initializes panelAjaxProxy
 	 * 	
@@ -361,6 +379,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			browsersButtonGroup.add(getChrome());
 			browsersButtonGroup.add(getHtmlunit());
 			browsersButtonGroup.add(getPhantomJs());
+			browsersButtonGroup.add(getIE());
 			
 			browsers = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.browsers"));
 			depth = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.depth"));
@@ -405,6 +424,15 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			gbc.gridx = 1;
 			gbc.fill = GridBagConstraints.NONE;
 			innerPanel.add(getSelectPhantomJsBinaryButton(), gbc);
+			
+			gbc.gridy++;
+			gbc.gridx = 0;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			innerPanel.add(getIE(), gbc);
+			
+			gbc.gridx = 1;
+			gbc.fill = GridBagConstraints.NONE;
+			innerPanel.add(getSelectIeDriverButton(), gbc);
 			
 			//Number of browsers Option
 			gbc.gridy++;
