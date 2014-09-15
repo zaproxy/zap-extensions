@@ -6,7 +6,8 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Safe menu items will now be enabled in protected and safe modes (Issue 1278).
+	Safe menu items will now be enabled in protected and safe modes (Issue 1278).<br>
+	Disable the attack menu item if a scan is already in progress (Issue 1290).
 	]]>
 	</changes>
 	<dependson/>

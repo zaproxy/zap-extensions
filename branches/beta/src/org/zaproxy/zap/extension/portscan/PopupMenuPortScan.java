@@ -60,23 +60,16 @@ public class PopupMenuPortScan extends PopupMenuItemSiteNodeContainer {
     
 	@Override
 	public void performAction(SiteNode node) {
-	    if (node != null) {
-	    	// Loop up to get the top parent
-			while (node.getParent() != null && node.getParent().getParent() != null) {
-				node = (SiteNode) node.getParent();
-			}
-	    	extension.portScanSite(node);
-	    }
+		// Loop up to get the top parent
+		while (node.getParent() != null && node.getParent().getParent() != null) {
+			node = (SiteNode) node.getParent();
+		}
+		extension.portScanSite(node);
 	}
 
 	@Override
     public boolean isButtonEnabledForSiteNode (SiteNode node) {
-	    if (node != null && ! node.isRoot() && ! extension.isScanning(node)) {
-	        this.setEnabled(true);
-	    } else {
-	        this.setEnabled(false);
-	    }
-        return true;
+	    return (!extension.isScanning(node));
     }
 
 	@Override
