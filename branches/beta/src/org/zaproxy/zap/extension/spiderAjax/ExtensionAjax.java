@@ -126,6 +126,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
             getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getSpiderPanel().getScanStatus().getCountLabel());
         }
         
+        API.getInstance().removeApiImplementor(ajaxSpiderApi);
+        
         super.unload();
     }
 
