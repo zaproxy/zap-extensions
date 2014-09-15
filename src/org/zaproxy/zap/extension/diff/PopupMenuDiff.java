@@ -77,4 +77,9 @@ public class PopupMenuDiff extends PopupMenuItemHistoryReferenceContainer {
 	public void performAction(HistoryReference href) {
 		// Ignore
 	}
+
+	@Override
+	public boolean isSafe() {
+		return true;
+	}
 }

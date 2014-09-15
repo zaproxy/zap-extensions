@@ -115,4 +115,9 @@ public class PopupMenuTreeTools extends ExtensionPopupMenuItem {
     	return true;
     }
 
+    @Override
+    public boolean isSafe() {
+        return true;
+    }
+
 }
