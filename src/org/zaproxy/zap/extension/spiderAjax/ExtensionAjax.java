@@ -25,7 +25,6 @@ import javax.swing.ImageIcon;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -56,7 +55,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private PopupMenuAjaxSiteInScope popupMenuInScope = null;
 	private OptionsAjaxSpider optionsAjaxSpider = null;
 	private List<String> excludeList = null;
-	private ChromeAlertDialog addDialog = null;
 	private boolean spiderRunning;
 	private SpiderListener spiderListener;
 	private AjaxSpiderAPI ajaxSpiderApi;
@@ -124,10 +122,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
     public void unload() {
         if (getView() != null) {
             getSpiderPanel().stopScan();
-            
-            if (addDialog != null) {
-                addDialog.dispose();
-            }
             
             getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getSpiderPanel().getScanStatus().getCountLabel());
         }
@@ -289,28 +283,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		spiderRunning = running;
 	}
 
-	/**
-	 * shows the chrome alert
-	 */
-	public void showChromeAlert() {
-		addDialog = new ChromeAlertDialog(getView().getMainFrame(), false, this);
-		addDialog.setVisible(true);
-	}
-
-	/**
-	 * This method checks if the chromedriver is available
-	 * @return true if available, false otherwise.
-	 */
-	public boolean isChromeAvail(){
-		try{
-			new ChromeDriver().quit();
-		} catch (Exception e) {
-			logger.error(e);
-			return false;
-		}
-		return true;
-	}
-	
 	private class SpiderSessionChangedListener implements SessionChangedListener {
 
 		@Override
