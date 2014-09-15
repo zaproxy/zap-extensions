@@ -55,10 +55,32 @@ public class AjaxSpiderParam extends AbstractParam {
         }
     };
 
+    /**
+     * The current version of the configurations. Used to keep track of configuration changes between releases, in case
+     * changes/updates are needed.
+     * <p>
+     * It only needs to be incremented for configuration changes (not releases of the add-on).
+     * 
+     * @see #CONFIG_VERSION_KEY
+     * @see #updateConfigFile()
+     */
     private static final int CONFIG_VERSION = 2;
+
+    /**
+     * A dummy version number used at runtime to indicate that the configurations were never persisted or an error occurred
+     * while reading the version from the file.
+     * 
+     * @see #CONFIG_VERSION
+     */
+    private static final int NO_CONFIG_VERSION = -1;
 
     private static final String AJAX_SPIDER_BASE_KEY = "ajaxSpider";
 
+    /**
+     * The configuration key for the version of the configurations.
+     * 
+     * @see #CONFIG_VERSION
+     */
     private static final String CONFIG_VERSION_KEY = AJAX_SPIDER_BASE_KEY + ".configVersion";
 
     private static final String NUMBER_OF_BROWSERS_KEY = AJAX_SPIDER_BASE_KEY + ".numberOfBrowsers";
@@ -134,17 +156,7 @@ public class AjaxSpiderParam extends AbstractParam {
 
     @Override
     protected void parse() {
-        int configVersion;
-        try {
-            configVersion = getConfig().getInt(CONFIG_VERSION_KEY, -1);
-        } catch (ConversionException e) {
-            logger.error("Error while getting the version of the configurations: " + e.getMessage(), e);
-            configVersion = -1;
-        }
-
-        if (configVersion == -1) {
-            getConfig().setProperty(CONFIG_VERSION_KEY, Integer.valueOf(CONFIG_VERSION));
-        }
+        updateConfigFile();
 
         try {
             this.numberOfBrowsers = getConfig().getInt(NUMBER_OF_BROWSERS_KEY, DEFAULT_NUMBER_OF_BROWSERS);
@@ -248,6 +260,67 @@ public class AjaxSpiderParam extends AbstractParam {
         } catch (ConversionException e) {
             logger.error("Error while loading the confirm remove element option: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Updates the configurations in the file, if needed.
+     * <p>
+     * The following steps are made:
+     * <ol>
+     * <li>Read the version of the configurations that are in the file;</li>
+     * <li>Check if the version read is the latest version;</li>
+     * <li>If it's not at the latest version, update the configurations.</li>
+     * </ol>
+     * 
+     * @see #CONFIG_VERSION
+     * @see #isLatestConfigVersion(int)
+     * @see #updateConfigsFromVersion(int)
+     */
+    private void updateConfigFile() {
+        int configVersion;
+        try {
+            configVersion = getConfig().getInt(CONFIG_VERSION_KEY, NO_CONFIG_VERSION);
+        } catch (ConversionException e) {
+            logger.error("Error while getting the version of the configurations: " + e.getMessage(), e);
+            configVersion = NO_CONFIG_VERSION;
+        }
+
+        if (!isLatestConfigVersion(configVersion)) {
+            updateConfigsFromVersion(configVersion);
+        }
+    }
+
+    /**
+     * Tells whether or not the given {@code version} number is the latest version, that is, is the same version number as the
+     * version of the running code.
+     *
+     * @param version the version that will be checked
+     * @return {@code true} if the given {@code version} is the latest version, {@code false} otherwise
+     * @see #CONFIG_VERSION
+     * @see #updateConfigFile() 
+     */
+    private static boolean isLatestConfigVersion(int version) {
+        return version == CONFIG_VERSION;
+    }
+
+    /**
+     * Called when the configuration version in the file is older than the version of the running code.
+     * <p>
+     * Any required configuration changes/updates should be added to this method.
+     * <p>
+     * Before returning the version in the configuration file is updated to the current version.
+     *
+     * @param oldVersion the version of the configurations in the file
+     * @see #CONFIG_VERSION
+     * @see #updateConfigFile()
+     */
+    private void updateConfigsFromVersion(int oldVersion) {
+        switch (oldVersion) {
+        case NO_CONFIG_VERSION: // Nothing to do, the current version is already written at the end of the method.
+        case 1:
+        }
+
+        getConfig().setProperty(CONFIG_VERSION_KEY, Integer.valueOf(CONFIG_VERSION));
     }
 
     public int getNumberOfBrowsers() {
