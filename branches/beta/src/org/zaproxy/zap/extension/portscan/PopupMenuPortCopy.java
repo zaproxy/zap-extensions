@@ -116,4 +116,9 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
 		// Do nothing
 	}
 
+	@Override
+	public boolean isSafe() {
+		return true;
+	}
+
 }

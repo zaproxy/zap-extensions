@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>TreeTools</name>
-	<version>5</version>
+	<version>6</version>
 	<description>Tools to add functionality to the tree view.</description>
 	<author>Carl Sampson</author>
 	<url/>
-	<changes>Updated add-on dir structure (Issue 1113).</changes>
+	<changes>Safe menu items will now be enabled in protected and safe modes (Issue 1278).</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.treetools.ExtensionTreeTools</extension>
