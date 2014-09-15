@@ -278,12 +278,6 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	 */
 	@Override
 	public void validateParam(Object obj) throws Exception {
-		
-		if(getChrome().isSelected() && !this.extension.isChromeAvail()){
-			getFirefox().setSelected(true);	
-			logger.info("ChromeDriver is not available, switching to the default browser.");
-			this.extension.showChromeAlert();
-		}
 	}
 
 	@Override

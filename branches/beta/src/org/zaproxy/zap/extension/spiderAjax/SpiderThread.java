@@ -43,6 +43,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.Browser;
 import org.zaproxy.zap.network.HttpResponseBody;
 
@@ -57,6 +58,7 @@ import com.crawljax.core.configuration.ProxyConfiguration.ProxyType;
 import com.crawljax.core.plugin.Plugins;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.inject.ProvisionException;
 
 public class SpiderThread implements Runnable {
 
@@ -190,6 +192,19 @@ public class SpiderThread implements Runnable {
 		try {
 			crawljax = new CrawljaxRunner(createCrawljaxConfiguration());
 			crawljax.call();
+        } catch (ProvisionException e) {
+            logger.warn("Failed to start browser " + extension.getAjaxSpiderParam().getBrowser(), e);
+            if (View.isInitialised()) {
+                switch (extension.getAjaxSpiderParam().getBrowser()) {
+                case CHROME:
+                    View.getSingleton().showWarningDialog(
+                            extension.getMessages().getString("spiderajax.warn.message.failed.start.browser.chrome"));
+                    break;
+                default:
+                    View.getSingleton().showWarningDialog(
+                            extension.getMessages().getString("spiderajax.warn.message.failed.start.browser"));
+                }
+            }
 		} catch (Exception e) {
 			logger.error(e, e);
 		} finally {
