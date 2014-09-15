@@ -3,7 +3,7 @@
 	<version>11</version>
 	<description>Allows you to spider sites that make heavy use of javascript using crawljax</description>
 	<author>ZAP Dev Team</author>
-	<url>https://code.google.com/p/zaproxy/wiki/AJAXSpider_getStarted</url>
+	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[In addition to Maximum crawl depth and Event wait time, added Max Crawl states, max duration, reload wait time and 'click elements once' as options to be configurable by a user (Issue 945) Added table to choose which elements to click and added 'click default only' option (issue 1177).]]>
 	</changes>
