@@ -19,35 +19,28 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 import net.sf.json.JSONObject;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
+import org.zaproxy.zap.extension.api.ApiResponseConversionUtils;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
-import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
 
 class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
@@ -169,7 +162,7 @@ class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 				final ApiResponseList resultList = new ApiResponseList(name);
 				for (int i = start - 1, recordsProcessed = i; i < historyReferences.size(); ++i) {
 					HistoryReference historyReference = historyReferences.get(i);
-					resultList.addItem(httpMessageToSet(historyReference.getHistoryId(), historyReference.getHttpMessage()));
+					resultList.addItem(ApiResponseConversionUtils.httpMessageToSet(historyReference.getHistoryId(), historyReference.getHttpMessage()));
 
 					if (hasEnd) {
 						++recordsProcessed;
@@ -201,40 +194,6 @@ class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 			spiderThread.stopSpider();
 			spiderThread = null;
 		}
-	}
-
-	// Copied from ZAP core class ApiResponseConversionUtils
-	// XXX Remove once new ZAP core release is available.
-	private static ApiResponseSet httpMessageToSet(int historyId, HttpMessage msg) {
-		Map<String, String> map = new HashMap<>();
-		map.put("id", String.valueOf(historyId));
-		map.put("cookieParams", msg.getCookieParamsAsString());
-		map.put("note", msg.getNote());
-		map.put("requestHeader", msg.getRequestHeader().toString());
-		map.put("requestBody", msg.getRequestBody().toString());
-		map.put("responseHeader", msg.getResponseHeader().toString());
-
-		if (HttpHeader.GZIP.equals(msg.getResponseHeader().getHeader(HttpHeader.CONTENT_ENCODING))) {
-			// Uncompress gziped content
-			try (ByteArrayInputStream bais = new ByteArrayInputStream(msg.getResponseBody().getBytes());
-				 GZIPInputStream gis = new GZIPInputStream(bais);
-				 InputStreamReader isr = new InputStreamReader(gis);
-				 BufferedReader br = new BufferedReader(isr);) {
-				StringBuilder sb = new StringBuilder();
-				String line = null;
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
-				}
-				map.put("responseBody", sb.toString());
-			} catch (IOException e) {
-				logger.error("Unable to uncompress gzip content: " + e.getMessage(), e);
-				map.put("responseBody", msg.getResponseBody().toString());
-			}
-		} else {
-			map.put("responseBody", msg.getResponseBody().toString());
-		}
-
-		return new ApiResponseSet("message", map);
 	}
 
 	@Override
