@@ -40,6 +40,7 @@ import javax.swing.SortOrder;
 
 import org.apache.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -52,6 +53,7 @@ import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 public class OptionsAjaxSpider extends AbstractParamPanel {
 
 	private static final String WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY = ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
+	private static final String PHANTOM_JS_BINARY_SYSTEM_PROPERTY = PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
 
 	private static final long serialVersionUID = -1350537974139536669L;
 	
@@ -75,7 +77,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JRadioButton chrome = null;
 	private JRadioButton ie = null;
 	private JRadioButton htmlunit = null;
+	private JRadioButton phantomJs;
 	private JButton selectChromeDriverButton;
+	private JButton selectPhantomJsBinaryButton;
 	private JLabel browsers = null;
 	private JLabel depth = null;
 	private JLabel crawlStates = null;
@@ -234,6 +238,14 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		}
 		return htmlunit;
 	}
+
+	private JRadioButton getPhantomJs() {
+		if (phantomJs == null) {
+			phantomJs = new JRadioButton();
+			phantomJs.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.phantomjs"));
+		}
+		return phantomJs;
+	}
 	
 	/**
 	 * 
@@ -269,6 +281,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    case HTML_UNIT:
 	    	this.getHtmlunit().setSelected(true);
 	    	break;
+	    case PHANTOM_JS:
+	    	this.getPhantomJs().setSelected(true);
+	    	break;
 	    default:
 	    	this.getFirefox().setSelected(true);
 	    }
@@ -303,6 +318,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			ajaxSpiderParam.setBrowser(Browser.CHROME);
 		} else if(getHtmlunit().isSelected()){
 			ajaxSpiderParam.setBrowser(Browser.HTML_UNIT);
+		} else if(getPhantomJs().isSelected()){
+			ajaxSpiderParam.setBrowser(Browser.PHANTOM_JS);
 		}
 	}
 
@@ -310,27 +327,20 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		if (selectChromeDriverButton == null) {
 			selectChromeDriverButton = new JButton(this.extension.getMessages().getString(
 					"spiderajax.options.select.chrome.driver.button.label"));
-			selectChromeDriverButton.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					JFileChooser fileChooser = new JFileChooser();
-					String path = System.getProperty(WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY);
-					if (path != null) {
-						File file = new File(path);
-						if (file.exists()) {
-							fileChooser.setSelectedFile(file);
-						}
-					}
-					if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-						final File selectedFile = fileChooser.getSelectedFile();
-
-						System.setProperty(WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY, selectedFile.getAbsolutePath());
-					}
-				}
-			});
+			selectChromeDriverButton.addActionListener(new SetSystemPropertyFromFileChooser(
+					WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY));
 		}
 		return selectChromeDriverButton;
+	}
+
+	private JButton getSelectPhantomJsBinaryButton() {
+		if (selectPhantomJsBinaryButton == null) {
+			selectPhantomJsBinaryButton = new JButton(this.extension.getMessages().getString(
+					"spiderajax.options.select.phantomjs.binary.button.label"));
+			selectPhantomJsBinaryButton.addActionListener(new SetSystemPropertyFromFileChooser(
+					PHANTOM_JS_BINARY_SYSTEM_PROPERTY));
+		}
+		return selectPhantomJsBinaryButton;
 	}
 
 	/**
@@ -350,6 +360,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			browsersButtonGroup.add(getFirefox());
 			browsersButtonGroup.add(getChrome());
 			browsersButtonGroup.add(getHtmlunit());
+			browsersButtonGroup.add(getPhantomJs());
 			
 			browsers = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.browsers"));
 			depth = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.depth"));
@@ -379,16 +390,25 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			gbc.gridy++;
 			innerPanel.add(getChrome(), gbc);
 			
+			gbc.gridx = 1;
+			gbc.fill = GridBagConstraints.NONE;
+			innerPanel.add(getSelectChromeDriverButton(), gbc);
+			
 			gbc.gridy++;
+			gbc.gridx = 0;
+			gbc.fill = GridBagConstraints.HORIZONTAL;
 			innerPanel.add(getHtmlunit(), gbc);
 			
 			gbc.gridy++;
+			innerPanel.add(getPhantomJs(), gbc);
+			
+			gbc.gridx = 1;
 			gbc.fill = GridBagConstraints.NONE;
-			gbc.insets = new java.awt.Insets(8,2,16,2);
-			innerPanel.add(getSelectChromeDriverButton(), gbc);
+			innerPanel.add(getSelectPhantomJsBinaryButton(), gbc);
 			
 			//Number of browsers Option
 			gbc.gridy++;
+			gbc.gridx = 0;
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.anchor = GridBagConstraints.LINE_START;
 			gbc.insets = new java.awt.Insets(2,2,2,2);		
@@ -594,4 +614,30 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         }
 	}
 	
+    private static class SetSystemPropertyFromFileChooser implements ActionListener {
+
+        private final String property;
+
+        public SetSystemPropertyFromFileChooser(String property) {
+            this.property = property;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            String path = System.getProperty(property);
+            if (path != null) {
+                File file = new File(path);
+                if (file.exists()) {
+                    fileChooser.setSelectedFile(file);
+                }
+            }
+            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                final File selectedFile = fileChooser.getSelectedFile();
+
+                System.setProperty(property, selectedFile.getAbsolutePath());
+            }
+        }
+    }
+
   }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -33,13 +33,23 @@
 					<li>Chrome - requires ChromeDriver, if not on the system's PATH, it can be set with the
 						option "Select ChromeDriver". For more information on ChromeDriver and how to obtain
 						it refer to https://sites.google.com/a/chromium.org/chromedriver/</li>
-					<li>HtmlUnit - is an embedded Java based browser included in AJAX Spider.</li>
+					<li>HtmlUnit - is an embedded Java based browser included in AJAX Spider;</li>
+					<li>PhantomJS - requires PhantomJS binary, if not on the system's PATH, it can
+						be set with the option "Select PhantomJS binary". For more information on PhantomJS
+						and how to obtain it refer to http://phantomjs.org/ (see footer note for caveat when
+						using PhantomJS).</li>
 				</ul>If you use Firefox or Chrome, you must have it installed in your system.
 			</td><td align="center">Firefox</td></tr>
 		<tr><td>Select ChromeDriver</td>
 			<td>This allows you to select the location of ChromeDriver. For more information
 				refer to the above Chrome Browser entry.</td>
 		<td align = "center">(None)</td>
+		</tr>
+		<tr>
+			<td>Select PhantomJS binary</td>
+			<td>This allows you to select the location of PhantomJS binary. For more
+				information refer to the above PhantomJS Browser entry.</td>
+			<td align="center">(None)</td>
 		</tr>
 		<tr>
 			<td>Number of browser windows to open</td>
@@ -94,6 +104,11 @@
 		</tr>
 		
 	</table>
+	<p>
+		<strong>PhantomJS Note:</strong> When PhantomJS is selected it will not be possible to
+		spider sites at localhost, 127.0.0.1 and ::1 because of an issue in PhantomJS
+		(https://github.com/ariya/phantomjs/issues/11342 ). Until a fix is issued a warning
+		message will be shown.
 	
 	<h2>See also</h2>
 	<table>
