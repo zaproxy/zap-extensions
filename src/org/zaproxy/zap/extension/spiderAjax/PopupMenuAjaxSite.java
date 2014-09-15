@@ -99,11 +99,9 @@ public class PopupMenuAjaxSite extends PopupMenuItemSiteNodeContainer {
 	@Override
     public boolean isButtonEnabledForSiteNode (SiteNode node) {
 	    if (!extension.isSpiderRunning() && ! node.isRoot() ) {
-	        this.setEnabled(true);
-	    } else {
-	        this.setEnabled(false);
+	        return true;
 	    }
-        return true;
+        return false;
     }
 	
 	
