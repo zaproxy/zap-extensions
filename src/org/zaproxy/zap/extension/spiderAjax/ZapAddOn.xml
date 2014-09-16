@@ -6,7 +6,7 @@
 	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
-	In addition to Maximum crawl depth and Event wait time, added Max Crawl states, max duration, reload wait time and 'click elements once' as options to be configurable by a user (Issue 945) Added table to choose which elements to click and added 'click default only' option (issue 1177).<br>
+	Exposed several Crawljax options (Issue 945.)<br>
 	A warning message is shown if the selected browser was not successfully started.<br>
 	Disable the attack menu item "AJAX Spider Site" when the spider is running (Issue 1289).<br>
 	Updated Crawljax to version 3.5.1 and Selenium which adds support for Firefox 32 (Issue 1336).<br>
