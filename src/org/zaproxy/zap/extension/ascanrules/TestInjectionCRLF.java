@@ -24,6 +24,7 @@
 // ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
 // ZAP: 2014/09/16 Address FindBug issue surrounding attempt to compute absolute value of signed random int
 // RV_ABSOLUTE_VALUE_OF_RANDOM_INT
+// ZAP: 2014/09/16 Removed forced HTML reference formatting and add proper WASC id.
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -60,7 +61,7 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-        return "CRLF injection";
+        return "CRLF Injection";
     }
 
 
@@ -91,10 +92,9 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
 
     @Override
     public String getReference() {
-        String msg = "<ul><li>http://www.watchfire.com/resources/HTTPResponseSplitting.pdf</li>"
-        + "<li>http://webappfirewall.com/lib/crlf-injection.txtnull</li>" 
-        + "<li>http://www.securityfocus.com/bid/9804</li>"
-        + "</ul>";
+        String msg = "http://www.watchfire.com/resources/HTTPResponseSplitting.pdf\n"
+        + "http://webappfirewall.com/lib/crlf-injection.txtnull\n" 
+        + "http://www.securityfocus.com/bid/9804";
          
         return msg;
     }
@@ -155,8 +155,7 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
 
 	@Override
 	public int getWascId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 25;
 	}
 
 }
