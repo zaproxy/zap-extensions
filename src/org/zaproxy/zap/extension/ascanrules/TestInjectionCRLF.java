@@ -22,10 +22,12 @@
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
 // ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
+// ZAP: 2014/09/16 Address FindBug issue surrounding attempt to compute absolute value of signed random int
+// RV_ABSOLUTE_VALUE_OF_RANDOM_INT
 
 package org.zaproxy.zap.extension.ascanrules;
 
-import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,11 +36,9 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 
-
 public class TestInjectionCRLF extends AbstractAppParamPlugin {
 
-    private static Random   staticRandomGenerator =     new Random();
-    private String randomString = "Tamper=" + Long.toString(Math.abs(staticRandomGenerator.nextLong()));
+    private String randomString = "Tamper=" + UUID.randomUUID().toString();
     private String cookieTamper1 = "Set-cookie: " + randomString;
     private String cookieTamper2a = "any\r\nSet-cookie: " + randomString;
     private String cookieTamper2b = "any?\r\nSet-cookie: " + randomString;
@@ -46,7 +46,7 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
     private String cookieTamper3b = "any?\nSet-cookie: " + randomString;
     private String cookieTamper4a = "any\r\nSet-cookie: " + randomString + "\r\n";
     private String cookieTamper4b = "any?\r\nSet-cookie: " + randomString + "\r\n";
-
+    
     // should not be changed to static as Global may not be ready
     private String[] PARAM_LIST = {cookieTamper1, cookieTamper2a, cookieTamper2b, cookieTamper3a, cookieTamper3b, cookieTamper4a, cookieTamper4b};
     
