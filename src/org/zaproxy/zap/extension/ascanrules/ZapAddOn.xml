@@ -1,12 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>16</version>
+	<version>17</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-        Fixed bug in Persistent XSS rule (Issue 1273)
+        Changes to TestInjectionCRLF: address FindBugs issue, remove forced HTML elements in
+        references, add proper WASC ID.
 	]]>
     </changes>
 	<dependson/>
