@@ -323,7 +323,8 @@ public class AjaxSpiderParam extends AbstractParam {
     private void updateConfigsFromVersion(int oldVersion) {
         switch (oldVersion) {
         case NO_CONFIG_VERSION: // Nothing to do, the current version is already written at the end of the method.
-        case 1:
+        case 1: 
+        	getConfig().clearProperty(AJAX_SPIDER_BASE_KEY + ".crawlInDepth");
         }
 
         getConfig().setProperty(CONFIG_VERSION_KEY, Integer.valueOf(CONFIG_VERSION));
