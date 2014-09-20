@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>12</version>
+	<version>13</version>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor fixes to XFrameOptionsScanner (Issue 1256)
+	XContentTypeOptionsScanner Internationalization (Issue 1343) and default/error page updates (Issue 760).
 	]]>
 	</changes>
 	<dependson/>

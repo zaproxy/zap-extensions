@@ -1,22 +1,46 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ * 
+ * Copyright 2014 The ZAP Development Team
+ *  
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.Vector;
 
 import net.htmlparser.jericho.Source;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class XContentTypeOptionsScanner  extends PluginPassiveScanner {
+public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 
 	private PassiveScanThread parent = null;
+	/**
+	 * Prefix for internationalized messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.xcontenttypeoptionsscanner.";
+	private final int PLUGIN_ID = 10021;
 	
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		
 		
 	}
 
@@ -41,21 +65,20 @@ public class XContentTypeOptionsScanner  extends PluginPassiveScanner {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
-		    		"The Anti-MIME-Sniffing header "+HttpHeader.X_CONTENT_TYPE_OPTIONS +" was not set to 'nosniff'.\nThis allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared content type.\nCurrent (early 2014) and legacy versions of Firefox will use the declared content type (if one is set), rather than performing MIME-sniffing.",
-		    	    msg.getRequestHeader().getURI().toString(),
+		    		getDescription(), // Desc
+		    	    msg.getRequestHeader().getURI().toString(), // URL
 		    	    xContentTypeOption,
-		    	    "", 
-		    	    "", 
-		    	    "Ensure that the application/web server sets the "+HttpHeader.CONTENT_TYPE +" header appropriately, and that it sets the "+HttpHeader.X_CONTENT_TYPE_OPTIONS + " header to 'nosniff' for all web pages.\nIf possible, ensure that the end user uses a standards-compliant and modern web browser that does not perform MIME-sniffing at all, or that can be directed by the web application/web server to not perform MIME-sniffing.", 
-		            "", 
-		            "", // No evidence
+		    	    "", // Attack
+		    	    getOtherInfo(), // OtherInfo
+		    	    getSolution(), // Soln 
+		            getReference(), // Refs
+		            "", // Evidence
 		            0,	// TODO CWE Id
-		            0,	// TODO WASC Id
+		            15,	
 		            msg);
 	
     	parent.raiseAlert(id, alert);
 	}
-		
 
 	@Override
 	public void setParent(PassiveScanThread parent) {
@@ -64,12 +87,27 @@ public class XContentTypeOptionsScanner  extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "X-Content-Type-Options header missing";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
 	@Override
 	public int getPluginId() {
-		return 10021;
+		return PLUGIN_ID;
+	}
+	
+	private String getDescription() {
+			return Constant.messages.getString(MESSAGE_PREFIX + "desc");
 	}
 
+	private String getOtherInfo() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo");
+	}
+	
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
+
+	private String getReference() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+	}
 }
