@@ -37,7 +37,7 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 	 * Prefix for internationalized messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.xcontenttypeoptionsscanner.";
-	private final int PLUGIN_ID = 10021;
+	private final static int PLUGIN_ID = 10021;
 	
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
