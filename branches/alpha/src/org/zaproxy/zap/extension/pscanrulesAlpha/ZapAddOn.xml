@@ -6,8 +6,8 @@
 	<url/>
 	<changes>
 	<![CDATA[	
-	Tweaked "Source Code Disclosure" scanner to reduce false positives</br> 
-	Added "Insecure Component" scanner</br>
+	Tweaked "Source Code Disclosure" scanner to reduce false positives<br> 
+	Added "Insecure Component" scanner<br>
 	Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')
 	]]>
 	</changes>
