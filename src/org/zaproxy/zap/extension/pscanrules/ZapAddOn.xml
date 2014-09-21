@@ -6,8 +6,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor fixes to XFrameOptionsScanner (Issue 1256).<br>
-	XContentTypeOptionsScanner Internationalization (Issue 1343).<br>
+	Minor fixes to XFrameOptionsScanner (Issue 1256).</br>
+	XContentTypeOptionsScanner Internationalization (Issue 1343).</br>
 	XContentTypeOptionsScanner default/error page updates (Issue 760).
 	]]>
 	</changes>
