@@ -37,7 +37,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.xframeoptionsscanner.";
-	private final int PLUGIN_ID = 10020;
+	private static final int PLUGIN_ID = 10020;
 	
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
