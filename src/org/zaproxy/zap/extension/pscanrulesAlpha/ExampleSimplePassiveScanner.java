@@ -40,7 +40,7 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 	// wasc_10 is Denial of Service - well, its just an example ;)
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
 	private PassiveScanThread parent = null;
-	private static Logger logger = Logger.getLogger(ExampleSimplePassiveScanner.class);
+	private static final Logger logger = Logger.getLogger(ExampleSimplePassiveScanner.class);
 	
 	private Random rnd = new Random();
 

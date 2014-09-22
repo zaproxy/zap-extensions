@@ -43,7 +43,7 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 	private static final int PLUGIN_ID = 10036;
 	
 	private PassiveScanThread parent = null;
-	private final static Logger logger = Logger.getLogger(ServerHeaderInfoLeakScanner.class);
+	private static final Logger logger = Logger.getLogger(ServerHeaderInfoLeakScanner.class);
 	
 	private final static Pattern VERSION_PATTERN = Pattern.compile(".*\\d.*");
 	

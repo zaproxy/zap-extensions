@@ -42,7 +42,7 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 	private static final int PLUGIN_ID = 10037;
 	
 	private PassiveScanThread parent = null;
-	private final static Logger logger = Logger.getLogger(XPoweredByHeaderInfoLeakScanner.class);
+	private static final Logger logger = Logger.getLogger(XPoweredByHeaderInfoLeakScanner.class);
 	
 	@Override
 	public void setParent(PassiveScanThread parent) {

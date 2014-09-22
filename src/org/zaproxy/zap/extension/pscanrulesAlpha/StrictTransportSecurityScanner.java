@@ -42,7 +42,7 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 	private static final int PLUGIN_ID = 10035;
 	
 	private PassiveScanThread parent = null;
-	private final static Logger logger = Logger.getLogger(StrictTransportSecurityScanner.class);
+	private static final Logger logger = Logger.getLogger(StrictTransportSecurityScanner.class);
 	
 	@Override
 	public void setParent(PassiveScanThread parent) {
