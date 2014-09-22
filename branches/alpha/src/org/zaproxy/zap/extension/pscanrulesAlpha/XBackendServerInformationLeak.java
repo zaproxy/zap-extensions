@@ -42,7 +42,7 @@ public class XBackendServerInformationLeak extends PluginPassiveScanner{
 	private static final int PLUGIN_ID = 10039;
 	
 	private PassiveScanThread parent = null;
-	private final static Logger logger = Logger.getLogger(XBackendServerInformationLeak.class);
+	private static final Logger logger = Logger.getLogger(XBackendServerInformationLeak.class);
 	
 	@Override
 	public void setParent(PassiveScanThread parent) {
