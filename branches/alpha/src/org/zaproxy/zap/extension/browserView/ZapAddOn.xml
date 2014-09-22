@@ -6,7 +6,8 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Check if JavaFX is available before trying to add the response view (Issue 1201).
+	Check if JavaFX is available before trying to add the response view (Issue 1201).<br>
+	Correctly unload the add-on (Issue 1344).
 	]]>
 	</changes>
 	<dependson/>
