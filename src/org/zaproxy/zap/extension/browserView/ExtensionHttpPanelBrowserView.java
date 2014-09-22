@@ -128,6 +128,8 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
 	
 	@Override
 	public void unload() {
+		super.unload();
+
 		if (getView() != null && javaFxAvailable) {
 			HttpPanelManager panelManager = HttpPanelManager.getInstance();
 			panelManager.removeResponseViewFactory(ResponseSplitComponent.NAME, ResponseBrowserViewFactory.NAME);
