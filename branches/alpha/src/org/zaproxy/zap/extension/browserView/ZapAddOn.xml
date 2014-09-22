@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Browser View</name>
-	<version>2</version>
+	<version>3</version>
 	<description>Adds an option to render HTML responses like a browser</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).<br>
-	Updated add-on dir structure (Issue 1113).
+	Check if JavaFX is available before trying to add the response view (Issue 1201).
 	]]>
 	</changes>
 	<dependson/>
