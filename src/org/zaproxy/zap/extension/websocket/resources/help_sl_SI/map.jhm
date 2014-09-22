@@ -9,5 +9,5 @@
     <mapID target="websocket.introduction" url="contents/introduction.html" />
     <mapID target="websocket.tab" url="contents/tab.html" />
  	<mapID target="websocket.options" url="contents/options.html" />
- 	<mapID target="websocket.session_properties" url="contents/session-properties.html" />
+ 	<mapID target="websocket.sessionProperties" url="contents/sessionProperties.html" />
 </map>
