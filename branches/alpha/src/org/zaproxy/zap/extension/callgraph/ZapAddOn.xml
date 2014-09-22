@@ -4,7 +4,12 @@
 	<description>Allows the user to view a call graph of the selected resources</description>
 	<author>Colm O'Flaherty</author>
 	<url></url>
-	<changes>Now also graphs requests originating from the Ajax Spider</changes>
+	<changes>
+	<![CDATA[
+	Now also graphs requests originating from the Ajax Spider.<br>
+	Enables "Call Graph" pop up menu when in "Protected" and "Safe" modes (Issue 1278).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.callgraph.ExtensionCallGraph</extension>
