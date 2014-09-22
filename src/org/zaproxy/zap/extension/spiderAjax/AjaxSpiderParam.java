@@ -367,7 +367,14 @@ public class AjaxSpiderParam extends AbstractParam {
             // and the current version is already written at the end of the method.
             break;
         case 1: 
-        	getConfig().clearProperty(AJAX_SPIDER_BASE_KEY + ".crawlInDepth");
+            String crawlInDepthKey = AJAX_SPIDER_BASE_KEY + ".crawlInDepth";
+            try {
+                boolean crawlInDepth = getConfig().getBoolean(crawlInDepthKey, false);
+                getConfig().setProperty(CLICK_DEFAULT_ELEMS_KEY, Boolean.valueOf(!crawlInDepth));
+            } catch (ConversionException e) {
+                logger.warn("Failed to read (old) configuration '" + crawlInDepthKey + "', no update will be made.");
+            }
+        	getConfig().clearProperty(crawlInDepthKey);
         }
 
         getConfig().setProperty(CONFIG_VERSION_KEY, Integer.valueOf(CURRENT_CONFIG_VERSION));
