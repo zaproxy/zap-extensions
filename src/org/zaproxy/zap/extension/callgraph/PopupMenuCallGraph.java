@@ -148,5 +148,10 @@ class PopupMenuCallGraph extends PopupMenuHttpMessageContainer {
 			//}
 			return callGraphFrame;
 		}
+
+		@Override
+		public boolean isSafe() {
+			return true;
+		}
 	}
 }
