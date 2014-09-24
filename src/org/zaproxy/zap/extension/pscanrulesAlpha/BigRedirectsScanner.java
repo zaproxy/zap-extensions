@@ -60,21 +60,21 @@ public class BigRedirectsScanner extends PluginPassiveScanner{
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
 	
-		int responseLocationHeaderURILength=0;
-		String locationHeaderValue = "";
 		//isRedirect checks response code between 300 and 400, but 304 isn't actually a redirect it's "not modified"
 		if(HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode()) &&
 				msg.getResponseHeader().getStatusCode() != 304) { //This response is a redirect
-			try {
-				locationHeaderValue = msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION);
+			int responseLocationHeaderURILength=0;
+			String locationHeaderValue = msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION);
+			if (locationHeaderValue !=null) {
 				responseLocationHeaderURILength = locationHeaderValue.length();
-			} catch(NullPointerException e) { //No location header found
-				logger.error(MessageFormat.format(Constant.messages.getString(MESSAGE_PREFIX + "redirect_no_location_error"),
+			} 
+			else { //No location header found
+				logger.debug(MessageFormat.format("Though the response had a redirect status code it did not have a Location header.\nRequested URL: {0}",
 						msg.getRequestHeader().getURI().toString()));
 			}
 		
 			if (responseLocationHeaderURILength > 0) {
-				double predictedResponseSize = getPredictedResponseSize(responseLocationHeaderURILength);
+				int predictedResponseSize = getPredictedResponseSize(responseLocationHeaderURILength);
 				int responseBodyLength=msg.getResponseBody().length();
 				//Check if response is bigger than predicted
 				if(responseBodyLength > predictedResponseSize) {
@@ -93,7 +93,7 @@ public class BigRedirectsScanner extends PluginPassiveScanner{
 			    				getReference(), //References
 			    				"",	// Evidence 
 			    				201, // CWE Id
-			    				38,	// WASC Id
+			    				13,	// WASC Id
 			    				msg); //HttpMessage
 			    		parent.raiseAlert(id, alert);
 				}
@@ -113,8 +113,8 @@ public class BigRedirectsScanner extends PluginPassiveScanner{
 	private int getPredictedResponseSize(int redirectURILength) {
 		int predictedResponseSize = redirectURILength + 300;
 		if (logger.isDebugEnabled()) {
-			logger.debug("Original Respsonse Location Header URI Length: "+ redirectURILength);
-			logger.debug("Predicted Respsonse Size: "+ predictedResponseSize);
+			logger.debug("Original Response Location Header URI Length: "+ redirectURILength);
+			logger.debug("Predicted Response Size: "+ predictedResponseSize);
 		}
 		return predictedResponseSize;
 	}
