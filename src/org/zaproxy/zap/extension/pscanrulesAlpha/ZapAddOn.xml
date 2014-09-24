@@ -8,7 +8,8 @@
 	<![CDATA[	
 	Tweaked "Source Code Disclosure" scanner to reduce false positives<br> 
 	Added "Insecure Component" scanner<br>
-	Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')
+	Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')<br>
+	Add Big Redirect scanner (Issue 1257)
 	]]>
 	</changes>
 	<dependson/>
@@ -18,6 +19,7 @@
 	<ascanrules/>
 	<pscanrules>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.Base64Disclosure</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.BigRedirectsScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ContentSecurityPolicyMissingScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CrossDomainMisconfiguration</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.DirectoryBrowsingScanner</pscanrule>
