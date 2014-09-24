@@ -120,5 +120,9 @@ This checks response headers for the presence of X-Powered-By details.
 <H2>X-Backend-Server Header Information Leak</H2>
 This checks response headers for the presence of X-Backend-Server details.
 
+<H2>Big Redirect</H2>
+This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
+A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
+
 </BODY>
 </HTML>
