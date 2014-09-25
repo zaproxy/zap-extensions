@@ -142,7 +142,7 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 														};
 	private static String SYNTACTIC_UNION_STATEMENTS [] = {
 														 "UNION" 
-														,"UNION ALL"
+														//,"UNION ALL"  Not necessary
 														};
 	private static String SQLITE_VERSION_FUNCTIONS [] = {
 														 "sqlite_version()"		//string type - gets the version in the form of "3.7.16.2", for instance
@@ -164,8 +164,8 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 														,",null,null,null,null,null,null,null,null,null"														
 														};
 	private static String SYNTACTIC_NEXT_STATEMENT_COMMENTER [] = {
-														 ""
-														,SQL_ONE_LINE_COMMENT
+														SQL_ONE_LINE_COMMENT
+														//,""				//this isn't useful at all
 														};
 	
 	/**
@@ -448,6 +448,12 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 					}
 					if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test for "+ numBlobsToCreate + " random blob bytes: ["+ newTimeBasedInjectionValue + "] on field: ["+paramName+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");					
 					previousDelay = modifiedTimeUsed;
+					
+					//bale out if we were asked nicely
+					if (isStop()) { 
+						if ( this.debugEnabled ) log.debug("Stopping the scan due to a user request");
+						return;
+						}
 				}  //end of for loop to increase the number of random blob bytes to create
 				
 				//the number of times that we could sequentially increase the delay by increasing the "number of random blob bytes to create"
@@ -494,7 +500,8 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 			//do this regardless of whether we already found a vulnerability using another technique.
 			if ( doUnionBased ) {
 				int unionRequests = 0;
-				Pattern versionNumberPattern = Pattern.compile("[0-9.]{3,}", PATTERN_PARAM);
+				//catch 3.0, 3.0.1, 3.0.1.1, 3.7.16.2, etc
+				Pattern versionNumberPattern = Pattern.compile("[0-9]{1}\\.[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{1,2}|[0-9]{1}\\.[0-9]{1,2}\\.[0-9]{1,2}|[0-9]{1}\\.[0-9]{1,2}", PATTERN_PARAM);
 				String candidateValues [] = {"",originalParamValue};
 				//shonky break label. labels the loop to break out of.  I believe I just finished a sentence with a preposition too. Oh My.
 				unionLoops:
@@ -544,10 +551,15 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 															getBaseMsg().getRequestHeader().getURI().getURI(), //url
 															paramName, unionAttack, 
 															extraInfo, getSolution(),
-															versionNumber, this.getCweId(), this.getWascId(), 
+															versionNumber /*as evidence*/, this.getCweId(), this.getWascId(), 
 															unionAttackMessage);
 													break unionLoops;
 												}
+											}
+										//bale out if we were asked nicely
+										if (isStop()) { 
+											if ( this.debugEnabled ) log.debug("Stopping the scan due to a user request");
+											return;
 											}
 										}
 									}
