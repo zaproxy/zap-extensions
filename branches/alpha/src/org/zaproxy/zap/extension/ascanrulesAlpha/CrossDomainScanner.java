@@ -186,7 +186,8 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 					}
 			    }			
 			} catch (SAXException | IOException e) {
-				log.error("An error occurred trying to parse "+ADOBE_CROSS_DOMAIN_POLICY_FILE+" as XML: "+ e);
+				// Could well be a 404 or equivalent
+				log.debug("An error occurred trying to parse "+ADOBE_CROSS_DOMAIN_POLICY_FILE+" as XML: "+ e);
 			}
 			
 
@@ -223,7 +224,8 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 			    }			    
 			
 			} catch (SAXException | IOException e) {
-				log.error("An error occurred trying to parse "+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE+" as XML: "+ e);
+				// Could well be a 404 or equivalent
+				log.debug("An error occurred trying to parse "+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE+" as XML: "+ e);
 			}
 
 			
