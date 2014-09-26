@@ -59,6 +59,11 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		if (!Constant.isDevBuild()) {
+			// Only run this example scanner in dev mode
+			// Uncomment locally if you want to see these alerts in non dev mode ;)
+			return;
+		}
 		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
 			String parameter;
 			if ((parameter = doesResponseContainString(msg.getResponseBody())) != null) {

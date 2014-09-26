@@ -22,6 +22,7 @@ import java.util.Random;
 import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
@@ -65,6 +66,11 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		if (!Constant.isDevBuild()) {
+			// Only run this example scanner in dev mode
+			// Uncomment locally if you want to see these alerts in non dev mode ;)
+			return;
+		}
 		long start = System.currentTimeMillis();
 		
 		// This is where you detect potential vulnerabilities.
