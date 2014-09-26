@@ -24,6 +24,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -90,7 +91,7 @@ public class ShellShockScanner extends AbstractAppPlugin {
 	@Override
 	public void scan() {		
 		try {
-			
+			// First try a simple reflected attack
 			HttpMessage msg = getNewMsg();
 			String evidence = "ZAP-Vulnerable";
 			String attack = "() { :;}; echo 'ShellShock: " + evidence + "'";
@@ -100,22 +101,55 @@ public class ShellShockScanner extends AbstractAppPlugin {
 			Vector<String> ssHeaders = msg.getResponseHeader().getHeaders("ShellShock");
 			if (ssHeaders.size() > 0) {
 				if (ssHeaders.get(0).contains(evidence)) {
-					
 					bingo(	getRisk(), 
 							Alert.WARNING,
 							this.getName(),
 							this.getDescription(), 
 							null, // originalMessage.getRequestHeader().getURI().getURI(),
 							HttpHeader.USER_AGENT, // parameter being attacked
-							attack,  // attack
+							attack,
 							Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
 							this.getSolution(),
 							evidence,
 							msg
 							);
-
+					return;
 				}
 			}
+			// Then a timing attack
+			boolean vulnerable = false;
+			msg = getNewMsg();
+			attack = "() { :;}; sleep 5 ";
+			msg.getRequestHeader().setHeader(HttpHeader.USER_AGENT, attack);
+			sendAndReceive(msg, false); //do not follow redirects
+			
+			if (msg.getTimeElapsedMillis() > 5000) {
+				vulnerable = true;
+		        if (!Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold()) && msg.getTimeElapsedMillis() > 6000) {
+					// Could be that the server is overloaded, try a safe request
+					HttpMessage safeMsg = getNewMsg();
+					sendAndReceive(safeMsg, false); //do not follow redirects
+					if (msg.getTimeElapsedMillis() > 5000) {
+						vulnerable = false;
+					}
+				}
+			}
+			if (vulnerable) {
+				bingo(	getRisk(), 
+						Alert.WARNING,
+						this.getName(),
+						this.getDescription(), 
+						null, // originalMessage.getRequestHeader().getURI().getURI(),
+						HttpHeader.USER_AGENT, // parameter being attacked
+						attack,
+						Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
+						this.getSolution(),
+						null,	// There isnt a relevant string to show
+						msg
+						);
+				return;
+			}
+
 		} catch (Exception e) {
 			log.error("Error scanning a Host for ShellShock: " + e.getMessage(), e);
 		}
@@ -129,12 +163,12 @@ public class ShellShockScanner extends AbstractAppPlugin {
 
 	@Override
 	public int getCweId() {
-		return 0;  // TODO
+		return 78;  // Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
 	}
 
 	@Override
 	public int getWascId() {
-		return 0;  // TODO
+		return 31;  // OS Commanding
 	}
 
 }
