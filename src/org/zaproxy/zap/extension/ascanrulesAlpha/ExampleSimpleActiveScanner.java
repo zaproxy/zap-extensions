@@ -20,6 +20,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -112,6 +113,11 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
 	@Override
 	public void scan(HttpMessage msg, String param, String value) {
 		try {
+			if (!Constant.isDevBuild()) {
+				// Only run this example scanner in dev mode
+				// Uncomment locally if you want to see these alerts in non dev mode ;)
+				return;
+			}
 			// This is where you change the 'good' request to attack the application
 			// You can make multiple requests if needed
 			String attack = "attack";

@@ -102,6 +102,12 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
 	@Override
 	public void scan(HttpMessage msg, String param, String value) {
 		try {
+			if (!Constant.isDevBuild()) {
+				// Only run this example scanner in dev mode
+				// Uncomment locally if you want to see these alerts in non dev mode ;)
+				return;
+			}
+			
 			if (this.strings == null) {
 				this.strings = loadFile(exampleAscanFile);
 			}
