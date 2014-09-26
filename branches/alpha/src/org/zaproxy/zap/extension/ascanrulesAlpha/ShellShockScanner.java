@@ -92,45 +92,53 @@ public class ShellShockScanner extends AbstractAppPlugin {
 	public void scan() {		
 		try {
 			// First try a simple reflected attack
+			// Use a standard HTTP response header, to make sure the header is not dropped by load balancers, proxies, etc
+			String attackHeader = "X-Powered-By";		
+			String evidence = "ShellShock-Vulnerable";
+			
 			HttpMessage msg1 = getNewMsg();
-			String evidence = "ZAP-Vulnerable";
-			String attack = "() { :;}; echo 'ShellShock: " + evidence + "'";
+			String attack = "() { :;}; echo '"+attackHeader+": " + evidence + "'";
+			
 			msg1.getRequestHeader().setHeader(HttpHeader.USER_AGENT, attack);
 			sendAndReceive(msg1, false); //do not follow redirects
 			
-			Vector<String> ssHeaders = msg1.getResponseHeader().getHeaders("ShellShock");
+			Vector<String> ssHeaders = msg1.getResponseHeader().getHeaders(attackHeader);
 			if (ssHeaders != null && ssHeaders.size() > 0) {
-				if (ssHeaders.get(0).contains(evidence)) {
-					bingo(	getRisk(), 
-							Alert.WARNING,
-							this.getName(),
-							this.getDescription(), 
-							null, // originalMessage.getRequestHeader().getURI().getURI(),
-							HttpHeader.USER_AGENT, // parameter being attacked
-							attack,
-							Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
-							this.getSolution(),
-							evidence,
-							msg1
-							);
-					return;
+				for ( String header: ssHeaders) {
+					if (header.contains(evidence)) {
+						bingo(	getRisk(), 
+								Alert.WARNING,
+								this.getName(),
+								this.getDescription(), 
+								null, // originalMessage.getRequestHeader().getURI().getURI(),
+								HttpHeader.USER_AGENT, // parameter being attacked
+								attack,
+								Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
+								this.getSolution(),
+								evidence,
+								msg1
+								);
+						return;
+					}	
 				}
 			}
+			
 			// Then a timing attack
 			boolean vulnerable = false;
 			HttpMessage msg2 = getNewMsg();
-			attack = "() { :;}; sleep 5 ";
+			attack = "() { :;}; /bin/sleep 5";
 			msg2.getRequestHeader().setHeader(HttpHeader.USER_AGENT, attack);
 			sendAndReceive(msg2, false); //do not follow redirects
+			long attackElapsedTime = msg2.getTimeElapsedMillis();
 			
-			if (msg2.getTimeElapsedMillis() > 5000) {
+			if (attackElapsedTime > 5000) {
 				vulnerable = true;
-		        if (!Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold()) && msg2.getTimeElapsedMillis() > 6000) {
+		        if (!Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold()) && attackElapsedTime > 6000) {
 					// Could be that the server is overloaded, try a safe request
 					HttpMessage safeMsg = getNewMsg();
 					sendAndReceive(safeMsg, false); //do not follow redirects
 					if (safeMsg.getTimeElapsedMillis() > 5000 && 
-							(safeMsg.getTimeElapsedMillis() - msg2.getTimeElapsedMillis()) < 5000) {
+							(safeMsg.getTimeElapsedMillis() - attackElapsedTime) < 5000) {
 						// Looks like the server is just overloaded
 						vulnerable = false;
 					}
@@ -146,7 +154,7 @@ public class ShellShockScanner extends AbstractAppPlugin {
 						attack,
 						Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
 						this.getSolution(),
-						null,	// There isnt a relevant string to show
+						Constant.messages.getString("ascanalpha.shellshock.timingbased.evidence", attackElapsedTime),
 						msg2
 						);
 				return;
