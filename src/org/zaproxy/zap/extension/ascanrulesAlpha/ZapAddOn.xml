@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>9</version>
+	<version>10</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-		Added "HTTPS Content Available via HTTP" scanner. (Issue 1295)<br>
-		Added "SQLite" SQL Injection scanner. (Issue 734).
+		Added "ShellShock" scanner. (Issue 1347)<br>
 	]]>
 	</changes>
 	<dependson/>
@@ -20,15 +19,16 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HeartBleedActiveScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.InsecureHTTPMethod</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RemoteCodeExecutionCVE20121823</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ShellShockScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SlackerCookieDetector</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureCVE20121823</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureSVN</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.InsecureHTTPMethod</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureWEBINF</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureCVE20121823</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RemoteCodeExecutionCVE20121823</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionSQLite</ascanrule>
 	</ascanrules>
 	<pscanrules/>

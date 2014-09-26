@@ -92,14 +92,14 @@ public class ShellShockScanner extends AbstractAppPlugin {
 	public void scan() {		
 		try {
 			// First try a simple reflected attack
-			HttpMessage msg = getNewMsg();
+			HttpMessage msg1 = getNewMsg();
 			String evidence = "ZAP-Vulnerable";
 			String attack = "() { :;}; echo 'ShellShock: " + evidence + "'";
-			msg.getRequestHeader().setHeader(HttpHeader.USER_AGENT, attack);
-			sendAndReceive(msg, false); //do not follow redirects
+			msg1.getRequestHeader().setHeader(HttpHeader.USER_AGENT, attack);
+			sendAndReceive(msg1, false); //do not follow redirects
 			
-			Vector<String> ssHeaders = msg.getResponseHeader().getHeaders("ShellShock");
-			if (ssHeaders.size() > 0) {
+			Vector<String> ssHeaders = msg1.getResponseHeader().getHeaders("ShellShock");
+			if (ssHeaders != null && ssHeaders.size() > 0) {
 				if (ssHeaders.get(0).contains(evidence)) {
 					bingo(	getRisk(), 
 							Alert.WARNING,
@@ -111,25 +111,27 @@ public class ShellShockScanner extends AbstractAppPlugin {
 							Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
 							this.getSolution(),
 							evidence,
-							msg
+							msg1
 							);
 					return;
 				}
 			}
 			// Then a timing attack
 			boolean vulnerable = false;
-			msg = getNewMsg();
+			HttpMessage msg2 = getNewMsg();
 			attack = "() { :;}; sleep 5 ";
-			msg.getRequestHeader().setHeader(HttpHeader.USER_AGENT, attack);
-			sendAndReceive(msg, false); //do not follow redirects
+			msg2.getRequestHeader().setHeader(HttpHeader.USER_AGENT, attack);
+			sendAndReceive(msg2, false); //do not follow redirects
 			
-			if (msg.getTimeElapsedMillis() > 5000) {
+			if (msg2.getTimeElapsedMillis() > 5000) {
 				vulnerable = true;
-		        if (!Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold()) && msg.getTimeElapsedMillis() > 6000) {
+		        if (!Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold()) && msg2.getTimeElapsedMillis() > 6000) {
 					// Could be that the server is overloaded, try a safe request
 					HttpMessage safeMsg = getNewMsg();
 					sendAndReceive(safeMsg, false); //do not follow redirects
-					if (msg.getTimeElapsedMillis() > 5000) {
+					if (safeMsg.getTimeElapsedMillis() > 5000 && 
+							(safeMsg.getTimeElapsedMillis() - msg2.getTimeElapsedMillis()) < 5000) {
+						// Looks like the server is just overloaded
 						vulnerable = false;
 					}
 				}
@@ -145,7 +147,7 @@ public class ShellShockScanner extends AbstractAppPlugin {
 						Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
 						this.getSolution(),
 						null,	// There isnt a relevant string to show
-						msg
+						msg2
 						);
 				return;
 			}
