@@ -1,15 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>9</version>
+	<version>10</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-		Added "HTTPS Content Available via HTTP" scanner. (Issue 1295)<br>
-		Added "SQLite" SQL Injection scanner. (Issue 734).<br>
-		Added "ShellShock" scanner. (Issue 1347)<br>
-		Only show example alerts in dev mode (Issue 1349)
+		Improved "Shell Shock" scanner to also detect the vulnerability in PHP scripts.
 	]]>
 	</changes>
 	<dependson/>
