@@ -95,6 +95,11 @@ class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
 		return true;
 	}
 
+	@Override
+	public boolean isSafe() {
+		return true;
+	}
+
     private static class SaveMessagePopupMenu extends PopupMenuHttpMessageContainer {
 
         private static final long serialVersionUID = -6742362073862968150L;
@@ -123,6 +128,11 @@ class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
             }
 
             return enabled;
+        }
+
+        @Override
+        public boolean isSafe() {
+            return true;
         }
     }
 
@@ -212,6 +222,11 @@ class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
             }
 
             writeToFile(file, bytes);
+        }
+
+        @Override
+        public boolean isSafe() {
+            return true;
         }
 
     }
