@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="quick start" target="quickstart" />
+	<indexitem text="クイック スタート" target="quickstart" />
 </index>
