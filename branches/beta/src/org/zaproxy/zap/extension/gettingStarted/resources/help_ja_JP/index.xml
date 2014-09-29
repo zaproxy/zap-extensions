@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="gettingStarted" target="gettingStarted" />
+	<indexitem text="はじめに" target="gettingStarted" />
 </index>
