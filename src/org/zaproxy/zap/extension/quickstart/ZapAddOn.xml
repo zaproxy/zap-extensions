@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>14</version>
+	<version>15</version>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).<br>
-	Updated add-on dir structure (Issue 1113).
+	Generate the report (arg -quickout) even if view is initialised (Issue 1281).
 	]]>
 	</changes>
 	<dependson/>

@@ -265,18 +265,24 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		return confButton;
 	}
 
-	private void attackUrl () {
+	boolean attackUrl () {
 		URL url;
 		try {
 			url = new URL(this.getUrlField().getText());
 		} catch (Exception e) {
 			extension.getView().showWarningDialog(Constant.messages.getString("quickstart.url.warning.invalid"));
-			return;
+			this.getUrlField().requestFocusInWindow();
+			return false;
 		}
 		getAttackButton().setEnabled(false);
 		getStopButton().setEnabled(true);
 		
 		extension.attack(url);
+		return true;
+	}
+
+	void setAttackUrl(String url) {
+		getUrlField().setText(url);
 	}
 	
 	private void stopAttack() {

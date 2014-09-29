@@ -20,14 +20,19 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.Container;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -46,6 +51,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	
 	public static final String NAME = "ExtensionQuickStart";
 	protected static final String SCRIPT_CONSOLE_HOME_PAGE = Constant.ZAP_HOMEPAGE;
+	private static final Logger LOGGER = Logger.getLogger(ExtensionQuickStart.class);
 	
 	private QuickStartPanel quickStartPanel = null;
 	private AttackThread attackThread = null;
@@ -138,20 +144,19 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	public void notifyProgress(AttackThread.Progress progress) {
 		if (View.isInitialised()) {
 			this.getQuickStartPanel().notifyProgress(progress);
-		} else {
-        	switch (progress) {
-        	case notstarted:
-        	case spider:
-        	case ascan:
-        		this.runningFromCmdLine = true;
-        		break;
-        	case failed:
-        	case complete:
-        	case stopped:
-        		this.runningFromCmdLine = false;
-        		break;
-        	}
 		}
+    	switch (progress) {
+    	case notstarted:
+    	case spider:
+    	case ascan:
+    		this.runningFromCmdLine = true;
+    		break;
+    	case failed:
+    	case complete:
+    	case stopped:
+    		this.runningFromCmdLine = false;
+    		break;
+    	}
 	}
 
 	public void stopAttack() {
@@ -201,38 +206,49 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
         if (arguments[ARG_QUICK_URL_IDX].isEnabled()) {
         	Vector<String> params = arguments[ARG_QUICK_URL_IDX].getArguments();
             if (params.size() == 1) {
-            	try {
-					this.attack(new URL(params.get(0)));
-	        		this.runningFromCmdLine = true;
-
-					while (this.runningFromCmdLine) {
-						// Loop until the attack thread completes
-						Thread.sleep(1000);
-					}
-				    ReportLastScan report = new ReportLastScan();
-				    StringBuilder rpt = new StringBuilder();
-					report.generate(rpt , getModel());
-					
-			        if (arguments[ARG_QUICK_OUT_IDX].isEnabled()) {
-			        	File f = new File(arguments[ARG_QUICK_OUT_IDX].getArguments().get(0));
-			        	System.out.println(MessageFormat.format(
-			        			Constant.messages.getString("quickstart.cmdline.outputto"), f.getAbsolutePath()));
-			        	PrintWriter writer = new PrintWriter(f);
-			        	writer.write(rpt.toString());
-			        	writer.close();
-			        } else {
-			        	// Just output to stdout
-			        	System.out.println(rpt.toString());
-			        }
-					
-				} catch (Exception e) {
-					// Stacktrace as good an anything else right now
-					e.printStackTrace();
+				QuickAttacker quickAttacker;
+				if (View.isInitialised()) {
+					quickAttacker = new UIQuickAttacker();
+				} else {
+					quickAttacker = new HeadlessQuickAttacker();
 				}
+
+				if (!quickAttacker.attack(params.get(0))) {
+					return;
+				}
+
+	    		this.runningFromCmdLine = true;
+
+				while (this.runningFromCmdLine) {
+					// Loop until the attack thread completes
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException ignore) {
+					}
+				}
+
+			    if (arguments[ARG_QUICK_OUT_IDX].isEnabled()) {
+			    	quickAttacker.saveReport(Paths.get(arguments[ARG_QUICK_OUT_IDX].getArguments().get(0)));
+                } else {
+			    	quickAttacker.handleNoSavedReport();
+                }
             }
         } else {
             return;
         }
+    }
+
+    private void saveReportTo(Path file) throws Exception {
+        try (BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
+            writer.write(getScanReport());
+        }
+    }
+
+    private String getScanReport() throws Exception {
+        ReportLastScan report = new ReportLastScan();
+        StringBuilder rpt = new StringBuilder();
+        report.generate(rpt, getModel());
+        return rpt.toString();
     }
 
     private CommandLineArgument[] getCommandLineArguments() {
@@ -254,4 +270,123 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 		return false;
 	}
 
+	private abstract static class QuickAttacker {
+
+		public abstract boolean attack(String url);
+
+		protected final boolean isValid(Path file) {
+			if (Files.notExists(file)) {
+				if (file.getParent() == null || !Files.isWritable(file.getParent())) {
+					reportError(MessageFormat.format(
+							Constant.messages.getString("quickstart.cmdline.quickout.error.dirNotWritable"),
+							file.getParent() == null ? file.toAbsolutePath() : file.getParent().toAbsolutePath().normalize()));
+					return false;
+				}
+			} else if (!Files.isRegularFile(file)) {
+				reportError(MessageFormat.format(
+						Constant.messages.getString("quickstart.cmdline.quickout.error.notAFile"),
+						file.toAbsolutePath().normalize()));
+				return false;
+			} else if (!Files.isWritable(file)) {
+				reportError(MessageFormat.format(
+						Constant.messages.getString("quickstart.cmdline.quickout.error.fileNotWritable"),
+						file.toAbsolutePath().normalize()));
+				return false;
+			}
+
+			return true;
+		}
+
+		protected abstract void reportError(String error);
+
+		public abstract void saveReport(Path file);
+
+		public abstract void handleNoSavedReport();
+	}
+
+	private class UIQuickAttacker extends QuickAttacker {
+
+		@Override
+		public boolean attack(String url) {
+			getQuickStartPanel().setAttackUrl(url);
+			return getQuickStartPanel().attackUrl();
+		}
+
+		@Override
+		protected void reportError(String error) {
+			View.getSingleton().showWarningDialog(error);
+		}
+
+		@Override
+		public void saveReport(Path file) {
+			if (!isValid(file)) {
+				return;
+			}
+			try {
+				saveReportTo(file);
+				View.getSingleton().showMessageDialog(
+						MessageFormat.format(
+								Constant.messages.getString("quickstart.cmdline.quickout.save.report.successful"),
+								file.toAbsolutePath().normalize()));
+			} catch (Exception e) {
+				reportError(Constant.messages.getString("quickstart.cmdline.quickout.error.save.report"));
+				LOGGER.error("Failed to generate report: ", e);
+			}
+		}
+
+		@Override
+		public void handleNoSavedReport() {
+			// Do nothing, the user has the UI to generate the report if (s)he wants to.
+		}
+	}
+
+	private class HeadlessQuickAttacker extends QuickAttacker {
+
+		@Override
+		public boolean attack(String url) {
+			URL targetURL;
+			try {
+				targetURL = new URL(url);
+			} catch (MalformedURLException e) {
+				reportError(Constant.messages.getString("quickstart.cmdline.quickurl.error.invalidUrl"));
+				e.printStackTrace();
+				return false;
+			}
+
+			ExtensionQuickStart.this.attack(targetURL);
+			return true;
+		}
+
+		@Override
+		protected void reportError(String error) {
+			System.out.println(error);
+		}
+
+		@Override
+		public void saveReport(Path file) {
+			System.out.println(MessageFormat.format(
+					Constant.messages.getString("quickstart.cmdline.outputto"),
+					file.toAbsolutePath().toString()));
+
+			if (!isValid(file)) {
+				return;
+			}
+
+			try {
+				saveReportTo(file);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void handleNoSavedReport() {
+			try {
+				// Just output to stdout
+				System.out.println(getScanReport());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
