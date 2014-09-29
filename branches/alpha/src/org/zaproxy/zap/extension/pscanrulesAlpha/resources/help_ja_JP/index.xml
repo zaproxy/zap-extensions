@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="pscanalpha" target="pscanalpha" />
+	<indexitem text="静的スキャンアルファ" target="pscanalpha" />
 </index>
