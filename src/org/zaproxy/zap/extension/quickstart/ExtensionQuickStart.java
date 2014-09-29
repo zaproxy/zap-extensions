@@ -196,7 +196,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 		// Ignore
 	}
 
-    //@Override
+    @Override
     public void execute(CommandLineArgument[] args) {
         if (arguments[ARG_QUICK_URL_IDX].isEnabled()) {
         	Vector<String> params = arguments[ARG_QUICK_URL_IDX].getArguments();
@@ -243,11 +243,12 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
         return arguments;
     }
 
+    @Override
     public List<String> getHandledExtensions() {
     	return null;
     }
 
-	//@Override
+	@Override
 	public boolean handleFile(File file) {
 		// Not supported
 		return false;
