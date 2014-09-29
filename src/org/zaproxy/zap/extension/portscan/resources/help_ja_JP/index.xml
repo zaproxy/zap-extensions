@@ -6,5 +6,5 @@
 <index version="2.0">
 	<indexitem text="ポートスキャン" target="addon.portscan.concepts" />
 	<indexitem text="ポート スキャン オプション" target="addon.portscan.options" />
-	<indexitem text="Port Scan Tab" target="addon.portscan.tab" />
+	<indexitem text="ポートスキャンタブ" target="addon.portscan.tab" />
 </index>
