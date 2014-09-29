@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="ascanrules" target="ascanrules" />
+	<indexitem text="動的スキャンルール" target="ascanrules" />
 </index>
