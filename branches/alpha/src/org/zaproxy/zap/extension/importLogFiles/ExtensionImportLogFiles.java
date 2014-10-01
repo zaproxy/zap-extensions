@@ -48,6 +48,8 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
 
     private static Logger log = Logger.getLogger(ExtensionImportLogFiles.class);
 
+    private ImportLogAPI importLogAPI;
+    
     public ExtensionImportLogFiles() {
         super();
         initialize();
@@ -64,12 +66,24 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        ImportLogAPI test = new ImportLogAPI(null);
-        API.getInstance().registerApiImplementor(test);
+        importLogAPI = new ImportLogAPI(null);
+        API.getInstance().registerApiImplementor(importLogAPI);
         if (getView() != null) {
             extensionHook.getHookMenu().addAnalyseMenuItem(getImportOption());
         }
 
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
+
+    @Override
+    public void unload() {
+        super.unload();
+
+        API.getInstance().removeApiImplementor(importLogAPI);
     }
 
     /**
