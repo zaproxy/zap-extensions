@@ -19,184 +19,436 @@
  */
 package org.zaproxy.zap.extension.alertReport;
 
-import java.io.FileOutputStream;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 
-import com.itextpdf.text.Anchor;
-import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfWriter;
 
 /**
- * Export Alert to PDF report Fill field 'Other Info' of the Alert to describe
- * test One line for describing the step and other line for adding an image
- * file. For example: Step URL attack DV-005-ImageTest1.png Step 2 URL attack
- * DV-005-ImageTest2.png Then, it's fill into the report
+ * Export Alerts to a PDF report
  */
 public class AlertReportExportPDF {
 
-	// private static ExtensionAlertReportExport extension = null;
-	private static final Logger logger = Logger
-			.getLogger(AlertReportExportPDF.class);
-	private static Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 28,
-			Font.BOLD);
+	private static final Logger logger = Logger.getLogger(AlertReportExportPDF.class);
+	
+	private enum TextJustification { LEFT, RIGHT, CENTRE };
+	
+	private PDRectangle pageSize = PDPage.PAGE_SIZE_A4;
+	
+	/**
+	 * holds font, font size, and formatting information
+	 * @author 70pointer@gmail.com
+	 *
+	 */
+	public class Formatting  {
+		private PDFont font ; //also contains the font formatting info (bold, italics, etc)
+		private int fontSize;
+		private TextJustification textJustification = null;
+		
 
-	private static Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,
-			Font.BOLD);
-	private static Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
-			Font.BOLD);
-	private static Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12,
-			Font.BOLD);
-	private static Font litleFont = new Font(Font.FontFamily.TIMES_ROMAN, 8,
-			Font.NORMAL);
+		Formatting (PDFont font, int fontSize, TextJustification textJustification) {
+			this.font = font;
+			this.fontSize = fontSize;
+			this.textJustification = textJustification;
+		}
+		
+		public PDFont getFont() {
+			return font;
+		}
+
+		public void setFont(PDFont font) {
+			this.font = font;
+		}
+
+		public int getFontSize() {
+			return fontSize;
+		}
+
+		public void setFontSize(int fontSize) {
+			this.fontSize = fontSize;
+		}
+
+		public TextJustification getTextJustification() {
+			return textJustification;
+		}
+
+		public void setTextJustification(TextJustification textJustification) {
+			this.textJustification = textJustification;
+		}
+		
+	}
+	//various formatting used in the report
+	private Formatting titlePageHeader1Formatting = this.new Formatting((PDFont)PDType1Font.TIMES_BOLD, 28, TextJustification.CENTRE);
+	private Formatting titlePageHeader2Formatting = this.new Formatting((PDFont)PDType1Font.TIMES_BOLD, 18, TextJustification.CENTRE);
+	private Formatting alertCategoryLabelFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_BOLD, 20, TextJustification.LEFT);
+	private Formatting alertLabelFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_BOLD, 16, TextJustification.LEFT);
+	private Formatting alertTextFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_ROMAN, 12, TextJustification.LEFT);
+	private Formatting textFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_ROMAN, 12, TextJustification.LEFT);
+	private Formatting smallLabelFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_BOLD, 12, TextJustification.LEFT);
+	private Formatting smallPrintFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_ROMAN, 8, TextJustification.LEFT);  //not bold
+	
+	/**
+	 * Since PDFBox does all insertions at a named point, and does not handle any of the text wrapping or pagination
+	 * we need to calculate and update the insert point as we go
+	 */
+	Point2D.Float textInsertionPoint = null; 
+	
+	/**
+	 * the PDF document being updated with content
+	 */
+	PDDocument document = null;
+	
+	/**
+	 * Again, since PDFBox does not handle the pagination for us, we need to handle it.  
+	 * The addText method will update the page when the addition of text pushes the text onto a new page 
+	 */
+	PDPage page = null;
+	
+	/**
+	 * a page margin, into which we will ot place any content  
+	 */
+	private static int marginPoints = (int) (( 72f / 25.4f ) *10) ; // a 10mm margin, expressed in points
 
 	public AlertReportExportPDF() {
 		super();
-
-	}
-
-	public boolean exportAlert(java.util.List<java.util.List<Alert>> alerts,
-			String fileName, ExtensionAlertReportExport extensionExport) {
-		Document document = new Document(PageSize.A4);
-		try {
-			// Document documentAdd = null;
-			PdfWriter writer = PdfWriter.getInstance(document,
-					new FileOutputStream(fileName));
-			document.open();
-			boolean attach = false;
-			// add attach document is exist
-			if (!extensionExport.getParams().getDocumentAttach().isEmpty()) {
-				PdfReader reader = new PdfReader(extensionExport.getParams()
-						.getDocumentAttach());
-				int n = reader.getNumberOfPages();
-				PdfImportedPage page;
-				// Go through all pages
-				for (int i = 1; i <= n; i++) {
-					page = writer.getImportedPage(reader, i);
-					Image instance = Image.getInstance(page);
-					instance.scalePercent(95f);
-					document.add(instance);
-				}
-				attach = true;
-			}
-			if (!attach) {
-				addMetaData(document, extensionExport);
-				addTitlePage(document, extensionExport);
-			}
-			for (int i = 0; i < alerts.size(); i++) {
-				java.util.List<Alert> alertAux = alerts.get(i);
-				addContent(document, alertAux, extensionExport);
-			}
-
-			document.close();
-			return true;
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			document.close();
-			return false;
-		}
-
-	}
-
-	// iText allows to add metadata to the PDF which can be viewed in your Adobe
-	// Reader
-	// under File -> Properties
-	private static void addMetaData(Document document,
-			ExtensionAlertReportExport extensionExport) {
-
-		document.addTitle(extensionExport.getParams().getTitleReport());
-		document.addSubject(extensionExport.getParams().getCustomerName());
-		document.addKeywords(extensionExport.getParams().getPdfKeywords());
-		document.addAuthor(extensionExport.getParams().getAuthorName());
-		document.addCreator(extensionExport.getParams().getAuthorName());
-	}
-
-	private static void addTitlePage(Document document,
-			ExtensionAlertReportExport extensionExport)
-			throws DocumentException {
-
-		document.addHeader("Header1", "Header2");
-
-		Paragraph preface = new Paragraph();
-		// We add one empty line
-		addEmptyLine(preface, 3);
-		// add logo first page
-		addImage(preface, extensionExport.getParams().getLogoFileName(), 40f);
-
-		addEmptyLine(preface, 4);
-		// Lets write a big header
-		Paragraph paragraph = new Paragraph(extensionExport.getParams()
-				.getTitleReport(), titleFont);
-		paragraph.setAlignment(Paragraph.ALIGN_CENTER);
-		preface.add(paragraph);
-
-		addEmptyLine(preface, 3);
-		paragraph = new Paragraph(
-				extensionExport.getParams().getCustomerName(), catFont);
-		paragraph.setAlignment(Paragraph.ALIGN_CENTER);
-		preface.add(paragraph);
-
-		addEmptyLine(preface, 15);
-
-		preface.add(new Paragraph(
-				extensionExport
-						.getMessages().getString("alertreport.export.message.export.pdf.confidential"),
-				smallBold));
-		preface.add(new Paragraph(extensionExport.getParams()
-				.getConfidentialText(), 
-				litleFont));
-
-		document.add(preface);
-		// Start a new page
-		document.newPage();
 	}
 
 	/**
-	 * Add image a Paragraph
-	 * 
-	 * @param paragraph
-	 * @param image
-	 * @param path
-	 * @throws BadElementException
+	 * export the alerts to the named file, using the options specified
+	 * @param alerts
+	 * @param fileName
+	 * @param extensionExport
+	 * @return
 	 */
-	private static void addImage(Paragraph paragraph, String imagePath,
-			float scalePercent) throws BadElementException {
-		Image image1;
+	public boolean exportAlert(	java.util.List<java.util.List<Alert>> alerts,
+								String fileName, 
+								ExtensionAlertReportExport extensionExport) {
+		document = new PDDocument();
+		File outputfile = new File (fileName);
 		try {
-			if (!imagePath.isEmpty()) {
-				image1 = Image.getInstance(imagePath);
-				if (scalePercent != 0)
-					image1.scalePercent(40f);
-				image1.setAlignment(Image.ALIGN_CENTER);
-				paragraph.add(image1);
+			//add the PDF metadata and title page in code
+			addMetaData(extensionExport);				
+			addTitlePage(extensionExport);
+			
+			//add the alert content for each of the alert categories in turn
+			for (int i = 0; i < alerts.size(); i++) {
+				java.util.List<Alert> alertAux = alerts.get(i);				
+				addContent(alertAux, extensionExport);
 			}
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-		}
+			//and tidy up afterwards
+			document.save(outputfile);
+			document.close();			
+			return true;
+			
+		} catch (Exception e) {
+			logger.error("An error occurred trying to generate a Report PDF: " + e.getMessage() + ": "+ e);			
+			return false;
+		} 
+
 
 	}
 
 	/**
-	 * get content field alert from property default extension
-	 * 
+	 * adds PDF metadata to the PDF document
+	 * @param extensionExport
+	 */
+	private void addMetaData(ExtensionAlertReportExport extensionExport) {
+		PDDocumentInformation docInfo = document.getDocumentInformation();
+		docInfo.setTitle(extensionExport.getParams().getTitleReport());
+		docInfo.setSubject(extensionExport.getParams().getCustomerName());
+		docInfo.setKeywords(extensionExport.getParams().getPdfKeywords());
+		docInfo.setAuthor(extensionExport.getParams().getAuthorName());
+		docInfo.setCreator(extensionExport.getParams().getAuthorName());
+		docInfo.setProducer("OWASP Zap. Extension authors: Leandro Ferrari, Colm O'Flaherty");
+	}
+
+	/**
+	 * add a title page to the PDF document
+	 * @param extensionExport
+	 * @throws IOException
+	 */
+	private void addTitlePage(ExtensionAlertReportExport extensionExport) throws IOException {
+
+		page = new PDPage(pageSize);
+        document.addPage( page );
+        
+        //calculate initial positioning on the page (origin = bottom left)
+        textInsertionPoint = new Point2D.Float(page.findMediaBox().getLowerLeftX() + marginPoints, page.findMediaBox().getUpperRightY() - marginPoints);
+                
+        //draw the logo at 40% size.
+        textInsertionPoint = addImage(extensionExport.getParams().getLogoFileName(), 40f, textInsertionPoint);
+        for (int i=0; i< 4; i++) {
+        	textInsertionPoint = addText (textFormatting, " ", textInsertionPoint);
+        }
+        textInsertionPoint = addText (titlePageHeader1Formatting, extensionExport.getParams().getTitleReport(), textInsertionPoint);
+        for (int i=0; i< 3; i++) {
+        	textInsertionPoint = addText (textFormatting, " ", textInsertionPoint);
+        }
+        textInsertionPoint = addText (titlePageHeader2Formatting, extensionExport.getParams().getCustomerName(), textInsertionPoint);
+        for (int i=0; i< 15; i++) {
+	        textInsertionPoint = addText (textFormatting, " ", textInsertionPoint);
+        }
+        textInsertionPoint = addText (smallLabelFormatting, extensionExport.getMessages().getString("alertreport.export.message.export.pdf.confidential"), textInsertionPoint);
+        textInsertionPoint = addText (smallPrintFormatting, extensionExport.getParams().getConfidentialText(), textInsertionPoint);
+	}
+	
+	/**
+	 * Add the specified text to the PDF document, using the specified formatting, and continuing from the specified text insertion point. 
+	 * The method will handle all text wrapping and pagination, in order to keep all of the text within the page body, and off the 
+	 * margin.  New pages will be added by the method, if required.
+	 * @param formatting
+	 * @param text
+	 * @param textInsertionPoint
+	 * @return
+	 * @throws IOException
+	 */
+	private Point2D.Float addText (Formatting formatting, String text, Point2D.Float textInsertionPoint) throws IOException {
+		//handles the case where an alert category falls off the end of a page (this is not automatically handled by the pdfbox library)
+				
+		PDPageContentStream contentStream = new PDPageContentStream(document, page, true, true);
+		//contentStream.moveTo (0,0);
+		contentStream.beginText();
+		contentStream.setFont( formatting.getFont(), formatting.getFontSize() );
+		
+		float pageWidthPoints = page.getMediaBox().getWidth();
+		float usableWidthPoints = pageWidthPoints - ( marginPoints * 2);		
+		//all text must be drawn at a y pos > this value to be off the margin, and on the page (note: the origin is at bottom left of the page)
+		float textYMinThreshold = marginPoints;  
+		
+		float previousX = 0, previousY = 0;
+		float xoffset = 0, yoffset=0;
+		List <String> textByLine = splitTextForWidth(text, formatting, usableWidthPoints);
+		for ( String lineOfText: textByLine) {
+			//calculate the x position, depending on the justification
+			//the font size (which is measured in points) needs to feed into the calculation of the y position. 
+			//it isn't known until now, and could be different for each distinct piece of text
+			float textWidthInPoints = formatting.getFontSize() * formatting.getFont().getStringWidth(lineOfText) / 1000;
+			switch ( formatting.textJustification ) {
+			case LEFT:
+				xoffset = (float)textInsertionPoint.getX() - previousX;
+				yoffset = (float)textInsertionPoint.getY() - formatting.getFontSize() - previousY;
+				previousX = (float)textInsertionPoint.getX(); 
+				previousY = (float)textInsertionPoint.getY() - formatting.getFontSize();
+				break;
+			case RIGHT:
+				xoffset = pageWidthPoints - textWidthInPoints - previousX;
+				yoffset = (float)textInsertionPoint.getY() - formatting.getFontSize() - previousY;
+				previousX = pageWidthPoints - textWidthInPoints;
+				previousY = (float)textInsertionPoint.getY() - formatting.getFontSize();
+				break; 
+			case CENTRE:
+				xoffset = (pageWidthPoints - textWidthInPoints) / 2 - previousX;
+				yoffset = (float)textInsertionPoint.getY() - formatting.getFontSize() - previousY;
+				previousX = (pageWidthPoints - textWidthInPoints) / 2;
+				previousY = (float)textInsertionPoint.getY() - formatting.getFontSize();
+				break;
+			default: 
+				throw new IOException ("Unsupported text justification option: "+formatting.textJustification);
+			}
+			
+			float absoluteY = (float)textInsertionPoint.getY() - formatting.getFontSize();
+			if ( absoluteY < textYMinThreshold) {
+				//close off the current page
+				contentStream.endText();
+				contentStream.saveGraphicsState();
+				contentStream.close();
+				
+				//and start a new page..
+				page = new PDPage(pageSize);
+		        document.addPage( page );
+		        contentStream = new PDPageContentStream(document, page, true, true);
+		        contentStream.beginText();
+				contentStream.setFont( formatting.getFont(), formatting.getFontSize() );
+				
+				//calculate initial positioning on the page (origin = bottom left)
+		        textInsertionPoint = getPageInitialInsertionPoint ();
+		        //for a new new page, the offset is from 0,0, so it needs to be re-calculated from the origin, not from the "previous" position on the page
+		        xoffset = (float)textInsertionPoint.getX(); 
+		        yoffset = (float)textInsertionPoint.getY() - formatting.getFontSize();
+		        previousY = yoffset;
+			}
+			
+			//move from the previous text position (within the beginText() + endText()) by the appropriate delta..
+			//and draw..
+			contentStream.moveTextPositionByAmount (xoffset,yoffset);
+			contentStream.drawString( lineOfText );
+			
+			//update the text insertion point for the next line, using 1.5 spacing..
+			textInsertionPoint = new Point2D.Float ((float)textInsertionPoint.getX(), (float)textInsertionPoint.getY() - ( formatting.getFontSize() * 1.5f));
+		}
+		
+		contentStream.endText();
+		contentStream.saveGraphicsState();
+		contentStream.close();
+		
+		return textInsertionPoint;
+	}
+
+	/**
+	 * split the text into chunks that will fit on the page width, given the text formatting. Handle newlines in the text.
+	 * If necessary, but only as a final resort, split the text in the middle of a long word. First tries to split using spaces.
+	 * @param text
+	 * @param formatting
+	 * @param maxWidthInPoints
+	 * @return
+	 * @throws IOException
+	 */
+	private List<String> splitTextForWidth (String text, Formatting formatting, float maxWidthInPoints) throws IOException {
+		List<String> lines = new ArrayList<String>();
+	    int lastSpace = -1;
+	    while (text.length() > 0) {
+	    	//before we get into looking at breaking based on spaces, find the next newline, and determine if it occurs
+	    	//within the current line of text.  If it does, add the portion before the newline as a line in itself, 
+	    	//and re-start the logic from the character after the newline
+	    	int newlineIndex = text.indexOf('\n');
+	    	if ( newlineIndex > -1 ) {
+		    	String toNewlineSubString = text.substring(0, newlineIndex);
+		    	float toNewlineTextWidth = formatting.getFontSize() * formatting.getFont().getStringWidth(toNewlineSubString) / 1000;
+	            if (toNewlineTextWidth <= maxWidthInPoints) {
+	            	lines.add(toNewlineSubString);
+	            	if ( text.length() > (newlineIndex +1))
+	            		text = text.substring(newlineIndex + 1);
+	            	else 
+	            		text = "";
+	            	lastSpace = -1;
+	            	continue; //to the next iteration
+	            }
+	    	}
+            
+	    	//there are no newlines within the current available width.
+	    	//base case: does the full text fits in a single line? if so, just add it as is.
+	    	float fulltextWidth = formatting.getFontSize() * formatting.getFont().getStringWidth(text) / 1000;
+        	if (fulltextWidth <= maxWidthInPoints) {
+        		lines.add(text);
+                text = "";
+                lastSpace = -1;
+                continue;
+        	}
+        	
+        	//inductive cases
+        	int spaceIndex = text.indexOf(' ', lastSpace + 1);
+            String subString = spaceIndex < 0 ? text : text.substring(0, spaceIndex);
+            float textWidth = formatting.getFontSize() * formatting.getFont().getStringWidth(subString) / 1000;
+            if (textWidth > maxWidthInPoints) {
+                if (lastSpace < 0) { 
+                	lastSpace = getIndexOfSubtringThatFitsWithinWidth(subString, maxWidthInPoints, formatting);
+                	subString = text.substring(0, lastSpace);
+	                lines.add(subString);
+	                text = text.substring(lastSpace);  //don't chop off the character at the position
+	                lastSpace = -1;
+	                continue; //to the next iteration
+                } else {
+	                subString = text.substring(0, lastSpace);
+	                lines.add(subString);
+	                text = text.substring(lastSpace).trim(); //do chop off the character at the position
+	                lastSpace = -1;
+	                }
+                }
+            else {
+            	//track the location of the space we were looking at, and loop to the next word break (in the next iteration)
+                lastSpace = spaceIndex;
+            }
+
+	    }
+	    return lines;
+	}
+	
+	
+	/**
+	 * calculate the index of a substring that will fit within the specified width. Does nor look at the specific characters used at all. 
+	 * @param subString
+	 * @param maxWidthInPoints
+	 * @return
+	 * @throws IOException 
+	 */
+	private int getIndexOfSubtringThatFitsWithinWidth(String subString,float maxWidthInPoints, Formatting formatting) throws IOException {
+		for (int testLength = 1 ; testLength <= subString.length(); testLength ++) {			
+			float textWidth = formatting.getFontSize() * formatting.getFont().getStringWidth(subString.substring(0, testLength)) / 1000;
+			if (textWidth > maxWidthInPoints) {
+				return testLength -1; 
+			}
+		}
+		return subString.length();
+	}
+
+	/**
+	 * Adds the image to the PDF document at the insertion point, first scaling the image as necessary 
+	 * For now, the image is centred on the line, and no other content is placed on the line. This may change.
+	 * @param imagePath
+	 * @param scalePercent
+	 * @param textInsertionPoint
+	 * @return
+	 * @throws IOException
+	 */
+	private Point2D.Float addImage(String imagePath, float scalePercent, Point2D.Float textInsertionPoint) 
+			throws IOException  {
+		if (!imagePath.isEmpty()) { 
+			
+			//create the image 
+			PDXObjectImage image = null;
+			BufferedImage awtImage = ImageIO.read( new File( imagePath ) );
+			image = new PDPixelMap(document, awtImage);
+			
+			//and scale it
+			if (scalePercent != 0) {
+	        	int newWidth  = (int)(awtImage.getWidth() * (scalePercent/100));
+	        	int newHeight = (int)(awtImage.getHeight() * (scalePercent /100));
+	        	BufferedImage resized = new BufferedImage(newWidth, newHeight, awtImage.getType());
+	            Graphics2D g = resized.createGraphics();
+	            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	            g.drawImage(awtImage, 0, 0, newWidth, newHeight, 0, 0, awtImage.getWidth(), awtImage.getHeight(), null);
+	            g.dispose();	            
+	            image = new PDPixelMap(document, resized);
+				}
+	        	        
+	        //centre align the image.  Note that the page dimension units here are in points. 
+	        float pageWidthPoints = page.getMediaBox().getWidth();	        
+	        float imageWidthInPoints =  (float)image.getWidth();
+	        
+	        //apparently this must be created after the image is created, for some reason..
+			PDPageContentStream contentStream = new PDPageContentStream(document, page, true, true);
+			
+			contentStream.drawImage( image, (pageWidthPoints / 2) - ( imageWidthInPoints / 2), (float)textInsertionPoint.getY() - image.getHeight() );
+	        contentStream.close();
+	        
+	        //update the text insertion point after drawing an image
+	        textInsertionPoint = new Point2D.Float ((float)marginPoints, (float)(textInsertionPoint.getY() - image.getHeight() ));
+		}
+		
+		return textInsertionPoint;
+	}
+	
+
+
+	 //get content field alert from property default extension
+	/**
+	 * get content for the named alert category, using the key provided, and the default value provided.  
 	 * @param pluginId
 	 * @param key
 	 * @param contentDefault
 	 * @param extensionExport
 	 * @return
 	 */
-	private static String getFieldAlertProperty(Integer pluginId, String key,
-			String contentDefault, ExtensionAlertReportExport extensionExport) {
+	private static String getFieldAlertProperty(Integer pluginId, String key,String contentDefault, ExtensionAlertReportExport extensionExport) {
 		if (key.contains("risk") || key.contains("reliability")) {
 			return getMessage(extensionExport, "alertreport.export.pluginid." + key, contentDefault);
 		}
@@ -209,6 +461,13 @@ public class AlertReportExportPDF {
 		return getMessage(extensionExport, sbKey.toString(), contentDefault);
 	}
 
+	/**
+	 * get a property
+	 * @param extensionExport
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
 	private static String getMessage(ExtensionAlertReportExport extensionExport, String key, String defaultValue) {
 		if (extensionExport.getMessages().containsKey(key)) {
 			return extensionExport.getMessages().getString(key);
@@ -216,168 +475,97 @@ public class AlertReportExportPDF {
 		return defaultValue;
 	}
 	
-	private static void addContent(Document document,
-			java.util.List<Alert> alerts,
-			ExtensionAlertReportExport extensionExport)
-			throws DocumentException {
+	/**
+	 * get the initial insertion point on a new page 
+	 * @return
+	 */
+	private Point2D.Float getPageInitialInsertionPoint () {
+		return new Point2D.Float(page.findMediaBox().getLowerLeftX() + marginPoints, page.findMediaBox().getUpperRightY() - marginPoints);
+	}
+
+	/**
+	 * adds content to the PDF report for the list of alerts provided, which are all for the same alert category 
+	 * @param alerts
+	 * @param extensionExport
+	 * @throws IOException
+	 */
+	private void addContent(java.util.List<Alert> alerts, ExtensionAlertReportExport extensionExport) throws IOException {
+
+		String labelDescription = extensionExport.getMessages().getString("alertreport.export.message.export.pdf.description");
+		String labelRisk = extensionExport.getMessages().getString("alertreport.export.message.export.pdf.risk");
+		String labelReliability = extensionExport.getMessages().getString("alertreport.export.message.export.pdf.reability");
+		String labelURLs = extensionExport.getMessages().getString("alertreport.export.message.export.pdf.urls");
+		String labelParameter = extensionExport.getMessages().getString("alertreport.export.message.export.pdf.parameters");
+		String labelAttack = extensionExport.getMessages().getString("alertreport.export.message.export.pdf.attack");
+		String labelEvidence = extensionExport.getMessages().getString("alertreport.export.message.export.pdf.evidence");
+		String labelOtherInfo = extensionExport.getMessages().getString("alertreport.export.message.export.pdf.otherinfo");
+		String labelSolution = extensionExport.getMessages().getString("alertreport.export.message.export.pdf.solution");
+		String labelReferences = extensionExport.getMessages().getString("alertreport.export.message.export.pdf.references");
 
 		Alert alert = alerts.get(0);
+		
+		page = new PDPage(pageSize);
+        document.addPage( page );
+        
+        //calculate initial positioning on the page (origin = bottom left)
+        //Point2D.Float textInsertionPoint = new Point2D.Float(page.findMediaBox().getLowerLeftX() + marginPoints, page.findMediaBox().getUpperRightY() - marginPoints);
+        Point2D.Float textInsertionPoint = getPageInitialInsertionPoint ();
+                
+        textInsertionPoint = addText (alertCategoryLabelFormatting, alert.getAlert(), textInsertionPoint);
+        
+        textInsertionPoint = addText (alertLabelFormatting, labelDescription, textInsertionPoint);
+        textInsertionPoint = addText (alertTextFormatting, getFieldAlertProperty(alert.getPluginId(),"description", alert.getDescription(), extensionExport),textInsertionPoint);
+		textInsertionPoint = addText (alertTextFormatting, " ", textInsertionPoint);
+		
+		textInsertionPoint = addText (alertLabelFormatting, labelRisk, textInsertionPoint);
+		textInsertionPoint = addText (alertTextFormatting, getFieldAlertProperty(alert.getPluginId(),"risk." + String.valueOf(alert.getRisk()),Alert.MSG_RISK[alert.getRisk()], extensionExport),textInsertionPoint);
+		textInsertionPoint = addText (alertTextFormatting, " ", textInsertionPoint);
 
-		Anchor anchor = new Anchor(alert.getAttack(), catFont);
-		anchor.setName(alert.getAttack());
-
-		Paragraph content = new Paragraph();
-		content.add(new Paragraph(alert.getAlert(), catFont));
-		content.add(new Paragraph(
-				extensionExport
-						.getMessages().getString("alertreport.export.message.export.pdf.description"),
-				subFont));
-		content.add(new Paragraph(getFieldAlertProperty(alert.getPluginId(),
-				"description", alert.getDescription(), extensionExport)));
-		addEmptyLine(content, 1);
-		content.add(new Paragraph(extensionExport
-				.getMessages().getString("alertreport.export.message.export.pdf.risk"),
-				subFont));
-		content.add(new Paragraph(getFieldAlertProperty(alert.getPluginId(),
-				"risk." + String.valueOf(alert.getRisk()),
-				Alert.MSG_RISK[alert.getRisk()], extensionExport)));
-		addEmptyLine(content, 1);
-		content.add(new Paragraph(extensionExport
-				.getMessages().getString("alertreport.export.message.export.pdf.reability"),
-				subFont));
-		content.add(new Paragraph(getFieldAlertProperty(alert.getPluginId(),
-				"reliability." + String.valueOf(alert.getReliability()),
-				Alert.MSG_RELIABILITY[alert.getReliability()], extensionExport)));
-		addEmptyLine(content, 1);
-		content.add(new Paragraph(extensionExport
-				.getMessages().getString("alertreport.export.message.export.pdf.urls"),
-				subFont));
-
-		// write all url with the same pluginid
+		textInsertionPoint = addText (alertLabelFormatting, labelReliability, textInsertionPoint);
+		textInsertionPoint = addText (alertTextFormatting, getFieldAlertProperty(alert.getPluginId(),"reliability." + String.valueOf(alert.getReliability()),Alert.MSG_RELIABILITY[alert.getReliability()], extensionExport),textInsertionPoint);
+		textInsertionPoint = addText (alertTextFormatting, " ", textInsertionPoint);
+		
+		textInsertionPoint = addText (alertLabelFormatting, labelURLs, textInsertionPoint);
+				
+		//TODO: binary data (Base64 decoded data is the only example I can find) flows onto the margin.. 
+		//can we do something about it??		
+		
+		//for each alert within this category
 		for (int i = 0; i < alerts.size(); i++) {
 			Alert alertAux = alerts.get(i);
-			// add url link and attack
-			anchor = new Anchor((i + 1) + "-" + alertAux.getUri());
-			anchor.setReference(alertAux.getUri());
-			content.add(anchor);
+			
+			//output the URL, and parameter information for each alert for this category
+			textInsertionPoint = addText (alertTextFormatting, (i + 1) + "-" + alertAux.getUri(),textInsertionPoint);
 			if (!alertAux.getParam().isEmpty()) {
-				content.add(new Paragraph(
-						"           "
-								+ extensionExport
-										.getMessages().getString("alertreport.export.message.export.pdf.parameters")
-								+ ": " + alertAux.getParam()));
-				addEmptyLine(content, 1);
+				textInsertionPoint = addText (alertTextFormatting, labelParameter+ ": " + alertAux.getParam(),textInsertionPoint);
 			}
 			if (!alertAux.getAttack().isEmpty()) {
-				content.add(new Paragraph(
-						extensionExport
-								.getMessages().getString("alertreport.export.message.export.pdf.attack"),
-						subFont));
-				content.add(new Paragraph(alertAux.getAttack()));
-				addEmptyLine(content, 1);
+				textInsertionPoint = addText (alertTextFormatting, labelAttack + ": "+ alertAux.getAttack() ,textInsertionPoint); 
 			}
-			// add images test
-			addEmptyLine(content, 1);
-			String images = alertAux.getOtherInfo();
-			if (!images.isEmpty()) {
-				String[] list = images.split("\n");
-				// for (int j = 0, lengh = list.length/2; j <= lengh; j += 2) {
-				for (int j = 0; j < list.length; j++) {
-					if (!((j + 1) >= list.length)) {
-						String step = list[j];
-						Paragraph paragraph = new Paragraph(step);
-						content.add(paragraph);
-						addEmptyLine(content, 1);
-						// add step and image
-						String imageName = "";
-						String path = extensionExport.getParams()
-								.getWorkingDirImages();
-						if (((j + 1) < list.length) && (!list[j + 1].isEmpty())) {
-							imageName = list[j + 1];
-							// if exist an image
-							try {
-								if ((imageName.endsWith(".png") || imageName
-										.endsWith(".jpg")) && (!path.isEmpty())) {
-									addImage(content, path + "/" + imageName,
-											60f);
-									addEmptyLine(content, 1);
-									paragraph = new Paragraph(
-											extensionExport.getMessages().getString("alertreport.export.message.export.pdf.image")
-													+ ": "
-													+ Integer.toString(j),
-											litleFont);
-									paragraph
-											.setAlignment(Paragraph.ALIGN_CENTER);
-									content.add(paragraph);
-								} else {
-									paragraph = new Paragraph(imageName);
-									content.add(paragraph);
-									addEmptyLine(content, 1);
-								}
-							} catch (Exception e) {
-								logger.error(e.getMessage(), e);
-							}
-						}
-						j++;
-					}
-
-				}
+			if (!alertAux.getEvidence().isEmpty()) {
+				textInsertionPoint = addText (alertTextFormatting, labelEvidence + ": "+ alertAux.getEvidence() ,textInsertionPoint); 
 			}
-
-			addEmptyLine(content, 1);
-
+			if (!alertAux.getOtherInfo().isEmpty()) {
+				textInsertionPoint = addText (alertTextFormatting, labelOtherInfo + ": "+ alertAux.getOtherInfo() ,textInsertionPoint); 
+			}
+			//put a blank line after each URL's worth of information
+			textInsertionPoint = addText (alertTextFormatting, " ",textInsertionPoint);
 		}
-		if (!alert.getSolution().equals("")) {
-			addEmptyLine(content, 1);
-			content.add(new Paragraph(
-					extensionExport
-							.getMessages().getString("alertreport.export.message.export.pdf.solution"),
-					subFont));
-			content.add(new Paragraph(getFieldAlertProperty(
-					alert.getPluginId(), "solution", alert.getSolution(),
-					extensionExport)));
-		}
-		addEmptyLine(content, 1);
-		if (!alert.getReference().equals("")) {
-			content.add(new Paragraph(
-					extensionExport
-							.getMessages().getString("alertreport.export.message.export.pdf.references"),
-					subFont));
-			content.add(new Paragraph(alert.getReference()));
-			addEmptyLine(content, 1);
 
-		}
-		document.add(content);
-		// Start a new page
-		document.newPage();
-
+		String solution = getFieldAlertProperty(alert.getPluginId(), "solution", alert.getSolution(),extensionExport);
+		if (!solution.isEmpty()) {
+			textInsertionPoint = addText (alertLabelFormatting, labelSolution, textInsertionPoint);
+			textInsertionPoint = addText (alertTextFormatting, getFieldAlertProperty(alert.getPluginId(), "solution", alert.getSolution(),extensionExport),textInsertionPoint);
+			textInsertionPoint = addText (alertTextFormatting, " ", textInsertionPoint);
+			}
+		
+		if ( !alert.getReference().isEmpty()) {
+			textInsertionPoint = addText (alertLabelFormatting, labelReferences, textInsertionPoint);
+			textInsertionPoint = addText (alertTextFormatting, alert.getReference(),textInsertionPoint);
+			textInsertionPoint = addText (alertTextFormatting, " ", textInsertionPoint);
+			}
 	}
-
-	/*
-	 * public class ReadAndUsePdf { private static String INPUTFILE =
-	 * "c:/temp/FirstPdf.pdf"; private static String OUTPUTFILE =
-	 * "c:/temp/ReadPdf.pdf";
-	 * 
-	 * public static void main(String[] args) throws DocumentException,
-	 * IOException { Document document = new Document();
-	 * 
-	 * PdfWriter writer = PdfWriter.getInstance(document, new
-	 * FileOutputStream(OUTPUTFILE)); document.open(); PdfReader reader = new
-	 * PdfReader(INPUTFILE); int n = reader.getNumberOfPages(); PdfImportedPage
-	 * page; // Go through all pages for (int i = 1; i <= n; i++) { // Only page
-	 * number 2 will be included if (i == 2) { page =
-	 * writer.getImportedPage(reader, i); Image instance =
-	 * Image.getInstance(page); document.add(instance); } } document.close();
-	 * 
-	 * }
-	 * 
-	 * }
-	 */
-
-	private static void addEmptyLine(Paragraph paragraph, int number) {
-		for (int i = 0; i < number; i++) {
-			paragraph.add(new Paragraph(" "));
-		}
-	}
+	
+	
 
 }
