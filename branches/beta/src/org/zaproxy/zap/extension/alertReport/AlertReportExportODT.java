@@ -43,8 +43,6 @@ import org.odftoolkit.simple.table.Table;
 import org.odftoolkit.simple.text.Paragraph;
 import org.parosproxy.paros.core.scanner.Alert;
 
-import com.itextpdf.text.BadElementException;
-
 /**
  * Export Alert to ODT report Fill field 'Other Info' of the Alert to describe
  * test One line for describing the step and other line for adding an image
@@ -212,9 +210,8 @@ public class AlertReportExportODT {
 	 * Add image a Paragraph
 	 * 
 	 * @param paragraph
-	 * @param image
-	 * @param path
-	 * @throws BadElementException
+	 * @param imagePath
+	 * @param scalePercent
 	 * @throws URISyntaxException
 	 */
 	private static void addImage(Paragraph paragraph, String imagePath,
