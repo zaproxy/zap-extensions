@@ -4,6 +4,6 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-	<indexitem text="Invoke Applications" target="addon.invoke.concepts" />
+	<indexitem text="アプリケーションの呼び出し" target="addon.invoke.concepts" />
 	<indexitem text="Invoke Applications Options" target="addon.invoke.options" />
 </index>
