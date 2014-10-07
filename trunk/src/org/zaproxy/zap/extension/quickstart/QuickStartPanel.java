@@ -311,5 +311,14 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 			break;
 		}
 	}
-	
+
+	/**
+	 * This should override (or use) the AbstractPanel class but cant do this until the relevant changes are
+	 * available in the zap-extensions trunk
+	 * @return
+	 */
+	public boolean isShowByDefault() {
+		return true;
+	}
+
 }

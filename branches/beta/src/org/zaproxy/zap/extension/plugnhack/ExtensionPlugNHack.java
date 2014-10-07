@@ -474,6 +474,10 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 						MonitoredPage page = mpm.monitorPage(msg);
 				        try {
 							this.clientTable.insert(page);
+							if (View.isInitialised()) {
+								// Switch to the clients tab, which ensures its visible
+								this.getClientsPanel().setTabFocus();
+							}
 						} catch (SQLException e) {
 							logger.error(e.getMessage(), e);
 						}
@@ -651,6 +655,10 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
         MonitoredPage page = this.mpm.startMonitoring(uri);
         try {
 			this.clientTable.insert(page);
+			if (View.isInitialised()) {
+				// Switch to the clients tab, which ensures its visible
+				this.getClientsPanel().setTabFocus();
+			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage(), e);
 		}
