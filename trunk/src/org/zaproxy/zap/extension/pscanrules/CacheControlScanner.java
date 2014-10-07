@@ -70,11 +70,11 @@ public class CacheControlScanner extends PluginPassiveScanner {
 	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
 		    	getName());
 		    	alert.setDetail(
-		    	    "The cache-control and pragma HTTPHeader have not been set properly allowing the browser and proxies to cache content", 
+		    	    "The cache-control and pragma HTTP header have not been set properly allowing the browser and proxies to cache content", 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    cacheControl,
 		    	    "", "", 
-		    	    "Whenever possible ensure the cache-control HTTPHeader is set with no-cache, no-store, must-revalidate, private, and the pragma HTTPHeader is set with no-cache.", 
+		    	    "Whenever possible ensure the cache-control HTTP header is set with no-cache, no-store, must-revalidate, private, and the pragma HTTPHeader is set with no-cache.", 
 		            "https://www.owasp.org/index.php/Session_Management_Cheat_Sheet#Web_Content_Caching", 
 		            "", // No evidence
 		            0,	// TODO CWE Id
@@ -91,7 +91,7 @@ public class CacheControlScanner extends PluginPassiveScanner {
 	
 	@Override
 	public String getName() {
-		return "Incomplete or no cache-control and pragma HTTPHeader set";
+		return "Incomplete or no cache-control and pragma HTTP header set";
 	}
 
 }
