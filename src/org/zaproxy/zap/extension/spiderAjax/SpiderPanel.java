@@ -387,6 +387,10 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	 * @param inScope if it is in scope
 	 */
 	public void startScan(String site, boolean inScope) {
+		if (View.isInitialised()) {
+			// Show the tab in case its been closed
+			this.setTabFocus();
+		}
 		try {
 			this.runnable = extension.createSpiderThread(site, inScope, this);
 		} catch (URIException e) {
