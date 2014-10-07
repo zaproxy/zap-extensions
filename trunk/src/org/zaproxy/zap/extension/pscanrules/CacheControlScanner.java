@@ -74,7 +74,7 @@ public class CacheControlScanner extends PluginPassiveScanner {
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    cacheControl,
 		    	    "", "", 
-		    	    "Whenever possible ensure the cache-control HTTP header is set with no-cache, no-store, must-revalidate, private, and the pragma HTTPHeader is set with no-cache.", 
+		    	    "Whenever possible ensure the cache-control HTTP header is set with no-cache, no-store, must-revalidate, private, and the pragma HTTP header is set with no-cache.", 
 		            "https://www.owasp.org/index.php/Session_Management_Cheat_Sheet#Web_Content_Caching", 
 		            "", // No evidence
 		            0,	// TODO CWE Id
