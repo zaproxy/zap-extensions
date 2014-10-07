@@ -284,9 +284,9 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		updateButtonsState();
 		updateCommandPanelState(script);
 		
-		if (script.getEngine().isTextBased()) {
+		if (script.getEngine().isTextBased() || ! this.isVisible()) {
 			// This causes a lot of pain when recording client side Zest scripts,
-			// so only do for text based ones
+			// so only do for text based ones (or if the tab is hidden)
 	        setTabFocus();
 		}
 	}
