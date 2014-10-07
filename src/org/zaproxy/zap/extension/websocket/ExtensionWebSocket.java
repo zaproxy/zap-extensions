@@ -448,6 +448,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		if (httpMessage.isWebSocketUpgrade()) {
 			logger.debug("Got WebSockets upgrade request. Handle socket connection over to WebSockets extension.");
+			if (View.isInitialised()) {
+				// Show the tab in case its been closed
+				this.getWebSocketPanel().setTabFocus();
+			}
 			
 			if (method != null) {
 				Socket outSocket = method.getUpgradedConnection();
