@@ -5,7 +5,7 @@
 	<author>Talsoft SRL</author>
 	<url>http://www.talsoft.com.ar</url>
 	<changes>
-	Safe menu items will now be enabled in protected and safe modes (Issue 1278).</br>
+	Safe menu items will now be enabled in protected and safe modes (Issue 1278).<br>
 	Changed from iText PDF library to Apache 2.0 licenced PDFBox libary.
 	</changes>
 	<dependson/>
