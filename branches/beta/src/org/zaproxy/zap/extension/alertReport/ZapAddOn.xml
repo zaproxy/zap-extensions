@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Report alert generator</name>
-	<version>12</version>
+	<version>13</version>
 	<description>Allows you to generate reports for alerts you specify in pdf or odt format</description>
 	<author>Talsoft SRL</author>
 	<url>http://www.talsoft.com.ar</url>
-	<changes>Safe menu items will now be enabled in protected and safe modes (Issue 1278).</changes>
+	<changes>Changed from iText PDF library to Apache 2.0 licenced PDFBox libary</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.alertReport.ExtensionAlertReportExport</extension>
