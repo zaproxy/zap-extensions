@@ -52,18 +52,17 @@ public class AlertReportExportPDF {
 	
 	private enum TextJustification { LEFT, RIGHT, CENTRE };
 	
-	private PDRectangle pageSize = PDPage.PAGE_SIZE_A4;
+	private static final PDRectangle pageSize = PDPage.PAGE_SIZE_A4;
 	
 	/**
 	 * holds font, font size, and formatting information
 	 * @author 70pointer@gmail.com
 	 *
 	 */
-	public class Formatting  {
-		private PDFont font ; //also contains the font formatting info (bold, italics, etc)
-		private int fontSize;
-		private TextJustification textJustification = null;
-		
+	private static class Formatting  {
+		private final PDFont font ; //also contains the font formatting info (bold, italics, etc)
+		private final int fontSize;
+		private final TextJustification textJustification;
 
 		Formatting (PDFont font, int fontSize, TextJustification textJustification) {
 			this.font = font;
@@ -75,56 +74,44 @@ public class AlertReportExportPDF {
 			return font;
 		}
 
-		public void setFont(PDFont font) {
-			this.font = font;
-		}
-
 		public int getFontSize() {
 			return fontSize;
-		}
-
-		public void setFontSize(int fontSize) {
-			this.fontSize = fontSize;
 		}
 
 		public TextJustification getTextJustification() {
 			return textJustification;
 		}
-
-		public void setTextJustification(TextJustification textJustification) {
-			this.textJustification = textJustification;
-		}
-		
 	}
+	
 	//various formatting used in the report
-	private Formatting titlePageHeader1Formatting = this.new Formatting((PDFont)PDType1Font.TIMES_BOLD, 28, TextJustification.CENTRE);
-	private Formatting titlePageHeader2Formatting = this.new Formatting((PDFont)PDType1Font.TIMES_BOLD, 18, TextJustification.CENTRE);
-	private Formatting alertCategoryLabelFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_BOLD, 20, TextJustification.LEFT);
-	private Formatting alertLabelFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_BOLD, 16, TextJustification.LEFT);
-	private Formatting alertTextFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_ROMAN, 12, TextJustification.LEFT);
-	private Formatting textFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_ROMAN, 12, TextJustification.LEFT);
-	private Formatting smallLabelFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_BOLD, 12, TextJustification.LEFT);
-	private Formatting smallPrintFormatting = this.new Formatting((PDFont)PDType1Font.TIMES_ROMAN, 8, TextJustification.LEFT);  //not bold
+	private static final Formatting titlePageHeader1Formatting = new Formatting(PDType1Font.TIMES_BOLD, 28, TextJustification.CENTRE);
+	private static final Formatting titlePageHeader2Formatting = new Formatting(PDType1Font.TIMES_BOLD, 18, TextJustification.CENTRE);
+	private static final Formatting alertCategoryLabelFormatting = new Formatting(PDType1Font.TIMES_BOLD, 20, TextJustification.LEFT);
+	private static final Formatting alertLabelFormatting = new Formatting(PDType1Font.TIMES_BOLD, 16, TextJustification.LEFT);
+	private static final Formatting alertTextFormatting = new Formatting(PDType1Font.TIMES_ROMAN, 12, TextJustification.LEFT);
+	private static final Formatting textFormatting = new Formatting(PDType1Font.TIMES_ROMAN, 12, TextJustification.LEFT);
+	private static final Formatting smallLabelFormatting = new Formatting(PDType1Font.TIMES_BOLD, 12, TextJustification.LEFT);
+	private static final Formatting smallPrintFormatting = new Formatting(PDType1Font.TIMES_ROMAN, 8, TextJustification.LEFT);  //not bold
 	
 	/**
 	 * Since PDFBox does all insertions at a named point, and does not handle any of the text wrapping or pagination
 	 * we need to calculate and update the insert point as we go
 	 */
-	Point2D.Float textInsertionPoint = null; 
+	private Point2D.Float textInsertionPoint; 
 	
 	/**
 	 * the PDF document being updated with content
 	 */
-	PDDocument document = null;
+	private PDDocument document;
 	
 	/**
 	 * Again, since PDFBox does not handle the pagination for us, we need to handle it.  
 	 * The addText method will update the page when the addition of text pushes the text onto a new page 
 	 */
-	PDPage page = null;
+	private PDPage page;
 	
 	/**
-	 * a page margin, into which we will ot place any content  
+	 * a page margin, into which we will not place any content
 	 */
 	private static int marginPoints = (int) (( 72f / 25.4f ) *10) ; // a 10mm margin, expressed in points
 
@@ -160,7 +147,7 @@ public class AlertReportExportPDF {
 			return true;
 			
 		} catch (Exception e) {
-			logger.error("An error occurred trying to generate a Report PDF: " + e.getMessage() + ": "+ e);			
+			logger.error("An error occurred trying to generate a Report PDF: " + e);			
 			return false;
 		} 
 
@@ -178,7 +165,7 @@ public class AlertReportExportPDF {
 		docInfo.setKeywords(extensionExport.getParams().getPdfKeywords());
 		docInfo.setAuthor(extensionExport.getParams().getAuthorName());
 		docInfo.setCreator(extensionExport.getParams().getAuthorName());
-		docInfo.setProducer("OWASP Zap. Extension authors: Leandro Ferrari, Colm O'Flaherty");
+		docInfo.setProducer("OWASP ZAP. Extension authors: Leandro Ferrari, Colm O'Flaherty");
 	}
 
 	/**
@@ -242,7 +229,7 @@ public class AlertReportExportPDF {
 			//the font size (which is measured in points) needs to feed into the calculation of the y position. 
 			//it isn't known until now, and could be different for each distinct piece of text
 			float textWidthInPoints = formatting.getFontSize() * formatting.getFont().getStringWidth(lineOfText) / 1000;
-			switch ( formatting.textJustification ) {
+			switch ( formatting.getTextJustification() ) {
 			case LEFT:
 				xoffset = (float)textInsertionPoint.getX() - previousX;
 				yoffset = (float)textInsertionPoint.getY() - formatting.getFontSize() - previousY;
@@ -422,7 +409,7 @@ public class AlertReportExportPDF {
 	        	        
 	        //centre align the image.  Note that the page dimension units here are in points. 
 	        float pageWidthPoints = page.getMediaBox().getWidth();	        
-	        float imageWidthInPoints =  (float)image.getWidth();
+	        float imageWidthInPoints =  image.getWidth();
 	        
 	        //apparently this must be created after the image is created, for some reason..
 			PDPageContentStream contentStream = new PDPageContentStream(document, page, true, true);
@@ -431,15 +418,12 @@ public class AlertReportExportPDF {
 	        contentStream.close();
 	        
 	        //update the text insertion point after drawing an image
-	        textInsertionPoint = new Point2D.Float ((float)marginPoints, (float)(textInsertionPoint.getY() - image.getHeight() ));
+	        textInsertionPoint = new Point2D.Float (marginPoints, (float)(textInsertionPoint.getY() - image.getHeight() ));
 		}
 		
 		return textInsertionPoint;
 	}
 	
-
-
-	 //get content field alert from property default extension
 	/**
 	 * get content for the named alert category, using the key provided, and the default value provided.  
 	 * @param pluginId
@@ -448,7 +432,7 @@ public class AlertReportExportPDF {
 	 * @param extensionExport
 	 * @return
 	 */
-	private static String getFieldAlertProperty(Integer pluginId, String key,String contentDefault, ExtensionAlertReportExport extensionExport) {
+	private static String getFieldAlertProperty(int pluginId, String key,String contentDefault, ExtensionAlertReportExport extensionExport) {
 		if (key.contains("risk") || key.contains("reliability")) {
 			return getMessage(extensionExport, "alertreport.export.pluginid." + key, contentDefault);
 		}
