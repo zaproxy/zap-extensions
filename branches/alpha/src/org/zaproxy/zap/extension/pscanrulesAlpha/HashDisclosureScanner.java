@@ -52,36 +52,40 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 	static Map <Pattern, HashAlert> hashPatterns = new LinkedHashMap <Pattern, HashAlert> ();
 	
 	static {
-		hashPatterns.put(Pattern.compile("\\b\\$LM\\$[a-f0-9]{16}\\b", Pattern.CASE_INSENSITIVE), new HashAlert ("LanMan / DES", Alert.RISK_HIGH, Alert.WARNING));
-		hashPatterns.put(Pattern.compile("\\b\\$K4\\$[a-f0-9]{16},\\b", Pattern.CASE_INSENSITIVE), new HashAlert ("Kerberos AFS DES", Alert.RISK_HIGH, Alert.WARNING));
-		hashPatterns.put(Pattern.compile("\\b\\$2a\\$05\\$[a-zA-z0-9\\+\\-_./=]{53}\\b", Pattern.CASE_INSENSITIVE), new HashAlert ("OpenBSD Blowfish", Alert.RISK_HIGH, Alert.WARNING));
-		hashPatterns.put(Pattern.compile("\\b\\$2y\\$05\\$[a-zA-z0-9\\+\\-_./=]{53}\\b", Pattern.CASE_INSENSITIVE), new HashAlert ("OpenBSD Blowfish", Alert.RISK_HIGH, Alert.WARNING));
+		//Traditional DES
+		//Example: sa3tHJ3/KuYvI
+		hashPatterns.put(Pattern.compile("\\b[A-Za-z0-9/]{13}\\b", Pattern.CASE_INSENSITIVE), new HashAlert ("Traditional DES", Alert.RISK_HIGH, Alert.WARNING));
+		
+		hashPatterns.put(Pattern.compile("\\$LM\\$[a-f0-9]{16}", Pattern.CASE_INSENSITIVE), new HashAlert ("LanMan / DES", Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$K4\\$[a-f0-9]{16},", Pattern.CASE_INSENSITIVE), new HashAlert ("Kerberos AFS DES", Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$2a\\$05\\$[a-zA-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE), new HashAlert ("OpenBSD Blowfish", Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$2y\\$05\\$[a-zA-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE), new HashAlert ("OpenBSD Blowfish", Alert.RISK_HIGH, Alert.WARNING));
 		
 		//MD5 Crypt 
 		//Example: $1$O3JMY.Tw$AdLnLjQ/5jXF9.MTp3gHv/
-		hashPatterns.put(Pattern.compile("\\b\\$1\\$[./0-9A-Za-z]{0,8}\\$[./0-9A-Za-z]{22}\\b"), new HashAlert ("MD5 Crypt",Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$1\\$[./0-9A-Za-z]{0,8}\\$[./0-9A-Za-z]{22}"), new HashAlert ("MD5 Crypt",Alert.RISK_HIGH, Alert.WARNING));
 
 		//SHA-256 Crypt
 		//Example: $5$MnfsQ4iN$ZMTppKN16y/tIsUYs/obHlhdP.Os80yXhTurpBMUbA5
 		//Example: $5$rounds=5000$usesomesillystri$KqJWpanXZHKq2BOB43TSaYhEWsQ1Lr5QNyPCDH/Tp.6
-		hashPatterns.put(Pattern.compile("\\b\\$5\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{43}\\b"), new HashAlert ("SHA-256 Crypt",Alert.RISK_HIGH, Alert.WARNING));
-		hashPatterns.put(Pattern.compile("\\b\\$5\\$rounds=[0-9]+\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{43}\\b"), new HashAlert ("SHA-256 Crypt",Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$5\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{43}"), new HashAlert ("SHA-256 Crypt",Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$5\\$rounds=[0-9]+\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{43}"), new HashAlert ("SHA-256 Crypt",Alert.RISK_HIGH, Alert.WARNING));
 
 		//SHA-512 Crypt
 		//Example: $6$zWwwXKNj$gLAOoZCjcr8p/.VgV/FkGC3NX7BsXys3KHYePfuIGMNjY83dVxugPYlxVg/evpcVEJLT/rSwZcDMlVVf/bhf.1
 		//Example: $6$rounds=5000$usesomesillystri$D4IrlXatmP7rx3P3InaxBeoomnAihCKRVQP22JZ6EY47Wc6BkroIuUUBOov1i.S5KPgErtP/EN5mcO.ChWQW21
-		hashPatterns.put(Pattern.compile("\\b\\$6\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{86}\\b"), new HashAlert ("SHA-512 Crypt",Alert.RISK_HIGH, Alert.WARNING));
-		hashPatterns.put(Pattern.compile("\\b\\$6\\$rounds=[0-9]+\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{86}\\b"), new HashAlert ("SHA-512 Crypt",Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$6\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{86}"), new HashAlert ("SHA-512 Crypt",Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$6\\$rounds=[0-9]+\\$[./0-9A-Za-z]{0,16}\\$[./0-9A-Za-z]{86}"), new HashAlert ("SHA-512 Crypt",Alert.RISK_HIGH, Alert.WARNING));
 
 		//BCrypt
 		//Example: $2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe
-		hashPatterns.put(Pattern.compile("\\b\\$2\\$[0-9]{2}\\$[./0-9A-Za-z]{53}\\b"), new HashAlert ("BCrypt",Alert.RISK_HIGH, Alert.WARNING));
-		hashPatterns.put(Pattern.compile("\\b\\$2a\\$[0-9]{2}\\$[./0-9A-Za-z]{53}\\b"), new HashAlert ("BCrypt",Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$2\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"), new HashAlert ("BCrypt",Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$2a\\$[0-9]{2}\\$[./0-9A-Za-z]{53}"), new HashAlert ("BCrypt",Alert.RISK_HIGH, Alert.WARNING));
 
 		//NTLM
 		//Example: $NT$7f8fe03093cc84b267b109625f6bbf4b		
-		hashPatterns.put(Pattern.compile("\\b\\$3\\$\\$[0-9a-f]{32}\\b"), new HashAlert("NTLM",Alert.RISK_HIGH, Alert.WARNING));
-		hashPatterns.put(Pattern.compile("\\b\\$NT\\$[0-9a-f]{32}\\b"), new HashAlert("NTLM",Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$3\\$\\$[0-9a-f]{32}"), new HashAlert("NTLM",Alert.RISK_HIGH, Alert.WARNING));
+		hashPatterns.put(Pattern.compile("\\$NT\\$[0-9a-f]{32}"), new HashAlert("NTLM",Alert.RISK_HIGH, Alert.WARNING));
 
 		//Mac OS X salted SHA-1
 		//Example: 0E6A48F765D0FFFFF6247FA80D748E615F91DD0C7431E4D9
