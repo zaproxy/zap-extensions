@@ -32,8 +32,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 
-import com.sittinglittleduck.DirBuster.gui.JDialogInconsistentFailCodes;
-
 /**
  * Generates a base case for a dir or file rangle that is about to be scanned
  * @author James
@@ -192,26 +190,7 @@ public class GenBaseCase
 
                 if(!baseResponce1.equalsIgnoreCase(baseResponce2) || !baseResponce1.equalsIgnoreCase(baseResponce3) || !baseResponce2.equalsIgnoreCase(baseResponce3))
                 {
-                    /*
-                     * if we dont have any regex saved
-                     */
-                    if(manager.getFailCaseRegexes().size() == 0)
-                    {
-                        
-                        /*
-                         * show diaglog with the three responses, asking the user for a reg instead
-                         */
-                        JDialogInconsistentFailCodes dialog = new JDialogInconsistentFailCodes(manager.gui, true, baseResponce1, baseResponce2, baseResponce3, failurl.toString());
-                        /*
-                         * get the returned regex
-                         */
-                        manager.setFailCaseDialogVisable(true);
-                        regex = dialog.showAndGetRegex();
-                        manager.addFailCaseRegex(regex);
-                        manager.setFailCaseDialogVisable(false);
-                        useRegexInstead = true;
-                    }
-                    else
+                    if(manager.getFailCaseRegexes().size() != 0)
                     {
                         
                         /*
@@ -219,7 +198,6 @@ public class GenBaseCase
                          * if not then give the uses the dialog
                          */
 
-                        boolean found = false;
                         Vector<String> failCaseRegexes = manager.getFailCaseRegexes();
                         for(int a = 0; a < failCaseRegexes.size(); a++)
                         {
@@ -238,27 +216,9 @@ public class GenBaseCase
                             {
                                 regex = failCaseRegexes.elementAt(a);
                                 useRegexInstead = true;
-                                found = true;
                                 break;
                             }
 
-                        }
-
-                        if(!found)
-                        {
-                            /*
-                             * if we get here then we didn't get a match so show the dialog
-                             */
-
-                            JDialogInconsistentFailCodes dialog = new JDialogInconsistentFailCodes(manager.gui, true, baseResponce1, baseResponce2, baseResponce3, failurl.toString());
-                            /*
-                             * get the returned regex
-                             */
-                            manager.setFailCaseDialogVisable(true);
-                            regex = dialog.showAndGetRegex();
-                            manager.addFailCaseRegex(regex);
-                            manager.setFailCaseDialogVisable(false);
-                            useRegexInstead = true;
                         }
 
                     }

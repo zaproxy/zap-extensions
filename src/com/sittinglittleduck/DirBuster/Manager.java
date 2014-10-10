@@ -37,11 +37,6 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.protocol.Protocol;
 
-import com.sittinglittleduck.DirBuster.gui.ResultsTableObject;
-import com.sittinglittleduck.DirBuster.gui.StartGUI;
-import com.sittinglittleduck.DirBuster.gui.JTableTree.JTreeTable;
-import com.sittinglittleduck.DirBuster.gui.Tree.ResultsNode;
-import com.sittinglittleduck.DirBuster.gui.Tree.ResultsTableTreeModel;
 import com.sittinglittleduck.DirBuster.workGenerators.BruteForceURLFuzz;
 import com.sittinglittleduck.DirBuster.workGenerators.BruteForceWorkGenerator;
 import com.sittinglittleduck.DirBuster.workGenerators.WorkerGenerator;
@@ -70,7 +65,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
     private String host;
     private int port;
     private String startPoint;
-    public StartGUI gui;
     private boolean doDirs,  doFiles;
     private int totalDone = 0;
     private Vector workers = new Vector(100, 10);
@@ -146,10 +140,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
     private boolean limitRequests = false;
     private int limitRequestsTo = 50;
     /*
-     * Stores setting for is dirbuster allowed to check for updates
-     */
-    private boolean checkForUpdates = true;
-    /*
      * user pref object
      */
     Preferences userPrefs;
@@ -157,10 +147,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
      * Date when the last check was performed
      */
     Date lastUpdateCheck;
-    /*
-     * flag to state if the inconsistent fail case dialog is visable
-     */
-    private boolean failCaseDialogVisable = false;
 
     /*
      * stores the default number of threads to be used
@@ -177,23 +163,10 @@ public class Manager implements ProcessChecker.ProcessUpdate
      */
     private String defaultExts;
 
-    public boolean isHeadLessMode()
-    {
-        return headLessMode;
-    }
-
-    public void setHeadLessMode(boolean headLessMode)
-    {
-        this.headLessMode = headLessMode;
-    }
     /*
      * this stores all the regexes that have been used when we get inconsistent base cases
      */
     private Vector<String> failCaseRegexes = new Vector(10, 10);
-    /*
-     * Are we running without a gui?
-     */
-    private boolean headLessMode = false;
     /*
      * Vector to store results when we are running in headless mode
      */
@@ -264,7 +237,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
             String host,
             int port,
             String extention,
-            StartGUI gui,
             int ThreadNumber,
             boolean doDirs,
             boolean doFiles,
@@ -281,7 +253,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
         this.host = host;
         this.port = port;
         workerCount = ThreadNumber;
-        this.gui = gui;
         this.doFiles = doFiles;
         this.doDirs = doDirs;
         this.recursive = recursive;
@@ -303,10 +274,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
 
 
         System.out.println("Starting dir/file list based brute forcing");
-        if(!headLessMode)
-        {
-            gui.setStatus("Starting dir/file list based brute forcing");
-        }
 
         setpUpHttpClient();
         createTheThreads();
@@ -334,7 +301,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
             String host,
             int port,
             String extention,
-            StartGUI gui,
             int ThreadNumber,
             boolean doDirs,
             boolean doFiles,
@@ -349,7 +315,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
         this.host = host;
         this.port = port;
         workerCount = ThreadNumber;
-        this.gui = gui;
         this.doFiles = doFiles;
         this.doDirs = doDirs;
         this.charSet = charSet;
@@ -373,11 +338,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
 
         System.out.println("Starting dir/file pure brute forcing");
 
-        if(!headLessMode)
-        {
-            gui.setStatus("Starting dir/file pure brute forcing");
-        }
-
         setpUpHttpClient();
         createTheThreads();
         workGenBrute = new BruteForceWorkGenerator();
@@ -391,7 +351,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
             String protocol,
             String host,
             int port,
-            StartGUI gui,
             int ThreadNumber,
             String urlFuzzStart,
             String urlFuzzEnd)
@@ -403,18 +362,12 @@ public class Manager implements ProcessChecker.ProcessUpdate
         this.host = host;
         this.port = port;
         workerCount = ThreadNumber;
-        this.gui = gui;
         this.urlFuzzStart = urlFuzzStart;
         this.urlFuzzEnd = urlFuzzEnd;
 
         urlFuzz = true;
 
         System.out.println("Starting URL fuzz");
-
-        if(!headLessMode)
-        {
-            gui.setStatus("Starting URL fuzz");
-        }
 
         setpUpHttpClient();
         createTheThreads();
@@ -430,7 +383,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
             String protocol,
             String host,
             int port,
-            StartGUI gui,
             int ThreadNumber,
             String urlFuzzStart,
             String urlFuzzEnd)
@@ -451,7 +403,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
         this.host = host;
         this.port = port;
         workerCount = ThreadNumber;
-        this.gui = gui;
 
         /*
          * fuzzing points
@@ -463,10 +414,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
         pureBrutefuzz = true;
 
         System.out.println("Starting URL fuzz");
-        if(!headLessMode)
-        {
-            gui.setStatus("Starting URL fuzz");
-        }
 
         setpUpHttpClient();
         createTheThreads();
@@ -596,14 +543,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
             numberOfBaseCasesProduced = 0;
             parsedLinksProcessed = 0;
             processedLinks.clear();
-
-            if(!headLessMode)
-            {
-                /*
-                 * clear the table tree
-                 */
-                gui.jPanelRunning.tableTreeModel.cleartable();
-            }
 
 
             task = new ProcessChecker();
@@ -785,62 +724,12 @@ public class Manager implements ProcessChecker.ProcessUpdate
             //add to list of items that have already processed
             addParsedLink(url.getPath());
 
-            /*
-             * if we are no using the headless mode then there is no need to update the gui!
-             */
-            if(!headLessMode)
-            {
-                //correction for the first item
-                String status = "Waiting";
-                if(Config.caseInsensativeMode)
-                {
-                    if(url.getFile().equalsIgnoreCase(gui.jPanelSetup.jTextFieldDirToStart.getText()))
-                    {
-                        status = "Scanning";
-                    }
-                }
-                else
-                {
-                    if(url.getFile().equals(gui.jPanelSetup.jTextFieldDirToStart.getText()))
-                    {
-                        status = "Scanning";
-                    }
-                }
-
-                ResultsTableObject tObject = new ResultsTableObject(
-                        "Dir",
-                        url.getFile(),
-                        Integer.toString(statusCode),
-                        status,
-                        url.toString(),
-                        Responce,
-                        BaseCase,
-                        RawResponce,
-                        this.recursive,
-                        baseCaseObj);
-
-                gui.addResult(tObject);
-
-
-                addToTree(tObject);
-            }
-            else
-            {
-                headlessResult.addElement(new HeadlessResult(url.getFile(), statusCode, HeadlessResult.DIR));
-            }
+            headlessResult.addElement(new HeadlessResult(url.getFile(), statusCode, HeadlessResult.DIR));
         }
         catch(InterruptedException e)
         {
             //e.printStackTrace();
             return;
-        }
-    }
-
-    public void updateTable(String finished, String started)
-    {
-        if(!headLessMode)
-        {
-            gui.updateTable(finished, started);
         }
     }
 
@@ -860,54 +749,13 @@ public class Manager implements ProcessChecker.ProcessUpdate
         System.out.println("File found: " + url.getFile() + " - " + statusCode);
         addParsedLink(url.getPath());
 
-        if(!headLessMode)
-        {
-            ResultsTableObject tObject = new ResultsTableObject(
-                    "File",
-                    url.getFile(),
-                    Integer.toString(statusCode),
-                    "",
-                    url.toString(),
-                    Responce,
-                    BaseCase,
-                    rawResponce,
-                    false,
-                    baseCaseObj);
-
-            gui.addResult(tObject);
-
-
-            //add to list of items that have already processed
-
-            addToTree(tObject);
-        }
-        else
-        {
-            headlessResult.addElement(new HeadlessResult(url.getFile(), statusCode, HeadlessResult.FILE));
-        }
+        headlessResult.addElement(new HeadlessResult(url.getFile(), statusCode, HeadlessResult.FILE));
     }
 
     public synchronized void foundError(URL url, String reason)
     {
-        if(!headLessMode)
-        {
-            String start = "<html><font color=\"red\">";
-            String end = "</font></html>";
-            gui.addResult(new ResultsTableObject(start + "Error" + end, start + url.getPath() + end, "", start + reason + end, url.toString(), reason, null, reason, false, null));
-        }
-        else
-        {
-            headlessResult.addElement(new HeadlessResult(url.getFile() + ":" + reason, -1, HeadlessResult.ERROR));
-        }
+        headlessResult.addElement(new HeadlessResult(url.getFile() + ":" + reason, -1, HeadlessResult.ERROR));
         System.err.println("ERROR: " + url.toString() + " - " + reason);
-    }
-
-    public void updateProgress(String current, String average, String total, String timeLeft, String parseQueueLength)
-    {
-        if(!headLessMode)
-        {
-            gui.updateProgress(current, average, total, workerCount, timeLeft, parseQueueLength);
-        }
     }
 
     public String getInputFile()
@@ -973,10 +821,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
                 ((Worker) workers.elementAt(a)).pause();
             }
         }
-        // ZAP: Check gui is not null
-        if (gui != null) {
-        	gui.setStatus("Program paused!");
-        }
     }
 
     public void unPause()
@@ -988,18 +832,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
                 ((Worker) workers.elementAt(a)).unPause();
                 ((Worker) workers.elementAt(a)).notify();
             }
-        }
-        // ZAP: Check gui is not null
-        if (gui != null) {
-        	gui.setStatus("Program running again");
-        }
-    }
-
-    public void setStatus(String status)
-    {
-        if(!headLessMode)
-        {
-            gui.setStatus(status);
         }
     }
 
@@ -1082,30 +914,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
             }
         }
 
-        /*
-         * only if there is a gui update it
-         */
-        if(!headLessMode)
-        {
-            //reset the tree
-            gui.jPanelRunning.jTableTreeResults = new JTreeTable(new ResultsTableTreeModel(new ResultsNode("/")));
-
-            //set the buttones when we are finished
-            gui.jPanelRunning.jButtonReport.setEnabled(true);
-            gui.jPanelRunning.jToggleButtonPause.setSelected(false);
-            gui.jPanelRunning.jButtonStop.setEnabled(false);
-            gui.jPanelRunning.jButtonBack.setEnabled(true);
-            gui.setStatus("DirBuster Stopped");
-        }
-
-        /*
-         * if we have finished and it's headless just exit, the exit thread will write the report
-         */
-        if(headLessMode)
-        {
-        	// ZAP: Dont do a System.exit, PLEASE dont do a System.exit...
-            //System.exit(0);
-        }
         System.out.println("DirBuster Stopped");
         /*
          * reset the all the markers for what type of test we are doing
@@ -1618,15 +1426,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
         this.limitRequestsTo = limitRequestsTo;
     }
 
-    /*
-     * add items to the table tree view
-     */
-    private void addToTree(ResultsTableObject result)
-    {
-        gui.jPanelRunning.tableTreeModel.addRow(result);
-
-    }
-
     public boolean areWorkersAlive()
     {
         for(int a = 0; a < workers.size(); a++)
@@ -1646,77 +1445,10 @@ public class Manager implements ProcessChecker.ProcessUpdate
     public void loadPrefs()
     {
         userPrefs = Preferences.userNodeForPackage(Manager.class);
-        checkForUpdates = userPrefs.getBoolean("CheckForUpdates", true);
         lastUpdateCheck = new Date(userPrefs.getLong("LastUpdateCheck", 0L));
         defaultNoThreads = userPrefs.getInt("DefaultNoTreads", 10);
         defaultList = userPrefs.get("DefaultList", "");
         defaultExts = userPrefs.get("DefaultExts", "php");
-
-    }
-
-    public boolean isCheckForUpdates()
-    {
-        return checkForUpdates;
-    }
-
-    public void setCheckForUpdates(boolean checkForUpdates)
-    {
-        this.checkForUpdates = checkForUpdates;
-        userPrefs.putBoolean("CheckForUpdates", checkForUpdates);
-
-    }
-
-    public boolean isFailCaseDialogVisable()
-    {
-        return failCaseDialogVisable;
-    }
-
-    public void setFailCaseDialogVisable(boolean failCaseDialogVisable)
-    {
-        this.failCaseDialogVisable = failCaseDialogVisable;
-    }
-
-    /*
-     * function to check for updates
-     */
-    public void checkForUpdates(boolean informUser)
-    {
-        /*
-         * the user has asked to check
-         */
-        if(informUser)
-        {
-            Thread update = new Thread(new CheckForUpdates(informUser));
-            update.start();
-        }
-        /*
-         * this an auto check
-         */
-        else
-        {
-            if(checkForUpdates)
-            {
-                /*
-                 * get the date now
-                 */
-                Date now = new Date();
-                long passedTime = now.getTime() - lastUpdateCheck.getTime();
-
-
-                /*
-                 * if the last check was over a day ago
-                 */
-                if(passedTime > (1000 * 60 * 60 * 24))
-                {
-                    Thread update = new Thread(new CheckForUpdates(informUser));
-                    update.start();
-                    /*
-                     * save the time back!
-                     */
-                    userPrefs.putLong("LastUpdateCheck", now.getTime());
-                }
-            }
-        }
 
     }
 

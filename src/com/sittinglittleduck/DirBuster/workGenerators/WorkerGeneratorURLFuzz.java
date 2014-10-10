@@ -183,7 +183,6 @@ public class WorkerGeneratorURLFuzz implements Runnable
             
             d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
             System.out.println("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
-            manager.setStatus("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
             int filesProcessed = 0;
 
             BaseCase baseCaseObj = GenBaseCase.genURLFuzzBaseCase(firstPart + urlFuzzStart, urlFuzzEnd);

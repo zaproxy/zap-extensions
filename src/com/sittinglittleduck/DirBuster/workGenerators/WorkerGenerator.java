@@ -215,9 +215,7 @@ public class WorkerGenerator implements Runnable
             {
                 e.printStackTrace();
             }
-            manager.setStatus("Starting Brute force of dirs in " + currentDir);
             started = currentDir;
-            manager.updateTable(finished, started);
 
             //generate the list of dirs
             if(manager.getDoDirs())
@@ -228,7 +226,6 @@ public class WorkerGenerator implements Runnable
                 try
                 {
                     baseResponce = null;
-                    manager.setStatus("Getting fail case for " + currentDir);
 
                     baseCaseObj = GenBaseCase.genBaseCase(firstPart + currentDir, true, null);
                 }
@@ -251,7 +248,6 @@ public class WorkerGenerator implements Runnable
                 //generate work links
                 try
                 {
-                    manager.setStatus("Brute forceing dirs in " + currentDir);
                     //readin dir names
                     BufferedReader d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
 
@@ -279,13 +275,6 @@ public class WorkerGenerator implements Runnable
                             currentURL = new URL(firstPart + currentDir);
                             //System.out.println("first part = " + firstPart);
                             //System.out.println("current dir = " + currentDir);
-                            if(!manager.isHeadLessMode())
-                            {
-                                if(currentDir.equals(manager.gui.jPanelSetup.jTextFieldDirToStart.getText()))
-                                {
-                                    manager.updateTable("", currentDir);
-                                }
-                            }
                             workQueue.put(new WorkUnit(currentURL, true, "GET", baseCaseObj, null));
                             if(Config.debug)
                             {
@@ -401,8 +390,6 @@ public class WorkerGenerator implements Runnable
 
                         try
                         {
-                            manager.setStatus("Starting brute force for files in " + currentDir + " with extention " + fileExtention);
-
                             //get the base for this extention
                             baseCaseObj = GenBaseCase.genBaseCase(firstPart + currentDir, false, fileExtention);
                         }
@@ -423,7 +410,6 @@ public class WorkerGenerator implements Runnable
 
                         try
                         {
-                            manager.setStatus("Brute forceing files in " + currentDir);
                             BufferedReader d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
                             //if(failcode != 200)
                             //{

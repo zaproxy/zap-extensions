@@ -142,9 +142,7 @@ public class BruteForceURLFuzz implements Runnable
         }
 
         System.out.println("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
-        manager.setStatus("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
         started = currentDir;
-        manager.updateTable(finished, started);
 
 
 
@@ -155,7 +153,6 @@ public class BruteForceURLFuzz implements Runnable
 
         try
         {
-            manager.setStatus("Getting fail case for " + currentDir);
             //get fail responce code for a dir test
 
             baseCaseObj = GenBaseCase.genURLFuzzBaseCase(firstPart + urlFuzzStart, urlFuzzEnd);

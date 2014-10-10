@@ -42,7 +42,7 @@ public class ProcessEnd extends TimerTask
 
     public void run()
     {
-        if (manager.dirQueue.isEmpty() && manager.workQueue.isEmpty() && manager.parseQueue.isEmpty() && !manager.isFailCaseDialogVisable())
+        if (manager.dirQueue.isEmpty() && manager.workQueue.isEmpty() && manager.parseQueue.isEmpty())
         {
             //test to see if all the workers are done
             boolean allWorkersFinished = true;
@@ -72,7 +72,6 @@ public class ProcessEnd extends TimerTask
             if (allWorkersFinished)
             {
                 //all the workers are finished and there is nothing 
-                manager.setStatus("Finished");
                 manager.youAreFinished();
             }
 
@@ -111,7 +110,6 @@ public class ProcessEnd extends TimerTask
                     if (allWorkersFinished)
                     {
                         //all the workers are finished and there is nothing 
-                        manager.setStatus("Finished");
                         manager.youAreFinished();
                     }
                 }

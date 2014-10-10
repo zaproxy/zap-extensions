@@ -124,7 +124,6 @@ public class BruteForce extends Thread implements BruteForceListenner {
             manager.setTargetURL(targetURL);
             
 			manager.setAuto(true);
-			manager.setHeadLessMode(true);
             
 			manager.setOnlyUnderStartPoint(onlyUnderDirectory);
 			
@@ -144,7 +143,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
 			final String fileAbsolutePath = file.getAbsolutePath();
 			
 			log.debug("BruteForce : file: " + fileAbsolutePath + " recursive=" + recursive);
-			manager.setupManager(startPoint, fileAbsolutePath, target.getScheme(), target.getHost(), target.getPort(), exts, null, threads, true, true, recursive, false, extsVector);
+			manager.setupManager(startPoint, fileAbsolutePath, target.getScheme(), target.getHost(), target.getPort(), exts, threads, true, true, recursive, false, extsVector);
 			
 			manager.start();
 			

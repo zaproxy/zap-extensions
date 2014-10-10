@@ -150,9 +150,7 @@ public class BruteForceWorkGenerator implements Runnable
                 e.printStackTrace();
             }
             
-            manager.setStatus("Starting pure brute force of dirs in " + currentDir);
             started = currentDir;
-            manager.updateTable(finished, started);
             
             
             if(manager.getDoDirs())
@@ -164,7 +162,6 @@ public class BruteForceWorkGenerator implements Runnable
                 URL failurl = null;
                 try
                 {
-                    manager.setStatus("Getting fail case for " + currentDir);
                     //get fail responce code for a dir test
                     
                     baseCaseObj = GenBaseCase.genBaseCase(firstPart + currentDir, true, null);
@@ -179,7 +176,6 @@ public class BruteForceWorkGenerator implements Runnable
                     e.printStackTrace();
                 }
                 
-                manager.setStatus("Brute forceing dirs in " + currentDir);
                 
                 //baseCaseObj = new BaseCase(null, failcode, true, failurl, baseCase);
                 //call function to generate the brute force
@@ -219,7 +215,6 @@ public class BruteForceWorkGenerator implements Runnable
                         
                         try
                         {
-                            manager.setStatus("Starting pure brute force for files in " + currentDir);
                             //deal with the files
                             
                             baseCaseObj = GenBaseCase.genBaseCase(firstPart + currentDir, false, fileExtention);
@@ -234,8 +229,6 @@ public class BruteForceWorkGenerator implements Runnable
                             e.printStackTrace();
                         }
                         
-                        
-                        manager.setStatus("Brute forcing files in " + currentDir);
                         
                         
                         //call function to generate the brute force
