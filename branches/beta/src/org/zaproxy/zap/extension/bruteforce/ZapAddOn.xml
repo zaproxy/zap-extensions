@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Forced Browse</name>
-	<version>1</version>
+	<version>2</version>
 	<description>Forced browsing of files and directories using code from the OWASP DirBuster tool</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First release as an add-on, previously bundled with ZAP core.</changes>
+	<changes>Removed DirBuster's GUI code, it's controlled with ZAP's GUI.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.bruteforce.ExtensionBruteForce</extension>

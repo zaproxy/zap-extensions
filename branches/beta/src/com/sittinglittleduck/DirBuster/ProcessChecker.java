@@ -132,44 +132,32 @@ public class ProcessChecker extends TimerTask
                 parseQueueLength = String.valueOf(manager.parseQueue.size());
             }
 
-            if(average == 0 || lastTenTotal == 0 || averageLastTen == 0)
-            {
-                manager.updateProgress(
-                        "Current speed: " + current + " requests/sec",
-                        "Average speed: (T) " + average + ", (C) " + averageLastTen + " requests/sec",
-                        "Total Requests: " + currentTotal + "/" + totalToDo, "Time To Finish: ~",
-                        parseQueueLength);
-            }
-            else
-            {
-                long timeLeft = (totalToDo - currentTotal) / averageLastTen;
-                String timeToCompelete = convertSecsToTime(timeLeft);
-                lastTotal = currentTotal;
-                manager.updateProgress(
-                        "Current speed: " + current + " requests/sec",
-                        "Average speed: (T) " + average + ", (C) " + averageLastTen + " requests/sec",
-                        "Total Requests: " + currentTotal + "/" + totalToDo, "Time To Finish: " + timeToCompelete,
-                        parseQueueLength);
-            }
             if(Config.debug)
             {
+                if(average == 0 || lastTenTotal == 0 || averageLastTen == 0)
+                {
+                    System.out.println(
+                            "Current speed: " + current + " requests/sec\n" +
+                            "Average speed: (T) " + average + ", (C) " + averageLastTen + " requests/sec\n" +
+                            "Total Requests: " + currentTotal + "/" + totalToDo + "\n" + "Time To Finish: ~\n" +
+                            parseQueueLength);
+                }
+                else
+                {
+                    long timeLeft = (totalToDo - currentTotal) / averageLastTen;
+                    String timeToCompelete = convertSecsToTime(timeLeft);
+                    lastTotal = currentTotal;
+                    System.out.println(
+                            "Current speed: " + current + " requests/sec\n" +
+                            "Average speed: (T) " + average + ", (C) " + averageLastTen + " requests/sec\n" +
+                            "Total Requests: " + currentTotal + "/" + totalToDo + "\n" + "Time To Finish: " + timeToCompelete + "\n" +
+                            parseQueueLength);
+                }
+
                 //System.out.println("workQ: " + manager.workQueue.size());
                 System.out.println("dirQ: " + manager.dirQueue.size());
             //System.out.println("parseQ: " + manager.parseQueue.size());
             //manager.
-            }
-
-            //set the second status bar to show what work we are doing
-            if(!manager.isHeadLessMode())
-            {
-                if(manager.workQueue.peek() != null)
-                {
-                    manager.gui.jLabelCurrentWork.setText(manager.workQueue.peek().getWork().getPath());
-                }
-                else
-                {
-                    manager.gui.jLabelCurrentWork.setText("");
-                }
             }
 
 
