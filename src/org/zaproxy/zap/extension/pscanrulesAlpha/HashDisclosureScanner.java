@@ -52,9 +52,9 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 	static Map <Pattern, HashAlert> hashPatterns = new LinkedHashMap <Pattern, HashAlert> ();
 	
 	static {
-		//Traditional DES
+		//Traditional DES: causes *way* too many false positives to enable this..
 		//Example: sa3tHJ3/KuYvI
-		hashPatterns.put(Pattern.compile("\\b[A-Za-z0-9/]{13}\\b", Pattern.CASE_INSENSITIVE), new HashAlert ("Traditional DES", Alert.RISK_HIGH, Alert.WARNING));
+		//hashPatterns.put(Pattern.compile("\\b[A-Za-z0-9/]{13}\\b", Pattern.CASE_INSENSITIVE), new HashAlert ("Traditional DES", Alert.RISK_HIGH, Alert.WARNING));
 		
 		hashPatterns.put(Pattern.compile("\\$LM\\$[a-f0-9]{16}", Pattern.CASE_INSENSITIVE), new HashAlert ("LanMan / DES", Alert.RISK_HIGH, Alert.WARNING));
 		hashPatterns.put(Pattern.compile("\\$K4\\$[a-f0-9]{16},", Pattern.CASE_INSENSITIVE), new HashAlert ("Kerberos AFS DES", Alert.RISK_HIGH, Alert.WARNING));
