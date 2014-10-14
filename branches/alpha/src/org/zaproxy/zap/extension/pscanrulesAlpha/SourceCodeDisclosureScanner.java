@@ -215,6 +215,9 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		//Shell Script
 		languagePatterns.put(Pattern.compile("^#!/bin/[a-z]*sh"), "Shell Script");
 		
+		//Node.js
+		languagePatterns.put(Pattern.compile("^#!/usr/bin/env\\s+node"), "Node.js");
+		
 		//Python
 		languagePatterns.put(Pattern.compile("#!/usr/bin/python.*$"), "Python");
 		languagePatterns.put(Pattern.compile("#!/usr/bin/env\\s+python"), "Python");
