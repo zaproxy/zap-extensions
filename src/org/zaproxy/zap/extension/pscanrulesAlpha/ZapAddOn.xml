@@ -10,7 +10,8 @@
 	Added "Insecure Component" scanner<br>
 	Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')<br>
 	Add Big Redirect scanner (Issue 1257)<br>
-	Fixed an issue in detecting SHA-512 Crypt hashes, and other hashes beginning with "$"
+	Fixed an issue in detecting SHA-512 Crypt hashes, and other hashes beginning with "$"<br>
+	Detect Node.js source code
 	]]>
 	</changes>
 	<dependson/>
