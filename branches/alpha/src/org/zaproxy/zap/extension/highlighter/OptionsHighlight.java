@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.util.LinkedList;
 
 import org.parosproxy.paros.common.AbstractParam;
-import org.zaproxy.zap.extension.highlighter.HighlightSearchEntry;
 import org.zaproxy.zap.extension.search.SearchMatch;
+import org.zaproxy.zap.view.HighlightSearchEntry;
 
 public class OptionsHighlight extends AbstractParam {
 

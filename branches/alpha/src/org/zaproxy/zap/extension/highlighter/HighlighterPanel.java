@@ -11,7 +11,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.zaproxy.zap.view.HighlightSearchEntry;
+import org.zaproxy.zap.view.HighlighterManager;
 
 /*
  * The main highlighter tab, used to configure highlights in the HighlightManager
