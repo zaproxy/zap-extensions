@@ -90,19 +90,19 @@ public class FileFuzzer<P extends Payload> {
 				String type = line.substring(8, (line.length() - 2));
 				do {
 					if (line.trim().length() > 0 && !line.startsWith(COMMENT)) {
-						Payload.Type t;
+						String t;
 						switch (type) {
 						case "FILE":
-							t = Payload.Type.FILE;
+							t = Payload.Type.FILE.name();
 							break;
 						case "REGEX":
-							t = Payload.Type.REGEX;
+							t = Payload.Type.REGEX.name();
 							break;
 						case "SCRIPT":
-							t = Payload.Type.SCRIPT;
+							t = Payload.Type.SCRIPT.name();
 							break;
 						default:
-							t = Payload.Type.STRING;
+							t = Payload.Type.STRING.name();
 							break;
 						}
 						payloads.add(factory.createPayload(t, line));

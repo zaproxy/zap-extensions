@@ -28,31 +28,31 @@ public class HttpPayloadFactory implements PayloadFactory<HttpPayload> {
 	public HttpPayload createPayload(String data) {
 		HttpPayload pay = new HttpPayload();
 		pay.setData(data);
-		pay.setType(Payload.Type.STRING);
+		pay.setType(Payload.Type.STRING.name());
 		pay.setLength(-1);
 		return pay;
 	}
 
 	@Override
-	public HttpPayload createPayload(Payload.Type type, String data) {
+	public HttpPayload createPayload(String type, String data) {
 		if (type.equals(Payload.Type.STRING)) {
 			return createPayload(data);
 		} else if (type.equals(Payload.Type.FILE)) {
 			HttpPayload pay = new HttpPayload();
-			pay.setType(Payload.Type.FILE);
+			pay.setType(Payload.Type.FILE.name());
 			pay.setData(data);
 			pay.setLength(-1);
 			return pay;
-		} else if (type.equals(Payload.Type.REGEX)) {
+		} else if (type.equals(Payload.Type.REGEX.name())) {
 			HttpPayload pay = new HttpPayload();
-			pay.setType(Payload.Type.REGEX);
+			pay.setType(Payload.Type.REGEX.name());
 			pay.setData(data);
 			pay.setLength(-1);
 			pay.setLimit(1000);
 			return pay;
-		} else if (type.equals(Payload.Type.SCRIPT)) {
+		} else if (type.equals(Payload.Type.SCRIPT.name())) {
 			HttpPayload pay = new HttpPayload();
-			pay.setType(Payload.Type.SCRIPT);
+			pay.setType(Payload.Type.SCRIPT.name());
 			pay.setData(data);
 			pay.setLength(-1);
 			return pay;
@@ -61,18 +61,18 @@ public class HttpPayloadFactory implements PayloadFactory<HttpPayload> {
 	}
 
 	@Override
-	public HttpPayload createPayload(Payload.Type type, String data, int limit) {
-		if (type.equals(Payload.Type.STRING)) {
+	public HttpPayload createPayload(String type, String data, int limit) {
+		if (type.equals(Payload.Type.STRING.name())) {
 			return createPayload(data);
-		} else if (type.equals(Payload.Type.FILE)) {
+		} else if (type.equals(Payload.Type.FILE.name())) {
 			HttpPayload pay = new HttpPayload();
-			pay.setType(Payload.Type.FILE);
+			pay.setType(Payload.Type.FILE.name());
 			pay.setData(data);
 			pay.setLength(-1);
 			return pay;
 		} else if (type.equals(Payload.Type.REGEX)) {
 			HttpPayload pay = new HttpPayload();
-			pay.setType(Payload.Type.REGEX);
+			pay.setType(Payload.Type.REGEX.name());
 			pay.setData(data);
 			pay.setLength(-1);
 			pay.setLimit(limit);

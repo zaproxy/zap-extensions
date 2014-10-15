@@ -435,19 +435,19 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 			if (input.startsWith(FileFuzzer.TYPE_SIG_BEG)) {
 				int i = input.indexOf(FileFuzzer.TYPE_SIG_END);
 				if (i > 0) {
-					Payload.Type type;
+					String type;
 					switch (input.substring(8, i)) {
 					case "REGEX":
-						type = Payload.Type.REGEX;
+						type = Payload.Type.REGEX.name();
 						break;
 					case "FILE":
-						type = Payload.Type.FILE;
+						type = Payload.Type.FILE.name();
 						break;
 					case "SCRIPT":
-						type = Payload.Type.SCRIPT;
+						type = Payload.Type.SCRIPT.name();
 						break;
 					default:
-						type = Payload.Type.STRING;
+						type = Payload.Type.STRING.name();
 						break;
 					}
 					String data = input.substring(i + 2);
@@ -477,7 +477,7 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String input = getRegExText().getText();
-			P newP = factory.createPayload(Payload.Type.REGEX, input,
+			P newP = factory.createPayload(Payload.Type.REGEX.name(), input,
 					((Number) getRegExLimitField().getValue()).intValue() - 1);
 			if (newP != null) {
 				target.getPayloads().add(newP);
@@ -500,7 +500,7 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 					.getFileFuzzerNames(cat).contains(choice))
 					|| (res.getJBroFuzzCategories().contains(cat) && res
 							.getJBroFuzzFuzzerNames(cat).contains(choice))) {
-				P pay = factory.createPayload(Payload.Type.FILE, cat + " --> "
+				P pay = factory.createPayload(Payload.Type.FILE.name(), cat + " --> "
 						+ choice);
 				target.getPayloads().add(pay);
 				payloadModel.addEntry(pay);
@@ -518,7 +518,7 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 		public void actionPerformed(ActionEvent e) {
 			if (payloadScripts.getSelectedItem() != null) {
 				String name = (String) payloadScripts.getSelectedItem();
-				P newP = factory.createPayload(Payload.Type.SCRIPT, name);
+				P newP = factory.createPayload(Payload.Type.SCRIPT.name(), name);
 				if (newP != null) {
 					target.getPayloads().add(newP);
 					payloadModel.addEntry(newP);

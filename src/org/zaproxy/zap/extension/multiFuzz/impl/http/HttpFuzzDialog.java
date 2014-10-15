@@ -254,7 +254,7 @@ public class HttpFuzzDialog extends
 				ArrayList<HttpPayload> regex = new ArrayList<>();
 				ArrayList<HttpPayload> scripts = new ArrayList<>();
 				for (HttpPayload p : g.getPayloads()) {
-					if (p.getType().equals(Payload.Type.SCRIPT)) {
+					if (p.getType().equals(Payload.Type.SCRIPT.name())) {
 						scripts.add(p);
 					}
 				}
@@ -280,10 +280,10 @@ public class HttpFuzzDialog extends
 					}
 				}
 				for (HttpPayload p : g.getPayloads()) {
-					if (p.getType().equals(Payload.Type.FILE)) {
+					if (p.getType().equals(Payload.Type.FILE.name())) {
 						files.add(p);
 					}
-					if (p.getType().equals(Payload.Type.REGEX)) {
+					if (p.getType().equals(Payload.Type.REGEX.name())) {
 						regex.add(p);
 					}
 				}
