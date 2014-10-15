@@ -44,7 +44,6 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
-import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
