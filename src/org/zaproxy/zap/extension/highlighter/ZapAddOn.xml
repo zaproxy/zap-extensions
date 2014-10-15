@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Highlighter</name>
-	<version>5</version>
+	<version>6</version>
 	<description>Allows you to highlight strings in the request and response tabs.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for ZAP 2.3.0</changes>
+	<changes>Restored the highlighting functionality.</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.highlighter.ExtensionHighlighter</extension>

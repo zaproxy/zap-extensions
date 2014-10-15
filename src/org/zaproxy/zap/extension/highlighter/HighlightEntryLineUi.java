@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.zaproxy.zap.view.HighlightSearchEntry;
 
 /*
  * A panel which specifies all values of an HighlightEntry in a JPanel,
