@@ -23,7 +23,7 @@ public interface PayloadFactory<P extends Payload> {
 
 	P createPayload(String data);
 
-	P createPayload(Payload.Type type, String data);
+	P createPayload(String type, String data);
 
-	P createPayload(Payload.Type type, String data, int limit);
+	P createPayload(String type, String data, int limit);
 }

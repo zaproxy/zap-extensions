@@ -23,7 +23,7 @@ import org.zaproxy.zap.extension.multiFuzz.Payload;
 
 public class HttpPayload implements Payload {
 	String data;
-	Type type;
+	String type;
 	int length = -1;
 	int limit = 0;
 	boolean recursive = false;
@@ -33,7 +33,7 @@ public class HttpPayload implements Payload {
 	}
 
 	public String getData() {
-		if (type.equals(Payload.Type.FILE) || type.equals(Payload.Type.REGEX) || length == -1) {
+		if (type.equals(Payload.Type.FILE.name()) || type.equals(Payload.Type.REGEX.name()) || length == -1) {
 			return data;
 		}
 		StringBuilder build = new StringBuilder();
@@ -43,11 +43,11 @@ public class HttpPayload implements Payload {
 		return build.substring(0, length);
 	}
 
-	public void setType(Type type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 
-	public Type getType() {
+	public String getType() {
 		return type;
 	}
 
