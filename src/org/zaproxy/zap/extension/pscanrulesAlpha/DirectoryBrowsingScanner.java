@@ -35,7 +35,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 
 /**
- * A class to passively scan response for signatures that are indicative that Directory Browsing is possible
+ * A class to passively scan response for signatures that are indicative that Directory Browsing / Listing is enabled
  * @author 70pointer@gmail.com
  *
  */
@@ -44,13 +44,13 @@ public class DirectoryBrowsingScanner extends PluginPassiveScanner {
 	private PassiveScanThread parent = null;
 	
 	/**
-	 * a consistently ordered map of: a regular expression pattern to the Programming language (string) to which the pattern most likely corresponds
+	 * a consistently ordered map of: a regular expression pattern, mapping to the Web server to which the pattern most likely corresponds
 	 */
 	static Map <Pattern, String> serverPatterns = new LinkedHashMap <Pattern, String> ();
 	
 	static {
 		//Apache 2
-		serverPatterns.put(Pattern.compile("<title>Index of /[^<]+?</title>", Pattern.MULTILINE | Pattern.DOTALL), "Apache 2"); 		
+		serverPatterns.put(Pattern.compile("<title>Index of /[^<]+?</title>", Pattern.MULTILINE | Pattern.DOTALL), "Apache 2");
 		//TODO: add patterns here for other web servers, once these are available
 		}
 
