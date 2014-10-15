@@ -82,7 +82,7 @@ public class FuzzerPanel extends AbstractPanel {
 	private void initialize() {
 		this.setLayout(new CardLayout());
 		this.setSize(474, 251);
-		this.setName(Constant.messages.getString("fuzz.panel.title"));
+		this.setName(Constant.messages.getString("fuzz.panel.title.multi"));
 		this.setIcon(new ImageIcon(FuzzerPanel.class
 				.getResource("/resource/icon/16/097.png")));
 		this.add(getPanelCommand(), getPanelCommand().getName());
@@ -91,7 +91,7 @@ public class FuzzerPanel extends AbstractPanel {
 		// ScanPanel
 		scanStatus = new ScanStatus(new ImageIcon(
 				FuzzerPanel.class.getResource("/resource/icon/16/097.png")),
-				Constant.messages.getString("fuzz.panel.title"));
+				Constant.messages.getString("fuzz.panel.title.multi"));
 
 		View.getSingleton().getMainFrame().getMainFooterPanel()
 				.addFooterToolbarRightLabel(scanStatus.getCountLabel());
