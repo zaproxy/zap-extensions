@@ -34,17 +34,20 @@ public class Product {
 		 }
 	
 	ProductType productType ;
+	String productDistro; //useful for Apache webserver in particular
 	String productName;
 	String productVersion;
 	
 	/**
 	 * construct a Product
 	 * @param productType
+	 * @param productDistro
 	 * @param productName
 	 * @param productVersion
 	 */
-	public Product (ProductType type, String name, String version) {
+	public Product (ProductType type, String productDistro, String name, String version) {
 		this.productType = type;
+		this.productDistro = productDistro;
 		this.productName = name;
 		this.productVersion = version;
 	}
@@ -54,6 +57,12 @@ public class Product {
 	}
 	public void setProductType(ProductType productType) {
 		this.productType = productType;
+	}
+	public String getProductDistro() {
+		return productDistro;
+	}
+	public void setProductDistro(String productDistro) {
+		this.productDistro = productDistro;
 	}
 	public String getProductName() {
 		return productName;
@@ -79,6 +88,7 @@ public class Product {
 		
 		Product anotherProduct = (Product) anotherObject;
 		return ( productType == anotherProduct.getProductType() &&
+				 productDistro.equals(anotherProduct.getProductDistro()) &&
 				 productName.equals (anotherProduct.getProductName()) &&
 				 productVersion.equals (anotherProduct.getProductVersion())  );
 	}

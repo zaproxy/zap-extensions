@@ -51,6 +51,11 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 	 * a pattern for identifying and parsing the server header line (normal case)
 	 */
 	private Pattern SERVER_HEADER_PATTERN = Pattern.compile("^([^ ]+)/([^ ]+)(.*)$");
+	
+	/**
+	 * a pattern for identifying the Distro from leaked Apache headers 
+	 */
+	private Pattern SERVER_HEADER_APACHE_DISTRO_PATTERN = Pattern.compile(".*\\(([^)]+)\\)");
 
 	/**
 	 * used to match Oracle headers, since these are non-standard
@@ -174,8 +179,20 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 						version = version.replaceAll("^([0-9]+)\\.([0-9]+)\\.([0-9]+)([a-zA-Z]+[0-9]+)?.*$", "$1.$2.$3$4");
 						if (log.isDebugEnabled()) log.debug("For PHP, extracted version " + version +" from "+ oldversion);
 					}
+					
+					//For Apache, check if the distro is leaked in the header.  
+					//Red Hat and Red Hat derived distros such as CentOS use "security backports", so that an earlier Apache version number
+					//is retained, but the product is *not* vulnerable to known security issues for that (earlier) product version.
+					String distro = "";
+					if ( header.startsWith("Apache") && dregs!= null && dregs.length() > 0) {
+						Matcher apacheDistroMatcher = SERVER_HEADER_APACHE_DISTRO_PATTERN.matcher(dregs);
+						if (apacheDistroMatcher.matches()) {
+							distro = apacheDistroMatcher.group(1);
+							if (log.isDebugEnabled()) log.debug("Apache distro ["+ distro + " found");
+						}
+					}
 					//record it..
-					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, distro, product, version));
 					matchingProductsEvidence.add(evidence);
 
 					//look for Apache web server modules, if any
@@ -187,12 +204,13 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 								version = modulematcher.group(2);
 								//remove the leading "v" in the version for the Apache Perl module (not for mod_perl though)
 								if (product.equals("Perl")) version = version.replaceFirst("^v(.*)$", "$1");
-								matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_APACHE_MODULE, product, version));
+								matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_APACHE_MODULE, distro, product, version));
 								//use the full module info as the evidence for now.
 								matchingProductsEvidence.add(evidence);
 							}
 						}
 					}
+
 				}
 								
 				//handle the "Generator" matches here
@@ -203,7 +221,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					product = matcherGenerator.group(1);
 					version = matcherGenerator.group(2);
 					String evidence = matcherGenerator.group(0);  //the evidence is not in the header, so grab it from here instead
-					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_CONTENT_GENERATOR, product, version));
+					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_CONTENT_GENERATOR, "", product, version));
 					matchingProductsEvidence.add(evidence);
 				}
 				
@@ -213,7 +231,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					product = matcherOracle.group(1);
 					version = matcherOracle.group(2);
 					String evidence = matcherOracle.group(0);
-					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, "", product, version));
 					matchingProductsEvidence.add(evidence);
 				}
 				//for Jetty
@@ -222,7 +240,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					product = matcherJetty.group(1);
 					version = matcherJetty.group(2);
 					String evidence = matcherJetty.group(0);
-					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, "", product, version));
 					matchingProductsEvidence.add(evidence);
 				}
 				//for JBoss
@@ -231,7 +249,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					product = matcherJBoss.group(1);
 					version = matcherJBoss.group(2);
 					String evidence = matcherJBoss.group(0);
-					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, "", product, version));
 					matchingProductsEvidence.add(evidence);
 				}
 				//For Apache Tomcat
@@ -240,7 +258,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					product = matcherTomcat.group(1);
 					version = matcherTomcat.group(2);
 					String evidence = matcherTomcat.group(0);  //the evidence is not in the header, so grab it from here instead
-					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, product, version));
+					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, "", product, version));
 					matchingProductsEvidence.add(evidence);
 				}
 
@@ -250,11 +268,12 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					String evidence = matchingProductsEvidenceIterator.next();
 					String product = matchingProduct.getProductName();
 					String version = matchingProduct.getProductVersion();
+					String distro = matchingProduct.getProductDistro();
 					Product.ProductType productType = matchingProduct.getProductType();
 
 					if ( product!= null && version != null) {
 						//TODO: handle special cases of web server software here that does not follow rfc2616						
-						if (log.isDebugEnabled()) log.debug("Found '" + productType + "' '"+product + "' version '"+ version+ "'");
+						if (log.isDebugEnabled()) log.debug("Found '" + productType + "' '"+product + "' version '"+ version+ "', distro '"+distro+"'");
 						LinkedList<CVE> vulnlist;
 						try {
 							//get the cached vulnerabilities (or retrieve them and cache them)
@@ -292,8 +311,15 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 									cvssAlertLevel = Alert.RISK_MEDIUM;
 								} else cvssAlertLevel = Alert.RISK_HIGH;
 								
+								//the confidence depends on the distro.  Red Hat and CentOS Apache versions are unreliable, for instance
+								//in that case, raise them, for visibility, but flag as a probable false positive.  
+								//The user will just have to check it out manually, since there is no way for us to be at all sure here.
+								int confidence = Alert.WARNING;
+								if ( distro.equals("Red Hat") || distro.equals("CentOS")) {
+									confidence = Alert.FALSE_POSITIVE;
+								}
 								//lets go ahead and raise the alert
-								Alert alert = new Alert(getPluginId(), cvssAlertLevel, Alert.WARNING, getName() + " - "+ product + " "+ version);
+								Alert alert = new Alert(getPluginId(), cvssAlertLevel, confidence, getName() + " - "+ product + " "+ version);
 								alert.setDetail(
 										Constant.messages.getString(MESSAGE_PREFIX + "desc", product, version, highestCvss, vulnlist.size()) , 
 										msg.getRequestHeader().getURI().toString(), 
