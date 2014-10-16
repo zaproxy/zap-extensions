@@ -214,6 +214,7 @@
 		<antcall target="build-addon"><param name="addon" value="sniTerminator"/></antcall>
         <antcall target="build-addon"><param name="addon" value="soap"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="tips"/></antcall>
         <antcall target="build-addon"><param name="addon" value="wappalyzer"/></antcall>
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>

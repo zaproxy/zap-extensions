@@ -106,7 +106,8 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
 
 	@Override
 	public void optionsLoaded() {
-		if (this.isShowOnStart()) {
+		if (View.isInitialised() && this.isShowOnStart() && ! Constant.isDevBuild() && ! Constant.isDailyBuild()) {
+			// The dev version now automatically includes tips (from this add-on) in the splash screen 
 			SwingUtilities.invokeLater(new Runnable(){
 				@Override
 				public void run() {
