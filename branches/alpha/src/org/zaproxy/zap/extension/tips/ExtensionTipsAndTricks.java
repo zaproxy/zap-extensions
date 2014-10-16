@@ -84,6 +84,11 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
 	    }
 	}
 	
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
+	
 	private TipsParam getTipsParam() {
 		if (params == null) {
 			params = new TipsParam();

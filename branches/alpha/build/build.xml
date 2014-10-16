@@ -322,6 +322,14 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="soap"/> </antcall>
 	</target>
 		
+    <target name="deploy-tips" description="deploy the Tips and Tricks">
+		<antcall target="build-deploy-addon"> <param name="addon" value="tips"/> </antcall>
+	</target>
+		
+	<target name="generate-wiki-tips" description="Generates the wiki of tips">
+		<generate-wiki addon="tips" />
+	</target>
+
     <target name="deploy-wappalyzer" description="deploy the Wappalyzer extension">
         <antcall target="build-deploy-addon"> <param name="addon" value="wappalyzer"/> </antcall>
     </target>
