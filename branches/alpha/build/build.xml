@@ -345,6 +345,7 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="soap-${status}-*.zap"/>
+				<include name="soap-${tips}-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
