@@ -148,7 +148,6 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 			    	String domain = exprAllowAccessFromDomainNodes.item(i).getNodeValue();
 			    	if ( domain.equals("*")) {
 						//oh dear me.
-						if (log.isInfoEnabled()) log.info("Bingo!  <allow-access-from domain=\"*\"");
 						bingo(	getRisk(), 
 								Alert.WARNING,
 								Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "name"),
@@ -170,7 +169,6 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 			    	String domain = exprRequestHeadersFromDomainNodes.item(i).getNodeValue();
 			    	if ( domain.equals("*")) {
 						//oh dear, dear me.
-						if (log.isInfoEnabled()) log.info("Bingo!  <allow-http-request-headers-from domain=\"*\"");
 						bingo(	getRisk(), 
 								Alert.WARNING,
 								Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "name"),
@@ -207,7 +205,7 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 			    	String uri = exprAllowFromUriNodes.item(i).getNodeValue();
 			    	if (uri.equals ("*")) {
 			    		//tut, tut, tut.
-						if (log.isInfoEnabled()) log.info("Bingo! "+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE+", at /access-policy/cross-domain-access/policy/allow-from/domain/@uri");
+						log.debug("Bingo! "+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE+", at /access-policy/cross-domain-access/policy/allow-from/domain/@uri");
 						bingo(	getRisk(), 
 								Alert.WARNING,
 								Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "name"),
