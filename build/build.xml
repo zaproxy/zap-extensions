@@ -23,7 +23,7 @@
 	<taskdef classpathref="build.classpath" resource="wikitasks.properties" />
 
 	<!-- Ant task to generate JavaHelp search indexes -->
-	<taskdef name="generatejavahelpsearchindexes" classname="org.zaproxy.ant.javahelp.taskdefs.GenerateJavaHelpSearchIndexes" classpathref="build.classpath" />
+	<taskdef classpathref="build.classpath" resource="javahelptasks.properties" />
 	
 	<target name="clean">
 		<delete dir="${dist}" includeEmptyDirs="true" />
