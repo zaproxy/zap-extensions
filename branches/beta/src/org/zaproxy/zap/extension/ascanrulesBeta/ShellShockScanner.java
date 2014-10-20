@@ -15,7 +15,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.util.Vector;
 
@@ -25,7 +25,6 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
@@ -59,7 +58,7 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
 	 */
 	@Override
 	public String getName() {
-		return Constant.messages.getString("ascanalpha.shellshock.name");
+		return Constant.messages.getString("ascanbeta.shellshock.name");
 	}
 
 	@Override
@@ -69,7 +68,7 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
 
 	@Override
 	public String getDescription() {
-		return Constant.messages.getString("ascanalpha.shellshock.desc");
+		return Constant.messages.getString("ascanbeta.shellshock.desc");
 	}
 
 	@Override
@@ -79,12 +78,12 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
 
 	@Override
 	public String getSolution() {
-		return Constant.messages.getString("ascanalpha.shellshock.soln");
+		return Constant.messages.getString("ascanbeta.shellshock.soln");
 	}
 
 	@Override
 	public String getReference() {
-		return Constant.messages.getString("ascanalpha.shellshock.ref");
+		return Constant.messages.getString("ascanbeta.shellshock.ref");
 	}
 
 	@Override
@@ -114,7 +113,7 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
 								null, // originalMessage.getRequestHeader().getURI().getURI(),
 								paramName, // parameter being attacked
 								attack,
-								Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
+								Constant.messages.getString("ascanbeta.shellshock.extrainfo"),
 								this.getSolution(),
 								evidence,
 								msg1
@@ -155,9 +154,9 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
 						null, // originalMessage.getRequestHeader().getURI().getURI(),
 						paramName, // parameter being attacked
 						attack,
-						Constant.messages.getString("ascanalpha.shellshock.extrainfo"),
+						Constant.messages.getString("ascanbeta.shellshock.extrainfo"),
 						this.getSolution(),
-						Constant.messages.getString("ascanalpha.shellshock.timingbased.evidence", attackElapsedTime),
+						Constant.messages.getString("ascanbeta.shellshock.timingbased.evidence", attackElapsedTime),
 						msg2
 						);
 				return;
