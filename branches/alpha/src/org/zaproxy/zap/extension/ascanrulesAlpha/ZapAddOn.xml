@@ -12,7 +12,6 @@
     Promoted Insecure HTTP Method<br>
     Promoted Remote Code Execution - CVE2012-1823<br>
     Promoted Source Code Disclosure - CVE2012-1823<br>
-    Promoted Source Code Disclosure - Git<br>
     Promoted Source Code Disclosure - SVN<br>
     Promoted Source Code Disclosure - WEB-INF<br>
   	]]>
@@ -28,6 +27,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ShellShockScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SlackerCookieDetector</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionSQLite</ascanrule>
 	</ascanrules>
 	<pscanrules/>
