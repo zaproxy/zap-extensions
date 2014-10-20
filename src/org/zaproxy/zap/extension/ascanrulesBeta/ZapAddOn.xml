@@ -7,14 +7,15 @@
 	<changes>
 	<![CDATA[
     Solved Comparison operator in XpathInjectionPlugin (Issue 1189).<br>
-    Promoted Backup File Disclosure<br>
-    Promoted Cross Domain Scanner<br>
-    Promoted HeartBleed<br>
-    Promoted Insecure HTTP Method<br>
-    Promoted Remote Code Execution - CVE2012-1823<br>
-    Promoted Source Code Disclosure - CVE2012-1823<br>
-    Promoted Source Code Disclosure - SVN<br>
-    Promoted Source Code Disclosure - WEB-INF<br>
+    Promoted Backup File Disclosure to beta<br>
+    Promoted Cross Domain Scanner to beta<br>
+    Promoted HeartBleed to beta<br>
+    Promoted Insecure HTTP Method to beta<br>
+    Promoted Remote Code Execution - CVE2012-1823 to beta<br>
+    Promoted Shell shock to beta<br>
+    Promoted Source Code Disclosure - CVE2012-1823 to beta<br>
+    Promoted Source Code Disclosure - SVN to beta<br>
+    Promoted Source Code Disclosure - WEB-INF to beta<br>
     ]]>
 	</changes>
 	<dependson/>
@@ -33,6 +34,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.PaddingOraclePlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.RemoteCodeExecutionCVE20121823</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SessionFixation</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.ShellShockScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionHypersonic</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionMySQL</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionOracle</ascanrule>
