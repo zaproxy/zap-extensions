@@ -13,7 +13,6 @@
     Promoted Insecure HTTP Method<br>
     Promoted Remote Code Execution - CVE2012-1823<br>
     Promoted Source Code Disclosure - CVE2012-1823<br>
-    Promoted Source Code Disclosure - Git<br>
     Promoted Source Code Disclosure - SVN<br>
     Promoted Source Code Disclosure - WEB-INF<br>
     ]]>
@@ -39,7 +38,6 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionOracle</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionPostgresql</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SourceCodeDisclosureCVE20121823</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SourceCodeDisclosureGit</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SourceCodeDisclosureSVN</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SourceCodeDisclosureWEBINF</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.UsernameEnumeration</ascanrule>
