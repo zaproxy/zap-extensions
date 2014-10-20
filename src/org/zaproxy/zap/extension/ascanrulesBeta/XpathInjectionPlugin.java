@@ -71,7 +71,8 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
         "<p>msxml4.dll</font>",
         "<p>msxml3.dll</font>",
         // Lotus notes error when document searching inside nsf files
-        "4005 Notes error: Query is not understandable"
+        "4005 Notes error: Query is not understandable",
+        "SimpleXMLElement::xpath()" // PHP error
     };
     
     // Get WASC Vulnerability description
