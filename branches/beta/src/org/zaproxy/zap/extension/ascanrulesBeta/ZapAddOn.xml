@@ -1,40 +1,50 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>13</version>
+	<version>14</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Promoted new XXE Plugin to test for remote and local XML External Entity Vulnerability.</br>
-	Promoted new PaddingOracle plugin to test for possible encryption padding errors.</br> 
-	Promoted PXSS tests to beta.</br>
-	Promoted Command Injection release.</br>
-	Promoted new Expression Language Plugin to test JSP EL Injection.</br> 
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).<br>
-	Updated add-on dir structure (Issue 1113).<br>
-        Solved Comparison operator in XpathInjectionPlugin (Issue 1189).
-	]]>
+    Solved Comparison operator in XpathInjectionPlugin (Issue 1189).<br>
+    Promoted Backup File Disclosure<br>
+    Promoted Cross Domain Scanner<br>
+    Promoted HeartBleed<br>
+    Promoted Insecure HTTP Method<br>
+    Promoted Remote Code Execution - CVE2012-1823<br>
+    Promoted Source Code Disclosure - CVE2012-1823<br>
+    Promoted Source Code Disclosure - Git<br>
+    Promoted Source Code Disclosure - SVN<br>
+    Promoted Source Code Disclosure - WEB-INF<br>
+    ]]>
 	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.ascanrulesBeta.ExtensionAscanRulesBeta</extension>
 	</extensions>
 	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.BackupFileDisclosure</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CrossDomainScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.ExpressionLanguageInjectionPlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HeartBleedActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HPP</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.InsecureHTTPMethod</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.LDAPInjection</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.PaddingOraclePlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.RemoteCodeExecutionCVE20121823</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SessionFixation</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionHypersonic</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionMySQL</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionOracle</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SQLInjectionPostgresql</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SourceCodeDisclosureCVE20121823</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SourceCodeDisclosureGit</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SourceCodeDisclosureSVN</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SourceCodeDisclosureWEBINF</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.UsernameEnumeration</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.XpathInjectionPlugin</ascanrule>                
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.XXEPlugin</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.PaddingOraclePlugin</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.ExpressionLanguageInjectionPlugin</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
