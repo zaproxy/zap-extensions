@@ -1,34 +1,33 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>10</version>
+	<version>11</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-		Improved "Shell Shock" scanner to also detect the vulnerability in PHP scripts.
-	]]>
+    Promoted Backup File Disclosure<br>
+    Promoted Cross Domain Scanner<br>
+    Promoted HeartBleed<br>
+    Promoted Insecure HTTP Method<br>
+    Promoted Remote Code Execution - CVE2012-1823<br>
+    Promoted Source Code Disclosure - CVE2012-1823<br>
+    Promoted Source Code Disclosure - Git<br>
+    Promoted Source Code Disclosure - SVN<br>
+    Promoted Source Code Disclosure - WEB-INF<br>
+  	]]>
 	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.ascanrulesAlpha.ExtensionAscanRulesAlpha</extension>
 	</extensions>
 	<ascanrules>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BackupFileDisclosure</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.CrossDomainScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HeartBleedActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.InsecureHTTPMethod</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RemoteCodeExecutionCVE20121823</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ShellShockScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SlackerCookieDetector</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureCVE20121823</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureSVN</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureWEBINF</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionSQLite</ascanrule>
 	</ascanrules>
 	<pscanrules/>
