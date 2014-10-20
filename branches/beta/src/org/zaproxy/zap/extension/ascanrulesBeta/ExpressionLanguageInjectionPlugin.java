@@ -38,6 +38,10 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
     // Logger object
     private static final Logger log = Logger.getLogger(ExpressionLanguageInjectionPlugin.class);    
 
+    private static final int MAX_NUM_TRIES   = 1000;
+    private static final int DEVIATION_VALUE = 999999;
+    private static final int MEAN_VALUE      = 100000;
+    
     /**
      * Get the unique identifier of this plugin
      * @return this plugin identifier
@@ -151,13 +155,15 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
         String addedString;
         int bignum1;
         int bignum2;
+        int tries = 0;
 
         do {
-            bignum1 = 100000 + (int) (rand.nextFloat() * (999999 - 100000 + 1));
-            bignum2 = 100000 + (int) (rand.nextFloat() * (999999 - 100000 + 1));
+            bignum1 = MEAN_VALUE + (int) (rand.nextFloat() * (DEVIATION_VALUE - MEAN_VALUE + 1));
+            bignum2 = MEAN_VALUE + (int) (rand.nextFloat() * (DEVIATION_VALUE - MEAN_VALUE + 1));
             addedString = String.valueOf(bignum1 + bignum2);
+            tries++;
 
-        } while (originalContent.contains(addedString));
+        } while (originalContent.contains(addedString) && (tries < MAX_NUM_TRIES));
 
         // Build the evil payload ${100146+99273}
         String payload = "${" + bignum1 + "+" + bignum2 + "}";
