@@ -98,10 +98,42 @@
 		<antcall target="build-addon"><param name="addon" value="treetools"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
 
+		<!-- Special case due to dependencies - need to fix this sometime;) -->
+		<antcall target="build-bruteforce"/>
+		<antcall target="build-tokengen"/>
 				
         <echo file="${versions.file}" append="true">&lt;/ZAP></echo>
 		
     </target>
+    
+    <target name="build-bruteforce" description="build the bruteforce extension">
+        <antcall target="build-addon"><param name="addon" value="bruteforce"/></antcall>
+        
+        <!-- Add the extra classes needed -->
+        <property name="addon" value="bruteforce" /> <!-- Set this to make cut-n-pasting safer ;) -->
+        <xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+        <property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+        <jar jarfile="${dist.dir}/${file}" update="true" compress="true">
+            <zipfileset dir="${build.classes.dir}" prefix="">
+                <include name="com/sittinglittleduck/DirBuster/**"/>
+            </zipfileset>
+        </jar>
+    </target>
+    
+    <target name="build-tokengen" description="build the tokengen extension">
+        <antcall target="build-addon"><param name="addon" value="tokengen"/></antcall>
+        
+        <!-- Add the extra classes needed -->
+        <property name="addon" value="tokengen" /> <!-- Set this to make cut-n-pasting safer ;) -->
+        <xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+        <property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+        <jar jarfile="${dist.dir}/${file}" update="true" compress="true">
+            <zipfileset dir="${build.classes.dir}" prefix="">
+                <include name="com/fasteasytrade/JRandTest/**"/>
+            </zipfileset>
+        </jar>
+    </target>
+    
 
     <!-- Version file content appender -->            
     <target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">

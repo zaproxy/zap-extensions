@@ -153,8 +153,8 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
         int bignum2;
 
         do {
-            bignum1 = 100000 + (int) (rand.nextFloat() * (999999 - 1000000 + 1));
-            bignum2 = 100000 + (int) (rand.nextFloat() * (999999 - 1000000 + 1));
+            bignum1 = 100000 + (int) (rand.nextFloat() * (999999 - 100000 + 1));
+            bignum2 = 100000 + (int) (rand.nextFloat() * (999999 - 100000 + 1));
             addedString = String.valueOf(bignum1 + bignum2);
 
         } while (originalContent.contains(addedString));
