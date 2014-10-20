@@ -570,8 +570,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 			
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			log.error("Some error occurred when looking for a backup file for '"+ originalMessage.getRequestHeader().getURI() + "': "+ e);
+			log.error("Some error occurred when looking for a backup file for '"+ originalMessage.getRequestHeader().getURI(), e);
 			return;
 		}
 

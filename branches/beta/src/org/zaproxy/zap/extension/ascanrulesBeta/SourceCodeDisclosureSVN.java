@@ -245,8 +245,6 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 				//check the contents of the output to some degree, if we have a file extension.
 				//if not, just try it (could be a false positive, but hey)    			
 				if (dataMatchesExtension (svnsourcefileattackmsg.getResponseBody().getBytes(), fileExtension)) {
-					log.info("Source code disclosure, using SVN metadata leakage!");
-
 					//if we get to here, is is very likely that we have source file inclusion attack. alert it.
 					bingo(Alert.RISK_HIGH, Alert.WARNING,
 							Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.name"),

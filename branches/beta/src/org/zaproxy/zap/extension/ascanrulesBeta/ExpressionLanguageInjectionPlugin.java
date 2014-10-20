@@ -177,7 +177,7 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
             if (msg.getResponseBody().toString().contains(addedString)) {
                 // We Found IT!
                 // First do logging
-                log.info("[Expression Langage Injection Found] on parameter [" + paramName
+                log.debug("[Expression Langage Injection Found] on parameter [" + paramName
                         + "]  with payload [" + payload + "]");
 
                 // Now create the alert message

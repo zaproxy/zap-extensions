@@ -543,7 +543,7 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 					}
 					catch (Exception e) {
 						//we cannot connect at all.. no point in continuing.
-						log.error("Cannot establish a socket connection to "+ hostname + ":"+ portnumber + " for HeartBleed");
+						log.debug("Cannot establish a socket connection to "+ hostname + ":"+ portnumber + " for HeartBleed");
 						return;							
 					}
 
