@@ -125,6 +125,7 @@
 		&lt;status>${status}&lt;/status>
 		&lt;changes>${changes}&lt;/changes>
 		&lt;url>http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download&lt;/url>
+		&lt;hash>${hash}&lt;/hash>
 		&lt;info>${url}&lt;/info>
 		&lt;size>${length}&lt;/size>
 		&lt;date>${yyyymmdd}&lt;/date>
@@ -182,6 +183,7 @@
 			<param name="file" value="${file}"/>
 		</antcall>
 
+		<checksum file="${dist}/${file}"  algorithm="SHA-1" property="sha1hash"/>
 
 		<antcall target="append-to-versions-file"> 
 			<param name="extension" value="${addon}"/> 
@@ -190,6 +192,7 @@
 			<param name="description" value="${zapaddon.description}"/> 
 			<param name="author" value="${zapaddon.author}"/> 
 			<param name="url" value="${zapaddon.url}"/> 
+			<param name="hash" value="SHA1:${sha1hash}"/>
 			<param name="changes" value="${zapaddon.changes}"/> 
 			<param name="file" value="${file}"/> 
 			<param name="not-before-version" value="${zapaddon.not-before-version}"/> 
