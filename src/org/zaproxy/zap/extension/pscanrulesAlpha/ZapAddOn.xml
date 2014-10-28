@@ -13,6 +13,7 @@
 	Fixed an issue in detecting SHA-512 Crypt hashes, and other hashes beginning with "$"<br>
 	Detect Node.js source code<br>
 	Report Apache vulnerabilities on Red Hat and CentOS as False Positives<br>
+	Detect Directory Browsing / Listings on Microsoft IIS<br>
 	]]>
 	</changes>
 	<dependson/>

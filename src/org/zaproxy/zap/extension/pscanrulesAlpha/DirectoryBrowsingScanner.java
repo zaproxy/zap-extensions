@@ -52,6 +52,8 @@ public class DirectoryBrowsingScanner extends PluginPassiveScanner {
 		//Apache 2
 		serverPatterns.put(Pattern.compile("<title>Index of /[^<]+?</title>", Pattern.MULTILINE | Pattern.DOTALL), "Apache 2");
 		//TODO: add patterns here for other web servers, once these are available
+		//IIS 7.5 follows this pattern. What about other versions??
+		serverPatterns.put(Pattern.compile("<pre><A\\s+HREF\\s*=\\s*\"/[^>]*\">\\[To Parent Directory\\]</A><br><br>", Pattern.MULTILINE | Pattern.DOTALL), "Microsoft IIS");
 		}
 
 	/**
