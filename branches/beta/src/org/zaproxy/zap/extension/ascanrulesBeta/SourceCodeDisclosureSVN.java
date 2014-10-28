@@ -56,7 +56,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 	 * TODO: add support for verification of other file types, once I get some real world test cases.
 	 */
 	private static final Pattern PATTERN_JSP = Pattern.compile("<%.*%>");
-	private static final Pattern PATTERN_PHP = Pattern.compile("<?php");
+	private static final Pattern PATTERN_PHP = Pattern.compile("<\\?php");
 	private static final Pattern PATTERN_JAVA = Pattern.compile("class");  //Java is compiled, not interpreted, but this helps with my test cases.
 	private static final Pattern PATTERN_HTML = Pattern.compile("<html");  //helps eliminate some common false positives in the case of 403s, 302s, etc
 
