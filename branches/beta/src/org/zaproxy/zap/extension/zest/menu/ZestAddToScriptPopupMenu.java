@@ -112,6 +112,14 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
 			this.subMenus.add(piicm);
 		}
 		
+		// TODO Sequence - makes it possible to add requests to a sequence script 
+		for (ScriptNode node : extension.getZestScriptNodes("sequence")) {
+			ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
+			piicm.setMenuIndex(this.getMenuIndex());
+			mainPopupMenuItems.add(piicm);
+			this.subMenus.add(piicm);
+		}
+		
         // Add the 'new zest' menu
         ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu();
 		mainPopupMenuItems.add(piicm);
