@@ -210,6 +210,7 @@
 		<antcall target="build-addon"><param name="addon" value="multiFuzz"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
         <antcall target="build-addon"><param name="addon" value="saml"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="sequence"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="simpleExample"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sniTerminator"/></antcall>
         <antcall target="build-addon"><param name="addon" value="soap"/></antcall>
@@ -290,11 +291,15 @@
 	<target name="generate-wiki-pscanrulesAlpha" description="Generates the wiki of passive scan rules">
 		<generate-wiki addon="pscanrulesAlpha" />
 	</target>
-
-    <target name="deploy-saml" description="deploy the SAML extension">
+	
+	<target name="deploy-saml" description="deploy the SAML extension">
         <antcall target="build-deploy-addon"> <param name="addon" value="saml"/> </antcall>
     </target>
     
+	<target name="deploy-sequence" description="deploy the Sequence extension">
+    	<antcall target="build-deploy-addon"> <param name="addon" value="sequence"/> </antcall>
+	</target>
+	
 	<target name="deploy-serverSentEvents" description="deploy the Server-Sent Events extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="serverSentEvents"/> </antcall>
 	</target>
