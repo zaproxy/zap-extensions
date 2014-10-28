@@ -374,22 +374,22 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	}
 
 	@Override
-	public void scannerComplete() {
+	public void scannerComplete(int id) {
 		this.scanning = false;
 	}
 
 	@Override
-	public void hostNewScan(String hostAndPort, HostProcess hostThread) {
+	public void hostNewScan(int id, String hostAndPort, HostProcess hostThread) {
 	}
 
 
 	@Override
-	public void hostProgress(String hostAndPort, String msg, int percentage) {
+	public void hostProgress(int id, String hostAndPort, String msg, int percentage) {
 	}
 
 
 	@Override
-	public void hostComplete(String hostAndPort) {
+	public void hostComplete(int id, String hostAndPort) {
 	}
 
 
