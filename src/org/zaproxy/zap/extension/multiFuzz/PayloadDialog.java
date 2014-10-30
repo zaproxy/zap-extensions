@@ -502,9 +502,11 @@ public class PayloadDialog<G extends FuzzGap<?, ?, P>, P extends Payload, F exte
 							.getJBroFuzzFuzzerNames(cat).contains(choice))) {
 				P pay = factory.createPayload(Payload.Type.FILE.name(), cat + " --> "
 						+ choice);
-				target.getPayloads().add(pay);
-				payloadModel.addEntry(pay);
-				getDoneButton().setEnabled(true);
+				if (pay != null) {
+					target.getPayloads().add(pay);
+					payloadModel.addEntry(pay);
+					getDoneButton().setEnabled(true);
+				}
 			}
 		}
 	}
