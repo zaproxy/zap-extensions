@@ -35,9 +35,9 @@ public class HttpPayloadFactory implements PayloadFactory<HttpPayload> {
 
 	@Override
 	public HttpPayload createPayload(String type, String data) {
-		if (type.equals(Payload.Type.STRING)) {
+		if (type.equals(Payload.Type.STRING.name())) {
 			return createPayload(data);
-		} else if (type.equals(Payload.Type.FILE)) {
+		} else if (type.equals(Payload.Type.FILE.name())) {
 			HttpPayload pay = new HttpPayload();
 			pay.setType(Payload.Type.FILE.name());
 			pay.setData(data);
@@ -70,7 +70,7 @@ public class HttpPayloadFactory implements PayloadFactory<HttpPayload> {
 			pay.setData(data);
 			pay.setLength(-1);
 			return pay;
-		} else if (type.equals(Payload.Type.REGEX)) {
+		} else if (type.equals(Payload.Type.REGEX.name())) {
 			HttpPayload pay = new HttpPayload();
 			pay.setType(Payload.Type.REGEX.name());
 			pay.setData(data);
