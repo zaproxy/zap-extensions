@@ -35,6 +35,7 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.model.Target;
 
 public class AttackThread extends Thread {
 	
@@ -77,15 +78,18 @@ public class AttackThread extends Thread {
 				extension.notifyProgress(Progress.stopped);
 	        	return;
 	        }
+			Target target = new Target(startNode);
+			target.setRecurse(true);
 
 			ExtensionSpider extSpider = (ExtensionSpider) Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.NAME);
+			int spiderId;
 			if (extSpider == null) {
 				logger.error("No spider");
 				extension.notifyProgress(Progress.failed);
 				return;
 			} else {
 				extension.notifyProgress(Progress.spider);
-				extSpider.startScan(startNode);
+				spiderId = extSpider.startScan(target.getDisplayName(), target, null, null);
 			}
 			
 			// Give some time to the spider to finish to setup and start itself.
@@ -93,10 +97,10 @@ public class AttackThread extends Thread {
 			
 			try {
 				 // Wait for the spider to complete
-				while (extSpider.isScanning(startNode, true)) { 
+				while (! extSpider.getScan(spiderId).isStopped()) { 
 					sleep (500);
 					if (this.stopAttack) {
-						extSpider.stopScan(startNode);
+						extSpider.stopScan(spiderId);
 						break;
 					}
 				}
@@ -126,21 +130,22 @@ public class AttackThread extends Thread {
 	        }
 			
 			ExtensionActiveScan extAscan = (ExtensionActiveScan) Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.NAME);
+			int scanId;
 			if (extAscan == null) {
 				logger.error("No active scanner");
 				extension.notifyProgress(Progress.failed);
 				return;
 			} else {
 				extension.notifyProgress(Progress.ascan);
-				extAscan.startScan(startNode);
+				scanId = extAscan.startScan(target);
 			}
 		
 			try {
 				 // Wait for the active scanner to complete
-				while (extAscan.isScanning(startNode)) { 
+				while (! extAscan.getScan(scanId).isStopped()) { 
 					sleep (500);
 					if (this.stopAttack) {
-						extAscan.stopScan(startNode);
+						extAscan.stopScan(scanId);
 					}
 				}
 			} catch (InterruptedException e) {
