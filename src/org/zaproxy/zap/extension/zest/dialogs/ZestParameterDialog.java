@@ -20,7 +20,7 @@
 package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
-import java.awt.Frame;
+import java.awt.Window;
 
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
@@ -39,7 +39,7 @@ public class ZestParameterDialog extends StandardFieldsDialog implements ZestDia
 	private boolean add = true;
 	private int index = -1;
 
-	public ZestParameterDialog(ScriptTokensTableModel model, Frame owner, Dimension dim) {
+	public ZestParameterDialog(ScriptTokensTableModel model, Window owner, Dimension dim) {
 		super(owner, "zest.dialog.param.add.title", dim);
 		this.model = model;
 	}

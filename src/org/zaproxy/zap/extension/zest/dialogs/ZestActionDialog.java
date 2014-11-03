@@ -232,6 +232,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
     
     private ZestParameterDialog getParamDialog() {
     	if (this.parmaDialog == null) {
+    		// TODO this 
     		this.parmaDialog = new ZestParameterDialog(this.getParamsModel(), this, new Dimension(300, 200)); 
     	}
     	return this.parmaDialog;
