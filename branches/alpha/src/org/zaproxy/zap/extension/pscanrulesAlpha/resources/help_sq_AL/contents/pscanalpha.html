@@ -24,6 +24,13 @@ This checks response headers for the presence of a Content Security Policy heade
 <h2>Cookie poisoning</h2>
 This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
 
+<h2>Cross Domain Misconfiguration</h2>
+Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
+The current implementation looks at excessively permissive CORS headers.
+
+<h2>Directory Browsing</h2>
+Passively scan responses for signatures that are indicative that Directory Browsing is possible.
+
 <h2>Example File Passive Scanner</h2>
 This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
 For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
@@ -33,13 +40,52 @@ This implements a very simple example passive scan rule.<br>
 For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
 <h2>Hash Disclosure</h2>
-A hash was disclosed by the web server
+Passively scan for password hashes disclosed by the web server. <br>
+Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
+
+<h2>HeartBleed</h2>
+Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
 
 <h2>HTTP to HTTPS insecure transition in form post</h2>
 This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
 
 <h2>HTTPS to HTTP insecure transition in form post</h2>
 This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
+
+<h2>Insecure Component</h2>
+Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs.<br>
+A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable.<br>
+Currently, the following server side products are supported:<br>
+Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
+Apache web server<br>
+mod_auth_radius Apache module<br>
+mod_fcgid Apache module<br>
+mod_imap Apache module<br>
+mod_jk Apache module<br>
+mod_perl Apache module<br>
+mod_python Apache module<br>
+mod_ssl Apache module<br>
+OpenSSL Apache module<br>
+Perl Apache module<br>
+Python Apache module<br>
+IBM HTTP Server<br>
+JBoss application server<br>
+Jetty web server / application server<br>
+LiteSpeed web server<br>
+Lighttpd web server<br>
+Microsoft IIS web server<br>
+Netscape Enterprise web server<br>
+Nginx web server<br>
+OpenCMS<br>
+Oracle Application Server<br>
+Oracle Web Cache<br>
+PHP<br>
+Phusion_Passenger<br>
+Squid proxy server<br>
+Sun One web server<br>
+Sun Java System Web Server<br>
+TornadoServer web server<br>
+WordPress<br>
 
 <h2>Open redirect</h2>
 Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
@@ -73,6 +119,10 @@ This checks response headers for the presence of X-Powered-By details.
 
 <h2>X-Backend-Server Header Information Leak</h2>
 This checks response headers for the presence of X-Backend-Server details.
+
+<h2>Big Redirect</h2>
+This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
+A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
 
 </body>
 </html>
