@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Quick Start" image="icon147" target="quickstart"/>
+			<tocitem text="Quick Start" image="icon147" target="quickstart">
+				<tocitem text="Command Line"  target="quickstart.cmdline" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

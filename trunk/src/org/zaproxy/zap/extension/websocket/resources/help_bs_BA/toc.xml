@@ -9,7 +9,7 @@
 			<tocitem text="WebSocketi" image="html5connectivity" target="websocket.introduction" >
          		<tocitem text="Tab" target="websocket.tab"/>
 				<tocitem text="Opcije" target="websocket.options"/>
-				<tocitem text="Svojstva Sesije" target="websocket.session_properties"/>
+				<tocitem text="Svojstva Sesije" target="websocket.sessionProperties"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
