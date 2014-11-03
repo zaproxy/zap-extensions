@@ -10,15 +10,46 @@ Active Scan Rules - beta
 <h1>Active Scan Rules - beta</h1>
 The following beta quality active scan rules are included in this add-on:
 
+<h2>Backup File Disclosure</h2>
+Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information
+
+<h2>Cross-Domain Misconfiguration</h2>
+Checks if the web server is configured to allow Cross Domain access, from a malicious
+third party service, for instance. Currently checks for wildcards in Adobe's crossdomain.xml, and in
+SilverLight's clientaccesspolicy.xml. 
+
 <h2>CSRF Token</h2>
 
+<h2>Heartbleed OpenSSL Vulnerability</h2>
+Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability, by exploiting it.
+
 <h2>HPP</h2>
+
+<h2>Insecure HTTP Method</h2>
+Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL.
 
 <h2>LDAP Injection</h2>
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
 
+<h2>Remote Code Execution - CVE-2012-1823</h2>
+Detect CVE-2012-1823 to perform Remote Code Execution on a PHP-CGI based web server.
+
 <h2>Session Fixation</h2>
 Session Fixation may be possible. If this issue occurs with a login URL (where the user authenticates themselves to the application), then the URL may be given by an attacker, along with a fixed session id, to a victim, in order to later assume the identity of the victim using the given session id. If the issue occurs with a non-login page, the URL and fixed session id may only be used by an attacker to track an unauthenticated user's actions. If the vulnerability occurs on a cookie field or a form field (POST parameter) rather than on a URL (GET) parameter, then some other vulnerability may also be required in order to set the cookie field on the victim's browser, to allow the vulnerability to be exploited.
+
+<h2>ShellShock - CVE-2014-6271</h2>
+
+This scanner perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
+The first is a simple reflected attack and the second is a time based attack.
+
+<h2>Source Code Disclosure - CVE-2012-1823</h2>
+Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.
+
+<h2>Source Code Disclosure - SVN</h2>
+Uses Subversion source code repository metadata to scan for files containing source code on the web server.
+
+<h2>Source Code Disclosure - /WEB-INF</h2>
+Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose Java source code.
 
 <h2>SQL Injection - Hypersonic, time based</h2>
 
