@@ -20,7 +20,7 @@
 package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
-import java.awt.Frame;
+import java.awt.Window;
 
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
@@ -41,7 +41,7 @@ public class ZestCookieDialog extends StandardFieldsDialog implements ZestDialog
 	private int index = -1;
 	private ZestScriptWrapper script;
 
-	public ZestCookieDialog(CookiesTableModel model, Frame owner, Dimension dim) {
+	public ZestCookieDialog(CookiesTableModel model, Window owner, Dimension dim) {
 		super(owner, "zest.dialog.param.add.title", dim);
 		this.model = model;
 	}

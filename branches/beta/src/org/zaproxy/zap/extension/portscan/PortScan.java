@@ -39,6 +39,7 @@ import org.parosproxy.paros.network.ConnectionParam;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ScanListenner;
 import org.zaproxy.zap.model.ScanThread;
+import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.users.User;
 
 public class PortScan extends ScanThread implements ScanListenner {
@@ -368,5 +369,10 @@ public class PortScan extends ScanThread implements ScanListenner {
     public void setScanAsUser(User user) {
         // Don't support
     }
+
+	@Override
+	public void setTechSet(TechSet techSet) {
+        // Don't support
+	}
 
 }
