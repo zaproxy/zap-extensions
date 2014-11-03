@@ -13,6 +13,8 @@
 	<property name="wiki.dir" location="../../zap-extensions-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
+	<!-- This assumes you also have the zaproxy-2.4 project (used for the weekly release -->
+	<property name="zap-2.4.plugin.dir" location="../../zaproxy-2.4/src/plugin" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
@@ -352,7 +354,7 @@
 		<!-- Set to compile with debug information -->
 		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
-		<copy todir="${zap.plugin.dir}">
+		<copy todir="${zap-2.4.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="soap-${status}-*.zap"/>
 				<include name="tips-${status}-*.zap"/>
