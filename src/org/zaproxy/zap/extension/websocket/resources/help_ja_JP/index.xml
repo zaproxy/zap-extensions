@@ -8,5 +8,5 @@
     <indexitem text="websocket" target="websocket.introduction" />
     <indexitem text="websocket タブ" target="websocket.tab" />
     <indexitem text="websocket オプション" target="websocket.options" />
-    <indexitem text="websocket セッション プロパティ" target="websocket.session_properties" />
+    <indexitem text="websocket セッション プロパティ" target="websocket.sessionProperties" />
 </index>

@@ -6,4 +6,5 @@
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="quick start" target="quickstart" />
+	<indexitem text="quick start command line" target="quickstart.cmdline" />
 </index>
