@@ -184,34 +184,38 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                 //kb = getKb().getString("sessionId/name");
                 //getKb().add("sessionId/name", sessionIdName);
 
-                // Raise an alert according to Passive Scan Rule model
-                // description, uri, param, attack, otherInfo, 
-                // solution, reference, evidence, cweId, wascId, msg
-                Alert alert = new Alert(getPluginId(), getRisk(), Alert.WARNING, getName());
-                alert.setDetail(
-                        getDescription(),
-                        uri,
-                        sessionIdName,
-                        sessionIdValue,
-                        "",
-                        getSolution(),
-                        getReference(),
-                        sessionIdValue, // evidence
-                        getCweId(), // CWE Id
-                        getWascId(), // WASC Id - Info leakage
-                        msg);
-
-                parent.raiseAlert(id, alert);
-
-                // Now try to check if there exists a 
-                // referer inside thecontent
-                try {
-                    checkSessionIDExposure(msg, id);
-
-                } catch (URIException e) {
-                }
-
-                break;
+                //To reduce false positives
+                if (sessionIdValue.length() > 8) { 
+	                
+	                // Raise an alert according to Passive Scan Rule model
+	                // description, uri, param, attack, otherInfo, 
+	                // solution, reference, evidence, cweId, wascId, msg
+	                Alert alert = new Alert(getPluginId(), getRisk(), Alert.WARNING, getName());
+	                alert.setDetail(
+	                        getDescription(),
+	                        uri,
+	                        sessionIdName,
+	                        sessionIdValue,
+	                        "",
+	                        getSolution(),
+	                        getReference(),
+	                        sessionIdValue, // evidence
+	                        getCweId(), // CWE Id
+	                        getWascId(), // WASC Id - Info leakage
+	                        msg);
+	
+	                parent.raiseAlert(id, alert);
+	
+	                // Now try to check if there exists a 
+	                // referer inside thecontent
+	                try {
+	                    checkSessionIDExposure(msg, id);
+	
+	                } catch (URIException e) {
+	                }
+	
+	                break;
+	            }
             }
         }
     }
