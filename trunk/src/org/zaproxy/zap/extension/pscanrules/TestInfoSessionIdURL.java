@@ -25,6 +25,7 @@
 // ZAP: 2013/03/03 Issue 546: Remove all template Javadoc comments
 // ZAP: 2013/07/19 Issue 366: "Other Info" for "Session ID in URL rewrite" not always correct
 // ZAP: 2013/10/12 Issue 809: Converted to a passive scan rule and added some new features
+// ZAP: 2014/11/09 Issue 1396: Add min length check to reduce false positives
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.regex.Matcher;
@@ -47,6 +48,9 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  */
 public class TestInfoSessionIdURL extends PluginPassiveScanner {
+	
+	private static final int SESSION_TOKEN_MIN_LENGTH = 8; 
+	
     /*
      * private static Pattern staticSessionCookieNamePHP = Pattern("PHPSESSID", PATTERN.PARAM);
      * ASP = ASPSESSIONIDxxxxx=xxxxxx
@@ -140,6 +144,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         // Simplify everything using only getQuery()???
         String uri = msg.getRequestHeader().getURI().toString();
+        String sessionIdPair;
         String sessionIdValue;
         String sessionIdName;
         Pattern pattern;
@@ -169,7 +174,9 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
 
             if (matcher.find()) {
                 // Get the overall sessionvar=value pattern
-                sessionIdValue = matcher.group(0);
+                sessionIdPair = matcher.group(0);
+                // Get the value portion
+                sessionIdValue = matcher.group(0).split("=")[1];
                 // Get the sessionvar name
                 sessionIdName = matcher.group(1);
 
@@ -184,8 +191,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                 //kb = getKb().getString("sessionId/name");
                 //getKb().add("sessionId/name", sessionIdName);
 
-                //To reduce false positives
-                if (sessionIdValue.length() > 8) { 
+                if (sessionIdValue.length() > SESSION_TOKEN_MIN_LENGTH) { 
 	                
 	                // Raise an alert according to Passive Scan Rule model
 	                // description, uri, param, attack, otherInfo, 
@@ -195,11 +201,11 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
 	                        getDescription(),
 	                        uri,
 	                        sessionIdName,
-	                        sessionIdValue,
+	                        sessionIdPair,
 	                        "",
 	                        getSolution(),
 	                        getReference(),
-	                        sessionIdValue, // evidence
+	                        sessionIdPair, // evidence
 	                        getCweId(), // CWE Id
 	                        getWascId(), // WASC Id - Info leakage
 	                        msg);

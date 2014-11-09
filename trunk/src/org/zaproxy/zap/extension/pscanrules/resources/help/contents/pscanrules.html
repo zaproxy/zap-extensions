@@ -30,8 +30,12 @@ The following release quality passive scan rules are included in this add-on:
 
 <H2>Private Address Disclosure</H2>
 
-<H2>Session Id in URL</H2>
-         
+<H2>Session Id in URL Rewrite</H2>
+This scanner checks for the existence of session token type parameters being rewritten to the URL. 
+To help reduce false positives the scanner checks the length of the token value,  if the value of the parameter 
+is not greater than 8 characters in length then the parameter is ignored 
+(i.e.: survey?sId=5 would not be flagged as vulnerable).
+
 <H2>X-Content-Type-Options</H2>
 
 <H2>X-Frame-Option</H2>
