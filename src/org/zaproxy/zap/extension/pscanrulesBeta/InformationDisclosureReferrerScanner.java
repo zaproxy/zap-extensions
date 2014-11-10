@@ -168,7 +168,7 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Information disclosure - sensitive informations on HTTP Referrer header";
+		return "Information Disclosure - Sensitive Information in HTTP Referrer Header";
 	}
 	
 	private String doesContainEmailAddress(String emailAddress) {

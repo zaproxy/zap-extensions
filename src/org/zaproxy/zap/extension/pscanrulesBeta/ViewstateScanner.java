@@ -187,7 +187,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
 
     @Override
     public String getName() {
-        return "Viewstate scanner";
+        return "Viewstate Scanner";
     }
 
 
