@@ -74,9 +74,8 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
 
     @Override
     public String getName() {
-        return "Private IP disclosure";
+        return "Private IP Disclosure";
     }
-
     private String getDescription() {
         return "A private IP such as 10.x.x.x, 172.x.x.x, 192.168.x.x has been found in the HTTP response body.  "
                 + "This information might be helpful for further attacks targeting internal systems.";

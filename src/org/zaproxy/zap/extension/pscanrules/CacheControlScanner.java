@@ -91,7 +91,7 @@ public class CacheControlScanner extends PluginPassiveScanner {
 	
 	@Override
 	public String getName() {
-		return "Incomplete or no cache-control and pragma HTTP header set";
+		return "Incomplete or No Cache-control and Pragma HTTP Header Set";
 	}
 
 }

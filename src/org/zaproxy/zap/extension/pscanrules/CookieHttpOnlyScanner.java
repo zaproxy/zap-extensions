@@ -93,7 +93,7 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Cookie no http-only flag";
+		return "Cookie No HttpOnly Flag";
 	}
 
 }

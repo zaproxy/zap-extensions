@@ -83,7 +83,7 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Content-Type header missing";
+		return "Content-Type Header Missing";
 	}
 	
 	@Override

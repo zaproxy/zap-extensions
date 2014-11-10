@@ -82,7 +82,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
      */
     @Override
     public String getName() {
-        return "Session ID in URL rewrite";
+        return "Session ID in URL Rewrite";
     }
 
     private String getDescription() {
