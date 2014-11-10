@@ -158,7 +158,7 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
 
 	@Override
 	public String getName() {
-		return "Information disclosure - suspicious comments";
+		return "Information Disclosure - Suspicious Comments";
 	}
 
 	@Override

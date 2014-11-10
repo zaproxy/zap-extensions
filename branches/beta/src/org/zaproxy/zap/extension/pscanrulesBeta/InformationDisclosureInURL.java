@@ -142,7 +142,7 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Information disclosure - sensitive informations in URL";
+		return "Information Disclosure - Sensitive Informations in URL";
 	}
 	
 	@Override

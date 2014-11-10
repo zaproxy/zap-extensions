@@ -128,7 +128,7 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Information disclosure - debug error messages";
+		return "Information Disclosure - Debug Error Messages";
 	}
 	
 	@Override
