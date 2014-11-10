@@ -167,7 +167,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         if (vuln != null) {
             return vuln.getAlert();
         }
-        return "Path traversal";
+        return "Path Traversal";
     }
 
     @Override

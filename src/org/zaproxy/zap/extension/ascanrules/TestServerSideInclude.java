@@ -53,7 +53,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-        return "Server side include";
+        return "Server Side Include";
     }
 
 

@@ -59,7 +59,7 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
     @Override
     public String getName() {
         
-        return "Directory browsing";
+        return "Directory Browsing";
     }
 
     @Override

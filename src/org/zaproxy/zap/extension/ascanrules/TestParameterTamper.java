@@ -62,7 +62,7 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-        return "Parameter tampering";
+        return "Parameter Tampering";
     }
 
     @Override
