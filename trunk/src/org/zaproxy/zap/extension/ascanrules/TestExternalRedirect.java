@@ -108,7 +108,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        return "External redirect";
+        return "External Redirect";
     }
 
     /**
