@@ -109,6 +109,6 @@ public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Password Autocomplete in browser";
+		return "Password Autocomplete in Browser";
 	}
 }

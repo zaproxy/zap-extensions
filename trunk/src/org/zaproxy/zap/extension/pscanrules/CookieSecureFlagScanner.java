@@ -97,6 +97,6 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Cookie without secure flag";
+		return "Cookie Without Secure Flag";
 	}
 }

@@ -141,7 +141,7 @@ public class MixedContentScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Secure pages including mixed content";
+		return "Secure Pages Including Mixed Content";
 	}
 	
 	private class MixedContent {

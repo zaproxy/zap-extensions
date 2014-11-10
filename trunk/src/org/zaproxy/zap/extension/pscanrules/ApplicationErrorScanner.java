@@ -61,7 +61,7 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
      */
     @Override
     public String getName() {
-        return "Application Error disclosure";
+        return "Application Error Disclosure";
     }
 
     private String getDescription() {

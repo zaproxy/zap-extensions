@@ -86,7 +86,7 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Cross-domain JavaScript source file inclusion";
+		return "Cross-Domain JavaScript Source File Inclusion";
 	}
 
 	private boolean isScriptFromOtherDomain (String host, String scriptURL){
