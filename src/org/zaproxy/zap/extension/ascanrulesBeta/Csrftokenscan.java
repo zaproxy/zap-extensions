@@ -68,7 +68,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	 */
 	@Override
 	public String getName() {
-		return "Anti CSRF tokens scanner";
+		return "Anti CSRF Tokens Scanner";
 	}
 
 	/**
