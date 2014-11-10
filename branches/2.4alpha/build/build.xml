@@ -12,6 +12,8 @@
 	<property name="versions.file" location="${dist}/ZapVersions.xml" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
+	<!-- This assumes you also have the zaproxy-2.4 project (used for the weekly release -->
+	<property name="zap-2.4.plugin.dir" location="../../zaproxy-2.4/src/plugin" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
@@ -265,9 +267,19 @@
 	</target>
 	
 	<target name="deploy-weekly" description="deploy extensions to be included in weekly releases">
-            <!-- Set to compile with debug information -->
-            <property name="javac.debug" value="true" />
-			<antcall target="deploy-accessControl"></antcall>
+		<!-- Set to compile with debug information -->
+		<property name="javac.debug" value="true" />
+		<antcall target="build-all" />
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+				<include name="accessControl-${status}-*.zap"/>
+			</fileset>
+		</copy>
+		<copy todir="${zap-2.4.plugin.dir}">
+			<fileset dir="${dist}">
+				<include name="accessControl-${status}-*.zap"/>
+			</fileset>
+		</copy>
     </target>
 
 

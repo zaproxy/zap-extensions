@@ -420,6 +420,21 @@
 		<!-- Set to compile with debug information -->
 		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+				<include name="ascanrulesBeta-${status}-*.zap"/>
+				<include name="bruteforce-${status}-*.zap"/>
+				<include name="diff-${status}-*.zap"/>
+				<include name="gettingStarted-${status}-*.zap"/>
+				<include name="invoke-${status}-*.zap"/>
+				<include name="plugnhack-${status}-*.zap"/>
+				<include name="portscan-${status}-*.zap"/>
+				<include name="pscanrulesBeta-${status}-*.zap"/>
+				<include name="scripts-${status}-*.zap"/>
+				<include name="spiderAjax-${status}-*.zap"/>
+				<include name="zest-${status}-*.zap"/>
+			</fileset>
+		</copy>
 		<copy todir="${zap-2.4.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="ascanrulesBeta-${status}-*.zap"/>

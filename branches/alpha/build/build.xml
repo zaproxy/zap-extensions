@@ -354,6 +354,13 @@
 		<!-- Set to compile with debug information -->
 		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+				<include name="sequence-${status}-*.zap"/>
+				<include name="soap-${status}-*.zap"/>
+				<include name="tips-${status}-*.zap"/>
+			</fileset>
+		</copy>
 		<copy todir="${zap-2.4.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="sequence-${status}-*.zap"/>

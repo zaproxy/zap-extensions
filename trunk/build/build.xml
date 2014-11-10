@@ -325,6 +325,18 @@
 		<!-- Set to compile with debug information -->
 		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+				<include name="ascanrules-${status}-*.zap"/>
+				<include name="coreLang-${status}-*.zap"/>
+				<include name="directorylistv1-${status}-*.zap"/>
+				<include name="pscanrules-${status}-*.zap"/>
+				<include name="quickstart-${status}-*.zap"/>
+				<include name="reveal-${status}-*.zap"/>
+				<include name="saverawmessage-${status}-*.zap"/>
+				<include name="websocket-${status}-*.zap"/>
+			</fileset>
+		</copy>
 		<copy todir="${zap-2.4.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="ascanrules-${status}-*.zap"/>
