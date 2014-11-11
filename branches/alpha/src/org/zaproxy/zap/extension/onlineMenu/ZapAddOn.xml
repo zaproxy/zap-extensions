@@ -1,0 +1,18 @@
+<zapaddon>
+	<name>Online menus</name>
+	<version>1</version>
+	<description>ZAP Online menu items</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>First version - moved from the core</changes>
+	<dependson/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.onlineMenu.ExtensionOnlineMenu</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.3.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>
