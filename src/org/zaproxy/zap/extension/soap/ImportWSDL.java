@@ -2,18 +2,20 @@ package org.zaproxy.zap.extension.soap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.parosproxy.paros.network.HttpMessage;
 
 public class ImportWSDL {
-
-	private ExtensionImportWSDL extensionInstance = null;
 	
 	//Dynamic chart filled with all SOAP actions detected from multiple WSDL files.
 	private HashMap<Integer, ArrayList<String>> soapActions = new HashMap<Integer, ArrayList<String>>(); 
 	
 	//Dynamic chart filled with all sended SOAP requests.
 	private HashMap<Integer, ArrayList<HttpMessage>> requestsList = new HashMap<Integer, ArrayList<HttpMessage>>(); 
+	
+	//Chart filled with all SOAP requests' configuration objects.
+	private HashMap<HttpMessage, SOAPMsgConfig> configurationsList = new HashMap<HttpMessage, SOAPMsgConfig>();
 	
 	private volatile static ImportWSDL singleton = null;
 	
@@ -51,8 +53,17 @@ public class ImportWSDL {
 		}	
 	}
 	
+	public void putConfiguration(HttpMessage request, SOAPMsgConfig config){
+		if (request == null || !config.isComplete()) return;
+		synchronized (this){
+			if (configurationsList.get(request) == null)
+				configurationsList.put(request, config);
+		}	
+	}
+	
 	/* Returns all detected SOAP actions as a fixed bidimensional array. Each row represents a different WSDL file. */
 	public synchronized String[][] getSoapActions(){
+		if(soapActions.size() < 1) return null;
 		String[][] operationsChart = new String[soapActions.size()][];
 		int i = 0;
 		for(ArrayList<String> ops : soapActions.values()){
@@ -85,12 +96,39 @@ public class ImportWSDL {
 		}
 		return null;
 	}
-
-	public ExtensionImportWSDL getExtensionInstance() {
-		return extensionInstance;
+	
+	/* Returns a SOAP configuration object from a given HttpMessage request. */
+	public synchronized SOAPMsgConfig getSoapConfig(final HttpMessage request){
+		Set<HttpMessage> keys = configurationsList.keySet();
+		final String content = new String(request.getRequestBody().getBytes());
+		final String header = request.getRequestHeader().getHeadersAsString();
+		for(HttpMessage key : keys){
+			final String keyContent = new String(key.getRequestBody().getBytes());
+			final String keyHeader = key.getRequestHeader().getHeadersAsString();
+			if(keyHeader.equals(header) && keyContent.equals(content)) return configurationsList.get(key);
+		}
+		return null;
+	}
+	
+	/* Returns a SOAP configuration object from a given HttpMessage request. */
+	public synchronized SOAPMsgConfig getSoapConfigByBody(final HttpMessage request){
+		Set<HttpMessage> keys = configurationsList.keySet();
+		final String content = new String(request.getRequestBody().getBytes());
+		for(HttpMessage key : keys){
+			final String keyContent = new String(key.getRequestBody().getBytes());
+			if(keyContent.equals(content)) return configurationsList.get(key);
+		}
+		return null;
+	}
+	
+	/* Destroys current instance. */
+	public static synchronized void destroy(){
+		if(singleton != null){
+			singleton.soapActions = null;
+			singleton.requestsList = null;
+			singleton.configurationsList = null;
+			singleton = null;
+		}
 	}
 
-	public void setExtensionInstance(ExtensionImportWSDL extensionInstance) {
-		this.extensionInstance = extensionInstance;
-	}
 }
