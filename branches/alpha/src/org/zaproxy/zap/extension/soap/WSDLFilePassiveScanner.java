@@ -46,14 +46,25 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		if (isWsdl(msg)){
+			HttpResponseHeader header = msg.getResponseHeader();
+			String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
+			raiseAlert(msg, id, contentType);
+		}
+	}
+	
+	public boolean isWsdl(HttpMessage msg){
+		if(msg == null) return false;
 		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
 			/* Alerts that a public WSDL file has been found. */
 			HttpResponseHeader header = msg.getResponseHeader();
+			String baseURL = msg.getRequestHeader().getURI().toString().trim();
 			String contentType = header.getHeader(HttpHeader.CONTENT_TYPE).trim();
-			if(contentType.equals("application/wsdl+xml")){
-				raiseAlert(msg, id, contentType);
+			if(baseURL.endsWith(".wsdl") || contentType.equals("text/xml") || contentType.equals("application/wsdl+xml")){
+				return true;
 			}
 		}
+		return false;
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String evidence) {
@@ -86,7 +97,7 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 		 * This should be unique across all active and passive rules.
 		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
 		 */
-		return 90027;
+		return 90030;
 	}
 	
 	@Override
