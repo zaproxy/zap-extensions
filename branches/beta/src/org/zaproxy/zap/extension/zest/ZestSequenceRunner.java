@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFailException;
@@ -46,6 +47,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.SequenceScript;
+import org.zaproxy.zap.users.User;
 
 public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript {
 
@@ -97,10 +99,8 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 			HttpMessage msgScript = getMatchingMessageFromScript(msg);
 			ZestScript scr = getBeforeSubScript(msgScript);
 			HttpSender sender = this.currentPlugin.getParent().getHttpSender();
-			sender.getClient().getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-			sender.getClient().getState().clearCookies();
-			this.setHttpClient(sender.getClient());
-			this.run(scr, EMPTYPARAMS);
+	
+			runSequenceAuthenticated(sender,msg,scr);
 
 			//Once the script has run, update the message with results from 
 			mergeRequestBodyFromScript(msgOriginal);
@@ -114,6 +114,40 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 			logger.debug("Error running Sequence script in 'runSequenceBefore' method : " + e.getMessage());
 		}
 		return msgOriginal;
+	}
+	
+	
+	/**
+	 * Run the ZestScript sequence while being properly authenticated 
+	 */
+	private void runSequenceAuthenticated(HttpSender sender, HttpMessage msg, ZestScript scr) 
+			throws ZestAssertFailException, ZestActionFailException, IOException, ZestInvalidCommonTestException, ZestAssignFailException, ZestClientFailException {
+		
+		// We must handle the authentication "by hand" as the HttpRunner is not used (direct call to HttpClient)
+		// when executing Zest scripts
+		
+		// Not sure is we do really need to revert to the original value.
+		// Let's say yes for now
+		String originalCookiePolicy = sender.getClient().getParams().getCookiePolicy();
+		HttpState originalState = sender.getClient().getState();
+
+		sender.getClient().getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+		sender.getClient().getState().clearCookies();
+		
+		User forceUser = sender.getUser(msg);
+		if (forceUser != null) {
+			forceUser.processMessageToMatchUser(msg);
+			sender.getClient().setState(forceUser.getCorrespondingHttpState());	
+		}
+
+		this.setHttpClient(sender.getClient());
+		this.run(scr, EMPTYPARAMS);
+
+		//Restore original values
+		sender.getClient().getParams().setCookiePolicy(originalCookiePolicy);
+		sender.getClient().setState(originalState);
+		
+		
 	}
 
 	private void mergeRequestBodyFromScript(HttpMessage msg)
@@ -167,9 +201,8 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 			ZestScript scr = getAfterSubScript(msgScript);
 
 			HttpSender sender = this.currentPlugin.getParent().getHttpSender();
-			this.setHttpClient(sender.getClient());
-			this.run(scr, EMPTYPARAMS);
-
+			runSequenceAuthenticated(sender,msg,scr);
+		
 			//Clean up redundant cookies
 			sender.getClient().getState().clearCookies();		
 		} catch (Exception e){
