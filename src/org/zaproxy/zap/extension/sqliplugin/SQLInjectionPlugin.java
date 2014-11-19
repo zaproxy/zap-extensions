@@ -101,8 +101,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             = Pattern.compile("\\[RANDSTR(?:\\d+)?\\]");
     
     // Internal dynamic properties
-    private ResponseMatcher responseMatcher;
-    private List<Long> responseTimes;
+    private final ResponseMatcher responseMatcher;
+    private final List<Long> responseTimes;
+    
     private int lastRequestUID;
     private int lastErrorPageUID;
     private long lastResponseTime;
@@ -742,7 +743,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     // Alert the vulnerability to the main core
                                     this.bingo(
                                             Alert.RISK_HIGH,
-                                            Alert.WARNING,
+                                            Alert.CONFIRMED,
                                             getName() + " - " + title,
                                             getDescription(),
                                             null,
@@ -834,7 +835,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // Alert the vulnerability to the main core
                                 this.bingo(
                                         Alert.RISK_HIGH,
-                                        Alert.WARNING,
+                                        Alert.CONFIRMED,
                                         getName() + " - " + title,
                                         getDescription(),
                                         null,
@@ -882,7 +883,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             // OK now we can get the deviation of the
                             // request computation time for this page
                             double deviation = getResponseTimeDeviation();
-                            double lowerLimit = (deviation >= 0) ? getResponseTimeAverage() + TIME_STDEV_COEFF * deviation : timeSec;
+                            double lowerLimit = (deviation >= 0) ? getResponseTimeAverage() + TIME_STDEV_COEFF * deviation : timeSec * 1000;
 
                             // Perform the test's request
                             reqPayload = setDelayValue(reqPayload);
@@ -925,7 +926,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     // Alert the vulnerability to the main core
                                     this.bingo(
                                             Alert.RISK_HIGH,
-                                            Alert.WARNING,
+                                            Alert.MEDIUM,
                                             getName() + " - " + title,
                                             getDescription(),
                                             null,
@@ -1000,7 +1001,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // Alert the vulnerability to the main core
                                 this.bingo(
                                         Alert.RISK_HIGH,
-                                        Alert.WARNING,
+                                        Alert.CONFIRMED,
                                         getName() + " - " + title,
                                         getDescription(),
                                         null,
@@ -1319,7 +1320,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      * @param payload
      * @param prefix
      * @param where
-     * @param clause
+     * @param test
      * @return
      */
     protected String preparePrefix(String payload, String prefix, int where, SQLiTest test) {
@@ -1359,7 +1360,6 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      * @param comment
      * @param suffix
      * @param where
-     * @param dbms
      * @return
      */
     protected String prepareSuffix(String payload, String comment, String suffix, int where) {
