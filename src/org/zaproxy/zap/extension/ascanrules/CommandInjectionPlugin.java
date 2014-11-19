@@ -18,8 +18,12 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,14 +83,56 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         OS_PAYLOADS.put("||" + NIX_TEST_CMD, NIX_CTRL_PATTERN);         //or control concatenation
         OS_PAYLOADS.put("&&" + NIX_TEST_CMD, NIX_CTRL_PATTERN);         //and control concatenation
         OS_PAYLOADS.put("|" + NIX_TEST_CMD + "#", NIX_CTRL_PATTERN);    //pipe & comment
-        // FoxPro for running os commands (thanks to W3AF)
+        // FoxPro for running os commands
         OS_PAYLOADS.put("run " + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         
         //Used for *nix
         //OS_PAYLOADS.put("\"|\"ld", null);
         //OS_PAYLOADS.put("'|'ld", null);
     };
+
+    // Coefficient used for a time-based query delay checking (must be >= 7)
+    private static final int TIME_STDEV_COEFF = 7;
+    // Time used in sleep command [sec]
+    private static final int TIME_SLEEP_SEC = 5;    
+    // Standard deviation limit in milliseconds (long requests deviate from a correct model)
+    public static final double WARN_TIME_STDEV = 0.5 * 1000;
     
+    // *NIX Blind OS Command constants
+    private static final String  NIX_BLIND_TEST_CMD = "sleep {0}s";
+    // Windows Blind OS Command constants
+    private static final String  WIN_BLIND_TEST_CMD = "timeout /T {0}";
+    
+    // OS Command payloads for blind command Injection testing
+    private static final List<String> BLIND_OS_PAYLOADS = new LinkedList();
+    static {
+        // No quote payloads
+        BLIND_OS_PAYLOADS.add("&" + NIX_BLIND_TEST_CMD + "&");
+        BLIND_OS_PAYLOADS.add(";" + NIX_BLIND_TEST_CMD + ";");
+        BLIND_OS_PAYLOADS.add("&" + WIN_BLIND_TEST_CMD);
+        BLIND_OS_PAYLOADS.add("|" + WIN_BLIND_TEST_CMD);
+        
+        // Double quote payloads
+        BLIND_OS_PAYLOADS.add("\"&" + NIX_BLIND_TEST_CMD + "&\"");
+        BLIND_OS_PAYLOADS.add("\";" + NIX_BLIND_TEST_CMD + ";\"");
+        BLIND_OS_PAYLOADS.add("\"&" + WIN_BLIND_TEST_CMD + "&\"");
+        BLIND_OS_PAYLOADS.add("\"|" + WIN_BLIND_TEST_CMD);
+        // Single quote payloads
+        BLIND_OS_PAYLOADS.add("'&" + NIX_BLIND_TEST_CMD + "&'");
+        BLIND_OS_PAYLOADS.add("';" + NIX_BLIND_TEST_CMD + ";'");
+        BLIND_OS_PAYLOADS.add("'&" + WIN_BLIND_TEST_CMD + "&'");
+        BLIND_OS_PAYLOADS.add("'|" + WIN_BLIND_TEST_CMD);
+        
+        // Special payloads   
+        BLIND_OS_PAYLOADS.add("\n" + NIX_BLIND_TEST_CMD + "\n");  //force enter
+        BLIND_OS_PAYLOADS.add("`" + NIX_BLIND_TEST_CMD + "`");    //backtick execution
+        BLIND_OS_PAYLOADS.add("||" + NIX_BLIND_TEST_CMD);         //or control concatenation
+        BLIND_OS_PAYLOADS.add("&&" + NIX_BLIND_TEST_CMD);         //and control concatenation
+        BLIND_OS_PAYLOADS.add("|" + NIX_BLIND_TEST_CMD + "#");    //pipe & comment
+        // FoxPro for running os commands
+        BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
+    };
+                
     // Logger instance
     private static final Logger log 
             = Logger.getLogger(CommandInjectionPlugin.class);
@@ -220,47 +266,68 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         
         // Number of targets to try
         int targetCount = 0;
+        int blindTargetCount = 0;
 
         switch (this.getAttackStrength()) {
             case LOW:
                 // This works out as a total of 4 reqs / param
                 targetCount = 4;
+                // Probably blind should be enabled only starting from MEDIUM (TBE)
+                blindTargetCount = 4;
                 break;
 
             case MEDIUM:
                 // This works out as a total of 12 reqs / param
                 targetCount = 12;
+                blindTargetCount = 12;
                 break;
 
             case HIGH:
             case INSANE:
                 // This works out as a total of 18 reqs / param
                 targetCount = OS_PAYLOADS.size();
+                blindTargetCount = BLIND_OS_PAYLOADS.size();
                 break;
 
             default:
             // Default to off
         }
         
-        // ------------------------------------------
         // Start testing OS Command Injection patterns
         // ------------------------------------------
         String payload;
+        String paramValue;
         Iterator<String> it = OS_PAYLOADS.keySet().iterator();
+        List<Long> responseTimes = new ArrayList<>(targetCount);
+        long currentTime;
         
+        // -----------------------------------------------
+        // Check 1: Feedback based OS Command Injection
+        // -----------------------------------------------
+        // try execution check sending a specific payload
+        // and verifying if it returns back the output inside
+        // the response content
+        // -----------------------------------------------
         for(int i = 0; it.hasNext() && (i < targetCount); i++) {
 
             msg = getNewMsg();
             payload = it.next();
-            setParameter(msg, paramName, payload);
+            paramValue = value + payload;
+            setParameter(msg, paramName, paramValue);
 
             if (log.isDebugEnabled()) {
-                log.debug("Testing [" + paramName + "] = [" + payload + "]");
+                log.debug("Testing [" + paramName + "] = [" + paramValue + "]");
             }
             
             try {
+                // Set initial time for request timing calculation
+                currentTime = System.currentTimeMillis();
+                
                 // Send the request and retrieve the response
                 sendAndReceive(msg, false);
+
+                currentTime = System.currentTimeMillis() - currentTime;
+                responseTimes.add(currentTime);
                                 
                 // Check if the injected content has been evaluated and printed
                 String content = msg.getResponseBody().toString();
@@ -268,15 +335,15 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 if (matcher.find()) {
                     // We Found IT!                    
                     // First do logging
-                    log.info("[OS Command Injection Found] on parameter [" + paramName + "] with payload [" + payload + "]");
+                    log.info("[OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
                     
                     // Now create the alert message
                     this.bingo(
                             Alert.RISK_HIGH, 
-                            Alert.WARNING, 
+                            Alert.CONFIRMED,    //Alert.WARNING
                             null,
                             paramName,
-                            payload, 
+                            paramValue, 
                             null,
                             matcher.group(),
                             msg);
@@ -301,5 +368,128 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 return;
             }
         }
+        
+        // -----------------------------------------------
+        // Check 2: Time-based Blind OS Command Injection
+        // -----------------------------------------------
+        // Check for a sleep shell execution according to
+        // the previous experimented request time execution
+        // It uses deviations and average for the real delay checking...
+        // 7? =	99.9999999997440% of the values
+        // so response time should be less than 7*stdev([normal response times])
+        // Math reference: http://www.answers.com/topic/standard-deviation
+        // -----------------------------------------------
+        double deviation = getResponseTimeDeviation(responseTimes);
+        double lowerLimit = (deviation >= 0) ? getResponseTimeAverage(responseTimes) + TIME_STDEV_COEFF * deviation : TIME_SLEEP_SEC * 1000;
+
+        it = BLIND_OS_PAYLOADS.iterator();
+        
+        for(int i = 0; it.hasNext() && (i < blindTargetCount); i++) {
+            msg = getNewMsg();
+            payload = it.next();
+            
+            paramValue = value + MessageFormat.format(payload, TIME_SLEEP_SEC);
+            setParameter(msg, paramName, paramValue);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Testing [" + paramName + "] = [" + paramValue + "]");
+            }
+            
+            try {
+                // Set initial time for request timing calculation
+                currentTime = System.currentTimeMillis();
+                
+                // Send the request and retrieve the response
+                sendAndReceive(msg, false);
+                currentTime = System.currentTimeMillis() - currentTime;
+
+                // Check if enough time has passed                            
+                if (currentTime >= lowerLimit) {
+
+                    // Probably we've to confirm it launching again the query
+                    // But we arise the alert directly with MEDIUM Confidence...
+                    
+                    // We Found IT!                    
+                    // First do logging
+                    log.info("[Blind OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                    
+                    // Now create the alert message
+                    this.bingo(
+                            Alert.RISK_HIGH, 
+                            Alert.MEDIUM, //Alert.WARNING
+                            null,
+                            paramName,
+                            paramValue, 
+                            null,
+                            null,
+                            msg);
+
+                    // All done. No need to look for vulnerabilities on subsequent 
+                    // parameters on the same request (to reduce performance impact)
+                    return;                 
+                }
+
+            } catch (IOException ex) {
+                //Do not try to internationalise this.. we need an error message in any event..
+                //if it's in English, it's still better than not having it at all.
+                log.error("Blind Command Injection vulnerability check failed for parameter ["
+                    + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
+            }
+            
+            // Check if the scan has been stopped
+            // if yes dispose resources and exit
+            if (isStop()) {
+                // Dispose all resources
+                // Exit the plugin
+                return;
+            }
+            
+        }
     }
+
+    /**
+     * Computes standard deviation of the responseTimes Reference:
+     * http://www.goldb.org/corestats.html
+     *
+     * @return the current responseTimes deviation
+     */
+    private double getResponseTimeDeviation(List<Long> responseTimes) {
+        // Cannot calculate a deviation with less than
+        // two response time values
+        if (responseTimes.size() < 2) {
+            return -1;
+        }
+
+        double avg = getResponseTimeAverage(responseTimes);
+        double result = 0;
+        for (long value : responseTimes) {
+            result += Math.pow(value - avg, 2);
+        }
+
+        result = Math.sqrt(result / (responseTimes.size() - 1));
+
+        // Check if there is too much deviation
+        if (result > WARN_TIME_STDEV) {
+            log.warn("There is considerable lagging "
+                    + "in connection response(s). Please use an higher "
+                    + "sleep time interval");
+        }
+
+        return result;
+    }
+
+    /**
+     * Computes the arithmetic mean of the responseTimes
+     *
+     * @return the current responseTimes mean
+     */
+    private double getResponseTimeAverage(List<Long> responseTimes) {
+        double result = 0;
+        for (long value : responseTimes) {
+            result += value;
+        }
+
+        return result / responseTimes.size();
+    }
+
 }
