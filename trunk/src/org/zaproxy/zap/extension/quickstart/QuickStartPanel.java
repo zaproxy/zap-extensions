@@ -186,8 +186,18 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	}
 	
 	protected void setMode(Mode mode) {
-		this.getUrlField().setEditable(mode.equals(Mode.standard));
-		this.getAttackButton().setEnabled(mode.equals(Mode.standard));
+		switch (mode) {
+		case safe:
+		case protect:
+			this.getUrlField().setEditable(false);
+			this.getAttackButton().setEnabled(false);
+			break;
+		case standard:
+		case attack:
+			this.getUrlField().setEditable(true);
+			this.getAttackButton().setEnabled(true);
+			break;
+		}
 	}
 	
 	private ZapTextField getUrlField () {
