@@ -270,21 +270,21 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
         switch (this.getAttackStrength()) {
             case LOW:
-                // This works out as a total of 4 reqs / param
-                targetCount = 4;
+                // This works out as a total of 4+4 reqs / param
                 // Probably blind should be enabled only starting from MEDIUM (TBE)
+                targetCount = 4;
                 blindTargetCount = 4;
                 break;
 
             case MEDIUM:
-                // This works out as a total of 12 reqs / param
+                // This works out as a total of 12+12 reqs / param
                 targetCount = 12;
                 blindTargetCount = 12;
                 break;
 
             case HIGH:
             case INSANE:
-                // This works out as a total of 18 reqs / param
+                // This works out as a total of 18+18 reqs / param
                 targetCount = OS_PAYLOADS.size();
                 blindTargetCount = BLIND_OS_PAYLOADS.size();
                 break;
@@ -299,7 +299,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         String paramValue;
         Iterator<String> it = OS_PAYLOADS.keySet().iterator();
         List<Long> responseTimes = new ArrayList<>(targetCount);
-        long currentTime;
+        long elapsedTime;
         
         // -----------------------------------------------
         // Check 1: Feedback based OS Command Injection
@@ -319,15 +319,11 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 log.debug("Testing [" + paramName + "] = [" + paramValue + "]");
             }
             
-            try {
-                // Set initial time for request timing calculation
-                currentTime = System.currentTimeMillis();
-                
+            try {                
                 // Send the request and retrieve the response
                 sendAndReceive(msg, false);
-
-                currentTime = System.currentTimeMillis() - currentTime;
-                responseTimes.add(currentTime);
+                elapsedTime = msg.getTimeElapsedMillis();
+                responseTimes.add(elapsedTime);
                                 
                 // Check if the injected content has been evaluated and printed
                 String content = msg.getResponseBody().toString();
@@ -340,7 +336,8 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                     // Now create the alert message
                     this.bingo(
                             Alert.RISK_HIGH, 
-                            Alert.CONFIRMED,    //Alert.WARNING
+                            //Set this to Alert.CONFIRMED when changing to 2.4.0
+                            Alert.WARNING,
                             null,
                             paramName,
                             paramValue, 
@@ -349,7 +346,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                             msg);
 
                     // All done. No need to look for vulnerabilities on subsequent 
-                    // parameters on the same request (to reduce performance impact)
+                    // payloads on the same request (to reduce performance impact)
                     return;                 
                 }
 
@@ -395,16 +392,13 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 log.debug("Testing [" + paramName + "] = [" + paramValue + "]");
             }
             
-            try {
-                // Set initial time for request timing calculation
-                currentTime = System.currentTimeMillis();
-                
+            try {                
                 // Send the request and retrieve the response
                 sendAndReceive(msg, false);
-                currentTime = System.currentTimeMillis() - currentTime;
+                elapsedTime = msg.getTimeElapsedMillis();
 
                 // Check if enough time has passed                            
-                if (currentTime >= lowerLimit) {
+                if (elapsedTime >= lowerLimit) {
 
                     // Probably we've to confirm it launching again the query
                     // But we arise the alert directly with MEDIUM Confidence...
@@ -416,7 +410,8 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                     // Now create the alert message
                     this.bingo(
                             Alert.RISK_HIGH, 
-                            Alert.MEDIUM, //Alert.WARNING
+                            //Set this to Alert.MEDIUM when changing to 2.4.0
+                            Alert.WARNING,
                             null,
                             paramName,
                             paramValue, 
@@ -425,8 +420,8 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                             msg);
 
                     // All done. No need to look for vulnerabilities on subsequent 
-                    // parameters on the same request (to reduce performance impact)
-                    return;                 
+                    // payloads on the same request (to reduce performance impact)
+                    return;           
                 }
 
             } catch (IOException ex) {
@@ -453,7 +448,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
      *
      * @return the current responseTimes deviation
      */
-    private double getResponseTimeDeviation(List<Long> responseTimes) {
+    private static double getResponseTimeDeviation(List<Long> responseTimes) {
         // Cannot calculate a deviation with less than
         // two response time values
         if (responseTimes.size() < 2) {
@@ -471,8 +466,9 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // Check if there is too much deviation
         if (result > WARN_TIME_STDEV) {
             log.warn("There is considerable lagging "
-                    + "in connection response(s). Please use an higher "
-                    + "sleep time interval");
+                    + "in connection response(s) which gives a standard deviation of " 
+                    + result + "ms on the sample set which is more than " 
+                    + WARN_TIME_STDEV + "ms");
         }
 
         return result;
@@ -483,8 +479,12 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
      *
      * @return the current responseTimes mean
      */
-    private double getResponseTimeAverage(List<Long> responseTimes) {
+    private static double getResponseTimeAverage(List<Long> responseTimes) {
         double result = 0;
+        
+        if (responseTimes.isEmpty())
+            return result;
+        
         for (long value : responseTimes) {
             result += value;
         }
