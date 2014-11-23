@@ -8,6 +8,7 @@
 	<![CDATA[
         Changes to TestInjectionCRLF: address FindBugs issue, remove forced HTML elements in
         references, add proper WASC ID.
+        Added blind command injection checks for CommandInjectionPlugin.
 	]]>
     </changes>
 	<dependson/>
