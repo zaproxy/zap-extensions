@@ -18,17 +18,17 @@
 
 package org.zaproxy.zap.extension.zest;
 
+import java.io.IOException;
+
 import javax.script.ScriptException;
 
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.log4j.Logger;
+import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestResponse;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.ascan.ActiveScript;
 import org.zaproxy.zap.extension.ascan.ScriptsActiveScanner;
-import org.zaproxy.zap.users.User;
 
 public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
 
@@ -55,39 +55,23 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
 
 		try {
 			sas.setParam(msg, param, "{{target}}");
-			
-			// We must handle the authentication "by hand" as the HttpRunner is not used (direct call to HttpClient)
-			// when executing Zest scripts
-			
-			HttpSender sender = this.sas.getParent().getHttpSender();
-			
-			// Not sure is we do really need to revert to the original value.
-			// Let's say yes for now
-			String originalCookiePolicy = sender.getClient().getParams().getCookiePolicy();
-			HttpState originalState = sender.getClient().getState();
-			
-			sender.getClient().getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-			this.setHttpClient(sender.getClient());
-			
-			User forceUser = sender.getUser(msg);
-			if (forceUser != null) {
-				forceUser.processMessageToMatchUser(msg);
-				sender.getClient().setState(forceUser.getCorrespondingHttpState());
-			}
-	
 			this.run(script.getZestScript(), 
 					ZestZapUtils.toZestRequest(msg, false, true, extension.getParam()), 
 					null);
-			
-			// Restore previous values
-			sender.getClient().getParams().setCookiePolicy(originalCookiePolicy);
-			sender.getClient().setState(originalState);
-
-			
 		} catch (Exception e) {
 			throw new ScriptException(e);
 		}
 	}
+	
+	@Override
+	public ZestResponse send(ZestRequest request) throws IOException {
+		HttpMessage msg = ZestZapUtils.toHttpMessage(request, null /*response*/);
+		
+		this.sas.sendAndReceive(msg, false /*isFollowRedirect*/);
+		
+		ZestResponse response = ZestZapUtils.toZestResponse(msg);
+		return response;	
+	}	
 
 	@Override
 	public void alertFound(Alert alert) {
