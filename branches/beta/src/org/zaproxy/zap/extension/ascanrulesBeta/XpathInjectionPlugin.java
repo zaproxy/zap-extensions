@@ -291,7 +291,7 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 //Do not try to internationalise this.. we need an error message in any event..
                 //if it's in English, it's still better than not having it at all.
-                log.error("XPath Injection vulnerability check failed for parameter ["
+                log.warn("XPath Injection vulnerability check failed for parameter ["
                         + paramName + "] and payload [" + evilPayload + "] due to an I/O error", ex);
             }
             

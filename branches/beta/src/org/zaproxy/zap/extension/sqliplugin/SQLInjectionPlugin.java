@@ -743,7 +743,8 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     // Alert the vulnerability to the main core
                                     this.bingo(
                                             Alert.RISK_HIGH,
-                                            Alert.CONFIRMED,
+                                            // Change to Alert.CONFIRMED for version 2.4.0 for the core
+                                            Alert.WARNING, 
                                             getName() + " - " + title,
                                             getDescription(),
                                             null,
@@ -835,7 +836,8 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // Alert the vulnerability to the main core
                                 this.bingo(
                                         Alert.RISK_HIGH,
-                                        Alert.CONFIRMED,
+                                        // Change to Alert.CONFIRMED for version 2.4.0 for the core
+                                        Alert.WARNING,
                                         getName() + " - " + title,
                                         getDescription(),
                                         null,
@@ -926,7 +928,8 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     // Alert the vulnerability to the main core
                                     this.bingo(
                                             Alert.RISK_HIGH,
-                                            Alert.MEDIUM,
+                                            // Change to Alert.MEDIUM for version 2.4.0 for the core
+                                            Alert.WARNING,
                                             getName() + " - " + title,
                                             getDescription(),
                                             null,
@@ -1001,7 +1004,8 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // Alert the vulnerability to the main core
                                 this.bingo(
                                         Alert.RISK_HIGH,
-                                        Alert.CONFIRMED,
+                                        // Change to Alert.CONFIRMED for version 2.4.0 for the core
+                                        Alert.WARNING,
                                         getName() + " - " + title,
                                         getDescription(),
                                         null,
@@ -1111,7 +1115,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         } catch (CircularRedirectException cre) {
             //Do not try to internationalise this.. we need an error message in any event..
             //if it's in English, it's still better than not having it at all.
-            log.error("SQL Injection vulnerability check failed for parameter ["
+            log.warn("SQL Injection vulnerability check failed for parameter ["
                     + paramName + "] because a Circular Exception occurred, exiting the plugin", cre);
             
             return null;
@@ -1124,7 +1128,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             
             //Do not try to internationalise this.. we need an error message in any event..
             //if it's in English, it's still better than not having it at all.
-            log.error("SQL Injection vulnerability check failed for parameter ["
+            log.warn("SQL Injection vulnerability check failed for parameter ["
                     + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
         }
 
@@ -1194,9 +1198,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         // Check if there is too much deviation
         if (result > WARN_TIME_STDEV) {
             log.warn("There is considerable lagging "
-                    + "in connection response(s). Please use an higher "
-                    + "sleep time interval");
-        }
+                    + "in connection response(s) which gives a standard deviation of " 
+                    + result + "ms on the sample set which is more than " 
+                    + WARN_TIME_STDEV + "ms");        }
 
         return result;
     }

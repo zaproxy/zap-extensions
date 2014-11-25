@@ -251,7 +251,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
             } catch (IOException ex) {
                 //Do not try to internationalise this.. we need an error message in any event..
                 //if it's in English, it's still better than not having it at all.
-                log.error("XXE Injection vulnerability check failed for payload [" + payload + "] due to an I/O error", ex);
+                log.warn("XXE Injection vulnerability check failed for payload [" + payload + "] due to an I/O error", ex);
             }
 
             // Check if we've to do only basic analysis (only remote should be done)...
@@ -327,7 +327,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                 }
                 
             } catch (IOException ex) {
-                log.error("XXE Injection vulnerability check failed for payload [" + payload + "] due to an I/O error", ex);
+                log.warn("XXE Injection vulnerability check failed for payload [" + payload + "] due to an I/O error", ex);
             }
 
             // Check if we've to do only medium sized analysis (only remote and reflected will be done)...
@@ -393,7 +393,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
             } catch (IOException ex) {
                 //Do not try to internationalise this.. we need an error message in any event..
                 //if it's in English, it's still better than not having it at all.
-                log.error("XXE Injection vulnerability check failed for payload [" + payload + "] due to an I/O error", ex);
+                log.warn("XXE Injection vulnerability check failed for payload [" + payload + "] due to an I/O error", ex);
             }
         }
     }
