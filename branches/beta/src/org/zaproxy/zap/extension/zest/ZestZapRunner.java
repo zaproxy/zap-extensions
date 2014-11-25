@@ -55,6 +55,8 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.script.ScriptUI;
 
 public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
@@ -318,7 +320,16 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			return null;
 		}
 	}
-
+	
+	private ScanPolicy getDefaultScanPolicy () {
+		// Dont cache as the user can change the default
+		ExtensionActiveScan extAscan = 
+				(ExtensionActiveScan) Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.NAME);
+		if (extAscan != null) {
+			return extAscan.getPolicyManager().getDefaultScanPolicy();
+		}
+		return null;
+	}
 	
 	private void invokeScan(ZestScript script, ZestActionScan scan) throws ZestActionFailException {
     	log.debug("invokeScan " + scan.getElementType());
@@ -327,7 +338,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		ScannerParam scannerParam = new ScannerParam();
 		Scanner scanner = new Scanner(scannerParam, 
 							Model.getSingleton().getOptionsParam().getConnectionParam(),
-							Control.getSingleton().getPluginFactory());
+							getDefaultScanPolicy ());
 		scanner.setScanChildren(false);
 		scanner.addScannerListener(this);
 		
