@@ -295,7 +295,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 //Do not try to internationalise this.. we need an error message in any event..
                 //if it's in English, it's still better than not having it at all.
-                logger.error("External Redirect vulnerability check failed for parameter ["
+                logger.warn("External Redirect vulnerability check failed for parameter ["
                         + param + "] and payload [" + payload + "] due to an I/O error", ex);
             }
         }

@@ -173,7 +173,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
      * Scan for Code Injection Vulnerabilites
      * 
      * @param msg a request only copy of the original message (the response isn't copied)
-     * @param parameter the parameter name that need to be exploited
+     * @param paramName the parameter name that need to be exploited
      * @param value the original parameter value
      */
     @Override
@@ -230,7 +230,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 //Do not try to internationalise this.. we need an error message in any event..
                 //if it's in English, it's still better than not having it at all.
-                log.error("PHP Code Injection vulnerability check failed for parameter ["
+                log.warn("PHP Code Injection vulnerability check failed for parameter ["
                     + paramName + "] and payload [" + phpPayload + "] due to an I/O error", ex);
             }
             
@@ -286,7 +286,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 //Do not try to internationalise this.. we need an error message in any event..
                 //if it's in English, it's still better than not having it at all.
-                log.error("ASP Code Injection vulnerability check failed for parameter ["
+                log.warn("ASP Code Injection vulnerability check failed for parameter ["
                     + paramName + "] and payload [" + aspPayload + "] due to an I/O error", ex);
             }
             

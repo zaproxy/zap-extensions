@@ -113,9 +113,16 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         "file:\\\\\\E:\\",
         "file:\\\\\\E:/"
         // Other LFI ideas (for future expansions)
-        //"/\../\../\../\../\../\../\../etc/passwd"
-        //"/.\\./.\\./.\\./.\\./.\\./.\\./windows/win.ini"
-        //"../.../.././../.../.././../.../.././../.../.././../.../.././../.../.././etc/passwd"
+	///../../../../../../../../%2A
+	///..\../..\../..\../..\../..\../..\../etc/passwd
+	//.\\./.\\./.\\./.\\./.\\./.\\./etc/passwd
+	//%00/etc/passwd%00
+	//%00../../../../../../etc/passwd
+	///..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../etc/passwd
+	//..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../boot.ini
+	///%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
+	///%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/boot.ini
+	//%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..% 25%5c..%25%5c..%255cboot.ini
     };
     
     /**
@@ -127,16 +134,21 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     // Dot used to match 'x' or '!' (used in AIX)
     private static final Pattern NIX_PATTERN = Pattern.compile("root:.:0:0");
     private static final Pattern WAR_PATTERN = Pattern.compile("</web-app>");
-    
+    //
+    //private static final Pattern DIR_PATTERN = Pattern.compile("(?s)((?=.*Windows)(?=.*Program\\sFiles).*)|((?=.*etc)(?=.*bin)(?=.*boot).*)");
+   
     // Set in this way we avoid to build Pattern objects for every iteration
     private static final Map<String, Pattern> LOCAL_FILE_TARGETS_AND_PATTERNS = new HashMap();
     static {       
-        LOCAL_FILE_TARGETS_AND_PATTERNS.put("etc/passwd", NIX_PATTERN);
+        LOCAL_FILE_TARGETS_AND_PATTERNS.put("etc/passwd", NIX_PATTERN);	///etc/passwd%00 ///etc/passwd^^ //etc/passwd%00.jpg
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("Windows\\system.ini", WIN_PATTERN);
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("WEB-INF/web.xml", WAR_PATTERN);
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("etc\\passwd", NIX_PATTERN);
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("Windows/system.ini", WIN_PATTERN);
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("WEB-INF\\web.xml", WAR_PATTERN);
+	//C:/inetpub/wwwroot/global.asa
+	//C:\inetpub\wwwroot\global.asa
+	//LOCAL_FILE_TARGETS_AND_PATTERNS.put("", DIR_PATTERN);
     }
     
     /**
@@ -193,6 +205,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         if (vuln != null) {
             return vuln.getSolution();
         }
+        
         return "Failed to load vulnerability solution from file";
     }
 
@@ -208,6 +221,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             }
             return sb.toString();
         }
+        
         return "Failed to load vulnerability reference from file";
     }
 
@@ -217,6 +231,9 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 
     /**
      * scans all GET and POST parameters for Path Traversal vulnerabilities
+     * @param msg
+     * @param param
+     * @param value
      */
     @Override
     public void scan(HttpMessage msg, String param, String value) {
@@ -404,7 +421,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             //but it would be foiled by simple input validation on "..", for instance.
 
         } catch (IOException e) {
-            log.error("Error scanning parameters for Path Traversal: " + e.getMessage(), e);
+            log.warn("Error scanning parameters for Path Traversal: " + e.getMessage(), e);
         }
     }
 

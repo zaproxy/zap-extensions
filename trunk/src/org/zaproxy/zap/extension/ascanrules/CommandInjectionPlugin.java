@@ -353,7 +353,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 //Do not try to internationalise this.. we need an error message in any event..
                 //if it's in English, it's still better than not having it at all.
-                log.error("Command Injection vulnerability check failed for parameter ["
+                log.warn("Command Injection vulnerability check failed for parameter ["
                     + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
             }
             
@@ -427,7 +427,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 //Do not try to internationalise this.. we need an error message in any event..
                 //if it's in English, it's still better than not having it at all.
-                log.error("Blind Command Injection vulnerability check failed for parameter ["
+                log.warn("Blind Command Injection vulnerability check failed for parameter ["
                     + paramName + "] and payload [" + payload + "] due to an I/O error", ex);
             }
             
