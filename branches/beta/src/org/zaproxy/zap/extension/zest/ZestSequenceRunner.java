@@ -42,11 +42,13 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.SequenceScript;
+import org.zaproxy.zap.model.ParameterParser;
 import org.zaproxy.zap.users.User;
 
 public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript {
@@ -275,7 +277,19 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 
 				if(msgzest.getUrl().equals(req.getUrl())) {
 					if(msgzest.getMethod().equals(req.getMethod())) {
-						return true;
+						
+						// Also compare the structural parameters if any
+						
+						ParameterParser parser = Model.getSingleton().getSession().getUrlParamParser(msg.getRequestHeader().getURI().toString());
+						HttpMessage reqMsg = ZestZapUtils.toHttpMessage(req, null);
+						
+						// In addition to the url, the TreePath contains also the structural parameters (url and form) 
+						// TODO: We could think about getting only the structural parameters for comparison
+												
+						List<String> msgTreePath = parser.getTreePath(msg);
+						List<String> reqTreePath = parser.getTreePath(reqMsg);
+
+						return msgTreePath.equals(reqTreePath);
 					}
 				}
 			}
