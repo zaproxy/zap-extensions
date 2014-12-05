@@ -146,7 +146,7 @@ public class ImportLogAPI extends ApiImplementor {
         this.addApiView(new ApiView(Import_ModSec_Log_From_File, new String[] { PARAM_FILE }));
         this.addApiView(new ApiView(Import_Zap_HttpRequestResponsePair, new String[] { PARAM_REQUEST, PARAM_RESPONSE }));
         this.addApiAction(new ApiAction(POST_ModSec_AuditEvent, null, new String[] { PARAM_AuditEventString }));
-        this.addApiOthers(new ApiOther(POST_ModSec_AuditEvent, new String[] { PARAM_AuditEventString }));
+        this.addApiOthers(new ApiOther(OtherPOST_ModSec_AuditEvent, new String[] { PARAM_AuditEventString }));
     }
 
     // TODO - Need to add functionality to handle the POSTBody processing at some level of the implementation.
