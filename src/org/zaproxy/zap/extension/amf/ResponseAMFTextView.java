@@ -198,7 +198,7 @@ public class ResponseAMFTextView implements HttpPanelView, HttpPanelViewModelLis
                 amfdeserialiser.readMessage(message, actioncontext);
                 // and now parse the message
                 int headerCount = message.getHeaderCount();
-                amfHumanReadable.append(headerCount + " headers<br />");
+                amfHumanReadable.append(headerCount).append(" headers<br />");
 
                 // get each message header in turn
                 for (int i = 0; i < headerCount; i++) {
