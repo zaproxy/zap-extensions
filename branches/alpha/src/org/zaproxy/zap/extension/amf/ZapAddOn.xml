@@ -1,0 +1,23 @@
+<zapaddon>
+    <name>AMF</name>
+    <version>1</version>
+    <description>Adds support for AMF messages</description>
+    <author>ZAP Dev Team</author>
+    <url/>
+    <changes>
+    <![CDATA[
+    First release as an add-on, previously bundled with core.
+    ]]>
+    </changes>
+    <dependson/>
+    <extensions>
+        <extension>org.zaproxy.zap.extension.amf.ExtensionAMF</extension>
+    </extensions>
+    <ascanrules/>
+    <pscanrules>
+    </pscanrules>
+    <filters/>
+    <files/>
+    <not-before-version>2.4.0</not-before-version>
+    <not-from-version></not-from-version>
+</zapaddon>

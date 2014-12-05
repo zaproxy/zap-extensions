@@ -205,6 +205,7 @@
 		
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
 		<antcall target="build-addon"><param name="addon" value="accessControl"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="amf"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="ascanrulesAlpha"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="birtreports"/></antcall>
         <antcall target="build-addon"><param name="addon" value="browserView"/></antcall>
@@ -244,6 +245,10 @@
 
 	<target name="deploy-accessControl" description="deploy the Access Control Testing extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="accessControl"/> </antcall>
+	</target>
+
+	<target name="deploy-amf" description="deploys AMF add-on">
+		<antcall target="build-deploy-addon"> <param name="addon" value="amf"/> </antcall>
 	</target>
 
 	<target name="deploy-ascanrulesAlpha" description="deploy the active scan rules">
