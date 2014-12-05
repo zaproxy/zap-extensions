@@ -28,7 +28,7 @@ public class ImportLogAPI extends ApiImplementor {
     private static Logger log = Logger.getLogger(ImportLogAPI.class);
 
     // API method names
-    private static final String PREFIX = "import";
+    private static final String PREFIX = "importLogFiles";
     private static final String Import_Zap_Log_From_File = "ImportZAPLogFromFile";
     private static final String Import_ModSec_Log_From_File = "ImportModSecurityLogFromFile";
     private static final String Import_Zap_HttpRequestResponsePair = "ImportZAPHttpRequestResponsePair";
