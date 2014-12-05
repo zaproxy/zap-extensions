@@ -43,7 +43,7 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.api.ApiView;
 
-class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
+public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
 	private static final Logger logger = Logger.getLogger(AjaxSpiderAPI.class);
 
