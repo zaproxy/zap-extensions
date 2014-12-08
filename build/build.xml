@@ -251,9 +251,11 @@
 		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="importurls"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="invoke"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="onlineMenu"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="plugnhack"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="portscan"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
@@ -261,6 +263,7 @@
 		<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sqliplugin"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="tips"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="treetools"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
 
@@ -331,6 +334,10 @@
 		<generate-wiki addon="gettingStarted" />
 	</target>
   
+  	<target name="deploy-importurls" description="deploy the importurls extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="importurls"/> </antcall>
+	</target>
+
 	<target name="deploy-invoke" description="deploy the invoke extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="invoke"/> </antcall>
 	</target>
@@ -355,6 +362,14 @@
 		<generate-wiki addon="jython" />
 	</target>
 
+  	<target name="deploy-onlineMenu" description="deploy the onlineMenu extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="onlineMenu"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-onlineMenu" description="Generates the wiki of onlineMenu">
+		<generate-wiki-core addon="onlineMenu" />
+	</target>
+	
   	<target name="deploy-plugnhack" description="deploy the plug-n-hack extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="plugnhack"/> </antcall>
 	</target>
@@ -395,6 +410,14 @@
 		<generate-wiki-core addon="spiderAjax" />
 	</target>
 
+    <target name="deploy-tips" description="deploy the Tips and Tricks">
+		<antcall target="build-deploy-addon"> <param name="addon" value="tips"/> </antcall>
+	</target>
+		
+	<target name="generate-wiki-tips" description="Generates the wiki of tips">
+		<generate-wiki addon="tips" />
+	</target>
+
 	<target name="deploy-tokengen" depends="clean,compile" description="deploy the tokengen extension">
 		<antcall target="build-tokengen"/>
 		<antcall target="deploy-addon"> <param name="addon" value="tokengen"/> </antcall>
@@ -427,11 +450,13 @@
 				<include name="diff-${status}-*.zap"/>
 				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
+				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="portscan-${status}-*.zap"/>
 				<include name="pscanrulesBeta-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="spiderAjax-${status}-*.zap"/>
+				<include name="tips-${status}-*.zap"/>
 				<include name="zest-${status}-*.zap"/>
 			</fileset>
 		</copy>
@@ -442,11 +467,13 @@
 				<include name="diff-${status}-*.zap"/>
 				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
+				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="portscan-${status}-*.zap"/>
 				<include name="pscanrulesBeta-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="spiderAjax-${status}-*.zap"/>
+				<include name="tips-${status}-*.zap"/>
 				<include name="zest-${status}-*.zap"/>
 			</fileset>
 		</copy>
@@ -462,9 +489,11 @@
 				<include name="diff-${status}-*.zap"/>
 				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
+				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="spiderAjax-${status}-*.zap"/>
+				<include name="tips-${status}-*.zap"/>
 				<include name="zest-${status}-*.zap"/>
 			</fileset>
 		</copy>
