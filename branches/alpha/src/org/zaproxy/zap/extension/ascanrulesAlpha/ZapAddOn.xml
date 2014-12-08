@@ -1,3 +1,5 @@
+<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
+<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
 	<version>11</version>
@@ -22,6 +24,7 @@
 		<extension>org.zaproxy.zap.extension.ascanrulesAlpha.ExtensionAscanRulesAlpha</extension>
 	</extensions>
 	<ascanrules>
+    <ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
