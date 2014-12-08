@@ -72,7 +72,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	 */
 	private void initialize() {
 		this.setName(NAME);
-		this.setOrder(157);
+		this.setOrder(158);
 	}
 
 	@Override
