@@ -214,7 +214,6 @@
 		<antcall target="build-addon"><param name="addon" value="highlighter"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="importLogFiles"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="importurls"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="multiFuzz"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
         <antcall target="build-addon"><param name="addon" value="saml"/></antcall>
@@ -223,7 +222,6 @@
 		<antcall target="build-addon"><param name="addon" value="sniTerminator"/></antcall>
         <antcall target="build-addon"><param name="addon" value="soap"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sse"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="tips"/></antcall>
         <antcall target="build-addon"><param name="addon" value="wappalyzer"/></antcall>
 
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
@@ -287,10 +285,6 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="httpsInfo"/> </antcall>
 	</target>
 
-  	<target name="deploy-importurls" description="deploy the importurls extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="importurls"/> </antcall>
-	</target>
-
 	<target name="deploy-importLogFiles" description="deploy the importLogFiles extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="importLogFiles"/> </antcall>
 	</target>
@@ -343,14 +337,6 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="soap"/> </antcall>
 	</target>
 		
-    <target name="deploy-tips" description="deploy the Tips and Tricks">
-		<antcall target="build-deploy-addon"> <param name="addon" value="tips"/> </antcall>
-	</target>
-		
-	<target name="generate-wiki-tips" description="Generates the wiki of tips">
-		<generate-wiki addon="tips" />
-	</target>
-
     <target name="deploy-wappalyzer" description="deploy the Wappalyzer extension">
         <antcall target="build-deploy-addon"> <param name="addon" value="wappalyzer"/> </antcall>
     </target>
@@ -368,7 +354,6 @@
 				<include name="accessControl-${status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
-				<include name="tips-${status}-*.zap"/>
 			</fileset>
 		</copy>
 		<copy todir="${zap-2.4.plugin.dir}">
@@ -376,7 +361,6 @@
 				<include name="accessControl-${status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
-				<include name="tips-${status}-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
