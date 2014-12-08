@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Tips and Tricks</name>
-	<version>2</version>
+	<version>3</version>
 	<description>Display ZAP Tips and Tricks</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Dont show on start in daemon mode or for a dev build</changes>
+	<changes>Promoted to beta</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.tips.ExtensionTipsAndTricks</extension>
