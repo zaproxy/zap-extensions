@@ -50,7 +50,7 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
 		 * This should be unique across all active and passive rules.
 		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
 		 */
-		return 60102;
+		return 30001;
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
 
 	@Override
 	public int getCategory() {
-		return Category.MISC;
+		return Category.INJECTION;
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
 
 	@Override
 	public int getRisk() {
-		return Alert.RISK_LOW;
+		return Alert.RISK_MEDIUM;
 	}
 
 	@Override
