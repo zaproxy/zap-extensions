@@ -1,4 +1,4 @@
-package org.parosproxy.paros.extension.advreport;
+package org.zaproxy.zap.extension.advreport;
 
 import java.util.List;
 
