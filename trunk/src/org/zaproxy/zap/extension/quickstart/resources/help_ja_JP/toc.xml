@@ -7,7 +7,7 @@
 	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
 			<tocitem text="クイック スタート" image="icon147" target="quickstart">
-				<tocitem text="Command Line"  target="quickstart.cmdline" />
+				<tocitem text="コマンドライン"  target="quickstart.cmdline" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

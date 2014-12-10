@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
-			<tocitem text="WebSocket" image="html5connectivity" target="websocket.introduction" >
+			<tocitem text="WebSockets" image="html5connectivity" target="websocket.introduction" >
          		<tocitem text="タブ" target="websocket.tab"/>
 				<tocitem text="オプション" target="websocket.options"/>
 				<tocitem text="セッション・プロパティ" target="websocket.sessionProperties"/>

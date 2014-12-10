@@ -6,7 +6,7 @@
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
     <indexitem text="websocket" target="websocket.introduction" />
-    <indexitem text="websocket タブ" target="websocket.tab" />
+    <indexitem text="WebSocketタブ" target="websocket.tab" />
     <indexitem text="websocket オプション" target="websocket.options" />
     <indexitem text="websocket セッション プロパティ" target="websocket.sessionProperties" />
 </index>
