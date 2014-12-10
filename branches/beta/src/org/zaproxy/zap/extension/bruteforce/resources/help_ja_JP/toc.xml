@@ -4,11 +4,11 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
 			<tocitem text="強制ブラウズ" image="addon.bruteforce.icon" target="addon.bruteforce.concepts">
-				<tocitem text="Options" target="addon.bruteforce.options" />
-				<tocitem text="Tab" target="addon.bruteforce.tab" />
+				<tocitem text="オプション" target="addon.bruteforce.options" />
+				<tocitem text="タブ" target="addon.bruteforce.tab" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

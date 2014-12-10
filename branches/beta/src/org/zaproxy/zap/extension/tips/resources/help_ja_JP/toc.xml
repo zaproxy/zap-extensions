@@ -4,9 +4,9 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Tips and Tricks" image="tips-icon" target="tips"/>
+	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
+		<tocitem text="アドオン" tocid="addons">
+			<tocitem text="ヒントとコツ" image="tips-icon" target="tips"/>
 		</tocitem>
 	</tocitem>
 </toc>

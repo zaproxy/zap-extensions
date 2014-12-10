@@ -7,7 +7,7 @@
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Invoke Applications" target="addon.invoke.concepts">
-				<tocitem text="Options" target="addon.invoke.options" />
+				<tocitem text="Opcije" target="addon.invoke.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

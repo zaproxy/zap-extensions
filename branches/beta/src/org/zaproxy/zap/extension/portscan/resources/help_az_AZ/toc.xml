@@ -4,10 +4,10 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+	<tocitem text="ZAP İstifadə Təlimatı" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Port Scan" image="addon.portscan.icon" target="addon.portscan.concepts">
-				<tocitem text="Options" target="addon.portscan.options" />
+			<tocitem text="Port skan" image="addon.portscan.icon" target="addon.portscan.concepts">
+				<tocitem text="Seçimlər" target="addon.portscan.options" />
 				<tocitem text="Tab" target="addon.portscan.tab" />
 			</tocitem>
 		</tocitem>

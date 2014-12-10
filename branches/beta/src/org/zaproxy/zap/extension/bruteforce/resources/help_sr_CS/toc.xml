@@ -7,7 +7,7 @@
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Forced Browse" image="addon.bruteforce.icon" target="addon.bruteforce.concepts">
-				<tocitem text="Options" target="addon.bruteforce.options" />
+				<tocitem text="Opcije" target="addon.bruteforce.options" />
 				<tocitem text="Tab" target="addon.bruteforce.tab" />
 			</tocitem>
 		</tocitem>

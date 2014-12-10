@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Forced Browse" image="addon.bruteforce.icon" target="addon.bruteforce.concepts">
+			<tocitem text="مرور اجباری" image="addon.bruteforce.icon" target="addon.bruteforce.concepts">
 				<tocitem text="گزینه ها" target="addon.bruteforce.options" />
 				<tocitem text="Tab" target="addon.bruteforce.tab" />
 			</tocitem>

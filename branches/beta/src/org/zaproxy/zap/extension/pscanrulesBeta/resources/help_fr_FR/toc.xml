@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Accessoires" tocid="addons">
-			<tocitem text="Passive Scan Rules - beta" image="pscanbeta-icon" target="pscanbeta"/>
+			<tocitem text="Règles d'analyse passives - bêta" image="pscanbeta-icon" target="pscanbeta"/>
 		</tocitem>
 	</tocitem>
 </toc>

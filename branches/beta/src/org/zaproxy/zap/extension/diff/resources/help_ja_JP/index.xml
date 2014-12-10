@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="diff" target="diff" />
+	<indexitem text="差分" target="diff" />
 </index>

@@ -9,11 +9,11 @@
 		The AJAX Spider tab shows you the set of unique URIs found by <a href="concepts.html">AJAX
 			Spider</a>.
 	</p>
-	<br /> For each request you can see:
+	<br /> 閲覧可能なリクエスト:
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The request index - each request is numbered, starting at 1</td>
+			<td>リクエストインデックス - 各リクエストは１から番号付けされます。</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -21,11 +21,11 @@
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The HTML method, e.g. GET or POST</td>
+			<td>HTMLメソッド、例えば、GETまたはPOST</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The URL requested</td>
+			<td>リクエストされたURL</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -33,11 +33,11 @@
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>A short summary of what the HTTP response code means</td>
+			<td>HTTPレスポンスコードの短い要約</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The length of time the whole request took</td>
+			<td>リクエスト全体にかかった時間の長さ</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -65,59 +65,59 @@
 	</table>
 
 	Selecting a requests will display it in the
-	<i>Request tab</i> and
-	<i>Response tab</i> above.
+	<i>リクエストタブ</i> 及び
+	<i>レスポンスタブ</i> above.
 	<br />
 
-	<h2>Right click menu</h2>
+	<h2>右クリック メニュー</h2>
 	Right clicking on a node will bring up a menu which will allow you to:
 
 	<h3>攻撃</h3>
 	The Attack menu has the following submenus:
-	<h4>Active Scan Site</h4>
+	<h4>サイトの動的スキャン</h4>
 	This will initiate an
 	<i>動的スキャン</i> of the whole of the site containing the selected node.
-	<br /> The
-	<i>Active Scan tab</i> will be display and will show the progress of the scan.
+	<br /> 　
+	<i>動的スキャンタブ</i> will be display and will show the progress of the scan.
 	<br />
 
-	<h4>Active Scan Node</h4>
+	<h4>動的スキャンノード</h4>
 	This will initiate an
 	<i>動的スキャン</i> of just the node selected.
-	<br /> The
-	<i>Active Scan tab</i> will be display and will show the progress of the scan.
+	<br /> 　
+	<i>動的スキャンタブ</i> will be display and will show the progress of the scan.
 	<br />
 
 	<h4>Spider Site</h4>
 	This will initiate a
-	<i>spider</i> of the whole of the site containing the selected node.
-	<br /> The
-	<i>Spider tab</i> will be display and will show the progress of the scan.
+	<i>スパイダー</i> of the whole of the site containing the selected node.
+	<br /> 　
+	<i>スパイダータブ</i> will be display and will show the progress of the scan.
 	<br />
 
 	<h4>Forced Browse Site</h4>
 	This will initiate a
 	<i>forced browse</i> of the whole of the site containing the selected node.
-	<br /> The
+	<br /> 　
 	<i>Forced Browse tab</i> will be display and will show the progress of the scan.
 	<br />
 
 	<h4>Forced Browse Directory</h4>
 	This will initiate a
 	<i>forced browse</i> on the selected directory.
-	<br /> The
+	<br /> 　
 	<i>Forced Browse tab</i> will be displayed and will show the progress of the scan.
 	<br />
 
 	<h4>Forced Browse Directory (and children)</h4>
 	This will initiate a
 	<i>forced browse</i> on the selected directory and all children found.
-	<br /> The
+	<br /> 　
 	<i>Forced Browse tab</i> will be displayed and will show the progress of the scan.
 	<br />
 
 	<h3>以下の処理から除外する:</h3>
-	This menu has the following submenus:
+	このメニューには、次のサブメニューがあります。
 
 	<h4>プロキシ</h4>
 	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
@@ -146,35 +146,35 @@
 	<h3>タグ管理...</h3>
 	This will bring up the
 	<i>Manage Tags dialog</i> which allows you to change the
-	<i>tags</i> associated with the request.
+	<i>タグ</i> associated with the request.
 
 	<h3>ノート...</h3>
 	This will bring up the
-	<i>Add Note dialog</i> which allows you to record
-	<i>notes</i> related to the request.
+	<i>ノートダイアログを追加</i> which allows you to record
+	<i>ノート</i> related to the request.
 
 	<h3>ブレーク...</h3>
 	This will bring up the
-	<i>Add Break Point dialog</i> which allows you to set a break point on that URL.
+	<i>ブレークポイントダイアログを追加</i> which allows you to set a break point on that URL.
 	<br />
 
 	<h3>Alerts for this node</h3>
 	If the URL selected has
-	<i>alerts</i> associated with it then they will be listed under this menu.
+	<i>アラート</i> associated with it then they will be listed under this menu.
 	<br> Selecting one of the alerts will cause it to be displayed.
 
 	<h3>再送信...</h3>
 	This will bring up the
-	<i>Resend dialog</i> which allows you to resend the request after making any changes to
+	<i>再送信ダイアログ</i> which allows you to resend the request after making any changes to
 	it that you want to.
 
 	<h3>新しいアラート...</h3>
 	This will bring up the
-	<i>Add Alert dialog</i> which allows you to manually record a new
+	<i>アラートダイアログを追加</i> which allows you to manually record a new
 	<i>Alert</i> against this request.
 
 	<h3>ブラウザで表示</h3>
-	This will open the URL of the selected node in your default browser.
+	既定のブラウザーで選択されたノードのURLを開きます。
 
 	<h2>関連情報</h2>
 	<table>

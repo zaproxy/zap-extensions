@@ -7,7 +7,7 @@
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Ajax Spider" image="addon.spiderajax.icon" target="addon.spiderajax.concepts">
-				<tocitem text="Options" target="addon.spiderajax.options" />
+				<tocitem text="Opcije" target="addon.spiderajax.options" />
 				<tocitem text="Tab" target="addon.spiderajax.tab" />
 			</tocitem>
 		</tocitem>
