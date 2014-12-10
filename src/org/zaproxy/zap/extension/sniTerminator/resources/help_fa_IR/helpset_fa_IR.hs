@@ -17,14 +17,14 @@
 
   <view>
     <name>Index</name>
-    <label>Index</label>
+    <label>نمایه</label>
     <type>javax.help.IndexView</type>
     <data>index.xml</data>
   </view>
 
   <view>
     <name>Search</name>
-    <label>Search</label>
+    <label>جستجو</label>
     <type>javax.help.SearchView</type>
     <data engine="com.sun.java.help.search.DefaultSearchEngine">
       JavaHelpSearch
