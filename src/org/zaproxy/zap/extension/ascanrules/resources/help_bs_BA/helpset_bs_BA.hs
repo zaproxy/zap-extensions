@@ -33,7 +33,7 @@
 
   <view>
     <name>Favorites</name>
-    <label>Omiljeni</label>
+    <label>Favoriti</label>
     <type>javax.help.FavoritesView</type>
   </view>
 </helpset>
