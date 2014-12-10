@@ -4,7 +4,7 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-	<indexitem text="Forced Browse" target="addon.bruteforce.concepts" />
-	<indexitem text="Forced Browse Options" target="addon.bruteforce.options" />
+	<indexitem text="Məcburi İzləmə" target="addon.bruteforce.concepts" />
+	<indexitem text="Məcburi İzləmə seçimləri" target="addon.bruteforce.options" />
 	<indexitem text="Forced Browse Tab" target="addon.bruteforce.tab" />
 </index>

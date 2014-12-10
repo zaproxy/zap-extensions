@@ -4,10 +4,10 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+	<tocitem text="ZAP ユーザーガイド" tocid="toplevelitem">
 		<tocitem text="アドオン" tocid="addons">
-			<tocitem text="Invoke Applications" target="addon.invoke.concepts">
-				<tocitem text="Options" target="addon.invoke.options" />
+			<tocitem text="アプリケーションの呼び出し" target="addon.invoke.concepts">
+				<tocitem text="オプション" target="addon.invoke.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

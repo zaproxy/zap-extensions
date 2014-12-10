@@ -5,8 +5,8 @@
 
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Getting Started Guide" image="book" target="gettingStarted"/>
+		<tocitem text="Componenti Aggiuntivi" tocid="addons">
+			<tocitem text="Guida introduttiva" image="book" target="gettingStarted"/>
 		</tocitem>
 	</tocitem>
 </toc>
