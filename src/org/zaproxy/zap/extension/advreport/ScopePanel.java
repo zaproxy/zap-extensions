@@ -57,7 +57,7 @@ public class ScopePanel extends AbstractPanel{
         gbc.gridy++ ;
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        this.add( new JLabel("Description :¡¡"), gbc );
+        this.add( new JLabel("Description : "), gbc );
  
         gbc.gridx++;
 		description = new JTextArea( " Description ", 3, 30 );
