@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package  org.parosproxy.paros.extension.advreport;
+package  org.zaproxy.zap.extension.advreport;
 
 import java.net.MalformedURLException;
 import java.net.URL;
