@@ -1,0 +1,40 @@
+<zapaddon>
+ 
+        <name>AdvReport</name>
+ 
+        <version>1</version>
+ 
+        <description>New HTML report module allows users to customize report content.</description>
+ 
+        <author>Chienli Ma</author>
+ 
+        <url></url>
+ 
+        <changes>First version</changes>
+ 
+        <dependson/>
+ 
+        <extensions>
+ 
+                <extension>org.zaproxy.zap.extension.advreport.ExtensionAdvReport</extension>
+ 
+        </extensions>
+ 
+        <ascanrules/>
+ 
+        <pscanrules/>
+ 
+        <filters/>
+ 
+        <files>
+                <file>xml/mergeAlertitems.xml.xsl</file>
+                <file>xml/report.concise.html.xsl</file>
+                <file>xml/report.separated.html.xsl</file>
+                <file>xml/report.traditional.html.xsl</file>
+        </files>
+ 
+        <not-before-version>2.3.0</not-before-version>
+ 
+        <not-from-version></not-from-version>
+ 
+</zapaddon> 
