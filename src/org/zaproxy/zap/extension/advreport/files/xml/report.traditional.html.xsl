@@ -16,14 +16,15 @@
 
 <body text="#000000">
 <!-- ZAP: rebrand -->
-<p><strong>ZAP Scanning Report</strong></p>
+<p><h1>ZAP Scanning Report</h1></p>
 
 <!-- Report name and desc -->
-<p><strong>Report name: </strong></p>
-<xsl:apply-templates select="name"/>
+  <p><h3>Report name: </h3></p>
+  <xsl:value-of select="name"/>
 
-<p><strong>Report description: </strong></p>
-<xsl:apply-templates select="desc"/>
+  <p><h3>Report description: </h3></p>
+  <xsl:value-of select="desc"/>
+
 
 
 
@@ -73,6 +74,8 @@
   <xsl:sort order="descending" data-type="number" select="confidence"/>
 </xsl:apply-templates>
 
+<!-- if there is port scan result -->
+<xsl:if test="portscan/port">     
 <p><strong>Port Scan</strong></p>
 
 	<xsl:apply-templates select="descendant::portscan">
@@ -110,6 +113,7 @@
 		</xsl:for-each>
 	</table>
 	</xsl:apply-templates>
+</xsl:if>
 
 </body>
 </html>
