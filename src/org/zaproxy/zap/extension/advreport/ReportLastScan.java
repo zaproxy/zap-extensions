@@ -28,7 +28,7 @@
 // ZAP: 2013/12/03 Issue 933: Automatically determine install dir
 // ZAP: 2014/07/15 Issue 1263: Generate Report Clobbers Existing Files Without Prompting
 
-package org.zaproxy.zap.extension.advreport;
+package org.parosproxy.paros.extension.advreport;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -170,7 +170,7 @@ public class ReportLastScan {
                 // select template and generate html file
                 File report = null;
                 String reportXSL="";
-                String extensionPath = Constant.getZapInstall() + "/org/parosproxy/paros/extension/advreport/files/xml/";
+                String extensionPath = Constant.getZapHome() + "/xml/";
                 switch( extension.getTemplate()){
                   
                     case "Concise":
@@ -187,7 +187,7 @@ public class ReportLastScan {
                 	    
                     case "Traditional":
                     default:
-                	    reportXSL = ( extensionPath + "report.html.xsl");
+                	    reportXSL = ( extensionPath + "report.traditional.html.xsl");
                         report = ReportGenerator.stringToHtml(sb.toString(), reportXSL, file.getAbsolutePath());
                     }
                                
