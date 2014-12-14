@@ -10,6 +10,7 @@ public class OptionDialog extends AbstractFrame{
 		JTabbedPane mainpane = new JTabbedPane();
         mainpane.add("Scope", scopeponel );
         mainpane.add("Advanced", advancedpanel );
+        this.setTitle("Generate report");
         this.add(mainpane);
         this.pack();
 	}
