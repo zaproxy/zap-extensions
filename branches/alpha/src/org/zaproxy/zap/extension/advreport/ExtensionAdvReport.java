@@ -15,16 +15,12 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package  org.zaproxy.zap.extension.advreport;
+package  org.parosproxy.paros.extension.advreport;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -44,10 +40,9 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
 	public static final String NAME = "ExtensionNewReport";
 	
     private ZapMenuItem menuExample = null;
-
-    JFrame optionframe = null;
+    private OptionDialog optionDialog = null;
     private ScopePanel scopetab = null;
-    private JPanel advancedtab = null;
+    private AdvancedPanel advancedtab = null;
     
     /**
      * 
@@ -78,8 +73,6 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
             super.hook(extensionHook);
             
             if (getView() != null) {
-                // Register our top menu item, as long as we're not running as a daemon
-                // Use one of the other methods to add to a different menu list
                 extensionHook.getHookMenu().addReportMenuItem(getMenuExample());
             }
 
@@ -92,26 +85,19 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
                 menuExample.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
-                        // This is where you do what you want to do.
-                        // In this case we'll just show a popup message.
-                	getNewOptionFrame().setVisible(true);
+                	getNewOptionFrame();
+                	optionDialog.setVisible(true);
+                	optionDialog.centerFrame();
                 }
             });
         }
         return menuExample;
     }// zap menu item
         
-        public JFrame getNewOptionFrame(){
-            optionframe = new JFrame("Generate Report");
+        public void getNewOptionFrame(){
         	//optionframe.setPreferredSize( new Dimension(530,320) );
-            
-            JTabbedPane mainpane = new JTabbedPane();
-            mainpane.add("Scope", getScopeTab());
-            List<String> alertTypes= getAlertTypes();
-            mainpane.add("Advanced", getAdvancedTab( alertTypes ));
-            optionframe.add(mainpane);
-            optionframe.pack();
-        	return optionframe;
+        	List<String> alertTypes= getAlertTypes();
+        	optionDialog = new OptionDialog(getScopeTab(),getAdvancedTab( alertTypes ) );
         }
         
         private List<String> getAlertTypes() {
@@ -130,7 +116,7 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
             ReportLastScan report = new ReportLastScan();
             
 		    report.generateReport(this.getView(), this.getModel(), this  );
-		    this.optionframe.setVisible( false );
+		    this.optionDialog.setVisible( false );
         }
 
 		private ScopePanel getScopeTab(){
@@ -138,7 +124,7 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
         	return scopetab;
         }
         
-        private JPanel getAdvancedTab( List<String> alertTypes ){
+        private AdvancedPanel getAdvancedTab( List<String> alertTypes ){
         	advancedtab = new AdvancedPanel( alertTypes, this );
         	return advancedtab;
         }
@@ -152,7 +138,7 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
         }
         
         public List<String> getSelectedAlerts(){
-        	return ((AdvancedPanel) advancedtab).getSelectedAlerts();
+        	return advancedtab.getSelectedAlerts();
         }
         
         public boolean onlyInScope(){
@@ -168,7 +154,6 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
                 return "\n Author: Chienli Ma";
         }
 
-
         @Override
         public URL getURL() {
                 try {
@@ -179,6 +164,6 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
         }
 
 		public void emitFrame() {
-			optionframe.setVisible(false);
+			optionDialog.setVisible(false);
 		}
 }
