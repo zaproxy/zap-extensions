@@ -28,7 +28,7 @@
 // ZAP: 2013/12/03 Issue 933: Automatically determine install dir
 // ZAP: 2014/07/15 Issue 1263: Generate Report Clobbers Existing Files Without Prompting
 
-package org.parosproxy.paros.extension.advreport;
+package org.zaproxy.zap.extension.advreport;
 
 import java.io.File;
 import java.text.MessageFormat;
