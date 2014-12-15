@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 
 import org.apache.commons.codec.binary.Hex;
@@ -540,6 +541,8 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 						socket.connect(new InetSocketAddress(hostname, portnumber), this.timeoutMs); 
 						if (log.isDebugEnabled()) 
 							log.debug("Connected");
+						//set a timeout on the socket for reads..
+						socket.setSoTimeout(this.timeoutMs);
 					}
 					catch (Exception e) {
 						//we cannot connect at all.. no point in continuing.
@@ -577,12 +580,16 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 					//read through messages until we get a handshake message back from the server
 					try {
 						while (true) {
-							SSLRecord sslRecord= recvmsg (is, this.timeoutMs); 
-							if (sslRecord.typ == handshakeRecordByte && sslRecord.len >0 && sslRecord.pay[0] == 0x0E)
+							SSLRecord sslRecord= recvmsg (is, this.timeoutMs);
+							if (sslRecord.typ == handshakeRecordByte && sslRecord.len >0 && sslRecord.pay[0] == 0x0E) {
 								break;
+							}
 							if (log.isDebugEnabled()) 
 								log.debug("Got a reponse from the server, but it was not a server hello 'Done' message");
 						}
+					}
+					catch (SocketTimeoutException es) {
+						throw new IOException ("The timeout was exceeded while attempting to read the Server Hello");
 					}
 					catch (IOException e) {
 						//if we do not get back a server hello, it is because
@@ -773,8 +780,8 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 
 		byte [] buffer = new byte [length];
 		int remainingtoread=length;
-		while ( remainingtoread > 0 && currentTime <= timeoutTime) {			
-			int read = s.read(buffer,length - remainingtoread, remainingtoread);
+		while ( remainingtoread > 0 && currentTime <= timeoutTime) {						
+			int read = s.read(buffer,length - remainingtoread, remainingtoread);			
 			if (read != -1 )
 				remainingtoread -= read;
 			else
