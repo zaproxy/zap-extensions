@@ -60,6 +60,7 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptTreeModel;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.dialogs.CopyScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.EditScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.LoadScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.NewScriptDialog;
@@ -86,6 +87,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	private NewScriptDialog newScriptDialog = null;
 	private LoadScriptDialog loadScriptDialog = null;
 	private EditScriptDialog editScriptDialog = null;
+	private CopyScriptDialog copyScriptDialog = null;
 
 	private HttpMessage lastMessageDisplayed = null;
 	
@@ -203,6 +205,17 @@ public class ScriptsListPanel extends AbstractPanel {
 		}
 		return newScriptButton;
 	}
+
+	public void showCopyScriptDialog(ScriptWrapper script) {
+		if (copyScriptDialog == null) {
+			copyScriptDialog = new CopyScriptDialog(extension, View.getSingleton().getMainFrame(), 
+					new Dimension(500, 250), script);
+		} else {
+			copyScriptDialog.init(script);
+		}
+		copyScriptDialog.setVisible(true);
+	}
+
 
 	public void showNewScriptDialog(ScriptWrapper template) {
 		if (newScriptDialog == null) {

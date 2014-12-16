@@ -75,7 +75,7 @@ public class PopupDuplicateScript extends ExtensionPopupMenuItem {
 	}
 	
 	private void duplicateScript(ScriptWrapper sw) {
-		extension.getScriptsPanel().showNewScriptDialog(sw);
+		extension.getScriptsPanel().showCopyScriptDialog(sw);
 	}
 	
     @Override
