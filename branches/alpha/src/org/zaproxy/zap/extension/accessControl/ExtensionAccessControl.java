@@ -445,6 +445,12 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	}
 
 	@Override
+	public void discardContext(Context ctx) {
+		this.contextPanelsMap.remove(ctx.getIndex());
+		this.contextManagers.remove(ctx.getIndex());
+	}
+
+	@Override
 	public void loadContextData(Session session, Context context) {
 		// Read the serialized rules for this context
 		List<String> serializedRules = null;
@@ -507,4 +513,5 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 			}
 		}
 	}
+
 }
