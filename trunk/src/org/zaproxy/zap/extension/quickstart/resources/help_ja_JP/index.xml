@@ -5,6 +5,6 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="クイック スタート" target="quickstart" />
-	<indexitem text="quick start command line" target="quickstart.cmdline" />
+	<indexitem text="クイックスタート" target="quickstart" />
+	<indexitem text="クイックスタート コマンドライン" target="quickstart.cmdline" />
 </index>
