@@ -1,5 +1,0 @@
-# This file is used by the class ExampleFilePassiveScanner under org.zaproxy.zap.extension.pscanrulesAlpha
-ThisIsATestString
-
-# Blank lines and lines starting with a hash are ignored
-ThisIsAnotherTestString
