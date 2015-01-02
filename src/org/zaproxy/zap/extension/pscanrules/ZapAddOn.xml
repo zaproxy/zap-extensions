@@ -9,7 +9,8 @@
 	Minor fixes to XFrameOptionsScanner (Issue 1256).<br>
 	XContentTypeOptionsScanner Internationalization (Issue 1343).<br>
 	XContentTypeOptionsScanner default/error page updates (Issue 760).<br>
-	TestInfoSessionIdURL added value length check to reduce false positives (Issue 1396).
+	TestInfoSessionIdURL added value length check to reduce false positives (Issue 1396).<br>
+	Application Error Disclosure shows evidence in attack (Issue 1487).
 	]]>
 	</changes>
 	<dependson/>
