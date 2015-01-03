@@ -229,6 +229,7 @@
 		<antcall target="build-addon"><param name="addon" value="quickstart"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="reveal"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="saverawmessage"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="websocket"/></antcall>
 		
 		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
@@ -305,6 +306,14 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="saverawmessage"/> </antcall>
 	</target>
 
+	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="spiderAjax"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-spiderAjax" description="Generates the wiki of spiderAjax">
+		<generate-wiki-core addon="spiderAjax" />
+	</target>
+
 	<target name="deploy-websockets" description="deploy the WebSockets extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="websocket"/> </antcall>
 	</target>
@@ -334,6 +343,7 @@
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
 				<include name="saverawmessage-${status}-*.zap"/>
+				<include name="spiderAjax-${status}-*.zap"/>
 				<include name="websocket-${status}-*.zap"/>
 			</fileset>
 		</copy>
@@ -346,6 +356,7 @@
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
 				<include name="saverawmessage-${status}-*.zap"/>
+				<include name="spiderAjax-${status}-*.zap"/>
 				<include name="websocket-${status}-*.zap"/>
 			</fileset>
 		</copy>
@@ -365,6 +376,7 @@
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
 				<include name="saverawmessage-${status}-*.zap"/>
+				<include name="spiderAjax-${status}-*.zap"/>
 				<include name="websocket-${status}-*.zap"/>
 			</fileset>
 		</copy>

@@ -30,7 +30,6 @@ import org.zaproxy.zap.extension.api.PhpAPIGenerator;
 import org.zaproxy.zap.extension.api.PythonAPIGenerator;
 import org.zaproxy.zap.extension.api.WikiAPIGenerator;
 import org.zaproxy.zap.extension.plugnhack.PlugNHackAPI;
-import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderAPI;
 
 public class ApiGenerator {
 
@@ -45,7 +44,6 @@ public class ApiGenerator {
 		//	php/api/zapv2/src/Zap/Zapv2.php
 		//	python/api/src/zapv2/__init__.py
 		
-		list.add(new AjaxSpiderAPI(null));
 		list.add(new PlugNHackAPI(null));
 		
 		return list;
