@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.scripts.dialogs;
 import java.awt.Dimension;
 import java.awt.Frame;
 
+import javax.swing.JLabel;
+
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
@@ -30,6 +32,7 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 public class EditScriptDialog extends StandardFieldsDialog {
 
 	private static final String FIELD_NAME = "scripts.dialog.script.label.name"; 
+	private static final String FIELD_FILE = "scripts.dialog.script.label.file"; 
 	private static final String FIELD_DESC = "scripts.dialog.script.label.desc";
 	private static final String FIELD_LOAD = "scripts.dialog.script.label.load";
 
@@ -49,8 +52,14 @@ public class EditScriptDialog extends StandardFieldsDialog {
 		if (script != null) {
 			this.removeAllFields();
 			this.addTextField(FIELD_NAME, script.getName());
+			this.addReadOnlyField(FIELD_FILE, "", false);
 			this.addMultilineField(FIELD_DESC, script.getDescription());
 			this.addCheckBoxField(FIELD_LOAD, script.isLoadOnStart());
+			if (script.getFile() != null) {
+				this.setFieldValue(FIELD_FILE, script.getFile().getAbsolutePath());
+				// Add tooltip in case file name is longer than the dialog
+				((JLabel)this.getField(FIELD_FILE)).setToolTipText(script.getFile().getAbsolutePath());
+			}
 		}
 
 		this.addPadding();

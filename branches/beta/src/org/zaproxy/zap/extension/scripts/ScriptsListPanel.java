@@ -50,6 +50,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
@@ -65,6 +66,7 @@ import org.zaproxy.zap.extension.scripts.dialogs.EditScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.LoadScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.NewScriptDialog;
 import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.zap.view.ScanPanel2;
 
 public class ScriptsListPanel extends AbstractPanel {
 
@@ -80,6 +82,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	private JButton loadButton = null;
 	private JButton saveButton = null;
 	private JButton newScriptButton = null;
+	private JButton optionsButton = null;
 
 	private JScrollPane jScrollPane = null;
 	private JTree tree = null;
@@ -144,7 +147,8 @@ public class ScriptsListPanel extends AbstractPanel {
 			panelToolbar.add(getLoadButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
 			panelToolbar.add(getSaveButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
 			panelToolbar.add(getNewScriptButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
-			panelToolbar.add(new JLabel(), LayoutHelper.getGBC(20, 0, 1, 1.0D));	// spacer
+			panelToolbar.add(new JLabel(), LayoutHelper.getGBC(i++, 0, 1, 1.0D));	// spacer
+			panelToolbar.add(getOptionsButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
 		}
 		return panelToolbar;
 	}
@@ -204,6 +208,24 @@ public class ScriptsListPanel extends AbstractPanel {
 			});
 		}
 		return newScriptButton;
+	}
+
+	private JButton getOptionsButton() {
+		if (optionsButton == null) {
+			optionsButton = new JButton();
+			optionsButton.setIcon(new ImageIcon(ScanPanel2.class.getResource("/resource/icon/16/041.png")));
+			optionsButton.setToolTipText(Constant.messages.getString("scripts.list.toolbar.button.options"));
+			
+			optionsButton.addActionListener(new java.awt.event.ActionListener() { 
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					Control.getSingleton().getMenuToolsControl().options(
+							Constant.messages.getString("scripts.options.title"));
+				}
+
+			});
+		}
+		return optionsButton;
 	}
 
 	public void showCopyScriptDialog(ScriptWrapper script) {
