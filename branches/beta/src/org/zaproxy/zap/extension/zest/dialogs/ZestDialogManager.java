@@ -312,8 +312,7 @@ public class ZestDialogManager extends AbstractPanel {
 			bringToFront(assertionsDialog);
 			return;
 		}
-		ZestScript script = extension.getZestTreeModel()
-				.getScriptWrapper(parent).getZestScript();
+		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
 		assertionsDialog.init(script, parent, child, assertion, add);
 		assertionsDialog.setVisible(true);
 	}
@@ -345,8 +344,7 @@ public class ZestDialogManager extends AbstractPanel {
 			bringToFront(assignmentDialog);
 			return;
 		}
-		ZestScriptWrapper script = extension.getZestTreeModel()
-				.getScriptWrapper(parent);
+		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
 		assignmentDialog.init(script, parent, child, req, assign, add);
 		assignmentDialog.setVisible(true);
 	}
@@ -361,8 +359,7 @@ public class ZestDialogManager extends AbstractPanel {
 			bringToFront(commentDialog);
 			return;
 		}
-		ZestScriptWrapper script = extension.getZestTreeModel()
-				.getScriptWrapper(parent);
+		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
 		commentDialog.init(script, parent, child, req, comment, add);
 		commentDialog.setVisible(true);
 	}
@@ -377,8 +374,7 @@ public class ZestDialogManager extends AbstractPanel {
 			bringToFront(controlDialog);
 			return;
 		}
-		ZestScriptWrapper script = extension.getZestTreeModel()
-				.getScriptWrapper(parent);
+		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
 		controlDialog.init(script, parent, child, req, ctrl, add);
 		controlDialog.setVisible(true);
 	}
@@ -386,8 +382,7 @@ public class ZestDialogManager extends AbstractPanel {
 	public void showZestExpressionDialog(ScriptNode parent,
 			List<ScriptNode> children, ZestStatement stmt, ZestExpression expr,
 			boolean add, boolean surround, boolean addToNewCondition) {
-		ZestScript script = extension.getZestTreeModel()
-				.getScriptWrapper(parent).getZestScript();
+		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
 		if (expr instanceof ZestStructuredExpression) {
 			return;
 		} else {
@@ -416,7 +411,8 @@ public class ZestDialogManager extends AbstractPanel {
 			bringToFront(loopDialog);
 			return;
 		}
-		loopDialog.init(parent, children, stmt, loop, add, surround);
+		ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+		loopDialog.init(script, parent, children, stmt, loop, add, surround);
 		loopDialog.setVisible(true);
 	}
 

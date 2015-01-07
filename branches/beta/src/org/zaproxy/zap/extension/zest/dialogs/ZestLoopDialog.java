@@ -16,12 +16,14 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestLoopClientElements;
 import org.mozilla.zest.core.v1.ZestLoopFile;
 import org.mozilla.zest.core.v1.ZestLoopInteger;
+import org.mozilla.zest.core.v1.ZestLoopRegex;
 import org.mozilla.zest.core.v1.ZestLoopString;
 import org.mozilla.zest.core.v1.ZestLoopTokenFileSet;
 import org.mozilla.zest.core.v1.ZestLoopTokenIntegerSet;
@@ -31,12 +33,14 @@ import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
-public class ZestLoopDialog extends StandardFieldsDialog {
+public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
 	private static final long serialVersionUID = 3720969585202318312L;
 
+	private ZestScriptWrapper script = null;
 	private ExtensionZest extension = null;
 	private ScriptNode parent = null;
 	private List<ScriptNode> children = null;
@@ -57,6 +61,11 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 	private final static String END_INTEGER = "zest.dialog.loop.integer.end";
 	private final static String STEP_INTEGER = "zest.dialog.loop.integer.step";
 
+	private static final String FIELD_INPUT_VAR = "zest.dialog.loop.regex.input"; 
+	private static final String FIELD_REGEX = "zest.dialog.loop.regex.regex"; 
+	private static final String FIELD_EXACT = "zest.dialog.loop.regex.exact"; 
+	private static final String FIELD_GROUP = "zest.dialog.loop.regex.group"; 
+
 	private static final Logger logger = Logger.getLogger(ZestLoopDialog.class);
 
 	public ZestLoopDialog(ExtensionZest extension, Frame owner, Dimension dim) {
@@ -64,8 +73,9 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 		this.extension = extension;
 	}
 
-	public void init(ScriptNode parent, List<ScriptNode> children,
+	public void init(ZestScriptWrapper script, ScriptNode parent, List<ScriptNode> children,
 			ZestStatement req, ZestLoop<?> loop, boolean add, boolean surround) {
+		this.script = script;
 		this.add = add;
 		this.parent = parent;
 		this.children = children;
@@ -88,6 +98,8 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 			drawLoopIntegerDialog((ZestLoopInteger) this.loop);
 		} else if (loop instanceof ZestLoopClientElements) {
 			drawLoopClientElementsDialog((ZestLoopClientElements) this.loop);
+		} else if (loop instanceof ZestLoopRegex) {
+			drawLoopRegexDialog((ZestLoopRegex) this.loop);
 		} else {
 			throw new IllegalStateException("Unknown loop type: "
 					+ this.loop.getClass().getCanonicalName());
@@ -167,6 +179,20 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 		this.addFieldListener(ZestClientElementDialog.FIELD_ELEMENT, ZestZapUtils.stdMenuAdapter()); 
 	}
 
+	private void drawLoopRegexDialog(ZestLoopRegex loop) {
+		this.addComboField(FIELD_INPUT_VAR, getVariableNames(), loop.getInputVariableName());
+		this.addTextField(FIELD_REGEX, loop.getRegex());
+		this.addComboField(FIELD_GROUP, new int[]{0, 1, 2, 3, 4, 5}, loop.getGroupIndex());
+		this.addCheckBoxField(FIELD_EXACT, loop.isCaseExact());
+	}
+	
+	private List<String> getVariableNames() {
+		ArrayList<String> list = new ArrayList<String>();
+		list.addAll(script.getZestScript().getVariableNames());
+		Collections.sort(list);
+		return list;
+	}
+
 	private List<String> getElementTypeFields() {
 		List<String> list = new ArrayList<String>();
 		for (String type : ZestClientElementDialog.ELEMENT_TYPES) {
@@ -219,6 +245,12 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 			loopCe.setWindowHandle(this.getStringValue(ZestClientElementDialog.FIELD_WINDOW_HANDLE));
 			loopCe.setElement(this.getStringValue(ZestClientElementDialog.FIELD_ELEMENT));
 			loopCe.setAttribute(this.getStringValue(ZestClientElementDialog.FIELD_ATTRIBUTE));
+		} else if (loop instanceof ZestLoopRegex) {
+			ZestLoopRegex loopRe = (ZestLoopRegex) this.loop;
+			loopRe.setInputVariableName(this.getStringValue(FIELD_INPUT_VAR));
+			loopRe.setRegex(this.getStringValue(FIELD_REGEX));
+			loopRe.setGroupIndex(this.getIntValue(FIELD_GROUP));
+			loopRe.setCaseExact(this.getBoolValue(FIELD_EXACT));
 		}
 		this.loop.setVariableName(this.getStringValue(VARIABLE_NAME));
 		if (add) {
@@ -267,7 +299,21 @@ public class ZestLoopDialog extends StandardFieldsDialog {
 			if (this.isEmptyField(ZestClientElementDialog.FIELD_ELEMENT)) {
 				return Constant.messages.getString("zest.dialog.client.error.element");
 			}
+		} else if (loop instanceof ZestLoopRegex) {
+			if (this.isEmptyField(FIELD_REGEX)) {
+				return Constant.messages.getString("zest.dialog.loop.regex.error.regex");
+			}
+			try {
+				Pattern.compile(this.getStringValue(FIELD_REGEX));
+			} catch (Exception e) {
+				return Constant.messages.getString("zest.dialog.loop.error.regex");
+			}
 		}
 		return null;
+	}
+	
+	@Override
+	public ZestScriptWrapper getScript() {
+		return this.script;
 	}
 }

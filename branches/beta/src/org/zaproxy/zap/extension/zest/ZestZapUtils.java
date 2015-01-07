@@ -74,6 +74,7 @@ import org.mozilla.zest.core.v1.ZestExpressionURL;
 import org.mozilla.zest.core.v1.ZestLoopClientElements;
 import org.mozilla.zest.core.v1.ZestLoopFile;
 import org.mozilla.zest.core.v1.ZestLoopInteger;
+import org.mozilla.zest.core.v1.ZestLoopRegex;
 import org.mozilla.zest.core.v1.ZestLoopString;
 import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
@@ -342,6 +343,16 @@ public class ZestZapUtils {
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.loop.clientElements.title");
+			}
+		} else if (za instanceof ZestLoopRegex) {
+			ZestLoopRegex zalr = (ZestLoopRegex) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.loop.regex"), 
+						zalr.getVariableName(), zalr.getInputVariableName(), zalr.getRegex());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.loop.regex.title");
 			}
 		} else if (za instanceof ZestAssignFieldValue) {
 			ZestAssignFieldValue zsa = (ZestAssignFieldValue) za;
