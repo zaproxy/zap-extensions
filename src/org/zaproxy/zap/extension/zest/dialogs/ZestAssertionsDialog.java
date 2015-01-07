@@ -32,15 +32,15 @@ import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
 import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
-public class ZestAssertionsDialog extends StandardFieldsDialog {
+public class ZestAssertionsDialog extends StandardFieldsDialog implements ZestDialog {
 
 	private static final String FIELD_VARIABLE = "zest.dialog.assert.label.variable";
 	private static final String FIELD_LENGTH = "zest.dialog.assert.label.length"; 
@@ -54,7 +54,7 @@ public class ZestAssertionsDialog extends StandardFieldsDialog {
 	private static final long serialVersionUID = 1L;
 
 	private ExtensionZest extension = null;
-	private ZestScript script = null;
+	private ZestScriptWrapper script = null;
 	private ScriptNode parent = null;
 	private ScriptNode child = null;
 	
@@ -67,7 +67,7 @@ public class ZestAssertionsDialog extends StandardFieldsDialog {
 		this.extension = ext;
 	}
 
-	public void init (ZestScript script, ScriptNode parent, ScriptNode child, ZestAssertion assertion, boolean add) {
+	public void init (ZestScriptWrapper script, ScriptNode parent, ScriptNode child, ZestAssertion assertion, boolean add) {
 		this.script = script;
 		this.add = add;
 		this.parent = parent;
@@ -105,6 +105,9 @@ public class ZestAssertionsDialog extends StandardFieldsDialog {
 			this.addCheckBoxField(FIELD_EXACT, za.isCaseExact());
 			this.addCheckBoxField(FIELD_INVERSE, za.isInverse());
 			
+			// Enable right click menus
+			this.addFieldListener(FIELD_VALUE, ZestZapUtils.stdMenuAdapter()); 
+
 		} else if (assertion.getRootExpression() instanceof ZestExpressionRegex) {
 			ZestExpressionRegex za = (ZestExpressionRegex) assertion.getRootExpression();
 			this.addComboField(FIELD_VARIABLE, this.getVariableNames(), za.getVariableName());
@@ -117,7 +120,7 @@ public class ZestAssertionsDialog extends StandardFieldsDialog {
 	
 	private List<String> getVariableNames() {
 		ArrayList<String> list = new ArrayList<String>();
-		list.addAll(script.getVariableNames());
+		list.addAll(script.getZestScript().getVariableNames());
 		Collections.sort(list);
 		return list;
 	}
@@ -179,6 +182,11 @@ public class ZestAssertionsDialog extends StandardFieldsDialog {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ZestScriptWrapper getScript() {
+		return this.script;
 	}
 	
 }

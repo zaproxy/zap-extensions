@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -57,6 +58,7 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 public class ZestScriptsDialog extends StandardFieldsDialog {
 
     private static final String FIELD_TITLE = "zest.dialog.script.label.title"; 
+    private static final String FIELD_FILE = "zest.dialog.script.label.file"; 
     private static final String FIELD_PREFIX = "zest.dialog.script.label.prefix"; 
     private static final String FIELD_DESC = "zest.dialog.script.label.desc";
     private static final String FIELD_AUTH_SITE = "zest.dialog.script.label.authsite";
@@ -129,12 +131,17 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             this.setTitle(Constant.messages.getString("zest.dialog.script.edit.title"));
         }
         this.addTextField(0, FIELD_TITLE, script.getTitle());
-        
+		this.addReadOnlyField(0, FIELD_FILE, "", false);
         this.addComboField(0, FIELD_PREFIX, this.getSites(), script.getPrefix(), true);
         this.addCheckBoxField(0, FIELD_LOAD, scriptWrapper.isLoadOnStart());
         this.addMultilineField(0, FIELD_DESC, script.getDescription());
         this.addCheckBoxField(0, FIELD_DEBUG, scriptWrapper.isDebug());
         
+		if (scriptWrapper.getFile() != null) {
+			this.setFieldValue(FIELD_FILE, scriptWrapper.getFile().getAbsolutePath());
+			// Add tooltip in case file name is longer than the dialog
+			((JLabel)this.getField(FIELD_FILE)).setToolTipText(scriptWrapper.getFile().getAbsolutePath());
+		}
         this.getParamsModel().setValues(script.getParameters().getVariables());
         
         List<JButton> buttons = new ArrayList<JButton>();

@@ -35,16 +35,16 @@ import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
 import org.mozilla.zest.core.v1.ZestExpressionStatusCode;
 import org.mozilla.zest.core.v1.ZestExpressionURL;
-import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
-public class ZestExpressionDialog extends StandardFieldsDialog {
+public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDialog {
 
 	private static final String FIELD_REGEX = "zest.dialog.condition.label.regex";
 	private static final String FIELD_STATUS = "zest.dialog.condition.label.status";
@@ -62,7 +62,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 	private static final long serialVersionUID = 1L;
 
 	private ExtensionZest extension = null;
-	private ZestScript script = null;
+	private ZestScriptWrapper script = null;
 	private ScriptNode parent = null;
 	private List<ScriptNode> children = null;
 	private ZestStatement request = null;
@@ -79,7 +79,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 		// this.owner = owner;
 	}
 
-	public void init(ZestScript script, ScriptNode parent,
+	public void init(ZestScriptWrapper script, ScriptNode parent,
 			List<ScriptNode> children, ZestStatement req,
 			ZestExpression expression, boolean add, boolean surround,
 			boolean addToNewConditional) {
@@ -157,7 +157,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 			ZestExpressionClientElementExists zc = (ZestExpressionClientElementExists) expression;
 			
 			// Pull down of all the valid window ids
-			List <String> windowIds = new ArrayList<String>(script.getClientWindowHandles());
+			List <String> windowIds = new ArrayList<String>(script.getZestScript().getClientWindowHandles());
 			Collections.sort(windowIds);
 			this.addComboField(ZestClientElementDialog.FIELD_WINDOW_HANDLE, windowIds, zc.getWindowHandle());
 			
@@ -200,7 +200,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 
 	private List<String> getVariableNames() {
 		ArrayList<String> list = new ArrayList<String>();
-		list.addAll(script.getVariableNames());
+		list.addAll(script.getZestScript().getVariableNames());
 		Collections.sort(list);
 		return list;
 	}
@@ -358,5 +358,10 @@ public class ZestExpressionDialog extends StandardFieldsDialog {
 
 	protected ZestExpression getExpression() {
 		return this.expression;
+	}
+
+	@Override
+	public ZestScriptWrapper getScript() {
+		return this.script;
 	}
 }

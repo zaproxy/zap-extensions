@@ -25,6 +25,7 @@ import org.mozilla.zest.core.v1.ZestLoop;
 import org.mozilla.zest.core.v1.ZestLoopClientElements;
 import org.mozilla.zest.core.v1.ZestLoopFile;
 import org.mozilla.zest.core.v1.ZestLoopInteger;
+import org.mozilla.zest.core.v1.ZestLoopRegex;
 import org.mozilla.zest.core.v1.ZestLoopString;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
@@ -109,6 +110,7 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 		}
 		createPopupAddActionMenu(parent, children, stmt, new ZestLoopInteger());
 		createPopupAddActionMenu(parent, children, stmt, new ZestLoopClientElements());
+		createPopupAddActionMenu(parent, children, stmt, new ZestLoopRegex());
 	}
 
 	private void createPopupAddActionMenu(final ScriptNode parent,
