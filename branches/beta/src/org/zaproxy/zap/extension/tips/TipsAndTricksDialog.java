@@ -53,7 +53,6 @@ public class TipsAndTricksDialog extends AbstractDialog {
 	private JButton btnClose = null;
 	private ZapTextArea txtTip = null;
 	private JScrollPane scrollPane = null;
-    private JCheckBox showOnStart = null;
 	private JPanel jPanel1 = null;
 	private String lastTip = null;
     
@@ -106,21 +105,11 @@ public class TipsAndTricksDialog extends AbstractDialog {
 			jPanel = new JPanel();
 			jPanel.setLayout(new GridBagLayout());
 			jPanel.add(getScrollPane(), LayoutHelper.getGBC(0, 0, 2, 1.0D, 1.0D));
-			jPanel.add(getShowOnStartCheckbox(), LayoutHelper.getGBC(0, 1, 2, 1.0D, 0.0D));
 			jPanel.add(new JLabel(), LayoutHelper.getGBC(0, 2, 1, 1.0D, 0.0D));
 			jPanel.add(getButtonPanel(), LayoutHelper.getGBC(1, 2, 1, 0.0D, 0.0D));
 		}
 		return jPanel;
 	}
-	
-    private JCheckBox getShowOnStartCheckbox() {
-    	if (showOnStart == null) {
-    		showOnStart = new JCheckBox(Constant.messages.getString("tips.checkbox.showOnStart"));
-    		showOnStart.setSelected(ext.isShowOnStart());
-    	}
-    	return showOnStart;
-    }
-
 	
 	/**
 	 * This method initializes btnFind	
@@ -152,7 +141,6 @@ public class TipsAndTricksDialog extends AbstractDialog {
 			btnClose.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					ext.setShowOnStart(getShowOnStartCheckbox().isSelected());
 				    TipsAndTricksDialog.this.setVisible(false);
 				}
 			});
