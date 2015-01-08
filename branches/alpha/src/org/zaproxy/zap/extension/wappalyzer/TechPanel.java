@@ -184,8 +184,9 @@ public class TechPanel extends AbstractPanel {
 	
 	private void setParamsTableColumnSizes() {
 		// Just set the 2 columns that dont need much space and let the rest autosize
-		techTable.getColumnModel().getColumn(0).setMinWidth(25);
-		techTable.getColumnModel().getColumn(0).setPreferredWidth(25);	// icon
+		techTable.getColumn(Constant.messages.getString("wappalyzer.table.header.icon")).setMinWidth(25);
+		techTable.getColumn(Constant.messages.getString("wappalyzer.table.header.icon")).setPreferredWidth(25);	// icon
+		techTable.getColumn(Constant.messages.getString("wappalyzer.table.header.icon")).setMaxWidth(35);
 
 		/* Dont currently support confidence
 		techTable.getColumnModel().getColumn(5).setMinWidth(80);
