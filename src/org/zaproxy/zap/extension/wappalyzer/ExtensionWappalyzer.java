@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.wappalyzer;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,7 +37,9 @@ import javax.swing.ImageIcon;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -110,8 +113,16 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		this.setOrder(201);
 		
 		try {
-			String appsData = getStringResource(RESOURCE + "/apps.json");
-			JSONObject json = JSONObject.fromObject(appsData);
+			parseJson(getStringResource(RESOURCE + "/apps.json"));
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+		}
+	}
+	
+	public void parseJson(String jsonStr) {
+		
+		try {
+			JSONObject json = JSONObject.fromObject(jsonStr);
 			
 			JSONObject cats = json.getJSONObject("categories");
 			
@@ -145,7 +156,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 				this.applications.add(app);
 			}
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
 		
@@ -205,18 +216,23 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	private List<AppPattern> jsonToPatternList(Object json) {
 		List<AppPattern> list = new ArrayList<AppPattern>();
 		if (json instanceof JSONArray) {
-			for (Object obj : (JSONArray)json) {
+			for (Object obj : ((JSONArray)json).toArray()) {
+				String objStr = obj.toString();
+				if (obj instanceof JSONArray) {
+					// Dereference it again
+					objStr = ((JSONArray)obj).getString(0);
+				}
 				try {
-					list.add(this.strToAppPAttern(obj.toString()));
+					list.add(this.strToAppPAttern(objStr));
 				} catch (PatternSyntaxException e) {
-					logger.error("Invalid pattern syntax " + obj.toString());
+					logger.error("Invalid pattern syntax " + objStr, e);
 				}
 			}
 		} else if (json != null) {
 			try {
 				list.add(this.strToAppPAttern(json.toString()));
 			} catch (PatternSyntaxException e) {
-				logger.error("Invalid pattern syntax " + json.toString());
+				logger.error("Invalid pattern syntax " + json.toString(), e);
 			}
 		}
 		return list;
@@ -474,9 +490,16 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		// Ignore
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		// Quick way to test the apps.json file parsing
+		
+		ConsoleAppender ca = new ConsoleAppender();
+		ca.setWriter(new OutputStreamWriter(System.out));
+		ca.setLayout(new PatternLayout("%-5p [%t]: %m%n"));
+        Logger.getRootLogger().addAppender(ca);
+		
 		new ExtensionWappalyzer();
+		
 	}
 
 }

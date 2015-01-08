@@ -1,17 +1,10 @@
 <zapaddon>
 	<name>Technology detection using Wappalyzer</name>
-	<version>3</version>
+	<version>4</version>
 	<description>Technology detection using Wappalyzer: wappalyzer.com</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>
-	<![CDATA[
-	Minor code changes (Issues 503, 1083 and 1085).<br>
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).<br>
-	Updated add-on dir structure (Issue 1113).
-	]]>
-	</changes>
+	<changes>Updated to latest apps.json</changes>
 	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer</extension>
