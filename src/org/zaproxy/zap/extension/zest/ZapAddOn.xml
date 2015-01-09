@@ -1,18 +1,13 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>17</version>
+	<version>18</version>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	ZAP Issue 600: Add option to include response details or not<br>
-	ZAP Issue 658: define which headers to be included by default<br>
-	ZAP Issue 1248: ZestRequest always follow redirects, fails to match redirect responses<br>
-	ZAP Issue 1327: Support drag and drop<br>
-	ZAP Issue 1329: support commenting in/out statements<br>
-	ZAP Issue 1331: Update selenium jar to fix issue working with firefox 32.0<br>
-	ZAP Issue 1278: Safe menu items not available in protected and safe modes.
+	ZAP Issue 1411: Missing authentication handling for Zest scripts called from scanner<br>
+	Zest Issue 66: Zest scripts cant be invoked from Zest scripts on Windows<br>
 	]]>
 	</changes>
 	<dependson/>
