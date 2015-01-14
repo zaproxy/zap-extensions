@@ -250,7 +250,6 @@
 		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="importurls"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="invoke"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
@@ -325,14 +324,6 @@
 		<generate-wiki-core addon="diff" />
 	</target>
 
-	<target name="deploy-gettingStarted" description="deploy the gettingStarted extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="gettingStarted"/> </antcall>
-	</target>
-
-	<target name="generate-wiki-gettingStarted" description="Generates the wiki of gettingStarted">
-		<generate-wiki addon="gettingStarted" />
-	</target>
-  
   	<target name="deploy-importurls" description="deploy the importurls extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="importurls"/> </antcall>
 	</target>
@@ -439,7 +430,6 @@
 				<include name="ascanrulesBeta-${status}-*.zap"/>
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
-				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
 				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
@@ -455,7 +445,6 @@
 				<include name="ascanrulesBeta-${status}-*.zap"/>
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
-				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
 				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
@@ -476,7 +465,6 @@
 			<fileset dir="${dist}">
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
-				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
 				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>

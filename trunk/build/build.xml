@@ -225,6 +225,7 @@
 		<antcall target="build-addon"><param name="addon" value="directorylistv2_3"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="directorylistv2_3_lc"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="fuzzdb"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrules"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="quickstart"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="reveal"/></antcall>
@@ -278,6 +279,14 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="exampleTopMenu"/> </antcall>
 	</target>
 
+	<target name="deploy-gettingStarted" description="deploy the gettingStarted extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="gettingStarted"/> </antcall>
+	</target>
+
+	<target name="generate-wiki-gettingStarted" description="Generates the wiki of gettingStarted">
+		<generate-wiki addon="gettingStarted" />
+	</target>
+  
 	<target name="deploy-pscanrules" description="deploy the passive scan rules">
 		<antcall target="build-deploy-addon"> <param name="addon" value="pscanrules"/> </antcall>
 	</target>
@@ -339,6 +348,7 @@
 				<include name="ascanrules-${status}-*.zap"/>
 				<include name="coreLang-${status}-*.zap"/>
 				<include name="directorylistv1-${status}-*.zap"/>
+				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
@@ -352,6 +362,7 @@
 				<include name="ascanrules-${status}-*.zap"/>
 				<include name="coreLang-${status}-*.zap"/>
 				<include name="directorylistv1-${status}-*.zap"/>
+				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
@@ -372,6 +383,7 @@
 				<include name="ascanrules-${status}-*.zap"/>
 				<include name="coreLang-${status}-*.zap"/>
 				<include name="directorylistv1-${status}-*.zap"/>
+				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
@@ -381,5 +393,17 @@
 			</fileset>
 		</copy>
 	</target>
+
+    <target name="generate-apis" description="generates the client APIs">
+        <path id="classpath">
+            <pathelement location="../bin" />
+            <pathelement location="./build" />
+            <fileset dir="../lib" includes="**/*.jar" />
+            <fileset dir="../../zaproxy/lib" includes="**/*.jar" />
+        </path>
+		<java classname="org.zaproxy.zap.extension.ApiGenerator" dir=".." fork="yes">
+			<classpath refid="classpath" />
+		</java>
+    </target>
 
 </project>
