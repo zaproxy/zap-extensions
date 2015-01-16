@@ -4,7 +4,12 @@
 	<description>Forced browsing of files and directories using code from the OWASP DirBuster tool</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Removed DirBuster's GUI code, it's controlled with ZAP's GUI.</changes>
+	<changes>
+	<![CDATA[
+	Removed DirBuster's GUI code, it's controlled with ZAP's GUI.<br>
+	Unload all components during uninstallation (Issue 1505).
+	]]>
+	</changes>
 	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.bruteforce.ExtensionBruteForce</extension>
