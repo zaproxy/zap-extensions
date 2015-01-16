@@ -117,7 +117,6 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
 					za.getVariableName());
 			this.addTextField(FIELD_REGEX, za.getRegex());
 			this.addCheckBoxField(FIELD_EXACT, za.isCaseExact());
-			this.addCheckBoxField(FIELD_INVERSE, za.isInverse());
 
 		} else if (expression instanceof ZestExpressionEquals) {
 			ZestExpressionEquals za = (ZestExpressionEquals) expression;
@@ -125,7 +124,6 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
 					za.getVariableName());
 			this.addTextField(FIELD_VALUE, za.getValue());
 			this.addCheckBoxField(FIELD_EXACT, za.isCaseExact());
-			this.addCheckBoxField(FIELD_INVERSE, za.isInverse());
 			
 			// Enable right click menus
 			this.addFieldListener(FIELD_VALUE, ZestZapUtils.stdMenuAdapter()); 
@@ -172,6 +170,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
 			this.addFieldListener(ZestClientElementDialog.FIELD_ELEMENT, ZestZapUtils.stdMenuAdapter()); 
 
 		}
+		this.addCheckBoxField(FIELD_INVERSE, expression.isInverse());
 		this.addPadding();
 	}
 
@@ -230,14 +229,12 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
 			zc.setVariableName(this.getStringValue(FIELD_VARIABLE));
 			zc.setRegex(this.getStringValue(FIELD_REGEX));
 			zc.setCaseExact(this.getBoolValue(FIELD_EXACT));
-			zc.setInverse(this.getBoolValue(FIELD_INVERSE));
 
 		} else if (expression instanceof ZestExpressionEquals) {
 			ZestExpressionEquals zc = (ZestExpressionEquals) expression;
 			zc.setVariableName(this.getStringValue(FIELD_VARIABLE));
 			zc.setValue(this.getStringValue(FIELD_VALUE));
 			zc.setCaseExact(this.getBoolValue(FIELD_EXACT));
-			zc.setInverse(this.getBoolValue(FIELD_INVERSE));
 
 		} else if (expression instanceof ZestExpressionStatusCode) {
 			ZestExpressionStatusCode zc = (ZestExpressionStatusCode) expression;
@@ -268,6 +265,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
 			zc.setElement(this.getStringValue(ZestClientElementDialog.FIELD_ELEMENT));
 
 		}
+		expression.setInverse(this.getBoolValue(FIELD_INVERSE));
 		if (addToNewConditional) {
 			ZestConditional condition = new ZestConditional(expression);
 			if (add) {
