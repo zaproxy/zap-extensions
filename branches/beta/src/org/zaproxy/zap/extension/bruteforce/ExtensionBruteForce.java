@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -111,16 +110,11 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 	
 	@Override
 	public void unload() {
-	    if (getView() != null) {
-	    	Control.getSingleton().getExtensionLoader().removeStatusPanel(getBruteForcePanel());
-	    	Control.getSingleton().getExtensionLoader().removeOptionsPanel(getOptionsBruteForcePanel());
+		if (getView() != null) {
+			getBruteForcePanel().unload();
+		}
 
-	    	Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupMenuBruteForceSite());
-	    	Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupMenuBruteForceDirectory());
-            Control.getSingleton().getExtensionLoader().removePopupMenuItem(getPopupMenuBruteForceDirectoryAndChildren());
-	    }
-	    Control.getSingleton().getExtensionLoader().removeOptionsParamSet(getBruteForceParam());
-	    // TODO remove listenners
+		super.unload();
 	}
 	
     @Override

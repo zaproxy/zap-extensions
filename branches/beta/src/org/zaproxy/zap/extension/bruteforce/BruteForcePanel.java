@@ -898,4 +898,10 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 			getSiteSelect().setEnabled(false);
 		}
 	}
+
+	void unload() {
+		if (View.isInitialised()) {
+			View.getSingleton().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(scanStatus.getCountLabel());
+		}
+	}
 }
