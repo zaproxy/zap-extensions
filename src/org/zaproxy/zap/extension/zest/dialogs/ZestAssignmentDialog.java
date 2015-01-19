@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.mozilla.zest.core.v1.ZestAssignCalc;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
@@ -53,6 +54,9 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 	private static final String FIELD_REPLACE_FORM = "zest.dialog.assign.label.repform";
 	private static final String FIELD_REPLACE_FIELD = "zest.dialog.assign.label.repfield";
 	private static final String FIELD_LOCATION = "zest.dialog.assign.label.location"; 
+	private static final String FIELD_OPERAND_A = "zest.dialog.assign.label.operanda";
+	private static final String FIELD_OPERAND_B = "zest.dialog.assign.label.operandb";
+	private static final String FIELD_OPERATION = "zest.dialog.assign.label.operation";
 	private static final String FIELD_REGEX = "zest.dialog.assign.label.regex";
 	private static final String FIELD_REGEX_PREFIX = "zest.dialog.assign.label.rgxprefix";
 	private static final String FIELD_REGEX_POSTFIX = "zest.dialog.assign.label.rgxpostfix";
@@ -153,6 +157,23 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 			// Enable right click menus
 			this.addFieldListener(FIELD_REPLACE, ZestZapUtils.stdMenuAdapter()); 
 			this.addFieldListener(FIELD_REPLACEMENT, ZestZapUtils.stdMenuAdapter()); 
+			
+		} else if (assign instanceof ZestAssignCalc) {
+			ZestAssignCalc za = (ZestAssignCalc) assign;
+			this.addTextField(FIELD_VARIABLE, assign.getVariableName());
+			this.addTextField(FIELD_OPERAND_A, za.getOperandA());
+			this.addComboField(FIELD_OPERATION, 
+					new String[] {
+					Constant.messages.getString("zest.dialog.assign.oper.add"),
+					Constant.messages.getString("zest.dialog.assign.oper.subtract"),
+					Constant.messages.getString("zest.dialog.assign.oper.multiply"),
+					Constant.messages.getString("zest.dialog.assign.oper.divide")
+					}, 
+					za.getOperation());
+			
+			// Enable right click menus
+			this.addFieldListener(FIELD_STRING, ZestZapUtils.stdMenuAdapter()); 
+
 		}
 		
 		this.addPadding();
@@ -243,6 +264,11 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 			za.setReplacement(this.getStringValue(FIELD_REPLACEMENT));
 			za.setRegex(this.getBoolValue(FIELD_REGEX));
 			// TODO support caseexact
+		} else if (assign instanceof ZestAssignCalc) {
+			ZestAssignCalc za = (ZestAssignCalc) assign;
+			za.setOperandA(this.getStringValue(FIELD_OPERAND_A));
+			za.setOperandB(this.getStringValue(FIELD_OPERAND_B));
+			za.setOperation(this.getStringValue(FIELD_OPERATION));
 		}
 
 		if (add) {
@@ -317,6 +343,13 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 				} catch (Exception e) {
 					return Constant.messages.getString("zest.dialog.assign.error.regexreplace");
 				}
+			}
+		} else if (assign instanceof ZestAssignCalc) {
+			if (this.isEmptyField(FIELD_OPERAND_A)) {
+				return Constant.messages.getString("zest.dialog.assign.error.operand");
+			}
+			if (this.isEmptyField(FIELD_OPERAND_B)) {
+				return Constant.messages.getString("zest.dialog.assign.error.operand");
 			}
 		}
 		return null;

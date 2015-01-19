@@ -7,8 +7,11 @@
 	<changes>
 	<![CDATA[
 	ZAP Issue 1411: Missing authentication handling for Zest scripts called from scanner<br>
+	ZAP Issue 1501: Add "Inverse" option in all the expression  dialog boxes.
 	Zest Issue 66: Zest scripts cant be invoked from Zest scripts on Windows<br>
-	Issue 1501: Add "Inverse" option in all the expression  dialog boxes.
+	Zest Issue 67: Multipart/form-data request failed<br>
+	Zest Issue 68: ZestExpressionURL fails to initialise regex patterns<br>
+	Zest Issue 69: Added support for AssignCalc and ExpressionIsInteger <br>
 	]]>
 	</changes>
 	<dependson/>

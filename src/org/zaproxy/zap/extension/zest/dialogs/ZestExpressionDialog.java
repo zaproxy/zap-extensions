@@ -30,6 +30,7 @@ import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestExpression;
 import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
+import org.mozilla.zest.core.v1.ZestExpressionIsInteger;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
 import org.mozilla.zest.core.v1.ZestExpressionResponseTime;
@@ -151,6 +152,10 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
 			this.addNumberField(FIELD_LENGTH, 0, Integer.MAX_VALUE, zc.getLength());
 			this.addNumberField(FIELD_APPROX, 0, 100, zc.getApprox());
 			
+		} else if (expression instanceof ZestExpressionIsInteger) {
+			ZestExpressionIsInteger zc = (ZestExpressionIsInteger) expression;
+			this.addComboField(FIELD_VARIABLE, this.getVariableNames(), zc.getVariableName());
+			
 		} else if (expression instanceof ZestExpressionClientElementExists) {
 			ZestExpressionClientElementExists zc = (ZestExpressionClientElementExists) expression;
 			
@@ -258,6 +263,10 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
 			za.setLength(this.getIntValue(FIELD_LENGTH));
 			za.setApprox(this.getIntValue(FIELD_APPROX));
 
+		} else if (expression instanceof ZestExpressionIsInteger) {
+			ZestExpressionIsInteger ze = (ZestExpressionIsInteger) expression;
+			ze.setVariableName(this.getStringValue(FIELD_VARIABLE));
+			
 		} else if (expression instanceof ZestExpressionClientElementExists) {
 			ZestExpressionClientElementExists zc = (ZestExpressionClientElementExists) expression;
 			zc.setWindowHandle(this.getStringValue(ZestClientElementDialog.FIELD_WINDOW_HANDLE));
