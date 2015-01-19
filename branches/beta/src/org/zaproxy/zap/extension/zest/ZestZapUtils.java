@@ -39,6 +39,7 @@ import org.mozilla.zest.core.v1.ZestActionPrint;
 import org.mozilla.zest.core.v1.ZestActionScan;
 import org.mozilla.zest.core.v1.ZestActionSleep;
 import org.mozilla.zest.core.v1.ZestAssertion;
+import org.mozilla.zest.core.v1.ZestAssignCalc;
 import org.mozilla.zest.core.v1.ZestAssignFieldValue;
 import org.mozilla.zest.core.v1.ZestAssignRandomInteger;
 import org.mozilla.zest.core.v1.ZestAssignRegexDelimiters;
@@ -65,6 +66,7 @@ import org.mozilla.zest.core.v1.ZestElement;
 import org.mozilla.zest.core.v1.ZestExpressionAnd;
 import org.mozilla.zest.core.v1.ZestExpressionClientElementExists;
 import org.mozilla.zest.core.v1.ZestExpressionEquals;
+import org.mozilla.zest.core.v1.ZestExpressionIsInteger;
 import org.mozilla.zest.core.v1.ZestExpressionLength;
 import org.mozilla.zest.core.v1.ZestExpressionOr;
 import org.mozilla.zest.core.v1.ZestExpressionRegex;
@@ -276,6 +278,17 @@ public class ZestZapUtils {
 						.getString("zest.element.expression.url.title");
 			}
 
+		} else if (za instanceof ZestExpressionIsInteger) {
+			ZestExpressionIsInteger zer = (ZestExpressionIsInteger) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(Constant.messages
+						.getString("zest.element.expression.isint"), zer
+						.getVariableName());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.expression.isint.title");
+			}
+
 		} else if (za instanceof ZestExpressionClientElementExists) {
 			ZestExpressionClientElementExists sla = (ZestExpressionClientElementExists) za;
 			if (incParams) {
@@ -420,6 +433,20 @@ public class ZestZapUtils {
 			} else {
 				return indexStr + Constant.messages
 						.getString("zest.element.assign.replace.title");
+			}
+
+		} else if (za instanceof ZestAssignCalc) {
+			ZestAssignCalc zsa = (ZestAssignCalc) za;
+			if (incParams) {
+				return indexStr + MessageFormat.format(
+						Constant.messages.getString("zest.element.assign.calc"), 
+						zsa.getVariableName(), 
+						zsa.getOperandA(),
+						zsa.getOperation(),
+						zsa.getOperandB());
+			} else {
+				return indexStr + Constant.messages
+						.getString("zest.element.assign.calc.title");
 			}
 
 		} else if (za instanceof ZestActionScan) {
