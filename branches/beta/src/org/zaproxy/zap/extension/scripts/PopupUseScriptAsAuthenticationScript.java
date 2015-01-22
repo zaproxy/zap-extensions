@@ -236,7 +236,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 
 				// And only if the script's type is Authentication
 				ScriptWrapper script = extension.getScriptsPanel().getSelectedScript();
-				return script != null
+				return script != null && script.getEngine() != null
 						&& script.getTypeName().equals(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH);
 			} catch (Exception e) {
 				e.printStackTrace();

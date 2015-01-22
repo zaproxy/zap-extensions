@@ -23,6 +23,7 @@ import java.awt.event.MouseAdapter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -81,7 +82,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	private boolean lockOutputToDisplayedScript = false;
 	//private ZapMenuItem menuEnableScripts = null;
 
-	//private static final Logger logger = Logger.getLogger(ExtensionScripts.class);
+	//private static final Logger logger = Logger.getLogger(ExtensionScriptsUI.class);
 
 	static {
 		List<Class<?>> dependencies = new ArrayList<>(1);
@@ -283,8 +284,12 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		}
 		
 		if (script.getEngine() == null) {
-			// Scripts loaded from the configs my have loaded before all of the engines
-			script.setEngine(getExtScript().getEngineWrapper(script.getEngineName()));
+			try {
+				// Scripts loaded from the configs my have loaded before all of the engines
+				script.setEngine(getExtScript().getEngineWrapper(script.getEngineName()));
+			} catch (Exception e) {
+				showWarningMissingEngine(script);
+			}
 		}
 		if (script.getEngine() != null) {
 			// Save any changes to previous script
@@ -319,14 +324,24 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		}
 	}
 
+	private void showWarningMissingEngine(ScriptWrapper script) {
+		View.getSingleton().showMessageDialog(
+				MessageFormat.format(getMessages().getString("scripts.warn.missing.engine"), script.getEngineName()));
+		displayType(script.getType());
+	}
+
 	public void displayTemplate (ScriptWrapper script) {
 		if (!View.isInitialised()) {
 			return;
 		}
 		
 		if (script.getEngine() == null) {
-			// Scripts loaded from the configs my have loaded before all of the engines
-			script.setEngine(getExtScript().getEngineWrapper(script.getEngineName()));
+			try {
+				// Scripts loaded from the configs my have loaded before all of the engines
+				script.setEngine(getExtScript().getEngineWrapper(script.getEngineName()));
+			} catch (Exception e) {
+				showWarningMissingEngine(script);
+			}
 		}
 		if (script.getEngine() != null) {
 			// Save any changes to previous script
@@ -346,7 +361,8 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	}
 	
 	private void saveChanges() {
-		if (this.getConsolePanel().getScript() != null && this.getConsolePanel().getScript().getEngine().isTextBased()) {
+		if (this.getConsolePanel().getScript() != null && this.getConsolePanel().getScript().getEngine() != null
+				&& this.getConsolePanel().getScript().getEngine().isTextBased()) {
 			// Save any changes made
 			// Non text based scripts wont be updated via the console panel
 			refreshScript(this.getConsolePanel().getScript());
