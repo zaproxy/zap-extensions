@@ -51,6 +51,8 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "tick-overlay.png"));
 	private static final ImageIcon WARNING_OVERLAY_ICON = 
 			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "exclamation-overlay.png"));
+	private static final ImageIcon MISSING_ENGINE_ICON = 
+			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-missing-engine.png"));
 
 	private ExtensionScriptsUI extension = null;
 	
@@ -111,24 +113,28 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 					}
 				}
 				
-				if (engine != null && engine.getIcon() != null) {
-					icon = new OverlayIcon(engine.getIcon());
-				} else {
-					// Default to the blank script
-					icon = new OverlayIcon(ExtensionScriptsUI.ICON);
-				}
-				if (script.isChanged() && ! node.isTemplate()) {
-					icon.add(PENCIL_OVERLAY_ICON);
-				}
-				if (script.isError() && ! node.isTemplate()) {
-					icon.add(WARNING_OVERLAY_ICON);
-				}
-				if (script.getType().isEnableable() && ! node.isTemplate()) {
-					if (script.isEnabled()) {
-						icon.add(TICK_OVERLAY_ICON);
+				if (engine != null) {
+					if (engine.getIcon() != null) {
+						icon = new OverlayIcon(engine.getIcon());
 					} else {
-						icon.add(CROSS_OVERLAY_ICON);
+						// Default to the blank script
+						icon = new OverlayIcon(ExtensionScriptsUI.ICON);
 					}
+					if (script.isChanged() && ! node.isTemplate()) {
+						icon.add(PENCIL_OVERLAY_ICON);
+					}
+					if (script.isError() && ! node.isTemplate()) {
+						icon.add(WARNING_OVERLAY_ICON);
+					}
+					if (script.getType().isEnableable() && ! node.isTemplate()) {
+						if (script.isEnabled()) {
+							icon.add(TICK_OVERLAY_ICON);
+						} else {
+							icon.add(CROSS_OVERLAY_ICON);
+						}
+					}
+				} else {
+					icon = new OverlayIcon(MISSING_ENGINE_ICON);
 				}
 				setIcon(icon);
 				

@@ -89,6 +89,10 @@ public class PopupDuplicateScript extends ExtensionPopupMenuItem {
                 		node.getUserObject() == null || ! (node.getUserObject() instanceof ScriptWrapper)) {
                 	return false;
                 }
+
+                if (((ScriptWrapper)node.getUserObject()).getEngine() == null) {
+                    return false;
+                }
                 	
             	return extension.getScriptsPanel().getSelectedScript() != null;
             } catch (Exception e) {}

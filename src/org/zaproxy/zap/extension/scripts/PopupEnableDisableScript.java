@@ -100,6 +100,10 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
                     	
                     } else {
                     	ScriptWrapper script = (ScriptWrapper) node.getUserObject();
+                        if (script.getEngine() == null) {
+                            return false;
+                        }
+
                     	if (script.getType().isEnableable()) {
                         	if (script.isEnabled()) {
                         		this.setText(Constant.messages.getString("scripts.disable.popup"));
