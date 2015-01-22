@@ -55,8 +55,9 @@ public class NewScriptDialog extends StandardFieldsDialog {
 	public void init (ScriptType type) {
 		this.setFieldValue(FIELD_NAME, "");
 		this.setFieldValue(FIELD_DESC, "");
-		this.setFieldValue(FIELD_ENGINE, "");
-		this.setFieldValue(FIELD_TEMPLATE, "");
+		this.setComboFields(FIELD_TYPE, this.getTypes(), "");
+		this.setComboFields(FIELD_ENGINE, this.getEngines(), "");
+		this.setComboFields(FIELD_TEMPLATE, this.getTemplates(), "");
 		
 		if (type == null) {
 			this.setFieldValue(FIELD_TYPE, "");

@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>13</version>
+	<version>14</version>
 	<description>Supports all JRS 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Issue 1327: Support drag and drop in the scripts tree.<br>
-	Issue 1330: Add menu for duplicating a script.<br>
-	Issue 1278: Safe menu items not available in protected and safe modes.
+	Make sure all script engines are shown when creating a script from type (Issue 1503).
 	]]>
 	</changes>
 	<dependson/>
