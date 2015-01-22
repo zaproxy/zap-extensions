@@ -42,6 +42,7 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
 /**
  * The Popup that allows users to set, for a Context, the authentication method to Script-Based
@@ -221,6 +222,14 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 
 	@Override
 	public boolean isEnableForComponent(Component invoker) {
+		boolean enable = isEnable(invoker);
+		if (!enable) {
+			View.getSingleton().getPopupList().remove(this);
+		}
+		return enable;
+	}
+
+	private boolean isEnable(Component invoker) {
 		// Enable the popup just for the scripts tree
 		if (invoker.getName() != null && invoker.getName().equals(ScriptsListPanel.TREE)) {
 			try {
@@ -253,5 +262,10 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 	@Override
 	public String getParentMenuName() {
 		return PARENT_MENU_NAME;
+	}
+
+	@Override
+	public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
+		View.getSingleton().getPopupList().remove(this);
 	}
 }
