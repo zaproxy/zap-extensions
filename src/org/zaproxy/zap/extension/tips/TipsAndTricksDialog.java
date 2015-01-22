@@ -1,27 +1,20 @@
 /*
- *
- * Paros and its related class files.
+ * Zed Attack Proxy (ZAP) and its related class files.
  * 
- * Paros is an HTTP/HTTPS proxy for assessing web application security.
- * Copyright (C) 2003-2004 Chinotec Technologies Company
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the Clarified Artistic License
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * Clarified Artistic License for more details.
- * 
- * You should have received a copy of the Clarified Artistic License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
  */
-// ZAP: 2011/04/16 i18n
-// ZAP: 2012/04/23 Added @Override annotation to all appropriate methods.
-// ZAP: 2012/05/03 Changed the method find to check if txtComp is null.
-// ZAP: 2014/01/30 Issue 996: Ensure all dialogs close when the escape key is pressed (copy tidy up)
 
 package org.zaproxy.zap.extension.tips;
 
@@ -39,6 +32,7 @@ import javax.swing.ScrollPaneConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -48,6 +42,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
 
 	private ExtensionTipsAndTricks ext;
 	private JPanel jPanel = null;
+	private JButton btnAllTips = null;
 	private JButton btnNextTip = null;
 	private JButton btnClose = null;
 	private ZapTextArea txtTip = null;
@@ -70,7 +65,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
 	private void initialize() {
         this.setVisible(false);
         this.setResizable(false);
-        this.setModalityType(ModalityType.APPLICATION_MODAL);	// Block all other windows
+        this.setModalityType(ModalityType.DOCUMENT_MODAL);
         this.setTitle(Constant.messages.getString("tips.dialog.title"));
         this.setContentPane(getJPanel());
 	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
@@ -84,7 +79,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
 	public void displayTip() {
 		String tip = ext.getRandomTip();
 		while (tip.equals(lastTip)) {
-			// Make sure we always get e new tip
+			// Make sure we always get a new tip
 			tip = ext.getRandomTip();
 		}
 		this.getTxtTip().setText(tip);
@@ -103,15 +98,35 @@ public class TipsAndTricksDialog extends AbstractDialog {
 		if (jPanel == null) {
 			jPanel = new JPanel();
 			jPanel.setLayout(new GridBagLayout());
-			jPanel.add(getScrollPane(), LayoutHelper.getGBC(0, 0, 2, 1.0D, 1.0D));
-			jPanel.add(new JLabel(), LayoutHelper.getGBC(0, 2, 1, 1.0D, 0.0D));
-			jPanel.add(getButtonPanel(), LayoutHelper.getGBC(1, 2, 1, 0.0D, 0.0D));
+			jPanel.add(getScrollPane(), LayoutHelper.getGBC(0, 0, 3, 1.0D, 1.0D));
+			jPanel.add(getAllTipsButton(), LayoutHelper.getGBC(0, 2, 1, 0.0D, 0.0D));
+			jPanel.add(new JLabel(), LayoutHelper.getGBC(1, 2, 1, 1.0D, 0.0D));
+			jPanel.add(getButtonPanel(), LayoutHelper.getGBC(2, 2, 1, 0.0D, 0.0D));
 		}
 		return jPanel;
 	}
 	
 	/**
-	 * This method initializes btnFind	
+	 * This method initializes the 'next tip' button	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */    
+	private JButton getAllTipsButton() {
+		if (btnAllTips == null) {
+			btnAllTips = new JButton();
+			btnAllTips.setText(Constant.messages.getString("tips.button.allTips"));
+			btnAllTips.addActionListener(new java.awt.event.ActionListener() { 
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {    
+					ExtensionHelp.showHelp("tips");
+				}
+			});
+		}
+		return btnAllTips;
+	}
+
+	/**
+	 * This method initializes the 'next tip' button	
 	 * 	
 	 * @return javax.swing.JButton	
 	 */    
@@ -129,7 +144,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
 		return btnNextTip;
 	}
 	/**
-	 * This method initializes btnCancel	
+	 * This method initializes the close button
 	 * 	
 	 * @return javax.swing.JButton	
 	 */    
