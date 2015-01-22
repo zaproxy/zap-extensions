@@ -174,10 +174,17 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             if (consolePanel != null) {
                 consolePanel.unload();
             }
+            if (scriptsPanel != null) {
+                scriptsPanel.unload();
+            }
         }
 
         if (extScript != null) {
-            extScript.removeScriptUI();
+            if (getView() != null) {
+                extScript.removeWriter(getStdOutputPanelWriter());
+                extScript.removeScriptUI();
+            }
+            extScript.removeListener(this);
         }
         
         super.unload();

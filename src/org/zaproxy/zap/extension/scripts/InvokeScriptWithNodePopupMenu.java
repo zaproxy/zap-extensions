@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -37,7 +36,6 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuItemSiteNodeContaine
 	private static final long serialVersionUID = 2282358266003940700L;
 
 	private ExtensionScriptsUI extension;
-    private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
 	/**
 	 * This method initializes 
@@ -77,17 +75,11 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuItemSiteNodeContaine
 	
     private void reCreateSubMenu() {
     	final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-    	for (ExtensionPopupMenuItem menu : subMenus) {
-			mainPopupMenuItems.remove(menu);
-			
-		}
-		subMenus.clear();
 		
 		for (ScriptWrapper script : extension.getExtScript().getScripts(ExtensionScript.TYPE_TARGETED)) {
         	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(script);
         	piicm.setMenuIndex(this.getMenuIndex());
 			mainPopupMenuItems.add(piicm);
-			this.subMenus.add(piicm);
 		}
 	}
 

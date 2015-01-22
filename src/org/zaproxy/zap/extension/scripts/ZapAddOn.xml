@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Make sure all script engines are shown when creating a script from type (Issue 1503).<br>
-	Warn about missing script engines (Issue 1504).
+	Warn about missing script engines (Issue 1504).<br>
+	Unload all components when uninstalling (Issue 1507).
 	]]>
 	</changes>
 	<dependson/>

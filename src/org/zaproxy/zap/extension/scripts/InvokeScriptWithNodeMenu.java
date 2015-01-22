@@ -23,7 +23,9 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
 public class InvokeScriptWithNodeMenu extends PopupMenuItemSiteNodeContainer {
@@ -69,4 +71,9 @@ public class InvokeScriptWithNodeMenu extends PopupMenuItemSiteNodeContainer {
     public boolean isSafe() {
     	return true;
     }
+
+	@Override
+	public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
+		View.getSingleton().getPopupList().remove(this);
+	}
 }

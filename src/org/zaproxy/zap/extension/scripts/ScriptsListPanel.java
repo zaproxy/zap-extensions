@@ -590,4 +590,25 @@ public class ScriptsListPanel extends AbstractPanel {
 		this.disabledScriptDialogs.add(klass);
 	}
 
+	void unload() {
+		if (tree != null) {
+			tree.setModel(null);
+		}
+
+		if (newScriptDialog != null) {
+			newScriptDialog.dispose();
+		}
+
+		if (loadScriptDialog != null) {
+			loadScriptDialog.dispose();
+		}
+
+		if (editScriptDialog != null) {
+			editScriptDialog.dispose();
+		}
+
+		if (copyScriptDialog != null) {
+			copyScriptDialog.dispose();
+		}
+	}
 }
