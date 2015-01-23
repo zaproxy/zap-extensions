@@ -52,7 +52,6 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
@@ -273,6 +272,19 @@ public class ScriptsListPanel extends AbstractPanel {
 		editScriptDialog.init(script);
 		editScriptDialog.setVisible(true);
 	}
+	
+	private File getDefaultScriptsDir(String type) {
+		File dir;
+		if (type != null) {
+			dir = new File(Constant.getZapHome() + File.separator + "scripts" + File.separator + "scripts" + File.separator + type);
+		} else {
+			dir = new File(Constant.getZapHome() + File.separator + "scripts" + File.separator + "scripts");
+		}
+		if (! dir.exists()) {
+			dir.mkdirs();
+		}
+		return dir;
+	}
 
 	private void saveScript (ScriptWrapper script) {
 		if (script.getFile() != null) {
@@ -286,8 +298,8 @@ public class ScriptsListPanel extends AbstractPanel {
 	            		Constant.messages.getString("file.save.error") + " " + script.getFile().getAbsolutePath() + ".");
 			}
 		} else {
-		    JFileChooser chooser = new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
-		    // ZAP: set session name as file name proposal
+		    JFileChooser chooser = new JFileChooser(getDefaultScriptsDir(script.getTypeName()));
+		    // ZAP: set script name as file name proposal
 			chooser.setSelectedFile(new File(script.getName()));
 		    chooser.setFileFilter(getScriptFilter(script.getEngine().getExtensions().get(0), script.getEngineName()));
 			File file = null;
@@ -319,9 +331,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	}
 
 	private void loadScript() {
-		String dir = Model.getSingleton().getOptionsParam().getUserDirectory().getAbsolutePath();
-		
-	    JFileChooser chooser = new JFileChooser(dir);
+	    JFileChooser chooser = new JFileChooser(getDefaultScriptsDir(null));
 		File file = null;
 	    int rc = chooser.showOpenDialog(this);
 	    if(rc == JFileChooser.APPROVE_OPTION) {

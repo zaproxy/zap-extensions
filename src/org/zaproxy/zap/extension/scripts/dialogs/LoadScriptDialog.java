@@ -56,12 +56,14 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 
 	private void init () {
 		// TODO this should really be a load file 
+		
 		this.setTitle(Constant.messages.getString("scripts.dialog.script.load.title"));
 		this.addTextField(FIELD_NAME, "");
-		this.addComboField(FIELD_ENGINE, extension.getExtScript().getScriptingEngines(), "");
+		this.addComboField(FIELD_ENGINE, extension.getExtScript().getScriptingEngines(), 
+				Constant.messages.getString("script.type.standalone"));
 		this.addComboField(FIELD_TYPE, this.getTypes(), "");
 		this.addMultilineField(FIELD_DESC, "");
-		this.addCheckBoxField(FIELD_LOAD, false);
+		this.addCheckBoxField(FIELD_LOAD, true);
 		this.addFieldListener(FIELD_ENGINE, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -132,6 +134,14 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 				this.setFieldValue(FIELD_ENGINE, name);
 			}
 		}
+		// Use the type from the parent dir, if its a valid one
+		String parentDir = script.getFile().getParentFile().getName();
+		ScriptType type = extension.getExtScript().getScriptType(parentDir);
+		if (type == null) {
+			type = extension.getExtScript().getScriptType(ExtensionScript.TYPE_STANDALONE);
+		}
+		this.setFieldValue(FIELD_TYPE, Constant.messages.getString(type.getI18nKey()));
+		
 		this.setFieldValue(FIELD_DESC, "");
 	}
 	

@@ -95,7 +95,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		this.addComboField(FIELD_ENGINE, this.getEngines(), engine);
 		this.addComboField(FIELD_TEMPLATE, this.getTemplates(), templateName);
 		this.addMultilineField(FIELD_DESC, desc);
-		this.addCheckBoxField(FIELD_LOAD, false);
+		this.addCheckBoxField(FIELD_LOAD, true);
 
 		this.addFieldListener(FIELD_TYPE, new ActionListener() {
 			@Override
