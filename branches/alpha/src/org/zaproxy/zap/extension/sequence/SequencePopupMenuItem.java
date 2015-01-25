@@ -68,7 +68,7 @@ public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
 						Object obj = node.getUserObject();
 						if(obj != null) {						
 							if(obj instanceof ScriptWrapper) {
-								return true;
+								return ((ScriptWrapper) obj).getEngine() != null;
 							}
 						}
 					}
