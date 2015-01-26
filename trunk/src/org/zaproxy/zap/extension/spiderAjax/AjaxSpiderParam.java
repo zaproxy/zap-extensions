@@ -25,10 +25,10 @@ import java.util.List;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
-public class AjaxSpiderParam extends AbstractParam {
+public class AjaxSpiderParam extends VersionedAbstractParam {
 
     private static final Logger logger = Logger.getLogger(AjaxSpiderParam.class);
 
@@ -68,27 +68,9 @@ public class AjaxSpiderParam extends AbstractParam {
      * It only needs to be incremented for configuration changes (not releases of the add-on).
      * 
      * @see #CONFIG_VERSION_KEY
-     * @see #NO_CONFIG_VERSION
-     * @see #ERROR_READING_CONFIG_VERSION
-     * @see #updateConfigFile()
+     * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 2;
-
-    /**
-     * A dummy version number used at runtime to indicate that the configurations were never persisted.
-     * 
-     * @see #CURRENT_CONFIG_VERSION
-     * @see #ERROR_READING_CONFIG_VERSION
-     */
-    private static final int NO_CONFIG_VERSION = -1;
-
-    /**
-     * A dummy version number used at runtime to indicate that an error occurred while reading the version from the file.
-     * 
-     * @see #CURRENT_CONFIG_VERSION
-     * @see #NO_CONFIG_VERSION
-     */
-    private static final int ERROR_READING_CONFIG_VERSION = -2;
+    private static final int CURRENT_CONFIG_VERSION = 3;
 
     private static final String AJAX_SPIDER_BASE_KEY = "ajaxSpider";
 
@@ -97,7 +79,9 @@ public class AjaxSpiderParam extends AbstractParam {
      * 
      * @see #CURRENT_CONFIG_VERSION
      */
-    private static final String CONFIG_VERSION_KEY = AJAX_SPIDER_BASE_KEY + ".configVersion";
+    private static final String CONFIG_VERSION_KEY = AJAX_SPIDER_BASE_KEY + VERSION_ATTRIBUTE;
+
+    private static final String OLD_CONFIG_VERSION_KEY = AJAX_SPIDER_BASE_KEY + ".configVersion";
 
     private static final String NUMBER_OF_BROWSERS_KEY = AJAX_SPIDER_BASE_KEY + ".numberOfBrowsers";
 
@@ -169,11 +153,27 @@ public class AjaxSpiderParam extends AbstractParam {
     private boolean randomInputs;
     private boolean confirmRemoveElem = true;
     
+    @Override
+    protected int getCurrentVersion() {
+        return CURRENT_CONFIG_VERSION;
+    }
 
     @Override
-    protected void parse() {
-        updateConfigFile();
+    protected String getConfigVersionKey() {
+        return CONFIG_VERSION_KEY;
+    }
 
+    @Override
+    protected int readConfigFileVersion() {
+        int version = super.readConfigFileVersion();
+        if (version == NO_CONFIG_VERSION) {
+            version = getConfig().getInt(OLD_CONFIG_VERSION_KEY, NO_CONFIG_VERSION);
+        }
+        return version;
+    }
+
+    @Override
+    protected void parseImpl() {
         try {
             this.numberOfBrowsers = getConfig().getInt(NUMBER_OF_BROWSERS_KEY, DEFAULT_NUMBER_OF_BROWSERS);
         } catch (ConversionException e) {
@@ -278,93 +278,12 @@ public class AjaxSpiderParam extends AbstractParam {
         }
     }
 
-    /**
-     * Updates the configurations in the file, if needed.
-     * <p>
-     * The following steps are made:
-     * <ol>
-     * <li>Read the version of the configurations that are in the file;</li>
-     * <li>Check if the version read is the latest version;</li>
-     * <li>If it's not at the latest version, update the configurations.</li>
-     * </ol>
-     * 
-     * @see #CURRENT_CONFIG_VERSION
-     * @see #isLatestConfigVersion(int)
-     * @see #updateConfigsFromVersion(int)
-     */
-    private void updateConfigFile() {
-        int configVersion;
-        try {
-            configVersion = getConfig().getInt(CONFIG_VERSION_KEY, NO_CONFIG_VERSION);
-        } catch (ConversionException e) {
-            logger.error("Error while getting the version of the configurations: " + e.getMessage(), e);
-            configVersion = ERROR_READING_CONFIG_VERSION;
-        }
-
-        if (!isLatestConfigVersion(configVersion)) {
-            updateConfigsFromVersion(configVersion);
-        }
-    }
-
-    /**
-     * Tells whether or not the given {@code version} number is the latest version, that is, is the same version number as the
-     * version of the running code.
-     *
-     * @param version the version that will be checked
-     * @return {@code true} if the given {@code version} is the latest version, {@code false} otherwise
-     * @see #CURRENT_CONFIG_VERSION
-     * @see #updateConfigFile() 
-     */
-    private static boolean isLatestConfigVersion(int version) {
-        return version == CURRENT_CONFIG_VERSION;
-    }
-
-    /**
-     * Called when the configuration version in the file is different than the version of the running code.
-     * <p>
-     * Any required configuration changes/updates should be added to this method.
-     * <p>
-     * If the given {@code fileVersion} is:
-     * <ul>
-     * <li>&lt; {@code CURRENT_CONFIG_VERSION} - expected case, the configurations are changed/updated to the current version.
-     * Before returning the version in the configuration file is updated to the current version.</li>
-     * <li>&gt; {@code CURRENT_CONFIG_VERSION} - no changes/updates are made, the method logs a warn and returns;</li>
-     * <li>{@code NO_CONFIG_VERSION} - only the current version is written to the configuration file;</li>
-     * <li>{@code ERROR_READING_CONFIG_VERSION} - no changes/updates are made, the method logs a warn and returns.</li>
-     * </ul>
-     * <p>
-     * 
-     * @param fileVersion the version of the configurations in the file
-     * @see #CURRENT_CONFIG_VERSION
-     * @see #NO_CONFIG_VERSION
-     * @see #ERROR_READING_CONFIG_VERSION
-     * @see #updateConfigFile()
-     */
-    private void updateConfigsFromVersion(int fileVersion) {
-        if (fileVersion == CURRENT_CONFIG_VERSION) {
-            return;
-        }
-
-        if (fileVersion == ERROR_READING_CONFIG_VERSION) {
-            // There's not much that can be done (quickly and easily)... log and return.
-            logger.warn("Configurations might not be in expected state, errors might happen...");
-            return;
-        }
-
-        if (fileVersion != NO_CONFIG_VERSION) {
-            if (fileVersion > CURRENT_CONFIG_VERSION) {
-                logger.warn("Configurations will not be updated, file version (v" + fileVersion
-                        + ") is greater than the version of running code (v" + CURRENT_CONFIG_VERSION
-                        + "), errors might happen...");
-                return;
-            }
-            logger.info("Updating configurations from v" + fileVersion + " to v" + CURRENT_CONFIG_VERSION);
-        }
-
+    @Override
+    protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
         case NO_CONFIG_VERSION:
             // No updates/changes needed, the configurations were not previously persisted
-            // and the current version is already written at the end of the method.
+            // and the current version is already written after this method.
             break;
         case 1: 
             String crawlInDepthKey = AJAX_SPIDER_BASE_KEY + ".crawlInDepth";
@@ -375,9 +294,11 @@ public class AjaxSpiderParam extends AbstractParam {
                 logger.warn("Failed to read (old) configuration '" + crawlInDepthKey + "', no update will be made.");
             }
         	getConfig().clearProperty(crawlInDepthKey);
+            //$FALL-THROUGH$
+        case 2:
+            // Remove old version element, from now on the version is saved as an attribute of root element
+            getConfig().clearProperty(OLD_CONFIG_VERSION_KEY);
         }
-
-        getConfig().setProperty(CONFIG_VERSION_KEY, Integer.valueOf(CURRENT_CONFIG_VERSION));
     }
 
     public int getNumberOfBrowsers() {
