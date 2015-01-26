@@ -19,7 +19,6 @@ package org.zaproxy.zap.extension.wavsepRpt;
 
 import java.awt.CardLayout;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
