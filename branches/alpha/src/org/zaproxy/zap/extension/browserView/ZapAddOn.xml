@@ -12,7 +12,7 @@
 	</changes>
 	<dependson/>
 	<extensions>
-	    <extension>org.zaproxy.zap.extension.browser.ExtensionHttpPanelBrowserView</extension>
+	    <extension>org.zaproxy.zap.extension.browserView.ExtensionHttpPanelBrowserView</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
