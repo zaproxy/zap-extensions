@@ -438,9 +438,12 @@ public class ScriptsListPanel extends AbstractPanel {
 		return jScrollPane;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void addScriptTreeTransferHander (Class c, TransferHandler th) {
-		this.stth.addTransferHander(c, th);
+	public void addScriptTreeTransferHandler (Class<?> c, TransferHandler th) {
+		this.stth.addTransferHandler(c, th);
+	}
+
+	public void removeScriptTreeTransferHandler(Class<?> c) {
+		this.stth.removeTransferHandler(c);
 	}
 
 	JTree getTree() {
@@ -598,6 +601,13 @@ public class ScriptsListPanel extends AbstractPanel {
 			throw new InvalidParameterException("Must specify a subclass of ScriptWrapper");
 		}
 		this.disabledScriptDialogs.add(klass);
+	}
+
+	public void removeDisableScriptDialog(Class<?> klass) {
+		if (ScriptWrapper.class.equals(klass) || !ScriptWrapper.class.isAssignableFrom(klass)) {
+			throw new InvalidParameterException("Must specify a subclass of ScriptWrapper");
+		}
+		this.disabledScriptDialogs.remove(klass);
 	}
 
 	void unload() {

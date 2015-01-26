@@ -44,6 +44,7 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
@@ -157,9 +158,17 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	}
 	*/
 
-	public void addScriptTreeTransferHander (@SuppressWarnings("rawtypes") Class c, TransferHandler th) {
+	@Override
+	public void addScriptTreeTransferHandler (Class<?> c, TransferHandler th) {
 		if (View.isInitialised()) {
-			this.getScriptsPanel().addScriptTreeTransferHander(c, th);
+			this.getScriptsPanel().addScriptTreeTransferHandler(c, th);
+		}
+	}
+
+	@Override
+	public void removeScriptTreeTransferHandler(Class<?> c) {
+		if (View.isInitialised()) {
+			this.getScriptsPanel().removeScriptTreeTransferHandler(c);
 		}
 	}
 
@@ -548,6 +557,13 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	}
 
 	@Override
+	public void removeMouseListener(MouseAdapter l) {
+		if (View.isInitialised()) {
+			this.getScriptsPanel().getTree().removeMouseListener(l);
+		}
+	}
+
+	@Override
 	public ScriptNode getSelectedNode() {
 		if (View.isInitialised()) {
 			return this.getScriptsPanel().getSelectedNode();
@@ -563,9 +579,14 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		return null;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void addRenderer(Class c, TreeCellRenderer renderer) {
+	@Override
+	public void addRenderer(Class<?> c, TreeCellRenderer renderer) {
 		this.getScriptsTreeCellRenderer().addRenderer(c, renderer);
+	}
+
+	@Override
+	public void removeRenderer(Class<?> c) {
+		this.getScriptsTreeCellRenderer().removeRenderer(c);
 	}
 
 	public ScriptsTreeCellRenderer getScriptsTreeCellRenderer() {
@@ -581,6 +602,13 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 			this.getScriptsPanel().disableScriptDialog(klass);
 		}
 		
+	}
+
+	@Override
+	public void removeDisableScriptDialog(Class<?> klass) {
+		if (View.isInitialised()) {
+			this.getScriptsPanel().removeDisableScriptDialog(klass);
+		}
 	}
 
 	@Override
@@ -632,4 +660,33 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		return this.getStdOutputPanelWriter();
 	}
 	
+	@Override
+	public void engineAdded(ScriptEngineWrapper scriptEngineWrapper) {
+		if (getView() == null) {
+			return;
+		}
+
+		ScriptNode node = getSelectedNode();
+		if (node.getUserObject() != null && (node.getUserObject() instanceof ScriptWrapper)) {
+			ScriptWrapper scriptWrapper = (ScriptWrapper) node.getUserObject();
+			if (ExtensionScript.hasSameScriptEngine(scriptWrapper, scriptEngineWrapper)) {
+				displayScript(scriptWrapper);
+			}
+		}
+	}
+
+	@Override
+	public void engineRemoved(ScriptEngineWrapper scriptEngineWrapper) {
+		if (getView() == null) {
+			return;
+		}
+
+		ScriptNode node = getSelectedNode();
+		if (node.getUserObject() != null && (node.getUserObject() instanceof ScriptWrapper)) {
+			ScriptWrapper scriptWrapper = (ScriptWrapper) node.getUserObject();
+			if (ExtensionScript.hasSameScriptEngine(scriptWrapper, scriptEngineWrapper)) {
+				displayType(scriptWrapper.getType());
+			}
+		}
+	}
 }

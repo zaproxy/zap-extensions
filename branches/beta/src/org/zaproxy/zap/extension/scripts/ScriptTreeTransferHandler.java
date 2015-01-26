@@ -48,12 +48,16 @@ public class ScriptTreeTransferHandler extends TransferHandler {
 	DataFlavor nodesFlavor;
     DataFlavor[] flavors = new DataFlavor[1];
 
-	@SuppressWarnings("rawtypes")
-	private Map <Class, TransferHandler> htMap = new HashMap<Class, TransferHandler>();
+	private Map <Class<?>, TransferHandler> htMap = new HashMap<>();
 
-	public void addTransferHander (@SuppressWarnings("rawtypes") Class c, TransferHandler th) {
-		logger.debug("addTransferHander " + c.getCanonicalName());
+	public void addTransferHandler (Class<?> c, TransferHandler th) {
+		logger.debug("addTransferHandler " + c.getCanonicalName());
 		this.htMap.put(c, th);
+	}
+
+	public void removeTransferHandler (Class<?> c) {
+		logger.debug("removeTransferHandler " + c.getCanonicalName());
+		this.htMap.remove(c);
 	}
 	
 	private TransferHandler getTransferHandlerForSelection(Component c) {

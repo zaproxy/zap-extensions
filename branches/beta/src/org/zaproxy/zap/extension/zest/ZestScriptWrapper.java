@@ -87,7 +87,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		this.setEnabled(script.isEnabled());
 		this.setFile(script.getFile());
 		this.setLoadOnStart(script.isLoadOnStart());
-		this.setChanged(false);
+		this.setChanged(script.isChanged());
 	}
 
 	public boolean isIncStatusCodeAssertion() {
@@ -194,5 +194,9 @@ public class ZestScriptWrapper extends ScriptWrapper {
 	public boolean isRunableStandalone() {
 		// We can always prompt for parameters :)
 		return true;
+	}
+
+	ScriptWrapper getOriginal() {
+		return original;
 	}
 }

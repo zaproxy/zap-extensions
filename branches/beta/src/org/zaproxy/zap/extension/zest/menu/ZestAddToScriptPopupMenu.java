@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.zest.menu;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -42,7 +41,6 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
 	private static final long serialVersionUID = 2282358266003940700L;
 
 	private ExtensionZest extension;
-    private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
 	/**
 	 * This method initializes 
@@ -81,11 +79,6 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
 
     private void reCreateSubMenu() {
     	final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-    	for (ExtensionPopupMenuItem menu : subMenus) {
-			mainPopupMenuItems.remove(menu);
-			
-		}
-		subMenus.clear();
 		ScriptNode selNode = extension.getSelectedZestNode();
 		ZestElement ze = extension.getSelectedZestElement();
 		
@@ -94,7 +87,6 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
 	        	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(selNode);
 	        	piicm.setMenuIndex(this.getMenuIndex());
 				mainPopupMenuItems.add(piicm);
-				this.subMenus.add(piicm);
 			}
 		}
 		
@@ -102,14 +94,12 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
         	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
         	piicm.setMenuIndex(this.getMenuIndex());
 			mainPopupMenuItems.add(piicm);
-			this.subMenus.add(piicm);
 		}
 		// TODO handle auth scripts... is there a better way to do this??
 		for (ScriptNode node : extension.getZestScriptNodes(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH)) {
         	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
         	piicm.setMenuIndex(this.getMenuIndex());
 			mainPopupMenuItems.add(piicm);
-			this.subMenus.add(piicm);
 		}
 		
 		// TODO Sequence - makes it possible to add requests to a sequence script 
@@ -117,13 +107,11 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
 			ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
 			piicm.setMenuIndex(this.getMenuIndex());
 			mainPopupMenuItems.add(piicm);
-			this.subMenus.add(piicm);
 		}
 		
         // Add the 'new zest' menu
         ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu();
 		mainPopupMenuItems.add(piicm);
-		this.subMenus.add(piicm);
 	}
 
     private ExtensionPopupMenuItem createPopupAddToScriptMenu() {

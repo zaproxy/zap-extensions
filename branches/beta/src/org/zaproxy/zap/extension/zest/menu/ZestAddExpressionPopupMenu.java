@@ -10,11 +10,8 @@ package org.zaproxy.zap.extension.zest.menu;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.JMenuItem;
 
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
@@ -45,7 +42,6 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
 	private static final long serialVersionUID = -2858088231126854392L;
 
 	private ExtensionZest extension;
-	private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
 	public ZestAddExpressionPopupMenu(ExtensionZest extension) {
 		super("AddExpressionX");
@@ -69,12 +65,6 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
 	}
 
 	public boolean isEnableForComponent(Component invoker) {
-		final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-		// Remove previous submenus
-		for (ExtensionPopupMenuItem menu : subMenus) {
-			mainPopupMenuItems.remove(menu);
-		}
-		subMenus.clear();
 		if (extension.isScriptTree(invoker)) {
 			ScriptNode node = extension.getSelectedZestNode();
 			ZestElement ze = extension.getSelectedZestElement();
@@ -141,7 +131,6 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
 			});
 			menu.setMenuIndex(this.getMenuIndex());
 			View.getSingleton().getPopupList().add(menu);
-			this.subMenus.add(menu);
 		}
 	}
 
@@ -169,7 +158,6 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
 		});
 		menu.setMenuIndex(this.getMenuIndex());
 		View.getSingleton().getPopupList().add(menu);
-		this.subMenus.add(menu);
 	}
 
 	@Override

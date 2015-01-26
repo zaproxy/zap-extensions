@@ -11,10 +11,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JMenuItem;
 
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestElement;
@@ -43,7 +40,6 @@ import org.zaproxy.zap.extension.zest.ZestZapUtils;
 public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
 	private static final long serialVersionUID = -5847208243296422433L;
 	private ExtensionZest extension;
-	private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
 	/**
 	 * This method initializes
@@ -71,12 +67,6 @@ public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
 	}
 
 	public boolean isEnableForComponent(Component invoker) {
-		final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-		for (ExtensionPopupMenuItem menu : subMenus) {
-			mainPopupMenuItems.remove(menu);
-		}
-		subMenus.clear();
-		// Remove previous submenus
 		if (extension.isScriptTree(invoker)) {
 			List<ScriptNode> selectedNodes = extension.getSelectedZestNodes();
 			if (selectedNodes == null || selectedNodes.isEmpty()) {
@@ -232,7 +222,6 @@ public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
 		}
 		menu.setMenuIndex(this.getMenuIndex());
 		View.getSingleton().getPopupList().add(menu);
-		this.subMenus.add(menu);
 	}
 
 	@Override

@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
 public class ZestPopupMenu extends ExtensionPopupMenuItem {
 
@@ -45,5 +47,10 @@ public class ZestPopupMenu extends ExtensionPopupMenuItem {
     @Override
     public boolean isSafe() {
     	return true;
+    }
+
+    @Override
+    public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
+        View.getSingleton().getPopupList().remove(this);
     }
 }

@@ -11,11 +11,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.JMenuItem;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestConditional;
@@ -40,7 +37,6 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 	private static final long serialVersionUID = -8433923894855139684L;
 
 	private ExtensionZest extension;
-	private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
 	private static final Logger logger = Logger
 			.getLogger(ZestAddConditionPopupMenu.class);
@@ -71,12 +67,6 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 	}
 
 	public boolean isEnableForComponent(Component invoker) {
-		final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-		// Remove previous submenus
-		for (ExtensionPopupMenuItem menu : subMenus) {
-			mainPopupMenuItems.remove(menu);
-		}
-		subMenus.clear();
 		if (extension.isScriptTree(invoker)) {
 			ScriptNode node = extension.getSelectedZestNode();
 			ZestElement ze = extension.getSelectedZestElement();
@@ -128,7 +118,6 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 		});
 		menu.setMenuIndex(this.getMenuIndex());
 		View.getSingleton().getPopupList().add(menu);
-		this.subMenus.add(menu);
 	}
 
 	@Override
