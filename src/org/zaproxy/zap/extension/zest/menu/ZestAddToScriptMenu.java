@@ -23,8 +23,10 @@ import java.util.List;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 public class ZestAddToScriptMenu extends PopupMenuItemHttpMessageContainer {
@@ -93,5 +95,10 @@ public class ZestAddToScriptMenu extends PopupMenuItemHttpMessageContainer {
     @Override
     public boolean isSafe() {
     	return true;
+    }
+
+    @Override
+    public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
+        View.getSingleton().getPopupList().remove(this);
     }
 }

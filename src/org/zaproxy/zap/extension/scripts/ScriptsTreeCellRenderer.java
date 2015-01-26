@@ -58,22 +58,23 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 	
 	private static final long serialVersionUID = -4278691012245035225L;
 	
-	@SuppressWarnings("rawtypes")
-	private Map<Class, TreeCellRenderer> renderers = new HashMap<Class, TreeCellRenderer>();
+	private Map<Class<?>, TreeCellRenderer> renderers = new HashMap<>();
 
 	public ScriptsTreeCellRenderer(ExtensionScriptsUI ext) {
 		this.extension = ext;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public void addRenderer(Class c, TreeCellRenderer renderer) {
+	public void addRenderer(Class<?> c, TreeCellRenderer renderer) {
 		this.renderers.put(c, renderer);
+	}
+
+	public void removeRenderer(Class<?> c) {
+		this.renderers.remove(c);
 	}
 
 	/**
 	 * Sets custom tree node logos.
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value,
 			boolean sel, boolean expanded, boolean leaf, int row,
@@ -89,7 +90,7 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 		}
 		
 		if (node != null) {
-			for (Entry<Class, TreeCellRenderer> entry : this.renderers.entrySet()) {
+			for (Entry<Class<?>, TreeCellRenderer> entry : this.renderers.entrySet()) {
 				if (entry.getKey().isInstance(node.getUserObject())) {
 					return entry.getValue().getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 				}

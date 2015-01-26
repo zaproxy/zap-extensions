@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	ZAP Issue 1411: Missing authentication handling for Zest scripts called from scanner<br>
-	ZAP Issue 1501: Add "Inverse" option in all the expression  dialog boxes.
+	ZAP Issue 1501: Add "Inverse" option in all the expression  dialog boxes.<br>
+	ZAP Issue 1507: Unload all components when uninstalling.<br>
 	Zest Issue 66: Zest scripts cant be invoked from Zest scripts on Windows<br>
 	Zest Issue 67: Multipart/form-data request failed<br>
 	Zest Issue 68: ZestExpressionURL fails to initialise regex patterns<br>
@@ -37,6 +38,6 @@
 		<file>scripts/templates/targeted/Resend as a GET request.zst</file>
 		<file>scripts/templates/targeted/Targeted default template.zst</file>
 	</files>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

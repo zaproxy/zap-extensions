@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -40,7 +39,6 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 
 	private JTextComponent lastInvoker = null;
     private ZestScriptWrapper script = null;
-    private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
 	/**
 	 * This method initializes 
@@ -67,8 +65,6 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
-    	this.clearSubMenus();
-    	
         if (invoker instanceof JTextComponent) {
         	// Need to be optimistic so invoker is initialised
         	setLastInvoker((JTextComponent) invoker);
@@ -95,15 +91,6 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
     	}
 	}
 
-    private void clearSubMenus() {
-    	final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-    	for (ExtensionPopupMenuItem menu : subMenus) {
-			mainPopupMenuItems.remove(menu);
-			
-		}
-		subMenus.clear();
-    }
-
     private void reCreateSubMenu() {
 		if (script != null) {
 			final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
@@ -112,7 +99,6 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 	        	ExtensionPopupMenuItem piicm = new ZestPasteVariableMenu(script, lastInvoker, var);
 	        	piicm.setMenuIndex(this.getMenuIndex());
 				mainPopupMenuItems.add(piicm);
-				this.subMenus.add(piicm);
 			}
 		}
 	}

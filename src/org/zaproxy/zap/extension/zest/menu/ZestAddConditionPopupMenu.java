@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.zest.menu;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -62,7 +61,6 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 	private static final long serialVersionUID = 2282358266003940700L;
 
 	private ExtensionZest extension;
-	private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
 	// private static final Logger logger =
 	// Logger.getLogger(ZestAddConditionPopupMenu.class);
@@ -93,12 +91,6 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 	}
 
 	public boolean isEnableForComponent(Component invoker) {
-		final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-		// Remove previous submenus
-		for (ExtensionPopupMenuItem menu : subMenus) {
-			mainPopupMenuItems.remove(menu);
-		}
-		subMenus.clear();
 		if (extension.isScriptTree(invoker)) {
 			ScriptNode node = extension.getSelectedZestNode();
 			ZestElement ze = extension.getSelectedZestElement();
@@ -275,7 +267,6 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 		final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
 		menu.setMenuIndex(this.getMenuIndex());
 		mainPopupMenuItems.add(menu);
-		this.subMenus.add(menu);
 		if (menu2 != null) {
 			menu2.addActionListener(new ActionListener() {
 				@Override
@@ -301,7 +292,6 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 			});
 			menu2.setMenuIndex(this.getMenuIndex());
 			mainPopupMenuItems.add(menu2);
-			this.subMenus.add(menu2);
 		}
 	}
 

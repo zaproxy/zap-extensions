@@ -26,6 +26,8 @@ import java.awt.event.MouseAdapter;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,7 +41,6 @@ import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.TransferHandler;
 
 import net.htmlparser.jericho.Source;
 import net.sf.json.JSONObject;
@@ -79,6 +80,8 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
+import org.zaproxy.zap.control.AddOn;
+import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -190,43 +193,30 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			View.getSingleton().addMainToolbarButton(getRecordButton());
 			View.getSingleton().addMainToolbarSeparator(getToolbarSeparator());
 
-			// TODO This is a temporary solution until we can be sure the scripts addon supports the required functionality
-			Extension extScUi = Control.getSingleton()
-					.getExtensionLoader().getExtension("ExtensionScripts");
-			if (extScUi != null) {
-				Method m;
-				try {
-					m = extScUi.getClass().getMethod("addScriptTreeTransferHander", Class.class, TransferHandler.class);
-					if (m != null) {
-						ZestTreeTransferHandler th = new ZestTreeTransferHandler(this);
-						m.invoke(extScUi, ZestScriptWrapper.class, th);
-						m.invoke(extScUi, ZestElementWrapper.class, th);
-					} else {
-						logger.debug("SBSB Failed to find scripts UI extension method :(");
-					}
-				} catch (Exception e) {
-					logger.debug(e.getMessage(), e);
-				}
-			} else {
-				logger.debug("Failed to find scripts UI extension");
+			if (getExtScript().getScriptUI() != null) {
+				ZestTreeTransferHandler th = new ZestTreeTransferHandler(this);
+				getExtScript().getScriptUI().addScriptTreeTransferHandler(ZestScriptWrapper.class, th);
+				getExtScript().getScriptUI().addScriptTreeTransferHandler(ZestElementWrapper.class, th);
 			}
 
 		}
 
+		List<Path> defaultTemplates = getDefaultTemplates();
+		
 		ScriptEngineManager mgr = new ScriptEngineManager();
 		ScriptEngine se = mgr.getEngineByName(ZestScriptEngineFactory.NAME);
 		if (se != null) {
 			// Looks like this only works if the Zest lib is in the top level
 			// lib directory
 			this.zestEngineFactory = (ZestScriptEngineFactory) se.getFactory();
-			zestEngineWrapper = new ZestEngineWrapper(se);
-			this.getExtScript().registerScriptEngineWrapper(zestEngineWrapper);
 		} else {
 			// Needed for when the Zest lib is in an add-on (usual case)
 			this.zestEngineFactory = new ZestScriptEngineFactory();
-			zestEngineWrapper = new ZestEngineWrapper(zestEngineFactory.getScriptEngine());
-			this.getExtScript().registerScriptEngineWrapper(zestEngineWrapper);
+			se = zestEngineFactory.getScriptEngine();
 		}
+		zestEngineWrapper = new ZestEngineWrapper(se, defaultTemplates);
+		this.getExtScript().registerScriptEngineWrapper(zestEngineWrapper);
+
 		this.getExtScript().addListener(this);
 
 		if (this.getExtScript().getScriptUI() != null) {
@@ -236,6 +226,29 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			this.getExtScript().getScriptUI().disableScriptDialog(ZestScriptWrapper.class);
 		}
 		
+	}
+
+	private List<Path> getDefaultTemplates() {
+		AddOn addOn = ExtensionFactory.getAddOnLoader().getAddOnCollection().getAddOn("zest");
+		if (addOn == null) {
+			// Probably running from source...
+			return Collections.emptyList();
+		}
+
+		List<String> files = addOn.getFiles();
+		if (files == null || files.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		ArrayList<Path> defaultTemplates = new ArrayList<>(files.size());
+		Path zapHome = Paths.get(Constant.getZapHome());
+		for (String file : files) {
+			if (file.startsWith("scripts/templates")) {
+				defaultTemplates.add(zapHome.resolve(file));
+			}
+		}
+		defaultTemplates.trimToSize();
+		return defaultTemplates;
 	}
 	
 	public boolean isPlugNHackInstalled() {
@@ -301,7 +314,43 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			View view = View.getSingleton();
 			view.removeMainToolbarButton(getRecordButton());
 			view.removeMainToolbarSeparator(getToolbarSeparator());
+			dialogManager.unload();
 		}
+
+		// Convert zest scripts into "plain" scripts
+		for (ScriptType type : this.getExtScript().getScriptTypes()) {
+			for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
+				if (script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+					ScriptNode node = this.getExtScript().getTreeModel().getNodeForScript(script);
+					if (script instanceof ZestScriptWrapper) {
+						ZestScriptWrapper zsw = (ZestScriptWrapper) script;
+						ScriptWrapper original = zsw.getOriginal();
+						original.setEngine(zsw.getEngine());
+						original.setEnabled(zsw.isEnabled());
+						original.setFile(zsw.getFile());
+						original.setLoadOnStart(zsw.isLoadOnStart());
+						original.setContents(zsw.getContents());
+						original.setChanged(zsw.isChanged());
+
+						node.setUserObject(original);
+						node.removeAllChildren();
+						this.getExtScript().getTreeModel().nodeStructureChanged(node);
+					}
+				}
+			}
+		}
+
+		if (this.getExtScript().getScriptUI() != null) {
+			this.getExtScript().getScriptUI().removeScriptTreeTransferHandler(ZestScriptWrapper.class);
+			this.getExtScript().getScriptUI().removeScriptTreeTransferHandler(ZestElementWrapper.class);
+
+			this.getExtScript().getScriptUI().removeRenderer(ZestElementWrapper.class);
+			this.getExtScript().getScriptUI().removeRenderer(ZestScriptWrapper.class);
+			this.getExtScript().getScriptUI().removeDisableScriptDialog(ZestScriptWrapper.class);
+		}
+
+		getExtScript().removeListener(this);
+		getExtScript().removeScriptEngineWrapper(zestEngineWrapper);
 
 		super.unload();
 	}

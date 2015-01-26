@@ -20,6 +20,7 @@
 
 package org.zaproxy.zap.extension.zest;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +29,20 @@ import javax.swing.ImageIcon;
 
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ZestEngineWrapper extends DefaultEngineWrapper {
 
-	public ZestEngineWrapper(ScriptEngine engine) {
+	private final List<Path> defaultTemplates;
+
+	public ZestEngineWrapper(ScriptEngine engine, List<Path> defaultTemplates) {
 		super(engine);
+
+		if (defaultTemplates == null) {
+			throw new IllegalArgumentException("Parameter defaultTemplates must not be null.");
+		}
+
+		this.defaultTemplates = defaultTemplates;
 	}
 
 	@Override
@@ -47,7 +57,7 @@ public class ZestEngineWrapper extends DefaultEngineWrapper {
 	
 	@Override
 	public List<String> getExtensions() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>(2);
 		list.add("zst");
 		list.add("zest");
 		return list;
@@ -68,4 +78,12 @@ public class ZestEngineWrapper extends DefaultEngineWrapper {
 		return false;
 	}
 
+	@Override
+	public boolean isDefaultTemplate(ScriptWrapper script) {
+		if (script.getFile() == null) {
+			return false;
+		}
+
+		return defaultTemplates.contains(script.getFile().toPath());
+	}
 }

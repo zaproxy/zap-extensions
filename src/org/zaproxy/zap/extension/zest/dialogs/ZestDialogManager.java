@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,6 +104,8 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestClientWindowOpenUrlDialog clientWindowOpenUrlDialog = null;
 	private ZestClientSwitchToFrameDialog clientSwitchToFrameDialog = null;
 
+	private MouseAdapter mouseListener;
+
 	public ZestDialogManager(ExtensionZest extension, ScriptUI scriptUI) {
 		super();
 		this.extension = extension;
@@ -115,7 +118,7 @@ public class ZestDialogManager extends AbstractPanel {
 		this.setName(Constant.messages.getString("zest.scripts.panel.title"));
 		this.setIcon(ExtensionZest.ZEST_ICON);
 
-		this.scriptUI.addMouseListener(new java.awt.event.MouseAdapter() {
+		mouseListener = new java.awt.event.MouseAdapter() {
 			@Override
 			public void mousePressed(java.awt.event.MouseEvent e) {
 			}
@@ -231,7 +234,8 @@ public class ZestDialogManager extends AbstractPanel {
 				}
 
 			}
-		});
+		};
+		this.scriptUI.addMouseListener(mouseListener);
 
 	}
 
@@ -630,5 +634,83 @@ public class ZestDialogManager extends AbstractPanel {
 	private void bringToFront(StandardFieldsDialog dialog) {
 		dialog.toFront();
 		dialog.requestFocus();
+	}
+
+	public void unload() {
+		scriptUI.removeMouseListener(mouseListener);
+
+		if (scriptDialog != null) {
+			scriptDialog.dispose();
+		}
+		if (recordDialog != null) {
+			recordDialog.dispose();
+		}
+		if (requestDialog != null) {
+			requestDialog.dispose();
+		}
+		if (assertionsDialog != null) {
+			assertionsDialog.dispose();
+		}
+		if (assignmentDialog != null) {
+			assignmentDialog.dispose();
+		}
+		if (actionDialog != null) {
+			actionDialog.dispose();
+		}
+		if (conditionDialog != null) {
+			conditionDialog.dispose();
+		}
+		if (commentDialog != null) {
+			commentDialog.dispose();
+		}
+		if (loopDialog != null) {
+			loopDialog.dispose();
+		}
+		if (redactDialog != null) {
+			redactDialog.dispose();
+		}
+		if (controlDialog != null) {
+			controlDialog.dispose();
+		}
+		if (paramDialog != null) {
+			paramDialog.dispose();
+		}
+		if (runScriptDialog != null) {
+			runScriptDialog.dispose();
+		}
+
+		if (clientAssignCookieDialog != null) {
+			clientAssignCookieDialog.dispose();
+		}
+		if (clientLaunchDialog != null) {
+			clientLaunchDialog.dispose();
+		}
+		if (clientElementAssignDialog != null) {
+			clientElementAssignDialog.dispose();
+		}
+		if (clientElementClearDialog != null) {
+			clientElementClearDialog.dispose();
+		}
+		if (clientElementClickDialog != null) {
+			clientElementClickDialog.dispose();
+		}
+		if (clientElementSendKeysDialog != null) {
+			clientElementSendKeysDialog.dispose();
+		}
+		if (clientElementSubmitDialog != null) {
+			clientElementSubmitDialog.dispose();
+		}
+		if (clientWindowDialog != null) {
+			clientWindowDialog.dispose();
+		}
+		if (clientWindowCloseDialog != null) {
+			clientWindowCloseDialog.dispose();
+		}
+		if (clientWindowOpenUrlDialog != null) {
+			clientWindowOpenUrlDialog.dispose();
+		}
+		if (clientSwitchToFrameDialog != null) {
+			clientSwitchToFrameDialog.dispose();
+		}
 	}
 }

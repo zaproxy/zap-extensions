@@ -26,7 +26,9 @@ import javax.swing.text.JTextComponent;
 import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
 public class ZestPasteVariableMenu extends ExtensionPopupMenuItem {
 
@@ -78,5 +80,10 @@ public class ZestPasteVariableMenu extends ExtensionPopupMenuItem {
 	@Override
     public boolean isSafe() {
     	return true;
+    }
+
+    @Override
+    public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
+        View.getSingleton().getPopupList().remove(this);
     }
 }
