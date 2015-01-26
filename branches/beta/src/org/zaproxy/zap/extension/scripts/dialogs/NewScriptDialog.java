@@ -177,8 +177,8 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		for (ScriptWrapper template : extension.getExtScript().getTreeModel().getTemplates(
 				this.nameToType(this.getStringValue(FIELD_TYPE)))) {
 			
-			if (getSelectedEngine() == null
-					|| (template.getEngine() != null && template.getEngine().equals(getSelectedEngine()))) {
+			if (template.getEngine() != null
+					&& (getSelectedEngine() == null || template.getEngine().equals(getSelectedEngine()))) {
 				list.add(template.getName());
 			}
 		}
