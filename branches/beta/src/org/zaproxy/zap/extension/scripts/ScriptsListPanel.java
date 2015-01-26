@@ -422,7 +422,7 @@ public class ScriptsListPanel extends AbstractPanel {
     	}
 	    
 	    if (script != null) {
-    		this.getSaveButton().setEnabled(script.isChanged());
+    		this.getSaveButton().setEnabled(script.isChanged() && script.getEngine() != null);
 	    } else {
     		this.getSaveButton().setEnabled(false);
 	    }
