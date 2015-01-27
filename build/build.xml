@@ -14,7 +14,7 @@
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 	<!-- This assumes you also have the zaproxy-2.4 project (used for the weekly release -->
-	<property name="zap-2.4.plugin.dir" location="../../zaproxy-2.4/src/plugin" />
+	<property name="zap-2.4.plugin.dir" location="../../zaproxy-dev2/src/plugin" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
@@ -188,6 +188,49 @@
 		</antcall>
 	</target>
 
+	<target name="build-help-addon" description="build the specified addon">
+		
+		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
+		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
+		
+		<generatejavahelpsearchindexes jhalljar="${dist.lib.dir}/jhall.jar"
+			helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
+			<dirset dir="${src}/org/zaproxy/zap/extension/${addon}/resources/">
+				<include name="help" />
+				<include name="help_*_*" />
+			</dirset>
+		</generatejavahelpsearchindexes>
+
+		<jar jarfile="${dist}/${file}" update="true" compress="true">
+			<zipfileset dir="${src}/org/zaproxy/zap/extension/${addon}/resources/${addon}/" prefix="/">
+				<include name="**"/>
+			</zipfileset>
+			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+		</jar>
+		<delete file="${addon.libs.zip}" />
+
+		<!-- Remove search indexes previously generated, no longer needed. -->
+		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resources/help/JavaHelpSearch" />
+		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resources/help_*_*/JavaHelpSearch" />
+
+		<checksum file="${dist}/${file}"  algorithm="SHA-1" property="sha1hash"/>
+
+		<antcall target="append-to-versions-file"> 
+			<param name="extension" value="${addon}"/> 
+			<param name="name" value="${zapaddon.name}"/> 
+			<param name="version" value="${zapaddon.version}"/> 
+			<param name="description" value="${zapaddon.description}"/> 
+			<param name="author" value="${zapaddon.author}"/> 
+			<param name="url" value="${zapaddon.url}"/> 
+			<param name="hash" value="SHA1:${sha1hash}"/>
+			<param name="changes" value="${zapaddon.changes}"/> 
+			<param name="file" value="${file}"/> 
+			<param name="not-before-version" value="${zapaddon.not-before-version}"/> 
+			<param name="not-from-version" value="${zapaddon.not-from-version}"/> 
+		</antcall>
+	</target>
+
+
 	<target name="include-files" depends="is-files-available" if="files.available"> 
 		<jar jarfile="${dist}/${file}" update="true" compress="true">
 			<zipfileset dir="${src}/org/zaproxy/zap/extension/${addon}/files/" prefix=""/>
@@ -215,6 +258,7 @@
 		<antcall target="build-addon"><param name="addon" value="httpsInfo"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="importLogFiles"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="multiFuzz"/></antcall>
+		<antcall target="build-addon"><param name="addon" value="onlineMenu"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="pscanrulesAlpha"/></antcall>
         <antcall target="build-addon"><param name="addon" value="saml"/></antcall>
 		<antcall target="build-addon"><param name="addon" value="sequence"/></antcall>
@@ -241,8 +285,17 @@
 		<antcall target="deploy-addon"> <param name="addon" value="${addon}"/> </antcall>
 	</target>
 
+	<target name="build-deploy-help-addon" depends="clean,compile" description="build and deploy the specified help addon">
+		<antcall target="build-help-addon"><param name="addon" value="${addon}"/></antcall>
+		<antcall target="deploy-addon"> <param name="addon" value="${addon}"/> </antcall>
+	</target>
+
 	<target name="deploy-accessControl" description="deploy the Access Control Testing extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="accessControl"/> </antcall>
+	</target>
+
+	<target name="deploy-advreport" description="deploy the advanced reporting extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="advreport"/> </antcall>
 	</target>
 
 	<target name="deploy-amf" description="deploys AMF add-on">
@@ -277,6 +330,14 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="cmss"/> </antcall>
 	</target>
 
+	<target name="deploy-help-fr-FR" description="deploy the highlighter extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="help_fr_FR"/> </antcall>
+	</target>
+  
+	<target name="deploy-help-ja-JP" description="deploy the highlighter extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="help_ja_JP"/> </antcall>
+	</target>
+  
 	<target name="deploy-highlighter" description="deploy the highlighter extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="highlighter"/> </antcall>
 	</target>
@@ -285,12 +346,20 @@
 		<antcall target="build-deploy-addon"> <param name="addon" value="httpsInfo"/> </antcall>
 	</target>
 
+	<target name="deploy-hud" description="deploy the HUD extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="hud"/> </antcall>
+	</target>
+
 	<target name="deploy-importLogFiles" description="deploy the importLogFiles extension">
 		<antcall target="build-deploy-addon"> <param name="addon" value="importLogFiles"/> </antcall>
 	</target>
 
 	<target name="deploy-multiFuzz" description="deploy the passive scan rules">
 		<antcall target="build-deploy-addon"> <param name="addon" value="multiFuzz"/> </antcall>
+	</target>
+
+	<target name="deploy-onlineMenu" description="deploy the online menu">
+		<antcall target="build-deploy-addon"> <param name="addon" value="onlineMenu"/> </antcall>
 	</target>
 
 	<target name="deploy-pscanrulesAlpha" description="deploy the passive scan rules">
@@ -344,6 +413,10 @@
 	<target name="generate-wiki-wappalyzer" description="Generates the wiki of wappalyzer">
 		<generate-wiki addon="wappalyzer" />
 	</target>
+
+    <target name="deploy-wavsepRpt" description="deploy the wavsepRpt extension">
+        <antcall target="build-deploy-addon"> <param name="addon" value="wavsepRpt"/> </antcall>
+    </target>
 
 	<target name="deploy-weekly" description="deploy extensions to be included in weekly releases">
 		<!-- Set to compile with debug information -->
