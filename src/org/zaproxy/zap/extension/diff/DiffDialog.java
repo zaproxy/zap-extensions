@@ -25,11 +25,15 @@ import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -56,12 +60,14 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 	private JPanel jPanel = null;
 	private JTextArea txtDisplayLeft = null;
 	private JTextArea txtDisplayRight = null;
+	private JPanel footer = null;
 	
 	private JSplitPane jSplitPane = null;
 	private JScrollPane jScrollPaneLeft = null;
 	private JScrollPane jScrollPaneRight = null;
 	private JLabel leftHeader = null;
 	private JLabel rightHeader = null;
+	private JCheckBox syncCheckbox = null;
 
     /**
      * @throws HeadlessException
@@ -119,11 +125,40 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 			jPanel.setPreferredSize(new java.awt.Dimension(900,700));
 			jPanel.setMinimumSize(new java.awt.Dimension(900,700));
 			jPanel.add(getJSplitPane(), 
-					LayoutHelper.getGBC(0, 1, 2, 1.0D, 1.0D, GridBagConstraints.BOTH, GridBagConstraints.EAST, new Insets(2,2,2,2)));
+					LayoutHelper.getGBC(0, 0, 2, 1.0D, 1.0D, GridBagConstraints.BOTH, GridBagConstraints.EAST, new Insets(2,2,2,2)));
+			jPanel.add(getFooter(), 
+					LayoutHelper.getGBC(0, 1, 2, 0.0D, 0.0D));
 		}
 		return jPanel;
 	}
 	
+	private JPanel getFooter() {
+		if (footer == null) {
+			footer = new JPanel();
+			footer.setLayout(new GridBagLayout());
+			
+			JButton close = new JButton(Constant.messages.getString("diff.diff.close.button"));
+			close.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					DiffDialog.this.dispatchEvent(new WindowEvent(DiffDialog.this, WindowEvent.WINDOW_CLOSING));
+				}});
+			
+			footer.add(getSyncCheckbox(), LayoutHelper.getGBC(0, 0, 1, 0.0D, new Insets(2,10,2,2)));
+			footer.add(new JLabel(), LayoutHelper.getGBC(1, 0, 1, 1.0D));	// Spacer
+			footer.add(close, LayoutHelper.getGBC(2, 0, 1, 0.0D, new Insets(2,2,2,10)));
+		}
+		return footer;
+	}
+
+	private JCheckBox getSyncCheckbox() {
+		if (syncCheckbox == null) {
+			syncCheckbox = new JCheckBox(Constant.messages.getString("diff.diff.lock.check"));
+			syncCheckbox.setSelected(true);
+		}
+		return syncCheckbox;
+	}
+
 	public void setLeftHeader(String header) {
 		this.leftHeader.setText(header);
 		this.leftHeader.setToolTipText(header);
@@ -254,15 +289,17 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 
 	@Override
 	public void adjustmentValueChanged(AdjustmentEvent e) {
-		// 'Lock' the scrollbars together
-		if (this.jScrollPaneLeft.getVerticalScrollBar().equals(e.getSource())) {
-			this.jScrollPaneRight.getVerticalScrollBar().setValue(this.jScrollPaneLeft.getVerticalScrollBar().getValue());
-		} else if (this.jScrollPaneRight.getVerticalScrollBar().equals(e.getSource())) {
-			this.jScrollPaneLeft.getVerticalScrollBar().setValue(this.jScrollPaneRight.getVerticalScrollBar().getValue());
-		} else if (this.jScrollPaneLeft.getHorizontalScrollBar().equals(e.getSource())) {
-			this.jScrollPaneRight.getHorizontalScrollBar().setValue(this.jScrollPaneLeft.getHorizontalScrollBar().getValue());
-		} else if (this.jScrollPaneRight.getHorizontalScrollBar().equals(e.getSource())) {
-			this.jScrollPaneLeft.getHorizontalScrollBar().setValue(this.jScrollPaneRight.getHorizontalScrollBar().getValue());
+		if (getSyncCheckbox().isSelected()) {
+			// 'Lock' the scrollbars together
+			if (this.jScrollPaneLeft.getVerticalScrollBar().equals(e.getSource())) {
+				this.jScrollPaneRight.getVerticalScrollBar().setValue(this.jScrollPaneLeft.getVerticalScrollBar().getValue());
+			} else if (this.jScrollPaneRight.getVerticalScrollBar().equals(e.getSource())) {
+				this.jScrollPaneLeft.getVerticalScrollBar().setValue(this.jScrollPaneRight.getVerticalScrollBar().getValue());
+			} else if (this.jScrollPaneLeft.getHorizontalScrollBar().equals(e.getSource())) {
+				this.jScrollPaneRight.getHorizontalScrollBar().setValue(this.jScrollPaneLeft.getHorizontalScrollBar().getValue());
+			} else if (this.jScrollPaneRight.getHorizontalScrollBar().equals(e.getSource())) {
+				this.jScrollPaneLeft.getHorizontalScrollBar().setValue(this.jScrollPaneRight.getHorizontalScrollBar().getValue());
+			}
 		}
 	}
 
