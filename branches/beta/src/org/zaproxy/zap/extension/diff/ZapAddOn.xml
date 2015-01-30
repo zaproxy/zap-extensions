@@ -6,7 +6,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Safe menu items will now be enabled in protected and safe modes (Issue 1278).
+	Added 'Lock Scrolling' checkbox so that this can be disabled if required.
 	]]>
 	</changes>
 	<dependson/>
