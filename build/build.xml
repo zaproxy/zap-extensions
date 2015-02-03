@@ -287,6 +287,10 @@
 		<generate-wiki addon="gettingStarted" />
 	</target>
   
+	<target name="deploy-help" description="deploy the help extension">
+		<antcall target="build-deploy-addon"> <param name="addon" value="help"/> </antcall>
+	</target>
+
 	<target name="deploy-pscanrules" description="deploy the passive scan rules">
 		<antcall target="build-deploy-addon"> <param name="addon" value="pscanrules"/> </antcall>
 	</target>
@@ -349,6 +353,7 @@
 				<include name="coreLang-${status}-*.zap"/>
 				<include name="directorylistv1-${status}-*.zap"/>
 				<include name="gettingStarted-${status}-*.zap"/>
+				<include name="help-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
@@ -363,6 +368,7 @@
 				<include name="coreLang-${status}-*.zap"/>
 				<include name="directorylistv1-${status}-*.zap"/>
 				<include name="gettingStarted-${status}-*.zap"/>
+				<include name="help-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
@@ -384,6 +390,7 @@
 				<include name="coreLang-${status}-*.zap"/>
 				<include name="directorylistv1-${status}-*.zap"/>
 				<include name="gettingStarted-${status}-*.zap"/>
+				<include name="help-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
