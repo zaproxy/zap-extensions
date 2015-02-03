@@ -289,13 +289,23 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	@Override
 	public void optionsLoaded() {
-		// Convert scripts loaded on start into real Zest scripts
-		for (ScriptType type : this.getExtScript().getScriptTypes()) {
-			for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
-				if (script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
-					this.scriptAdded(script, false);
+		if (getView() == null || EventQueue.isDispatchThread()) {
+			// Convert scripts loaded on start into real Zest scripts
+			for (ScriptType type : this.getExtScript().getScriptTypes()) {
+				for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
+					if (script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+						this.scriptAdded(script, false);
+					}
 				}
 			}
+		} else {
+			EventQueue.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					optionsLoaded();
+				}
+			});
 		}
 	}
 
