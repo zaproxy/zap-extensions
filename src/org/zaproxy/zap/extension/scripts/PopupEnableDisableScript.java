@@ -67,15 +67,16 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
         this.addActionListener(new java.awt.event.ActionListener() { 
         	@Override
         	public void actionPerformed(java.awt.event.ActionEvent e) {
-			    TreePath path = extension.getScriptsPanel().getTree().getSelectionPath();
-			    if (path != null) {
-			    	ScriptNode node = (ScriptNode)path.getLastPathComponent();
-                    if (node == null || node.getUserObject() == null || ! (node.getUserObject() instanceof ScriptWrapper)) {
-                    	return;
+            	for (TreePath tp : extension.getScriptsPanel().getTree().getSelectionPaths()) {
+            		ScriptNode node = (ScriptNode) tp.getLastPathComponent();
+            		
+                    if (node == null || node.isTemplate() ||
+                    		node.getUserObject() == null || ! (node.getUserObject() instanceof ScriptWrapper)) {
+                    	continue;
                     }
                 	ScriptWrapper script = (ScriptWrapper) node.getUserObject();
                     extension.getExtScript().setEnabled(script, ! script.isEnabled());
-			    }
+            	}
         	}
         });
 			
@@ -87,33 +88,44 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
             try {
                 JTree tree = (JTree) invoker;
                 if (tree.getLastSelectedPathComponent() != null) {
-                	if (tree.getSelectionPaths().length != 1) {
-                		// Start by just supporting one at a time..
+                	if (tree.getSelectionPaths().length == 0) {
+                		// None selected
                 		return false;
                 	}
-                    ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
+                	
             		this.setEnabled(false);
+            		Boolean enable = null;	// We dont know whetehr it will be Enable or Disable yet
             		
-                    if (node == null || node.isTemplate() ||
-                    		node.getUserObject() == null || ! (node.getUserObject() instanceof ScriptWrapper)) {
-                    	return false;
-                    	
-                    } else {
-                    	ScriptWrapper script = (ScriptWrapper) node.getUserObject();
-                        if (script.getEngine() == null) {
-                            return false;
-                        }
+                	for (TreePath tp : tree.getSelectionPaths()) {
+                		ScriptNode node = (ScriptNode) tp.getLastPathComponent();
+                		
+                        if (node == null || node.isTemplate() ||
+                        		node.getUserObject() == null || ! (node.getUserObject() instanceof ScriptWrapper)) {
+                        	return false;
+                        	
+                        } else {
+                        	ScriptWrapper script = (ScriptWrapper) node.getUserObject();
+                            if (script.getEngine() == null) {
+                                return false;
+                            }
 
-                    	if (script.getType().isEnableable()) {
-                        	if (script.isEnabled()) {
-                        		this.setText(Constant.messages.getString("scripts.disable.popup"));
-                        	} else {
-                        		this.setText(Constant.messages.getString("scripts.enable.popup"));
+                        	if (script.getType().isEnableable()) {
+                        		if (enable == null) {
+                        			// First one
+                        			enable = ! script.isEnabled();
+                                	if (script.isEnabled()) {
+                                		this.setText(Constant.messages.getString("scripts.disable.popup"));
+                                	} else {
+                                		this.setText(Constant.messages.getString("scripts.enable.popup"));
+                                	}
+                        		} else if (enable.equals(script.isEnabled())) {
+                        			// Some are enabled, some disabled, cant tell which to do
+                        			return false;
+                        		}
+                       			this.setEnabled(true);
                         	}
-                   			this.setEnabled(true);
-                    	}
-                    }
-                    
+                        }
+                	}
                     return true;
                 }
             } catch (Exception e) {
