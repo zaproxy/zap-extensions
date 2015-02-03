@@ -21,6 +21,7 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestScript;
@@ -89,10 +90,15 @@ public class ZestPopupCommentOnOff extends ExtensionPopupMenuItem {
     public boolean isEnableForComponent(Component invoker) {
 		if (extension.isScriptTree(invoker)) {
             try {
+                List<ScriptNode> selectedNodes = extension.getSelectedZestNodes();
+                if (selectedNodes.isEmpty()) {
+                    return false;
+                }
+
        			this.setEnabled(false);
        			// If we have a mix of commented and uncommented statements then default to commenting
                 this.comment = true;
-            	for (ScriptNode node : extension.getSelectedZestNodes()) {
+            	for (ScriptNode node : selectedNodes) {
                     if (node == null || node.isRoot() || node.isTemplate()) {
                			this.setEnabled(false);
                     	return false;

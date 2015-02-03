@@ -93,8 +93,13 @@ public class ZestPopupNodeCopyOrCut extends ExtensionPopupMenuItem {
     public boolean isEnableForComponent(Component invoker) {
 		if (extension.isScriptTree(invoker)) {
             try {
+                List<ScriptNode> selectedNodes = extension.getSelectedZestNodes();
+                if (selectedNodes.isEmpty()) {
+                    return false;
+                }
+
        			this.setEnabled(false);
-            	for (ScriptNode node : extension.getSelectedZestNodes()) {
+            	for (ScriptNode node : selectedNodes) {
                     if (node == null || node.isRoot() || node.isTemplate()) {
                			this.setEnabled(false);
                     	return false;
