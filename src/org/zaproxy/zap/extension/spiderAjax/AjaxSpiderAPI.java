@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.spiderAjax;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +30,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.api.ApiAction;
@@ -172,7 +172,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 					}
 				}
 				result = resultList;
-			} catch (SQLException | IOException e) {
+			} catch (DatabaseException | IOException e) {
 				throw new ApiException(ApiException.Type.INTERNAL_ERROR, e);
 			}
 			break;

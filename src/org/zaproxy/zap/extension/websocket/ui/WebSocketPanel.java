@@ -27,7 +27,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,6 +46,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.LogPanel;
@@ -652,7 +652,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 					index = 0;
 				}
 				channelSelect.setSelectedIndex(index);
-			} catch (SQLException e) {
+			} catch (DatabaseException e) {
 				logger.error(e.getMessage(), e);
 			}
 		}
@@ -716,7 +716,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
 		@Override
 		public void sessionChanged(Session session) {
-			resume();
+			// Resume now called when the db changed 
 		}
 
 		@Override

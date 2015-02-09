@@ -17,8 +17,7 @@
  */
 package org.zaproxy.zap.extension.websocket;
 
-import java.sql.SQLException;
-
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -97,7 +96,7 @@ public class WebSocketChannelDTO implements Comparable<WebSocketChannelDTO> {
 			return new HistoryReference(historyId);
 		} catch (HttpMalformedHeaderException e) {
 			return null;
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			return null;
 		}
 	}

@@ -17,11 +17,11 @@
  */
 package org.zaproxy.zap.extension.websocket.ui;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
@@ -110,7 +110,7 @@ public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuIte
 			if (channels.size() == 1) {
 				return channels.get(0);
 			}
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 		}
 		

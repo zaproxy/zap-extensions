@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
@@ -35,6 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 
@@ -688,7 +688,7 @@ public abstract class WebSocketProxy {
 			} catch (HttpMalformedHeaderException e) {
 				dto.url = "";
 				logger.error("HttpMessage for WebSockets-handshake not found!");
-			} catch (SQLException e) {
+			} catch (DatabaseException e) {
 				dto.url = "";
 				logger.error("HttpMessage for WebSockets-handshake not found!");
 			}

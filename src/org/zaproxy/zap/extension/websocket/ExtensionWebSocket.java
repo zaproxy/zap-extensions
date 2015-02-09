@@ -38,6 +38,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseServer;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.db.RecordSessionUrl;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -193,25 +196,36 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		wsProxies = new HashMap<>();
 		config = new OptionsParamWebSocket();
 		
-		// setup database
-		storage = new WebSocketStorage(createTableWebSocket());
-		addAllChannelObserver(storage);
-		
 		preparedIgnoredChannels = new ArrayList<>();
 		ignoredChannelList = new ArrayList<>();
 	}
 	
-	private TableWebSocket createTableWebSocket() {
+    @Override
+    public void databaseOpen(DatabaseServer dbServer) throws DatabaseException, DatabaseUnsupportedException {
 		TableWebSocket table = new TableWebSocket();
 		Database db = Model.getSingleton().getDb();
 		db.addDatabaseListener(table);
 		try {
 			table.databaseOpen(db.getDatabaseServer());
+
+			if (storage == null) {
+				storage = new WebSocketStorage(table);	
+				addAllChannelObserver(storage);
+			} else {
+				storage.setTable(table);
+			}
+			if (View.isInitialised()) {
+				getWebSocketPanel().setTable(table);
+				// Will have been paused when the session was about to change
+				getWebSocketPanel().resume();
+			}
+			
+			WebSocketProxy.setChannelIdGenerator(table.getMaxChannelId());
+
 		} catch (SQLException e) {
 			logger.warn(e.getMessage(), e);
 		}
-		return table;
-	}
+    }
 
 	/**
 	 * This method interweaves the WebSocket extension with the rest of ZAP.
@@ -738,7 +752,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		try {
 			Model.getSingleton().getDb().getTableSessionUrl().setUrls(RecordSessionUrl.TYPE_EXCLUDE_FROM_WEBSOCKET, nonEmptyIgnoreList);
 			ignoredChannelList = nonEmptyIgnoreList;
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 			
 			ignoredChannelList.clear();
@@ -797,6 +811,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 
 	@Override
 	public void sessionChanged(final Session session) {
+		// TODO
+		/*
 		TableWebSocket table = createTableWebSocket();
 		if (View.isInitialised()) {
 			getWebSocketPanel().setTable(table);
@@ -808,6 +824,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		} catch (SQLException e) {
 			logger.error("Unable to retrieve current channelId value!", e);
 		}
+		*/
 		
 		if (fuzzHandler != null) {
 			fuzzHandler.resume();
@@ -822,7 +839,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			for (RecordSessionUrl record  : recordSessionUrls) {
 				ignoredList.add(record.getUrl());
 			}
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 		} finally {
 			try {
