@@ -17,7 +17,6 @@
  */
 package org.zaproxy.zap.extension.websocket.ui;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +26,7 @@ import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
@@ -144,7 +144,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 				}
 				return cachedRowCount;
 			}
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 			return 0;
 		}
@@ -162,7 +162,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 					}
 				}
 				return inScopeChannelIds;
-			} catch (SQLException e) {
+			} catch (DatabaseException e) {
 				logger.warn(e.getMessage(), e);
 			}
 		}
@@ -248,7 +248,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 	protected List<WebSocketMessageDTO> loadPage(int offset, int length) {
 		try {
 			return table.getMessages(getCriterionMessage(), getCriterionOpcodes(), getCriterianInScope(), offset, length, PAYLOAD_PREVIEW_LENGTH);
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 			return new ArrayList<>(0);
 		}
@@ -319,7 +319,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 				fullMessagesCache.put(pk, fullMessage);
 				
 				return fullMessage;
-			} catch (SQLException e) {
+			} catch (DatabaseException e) {
 				logger.error("Error retrieving full message!",e);
 				return message;
 			}
@@ -390,7 +390,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 		
 		try {
 			return table.getIndexOf(criteria, null, null);
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 			// maybe I'm right with this guess - try
 			return message.id - 1;
