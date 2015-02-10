@@ -1,6 +1,6 @@
 = Upgrade to 2.4 =
 
-= Database abstraction layer =
+== Database abstraction layer ==
 A database abstraction layer has been introduced at this version to make it easier to support different databases in addition to the default HSQLDB.
 
 Methods that used to throw 
@@ -17,3 +17,12 @@ The db classes are now all interfaces, and implemented by classes in org.parospr
 Add-ons should never access the db tables directly, instead they should access the data via the classes that 'own' the tables. If they do not provide the data required then they should be enhanced to do so.
 
 New tables should be registered with ZAP as per TBA.
+
+== Setting Fonts ==
+ZAP now allows the user to specify the default font size, which doesnt work if fixed fonts are explicitly used.
+
+Add-ons should typically _not_ set the font size.
+
+If there is a need to set the font size then the following calls should be used:
+
+TBA
