@@ -37,6 +37,8 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
@@ -111,10 +113,6 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 	@Override
 	public void init() {
 		super.init();
-		
-		// setup database
-		storage = new EventStreamStorage(createDatabaseTable());
-		addObserver(storage);
 	}
 	
 	private void addObserver(EventStreamObserver observer) {
@@ -171,17 +169,23 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 		return panel;
 	}
 	
-	private TableEventStream createDatabaseTable() {
+    @Override
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
 		TableEventStream table = new TableEventStream();
-		Database db = Model.getSingleton().getDb();
 		db.addDatabaseListener(table);
 		try {
 			table.databaseOpen(db.getDatabaseServer());
-		} catch (SQLException e) {
+			
+			if (storage == null) {
+				storage = new EventStreamStorage(table);
+				addObserver(storage);
+			} else {
+				storage.setTable(table);
+			}
+		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
 		}
-		return table;
-	}
+    }
 
 	@Override
 	public String getAuthor() {
@@ -253,17 +257,6 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 
 	@Override
 	public void sessionChanged(final Session session) {
-		TableEventStream table = createDatabaseTable();
-//		if (View.isInitialised()) {
-//			getWebSocketPanel().setTable(table);
-//		}
-		storage.setTable(table);
-		
-//		try {
-//			WebSocketProxy.setChannelIdGenerator(table.getMaxChannelId());
-//		} catch (SQLException e) {
-//			logger.error("Unable to retrieve current channelId value!", e);
-//		}
 	}
 
 	@Override

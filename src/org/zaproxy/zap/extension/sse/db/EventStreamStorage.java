@@ -17,9 +17,8 @@
  */
 package org.zaproxy.zap.extension.sse.db;
 
-import java.sql.SQLException;
-
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.sse.EventStreamObserver;
 import org.zaproxy.zap.extension.sse.EventStreamProxy.State;
 import org.zaproxy.zap.extension.sse.ServerSentEvent;
@@ -54,7 +53,7 @@ public class EventStreamStorage implements EventStreamObserver {
 		boolean continueForwarding = true;
 		try {
 			table.insertEvent(event);
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 		}
 		return continueForwarding;
@@ -70,7 +69,7 @@ public class EventStreamStorage implements EventStreamObserver {
 				} else if (!state.equals(State.CLOSED)) {
 					logger.warn("Could not update state of Server-Sent Event stream to '" + state.toString() + "'!");
 				}
-			} catch (SQLException e) {
+			} catch (DatabaseException e) {
 				logger.error(e.getMessage(), e);
 			}
 		} else if (state.equals(State.EXCLUDED)) {
@@ -78,7 +77,7 @@ public class EventStreamStorage implements EventStreamObserver {
 			// but not stored - all existing communication is deleted
             try {
 				table.purgeStream(stream.getId());
-			} catch (SQLException e) {
+			} catch (DatabaseException e) {
 				logger.error(e.getMessage(), e);
 			}
 		}

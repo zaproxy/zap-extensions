@@ -20,13 +20,14 @@
 package org.zaproxy.zap.extension.accessControl;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
@@ -225,7 +226,7 @@ public class AccessControlScannerThread extends
 		try {
 			hRef = new HistoryReference(Model.getSingleton().getSession(),
 					HistoryReference.TYPE_ACCESS_CONTROL, scanMessage);
-		} catch (HttpMalformedHeaderException | SQLException e) {
+		} catch (HttpMalformedHeaderException | DatabaseException e) {
 			log.error(
 					"An error has occurred while saving AccessControl testing message in HistoryReference: "
 							+ e.getMessage(), e);
