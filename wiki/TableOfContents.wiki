@@ -37,5 +37,7 @@
   * [AddOnStructure  Add-on Structure]
   * [AddOnDebugging Add-on Debugging]
   * [Examples Examples]
+  * [Upgrade Upgrade]
+   * [Upgrade_2_4 Upgrade to 2.4]
   * [CodeStructure Code Structure]
   * [V1Extensions 1.4 Add-ons]
