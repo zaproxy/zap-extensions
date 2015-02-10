@@ -23,6 +23,4 @@ ZAP now allows the user to specify the default font size, which doesnt work if f
 
 Add-ons should typically _not_ set the font size.
 
-If there is a need to set the font size then the following calls should be used:
-
-TBA
+If there is a need to set the font size or style then the [https://code.google.com/p/zaproxy/source/browse/trunk/src/org/zaproxy/zap/utils/FontUtils.java org.zaproxy.zap.view.FontUtils] static methods should be used.
