@@ -1,0 +1,19 @@
+= Upgrade to 2.4 =
+
+= Database abstraction layer =
+A database abstraction layer has been introduced at this version to make it easier to support different databases in addition to the default HSQLDB.
+
+Methods that used to throw 
+{{{
+    java.sql.SQLException
+}}}
+now throw 
+{{{
+    org.parosproxy.paros.db.DatabaseException
+}}}
+
+The db classes are now all interfaces, and implemented by classes in org.parosproxy.paros.db.paros package prefixed by 'Paros'.
+
+Add-ons should never access the db tables directly, instead they should access the data via the classes that 'own' the tables. If they do not provide the data required then they should be enhanced to do so.
+
+New tables should be registered with ZAP as per TBA.
