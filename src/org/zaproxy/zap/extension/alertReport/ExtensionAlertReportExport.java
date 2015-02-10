@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.alertReport;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -33,6 +32,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -174,7 +174,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
                     allAlerts.add(alert);
                 }
             }
-        } catch (SQLException e) {
+        } catch (DatabaseException e) {
             logger.error(e.getMessage(), e);
         }
         alertsDB = allAlerts;

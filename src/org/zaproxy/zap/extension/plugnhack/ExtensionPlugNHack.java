@@ -39,6 +39,8 @@ import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -167,14 +169,15 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     private void initialize() {
         this.setName(NAME);
         this.setOrder(101);
-        
-		Database db = Model.getSingleton().getDb();
-
+    }
+    
+    @Override
+    public void databaseOpen(Database db) throws DatabaseUnsupportedException {
 		clientTable = new ClientTable();
 		db.addDatabaseListener(clientTable);
 		try {
 			clientTable.databaseOpen(db.getDatabaseServer());
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
 		}
 
@@ -182,9 +185,10 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 		db.addDatabaseListener(messageTable);
 		try {
 			messageTable.databaseOpen(db.getDatabaseServer());
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.warn(e.getMessage(), e);
 		}
+    	
     }
 
     private void startTimeoutThread() {
