@@ -27,19 +27,18 @@
 
 package org.zaproxy.zap.extension.birtreports;
 
-import edu.stanford.ejalbert.BrowserLauncher;
-
 import java.awt.Desktop;
-import java.util.HashMap;
-import java.util.List;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
@@ -47,12 +46,23 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.Logger;
+import org.eclipse.birt.core.exception.BirtException;
+import org.eclipse.birt.core.framework.Platform;
+import org.eclipse.birt.report.engine.api.EngineConfig;
+import org.eclipse.birt.report.engine.api.EngineException;
+import org.eclipse.birt.report.engine.api.IReportRunnable;
+import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
+import org.eclipse.birt.report.engine.api.PDFRenderOption;
+import org.eclipse.birt.report.engine.api.impl.ReportEngine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.db.RecordScan;
+import org.parosproxy.paros.db.paros.ParosDatabase;
+import org.parosproxy.paros.db.paros.ParosDatabaseServer;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.ViewDelegate;
@@ -64,15 +74,9 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.XmlReporterExtension;
 import org.zaproxy.zap.utils.XMLStringUtil;
 import org.zaproxy.zap.view.ScanPanel;
+
+import edu.stanford.ejalbert.BrowserLauncher;
 //birt jars
-import org.eclipse.birt.core.exception.BirtException;
-import org.eclipse.birt.core.framework.Platform;
-import org.eclipse.birt.report.engine.api.EngineConfig;
-import org.eclipse.birt.report.engine.api.EngineException;
-import org.eclipse.birt.report.engine.api.IReportRunnable;
-import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
-import org.eclipse.birt.report.engine.api.PDFRenderOption;
-import org.eclipse.birt.report.engine.api.impl.ReportEngine;
 
 public class ReportLastScan {
 
@@ -85,15 +89,23 @@ public class ReportLastScan {
     public ReportLastScan() {
     }
 
-    private String getAlertXML(Database db, RecordScan recordScan) throws SQLException {
+    private String getAlertXML(Database db, RecordScan recordScan) throws DatabaseException {
 
         Connection conn = null;
         PreparedStatement psAlert = null;
         StringBuilder sb = new StringBuilder();
+        
+        if (! (db instanceof ParosDatabase)) {
+        	throw new InvalidParameterException(db.getClass().getCanonicalName());
+        }
 
         // prepare table connection
         try {
-            conn = db.getDatabaseServer().getNewConnection();
+        	/*
+        	 * TODO Add-ons should NOT make their own connections to the db any more - the db layer is plugable
+        	 * so could be implemented in a completely different way
+        	 */
+            conn = ((ParosDatabaseServer)db.getDatabaseServer()).getNewConnection();
             conn.setReadOnly(true);
             // ZAP: Changed to read all alerts and order by risk
             psAlert = conn.prepareStatement("SELECT ALERT.ALERTID FROM ALERT ORDER BY RISK, PLUGINID");
@@ -149,7 +161,11 @@ public class ReportLastScan {
             logger.error(e.getMessage(), e);
         } finally {
             if (conn != null) {
-                conn.close();
+                try {
+					conn.close();
+				} catch (SQLException e) {
+					// Ignore
+				}
             }
 
         }

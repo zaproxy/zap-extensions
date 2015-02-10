@@ -10,7 +10,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -27,6 +26,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.log4j.Logger;
 import org.jwall.web.audit.AuditEvent;
 import org.jwall.web.audit.io.ModSecurity2AuditReader;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.HistoryReference;
@@ -352,7 +352,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
         for (HttpMessage message : messages) {
             try {
                 historyRefs.add(new HistoryReference(currentSession, 1, message));
-            } catch (SQLException e) {
+            } catch (DatabaseException e) {
                 log.error(e.getMessage(), e);
             } catch (HttpMalformedHeaderException e) {
                 log.error(e.getMessage(), e);

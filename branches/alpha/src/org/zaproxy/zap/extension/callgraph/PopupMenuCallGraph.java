@@ -23,6 +23,8 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.db.paros.ParosDatabase;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.popup.PopupMenuHttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
@@ -56,6 +58,12 @@ class PopupMenuCallGraph extends PopupMenuHttpMessageContainer {
 		add(menuitemAllSites);
 		CallGraphPopupMenuItem menuitemOneSite = new CallGraphPopupMenuItem(POPUP_MENU_ONE_SITE, NodeType.ONE_SITE);
 		add(menuitemOneSite);
+		
+        // TODO This add-on only supports the 'Paos' HSQLDB database
+        if (! (Model.getSingleton().getDb() instanceof ParosDatabase)) {
+        	menuitemAllSites.setEnabled(false);
+        	menuitemOneSite.setEnabled(false);
+        }
 	}
 
 	@Override

@@ -26,8 +26,10 @@ import java.util.ResourceBundle;
 import javax.swing.JMenuItem;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.db.paros.ParosDatabase;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.model.Model;
 
 /*
  * An example ZAP extension which adds a top level menu item.
@@ -81,6 +83,11 @@ public class BirtTopMenu extends ExtensionAdaptor {
         if (menuExample == null) {
                 menuExample = new JMenuItem();
                 menuExample.setText(getMessageString("menu.birtreport.pdf.generate"));
+                
+                // TODO This add-on only supports the 'Paos' HSQLDB database
+                if (! (Model.getSingleton().getDb() instanceof ParosDatabase)) {
+                	menuExample.setEnabled(false);
+                }
 
                 menuExample.addActionListener(new java.awt.event.ActionListener() {
                 @Override

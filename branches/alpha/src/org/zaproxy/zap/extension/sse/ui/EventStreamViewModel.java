@@ -17,13 +17,13 @@
  */
 package org.zaproxy.zap.extension.sse.ui;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.sse.ServerSentEvent;
 import org.zaproxy.zap.extension.sse.db.EventStreamPrimaryKey;
 import org.zaproxy.zap.extension.sse.db.ServerSentEventStream;
@@ -132,7 +132,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 				}
 				return cachedRowCount;
 			}
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 			return 0;
 		}
@@ -150,7 +150,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 					}
 				}
 				return inScopeStreamIds;
-			} catch (SQLException e) {
+			} catch (DatabaseException e) {
 				logger.warn(e.getMessage(), e);
 			}
 		}
@@ -212,7 +212,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 	protected List<ServerSentEvent> loadPage(int offset, int length) {
 		try {
 			return table.getEvents(getCriterionMessage(), getCriterianInScope(), offset, length, PAYLOAD_PREVIEW_LENGTH);
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 			return new ArrayList<>(0);
 		}
@@ -281,7 +281,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 				fullMessagesCache.put(pk, fullEvent);
 				
 				return fullEvent;
-			} catch (SQLException e) {
+			} catch (DatabaseException e) {
 				logger.error("Error retrieving full event!",e);
 				return event;
 			}
@@ -352,7 +352,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 		
 		try {
 			return table.getIndexOf(criteria, null);
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			logger.error(e.getMessage(), e);
 			// maybe I'm right with this guess - try
 			return event.getId() - 1;

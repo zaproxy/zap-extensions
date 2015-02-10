@@ -19,16 +19,15 @@
  */
 package org.zaproxy.zap.extension.accessControl;
 
-import java.sql.SQLException;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlResultEntry;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlNodeResult;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlResultEntry;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -84,7 +83,7 @@ public class AccessControlAlertsProcessor {
 		HttpMessage msg = null;
 		try {
 			msg = result.getHistoryReference().getHttpMessage();
-		} catch (HttpMalformedHeaderException | SQLException e) {
+		} catch (HttpMalformedHeaderException | DatabaseException e) {
 			e.printStackTrace();
 		}
 		// @formatter:off
@@ -110,7 +109,7 @@ public class AccessControlAlertsProcessor {
 		HttpMessage msg = null;
 		try {
 			msg = result.getHistoryReference().getHttpMessage();
-		} catch (HttpMalformedHeaderException | SQLException e) {
+		} catch (HttpMalformedHeaderException | DatabaseException e) {
 			e.printStackTrace();
 		}
 		// @formatter:off

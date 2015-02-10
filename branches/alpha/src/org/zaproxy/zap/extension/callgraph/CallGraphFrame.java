@@ -19,11 +19,17 @@
  */
 package org.zaproxy.zap.extension.callgraph;
 
-import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.db.Database;
-import org.parosproxy.paros.view.AbstractFrame;
-
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,21 +38,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.awt.*;
-import java.awt.event.*;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import org.apache.commons.httpclient.URI;
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.paros.ParosDatabase;
+import org.parosproxy.paros.db.paros.ParosDatabaseServer;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.view.AbstractFrame;
 
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.view.mxGraph;
 import com.mxgraph.swing.mxGraphOutline;
 import com.mxgraph.swing.handler.mxRubberband;
+import com.mxgraph.view.mxGraph;
 
 /**
  * displays a call graph
@@ -115,7 +127,16 @@ public class CallGraphFrame extends AbstractFrame {
 
 			//get a new connection to the database to query it, since the existing database classes do not cater for 
 			//ad-hoc queries on the table
-			conn = Database.getSingleton().getDatabaseServer().getNewConnection();
+        	/*
+        	 * TODO Add-ons should NOT make their own connections to the db any more - the db layer is plugable
+        	 * so could be implemented in a completely different way
+        	 */
+			Database db = Model.getSingleton().getDb();
+	        if (! (db instanceof ParosDatabase)) {
+	        	throw new InvalidParameterException(db.getClass().getCanonicalName());
+	        }
+
+			conn = ((ParosDatabaseServer)db.getDatabaseServer()).getNewConnection();
 
 			//we begin adding stuff to the graph, so begin a "transaction" on it.
 			//we will close this after we add all the vertexes and edges to the graph 

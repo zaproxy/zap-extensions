@@ -23,7 +23,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +39,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -337,7 +337,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 				if (hRef != null) {
 					try {
 						displayMessageInHttpPanel(hRef.getHttpMessage());
-					} catch (HttpMalformedHeaderException | SQLException e) {
+					} catch (HttpMalformedHeaderException | DatabaseException e) {
 						log.error(e.getMessage(), e);
 					}
 				}
