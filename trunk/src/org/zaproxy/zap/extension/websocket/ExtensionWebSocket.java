@@ -39,7 +39,6 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.DatabaseException;
-import org.parosproxy.paros.db.DatabaseServer;
 import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.db.RecordSessionUrl;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -201,9 +200,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	}
 	
     @Override
-    public void databaseOpen(DatabaseServer dbServer) throws DatabaseException, DatabaseUnsupportedException {
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
 		TableWebSocket table = new TableWebSocket();
-		Database db = Model.getSingleton().getDb();
 		db.addDatabaseListener(table);
 		try {
 			table.databaseOpen(db.getDatabaseServer());
