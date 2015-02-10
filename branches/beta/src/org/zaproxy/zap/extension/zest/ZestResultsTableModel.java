@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.zest;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -30,6 +29,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.ZAP;
@@ -200,7 +200,7 @@ public class ZestResultsTableModel extends
 	                    return i;
 	                }
 				}
-            } catch (HttpMalformedHeaderException | SQLException e) {
+            } catch (HttpMalformedHeaderException | DatabaseException e) {
                 // Ignore
             }
         }

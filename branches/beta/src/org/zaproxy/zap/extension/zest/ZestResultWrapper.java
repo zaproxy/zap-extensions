@@ -19,8 +19,7 @@
  */
 package org.zaproxy.zap.extension.zest;
 
-import java.sql.SQLException;
-
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -35,7 +34,7 @@ public class ZestResultWrapper extends HistoryReference {
 	private int scriptRequestIndex = -1;
 	private Type type = Type.request;
 
-	public ZestResultWrapper(Session session, int historyType, HttpMessage msg, int scriptRequestIndex) throws HttpMalformedHeaderException, SQLException {
+	public ZestResultWrapper(Session session, int historyType, HttpMessage msg, int scriptRequestIndex) throws HttpMalformedHeaderException, DatabaseException {
 		super(session, historyType, msg);
 		this.scriptRequestIndex = scriptRequestIndex;
 	}
