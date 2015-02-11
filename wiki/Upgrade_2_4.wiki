@@ -18,6 +18,12 @@ Add-ons should never access the db tables directly, instead they should access t
 
 New tables should be registered with ZAP as per TBA.
 
+== Add-on dependencies ==
+
+Add-ons can now explicitly depend on other add-ons.
+
+Add-ons that require add-ons should specify the add-ons the depend on - details TBA.
+
 == Setting Fonts ==
 ZAP now allows the user to specify the default font size, which doesnt work if fixed fonts are explicitly used.
 
