@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Promoted to 'release' status (Issue 1326).<br>
-	Set to depend on 'Selenium' add-on (Issue 1534).
+	Set to depend on 'Selenium' add-on (Issue 1534).<br>
+	Updated Crawljax to version 3.6 (Issue 1535).
 	]]>
 	</changes>
 	<dependencies>
