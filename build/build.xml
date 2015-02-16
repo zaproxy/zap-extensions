@@ -344,10 +344,6 @@
 		<build-deploy-addon name="httpsInfo" />
 	</target>
 
-	<target name="deploy-hud" description="deploy the HUD extension">
-		<build-deploy-addon name="hud" />
-	</target>
-
 	<target name="deploy-importLogFiles" description="deploy the importLogFiles extension">
 		<build-deploy-addon name="importLogFiles" />
 	</target>
