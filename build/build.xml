@@ -246,6 +246,7 @@
 		<build-addon name="multiFuzz" />
 		<build-addon name="pscanrulesAlpha" />
 		<build-addon name="saml" />
+		<build-selenium-addon />
 		<build-addon name="sequence" />
 		<build-addon name="simpleExample" />
 		<build-addon name="sniTerminator" />
@@ -370,6 +371,24 @@
 	<target name="deploy-saml" description="deploy the SAML extension">
         <build-deploy-addon name="saml" />
     </target>
+
+	<macrodef name="build-selenium-addon" description="Builds Selenium add-on">
+		<sequential>
+			<build-addon name="selenium">
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="org/openqa/selenium/browserlaunchers/**"/>
+					</zipfileset>
+				</jar>
+			</build-addon>
+		</sequential>
+	</macrodef>
+
+	<target name="deploy-selenium" depends="clean, compile" description="Deploys Selenium add-on">
+		<build-selenium-addon />
+		<deploy-addon name="selenium" />
+	</target>
     
 	<target name="deploy-sequence" description="deploy the Sequence extension">
     	<build-deploy-addon name="sequence" />
@@ -422,6 +441,7 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="accessControl-${status}-*.zap"/>
+				<include name="selenium-${status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
 			</fileset>
@@ -429,6 +449,7 @@
 		<copy todir="${zap-2.4.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="accessControl-${status}-*.zap"/>
+				<include name="selenium-${status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
 			</fileset>

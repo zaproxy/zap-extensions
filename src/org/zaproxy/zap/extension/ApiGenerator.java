@@ -30,6 +30,8 @@ import org.zaproxy.zap.extension.api.PhpAPIGenerator;
 import org.zaproxy.zap.extension.api.PythonAPIGenerator;
 import org.zaproxy.zap.extension.api.WikiAPIGenerator;
 import org.zaproxy.zap.extension.importLogFiles.ImportLogAPI;
+import org.zaproxy.zap.extension.selenium.SeleniumAPI;
+import org.zaproxy.zap.extension.selenium.SeleniumOptions;
 
 public class ApiGenerator {
 
@@ -44,6 +46,7 @@ public class ApiGenerator {
 		//	php/api/zapv2/src/Zap/Zapv2.php
 		//	python/api/src/zapv2/__init__.py
 
+		list.add(new SeleniumAPI(new SeleniumOptions()));
 		list.add(new ImportLogAPI(null));
 
 		return list;
