@@ -1,10 +1,13 @@
 <zapaddon>
 	<name>SNI Terminator</name>
-	<version>2</version>
-	<description>Transparent HTTP proxying - requires Java 8!</description>
+	<version>3</version>
+	<description>Transparent HTTP proxying</description>
 	<author>ZAP Dev Team</author>
+	<dependencies>
+		<javaversion>1.8</javaversion>
+	</dependencies>
 	<url>http://www.computerist.org/blog/2014/07/23/Transparent-HTTPS-proxying-with-ZAP/</url>
-	<changes>Call start explicitly as its no longer called from the constructor</changes>
+	<changes>Add dependency on Java 8.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.sniTerminator.ExtensionSniTerminator</extension>
 	</extensions>
@@ -12,7 +15,7 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
 

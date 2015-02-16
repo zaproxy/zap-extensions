@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.sniTerminator;
 
-import java.awt.Color;
 import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
@@ -51,13 +50,6 @@ public class SniTermPanel extends AbstractParamPanel {
 
         this.setLayout(new GridBagLayout());
 
-		if (! this.extension.isSniEnabled()) {
-			// Show an appropriate error message
-	        JLabel errorLabel = new JLabel(Constant.messages.getString(ExtensionSniTerminator.PREFIX + ".options.disabled"));
-	        errorLabel.setForeground(Color.RED);
-	        this.add(errorLabel, LayoutHelper.getGBC(0, 0, 2, 1.0));
-		}
-
         JLabel serverLabel = new JLabel(Constant.messages.getString(ExtensionSniTerminator.PREFIX + ".options.server"));
         serverLabel.setLabelFor(this.getTxtProxyIp());
         this.add(serverLabel, LayoutHelper.getGBC(0, 1, 1, 0.6));
@@ -76,7 +68,6 @@ public class SniTermPanel extends AbstractParamPanel {
     private ZapTextField getTxtProxyIp() {
         if (txtProxyIp == null) {
             txtProxyIp = new ZapTextField("");
-            txtProxyIp.setEnabled(this.extension.isSniEnabled());
         }
         return txtProxyIp;
     }
@@ -85,7 +76,6 @@ public class SniTermPanel extends AbstractParamPanel {
         if (spinnerProxyPort == null) {
             // ZAP: Do not allow invalid port numbers
             spinnerProxyPort = new ZapPortNumberSpinner(8080);
-            spinnerProxyPort.setEnabled(this.extension.isSniEnabled());
         }
         return spinnerProxyPort;
     }
@@ -107,25 +97,23 @@ public class SniTermPanel extends AbstractParamPanel {
 	public void saveParam(Object obj) throws Exception {
 		final OptionsParam options = (OptionsParam) obj;
 		final SniTermParam param = (SniTermParam) options.getParamSet(SniTermParam.class);
-		if (this.extension.isSniEnabled()) {
-			boolean changed = false;
-			if (!param.getServerAddress().equals(this.getTxtProxyIp().getText())) {
-				param.setServerAddress(this.getTxtProxyIp().getText());
-				changed = true;
-			}
-			if (param.getServerPort() != this.getSpinnerProxyPort().getValue()) {
-				param.setServerPort(this.getSpinnerProxyPort().getValue());
-				changed = true;
-			}
-			if (changed) {
-				this.extension.initSniTerminator();
-			}
+		boolean changed = false;
+		if (!param.getServerAddress().equals(this.getTxtProxyIp().getText())) {
+			param.setServerAddress(this.getTxtProxyIp().getText());
+			changed = true;
+		}
+		if (param.getServerPort() != this.getSpinnerProxyPort().getValue()) {
+			param.setServerPort(this.getSpinnerProxyPort().getValue());
+			changed = true;
+		}
+		if (changed) {
+			this.extension.initSniTerminator();
 		}
 	}
 	
 	@Override
 	public String getHelpIndex() {
-		return "ui.dialogs.options.sniTerminator";
+		return null;
 	}
 
 }

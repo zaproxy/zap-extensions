@@ -46,8 +46,6 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
 
     private Logger log = Logger.getLogger(this.getClass());
     
-    private boolean sniEnabled = false;
-    
     private ZAPSNITerminator zst = null;
     private SniTermParam params = null;
 	private SniTermPanel optionsPanel = null;
@@ -79,13 +77,6 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
 
-		String [] verArray = System.getProperty("java.version").split("\\.");
-		if (verArray.length >= 2 && Integer.parseInt(verArray[0]) >= 1 && Integer.parseInt(verArray[1]) >= 8) {
-			sniEnabled = true;
-		} else {
-			log.info("SNI Terminator not supported in java " + verArray[0] + "." + verArray[1] + " minimum of Java 8 required");
-		}
-
 	    if (getView() != null) {
 	        extensionHook.getHookView().addOptionPanel(getOptionsPanel());
 	    }
@@ -94,9 +85,7 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
 	
 	@Override
 	public void postInstall() {
-        if (sniEnabled) {
-			initSniTerminator();
-        }
+		initSniTerminator();
 	}
 
 	@Override
@@ -111,29 +100,28 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
 	}
 
 	@Override
-    public void optionsLoaded() {
-        if (sniEnabled) {
-			initSniTerminator();
-        }
+    public void postInit() {
+		initSniTerminator();
     }
 
 	public void initSniTerminator() {
-		if (sniEnabled) {
-			String serverAddressString = this.getParams().getServerAddress();
-			int serverPort = this.getParams().getServerPort();
-			
-			log.info("Initialize SNI Terminator " + serverAddressString + ":" + serverPort);
+		// Stop previous instance, if any.
+		stopTerminator();
 
-			// Read from other configs
-			String proxyAddressString = Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp();
-			int proxyPort = Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort();
-			
-			String rootcastr = Model.getSingleton().getOptionsParam().getConfig().getString(PARAM_ROOT_CA, null);
+		String serverAddressString = this.getParams().getServerAddress();
+		int serverPort = this.getParams().getServerPort();
 		
-			zst = new ZAPSNITerminator(rootcastr, serverAddressString, serverPort, proxyAddressString, proxyPort);
-			
-			zst.start();
-		}
+		log.info("Initialize SNI Terminator " + serverAddressString + ":" + serverPort);
+
+		// Read from other configs
+		String proxyAddressString = Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp();
+		int proxyPort = Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort();
+		
+		String rootcastr = Model.getSingleton().getOptionsParam().getConfig().getString(PARAM_ROOT_CA, null);
+	
+		zst = new ZAPSNITerminator(rootcastr, serverAddressString, serverPort, proxyAddressString, proxyPort);
+		
+		zst.start();
 	}
 	
 	public void startTerminator() {
@@ -148,10 +136,6 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
 			log.debug("stopTerminator()");
 			zst.stop();
 		}
-	}
-	
-	public boolean isSniEnabled() {
-		return sniEnabled;
 	}
 
 	private SniTermPanel getOptionsPanel() {
