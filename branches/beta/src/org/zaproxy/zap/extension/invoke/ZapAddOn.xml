@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>First release as an add-on, previously bundled with ZAP core.</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.invoke.ExtensionInvoke</extension>
 	</extensions>

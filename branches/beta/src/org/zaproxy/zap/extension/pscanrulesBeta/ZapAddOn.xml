@@ -13,7 +13,6 @@
 	Updated add-on dir structure (Issue 1113).
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.pscanrulesBeta.ExtensionPscanRulesBeta</extension>
 	</extensions>

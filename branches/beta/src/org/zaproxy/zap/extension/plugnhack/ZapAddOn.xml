@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url>https://developer.mozilla.org/en-US/docs/Plug-n-Hack</url>
 	<changes>Fixed uninstallation issue (Issue 1261)</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack</extension>
 	</extensions>

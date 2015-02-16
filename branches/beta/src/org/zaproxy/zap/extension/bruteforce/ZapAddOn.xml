@@ -10,7 +10,6 @@
 	Unload all components during uninstallation (Issue 1505).
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.bruteforce.ExtensionBruteForce</extension>
 	</extensions>

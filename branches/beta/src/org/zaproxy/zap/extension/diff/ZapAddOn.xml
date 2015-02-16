@@ -9,7 +9,6 @@
 	Added 'Lock Scrolling' checkbox so that this can be disabled if required.
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.diff.ExtensionDiff</extension>
 	</extensions>
