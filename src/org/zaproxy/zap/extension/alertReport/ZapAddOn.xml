@@ -10,7 +10,6 @@
 	Changed from iText PDF library to Apache 2.0 licenced PDFBox libary.
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.alertReport.ExtensionAlertReportExport</extension>
 	</extensions>

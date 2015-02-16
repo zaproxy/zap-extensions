@@ -10,7 +10,6 @@
     Updated payload signature list with new checks.
 	]]>
         </changes>
-	<dependson/>
 	<extensions>
 	</extensions>
 	<ascanrules>

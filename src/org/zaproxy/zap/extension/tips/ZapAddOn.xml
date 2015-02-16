@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>Removed the 'show on start' option as the tips are now shown in the splash screen</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.tips.ExtensionTipsAndTricks</extension>
 	</extensions>

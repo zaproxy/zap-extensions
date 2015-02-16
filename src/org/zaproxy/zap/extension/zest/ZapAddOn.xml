@@ -15,7 +15,6 @@
 	Zest Issue 69: Added support for AssignCalc and ExpressionIsInteger <br>
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.zest.ExtensionZest</extension>
 	</extensions>

@@ -12,7 +12,6 @@
 	Updated add-on dir structure (Issue 1113).
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jython.ExtensionJython</extension>
 	</extensions>

@@ -19,7 +19,6 @@
     Fixed minor regex escaping issue with Source Code Disclosure - SVN (Issue 1377)
     ]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.ascanrulesBeta.ExtensionAscanRulesBeta</extension>
 	</extensions>

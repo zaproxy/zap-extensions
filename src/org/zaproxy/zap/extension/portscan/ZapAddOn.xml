@@ -10,7 +10,6 @@
 	Disable the attack menu item if a scan is already in progress (Issue 1290).
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.portscan.ExtensionPortScan</extension>
 	</extensions>

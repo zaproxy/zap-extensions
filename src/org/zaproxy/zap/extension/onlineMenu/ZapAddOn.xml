@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>Promoted to beta</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.onlineMenu.ExtensionOnlineMenu</extension>
 	</extensions>

@@ -5,7 +5,6 @@
 	<author>Carl Sampson</author>
 	<url/>
 	<changes>Safe menu items will now be enabled in protected and safe modes (Issue 1278).</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.treetools.ExtensionTreeTools</extension>
 	</extensions>
