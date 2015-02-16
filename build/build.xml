@@ -26,6 +26,9 @@
 
 	<!-- Ant task to generate JavaHelp search indexes -->
 	<taskdef classpathref="build.classpath" resource="javahelptasks.properties" />
+
+	<!-- Ant task to append ZapAddOn.xml files to ZapVersions.xml -->
+	<taskdef classpathref="build.classpath" resource="zapversionstasks.properties"/>
 	
 	<target name="clean">
 		<delete dir="${dist}" includeEmptyDirs="true" />
@@ -54,6 +57,7 @@
 			<classpath>
 				<fileset dir="${dist.lib.dir}">
 					<include name="**/*.jar" />
+					<include name="**/*.zap" />
 				</fileset>
 			</classpath>
 		</javac>
@@ -115,149 +119,184 @@
 		</sequential>
 	</macrodef>
 
-	<target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
-		<length file="${dist}/${file}" property="length" />
-        <tstamp>
-            <format property="yyyymmdd" pattern="yyyy-MM-dd"/>
-        </tstamp>
-		<echo file="${versions.file}" append="true">
-	&lt;addon>${extension}&lt;/addon>
-	&lt;addon_${extension}>
-		&lt;name>${name}&lt;/name>
-		&lt;description>${description}&lt;/description>
-		&lt;author>${author}&lt;/author>
-		&lt;version>${version}&lt;/version>
-		&lt;file>${file}&lt;/file>
-		&lt;status>${status}&lt;/status>
-		&lt;changes>${changes}&lt;/changes>
-		&lt;url>http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download&lt;/url>
-		&lt;hash>${hash}&lt;/hash>
-		&lt;info>${url}&lt;/info>
-		&lt;size>${length}&lt;/size>
-		&lt;date>${yyyymmdd}&lt;/date>
-		&lt;not-before-version>${not-before-version}&lt;/not-before-version>
-		&lt;not-from-version>${not-from-version}&lt;/not-from-version>
-	&lt;/addon_${extension}>
-</echo>
-	</target>
-	
-	<target name="build-addon" description="build the specified addon">
-		
-		<xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
-		<property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
-		
-		<generatejavahelpsearchindexes jhalljar="${dist.lib.dir}/jhall.jar"
-			helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
-			<dirset dir="${src}/org/zaproxy/zap/extension/${addon}/resources/">
-				<include name="help" />
-				<include name="help_*_*" />
-			</dirset>
-		</generatejavahelpsearchindexes>
+	<macrodef name="build-addon" description="build the specified addon">
+		<attribute name="name"/>
+		<element name="extra-actions" implicit="true" optional="true" />
+		<sequential>
+			<local name="zapaddon.version" />
+			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+			<local name="file" />
+			<property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
 
-		<local name="addon.libs.zip" />
-		<property name="addon.libs.zip" value="${temp}/libs-${addon}.zip" />
+			<generatejavahelpsearchindexes jhalljar="${dist.lib.dir}/jhall.jar"
+				helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
+				<dirset dir="${src}/org/zaproxy/zap/extension/@{name}/resources/">
+					<include name="help" />
+					<include name="help_*_*" />
+				</dirset>
+			</generatejavahelpsearchindexes>
 
-		<delete file="${addon.libs.zip}" failonerror="true" />
-		<zip destfile="${addon.libs.zip}" whenempty="create">
-			<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false" />
-		</zip>
+			<local name="addon.libs.zip" />
+			<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
 
-		<jar jarfile="${dist}/${file}" update="true" compress="true">
-			<zipfileset dir="${build}" prefix="">
-				<include name="org/zaproxy/zap/extension/${addon}/**"/>
-			</zipfileset>
-			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/${addon}/Messages*"/>
-			</zipfileset>
-			<zipfileset dir="${src}" prefix="">
-				<include name="org/zaproxy/zap/extension/${addon}/resources/**"/>
-			</zipfileset>
-			<zipfileset src="${addon.libs.zip}">
-				<exclude name="META-INF/*.DSA" />
-				<exclude name="META-INF/*.SF" />
-			</zipfileset>
-			<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
-		</jar>
-		<delete file="${addon.libs.zip}" />
+			<delete file="${addon.libs.zip}" failonerror="true" />
+			<zip destfile="${addon.libs.zip}" whenempty="create">
+				<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/@{name}/lib/" includes="*.jar" erroronmissingdir="false" />
+			</zip>
 
-		<!-- Remove search indexes previously generated, no longer needed. -->
-		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resources/help/JavaHelpSearch" />
-		<delete dir="${src}/org/zaproxy/zap/extension/${addon}/resources/help_*_*/JavaHelpSearch" />
+			<jar jarfile="${dist}/${file}" update="true" compress="true">
+				<zipfileset dir="${build}" prefix="">
+					<include name="org/zaproxy/zap/extension/@{name}/**"/>
+				</zipfileset>
+				<zipfileset dir="${src}" prefix="">
+					<include name="org/zaproxy/zap/extension/@{name}/Messages*"/>
+				</zipfileset>
+				<zipfileset dir="${src}" prefix="">
+					<include name="org/zaproxy/zap/extension/@{name}/resources/**"/>
+				</zipfileset>
+				<zipfileset src="${addon.libs.zip}">
+					<exclude name="META-INF/*.DSA" />
+					<exclude name="META-INF/*.SF" />
+				</zipfileset>
+				<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+			</jar>
+			<delete file="${addon.libs.zip}" />
 
-		<antcall target="include-files"> 
-			<param name="addon" value="${addon}"/>
-			<param name="file" value="${file}"/>
-		</antcall>
-		
-		<checksum file="${dist}/${file}"  algorithm="SHA-1" property="sha1hash"/>
+			<!-- Remove search indexes previously generated, no longer needed. -->
+			<delete dir="${src}/org/zaproxy/zap/extension/@{name}/resources/help/JavaHelpSearch" />
+			<delete dir="${src}/org/zaproxy/zap/extension/@{name}/resources/help_*_*/JavaHelpSearch" />
 
-		<antcall target="append-to-versions-file"> 
-			<param name="extension" value="${addon}"/> 
-			<param name="name" value="${zapaddon.name}"/> 
-			<param name="version" value="${zapaddon.version}"/> 
-			<param name="description" value="${zapaddon.description}"/> 
-			<param name="author" value="${zapaddon.author}"/> 
-			<param name="url" value="${zapaddon.url}"/> 
-			<param name="hash" value="SHA1:${sha1hash}"/>
-			<param name="changes" value="${zapaddon.changes}"/> 
-			<param name="file" value="${file}"/> 
-			<param name="not-before-version" value="${zapaddon.not-before-version}"/> 
-			<param name="not-from-version" value="${zapaddon.not-from-version}"/> 
-		</antcall>
-	</target>
+			<!-- Include add-on files -->
+			<jar jarfile="${dist}/${file}" update="true" compress="true">
+				<zipfileset dir="${src}/org/zaproxy/zap/extension/@{name}/files/" prefix="" erroronmissingdir="false" />
+			</jar>
 
-	<target name="include-files" depends="is-files-available" if="files.available"> 
-		<jar jarfile="${dist}/${file}" update="true" compress="true">
-			<zipfileset dir="${src}/org/zaproxy/zap/extension/${addon}/files/" prefix=""/>
-		</jar>
-	</target>
+			<!-- allow callers to do extra actions before generating the hash and determine the size of the file -->
+			<extra-actions />
 
-	<target name="is-files-available">
-	    <available property="files.available" type="dir" file="${src}/org/zaproxy/zap/extension/${addon}/files"/>
-	</target>
-	
+			<local name="length" />
+			<length file="${dist}/${file}" property="length" />
+
+			<local name="sha1hash" />
+			<checksum file="${dist}/${file}"  algorithm="SHA-1"  property="sha1hash"/>
+
+			<local name="hash" />
+			<property name="hash"  value="SHA1:${sha1hash}"/>
+
+			<local name="yyyymmdd" />
+			<tstamp>
+				<format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+			</tstamp>
+
+			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
+				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				url="http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download" />
+
+		</sequential>
+	</macrodef>
+
+	<macrodef name="build-help-addon" description="build the specified addon">
+		<attribute name="name"/>
+		<element name="extra-actions" implicit="true" optional="true" />
+		<sequential>
+			<local name="zapaddon.version" />
+			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
+			<local name="file" />
+			<property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
+
+			<local name="addon.libs.zip" />
+			<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
+
+			<delete file="${addon.libs.zip}" failonerror="true" />
+			<zip destfile="${addon.libs.zip}" whenempty="create">
+				<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/@{name}/lib/" includes="*.jar" />
+			</zip>
+
+			 <jar jarfile="${dist}/${file}" update="true" compress="true">
+				<zipfileset src="${addon.libs.zip}" />
+				<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+			</jar>
+			<delete file="${addon.libs.zip}" />
+
+			<!-- allow callers to do extra actions before generating the hash and determine the size of the file -->
+			<extra-actions />
+
+			<local name="length" />
+			<length file="${dist}/${file}" property="length" />
+
+			<local name="sha1hash" />
+			<checksum file="${dist}/${file}"  algorithm="SHA-1" property="sha1hash"/>
+
+			<local name="hash" />
+			<property name="hash" value="SHA1:${sha1hash}"/>
+
+			<local name="yyyymmdd" />
+			<tstamp>
+				<format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+			</tstamp>
+
+			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
+				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				url="http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download" />
+
+		</sequential>
+	</macrodef>
 
 	<target name="build-all" depends="clean,compile" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 		
-		<echo file="${versions.file}" append="true">&lt;ZAP></echo>
-		
 		<!-- Keep in alphabetical order ;) -->
 		
-		<antcall target="build-addon"><param name="addon" value="ascanrules"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="coreLang"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="directorylistv1"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="directorylistv2_3"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="directorylistv2_3_lc"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="fuzzdb"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="pscanrules"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="quickstart"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="reveal"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="saverawmessage"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="websocket"/></antcall>
-		
-		<echo file="${versions.file}" append="true">&lt;/ZAP></echo>
+		<build-addon name="ascanrules" />
+		<build-addon name="coreLang" />
+		<build-addon name="directorylistv1" />
+		<build-addon name="directorylistv2_3" />
+		<build-addon name="directorylistv2_3_lc" />
+		<build-addon name="fuzzdb" />
+		<build-addon name="gettingStarted" />
+		<build-addon name="pscanrules" />
+		<build-addon name="quickstart" />
+		<build-addon name="reveal" />
+		<build-addon name="saverawmessage" />
+		<build-addon name="spiderAjax" />
+		<build-addon name="websocket" />
 
 	</target>
 
-	<target name="deploy-addon" description="deploy the specified extension">
-		<copy todir="${zap.plugin.dir}">
-			<fileset dir="${dist}">
-			<include name="${addon}-*.zap"/>
-			</fileset>
-		</copy>
-	</target>
+	<macrodef name="deploy-addon" description="deploy the specified extension">
+		<attribute name="name"/>
+		<sequential>
+			<copy todir="${zap.plugin.dir}">
+				<fileset dir="${dist}">
+				<include name="@{name}-*.zap"/>
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
 
-	<target name="build-deploy-addon" depends="clean,compile" description="build and deploy the specified addon">
-		<antcall target="build-addon"><param name="addon" value="${addon}"/></antcall>
-		<antcall target="deploy-addon"> <param name="addon" value="${addon}"/> </antcall>
-	</target>
+	<macrodef name="build-deploy-addon" description="build and deploy the specified addon">
+		<attribute name="name"/>
+		<sequential>
+			<antcall target="clean" />
+			<antcall target="compile" />
 
+			<build-addon name="@{name}" />
+			<deploy-addon name="@{name}" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="build-deploy-help-addon" description="build and deploy the specified help addon">
+		<attribute name="name"/>
+		<sequential>
+			<antcall target="clean" />
+
+			<build-help-addon name="@{name}" />
+			<deploy-addon name="@{name}" />
+		</sequential>
+	</macrodef>
 	
 	<target name="deploy-ascanrules" description="deploy the active scan rules">
-		<antcall target="build-deploy-addon"> <param name="addon" value="ascanrules"/> </antcall>
+		<build-deploy-addon name="ascanrules" />
 	</target>
 
 	<target name="generate-wiki-ascanrules" description="Generates the wiki of active scan rules">
@@ -265,27 +304,27 @@
 	</target>
 
 	<target name="deploy-directorylistv1" description="deploys Directory List v1.0 add-on">
-		<antcall target="build-deploy-addon"> <param name="addon" value="directorylistv1"/> </antcall>
+		<build-deploy-addon name="directorylistv1" />
 	</target>
 
 	<target name="deploy-directorylistv2_3" description="deploys Directory List v2.3 add-on">
-		<antcall target="build-deploy-addon"> <param name="addon" value="directorylistv2_3"/> </antcall>
+		<build-deploy-addon name="directorylistv2_3" />
 	</target>
 
 	<target name="deploy-directorylistv2_3_lc" description="deploys Directory List v2.3 lower case add-on">
-		<antcall target="build-deploy-addon"> <param name="addon" value="directorylistv2_3_lc"/> </antcall>
+		<build-deploy-addon name="directorylistv2_3_lc" />
 	</target>
 
 	<target name="deploy-exampleRightClickMsg" description="deploy the exampleRightClickMsg extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="exampleRightClickMsg"/> </antcall>
+		<build-deploy-addon name="exampleRightClickMsg" />
 	</target>
 
 	<target name="deploy-exampleTopMenu" description="deploy the exampleTopMenu extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="exampleTopMenu"/> </antcall>
+		<build-deploy-addon name="exampleTopMenu" />
 	</target>
 
 	<target name="deploy-gettingStarted" description="deploy the gettingStarted extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="gettingStarted"/> </antcall>
+		<build-deploy-addon name="gettingStarted" />
 	</target>
 
 	<target name="generate-wiki-gettingStarted" description="Generates the wiki of gettingStarted">
@@ -293,11 +332,11 @@
 	</target>
   
 	<target name="deploy-help" description="deploy the help extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="help"/> </antcall>
+		<build-deploy-help-addon name="help" />
 	</target>
 
 	<target name="deploy-pscanrules" description="deploy the passive scan rules">
-		<antcall target="build-deploy-addon"> <param name="addon" value="pscanrules"/> </antcall>
+		<build-deploy-addon name="pscanrules" />
 	</target>
 
 	<target name="generate-wiki-pscanrules" description="Generates the wiki of passive scan rules">
@@ -305,7 +344,7 @@
 	</target>
 
 	<target name="deploy-quickstart" description="deploy the quick start extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="quickstart"/> </antcall>
+		<build-deploy-addon name="quickstart" />
 	</target>
 
 	<target name="generate-wiki-quickstart" description="Generates the wiki of quickstart">
@@ -313,7 +352,7 @@
 	</target>
 
 	<target name="deploy-reveal" description="deploy the Reveal extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="reveal"/> </antcall>
+		<build-deploy-addon name="reveal" />
 	</target>
 
 	<target name="generate-wiki-reveal" description="Generates the wiki of reveal">
@@ -321,11 +360,11 @@
 	</target>
 	
 	<target name="deploy-saverawmessage" description="deploy the Save Raw Message extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="saverawmessage"/> </antcall>
+		<build-deploy-addon name="saverawmessage" />
 	</target>
 
 	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="spiderAjax"/> </antcall>
+		<build-deploy-addon name="spiderAjax" />
 	</target>
 
 	<target name="generate-wiki-spiderAjax" description="Generates the wiki of spiderAjax">
@@ -333,7 +372,7 @@
 	</target>
 
 	<target name="deploy-websockets" description="deploy the WebSockets extension">
-		<antcall target="build-deploy-addon"> <param name="addon" value="websocket"/> </antcall>
+		<build-deploy-addon name="websocket" />
 	</target>
 
 	<target name="generate-wiki-websockets" description="Generates the wiki of WebSockets">

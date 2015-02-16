@@ -9,7 +9,6 @@
 	Promoted to 'release' status (Issue 1326).
 	]]>
 	</changes>
-	<dependson></dependson>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.spiderAjax.ExtensionAjax</extension>
 	</extensions>

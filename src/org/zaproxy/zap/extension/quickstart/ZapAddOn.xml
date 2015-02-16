@@ -9,7 +9,6 @@
 	Generate the report (arg -quickout) even if view is initialised (Issue 1281).
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.quickstart.ExtensionQuickStart</extension>
 	</extensions>

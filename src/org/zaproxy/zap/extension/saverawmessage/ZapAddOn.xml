@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>Safe menu item will now be enabled in protected and safe modes (Issue 1278).</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.saverawmessage.ExtensionSaveRawHttpMessage</extension>
 	</extensions>

@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>Updated for 2.4 and promoted to release</changes>
-	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.gettingStarted.ExtensionGettingStarted</extension>
 	</extensions>
