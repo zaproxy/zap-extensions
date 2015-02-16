@@ -30,17 +30,7 @@ import javax.inject.Provider;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
-import org.openqa.selenium.Proxy;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.model.HistoryReference;
@@ -50,7 +40,8 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.Browser;
+import org.zaproxy.zap.extension.selenium.Browser;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.network.HttpResponseBody;
 
 import com.crawljax.browser.EmbeddedBrowser;
@@ -60,9 +51,7 @@ import com.crawljax.core.configuration.BrowserConfiguration;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurationBuilder;
 import com.crawljax.core.configuration.ProxyConfiguration;
-import com.crawljax.core.configuration.ProxyConfiguration.ProxyType;
 import com.crawljax.core.plugin.Plugins;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.inject.ProvisionException;
 
@@ -161,7 +150,7 @@ public class SpiderThread implements Runnable {
 		configurationBuilder.setBrowserConfig(new BrowserConfiguration(
 				com.crawljax.browser.EmbeddedBrowser.BrowserType.FIREFOX,
 				this.extension.getAjaxSpiderParam().getNumberOfBrowsers(),
-				new AjaxSpiderBrowserBuilder(extension.getAjaxSpiderParam().getBrowser())));
+				new AjaxSpiderBrowserBuilder(extension.getAjaxSpiderParam().getBrowserId())));
 
 		if (this.extension.getAjaxSpiderParam().isClickDefaultElems()) {
 			configurationBuilder.crawlRules().clickDefaultElements();
@@ -203,25 +192,13 @@ public class SpiderThread implements Runnable {
 			crawljax = new CrawljaxRunner(createCrawljaxConfiguration());
 			crawljax.call();
         } catch (ProvisionException e) {
-            logger.warn("Failed to start browser " + extension.getAjaxSpiderParam().getBrowser(), e);
+            logger.warn("Failed to start browser " + extension.getAjaxSpiderParam().getBrowserId(), e);
             if (View.isInitialised()) {
-                switch (extension.getAjaxSpiderParam().getBrowser()) {
-                case CHROME:
-                    View.getSingleton().showWarningDialog(
-                            extension.getMessages().getString("spiderajax.warn.message.failed.start.browser.chrome"));
-                    break;
-                case PHANTOM_JS:
-                    View.getSingleton().showWarningDialog(
-                            extension.getMessages().getString("spiderajax.warn.message.failed.start.browser.phantomjs"));
-                    break;
-                case INTERNET_EXPLORER:
-                    View.getSingleton().showWarningDialog(
-                            extension.getMessages().getString("spiderajax.warn.message.failed.start.browser.ie"));
-                    break;
-                default:
-                    View.getSingleton().showWarningDialog(
-                            extension.getMessages().getString("spiderajax.warn.message.failed.start.browser"));
-                }
+                ExtensionSelenium extSelenium = (ExtensionSelenium) Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionSelenium.class);
+                Browser browser = Browser.getBrowserWithId(extension.getAjaxSpiderParam().getBrowserId());
+                View.getSingleton().showWarningDialog(extSelenium.getWarnMessageFailedToStart(browser));
             }
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -345,12 +322,7 @@ public class SpiderThread implements Runnable {
 	// NOTE: The implementation of this class was copied from com.crawljax.browser.WebDriverBrowserBuilder since it's not
 	// possible to correctly extend it because of DI issues.
 	// Changes:
-	// - Changed to set the properties to Firefox to enable SSL proxying;
-	// - Changed to use the custom browser enum;
-	// - Removed the code of browsers not (yet?) supported (REMOTE);
-	// - Added support for HtmlUnit.
-	// - Tweaked the method newPhantomJSDriver to ignore SSL/TLS errors, use any protocol version and properly set all cli args;
-	// - Set the proxy configurations to Internet Explorer.
+	// - Changed to use Selenium add-on to leverage the creation of WebDrivers.
 	private static class AjaxSpiderBrowserBuilder implements Provider<EmbeddedBrowser> {
 
 		@Inject
@@ -358,11 +330,11 @@ public class SpiderThread implements Runnable {
 		@Inject
 		private Plugins plugins;
 
-		private final Browser browser;
+		private final String browserId;
 
-		public AjaxSpiderBrowserBuilder(Browser browser) {
+		public AjaxSpiderBrowserBuilder(String browserId) {
 			super();
-			this.browser = browser;
+			this.browserId = browserId;
 		}
 
 		/**
@@ -380,152 +352,12 @@ public class SpiderThread implements Runnable {
 			long crawlWaitReload = configuration.getCrawlRules().getWaitAfterReloadUrl();
 			long crawlWaitEvent = configuration.getCrawlRules().getWaitAfterEvent();
 
-			// Determine the requested browser type
-			EmbeddedBrowser embeddedBrowser = null;
-			switch (browser) {
-			case FIREFOX:
-				embeddedBrowser = newFireFoxBrowser(filterAttributes, crawlWaitReload, crawlWaitEvent);
-				break;
-			case CHROME:
-				embeddedBrowser = newChromeBrowser(filterAttributes, crawlWaitReload, crawlWaitEvent);
-				break;
-			case HTML_UNIT:
-				embeddedBrowser = newHtmlUnitBrowser(filterAttributes, crawlWaitReload, crawlWaitEvent);
-				break;
-			case PHANTOM_JS:
-				embeddedBrowser = newPhantomJSDriver(filterAttributes, crawlWaitReload, crawlWaitEvent);
-				break;
-			case INTERNET_EXPLORER:
-				embeddedBrowser = newInternetExplorerDriver(filterAttributes, crawlWaitReload, crawlWaitEvent);
-				break;
-			default:
-				throw new IllegalStateException("Unrecognized browsertype " + browser);
-			}
+			EmbeddedBrowser embeddedBrowser = WebDriverBackedEmbeddedBrowser.withDriver(ExtensionSelenium.getWebDriver(
+					Browser.getBrowserWithId(browserId),
+					configuration.getProxyConfiguration().getHostname(),
+					configuration.getProxyConfiguration().getPort()), filterAttributes, crawlWaitEvent, crawlWaitReload);
 			plugins.runOnBrowserCreatedPlugins(embeddedBrowser);
 			return embeddedBrowser;
-		}
-
-		private EmbeddedBrowser newFireFoxBrowser(
-				ImmutableSortedSet<String> filterAttributes,
-				long crawlWaitReload,
-				long crawlWaitEvent) {
-			if (configuration.getProxyConfiguration() != null) {
-				FirefoxProfile profile = new FirefoxProfile();
-				String lang = configuration.getBrowserConfig().getLangOrNull();
-				if (!Strings.isNullOrEmpty(lang)) {
-					profile.setPreference("intl.accept_languages", lang);
-				}
-
-				final String hostname = configuration.getProxyConfiguration().getHostname();
-				final int port = configuration.getProxyConfiguration().getPort();
-
-				profile.setPreference("network.proxy.http", hostname);
-				profile.setPreference("network.proxy.http_port", port);
-				profile.setPreference("network.proxy.type", configuration.getProxyConfiguration().getType().toInt());
-				profile.setPreference("network.proxy.ssl", hostname);
-				profile.setPreference("network.proxy.ssl_port", port);
-				/* use proxy for everything, including localhost */
-				profile.setPreference("network.proxy.no_proxies_on", "");
-
-				return WebDriverBackedEmbeddedBrowser.withDriver(
-						new FirefoxDriver(profile),
-						filterAttributes,
-						crawlWaitReload,
-						crawlWaitEvent);
-			}
-
-			return WebDriverBackedEmbeddedBrowser.withDriver(
-					new FirefoxDriver(),
-					filterAttributes,
-					crawlWaitEvent,
-					crawlWaitReload);
-		}
-
-		private EmbeddedBrowser newChromeBrowser(
-				ImmutableSortedSet<String> filterAttributes,
-				long crawlWaitReload,
-				long crawlWaitEvent) {
-			ChromeDriver driverChrome;
-			if (configuration.getProxyConfiguration() != null
-					&& configuration.getProxyConfiguration().getType() != ProxyType.NOTHING) {
-				ChromeOptions optionsChrome = new ChromeOptions();
-				String lang = configuration.getBrowserConfig().getLangOrNull();
-				if (!Strings.isNullOrEmpty(lang)) {
-					optionsChrome.addArguments("--lang=" + lang);
-				}
-				optionsChrome.addArguments("--proxy-server=http://" + configuration.getProxyConfiguration().getHostname() + ":"
-						+ configuration.getProxyConfiguration().getPort());
-				driverChrome = new ChromeDriver(optionsChrome);
-			} else {
-				driverChrome = new ChromeDriver();
-			}
-
-			return WebDriverBackedEmbeddedBrowser.withDriver(driverChrome, filterAttributes, crawlWaitEvent, crawlWaitReload);
-		}
-
-		private EmbeddedBrowser newHtmlUnitBrowser(
-				ImmutableSortedSet<String> filterAttributes,
-				long crawlWaitReload,
-				long crawlWaitEvent) {
-
-			HtmlUnitDriver driverHtmlUnit = new HtmlUnitDriver(true);
-			if (configuration.getProxyConfiguration() != null
-					&& configuration.getProxyConfiguration().getType() != ProxyType.NOTHING) {
-				driverHtmlUnit.setProxy(
-						configuration.getProxyConfiguration().getHostname(),
-						configuration.getProxyConfiguration().getPort());
-			}
-
-			return WebDriverBackedEmbeddedBrowser.withDriver(driverHtmlUnit, filterAttributes, crawlWaitEvent, crawlWaitReload);
-		}
-
-		private EmbeddedBrowser newPhantomJSDriver(
-				ImmutableSortedSet<String> filterAttributes,
-				long crawlWaitReload,
-				long crawlWaitEvent) {
-
-			DesiredCapabilities caps = new DesiredCapabilities();
-			caps.setCapability("takesScreenshot", true);
-
-			final ArrayList<String> cliArgs = new ArrayList<>(5);
-			cliArgs.add("--ssl-protocol=any");
-			cliArgs.add("--ignore-ssl-errors=true");
-
-			// TODO Uncomment when Constant.getZapHome() returns (always) an absolute path. 
-			// cliArgs.add("--webdriver-logfile=" + Constant.getZapHome() + "/phantomjsdriver.log");
-			cliArgs.add("--webdriver-loglevel=WARN");
-
-			final ProxyConfiguration proxyConf = configuration.getProxyConfiguration();
-			if (proxyConf != null && proxyConf.getType() != ProxyType.NOTHING) {
-				cliArgs.add("--proxy=" + proxyConf.getHostname() + ":" + proxyConf.getPort());
-				cliArgs.add("--proxy-type=http");
-			}
-
-			caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cliArgs);
-
-			PhantomJSDriver phantomJsDriver = new PhantomJSDriver(caps);
-
-			return WebDriverBackedEmbeddedBrowser.withDriver(phantomJsDriver, filterAttributes, crawlWaitEvent, crawlWaitReload);
-		}
-
-		private EmbeddedBrowser newInternetExplorerDriver(
-				ImmutableSortedSet<String> filterAttributes,
-				long crawlWaitReload,
-				long crawlWaitEvent) {
-
-			DesiredCapabilities caps = new DesiredCapabilities();
-			caps.setCapability(InternetExplorerDriver.IE_USE_PRE_PROCESS_PROXY, true);
-
-			final ProxyConfiguration proxyConf = configuration.getProxyConfiguration();
-			if (proxyConf != null && proxyConf.getType() != ProxyType.NOTHING) {
-				final String proxy = proxyConf.getHostname() + ":" + proxyConf.getPort();
-				Proxy proxyCap = new org.openqa.selenium.Proxy();
-				proxyCap.setHttpProxy(proxy).setSslProxy(proxy);
-				caps.setCapability(CapabilityType.PROXY, proxyCap);
-			}
-			InternetExplorerDriver ieDriver = new InternetExplorerDriver(caps);
-
-			return WebDriverBackedEmbeddedBrowser.withDriver(ieDriver, filterAttributes, crawlWaitEvent, crawlWaitReload);
 		}
 	}
 }

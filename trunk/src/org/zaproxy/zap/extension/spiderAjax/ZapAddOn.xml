@@ -6,9 +6,18 @@
 	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
-	Promoted to 'release' status (Issue 1326).
+	Promoted to 'release' status (Issue 1326).<br>
+	Set to depend on 'Selenium' add-on (Issue 1534).
 	]]>
 	</changes>
+	<dependencies>
+		<addons>
+			<addon>
+				<id>selenium</id>
+				<semver>1.*</semver>
+			</addon>
+		</addons>
+	</dependencies>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.spiderAjax.ExtensionAjax</extension>
 	</extensions>
@@ -16,7 +25,7 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
 
