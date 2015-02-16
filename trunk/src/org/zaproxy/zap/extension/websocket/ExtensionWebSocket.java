@@ -197,6 +197,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		preparedIgnoredChannels = new ArrayList<>();
 		ignoredChannelList = new ArrayList<>();
+
+		mode = Control.getSingleton().getMode();
 	}
 	
     @Override
