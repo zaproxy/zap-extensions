@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url>http://www.computerist.org/blog/2014/07/23/Transparent-HTTPS-proxying-with-ZAP/</url>
 	<changes>Call start explicitly as its no longer called from the constructor</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.sniTerminator.ExtensionSniTerminator</extension>
 	</extensions>

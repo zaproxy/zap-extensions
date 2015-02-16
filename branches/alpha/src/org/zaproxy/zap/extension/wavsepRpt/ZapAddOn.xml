@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>First version</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.wavsepRpt.ExtensionWavsepReport</extension>
 	</extensions>

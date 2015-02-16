@@ -10,7 +10,6 @@
 	Enables "Call Graph" pop up menu when in "Protected" and "Safe" modes (Issue 1278).
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.callgraph.ExtensionCallGraph</extension>
 	</extensions>

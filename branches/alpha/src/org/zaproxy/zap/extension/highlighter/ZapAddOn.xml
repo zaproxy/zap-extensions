@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>Restored the highlighting functionality.</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.highlighter.ExtensionHighlighter</extension>
 	</extensions>

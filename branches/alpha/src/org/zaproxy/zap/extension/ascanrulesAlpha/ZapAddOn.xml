@@ -17,7 +17,6 @@
     Promoted Source Code Disclosure - WEB-INF to beta<br>
   	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.ascanrulesAlpha.ExtensionAscanRulesAlpha</extension>
 	</extensions>
