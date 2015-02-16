@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>WAFP Extension</name>
-	<version>1.0</version>
+	<version>1</version>
 	<description>Fingerprint web applications</description>
 	<author>ZAP Dev Team</author>
 	<url>http://code.google.com/p/zaproxy/</url>
