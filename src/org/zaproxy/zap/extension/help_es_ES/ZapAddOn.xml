@@ -5,7 +5,6 @@
 	<author>ZAP Crowdin Team</author>
 	<url>https://crowdin.com/project/owasp-zap-help</url>
 	<changes>First version.</changes>
-	<dependson/>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>

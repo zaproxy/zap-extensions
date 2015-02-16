@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>Fixes an error that occurred when adding file payloads.</changes>
-	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.multiFuzz.ExtensionFuzz</extension>
 	    <extension>org.zaproxy.zap.extension.multiFuzz.impl.http.ExtensionRegister</extension>

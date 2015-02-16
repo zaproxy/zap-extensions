@@ -4,7 +4,6 @@
 	<description>Fingerprint web applications</description>
 	<author>ZAP Dev Team</author>
 	<url>http://code.google.com/p/zaproxy/</url>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.cmss.CMSSTopMenu</extension>
 	</extensions>

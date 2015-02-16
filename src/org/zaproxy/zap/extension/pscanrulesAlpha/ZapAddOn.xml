@@ -16,7 +16,6 @@
 	Detect Directory Browsing / Listings on Microsoft IIS<br>
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.pscanrulesAlpha.ExtensionPscanRulesAlpha</extension>
 	</extensions>

@@ -10,7 +10,6 @@
 	Correctly unload the add-on (Issue 1344).
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.browserView.ExtensionHttpPanelBrowserView</extension>
 	</extensions>

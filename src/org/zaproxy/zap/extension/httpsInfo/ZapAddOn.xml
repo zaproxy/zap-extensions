@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>Updated add-on dir structure (Issue 1113).</changes>
-	<dependson/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.httpsInfo.RightClickMenu</extension>
 	</extensions>
