@@ -80,7 +80,6 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 		revealParam = new RevealParam();
 
 		revealAPI = new RevealAPI(this);
-		revealAPI.addApiOptions(revealParam);
 	}
 
 	@Override

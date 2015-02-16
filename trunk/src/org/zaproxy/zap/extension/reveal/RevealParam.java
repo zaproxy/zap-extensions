@@ -21,10 +21,9 @@ package org.zaproxy.zap.extension.reveal;
 
 import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.common.AbstractParam;
-import org.zaproxy.zap.extension.api.ZapApiIgnore;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 
-public class RevealParam extends AbstractParam {
+public class RevealParam extends VersionedAbstractParam {
 
 	private static final Logger logger = Logger.getLogger(RevealParam.class);
 
@@ -34,17 +33,12 @@ public class RevealParam extends AbstractParam {
 	 * It only needs to be updated for configurations changes (not releases of the add-on).
 	 * </p>
 	 */
-	private static final long PARAM_CURRENT_VERSION = 1;
+	private static final int PARAM_CURRENT_VERSION = 1;
 
 	/**
 	 * The base configuration key for all "reveal" configurations.
 	 */
 	private static final String PARAM_BASE_KEY = "reveal";
-
-	/**
-	 * The configuration key for the version of the reveal configurations.
-	 */
-	private static final String PARAM_REVEAL_VERSION = PARAM_BASE_KEY + "@version";
 
 	/**
 	 * The configuration key for the state of reveal functionality.
@@ -56,13 +50,17 @@ public class RevealParam extends AbstractParam {
 	private boolean reveal = PARAM_REVEAL_STATE_DEFAULT_VALUE;
 
 	@Override
-	protected void parse() {
-		long version = getConfig().getLong(PARAM_REVEAL_VERSION, 0);
+	protected int getCurrentVersion() {
+		return PARAM_CURRENT_VERSION;
+	}
 
-		if (!isCurrentParamVersion(version)) {
-			update(version);
-		}
+	@Override
+	protected String getConfigVersionKey() {
+		return PARAM_BASE_KEY + VERSION_ATTRIBUTE;
+	}
 
+	@Override
+	protected void parseImpl() {
 		try {
 			reveal = getConfig().getBoolean(PARAM_REVEAL_STATE, PARAM_REVEAL_STATE_DEFAULT_VALUE);
 		} catch (ConversionException e) {
@@ -70,13 +68,10 @@ public class RevealParam extends AbstractParam {
 		}
 	}
 
-	private static boolean isCurrentParamVersion(long version) {
-		return version != PARAM_CURRENT_VERSION;
-	}
-
-	private void update(long oldVersion) {
+	@Override
+	protected void updateConfigsImpl(int fileVersion) {
 		// When in ZAP "core"
-		if (oldVersion == 0) {
+		if (fileVersion == NO_CONFIG_VERSION) {
 			try {
 				final String oldKey = "view.reveal";
 				boolean oldValue = getConfig().getBoolean(oldKey, false);
@@ -84,21 +79,15 @@ public class RevealParam extends AbstractParam {
 
 				getConfig().setProperty(PARAM_REVEAL_STATE, Boolean.valueOf(oldValue));
 			} catch (ConversionException e) {
-				logger.error(
-						"Error while updating the reveal state from old version [" + oldVersion + "], " + e.getMessage(),
-						e);
+				logger.error("Error while updating the reveal state from old version [" + fileVersion + "]", e);
 			}
 		}
-
-		getConfig().setProperty(PARAM_REVEAL_VERSION, Long.valueOf(PARAM_CURRENT_VERSION));
 	}
 
-	@ZapApiIgnore
 	public boolean isReveal() {
 		return reveal;
 	}
 
-	@ZapApiIgnore
 	public void setReveal(boolean reveal) {
 		if (this.reveal != reveal) {
 			this.reveal = reveal;
