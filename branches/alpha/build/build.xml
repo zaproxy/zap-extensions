@@ -14,7 +14,7 @@
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 	<!-- This assumes you also have the zaproxy-2.4 project (used for the weekly release -->
-	<property name="zap-2.4.plugin.dir" location="../../zaproxy-dev2/src/plugin" />
+	<property name="zap-2.4.plugin.dir" location="../../zaproxy-2.4/src/plugin" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
