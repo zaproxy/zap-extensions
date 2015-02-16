@@ -1,16 +1,12 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>8</version>
+	<version>9</version>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes (Issues 503, 609, 1104 and 1105).<br>
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).<br>
-	Updated add-on dir structure (Issue 1113).<br>
-	Restored the rendering of a custom icon for "handshake" messages shown in "Sites" tab.
+	Minor code changes and fix of exception.
 	]]>
 	</changes>
 	<dependson/>
@@ -21,6 +17,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
