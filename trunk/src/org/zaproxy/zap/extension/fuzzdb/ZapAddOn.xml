@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url>http://code.google.com/p/fuzzdb/</url>
 	<changes>Removed a file entry from the ZapAddOn.xml file because it doesn't exist.</changes>
-	<dependson/>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>

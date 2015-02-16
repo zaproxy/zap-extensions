@@ -5,7 +5,6 @@
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>Code changes and API documentation.</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.reveal.ExtensionReveal</extension>
 	</extensions>

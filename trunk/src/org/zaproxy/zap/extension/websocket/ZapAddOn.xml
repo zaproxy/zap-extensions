@@ -9,7 +9,6 @@
 	Minor code changes and fix of exception.
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.websocket.ExtensionWebSocket</extension>
 	</extensions>

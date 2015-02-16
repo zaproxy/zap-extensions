@@ -13,7 +13,6 @@
 	Application Error Disclosure shows evidence in attack (Issue 1487).
 	]]>
 	</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.pscanrules.ExtensionPscanRules</extension>
 	</extensions>

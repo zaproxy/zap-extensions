@@ -6,7 +6,6 @@
 	<version>5</version>
 	<url>https://crowdin.com/project/owasp-zap</url>
 	<changes>Latest translations from Crowdin - new Japanese translations and support for Azerbaijani</changes>
-	<dependson/>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.coreLang.ExtensionCoreLanguages</extension>
 	</extensions>
