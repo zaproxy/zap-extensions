@@ -19,6 +19,8 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -26,6 +28,7 @@ import javax.swing.ImageIcon;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -38,6 +41,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
 /**
  * Main class of the plugin, it instantiates the rest of them.
@@ -48,6 +52,15 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	private static final Logger logger = Logger.getLogger(ExtensionAjax.class);
 	public static final int PROXY_LISTENER_ORDER = ProxyListenerLog.PROXY_LISTENER_ORDER + 1;
 	public static final String NAME = "ExtensionSpiderAjax";
+
+	private static final List<Class<?>> DEPENDENCIES;
+
+	static {
+		List<Class<?>> dependencies = new ArrayList<>(1);
+		dependencies.add(ExtensionSelenium.class);
+
+		DEPENDENCIES = Collections.unmodifiableList(dependencies);
+	}
 
 	private SpiderPanel spiderPanel = null;
 	private PopupMenuAjax popupMenuSpider = null;
@@ -131,6 +144,22 @@ public class ExtensionAjax extends ExtensionAdaptor {
         super.unload();
     }
 
+    @Override
+    public List<String> getActiveActions() {
+        if (isSpiderRunning()) {
+            List<String> activeActions = new ArrayList<>(1);
+            activeActions.add(getMessages().getString("spiderajax.active.action"));
+            return activeActions;
+        }
+
+        return super.getActiveActions();
+    }
+
+	@Override
+	public List<Class<?>> getDependencies() {
+		return DEPENDENCIES;
+	}
+
 	/**
 	 * Creates the panel with the config of the proxy
 	 * @return the panel
@@ -192,7 +221,10 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	private OptionsAjaxSpider getOptionsSpiderPanel() {
 		if (optionsAjaxSpider == null) {
-			optionsAjaxSpider = new OptionsAjaxSpider(this);
+			ExtensionSelenium extSelenium = (ExtensionSelenium) Control.getSingleton()
+					.getExtensionLoader()
+					.getExtension(ExtensionSelenium.class);
+			optionsAjaxSpider = new OptionsAjaxSpider(this.getMessages(), extSelenium.createBrowsersComboBoxModel());
 		}
 		return optionsAjaxSpider;
 	}

@@ -21,41 +21,28 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.io.File;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.SortOrder;
 
-import org.apache.log4j.Logger;
-import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.ie.InternetExplorerDriverService;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.Browser;
+import org.zaproxy.zap.extension.selenium.BrowsersComboBoxModel;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
 public class OptionsAjaxSpider extends AbstractParamPanel {
-
-	private static final String WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY = ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
-	private static final String PHANTOM_JS_BINARY_SYSTEM_PROPERTY = PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
-	private static final String INTERNET_EXPLORER_DRIVER_SYSTEM_PROPERTY = InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY;
 
 	private static final long serialVersionUID = -1350537974139536669L;
 	
@@ -63,8 +50,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	
 	private OptionsAjaxSpiderTableModel ajaxSpiderClickModel = null;
 
-	private ExtensionAjax extension=null;
 	private JPanel panelCrawljax = null;
+	private final BrowsersComboBoxModel browsersComboBoxModel;
 	private ZapNumberSpinner txtNumBro = null;
 	private ZapNumberSpinner maximumDepthNumberSpinner = null;
 	private ZapNumberSpinner maximumStatesNumberSpinner = null;
@@ -75,29 +62,21 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JCheckBox clickDefaultElems = null;
 	private JCheckBox clickElemsOnce = null;
 	private JCheckBox randomInputs = null;
-	private JRadioButton firefox = null;
-	private JRadioButton chrome = null;
-	private JRadioButton ie = null;
-	private JRadioButton htmlunit = null;
-	private JRadioButton phantomJs;
-	private JButton selectChromeDriverButton;
-	private JButton selectPhantomJsBinaryButton;
-	private JButton selectIeDriverButton;
+
 	private JLabel browsers = null;
 	private JLabel depth = null;
 	private JLabel crawlStates = null;
 	private JLabel maxDuration = null;
 	private JLabel eventWait = null;
 	private JLabel reloadWait = null;
-	private static final Logger logger = Logger.getLogger(OptionsAjaxSpider.class);
 
-	/**
-	 * Constructor for the class
-	 * @param extension
-	 */
-    public OptionsAjaxSpider(ExtensionAjax extension) {
+	private ResourceBundle resourceBundle;
+
+    public OptionsAjaxSpider(ResourceBundle resourceBundle, BrowsersComboBoxModel browsersComboBoxModel) {
         super();
-    	this.extension=extension;
+        this.resourceBundle = resourceBundle;
+        this.browsersComboBoxModel = browsersComboBoxModel;
+
  		initialize();
    }
     
@@ -107,7 +86,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	 */
 	private void initialize() {
         this.setLayout(new CardLayout());
-        this.setName(this.extension.getMessages().getString("spiderajax.options.title"));
+        this.setName(resourceBundle.getString("spiderajax.options.title"));
 	    if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
 	    	this.setSize(391, 320);
 	    }
@@ -166,7 +145,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JCheckBox getClickDefaultElems() {
 			if (clickDefaultElems == null) {
 				clickDefaultElems = new JCheckBox();
-				clickDefaultElems.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.defaultElems"));
+				clickDefaultElems.setText(resourceBundle.getString("spiderajax.proxy.local.label.defaultElems"));
 				clickDefaultElems.addItemListener(new java.awt.event.ItemListener() {
 					@Override
 					public void itemStateChanged(java.awt.event.ItemEvent e) {
@@ -180,7 +159,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JCheckBox getClickElemsOnce() {
 		if (clickElemsOnce == null) {
 			clickElemsOnce = new JCheckBox();
-			clickElemsOnce.setText(this.extension.getMessages().getString("spiderajax.options.label.clickonce"));
+			clickElemsOnce.setText(resourceBundle.getString("spiderajax.options.label.clickonce"));
 		}
 		return clickElemsOnce;
 	}
@@ -188,68 +167,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private JCheckBox getRandomInputs() {
 		if (randomInputs == null) {
 			randomInputs = new JCheckBox();
-			randomInputs.setText(this.extension.getMessages().getString("spiderajax.options.label.randominputs"));
+			randomInputs.setText(resourceBundle.getString("spiderajax.options.label.randominputs"));
 		}
 		return randomInputs;
 	}
 	
 
-	/**
-	 * 
-	 * @return the firefox radio button
-	 */
-	private JRadioButton getFirefox() {
-		if (firefox == null) {
-			firefox = new JRadioButton();
-			firefox.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.firefox"));
-		}
-		return firefox;
-	}
-	
-	/**
-	 * 
-	 * @return the chrome radio button
-	 */
-	private JRadioButton getChrome() {
-		if (chrome == null) {
-			chrome = new JRadioButton();
-			chrome.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.chrome"));
-		}
-		return chrome;
-	}
-	
-	/**
-	 * 
-	 * @return the IE radio button
-	 */
-	private JRadioButton getIE() {
-		if (ie == null) {
-			ie = new JRadioButton();
-			ie.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.ie"));
-		}
-		return ie;
-	}
-	
-	/**
-	 * 
-	 * @return the Htmlunit radio button
-	 */
-	private JRadioButton getHtmlunit() {
-		if (htmlunit == null) {
-			htmlunit = new JRadioButton();
-			htmlunit.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.htmlunit"));
-		}
-		return htmlunit;
-	}
-
-	private JRadioButton getPhantomJs() {
-		if (phantomJs == null) {
-			phantomJs = new JRadioButton();
-			phantomJs.setText(this.extension.getMessages().getString("spiderajax.proxy.local.label.phantomjs"));
-		}
-		return phantomJs;
-	}
-	
 	/**
 	 * 
 	 */
@@ -273,26 +196,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	    getRandomInputs().setSelected(ajaxSpiderParam.isRandomInputs());
 	    
 	    setClickElemsEnabled(!ajaxSpiderParam.isClickDefaultElems());
-	    	       
-	    switch (ajaxSpiderParam.getBrowser()) {
-	    case FIREFOX:
-	    	this.getFirefox().setSelected(true);
-	    	break;
-	    case CHROME:
-	    	this.getChrome().setSelected(true);
-	    	break;
-	    case HTML_UNIT:
-	    	this.getHtmlunit().setSelected(true);
-	    	break;
-	    case PHANTOM_JS:
-	    	this.getPhantomJs().setSelected(true);
-	    	break;
-	    case INTERNET_EXPLORER:
-	    	this.getIE().setSelected(true);
-	    	break;
-	    default:
-	    	this.getFirefox().setSelected(true);
-	    }
+
+		browsersComboBoxModel.setSelectedBrowser(ajaxSpiderParam.getBrowserId());
 	}
 	
 	/**
@@ -318,47 +223,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 		ajaxSpiderParam.setReloadWait(reloadWaitNumberSpinner.getValue().intValue());
 		ajaxSpiderParam.setElems(getAjaxSpiderClickModel().getElements());
 
-		if(getFirefox().isSelected()){
-			ajaxSpiderParam.setBrowser(Browser.FIREFOX);
-		} else if(getChrome().isSelected()){
-			ajaxSpiderParam.setBrowser(Browser.CHROME);
-		} else if(getHtmlunit().isSelected()){
-			ajaxSpiderParam.setBrowser(Browser.HTML_UNIT);
-		} else if(getPhantomJs().isSelected()){
-			ajaxSpiderParam.setBrowser(Browser.PHANTOM_JS);
-		} else if(getIE().isSelected()){
-			ajaxSpiderParam.setBrowser(Browser.INTERNET_EXPLORER);
-		}
-	}
-
-	private JButton getSelectChromeDriverButton() {
-		if (selectChromeDriverButton == null) {
-			selectChromeDriverButton = new JButton(this.extension.getMessages().getString(
-					"spiderajax.options.select.chrome.driver.button.label"));
-			selectChromeDriverButton.addActionListener(new SetSystemPropertyFromFileChooser(
-					WEBDRIVER_CHROME_DRIVER_SYSTEM_PROPERTY));
-		}
-		return selectChromeDriverButton;
-	}
-
-	private JButton getSelectPhantomJsBinaryButton() {
-		if (selectPhantomJsBinaryButton == null) {
-			selectPhantomJsBinaryButton = new JButton(this.extension.getMessages().getString(
-					"spiderajax.options.select.phantomjs.binary.button.label"));
-			selectPhantomJsBinaryButton.addActionListener(new SetSystemPropertyFromFileChooser(
-					PHANTOM_JS_BINARY_SYSTEM_PROPERTY));
-		}
-		return selectPhantomJsBinaryButton;
-	}
-
-	private JButton getSelectIeDriverButton() {
-		if (selectIeDriverButton == null) {
-			selectIeDriverButton = new JButton(this.extension.getMessages().getString(
-					"spiderajax.options.select.ie.driver.button.label"));
-			selectIeDriverButton.addActionListener(new SetSystemPropertyFromFileChooser(
-					INTERNET_EXPLORER_DRIVER_SYSTEM_PROPERTY));
-		}
-		return selectIeDriverButton;
+		ajaxSpiderParam.setBrowserId(browsersComboBoxModel.getSelectedItem().getBrowser().getId());
 	}
 
 	/**
@@ -374,19 +239,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			
 			panelCrawljax.setName("");
 			
-			ButtonGroup browsersButtonGroup = new ButtonGroup();
-			browsersButtonGroup.add(getFirefox());
-			browsersButtonGroup.add(getChrome());
-			browsersButtonGroup.add(getHtmlunit());
-			browsersButtonGroup.add(getPhantomJs());
-			browsersButtonGroup.add(getIE());
-			
-			browsers = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.browsers"));
-			depth = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.depth"));
-			crawlStates = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.crawlstates"));
-			maxDuration  = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.maxduration"));
-			eventWait = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.eventwait"));
-			reloadWait = new JLabel(this.extension.getMessages().getString("spiderajax.options.label.reloadwait"));
+			browsers = new JLabel(resourceBundle.getString("spiderajax.options.label.browsers"));
+			depth = new JLabel(resourceBundle.getString("spiderajax.options.label.depth"));
+			crawlStates = new JLabel(resourceBundle.getString("spiderajax.options.label.crawlstates"));
+			maxDuration  = new JLabel(resourceBundle.getString("spiderajax.options.label.maxduration"));
+			eventWait = new JLabel(resourceBundle.getString("spiderajax.options.label.eventwait"));
+			reloadWait = new JLabel(resourceBundle.getString("spiderajax.options.label.reloadwait"));
 
 			GridBagConstraints gbc = new GridBagConstraints();
 			
@@ -400,46 +258,16 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			gbc.gridwidth = 2;
 			gbc.insets = new java.awt.Insets(2,2,2,2);
 			gbc.anchor = GridBagConstraints.LINE_START;
-			innerPanel.add(new JLabel(this.extension.getMessages().getString("spiderajax.proxy.local.label.browsers")), gbc);
+			innerPanel.add(new JLabel(resourceBundle.getString("spiderajax.proxy.local.label.browsers")), gbc);
 			
 			gbc.gridy++;
 			gbc.gridwidth = 1;
-			innerPanel.add(getFirefox(), gbc);
+			innerPanel.add(new JComboBox<>(browsersComboBoxModel), gbc);
 
-			gbc.gridy++;
-			innerPanel.add(getChrome(), gbc);
-			
-			gbc.gridx = 1;
-			gbc.fill = GridBagConstraints.NONE;
-			innerPanel.add(getSelectChromeDriverButton(), gbc);
-			
-			gbc.gridy++;
-			gbc.gridx = 0;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			innerPanel.add(getHtmlunit(), gbc);
-			
-			gbc.gridy++;
-			innerPanel.add(getPhantomJs(), gbc);
-			
-			gbc.gridx = 1;
-			gbc.fill = GridBagConstraints.NONE;
-			innerPanel.add(getSelectPhantomJsBinaryButton(), gbc);
-			
-			gbc.gridy++;
-			gbc.gridx = 0;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			innerPanel.add(getIE(), gbc);
-			
-			gbc.gridx = 1;
-			gbc.fill = GridBagConstraints.NONE;
-			innerPanel.add(getSelectIeDriverButton(), gbc);
-			
 			//Number of browsers Option
 			gbc.gridy++;
 			gbc.gridx = 0;
 			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.anchor = GridBagConstraints.LINE_START;
-			gbc.insets = new java.awt.Insets(2,2,2,2);		
 			innerPanel.add(browsers, gbc);
 
 			gbc.gridx = 1;
@@ -518,10 +346,11 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 			//Select Elements to Click
 			gbc.gridy++;
 			gbc.insets = new java.awt.Insets(16,2,2,2);
-			innerPanel.add(new JLabel(this.extension.getMessages().getString("spiderajax.options.label.clickelems")),gbc);
+			innerPanel.add(new JLabel(resourceBundle.getString("spiderajax.options.label.clickelems")),gbc);
 			
 			elemsOptionsPanel = new AjaxSpiderMultipleOptionsPanel(getAjaxSpiderClickModel());
 			gbc.gridy++;
+			gbc.weighty = 1.0D;
 			gbc.insets = new java.awt.Insets(2,2,2,2);
 			innerPanel.add(elemsOptionsPanel, gbc);
 			
@@ -642,30 +471,4 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         }
 	}
 	
-    private static class SetSystemPropertyFromFileChooser implements ActionListener {
-
-        private final String property;
-
-        public SetSystemPropertyFromFileChooser(String property) {
-            this.property = property;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JFileChooser fileChooser = new JFileChooser();
-            String path = System.getProperty(property);
-            if (path != null) {
-                File file = new File(path);
-                if (file.exists()) {
-                    fileChooser.setSelectedFile(file);
-                }
-            }
-            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                final File selectedFile = fileChooser.getSelectedFile();
-
-                System.setProperty(property, selectedFile.getAbsolutePath());
-            }
-        }
-    }
-
   }  //  @jve:decl-index=0:visual-constraint="10,10"

@@ -27,39 +27,11 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
+import org.zaproxy.zap.extension.selenium.Browser;
 
 public class AjaxSpiderParam extends VersionedAbstractParam {
 
     private static final Logger logger = Logger.getLogger(AjaxSpiderParam.class);
-
-    public enum Browser {
-        CHROME("chrome"),
-        FIREFOX("firefox"),
-        HTML_UNIT("htmlunit"),
-        PHANTOM_JS("phantomjs"),
-        INTERNET_EXPLORER("ie");
-
-        private final String id;
-
-        private Browser(String id) {
-            this.id = id;
-        }
-
-        private static Browser getBrowserById(String id) {
-            if (CHROME.id.equals(id)) {
-                return CHROME;
-            } else if (FIREFOX.id.equals(id)) {
-                return FIREFOX;
-            } else if (HTML_UNIT.id.equals(id)) {
-                return HTML_UNIT;
-            } else if (PHANTOM_JS.id.equals(id)) {
-                return PHANTOM_JS;
-            } else if (INTERNET_EXPLORER.id.equals(id)) {
-                return INTERNET_EXPLORER;
-            }
-            return FIREFOX;
-        }
-    };
 
     /**
      * The current version of the configurations. Used to keep track of configuration changes between releases, in case
@@ -127,7 +99,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     
     private static final int DEFAULT_RELOAD_WAIT_TIME = 1000;
 
-    private static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
+    private static final String DEFAULT_BROWSER_ID = Browser.FIREFOX.getId();
 
     private static final boolean DEFAULT_CLICK_DEFAULT_ELEMS = true;
 
@@ -146,7 +118,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private List<AjaxSpiderParamElem> elems = null;
     private List<String> enabledElemsNames = null;
 
-    private Browser browser;
+    private String browserId;
 
     private boolean clickDefaultElems;
     private boolean clickElemsOnce;
@@ -210,18 +182,17 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             logger.error("Error while loading the reload wait time: " + e.getMessage(), e);
         }
         
-        String browserId;
         try {
-            browserId = getConfig().getString(BROWSER_ID_KEY, DEFAULT_BROWSER.id);
+            browserId = getConfig().getString(BROWSER_ID_KEY, DEFAULT_BROWSER_ID);
         } catch (ConversionException e) {
             logger.error("Error while loading the browser id: " + e.getMessage(), e);
-            browserId = DEFAULT_BROWSER.id;
+            browserId = DEFAULT_BROWSER_ID;
         }
         try {
-            this.browser = Browser.getBrowserById(browserId);
+            Browser.getBrowserWithId(browserId);
         } catch (IllegalArgumentException e) {
-            logger.warn("Unknow browser [" + browserId + "] using default [" + DEFAULT_BROWSER.id + "].", e);
-            this.browser = DEFAULT_BROWSER;
+            logger.warn("Unknow browser [" + browserId + "] using default [" + DEFAULT_BROWSER_ID + "].", e);
+            browserId = DEFAULT_BROWSER_ID;
         }
 
         try {
@@ -359,13 +330,13 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         getConfig().setProperty(RELOAD_WAIT_TIME_KEY, Integer.valueOf(reloadWait));
     }
 
-    public Browser getBrowser() {
-        return browser;
+    public String getBrowserId() {
+        return browserId;
     }
 
-    public void setBrowser(Browser browser) {
-        this.browser = browser;
-        getConfig().setProperty(BROWSER_ID_KEY, browser.id);
+    public void setBrowserId(String browserId) {
+        this.browserId = browserId;
+        getConfig().setProperty(BROWSER_ID_KEY, browserId);
     }
 
     public boolean isClickDefaultElems() {
