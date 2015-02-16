@@ -67,12 +67,17 @@
 			<local name="addOnCapitalised" />
 			<capitalise name="addOnCapitalised" value="@{addOn}" />
 
+			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{addOn}/ZapAddOn.xml"/>
+			<local name="version"/>
+			<property name="version" value="${zapaddon.version}" />
+
 			<generatewiki basesrcdir="${src}/org/zaproxy/zap/extension/@{addOn}/resources" basedestdir="${wiki.dir}"
 				helpcontentsdir="contents/" helpcontentsinclude=".*\.html"
 				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="https://zap-extensions.googlecode.com/svn/wiki/images/"
 				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.wiki"
 				helpfileextension=".html" wikifileextension=".wiki"
-				srctocfile="toc.xml" srcmapfile="map.jhm" wikitocfilename="TableOfContents-${addOnCapitalised}">
+				srctocfile="toc.xml" srcmapfile="map.jhm" wikitocfilename="TableOfContents-${addOnCapitalised}"
+				labels="UserGuide-${addOnCapitalised}-v${version}">
 
 				<!-- Default language is at root of dest dir -->
 				<helpdir src="help" dest="" />
