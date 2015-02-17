@@ -95,6 +95,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestResultsTableModel.ZestResultsTableEntry;
 import org.zaproxy.zap.extension.zest.dialogs.ZestDialogManager;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
@@ -406,6 +407,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			recordButton.setSelectedIcon(RECORD_ON_ICON);
 			recordButton.setToolTipText(Constant.messages.getString("zest.toolbar.button.record.off"));
 			recordButton.setSelectedToolTipText(Constant.messages.getString("zest.toolbar.button.record.on"));
+			DisplayUtils.scaleIcon(recordButton);
 			
 			recordButton.addActionListener(new java.awt.event.ActionListener() {
 				@Override
