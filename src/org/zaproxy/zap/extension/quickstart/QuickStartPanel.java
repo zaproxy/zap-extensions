@@ -50,6 +50,7 @@ import org.zaproxy.zap.extension.brk.BreakPanel;
 import org.zaproxy.zap.extension.search.SearchPanel;
 import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.utils.DesktopUtils;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.NodeSelectDialog;
@@ -73,7 +74,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	}
 
 	private void initialize() {
-		this.setIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/147.png")));	// 'lightning' icon
+		this.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/147.png"))));	// 'lightning' icon
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Event.CTRL_MASK | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
 		this.setLayout(new BorderLayout());
@@ -212,7 +213,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		if (attackButton == null) {
 			attackButton = new JButton();
 			attackButton.setText(Constant.messages.getString("quickstart.button.label.attack"));
-			attackButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/147.png")));	// 'lightning' icon
+			attackButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/147.png"))));	// 'lightning' icon
 			attackButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.attack"));
 
 			attackButton.addActionListener(new java.awt.event.ActionListener() { 
@@ -229,7 +230,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		if (stopButton == null) {
 			stopButton = new JButton();
 			stopButton.setText(Constant.messages.getString("quickstart.button.label.stop"));
-			stopButton.setIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/142.png")));	// 'stop' icon
+			stopButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(SearchPanel.class.getResource("/resource/icon/16/142.png"))));	// 'stop' icon
 			stopButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.stop"));
 			stopButton.setEnabled(false);
 
