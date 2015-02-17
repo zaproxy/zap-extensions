@@ -45,6 +45,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.api.API;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
@@ -150,6 +151,7 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 			revealButton.setToolTipText(Constant.messages.getString("reveal.button.enable"));
 			revealButton.setSelectedIcon(new ImageIcon(ExtensionReveal.class.getResource("resources/icons/043.png"))); // 'light on' icon
 			revealButton.setSelectedToolTipText(Constant.messages.getString("reveal.button.disable"));
+			DisplayUtils.scaleIcon(revealButton);
 
 			revealButton.addItemListener(new ItemListener() {
 
