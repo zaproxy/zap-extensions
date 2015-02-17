@@ -74,7 +74,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	}
 
 	private void initialize() {
-		this.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/147.png"))));	// 'lightning' icon
+		this.setIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/147.png")));	// 'lightning' icon
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Event.CTRL_MASK | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
 		this.setLayout(new BorderLayout());
@@ -111,7 +111,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 					"/org/zaproxy/zap/extension/quickstart/resources/zap128x128dark.png"))),
 					LayoutHelper.getGBC(4, 0, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
 		} else {
-			panelContent.add(new JLabel(new ImageIcon(SearchPanel.class.getResource("/resource/zap128x128.png"))),
+			panelContent.add(new JLabel(DisplayUtils.getScaledIcon(new ImageIcon(SearchPanel.class.getResource("/resource/zap128x128.png")))),
 				LayoutHelper.getGBC(4, 0, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
 		}
 	
@@ -120,7 +120,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
 		JPanel urlSelectPanel = new JPanel(new GridBagLayout());
 		JButton selectButton = new JButton(Constant.messages.getString("all.button.select"));
-		selectButton.setIcon(new ImageIcon(View.class.getResource("/resource/icon/16/094.png"))); // Globe icon
+		selectButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(View.class.getResource("/resource/icon/16/094.png")))); // Globe icon
 		selectButton.addActionListener(new java.awt.event.ActionListener() { 
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -263,8 +263,8 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 			confButton = new JButton();
 			confButton.setText(Constant.messages.getString("quickstart.button.label.mitm"));
 			confButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.mitm"));
-			confButton.setIcon(new ImageIcon(
-					QuickStartPanel.class.getResource("/org/zaproxy/zap/extension/quickstart/resources/plug.png")));
+			confButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(
+					QuickStartPanel.class.getResource("/org/zaproxy/zap/extension/quickstart/resources/plug.png"))));
 
 			confButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
