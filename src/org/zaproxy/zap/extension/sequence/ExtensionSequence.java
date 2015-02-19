@@ -23,6 +23,7 @@ package org.zaproxy.zap.extension.sequence;
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 
@@ -30,12 +31,14 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
+import org.parosproxy.paros.core.scanner.Scanner;
 import org.parosproxy.paros.core.scanner.ScannerHook;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptCollection;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.script.SequenceScript;
@@ -48,11 +51,28 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 	public static final ImageIcon ICON = new ImageIcon(ExtensionSequence.class.getResource("/org/zaproxy/zap/extension/sequence/resources/icons/script-sequence.png"));
 	public static final String TYPE_SEQUENCE = "sequence";
 
-	private List<ScriptWrapper> enabledScripts = null;
+	private List<ScriptWrapper> directScripts = null;
+	private SequenceAscanPanel sequencePanel = new SequenceAscanPanel();
 
 	public ExtensionSequence() {
 		super("ExtensionSequence");
 		this.setOrder(29);
+		
+	}
+	
+	public void postInit() {
+		ExtensionActiveScan extAscan = getExtActiveScan();
+		if (extAscan != null) {
+			extAscan.addCustomScanPanel(sequencePanel);
+		}
+	}
+	
+	public void unload() {
+		super.unload();
+		ExtensionActiveScan extAscan = getExtActiveScan();
+		if (extAscan != null) {
+			extAscan.removeCustomScanPanel(sequencePanel);
+		}
 	}
 
 	@Override
@@ -63,15 +83,14 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 	@Override
 	public void scannerComplete() {
 		//Reset the sequence extension
-		this.enabledScripts = null;
-		getExtActiveScan().setIncludedSequenceScripts(null);
+		this.directScripts = null;
 	}
 
 	@Override
 	public void hook(ExtensionHook extensionhook) {
 		super.hook(extensionhook);
 		//Create a new sequence script type and register
-		ScriptType type = new ScriptType(TYPE_SEQUENCE, "script.type.sequence", ICON, false);
+		ScriptType type = new ScriptType(TYPE_SEQUENCE, "script.type.sequence", ICON, false, new String[] {"append"});
 		getExtScript().registerScriptType(type);
 		
 		extensionhook.getHookMenu().addPopupMenuItem(new SequencePopupMenuItem(this));
@@ -81,10 +100,10 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 	}
 
 	@Override
-	public void beforeScan(HttpMessage msg, AbstractPlugin plugin) {
+	public void beforeScan(HttpMessage msg, AbstractPlugin plugin, Scanner scanner) {
 		//If the HttpMessage has a HistoryReference with an ID that is also in the HashMap of the Scanner,
 		//then the message has a specific Sequence script to scan.
-		SequenceScript seqScr = getIncludedSequenceScript(msg);
+		SequenceScript seqScr = getIncludedSequenceScript(msg, scanner);
 
 		//If any script was found, send all the requests prior to the message to be scanned.
 		if(seqScr!= null) {
@@ -94,10 +113,10 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 	}
 
 	@Override
-	public void afterScan(HttpMessage msg, AbstractPlugin plugin) {
+	public void afterScan(HttpMessage msg, AbstractPlugin plugin, Scanner scanner) {
 		//If the HttpMessage has a HistoryReference with an ID that is also in the HashMap of the Scanner,
 		//then the message has a specific Sequence script to scan.
-		SequenceScript seqScr = getIncludedSequenceScript(msg);
+		SequenceScript seqScr = getIncludedSequenceScript(msg, scanner);
 
 		//If any script was found, send all the requests after the message that was scanned.
 		if(seqScr!= null) {
@@ -105,26 +124,39 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 		}
 	}
 
-	private SequenceScript getIncludedSequenceScript(HttpMessage msg) {
-		List<ScriptWrapper> sequences = getSelectedSequenceScripts();
-		for(ScriptWrapper wrapper: sequences) {
-			try {
-				SequenceScript seqScr = getExtScript().getInterface(wrapper, SequenceScript.class); 
-				if(seqScr != null) {
-					if(seqScr.isPartOfSequence(msg)) {
-						return seqScr;
+	private SequenceScript getIncludedSequenceScript(HttpMessage msg, Scanner scanner) {
+		List<ScriptWrapper> sequences = directScripts;
+		if (sequences == null) {
+			Set<ScriptCollection> scs = scanner.getScriptCollections();
+			if (scs != null) {
+				for (ScriptCollection sc : scs) {
+					if (sc.getType().getName().equals(TYPE_SEQUENCE)) {
+						sequences = sc.getScripts();
+						break;
 					}
 				}
-			} catch (Exception e) {
-				logger.debug("Exception occurred, while trying to fetch Included Sequence Script: " + e.getMessage());
+			}
+		}
+		if (sequences != null) {
+			for(ScriptWrapper wrapper: sequences) {
+				try {
+					SequenceScript seqScr = getExtScript().getInterface(wrapper, SequenceScript.class); 
+					if (seqScr != null) {
+						if (seqScr.isPartOfSequence(msg)) {
+							return seqScr;
+						}
+					}
+				} catch (Exception e) {
+					logger.debug("Exception occurred, while trying to fetch Included Sequence Script: " + e.getMessage());
+				}
 			}
 		}
 		return null;
 	}
 	
 	public void setDirectScanScript(ScriptWrapper script) {
-		enabledScripts = new ArrayList<ScriptWrapper>();
-		enabledScripts.add(script);
+		directScripts = new ArrayList<ScriptWrapper>();
+		directScripts.add(script);
 	}
 
 	private void updateMessage(HttpMessage msg, HttpMessage newMsg) {
@@ -145,15 +177,5 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 			extActiveScan = (ExtensionActiveScan) Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.class);
 		}
 		return extActiveScan;
-	}
-
-	private List<ScriptWrapper> getSelectedSequenceScripts() {
-		if(enabledScripts == null) {
-			enabledScripts = getExtActiveScan().getIncludedSequenceScripts();
-			if(enabledScripts == null) {
-				enabledScripts = new ArrayList<ScriptWrapper>();
-			}
-		}
-		return enabledScripts;
 	}
 }
