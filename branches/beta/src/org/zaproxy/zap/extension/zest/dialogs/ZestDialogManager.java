@@ -103,6 +103,8 @@ public class ZestDialogManager extends AbstractPanel {
 	private ZestClientWindowCloseDialog clientWindowCloseDialog = null;
 	private ZestClientWindowOpenUrlDialog clientWindowOpenUrlDialog = null;
 	private ZestClientSwitchToFrameDialog clientSwitchToFrameDialog = null;
+	// TODO Work in progress
+	//private ZestClientTakeScreenshotDialog clientTakeScreenshotDialog = null;
 
 	private MouseAdapter mouseListener;
 
@@ -217,6 +219,11 @@ public class ZestDialogManager extends AbstractPanel {
 							} else if (obj instanceof ZestClientSwitchToFrame) {
 								showZestClientSwitchToFrameDialog(parent, sn, null,
 										(ZestClientSwitchToFrame) obj, false);
+							/* TODO Work in progress
+							} else if (obj instanceof ZestClientTakeScreenshot) {
+								showZestClientTakeScreenshotDialog(parent, sn, null,
+										(ZestClientTakeScreenshot) obj, false);
+							*/
 							}
 						}
 					}
@@ -260,6 +267,7 @@ public class ZestDialogManager extends AbstractPanel {
 			bringToFront(scriptDialog);
 			return;
 		}
+		boolean chooseType = false;
 
 		if (script == null) {
 			ScriptWrapper sw = new ScriptWrapper();
@@ -267,6 +275,7 @@ public class ZestDialogManager extends AbstractPanel {
 			sw.setEngineName(ZestScriptEngineFactory.NAME);
 			sw.setType(extension.getExtScript().getScriptType(
 					ExtensionScript.TYPE_STANDALONE));
+			chooseType = true;
 			script = new ZestScriptWrapper(sw);
 			try {
 				script.getZestScript().setPrefix(prefix);
@@ -274,7 +283,7 @@ public class ZestDialogManager extends AbstractPanel {
 				logger.error(e.getMessage(), e);
 			}
 		}
-		scriptDialog.init(parentNode, script, add);
+		scriptDialog.init(parentNode, script, add, chooseType);
 		scriptDialog.setVisible(true);
 	}
 
@@ -614,6 +623,24 @@ public class ZestDialogManager extends AbstractPanel {
 		clientWindowOpenUrlDialog.init(script, parent, child, req, client, add);
 		clientWindowOpenUrlDialog.setVisible(true);
 	}
+
+	/* TODO Work in progress
+	public void showZestClientTakeScreenshotDialog(ScriptNode parent, ScriptNode child,
+			ZestStatement req, ZestClientTakeScreenshot client, boolean add) {
+		if (clientTakeScreenshotDialog == null) {
+			clientTakeScreenshotDialog = new ZestClientTakeScreenshotDialog(extension, View
+					.getSingleton().getMainFrame(), new Dimension(300, 200));
+		} else if (clientTakeScreenshotDialog.isVisible()) {
+			// Already being displayed, bring to the front but dont overwrite anything
+			bringToFront(clientTakeScreenshotDialog);
+			return;
+		}
+		ZestScriptWrapper script = extension.getZestTreeModel()
+				.getScriptWrapper(parent);
+		clientTakeScreenshotDialog.init(script, parent, child, req, client, add);
+		clientTakeScreenshotDialog.setVisible(true);
+	}
+	*/
 
 	public void showZestClientSwitchToFrameDialog(ScriptNode parent, ScriptNode child,
 			ZestStatement req, ZestClientSwitchToFrame client, boolean add) {

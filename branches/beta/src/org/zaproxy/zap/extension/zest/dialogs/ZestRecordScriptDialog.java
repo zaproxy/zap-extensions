@@ -39,8 +39,6 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
-import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
-import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -129,19 +127,23 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
     private List<String> getScriptTypes() {
         List<String> list = new ArrayList<String>();
-        list.add(Constant.messages.getString(
-        		extension.getExtScript().getScriptType(ExtensionScript.TYPE_STANDALONE).getI18nKey()));
-        list.add(Constant.messages.getString(
-        		extension.getExtScript().getScriptType(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH).getI18nKey()));
+        
+        for (ScriptType st : extension.getExtScript().getScriptTypes()) {
+        	if (st.hasCapability("append")) {
+                list.add(Constant.messages.getString(st.getI18nKey()));
+        	}
+        }
+        
         return list;
     }
     
     private ScriptType getSelectedType () {
-    	ScriptType st = extension.getExtScript().getScriptType(ExtensionScript.TYPE_STANDALONE);
-    	if (this.getStringValue(FIELD_TYPE).equals(Constant.messages.getString(st.getI18nKey()))) {
-    		return st;
-    	}
-    	return extension.getExtScript().getScriptType(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH);
+        for (ScriptType st : extension.getExtScript().getScriptTypes()) {
+        	if (this.getStringValue(FIELD_TYPE).equals(Constant.messages.getString(st.getI18nKey()))) {
+        		return st;
+        	}
+        }
+        return null;
     }
 
     private List<String> getRecordTypes() {
@@ -171,7 +173,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     }
     
     public void save() {
-    	// Creat a new script
+    	// Create a new script
     	
 		ScriptWrapper sw = new ScriptWrapper();
 		sw.setEngine(extension.getZestEngineWrapper());
@@ -237,18 +239,11 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         }
     }
     
-    /*
     @Override
-    public void setVisible(boolean vis) {
-    	if (!vis && !saved) {
-    		// Cancel recording if switched on
-    		if (this.scriptWrapper != null && this.scriptWrapper.isRecording()) {
-    			extension.cancelScriptRecording();
-    		}
-    	}
-    	super.setVisible(vis);
+    public void cancelPressed() {
+    	super.cancelPressed();
+		extension.cancelScriptRecording();
     }
-    */
 
     @Override
     public String validateFields() {
