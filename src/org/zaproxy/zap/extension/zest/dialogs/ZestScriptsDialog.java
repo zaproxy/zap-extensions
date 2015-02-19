@@ -50,7 +50,9 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -58,6 +60,7 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 public class ZestScriptsDialog extends StandardFieldsDialog {
 
     private static final String FIELD_TITLE = "zest.dialog.script.label.title"; 
+    private static final String FIELD_TYPE = "zest.dialog.script.label.type"; 
     private static final String FIELD_FILE = "zest.dialog.script.label.file"; 
     private static final String FIELD_PREFIX = "zest.dialog.script.label.prefix"; 
     private static final String FIELD_DESC = "zest.dialog.script.label.desc";
@@ -80,6 +83,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private ZestScriptWrapper scriptWrapper = null;
     private ZestScript script = null;
     private boolean add = false;
+    private boolean chooseType = false;
     private ZestScript.Type type;
     // Need the saved boolean for deciding if we need to cancel the record button 
     private boolean saved = false;
@@ -104,11 +108,16 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         this.extension = ext;
     }
 
-    public void init (ScriptNode scriptNode, ZestScriptWrapper scriptWrapper, boolean add/*, ZestScript.Type type*/) {
+    public void init (ScriptNode scriptNode, ZestScriptWrapper scriptWrapper, boolean add) {
+    	this.init(scriptNode, scriptWrapper, add, false);
+    }
+
+    public void init (ScriptNode scriptNode, ZestScriptWrapper scriptWrapper, boolean add, boolean chooseType) {
         this.scriptNode = scriptNode;
         this.scriptWrapper = scriptWrapper;
         this.script = scriptWrapper.getZestScript();
         this.add = add;
+        this.chooseType = chooseType;
         this.saved = false;
         
         if (scriptWrapper.getZestScript().getType() != null) {
@@ -131,6 +140,17 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             this.setTitle(Constant.messages.getString("zest.dialog.script.edit.title"));
         }
         this.addTextField(0, FIELD_TITLE, script.getTitle());
+        if (this.chooseType) {
+        	List<String> types = new ArrayList<String>();
+    		for (ScriptType st : extension.getExtScript().getScriptTypes()) {
+    			if (st.hasCapability("append")) {
+    				types.add(Constant.messages.getString(st.getI18nKey()));
+    			}
+    		}
+            this.addComboField(0, FIELD_TYPE, types, 
+            		Constant.messages.getString(extension.getExtScript().getScriptType(ExtensionScript.TYPE_STANDALONE).getI18nKey()), false);
+
+        }
 		this.addReadOnlyField(0, FIELD_FILE, "", false);
         this.addComboField(0, FIELD_PREFIX, this.getSites(), script.getPrefix(), true);
         this.addCheckBoxField(0, FIELD_LOAD, scriptWrapper.isLoadOnStart());
@@ -290,6 +310,15 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         }
         return paramsModel;
     }
+    
+    private ScriptType getSelectedType () {
+        for (ScriptType st : extension.getExtScript().getScriptTypes()) {
+        	if (this.getStringValue(FIELD_TYPE).equals(Constant.messages.getString(st.getI18nKey()))) {
+        		return st;
+        	}
+        }
+        return null;
+    }
 
     public void save() {
         script.setTitle(this.getStringValue(FIELD_TITLE));
@@ -315,6 +344,10 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         scriptWrapper.setDebug(this.getBoolValue(FIELD_DEBUG));
         
         if (add) {
+        	if (this.chooseType) {
+        		scriptWrapper.setType(this.getSelectedType());
+        	}
+        	
             script.setType(type);
             if (ZestScript.Type.StandAlone.equals(type)) {
                 // Only need to handle standalone scripts here - rest handled by templates

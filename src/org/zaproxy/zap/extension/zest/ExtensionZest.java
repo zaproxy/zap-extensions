@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -1783,5 +1784,34 @@ logger.debug("SBSB TODO pasteToNode " + cnpNodes);
 		}
 		return optionsZestPanel;
 	}
+	
+	/**
+	 * Return all of the requests in the script
+	 * ScriptWrapper is deliberately used to make it easier to call this method by reflection
+	 * @param script
+	 * @return
+	 */
+	public List<HttpMessage> getAllRequestsInScript(ScriptWrapper script) {
+		ArrayList<HttpMessage> requests = new ArrayList<HttpMessage>();
+		
+		if (! (script instanceof ZestScriptWrapper)) {
+			throw new InvalidParameterException(script.getClass().getCanonicalName());
+		}
+
+		ZestScriptWrapper sw = (ZestScriptWrapper) script;
+		for(ZestStatement stmt : sw.getZestScript().getStatements()) {
+			try {
+				if(stmt.getElementType().equals("ZestRequest")) {
+					ZestRequest req = (ZestRequest)stmt;
+					HttpMessage scrMessage = ZestZapUtils.toHttpMessage(req, req.getResponse());
+					requests.add(scrMessage);
+				}
+			}catch(Exception e) {
+				logger.debug("Exception occurred while fetching HttpMessages from sequence script: " + e.getMessage());
+			}
+		}
+		return requests;
+	}
+
 
 }

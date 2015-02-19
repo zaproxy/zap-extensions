@@ -29,9 +29,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
-import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
@@ -90,25 +89,15 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
 			}
 		}
 		
-		for (ScriptNode node : extension.getZestScriptNodes(ExtensionScript.TYPE_STANDALONE)) {
-        	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
-        	piicm.setMenuIndex(this.getMenuIndex());
-			mainPopupMenuItems.add(piicm);
+		for (ScriptType st : extension.getExtScript().getScriptTypes()) {
+			if (st.hasCapability("append")) {
+				for (ScriptNode node : extension.getZestScriptNodes(st.getName())) {
+		        	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
+		        	piicm.setMenuIndex(this.getMenuIndex());
+					mainPopupMenuItems.add(piicm);
+				}
+			}
 		}
-		// TODO handle auth scripts... is there a better way to do this??
-		for (ScriptNode node : extension.getZestScriptNodes(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH)) {
-        	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
-        	piicm.setMenuIndex(this.getMenuIndex());
-			mainPopupMenuItems.add(piicm);
-		}
-		
-		// TODO Sequence - makes it possible to add requests to a sequence script 
-		for (ScriptNode node : extension.getZestScriptNodes("sequence")) {
-			ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
-			piicm.setMenuIndex(this.getMenuIndex());
-			mainPopupMenuItems.add(piicm);
-		}
-		
         // Add the 'new zest' menu
         ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu();
 		mainPopupMenuItems.add(piicm);

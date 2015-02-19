@@ -43,12 +43,12 @@ import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.SequenceScript;
-import org.zaproxy.zap.model.ParameterParser;
 import org.zaproxy.zap.users.User;
 
 public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript {
@@ -78,7 +78,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 
 		for(ZestStatement stmt : this.script.getZestScript().getStatements()) {
 			try {
-				if(stmt.getElementType().equals("ZestRequest")) {
+				if(stmt instanceof ZestRequest) {
 					ZestRequest req = (ZestRequest)stmt;
 					HttpMessage scrMessage = ZestZapUtils.toHttpMessage(req, req.getResponse());
 					requests.add(scrMessage);
@@ -237,19 +237,12 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 		}
 
 		try {
-			if(stmt.getElementType().equals("ZestRequest"))	{
-				ZestRequest req = (ZestRequest)stmt;
-				HttpMessage msg = ZestZapUtils.toHttpMessage(req, response);
-
-				String reqBody = msg.getRequestBody().toString();
-				reqBody = this.replaceVariablesInString(reqBody, false);
-				msg.setRequestBody(reqBody);
-				msg.setTimeSentMillis(System.currentTimeMillis());
-				msg.setTimeElapsedMillis((int) response.getResponseTimeInMs());
+			if (stmt instanceof ZestRequest) {
+				HttpMessage msg = ZestZapUtils.toHttpMessage((ZestRequest)stmt, response);
 				this.currentPlugin.getParent().notifyNewMessage(msg);
+				
 			}
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			logger.debug("Exception while trying to notify of unscanned message in a sequence.");
 		}
 		return response;
@@ -268,33 +261,24 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 
 	private boolean isSameRequest(HttpMessage msg, ZestStatement stmt) {
 		try {
-			if(stmt.getElementType().equals("ZestRequest")) {
-				//				ZestParam param = new ZestParam();
-				//				param.setIncludeResponses(true);
-				//				ZestRequest msgzest = ZestZapUtils.toZestRequest(msg, true, param);
-				ZestRequest msgzest = ZestZapUtils.toZestRequest(msg, true, new ZestParam());
-				ZestRequest req = (ZestRequest)stmt;
-
-				if(msgzest.getUrl().equals(req.getUrl())) {
-					if(msgzest.getMethod().equals(req.getMethod())) {
-						
-						// Also compare the structural parameters if any
-						
-						ParameterParser parser = Model.getSingleton().getSession().getUrlParamParser(msg.getRequestHeader().getURI().toString());
-						HttpMessage reqMsg = ZestZapUtils.toHttpMessage(req, null);
-						
-						// In addition to the url, the TreePath contains also the structural parameters (url and form) 
-						// TODO: We could think about getting only the structural parameters for comparison
-												
-						List<String> msgTreePath = parser.getTreePath(msg);
-						List<String> reqTreePath = parser.getTreePath(reqMsg);
-
-						return msgTreePath.equals(reqTreePath);
-					}
+			if (stmt instanceof ZestRequest) {
+				ZestRequest zr = (ZestRequest)stmt;
+				Session session = Model.getSingleton().getSession();
+				SiteNode msgNode = session.getSiteTree().findNode(msg);
+				if (msgNode == null) {
+					return false;
+				}
+				SiteNode stmtNode = session.getSiteTree().findNode(ZestZapUtils.toHttpMessage(zr, null));
+				if (stmtNode == null) {
+					return false;
+				}
+				if (msgNode.equals(stmtNode)) {
+					return true;
+				} else {
+					return false;
 				}
 			}
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			logger.debug("Exception in ZestSequenceRunner isSameRequest:" + e.getMessage());
 		}
 		return false;
@@ -356,18 +340,20 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 
 		for(ZestStatement stmt : script.getZestScript().getStatements()) {
 			try {
-				if(stmt.getElementType().equals("ZestRequest")) {
+				if(stmt instanceof ZestRequest) {
 					ZestRequest req = (ZestRequest)stmt;
 					HttpMessage msg = ZestZapUtils.toHttpMessage(req, req.getResponse());
-					SiteNode node = messageToSiteNode(msg);
-
-					if(node != null) {
+					SiteNode node = Model.getSingleton().getSession().getSiteTree().findNode(msg);
+					if (node == null) {
+						node = messageToSiteNode(msg);
+					}
+					if (node != null) {
 						fakeDirectory.add(node);
 					}
 				}
 			}
 			catch(Exception e) {
-				logger.info("An exception occurred while scanning sequence directly: " + e.getMessage(), e);
+				logger.error("An exception occurred while scanning sequence directly: " + e.getMessage(), e);
 			}
 		}
 		fakeRoot.add(fakeDirectory);
@@ -383,7 +369,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 			getHistory().addHistory(ref);
 			temp.setHistoryReference(ref);
 		} catch(Exception e) {
-			logger.info("An exception occurred while converting a HttpMessage to SiteNode: " + e.getMessage(), e);
+			logger.error("An exception occurred while converting a HttpMessage to SiteNode: " + e.getMessage(), e);
 		}
 		return temp;
 	}
