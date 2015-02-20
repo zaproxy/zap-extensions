@@ -540,15 +540,11 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 			 * When the pages are initialized the href typically is not available
 			 */
 			if (page.getHistoryReference() != null) {
-				System.out.println("SBSB messageReceived updating for href " + page.getId());
 				try {
 					this.clientTable.update(page);
 				} catch (SQLException e) {
 					logger.error(e.getMessage(), e);
 				}
-			} else {
-				System.out.println("SBSB messageReceived NO HREF :((( for href " + page.getId());
-				
 			}
 		}
 		persist(msg);
