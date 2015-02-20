@@ -880,16 +880,14 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			} else {// cannot be non shadow
 				zc.addIf(zc.getIndex(existingChild) + 1, newChild);
 			}
-			//ScriptNode child = this.getZestTreeModel().addAfterNode(parent, existingChild, newChild);
-			ScriptNode child = this.getZestTreeModel().addToNodeAt(parent, newChild, zc.getIndex(existingChild));
+			ScriptNode child = this.getZestTreeModel().addToNodeAt(parent, newChild, zc.getIndex(existingChild)+1);
 			this.updated(child);
 			this.display(child, false);
 			return child;
 		} else if (ZestZapUtils.getElement(parent) instanceof ZestLoop<?>) {
 			ZestLoop<?> zl = (ZestLoop<?>) ZestZapUtils.getElement(parent);
 			zl.add(zl.getIndex(existingChild) + 1, newChild);
-			//ScriptNode child = this.getZestTreeModel().addAfterNode(parent, existingChild, newChild);
-			ScriptNode child = this.getZestTreeModel().addToNodeAt(parent, newChild, zl.getIndex(existingChild));
+			ScriptNode child = this.getZestTreeModel().addToNodeAt(parent, newChild, zl.getIndex(existingChild)+1);
 			this.updated(child);
 			this.display(child, false);
 			return child;
@@ -1277,7 +1275,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	
 	public void pasteToNode(ScriptNode parent, List<ScriptNode> cnpNodes, boolean cutNodes, 
 			ScriptNode beforeChild, ScriptNode afterChild) {
-logger.debug("SBSB TODO pasteToNode " + cnpNodes);
 		if (cnpNodes != null && cnpNodes.size() > 0) {
 			logger.debug("pasteToNode parent=" + parent.getNodeName() + " num children=" + cnpNodes.size() +
 					" cut=" + cutNodes + " before=" + beforeChild + " after = " + afterChild);
