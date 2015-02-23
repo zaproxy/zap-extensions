@@ -73,7 +73,7 @@ public class PopupIncludeWebSocketInContextMenu extends PopupMenuItemIncludeInCo
 		if (message != null) {
 			String url = Pattern.quote(message.channel.getContextUrl());
         	
-        	performAction(url);
+        	performAction("", url);
 		}
 	}
 
