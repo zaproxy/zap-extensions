@@ -205,7 +205,7 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 			    	String uri = exprAllowFromUriNodes.item(i).getNodeValue();
 			    	if (uri.equals ("*")) {
 			    		//tut, tut, tut.
-						log.debug("Bingo! "+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE+", at /access-policy/cross-domain-access/policy/allow-from/domain/@uri");
+						if (log.isDebugEnabled())log.debug("Bingo! "+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE+", at /access-policy/cross-domain-access/policy/allow-from/domain/@uri");
 						bingo(	getRisk(), 
 								Alert.WARNING,
 								Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "name"),
