@@ -71,177 +71,160 @@
     nbproject/build-impl.xml file. 
 
     -->
-    <target depends="clean" name="-do-jar-jar">
+    <target name="-do-jar-jar">
         <property name="status" value="beta" />
         <property name="versions.file" location="${dist.dir}/ZapVersions.xml"  />
 
-        <delete file="${versions.file}"/>
-                
-        <echo file="${versions.file}" append="true">&lt;ZAP></echo>
-        
+		<delete file="${versions.file}"/>
+		
 		<!-- Keep in alphabetical order ;) -->
-		<antcall target="build-addon"><param name="addon" value="alertReport"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="ascanrulesBeta"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="beanshell"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="diff"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="gettingStarted"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="invoke"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="jruby"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="jython"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="plugnhack"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="portscan"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="pscanrulesBeta"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="scripts"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="spiderAjax"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="sqliplugin"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="svndigger"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="treetools"/></antcall>
-		<antcall target="build-addon"><param name="addon" value="zest"/></antcall>
-
-		<!-- Special case due to dependencies - need to fix this sometime;) -->
-		<antcall target="build-bruteforce"/>
-		<antcall target="build-tokengen"/>
-				
-        <echo file="${versions.file}" append="true">&lt;/ZAP></echo>
+		<build-addon name="alertReport" />
+		<build-addon name="ascanrulesBeta" />
+		<build-addon name="beanshell" />
+		<build-bruteforce-addon />
+		<build-addon name="diff" />
+		<build-addon name="importurls" />
+		<build-addon name="invoke" />
+		<build-addon name="jruby" />
+		<build-addon name="jython" />
+		<build-addon name="onlineMenu" />
+		<build-addon name="plugnhack" />
+		<build-addon name="portscan" />
+		<build-addon name="pscanrulesBeta" />
+		<build-addon name="scripts" />
+		<build-addon name="sqliplugin" />
+		<build-addon name="svndigger" />
+		<build-addon name="tips" />
+		<build-tokengen-addon />
+		<build-addon name="treetools" />
+		<build-addon name="zest" />
 		
     </target>
     
-    <target name="build-bruteforce" description="build the bruteforce extension">
-        <antcall target="build-addon"><param name="addon" value="bruteforce"/></antcall>
-        
-        <!-- Add the extra classes needed -->
-        <property name="addon" value="bruteforce" /> <!-- Set this to make cut-n-pasting safer ;) -->
-        <xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
-        <property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
-        <jar jarfile="${dist.dir}/${file}" update="true" compress="true">
-            <zipfileset dir="${build.classes.dir}" prefix="">
-                <include name="com/sittinglittleduck/DirBuster/**"/>
-            </zipfileset>
-        </jar>
-    </target>
-    
-    <target name="build-tokengen" description="build the tokengen extension">
-        <antcall target="build-addon"><param name="addon" value="tokengen"/></antcall>
-        
-        <!-- Add the extra classes needed -->
-        <property name="addon" value="tokengen" /> <!-- Set this to make cut-n-pasting safer ;) -->
-        <xmlproperty file="${src}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
-        <property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
-        <jar jarfile="${dist.dir}/${file}" update="true" compress="true">
-            <zipfileset dir="${build.classes.dir}" prefix="">
-                <include name="com/fasteasytrade/JRandTest/**"/>
-            </zipfileset>
-        </jar>
-    </target>
-    
+    <!-- Plugin specific build -->
+	<macrodef name="build-bruteforce-addon" description="Builds bruteforce add-on">
+		<sequential>
+			<build-addon name="bruteforce">
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist.dir}/${file}" update="true" compress="true">
+					<zipfileset dir="${build.classes.dir}" prefix="">
+						<include name="com/sittinglittleduck/DirBuster/**"/>
+					</zipfileset>
+				</jar>
+			</build-addon>
+		</sequential>
+	</macrodef>
 
-    <!-- Version file content appender -->            
-    <target name="append-to-versions-file" description="appends the extension details to the versions xml file" unless="addon-example">
-        <length file="${dist.dir}/${file}" property="length" />
-        <tstamp>
-            <format property="yyyymmdd" pattern="yyyy-MM-dd"/>
-        </tstamp>
-        <echo file="${versions.file}" append="true">
-	&lt;addon>${extension}&lt;/addon>
-	&lt;addon_${extension}>
-		&lt;name>${name}&lt;/name>
-		&lt;description>${description}&lt;/description>
-		&lt;author>${author}&lt;/author>
-		&lt;version>${version}&lt;/version>
-		&lt;file>${file}&lt;/file>
-		&lt;status>${status}&lt;/status>
-		&lt;changes>${changes}&lt;/changes>
-		&lt;url>https://zap-extensions.googlecode.com/files/${file}&lt;/url>
-		&lt;size>${length}&lt;/size>
-		&lt;date>${yyyymmdd}&lt;/date>
-	&lt;/addon_${extension}>
-</echo>
-    </target>
+	<macrodef name="build-tokengen-addon" description="Builds tokengen add-on">
+		<sequential>
+			<build-addon name="tokengen">
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist.dir}/${file}" update="true" compress="true">
+					<zipfileset dir="${build.classes.dir}" prefix="">
+						<include name="com/fasteasytrade/JRandTest/**"/>
+					</zipfileset>
+				</jar>
+			</build-addon>
+		</sequential>
+	</macrodef>
 
+    <!--     
+    ZAP Specific build tags
+    Use Ant automation and specific libs to build 
+    help files and the version file
+    -->    
+    <path id="build.classpath">
+        <fileset dir="lib" includes="*.jar"/>
+    </path>
+
+    <!-- Ant task to generate the wiki -->
+    <taskdef classpathref="build.classpath" resource="wikitasks.properties" />
+
+    <!-- Ant task to generate JavaHelp search indexes -->
+    <taskdef classpathref="build.classpath" resource="javahelptasks.properties" />
+
+    <!-- Ant task to append ZapAddOn.xml files to ZapVersions.xml -->
+    <taskdef classpathref="build.classpath" resource="zapversionstasks.properties"/>
+ 
     <!--
-            - runs if "help" directory is present
-            - creates help.jar which is included in the extension-jar file
-            - help.jar is dynamically merged into core help pages on ZAP start
+    Build the specified extension
+    version should be an integer that increments on each release, starting at 1
     -->
-    <target name="build-extension-help" depends="is-help-available" if="help.available" description="generates the help file and copies it to the right place">
-        <property name="help.jar" value="help.jar" />
-        <property name="help.package" value="org/zaproxy/zap/extension/${extension}/resource/help" />
-        <property name="help.target" value="${build.classes.dir}/${help.package}/" />
-    
-    	<antcall target="cleanup-extension-help" />
-    	
-        <!-- generate the indexes -->
-        <java classname="com.sun.java.help.search.Indexer" fork="true" dir="${build.classes.dir}/${help.package}">
-            <arg value="zaphelp"/>
-            <classpath>
-                <pathelement location="../lib/jhall.jar" />
-            </classpath>
-        </java>
-        
-        <!-- delete the previous jar in the help directory (if present) -->
-        <!--delete dir="${build.classes.dir}/${help.package}" /-->
-        <!--mkdir dir="${build.classes.dir}/${help.package}" /-->
+    <macrodef name="build-addon" description="build the specified addon">
+        <attribute name="name"/>
+        <element name="extra-actions" implicit="true" optional="true" />
+        <sequential>
+            <local name="zapaddon.version" />
+            <xmlproperty file="${build.classes.dir}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+            <local name="file" />
+            <property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
 
-        <!-- as files reside in resource/ they are copied later -->
-    </target>
-    
-    <target name="is-help-available">
-        <available property="help.available" type="dir" file="${build.classes.dir}/org/zaproxy/zap/extension/${extension}/resource/help"/>
-    </target>
-    
-    <!-- delete the indexes, generated previously, as they are no longer needed. -->
-    <target name="cleanup-extension-help">
-        <delete dir="${build.classes.dir}/org/zaproxy/zap/extension/${extension}/resource/help/JavaHelpSearch" />
-    </target>
+            <generatejavahelpsearchindexes jhalljar="../lib/jhall.jar"
+                    helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
+                    <dirset dir="${build.classes.dir}/org/zaproxy/zap/extension/@{name}/resources/">
+                            <include name="help" />
+                            <include name="help_*_*" />
+                    </dirset>
+            </generatejavahelpsearchindexes>
 
-    <!-- Package the specific addon -->
-    <target name="build-addon" description="build the specified addon">            
-        <xmlproperty file="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/ZapAddOn.xml"/>
-        <property name="file" value="${addon}-${status}-${zapaddon.version}.zap" />
-        
-        <antcall target="build-extension-help"> 
-            <param name="extension" value="${addon}"/>
-        </antcall>
-        
-        <jar jarfile="${dist.dir}/${file}" compress="${jar.compress}">
-            <zipfileset dir="${build.classes.dir}" prefix="">
-                <include name="org/zaproxy/zap/extension/${addon}/**"/>
-                <exclude name="**/*.jar"/>
-            </zipfileset>
-            <zipgroupfileset dir="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/lib/" includes="*.jar" erroronmissingdir="false"/>
-            <zipfileset dir="${build.classes.dir}" includes="org/zaproxy/zap/extension/${addon}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
-        </jar>
-        
-        <antcall target="include-files"> 
-            <param name="addon" value="${addon}"/>
-            <param name="file" value="${file}"/>
-        </antcall>
-        
-        <antcall target="append-to-versions-file"> 
-            <param name="extension" value="${addon}"/> 
-            <param name="name" value="${zapaddon.name}"/> 
-            <param name="version" value="${zapaddon.version}"/> 
-            <param name="description" value="${zapaddon.description}"/> 
-            <param name="author" value="${zapaddon.author}"/> 
-            <param name="url" value="${zapaddon.url}"/> 
-            <param name="changes" value="${zapaddon.changes}"/> 
-            <param name="file" value="${file}"/> 
-        </antcall>        
-    </target>
+            <local name="addon.libs.zip" />
+            <property name="addon.libs.zip" value="${build.dir}/libs-@{name}.zip" />
 
-    <!-- add files -->
-    <target name="include-files" depends="is-files-available" if="files.available"> 
-        <jar jarfile="${dist.dir}/${file}" update="true" compress="${jar.compress}">
-            <zipfileset dir="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/files/" prefix=""/>
-        </jar>
-    </target>
-    
-    <target name="is-files-available">
-        <available property="files.available" type="dir" file="${build.classes.dir}/org/zaproxy/zap/extension/${addon}/files"/>
-    </target>
+            <delete file="${addon.libs.zip}" failonerror="true" />
+            <zip destfile="${addon.libs.zip}" whenempty="create">
+                <zipgroupfileset dir="${src.src.dir}/org/zaproxy/zap/extension/@{name}/lib/" includes="*.jar" erroronmissingdir="false" />
+            </zip>
+        
+            <jar jarfile="${dist.dir}/${file}" update="true" compress="true">
+                <zipfileset dir="${build.classes.dir}" prefix="">
+                    <include name="org/zaproxy/zap/extension/@{name}/**"/>
+                    <exclude name="org/zaproxy/zap/extension/@{name}/lib/**"/>
+                </zipfileset>
+                <!--zipfileset dir="${build.classes.dir}" prefix="">
+                    <include name="org/zaproxy/zap/extension/@{name}/Messages*"/>
+                </zipfileset>
+                <zipfileset dir="${build.classes.dir}" prefix="">
+                    <include name="org/zaproxy/zap/extension/@{name}/resources/**"/>
+                </zipfileset-->
+                <zipfileset src="${addon.libs.zip}">
+                    <exclude name="META-INF/*.DSA" />
+                    <exclude name="META-INF/*.SF" />
+                </zipfileset>
+                <zipfileset dir="${build.classes.dir}" includes="org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+            </jar>
+            <delete file="${addon.libs.zip}" />
 
-    <target name="clean">
-	<delete dir="${dist.dir}" includeEmptyDirs="true" />
-    </target>
+            <!-- Remove search indexes previously generated, no longer needed. -->
+            <delete dir="${build.classes.dir}/org/zaproxy/zap/extension/@{name}/resources/help/JavaHelpSearch" />
+            <delete dir="${build.classes.dir}/org/zaproxy/zap/extension/@{name}/resources/help_*_*/JavaHelpSearch" />
+
+            <!-- Include add-on files -->
+            <jar jarfile="${dist.dir}/${file}" update="true" compress="true">
+                <zipfileset dir="${build.classes.dir}/org/zaproxy/zap/extension/@{name}/files/" prefix="" erroronmissingdir="false" />
+            </jar>
+
+            <!-- allow callers to do extra actions before generating the hash and determine the size of the file -->
+            <extra-actions />
+
+            <local name="length" />
+            <length file="${dist.dir}/${file}" property="length" />
+
+            <local name="sha1hash" />
+            <checksum file="${dist.dir}/${file}"  algorithm="SHA-1"  property="sha1hash"/>
+
+            <local name="hash" />
+            <property name="hash"  value="SHA1:${sha1hash}"/>
+
+            <local name="yyyymmdd" />
+            <tstamp>
+                <format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+            </tstamp>
+
+            <appendzapaddonfile from="${build.classes.dir}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
+                                addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+                                url="http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download" />
+
+        </sequential>
+    </macrodef>
       
 </project>
