@@ -61,6 +61,7 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 	private static final List <String> WEBINF_FILES = new LinkedList<String>(Arrays.asList(new String [] 
 			{
 			"web.xml"
+			,"applicationContext.xml" //for Spring 
 			}
 			));
 	/**
