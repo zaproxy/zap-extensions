@@ -165,13 +165,14 @@
             <jar jarfile="${dist.dir}/${file}" update="true" compress="true">
                 <zipfileset dir="${build.classes.dir}" prefix="">
                     <include name="org/zaproxy/zap/extension/@{name}/**"/>
+                    <exclude name="org/zaproxy/zap/extension/@{name}/lib/**"/>
                 </zipfileset>
-                <zipfileset dir="${build.classes.dir}" prefix="">
+                <!--zipfileset dir="${build.classes.dir}" prefix="">
                     <include name="org/zaproxy/zap/extension/@{name}/Messages*"/>
                 </zipfileset>
                 <zipfileset dir="${build.classes.dir}" prefix="">
                     <include name="org/zaproxy/zap/extension/@{name}/resources/**"/>
-                </zipfileset>
+                </zipfileset-->
                 <zipfileset src="${addon.libs.zip}">
                     <exclude name="META-INF/*.DSA" />
                     <exclude name="META-INF/*.SF" />
