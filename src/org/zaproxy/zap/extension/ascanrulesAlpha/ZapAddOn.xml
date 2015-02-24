@@ -15,6 +15,8 @@
     Promoted Source Code Disclosure - CVE2012-1823 to beta<br>
     Promoted Source Code Disclosure - SVN to beta<br>
     Promoted Source Code Disclosure - WEB-INF to beta<br>
+    Added "Proxy Disclosure" scanner<br>
+    Added "Relative Path Confusion" scanner<br>
   	]]>
 	</changes>
 	<extensions>
@@ -29,6 +31,8 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionSQLite</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ProxyDisclosureScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RelativePathConfusionScanner</ascanrule>		
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
