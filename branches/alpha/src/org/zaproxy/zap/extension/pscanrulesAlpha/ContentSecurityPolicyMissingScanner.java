@@ -59,23 +59,41 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 		long start = System.currentTimeMillis();
 	
 		//Get the various CSP headers
-		boolean headerFound = false;
+		boolean cspHeaderFound = false, xCspHeaderFound = false, xWebKitHeaderFound=false;
+		
+		//Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but Internet Exploder
 		Vector<String> cspOptions = msg.getResponseHeader().getHeaders("Content-Security-Policy");
 		//If it's not null or empty then we found one
 		if (cspOptions != null && cspOptions.isEmpty() == false) 
-			headerFound = true;
+			cspHeaderFound = true;
 		
+		//X-Content-Security-Policy is an older header, supported by Firefox 4.0+, and IE 10+ (in a limited fashion)
 		Vector<String> xcspOptions = msg.getResponseHeader().getHeaders("X-Content-Security-Policy");
 		//If it's not null or empty then we found one
 		if (xcspOptions != null && xcspOptions.isEmpty() == false) 
-			headerFound = true;
-	
+			xCspHeaderFound = true;
+		
+		//X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
 		Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders("X-WebKit-CSP");
 		//If it's not null or empty then we found one
 		if (xwkcspOptions !=null && xwkcspOptions.isEmpty() == false) 
-			headerFound = true;
+			xWebKitHeaderFound = true;
+		
+		//TODO: parse the CSP values out, and look at them in more detail.  In particular, look for things like...
+		//script-src *
+		//style-src *
+		//img-src *
+		//connect-src *
+		//font-src *
+		//object-src *
+		//media-src *
+		//frame-src *
+		//script-src 'unsafe-inline'
+		//script-src 'unsafe-eval'
+		
+		//TODO: set the CVEID etc below
 
-		if (!headerFound) { //NOT Header Found 
+		if (!cspHeaderFound || !xCspHeaderFound || !xWebKitHeaderFound) { //at least one of the headers wasn't found 
 			Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
 				getName()); 
 				alert.setDetail(
