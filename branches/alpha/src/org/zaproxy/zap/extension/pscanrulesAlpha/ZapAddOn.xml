@@ -14,6 +14,8 @@
 	Detect Node.js source code<br>
 	Report Apache vulnerabilities on Red Hat and CentOS as False Positives<br>
 	Detect Directory Browsing / Listings on Microsoft IIS<br>
+	Added Cacheable Content scanner<br>
+	Added Retrieved From Cache scanner<br>
 	]]>
 	</changes>
 	<extensions>
@@ -23,6 +25,7 @@
 	<pscanrules>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.Base64Disclosure</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.BigRedirectsScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CacheableScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ContentSecurityPolicyMissingScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CrossDomainMisconfiguration</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.DirectoryBrowsingScanner</pscanrule>
@@ -30,9 +33,10 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ExampleSimplePassiveScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HashDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HeartBleedScanner</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureComponent</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureComponentScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormLoadScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormPostScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.RetrievedFromCacheScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ServerHeaderInfoLeakScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.SourceCodeDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.StrictTransportSecurityScanner</pscanrule>
