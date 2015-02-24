@@ -1,9 +1,23 @@
 """
+The scanNode function will typically be called once for every page 
 The scan function will typically be called for every parameter in every URL and Form for every page 
 
 Note that new active scripts will initially be disabled
 Right click the script in the Scripts tree and select "enable"  
 """
+def scanNode(sas, msg):
+  # Debugging can be done using print like this
+  print('scan called for url=' + msg.getRequestHeader().getURI().toString());
+
+  # Copy requests before reusing them
+  msg = msg.cloneRequest();
+
+  # sendAndReceive(msg, followRedirect, handleAntiCSRFtoken)
+  sas.sendAndReceive(msg, False, False);
+
+  # Test the responses and raise alerts as below
+
+
 def scan(sas, msg, param, value):
   # Debugging can be done using print like this
   print('scan called for url=' + msg.getRequestHeader().getURI().toString() + 
