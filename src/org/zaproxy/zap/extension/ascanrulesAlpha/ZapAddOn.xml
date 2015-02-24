@@ -31,7 +31,6 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionSQLite</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ProxyDisclosureScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RelativePathConfusionScanner</ascanrule>		
 	</ascanrules>
 	<pscanrules/>
