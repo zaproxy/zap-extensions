@@ -363,7 +363,11 @@ public class ViewStateDecoder {
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append("<hmac>true</hmac>\n");
 			representation.append(getIndentation(this.indentationlevel));
-			if (bytesremainingtoberead == 32)
+			if (bytesremainingtoberead == 16)
+				representation.append("<hmactype>HMAC-MD5</hmactype>\n");
+			else if (bytesremainingtoberead == 20)
+				representation.append("<hmactype>HMAC-SHA0/HMAC-SHA1</hmactype>\n");
+			else if (bytesremainingtoberead == 32)
 				representation.append("<hmactype>HMAC-SHA256</hmactype>\n");
 			else if (bytesremainingtoberead == 48)
 				representation.append("<hmactype>HMAC-SHA384</hmactype>\n");
