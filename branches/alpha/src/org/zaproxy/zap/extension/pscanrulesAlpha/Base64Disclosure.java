@@ -218,7 +218,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 							Matcher hmaclessmatcher = ViewStateDecoder.patternNoHMAC.matcher(viewstatexml);
 							macless = hmaclessmatcher.find();
 
-							if (log.isDebugEnabled()) log.debug("MACles??? "+ macless);
+							if (log.isDebugEnabled()) log.debug("MAC-less??? "+ macless);
 						} catch (Exception e) {
 							//no need to do anything here.. just don't set "validviewstate" to true :)
 							//e.printStackTrace();
