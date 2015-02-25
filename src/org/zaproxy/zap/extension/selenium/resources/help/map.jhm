@@ -4,9 +4,7 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-    <!-- Need to find a icon...
-    <mapID target="addon.selenium.icon" url="contents/images/icon.png" /> -->
-
+    <mapID target="addon.selenium.icon" url="contents/selenium.png" />
     <mapID target="addon.selenium.intro" url="contents/intro.html" />
     <mapID target="addon.selenium.options" url="contents/options.html" />
     <mapID target="addon.selenium.api" url="contents/api.html" />

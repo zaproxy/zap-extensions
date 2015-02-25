@@ -6,9 +6,7 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <!-- Need to find a icon first...
-            image="addon.selenium.icon" -->
-            <tocitem text="Selenium" target="addon.selenium.intro">
+            <tocitem text="Selenium" image="addon.selenium.icon" target="addon.selenium.intro">
                 <tocitem text="Options" target="addon.selenium.options" />
                 <tocitem text="API" target="addon.selenium.api" />
             </tocitem>
