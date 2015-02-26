@@ -46,6 +46,24 @@ If your favourite language is not available on the Marketplace then please raise
 In the meantime you can just place the relevant jars in the 'lib' directory (not the 'plugin' directory) and restart ZAP.<br/>
 </p>
 
+<H2>Global Variables</H2>
+Variables can be shared between all scripts via the class org.zaproxy.zap.extension.script.ScriptVars.<br/>
+For example in Javascript you can use this class as follows:<br/><br/>
+<code>
+org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
+</code>
+
+<H2>Script Variables</H2>
+Variables can be shared between separate invocations of the same script via the same org.zaproxy.zap.extension.script.ScriptVars class.<br/>
+For example in Javascript you can use this class as follows:<br/><br/>
+<code>
+org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name","value")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
+</code>
+<br/>
+Note that these methods are only usable from scripting languages that provide access to the ScriptContext (like Javascript).
+
 <H2>See also</H2>
 <table>
 <tr>
