@@ -31,6 +31,7 @@ public class Product {
 		   PRODUCTTYPE_WEBSERVER
 		   ,PRODUCTTYPE_APACHE_MODULE
 		   ,PRODUCTTYPE_CONTENT_GENERATOR
+		   ,PRODUCTTYPE_PROXY_SERVER
 		 }
 	
 	ProductType productType ;

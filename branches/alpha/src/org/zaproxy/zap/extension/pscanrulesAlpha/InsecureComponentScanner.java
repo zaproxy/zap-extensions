@@ -48,10 +48,15 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 	private Pattern MODULE_PATTERN = Pattern.compile("([^ ]+)/([^ ]+)");
 
 	/**
-	 * a pattern for identifying and parsing the server header line (normal case)
+	 * a pattern for identifying and parsing the Server header line (normal case)
 	 */
 	private Pattern SERVER_HEADER_PATTERN = Pattern.compile("^([^ ]+)/([^ ]+)(.*)$");
-	
+
+	/**
+	 * a pattern for identifying and parsing the Via header line
+	 */
+	private Pattern VIA_HEADER_PATTERN = Pattern.compile("^.*\\(([^ ]+)/([^ ]+)\\)$");
+
 	/**
 	 * a pattern for identifying the Distro from leaked Apache headers 
 	 */
@@ -71,7 +76,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 	 * used to match JBoss headers, since these are non-standard
 	 */
 	private Pattern SERVER_HEADER_PATTERN_JBOSS = Pattern.compile("^Servlet [^ ]+[ ]+(JBoss)-([^ /]+).*$");
-	
+		
 	/**
 	 * a pattern for identifying and parsing the Generator tag in the body (normal case)
 	 */
@@ -128,22 +133,31 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 	 */
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		Vector <String> headerVector = new Vector <String>();
+		Vector <String> serverlikeHeaderVector = new Vector <String>();
+		Vector <String> vialikeHeaderVector = new Vector <String>();
+		
 
 		Vector<String> serverHeaderVector = msg.getResponseHeader().getHeaders("Server");
-		if ( serverHeaderVector!= null ) headerVector.addAll(serverHeaderVector); 
+		if ( serverHeaderVector!= null ) serverlikeHeaderVector.addAll(serverHeaderVector); 
 		Vector<String> poweredByHeaderVector = msg.getResponseHeader().getHeaders("X-Powered-By");
-		if ( poweredByHeaderVector!= null ) headerVector.addAll(poweredByHeaderVector);
-		String responseBody = msg.getResponseBody().toString();
+		if ( poweredByHeaderVector!= null ) serverlikeHeaderVector.addAll(poweredByHeaderVector);
 		
-		//for each header (there could be multiple, or none)
-		for (String header : headerVector) {
+		Vector<String> viaHeaderVector = msg.getResponseHeader().getHeaders("Via");
+		if ( viaHeaderVector!= null ) vialikeHeaderVector.addAll(viaHeaderVector); 
+		
+		String responseBody = msg.getResponseBody().toString();
+
+		//ordered list, so we can pull the items out in the order they were added
+		List <Product> matchingProducts = new LinkedList<Product> ();
+		List <String> matchingProductsEvidence = new LinkedList<String> ();
+		
+		VulnerabilityCache vc = VulnerabilityCache.getSingleton();
+
+		//for each server-like header (there could be multiple, or none)
+		for (String header : serverlikeHeaderVector) {
 			//the evidence is in the header, unless specified as being in the body... (Tomcat!) 
 			//String evidence = header;
 			if (header != null) {
-				//ordered list, so we can pull the items out in the order they were added
-				List <Product> matchingProducts = new LinkedList<Product> ();
-				List <String> matchingProductsEvidence = new LinkedList<String> ();
 				//per rfc2616, the server token can contain multiple product tokens, delimited by a space character
 				//and each product token takes the form: "token" or "token/product-version".
 				//in practice, we only see one of the following: 
@@ -154,9 +168,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 				//we're only interested cases where we can see the version, or the subcomponent (since we can't do anything meaningful without a software version)
 				//In the case of Apache, the subcomponent (if present) is the web server's underlying OS.  That's good to know :)
 
-				VulnerabilityCache vc = VulnerabilityCache.getSingleton();					
-
-				Matcher matcher = SERVER_HEADER_PATTERN.matcher(header);
+				Matcher serverheadermatcher = SERVER_HEADER_PATTERN.matcher(header);
 				Matcher matcherOracle = SERVER_HEADER_PATTERN_ORACLE.matcher (header);					
 				Matcher matcherJetty = SERVER_HEADER_PATTERN_JETTY.matcher (header);
 				Matcher matcherJBoss = SERVER_HEADER_PATTERN_JBOSS.matcher(header);
@@ -164,12 +176,12 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 				Matcher matcherTomcat = SERVER_BODY_PATTERN_TOMCAT.matcher(responseBody);
 
 				//for generic (mostly compliant with the rfc) products
-				if (matcher.matches()) {
+				if (serverheadermatcher.matches()) {
 					String product = null, version = null, dregs = null, evidence =null;
-					product = matcher.group(1);
-					version = matcher.group(2);
-					dregs = matcher.group(3);
-					evidence = matcher.group(0);
+					product = serverheadermatcher.group(1);
+					version = serverheadermatcher.group(2);
+					dregs = serverheadermatcher.group(3);
+					evidence = serverheadermatcher.group(0);
 					
 					//tweak for PHP (for which the general format is RFC compliant), since the the product information stored in the 
 					//database is limited to 3 levels of decimal digits, separated by dots, possibly followed directly by
@@ -211,8 +223,10 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 						}
 					}
 
+				} else {
+					if (log.isDebugEnabled()) log.debug ("Header "+ header + " does not match the server header standard, and will be ignored");
 				}
-								
+												
 				//handle the "Generator" matches here
 				//According to the following page, the generator is "one of the software packages used to generate the document"
 				//http://www.w3.org/TR/html5/document-metadata.html#standard-metadata-names
@@ -261,86 +275,107 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_WEBSERVER, "", product, version));
 					matchingProductsEvidence.add(evidence);
 				}
-
-				//for each of the product matches.
-				Iterator <String> matchingProductsEvidenceIterator = matchingProductsEvidence.iterator();				
-				for ( Product matchingProduct : matchingProducts) {						
-					String evidence = matchingProductsEvidenceIterator.next();
-					String product = matchingProduct.getProductName();
-					String version = matchingProduct.getProductVersion();
-					String distro = matchingProduct.getProductDistro();
-					Product.ProductType productType = matchingProduct.getProductType();
-
-					if ( product!= null && version != null) {
-						//TODO: handle special cases of web server software here that does not follow rfc2616						
-						if (log.isDebugEnabled()) log.debug("Found '" + productType + "' '"+product + "' version '"+ version+ "', distro '"+distro+"'");
-						LinkedList<CVE> vulnlist;
-						try {
-							//get the cached vulnerabilities (or retrieve them and cache them)
-							vulnlist = vc.getVulnerabilities(matchingProduct);
-
-							//if we found vulnerabilities, raise them (by throwing a single alert, using the highest risk noted)
-							if (vulnlist != null && vulnlist.size() > 0) {
-								if (log.isDebugEnabled()) log.debug("Found "+vulnlist.size()+" vulnerabilities");
-
-								StringBuffer sb = new StringBuffer ();
-								StringBuffer sbRefs = new StringBuffer ();
-								Double highestCvss = null;
-								boolean highestCVSSNoted = false;
-								for (CVE cve : vulnlist) {
-									if (!highestCVSSNoted) highestCvss = cve.getCvss();
-									highestCVSSNoted = true;
-
-									sb.append("CVE: "+ cve.getCve() + "\n");
-									sb.append("CVSS: "+ cve.getCvss() + "\n\n");
-
-									sbRefs.append("http://www.cvedetails.com/cve-details.php?cve_id=");
-									sbRefs.append(cve.getCve() + "\n");
-								}
-
-								//now we have the list of vulnerabilities in string form, so raise the alert
-								String extraInfo = new String (sb);
-								String refs = new String (sbRefs);
-								int cvssAlertLevel = 0;
-								
-								if (highestCvss< 2.5) {
-									cvssAlertLevel = Alert.RISK_INFO;
-								} else if (highestCvss< 5.0) {
-									cvssAlertLevel = Alert.RISK_LOW;
-								} else if (highestCvss< 7.5) {
-									cvssAlertLevel = Alert.RISK_MEDIUM;
-								} else cvssAlertLevel = Alert.RISK_HIGH;
-								
-								//the confidence depends on the distro.  Red Hat and CentOS Apache versions are unreliable, for instance
-								//in that case, raise them, for visibility, but flag as a probable false positive.  
-								//The user will just have to check it out manually, since there is no way for us to be at all sure here.
-								int confidence = Alert.WARNING;
-								if ( distro.equals("Red Hat") || distro.equals("CentOS")) {
-									confidence = Alert.FALSE_POSITIVE;
-								}
-								//lets go ahead and raise the alert
-								Alert alert = new Alert(getPluginId(), cvssAlertLevel, confidence, getName() + " - "+ product + " "+ version);
-								alert.setDetail(
-										Constant.messages.getString(MESSAGE_PREFIX + "desc", product, version, highestCvss, vulnlist.size()) , 
-										msg.getRequestHeader().getURI().toString(), 
-										"", //param
-										"", //attack 
-										extraInfo,  //other info
-										Constant.messages.getString(MESSAGE_PREFIX + "soln", product, version), 
-										Constant.messages.getString(MESSAGE_PREFIX + "refs", refs), 
-										evidence,		//evidence	
-										829,	//CWE 829: Inclusion of Functionality from Untrusted Control Sphere
-										0,		//There is no CWE for "Components with Known Vulnerabilities!"
-										msg);  
-								parent.raiseAlert(id, alert);
-							}
-						} catch (Exception e) {
-							log.error("Error getting the list of web server vulnerabilities", e);
-						} 
-					}
+			}
+		}
+		
+		//for each via-like header (there could be multiple, or none)
+		for (String header : vialikeHeaderVector) {
+			//the evidence is in the header
+			if (header != null) {	
+				Matcher viaheadermatcher = VIA_HEADER_PATTERN.matcher(header);
+				
+				//for generic VIA products
+				if (viaheadermatcher.matches()) {
+					String product = null, version = null, evidence = null;
+					product = viaheadermatcher.group(1);
+					version = viaheadermatcher.group(2);
+					evidence = viaheadermatcher.group(0);
+					
+					//record it..
+					matchingProducts.add(new Product (Product.ProductType.PRODUCTTYPE_PROXY_SERVER, "", product, version));
+					matchingProductsEvidence.add(evidence);
 				}
 			}
 		}
+		
+		//for each of the product matches, from, various header formats
+		Iterator <String> matchingProductsEvidenceIterator = matchingProductsEvidence.iterator();				
+		for ( Product matchingProduct : matchingProducts) {						
+			String evidence = matchingProductsEvidenceIterator.next();
+			String product = matchingProduct.getProductName();
+			String version = matchingProduct.getProductVersion();
+			String distro = matchingProduct.getProductDistro();
+			Product.ProductType productType = matchingProduct.getProductType();
+
+			if ( product!= null && version != null) {
+				//TODO: handle special cases of web server software here that does not follow rfc2616						
+				if (log.isDebugEnabled()) log.debug("Found '" + productType + "' '"+product + "' version '"+ version+ "', distro '"+distro+"'");
+				LinkedList<CVE> vulnlist;
+				try {
+					//get the cached vulnerabilities (or retrieve them and cache them)
+					vulnlist = vc.getVulnerabilities(matchingProduct);
+
+					//if we found vulnerabilities, raise them (by throwing a single alert, using the highest risk noted)
+					if (vulnlist != null && vulnlist.size() > 0) {
+						if (log.isDebugEnabled()) log.debug("Found "+vulnlist.size()+" vulnerabilities");
+
+						StringBuffer sb = new StringBuffer ();
+						StringBuffer sbRefs = new StringBuffer ();
+						Double highestCvss = null;
+						boolean highestCVSSNoted = false;
+						for (CVE cve : vulnlist) {
+							if (!highestCVSSNoted) highestCvss = cve.getCvss();
+							highestCVSSNoted = true;
+
+							sb.append("CVE: "+ cve.getCve() + "\n");
+							sb.append("CVSS: "+ cve.getCvss() + "\n\n");
+
+							sbRefs.append("http://www.cvedetails.com/cve-details.php?cve_id=");
+							sbRefs.append(cve.getCve() + "\n");
+						}
+
+						//now we have the list of vulnerabilities in string form, so raise the alert
+						String extraInfo = new String (sb);
+						String refs = new String (sbRefs);
+						int cvssAlertLevel = 0;
+						
+						if (highestCvss< 2.5) {
+							cvssAlertLevel = Alert.RISK_INFO;
+						} else if (highestCvss< 5.0) {
+							cvssAlertLevel = Alert.RISK_LOW;
+						} else if (highestCvss< 7.5) {
+							cvssAlertLevel = Alert.RISK_MEDIUM;
+						} else cvssAlertLevel = Alert.RISK_HIGH;
+						
+						//the confidence depends on the distro.  Red Hat and CentOS Apache versions are unreliable, for instance
+						//in that case, raise them, for visibility, but flag as a probable false positive.  
+						//The user will just have to check it out manually, since there is no way for us to be at all sure here.
+						int confidence = Alert.CONFIRMED; //replaces "Warning"?
+						if ( distro.equals("Red Hat") || distro.equals("CentOS")) {
+							confidence = Alert.FALSE_POSITIVE;
+						}
+						//lets go ahead and raise the alert
+						Alert alert = new Alert(getPluginId(), cvssAlertLevel, confidence, getName() + " - "+ product + " "+ version);
+						alert.setDetail(
+								Constant.messages.getString(MESSAGE_PREFIX + "desc", product, version, highestCvss, vulnlist.size()) , 
+								msg.getRequestHeader().getURI().toString(), 
+								"", //param
+								"", //attack 
+								extraInfo,  //other info
+								Constant.messages.getString(MESSAGE_PREFIX + "soln", product, version), 
+								Constant.messages.getString(MESSAGE_PREFIX + "refs", refs), 
+								evidence,		//evidence	
+								829,	//CWE 829: Inclusion of Functionality from Untrusted Control Sphere
+								0,		//There is no CWE for "Components with Known Vulnerabilities!"
+								msg);  
+						parent.raiseAlert(id, alert);
+					}
+				} catch (Exception e) {
+					log.error("Error getting the list of web server vulnerabilities", e);
+				} 
+			}
+		}
+
 
 	}
 

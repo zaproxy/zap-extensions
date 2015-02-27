@@ -16,6 +16,7 @@
 	Detect Directory Browsing / Listings on Microsoft IIS<br>
 	Added Cacheable Content scanner<br>
 	Added Retrieved From Cache scanner<br>
+	Updated Insecure Component scanner to support Squid<br>
 	]]>
 	</changes>
 	<extensions>
