@@ -16,21 +16,23 @@
     Promoted Source Code Disclosure - SVN to beta<br>
     Promoted Source Code Disclosure - WEB-INF to beta<br>
     Added "Relative Path Confusion" scanner<br>
+    Added "Proxy Disclosure" scanner<br>
   	]]>
 	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.ascanrulesAlpha.ExtensionAscanRulesAlpha</extension>
 	</extensions>
 	<ascanrules>
-         <ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BufferOverflow</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ProxyDisclosureScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RelativePathConfusionScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SlackerCookieDetector</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionSQLite</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RelativePathConfusionScanner</ascanrule>		
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
