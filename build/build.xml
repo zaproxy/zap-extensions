@@ -244,7 +244,14 @@
 		<build-addon name="httpsInfo" />
 		<build-addon name="importLogFiles" />
 		<build-addon name="multiFuzz" />
-		<build-addon name="pscanrulesAlpha" />
+		<build-addon name="pscanrulesAlpha" >
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="com/veggiespam/imagelocationscanner/**"/>
+					</zipfileset>
+				</jar>
+			</build-addon>
 		<build-addon name="saml" />
 		<build-addon name="sequence" />
 		<build-addon name="simpleExample" />

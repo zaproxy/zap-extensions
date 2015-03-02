@@ -17,6 +17,7 @@
 	Added Cacheable Content scanner<br>
 	Added Retrieved From Cache scanner<br>
 	Updated Insecure Component scanner to support Squid<br>
+	Added Image Location Scanner passive scanner<br>
 	]]>
 	</changes>
 	<extensions>
@@ -34,6 +35,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ExampleSimplePassiveScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HashDisclosureScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.HeartBleedScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ImageLocationScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureComponentScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormLoadScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormPostScanner</pscanrule>
