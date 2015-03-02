@@ -30,6 +30,7 @@ import org.zaproxy.zap.extension.api.PhpAPIGenerator;
 import org.zaproxy.zap.extension.api.PythonAPIGenerator;
 import org.zaproxy.zap.extension.api.WikiAPIGenerator;
 import org.zaproxy.zap.extension.reveal.RevealAPI;
+import org.zaproxy.zap.extension.selenium.SeleniumAPI;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderAPI;
 
 public class ApiGenerator {
@@ -47,6 +48,7 @@ public class ApiGenerator {
 
 		list.add(new AjaxSpiderAPI(null));
 		list.add(new RevealAPI(null));
+		list.add(new SeleniumAPI(null));
 
 		return list;
 	}

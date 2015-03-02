@@ -258,6 +258,7 @@
 		<build-addon name="quickstart" />
 		<build-addon name="reveal" />
 		<build-addon name="saverawmessage" />
+		<build-addon name="selenium" />
 		<build-addon name="spiderAjax" />
 		<build-addon name="websocket" />
 
@@ -363,6 +364,14 @@
 		<build-deploy-addon name="saverawmessage" />
 	</target>
 
+	<target name="deploy-selenium" depends="clean, compile" description="Deploys Selenium add-on">
+		<build-deploy-addon name="selenium" />
+	</target>
+
+	<target name="generate-wiki-selenium" description="Generates the wiki of selenium">
+		<generate-wiki-core addon="selenium" />
+	</target>
+
 	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
 		<build-deploy-addon name="spiderAjax" />
 	</target>
@@ -402,6 +411,7 @@
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
 				<include name="saverawmessage-${status}-*.zap"/>
+				<include name="selenium-${status}-*.zap"/>
 				<include name="spiderAjax-${status}-*.zap"/>
 				<include name="websocket-${status}-*.zap"/>
 			</fileset>
@@ -417,6 +427,7 @@
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
 				<include name="saverawmessage-${status}-*.zap"/>
+				<include name="selenium-${status}-*.zap"/>
 				<include name="spiderAjax-${status}-*.zap"/>
 				<include name="websocket-${status}-*.zap"/>
 			</fileset>
@@ -439,6 +450,7 @@
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
 				<include name="saverawmessage-${status}-*.zap"/>
+				<include name="selenium-${status}-*.zap"/>
 				<include name="spiderAjax-${status}-*.zap"/>
 				<include name="websocket-${status}-*.zap"/>
 			</fileset>
