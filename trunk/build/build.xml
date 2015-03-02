@@ -254,6 +254,7 @@
 		<build-addon name="directorylistv2_3_lc" />
 		<build-addon name="fuzzdb" />
 		<build-addon name="gettingStarted" />
+		<build-addon name="help" />
 		<build-addon name="pscanrules" />
 		<build-addon name="quickstart" />
 		<build-addon name="reveal" />
