@@ -61,9 +61,10 @@ class PopupMenuCallGraph extends PopupMenuHttpMessageContainer {
 		
         // TODO This add-on only supports the 'Paos' HSQLDB database
         if (! (Model.getSingleton().getDb() instanceof ParosDatabase)) {
+        	log.warn("Note: The database is not a 'ParosDatabase' instance, so the Call Graph Extension is disabled");
         	menuitemAllSites.setEnabled(false);
         	menuitemOneSite.setEnabled(false);
-        }
+        } 
 	}
 
 	@Override
