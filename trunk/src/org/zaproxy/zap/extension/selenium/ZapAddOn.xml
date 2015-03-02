@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Selenium</name>
-	<version>2</version>
+	<version>1</version>
 	<semver>1.0.0</semver><!-- This version should be kept in sync with the one of the extension. -->
 	<description>WebDriver provider and includes HtmlUnit browser</description>
 	<author>ZAP Dev Team</author>
