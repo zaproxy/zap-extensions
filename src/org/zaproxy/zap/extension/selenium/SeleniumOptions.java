@@ -122,7 +122,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
     /**
      * Reads the given {@code systemProperty}, falling back to the option with the given {@code optionKey} if not set.
      * <p>
-     * The system property if set, is saved in the file with the given {@code optionKey}.
+     * The system property if set, is saved in the file with the given {@code optionKey}. If not set, it's restored with the
+     * option if available.
      * 
      * @param systemProperty the name of the system property
      * @param optionKey the key of the option used as fallback
@@ -134,6 +135,9 @@ public class SeleniumOptions extends VersionedAbstractParam {
         if (value == null) {
             try {
                 value = getConfig().getString(optionKey, "");
+                if (!value.isEmpty()) {
+                    System.setProperty(systemProperty, value);
+                }
             } catch (ConversionException e) {
                 LOGGER.error("Failed to read '" + optionKey + "'", e);
                 value = "";
