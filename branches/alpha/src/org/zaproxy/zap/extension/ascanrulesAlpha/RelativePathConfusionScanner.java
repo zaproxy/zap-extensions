@@ -227,8 +227,6 @@ public class RelativePathConfusionScanner extends AbstractAppPlugin {
 					else {
 						if (extraInfo==null)
 							extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.nobasetag");
-						else 
-							extraInfo += "\n"+Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.nobasetag");
 						if (log.isDebugEnabled()) log.debug("There is no base specified for the page");
 					}
 				}
