@@ -130,7 +130,9 @@ public class CallGraphFrame extends AbstractFrame {
         	/*
         	 * TODO Add-ons should NOT make their own connections to the db any more - the db layer is plugable
         	 * so could be implemented in a completely different way
+        	 * TODO: how? There is currently no API to do this.
         	 */
+			//Note: the db is a singleton instance, so do *not* close it!!
 			Database db = Model.getSingleton().getDb();
 	        if (! (db instanceof ParosDatabase)) {
 	        	throw new InvalidParameterException(db.getClass().getCanonicalName());
