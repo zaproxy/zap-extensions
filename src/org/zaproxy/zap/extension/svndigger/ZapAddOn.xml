@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>SVN Digger files</name>
-	<version>2</version>
+	<version>3</version>
 	<description>SVN Digger files which can be used with ZAP forced browsing</description>
 	<author>ZAP Dev Team</author>
 	<url>http://www.mavitunasecurity.com/blog/svn-digger-better-lists-for-forced-browsing/</url>
-	<changes/>
+	<changes>Updated for ZAP 2.4</changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
@@ -69,6 +69,6 @@
 		<file>dirbuster/svndigger-context-setup.txt</file>
 		<file>dirbuster/svndigger-context-test.txt</file>
 	</files>
-	<not-before-version>2.2.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

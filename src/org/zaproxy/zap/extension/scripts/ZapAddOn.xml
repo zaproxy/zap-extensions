@@ -8,7 +8,8 @@
 	<![CDATA[
 	Make sure all script engines are shown when creating a script from type (Issue 1503).<br>
 	Warn about missing script engines (Issue 1504).<br>
-	Unload all components when uninstalling (Issue 1507).
+	Unload all components when uninstalling (Issue 1507).<br>
+	Updated for ZAP 2.4
 	]]>
 	</changes>
 	<extensions>

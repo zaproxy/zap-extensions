@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>14</version>
+	<version>15</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
@@ -16,7 +16,8 @@
     Promoted Source Code Disclosure - CVE2012-1823 to beta<br>
     Promoted Source Code Disclosure - SVN to beta<br>
     Promoted Source Code Disclosure - WEB-INF to beta<br>
-    Fixed minor regex escaping issue with Source Code Disclosure - SVN (Issue 1377)
+    Fixed minor regex escaping issue with Source Code Disclosure - SVN (Issue 1377)<br>
+	Updated for ZAP 2.4
     ]]>
 	</changes>
 	<extensions>
@@ -49,6 +50,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
