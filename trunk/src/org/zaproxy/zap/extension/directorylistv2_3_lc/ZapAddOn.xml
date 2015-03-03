@@ -4,7 +4,7 @@
 	<description>Lists of lower case directory names to be used with "Forced Browse" add-on.</description>
 	<author>ZAP Dev Team</author>
 	<url>https://owasp.org/index.php/DirBuster</url>
-	<changes>First release as an add-on, previously bundled with ZAP core.</changes>
+	<changes>Updated for 2.4.0.</changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
@@ -14,6 +14,6 @@
 		<file>dirbuster/directory-list-lowercase-2.3-medium.txt</file>
 		<file>dirbuster/directory-list-lowercase-2.3-big.txt</file>
 	</files>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

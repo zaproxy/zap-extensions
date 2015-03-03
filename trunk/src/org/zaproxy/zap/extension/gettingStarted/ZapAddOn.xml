@@ -14,4 +14,6 @@
 	<files>
 		<file>lang/ZAPGettingStartedGuide.pdf</file>
 	</files>
+	<not-before-version>2.4.0</not-before-version>
+	<not-from-version/>
 </zapaddon>

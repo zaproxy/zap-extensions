@@ -6,7 +6,8 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Generate the report (arg -quickout) even if view is initialised (Issue 1281).
+	Generate the report (arg -quickout) even if view is initialised (Issue 1281).<br>
+	Updated for ZAP 2.4
 	]]>
 	</changes>
 	<extensions>
@@ -16,6 +17,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

@@ -10,7 +10,8 @@
 	XContentTypeOptionsScanner Internationalization (Issue 1343).<br>
 	XContentTypeOptionsScanner default/error page updates (Issue 760).<br>
 	TestInfoSessionIdURL added value length check to reduce false positives (Issue 1396).<br>
-	Application Error Disclosure shows evidence in attack (Issue 1487).
+	Application Error Disclosure shows evidence in attack (Issue 1487).<br>
+	Updated to ZAP 2.4
 	]]>
 	</changes>
 	<extensions>
@@ -34,6 +35,6 @@
 	</pscanrules>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

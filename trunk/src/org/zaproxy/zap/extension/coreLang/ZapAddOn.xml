@@ -3,9 +3,9 @@
 	<name>Core Language Files</name>
 	<description>Translations of the core language files</description>
 	<author>ZAP Dev Team</author>
-	<version>5</version>
+	<version>6</version>
 	<url>https://crowdin.com/project/owasp-zap</url>
-	<changes>Latest translations from Crowdin - new Japanese translations and support for Azerbaijani</changes>
+	<changes>Latest translations from Crowdin and updated for 2.4.0</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.coreLang.ExtensionCoreLanguages</extension>
 	</extensions>
@@ -13,8 +13,8 @@
 	<pscanrules/>
 	<filters/>
 	<files>
-		<file>lang/ZAP_2.3.1_language_pack.4.zaplang</file>
+		<file>lang/ZAP_2.4.0_language_pack.1.zaplang</file>
 	</files>
-	<not-before-version>2.3.1</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

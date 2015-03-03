@@ -7,8 +7,9 @@
 	<changes>
 	<![CDATA[
         Changes to TestInjectionCRLF: address FindBugs issue, remove forced HTML elements in
-        references, add proper WASC ID.
-        Added blind command injection checks for CommandInjectionPlugin.
+        references, add proper WASC ID.<br>
+        Added blind command injection checks for CommandInjectionPlugin.<br>
+        Upgraded to ZAP 2.4
 	]]>
     </changes>
 	<extensions>
@@ -34,6 +35,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
