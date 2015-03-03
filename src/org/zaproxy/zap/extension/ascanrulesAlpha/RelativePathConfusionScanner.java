@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -63,7 +64,7 @@ public class RelativePathConfusionScanner extends AbstractAppPlugin {
 	private static final String MESSAGE_PREFIX = "ascanalpha.relativepathconfusion.";
 	
 	/**
-	 * a list of HTML attributes that load objects using a URL (and potentially using a relatvie path), mapping to the HTML tags that use them 
+	 * a list of HTML attributes that load objects using a URL (and potentially using a relative path), mapping to the HTML tags that use them 
 	 */
 	static final Map <String, String[]> RELATIVE_LOADING_ATTRIBUTE_TO_TAGS = new LinkedHashMap<String, String[]>();
 	
@@ -119,6 +120,16 @@ public class RelativePathConfusionScanner extends AbstractAppPlugin {
 	//										     background: url(image.png)
 	static final Pattern STYLE_URL_LOAD = Pattern.compile("[a-zA-Z_-]*\\s*:\\s*url\\s*\\([^/)]+[^)]*\\)", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 	
+	//Note: important here to *NOT* include any characters that could cause the resulting file suffix to be interpreted as a file with a file extension
+	private static final char[] RANDOM_PARAMETER_CHARS = "abcdefghijklmnopqrstuvwyxz0123456789".toCharArray();
+	
+	/**
+	 * the attack path to be appended to the URL. This is static to avoid repeated attacks on the same URL (in Attack mode, for instance) yielding new vulnerabilities
+	 * via different random file paths. 
+	 */
+	private static final String RANDOM_ATTACK_PATH = "/" + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS) + "/" + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS);
+
+	
 
 	/**
 	 * returns the plugin id
@@ -169,11 +180,6 @@ public class RelativePathConfusionScanner extends AbstractAppPlugin {
 	@Override
 	public void scan() {
 		
-		final char[] RANDOM_PARAMETER_CHARS = "abcdefghijklmnopqrstuvwyxz0123456789".toCharArray();
-		String randomAttackPath = "/" + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS) + "/" + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS);
-		
-				
-		
 		//get the base message. What else did you think this line of code might do??
 		HttpMessage originalMsg = getBaseMsg();
 		
@@ -185,10 +191,18 @@ public class RelativePathConfusionScanner extends AbstractAppPlugin {
 
 		try {
 			URI baseUri = originalMsg.getRequestHeader().getURI();
-			String filename = baseUri.getName();			
-
-			//is there a file name at the end of the path?
+			String filename = baseUri.getName();
+			String fileext = "";
+			
+			//is there a file extension at the end of the file name?
 			if ( filename != null && filename.length() > 0) {
+				fileext = FilenameUtils.getExtension(filename);
+			}
+			
+			//only filenames that have a file extension are potentially vulnerable to Relative Path Confusion
+			//(based on the instances of this that I've in seen in the wild, at least)
+			if (fileext!=null && fileext.length() > 0) {
+				if (log.isDebugEnabled()) log.debug("The file extension of "+baseUri.getURI() + " is "+ fileext);
 				
 				//1: First manipulate the URL, using a URL which is ambiguous..
 				URI originalURI = originalMsg.getRequestHeader().getURI();
@@ -197,7 +211,7 @@ public class RelativePathConfusionScanner extends AbstractAppPlugin {
 				String query = originalURI.getQuery();
 				if (query==null) query="";
 				
-				URI hackedUri = new URI (originalURI.getScheme(), originalURI.getAuthority(), path + randomAttackPath + "?" + query, null, null);
+				URI hackedUri = new URI (originalURI.getScheme(), originalURI.getAuthority(), path + RANDOM_ATTACK_PATH + "?" + query, null, null);
 				HttpMessage hackedMessage= new HttpMessage (hackedUri);				
 				try {
 					hackedMessage.setCookieParams(originalMsg.getCookieParams());
