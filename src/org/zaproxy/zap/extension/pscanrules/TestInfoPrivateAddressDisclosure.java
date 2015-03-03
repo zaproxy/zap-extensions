@@ -42,9 +42,15 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
     
     // Private IP's including localhost
     public static final Pattern patternPrivateIP = Pattern.compile(
-            "(10\\.(" + REGULAR_IP_OCTET + "\\.){2}" + REGULAR_IP_OCTET + "|"
+            "("
+            + "10\\.(" + REGULAR_IP_OCTET + "\\.){2}" + REGULAR_IP_OCTET + "|"
             + "172\\." + "\\b(3[01]|2[0-9]|1[6-9])\\." + REGULAR_IP_OCTET + "\\." + REGULAR_IP_OCTET + "|"
-            + "192\\.168\\." + REGULAR_IP_OCTET + "\\." + REGULAR_IP_OCTET + ")"
+            + "192\\.168\\." + REGULAR_IP_OCTET + "\\." + REGULAR_IP_OCTET + "|"
+            //find IPs from AWS hostnames such as "ip-10-2-3-200"
+            + "10\\-(" + REGULAR_IP_OCTET + "\\-){2}" + REGULAR_IP_OCTET + "|"
+            + "172\\-" + "\\b(3[01]|2[0-9]|1[6-9])\\-" + REGULAR_IP_OCTET + "\\-" + REGULAR_IP_OCTET + "|"
+            + "192\\-168\\-" + REGULAR_IP_OCTET + "\\-" + REGULAR_IP_OCTET             
+            + ")"
             + "(\\:" + REGULAR_PORTS + ")?",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
     
