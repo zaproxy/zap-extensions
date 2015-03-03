@@ -1,17 +1,10 @@
 <zapaddon>
 	<name>Server-Sent Events</name>
-	<version>7</version>
+	<version>8</version>
 	<description>Allows you to view Server-Sent Events (SSE) communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>
-	<![CDATA[
-	Minor code changes (Issues 503, 1104 and 1105).<br>
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).<br>
-	Updated add-on dir structure (Issue 1113).
-	]]>
-	</changes>
+	<changes>Updated for ZAP 2.4</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.sse.ExtensionServerSentEvents</extension>
 	</extensions>
@@ -19,6 +12,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

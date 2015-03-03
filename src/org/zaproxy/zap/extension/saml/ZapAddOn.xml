@@ -1,15 +1,10 @@
 <zapaddon>
     <name>SAML Extension</name>
-    <version>2</version>
+    <version>3</version>
     <description>Detect, Show, Edit, Fuzz SAML requests</description>
     <author>ZAP Dev Team</author>
     <url>http://code.google.com/p/zaproxy/</url>
-    <changes>
-    <![CDATA[
-    Updated to latest core changes and other minor code changes (Issue 609).<br>
-    Updated add-on dir structure (Issue 1113).
-    ]]>
-    </changes>
+	<changes>Updated for ZAP 2.4</changes>
     <dependson/>
     <extensions>
         <extension>org.zaproxy.zap.extension.saml.SAMLExtension</extension>
@@ -19,6 +14,6 @@
     </pscanrules>
     <filters/>
     <files/>
-    <not-before-version>2.3.0</not-before-version>
+    <not-before-version>2.4.0</not-before-version>
     <not-from-version></not-from-version>
 </zapaddon>
