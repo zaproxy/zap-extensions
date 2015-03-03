@@ -18,6 +18,7 @@
 	Added Retrieved From Cache scanner<br>
 	Updated Insecure Component scanner to support Squid<br>
 	Added Image Location Scanner passive scanner<br>
+	Updated for ZAP 2.4<br>
 	]]>
 	</changes>
 	<extensions>

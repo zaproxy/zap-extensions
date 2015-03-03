@@ -1,15 +1,10 @@
 <zapaddon>
 	<name>Call Graph</name>
-	<version>2</version>
+	<version>3</version>
 	<description>Allows the user to view a call graph of the selected resources</description>
 	<author>Colm O'Flaherty</author>
 	<url></url>
-	<changes>
-	<![CDATA[
-	Now also graphs requests originating from the Ajax Spider.<br>
-	Enables "Call Graph" pop up menu when in "Protected" and "Safe" modes (Issue 1278).
-	]]>
-	</changes>
+	<changes>Updated for ZAP 2.4</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.callgraph.ExtensionCallGraph</extension>
 	</extensions>
@@ -17,6 +12,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

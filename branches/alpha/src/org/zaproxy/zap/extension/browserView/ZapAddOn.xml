@@ -1,15 +1,10 @@
 <zapaddon>
 	<name>Browser View</name>
-	<version>3</version>
+	<version>4</version>
 	<description>Adds an option to render HTML responses like a browser</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>
-	<![CDATA[
-	Check if JavaFX is available before trying to add the response view (Issue 1201).<br>
-	Correctly unload the add-on (Issue 1344).
-	]]>
-	</changes>
+	<changes>Updated for ZAP 2.4</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.browserView.ExtensionHttpPanelBrowserView</extension>
 	</extensions>
@@ -17,7 +12,7 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
 

@@ -1,5 +1,5 @@
 <zapaddon>
-	<name>Simple Example</name>
+	<name>Wavsep report generator</name>
 	<version>1</version>
 	<description>Wavsep report generator.</description>
 	<author>ZAP Dev Team</author>
@@ -13,6 +13,6 @@
 	<filters/>
 	<files>
 	</files>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
