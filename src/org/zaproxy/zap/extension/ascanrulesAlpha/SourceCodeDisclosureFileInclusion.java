@@ -20,6 +20,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -38,8 +39,8 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 
-	//TODO: replace this with an actual random value, or someone will decide to play with our heads by creating actual files with this name.
-	private static final String NON_EXISTANT_FILENAME = "thishouldnotexistandhopefullyitwillnot";
+	//use a random file name which is very unlikely to exist
+	private static final String NON_EXISTANT_FILENAME = RandomStringUtils.random(38, "abcdefghijklmnopqrstuvwxyz");
 
 	//the prefixes to try for source file inclusion
 	private String[] LOCAL_SOURCE_FILE_TARGET_PREFIXES = {
