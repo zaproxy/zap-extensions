@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Fuzzdb files</name>
-	<version>2</version>
+	<version>3</version>
 	<description>Fuzzdb v1.09 files which can be used with the ZAP fuzzer</description>
 	<author>ZAP Dev Team</author>
 	<url>http://code.google.com/p/fuzzdb/</url>
-	<changes>Removed a file entry from the ZapAddOn.xml file because it doesn't exist.</changes>
+	<changes>Updated for 2.4.0.</changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
@@ -1373,6 +1373,6 @@
 		<file>fuzzers/fuzzdb-1.09/wordlists-user-passwd/unix-os/unix_passwords.txt</file>
 		<file>fuzzers/fuzzdb-1.09/wordlists-user-passwd/unix-os/unix_users.txt</file>
 	</files>
-	<not-before-version/>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
