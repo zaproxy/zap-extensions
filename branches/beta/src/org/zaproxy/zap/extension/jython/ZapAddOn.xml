@@ -1,17 +1,10 @@
 <zapaddon>
 	<name>Python scripting</name>
-	<version>3</version>
+	<version>4</version>
 	<description>Allows Python to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>
-	<![CDATA[
-	Moved to beta<br>
-	Changed help file structure to support internationalisation (Issue 981).<br>
-	Added content-type to help pages (Issue 1080).<br>
-	Updated add-on dir structure (Issue 1113).
-	]]>
-	</changes>
+	<changes>Updated for ZAP 2.4</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jython.ExtensionJython</extension>
 	</extensions>
@@ -29,6 +22,6 @@
 		<file>scripts/templates/standalone/Traverse sites tree.py</file>
 		<file>scripts/templates/targeted/Targeted default template.py</file>
 	</files>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

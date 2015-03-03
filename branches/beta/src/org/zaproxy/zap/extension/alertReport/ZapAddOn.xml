@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Safe menu items will now be enabled in protected and safe modes (Issue 1278).<br>
-	Changed from iText PDF library to Apache 2.0 licenced PDFBox libary.
+	Changed from iText PDF library to Apache 2.0 licenced PDFBox libary.<br>
+	Updated for ZAP 2.4
 	]]>
 	</changes>
 	<extensions>
@@ -17,6 +18,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

@@ -4,7 +4,7 @@
 	<description>Display ZAP Tips and Tricks</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Removed the 'show on start' option as the tips are now shown in the splash screen</changes>
+	<changes>Removed the 'show on start' option as the tips are now shown in the splash screen, added more tips</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.tips.ExtensionTipsAndTricks</extension>
 	</extensions>
@@ -12,6 +12,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

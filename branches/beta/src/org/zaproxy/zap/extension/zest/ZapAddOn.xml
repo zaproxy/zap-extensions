@@ -14,6 +14,7 @@
 	Zest Issue 67: Multipart/form-data request failed<br>
 	Zest Issue 68: ZestExpressionURL fails to initialise regex patterns<br>
 	Zest Issue 69: Added support for AssignCalc and ExpressionIsInteger <br>
+	Updated for ZAP 2.4
 	]]>
 	</changes>
 	<dependencies>

@@ -4,7 +4,7 @@
 	<description>Adds an option to import a file of URLs. The file must be plain text with one URL per line.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Promoted to beta</changes>
+	<changes>Promoted to beta, updated for ZAP 2.4</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.importurls.ExtensionImportUrls</extension>
 	</extensions>
@@ -12,6 +12,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.3.0</not-before-version>
+	<not-before-version>2.4.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
