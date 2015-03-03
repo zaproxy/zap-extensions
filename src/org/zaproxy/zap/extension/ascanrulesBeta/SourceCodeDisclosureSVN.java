@@ -20,6 +20,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
@@ -223,6 +224,20 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 			fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
 			fileExtension = fileExtension.toUpperCase();
 		}
+		
+		//do not attempt to find source code where the original message had a status code of 0.
+		//this occurs when a folder is recursively scanned, it seems
+		if (originalMessage.getResponseHeader().getStatusCode() == 0) {
+			if (log.isDebugEnabled()) log.debug ("Nope. The original message/URL is not real (HTTP response status code == 0), so there is no point in looking for Subversion data for it");
+			return false;
+		}
+				
+		//do not recurse into a Subversion folder... this would cause infinite recursion issues in Attack Mode. (which goes depth first!)
+		//in any event, it doesn't make sense to do this.
+		if (path.contains("/.svn/") || path.endsWith("/.svn")) {
+			if (log.isDebugEnabled()) log.debug ("Nope. It doesn't make any sense to look for a Subversion repo *within* a Subversion repo");
+			return false;
+		}
 
 		//Look for SVN metadata containing source code
 		String pathminusfilename = path.substring( 0, path.lastIndexOf(filename));
@@ -230,7 +245,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 		HttpMessage svnsourcefileattackmsg = new HttpMessage(new URI (uri.getScheme(), uri.getAuthority(), pathminusfilename + ".svn/text-base/" + filename + ".svn-base", null, null));
 		svnsourcefileattackmsg.setCookieParams(this.getBaseMsg().getCookieParams());
 		//svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
-		sendAndReceive(svnsourcefileattackmsg);
+		sendAndReceive(svnsourcefileattackmsg, false);  //do not follow redirects
 
 		//if we got a 404 specifically, then this is NOT a match
 		//note that since we are simply relying on the file existing or not, we 
@@ -239,8 +254,13 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 		if ( svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND ) {
 
 			if (! Arrays.equals(svnsourcefileattackmsg.getResponseBody().getBytes(), originalMessage.getResponseBody().getBytes())) {
-
+				
 				String attackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/text-base/" + filename + ".svn-base";
+				if (log.isDebugEnabled()) {
+					log.debug("The contents for request '"+ attackFilename + "' do not match the contents for the original request '"+ uri.getURI() + "', so we likely have the source code..");
+					log.debug("  Original (of length "+originalMessage.getResponseBody().getBytes().length        + "): " + Hex.encodeHexString(originalMessage.getResponseBody().getBytes()));
+					log.debug("SVN Attack (of length "+svnsourcefileattackmsg.getResponseBody().getBytes().length + "): " + Hex.encodeHexString(svnsourcefileattackmsg.getResponseBody().getBytes()));
+				}
 
 				//check the contents of the output to some degree, if we have a file extension.
 				//if not, just try it (could be a false positive, but hey)    			
