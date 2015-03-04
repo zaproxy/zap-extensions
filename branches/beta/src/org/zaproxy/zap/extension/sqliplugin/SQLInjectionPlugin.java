@@ -743,8 +743,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     // Alert the vulnerability to the main core
                                     this.bingo(
                                             Alert.RISK_HIGH,
-                                            // Change to Alert.CONFIRMED for version 2.4.0 for the core
-                                            Alert.WARNING, 
+                                            Alert.CONFIRMED, 
                                             getName() + " - " + title,
                                             getDescription(),
                                             null,
@@ -836,8 +835,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // Alert the vulnerability to the main core
                                 this.bingo(
                                         Alert.RISK_HIGH,
-                                        // Change to Alert.CONFIRMED for version 2.4.0 for the core
-                                        Alert.WARNING,
+                                        Alert.CONFIRMED,
                                         getName() + " - " + title,
                                         getDescription(),
                                         null,
@@ -928,8 +926,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     // Alert the vulnerability to the main core
                                     this.bingo(
                                             Alert.RISK_HIGH,
-                                            // Change to Alert.MEDIUM for version 2.4.0 for the core
-                                            Alert.WARNING,
+                                            Alert.MEDIUM,
                                             getName() + " - " + title,
                                             getDescription(),
                                             null,
@@ -1004,8 +1001,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // Alert the vulnerability to the main core
                                 this.bingo(
                                         Alert.RISK_HIGH,
-                                        // Change to Alert.CONFIRMED for version 2.4.0 for the core
-                                        Alert.WARNING,
+                                        Alert.CONFIRMED,
                                         getName() + " - " + title,
                                         getDescription(),
                                         null,
