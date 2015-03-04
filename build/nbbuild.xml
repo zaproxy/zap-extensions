@@ -91,7 +91,6 @@
         <build-addon name="multiFuzz" />
         <build-addon name="pscanrulesAlpha" />
         <build-addon name="saml" />
-        <build-selenium-addon />
         <build-addon name="sequence" />
         <build-addon name="simpleExample" />
         <build-addon name="sniTerminator" />
@@ -100,20 +99,6 @@
         <build-addon name="wappalyzer" />
 		
     </target>
-    
-    <!-- Selenium specific build -->
-    <macrodef name="build-selenium-addon" description="Builds Selenium add-on">
-        <sequential>
-            <build-addon name="selenium">
-                <!-- Add the extra classes required -->
-                <jar jarfile="${dist.dir}/${file}" update="true" compress="true">
-                    <zipfileset dir="${build.classes.dir}" prefix="">
-                        <include name="org/openqa/selenium/browserlaunchers/**"/>
-                    </zipfileset>
-                </jar>
-            </build-addon>
-        </sequential>
-    </macrodef>
 
     <!--     
     ZAP Specific build tags
