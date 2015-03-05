@@ -117,7 +117,7 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
         }
 
         if (sbTxtFound.length() != 0) {
-            Alert alert = new Alert(getPluginId(), this.getRisk(), Alert.WARNING, this.getName());
+            Alert alert = new Alert(getPluginId(), this.getRisk(), Alert.CONFIRMED, this.getName());
 
             alert.setDetail(
                     this.getDescription(),
