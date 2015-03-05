@@ -68,7 +68,7 @@ public class HeaderXssProtectionScanner extends PluginPassiveScanner {
 	}
 	
 	private void raiseAlert(HttpMessage msg, int id, String xssHeaderProtection) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING,  getName());
+		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIRMED,  getName());
 		alert.setDetail(
 					Constant.messages.getString("pscanrules.xss-protection.desc"), 
 		    	    msg.getRequestHeader().getURI().toString(),
