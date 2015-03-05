@@ -128,7 +128,7 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 			//tries payloads for Linux/Unix, and Windows until we find something that works
 			for ( String payload : payloads) {
 				URI originalURI = getBaseMsg().getRequestHeader().getURI();
-				byte [] originalResponseBody = getBaseMsg().getResponseBody().getBytes();
+				//byte [] originalResponseBody = getBaseMsg().getResponseBody().getBytes();
 				
 				//construct a new URL based on the original URL, but without any of the original parameters
 				//important: the URL is already escaped, and must not be escaped again
@@ -154,7 +154,7 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 						
 					//bingo.
 					bingo(	Alert.RISK_HIGH, 
-						Alert.WARNING,
+						Alert.CONFIRMED,
 						Constant.messages.getString("ascanbeta.remotecodeexecution.cve-2012-1823.name"),
 						Constant.messages.getString("ascanbeta.remotecodeexecution.cve-2012-1823.desc"), 
 						null, // originalMessage.getRequestHeader().getURI().getURI(),
