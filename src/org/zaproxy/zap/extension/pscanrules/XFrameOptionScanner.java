@@ -61,7 +61,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String xFrameOption, boolean isXFrameOptionsMissing) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIRMED, 
 		    	getName());
 		    	alert.setDetail(
 		    		getDescription(isXFrameOptionsMissing), 
