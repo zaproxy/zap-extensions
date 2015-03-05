@@ -56,7 +56,7 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String crossDomainScript) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIRMED, 
 		    	getName());
 		    	alert.setDetail(
 		    			"The page at the following URL includes one or more script files from a third-party domain", 
