@@ -67,7 +67,7 @@ public class CacheControlScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String cacheControl) {
-	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
+	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
 		    	    "The cache-control and pragma HTTP header have not been set properly allowing the browser and proxies to cache content", 
