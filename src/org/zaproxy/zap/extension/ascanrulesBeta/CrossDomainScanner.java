@@ -149,7 +149,7 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 			    	if ( domain.equals("*")) {
 						//oh dear me.
 						bingo(	getRisk(), 
-								Alert.WARNING,
+								Alert.CONFIRMED,
 								Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "name"),
 								Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"), 
 								crossdomainmessage.getRequestHeader().getURI().getURI(), //the url field 
@@ -170,7 +170,7 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 			    	if ( domain.equals("*")) {
 						//oh dear, dear me.
 						bingo(	getRisk(), 
-								Alert.WARNING,
+								Alert.CONFIRMED,
 								Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "name"),
 								Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"), 
 								crossdomainmessage.getRequestHeader().getURI().getURI(), //the url field 
@@ -207,7 +207,7 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 			    		//tut, tut, tut.
 						if (log.isDebugEnabled())log.debug("Bingo! "+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE+", at /access-policy/cross-domain-access/policy/allow-from/domain/@uri");
 						bingo(	getRisk(), 
-								Alert.WARNING,
+								Alert.CONFIRMED,
 								Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "name"),
 								Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "desc"), 
 								clientaccesspolicymessage.getRequestHeader().getURI().getURI(), //the url field 
