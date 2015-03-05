@@ -138,7 +138,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     //private static final Pattern DIR_PATTERN = Pattern.compile("(?s)((?=.*Windows)(?=.*Program\\sFiles).*)|((?=.*etc)(?=.*bin)(?=.*boot).*)");
    
     // Set in this way we avoid to build Pattern objects for every iteration
-    private static final Map<String, Pattern> LOCAL_FILE_TARGETS_AND_PATTERNS = new HashMap();
+    private static final Map<String, Pattern> LOCAL_FILE_TARGETS_AND_PATTERNS = new HashMap<String, Pattern>();
     static {       
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("etc/passwd", NIX_PATTERN);	///etc/passwd%00 ///etc/passwd^^ //etc/passwd%00.jpg
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("Windows\\system.ini", WIN_PATTERN);
@@ -326,7 +326,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     
                     //if the output matches, and we get a 200
                     if (matcher.find() && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
-                        bingo(Alert.RISK_HIGH, Alert.WARNING,
+                        bingo(Alert.RISK_HIGH, Alert.CONFIRMED,
                                 null, param,
                                 matcher.group(), null, msg);
                         
@@ -392,7 +392,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         
                         //if it returns OK, and the random string above did NOT return ok, then raise an alert
                         //since the filename has likely been picked up and used as a file name from the parameter
-                        bingo(Alert.RISK_HIGH, Alert.WARNING,
+                        bingo(Alert.RISK_HIGH, Alert.CONFIRMED,
                                 null, param, prefixedUrlfilename, null, msg);
                         
                         // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact)
