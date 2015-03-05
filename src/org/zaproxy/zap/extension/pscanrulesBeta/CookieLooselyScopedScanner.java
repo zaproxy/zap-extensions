@@ -128,7 +128,7 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String host, List<HttpCookie> looselyScopedCookies) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.SUSPICIOUS,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_LOW,
 				getName());
 		StringBuilder sbCookies = new StringBuilder();
 		for (HttpCookie cookie: looselyScopedCookies) {

@@ -324,7 +324,7 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                         String vulnsoln = Constant.messages.getString("ascanbeta.ldapinjection.soln");
                         
                         //bingo!
-                        bingo(Alert.RISK_HIGH, Alert.CONFIRMED, vulnname, vulndesc,
+                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, vulnname, vulndesc,
                                 getBaseMsg().getRequestHeader().getURI().getURI(),
                                 paramname, 
                                 attack,
@@ -394,7 +394,7 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                         String vulnsoln = Constant.messages.getString("ascanbeta.ldapinjection.soln");
                         
                         //bingo!
-                        bingo(Alert.RISK_HIGH, Alert.CONFIRMED, vulnname, vulndesc,
+                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, vulnname, vulndesc,
                                 getBaseMsg().getRequestHeader().getURI().getURI(),
                                 paramname, 
                                 attack,
@@ -504,7 +504,7 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                 String vulnsoln = Constant.messages.getString("ascanbeta.ldapinjection.soln");
                 
                 //we know the LDAP implementation, so put it in the title, where it will be obvious.
-                bingo(Alert.RISK_HIGH, Alert.CONFIRMED, vulnname + " - " + LDAP_ERRORS.get(errorPattern), vulndesc,
+                bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, vulnname + " - " + LDAP_ERRORS.get(errorPattern), vulndesc,
                         getBaseMsg().getRequestHeader().getURI().getURI(),
                         parameterName, 
                         attack,

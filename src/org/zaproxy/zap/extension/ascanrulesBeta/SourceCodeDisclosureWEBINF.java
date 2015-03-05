@@ -218,7 +218,7 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 						
 						//bingo.
 						bingo(	Alert.RISK_HIGH, 
-							Alert.WARNING,
+							Alert.CONFIDENCE_MEDIUM,
 							Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.name"),
 							Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.desc"), 
 							null, // originalMessage.getRequestHeader().getURI().getURI(),
@@ -256,7 +256,7 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 							if (propsfilemsg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK ) {
 								//Holy sheet.. we found a properties file
 								bingo(	Alert.RISK_HIGH, 
-										Alert.WARNING,
+										Alert.CONFIDENCE_MEDIUM,
 										Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.propertiesfile.name"),
 										Constant.messages.getString("ascanbeta.sourcecodedisclosurewebinf.propertiesfile.desc"), 
 										null, // originalMessage.getRequestHeader().getURI().getURI(),

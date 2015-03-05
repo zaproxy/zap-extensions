@@ -115,7 +115,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
         Alert alert = new Alert(
                                 getPluginId(),
                                 Alert.RISK_HIGH,
-                                Alert.SUSPICIOUS,
+                                Alert.CONFIDENCE_LOW,
                                 "Viewstate without MAC signature (Unsure)"
                             );
         alert.setDetail(

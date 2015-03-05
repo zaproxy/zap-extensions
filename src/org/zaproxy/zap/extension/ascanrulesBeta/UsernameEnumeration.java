@@ -506,8 +506,8 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 						String vulndesc=Constant.messages.getString("ascanbeta.usernameenumeration.desc");
 						String vulnsoln=Constant.messages.getString("ascanbeta.usernameenumeration.soln");
 
-						//call bingo with some extra info, indicating that the alert is 
-						bingo(Alert.RISK_INFO, Alert.SUSPICIOUS, vulnname, vulndesc, 
+						//call bingo with some extra info, indicating that the alert is
+						bingo(Alert.RISK_INFO, Alert.CONFIDENCE_LOW, vulnname, vulndesc, 
 								getBaseMsg().getRequestHeader().getURI().getURI(),
 								currentHtmlParameter.getName(),  attack, 
 								extraInfo, vulnsoln, getBaseMsg());
