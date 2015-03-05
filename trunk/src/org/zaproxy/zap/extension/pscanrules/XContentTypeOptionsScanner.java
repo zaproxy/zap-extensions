@@ -62,7 +62,7 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 	}
 		
 	private void raiseAlert(HttpMessage msg, int id, String xContentTypeOption) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIRMED, 
 		    	getName());
 		    	alert.setDetail(
 		    		getDescription(), // Desc
