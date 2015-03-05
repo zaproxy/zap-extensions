@@ -336,8 +336,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                     // Now create the alert message
                     this.bingo(
                             Alert.RISK_HIGH, 
-                            //Set this to Alert.CONFIRMED when changing to 2.4.0
-                            Alert.WARNING,
+                            Alert.CONFIDENCE_MEDIUM,
                             null,
                             paramName,
                             paramValue, 
@@ -410,8 +409,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                     // Now create the alert message
                     this.bingo(
                             Alert.RISK_HIGH, 
-                            //Set this to Alert.MEDIUM when changing to 2.4.0
-                            Alert.WARNING,
+                            Alert.CONFIDENCE_MEDIUM,
                             null,
                             paramName,
                             paramValue, 

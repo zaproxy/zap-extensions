@@ -281,7 +281,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
                     // Now create the alert message
                     this.bingo(
                             Alert.RISK_HIGH, 
-                            Alert.CONFIRMED, 
+                            Alert.CONFIDENCE_MEDIUM, 
                             null,
                             param,
                             payload, 

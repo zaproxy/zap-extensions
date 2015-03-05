@@ -144,7 +144,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 	            		"'\"<script>alert(1);</script>", null, 0);
 	            if (contexts2.size() > 0) {
             		// Yep, its vulnerable
-					bingo(Alert.RISK_HIGH, Alert.SUSPICIOUS, null, param, contexts2.get(0).getTarget(), 
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, null, param, contexts2.get(0).getTarget(), 
 							"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
 					attackWorked = true;
 	            }

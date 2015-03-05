@@ -147,7 +147,7 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
         // Raise an alert according to Passive Scan Rule model
         // description, uri, param, attack, otherInfo, 
         // solution, reference, evidence, cweId, wascId, msg
-        Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIRMED, getName());
+        Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_MEDIUM, getName());
         alert.setDetail(
                 getDescription(),
                 msg.getRequestHeader().getURI().toString(),
