@@ -113,8 +113,8 @@ public class HeartBleedScanner extends PluginPassiveScanner {
 			//if the version matches any of the known vulnerable versions, raise an alert.
 			for (int i = 0; i < openSSLvulnerableVersions.length; i ++) {
 				if (versionNumber.equalsIgnoreCase(openSSLvulnerableVersions[i])) {
-					//Suspicious, but not a warning, because the reported version could have a security back-port.					
-					Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.SUSPICIOUS, getName());		
+					//Suspicious, but not a warning, because the reported version could have a security back-port.
+					Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, getName());
 					     
 					alert.setDetail(
 							getDescription(),  

@@ -98,6 +98,8 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
 	 */
 	public static final Map <Pattern, String> PROXY_RESPONSE_HEADERS = new LinkedHashMap <Pattern, String> ();
 	static {
+		PROXY_RESPONSE_HEADERS.put(Pattern.compile("^(X-RBT-Optimized-By):\\s*(.+)\\s*$", Pattern.CASE_INSENSITIVE |  Pattern.MULTILINE | Pattern.DOTALL), "Riverbed Steelhead");
+		
 		PROXY_RESPONSE_HEADERS.put(Pattern.compile("^(X-Cache):\\s*(.+)\\s*$", Pattern.CASE_INSENSITIVE |  Pattern.MULTILINE | Pattern.DOTALL), "");
 		PROXY_RESPONSE_HEADERS.put(Pattern.compile("^(X-Cache-Lookup):\\s*(.+)\\s*$", Pattern.CASE_INSENSITIVE |  Pattern.MULTILINE | Pattern.DOTALL), "");
 		PROXY_RESPONSE_HEADERS.put(Pattern.compile("^(Via):\\s*(.+)\\s*$", Pattern.CASE_INSENSITIVE |  Pattern.MULTILINE | Pattern.DOTALL), "");
@@ -379,7 +381,13 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
 					cookies2.add(new HtmlParameter(HtmlParameter.Type.cookie, randomcookiename2, randomcookievalue2));
 					mfMethodMsg.setCookieParams(cookies2);
 
-					sendAndReceive(mfMethodMsg, false); //do not follow redirects. 
+					try {
+						sendAndReceive(mfMethodMsg, false); //do not follow redirects.
+					}
+					catch (Exception e) {
+						log.error("Failed to send a request in step 2 with method "+httpMethod+", Max-Forwards: "+ requestHeader.getHeader("Max-Forwards")+ ": " + e.getMessage());
+						break; //to the next method
+					}
 					
 					//if the response from the proxy/origin server echoes back the cookie (TRACE, or other method), that's serious, so we need to check.
 					String methodResponseBody = mfMethodMsg.getResponseBody().toString();  
@@ -564,7 +572,7 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
 				//there are multiple messages on which the issue could have been raised, but each individual atatck message 
 				//tells only a small part of the story. Explain it in the "extra info" instead. 
 				bingo(	endToEndTraceEnabled || proxyTraceEnabled ? Alert.RISK_HIGH:getRisk(), 
-						Alert.CONFIRMED, 
+						Alert.CONFIDENCE_MEDIUM, 
 						getName(), 
 						Constant.messages.getString(MESSAGE_PREFIX+"desc", step2numberOfNodes -1 + silentProxySet.size()),
 						getBaseMsg().getRequestHeader().getURI().getURI(), //url

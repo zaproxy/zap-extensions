@@ -375,7 +375,7 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 							//Likely an error based SQL Injection. Raise it
 							String extraInfo = Constant.messages.getString("ascanalpha.sqlinjection.sqlite.alert.errorbased.extrainfo", errorMessagePattern);
 							//raise the alert
-							bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
+							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(),
 									getBaseMsg().getRequestHeader().getURI().getURI(), //url
 									paramName, newTimeBasedInjectionValue, 
 									extraInfo, getSolution(),
@@ -468,7 +468,7 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 							originalParamValue, originalTimeUsed);
 					
 					//raise the alert
-					bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(), 
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), 
 							getBaseMsg().getRequestHeader().getURI().getURI(), //url
 							paramName,  detectableDelayParameter, 
 							extraInfo, getSolution(),
@@ -547,7 +547,7 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 
 													String extraInfo = Constant.messages.getString("ascanalpha.sqlinjection.sqlite.alert.versionnumber.extrainfo", versionNumber);
 													//raise the alert
-													bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - "+ versionNumber, getDescription(),
+													bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - "+ versionNumber, getDescription(),
 															getBaseMsg().getRequestHeader().getURI().getURI(), //url
 															paramName, unionAttack, 
 															extraInfo, getSolution(),

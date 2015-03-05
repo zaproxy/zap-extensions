@@ -338,7 +338,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 		}
 		if (evidence!=null && evidence.length() > 0) {
 			//we found something			
-			Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.WARNING, getName() + " - "+ programminglanguage );		
+			Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - "+ programminglanguage );		
 			     
 			alert.setDetail(
 					getDescription() + " - "+ programminglanguage, 

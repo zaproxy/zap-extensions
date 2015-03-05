@@ -106,7 +106,7 @@ public class DirectoryBrowsingScanner extends PluginPassiveScanner {
 		}
 		if (evidence!=null && evidence.length() > 0) {
 			//we found something
-			Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING, getName() + " - "+ server );		
+			Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName() + " - "+ server );		
 			     
 			alert.setDetail(
 					getDescription() + " - "+ server, 

@@ -78,7 +78,7 @@ public class AccessControlAlertsProcessor {
 	}
 
 	private void raiseAuthorizationAlert(AccessControlResultEntry result) {
-		Alert alert = new Alert(10102, alertRiskLevel, Alert.HIGH, AUTHORIZATION_ALERT_TITLE);
+		Alert alert = new Alert(10102, alertRiskLevel, Alert.CONFIDENCE_HIGH, AUTHORIZATION_ALERT_TITLE);
 
 		HttpMessage msg = null;
 		try {
@@ -104,7 +104,7 @@ public class AccessControlAlertsProcessor {
 	}
 
 	private void raiseAuthenticationAlert(AccessControlResultEntry result) {
-		Alert alert = new Alert(10101, alertRiskLevel, Alert.HIGH, AUTHENTICATION_ALERT_TITLE);
+		Alert alert = new Alert(10101, alertRiskLevel, Alert.CONFIDENCE_HIGH, AUTHENTICATION_ALERT_TITLE);
 
 		HttpMessage msg = null;
 		try {

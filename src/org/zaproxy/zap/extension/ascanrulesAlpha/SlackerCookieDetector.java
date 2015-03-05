@@ -88,7 +88,7 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 				sessionNoLongerGood = true;
 				bingo(Alert.RISK_INFO,
 				// reliability:
-						Alert.SUSPICIOUS, msg.getRequestHeader().getURI().toString(),
+						Alert.CONFIDENCE_LOW, msg.getRequestHeader().getURI().toString(),
 						// parameter:
 						null,
 						// Attack:
@@ -171,7 +171,7 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 
 		bingo(riskLevel,
 		// reliability:
-				Alert.SUSPICIOUS, msg.getRequestHeader().getURI().toString(),
+				Alert.CONFIDENCE_LOW, msg.getRequestHeader().getURI().toString(),
 				// parameter:
 				null,
 				// Attack:

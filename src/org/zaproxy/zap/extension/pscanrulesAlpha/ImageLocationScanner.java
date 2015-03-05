@@ -118,7 +118,7 @@ public class ImageLocationScanner extends PluginPassiveScanner {
 			String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes());
 			
 			if (! hasGPS.isEmpty()) {
-				Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIRMED, alertTitle);
+				Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, alertTitle);
 				alert.setDetail(
 			    		getDescription(), 
 			    		url,

@@ -151,8 +151,8 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 						if (log.isDebugEnabled()) log.debug("Found a match for timestamp type "+ timestampType +":" + evidence);
 
 						if ( evidence!=null && evidence.length() > 0) {
-							//we found something
-							Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.SUSPICIOUS, getName() + " - "+ timestampType );
+							//we found something.. potentially
+							Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getName() + " - "+ timestampType );
 							alert.setDetail(
 									getDescription() + " - "+ timestampType, 
 									msg.getRequestHeader().getURI().toString(), 
