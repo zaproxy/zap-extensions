@@ -107,7 +107,7 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
 				for ( String header: ssHeaders) {
 					if (header.contains(evidence)) {
 						bingo(	getRisk(), 
-								Alert.WARNING,
+								Alert.CONFIRMED,
 								this.getName(),
 								this.getDescription(), 
 								null, // originalMessage.getRequestHeader().getURI().getURI(),
@@ -148,7 +148,7 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
 			}
 			if (vulnerable) {
 				bingo(	getRisk(), 
-						Alert.WARNING,
+						Alert.CONFIRMED,
 						this.getName(),
 						this.getDescription(), 
 						null, // originalMessage.getRequestHeader().getURI().getURI(),
