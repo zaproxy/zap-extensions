@@ -196,7 +196,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
 	                // Raise an alert according to Passive Scan Rule model
 	                // description, uri, param, attack, otherInfo, 
 	                // solution, reference, evidence, cweId, wascId, msg
-	                Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIRMED, getName());
+	                Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_MEDIUM, getName());
 	                alert.setDetail(
 	                        getDescription(),
 	                        uri,
@@ -290,7 +290,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                     // Raise an alert according to Passive Scan Rule model
                     // description, uri, param, attack, otherInfo, 
                     // solution, reference, evidence, cweId, wascId, msg
-                    Alert alert = new Alert(getPluginId(), risk, Alert.CONFIRMED, getRefererAlert());
+                    Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, getRefererAlert());
                     alert.setDetail(
                             getRefererDescription(),
                             msg.getRequestHeader().getURI().getURI(),

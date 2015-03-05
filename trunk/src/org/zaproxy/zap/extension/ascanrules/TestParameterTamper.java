@@ -169,7 +169,7 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
                 || matchBodyPattern(msg, patternErrorJet, sb)
                 || matchBodyPattern(msg, patternErrorTomcat, sb)
                 || matchBodyPattern(msg, patternErrorPHP, sb)) {
-            bingo(Alert.RISK_MEDIUM, Alert.SUSPICIOUS, "", param, sb.toString(), attack, msg);
+            bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_LOW, "", param, sb.toString(), attack, msg);
 
             return true;
         }

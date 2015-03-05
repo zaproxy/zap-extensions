@@ -211,7 +211,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
                     matcher = REMOTE_FILE_PATTERNS[i].matcher(response);
                     //if the output matches, and we get a 200
                     if (matcher.find() && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
-                        bingo(Alert.RISK_HIGH, Alert.CONFIRMED,
+                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
                                 null, param, matcher.group(), null, msg);
                         // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact) 
                         return;

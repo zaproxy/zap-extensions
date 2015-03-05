@@ -132,12 +132,12 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
     			result = true;
     		} else if (matchBodyPattern(msg, patternGeneralParent, evidence)) {
     			result = true;
-    			reliability = Alert.SUSPICIOUS;
+    			reliability = Alert.CONFIDENCE_LOW;
     		} else if (matchBodyPattern(msg, patternGeneralDir1, evidence)) {
     			// Dont append the second matching pattern to the evidence as they will be in different places
     			if (matchBodyPattern(msg, patternGeneralDir2, null)) {
     				result = true;
-    				reliability = Alert.SUSPICIOUS;
+    				reliability = Alert.CONFIDENCE_LOW;
     			}
     		}
 

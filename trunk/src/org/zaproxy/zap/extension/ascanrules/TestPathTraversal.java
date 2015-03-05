@@ -326,7 +326,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     
                     //if the output matches, and we get a 200
                     if (matcher.find() && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
-                        bingo(Alert.RISK_HIGH, Alert.CONFIRMED,
+                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
                                 null, param,
                                 matcher.group(), null, msg);
                         
@@ -392,7 +392,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         
                         //if it returns OK, and the random string above did NOT return ok, then raise an alert
                         //since the filename has likely been picked up and used as a file name from the parameter
-                        bingo(Alert.RISK_HIGH, Alert.CONFIRMED,
+                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
                                 null, param, prefixedUrlfilename, null, msg);
                         
                         // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact)

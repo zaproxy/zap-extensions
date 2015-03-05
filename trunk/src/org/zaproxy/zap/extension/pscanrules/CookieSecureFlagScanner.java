@@ -72,7 +72,7 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
 	}
 	
 	private void raiseAlert(HttpMessage msg, int id, String cookie) {
-	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIRMED, 
+	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 		    	"Cookie set without secure flag");
 		    	alert.setDetail(
 		    	    "A cookie has been set without the secure flag, which means that the cookie can be accessed via unencrypted connections.", 
