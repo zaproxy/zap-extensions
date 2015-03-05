@@ -502,7 +502,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
 							//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 							sqlInjectionAttack = sqlErrValue;
-							bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - " + errorPatternRDBMS, getDescription(),
+							bingo(Alert.RISK_HIGH, Alert.CONFIRMED, getName() + " - " + errorPatternRDBMS, getDescription(),
 									null,
 									param, sqlInjectionAttack,
 									extraInfo, getSolution(), sb.toString(), msg1);
@@ -535,7 +535,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 								String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
 								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 								sqlInjectionAttack = sqlErrValue;
-								bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - " + errorPatternRDBMS, getDescription(),
+								bingo(Alert.RISK_HIGH, Alert.CONFIRMED, getName() + " - " + errorPatternRDBMS, getDescription(),
 										null,
 										param, sqlInjectionAttack,
 										extraInfo, getSolution(), sb.toString(), msg1);
@@ -650,7 +650,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 								sqlInjectionAttack = modifiedParamValue;
-								bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
+								bingo(Alert.RISK_HIGH, Alert.CONFIRMED, getName(), getDescription(),
 										null, //url
 										param, sqlInjectionAttack,
 										extraInfo, getSolution(), "", msg4);
@@ -787,7 +787,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 							//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 							sqlInjectionAttack = sqlBooleanAndTrueValue;
-							bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
+							bingo(Alert.RISK_HIGH, Alert.CONFIRMED, getName(), getDescription(),
 									null, //url
 									param, sqlInjectionAttack,
 									extraInfo, getSolution(), "", msg2);
@@ -840,7 +840,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 								sqlInjectionAttack = orValue;
-								bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
+								bingo(Alert.RISK_HIGH, Alert.CONFIRMED, getName(), getDescription(),
 										null, //url
 										param, sqlInjectionAttack,
 										extraInfo, getSolution(), "", msg2);
@@ -945,7 +945,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	
 						//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 						sqlInjectionAttack = sqlBooleanOrTrueValue;
-						bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
+						bingo(Alert.RISK_HIGH, Alert.CONFIRMED, getName(), getDescription(),
 								null, //url
 								param, sqlInjectionAttack,
 								extraInfo, getSolution(), "", msg2);
@@ -999,7 +999,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 						//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 						sqlInjectionAttack = sqlUnionValue;
-						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - " + errorPatternRDBMS, getDescription(),
+						bingo(Alert.RISK_HIGH, Alert.CONFIRMED, getName() + " - " + errorPatternRDBMS, getDescription(),
 								refreshedmessage.getRequestHeader().getURI().getURI(), //url
 								param, sqlInjectionAttack,
 								extraInfo, getSolution(), matcherSQLUnion.group(), msg3);
@@ -1102,7 +1102,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 							//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 							sqlInjectionAttack = modifiedParamValue;
-							bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(),
+							bingo(Alert.RISK_HIGH, Alert.CONFIRMED, getName(), getDescription(),
 									null, //url
 									param, sqlInjectionAttack,
 									extraInfo, getSolution(), "", msg5);
@@ -1164,7 +1164,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					String vulndesc = Constant.messages.getString("ascanrules.sqlinjection.authbypass.desc");
 
 					//raise the alert, using the attack string stored earlier for this purpose					
-					bingo(Alert.RISK_HIGH, Alert.WARNING, vulnname, vulndesc,
+					bingo(Alert.RISK_HIGH, Alert.CONFIRMED, vulnname, vulndesc,
 							refreshedmessage.getRequestHeader().getURI().getURI(), //url
 							param, sqlInjectionAttack,
 							"", getSolution(), "", getBaseMsg());
