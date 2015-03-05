@@ -251,7 +251,7 @@ public class SQLInjectionOracle extends AbstractAppParamPlugin {
 					String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", paramName, newTimeBasedInjectionValue);
 
 					//raise the alert
-					bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Time Based", getDescription(), 
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - Time Based", getDescription(), 
 							getBaseMsg().getRequestHeader().getURI().getURI(), //url
 							paramName,  attack, 
 							extraInfo, getSolution(), msgAttack);

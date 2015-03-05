@@ -154,7 +154,7 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 						
 					//bingo.
 					bingo(	Alert.RISK_HIGH, 
-						Alert.CONFIRMED,
+						Alert.CONFIDENCE_MEDIUM,
 						Constant.messages.getString("ascanbeta.remotecodeexecution.cve-2012-1823.name"),
 						Constant.messages.getString("ascanbeta.remotecodeexecution.cve-2012-1823.desc"), 
 						null, // originalMessage.getRequestHeader().getURI().getURI(),

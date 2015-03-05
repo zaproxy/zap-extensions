@@ -305,7 +305,7 @@ public class SQLInjectionHypersonic extends AbstractAppPlugin {
 						String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", currentHtmlParameter.getName(), newTimeBasedInjectionValue);
 
 						//raise the alert
-						bingo(Alert.RISK_HIGH, Alert.WARNING, getName() + " - Time Based", getDescription(), 
+						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - Time Based", getDescription(), 
 								getBaseMsg().getRequestHeader().getURI().getURI(), //url
 								"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
 								extraInfo, getSolution(), msg3);

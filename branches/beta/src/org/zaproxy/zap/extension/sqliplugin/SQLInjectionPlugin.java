@@ -743,7 +743,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     // Alert the vulnerability to the main core
                                     this.bingo(
                                             Alert.RISK_HIGH,
-                                            Alert.CONFIRMED, 
+                                            Alert.CONFIDENCE_MEDIUM, 
                                             getName() + " - " + title,
                                             getDescription(),
                                             null,
@@ -835,7 +835,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // Alert the vulnerability to the main core
                                 this.bingo(
                                         Alert.RISK_HIGH,
-                                        Alert.CONFIRMED,
+                                        Alert.CONFIDENCE_MEDIUM,
                                         getName() + " - " + title,
                                         getDescription(),
                                         null,
@@ -926,7 +926,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                     // Alert the vulnerability to the main core
                                     this.bingo(
                                             Alert.RISK_HIGH,
-                                            Alert.MEDIUM,
+                                            Alert.CONFIDENCE_MEDIUM,
                                             getName() + " - " + title,
                                             getDescription(),
                                             null,
@@ -1001,7 +1001,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 // Alert the vulnerability to the main core
                                 this.bingo(
                                         Alert.RISK_HIGH,
-                                        Alert.CONFIRMED,
+                                        Alert.CONFIDENCE_MEDIUM,
                                         getName() + " - " + title,
                                         getDescription(),
                                         null,

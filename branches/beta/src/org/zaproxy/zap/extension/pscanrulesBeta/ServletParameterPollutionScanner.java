@@ -84,7 +84,7 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 				}
 				
 				if (!actionFound) {
-				    Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.SUSPICIOUS, 
+				    Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_LOW, 
 					    	getName());
 					    	alert.setDetail(
 					    		getDescription(), 

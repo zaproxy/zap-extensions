@@ -151,7 +151,7 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String extraInfo) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.SUSPICIOUS,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_LOW,
 				getName());
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
 				.getURI().toString(), "content-type", getExploitMessage(), extraInfo,

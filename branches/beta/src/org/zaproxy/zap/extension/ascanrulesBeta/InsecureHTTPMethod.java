@@ -158,7 +158,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 				MessageAndEvidence maeTrack = testTraceOrTrack(this.getBaseMsg(), "TRACK");
 				if ( maeTrack != null) {
 					bingo(	Alert.RISK_MEDIUM, 
-							Alert.CONFIRMED,
+							Alert.CONFIDENCE_MEDIUM,
 							Constant.messages.getString("ascanbeta.insecurehttpmethod.detailed.name", "TRACK"),
 							Constant.messages.getString("ascanbeta.insecurehttpmethod.trace.exploitable.desc", "TRACK"), 
 							null, // originalMessage.getRequestHeader().getURI().getURI(),
@@ -174,7 +174,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 				MessageAndEvidence maeTrace = testTraceOrTrack(this.getBaseMsg(), "TRACE");
 				if ( maeTrace != null) {
 					bingo(	Alert.RISK_MEDIUM, 
-							Alert.CONFIRMED,
+							Alert.CONFIDENCE_MEDIUM,
 							Constant.messages.getString("ascanbeta.insecurehttpmethod.detailed.name", "TRACE"),
 							Constant.messages.getString("ascanbeta.insecurehttpmethod.trace.exploitable.desc", "TRACE"), 
 							null, // originalMessage.getRequestHeader().getURI().getURI(),
@@ -191,7 +191,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 				boolean connectWorks = testConnect (this.getBaseMsg(), thirdpartyHost, thirdpartyPort, thirdPartyContentPattern);
 				if (connectWorks) {
 					bingo(	Alert.RISK_MEDIUM, 
-							Alert.CONFIRMED,
+							Alert.CONFIDENCE_MEDIUM,
 							Constant.messages.getString("ascanbeta.insecurehttpmethod.detailed.name", "CONNECT"),
 							Constant.messages.getString("ascanbeta.insecurehttpmethod.connect.exploitable.desc", "CONNECT"), 
 							null, // originalMessage.getRequestHeader().getURI().getURI(),
@@ -302,7 +302,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 								}
 								//bingo.
 								bingo(	Alert.RISK_MEDIUM, 
-										Alert.CONFIRMED,
+										Alert.CONFIDENCE_MEDIUM,
 									Constant.messages.getString("ascanbeta.insecurehttpmethod.detailed.name", insecureMethod),
 									description, 
 									null, // originalMessage.getRequestHeader().getURI().getURI(),

@@ -607,7 +607,7 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 							log.debug("Vulnerable");
 						//bingo!
 						String extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", tlsNames[tlsIndex]);
-						bingo(getRisk(), Alert.CONFIRMED, getName(), getDescription(),
+						bingo(getRisk(), Alert.CONFIDENCE_MEDIUM, getName(), getDescription(),
 								getBaseMsg().getRequestHeader().getURI().getURI(),
 								"",  //param 
 								"",  //attack

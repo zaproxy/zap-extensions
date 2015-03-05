@@ -252,7 +252,7 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 					String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, originalParamValue, originalTimeUsed);
 					
 					//raise the alert
-					bingo(Alert.RISK_HIGH, Alert.WARNING, getName(), getDescription(), 
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), 
 							getBaseMsg().getRequestHeader().getURI().getURI(), //url
 							paramName,  newTimeBasedInjectionValue, 
 							extraInfo, getSolution(), msg3);

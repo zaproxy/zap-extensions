@@ -166,7 +166,7 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
 						
 					//bingo.
 					bingo(	Alert.RISK_HIGH, 
-						Alert.WARNING,
+						Alert.CONFIDENCE_MEDIUM,
 						Constant.messages.getString("ascanbeta.sourcecodedisclosurecve-2012-1823.name"),
 						Constant.messages.getString("ascanbeta.sourcecodedisclosurecve-2012-1823.desc"), 
 						null, // originalMessage.getRequestHeader().getURI().getURI(),

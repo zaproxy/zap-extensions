@@ -361,7 +361,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			//call bingo with some extra info, indicating that the alert is 
 	        			//not specific to Session Fixation, but has its own title and description (etc)
 	        			//the alert here is "Session id sent insecurely", or words to that effect.
-	        			bingo(risk, Alert.CONFIRMED, vulnname, vulndesc, 
+	        			bingo(risk, Alert.CONFIDENCE_MEDIUM, vulnname, vulndesc, 
 	        					getBaseMsg().getRequestHeader().getURI().getURI(),
 	        					currentHtmlParameter.getName(),  attack, 
 	        					extraInfo, vulnsoln, getBaseMsg());
@@ -403,7 +403,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			//call bingo with some extra info, indicating that the alert is 
 	        			//not specific to Session Fixation, but has its own title and description (etc)
 	        			//the alert here is "Session id accessible in Javascript", or words to that effect.
-	        			bingo(risk, Alert.CONFIRMED, vulnname, vulndesc, 
+	        			bingo(risk, Alert.CONFIDENCE_MEDIUM, vulnname, vulndesc, 
 	        					getBaseMsg().getRequestHeader().getURI().getURI(),
 	        					currentHtmlParameter.getName(),  attack, 
 	        					extraInfo, vulnsoln, getBaseMsg());
@@ -530,7 +530,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			//call bingo with some extra info, indicating that the alert is 
 	        			//not specific to Session Fixation, but has its own title and description (etc)
 	        			//the alert here is "Session Id Expiry Time is excessive", or words to that effect.
-	        			bingo(sessionExpiryRiskLevel, Alert.CONFIRMED, vulnname, vulndesc, 
+	        			bingo(sessionExpiryRiskLevel, Alert.CONFIDENCE_MEDIUM, vulnname, vulndesc, 
 	        					getBaseMsg().getRequestHeader().getURI().getURI(),
 	        					currentHtmlParameter.getName(),  attack, 
 	        					extraInfo, vulnsoln, getBaseMsg());
@@ -669,7 +669,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        				risk = Alert.RISK_LOW;
 	        			}
 	        			
-	        			bingo(risk, Alert.CONFIRMED, msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, msg2Initial);
+	        			bingo(risk, Alert.CONFIDENCE_MEDIUM, msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, msg2Initial);
 	        			//if ( log.isInfoEnabled())  {
 	        				String logMessage = Constant.messages.getString("ascanbeta.sessionfixation.alert.logmessage", msg2Initial.getRequestHeader().getMethod(),  msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        				log.info(logMessage);
@@ -770,7 +770,7 @@ public class SessionFixation extends AbstractAppPlugin {
 		        			//call bingo with some extra info, indicating that the alert is 
 		        			//not specific to Session Fixation, but has its own title and description (etc)
 		        			//the alert here is "Session id exposed in url", or words to that effect.
-		        			bingo(Alert.RISK_MEDIUM, Alert.CONFIRMED, vulnname, vulndesc, 
+		        			bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, vulnname, vulndesc, 
 		        					getBaseMsg().getRequestHeader().getURI().getURI(),
 		        					currentHtmlParameter.getName(),  attack, 
 		        					extraInfo, vulnsoln, getBaseMsg());
@@ -873,7 +873,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        				risk = Alert.RISK_LOW;
 	        			}
 	        			
-	        			bingo(risk, Alert.CONFIRMED, getBaseMsg().getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, getBaseMsg());
+	        			bingo(risk, Alert.CONFIDENCE_MEDIUM, getBaseMsg().getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, getBaseMsg());
 	        			//if ( log.isInfoEnabled())  {
 	        				String logMessage = Constant.messages.getString("ascanbeta.sessionfixation.alert.logmessage", getBaseMsg().getRequestHeader().getMethod(),  getBaseMsg().getRequestHeader().getURI().getURI(), (isPseudoUrlParameter?"pseudo ":"") +currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        				log.info(logMessage);
