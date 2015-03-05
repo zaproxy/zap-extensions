@@ -298,7 +298,7 @@ public class HPP extends AbstractAppPlugin {
 		log.debug("Page vulnerable to HPP attacks");
 		String attack = Constant.messages.getString("ascanbeta.HTTPParamPoll.alert.attack");
 		try {
-			bingo(Alert.RISK_MEDIUM, Alert.WARNING, attack, getDescription(),getBaseMsg().getRequestHeader().getURI().getURI(), vulnParams, attack, getReference(), getSolution(), getBaseMsg());
+			bingo(Alert.RISK_MEDIUM, Alert.CONFIRMED, attack, getDescription(),getBaseMsg().getRequestHeader().getURI().getURI(), vulnParams, attack, getReference(), getSolution(), getBaseMsg());
 		} catch (URIException e) {
 			log.error(e.getMessage(), e);
 		}
