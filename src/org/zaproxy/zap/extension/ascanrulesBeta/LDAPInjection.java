@@ -211,7 +211,15 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                 this.setParameter(attackMsg, paramname, errorAttack);
                 //send it, and see what happens :)
                 sendAndReceive(attackMsg);
-                if ( checkResultsForLDAPAlert(attackMsg, /*currentHtmlParameter.getType().toString(), */ paramname))  {
+
+                //Now send another request for the same parameter, except use this request as a control to see if a placebo attack has the same effect
+                //the parameter will be the same length as the actual attack, but will contain purely alphanumeric characters
+                String placeboAttack = RandomStringUtils.random(errorAttack.length(), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+                HttpMessage placeboAttackMsg = getNewMsg();
+                this.setParameter(placeboAttackMsg, paramname, placeboAttack);
+                sendAndReceive(placeboAttackMsg);
+                
+                if ( checkResultsForLDAPAlert(attackMsg, placeboAttackMsg, paramname))  {
                 	return;
                 }
                 
@@ -466,13 +474,13 @@ public class LDAPInjection extends AbstractAppParamPlugin {
 
     /**
      *
-     * @param message
-     * @param parameterType
-     * @param parameterName
+     * @param attackMessage the message used to send the LDAP attack
+     * @param placeboMessage the message used to send the placebo attack
+     * @param parameterName the name of the parameter which was attacked
      * @return
      * @throws Exception
      */
-    private boolean checkResultsForLDAPAlert(HttpMessage message, /*String parameterType, */ String parameterName) throws Exception {
+    private boolean checkResultsForLDAPAlert(HttpMessage attackMessage, HttpMessage placeboMessage, String parameterName) throws Exception {
         //compare the request response with each of the known error messages, 
         //for each of the known LDAP implementations.
         //in order to minimise false positives, only consider a match 
@@ -483,14 +491,15 @@ public class LDAPInjection extends AbstractAppParamPlugin {
             //if the pattern was found in the new response, 
             //but not in the original response (for the unmodified request)
             //then we have a match.. LDAP injection!
-            if (	responseMatches(message, errorPattern)
-                    && !responseMatches(getBaseMsg(), errorPattern)) {
+            if (	responseMatches(attackMessage, errorPattern)
+                    && !responseMatches(getBaseMsg(), errorPattern)
+                    && !responseMatches(placeboMessage, errorPattern)
+                    ) {
 
-                //the HTML matches one of the known LDAP errors.
+                //the response of the attack matches one of the known LDAP errors, but the placebo does not trigger the same effect.
                 //so raise the error, and move on to the next parameter
             	
                 String extraInfo = Constant.messages.getString("ascanbeta.ldapinjection.alert.extrainfo",
-                        /*parameterType,*/
                         parameterName,
                         getBaseMsg().getRequestHeader().getMethod(),
                         getBaseMsg().getRequestHeader().getURI().getURI(),
@@ -498,7 +507,7 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                         LDAP_ERRORS.get(errorPattern), 
                         errorPattern);
 
-                String attack = Constant.messages.getString("ascanbeta.ldapinjection.alert.attack", /*parameterType, */ parameterName, errorAttack);
+                String attack = Constant.messages.getString("ascanbeta.ldapinjection.alert.attack", parameterName, errorAttack);
                 String vulnname = Constant.messages.getString("ascanbeta.ldapinjection.name");
                 String vulndesc = Constant.messages.getString("ascanbeta.ldapinjection.desc");
                 String vulnsoln = Constant.messages.getString("ascanbeta.ldapinjection.soln");
@@ -511,13 +520,12 @@ public class LDAPInjection extends AbstractAppParamPlugin {
                         extraInfo, 
                         vulnsoln, 
                         errorPattern.toString(),
-                        message); //use the attack message, rather than the original message.
+                        attackMessage); //use the attack message, rather than the original message.
 
                 //and log it                
                 String logMessage = Constant.messages.getString("ascanbeta.ldapinjection.alert.logmessage",
                         getBaseMsg().getRequestHeader().getMethod(),
                         getBaseMsg().getRequestHeader().getURI().getURI(),
-                        /* parameterType, */
                         parameterName,
                         errorAttack, 
                         LDAP_ERRORS.get(errorPattern), 
