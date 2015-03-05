@@ -457,7 +457,7 @@ public class RelativePathConfusionScanner extends AbstractAppPlugin {
 				
 				//alert it..        
                 bingo(	getRisk(), 
-						Alert.CONFIRMED,
+						Alert.CONFIDENCE_MEDIUM,
 						getName(),
 						getDescription(), 
 						getBaseMsg().getRequestHeader().getURI().getURI(),

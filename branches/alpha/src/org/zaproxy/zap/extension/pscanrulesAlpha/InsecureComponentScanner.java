@@ -348,11 +348,11 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 						} else cvssAlertLevel = Alert.RISK_HIGH;
 						
 						//the confidence depends on the distro.  Red Hat and CentOS Apache versions are unreliable, for instance
-						//in that case, raise them, for visibility, but flag as a probable false positive.  
+						//in that case, raise them, for visibility, but flag it with low confidence.  
 						//The user will just have to check it out manually, since there is no way for us to be at all sure here.
-						int confidence = Alert.CONFIRMED; //replaces "Warning"?
+						int confidence = Alert.CONFIDENCE_MEDIUM; 
 						if ( distro.equals("Red Hat") || distro.equals("CentOS")) {
-							confidence = Alert.FALSE_POSITIVE;
+							confidence = Alert.CONFIDENCE_LOW;
 						}
 						//lets go ahead and raise the alert
 						Alert alert = new Alert(getPluginId(), cvssAlertLevel, confidence, getName() + " - "+ product + " "+ version);

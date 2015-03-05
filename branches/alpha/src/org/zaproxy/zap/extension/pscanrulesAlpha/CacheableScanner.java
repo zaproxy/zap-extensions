@@ -587,7 +587,7 @@ public class CacheableScanner extends PluginPassiveScanner{
 	 * @param evidence
 	 */
 	public void alertNonStorable (HttpMessage msg, int id, String evidence) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIRMED, Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "name"));
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "name"));
 		alert.setDetail(
 				Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "desc"), //Description
 				msg.getRequestHeader().getURI().toString(), //URI
@@ -610,7 +610,7 @@ public class CacheableScanner extends PluginPassiveScanner{
 	 * @param evidence
 	 */
 	public void alertStorableNonCacheable (HttpMessage msg, int id, String evidence) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIRMED, Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "name"));
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "name"));
 		alert.setDetail(
 				Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "desc"), //Description
 				msg.getRequestHeader().getURI().toString(), //URI
@@ -633,7 +633,7 @@ public class CacheableScanner extends PluginPassiveScanner{
 	 * @param evidence
 	 */
 	public void alertStorableCacheable (HttpMessage msg, int id, String evidence) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIRMED, Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "name"));
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "name"));
 		alert.setDetail(
 				Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "desc"), //Description
 				msg.getRequestHeader().getURI().toString(), //URI

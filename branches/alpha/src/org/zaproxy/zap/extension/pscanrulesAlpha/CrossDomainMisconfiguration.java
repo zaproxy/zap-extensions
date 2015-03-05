@@ -109,7 +109,7 @@ public class CrossDomainMisconfiguration extends PluginPassiveScanner {
 				//   (this is even more restrictive than the equivalent request sent by XHR)
 				
 				//The CORS misconfig could still allow an attacker to access the data returned from an unauthenticated API, which is protected by some other form of security, such as IP address white-listing, for instance.				
-				Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING, getName() );
+				Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName() );
 				alert.setDetail(
 						getDescription(), 
 						msg.getRequestHeader().getURI().toString(), 

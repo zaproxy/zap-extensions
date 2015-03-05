@@ -131,7 +131,7 @@ public class ReportLastScan {
                 alert = new Alert(recordAlert);
 
                 // ZAP: Ignore false positives
-                if (alert.getReliability() == Alert.FALSE_POSITIVE) {
+                if (alert.getReliability() == Alert.CONFIDENCE_FALSE_POSITIVE) {
                     continue;
                 }
 

@@ -63,7 +63,7 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 			//Content available via both HTTPS and HTTP is a separate though related issue
 			Vector<String> STSOption = msg.getResponseHeader().getHeaders("Strict-Transport-Security");
 			if (STSOption == null) { // Header NOT found
-				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
+				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
 						getName()); //Name
 			    		alert.setDetail(
 			    			getDescription(), //Description

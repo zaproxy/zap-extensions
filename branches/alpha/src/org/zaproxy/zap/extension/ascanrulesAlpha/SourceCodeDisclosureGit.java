@@ -341,7 +341,7 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
 					//we cannot meaningfully raise an alert on any one file, except perhaps the file on which the attack was launched.
 					//it's the least worst way of doing it, IMHO.
 					bingo(	Alert.RISK_HIGH, 
-							Alert.WARNING,
+							Alert.CONFIDENCE_MEDIUM,
 							Constant.messages.getString("ascanalpha.sourcecodedisclosure.gitbased.name"),
 							Constant.messages.getString("ascanalpha.sourcecodedisclosure.desc"), 
 							getBaseMsg().getRequestHeader().getURI().getURI(),

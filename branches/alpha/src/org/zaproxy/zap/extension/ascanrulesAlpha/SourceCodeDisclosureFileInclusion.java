@@ -282,7 +282,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 							log.info("Source code disclosure!  The output for the source code filename ["+ prefixedUrlfilename + "] differs sufficiently from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
 
 							//if we get to here, is is very likely that we have source file inclusion attack. alert it.
-							bingo(Alert.RISK_HIGH, Alert.WARNING,
+							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
 									Constant.messages.getString("ascanalpha.sourcecodedisclosure.lfibased.name"),
 									Constant.messages.getString("ascanalpha.sourcecodedisclosure.desc"), 
 									getBaseMsg().getRequestHeader().getURI().getURI(),
@@ -351,7 +351,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 							//Note: no verification of the file contents in this case.
 
 							//if we get to here, is is very likely that we have source file inclusion attack. alert it.
-							bingo(Alert.RISK_HIGH, Alert.WARNING,
+							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
 									Constant.messages.getString("ascanalpha.sourcecodedisclosure.name"),
 									Constant.messages.getString("ascanalpha.sourcecodedisclosure.desc"), 
 									getBaseMsg().getRequestHeader().getURI().getURI(),

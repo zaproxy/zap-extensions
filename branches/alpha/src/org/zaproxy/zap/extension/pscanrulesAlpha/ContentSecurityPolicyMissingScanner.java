@@ -94,7 +94,7 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 		//TODO: set the CVEID etc below
 
 		if (!cspHeaderFound || !xCspHeaderFound || !xWebKitHeaderFound) { //at least one of the headers wasn't found 
-			Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
+			Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
 				getName()); 
 				alert.setDetail(
 						getDescription(), //Description

@@ -87,7 +87,7 @@ public class RetrievedFromCacheScanner extends PluginPassiveScanner{
 								//the response was served from cache, so raise it..
 								String evidence = proxyServerDetails;
 								if (logger.isDebugEnabled()) logger.debug(msg.getRequestHeader().getURI().getURI() + " was served from a cache, due to presence of a 'HIT' in the 'X-Cache' response header");
-								Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIRMED, Constant.messages.getString(MESSAGE_PREFIX + "name"));
+								Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString(MESSAGE_PREFIX + "name"));
 								//could be from HTTP/1.0 or HTTP/1.1. We don't know which.
 								alert.setDetail(
 										getDescription(), //Description
@@ -123,7 +123,7 @@ public class RetrievedFromCacheScanner extends PluginPassiveScanner{
 					if (ageAsLong!= null && ageAsLong >= 0) {
 						String evidence = "Age: " +ageHeader;
 						if (logger.isDebugEnabled()) logger.debug(msg.getRequestHeader().getURI().getURI() + " was served from a HTTP/1.1 cache, due to presence of a valid (non-negative decimal integer) 'Age' response header value");
-						Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIRMED, Constant.messages.getString(MESSAGE_PREFIX + "name"));
+						Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString(MESSAGE_PREFIX + "name"));
 						alert.setDetail(
 								getDescription(), //Description
 								msg.getRequestHeader().getURI().toString(), //URI

@@ -137,7 +137,7 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
     		if (chkerrorbody.contains(checkStringBody1) && chkerrorheader.contains(checkStringHeader1))
     		{
     			log.debug("Found Header");
-    			bingo(getRisk(), Alert.MEDIUM, null, param, returnAttack, errorBufferOverflowMessage ,msg);
+    			bingo(getRisk(), Alert.CONFIDENCE_MEDIUM, null, param, returnAttack, errorBufferOverflowMessage ,msg);
     			return;
     		}
     			
