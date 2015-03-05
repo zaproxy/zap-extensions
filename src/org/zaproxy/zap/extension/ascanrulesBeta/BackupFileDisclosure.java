@@ -507,7 +507,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 						)
 					) {
 					bingo(	Alert.RISK_MEDIUM, 
-							Alert.WARNING,
+							Alert.CONFIRMED,
 							Constant.messages.getString("ascanbeta.backupfiledisclosure.name"),
 							Constant.messages.getString("ascanbeta.backupfiledisclosure.desc"), 
 							requestmsg.getRequestHeader().getURI().getURI(), // originalMessage.getRequestHeader().getURI().getURI(),
@@ -549,7 +549,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 							(! Arrays.equals(disclosedData, nonexistparentmsgdata)))
 					) {
 					bingo(	Alert.RISK_MEDIUM, 
-							Alert.WARNING,
+							Alert.CONFIRMED,
 							Constant.messages.getString("ascanbeta.backupfiledisclosure.name"),
 							Constant.messages.getString("ascanbeta.backupfiledisclosure.desc"), 
 							requestmsg.getRequestHeader().getURI().getURI(),   //originalMessage.getRequestHeader().getURI().getURI(),
