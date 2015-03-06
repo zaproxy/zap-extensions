@@ -30,9 +30,6 @@ import org.parosproxy.paros.network.HttpMessage;
 
 
 /**
- * TODO: do not do dangerous operations unless the Mode is right!
- * TODO: implement checks in Header fields (currently does Cookie values, form fields, and url parameters)
- * TODO: change the Alert Titles.
  * TODO: maybe implement a more specific UNION based check for Oracle (with table names)
  * 
  * The SQLInjectionOracle plugin identifies Oracle specific SQL Injection vulnerabilities
