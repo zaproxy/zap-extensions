@@ -209,12 +209,14 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 				log.debug("Checking [" + getBaseMsg().getRequestHeader().getMethod() + "] ["
 						+ getBaseMsg().getRequestHeader().getURI() + "], parameter [" + paramname + "], with original value ["+ paramvalue + "] for Source Code Disclosure");
 			}
+			//the response of the original message is not populated! so populate it.
+			sendAndReceive(originalmsg, false); //do nto follow redirects
 
 			//first send a query for a random parameter value
 			//then try a query for the file paths and names that we are using to try to get out the source code for the current URL                        
 			HttpMessage randomfileattackmsg = getNewMsg();
 			setParameter(randomfileattackmsg, paramname, NON_EXISTANT_FILENAME);
-			sendAndReceive(randomfileattackmsg);
+			sendAndReceive(randomfileattackmsg, false); //do not follow redirects
 
 			int originalversusrandommatchpercentage = calcMatchPercentage (originalmsg.getResponseBody().toString(), randomfileattackmsg.getResponseBody().toString());            
 			if (originalversusrandommatchpercentage > this.thresholdPercentage) {
@@ -266,7 +268,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 					HttpMessage sourceattackmsg = getNewMsg();
 					setParameter(sourceattackmsg, paramname, prefixedUrlfilename);	                    
 					//send the modified message (with the url filename), and see what we get back
-					sendAndReceive(sourceattackmsg);
+					sendAndReceive(sourceattackmsg, false); //do not follow redirects
 
 					int randomversussourcefilenamematchpercentage = calcMatchPercentage (
 							randomfileattackmsg.getResponseBody().toString(), 
@@ -337,7 +339,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 						HttpMessage sourceattackmsg = getNewMsg();
 						setParameter(sourceattackmsg, paramname, prefixedUrlfilename);	                    
 						//send the modified message (with the url filename), and see what we get back
-						sendAndReceive(sourceattackmsg);
+						sendAndReceive(sourceattackmsg, false); //do not follow redirects
 						if (log.isDebugEnabled()) {
 							log.debug("Completed WAR/EAR file name ["+ prefixedUrlfilename + "]");
 						}
