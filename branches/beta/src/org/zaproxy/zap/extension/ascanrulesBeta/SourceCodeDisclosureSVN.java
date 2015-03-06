@@ -17,10 +17,8 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
@@ -212,6 +210,11 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 	 * @return Did we find the source code?
 	 */
 	private boolean findSourceCodeSVN(HttpMessage originalMessage) throws Exception {
+		
+		//TODO: the ".svn/entries" style is used up to SVN format 10 only.
+		//from format 12 onwards, there is a central "wc.db" file, which contains entries for all the sub-directories
+		//wc.db is a "SQLite 3.x database, user version 29" (or later version) database..
+		//Not to worry though: the Spider logic handles the new format correctly. we just don't support it here.. yet.
 
 		URI uri = originalMessage.getRequestHeader().getURI();
 		String path = uri.getPath();
@@ -224,14 +227,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 			fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
 			fileExtension = fileExtension.toUpperCase();
 		}
-		
-		//do not attempt to find source code where the original message had a status code of 0.
-		//this occurs when a folder is recursively scanned, it seems
-		if (originalMessage.getResponseHeader().getStatusCode() == 0) {
-			if (log.isDebugEnabled()) log.debug ("Nope. The original message/URL is not real (HTTP response status code == 0), so there is no point in looking for Subversion data for it");
-			return false;
-		}
-				
+						
 		//do not recurse into a Subversion folder... this would cause infinite recursion issues in Attack Mode. (which goes depth first!)
 		//in any event, it doesn't make sense to do this.
 		if (path.contains("/.svn/") || path.endsWith("/.svn")) {
@@ -247,49 +243,46 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 		//svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
 		sendAndReceive(svnsourcefileattackmsg, false);  //do not follow redirects
 
-		//if we got a 404 specifically, then this is NOT a match
+		//if we got a 404 or a redirect specifically, then this is NOT a match
 		//note that since we are simply relying on the file existing or not, we 
 		//will not attempt any fuzzy matching. Old school.
 		//this check is necessary, otherwise a recursive scan on nodes in the url path cause lots of false positives.
-		if ( svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND ) {
-
-			if (! Arrays.equals(svnsourcefileattackmsg.getResponseBody().getBytes(), originalMessage.getResponseBody().getBytes())) {
-				
-				String attackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/text-base/" + filename + ".svn-base";
-				if (log.isDebugEnabled()) {
-					log.debug("The contents for request '"+ attackFilename + "' do not match the contents for the original request '"+ uri.getURI() + "', so we likely have the source code..");
-					log.debug("  Original (of length "+originalMessage.getResponseBody().getBytes().length        + "): " + Hex.encodeHexString(originalMessage.getResponseBody().getBytes()));
-					log.debug("SVN Attack (of length "+svnsourcefileattackmsg.getResponseBody().getBytes().length + "): " + Hex.encodeHexString(svnsourcefileattackmsg.getResponseBody().getBytes()));
-				}
-
-				//check the contents of the output to some degree, if we have a file extension.
-				//if not, just try it (could be a false positive, but hey)    			
-				if (dataMatchesExtension (svnsourcefileattackmsg.getResponseBody().getBytes(), fileExtension)) {
-					//if we get to here, is is very likely that we have source file inclusion attack. alert it.
-					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
-							Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.name"),
-							Constant.messages.getString("ascanbeta.sourcecodedisclosure.desc"), 
-							getBaseMsg().getRequestHeader().getURI().getURI(),
-							null, 
-							attackFilename,
-							Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.extrainfo", filename, attackFilename),
-							Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.soln"),
-							null,
-							svnsourcefileattackmsg
-							);
-					//if we found one, do not even try the "super" method, which tries each of the parameters,
-					//since this is slow, and we already found an instance
-					return true;
-				} else {
-					if (log.isDebugEnabled())  log.debug("The HTML output does not look like source code of type "+fileExtension );					
-				}
+		if (	svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND &&  //404
+				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.MOVED_PERMANENTLY && //301
+				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.FOUND && //302
+				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.SEE_OTHER	&& //303
+				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_MODIFIED && //304
+				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.USE_PROXY && //305 (306 is currently unused)
+				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.TEMPORARY_REDIRECT //307
+				) {
+			String attackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/text-base/" + filename + ".svn-base";
+			if (log.isDebugEnabled()) {
+				log.debug("The contents for request '"+ attackFilename + "' do not return 404 or 3**, so we possibly have the source code..");
+			}
+			//check the contents of the output to some degree, if we have a file extension.
+			//if not, just try it (could be a false positive, but hey)    			
+			if (dataMatchesExtension (svnsourcefileattackmsg.getResponseBody().getBytes(), fileExtension)) {
+				//if we get to here, is is very likely that we have source file inclusion attack. alert it.
+				bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
+						Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.name"),
+						Constant.messages.getString("ascanbeta.sourcecodedisclosure.desc"), 
+						getBaseMsg().getRequestHeader().getURI().getURI(),
+						null, 
+						attackFilename,
+						Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.extrainfo", filename, attackFilename),
+						Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.soln"),
+						null,
+						svnsourcefileattackmsg
+						);
+				//if we found one, do not even try the "super" method, which tries each of the parameters,
+				//since this is slow, and we already found an instance
+				return true;
 			} else {
-				if (log.isDebugEnabled()) log.debug("The data disclosed via SVN meta-data is not source code, since it matches the data served when we requested the file in the normal manner (source code is not served by web apps, and if it is, then you have bigger problems)");
-				return false;
+				if (log.isDebugEnabled())  log.debug("The HTML output does not look like source code of type "+fileExtension );					
 			}
 		} else {
 			if (log.isDebugEnabled()) {
-				log.debug("Got a 404, so the SVN source code file was not found");
+				log.debug("Got an unsuitabe response code "+ svnsourcefileattackmsg.getResponseHeader().getStatusCode() + ", so it looks like the SVN source code file was not found");
 			}
 		}
 		return false;	
