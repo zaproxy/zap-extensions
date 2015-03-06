@@ -204,14 +204,15 @@ public class SQLInjectionOracle extends AbstractAppParamPlugin {
 	 * scans for SQL Injection vulnerabilities, using Oracle specific syntax.  If it doesn't use specifically Oracle syntax, it does not belong in here, but in SQLInjection 
 	 */
 	@Override
-	public void scan(HttpMessage arg0, String paramName, String paramValue) {
+	public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
 		
 		try {
 			//Timing Baseline check: we need to get the time that it took the original query, to know if the time based check is working correctly..
 			HttpMessage msgTimeBaseline = getNewMsg();
 			long originalTimeStarted = System.currentTimeMillis();
 			try {
-				sendAndReceive(msgTimeBaseline); }
+				sendAndReceive(msgTimeBaseline, false); //do not follow redirects
+				}
 			catch (java.net.SocketTimeoutException e) {
 				//to be expected occasionally, if the base query was one that contains some parameters exploiting time based SQL injection?
 				if ( this.debugEnabled ) log.debug("The Base Time Check timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"]");
@@ -234,7 +235,7 @@ public class SQLInjectionOracle extends AbstractAppParamPlugin {
 				//send it.
 				long modifiedTimeStarted = System.currentTimeMillis();
 				try {
-					sendAndReceive(msgAttack);
+					sendAndReceive(msgAttack, false); //do not follow redirects
 					countTimeBasedRequests++;
 					}
 				catch (java.net.SocketTimeoutException e) {
