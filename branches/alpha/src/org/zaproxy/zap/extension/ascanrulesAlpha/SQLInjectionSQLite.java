@@ -284,6 +284,9 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 	public void scan(HttpMessage originalMessage, String paramName, String originalParamValue) {
 
 		try {
+			//the original message passed to us never has the response populated. fix that by re-retrieving it..
+			sendAndReceive(originalMessage, false); //do not follow redirects
+						
 			//Do time based SQL injection checks..
 			//Timing Baseline check: we need to get the time that it took the original query, to know if the time based check is working correctly..
 			HttpMessage msgTimeBaseline = getNewMsg();
@@ -494,7 +497,8 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 			}  //for each time based SQL index
 			//end of check for SQLite time based SQL Injection
 			
-			
+			//TODO: fix this logic, cos it's broken already. it reports version 2.2 and 4.0.. (false positives ahoy)
+			doUnionBased = false;
 			
 			//try to get the version of SQLite, using a UNION based SQL injection vulnerability
 			//do this regardless of whether we already found a vulnerability using another technique.
@@ -539,6 +543,8 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 											while (matcher.find()) {
 												String versionNumber = matcher.group();
 												Pattern actualVersionNumberPattern = Pattern.compile("\\Q"+ versionNumber + "\\E", PATTERN_PARAM);
+												if (log.isDebugEnabled()) log.debug("Found a candidate SQLite version number '"+ versionNumber + "'. About to look for the absence of '"+ actualVersionNumberPattern + "' in the (re-created) original response body (of length "+originalMessage.getResponseBody().toString().length()+") to validate it");
+												
 												//if the version number was not in the original* response, we will call it..
 												Matcher matcherVersionInOriginal = actualVersionNumberPattern.matcher(originalMessage.getResponseBody().toString());
 												if ( ! matcherVersionInOriginal.find()) {
