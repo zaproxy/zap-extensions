@@ -17,6 +17,15 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -127,7 +136,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 		if ( (attackStrength==AttackStrength.LOW||attackStrength==AttackStrength.MEDIUM) 
 				&& (getBaseMsg().getResponseHeader().getStatusCode() == HttpStatus.SC_NOT_FOUND))
 			return;
-		
+
 		// scan the node itself (ie, at URL level, rather than at parameter level)
 		if (log.isDebugEnabled()) {
 			log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
@@ -210,24 +219,24 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 	 * @return Did we find the source code?
 	 */
 	private boolean findSourceCodeSVN(HttpMessage originalMessage) throws Exception {
-		
-		//TODO: the ".svn/entries" style is used up to SVN format 10 only.
-		//from format 12 onwards, there is a central "wc.db" file, which contains entries for all the sub-directories
-		//wc.db is a "SQLite 3.x database, user version 29" (or later version) database..
-		//Not to worry though: the Spider logic handles the new format correctly. we just don't support it here.. yet.
+
+		//SVN formats 1-10 (format 11 is not used) are supported by this logic.
+		//TODO: The SQLite based (and centralised, except for pre-release formats which we don't plan to support) ".svn/wc.db" style used from SVN format 12 through to 31 
+		//(and possibly later formats) is not yet supported here. It's a work in progress.
+		//It is fully supported in the Spider, however.
 
 		URI uri = originalMessage.getRequestHeader().getURI();
 		String path = uri.getPath();
 		if (path == null) path="";
 		//String filename = path.substring( path.lastIndexOf('/')+1, path.length() );
-		String filename = uri.getName();
+		String urlfilename = uri.getName();
 
 		String fileExtension = null;
-		if(filename.contains(".")) {
-			fileExtension = filename.substring(filename.lastIndexOf(".") + 1);
+		if(urlfilename.contains(".")) {
+			fileExtension = urlfilename.substring(urlfilename.lastIndexOf(".") + 1);
 			fileExtension = fileExtension.toUpperCase();
 		}
-						
+
 		//do not recurse into a Subversion folder... this would cause infinite recursion issues in Attack Mode. (which goes depth first!)
 		//in any event, it doesn't make sense to do this.
 		if (path.contains("/.svn/") || path.endsWith("/.svn")) {
@@ -235,55 +244,265 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 			return false;
 		}
 
-		//Look for SVN metadata containing source code
-		String pathminusfilename = path.substring( 0, path.lastIndexOf(filename));
 
-		HttpMessage svnsourcefileattackmsg = new HttpMessage(new URI (uri.getScheme(), uri.getAuthority(), pathminusfilename + ".svn/text-base/" + filename + ".svn-base", null, null));
-		svnsourcefileattackmsg.setCookieParams(this.getBaseMsg().getCookieParams());
-		//svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
-		sendAndReceive(svnsourcefileattackmsg, false);  //do not follow redirects
+		//Look for SVN < 1.7 metadata (ie internal SVN format < 29) containing source code
+		//These versions all store the pristine copies in the the same format (insofar as the logic here is concerned, at least)
+		try {
+			String pathminusfilename = path.substring( 0, path.lastIndexOf(urlfilename));
 
-		//if we got a 404 or a redirect specifically, then this is NOT a match
-		//note that since we are simply relying on the file existing or not, we 
-		//will not attempt any fuzzy matching. Old school.
-		//this check is necessary, otherwise a recursive scan on nodes in the url path cause lots of false positives.
-		if (	svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND &&  //404
-				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.MOVED_PERMANENTLY && //301
-				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.FOUND && //302
-				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.SEE_OTHER	&& //303
-				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_MODIFIED && //304
-				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.USE_PROXY && //305 (306 is currently unused)
-				svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.TEMPORARY_REDIRECT //307
-				) {
-			String attackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/text-base/" + filename + ".svn-base";
-			if (log.isDebugEnabled()) {
-				log.debug("The contents for request '"+ attackFilename + "' do not return 404 or 3**, so we possibly have the source code..");
-			}
-			//check the contents of the output to some degree, if we have a file extension.
-			//if not, just try it (could be a false positive, but hey)    			
-			if (dataMatchesExtension (svnsourcefileattackmsg.getResponseBody().getBytes(), fileExtension)) {
-				//if we get to here, is is very likely that we have source file inclusion attack. alert it.
-				bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
-						Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.name"),
-						Constant.messages.getString("ascanbeta.sourcecodedisclosure.desc"), 
-						getBaseMsg().getRequestHeader().getURI().getURI(),
-						null, 
-						attackFilename,
-						Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.extrainfo", filename, attackFilename),
-						Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.soln"),
-						null,
-						svnsourcefileattackmsg
-						);
-				//if we found one, do not even try the "super" method, which tries each of the parameters,
-				//since this is slow, and we already found an instance
-				return true;
+			HttpMessage svnsourcefileattackmsg = new HttpMessage(new URI (uri.getScheme(), uri.getAuthority(), pathminusfilename + ".svn/text-base/" + urlfilename + ".svn-base", null, null));
+			svnsourcefileattackmsg.setCookieParams(this.getBaseMsg().getCookieParams());
+			//svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
+			sendAndReceive(svnsourcefileattackmsg, false);  //do not follow redirects
+
+			//if we got a 404 or a redirect specifically, then this is NOT a match
+			//note that since we are simply relying on the file existing or not, we 
+			//will not attempt any fuzzy matching. Old school.
+			//this check is necessary, otherwise a recursive scan on nodes in the url path cause lots of false positives.
+			if (	svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND &&  //404
+					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.MOVED_PERMANENTLY && //301
+					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.FOUND && //302
+					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.SEE_OTHER	&& //303
+					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_MODIFIED && //304
+					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.USE_PROXY && //305 (306 is currently unused)
+					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.TEMPORARY_REDIRECT //307
+					) {
+				String attackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/text-base/" + urlfilename + ".svn-base";
+				if (log.isDebugEnabled()) {
+					log.debug("The contents for request '"+ attackFilename + "' do not return 404 or 3**, so we possibly have the source code using SVN < 1.7");					
+				}
+				//check the contents of the output to some degree, if we have a file extension.
+				//if not, just try it (could be a false positive, but hey)    			
+				if (dataMatchesExtension (svnsourcefileattackmsg.getResponseBody().getBytes(), fileExtension)) {
+					//if we get to here, is is very likely that we have source file inclusion attack. alert it.
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
+							Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.name"),
+							Constant.messages.getString("ascanbeta.sourcecodedisclosure.desc"), 
+							getBaseMsg().getRequestHeader().getURI().getURI(),
+							null, 
+							attackFilename,
+							Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.extrainfo", urlfilename, attackFilename),
+							Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.soln"),
+							null,
+							svnsourcefileattackmsg
+							);
+					//if we found one, do not even try the "super" method, which tries each of the parameters,
+					//since this is slow, and we already found an instance
+					return true;
+				} else {
+					if (log.isDebugEnabled())  log.debug("The HTML output does not look like source code of type "+fileExtension );
+				}
 			} else {
-				if (log.isDebugEnabled())  log.debug("The HTML output does not look like source code of type "+fileExtension );					
+				if (log.isDebugEnabled()) {
+					log.debug("Got an unsuitable response code "+ svnsourcefileattackmsg.getResponseHeader().getStatusCode() + ", so it looks like SVN < 1.7 source code file was not found");
+				}
 			}
-		} else {
-			if (log.isDebugEnabled()) {
-				log.debug("Got an unsuitabe response code "+ svnsourcefileattackmsg.getResponseHeader().getStatusCode() + ", so it looks like the SVN source code file was not found");
+		}
+		catch (Exception e) {
+			log.warn("Got an error trying to find source code using the format used by SVN < 1.7", e);
+		}
+
+		//try again, by assuming that SVN 1.7 or later is used.  These versions use a different internal format, and store the source code in different locations compared to SVN < 1.7.
+		//Note that it's not as simple this time around, because the name of the file that contains the source code is based on a SHA1 hash of the file contents, rather than being based on the source file name.  
+		//In other words, we can't guess the name of the internal SVN file, and we can't just calculate it from the file name.  The good news is that the file name that we need is contained in the centralised 
+		//"wc.db" SVN metadata file that is associated with SVN >= 1.7.
+		//"wc.db" lives in ".svn/wc.db".  This file contains data for all of the files in the repo (ie, it contains data for the root directory and all subdirectories of the repo).  
+		//The only real issue we have is the question of where within the web folder structure (or mappings) that the "wc.db" file resides.  
+		//For instance, the ".svn" directory might have been deployed into "http://www.example.com/.svn",
+		//or it *might* have been deployed into "http://www.example.com/dir1/dir2/.svn".
+		//If we're looking for the SVN >= 1.7 source for "http://www.example.com/dir1/dir2/login.php", for instance, we need to check for the "wc.db" file in the following locations:
+		//	"http://www.example.com/dir1/dir2/.svn/wc.db"
+		//	"http://www.example.com/dir1/.svn/wc.db"
+		//	"http://www.example.com/.svn/wc.db"
+		//ie, we need to traverse all the way back to the web root looking for it.
+		//Once we've found the "wc.db" file, we use it as an index, looking up the name of the file for which we're trying to get the source code.  
+		//That gives us the internal SVN file name (containing the SHA1 value), which we can (in theory) then retrieve. If it works, we will retrieve the source code for the file!
+		try {			
+			String pathminusfilename = path.substring( 0, path.lastIndexOf(urlfilename));
+			while (! pathminusfilename.equals ("/")) {
+				HttpMessage svnWCDBAttackMsg = new HttpMessage(new URI (uri.getScheme(), uri.getAuthority(), pathminusfilename + ".svn/wc.db", null, null));
+				svnWCDBAttackMsg.setCookieParams(this.getBaseMsg().getCookieParams());
+				//svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
+				sendAndReceive(svnWCDBAttackMsg, false);  //do not follow redirects
+	
+				//if we got a 404 or a redirect specifically, then this is NOT a match
+				//note that since we are simply relying on the file existing or not, we 
+				//will not attempt any fuzzy matching. Old school.
+				//this check is necessary, otherwise a recursive scan on nodes in the url path cause lots of false positives.
+				if (	svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND &&  //404
+						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.MOVED_PERMANENTLY && //301
+						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.FOUND && //302
+						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.SEE_OTHER	&& //303
+						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_MODIFIED && //304
+						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.USE_PROXY && //305 (306 is currently unused)
+						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.TEMPORARY_REDIRECT //307
+						) {
+					//calculate the path used to access the wc.db, as well as the matching relpath to query the wc.db
+					//since the relpath is calculated from the original message URL path, after removing the base used in the wc.db url path
+					String wcdbAttackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/wc.db";
+					String relPath = path.substring(path.indexOf(pathminusfilename) + pathminusfilename.length());
+					if (log.isDebugEnabled())	{ 
+						log.debug("The contents for request '"+ wcdbAttackFilename + "' do not return 404 or 3**, so we found the '.svn/wc.db' file for SVN >= 1.7..");
+						log.debug("The relpath to query SQLite is '"+ relPath + "'");
+					}
+					
+
+					//so we found the wc.db file... handle it.
+					//get the binary data, and put it in a temp file we can use with the SQLite JDBC driver
+					//Note: File is not AutoClosable, so cannot use a "try with resources" to manage it
+					File tempSqliteFile;					
+					tempSqliteFile = File.createTempFile("sqlite_svn_wc_db", null);
+					tempSqliteFile.deleteOnExit();
+					OutputStream fos = new FileOutputStream (tempSqliteFile);
+					fos.write(svnWCDBAttackMsg.getResponseBody().getBytes());
+					fos.close();
+					
+					if ( log.isDebugEnabled() ) {
+						org.sqlite.JDBC jdbcDriver = new org.sqlite.JDBC();
+						log.debug ("Created a temporary SQLite database file '"+ tempSqliteFile+ "'");				
+						log.debug("SQLite JDBC Driver is version " + jdbcDriver.getMajorVersion() + "." + jdbcDriver.getMinorVersion());
+						}
+
+					//now load the temporary SQLite file using JDBC, and query the file entries within.
+					Class.forName("org.sqlite.JDBC"); 
+					String sqliteConnectionUrl = "jdbc:sqlite:" + tempSqliteFile.getAbsolutePath();
+					
+					try (Connection conn = DriverManager.getConnection(sqliteConnectionUrl)) {
+						if (conn != null) {
+							Statement pragmaStatement = null;
+							PreparedStatement nodeStatement = null;
+							ResultSet rsSVNWCFormat=null;
+							ResultSet rsNode = null;
+							ResultSet rsRepo = null;
+							try {
+								pragmaStatement = conn.createStatement();									
+								rsSVNWCFormat= pragmaStatement.executeQuery("pragma USER_VERSION");
+
+								//get the precise internal version of SVN in use   
+								//this will inform how the scanner should proceed in an efficient manner.
+								int svnFormat = 0;
+								while (rsSVNWCFormat.next()) {
+									if (log.isDebugEnabled()) log.debug("Got a row from 'pragma USER_VERSION'");
+									svnFormat = rsSVNWCFormat.getInt(1);
+									break;
+								}
+								if (svnFormat < 29) {
+									throw new Exception ("The SVN Working Copy Format of the SQLite database should be >= 29. We found "+ svnFormat);
+								}
+								if (svnFormat > 31) {
+									throw new Exception ("SVN Working Copy Format "+ svnFormat + " is not supported at this time.  We support up to and including format 31 (~ SVN 1.8.5)");
+								}
+								if ( log.isDebugEnabled() ) {
+									log.debug("Internal SVN Working Copy Format for "+ tempSqliteFile + " is "+ svnFormat);
+									log.debug("Refer to http://svn.apache.org/repos/asf/subversion/trunk/subversion/libsvn_wc/wc.h for more details!");
+								}
+								
+								//allow future changes to be easily handled 
+								switch (svnFormat) {
+									case 29: case 30: case 31:
+										nodeStatement= conn.prepareStatement("select kind,local_relpath,'pristine/'||substr(checksum,7,2) || \"/\" || substr(checksum,7)|| \".svn-base\" from nodes where local_relpath = ? order by wc_id");
+										break;
+								}
+								//now set the parameter, and execute the query
+								nodeStatement.setString(1, relPath);
+								rsNode = nodeStatement.executeQuery();
+								
+								//and get the internal name of the SVN file stored in the SVN repo 
+								while (rsNode.next()) {
+									if (log.isDebugEnabled()) log.debug("Got a Node from the SVN wc.db file (format " + svnFormat+ ")");
+									//String kind = rsNode.getString(1);
+									//String filename = rsNode.getString(2);
+									String svnFilename = rsNode.getString(3);
+			
+									if ( svnFilename != null && svnFilename.length() > 0 ) {
+										log.debug("Found " + relPath + " in the wc.db: "+ svnFilename);
+										
+										//try get the source, using the internal SVN file path, building the path back up correctly										
+										HttpMessage svnSourceFileAttackMsg = new HttpMessage(new URI (uri.getScheme(), uri.getAuthority(), pathminusfilename + ".svn/"+svnFilename, null, null));
+										svnSourceFileAttackMsg.setCookieParams(this.getBaseMsg().getCookieParams());
+										//svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
+										sendAndReceive(svnSourceFileAttackMsg, false);  //do not follow redirects
+
+										//if we got a 404 or a redirect specifically, then this is NOT a match
+										//note that since we are simply relying on the file existing or not, we 
+										//will not attempt any fuzzy matching. Old school.
+										//this check is necessary, otherwise a recursive scan on nodes in the url path cause lots of false positives.
+										if (	svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND &&  //404
+												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.MOVED_PERMANENTLY && //301
+												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.FOUND && //302
+												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.SEE_OTHER	&& //303
+												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_MODIFIED && //304
+												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.USE_PROXY && //305 (306 is currently unused)
+												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.TEMPORARY_REDIRECT //307
+												) {
+											String attackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/" + svnFilename;
+											if (log.isDebugEnabled()) {
+												log.debug("The contents for request '"+ attackFilename + "' do not return 404 or 3**, so we possibly have the source code using SVN >= 1.7");					
+											}
+											//check the contents of the output to some degree, if we have a file extension.
+											//if not, just try it (could be a false positive, but hey)    			
+											if (dataMatchesExtension (svnSourceFileAttackMsg.getResponseBody().getBytes(), fileExtension)) {
+												//if we get to here, is is very likely that we have source file inclusion attack. alert it.
+												bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
+														Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.name"),
+														Constant.messages.getString("ascanbeta.sourcecodedisclosure.desc"), 
+														getBaseMsg().getRequestHeader().getURI().getURI(),
+														null, 
+														attackFilename,
+														Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.extrainfo", urlfilename, attackFilename),
+														Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.soln"),
+														null,
+														svnSourceFileAttackMsg
+														);
+												//do not return.. need to tidy up first
+											} else {
+												if (log.isDebugEnabled())  log.debug("The HTML output does not look like source code of type "+fileExtension );
+											}
+										} else {
+											if (log.isDebugEnabled()) {
+												log.debug("Got an unsuitable response code "+ svnSourceFileAttackMsg.getResponseHeader().getStatusCode() + ", so it looks like SVN >= 1.7 source code file was not found");
+											}
+										}
+			
+										break; //out of the loop. even though there should be just 1 entry
+									}
+								}
+							}
+							catch (Exception e) {
+								log.error ("Error executing SQL on temporary SVN SQLite database '"+ sqliteConnectionUrl + "': "+ e);
+							}
+							finally {
+								//the JDBC driver in use does not play well with "try with resource" construct. I tried!
+								if (rsRepo != null) rsRepo.close();
+								if (rsNode != null) rsNode.close();
+								if (rsSVNWCFormat != null) rsSVNWCFormat.close(); 			
+								if (pragmaStatement != null) pragmaStatement.close();
+								if (nodeStatement != null) nodeStatement.close();
+							}
+						}
+					else 
+						throw new SQLException ("Could not open a JDBC connection to SQLite file "+ tempSqliteFile.getAbsolutePath());
+					} 
+					catch (Exception e) {
+						//the connection will have been closed already, since we're used a try with resources
+						log.error ("Error parsing temporary SVN SQLite database "+ sqliteConnectionUrl);					
+					}
+					finally {
+						//delete the temp file.
+						//this will be deleted when the VM is shut down anyway, but better to be safe than to run out of disk space.				
+						tempSqliteFile.delete();
+					}
+
+				
+					break; //out of the while loop
+				}	//non 404, 300, etc for "wc.db", for SVN >= 1.7
+				//set up the parent directory name
+				pathminusfilename = pathminusfilename.substring( 0, pathminusfilename.substring(0, pathminusfilename.length()-1).lastIndexOf("/")+1);
 			}
+				
+		}
+		catch (Exception e) {
+			log.warn("Got an error trying to find source code using the format used by SVN >= 1.7", e);
 		}
 		return false;	
 	}	
