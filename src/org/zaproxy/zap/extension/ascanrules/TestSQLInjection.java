@@ -483,7 +483,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					//System.out.println("Attacking [" + msg + "], parameter [" + param + "] with value ["+ sqlErrValue + "]");
 
 					//send the message with the modified parameters
-					sendAndReceive(msg1);
+					sendAndReceive(msg1, false); //do not follow redirects
 					countErrorBasedRequests++;
 
 					//now check the results against each pattern in turn, to try to identify a database, or even better: a specific database.
@@ -571,7 +571,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//so to work around this, simply re-run the query again now at this point.
 			//Note that we are not counting this request in our max number of requests to be issued
 			refreshedmessage = getNewMsg();
-			sendAndReceive(refreshedmessage);
+			sendAndReceive(refreshedmessage, false); //do not follow redirects
 
 			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
 			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
@@ -599,7 +599,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					HttpMessage msg4 = getNewMsg();
 					setParameter(msg4, param, modifiedParamValue);
 
-					sendAndReceive(msg4);
+					sendAndReceive(msg4, false); //do not follow redirects
 					countExpressionBasedRequests++;
 
 					String modifiedExpressionOutputUnstripped = msg4.getResponseBody().toString();
@@ -627,7 +627,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							HttpMessage msg4Confirm = getNewMsg();
 							setParameter(msg4Confirm, param, modifiedParamValueConfirm);
 
-							sendAndReceive(msg4Confirm);
+							sendAndReceive(msg4Confirm, false); //do not follow redirects
 							countExpressionBasedRequests++;
 
 							String confirmExpressionOutputUnstripped = msg4Confirm.getResponseBody().toString();
@@ -710,7 +710,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//so to work around this, simply re-run the query again now at this point.
 			//Note that we are not counting this request in our max number of requests to be issued
 			refreshedmessage = getNewMsg();
-			sendAndReceive(refreshedmessage);
+			sendAndReceive(refreshedmessage, false); //do not follow redirects
 
 			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
 			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
@@ -733,7 +733,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				setParameter(msg2, param, sqlBooleanAndTrueValue);
 
 				//send the AND with an additional TRUE statement tacked onto the end. Hopefully it will return the same results as the original (to find a vulnerability)
-				sendAndReceive(msg2);
+				sendAndReceive(msg2, false); //do not follow redirects
 				countBooleanBasedRequests++;
 
 				//String resBodyAND = msg2.getResponseBody().toString();
@@ -756,7 +756,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 						setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
 
-						sendAndReceive(msg2_and_false);
+						sendAndReceive(msg2_and_false, false); //do not follow redirects
 						countBooleanBasedRequests++;
 
 						//String resBodyANDFalse = stripOff(msg2_and_false.getResponseBody().toString(), SQL_LOGIC_AND_FALSE[i]);
@@ -811,7 +811,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							}
 							HttpMessage msg2_or_true = getNewMsg();
 							setParameter(msg2_or_true, param, orValue);
-							sendAndReceive(msg2_or_true);
+							sendAndReceive(msg2_or_true, false); //do not follow redirects
 							countBooleanBasedRequests++;
 
 							//String resBodyORTrue = stripOff(msg2_or_true.getResponseBody().toString(), orValue);
@@ -907,7 +907,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				String sqlBooleanAndFalseValue = origParamValue + SQL_LOGIC_AND_FALSE[i];
 
 				setParameter(msg2, param, sqlBooleanOrTrueValue);				
-				sendAndReceive(msg2);
+				sendAndReceive(msg2, false); //do not follow redirects
 				countBooleanBasedRequests++;
 
 				String resBodyORTrueUnstripped = msg2.getResponseBody().toString();
@@ -921,7 +921,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					//if we can also restrict it back to the original results by appending a " and 1=2", then "Winner Winner, Chicken Dinner". 
 					HttpMessage msg2_and_false = getNewMsg();
 					setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
-					sendAndReceive(msg2_and_false);
+					sendAndReceive(msg2_and_false, false); //do not follow redirects
 					countBooleanBasedRequests++;
 
 					String resBodyANDFalseUnstripped = msg2_and_false.getResponseBody().toString();
@@ -970,7 +970,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				String sqlUnionValue = origParamValue + SQL_UNION_APPENDAGES[sqlUnionStringIndex];
 				setParameter(msg3, param, sqlUnionValue);
 				//send the message with the modified parameters
-				sendAndReceive(msg3);
+				sendAndReceive(msg3, false); //do not follow redirects
 				countUnionBasedRequests++;
 
 				//now check the results.. look first for UNION specific error messages in the output that were not there in the original output
@@ -1039,7 +1039,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//so to work around this, simply re-run the query again now at this point.
 			//Note that we are not counting this request in our max number of requests to be issued
 			refreshedmessage = getNewMsg();
-			sendAndReceive(refreshedmessage);
+			sendAndReceive(refreshedmessage, false); //do not follow redirects
 
 			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
 			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
@@ -1053,7 +1053,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				HttpMessage msg5 = getNewMsg();
 				setParameter(msg5, param, modifiedParamValue);
 
-				sendAndReceive(msg5);
+				sendAndReceive(msg5, false); //do not follow redirects
 				countOrderByBasedRequests++;
 
 				String modifiedAscendingOutputUnstripped = msg5.getResponseBody().toString();
@@ -1079,7 +1079,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						HttpMessage msg5Confirm = getNewMsg();
 						setParameter(msg5Confirm, param, modifiedParamValueConfirm);
 
-						sendAndReceive(msg5Confirm);
+						sendAndReceive(msg5Confirm, false); //do not follow redirects
 						countOrderByBasedRequests++;
 
 						String confirmOrderByOutputUnstripped = msg5Confirm.getResponseBody().toString();
