@@ -258,7 +258,7 @@ public class SQLInjectionOracle extends AbstractAppParamPlugin {
 					return;
 				} //query took longer than the amount of time we attempted to retard it by						
 			}  //for each time based SQL index
-			//end of Check 3: end of check for time based SQL Injection
+			//end of check for time based SQL Injection
 
 			
 

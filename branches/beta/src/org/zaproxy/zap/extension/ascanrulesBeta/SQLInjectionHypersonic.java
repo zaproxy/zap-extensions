@@ -17,25 +17,18 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeSet;
-
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
+import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 
 
 /**
- * TODO: do not do dangerous operations unless the Mode is right!
- * TODO: implement checks in Header fields (currently does Cookie values, form fields, and url parameters)
- * TODO: change the Alert Titles.
  * TODO: maybe implement a more specific UNION based check for Hypersonic (with table names)
  * 
  * The SQLInjectionHypersonic plugin identifies Hypersonic specific SQL Injection vulnerabilities
@@ -63,14 +56,14 @@ import org.parosproxy.paros.network.HttpMessage;
  * 
  *  @author 70pointer
  */
-public class SQLInjectionHypersonic extends AbstractAppPlugin {
-		
+public class SQLInjectionHypersonic extends AbstractAppParamPlugin {
+
 	private boolean doUnionBased = false;   //TODO: use in Union based, when we implement it
 	private boolean doTimeBased = false;
-	
+
 	private int doUnionMaxRequests = 0;	//TODO: use in Union based, when we implement it
 	private int doTimeMaxRequests = 0;
-	
+
 
 	/**
 	 * Hypersonic one-line comment
@@ -101,11 +94,11 @@ public class SQLInjectionHypersonic extends AbstractAppPlugin {
 	 */
 	private static String SQL_HYPERSONIC_TIME_FUNCTION = "\"java.lang.Thread.sleep\"(5000)";
 
-	
+
 	/**
 	 * Hypersonic specific time based injection strings. each for 5 seconds
 	 */
-	
+
 	//issue with "+" symbols in here: 
 	//we cannot encode them here as %2B, as then the database gets them double encoded as %252B
 	//we cannot leave them as unencoded '+' characters either, as then they are NOT encoded by the HttpMessage.setGetParams (x) or by AbstractPlugin.sendAndReceive (HttpMessage)
@@ -133,8 +126,8 @@ public class SQLInjectionHypersonic extends AbstractAppPlugin {
 		"<<<<ORIGINALVALUE>>>>' or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
 		"<<<<ORIGINALVALUE>>>>\" or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
 		"<<<<ORIGINALVALUE>>>>) or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		};
-	
+	};
+
 
 	/**
 	 * plugin dependencies (none! not even "SQL Injection")
@@ -194,10 +187,10 @@ public class SQLInjectionHypersonic extends AbstractAppPlugin {
 		//this.debugEnabled = true;
 
 		if ( this.debugEnabled ) log.debug("Initialising");
-		
+
 		//TODO: debug only
 		//this.setAttackStrength(AttackStrength.INSANE);
-		
+
 		//set up what we are allowed to do, depending on the attack strength that was set.
 		if ( this.getAttackStrength() == AttackStrength.LOW ) {
 			doTimeBased=true; doTimeMaxRequests=3;
@@ -219,12 +212,8 @@ public class SQLInjectionHypersonic extends AbstractAppPlugin {
 	 * scans for SQL Injection vulnerabilities, using Hypersonic specific syntax.  If it doesn't use specifically Hypersonic syntax, it does not belong in here, but in SQLInjection 
 	 */
 	@Override
-	public void scan() {
+	public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
 
-		//as soon as we find a single SQL injection on the url, skip out. Do not look for SQL injection on a subsequent parameter on the same URL
-		//for performance reasons.
-		boolean sqlInjectionFoundForUrl = false;
-		
 		//DEBUG only
 		//log.setLevel(org.apache.log4j.Level.DEBUG);
 		//this.debugEnabled = true;
@@ -234,94 +223,63 @@ public class SQLInjectionHypersonic extends AbstractAppPlugin {
 			HttpMessage msgTimeBaseline = getNewMsg();
 			long originalTimeStarted = System.currentTimeMillis();
 			try {
-				sendAndReceive(msgTimeBaseline); }
+				sendAndReceive(msgTimeBaseline, false); //do not follow redirects
+				}
 			catch (java.net.SocketTimeoutException e) {
 				//to be expected occasionally, if the base query was one that contains some parameters exploiting time based SQL injection?
 				if ( this.debugEnabled ) log.debug("The Base Time Check timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"]");
 			}
 			long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
 			//end of timing baseline check
-			
-			
-			TreeSet<HtmlParameter> htmlParams = new TreeSet<> (); 
-			htmlParams.addAll(getBaseMsg().getFormParams());  //add in the POST params
-			htmlParams.addAll(getBaseMsg().getUrlParams()); //add in the GET params
 
-			//for each parameter in turn
-			for (Iterator<HtmlParameter> iter = htmlParams.iterator(); iter.hasNext() && ! sqlInjectionFoundForUrl; ) {
-				
-				int countUnionBasedRequests = 0;
-				int countTimeBasedRequests = 0;				
+			int countUnionBasedRequests = 0;
+			int countTimeBasedRequests = 0;				
 
-				HtmlParameter currentHtmlParameter = iter.next();
-				if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], ["+ currentHtmlParameter.getType()+"] field ["+ currentHtmlParameter.getName() + "] with value ["+currentHtmlParameter.getValue()+"] for SQL Injection");    			
-				
-				//Check 3: check for time based SQL Injection
-				//Hypersonic specific time based SQL injection checks
+			if ( this.debugEnabled ) log.debug("Scanning URL ["+ getBaseMsg().getRequestHeader().getMethod()+ "] ["+ getBaseMsg().getRequestHeader().getURI() + "], field ["+ paramName + "] with value ["+paramValue+"] for SQL Injection");    			
 
-				for (int timeBasedSQLindex = 0; 
-						timeBasedSQLindex < SQL_HYPERSONIC_TIME_REPLACEMENTS.length && ! sqlInjectionFoundForUrl && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
-						timeBasedSQLindex ++) {
-					HttpMessage msg3 = getNewMsg();
-					String newTimeBasedInjectionValue = SQL_HYPERSONIC_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", currentHtmlParameter.getValue());
-					
-					if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.url)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getUrlParams(); //get parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue)); 
-						msg3.setGetParams(requestParams); //url parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.form)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getFormParams(); //form parameters
-						requestParams.remove(currentHtmlParameter);
-						//new HtmlParameter ();
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue));
-						msg3.setFormParams(requestParams); //form parameters       		        			        			        		
-					}  //end of the URL parameter code
-					else if ( currentHtmlParameter.getType().equals (HtmlParameter.Type.cookie)) {
-						TreeSet <HtmlParameter> requestParams = msg3.getCookieParams(); //cookie parameters
-						requestParams.remove(currentHtmlParameter);
-						requestParams.add(new HtmlParameter(currentHtmlParameter.getType(), currentHtmlParameter.getName(), newTimeBasedInjectionValue));
-						msg3.setCookieParams(requestParams); //cookie parameters
-					}
+			//Hypersonic specific time based SQL injection checks
+			for (int timeBasedSQLindex = 0; 
+					timeBasedSQLindex < SQL_HYPERSONIC_TIME_REPLACEMENTS.length && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
+					timeBasedSQLindex ++) {
+				HttpMessage msgAttack = getNewMsg();
+				String newTimeBasedInjectionValue = SQL_HYPERSONIC_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", paramValue);
 
-					//send it.
-					long modifiedTimeStarted = System.currentTimeMillis();
-					try {
-						sendAndReceive(msg3);
-						countTimeBasedRequests++;
-						}
-					catch (java.net.SocketTimeoutException e) {
-						//this is to be expected, if we start sending slow queries to the database.  ignore it in this case.. and just get the time.
-						if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] on ["+currentHtmlParameter.getType()+"] field: ["+currentHtmlParameter.getName()+"]");
-					}
-					long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
+				setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
 
-					if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on ["+currentHtmlParameter.getType()+"] field: ["+currentHtmlParameter.getName()+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
+				//send it.
+				long modifiedTimeStarted = System.currentTimeMillis();
+				try {
+					sendAndReceive(msgAttack, false); //do not follow redirects
+					countTimeBasedRequests++;
+				}
+				catch (java.net.SocketTimeoutException e) {
+					//this is to be expected, if we start sending slow queries to the database.  ignore it in this case.. and just get the time.
+					if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+				}
+				long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
 
-					if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
-						//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
-						String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, currentHtmlParameter.getValue(), originalTimeUsed);
-						String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", currentHtmlParameter.getName(), newTimeBasedInjectionValue);
+				if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on field: ["+paramName+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
 
-						//raise the alert
-						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - Time Based", getDescription(), 
-								getBaseMsg().getRequestHeader().getURI().getURI(), //url
-								"["+currentHtmlParameter.getType()+"] "+ currentHtmlParameter.getName(),  attack, 
-								extraInfo, getSolution(), msg3);
+				if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
+					//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
+					String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, paramValue, originalTimeUsed);
+					String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", paramName, newTimeBasedInjectionValue);
 
-						log.info("A likely Time Based SQL Injection Vulnerability has been found with ["+msg3.getRequestHeader().getMethod()+"] URL ["+msg3.getRequestHeader().getURI().getURI()+"] on "+currentHtmlParameter.getType()+" field: ["+currentHtmlParameter.getName()+"]");
+					//raise the alert
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - Time Based", getDescription(), 
+							getBaseMsg().getRequestHeader().getURI().getURI(), //url
+							paramName,  attack, 
+							extraInfo, getSolution(), msgAttack);
 
-						sqlInjectionFoundForUrl = true; 
-						continue;
-					} //query took longer than the amount of time we attempted to retard it by						
-				}  //for each time based SQL index
-				//end of Check 3: end of check for time based SQL Injection
+					log.info("A likely Time Based SQL Injection Vulnerability has been found with ["+msgAttack.getRequestHeader().getMethod()+"] URL ["+msgAttack.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+					return;
+				} //query took longer than the amount of time we attempted to retard it by						
+			}  //for each time based SQL index
+			//end of check for time based SQL Injection
 
-			} //end of the for loop around the parameter list
 
-    	} catch (InvalidRedirectLocationException e) {
-    		// Not an error, just means we probably attacked the redirect location
+		} catch (InvalidRedirectLocationException e) {
+			// Not an error, just means we probably attacked the redirect location
 		} catch (Exception e) {
 			//Do not try to internationalise this.. we need an error message in any event.. 
 			//if it's in English, it's still better than not having it at all. 
