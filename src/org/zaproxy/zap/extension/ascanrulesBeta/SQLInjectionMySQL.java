@@ -184,7 +184,7 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 			HttpMessage msgTimeBaseline = getNewMsg();
 			long originalTimeStarted = System.currentTimeMillis();
 			try {
-				sendAndReceive(msgTimeBaseline);
+				sendAndReceive(msgTimeBaseline, false); //do not follow redirects
 			}
 			catch (java.net.SocketTimeoutException e) {
 				//to be expected occasionally, if the base query was one that contains some parameters exploiting time based SQL injection?
@@ -198,7 +198,7 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 			if (originalTimeUsed > 5000) {
 				long originalTimeStarted2 = System.currentTimeMillis();
 				try {
-					sendAndReceive(msgTimeBaseline);
+					sendAndReceive(msgTimeBaseline, false); //do not follow redirects
 				}
 				catch (java.net.SocketTimeoutException e) {
 					//to be expected occasionally, if the base query was one that contains some parameters exploiting time based SQL injection?
@@ -232,7 +232,7 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 				//send it.
 				long modifiedTimeStarted = System.currentTimeMillis();
 				try {
-					sendAndReceive(msg3);
+					sendAndReceive(msg3, false); //do not follow redirects
 					countTimeBasedRequests++;
 				}
 				catch (java.net.SocketTimeoutException e) {
