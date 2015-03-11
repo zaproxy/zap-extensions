@@ -20,7 +20,7 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,11 +54,12 @@ public class Base64Disclosure extends PluginPassiveScanner {
 	 */
 	//static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={1,2}");
 	//static Pattern base64Pattern = Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={0,2}");
-	static Set <Pattern> base64Patterns = new HashSet<Pattern>();
+	static Set <Pattern> base64Patterns = new LinkedHashSet<Pattern>();  //the order of patterns is important. most specific first
 
 	static {
-		base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={0,2}"));
-		base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\-_]{30,}={0,2}"));  //used in JWT - file and URL safe variant of Base64 alphabet
+		//base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\+\\\\/]{30,}={0,2}"));
+		//base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\-_]{30,}={0,2}"));  //used in JWT - file and URL safe variant of Base64 alphabet
+		base64Patterns.add(Pattern.compile("[a-zA-Z0-9\\+\\\\/\\-_]{30,}={0,2}"));
 	};
 
 	/**
@@ -182,23 +183,23 @@ public class Base64Disclosure extends PluginPassiveScanner {
 							(noLowerInString && probabilityOfNoLowerInString < probabilityThreshold) ||
 							(noUpperInString && probabilityOfNoUpperInString < probabilityThreshold)
 							) {
-						if (log.isDebugEnabled()) { 
-							log.debug("The following candidate Base64 has been excluded on probabilistic grounds: ["+base64evidence + "] ");
+						if (log.isTraceEnabled()) { 
+							log.trace("The following candidate Base64 has been excluded on probabilistic grounds: ["+base64evidence + "] ");
 							if (noDigitInString)
-								log.debug("The candidate Base64 has no digit characters, and the the probability of this occurring for a string of this length is "+ (probabilityOfNoDigitInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
+								log.trace("The candidate Base64 has no digit characters, and the the probability of this occurring for a string of this length is "+ (probabilityOfNoDigitInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
 							if (noAlphaInString)
-								log.debug("The candidate Base64 has no alphabetic characters, and the the probability of this occurring for a string of this length is "+ (probabilityOfNoAlphaInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
+								log.trace("The candidate Base64 has no alphabetic characters, and the the probability of this occurring for a string of this length is "+ (probabilityOfNoAlphaInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
 							//if (noOtherInString)
-							//	log.debug("The candidate Base64 has no 'other' characters, and the the probability of this occurring for a string of this length is "+ (probabilityOfNoOtherInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
+							//	log.trace("The candidate Base64 has no 'other' characters, and the the probability of this occurring for a string of this length is "+ (probabilityOfNoOtherInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
 							if (noLowerInString)
-								log.debug("The candidate Base64 has no lowercase characters, and the the probability of this occurring for a string of this length is "+ (probabilityOfNoLowerInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
+								log.trace("The candidate Base64 has no lowercase characters, and the the probability of this occurring for a string of this length is "+ (probabilityOfNoLowerInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
 							if (noUpperInString)
-								log.debug("The candidate Base64 has no uppercase characters, and the the probability of this occurring for a string of this length is "+ (probabilityOfNoUpperInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
+								log.trace("The candidate Base64 has no uppercase characters, and the the probability of this occurring for a string of this length is "+ (probabilityOfNoUpperInString * 100) + "%. The threshold is "+ (probabilityThreshold *100)+ "%");
 						}
 						continue;
 					}
 
-					if (log.isDebugEnabled()) log.debug("Found a match for Base64:" + base64evidence);
+					if (log.isDebugEnabled()) log.debug("Found a match for Base64, of length "+ base64evidence.length()+ ":" + base64evidence);
 
 					//so it's valid Base64.  Is it valid .NET ViewState data?
 					//This will be true for both __VIEWSTATE and __EVENTVALIDATION data, although currently, we can only interpret/decode __VIEWSTATE.
@@ -210,8 +211,8 @@ public class Base64Disclosure extends PluginPassiveScanner {
 						ViewStateDecoder viewstatedecoded = new ViewStateDecoder ();					
 						try {
 							if (log.isDebugEnabled()) log.debug("The following Base64 string has a ViewState preamble: ["+base64evidence + "]");
-							viewstatexml = viewstatedecoded.decode(base64evidence.getBytes());
-							if (log.isDebugEnabled()) log.debug("The data was successfully decoded as ViewState data");
+							viewstatexml = viewstatedecoded.decodeAsXML(base64evidence.getBytes());
+							if (log.isDebugEnabled()) log.debug("The data was successfully decoded as ViewState data of length "+ viewstatexml.length() + ": "+ viewstatexml);
 							validviewstate = true;
 
 							//is the ViewState protected by a MAC?
@@ -235,11 +236,11 @@ public class Base64Disclosure extends PluginPassiveScanner {
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.desc"), 
 								msg.getRequestHeader().getURI().toString(), 
 								"", //param
-								viewstatexml, //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+								viewstatexml.substring(0, Math.min(32000, viewstatexml.length())), //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.extrainfo", viewstatexml), //other info
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.soln"), 
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.refs"), 
-								viewstatexml,
+								viewstatexml, //evidence
 								200, //Information Exposure, 
 								13, //Information Leakage
 								msg);  
@@ -253,7 +254,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.desc"), 
 									msg.getRequestHeader().getURI().toString(), 
 									"", //param
-									viewstatexml, //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+									viewstatexml.substring(0, Math.min(32000, viewstatexml.length())), //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.extrainfo", viewstatexml), //other info
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.soln"), 
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.refs"), 
@@ -277,7 +278,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 									getDescription(), 
 									msg.getRequestHeader().getURI().toString(), 
 									"", //param
-									base64evidence, //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+									viewstatexml.substring(0, Math.min(32000, viewstatexml.length())), //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
 									getExtraInfo(msg, base64evidence, decodeddata),  //other info
 									getSolution(), 
 									getReference(), 
