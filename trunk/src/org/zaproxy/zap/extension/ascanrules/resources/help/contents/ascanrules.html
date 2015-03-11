@@ -12,6 +12,11 @@ The following release quality active scan rules are included in this add-on:
 
 <H2>Code Injection</H2>
 
+This rule submits PHP and ASP attack strings as values for URL parameters in a request and examines the response to 
+see if those values have been evaluated by the server. First, requests are constructed and sent containing injected PHP instructions
+to print a token. In the event of a match between the token and the content of the response body, the scanner raises an alert and returns immediately.
+If there aren't any matches, the scanner will construct requests with several injected ASP strings that instruct the server to write the product
+of two randomly generated integers in the response. If the body of the response matches the product, an alert is raised.
 <H2>Command Injection</H2>
 
 <H2>Client Browser Cache</H2>
