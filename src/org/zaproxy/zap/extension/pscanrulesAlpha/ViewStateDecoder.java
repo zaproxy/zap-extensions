@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.nio.ByteBuffer;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Hex;
@@ -33,6 +34,9 @@ import java.io.IOException;
  *
  */
 public class ViewStateDecoder {
+	
+	//private static final Pattern charsToEncodeInXMLPattern = Pattern.compile("[\\<\\>\\&]+");
+	private static final Pattern charsToEncodeInXMLPattern = Pattern.compile("[<>\\&]+", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 	
 	/**
 	 * a pattern to use when looking at the output to check if a ViewState is protected by a MAC
@@ -125,9 +129,11 @@ public class ViewStateDecoder {
 	 * @throws NoMoreDataException
 	 * @throws Exception
 	 */
-	public StringBuffer decodeObject (ByteBuffer bb) throws NoMoreDataException, Exception {
+	public StringBuffer decodeObjectAsXML (ByteBuffer bb) throws NoMoreDataException, Exception {
 		int b = (int)bb.get();
 		StringBuffer representation = new StringBuffer ();
+		Matcher matcher = null;
+		boolean malicious = false;
 		switch (b) {
 		case 0x02:
 			//Unsigned integer
@@ -145,7 +151,7 @@ public class ViewStateDecoder {
 			representation.append ("<booleanarray size=\""  + booleancontainersize + "\">\n");
 			this.indentationlevel++;
 			for (int i=0; i< booleancontainersize; i++)
-				representation.append (decodeObject (bb));
+				representation.append (decodeObjectAsXML (bb));
 			this.indentationlevel--;
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append ("</booleanarray>\n");
@@ -155,8 +161,12 @@ public class ViewStateDecoder {
 			int stringsize = readLittleEndianBase128Number (bb);
 			String s = new String (readBytes (bb, stringsize));
 			representation.append(getIndentation(this.indentationlevel));
-			representation.append ("<string>");
+			representation.append ("<string>");			
+			matcher = charsToEncodeInXMLPattern.matcher(s);
+			malicious = matcher.find();
+			if ( malicious ) representation.append ("<![CDATA[");
 			representation.append (s);
+			if ( malicious ) representation.append ("]]>");
 			representation.append ("</string>\n");
 			return representation;
 		case 0x0B:
@@ -165,7 +175,11 @@ public class ViewStateDecoder {
 			String nullterminatedString = readNullTerminatedString (bb);
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append ("<stringnullterminated>");
+			matcher = charsToEncodeInXMLPattern.matcher(nullterminatedString);
+			malicious = matcher.find();
+			if ( malicious ) representation.append ("<![CDATA[");
 			representation.append (nullterminatedString);
+			if ( malicious ) representation.append ("]]>");
 			representation.append ("</stringnullterminated>\n");
 			return representation;
 		case 0x0F:
@@ -173,8 +187,8 @@ public class ViewStateDecoder {
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append ("<pair>\n");
 			this.indentationlevel++;
-			representation.append (decodeObject (bb));
-			representation.append (decodeObject (bb));
+			representation.append (decodeObjectAsXML (bb));
+			representation.append (decodeObjectAsXML (bb));
 			this.indentationlevel--;
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append("</pair>\n");
@@ -185,9 +199,9 @@ public class ViewStateDecoder {
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append ("<triple>\n");
 			this.indentationlevel++;
-			representation.append (decodeObject (bb));
-			representation.append (decodeObject (bb));
-			representation.append (decodeObject (bb));
+			representation.append (decodeObjectAsXML (bb));
+			representation.append (decodeObjectAsXML (bb));
+			representation.append (decodeObjectAsXML (bb));
 			this.indentationlevel--;
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append("</triple>\n");
@@ -203,7 +217,11 @@ public class ViewStateDecoder {
 				String s2 = new String(readBytes (bb, stringlength));
 				representation.append(getIndentation(this.indentationlevel +1));
 				representation.append ("<stringwithlength length=\""+stringlength+"\">");
+				matcher = charsToEncodeInXMLPattern.matcher(s2);
+				malicious = matcher.find();
+				if ( malicious ) representation.append ("<![CDATA[");
 				representation.append (s2);
+				if ( malicious ) representation.append ("]]>");
 				representation.append ("</stringwithlength>\n");
 			}
 			this.indentationlevel--;
@@ -217,7 +235,7 @@ public class ViewStateDecoder {
 			representation.append ("<objectarray size=\""  + objectcontainersize + "\">\n");
 			this.indentationlevel++;
 			for (int i=0; i< objectcontainersize; i++)
-				representation.append (decodeObject (bb));
+				representation.append (decodeObjectAsXML (bb));
 			this.indentationlevel--;
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append ("</objectarray>\n");
@@ -245,7 +263,7 @@ public class ViewStateDecoder {
 			//String reference
 			int stringref = readLittleEndianBase128Number (bb);
 			representation.append(getIndentation(this.indentationlevel));
-			representation.append ("<stringreference>");
+			representation.append ("<stringreference>");			
 			representation.append (new Integer(stringref));
 			representation.append ("</stringreference>\n");
 			return representation;
@@ -258,8 +276,8 @@ public class ViewStateDecoder {
 			representation.append ("<controlstate size=\""  + controlstatelength + "\">\n");
 			this.indentationlevel++;
 			//for (int i=0; i< controlstatelength; i++)
-			representation.append (decodeObject (bb));
-			representation.append (decodeObject (bb));
+			representation.append (decodeObjectAsXML (bb));
+			representation.append (decodeObjectAsXML (bb));
 			this.indentationlevel--;
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append ("</controlstate>\n");
@@ -314,9 +332,9 @@ public class ViewStateDecoder {
 	 * @return a human readable, XML based representation of the ViewState data
 	 * @throws Exception
 	 */
-	public String decode (byte [] base64encoded) throws Exception{
+	public String decodeAsXML (byte [] base64encoded) throws Exception{
 		byte [] decodeddata = null;
-		String viewstatebase64encoded = new String (base64encoded);
+		//String viewstatebase64encoded = new String (base64encoded);
 		try {
 			decodeddata = Base64.decode(base64encoded);
 		}
@@ -344,7 +362,7 @@ public class ViewStateDecoder {
 
 		//decode the root object, which contains the remainder of the ViewState
 		try {
-			representation.append (decodeObject (dataBuffer));
+			representation.append (decodeObjectAsXML (dataBuffer));
 		}
 		catch (NoMoreDataException nmde) {
 			//throw new Exception ("The data does not appear to be valid ViewState Data");
@@ -387,8 +405,8 @@ public class ViewStateDecoder {
 			representation.append("<hmac>false</hmac>\n");
 		}
 		//put in the original ViewState value, in Base64 encoded form.
-		representation.append(getIndentation(this.indentationlevel));
-		representation.append("<viewstatebase64encoded>"+viewstatebase64encoded+"</viewstatebase64encoded>\n");
+		//representation.append(getIndentation(this.indentationlevel));
+		//representation.append("<viewstatebase64encoded>"+viewstatebase64encoded+"</viewstatebase64encoded>\n");
 
 		this.indentationlevel--;
 		representation.append(getIndentation(this.indentationlevel));
