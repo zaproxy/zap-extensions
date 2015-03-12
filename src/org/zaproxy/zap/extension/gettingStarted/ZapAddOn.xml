@@ -12,7 +12,7 @@
 	<pscanrules/>
 	<filters/>
 	<files>
-		<file>lang/ZAPGettingStartedGuide.pdf</file>
+		<file>lang/ZAPGettingStartedGuide-2.4.pdf</file>
 	</files>
 	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
