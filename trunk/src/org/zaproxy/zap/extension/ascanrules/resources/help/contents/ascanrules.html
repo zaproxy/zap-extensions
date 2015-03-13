@@ -17,7 +17,16 @@ see if those values have been evaluated by the server. First, requests are const
 to print a token. In the event of a match between the token and the content of the response body, the scanner raises an alert and returns immediately.
 If there aren't any matches, the scanner will construct requests with several injected ASP strings that instruct the server to write the product
 of two randomly generated integers in the response. If the body of the response matches the product, an alert is raised.
+
 <H2>Command Injection</H2>
+
+This rule submits *NIX and Windows OS commands as URL parameter values to determine whether or not the web application is passing unchecked
+user input directly to the underlying OS. The injection strings consist of meta-characters that may be interpreted by the OS
+as join commands along with a payload that should generate output in the response if the application is vulnerable. If the content of a response body
+matches the payload, the scanner raises an alert and returns immediately. In the event that none of the error-based matching attempts
+return output in the response, the scanner will attempt a blind injection attack by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
+and receiving the response against a heuristic time-delay lower limit. If the elapsed time is greater than this limit, an alert is raised with medium confidence
+and the scanner returns immediately.
 
 <H2>Client Browser Cache</H2>
 
