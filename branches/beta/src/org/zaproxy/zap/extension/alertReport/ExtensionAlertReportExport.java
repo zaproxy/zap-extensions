@@ -164,7 +164,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
         TableAlert tableAlert = getModel().getDb().getTableAlert();
         Vector<Integer> v;
         try {
-            v = tableAlert.getAlertList();
+            v = tableAlert.getAlertListBySession(getModel().getSession().getSessionId());
 
             for (int i = 0; i < v.size(); i++) {
                 int alertId = v.get(i).intValue();
