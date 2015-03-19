@@ -24,6 +24,7 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -172,7 +173,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 	 */
 	private void initializePanel() {
 		setName(Constant.messages.getString("websocket.panel.title"));
-		setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK | Event.SHIFT_MASK, false));
+		setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
 		setMnemonic(Constant.messages.getChar("websocket.panel.mnemonic"));
 
 		
