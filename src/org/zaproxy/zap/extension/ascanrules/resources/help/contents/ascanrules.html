@@ -51,9 +51,21 @@ and other web server software.
 
 <H2>External Redirect</H2>
 
+This rule submits a variety of URL redirect strings as parameter values in a request, then examines the headers and bodies of responses to determine
+whether or not a redirect occurred and of what type. The cause of redirect is searched for in the "Location" and "Refresh" header fields, as well as by HTML meta tags
+and Javascript in the body of the response. An alert is raised including the redirection type and the scanner returns immediately.
+
 <H2>CRLF Injection</H2>
 
+This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. If the response contains an identical Set-Cookie header,
+an alert is raised and the scanner returns immediately.
+
 <H2>Parameter Tampering</H2>
+
+This rule submits requests with parameter values known to cause errors to be displayed to the user if handled improperly. Responses are checked to make sure that they return
+a server error status code, then compared with a normal HTTP response to make sure it does not raise an alert if the bad parameter has no effect on output. Finally, the content
+of the reponse body is compared against various patterns that may be found in Java servlet, Microsoft VBScript, OLE DB, JET, PHP and Tomcat errors. If a match is found, an alert is raised and
+the scanner returns immediately.
 
 <H2>Path Traversal</H2>
 
