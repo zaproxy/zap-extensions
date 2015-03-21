@@ -19,8 +19,8 @@
  */
 package org.zaproxy.zap.extension.importurls;
 
-import java.awt.Event;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -100,7 +100,7 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
 	private ZapMenuItem getMenuImportUrls() {
         if (menuImportUrls == null) {
         	menuImportUrls = new ZapMenuItem("importurls.topmenu.tools.importurls",
-        			KeyStroke.getKeyStroke(KeyEvent.VK_I, Event.CTRL_MASK, false));
+        			KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         	menuImportUrls.setToolTipText(Constant.messages.getString("importurls.topmenu.tools.importurls.tooltip"));
 
         	menuImportUrls.addActionListener(new java.awt.event.ActionListener() {

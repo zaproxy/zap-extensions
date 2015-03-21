@@ -25,6 +25,7 @@ import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -108,7 +109,7 @@ public class ScriptsListPanel extends AbstractPanel {
         this.setName(Constant.messages.getString("scripts.list.panel.title"));
 		this.setIcon(ExtensionScriptsUI.ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_S, Event.CTRL_MASK | Event.ALT_MASK | Event.SHIFT_MASK, false));
+				KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("scripts.list.panel.mnemonic"));
 
         this.add(getListPanel(), getListPanel().getName());
