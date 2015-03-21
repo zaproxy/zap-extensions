@@ -23,6 +23,7 @@ import java.awt.CardLayout;
 import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class ZestResultsPanel extends AbstractPanel {
         this.setName(Constant.messages.getString("zest.results.panel.title"));
 		this.setIcon(ExtensionZest.ZEST_ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_Z, Event.CTRL_MASK | Event.SHIFT_MASK, false));
+				KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("zest.results.panel.mnemonic"));
 
         this.add(getZestPanel(), getZestPanel().getName());

@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.bruteforce;
 import java.awt.CardLayout;
 import java.awt.Event;
 import java.awt.GridBagConstraints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -149,7 +150,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         this.setName(Constant.messages.getString("bruteforce.panel.title"));
 		this.setIcon(new ImageIcon(BruteForcePanel.class.getResource(ExtensionBruteForce.HAMMER_ICON_RESOURCE)));
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_F, Event.CTRL_MASK | Event.ALT_MASK | Event.SHIFT_MASK, false));
+				KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("bruteforce.panel.mnemonic"));
 		this.add(getPanelCommand(), getPanelCommand().getName());
         

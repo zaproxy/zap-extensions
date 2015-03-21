@@ -23,6 +23,7 @@ import java.awt.CardLayout;
 import java.awt.Event;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -102,7 +103,7 @@ public class TokenPanel extends AbstractPanel {
         this.setName(extension.getMessages().getString("tokengen.panel.title"));
 		this.setIcon(new ImageIcon(getClass().getResource("/resource/icon/fugue/barcode.png")));
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_T, Event.CTRL_MASK | Event.SHIFT_MASK, false));
+				KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("tokengen.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
         

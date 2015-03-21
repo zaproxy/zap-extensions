@@ -17,7 +17,7 @@
  */
 package org.zaproxy.zap.extension.onlineMenu;
 
-import java.awt.Event;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -77,7 +77,7 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
 	    if (getView() != null) {
 			// Homepage
 			ZapMenuItem menuHomepage = new ZapMenuItem("onlineMenu.home",
-					KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK, false));
+					KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 			menuHomepage.setEnabled(DesktopUtils.canOpenUrlInBrowser());
 			menuHomepage.addActionListener(new java.awt.event.ActionListener() { 
 				@Override

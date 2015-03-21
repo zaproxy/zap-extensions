@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.portscan;
 
 import java.awt.Event;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class PortScanPanel extends ScanPanel implements ScanListenner {
         super("ports", new ImageIcon(PortScanPanel.class.getResource("/resource/icon/16/187.png")), extension, portScanParam);
         
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_P, Event.CTRL_MASK | Event.ALT_MASK | Event.SHIFT_MASK, false));
+				KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("ports.panel.mnemonic"));
     }
 

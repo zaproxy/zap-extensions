@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.wappalyzer;
 import java.awt.CardLayout;
 import java.awt.Event;
 import java.awt.GridBagConstraints;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JComboBox;
@@ -79,7 +80,7 @@ public class TechPanel extends AbstractPanel {
         this.setName(Constant.messages.getString("wappalyzer.panel.title"));
 		this.setIcon(ExtensionWappalyzer.WAPPALYZER_ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_T, Event.CTRL_MASK | Event.ALT_MASK | Event.SHIFT_MASK, false));
+				KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("wappalyzer.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
 	}

@@ -23,6 +23,7 @@ import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -100,7 +101,7 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
         this.setSize(274, 251);
         this.setName(Constant.messages.getString("plugnhack.client.panel.title"));
 		this.setIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON);
-		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Event.CTRL_MASK | Event.SHIFT_MASK, false));
+		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("plugnhack.client.panel.mnemonic"));
 
         this.add(getClientsPanel(), getClientsPanel().getName());

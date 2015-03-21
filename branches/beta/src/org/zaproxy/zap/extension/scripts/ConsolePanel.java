@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.scripts;
 import java.awt.BorderLayout;
 import java.awt.Event;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.ref.WeakReference;
@@ -78,7 +79,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private void initialize() {
 		this.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")));	// 'script' icon
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_C, Event.CTRL_MASK | Event.ALT_MASK | Event.SHIFT_MASK, false));
+				KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK | Event.SHIFT_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("scripts.panel.mnemonic"));
 		this.setLayout(new BorderLayout());
 
