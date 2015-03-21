@@ -42,6 +42,8 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class TestExternalRedirect extends AbstractAppParamPlugin {
     
+	private static final int PLUGIN_ID = 20019;
+
     // ZAP: Added multiple redirection types 
     public static final int NO_REDIRECT              = 0x00;
     public static final int REDIRECT_LOCATION_HEADER = 0x01;
@@ -99,7 +101,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
      */
     @Override
     public int getId() {
-        return 30000;
+        return PLUGIN_ID;
     }
 
     /**
