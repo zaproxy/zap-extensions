@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import java.awt.Event;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,6 +37,10 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.soap.ImportFromUrlDialog;
+import org.zaproxy.zap.extension.soap.ImportWSDL;
+import org.zaproxy.zap.extension.soap.WSDLCustomParser;
+import org.zaproxy.zap.extension.soap.WSDLSpider;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -116,7 +120,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	private ZapMenuItem getMenuImportLocalWSDL() {
         if (menuImportLocalWSDL == null) {
         	menuImportLocalWSDL = new ZapMenuItem("soap.topmenu.tools.importWSDL",
-        			KeyStroke.getKeyStroke(KeyEvent.VK_I, Event.CTRL_MASK, false));
+        			KeyStroke.getKeyStroke(KeyEvent.VK_I, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         	menuImportLocalWSDL.setToolTipText(Constant.messages.getString("soap.topmenu.tools.importWSDL.tooltip"));
 
         	menuImportLocalWSDL.addActionListener(new java.awt.event.ActionListener() {
@@ -141,7 +145,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	private ZapMenuItem getMenuImportUrlWSDL() {
         if (menuImportUrlWSDL == null) {
         	menuImportUrlWSDL = new ZapMenuItem("soap.topmenu.tools.importRemoteWSDL",
-        			KeyStroke.getKeyStroke(KeyEvent.VK_J, Event.CTRL_MASK, false));
+        			KeyStroke.getKeyStroke(KeyEvent.VK_J, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         	menuImportUrlWSDL.setToolTipText(Constant.messages.getString("soap.topmenu.tools.importRemoteWSDL.tooltip"));
 
         	final ExtensionImportWSDL shadowCopy = this;
