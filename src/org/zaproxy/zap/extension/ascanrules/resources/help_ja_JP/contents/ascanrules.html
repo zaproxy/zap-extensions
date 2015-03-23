@@ -7,22 +7,64 @@
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>動的スキャンルール</h1>
+<h1>Active Scan Rules</h1>
 The following release quality active scan rules are included in this add-on:
 
-<h2>コードインジェクション</h2>
+<h2>Code Injection</h2>
 
-<h2>コマンドインジェクション</h2>
+This rule submits PHP and ASP attack strings as values for URL parameters in a request and examines the response to 
+see if those values have been evaluated by the server. First, requests are constructed and sent containing injected PHP instructions
+to print a token. In the event of a match between the token and the content of the response body, the scanner raises an alert and returns immediately.
+If there aren't any matches, the scanner will construct requests with several injected ASP strings that instruct the server to write the product
+of two randomly generated integers in the response. If the body of the response matches the product, an alert is raised.
 
-<h2>クライアントブラウザキャッシュ</h2>
+<h2>Command Injection</h2>
+
+This rule submits *NIX and Windows OS commands as URL parameter values to determine whether or not the web application is passing unchecked
+user input directly to the underlying OS. The injection strings consist of meta-characters that may be interpreted by the OS
+as join commands along with a payload that should generate output in the response if the application is vulnerable. If the content of a response body
+matches the payload, the scanner raises an alert and returns immediately. In the event that none of the error-based matching attempts
+return output in the response, the scanner will attempt a blind injection attack by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
+and receiving the response against a heuristic time-delay lower limit. If the elapsed time is greater than this limit, an alert is raised with medium confidence
+and the scanner returns immediately.
+
+<h2>Client Browser Cache</h2>
 
 This rule checks the headers of secure pages and reports an alert if they allow a browser to cache the page.
 
-<h2>クロスサイトスクリプティング(反射型)</h2>このルールは、安全な値をサブミットし、レスポンス内にこの値が出力された全ての箇所を分析する(1つでもあれば)ことで開始します。 <br>そして、サブミットしたそれぞれの値が出力された箇所毎に用意された一連の攻撃を実行します。この箇所には、タグ属性・URL属性・src属性をサポートするタグの属性・HTMLコメント等の種類があります。 
+<h2>Cross Site Scripting (reflected)</h2>
 
-<h2>クロスサイトスクリプティング(持続型)</h2>このルールは、一意の安全な値をサブミットすることで開始します。次に、この値が出力される全ての箇所を見付けるためにアプリケーション全体をクロールします。<br>そして、"反射型"のクロスサイトスクリプティングが行うのと同じ方法で一連の攻撃を実行しますが、こちらの場合は他のページも含めてターゲット内の全ての箇所をチェックします。 
+This rule starts by submitting a 'safe' value and analyzing all of the locations in which this value occurs in the response (if any). <br>
+It then performs a series of attacks specifically targeted at the location in which each of the instances occurs, 
+including tag attributes, URL attributes, attributes in tags which support src attributes, html comments etc. 
 
-<h2>Directory Browsing</h2>    <h2>External Redirect</h2>    <h2>CRLF Injection</h2>    <h2>Parameter Tampering</h2>    <h2>Path Traversal</h2>    <h2>Remote File Include</h2>    <h2>Server Side Include</h2>    <h2>SQL Injection</h2> このスキャナはRDBMSに依存しないやり方で、URLパラメータ・フォームパラメータを攻撃することにより、SQLインジェクション脆弱性をスキャンします。この攻撃には、エラーベース・booleanベース・unionベース・複文といったSQLインジェクションの技術を使い、SQLの文法として妥当な値や妥当でない値を用います。 <br>もしアプリケーションがRDBMSに固有のSQLエラーメッセージを出力した場合、このスキャナはRDBMSを識別できるかもしれません。 <br>このスキャナはRDBMSに固有の技術を使いませんので、出発点として使うには最高のSQLインジェクションスキャナです。 
+<h2>Cross Site Scripting (persistent)</h2>
+
+This rule starts by submitting a unique 'safe' value and then spiders the whole application to find all of the locations in which the value occurs.<br>
+It then performs a series of attacks in the same way that the 'reflected' version does but in this case checks all of the 
+target locations in other pages. 
+
+<h2>Directory Browsing</h2>
+
+<h2>External Redirect</h2>
+
+<h2>CRLF Injection</h2>
+
+<h2>Parameter Tampering</h2>
+
+<h2>Path Traversal</h2>
+
+<h2>Remote File Include</h2>
+
+<h2>Server Side Include</h2>
+
+<h2>SQL Injection</h2>
+
+This scanner scans for SQL Injection vulnerabilities in an RDBMS-independent fashion, 
+by attacking url parameters and form parameters with fragments of valid and invalid SQL syntax, using error based, 
+boolean based, Union based, and stacked query SQL Injection techniques. <br>
+This scanner may be able to fingerprint the RDBMS if the application throws a known RDBMS specific SQL error message. <br>
+This scanner does not exploit any RDBMS specific techniques, and so is the best SQL injection scanner to use as a starting point. 
 
 </body>
 </html>

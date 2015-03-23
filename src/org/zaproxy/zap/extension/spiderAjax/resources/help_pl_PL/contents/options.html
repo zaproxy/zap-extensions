@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Options AJAX Spider screen</title>
 </head>
 <body bgcolor="#ffffff">
@@ -25,26 +26,13 @@
 			<th>Details</th>
 			<th>Domyślny</th>
 		</tr>
-		<tr><td>Browser</td>
-	    <td>AJAX Spider relies on an external browser to crawl the targeted site. You can
-		specify which one you want to use:
-				<ul>
-					<li>Firefox;</li>
-					<li>Chrome - requires ChromeDriver, if not on the system's PATH, it can be set with the
-						option "Select ChromeDriver". For more information on ChromeDriver and how to obtain
-						it refer to https://sites.google.com/a/chromium.org/chromedriver/</li>
-					<li>HtmlUnit - is an embedded Java based browser included in AJAX Spider;</li>
-					<li>PhantomJS - requires PhantomJS binary, if not on the system's PATH, it can
-						be set with the option "Select PhantomJS binary". For more information on PhantomJS
-						and how to obtain it refer to http://phantomjs.org/ (see footer note for caveat when
-						using PhantomJS).</li>
-					<li>Internet Explorer - requires IEDriverServer, if not on the system's PATH, it
-						can be set with option "Select IEDriverServer". For more information on
-						IEDriverServer refer to
-						https://code.google.com/p/selenium/wiki/InternetExplorerDriver (see footer note for
-						caveat when using Internet Explorer).</li>
-				</ul>If you use Firefox, Chrome or Internet Explorer, you must have it installed in your system.
-			</td><td align="center">Firefox</td></tr>
+		<tr>
+			<td>Browser</td>
+			<td>AJAX Spider relies on an external browser to crawl the targeted site. You can
+				specify which one you want to use. For more details on supported browsers refer to
+				"Selenium" add-on help pages.</td>
+			<td align="center">Firefox</td>
+		</tr>
 		<tr><td>Select ChromeDriver</td>
 			<td>This allows you to select the location of ChromeDriver. For more information
 				refer to the above Chrome Browser entry.</td>
@@ -115,22 +103,12 @@
 		</tr>
 		
 	</table>
-	<p>
-		<strong>PhantomJS Note:</strong> When PhantomJS is selected it will not be possible to
-		spider sites at localhost, 127.0.0.1 and ::1 because of an issue in PhantomJS
-		(https://github.com/ariya/phantomjs/issues/11342 ). Until a fix is issued a warning
-		message will be shown.
-	<p>
-		<strong>Internet Explorer Note:</strong> Not all versions of Internet Explorer work out
-		of the box, refer to
-		https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration
-		for more details on how to configure them.
 	
-	<h2>Zobacz również</h2>
+	<h2>See also</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="concepts.html">"pająka AJAX"</a></td>
+			<td><a href="concepts.html">AJAX Spider</a></td>
 			<td>for an overview of the AJAX Spider</td>
 		</tr>
 		<tr>
