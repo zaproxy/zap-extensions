@@ -87,6 +87,20 @@ Sun Java System Web Server<br>
 TornadoServer web server<br>
 WordPress<br>
 
+<h2>Image Location Scanner</h2>
+<p>Passively scans for GPS location exposure in images during normal security
+assessments of websites.  Image Location Scanner assists in situations where
+end users may post profile images and possibly give away their home location,
+e.g. a dating site or children's chatroom.  A whitepaper on this can be found
+at http://veggiespam.com/ils/</p>
+
+<p>Note: In order for this plug-in to operate, ZAP must be configured to
+receive and process images.  To do this, go to the ZAP Options panel (Tools
+&rarr; Options), choose Display, and enable the checkbox for "Process images in
+HTTP requests/responses".  In addition, ZAP images cannot be filtered out via
+the settings "Global Exclude URL" or the Session Properties for "Exclude from
+Proxy". </p>
+
 <h2>Open redirect</h2>
 Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
 
