@@ -32,7 +32,7 @@ Different types of scripts are supported:
 be selected when configuring the Script-Based Authentication Method for a Context. </li> 
 <li>Script Input Vectors  - scripts for defining exactly what ZAP should attack</li> 
 </ul>
-All scripts that are run automatically are initially 'disabled' - you much enable them via the <a href="tree.html">The Scripts 'tree' tab</a>
+All scripts that are run automatically are initially 'disabled' - you must enable them via the <a href="tree.html">The Scripts 'tree' tab</a>
 before they will run.<br/>
 If an error occurs when they run then they will be disabled.<br/>
 When you select the script then the last error will be shown in the <a href="console.html">Script Console tab</a>.<br/>
@@ -45,6 +45,24 @@ will typically have templates. However you may well be able to adapt a template 
 If your favourite language is not available on the Marketplace then please raise a new issue via the "Online/Report an issue" menu item.<br/>
 In the meantime you can just place the relevant jars in the 'lib' directory (not the 'plugin' directory) and restart ZAP.<br/>
 </p>
+
+<h2>Global Variables</h2>
+Variables can be shared between all scripts via the class org.zaproxy.zap.extension.script.ScriptVars.<br/>
+For example in Javascript you can use this class as follows:<br/><br/>
+<code>
+org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
+</code>
+
+<h2>Script Variables</h2>
+Variables can be shared between separate invocations of the same script via the same org.zaproxy.zap.extension.script.ScriptVars class.<br/>
+For example in Javascript you can use this class as follows:<br/><br/>
+<code>
+org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name","value")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
+</code>
+<br/>
+Note that these methods are only usable from scripting languages that provide access to the ScriptContext (like Javascript).
 
 <h2>See also</h2>
 <table>
