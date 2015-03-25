@@ -19,11 +19,14 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -53,15 +56,20 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
     public static final int REDIRECT_HREF_BASE       = 0x05;
     public static final int REDIRECT_JAVASCRIPT      = 0x06;
     
-    private static final String REDIRECT_SITE = "www.owasp.org";
+    private static final String OWASP_SUFFIX=".owasp.org";
+    //Use a random 'host' to prevent false positives/collisions
+    //Something like: 8519918658030487947.owasp.org
+    //Only need part of the UUID and abs so that we don't get negatives
+    private static final String SITE_HOST = Long.toString(Math.abs(UUID.randomUUID().getMostSignificantBits()));
+    private static final String REDIRECT_SITE = SITE_HOST+OWASP_SUFFIX;
     
     /**
-     * The various (prioritised) payload to try
+     * The various (prioritized) payload to try
      */
     private static final String[] REDIRECT_TARGETS = {
-        "http://" + REDIRECT_SITE,
+    	REDIRECT_SITE,
+    	"http://" + REDIRECT_SITE,
         "https://" + REDIRECT_SITE,
-        REDIRECT_SITE,
         "http:\\\\" + REDIRECT_SITE,
         "https:\\\\" + REDIRECT_SITE,
         "//" + REDIRECT_SITE,
@@ -114,7 +122,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
     }
 
     /**
-     * Give back specific pugin dependancies (none for this)
+     * Give back specific plugin dependencies (none for this)
      * @return the list of plugins that need to be executed before
      */
     @Override
@@ -123,7 +131,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
     }
 
     /**
-     * Get the description of the vulnerbaility when found
+     * Get the description of the vulnerability when found
      * @return the vulnerability description
      */
     @Override
@@ -188,7 +196,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
     }
 
     /**
-     * Scan for External Redirect vulnerabilties
+     * Scan for External Redirect vulnerabilities
      * @param msg a request only copy of the original message (the response isn't copied)
      * @param param the parameter name that need to be exploited
      * @param value the original parameter value
@@ -303,7 +311,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
                 }
                 
             } catch (IOException ex) {
-                //Do not try to internationalise this.. we need an error message in any event..
+                //Do not try to internationalize this.. we need an error message in any event..
                 //if it's in English, it's still better than not having it at all.
                 logger.warn("External Redirect vulnerability check failed for parameter ["
                         + param + "] and payload [" + payload + "] due to an I/O error", ex);
@@ -326,7 +334,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
      * @return true if it's a valid open redirect
      */
     private boolean checkPayload(String value, String payload) {
-        // Check both the payolad and the standard url format
+        // Check both the payload and the standard url format
         return (value != null) && (StringUtils.startsWithIgnoreCase(value, payload) ||
                 StringUtils.startsWithIgnoreCase(value, "http://" + REDIRECT_SITE));
     }
