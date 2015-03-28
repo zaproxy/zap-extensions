@@ -32,6 +32,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -39,6 +40,11 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class TestInjectionCRLF extends AbstractAppParamPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testinjectioncrlf.";
+	
     private String randomString = "Tamper=" + UUID.randomUUID().toString();
     private String cookieTamper1 = "Set-cookie: " + randomString;
     private String cookieTamper2a = "any\r\nSet-cookie: " + randomString;
@@ -61,7 +67,7 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-        return "CRLF Injection";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
 
@@ -73,10 +79,7 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        
-        String msg = "Cookie can be set via CRLF injection.  It may also be possible to set arbitrary HTTP response header." + CRLF
-        + "In addition, by carefully crafting the injected response using cross-site script, cache poisiong vulnerability may also exist.";
-        return msg;
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     @Override
@@ -86,17 +89,13 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        return "Type check the submitted parameter carefully.  Do not allow CRLF to be injected by filtering CRLF.";
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
         
     }
 
     @Override
     public String getReference() {
-        String msg = "http://www.watchfire.com/resources/HTTPResponseSplitting.pdf\n"
-        + "http://webappfirewall.com/lib/crlf-injection.txtnull\n" 
-        + "http://www.securityfocus.com/bid/9804";
-         
-        return msg;
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override

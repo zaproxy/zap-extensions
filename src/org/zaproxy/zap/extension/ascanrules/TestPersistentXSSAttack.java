@@ -35,6 +35,11 @@ import org.zaproxy.zap.model.Vulnerability;
 
 public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testpersistentxssattack.";
+	
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
     private static Logger log = Logger.getLogger(TestPersistentXSSAttack.class);
 
@@ -45,7 +50,7 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-    	return Constant.messages.getString("ascanrules.pxss.attack.name");
+    	return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
@@ -121,7 +126,7 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
     @Override
     public void scan(HttpMessage sourceMsg, String param, String value) {
     	String otherInfo = MessageFormat.format(
-				Constant.messages.getString("ascanrules.pxss.otherinfo"), 
+				Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"), 
 				sourceMsg.getRequestHeader().getURI().toString());
     	
 		try {

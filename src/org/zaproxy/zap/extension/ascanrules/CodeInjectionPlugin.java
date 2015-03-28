@@ -20,7 +20,9 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Random;
+
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -34,6 +36,11 @@ import org.parosproxy.paros.network.HttpMessage;
  */
 public class CodeInjectionPlugin extends AbstractAppParamPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.codeinjectionplugin.";
+	
     // PHP control Token used to verify the vulnerability
     private static final String PHP_CONTROL_TOKEN = "zap_token";
     private static final String PHP_ENCODED_TOKEN = "chr(122).chr(97).chr(112).chr(95).chr(116).chr(111).chr(107).chr(101).chr(110)";
@@ -54,7 +61,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
     // ASP payloads for Code Injection testing
     // to avoid reflective values mis-interpretation
     // we evaluate the content value inside the response
-    // multiplicating two random 7-digit numbers
+    // multiplying two random 7-digit numbers
     private static final String[] ASP_PAYLOADS = {
         "\"+response.write([{0}*{1})+\"",
         "'+response.write({0}*{1})+'",
@@ -80,11 +87,11 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        return "Server Side Code Injection Plugin";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
     
     /**
-     * Give back specific pugin dependancies (none for this)
+     * Give back specific plugin dependencies (none for this)
      * @return the list of plugins that need to be executed before
      */
     @Override
@@ -93,12 +100,12 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Get the description of the vulnerbaility when found
+     * Get the description of the vulnerability when found
      * @return the vulnerability description
      */
     @Override
     public String getDescription() {
-        return "A code injection may be possible including custom code that will be evaluated by the scripting engine";
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     /**
@@ -117,10 +124,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getSolution() {
-        return "Do not trust client side input, even if there is client side validation in place.\n"
-                + "In general, type check all data on the server side and "
-                + "escape all data received from the client.\n"
-                + "Avoid the use of eval() functions combined with user input data.";
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     /**
@@ -129,8 +133,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getReference() {
-        return "http://cwe.mitre.org/data/definitions/94.html\n"
-                + "https://www.owasp.org/index.php/Direct_Dynamic_Code_Evaluation_('Eval_Injection')";
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     /**
@@ -170,7 +173,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Scan for Code Injection Vulnerabilites
+     * Scan for Code Injection Vulnerabilities
      * 
      * @param msg a request only copy of the original message (the response isn't copied)
      * @param paramName the parameter name that need to be exploited

@@ -27,6 +27,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.regex.Pattern;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -36,6 +37,10 @@ import org.zaproxy.zap.model.Tech;
 
 public class TestServerSideInclude extends AbstractAppParamPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testserversideinclude.";
 
     private static final String SSI_UNIX = "<!--#EXEC cmd=\"ls /\"-->";
     private static final String SSI_UNIX2 = "\">" +SSI_UNIX + "<";
@@ -53,7 +58,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-        return "Server Side Include";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
 
@@ -64,8 +69,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        String msg = "Certain parameters may cause Server Side Include commands to be executed.  This may allow database connection or arbitrary code to be executed.";
-        return msg;
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     @Override
@@ -75,20 +79,12 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        String msg = "Do not trust client side input and enforece tight check in the server side.  Disable server side include." + CRLF
-            + ". Refer to manual to disable Sever Side Include." + CRLF
-            + ". Use least privilege to run your web server or application server." + CRLF
-            + "For Apache, disable the following:" + CRLF
-            + "Options Indexes FollowSymLinks Includes" + CRLF
-            + "AddType application/x-httpd-cgi .cgi" + CRLF
-            + "AddType text/x-server-parsed-html .html" + CRLF;
-        return msg;
+         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     @Override
     public String getReference() {
-        String msg = "http://www.carleton.ca/~dmcfet/html/ssi.html";
-        return msg;
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override

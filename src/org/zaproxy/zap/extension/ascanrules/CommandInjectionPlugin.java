@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -44,7 +45,12 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
-    // *NIX OS Command constants
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.commandinjectionplugin.";
+	
+	// *NIX OS Command constants
     private static final String  NIX_TEST_CMD = "cat /etc/passwd";    
     private static final Pattern NIX_CTRL_PATTERN = Pattern.compile("root:.:0:0"); 
     // Dot used to match 'x' or '!' (used in AIX)
@@ -156,11 +162,11 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        return Constant.messages.getString("ascanrules.cmdinjection.name");
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
     
     /**
-     * Give back specific pugin dependancies (none for this)
+     * Give back specific plugin dependencies (none for this)
      * @return the list of plugins that need to be executed before
      */
     @Override
@@ -169,12 +175,12 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * Get the description of the vulnerbaility when found
+     * Get the description of the vulnerability when found
      * @return the vulnerability description
      */
     @Override
     public String getDescription() {
-        return Constant.messages.getString("ascanrules.cmdinjection.desc");
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     /**
@@ -206,8 +212,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getReference() {
-        return "http://cwe.mitre.org/data/definitions/78.html\n"
-                + "https://www.owasp.org/index.php/Command_Injection";
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     /**

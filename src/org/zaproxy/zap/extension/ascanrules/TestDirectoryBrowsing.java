@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -41,6 +42,10 @@ import org.parosproxy.paros.network.HttpStatusCode;
 
 public class TestDirectoryBrowsing extends AbstractAppPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testdirectorybrowsing.";
 
 	private static final Pattern patternIIS			= Pattern.compile("Parent Directory", PATTERN_PARAM);
 	private static final Pattern patternApache		= Pattern.compile("\\bDirectory Listing\\b.*(Tomcat|Apache)", PATTERN_PARAM);
@@ -58,8 +63,7 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
 
     @Override
     public String getName() {
-        
-        return "Directory Browsing";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
@@ -69,7 +73,7 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
 
     @Override
     public String getDescription() {
-        return "It is possible to view the directory listing.  Directory listing may reveal hidden scripts, include files , backup source files etc which be accessed to read sensitive information.";
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
     
     @Override
@@ -79,17 +83,12 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        return "Disable directory browsing.  If this is required, make sure the listed files does not induce risks.";
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
     
     @Override
     public String getReference() {
-        String ref = "For IIS, turn off directory browsing.\r\n"
-            + "For Apache, use the 'Options -Indexes' directive to disable indexes in directory or via .htaccess:\r\n"
-            + ". http://httpd.apache.org/docs/mod/core.html#options\r\n"
-            + ". http://alamo.satlug.org/pipermail/satlug/2002-February/000053.html\r\n"
-            + ". or create a default index.html for each directory.";
-        return ref;
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
     
     @Override
