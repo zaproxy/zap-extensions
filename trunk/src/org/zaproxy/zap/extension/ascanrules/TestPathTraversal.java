@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -40,6 +41,11 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class TestPathTraversal extends AbstractAppParamPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testpathtraversal.";
+	
     private static final String NON_EXISTANT_FILENAME = "thishouldnotexistandhopefullyitwillnot";
     
     /**
@@ -176,10 +182,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        if (vuln != null) {
-            return vuln.getAlert();
-        }
-        return "Path Traversal";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
@@ -205,7 +208,6 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         if (vuln != null) {
             return vuln.getSolution();
         }
-        
         return "Failed to load vulnerability solution from file";
     }
 

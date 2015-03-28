@@ -45,6 +45,10 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class TestExternalRedirect extends AbstractAppParamPlugin {
     
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testexternalredirect.";
 	private static final int PLUGIN_ID = 20019;
 
     // ZAP: Added multiple redirection types 
@@ -118,7 +122,7 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        return "External Redirect";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     /**

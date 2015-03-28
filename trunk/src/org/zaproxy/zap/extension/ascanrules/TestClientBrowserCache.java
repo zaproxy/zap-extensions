@@ -39,7 +39,11 @@ import org.parosproxy.paros.network.HttpStatusCode;
 
 public class TestClientBrowserCache extends AbstractAppPlugin {
 
-    
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testclientbrowsercache.";
+	
     public static final Pattern patternNoCache	= Pattern.compile("\\QNo-cache\\E|\\QNo-store\\E", PATTERN_PARAM);
 
 	// <meta http-equiv="Pragma" content="no-cache">
@@ -53,7 +57,7 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 
     @Override
     public String getName() {
-        return Constant.messages.getString("ascanrules.clientbrowsercache.name");
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
@@ -63,7 +67,7 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("ascanrules.clientbrowsercache.desc");
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     @Override
@@ -73,12 +77,12 @@ public class TestClientBrowserCache extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString("ascanrules.clientbrowsercache.solution");
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     @Override
     public String getReference() {
-        return Constant.messages.getString("ascanrules.clientbrowsercache.ref");
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override

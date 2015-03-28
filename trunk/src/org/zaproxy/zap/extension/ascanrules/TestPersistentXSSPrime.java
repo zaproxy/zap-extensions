@@ -27,6 +27,11 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testpersistentxssprime.";
+	
     private static Logger log = Logger.getLogger(TestPersistentXSSPrime.class);
 	
     @Override
@@ -36,7 +41,7 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-    	return Constant.messages.getString("ascanrules.pxss.prime.name");
+    	return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
@@ -46,7 +51,7 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        return "N/A";
+        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
     }
 
     @Override
@@ -56,12 +61,12 @@ public class TestPersistentXSSPrime extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        return "N/A";
+        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
     }
 
     @Override
     public String getReference() {
-        return "N/A";
+        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
     }
 
     @Override

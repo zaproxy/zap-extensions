@@ -30,6 +30,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -39,6 +40,11 @@ import org.parosproxy.paros.network.HttpStatusCode;
 
 public class TestParameterTamper extends AbstractAppParamPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testparametertamper.";
+	
     //private static final String[] PARAM_LIST = {"", "@", "+", "%A", "%1Z", "%", "%00", "|"};
     // problem sending "%A", "%1Z" to server - assume server can handle properly on this.
     // %0A not included as this is in CRLFInjection already.
@@ -62,7 +68,7 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-        return "Parameter Tampering";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
@@ -72,9 +78,7 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-
-        String msg = "Certain parameter caused error page or Java stacktrace to be displayed.  This indicated lack of exception handling and potential areas for further exploit.";
-        return msg;
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     @Override
@@ -84,7 +88,7 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        return "Identify the cause of the error and fix it.  Do not trust client side input and enforece tight check in the server side.  Besides, catch the exception properly.  Use a generic 500 error page for internal server error.";
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 
     }
 

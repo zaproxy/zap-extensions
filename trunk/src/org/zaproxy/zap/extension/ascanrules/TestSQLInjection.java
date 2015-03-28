@@ -68,6 +68,11 @@ import difflib.Patch;
  */
 public class TestSQLInjection extends AbstractAppParamPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testsqlinjection.";
+	
 	//what do we do at each attack strength?
 	//(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
 	private boolean doSpecificErrorBased = false;
@@ -305,7 +310,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 	@Override
 	public String getName() {
-		return Constant.messages.getString("ascanrules.sqlinjection.name");
+		return Constant.messages.getString(MESSAGE_PREFIX+ "name");
 	}
 
 	@Override
@@ -315,7 +320,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 	@Override
 	public String getDescription() {
-		return Constant.messages.getString("ascanrules.sqlinjection.desc");
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
 	}
 
 	@Override
@@ -325,12 +330,12 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 	@Override
 	public String getSolution() {
-		return Constant.messages.getString("ascanrules.sqlinjection.soln");
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}
 
 	@Override
 	public String getReference() {
-		return Constant.messages.getString("ascanrules.sqlinjection.refs");
+		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
 
 	/* initialise
@@ -499,7 +504,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						StringBuilder sb = new StringBuilder();
 						if (!matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
 							//Likely a SQL Injection. Raise it
-							String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
+							String extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.errorbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
 							//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 							sqlInjectionAttack = sqlErrValue;
 							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - " + errorPatternRDBMS, getDescription(),
@@ -532,7 +537,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							StringBuilder sb = new StringBuilder();
 							if (!matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
 								//Likely a SQL Injection. Raise it
-								String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.errorbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
+								String extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.errorbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
 								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 								sqlInjectionAttack = sqlErrValue;
 								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - " + errorPatternRDBMS, getDescription(),
@@ -643,9 +648,9 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 								//Likely a SQL Injection. Raise it
 								String extraInfo = null;
 								if (strippedOutput[booleanStrippedUnstrippedIndex]) {
-									extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.expressionbased.extrainfo", modifiedParamValue, "");
+									extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "");
 								} else {
-									extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.expressionbased.extrainfo", modifiedParamValue, "NOT ");
+									extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "NOT ");
 								}
 
 								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
@@ -779,11 +784,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							//Likely a SQL Injection. Raise it
 							String extraInfo = null;
 							if (strippedOutput[booleanStrippedUnstrippedIndex]) {
-								extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndTrueValue, sqlBooleanAndFalseValue, "");
+								extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.booleanbased.extrainfo", sqlBooleanAndTrueValue, sqlBooleanAndFalseValue, "");
 							} else {
-								extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndTrueValue, sqlBooleanAndFalseValue, "NOT ");
+								extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.booleanbased.extrainfo", sqlBooleanAndTrueValue, sqlBooleanAndFalseValue, "NOT ");
 							}
-							extraInfo = extraInfo + "\n" + Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo.dataexists");
+							extraInfo = extraInfo + "\n" + Constant.messages.getString(MESSAGE_PREFIX + "alert.booleanbased.extrainfo.dataexists");
 
 							//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 							sqlInjectionAttack = sqlBooleanAndTrueValue;
@@ -832,11 +837,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 								//Likely a SQL Injection. Raise it
 								String extraInfo = null;
 								if (strippedOutput[booleanStrippedUnstrippedIndex]) {
-									extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndTrueValue, orValue, "");
+									extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.booleanbased.extrainfo", sqlBooleanAndTrueValue, orValue, "");
 								} else {
-									extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanAndTrueValue, orValue, "NOT ");
+									extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.booleanbased.extrainfo", sqlBooleanAndTrueValue, orValue, "NOT ");
 								}
-								extraInfo = extraInfo + "\n" + Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo.datanotexists");
+								extraInfo = extraInfo + "\n" + Constant.messages.getString(MESSAGE_PREFIX + "alert.booleanbased.extrainfo.datanotexists");
 
 								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 								sqlInjectionAttack = orValue;
@@ -937,11 +942,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						//Likely a SQL Injection. Raise it
 						String extraInfo = null;
 						if (verificationUsingStripped) {
-							extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanOrTrueValue, sqlBooleanAndFalseValue, "");
+							extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.booleanbased.extrainfo", sqlBooleanOrTrueValue, sqlBooleanAndFalseValue, "");
 						} else {
-							extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo", sqlBooleanOrTrueValue, sqlBooleanAndFalseValue, "NOT ");
+							extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.booleanbased.extrainfo", sqlBooleanOrTrueValue, sqlBooleanAndFalseValue, "NOT ");
 						}
-						extraInfo = extraInfo + "\n" + Constant.messages.getString("ascanrules.sqlinjection.alert.booleanbased.extrainfo.datanotexists");
+						extraInfo = extraInfo + "\n" + Constant.messages.getString(MESSAGE_PREFIX + "alert.booleanbased.extrainfo.datanotexists");
 	
 						//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 						sqlInjectionAttack = sqlBooleanOrTrueValue;
@@ -995,7 +1000,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					//if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg3, errorPattern, sb)) {				
 					if (!patternInOrig && patternInSQLUnion) {
 						//Likely a UNION Based SQL Injection (by error message). Raise it
-						String extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.unionbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
+						String extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.unionbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
 
 						//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 						sqlInjectionAttack = sqlUnionValue;
@@ -1095,9 +1100,9 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							//Likely a SQL Injection. Raise it
 							String extraInfo = null;
 							if (strippedOutput[booleanStrippedUnstrippedIndex]) {
-								extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.orderbybased.extrainfo", modifiedParamValue, "");
+								extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.orderbybased.extrainfo", modifiedParamValue, "");
 							} else {
-								extraInfo = Constant.messages.getString("ascanrules.sqlinjection.alert.orderbybased.extrainfo", modifiedParamValue, "NOT ");
+								extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.orderbybased.extrainfo", modifiedParamValue, "NOT ");
 							}
 
 							//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
@@ -1160,8 +1165,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				if (loginUrl) {
 					//log.debug("##### Raising auth bypass");
 					//raise the alert, using the custom name and description
-					String vulnname = Constant.messages.getString("ascanrules.sqlinjection.authbypass.name");
-					String vulndesc = Constant.messages.getString("ascanrules.sqlinjection.authbypass.desc");
+					String vulnname = Constant.messages.getString(MESSAGE_PREFIX + "authbypass.name");
+					String vulndesc = Constant.messages.getString(MESSAGE_PREFIX + "authbypass.desc");
 
 					//raise the alert, using the attack string stored earlier for this purpose					
 					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, vulnname, vulndesc,

@@ -34,6 +34,11 @@ import org.zaproxy.zap.model.Vulnerability;
 
 public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testscrosssitescriptv2.";
+	
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
     private static Logger log = Logger.getLogger(TestCrossSiteScriptV2.class);
 
@@ -44,7 +49,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-    	return Constant.messages.getString("ascanrules.rxss.name");
+    	return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override

@@ -26,6 +26,11 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class TestPersistentXSSSpider extends AbstractAppPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testpersistentxssspider.";
+	
     private static Logger log = Logger.getLogger(TestPersistentXSSSpider.class);
 
     @Override
@@ -35,7 +40,7 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
 
     @Override
     public String getName() {
-        return Constant.messages.getString("ascanrules.pxss.spider.name");
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
@@ -45,7 +50,7 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
 
     @Override
     public String getDescription() {
-        return "N/A";
+        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
     }
 
     @Override
@@ -55,12 +60,12 @@ public class TestPersistentXSSSpider extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        return "N/A";
+        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
     }
 
     @Override
     public String getReference() {
-        return "N/A";
+        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
     }
 
     @Override

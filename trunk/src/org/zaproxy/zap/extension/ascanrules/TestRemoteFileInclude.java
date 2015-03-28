@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -36,6 +37,11 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class TestRemoteFileInclude extends AbstractAppParamPlugin {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanrules.testremotefileinclude.";
+	
     /**
      * the various prefixes to try, for each of the remote file targets below
      */
@@ -96,10 +102,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        if (vuln != null) {
-            return vuln.getAlert();
-        }
-        return "Remote File Inclusion";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
