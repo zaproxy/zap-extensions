@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 import net.htmlparser.jericho.Source;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -37,6 +38,11 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.testinfoprivateaddressdisclosure.";
+	
     private static final String REGULAR_IP_OCTET = "\\b(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})";
     private static final String REGULAR_PORTS = "\\b(6553[0-5]|65[0-5][0-2][0-9]|6[0-4][0-9]{4}|[0-5]?[0-9]{0,4})";
     
@@ -80,20 +86,18 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
 
     @Override
     public String getName() {
-        return "Private IP Disclosure";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
     private String getDescription() {
-        return "A private IP such as 10.x.x.x, 172.x.x.x, 192.168.x.x has been found in the HTTP response body.  "
-                + "This information might be helpful for further attacks targeting internal systems.";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     private String getSolution() {
-        return "Remove the private IP address from the HTTP response body.  For comments, use JSP/ASP comment instead "
-                + "of HTML/JavaScript comment which can be seen by client browsers.";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     private String getReference() {
-        return null;
+    	return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override

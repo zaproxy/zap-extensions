@@ -24,6 +24,7 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -32,6 +33,11 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class MixedContentScanner extends PluginPassiveScanner {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.mixedcontentscanner.";
+	
 	private PassiveScanThread parent = null;
 
 	@Override
@@ -141,7 +147,7 @@ public class MixedContentScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Secure Pages Including Mixed Content";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
 	private class MixedContent {

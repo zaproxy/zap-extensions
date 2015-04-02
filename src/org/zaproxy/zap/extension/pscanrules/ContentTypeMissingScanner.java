@@ -18,7 +18,10 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.Vector;
+
 import net.htmlparser.jericho.Source;
+
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -27,6 +30,11 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class ContentTypeMissingScanner extends PluginPassiveScanner {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.contenttypemissingscanner.";
+	
 	private PassiveScanThread parent = null;
 	
 	@Override
@@ -83,7 +91,7 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Content-Type Header Missing";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
 	@Override

@@ -25,6 +25,7 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -33,6 +34,11 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.passwordautocompletescanner.";
+	
 	private PassiveScanThread parent = null;
 	private Logger logger = Logger.getLogger(this.getClass());
 
@@ -109,6 +115,6 @@ public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Password Autocomplete in Browser";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 }

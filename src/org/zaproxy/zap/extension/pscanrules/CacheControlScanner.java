@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import net.htmlparser.jericho.Source;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -29,6 +30,11 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 
 public class CacheControlScanner extends PluginPassiveScanner {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.cachecontrolscanner.";
+	
 	private PassiveScanThread parent = null;
 	
 	@Override
@@ -91,7 +97,7 @@ public class CacheControlScanner extends PluginPassiveScanner {
 	
 	@Override
 	public String getName() {
-		return "Incomplete or No Cache-control and Pragma HTTP Header Set";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 
 }

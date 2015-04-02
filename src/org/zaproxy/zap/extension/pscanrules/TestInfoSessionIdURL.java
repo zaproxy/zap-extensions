@@ -30,8 +30,11 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import net.htmlparser.jericho.Source;
+
 import org.apache.commons.httpclient.URIException;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -49,13 +52,18 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class TestInfoSessionIdURL extends PluginPassiveScanner {
 	
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.testinfosessionidurl.";
+	
 	private static final int SESSION_TOKEN_MIN_LENGTH = 8; 
 	
     /*
      * private static Pattern staticSessionCookieNamePHP = Pattern("PHPSESSID", PATTERN.PARAM);
      * ASP = ASPSESSIONIDxxxxx=xxxxxx
      * PHP = PHPSESSID
-     * Cole fusion = CFID, CFTOKEN	(firmed, checked with Macromedia)
+     * Cold fusion = CFID, CFTOKEN	(firmed, checked with Macromedia)
      * Java (tomcat, jrun, websphere, sunone, weblogic )= JSESSIONID=xxxxx
      *
      * List of session id available also on this site:
@@ -82,22 +90,19 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
      */
     @Override
     public String getName() {
-        return "Session ID in URL Rewrite";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     private String getDescription() {
-        return "URL rewrite is used to track user session ID. "
-                + "The session ID may be disclosed in referer header. "
-                + "Besides, the session ID can be stored in browser history or server logs.";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     private String getSolution() {
-        return "For secure content, put session ID in cookie. "
-                + "To be even more secure consider to use a combination of cookie and URL rewrite.";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     private String getReference() {
-        return "http://seclists.org/lists/webappsec/2002/Oct-Dec/0111.html";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     private int getRisk() {
@@ -113,7 +118,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     }
 
     /**
-     * Set the Scanner thred parent object
+     * Set the Scanner thread parent object
      * 
      * @param parent the PassiveScanThread parent object
      */
@@ -134,7 +139,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     }
 
     /**
-     * Perform the passive scanning of url based session ids
+     * Perform the passive scanning of URL based session IDs
      * 
      * @param msg the message that need to be checked
      * @param id the id of the session
@@ -213,7 +218,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
 	                parent.raiseAlert(id, alert);
 	
 	                // Now try to check if there exists a 
-	                // referer inside thecontent
+	                // referer inside the content
 	                try {
 	                    checkSessionIDExposure(msg, id);
 	
@@ -236,7 +241,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
     // and also internal variables containing urls that can be
     // also dynamically composed along page execution
     // so we search only for pattern like these:
-    // ='url or ('url beacuse it's suitable to all the previous possibilities
+    // ='url or ('url because it's suitable to all the previous possibilities
     // and we check for no quoted urls only if href or src
     // ---------------------------------
     private static final String EXT_LINK = "https?://([\\w\\.\\-_]+)";
@@ -250,19 +255,17 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
 
     // The name of this sub-alert
     private String getRefererAlert() {
-        return "Referer expose session ID";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "referrer.alert");
     }
 
     // The description of this sub-alert
     private String getRefererDescription() {
-        return "Hyperlink to other host name is found. "
-                + "As session ID URL rewrite is used, it may be disclosed in referer header to external host.";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "referrer.desc");
     }
 
     // The solution of this sub-alert
     private String getRefererSolution() {
-        return "This is a risk if the session ID is sensitive and the hyperlink refer to an external host. "
-                + "For secure content, put session ID in secured session cookie.";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "referrer.soln");
     }
 
     /**

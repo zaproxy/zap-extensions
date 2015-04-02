@@ -33,6 +33,11 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
  */
 public class HeaderXssProtectionScanner extends PluginPassiveScanner {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.headerxssprotectionscanner.";
+	
 	private PassiveScanThread parent = null;
 	
 	@Override
@@ -70,13 +75,13 @@ public class HeaderXssProtectionScanner extends PluginPassiveScanner {
 	private void raiseAlert(HttpMessage msg, int id, String xssHeaderProtection) {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM,  getName());
 		alert.setDetail(
-					Constant.messages.getString("pscanrules.xss-protection.desc"), 
+					Constant.messages.getString(MESSAGE_PREFIX + "desc"), 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    "",  					//parameter
 		    	    "", 					//attack
-		    	    Constant.messages.getString("pscanrules.xss-protection.extrainfo"),		//other info
-		    	    Constant.messages.getString("pscanrules.xss-protection.soln"),			//solution 
-		    	    Constant.messages.getString("pscanrules.xss-protection.refs"),			//refs 
+		    	    Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"),		//other info
+		    	    Constant.messages.getString(MESSAGE_PREFIX + "soln"),			//solution 
+		    	    Constant.messages.getString(MESSAGE_PREFIX + "refs"),			//refs 
 		            (xssHeaderProtection!= null?HttpHeader.X_XSS_PROTECTION+": "+xssHeaderProtection:""), 	//evidence, if any
 		            933, //CWE-933: OWASP Top Ten 2013 Category A5 - Security Misconfiguration
 		            14,  //WASC-14: Server Misconfiguration
@@ -92,7 +97,7 @@ public class HeaderXssProtectionScanner extends PluginPassiveScanner {
 	
 	@Override
 	public String getName() {
-		return Constant.messages.getString("pscanrules.xss-protection.name");
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
 }

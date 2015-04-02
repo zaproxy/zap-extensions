@@ -11,7 +11,8 @@
 	XContentTypeOptionsScanner default/error page updates (Issue 760).<br>
 	TestInfoSessionIdURL added value length check to reduce false positives (Issue 1396).<br>
 	Application Error Disclosure shows evidence in attack (Issue 1487).<br>
-	Updated to ZAP 2.4
+	Updated to ZAP 2.4.<br>
+	Issue 823: i18n active/passive scan rules.
 	]]>
 	</changes>
 	<extensions>
