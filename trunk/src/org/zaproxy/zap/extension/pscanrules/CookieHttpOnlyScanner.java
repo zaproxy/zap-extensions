@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import net.htmlparser.jericho.Source;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -30,6 +31,11 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.cookiehttponlyscanner.";
+	
 	private PassiveScanThread parent = null;
 	//private Logger logger = Logger.getLogger(this.getClass());
 
@@ -93,7 +99,7 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Cookie No HttpOnly Flag";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 
 }

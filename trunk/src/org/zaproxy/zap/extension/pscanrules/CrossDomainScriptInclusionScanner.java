@@ -18,12 +18,15 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
+
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -32,6 +35,11 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.crossdomainscriptinclusionscanner.";
+	
 	private PassiveScanThread parent = null;
 	private static final Logger logger = Logger.getLogger(CrossDomainScriptInclusionScanner.class);
 	
@@ -86,7 +94,7 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Cross-Domain JavaScript Source File Inclusion";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 
 	private boolean isScriptFromOtherDomain (String host, String scriptURL){

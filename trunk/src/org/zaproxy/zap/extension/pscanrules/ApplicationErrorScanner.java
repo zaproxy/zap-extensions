@@ -18,7 +18,9 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import net.htmlparser.jericho.Source;
+
 import org.apache.commons.httpclient.HttpStatus;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -28,16 +30,21 @@ import org.zaproxy.zap.extension.pscanrules.utils.ContentMatcher;
 /**
  * Plugin able to analyze the content for Application Error messages. The plugin
  * find the first occurrence of an exact match or a regex pattern matching
- * accordding to an external file definition. The vulnerability can be included
- * innside the Information Leakage family (WASC-13)
+ * according to an external file definition. The vulnerability can be included
+ * inside the Information Leakage family (WASC-13)
  *
  * @author yhawke 2013
  */
 public class ApplicationErrorScanner extends PluginPassiveScanner {
 
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "pscanrules.applicationerrorscanner.";
+	
     // Name of the file related to pattern's definition list
     private static final String APP_ERRORS_FILE = "/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml";
-    // Evidence used for Internal Server Error doccurrence
+    // Evidence used for Internal Server Error occurrence
     private static final String EVIDENCE_INTERNAL_SERVER_ERROR = "HTTP 500 Internal server error";
     // Inner Content Matcher component with pattern definitions
     private static final ContentMatcher matcher = ContentMatcher.getInstance(APP_ERRORS_FILE);
@@ -61,18 +68,15 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
      */
     @Override
     public String getName() {
-        return "Application Error Disclosure";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     private String getDescription() {
-        return "This page contains an error/warning message that may disclose sensitive information like "
-                + "the location of the file that produced the unhandled exception. "
-                + "This information can be used to launch further attacks against the web application."
-                + "The alert could be a false positive if the error message is found inside a documentation page.";
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     private String getSolution() {
-        return "Review the source code of this page";
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     private String getReference() {
@@ -92,7 +96,7 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
     }
 
     /**
-     * Set the Scanner thred parent object
+     * Set the Scanner thread parent object
      *
      * @param parent the PassiveScanThread parent object
      */
