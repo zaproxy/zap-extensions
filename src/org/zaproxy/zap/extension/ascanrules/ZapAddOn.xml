@@ -12,7 +12,8 @@
         Upgraded to ZAP 2.4.<br>
         Issue 823: i18n active/passive scan rules.<br>
         Issue 1529: TestExternalRedirect minor performance improvement, injection generation changed to reduce collisions or false positives.<br>
-        Issue 1569: TestExternalRedirect plugin ID changed from 30000 to 20019.
+        Issue 1569: TestExternalRedirect plugin ID changed from 30000 to 20019.<br>
+        Issue 1499: Replace active 'Client Browser Cache' with passive 'Cache Control' rule. TestClientBrowserCache removed.
 	]]>
     </changes>
 	<extensions>
@@ -21,7 +22,6 @@
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.CodeInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.CommandInjectionPlugin</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestClientBrowserCache</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestCrossSiteScriptV2</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestDirectoryBrowsing</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestExternalRedirect</ascanrule>
