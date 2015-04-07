@@ -59,6 +59,9 @@ public class CacheControlScanner extends PluginPassiveScanner {
 					}
 				}
 			}
+			else { // No cache control header at all
+				this.raiseAlert(msg, id, null);
+			}
 			
 			Vector<String> pragma = msg.getResponseHeader().getHeaders(HttpHeader.PRAGMA);
 			if (pragma != null) {
@@ -69,21 +72,20 @@ public class CacheControlScanner extends PluginPassiveScanner {
 				}
 			}
 		}
-		
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String cacheControl) {
 	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
-		    	    "The cache-control and pragma HTTP header have not been set properly allowing the browser and proxies to cache content", 
+		    	    getDescription(), 
 		    	    msg.getRequestHeader().getURI().toString(),
-		    	    cacheControl,
+		    	    "",
 		    	    "", "", 
-		    	    "Whenever possible ensure the cache-control HTTP header is set with no-cache, no-store, must-revalidate, private, and the pragma HTTP header is set with no-cache.", 
-		            "https://www.owasp.org/index.php/Session_Management_Cheat_Sheet#Web_Content_Caching", 
-		            "", // No evidence
-		            0,	// TODO CWE Id
+		    	    getSolution(), 
+		            getReference(), 
+		            cacheControl, // No evidence
+		            525,
 		            0,	// TODO WASC Id
 		            msg);
 	
@@ -99,5 +101,17 @@ public class CacheControlScanner extends PluginPassiveScanner {
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
+	
+    private String getDescription() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
+
+    private String getSolution() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
+
+    private String getReference() {
+    	return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+    }
 
 }
