@@ -76,7 +76,7 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
     }
 
     private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     private String getReference() {
