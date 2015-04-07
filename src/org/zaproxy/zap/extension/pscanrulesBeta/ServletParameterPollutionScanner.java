@@ -89,12 +89,12 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 					    	alert.setDetail(
 					    		getDescription(), 
 					    		msg.getRequestHeader().getURI().toString(),
+					    		"",
 					    		"", 
-					    		formElement.getFirstStartTag().toString(), // just include the first <form ..> element 
 					    		"",
 					    		getSolution(), 
 					            getReference(), 
-								"",	// No Evidence
+					    		formElement.getFirstStartTag().toString(), // evidence - just include the first <form ..> element 
 								0,	// TODO CWE Id
 								0,	// TODO WASC Id
 					            msg);
