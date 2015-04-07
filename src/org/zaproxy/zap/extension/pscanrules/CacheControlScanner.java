@@ -84,7 +84,7 @@ public class CacheControlScanner extends PluginPassiveScanner {
 		    	    "", "", 
 		    	    getSolution(), 
 		            getReference(), 
-		            cacheControl, // No evidence
+		            cacheControl, // Highlight if it's wrong...
 		            525,
 		            0,	// TODO WASC Id
 		            msg);
