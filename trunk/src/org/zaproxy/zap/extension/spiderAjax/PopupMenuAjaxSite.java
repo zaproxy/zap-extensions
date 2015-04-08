@@ -105,7 +105,7 @@ public class PopupMenuAjaxSite extends PopupMenuItemSiteNodeContainer {
                 }
             }
 	        
-	    	extension.spiderSite(node, false);
+	    	extension.showScanDialog(node);
 	    }
 	}
 	

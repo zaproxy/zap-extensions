@@ -31,8 +31,8 @@ import javax.inject.Provider;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
+import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -61,7 +61,7 @@ public class SpiderThread implements Runnable {
 
 	// crawljax config
 	private String url = null;
-	private ExtensionAjax extension = null;
+	private AjaxSpiderParam params = null;
 	private CrawljaxRunner crawljax;
 	private final boolean spiderInScope;
 	private boolean running;
@@ -82,9 +82,9 @@ public class SpiderThread implements Runnable {
 	 * @param extension
 	 * @param inScope
 	 */
-	SpiderThread(String url, ExtensionAjax extension, boolean inScope, SpiderListener spiderListener) throws URIException {
+	SpiderThread(String url, ExtensionAjax extension, boolean inScope, AjaxSpiderParam params, SpiderListener spiderListener) throws URIException {
 		this.url = url;
-		this.extension = extension;
+		this.params = params;
 		this.spiderInScope = inScope;
 		this.running = false;
 		spiderListeners = new ArrayList<>(2);
@@ -149,30 +149,30 @@ public class SpiderThread implements Runnable {
 
 		configurationBuilder.setBrowserConfig(new BrowserConfiguration(
 				com.crawljax.browser.EmbeddedBrowser.BrowserType.FIREFOX,
-				this.extension.getAjaxSpiderParam().getNumberOfBrowsers(),
-				new AjaxSpiderBrowserBuilder(extension.getAjaxSpiderParam().getBrowserId())));
+				params.getNumberOfBrowsers(),
+				new AjaxSpiderBrowserBuilder(params.getBrowserId())));
 
-		if (this.extension.getAjaxSpiderParam().isClickDefaultElems()) {
+		if (params.isClickDefaultElems()) {
 			configurationBuilder.crawlRules().clickDefaultElements();
 		} else {
-			for (String elem : this.extension.getAjaxSpiderParam().getElemsNames()) {
+			for (String elem : params.getElemsNames()) {
 				configurationBuilder.crawlRules().click(elem);
 			}
 		}
 
-		configurationBuilder.crawlRules().insertRandomDataInInputForms(this.extension.getAjaxSpiderParam().isRandomInputs());
-		configurationBuilder.crawlRules().waitAfterEvent(this.extension.getAjaxSpiderParam().getEventWait(),TimeUnit.MILLISECONDS);
-		configurationBuilder.crawlRules().waitAfterReloadUrl(this.extension.getAjaxSpiderParam().getReloadWait(),TimeUnit.MILLISECONDS);
+		configurationBuilder.crawlRules().insertRandomDataInInputForms(params.isRandomInputs());
+		configurationBuilder.crawlRules().waitAfterEvent(params.getEventWait(),TimeUnit.MILLISECONDS);
+		configurationBuilder.crawlRules().waitAfterReloadUrl(params.getReloadWait(),TimeUnit.MILLISECONDS);
 
-		if (this.extension.getAjaxSpiderParam().getMaxCrawlStates() == 0) {
+		if (params.getMaxCrawlStates() == 0) {
 			configurationBuilder.setUnlimitedStates();
 		} else {
-			configurationBuilder.setMaximumStates(this.extension.getAjaxSpiderParam().getMaxCrawlStates());
+			configurationBuilder.setMaximumStates(params.getMaxCrawlStates());
 		}
 				
-		configurationBuilder.setMaximumDepth(this.extension.getAjaxSpiderParam().getMaxCrawlDepth());
-		configurationBuilder.setMaximumRunTime(this.extension.getAjaxSpiderParam().getMaxDuration(),TimeUnit.MINUTES);
-		configurationBuilder.crawlRules().clickOnce(this.extension.getAjaxSpiderParam().isClickElemsOnce());
+		configurationBuilder.setMaximumDepth(params.getMaxCrawlDepth());
+		configurationBuilder.setMaximumRunTime(params.getMaxDuration(),TimeUnit.MINUTES);
+		configurationBuilder.crawlRules().clickOnce(params.isClickElemsOnce());
 				
 		return configurationBuilder.build();
 	}
@@ -192,12 +192,12 @@ public class SpiderThread implements Runnable {
 			crawljax = new CrawljaxRunner(createCrawljaxConfiguration());
 			crawljax.call();
         } catch (ProvisionException e) {
-            logger.warn("Failed to start browser " + extension.getAjaxSpiderParam().getBrowserId(), e);
+            logger.warn("Failed to start browser " + params.getBrowserId(), e);
             if (View.isInitialised()) {
                 ExtensionSelenium extSelenium = (ExtensionSelenium) Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionSelenium.class);
-                Browser browser = Browser.getBrowserWithId(extension.getAjaxSpiderParam().getBrowserId());
+                Browser browser = Browser.getBrowserWithId(params.getBrowserId());
                 View.getSingleton().showWarningDialog(extSelenium.getWarnMessageFailedToStart(browser));
             }
 		} catch (Exception e) {
