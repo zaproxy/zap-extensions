@@ -39,9 +39,11 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.utils.DisplayUtils;
 
 /**
  * Main class of the plugin, it instantiates the rest of them.
@@ -63,9 +65,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	}
 
 	private SpiderPanel spiderPanel = null;
-	private PopupMenuAjax popupMenuSpider = null;
 	private PopupMenuAjaxSite popupMenuSpiderSite = null;
-	private PopupMenuAjaxSiteInScope popupMenuInScope = null;
+	private AjaxSpiderDialog spiderDialog = null;
 	private OptionsAjaxSpider optionsAjaxSpider = null;
 	private List<String> excludeList = null;
 	private boolean spiderRunning;
@@ -118,9 +119,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			ExtensionHookView pv = extensionHook.getHookView();
 			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
-			//scope control
-			//extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuSpider());
-			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSiteInScope());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSite());
 			ExtensionHelp.enableHelpKey(getSpiderPanel(), "addon.spiderajax.tab");
 		}
@@ -182,30 +180,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
 	/**
 	 * 
-	 * @return the PopupMenuAjax object
-	 */
-	private PopupMenuAjax getPopupMenuSpider() {
-		if (popupMenuSpider == null) {
-			popupMenuSpider = new PopupMenuAjax(this);
-			popupMenuSpider.setExtension(this);
-		}
-		return popupMenuSpider;
-	}
-	
-	
-	/**
-	 * 
-	 * @return the PopupMenuSpiderSiteInScope object
-	 */
-	private PopupMenuAjaxSiteInScope getPopupMenuAjaxSiteInScope() {
-		if (popupMenuInScope == null) {
-			popupMenuInScope = new PopupMenuAjaxSiteInScope(this.getMessages().getString("spiderajax.site.popup.InScope"), this);
-		}
-		return popupMenuInScope;
-	}
-
-	/**
-	 * 
 	 * @return the PopupMenuAjaxSite object
 	 */
 	private PopupMenuAjaxSite getPopupMenuAjaxSite() {
@@ -228,6 +202,18 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		}
 		return optionsAjaxSpider;
 	}
+	
+	public void showScanDialog(SiteNode node) {
+		if (spiderDialog == null) {
+			spiderDialog = 
+				new AjaxSpiderDialog(this, View.getSingleton().getMainFrame(), DisplayUtils.getScaledDimension(700, 500));
+			spiderDialog.init(node);
+		} else if (node != null) {
+			spiderDialog.init(node);
+		}
+		
+		spiderDialog.setVisible(true);
+	}
 
 	/**
 	 *  calls the spider
@@ -235,11 +221,14 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 * @param incPort
 	 */
 	public void spiderSite(SiteNode node, boolean inScope) {
-		if (getView() != null) {
-			getSpiderPanel().startScan(node.getHierarchicNodeName(), inScope);
-		}
+		this.spiderSite(node, inScope, getAjaxSpiderParam());
 	}
 
+	public void spiderSite(SiteNode node, boolean inScope, AjaxSpiderParam params) {
+		if (getView() != null) {
+			getSpiderPanel().startScan(node.getHierarchicNodeName(), inScope, params);
+		}
+	}
 
 	/**
 	 * 
@@ -290,7 +279,11 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	}
 	
 	SpiderThread createSpiderThread(String url, boolean inScope, SpiderListener spiderListener) throws URIException {
-		SpiderThread spiderThread = new SpiderThread(url, this, inScope, spiderListener);
+		return this.createSpiderThread(url, inScope, getAjaxSpiderParam(), spiderListener);
+	}
+	
+	SpiderThread createSpiderThread(String url, boolean inScope, AjaxSpiderParam params, SpiderListener spiderListener) throws URIException {
+		SpiderThread spiderThread = new SpiderThread(url, this, inScope, params, spiderListener);
 		spiderThread.addSpiderListener(getSpiderListener());
 		
 		return spiderThread;

@@ -230,14 +230,14 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	private JButton getStartScanButton() {
 		if (startScanButton == null) {
 			startScanButton = new JButton();
-			startScanButton.setToolTipText(this.extension.getMessages().getString("spiderajax.toolbar.button.start"));
-			startScanButton.setIcon(new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/131.png")));
+			startScanButton.setText(this.extension.getMessages().getString("spiderajax.toolbar.button.start"));
+			startScanButton.setIcon(new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/spiderAjax.png")));
 			startScanButton.setEnabled(false);
 			startScanButton.addActionListener(new ActionListener () {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					//TODO: iniciar aqui el thread
+					extension.showScanDialog(null);
 				}
 
 			});
@@ -356,10 +356,11 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 			filterStatus = new JLabel(this.extension.getMessages().getString("spiderajax.panel.subtitle"));
 			JLabel t1 = new JLabel();
 
-			panelToolbar.add(filterStatus, gridBagConstraints2);
-			panelToolbar.add(getStopScanButton(), gridBagConstraints1);
-			panelToolbar.add(getOptionsButton(), gridBagConstraintsy);
+			panelToolbar.add(getStartScanButton(), gridBagConstraints1);
+			panelToolbar.add(getStopScanButton(), gridBagConstraints2);
+			panelToolbar.add(filterStatus, gridBagConstraints3);
 			panelToolbar.add(t1, gridBagConstraintsX);
+			panelToolbar.add(getOptionsButton(), gridBagConstraintsy);
 		}
 		return panelToolbar;
 	}
@@ -387,13 +388,13 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	 * @param site the targeted site
 	 * @param inScope if it is in scope
 	 */
-	public void startScan(String site, boolean inScope) {
+	public void startScan(String site, boolean inScope, AjaxSpiderParam params) {
 		if (View.isInitialised()) {
 			// Show the tab in case its been closed
 			this.setTabFocus();
 		}
 		try {
-			this.runnable = extension.createSpiderThread(site, inScope, this);
+			this.runnable = extension.createSpiderThread(site, inScope, params, this);
 		} catch (URIException e) {
 			logger.error(e);
 			return;
@@ -473,6 +474,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 		switch (mode) {
 		case standard:
 		case protect:
+		case attack:
 			break;
 		case safe:
 			stopScan();

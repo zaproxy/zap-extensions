@@ -74,7 +74,9 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private static final String CLICK_ELEMS_ONCE_KEY = AJAX_SPIDER_BASE_KEY + ".clickElemsOnce";
     
     private static final String RANDOM_INPUTS_KEY = AJAX_SPIDER_BASE_KEY + ".randomInputs";
-    
+
+    private static final String SHOW_ADV_OPTIONS_KEY = AJAX_SPIDER_BASE_KEY + ".showAdvOptions";
+
     private static final String ALL_ELEMS_KEY = AJAX_SPIDER_BASE_KEY + ".elems.elem";
     
     private static final String ELEM_NAME_KEY = "name";
@@ -124,6 +126,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private boolean clickElemsOnce;
     private boolean randomInputs;
     private boolean confirmRemoveElem = true;
+    private boolean showAdvancedDialog;
     
     @Override
     protected int getCurrentVersion() {
@@ -211,6 +214,12 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             this.randomInputs = getConfig().getBoolean(RANDOM_INPUTS_KEY, DEFAULT_RANDOM_INPUTS);
         } catch (ConversionException e) {
             logger.error("Error while loading the random inputs option: " + e.getMessage(), e);
+        }    
+        
+        try {
+            this.showAdvancedDialog = getConfig().getBoolean(SHOW_ADV_OPTIONS_KEY, false);
+        } catch (ConversionException e) {
+            logger.error("Error while loading the show advanced option: " + e.getMessage(), e);
         }    
         
         try {
@@ -405,5 +414,16 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     public void setConfirmRemoveElem(boolean confirmRemove) {
         this.confirmRemoveElem = confirmRemove;
         getConfig().setProperty(CONFIRM_REMOVE_ELEM_KEY, Boolean.valueOf(confirmRemoveElem));
+    }
+
+    @ZapApiIgnore
+	public boolean isShowAdvancedDialog() {
+		return this.showAdvancedDialog;
+	}
+	
+    @ZapApiIgnore
+    public void setShowAdvancedDialog(boolean show) {
+        this.showAdvancedDialog = show;
+        getConfig().setProperty(SHOW_ADV_OPTIONS_KEY, Boolean.valueOf(showAdvancedDialog));
     }
 }
