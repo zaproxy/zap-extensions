@@ -296,4 +296,25 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             return MessageFormat.format(getMessages().getString("selenium.warn.message.failed.start.browser"), getName(browser));
         }
     }
+
+    public List<Browser> getConfiguredBrowsers() {
+        List<Browser> browsers = new ArrayList<>();
+        // No configurations, just install the browser or
+        // browser plugins to work properly
+        browsers.add(Browser.HTML_UNIT);
+        browsers.add(Browser.FIREFOX);
+        browsers.add(Browser.OPERA);
+        browsers.add(Browser.SAFARI);
+
+        if (!getOptions().getChromeDriverPath().isEmpty()) {
+            browsers.add(Browser.CHROME);
+        }
+        if (!getOptions().getIeDriverPath().isEmpty()) {
+            browsers.add(Browser.INTERNET_EXPLORER);
+        }
+        if (!getOptions().getPhantomJsBinaryPath().isEmpty()) {
+            browsers.add(Browser.PHANTOM_JS);
+        }
+        return browsers;
+    }
 }
