@@ -13,7 +13,8 @@
         Issue 823: i18n active/passive scan rules.<br>
         Issue 1529: TestExternalRedirect minor performance improvement, injection generation changed to reduce collisions or false positives.<br>
         Issue 1569: TestExternalRedirect plugin ID changed from 30000 to 20019.<br>
-        Issue 1499: Replace active 'Client Browser Cache' with passive 'Cache Control' rule. TestClientBrowserCache removed.
+        Issue 1499: Replace active 'Client Browser Cache' with passive 'Cache Control' rule. TestClientBrowserCache removed.<br>
+        Issue 1592: CommandInjectionPlugin timing false positives
 	]]>
     </changes>
 	<extensions>
