@@ -402,7 +402,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 elapsedTime = msg.getTimeElapsedMillis();
 
                 // Check if enough time has passed                            
-                if (elapsedTime >= lowerLimit) {
+                if (elapsedTime >= lowerLimit && elapsedTime > TIME_SLEEP_SEC * 1000) {
 
                     // Probably we've to confirm it launching again the query
                     // But we arise the alert directly with MEDIUM Confidence...
