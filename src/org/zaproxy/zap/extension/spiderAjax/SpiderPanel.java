@@ -64,6 +64,8 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	private javax.swing.JPanel AJAXSpiderPanel = null;
 	private javax.swing.JToolBar panelToolbar = null;
 	private JLabel filterStatus = null;
+	private int foundCount = 0;
+	private JLabel foundLabel = new JLabel();;
     private ExtensionAjax extension = null;
 	private SpiderThread runnable = null;
 	private JButton stopScanButton;
@@ -252,10 +254,12 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	 * @param msg the http message
 	 * @param url the targeted url
 	 */
-	private void addHistoryUrl(HistoryReference r, HttpMessage msg, String url){
-			if(isNewUrl(r, msg) && msg.getRequestHeader().getURI().toString().contains(url)){
+	private boolean addHistoryUrl(HistoryReference r, HttpMessage msg, String url){
+			if(isNewUrl(r, msg)){
 				this.spiderResultsTableModel.addHistoryReference(r);
+				return true;
 			}
+			return false;
 		}
 	
 	/**
@@ -359,6 +363,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 			panelToolbar.add(getStartScanButton(), gridBagConstraints1);
 			panelToolbar.add(getStopScanButton(), gridBagConstraints2);
 			panelToolbar.add(filterStatus, gridBagConstraints3);
+			panelToolbar.add(foundLabel, gridBagConstraints4);
 			panelToolbar.add(t1, gridBagConstraintsX);
 			panelToolbar.add(getOptionsButton(), gridBagConstraintsy);
 		}
@@ -392,6 +397,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 		if (View.isInitialised()) {
 			// Show the tab in case its been closed
 			this.setTabFocus();
+			this.foundCount ++;
 		}
 		try {
 			this.runnable = extension.createSpiderThread(site, inScope, params, this);
@@ -487,7 +493,11 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 
 	@Override
 	public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage) {
-		addHistoryUrl(historyReference, httpMessage, targetSite);
+		boolean added = addHistoryUrl(historyReference, httpMessage, targetSite);
+		if (View.isInitialised() && added) {
+			foundCount++;
+			this.foundLabel.setText(Integer.toString(this.foundCount));
+		}
 	}
 
 	@Override
