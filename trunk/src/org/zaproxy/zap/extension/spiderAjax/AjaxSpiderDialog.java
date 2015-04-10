@@ -39,7 +39,8 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 	
 	protected static final String[] LABELS = {
 		"spiderajax.scandialog.tab.scope",
-		"spiderajax.scandialog.tab.options"};
+		"spiderajax.scandialog.tab.options",
+		/*"spiderajax.scandialog.tab.elements"*/};
 
     private static final String FIELD_START = "spiderajax.scandialog.label.start";
     private static final String FIELD_IN_SCOPE = "spiderajax.scandialog.label.inscope";
@@ -63,6 +64,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 
     private SiteNode startNode = null;
 	private AjaxSpiderParam params = null;
+	//private OptionsAjaxSpiderTableModel ajaxSpiderClickModel = null;
 
     public AjaxSpiderDialog(ExtensionAjax ext, Frame owner, Dimension dim) {
         super(owner, "spiderajax.scandialog.title", dim, LABELS);
@@ -123,14 +125,18 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         
         // Options tab
         this.addNumberField(1, FIELD_NUM_BROWSERS, 1, Integer.MAX_VALUE, params.getNumberOfBrowsers());
-        this.addNumberField(1, FIELD_DEPTH, 1, Integer.MAX_VALUE, params.getMaxCrawlDepth());
-        this.addNumberField(1, FIELD_CRAWL_STATES, 1, Integer.MAX_VALUE, params.getMaxCrawlStates());
-        this.addNumberField(1, FIELD_DURATION, 1, Integer.MAX_VALUE, params.getMaxDuration());
+        this.addNumberField(1, FIELD_DEPTH, 0, Integer.MAX_VALUE, params.getMaxCrawlDepth());
+        this.addNumberField(1, FIELD_CRAWL_STATES, 0, Integer.MAX_VALUE, params.getMaxCrawlStates());
+        this.addNumberField(1, FIELD_DURATION, 0, Integer.MAX_VALUE, params.getMaxDuration());
         this.addNumberField(1, FIELD_EVENT_WAIT, 1, Integer.MAX_VALUE, params.getEventWait());
         this.addNumberField(1, FIELD_RELOAD_WAIT, 1, Integer.MAX_VALUE, params.getReloadWait());
         
         this.addPadding(1);
-
+        
+        /* Need to check this really works before releasing it
+        getAjaxSpiderClickModel().setElems(params.getElems());
+        this.setCustomTabPanel(2, new AjaxSpiderMultipleOptionsPanel(getAjaxSpiderClickModel()));
+        */
 
         this.pack();
     }
@@ -142,7 +148,15 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     	return extSel;
     }
 
-    
+    /*
+	private OptionsAjaxSpiderTableModel getAjaxSpiderClickModel() {
+		if (ajaxSpiderClickModel == null) {
+			ajaxSpiderClickModel = new OptionsAjaxSpiderTableModel();
+		}
+		return ajaxSpiderClickModel;
+	}
+	*/
+
     @Override
     public String getHelpIndex() {
     	return "addon.spiderajax.dialog";
@@ -151,7 +165,8 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     
     private void setAdvancedOptions(boolean adv) {
         this.setTabsVisible(new String[]{
-        		"spiderajax.scandialog.tab.options"
+        		"spiderajax.scandialog.tab.options",
+        		/*"spiderajax.scandialog.tab.elements"*/
             }, adv);
         // Always save in the 'global' options
         extension.getAjaxSpiderParam().setShowAdvancedDialog(adv);
@@ -194,6 +209,9 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         	params.setMaxDuration(this.getIntValue(FIELD_DURATION));
         	params.setEventWait(this.getIntValue(FIELD_EVENT_WAIT));
         	params.setReloadWait(this.getIntValue(FIELD_RELOAD_WAIT));
+        	
+            //params.setElems(getAjaxSpiderClickModel().getElements());
+        	
         }
 
     	this.extension.spiderSite(this.startNode, this.getBoolValue(FIELD_IN_SCOPE), params);
