@@ -243,7 +243,6 @@
 		<build-addon name="highlighter" />
 		<build-addon name="httpsInfo" />
 		<build-addon name="importLogFiles" />
-		<build-addon name="multiFuzz" />
 		<build-addon name="pscanrulesAlpha" >
 				<!-- Add the extra classes required -->
 				<jar jarfile="${dist}/${file}" update="true" compress="true">
@@ -352,10 +351,6 @@
 
 	<target name="deploy-importLogFiles" description="deploy the importLogFiles extension">
 		<build-deploy-addon name="importLogFiles" />
-	</target>
-
-	<target name="deploy-multiFuzz" description="deploy the passive scan rules">
-		<build-deploy-addon name="multiFuzz" />
 	</target>
 
 	<target name="deploy-onlineMenu" description="deploy the online menu">
