@@ -10,7 +10,7 @@
 	<pscanrules/>
 	<filters/>
 	<files>
-		<file>dirbuster/directory-list-1.0.txt</file>
+		<file>fuzzers/dirbuster/directory-list-1.0.txt</file>
 	</files>
 	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>
