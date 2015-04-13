@@ -72,17 +72,8 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
 
     private ScriptType scriptType;
 
-    private final String uiName;
-
     public ExtensionHttpFuzzer() {
         super();
-
-        uiName = Constant.messages.getString("fuzz.httpfuzzer.name");
-    }
-
-    @Override
-    public String getUIName() {
-        return uiName;
     }
 
     @Override
