@@ -23,13 +23,9 @@ import java.util.regex.Pattern;
 
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.FuzzableComponent;
-import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.httppanel.view.FuzzableMessage;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextView;
 import org.zaproxy.zap.extension.search.SearchMatch;
-import org.zaproxy.zap.extension.sse.ServerSentEvent;
 
 public class EventStreamSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTextView {
 
@@ -42,7 +38,7 @@ public class EventStreamSyntaxHighlightTextView extends HttpPanelSyntaxHighlight
 		return new EventStreamSyntaxHighlightTextArea();
 	}
 	
-	protected static class EventStreamSyntaxHighlightTextArea extends HttpPanelSyntaxHighlightTextArea implements FuzzableComponent {
+	protected static class EventStreamSyntaxHighlightTextArea extends HttpPanelSyntaxHighlightTextArea {
 
         private static final long serialVersionUID = -6469629120424801024L;
 
@@ -65,48 +61,6 @@ public class EventStreamSyntaxHighlightTextView extends HttpPanelSyntaxHighlight
             
 //    		this.extEventStream = (ExtensionServerSentEvents) Control.getSingleton().getExtensionLoader().getExtension(ExtensionServerSentEvents.NAME);
 		}
-
-	    @Override
-	    public Class<? extends Message> getMessageClass() {
-	        return ServerSentEvent.class;
-	    }
-	    
-	    @Override
-	    public boolean canFuzz() {
-	    	return false;
-	    	//TODO
-//            // Currently do not allow to fuzz if the text area is editable,
-//            // because the Message used is not updated with the changes.
-//	        if (isEditable()) {
-//	            return false;
-//	        }
-//	        
-//	        ServerSentEvent message = (ServerSentEvent) getMessage();
-//	        
-//	        // do not allow to fuzz if there is no active connection
-//	        if (!extEventStream.isConnected(message.channel.id)) {
-//	        	return false;
-//	        }
-//	        
-//	        final String selectedText = getSelectedText();
-//	        if (selectedText == null || selectedText.isEmpty()) {
-//	            return false;
-//	        }
-//	        
-//	        return true;
-	    }
-	    
-	    @Override
-	    public String getFuzzTarget() {
-	        return getSelectedText();
-	    }
-
-        @Override
-        public FuzzableMessage getFuzzableMessage() {
-        	//TODO
-        	return null;
-//            return new EventStreamFuzzableTextMessage((EventStreamMessageDTO)getMessage(), getSelectionStart(), getSelectionEnd());
-        }
 
         @Override
         public void search(Pattern p, List<SearchMatch> matches) {

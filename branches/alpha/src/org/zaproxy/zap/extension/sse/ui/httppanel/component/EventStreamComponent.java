@@ -238,4 +238,9 @@ public class EventStreamComponent implements HttpPanelComponentInterface, Search
 	public void searchBody(Pattern p, List<SearchMatch> matches) {
 		views.search(p, matches);
 	}
+
+    @Override
+    public HttpPanelView setSelectedView(String arg0) {
+        return null;
+    }
 }
