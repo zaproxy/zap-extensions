@@ -76,7 +76,7 @@ public class FuzzerDialog<M extends Message, FO extends FuzzerOptions, FMP exten
             boolean outgoing,
             FuzzerHandlerOptionsPanel<FO> fuzzerHandlerOptionsPanel,
             FuzzerMessageProcessors<M, FMP> fuzzerMessageProcessors) {
-        super(owner, "fuzz.fuzzer.dialog.title", new Dimension(800, 600), new String[] {
+        super(owner, "fuzz.fuzzer.dialog.title", new Dimension(900, 600), new String[] {
                 "fuzz.fuzzer.dialog.tab.fuzzLocations",
                 "fuzz.fuzzer.dialog.tab.options",
                 "fuzz.fuzzer.dialog.tab.messageprocessors" });
@@ -118,8 +118,6 @@ public class FuzzerDialog<M extends Message, FO extends FuzzerOptions, FMP exten
             fuzzerMessageProcessorsTablePanel = new FuzzerMessageProcessorsTablePanel<>(this, message, fuzzerMessageProcessors);
             this.setCustomTabPanel(2, fuzzerMessageProcessorsTablePanel);
         }
-
-        setBounds(GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds());
     }
 
     @Override
