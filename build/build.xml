@@ -278,6 +278,7 @@
 		<build-addon name="beanshell" />
 		<build-bruteforce-addon />
 		<build-addon name="diff" />
+		<build-addon name="fuzz" />
 		<build-addon name="importurls" />
 		<build-addon name="invoke" />
 		<build-addon name="jruby" />
@@ -363,6 +364,14 @@
 
 	<target name="generate-wiki-diff" description="Generates the wiki of diff">
 		<generate-wiki-core addon="diff" />
+	</target>
+
+	<target name="deploy-fuzz" description="deploy the fuzz extension">
+		<build-deploy-addon name="fuzz" />
+	</target>
+
+	<target name="generate-wiki-fuzz" description="Generates the wiki of fuzz">
+		<generate-wiki-core addon="fuzz" />
 	</target>
 
   	<target name="deploy-importurls" description="deploy the importurls extension">
@@ -471,6 +480,7 @@
 				<include name="ascanrulesBeta-${status}-*.zap"/>
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
+				<include name="fuzz-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
 				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
@@ -486,6 +496,7 @@
 				<include name="ascanrulesBeta-${status}-*.zap"/>
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
+				<include name="fuzz-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
 				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
@@ -506,6 +517,20 @@
 			<fileset dir="${dist}">
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
+				<include name="fuzz-${status}-*.zap"/>
+				<include name="invoke-${status}-*.zap"/>
+				<include name="onlineMenu-${status}-*.zap"/>
+				<include name="plugnhack-${status}-*.zap"/>
+				<include name="scripts-${status}-*.zap"/>
+				<include name="tips-${status}-*.zap"/>
+				<include name="zest-${status}-*.zap"/>
+			</fileset>
+		</copy>
+		<copy todir="${zap-2.4.plugin.dir}">
+			<fileset dir="${dist}">
+				<include name="bruteforce-${status}-*.zap"/>
+				<include name="diff-${status}-*.zap"/>
+				<include name="fuzz-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
 				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
