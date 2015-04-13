@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>11</version>
+	<version>12</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
