@@ -22,13 +22,12 @@ import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
+import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketObserver;
-import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
-import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzMessageDTO;
 
 /**
  * Gets notified about WebSocket messages and checks if breakpoint applies.
@@ -67,11 +66,13 @@ public class WebSocketProxyListenerBreak implements WebSocketObserver {
 		
 		// message is safe => no need to set onlyIfInScope parameter to true
         
+		/* TODO re-implement support for fuzzing
         if (message instanceof WebSocketFuzzMessageDTO) {
         	// as this message was sent by some fuzzer, do not catch it
         	continueNotifying = true;
         	return continueNotifying;
         }
+        */
     	
         if (!wsMessage.isFinished()) {
         	boolean isRequest = (wsMessage.getDirection().equals(Direction.OUTGOING));

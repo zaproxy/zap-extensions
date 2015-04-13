@@ -6,7 +6,8 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes and fix of exception.
+	Minor code changes and fix of exception.<br>
+	Removed fuzzing code - will need to be re-implemented for new adv fuzzing
 	]]>
 	</changes>
 	<extensions>

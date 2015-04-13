@@ -62,7 +62,6 @@ import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
-import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.component.HttpPanelComponentInterface;
@@ -78,8 +77,6 @@ import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
 import org.zaproxy.zap.extension.websocket.filter.FilterWebSocketPayload;
 import org.zaproxy.zap.extension.websocket.filter.WebSocketFilter;
 import org.zaproxy.zap.extension.websocket.filter.WebSocketFilterListener;
-import org.zaproxy.zap.extension.websocket.fuzz.ShowFuzzMessageInWebSocketsTabMenuItem;
-import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerHandler;
 import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorDialog;
 import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
 import org.zaproxy.zap.extension.websocket.ui.ExcludeFromWebSocketsMenuItem;
@@ -161,7 +158,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	/**
 	 * Link to {@link ExtensionFuzz}.
 	 */
-	private WebSocketFuzzerHandler fuzzHandler;
+	// TODO re-implement support for fuzzing
+	//private WebSocketFuzzerHandler fuzzHandler;
 
 	/**
 	 * Messages for some {@link WebSocketProxy} on this list are just
@@ -309,6 +307,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			addWebSocketFilter(payloadFilter);
 			
 			// setup fuzzable extension
+			/* TODO re-implement support for fuzzing
 			ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
 			if (extFuzz != null) {
 				hookMenu.addPopupMenuItem(new ShowFuzzMessageInWebSocketsTabMenuItem(getWebSocketPanel()));
@@ -317,6 +316,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				extFuzz.addFuzzerHandler(WebSocketMessageDTO.class, fuzzHandler);
 				addAllChannelObserver(fuzzHandler);
 			}
+			*/
 			
 			// add exclude/include scope
 			hookMenu.addPopupMenuItem(new PopupIncludeWebSocketContextMenu());
@@ -378,10 +378,12 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 		
 		// clear up fuzzable extension
+		/* TODO re-implement support for fuzzing
 		ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
 		if (extFuzz != null) {
 			extFuzz.removeFuzzerHandler(WebSocketMessageDTO.class);
 		}
+		*/
 		
 		removeWebSocketFilter(payloadFilter);
 		
@@ -826,9 +828,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 		*/
 		
+		/* TODO re-implement support for fuzzing
 		if (fuzzHandler != null) {
 			fuzzHandler.resume();
 		}
+		*/
 
 		List<String> ignoredList = new ArrayList<>();
 		try {
@@ -870,9 +874,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			wsFilterListener.reset();
 		}
 		
+		/* TODO re-implement support for fuzzing
 		if (fuzzHandler != null) {
 			fuzzHandler.pause();
 		}
+		*/
 	}
 
 	@Override

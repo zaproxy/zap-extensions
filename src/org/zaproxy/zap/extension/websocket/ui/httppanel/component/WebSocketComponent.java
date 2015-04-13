@@ -258,4 +258,9 @@ public class WebSocketComponent implements HttpPanelComponentInterface, Searchab
 	public void searchBody(Pattern p, List<SearchMatch> matches) {
 		views.search(p, matches);
 	}
+
+	@Override
+	public HttpPanelView setSelectedView(String arg0) {
+		return null;
+	}
 }
