@@ -71,6 +71,11 @@ public class FuzzMessageWithLocationPopupMenuItem extends ExtensionPopupMenuItem
         return false;
     }
 
+    @Override
+    public int getMenuIndex() {
+        return 3;
+    }
+
     private <M extends Message, F extends Fuzzer<M>> boolean isEnableForMessageContainerHelper(
             SelectableContentMessageContainer<M> invoker) {
         if (SwingUtilities.getAncestorOfClass(FuzzerDialog.class, invoker.getComponent()) != null
