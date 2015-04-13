@@ -27,6 +27,10 @@ public class ZestFuzzerDelegate {
 	private File fuzzerDir = null;
 	private File fuzzerJBroFuzzDir = null;
 
+    private Database jbroFuzzDB = null;
+	private List <String> fuzzerCategories = new ArrayList<>();
+	private Map<String, DirCategory> catMap = new HashMap<>();
+
 	public static final String JBROFUZZ_CATEGORY_PREFIX = "jbrofuzz / ";
 
 	private static final Logger logger = Logger.getLogger(ZestFuzzerDelegate.class);
@@ -76,8 +80,12 @@ public class ZestFuzzerDelegate {
 		}
 	}
 
-	private FileFuzzer getFileFuzzer(String category, String name){
-		return getFileFuzzer(category, name);
+	public FileFuzzer getFileFuzzer(String category, String name) {
+		DirCategory dirCat = this.catMap.get(category);
+		if (dirCat != null) {
+			return dirCat.getFileFuzzer(name);
+		}
+		return null;
 	}
 	
 	public List<String> getAllFuzzCategories(){
@@ -93,7 +101,6 @@ public class ZestFuzzerDelegate {
 				cats.add(cat);
 			}
 		}
-		cats.add(Constant.messages.getString("fuzz.category.custom"));
 		return cats;
 	}
 	
@@ -161,10 +168,6 @@ public class ZestFuzzerDelegate {
 		}
 	}
 
-    private Database jbroFuzzDB = null;
-	private List <String> fuzzerCategories = new ArrayList<>();
-	private Map<String, DirCategory> catMap = new HashMap<>();
-
     private Database getDB() {
     	if (jbroFuzzDB == null) {
     		jbroFuzzDB = new Database();
@@ -178,7 +181,6 @@ public class ZestFuzzerDelegate {
 		catMap = new HashMap<>();
 		
 		addFileFuzzers(new File(Constant.getInstance().FUZZER_DIR), null);
-		addFileFuzzers(new File(Constant.getZapHome(), Constant.getInstance().FUZZER_DIR), null);
         Collections.sort(fuzzerCategories);
 	}
 
