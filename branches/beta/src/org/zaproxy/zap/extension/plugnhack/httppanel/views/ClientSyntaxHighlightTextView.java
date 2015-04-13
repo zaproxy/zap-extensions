@@ -24,13 +24,9 @@ import java.util.regex.Pattern;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.zaproxy.zap.extension.fuzz.FuzzableComponent;
-import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.httppanel.view.FuzzableMessage;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextView;
 import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
-import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 import org.zaproxy.zap.extension.plugnhack.httppanel.models.StringClientPanelViewModel;
 import org.zaproxy.zap.extension.search.SearchMatch;
 
@@ -45,7 +41,7 @@ public class ClientSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTextV
 		return new ClientSyntaxHighlightTextArea();
 	}
 	
-	protected static class ClientSyntaxHighlightTextArea extends HttpPanelSyntaxHighlightTextArea implements FuzzableComponent {
+	protected static class ClientSyntaxHighlightTextArea extends HttpPanelSyntaxHighlightTextArea {
 
         private static final long serialVersionUID = -6469629120424801024L;
 
@@ -68,34 +64,6 @@ public class ClientSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTextV
             
     		this.extension = (ExtensionPlugNHack) Control.getSingleton().getExtensionLoader().getExtension(ExtensionPlugNHack.NAME);
 		}
-
-	    @Override
-	    public Class<? extends Message> getMessageClass() {
-	        return ClientMessage.class;
-	    }
-	    
-	    @Override
-	    public boolean canFuzz() {
-            // Currently do not allow to fuzz if the text area is editable,
-            // because the Message used is not updated with the changes.
-	        if (isEditable()) {
-	            return false;
-	        }
-	        
-	        ClientMessage message = (ClientMessage) getMessage();
-	        
-	        return extension.isBeingMonitored(message.getClientId());
-	    }
-	    
-	    @Override
-	    public String getFuzzTarget() {
-	        return getSelectedText();
-	    }
-
-        @Override
-        public FuzzableMessage getFuzzableMessage() {
-            return new ClientFuzzableTextMessage((ClientMessage)getMessage(), getSelectionStart(), getSelectionEnd());
-        }
 
         @Override
         public void search(Pattern p, List<SearchMatch> matches) {

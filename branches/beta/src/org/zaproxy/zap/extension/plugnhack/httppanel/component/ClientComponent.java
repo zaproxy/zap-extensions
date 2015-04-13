@@ -242,4 +242,9 @@ public class ClientComponent implements HttpPanelComponentInterface, SearchableH
 	public void searchBody(Pattern p, List<SearchMatch> matches) {
 		views.search(p, matches);
 	}
+
+    @Override
+    public HttpPanelView setSelectedView(String arg0) {
+        return null;
+    }
 }

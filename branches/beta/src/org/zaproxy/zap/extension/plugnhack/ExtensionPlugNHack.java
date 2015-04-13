@@ -58,7 +58,6 @@ import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
-import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.component.HttpPanelComponentInterface;
@@ -70,8 +69,6 @@ import org.zaproxy.zap.extension.plugnhack.brk.ClientBreakpointsUiManagerInterfa
 import org.zaproxy.zap.extension.plugnhack.brk.PopupMenuAddBreakClient;
 import org.zaproxy.zap.extension.plugnhack.db.ClientTable;
 import org.zaproxy.zap.extension.plugnhack.db.MessageTable;
-import org.zaproxy.zap.extension.plugnhack.fuzz.ClientMessageFuzzerContentPanel;
-import org.zaproxy.zap.extension.plugnhack.fuzz.ClientMessageFuzzerHandler;
 import org.zaproxy.zap.extension.plugnhack.httppanel.component.ClientComponent;
 import org.zaproxy.zap.extension.plugnhack.httppanel.models.ByteClientPanelViewModel;
 import org.zaproxy.zap.extension.plugnhack.httppanel.models.StringClientPanelViewModel;
@@ -142,7 +139,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 	
 	private BreakpointMessageHandler brkMessageHandler = null;
 	private ManualClientMessageSendEditorDialog resendDialog = null;
-	private ClientMessageFuzzerContentPanel fuzzerContentPanel = null;
 	private ClientConfigDialog clientConfigDialog = null;
 	
 	private ClientBreakpointsUiManagerInterface brkManager = null;
@@ -279,15 +275,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 				extBreak.addBreakpointsUiManager(getBrkManager());
 			}
 			
-			// setup fuzzable extension
-			ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
-			if (extFuzz != null) {
-				//hookMenu.addPopupMenuItem(new ShowFuzzMessageInWebSocketsTabMenuItem(getWebSocketPanel()));
-				
-				ClientMessageFuzzerHandler fuzzHandler = new ClientMessageFuzzerHandler(extFuzz, this);
-				extFuzz.addFuzzerHandler(ClientMessage.class, fuzzHandler);
-				this.fuzzerContentPanel = (ClientMessageFuzzerContentPanel) fuzzHandler.getFuzzerContentPanel();
-			}
 	        startTimeoutThread();
         }
     }
@@ -328,12 +315,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
             ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
             if (extBreak != null) {
                 extBreak.removeBreakpointsUiManager(getBrkManager());
-            }
-
-            // clear up fuzzable extension
-            ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
-            if (extFuzz != null) {
-                extFuzz.removeFuzzerHandler(ClientMessage.class);
             }
 
             // clear up manualrequest extension
@@ -646,9 +627,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
         logger.debug("Oracle invoked for " + id);
         this.oracleManager.oracleInvoked(id);
 
-        if (this.fuzzerContentPanel != null) {
-            this.fuzzerContentPanel.flagOracleInvoked(id);
-        }
     }
 
     public String startMonitoring(URI uri) throws HttpMalformedHeaderException {
