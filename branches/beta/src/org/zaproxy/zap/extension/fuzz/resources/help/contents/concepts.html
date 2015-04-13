@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Fuzzing
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1>Fuzzing</H1>
+<p>
+Fuzzing is a technique of submitting lots of invalid or unexpected data to a target.
+</p>
+<p>
+ZAP allows you to fuzz any request still using a built in set of payloads.<br/>
+To fuzz a request string:<br/>
+<ul>
+<li>Select a request in the Sites or History tab</li>
+<li>Highlight the string you wish to fuzz in the Request tab</li>
+<li>Right click in the Request tab and select 'Fuzz...'</li>
+<li>Add payloads and new locations</li>
+<li>Press the Start Fuzzer button</li>
+<li>The results will then be listed in the <a href="tab.html">Fuzzer tab</a> select them to see the full requests and responses.</li>
+</ul>
+You can also search for strings in the fuzz results using the 'Search tab'.
+<p>
+Fuzzing is configured using the 
+<a href="options.html">Options Fuzzing screen</a>. Additional fuzzing files can be added via this screen 
+or can be put manually into the "fuzzers" directory where ZAP was installed - they will then become available after restarting ZAP.
+</p>
+<p>
+This functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
+</p>
+
+</BODY>
+</HTML>
