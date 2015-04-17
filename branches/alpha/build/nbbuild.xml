@@ -88,16 +88,21 @@
         <build-addon name="highlighter" />
         <build-addon name="httpsInfo" />
         <build-addon name="importLogFiles" />
-        <build-addon name="multiFuzz" />
-        <build-addon name="pscanrulesAlpha" />
+	<build-addon name="pscanrulesAlpha" >
+		<!-- Add the extra classes required -->
+		<jar jarfile="${dist.dir}/${file}" update="true" compress="true">
+			<zipfileset dir="${build.dir}" prefix="">
+				<include name="com/veggiespam/imagelocationscanner/**"/>
+			</zipfileset>
+		</jar>
+	</build-addon>
         <build-addon name="saml" />
         <build-addon name="sequence" />
         <build-addon name="simpleExample" />
         <build-addon name="sniTerminator" />
         <build-addon name="soap" />
         <build-addon name="sse" />
-        <build-addon name="wappalyzer" />
-		
+        <build-addon name="wappalyzer" />		
     </target>
 
     <!--     
