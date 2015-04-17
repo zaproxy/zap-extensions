@@ -83,6 +83,7 @@
 		<build-addon name="beanshell" />
 		<build-bruteforce-addon />
 		<build-addon name="diff" />
+		<build-addon name="fuzz" />
 		<build-addon name="importurls" />
 		<build-addon name="invoke" />
 		<build-addon name="jruby" />

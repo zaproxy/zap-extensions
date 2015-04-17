@@ -4,7 +4,12 @@
 	<description>An advanced active injection bundle for SQLi (derived by SQLMap)</description>
 	<author>Andrea Pompili (Yhawke)</author>
 	<url/>
-	<changes>Updated for ZAP 2.4</changes>
+	<changes><![CDATA[
+	Updated for ZAP 2.4<br>
+        Improved execution time when a WAF or Reverse Proxy is in place disabling keep-alive<br>
+        Improved the time based statistical model taking in account also some other thresholds
+        ]]>
+        </changes>
 	<extensions>
 	</extensions>
 	<ascanrules>

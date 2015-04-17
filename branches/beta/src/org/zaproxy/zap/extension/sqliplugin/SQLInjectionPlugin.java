@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
@@ -80,6 +81,11 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     private boolean invalidLogical = false;
     // --time-sec=TIMESEC  Seconds to delay the DBMS response (default 5)
     private int timeSec = 5;
+    // --keep-alive Use persistent HTTP(s) connections
+    // By default set connection behavior to close 
+    // to avoid troubles related to WAF or lagging
+    // which can make things very slow...
+    private boolean keepAlive = false;
 
     // ---------------------------------------------------------    
     // Plugin internal properties
@@ -882,8 +888,19 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
                             // OK now we can get the deviation of the
                             // request computation time for this page
+                            double lowerLimit = timeSec * 1000;
                             double deviation = getResponseTimeDeviation();
-                            double lowerLimit = (deviation >= 0) ? getResponseTimeAverage() + TIME_STDEV_COEFF * deviation : timeSec * 1000;
+
+                            // Minimum response time that can be even considered as delayed
+                            // MIN_VALID_DELAYED_RESPONSE = 0.5secs
+                            // lowerLimit = Math.max(MIN_VALID_DELAYED_RESPONSE, lowerLimit);
+
+                            // Get the maximum value to avoid false positives related
+                            // to slow pages that can take an average time 
+                            // worse than the timeSec waiting period
+                            if (deviation >= 0) {
+                                lowerLimit = Math.max(lowerLimit, getResponseTimeAverage() + TIME_STDEV_COEFF * deviation);
+                            }
 
                             // Perform the test's request
                             reqPayload = setDelayValue(reqPayload);
@@ -1082,7 +1099,8 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             //REMOVED - encoding should be done by Variants -
             //payload = AbstractPlugin.getURLEncode(payload);
             
-            setParameter(tempMsg, paramName, payload);
+            setParameter(tempMsg, paramName, payload);            
+            tempMsg.getRequestHeader().setHeader(HttpHeader.CONNECTION, keepAlive ? HttpHeader._KEEP_ALIVE : HttpHeader._CLOSE);
 
         } else {
             tempMsg = getBaseMsg();
@@ -1502,5 +1520,14 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      */
     public void setTimeSec(int seconds) {
         this.timeSec = seconds;
+    }
+
+    /**
+     * Set the keepalive directive for all the HTTP Connections. Using it can optimize performances, but
+     * can slow down everything if a WAF is in place
+     * @param keepAlive true if keep-alive directive should be used
+     */
+    public void setKeepAlive(boolean keepAlive) {
+        this.keepAlive = keepAlive;
     }
 }
