@@ -137,7 +137,7 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
     		String chkerrorheader = requestReturn.getHeadersAsString();
     		String chkerrorbody = responseBody.toString();
     		log.debug("Header: "+ chkerrorheader);
-    		if (chkerrorbody.contains(checkStringBody1) && chkerrorheader.contains(checkStringHeader1))
+    		if (msg.getResponseHeader().getStatusCode() == 500 && chkerrorheader.contains(checkStringHeader1))
     		{
     			log.debug("Found Header");
     			bingo(getRisk(), Alert.CONFIDENCE_MEDIUM, null, param, returnAttack, errorBufferOverflowMessage ,msg);
