@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import org.apache.commons.lang.ArrayUtils;
+import org.zaproxy.zap.model.Tech;
 
 /**
  * DBMS's SQL dialect implementation and Service name aliases module.
@@ -35,7 +36,12 @@ import org.apache.commons.lang.ArrayUtils;
  * @author yhawke (2013)
  */
 public enum DBMSHelper {
-    MYSQL("MySQL", new String[]{"mysql", "my"}, 
+    // ------------------------------------------------------------------
+    // internal mapping for technologies currently not available on ZAP 2.4.0
+    // should be reset to Tech list in the future
+    // ------------------------------------------------------------------
+    
+    MYSQL(Tech.MySQL, new String[]{"mysql", "my"}, 
             ",", 
             "CAST({0} AS CHAR)", 
             "IFNULL({0},''' ''')", 
@@ -76,7 +82,7 @@ public enum DBMSHelper {
         }        
     },
     
-    PGSQL("PostgreSQL", new String[]{"postgresql", "postgres", "pgsql", "psql", "pg"}, 
+    PGSQL(Tech.PostgreSQL, new String[]{"postgresql", "postgres", "pgsql", "psql", "pg"}, 
             "||", 
             "CAST({0} AS CHARACTER(10000))", 
             "COALESCE({0},''' ''')", 
@@ -110,7 +116,7 @@ public enum DBMSHelper {
     },
             
     
-    MSSQL("Microsoft SQL Server", new String[]{"microsoft sql server", "mssqlserver", "mssql", "ms"}, 
+    MSSQL(Tech.MsSQL, new String[]{"microsoft sql server", "mssqlserver", "mssql", "ms"}, 
             "+", 
             "CAST({0} AS NVARCHAR(4000))", 
             "ISNULL({0},''' ''')", 
@@ -140,7 +146,7 @@ public enum DBMSHelper {
         }        
     },
     
-    ORACLE("Oracle", new String[]{"oracle", "orcl", "ora", "or"}, 
+    ORACLE(Tech.Oracle, new String[]{"oracle", "orcl", "ora", "or"}, 
             "||", 
             "CAST({0} AS VARCHAR(4000))", 
             "NVL({0},''' ''')", 
@@ -170,7 +176,7 @@ public enum DBMSHelper {
         }        
     },
     
-    SQLITE("SQLite", new String[]{"sqlite", "sqlite3"}, 
+    SQLITE(new Tech(Tech.Db, "SQLite"), new String[]{"sqlite", "sqlite3"}, 
             "||", 
             "CAST({0} AS VARCHAR(8000))", 
             "IFNULL({0},''' ''')", 
@@ -191,7 +197,7 @@ public enum DBMSHelper {
         }        
     },
     
-    ACCESS("Microsoft Access", new String[]{"msaccess", "access", "jet", "microsoft access"}, 
+    ACCESS(new Tech(Tech.Db, "Microsoft Access"), new String[]{"msaccess", "access", "jet", "microsoft access"}, 
             "&", 
             "CVAR({0})", 
             "IIF(LEN({0})=0,''' ''',{0})", 
@@ -219,7 +225,7 @@ public enum DBMSHelper {
         }
     },
     
-    FIREBIRD("Firebird", new String[]{"firebird", "mozilla firebird", "interbase", "ibase", "fb"}, 
+    FIREBIRD(new Tech(Tech.Db, "Firebird"), new String[]{"firebird", "mozilla firebird", "interbase", "ibase", "fb"}, 
             "", 
             "CAST({0} AS VARCHAR(10000))", 
             "{0}", 
@@ -247,7 +253,7 @@ public enum DBMSHelper {
         }        
     },
     
-    MAXDB("SAP MaxDB", new String[]{"maxdb", "sap maxdb", "sap db"}, 
+    MAXDB(new Tech(Tech.Db, "SAP MaxDB"), new String[]{"maxdb", "sap maxdb", "sap db"}, 
             ",", 
             "REPLACE(CHR({0}),''' ''','''_''')", 
             "VALUE({0},''' ''')", 
@@ -259,7 +265,7 @@ public enum DBMSHelper {
         }        
     },
     
-    SYBASE("Sybase", new String[]{"sybase", "sybase sql server"}, 
+    SYBASE(new Tech(Tech.Db, "Sybase"), new String[]{"sybase", "sybase sql server"}, 
             "+", 
             "CONVERT(NVARCHAR(4000),{0})", 
             "ISNULL({0},''' ''')", 
@@ -289,7 +295,7 @@ public enum DBMSHelper {
         }            
     },
     
-    DB2("IBM DB2", new String[]{"db2", "ibm db2", "ibmdb2"}, 
+    DB2(new Tech(Tech.Db, "IBM DB2"), new String[]{"db2", "ibm db2", "ibmdb2"}, 
             "||", 
             "RTRIM(CAST({0} AS CHAR(254)))", 
             "COALESCE({0},''' ''')", 
@@ -318,7 +324,7 @@ public enum DBMSHelper {
         }
     },
                 
-    HSQLDB("HSQLDB", new String[]{"hsql", "hsqldb", "hs", "hypersql"}, 
+    HSQLDB(Tech.HypersonicSQL, new String[]{"hsql", "hsqldb", "hs", "hypersql"}, 
             "||", 
             "CAST({0} AS LONGVARCHAR)", 
             "IFNULL({0},''' ''')", 
@@ -348,25 +354,25 @@ public enum DBMSHelper {
 
     // ------------------------------------------------------------------
     
-    private String name;
-    private String[] aliases;
-    private String delimiter;
-    private String castQuery;
-    private String isnullQuery;
-    private String dummyTableFromQuery;
+    private final Tech tech;
+    private final String[] aliases;
+    private final String delimiter;
+    private final String castQuery;
+    private final String isnullQuery;
+    private final String dummyTableFromQuery;
 
     /**
      * Enum inner constructor
      * 
-     * @param name
+     * @param tech
      * @param aliases
      * @param delimiter
      * @param castQuery
      * @param isnullQuery
      * @param dummyTable 
      */
-    private DBMSHelper(String name, String[] aliases, String delimiter, String castQuery, String isnullQuery, String dummyTable) {
-        this.name = name;
+    private DBMSHelper(Tech tech, String[] aliases, String delimiter, String castQuery, String isnullQuery, String dummyTable) {
+        this.tech = tech;
         this.aliases = aliases;
         this.delimiter = delimiter;
         this.castQuery = castQuery;
@@ -385,8 +391,14 @@ public enum DBMSHelper {
      */
     public String encodeStrings(String payload) {
         StringBuilder builder = new StringBuilder();
+        boolean noescape = false;
         int eidx = 0;
         int sidx;
+        
+        //for exclude in EXCLUDE_UNESCAPE:
+        //    if exclude in payload:
+        //        return payload
+        //EXCLUDE_UNESCAPE = ("WAITFOR DELAY ", "CREATE ", " INTO DUMPFILE ", " INTO OUTFILE ", "BULK ", "EXEC ", "RECONFIGURE ", "DECLARE ", "'%c'")
 
         while ((sidx = payload.indexOf('\'', eidx)) != -1) {
             builder.append(payload.substring(eidx, sidx));
@@ -394,6 +406,21 @@ public enum DBMSHelper {
             if (eidx < 0) {
                 // Unclosed ' literal, give back the original payload
                 return payload;
+            }
+            
+            // Check if the string should be encoded or left as it is
+            if (eidx == sidx) {
+                // OK it's a '' char so escaping should be skipped
+                builder.append('\'');
+                noescape = !noescape;
+                eidx++;
+                
+                continue;               
+            }
+            
+            // Check if this is an unclosed '' literal, if so exit...
+            if (noescape) {
+                return payload;  
             }
 
             builder.append(doEncode(payload.substring(sidx, eidx++)));
@@ -455,12 +482,20 @@ public enum DBMSHelper {
     }
 
     /**
+     * Get this DBMS Tech object
+     * @return the Tech object associated with this DBMS
+     */
+    public Tech getTech() {
+        return tech;
+    }
+    
+    /**
      * Get this DBMS name
      * 
      * @return the readable name of this DBMS 
      */
     public String getName() {
-        return name;
+        return tech.getName();
     }
     
     // Generic SQL comment formation
@@ -475,7 +510,7 @@ public enum DBMSHelper {
      */
     public static DBMSHelper getByName(String value) {
         for (DBMSHelper helper : DBMSHelper.values()) {
-            if (ArrayUtils.contains(helper.aliases, value.toLowerCase()) || helper.name.equalsIgnoreCase(value)) {
+            if (helper.getName().equalsIgnoreCase(value) || ArrayUtils.contains(helper.aliases, value.toLowerCase())) {
                 return helper;
             }
         }

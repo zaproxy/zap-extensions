@@ -35,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
 
 /**
  * Active Plugin for SQL injection testing and verification.
@@ -69,8 +70,6 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     private int risk = 1;
     //--level=LEVEL       Level of tests to perform (1-5, default 1)
     private int level = 1;
-    // --dbms=DBMS         Force back-end DBMS to this value
-    private DBMSHelper dbms = null;
     // --prefix=PREFIX     Injection payload prefix string
     private String prefix = null;
     // --suffix=SUFFIX     Injection payload suffix string
@@ -249,7 +248,6 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         unionChar = null;
         unionCols = null;
         techniques = null;
-        dbms = null;
         prefix = null;
         suffix = null;
         invalidBignum = false;
@@ -474,19 +472,39 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             // Skip DBMS-specific test if it does not match either the
             // previously identified or the user's provided DBMS (either
             // from program switch or from parsed error message(s))
+            // ------------------------------------------------------------
+            // Initially set the current Tech value to null
+            currentDbms = null;
+                
             if ((test.getDetails() != null) && !(test.getDetails().getDbms().isEmpty())) {
 
-                // Force back-end DBMS according to the current
-                // test value for proper payload unescaping
-                currentDbms = test.getDetails().getDbms().get(0);
-
-                // Check if DBMS has been forced
-                // --------------------------
-                if ((dbms != null) && !test.getDetails().matchDbms(dbms)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("skipping test '" + title + "' because the provided DBMS is " + dbms.getName());
-                    }
+                // If the global techset hasn't been populated this 
+                // mean that all technologies should be scanned...
+                if (getTechSet() == null) {
+                    currentDbms = test.getDetails().getDbms().get(0);
                     
+                } else {    
+                    // Check if DBMS scope has been restricted
+                    // using the Tech tab inside the scanner
+                    // --------------------------
+                    for (DBMSHelper dbms : test.getDetails().getDbms()) {
+                    
+                        if (getTechSet().includes(dbms.getTech())) {                        
+                            // Force back-end DBMS according to the current
+                            // test value for proper payload unescaping
+                            currentDbms = dbms;
+                            break;
+                        }
+                    }
+                }
+                
+                // Skip this test if the specific Dbms is not include 
+                // inside the list of the allowed one
+                if (currentDbms == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("skipping test '" + title + "' because the db is not included in the Technology list");
+                    }
+
                     continue;
                 }
 
@@ -512,12 +530,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                  debugMsg += "%s" % Format.getErrorParsedDBMSes()
                  logger.debug(debugMsg)
                  continue
-                 */
-                
-            } else {
-                // No dbms provided by the plugin, set it to null
-                // why it seems a generig plugin adaptable to all DBMS
-                currentDbms = null;
+                 */                
             }
 
             // Skip test if the user provided custom character
@@ -1396,7 +1409,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         if (where == SQLiPayloadManager.WHERE_REPLACE) {
             // Do Nothing
         } else if ((suffix != null) && (comment == null)) {
-            payload += " " + suffix;
+            payload += suffix;
         }
 
         return prepareCleanPayload(payload.replaceAll("(?s);\\W*;", ";"), null);
@@ -1465,17 +1478,6 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      */
     public void setLevel(int level) {
         this.level = level;
-    }
-
-    /**
-     * Force back-end DBMS to a specific instance choosen inside these values:
-     * MySQL, PostgreSQL, Microsoft SQL Server, Oracle,
-     * SQLite, Microsoft Access, Firebird, SAP MaxDB,
-     * Sybase, IBM DB2, HSQLDB
-     * @param dbms the dbms name
-     */
-    public void setDbms(String dbms) {
-        this.dbms = DBMSHelper.getByName(dbms);
     }
 
     /**

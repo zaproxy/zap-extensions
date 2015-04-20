@@ -98,13 +98,13 @@ public class SQLiTestDetails {
 
     /**
      * 
-     * @param name
+     * @param dbms
      * @return 
      */
     public boolean matchDbms(DBMSHelper dbms) {
        return this.dbms.contains(dbms);
     }
-
+    
     /**
      * 
      * @return 

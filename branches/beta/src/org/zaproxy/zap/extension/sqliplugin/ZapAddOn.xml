@@ -1,13 +1,14 @@
 <zapaddon>
 	<name>Advanced SQLInjection Scanner</name>
-	<version>7</version>
+	<version>8</version>
 	<description>An advanced active injection bundle for SQLi (derived by SQLMap)</description>
 	<author>Andrea Pompili (Yhawke)</author>
 	<url/>
 	<changes><![CDATA[
-	Updated for ZAP 2.4<br>
-        Improved execution time when a WAF or Reverse Proxy is in place disabling keep-alive<br>
-        Improved the time based statistical model taking in account also some other thresholds
+        Improved execution time when a WAF or Reverse Proxy is in place disabling keep-alive for all request<br>
+        Enforced the time based statistical model taking in account also the wait time threshold<br>
+        Solved some wrong "escape" that happened on some time based SQLi<br>
+        Users can specify the technology of interest, enabling or disabling them using the Advanced Active Scan tab
         ]]>
         </changes>
 	<extensions>
