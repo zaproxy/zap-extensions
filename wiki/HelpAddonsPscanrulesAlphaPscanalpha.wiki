@@ -1,3 +1,4 @@
+#labels UserGuide-PscanrulesAlpha-v5
 =Passive Scan Rules - Alpha=
 The following alpha quality passive scan rules are included in this add-on: 
 ==ASP.NET ViewState Disclosure==
@@ -14,13 +15,23 @@ This check looks at user-supplied input in query string parameters and POST data
 parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when 
 an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, 
 allowing URL parameters to set cookie values is generally considered a bug. 
+==Cross Domain Misconfiguration==
+Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the 
+web browser, for instance.<br>The current implementation looks at excessively permissive CORS headers. 
+==Directory Browsing==
+Passively scan responses for signatures that are indicative that Directory Browsing is possible. 
 ==Example File Passive Scanner==
 This implements an example passive scan rule that loads strings from a file that the user can edit.<br>For 
 more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html 
 ==Example Simple Passive Scanner==
 This implements a very simple example passive scan rule.<br>For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html 
 ==Hash Disclosure==
-A hash was disclosed by the web server 
+Passively scan for password hashes disclosed by the web server. <br>Various formats are including, including 
+some formats such as MD4, MD5, and SHA`*`, which are sometimes used for purposes other than to contain 
+password hashes. 
+==HeartBleed==
+Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical 
+HeartBleed OpenSSL vulnerability. 
 ==HTTP to HTTPS insecure transition in form post==
 This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page 
 can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed. 
@@ -28,6 +39,28 @@ can easily be hijacked through MITM and the secure HTTPS form can be replaced or
 This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page 
 is transitioning to an insecure page when data is uploaded through a form. The user may think they're 
 submitting data to a secure page when in fact they are not. 
+==Insecure Component==
+Passively scans the server response headers and body generator content for product versions, which are 
+then cross-referenced against a list of product versions known to be vulnerable to various CVEs.<br>A list 
+of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable.<br>Currently, 
+the following server side products are supported:<br>Apache Tomcat application server (limited functionality 
+due to limited information leakage by Tomcat)<br>Apache web server<br>mod`_`auth`_`radius Apache module<br>mod`_`fcgid 
+Apache module<br>mod`_`imap Apache module<br>mod`_`jk Apache module<br>mod`_`perl Apache module<br>mod`_`python Apache module<br>mod`_`ssl 
+Apache module<br>OpenSSL Apache module<br>Perl Apache module<br>Python Apache module<br>IBM HTTP Server<br>JBoss application 
+server<br>Jetty web server / application server<br>LiteSpeed web server<br>Lighttpd web server<br>Microsoft IIS web server<br>Netscape 
+Enterprise web server<br>Nginx web server<br>OpenCMS<br>Oracle Application Server<br>Oracle Web Cache<br>PHP<br>Phusion`_`Passenger<br>Squid 
+proxy server<br>Sun One web server<br>Sun Java System Web Server<br>TornadoServer web server<br>WordPress<br>
+==Image Location Scanner==
+
+Passively scans for GPS location exposure in images during normal security assessments of websites. Image 
+Location Scanner assists in situations where end users may post profile images and possibly give away 
+their home location, e.g. a dating site or children's chatroom. A whitepaper on this can be found at 
+http://veggiespam.com/ils/
+
+Note: In order for this plug-in to operate, ZAP must be configured to receive and process images. To 
+do this, go to the ZAP Options panel (Tools → Options), choose Display, and enable the checkbox 
+for "Process images in HTTP requests/responses". In addition, ZAP images cannot be filtered out via the 
+settings "Global Exclude URL" or the Session Properties for "Exclude from Proxy". 
 ==Open redirect==
 Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input 
 in query string parameters and POST data to identify where open redirects might be possible. Open redirects 
@@ -64,3 +97,7 @@ exploitability.
 This checks response headers for the presence of X-Powered-By details. 
 ==X-Backend-Server Header Information Leak==
 This checks response headers for the presence of X-Backend-Server details. 
+==Big Redirect==
+This check predicts the size of various redirect type responses and generates an alert if the response 
+is greater than the predicted size. A large redirect response may indicate that although a redirect has 
+taken place the page actually contained content (which may reveal sensitive information, PII, etc). 

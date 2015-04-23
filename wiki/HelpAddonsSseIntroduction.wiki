@@ -1,3 +1,4 @@
+#labels UserGuide-Sse-v8
 =Server-Sent Events=
 
 Server-Sent Events can be used by web applications or web sites to setup a uni-directional (one-way) 

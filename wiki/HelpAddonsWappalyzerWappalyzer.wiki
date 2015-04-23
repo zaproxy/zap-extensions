@@ -1,3 +1,4 @@
+#labels UserGuide-Wappalyzer-v4
 =Technology Detection using Wappalyzer=
 
 The Technology Detection add-on uses the Wappalyzer (http://wappalyzer.com/) rules to detect the technologies 
@@ -15,6 +16,6 @@ will display a 'Show evidence' menu underneight which are all of the regexes use
 a regex will switch to the 'Search' tab and search through the history for that regex. 
 ==External links==
 <table>
-<tr><td></td><td>http://wappalyzer.com/</td><td>The Wappalyzer homepage</td></tr>
-<tr><td></td><td>https://github.com/ElbertF/Wappalyzer/</td><td>The Wappalyzer repository</td></tr>
+<tr><td></td><td>[http://wappalyzer.com/ http://wappalyzer.com/]</td><td>The Wappalyzer homepage</td></tr>
+<tr><td></td><td>[https://github.com/ElbertF/Wappalyzer/ https://github.com/ElbertF/Wappalyzer/]</td><td>The Wappalyzer repository</td></tr>
 </table>

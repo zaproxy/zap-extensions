@@ -1,3 +1,4 @@
+#labels UserGuide-Sse-v8
 =Server-Sent Events tab=
 
 The Server-Sent Events tab displays all events from event streams. 

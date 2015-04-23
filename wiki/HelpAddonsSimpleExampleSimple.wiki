@@ -1,3 +1,4 @@
+#labels UserGuide-SimpleExample-v1
 =Simple Example=
 This is a simple example add-on that you can copy and use as the basis of a new add-on that actuall does 
 something useful. 

@@ -1,3 +1,4 @@
+#labels UserGuide-Portscan-v6
 =Options Port Scan screen=
 
 This screen allows you to configure the port scan options: 

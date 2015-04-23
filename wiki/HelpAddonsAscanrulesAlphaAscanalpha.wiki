@@ -1,7 +1,12 @@
+#labels UserGuide-AscanrulesAlpha-v12
 =Active Scan Rules - alpha=
 The following alpha quality active scan rules are included in this add-on: 
-==Backup File Disclosure==
-Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information 
+==Buffer Overflow==
+Looks for indicators of buffer overflows in complied code. It does this by putting out large strings 
+of input text and look for code crash and abnormal session closure. 
+==Cookie Slack Detector==
+Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing 
+the name "session" or "userid" 
 ==Example File Active Scanner==
 This implements an example active scan rule that loads strings from a file that the user can edit.<br>For 
 more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html 
@@ -15,10 +20,8 @@ versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) 
 tags would be evaluated twice, which effectively exposed any application to EL injection. However, even 
 for later versions, this weakness is still possible depending on configuration. 
 ==Source Code Disclosure - File Inclusion==
-Uses local file inclusion techniques to scan for files containing source code on the web server 
-==Source Code Disclosure - SVN==
-Uses Subversion source code repository metadata to scan for files containing source code on the web server 
+Uses local file inclusion techniques to scan for files containing source code on the web server. 
 ==Source Code Disclosure - Git==
-Uses Git source code repository metadata to scan for files containing source code on the web server 
-==Heartbleed OpenSSL Vulnerability==
-Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability 
+Uses Git source code repository metadata to scan for files containing source code on the web server. 
+==HTTPS As HTTP Scanner==
+This active scanner attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP. 

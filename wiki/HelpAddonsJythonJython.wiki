@@ -1,3 +1,4 @@
+#labels UserGuide-Jython-v4
 =Python Scripting=
 
 The Python Scripting add-on allow you to integrate Python scripts in ZAP. 

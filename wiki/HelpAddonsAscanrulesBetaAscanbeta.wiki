@@ -1,10 +1,22 @@
+#labels UserGuide-AscanrulesBeta-v15
 =Active Scan Rules - beta=
 The following beta quality active scan rules are included in this add-on: 
+==Backup File Disclosure==
+Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information 
+==Cross-Domain Misconfiguration==
+Checks if the web server is configured to allow Cross Domain access, from a malicious third party service, 
+for instance. Currently checks for wildcards in Adobe's crossdomain.xml, and in SilverLight's clientaccesspolicy.xml. 
 ==CSRF Token==
+==Heartbleed OpenSSL Vulnerability==
+Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability, by exploiting it. 
 ==HPP==
+==Insecure HTTP Method==
+Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL. 
 ==LDAP Injection==
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, 
 and to view and modify arbitrary data in the LDAP directory. 
+==Remote Code Execution - CVE-2012-1823==
+Detect CVE-2012-1823 to perform Remote Code Execution on a PHP-CGI based web server. 
 ==Session Fixation==
 Session Fixation may be possible. If this issue occurs with a login URL (where the user authenticates 
 themselves to the application), then the URL may be given by an attacker, along with a fixed session 
@@ -13,6 +25,16 @@ issue occurs with a non-login page, the URL and fixed session id may only be use
 an unauthenticated user's actions. If the vulnerability occurs on a cookie field or a form field (POST 
 parameter) rather than on a URL (GET) parameter, then some other vulnerability may also be required in 
 order to set the cookie field on the victim's browser, to allow the vulnerability to be exploited. 
+==ShellShock - CVE-2014-6271==
+This scanner perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>The first 
+is a simple reflected attack and the second is a time based attack. 
+==Source Code Disclosure - CVE-2012-1823==
+Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server. 
+==Source Code Disclosure - SVN==
+Uses Subversion source code repository metadata to scan for files containing source code on the web server. 
+==Source Code Disclosure - /WEB-INF==
+Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose 
+Java source code. 
 ==SQL Injection - Hypersonic, time based==
 This scanner uses Hypersonic-specific SQL syntax to attempt to induce time delays in the SQL statement 
 called by the page.<br>If the unmodified query is not affected by a time delay, and the modified query's 
