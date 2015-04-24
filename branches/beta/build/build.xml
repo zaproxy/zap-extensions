@@ -374,6 +374,14 @@
 		<generate-wiki-core addon="fuzz" />
 	</target>
 
+	<target name="build-help-pt-BR" description="builds the help_pt_BR add-on">
+		<build-help-addon name="help_pt_BR" />
+	</target>
+
+	<target name="deploy-help-pt-BR" description="deploy the help_pt_BR add-on">
+		<build-deploy-help-addon name="help_pt_BR" />
+	</target>
+
   	<target name="deploy-importurls" description="deploy the importurls extension">
 		<build-deploy-addon name="importurls" />
 	</target>
