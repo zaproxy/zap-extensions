@@ -5,5 +5,6 @@
 
 <index version="2.0">
     <indexitem text=""pająka AJAX"" target="addon.spiderajax.concepts" />
+    <indexitem text="AJAX Spider dialog" target="addon.spiderajax.dialog"/>
     <indexitem text="AJAX Spider tab" target="addon.spiderajax.tab"/>
 </index>
