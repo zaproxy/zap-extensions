@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.fuzz.impl;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
@@ -147,8 +146,7 @@ public class FuzzerDialog<M extends Message, FO extends FuzzerOptions, FMP exten
 
     @Override
     public String getHelpIndex() {
-        // THC add help page
-        return "ui.dialogs.fuzz";
+        return "addon.fuzzer.dialogue";
     }
 
     private JPanel getMessageFuzzLocationsPanel() {

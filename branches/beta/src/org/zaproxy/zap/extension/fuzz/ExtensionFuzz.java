@@ -111,7 +111,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
             ExtensionFuzz.class.getResource("resources/icons/script-payload-processor.png"));
 
     public static final String NAME = "ExtensionFuzz";
-    public static final Version CURRENT_VERSION = new Version("1.0.0");
+    public static final Version CURRENT_VERSION = new Version("1.0.1");
 
     private static final String JBROFUZZ_CATEGORY_PREFIX = "jbrofuzz";
 
