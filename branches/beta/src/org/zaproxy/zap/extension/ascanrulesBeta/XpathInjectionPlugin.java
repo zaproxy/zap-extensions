@@ -72,7 +72,11 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
         "<p>msxml3.dll</font>",
         // Lotus notes error when document searching inside nsf files
         "4005 Notes error: Query is not understandable",
-        "SimpleXMLElement::xpath()" // PHP error
+        // PHP error 
+        "SimpleXMLElement::xpath()",
+        
+        "xmlXPathEval: evaluation failed",
+        "Expression must evaluate to a node-set."
     };
     
     // Get WASC Vulnerability description
@@ -218,7 +222,7 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
      *
      * @param msg a request only copy of the original message (the response
      * isn't copied)
-     * @param parameter the parameter name that need to be exploited
+     * @param paramName the parameter name that need to be exploited
      * @param value the original parameter value
      */
     @Override
@@ -272,7 +276,7 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
                         // Now create the alert message
                         this.bingo(
                                 Alert.RISK_HIGH,
-                                Alert.WARNING,
+                                Alert.CONFIDENCE_HIGH,
                                 getName() + " - XPath Injection",
                                 getDescription(),
                                 null,
