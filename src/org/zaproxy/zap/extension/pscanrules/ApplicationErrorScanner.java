@@ -47,7 +47,8 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
     // Evidence used for Internal Server Error occurrence
     private static final String EVIDENCE_INTERNAL_SERVER_ERROR = "HTTP 500 Internal server error";
     // Inner Content Matcher component with pattern definitions
-    private static final ContentMatcher matcher = ContentMatcher.getInstance(APP_ERRORS_FILE);
+    private static final ContentMatcher matcher = 
+    		ContentMatcher.getInstance(ApplicationErrorScanner.class.getResourceAsStream(APP_ERRORS_FILE));
     // Inner Thread Parent variable
     private PassiveScanThread parent = null;
 
