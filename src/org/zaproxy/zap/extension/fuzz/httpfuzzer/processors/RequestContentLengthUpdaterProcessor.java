@@ -31,6 +31,8 @@ public class RequestContentLengthUpdaterProcessor implements HttpFuzzerMessagePr
 
     private static RequestContentLengthUpdaterProcessor instance;
 
+    private final String method;
+
     public static RequestContentLengthUpdaterProcessor getInstance() {
         if (instance == null) {
             createInstance();
@@ -44,6 +46,14 @@ public class RequestContentLengthUpdaterProcessor implements HttpFuzzerMessagePr
         }
     }
 
+    public RequestContentLengthUpdaterProcessor() {
+        this(null);
+    }
+
+    public RequestContentLengthUpdaterProcessor(String method) {
+        this.method = method;
+    }
+
     @Override
     public String getName() {
         return NAME;
@@ -51,6 +61,10 @@ public class RequestContentLengthUpdaterProcessor implements HttpFuzzerMessagePr
 
     @Override
     public HttpMessage processMessage(HttpFuzzerTaskProcessorUtils utils, HttpMessage message) {
+        if (method != null && !method.equals(message.getRequestHeader().getMethod())) {
+            return message;
+        }
+
         message.getRequestHeader().setContentLength(message.getRequestBody().length());
         return message;
     }
