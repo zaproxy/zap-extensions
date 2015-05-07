@@ -19,7 +19,10 @@
  */
 package org.zaproxy.zap.extension.fuzz;
 
+import java.awt.Event;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
@@ -41,6 +44,7 @@ import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 import org.owasp.jbrofuzz.core.Database;
@@ -98,6 +102,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.URLEncodeProcessorU
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
+import org.zaproxy.zap.view.ZapMenuItem;
 import org.zaproxy.zap.view.messagecontainer.MessageContainer;
 import org.zaproxy.zap.view.messagecontainer.SelectableContentMessageContainer;
 
@@ -130,6 +135,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     private FuzzerHandler<?, ?> defaultFuzzerHandler;
     private ScriptType scriptTypeGenerator;
     private ScriptType scriptTypeProcessor;
+    private ZapMenuItem menuItemCustomScan = null;
 
     public ExtensionFuzz() {
         super(NAME, CURRENT_VERSION);
@@ -281,6 +287,8 @@ public class ExtensionFuzz extends ExtensionAdaptor {
             payloadGeneratorsUIRegistry.registerPayloadUI(FuzzerPayloadGenerator.class, new FuzzerPayloadGeneratorUIHandler(
                     this));
 
+            extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
+
             extensionHook.getHookView().addOptionPanel(fuzzOptionsPanel);
 
             extensionHook.getHookView().addStatusPanel(fuzzScansPanel);
@@ -351,6 +359,23 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         super.destroy();
 
         fuzzersController.stopAllScans();
+    }
+
+    private ZapMenuItem getMenuItemCustomScan() {
+        if (menuItemCustomScan == null) {
+            menuItemCustomScan = new ZapMenuItem("fuzz.menu.tools.fuzz",
+                    KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK, false));
+
+            menuItemCustomScan.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                	fuzzerStarter.actionPerformed(e);
+                }
+            });
+
+        }
+        
+        return menuItemCustomScan;
     }
 
     private void readFuzzersDir() {
