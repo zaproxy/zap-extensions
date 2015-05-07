@@ -8,16 +8,57 @@ Fuzzer dialog
 </HEAD>
 <BODY BGCOLOR="#ffffff">
 <H1>Fuzzer dialog</H1>
-<p>
 This allows you to select the fuzzers to use when <a href="concepts.html">fuzzing </a> a request. 
-</p>
+
+<H3>Fuzz Locations tab</H3>
+To configure the fuzzing:<br/>
+<ul>
+<li>Highlight a string you wish to fuzz in the Fuzz Locations tab</li>
+<li>Click the 'Add...' button to launch the <a href="payloads.html">Payloads dialog</a></li>
+<li>Add the payloads you want to use</li>
+<li>Click on the 'Processors...' button to launch the <a href="locations.html">Location Processors dialog</a> (if required)</li>
+<li>Click on the 'Start Fuzzer' button to start the fuzzing</li>
+<li>The results will then be listed in the <a href="tab.html">Fuzzer tab</a> select them to see the full requests and responses.</li>
+</ul>
+You can also search for strings in the fuzz results using the 'Search tab'.
+
+<H3>Options tab</H3>
+This tab allows you to configure the options to be used when fuzzing.
+
+<H3>Message Processors tab</H3>
+Message Processors can access and change the fuzzing requests and responses, control the fuzzing process and interact with the ZAP UI.
+<br><br>
+The following types of message processors are provided by default:
+<ul>
+<li>Payload Reflection Detector</li>
+<li>Request Content-Length Updater</li>
+<li>User message processor</li>
+</ul>
+You can write custom HTTP Message Processor scripts, which allow you to 
+<ul>
+<li>Obtain the list of payloads</li>
+<li>Stop fuzzing</li>
+<li>Increase the error count</li>
+<li>Send new messages</li>
+<li>Add messages to the Results tab[link]</li>
+<li>Set custom ‘state’ messages in the <a href="tab.html">Fuzzer tab</a></li>
+<li>Raise alerts</li>
+</ul>
+
+<br><br>
+Add-ons can also define additional payload generators.
+
 
 <H2>Accessed via</H2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
-Request tab</td><td>'Fuzz...' right click menu item</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
-Sites and History tab</td><td>Attack > Fuzz... menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Request tab</td><td>'Fuzz...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites and History tab</td><td>Attack > Fuzz... menu items</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Tools menu </td><td>Attack > Fuzz... menu item</td></tr>
+</table>
+
+<H2>See also</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
 </table>
 
 </BODY>

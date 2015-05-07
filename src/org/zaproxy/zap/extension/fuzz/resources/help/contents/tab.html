@@ -2,79 +2,33 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>Fuzz tab</TITLE>
+<TITLE>Fuzzer tab</TITLE>
 </HEAD>
 <BODY BGCOLOR="#ffffff">
 	<H1>Fuzzer tab</H1>
 
 	The Fuzzer tab shows you the requests and responses performed when you
-	<a href="../../start/concepts/fuzz.html">fuzz</a> a string.
+	<a href="concepts.html">fuzz</a> a string.
 	<br> Selecting a row see the full requests and responses. You can also search for
-	strings in the fuzz results using the
-	<a href="search.html">Search tab</a>.
+	strings in the fuzz results using the Search tab.
 	<br>
 	<H2>HTTP Fuzzer results</H2>
 	The results have to be manually assessed to know if any vulnerability was found.
 	<br> Meaning of values of the "State" column:
 	<ul>
-		<li>"Successful" - the message was successfully sent/received;</li>
 		<li>"Error" - an error occurred while creating or sending/receiving the message
-			(for example: malformed HTTP message, time out while reading the response);</li>
+			(for example: malformed HTTP message, time out while reading the response)</li>
 		<li>"Reflected" - the injected fuzz string (value of "Fuzz" column) was found in
 			the response body.</li>
 	</ul>
+	If this field is blank then it means that the message was successfully sent/received and the injected string was not detected in the response.<br>
 
 	<H2>Right click menu</H2>
-	Right clicking on a row will bring up a menu which will allow you to:
-
-	<H3>Exclude from</H3>
-	This menu has the following submenus:
-
-	<H4>Proxy</H4>
-	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
-	but will not be shown in any of the tabs.
-	<br /> This can be used to ignore URLs that you know are not relevant to the system you
-	are currently testing.
-	<br /> The nodes can be included again via the
-	<a href="../dialogs/session/sessprop.html">Session Properties</a> dialog
-
-	<H4>Scanner</H4>
-	This will prevent the selected nodes from being actively scanned.
-	<br /> The nodes can be included again via the
-	<a href="../dialogs/session/sessprop.html">Session Properties</a> dialog
-
-	<H4>Spider</H4>
-	This will prevent the selected nodes from being spidered.
-	<br /> The nodes can be included again via the
-	<a href="../dialogs/session/sessprop.html">Session Properties</a> dialog
-
-	<H3>Resend...</H3>
-	This will bring up the
-	<a href="../dialogs/resend.html">Resend dialog</a> which allows you to resend the request
-	after making any changes to it that you want to.
-
-	<H3>New Alert...</H3>
-	This will bring up the
-	<a href="../dialogs/addalert.html">Add Alert dialog</a> which allows you to manually
-	record a new
-	<a href="../../start/concepts/alerts.html">alert</a> against this request.
-
-	<H3>Open URL in Browser</H3>
-	This will open the URL of the selected node in your default browser.
+	Right clicking on a row will bring up a menu which has the same options as the History tab.
 
 	<H2>See also</H2>
 	<table>
-		<tr>
-			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="../overview.html">UI Overview</a></td>
-			<td>for an overview of the user interface</td>
-		</tr>
-		<tr>
-			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="../dialogs/options/fuzz.html">Options Fuzz screen</a></td>
-			<td>for details of the fuzz configuration</td>
-		</tr>
-
+		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
 	</table>
 
 </BODY>

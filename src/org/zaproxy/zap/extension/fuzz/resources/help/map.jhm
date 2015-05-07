@@ -5,9 +5,11 @@
 
 <map version="1.0">
 	<mapID target="addon.fuzzer.icon" url="contents/images/fuzzer.png" />
-
     <mapID target="addon.fuzzer.concepts" url="contents/concepts.html" />
+    <mapID target="addon.fuzzer.dialogue" url="contents/dialogue.html" />
+    <mapID target="addon.fuzzer.locations" url="contents/locations.html" />
+    <mapID target="addon.fuzzer.payloads" url="contents/payloads.html" />
+    <mapID target="addon.fuzzer.processors" url="contents/processors.html" />
     <mapID target="addon.fuzzer.options" url="contents/options.html" />
     <mapID target="addon.fuzzer.tab" url="contents/tab.html" />
-    <mapID target="addon.fuzzer.dialogue" url="contents/dialogue.html" />
 </map>
