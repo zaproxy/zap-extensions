@@ -8,7 +8,7 @@ If you are using the latest version of ZAP  then you can browse and download add
 
 You can also import add-ons you have downloaded manually via the "File / Load Add-on file..." menu option.
 
-This project also contains [example templates](Examples) to help you get started when developing new ZAP extensions.
+This project also contains [example templates](wiki/Examples) to help you get started when developing new ZAP extensions.
 
 For a summary of the ways you can extend ZAP see https://code.google.com/p/zaproxy/wiki/DevExtending
 
