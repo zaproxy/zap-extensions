@@ -10,7 +10,8 @@
     Fix the help button in the Fuzzer dialogue and broken link in Fuzzer dialogue help page.<br>
     Properly load the 'Fuzzer HTTP Processor' templates.<br>
     Keep focus on results table, even if there's a payload reflection in the response (Issue 1442).<br>
-    Update POST request's Content-Length by default.
+    Update POST request's Content-Length by default.<br>
+    Remove status icon when uninstalling.
     ]]>
     </changes>
     <extensions>

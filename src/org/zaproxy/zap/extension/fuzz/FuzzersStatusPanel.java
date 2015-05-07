@@ -152,6 +152,12 @@ public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController>
         return fuzzerListener;
     }
 
+    // Overridden to expose the method to ExtensionFuzz
+    @Override
+    protected void unload() {
+        super.unload();
+    }
+
     private class FuzzerListenerImpl implements FuzzerProgressListener {
 
         @Override

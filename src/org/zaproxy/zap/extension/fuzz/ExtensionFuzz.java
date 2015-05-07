@@ -307,6 +307,10 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     public void unload() {
         super.unload();
 
+        if (fuzzScansPanel != null) {
+            fuzzScansPanel.unload();
+        }
+
         ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
 
         if (extensionScript != null) {
