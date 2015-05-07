@@ -38,6 +38,6 @@ function processResult(utils, fuzzResult){
 	if (condition)
 		fuzzResult.addCustomState("Key Custom State", "Message Contains X")
 	
-	// Returns true to accept the result, false to discard and not shown it
+	// Returns true to accept the result, false to discard and not show it
 	return true;
 }

@@ -37,7 +37,7 @@ public interface HttpFuzzerProcessorScript {
     /**
      * The name used to identify the type of this script, for example, in configurations.
      */
-    final static String TYPE_NAME = "fuzz.httpfuzzerprocessor";
+    final static String TYPE_NAME = "httpfuzzerprocessor";
 
     /**
      * Processes the fuzzed message before being forward to the server.

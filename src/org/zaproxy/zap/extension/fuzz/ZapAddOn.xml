@@ -7,7 +7,8 @@
     <url>https://code.google.com/p/zap-extensions/</url>
     <changes>
     <![CDATA[
-    Fix the help button in the Fuzzer dialogue and broken link in Fuzzer dialogue help page.
+    Fix the help button in the Fuzzer dialogue and broken link in Fuzzer dialogue help page.<br>
+    Properly load the 'Fuzzer HTTP Processor' templates.
     ]]>
     </changes>
     <extensions>
@@ -16,7 +17,7 @@
     </extensions>
     <filters/>
     <files>
-        <file>scripts/templates/httpfuzzerprocessor/HTTP Fuzzer Processor default template.js</file>
+        <file>scripts/templates/httpfuzzerprocessor/Fuzzer HTTP Processor default template.js</file>
         <file>scripts/templates/payloadgenerator/Payload Generator default template.js</file>
         <file>scripts/templates/payloadprocessor/Payload Processor default template.js</file>
     </files>
