@@ -123,6 +123,7 @@ public class HttpFuzzerResultsTable extends HistoryReferencesTable {
                             View.getSingleton().getResponsePanel().highlightBody(sm);
                         }
                     }
+                    HttpFuzzerResultsTable.this.requestFocusInWindow();
 
                 } catch (HttpMalformedHeaderException | DatabaseException e) {
                     LOGGER.error(e.getMessage(), e);
