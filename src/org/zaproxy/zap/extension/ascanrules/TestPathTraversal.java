@@ -41,13 +41,13 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class TestPathTraversal extends AbstractAppParamPlugin {
 
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
-	private static final String MESSAGE_PREFIX = "ascanrules.testpathtraversal.";
-	
+    /**
+     * Prefix for internationalised messages used by this rule
+     */
+    private static final String MESSAGE_PREFIX = "ascanrules.testpathtraversal.";
+
     private static final String NON_EXISTANT_FILENAME = "thishouldnotexistandhopefullyitwillnot";
-    
+
     /**
      * the various (prioritised) prefixes to try, for each of the local file
      * targets below
@@ -85,24 +85,24 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         // If host is omitted, it is taken to be "localhost", the machine from 
         // which the URL is being interpreted. Note that when omitting host you 
         // do not omit the slash
-        "file:///",         //*nix
-        "file:///c:\\",     //Windows
-        "file:///c:/",      //Windows
-        "file:///d:\\",     //Windows
-        "file:///d:/",      //Windows
+        "file:///", //*nix
+        "file:///c:\\", //Windows
+        "file:///c:/", //Windows
+        "file:///d:\\", //Windows
+        "file:///d:/", //Windows
         // Useful when the application filters out the / char
-        "file:\\\\\\",      //*nix
-        "file:\\\\\\c:\\",  //Windows
-        "file:\\\\\\c:/",   //Windows
-        "file:\\\\\\d:\\",  //Windows
-        "file:\\\\\\d:/",   //Windows
+        "file:\\\\\\", //*nix
+        "file:\\\\\\c:\\", //Windows
+        "file:\\\\\\c:/", //Windows
+        "file:\\\\\\d:\\", //Windows
+        "file:\\\\\\d:/", //Windows
         // Evasions temptatives: we use only C:\\ to avoid too much of them
-        "fiLe:///",         //*nix
-        "FILE:///",         //*nix
-        "fiLe:///c:\\",     //Windows
-        "FILE:///c:\\",     //Windows
-        "fiLe:///c:/",      //Windows
-        "FILE:///c:/",      //Windows
+        "fiLe:///", //*nix
+        "FILE:///", //*nix
+        "fiLe:///c:\\", //Windows
+        "FILE:///c:\\", //Windows
+        "fiLe:///c:/", //Windows
+        "FILE:///c:/", //Windows
         // Colm please check these ones on *Nix because seems not working on Windows...
         //"file://",
         //"fiLe://",
@@ -119,18 +119,18 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         "file:\\\\\\E:\\",
         "file:\\\\\\E:/"
         // Other LFI ideas (for future expansions)
-	///../../../../../../../../%2A
-	///..\../..\../..\../..\../..\../..\../etc/passwd
-	//.\\./.\\./.\\./.\\./.\\./.\\./etc/passwd
-	//%00/etc/passwd%00
-	//%00../../../../../../etc/passwd
-	///..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../etc/passwd
-	//..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../boot.ini
-	///%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
-	///%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/boot.ini
-	//%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..% 25%5c..%25%5c..%255cboot.ini
+    ///../../../../../../../../%2A
+    ///..\../..\../..\../..\../..\../..\../etc/passwd
+    //.\\./.\\./.\\./.\\./.\\./.\\./etc/passwd
+    //%00/etc/passwd%00
+    //%00../../../../../../etc/passwd
+    ///..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../etc/passwd
+    //..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../..%c0%af../boot.ini
+    ///%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd
+    ///%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/boot.ini
+    //%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..%25%5c..% 25%5c..%25%5c..%255cboot.ini
     };
-    
+
     /**
      * the various (prioritised) local file targets to look for (prefixed by the
      * prefixes above)
@@ -142,10 +142,11 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     private static final Pattern WAR_PATTERN = Pattern.compile("</web-app>");
     //
     //private static final Pattern DIR_PATTERN = Pattern.compile("(?s)((?=.*Windows)(?=.*Program\\sFiles).*)|((?=.*etc)(?=.*bin)(?=.*boot).*)");
-   
+
     // Set in this way we avoid to build Pattern objects for every iteration
     private static final Map<String, Pattern> LOCAL_FILE_TARGETS_AND_PATTERNS = new HashMap<String, Pattern>();
-    static {       
+
+    static {
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("etc/passwd", NIX_PATTERN);	///etc/passwd%00 ///etc/passwd^^ //etc/passwd%00.jpg
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("Windows\\system.ini", WIN_PATTERN);
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("WEB-INF/web.xml", WAR_PATTERN);
@@ -153,15 +154,15 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("Windows/system.ini", WIN_PATTERN);
         LOCAL_FILE_TARGETS_AND_PATTERNS.put("WEB-INF\\web.xml", WAR_PATTERN);
 	//C:/inetpub/wwwroot/global.asa
-	//C:\inetpub\wwwroot\global.asa
-	//LOCAL_FILE_TARGETS_AND_PATTERNS.put("", DIR_PATTERN);
+        //C:\inetpub\wwwroot\global.asa
+        //LOCAL_FILE_TARGETS_AND_PATTERNS.put("", DIR_PATTERN);
     }
-    
+
     /**
      * details of the vulnerability which we are attempting to find
      */
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
-    
+
     /**
      * the logger object
      */
@@ -169,6 +170,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 
     /**
      * returns the plugin id
+     *
      * @return the id of the plugin
      */
     @Override
@@ -178,6 +180,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 
     /**
      * returns the name of the plugin
+     *
      * @return the name of the plugin
      */
     @Override
@@ -223,7 +226,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             }
             return sb.toString();
         }
-        
+
         return "Failed to load vulnerability reference from file";
     }
 
@@ -233,6 +236,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 
     /**
      * scans all GET and POST parameters for Path Traversal vulnerabilities
+     *
      * @param msg
      * @param param
      * @param value
@@ -252,7 +256,6 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 
             //DEBUG only
             //this.setAttackStrength(AttackStrength.INSANE);
-
             if (log.isDebugEnabled()) {
                 log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
             }
@@ -264,28 +267,28 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.size() / 2;
                     prefixCountOurUrl = 0;
                     break;
-                    
+
                 case MEDIUM:
                     // This works out as a total of 24 reqs / param
                     prefixCount = 8; // changed to 8 to add also all .. directory traversals
                     targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.size() / 2;
                     prefixCountOurUrl = 0;
                     break;
-                    
+
                 case HIGH:
                     // This works out as a total of 69 reqs / param
                     prefixCount = 23; // changed to 23 to add also all extended traversals
                     targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.size() / 2;
                     prefixCountOurUrl = 1;
                     break;
-                    
+
                 case INSANE:
                     // This works out as a total of 270(!) reqs / param
                     prefixCount = LOCAL_FILE_TARGET_PREFIXES.length;
                     targetCount = LOCAL_FILE_TARGETS_AND_PATTERNS.size();
                     prefixCountOurUrl = LOCAL_FILE_TARGET_PREFIXES.length;
                     break;
-                    
+
                 default:
                 // Default to off
             }
@@ -300,10 +303,10 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             //for each local prefix in turn
             //note that depending on the AttackLevel, the number of prefixes that we will try changes.
             for (int h = 0; h < prefixCount; h++) {
-                
+
                 String prefix = LOCAL_FILE_TARGET_PREFIXES[h];
                 Iterator<String> it = LOCAL_FILE_TARGETS_AND_PATTERNS.keySet().iterator();
-                
+
                 //for each target in turn
                 //note: regardless of the specified Attack Strength, we want to try all files name here 
                 //(just for a limited number of prefixes)
@@ -321,31 +324,31 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 
                     //send the modified request, and see what we get back
                     sendAndReceive(msg);
-                    
+
                     //does it match the pattern specified for that file name?
                     String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
                     matcher = LOCAL_FILE_TARGETS_AND_PATTERNS.get(target).matcher(response);
-                    
+
                     //if the output matches, and we get a 200
                     if (matcher.find() && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
                         bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
                                 null, param,
                                 matcher.group(), null, msg);
-                        
+
                         // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact)
                         return;
                     }
-                    
+
                     // Check if the scan has been stopped
                     // if yes dispose resources and exit
                     if (isStop()) {
                         // Dispose all resources
                         // Exit the plugin
                         return;
-                    }                    
+                    }
                 }
             }
-            
+
             //Check 2: try a local file Path Traversal on the file name of the URL (which obviously will not be in the target list above).
             //first send a query for a random parameter value, and see if we get a 200 back
             //if 200 is returned, abort this check (on the url filename itself), because it would be unreliable.
@@ -353,7 +356,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             //this logic is all about avoiding false positives, while still attempting to match on actual vulnerabilities
             msg = getNewMsg();
             setParameter(msg, param, NON_EXISTANT_FILENAME);
-            
+
             //send the modified message (with a hopefully non-existent filename), and see what we get back
             sendAndReceive(msg);
 
@@ -366,21 +369,21 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK
                     || exceptionMatcher.find()
                     || errorMatcher.find()) {
-                
+
                 if (log.isDebugEnabled()) {
                     log.debug("It IS possible to check for local file Path Traversal on the url filename on ["
                             + msg.getRequestHeader().getMethod() + "] [" + msg.getRequestHeader().getURI() + "], [" + param + "]");
                 }
-                
+
                 String urlfilename = msg.getRequestHeader().getURI().getName();
 
                 //for the url filename, try each of the prefixes in turn
                 for (int h = 0; h < prefixCountOurUrl; h++) {
-                    
+
                     String prefixedUrlfilename = LOCAL_FILE_TARGET_PREFIXES[h] + urlfilename;
                     msg = getNewMsg();
                     setParameter(msg, param, prefixedUrlfilename);
-                    
+
                     //send the modified message (with the url filename), and see what we get back
                     sendAndReceive(msg);
 
@@ -391,26 +394,25 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK
                             && (!exceptionMatcher.find())
                             && (!errorMatcher.find())) {
-                        
+
                         //if it returns OK, and the random string above did NOT return ok, then raise an alert
                         //since the filename has likely been picked up and used as a file name from the parameter
                         bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
                                 null, param, prefixedUrlfilename, null, msg);
-                        
+
                         // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact)
                         return;
                     }
-                    
+
                     // Check if the scan has been stopped
                     // if yes dispose resources and exit
                     if (isStop()) {
                         // Dispose all resources
                         // Exit the plugin
                         return;
-                    }                    
+                    }
                 }
             }
-
 
             //Check 3 for local file names
             //TODO: consider making this check 1, for performance reasons
@@ -421,7 +423,6 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             //this is nice because it means we do not have to guess any file names, and would only require one
             //request to find the vulnerability 
             //but it would be foiled by simple input validation on "..", for instance.
-
         } catch (IOException e) {
             log.warn("Error scanning parameters for Path Traversal: " + e.getMessage(), e);
         }
