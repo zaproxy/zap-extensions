@@ -99,6 +99,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.ScriptStringPayload
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.TrimStringProcessorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.URLDecodeProcessorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.URLEncodeProcessorUIHandler;
+import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
@@ -298,8 +299,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
 
             extensionHook.addSessionListener(new FuzzerSessionListener());
 
-            // TODO move help page to a new location
-            // ExtensionHelp.enableHelpKey(fuzzScansPanel, "ui.tabs.fuzz");
+            ExtensionHelp.enableHelpKey(fuzzScansPanel, "addon.fuzzer.tab");
         }
     }
 

@@ -434,8 +434,7 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
 
     @Override
     public String getHelpIndex() {
-        // TODO relocate
-        return null;// "ui.dialogs.options.fuzz";
+        return "addon.fuzzer.options";
     }
 
     public static interface CustomFileFuzzerAddedListener {
