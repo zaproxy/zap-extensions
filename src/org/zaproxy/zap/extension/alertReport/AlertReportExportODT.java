@@ -364,6 +364,16 @@ public class AlertReportExportODT {
 				para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 				addLines(outputDocument, 1);
 			}
+			if (alertAux.getEvidence() != null && !alertAux.getEvidence().isEmpty()) {
+				para = outputDocument.addParagraph(extension.getMessages().getString(
+						"alertreport.export.message.export.pdf.evidence"));
+				para.setFont(fontTitleBold);
+				para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
+				para = outputDocument.addParagraph(alertAux.getEvidence());
+				para.setFont(fontText);
+				para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
+				addLines(outputDocument, 1);
+			}
 			// add images test
 			addLines(outputDocument, 1);
 			String images = alertAux.getOtherInfo();

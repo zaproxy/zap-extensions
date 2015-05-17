@@ -6,7 +6,8 @@
 	<url>http://www.talsoft.com.ar</url>
 	<changes>
 	<![CDATA[
-	Fix an exception while generating the report (Issue 1612).
+	Fix an exception while generating the report (Issue 1612).<br>
+	Include Alert's evidence in report of ODT format.
 	]]>
 	</changes>
 	<extensions>
