@@ -455,7 +455,7 @@
 	</target>
 		
 	<target name="generate-wiki-tips" description="Generates the wiki of tips">
-		<generate-wiki addon="tips" />
+		<generate-wiki-core addon="tips" />
 	</target>
 
 	<target name="deploy-tokengen" depends="clean,compile" description="deploy the tokengen extension">
