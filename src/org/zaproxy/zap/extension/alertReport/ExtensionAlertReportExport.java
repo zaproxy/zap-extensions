@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.Logger;
@@ -40,6 +39,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.view.ZapMenuItem;
 
 
 
@@ -56,7 +56,7 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
 	public static final String NAME = "ExtensionAlertReportExports";
 	private AlertReportExportMenuItem alertReportExportMenuItem = null;
 	private OptionsAlertReportExportPanel optionsAlertExportPanel = null;
-	private JMenuItem menuItemAlertExport = null;
+	private ZapMenuItem menuItemAlertExport = null;
 	private AlertReportExportParam params;
 	private List<Alert> alertsDB = null;
 	private static final Logger logger = Logger.getLogger(ExtensionAlertReportExport.class);
@@ -106,10 +106,9 @@ public class ExtensionAlertReportExport extends ExtensionAdaptor  {
     	return true;
     }
 
-	private JMenuItem getMenuItemAlertReport() {
+	private ZapMenuItem getMenuItemAlertReport() {
 		if (menuItemAlertExport == null) {
-			menuItemAlertExport = new JMenuItem();
-			menuItemAlertExport.setText(this.getMessages().getString("alertreport.export.menu.report.generate"));
+			menuItemAlertExport = new ZapMenuItem("alertreport.export.menu.report.generate");
 			menuItemAlertExport.addActionListener(new java.awt.event.ActionListener() { 
 
 				@Override

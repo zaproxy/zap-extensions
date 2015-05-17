@@ -506,7 +506,7 @@ public class AlertReportExportPDF {
 		textInsertionPoint = addText (alertTextFormatting, " ", textInsertionPoint);
 
 		textInsertionPoint = addText (alertLabelFormatting, labelReliability, textInsertionPoint);
-		textInsertionPoint = addText (alertTextFormatting, getFieldAlertProperty(alert.getPluginId(),"reliability." + String.valueOf(alert.getReliability()),Alert.MSG_RELIABILITY[alert.getReliability()], extensionExport),textInsertionPoint);
+		textInsertionPoint = addText (alertTextFormatting, getFieldAlertProperty(alert.getPluginId(),"reliability." + String.valueOf(alert.getConfidence()),Alert.MSG_CONFIDENCE[alert.getConfidence()], extensionExport),textInsertionPoint);
 		textInsertionPoint = addText (alertTextFormatting, " ", textInsertionPoint);
 		
 		textInsertionPoint = addText (alertLabelFormatting, labelURLs, textInsertionPoint);

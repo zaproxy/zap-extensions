@@ -449,7 +449,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
     	
     	OptionsParam options = (OptionsParam) obj;
 		
-		AlertReportExportParam param = (AlertReportExportParam) options.getParamSet(AlertReportExportParam.class);
+		AlertReportExportParam param = options.getParamSet(AlertReportExportParam.class);
 		if (param!=null){
 			if (getComboLevel().getSelectedItem().toString().equals("PDF")&&(!getEditAttachDoc().getText().isEmpty())&&(!getEditAttachDoc().getText().contains(".pdf"))){
 				throw new Exception(getMessageString("alertreport.export.message.export.option.distintformat"));
@@ -464,7 +464,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
     public void saveParam(Object obj) throws Exception {
     	OptionsParam options = (OptionsParam) obj;
 		
-		AlertReportExportParam param = (AlertReportExportParam) options.getParamSet(AlertReportExportParam.class);
+		AlertReportExportParam param = options.getParamSet(AlertReportExportParam.class);
 		if (param!=null){
 			param.setTitleReport(getEditTitleReport().getText());
 			param.setLogoFileName(getEditLogoFileName().getText());
@@ -489,7 +489,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 	public void initParam(Object obj) {
 		OptionsParam options = (OptionsParam) obj;
 		
-		AlertReportExportParam param = (AlertReportExportParam) options.getParamSet(AlertReportExportParam.class);
+		AlertReportExportParam param = options.getParamSet(AlertReportExportParam.class);
 		if (param!=null){
 			getEditTitleReport().setText(param.getTitleReport());
 			getEditLogoFileName().setText(param.getLogoFileName());

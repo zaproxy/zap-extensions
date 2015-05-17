@@ -323,8 +323,8 @@ public class AlertReportExportODT {
 		// add reability
 		para = outputDocument.addParagraph(getFieldAlertProperty(
 				alert.getPluginId(),
-				"reliability." + String.valueOf(alert.getReliability()),
-				Alert.MSG_RELIABILITY[alert.getReliability()], extension));
+				"reliability." + String.valueOf(alert.getConfidence()),
+				Alert.MSG_CONFIDENCE[alert.getConfidence()], extension));
 		para.setFont(fontText);
 		para.setHorizontalAlignment(HorizontalAlignmentType.JUSTIFY);
 		addLines(outputDocument, 1);
