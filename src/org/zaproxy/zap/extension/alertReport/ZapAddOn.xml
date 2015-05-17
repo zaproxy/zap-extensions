@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Report alert generator</name>
-	<version>13</version>
+	<version>14</version>
 	<description>Allows you to generate reports for alerts you specify in pdf or odt format</description>
 	<author>Talsoft SRL</author>
 	<url>http://www.talsoft.com.ar</url>
 	<changes>
 	<![CDATA[
-	Restore generation of report (Issue 1606).
+	Fix an exception while generating the report (Issue 1612).
 	]]>
 	</changes>
 	<extensions>

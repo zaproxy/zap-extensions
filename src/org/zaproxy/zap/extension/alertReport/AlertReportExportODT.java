@@ -353,7 +353,7 @@ public class AlertReportExportODT {
 				para.setHorizontalAlignment(HorizontalAlignmentType.LEFT);
 				addLines(outputDocument, 1);
 			}
-			if (!alertAux.getAttack().isEmpty()) {
+			if (alertAux.getAttack() != null && !alertAux.getAttack().isEmpty()) {
 				para = outputDocument
 						.addParagraph(extension
 								.getMessages().getString("alertreport.export.message.export.pdf.attack"));

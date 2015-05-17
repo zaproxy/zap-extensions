@@ -523,10 +523,10 @@ public class AlertReportExportPDF {
 			if (!alertAux.getParam().isEmpty()) {
 				textInsertionPoint = addText (alertTextFormatting, labelParameter+ ": " + alertAux.getParam(),textInsertionPoint);
 			}
-			if (!alertAux.getAttack().isEmpty()) {
+			if (alertAux.getAttack() != null && !alertAux.getAttack().isEmpty()) {
 				textInsertionPoint = addText (alertTextFormatting, labelAttack + ": "+ alertAux.getAttack() ,textInsertionPoint); 
 			}
-			if (!alertAux.getEvidence().isEmpty()) {
+			if (alertAux.getEvidence() != null && !alertAux.getEvidence().isEmpty()) {
 				textInsertionPoint = addText (alertTextFormatting, labelEvidence + ": "+ alertAux.getEvidence() ,textInsertionPoint); 
 			}
 			if (!alertAux.getOtherInfo().isEmpty()) {
