@@ -240,6 +240,10 @@
 		<build-addon name="browserView" />
 		<build-addon name="callgraph" />
 		<build-addon name="cmss" />
+		<build-addon name="help_bs_BA" />
+		<build-addon name="help_es_ES" />
+		<build-addon name="help_fr_FR" />
+		<build-addon name="help_ja_JP" />
 		<build-addon name="highlighter" />
 		<build-addon name="httpsInfo" />
 		<build-addon name="importLogFiles" />
