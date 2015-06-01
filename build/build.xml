@@ -305,6 +305,14 @@
 		<generate-wiki-core addon="ascanrules" />
 	</target>
 
+	<target name="deploy-coreLang" description="deploy the  add-on">
+		<build-deploy-addon name="coreLang" />
+	</target>
+
+	<target name="generate-wiki-coreLang" description="Generates the wiki for the add-on">
+		<generate-wiki-core addon="coreLang" />
+	</target>
+
 	<target name="deploy-directorylistv1" description="deploys Directory List v1.0 add-on">
 		<build-deploy-addon name="directorylistv1" />
 	</target>
