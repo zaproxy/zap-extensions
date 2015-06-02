@@ -25,8 +25,10 @@ import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
@@ -489,27 +491,7 @@ public class ScriptsListPanel extends AbstractPanel {
 				public void mouseClicked(java.awt.event.MouseEvent e) {
 					// right mouse button action
 				    if (SwingUtilities.isRightMouseButton(e)) {
-						// Select site list item on right click
-				    	TreePath tp = tree.getPathForLocation( e.getPoint().x, e.getPoint().y );
-				    	if ( tp != null ) {
-				    		boolean select = true;
-				    		// Only select a new item if the current item is not
-				    		// already selected - this is to allow multiple items
-				    		// to be selected
-					    	if (tree.getSelectionPaths() != null) {
-					    		for (TreePath t : tree.getSelectionPaths()) {
-					    			if (t.equals(tp)) {
-					    				select = false;
-					    				break;
-					    			}
-					    		}
-					    	}
-					    	if (select) {
-					    		tree.getSelectionModel().setSelectionPath(tp);
-					    	}
-				    	}
-				        View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
-
+				    	showPopupMenu(e.getPoint().x, e.getPoint().y );
 				    }
 				    
 				    if (e.getClickCount() > 1) {
@@ -541,8 +523,47 @@ public class ScriptsListPanel extends AbstractPanel {
 					selectionChanged();
 				}
 			});
+			tree.addKeyListener(new KeyListener(){
+				@Override
+				public void keyTyped(KeyEvent e) {
+				}
+
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU) {
+						Rectangle rec = tree.getUI().getPathBounds(tree, tree.getSelectionPath());
+						showPopupMenu(rec.x, rec.y);
+					}
+				}
+
+				@Override
+				public void keyReleased(KeyEvent e) {
+				}});
 		}
 		return tree;
+	}
+	
+	private void showPopupMenu (int x, int y) {
+		// Select site list item on right click
+    	TreePath tp = tree.getPathForLocation(x, y);
+    	if ( tp != null ) {
+    		boolean select = true;
+    		// Only select a new item if the current item is not
+    		// already selected - this is to allow multiple items
+    		// to be selected
+	    	if (tree.getSelectionPaths() != null) {
+	    		for (TreePath t : tree.getSelectionPaths()) {
+	    			if (t.equals(tp)) {
+	    				select = false;
+	    				break;
+	    			}
+	    		}
+	    	}
+	    	if (select) {
+	    		tree.getSelectionModel().setSelectionPath(tp);
+	    	}
+    	}
+        View.getSingleton().getPopupMenu().show(tree, x, y);
 	}
 	
 	private void selectionChanged() {
