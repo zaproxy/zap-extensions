@@ -37,13 +37,13 @@ import org.zaproxy.zap.view.ZapMenuItem;
  */
 public class ExtensionOnlineMenu extends ExtensionAdaptor {
 
-    public static final String ZAP_HOMEPAGE				= "http://www.owasp.org/index.php/ZAP";
-    public static final String ZAP_EXTENSIONS_PAGE		= "https://code.google.com/p/zap-extensions/";
-    public static final String ZAP_DOWNLOADS_PAGE		= "https://code.google.com/p/zaproxy/downloads/list";
-    public static final String ZAP_WIKI_PAGE			= "https://code.google.com/p/zaproxy/wiki/Introduction";
-    public static final String ZAP_USER_GROUP_PAGE		= "http://groups.google.com/group/zaproxy-users";
-    public static final String ZAP_DEV_GROUP_PAGE		= "http://groups.google.com/group/zaproxy-develop";
-    public static final String ZAP_ISSUES_PAGE			= "https://code.google.com/p/zaproxy/issues/list";
+    public static final String ZAP_HOMEPAGE				= "https://www.owasp.org/index.php/ZAP";
+    public static final String ZAP_EXTENSIONS_PAGE		= "https://github.com/zaproxy/zap-extensions";
+    public static final String ZAP_DOWNLOADS_PAGE		= "https://github.com/zaproxy/zaproxy/wiki/Downloads";
+    public static final String ZAP_WIKI_PAGE			= "https://github.com/zaproxy/zaproxy/wiki";
+    public static final String ZAP_USER_GROUP_PAGE		= "https://groups.google.com/group/zaproxy-users";
+    public static final String ZAP_DEV_GROUP_PAGE		= "https://groups.google.com/group/zaproxy-develop";
+    public static final String ZAP_ISSUES_PAGE			= "https://github.com/zaproxy/zaproxy/issues";
 
 	// The name is public so that other extensions can access it
 	public static final String NAME = "ExtensionOnlineMenu";
