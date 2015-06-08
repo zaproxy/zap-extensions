@@ -7,26 +7,11 @@ Active Scan Rules - beta
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Active Scan Rules - beta</h1>
-The following beta quality active scan rules are included in this add-on:
+<h1>Regras de Varredura Ativa - beta</h1> Foram incluídas neste complemento as seguintes regras de varredura ativa de qualidade beta: <h2>Exposição de arquivos de Backup</h2> verifica a existência de cópias backup de arquivos no servidor web com os nomes mais usados, o que pode revelar informações confidenciais<h2>Configuração incorreta de Cross-Domain/Domínio Cruzado</h2>Verifica se o servidor web está configurado para permitir acesso Cross Domain, a um serviço mal-intencionado, por exemplo. Atualmente checa se há caracteres curinga no crossdomain.xml da Adobe e em clientaccesspolicy.xml do SilverLight. 
 
-<h2>Backup File Disclosure</h2>
-Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information
+<h2>Token de CSRF</h2>  <h2>Vulnerabilidade do Heartbleed OpenSSL</h2> Detecta se o servidor web é vulnerável ao OpenSSL Heartbleed.
 
-<h2>Cross-Domain Misconfiguration</h2>
-Checks if the web server is configured to allow Cross Domain access, from a malicious
-third party service, for instance. Currently checks for wildcards in Adobe's crossdomain.xml, and in
-SilverLight's clientaccesspolicy.xml. 
-
-<h2>CSRF Token</h2>
-
-<h2>Heartbleed OpenSSL Vulnerability</h2>
-Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability, by exploiting it.
-
-<h2>HPP</h2>
-
-<h2>Insecure HTTP Method</h2>
-Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL.
+<h2>HPP</h2>  <h2>Método de HTTP inseguro</h2> Detecta (e explora, dependendo das configurações de varredura) conhecidos métodos de HTTP inseguros, habilitados para a URL.
 
 <h2>LDAP Injection</h2>
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
