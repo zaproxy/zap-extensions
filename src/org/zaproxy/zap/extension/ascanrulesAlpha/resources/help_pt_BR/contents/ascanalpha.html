@@ -2,39 +2,19 @@
 <html>
 <head>
 <title>
-Active Scan Rules - alpha
+Regras de varredura Ativa - alfa
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Active Scan Rules - alpha</h1>
-The following alpha quality active scan rules are included in this add-on:
+<h1>Regras de Varredura Ativ - alfa</h1> Este complemento traz as seguintes regras de varredura ativa em qualidade alfa: <h2>Buffer Overflow</h2> procura por indícios de estouro de pilha (buffer overflow) no código.  Isso é feito com o lançamento de grandes seqüências de caracteres de texto de entrada e busca por código de crash e encerramento anormal da sessão.
 
-<h2>Buffer Overflow</h2>
-Looks for indicators of buffer overflows in complied code.  It does this by putting out large strings of input text and look for code crash
-and abnormal session closure.
+<h2>Detector de cookie inútil</h2> Testa cookies para detectar se alguns não têm nenhum efeito no tamanho da resposta quando omitidos, especialmente os que contém o nome "sessão" ou "userid" <h2>Exemplo de arquivo de varredura ativo</h2> Esta regra implementa um exemplo de varredura ativa que carrega strings de um arquivo que o usuário pode editar. <br>Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html <h2>Exemplo de Varredura ativa simples</h2> Isso implementa um exemplo de regra de varredura muito simples. <br>Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html <h2>Injeção de linguagem de expressão</h2> O software constrói todo ou parte de uma instrução de linguagem de expressão (EL) em uma página de servidor de Java (JSP); para isso usa uma entrada vinda de um componente upstream, mas não neutraliza elementos especiais que poderiam modificar a instrução EL antes que seja executada. Em certas versões do Spring 3.0.5 e anteriormente, houve uma vulnerabilidade (CVE-2011-2730) na qual tags de EL podiam ser avaliadas duas vezes, que expunha qualquer aplicação a uma EL injection. No entanto, mesmo para versões posteriores, esta vulnerabilidade é ainda possível, dependendo da configuração.
 
-<h2>Cookie Slack Detector</h2>
-Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid"
+<h2>Exibição de código fonte - Inclusão de arquivo</h2> Utiliza técnicas de inclusão de arquivo para procurar por arquivos contendo código-fonte no servidor web.
 
-<h2>Example File Active Scanner</h2>
-This implements an example active scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+<h2>Exibição de código fonte - Git</h2> Usa os metadados do repositório de código fonte Git para buscar arquivos contendo código-fonte no servidor web.
 
-<h2>Example Simple Active Scanner</h2>
-This implements a very simple example active scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
-
-<h2>Expression Language Injection</h2>
-The software constructs all or part of an expression language (EL) statement in a Java Server Page (JSP) using externally-influenced input from an upstream component, but it does not neutralize or incorrectly neutralizes special elements that could modify the intended EL statement before it is executed. In certain versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) in which Expression Language tags would be evaluated twice, which effectively exposed any application to EL injection. However, even for later versions, this weakness is still possible depending on configuration.
-
-<h2>Source Code Disclosure - File Inclusion</h2>
-Uses local file inclusion techniques to scan for files containing source code on the web server.
-
-<h2>Source Code Disclosure - Git</h2>
-Uses Git source code repository metadata to scan for files containing source code on the web server.
-
-<h2>HTTPS As HTTP Scanner</h2>
-This active scanner attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
+<h2>HTTPS como scanner HTTP</h2> Esta varredura ativa tenta acessar via HTTP conteúdo que originalmente foi acessado via HTTPS (SSL/TLS).
 
 </body>
 </html>
