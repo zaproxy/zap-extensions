@@ -284,7 +284,6 @@
 		<build-addon name="invoke" />
 		<build-addon name="jruby" />
 		<build-addon name="jython" />
-		<build-addon name="onlineMenu" />
 		<build-addon name="plugnhack" />
 		<build-addon name="portscan" />
 		<build-addon name="pscanrulesBeta" />
@@ -411,14 +410,6 @@
 		<generate-wiki addon="jython" />
 	</target>
 
-  	<target name="deploy-onlineMenu" description="deploy the onlineMenu extension">
-		<build-deploy-addon name="onlineMenu" />
-	</target>
-
-	<target name="generate-wiki-onlineMenu" description="Generates the wiki of onlineMenu">
-		<generate-wiki-core addon="onlineMenu" />
-	</target>
-	
   	<target name="deploy-plugnhack" description="deploy the plug-n-hack extension">
 		<build-deploy-addon name="plugnhack" />
 	</target>
@@ -491,7 +482,6 @@
 				<include name="diff-${status}-*.zap"/>
 				<include name="fuzz-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
-				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="portscan-${status}-*.zap"/>
 				<include name="pscanrulesBeta-${status}-*.zap"/>
@@ -507,7 +497,6 @@
 				<include name="diff-${status}-*.zap"/>
 				<include name="fuzz-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
-				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="portscan-${status}-*.zap"/>
 				<include name="pscanrulesBeta-${status}-*.zap"/>
@@ -528,7 +517,6 @@
 				<include name="diff-${status}-*.zap"/>
 				<include name="fuzz-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
-				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="tips-${status}-*.zap"/>
@@ -541,7 +529,6 @@
 				<include name="diff-${status}-*.zap"/>
 				<include name="fuzz-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
-				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="tips-${status}-*.zap"/>
