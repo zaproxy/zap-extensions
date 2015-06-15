@@ -3,78 +3,55 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Bean Shell Console
+Console BeanShell
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Bean Shell Console</h1>
+<h1>Console BeanShell</h1>
 <p>
-	The BeanShell is an interactive Java shell that can be used to execute BeanShell scripts. These
-	scripts are a simplified form of Java that use many elements from Java syntax, but in a simpler
-	scripting format. All Java code is also valid BeanShell code.<br/>
-	BeanShell integration in OWASP ZAP enables you to write scripts using the ZAP functions and
-	data set. This can be a very powerful feature for analyzing web applications.
+	O BeanShell é um shell interativo de Java que pode ser usado para executar scripts BeanShell. Esses scripts são uma forma simplificada de Java que usam muitos elementos de sintaxe Java, mas em um formato mais simples de script. Todo o código Java é também válido dentro do código BeanShell. <br/> A integração do  BeanShell no OWASP ZAP permite que você escreva scripts usando as funções ZAP e conjunto de dados. Isto pode ser um recurso muito poderoso para a análise de aplicações web.
 </p>
 <h2>Console BeanShell</h2>
 <p>
-	The console is started from the Tools menu, and contains a split screen where the top half is the
-	interactive BeanShell console and the bottom half is a simple text editor. For complex scripts, you're
-	encouraged to use a Java editor. Scripts can be loaded, saved and evaluated from the editor.
-	When the BeanShell starts a number of objects from ZAP are available for use, namely:
+	O console é iniciado a partir do menu ferramentas e contém uma tela dividida, onde a metade superior é o console BeanShell interativo e a parte inferior metade é um simples editor de texto. Para scripts complexos, sugerimos o uso de um editor Java. Scripts podem ser carregados, salvos e avaliados a partir do editor.
+	Quando o BeanShell é aberto, vários objetos do ZAP estão disponível para uso, ou seja:
 	<ul>
-	<li>the <i>Model</i> singleton, through the object named <i>model</i></li>
-	<li>the <i>SiteTree</i> tree of current sites through the <i>sites</i> object</li>
-	<li>an instance of <pre>HttpSender</pre> through the <i>sender</i> object</li>
+	<li>o <i>modelo</i> singleton, através do objeto denominado <b><i>model</i></b></li>
+	<li>a  <i>árvore</i> de sites atuais através do objeto  <b><i>sites</i></b></li>
+	<li>uma instância do <pre>HttpSender</pre> através do  <i>sender</i> - objeto</li>
 	</ul>
-	Notice that the BeanShell is loosely typed. Therefore, it is not necessary to declare variables before
-	using them – this makes scripts a bit more concise than regular Java. But of course, if you did want
-	to define the type you can.
+	Observe que o BeanShell é digitado à vontade. Portanto, não é necessário declarar as variáveis antes de usá-las – isto torna os scripts um pouco mais concisos do que o Java normal. Mas claro, se quiser definir um tipo você pode.
 </p>
-<h2>Using the Site Map</h2>
+<h2>Usando o mapa do Site</h2>
 <p>
-	Let's start with something useful and typical: Iterate through all the site nodes and check for the
-	existence of a file. A script has already been created that accomplishes this, choose Load and select
-	the example.tree.bsh file. Before clicking Evaluate, first browse to a site through ZAP to populate
-	the tree:
+	Vamos começar com algo útil e típico: percorrer todos os nós do site e verificar a existência de um arquivo. Um script já foi criado para fazer isso; escolha "Carregar" (Load) e selecione o arquivo example.tree.bsh. Antes de clicar em 'Avaliar', primeiro navegue até um site através do ZAP para preencher a árvore:
 	<br/><br/>
-	Now click on evaluate to execute the script that's in the editor. If there are no errors, then you can
-	now start using the object defined in the script by issuing these commands:
+	Agora clique em avaliar para executar o script no editor. Se não houver nenhum erro, você pode começar usando o objeto definido no script emitindo os seguintes comandos:
 	<pre>
 	t = Tree();
 	</pre>
-	Which constructs a new Tree object and assigns a reference to t.
+	Que constrói um novo objeto de árvore e atribui uma referência para t.
 	<pre>
 	t.find(sites.getRoot(), "index.html");
 	</pre>
-	Call the find method on t, which takes a SiteNode as the first argument and a resource to find as the
-	second. In this case, the method will iterate through all the nodes in the tree, because we started at
-	the root, and will find index.html files.
+	Chama o método find em t, o que pega um SiteNode como o primeiro argumento e um recurso para encontrar o segundo. Neste caso, o método irá iterar através de todos os nós na árvore, porque começamos na raiz e irá encontrar arquivos index.html.
 	<br/><br/>
-	Instead of iterating through all the nodes, we could choose to start a specific node by using the
-	findChild method e.g.:
+	Em vez de iteração através de todos nós, poderíamos iniciar um nó específico usando o método findChild por exemplo:
 	<br/><br/>
-	This should give you some idea of the power of the BeanShell in ZAP. But to fully exploit it, you'll
-	need to familiarize yourself with the internal API and the BeanShell's features. The BeanShell has
-	been setup so as to allow full access to all internal objects and methods – even private ones.
+	Isso deve dar a você uma idéia do poder do BeanShell no ZAP. Mas para explorá-lo totalmente, você vai precisar para se familiarizar com a API interna e características do BeanShell. O BeanShell tem sido configurado de modo a permitir o acesso completo a todos os objetos internos e métodos – até mesmo os privados.
 </p>
-<h2>Simple HTTP Request</h2>
+<h2>Simples request de HTTP</h2>
 <p>
-	In the next example, we create and send an HTTP request directly in the interactive console:
-	To fully utilize the power of the BeanShell, you should familiarize yourself with ZAP's internals.
-	The sender object is the same instance as is used by the Manual Request Editor and will therefore
-	automatically use proxy settings set in the ZAP configuration.
-	<br/><br/>
-	TODO: POST example
+	No próximo exemplo, vamos criar e enviar uma solicitação HTTP diretamente no console interativo: para utilizar plenamente o poder do BeanShell, você deve se familiarizar com aspectos internos do ZAP.
+	O objeto sender é a mesma instância como é usado pelo Editor Manual de request e, portanto, usará automaticamente as configurações de proxy da configuração do ZAP.
+	<br/> <br/>  Faltando fazer: Exemplo de POST
 </p>
-<h2>Tips</h2>
+<h2>Dicas</h2>
 <p>
-	Use the unset(String) command to unset any declared variables, methods or objects. This is useful if
-	you want to replace a method declaration in the current namespace. Note that the command takes a
-	String argument, not an Object, so to unset the t object we used above, it should be: unset(“t”); and
-	not unset(t);
+	Use o comando <i>unset(String)</i> para desproteger quaisquer variáveis, métodos ou objetos declarados. Isso é útil se você deseja substituir uma declaração de método no namespace atual. Observe que o comando leva um argumento String, não um objeto; então para retirar o objeto t usado acima, deve-se fazer: unset("t"); e não unset(t);
 </p>
 <p>
-	Original document by: Stephen de Vries
+	Documento original por: Stephen de Vries
 </p>
 
 </body>
