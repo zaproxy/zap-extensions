@@ -84,11 +84,11 @@
 		<build-bruteforce-addon />
 		<build-addon name="diff" />
 		<build-addon name="fuzz" />
+		<build-addon name="help_pt_BR" />
 		<build-addon name="importurls" />
 		<build-addon name="invoke" />
 		<build-addon name="jruby" />
 		<build-addon name="jython" />
-		<build-addon name="onlineMenu" />
 		<build-addon name="plugnhack" />
 		<build-addon name="portscan" />
 		<build-addon name="pscanrulesBeta" />

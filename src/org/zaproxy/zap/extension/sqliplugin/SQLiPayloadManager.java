@@ -21,6 +21,7 @@
 package org.zaproxy.zap.extension.sqliplugin;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,20 +46,20 @@ public class SQLiPayloadManager {
     // PAYLOAD CONSTANTS
     public static final int TECHNIQUE_BOOLEAN = 1;
     public static final int TECHNIQUE_ERROR = 2;
-    public static final int TECHNIQUE_UNION = 3;
+    public static final int TECHNIQUE_INLINE = 3;
     public static final int TECHNIQUE_STACKED = 4;
     public static final int TECHNIQUE_TIME = 5;
-    public static final int TECHNIQUE_QUERY = 6;    
+    public static final int TECHNIQUE_UNION = 6;
 
     // Map for technique retrieval
     public static final Map<Integer, String> SQLI_TECHNIQUES = new HashMap();    
     static {
         SQLI_TECHNIQUES.put(TECHNIQUE_BOOLEAN, "boolean-based blind");
         SQLI_TECHNIQUES.put(TECHNIQUE_ERROR, "error-based");
-        SQLI_TECHNIQUES.put(TECHNIQUE_UNION, "UNION query");
+        SQLI_TECHNIQUES.put(TECHNIQUE_INLINE, "inline query");
         SQLI_TECHNIQUES.put(TECHNIQUE_STACKED, "stacked queries");
         SQLI_TECHNIQUES.put(TECHNIQUE_TIME, "AND/OR time-based blind");
-        SQLI_TECHNIQUES.put(TECHNIQUE_QUERY, "inline query");
+        SQLI_TECHNIQUES.put(TECHNIQUE_UNION, "UNION query");
     }
 
     // PAYLOAD ORIGINAL VALUE MANAGEMENT CONSTANTS
@@ -75,6 +76,7 @@ public class SQLiPayloadManager {
     public static final String charsHash = ":" + randomString(4, true, null) + ":";
     public static final String charsDelimiter = randomString(6, true, null);
         
+    private static final String BOUNDARY_FILE = "resources/boundaries.xml";
     private static final String PAYLOAD_FILE = "resources/payloads.xml";
     private static final String TAG_BOUNDARY = "boundary";
     private static final String TAG_TEST = "test";
@@ -121,19 +123,27 @@ public class SQLiPayloadManager {
     private SQLiPayloadManager() throws IOException, JDOMException {
         boundaries = new ArrayList();
         tests = new ArrayList();
-        
+
+        // Load all boundaries from resources
         SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(this.getClass().getResourceAsStream(PAYLOAD_FILE));
+        InputStream is = this.getClass().getResourceAsStream(BOUNDARY_FILE);
+        Document doc = builder.build(is);
         Element rootNode = doc.getRootElement();
         
         // now we have the <root> tag indexed so we can
-        // go ahead for boundaries and tests
+        // go ahead for boundaries
         for (Object obj : rootNode.getChildren(TAG_BOUNDARY)) {
             boundaries.add(new SQLiBoundary((Element)obj));
         }
-
+        
         // Log current execution
         //log.info("Loaded " + boundaries.size() + " boundary elements");
+        is.close();
+        
+        // Load all payloads from resources
+        is = this.getClass().getResourceAsStream(PAYLOAD_FILE);
+        doc = builder.build(is);
+        rootNode = doc.getRootElement();
         
         for (Object obj : rootNode.getChildren(TAG_TEST)) {
             tests.add(new SQLiTest((Element)obj));
@@ -141,6 +151,7 @@ public class SQLiPayloadManager {
         
         // Log current execution
         //log.info("Loaded " + tests.size() + " payload elements");
+        is.close();
     }
 
     /**
