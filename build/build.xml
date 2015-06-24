@@ -335,7 +335,7 @@
 	</target>
 
 	<target name="generate-wiki-gettingStarted" description="Generates the wiki of gettingStarted">
-		<generate-wiki addon="gettingStarted" />
+		<generate-wiki-core addon="gettingStarted" />
 	</target>
   
 	<target name="deploy-help" description="deploy the help extension">
