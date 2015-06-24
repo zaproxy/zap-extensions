@@ -3,7 +3,7 @@
 	<version>1</version>
 	<description>Fingerprint web applications</description>
 	<author>ZAP Dev Team</author>
-	<url>http://code.google.com/p/zaproxy/</url>
+	<url>https://github.com/zaproxy/zaproxy</url>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.cmss.CMSSTopMenu</extension>
 	</extensions>
