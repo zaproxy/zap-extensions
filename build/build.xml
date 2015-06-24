@@ -77,11 +77,10 @@
 
 			<generatewiki basesrcdir="${src}/org/zaproxy/zap/extension/@{addOn}/resources" basedestdir="${wiki.dir}"
 				helpcontentsdir="contents/" helpcontentsinclude=".*\.html"
-				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="https://zap-extensions.googlecode.com/svn/wiki/images/"
-				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.wiki"
-				helpfileextension=".html" wikifileextension=".wiki"
-				srctocfile="toc.xml" srcmapfile="map.jhm" wikitocfilename="TableOfContents-${addOnCapitalised}"
-				labels="UserGuide-${addOnCapitalised}-v${version}">
+				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="https://github.com/zaproxy/zap-extensions/wiki/images/"
+				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.md"
+				helpfileextension=".html" wikifileextension=".md"
+				srctocfile="toc.xml" srcmapfile="map.jhm" wikitocfilename="_Sidebar-${addOnCapitalised}">
 
 				<!-- Default language is at root of dest dir -->
 				<helpdir src="help" dest="" />
