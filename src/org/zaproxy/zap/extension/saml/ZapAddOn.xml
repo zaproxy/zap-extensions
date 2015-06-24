@@ -1,10 +1,10 @@
 <zapaddon>
     <name>SAML Extension</name>
-    <version>3</version>
+    <version>4</version>
     <description>Detect, Show, Edit, Fuzz SAML requests</description>
     <author>ZAP Dev Team</author>
-    <url>http://code.google.com/p/zaproxy/</url>
-	<changes>Updated for ZAP 2.4</changes>
+    <url>https://github.com/zaproxy/zaproxy</url>
+	<changes>Updated add-on's info URL.</changes>
     <dependson/>
     <extensions>
         <extension>org.zaproxy.zap.extension.saml.SAMLExtension</extension>

@@ -380,7 +380,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
     @Override
     public URL getURL() {
         try {
-            return new URL("http://code.google.com/p/zaproxy/wiki/MozillaMentorship_ImportingModSecurityLogs");
+            return new URL("https://github.com/zaproxy/zaproxy/wiki/MozillaMentorship_ImportingModSecurityLogs");
         } catch (MalformedURLException e) {
             return null;
         }

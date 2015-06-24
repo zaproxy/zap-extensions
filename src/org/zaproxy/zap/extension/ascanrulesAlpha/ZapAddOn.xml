@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>12</version>
+	<version>13</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
-	<url>https://code.google.com/p/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
+	<url>https://github.com/zaproxy/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-    Added "Relative Path Confusion" scanner<br>
-    Added "Proxy Disclosure" scanner<br>
-    Updated for ZAP 2.4
+	Updated add-on's info URL.
   	]]>
 	</changes>
 	<extensions>
