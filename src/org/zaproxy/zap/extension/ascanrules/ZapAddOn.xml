@@ -1,20 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>17</version>
+	<version>18</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-        Changes to TestInjectionCRLF: address FindBugs issue, remove forced HTML elements in
-        references, add proper WASC ID.<br>
-        Added blind command injection checks for CommandInjectionPlugin.<br>
-        Upgraded to ZAP 2.4.<br>
-        Issue 823: i18n active/passive scan rules.<br>
-        Issue 1529: TestExternalRedirect minor performance improvement, injection generation changed to reduce collisions or false positives.<br>
-        Issue 1569: TestExternalRedirect plugin ID changed from 30000 to 20019.<br>
-        Issue 1499: Replace active 'Client Browser Cache' with passive 'Cache Control' rule. TestClientBrowserCache removed.<br>
-        Issue 1592: CommandInjectionPlugin timing false positives
+        Improved "Path Traversal" scanner.
 	]]>
     </changes>
 	<extensions>
