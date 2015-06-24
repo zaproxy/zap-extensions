@@ -35,7 +35,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.model.Tech;
 
 /**
  * Active Plugin for SQL injection testing and verification.
