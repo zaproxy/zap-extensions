@@ -195,7 +195,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	private OptionsAjaxSpider getOptionsSpiderPanel() {
 		if (optionsAjaxSpider == null) {
-			ExtensionSelenium extSelenium = (ExtensionSelenium) Control.getSingleton()
+			ExtensionSelenium extSelenium = Control.getSingleton()
 					.getExtensionLoader()
 					.getExtension(ExtensionSelenium.class);
 			optionsAjaxSpider = new OptionsAjaxSpider(this.getMessages(), extSelenium.createBrowsersComboBoxModel());

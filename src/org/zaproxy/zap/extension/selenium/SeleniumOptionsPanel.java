@@ -133,7 +133,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     @Override
     public void initParam(Object obj) {
         OptionsParam optionsParam = (OptionsParam) obj;
-        SeleniumOptions seleniumOptions = (SeleniumOptions) optionsParam.getParamSet(SeleniumOptions.class);
+        SeleniumOptions seleniumOptions = optionsParam.getParamSet(SeleniumOptions.class);
 
         chromeDriverTextField.setText(seleniumOptions.getChromeDriverPath());
         ieDriverTextField.setText(seleniumOptions.getIeDriverPath());
@@ -147,7 +147,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     @Override
     public void saveParam(Object obj) throws Exception {
         OptionsParam optionsParam = (OptionsParam) obj;
-        SeleniumOptions seleniumOptions = (SeleniumOptions) optionsParam.getParamSet(SeleniumOptions.class);
+        SeleniumOptions seleniumOptions = optionsParam.getParamSet(SeleniumOptions.class);
 
         seleniumOptions.setChromeDriverPath(chromeDriverTextField.getText());
         seleniumOptions.setIeDriverPath(ieDriverTextField.getText());

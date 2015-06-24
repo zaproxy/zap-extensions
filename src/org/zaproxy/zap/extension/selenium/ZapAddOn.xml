@@ -5,7 +5,7 @@
 	<description>WebDriver provider and includes HtmlUnit browser</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes></changes>
+	<changes>Minor code changes.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.selenium.ExtensionSelenium</extension>
 	</extensions>

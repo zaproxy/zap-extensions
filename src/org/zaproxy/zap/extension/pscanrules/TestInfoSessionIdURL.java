@@ -163,7 +163,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
         // The Session ID list option param
         OptionsParam options = Model.getSingleton().getOptionsParam();
         HttpSessionsParam sessionOptions =
-                (HttpSessionsParam) options.getParamSet(HttpSessionsParam.class);
+                options.getParamSet(HttpSessionsParam.class);
 
         // Loop on all possible 
         // session id variables (looking all along the url)

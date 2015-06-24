@@ -175,7 +175,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	public void initParam(Object obj) {
 	    
 	    OptionsParam optionsParam = (OptionsParam) obj;
-	    AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
+	    AjaxSpiderParam ajaxSpiderParam = optionsParam.getParamSet(AjaxSpiderParam.class);
 	    getAjaxSpiderClickModel().setElems(ajaxSpiderParam.getElems());
 	    elemsOptionsPanel.setRemoveWithoutConfirmation(!ajaxSpiderParam.isConfirmRemoveElem());
 	    
@@ -205,7 +205,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	@Override
 	public void saveParam(Object obj) throws Exception  {; 
 		OptionsParam optionsParam = (OptionsParam) obj;
-		AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
+		AjaxSpiderParam ajaxSpiderParam = optionsParam.getParamSet(AjaxSpiderParam.class);
 		
 		ajaxSpiderParam.setClickElemsOnce(getClickElemsOnce().isSelected());
 		ajaxSpiderParam.setClickDefaultElems(getClickDefaultElems().isSelected());
