@@ -11,7 +11,7 @@
 	<property name="status" value="release" />
 	<property name="versions.file" location="${dist}/ZapVersions-${status}.xml" />
 	<property name="wiki.dir" location="../../zap-extensions-wiki" />
-	<property name="wiki.zaproxy.dir" location="../../zaproxy-wiki" />
+	<property name="wiki.zapcorehelp.dir" location="../../zap-core-help-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 	<!-- This assumes you also have the zaproxy_2.4 project (used for the weekly release -->
@@ -67,15 +67,15 @@
 		<attribute name="addOn"/>
 		<sequential>
 			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.dir}"
-				prefixlinkimages="https://zap-extensions.googlecode.com/svn/wiki/images/" tocpadding="0" />
+				prefixlinkimages="https://github.com/zaproxy/zap-extensions/wiki/images/" tocpadding="0" />
 		</sequential>
 	</macrodef>
 
-	<macrodef name="generate-wiki-core" description="Generates the wiki of an add-on into zaproxy wiki dir (normally for add-ons included in the main release)">
+	<macrodef name="generate-wiki-core" description="Generates the wiki of an add-on into zap-core-help wiki dir (normally for add-ons included in the main release)">
 		<attribute name="addOn"/>
 		<sequential>
-			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.zaproxy.dir}"
-				prefixlinkimages="https://zaproxy.googlecode.com/svn/wiki/images/" tocpadding="2" />
+			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.zapcorehelp.dir}"
+				prefixlinkimages="https://github.com/zaproxy/zap-core-help/wiki/images/" tocpadding="0" />
 		</sequential>
 	</macrodef>
 
@@ -95,11 +95,10 @@
 			<generatewiki basesrcdir="${src}/org/zaproxy/zap/extension/@{addOn}/resources" basedestdir="@{baseDestDir}"
 				helpcontentsdir="contents/" helpcontentsinclude=".*\.html"
 				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="@{prefixLinkImages}"
-				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.wiki"
-				helpfileextension=".html" wikifileextension=".wiki"
+				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.md"
+				helpfileextension=".html" wikifileextension=".md"
 				srctocfile="toc.xml" srcmapfile="map.jhm"
-				wikitocfilename="TableOfContents-${addOnCapitalised}" wikitocentryinitpadding="@{tocpadding}"
-				labels="UserGuide-${addOnCapitalised}-v${version}">
+				wikitocfilename="_SiderBar-${addOnCapitalised}" wikitocentryinitpadding="@{tocpadding}">
 
 				<!-- Default language is at root of dest dir -->
 				<helpdir src="help" dest="" />
