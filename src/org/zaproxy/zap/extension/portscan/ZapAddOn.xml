@@ -1,14 +1,12 @@
 <zapaddon>
 	<name>Port Scanner</name>
-	<version>6</version>
+	<version>7</version>
 	<description>Allows to port scan a target server</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Safe menu items will now be enabled in protected and safe modes (Issue 1278).<br>
-	Disable the attack menu item if a scan is already in progress (Issue 1290).<br>
-	Updated for ZAP 2.4
+	Minor code changes.
 	]]>
 	</changes>
 	<extensions>

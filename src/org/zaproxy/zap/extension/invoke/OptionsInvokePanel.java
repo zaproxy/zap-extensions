@@ -75,7 +75,7 @@ public class OptionsInvokePanel extends AbstractParamPanel {
     @Override
     public void initParam(Object obj) {
 	    OptionsParam optionsParam = (OptionsParam) obj;
-	    InvokeParam invokeParam = (InvokeParam) optionsParam.getParamSet(InvokeParam.class);
+	    InvokeParam invokeParam = optionsParam.getParamSet(InvokeParam.class);
 	    getTableModel().setListInvokableApps(invokeParam.getListInvoke());
 	    appsOptionsPanel.setRemoveWithoutConfirmation(!invokeParam.isConfirmRemoveApp());
     }
@@ -88,7 +88,7 @@ public class OptionsInvokePanel extends AbstractParamPanel {
     @Override
     public void saveParam(Object obj) throws Exception {
 	    OptionsParam optionsParam = (OptionsParam) obj;
-	    InvokeParam invokeParam = (InvokeParam) optionsParam.getParamSet(InvokeParam.class);
+	    InvokeParam invokeParam = optionsParam.getParamSet(InvokeParam.class);
 	    invokeParam.setListInvoke(getTableModel().getListInvokableApps());
 	    invokeParam.setConfirmRemoveApp(!appsOptionsPanel.isRemoveWithoutConfirmation());
 	    

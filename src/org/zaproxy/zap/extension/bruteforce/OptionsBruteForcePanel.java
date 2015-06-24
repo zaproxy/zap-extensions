@@ -267,7 +267,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 	@Override
 	public void initParam(Object obj) {
 	    OptionsParam options = (OptionsParam) obj;
-	    BruteForceParam param = (BruteForceParam) options.getParamSet(BruteForceParam.class);
+	    BruteForceParam param = options.getParamSet(BruteForceParam.class);
 	    if (param == null) {
 		    getSliderThreadsPerScan().setValue(BruteForceParam.DEFAULT_THREAD_PER_SCAN);
 		    getCheckBoxRecursive().setSelected(BruteForceParam.DEFAULT_RECURSIVE);
@@ -293,7 +293,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 	@Override
 	public void saveParam (Object obj) throws Exception {
 	    OptionsParam options = (OptionsParam) obj;
-	    BruteForceParam param = (BruteForceParam) options.getParamSet(BruteForceParam.class);
+	    BruteForceParam param = options.getParamSet(BruteForceParam.class);
 	    if (param == null) {
 	    	param = new BruteForceParam();
 	    	options.addParamSet(param);

@@ -71,7 +71,7 @@ public class OptionsZestPanel extends AbstractParamPanel {
 	@Override
     public void initParam(Object obj) {
 	    OptionsParam optionsParam = (OptionsParam) obj;
-		ZestParam param = (ZestParam) optionsParam.getParamSet(ZestParam.class);
+		ZestParam param = optionsParam.getParamSet(ZestParam.class);
 		getIncResps().setSelected(param.isIncludeResponses());
 		getModel().setAllHeaders(param.getAllHeaders());
 		getModel().setIgnoredHeaders(param.getIgnoredHeaders());
@@ -87,7 +87,7 @@ public class OptionsZestPanel extends AbstractParamPanel {
     @Override
     public void saveParam(Object obj) throws Exception {
 	    OptionsParam optionsParam = (OptionsParam) obj;
-		ZestParam param = (ZestParam) optionsParam.getParamSet(ZestParam.class);
+		ZestParam param = optionsParam.getParamSet(ZestParam.class);
 		param.setIncludeResponses(getIncResps().isSelected());
 		param.setIgnoredHeaders(getModel().getIgnoredHeaders());
     }

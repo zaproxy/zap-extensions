@@ -376,14 +376,14 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 
 	private ExtensionHistory getHistory() {
 		if(extHistory == null) {
-			extHistory = (ExtensionHistory) Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
+			extHistory = Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
 		}
 		return extHistory;
 	}
 
 	private ExtensionActiveScan getActiveScanner() {
 		if(extAscan == null) {
-			extAscan = (ExtensionActiveScan) Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.class);
+			extAscan = Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.class);
 		}
 		return extAscan;
 	}

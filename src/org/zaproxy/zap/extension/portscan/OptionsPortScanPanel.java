@@ -105,7 +105,7 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
 	@Override
 	public void initParam(Object obj) {
 	    OptionsParam options = (OptionsParam) obj;
-	    PortScanParam param = (PortScanParam) options.getParamSet(PortScanParam.class);
+	    PortScanParam param = options.getParamSet(PortScanParam.class);
 	    if (param == null) {
 		    getSliderMaxPort().setValue(PortScanParam.DEFAULT_MAX_PORT);
 		    getSliderThreadsPerScan().setValue(PortScanParam.DEFAULT_THREAD_PER_SCAN);
@@ -127,7 +127,7 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
 	@Override
 	public void saveParam (Object obj) throws Exception {
 	    OptionsParam options = (OptionsParam) obj;
-	    PortScanParam param = (PortScanParam) options.getParamSet(PortScanParam.class);
+	    PortScanParam param = options.getParamSet(PortScanParam.class);
 	    if (param == null) {
 	    	param = new PortScanParam();
 	    	options.addParamSet(param);

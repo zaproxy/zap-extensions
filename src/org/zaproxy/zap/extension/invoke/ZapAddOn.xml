@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Invoke Applications</name>
-	<version>2</version>
+	<version>3</version>
 	<description>Invoke external applications passing context related information such as URLs and parameters</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for ZAP 2.4</changes>
+	<changes>Minor code changes.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.invoke.ExtensionInvoke</extension>
 	</extensions>
