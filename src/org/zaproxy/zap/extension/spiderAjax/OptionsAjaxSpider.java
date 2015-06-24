@@ -28,19 +28,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SortOrder;
 
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.BrowsersComboBoxModel;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
-import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
 public class OptionsAjaxSpider extends AbstractParamPanel {
 
