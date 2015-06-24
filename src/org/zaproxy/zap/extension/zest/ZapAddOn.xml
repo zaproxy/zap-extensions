@@ -1,21 +1,12 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>18</version>
+	<version>19</version>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
-	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsZestZest</url>
+	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	ZAP Issue 1411: Missing authentication handling for Zest scripts called from scanner<br>
-	ZAP Issue 1501: Add "Inverse" option in all the expression  dialog boxes.<br>
-	ZAP Issue 1507: Unload all components when uninstalling.<br>
-	ZAP Issue 1536: Change "Zest" add-on to depend on "Selenium" add-on.<br>
-	Zest Issue 66: Zest scripts cant be invoked from Zest scripts on Windows<br>
-	Zest Issue 67: Multipart/form-data request failed<br>
-	Zest Issue 68: ZestExpressionURL fails to initialise regex patterns<br>
-	Zest Issue 69: Added support for AssignCalc and ExpressionIsInteger <br>
-	Updated for ZAP 2.4<br>
-	Removed fuzzing code - will need to be re-implemented for new adv fuzzing
+	Updated add-on's info URL.
 	]]>
 	</changes>
 	<dependencies>
