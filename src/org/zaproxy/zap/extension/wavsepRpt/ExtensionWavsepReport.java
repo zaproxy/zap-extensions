@@ -468,7 +468,7 @@ public class ExtensionWavsepReport extends ExtensionAdaptor {
 			PrintWriter pw = new PrintWriter(htmlFile);
 			
 			pw.println("<html><head><title>ZAP Wavsep Report</title></head><body>");
-			pw.println("<h1><img src=\"http://zaproxy.googlecode.com/svn/trunk/src/resource/zap64x64.png\" align=\"middle\">OWASP ZAP wavsep results</h1>");
+			pw.println("<h1><img src=\"https://raw.githubusercontent.com/zaproxy/zaproxy/develop/src/resource/zap64x64.png\" align=\"middle\">OWASP ZAP wavsep results</h1>");
 			pw.println("Generated TBA");
 			pw.println("<h3>Total Score " + passRate + "%</h3>");
 			pw.println("<br/>");
