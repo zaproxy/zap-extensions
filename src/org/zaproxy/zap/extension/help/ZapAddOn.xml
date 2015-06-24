@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Help - English</name>
-	<version>1</version>
+	<version>2</version>
 	<description>English (master) version of the ZAP help file.</description>
 	<author>ZAP Crowdin Team</author>
-	<url>https://code.google.com/p/zaproxy/wiki/HelpIntro</url>
-	<changes>First version.</changes>
+	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpIntro</url>
+	<changes>Updated add-on's info URL.</changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>

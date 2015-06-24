@@ -1,15 +1,12 @@
 <zapaddon>
 	<name>Ajax Spider</name>
-	<version>12</version>
+	<version>13</version>
 	<description>Allows you to spider sites that make heavy use of JavaScript using Crawljax</description>
 	<author>ZAP Dev Team</author>
-	<url>https://code.google.com/p/zaproxy/wiki/HelpAddonsSpiderAjaxConcepts</url>
+	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
-	Promoted to 'release' status (Issue 1326).<br>
-	Set to depend on 'Selenium' add-on (Issue 1534).<br>
-	Updated Crawljax to version 3.6 (Issue 1535).<br>
-	Advanced scan dialog (Issue 1177).
+	Updated add-on's info URL.
 	]]>
 	</changes>
 	<dependencies>
