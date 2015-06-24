@@ -183,7 +183,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				String attack = Constant.messages.getString("pscanbeta.noanticsrftokens.alert.attack");
 				String extraInfo = Constant.messages.getString("pscanbeta.noanticsrftokens.alert.extrainfo", tokenNamesFlattened, formDetails);
 				
-			    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING,  getName());
+			    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM,  getName());
 			    alert.setDetail(
 			    			desc + "\n"+getDescription(), 
 				    		msg.getRequestHeader().getURI().toString(),

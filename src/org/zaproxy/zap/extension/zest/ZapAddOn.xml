@@ -6,7 +6,8 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Updated add-on's info URL.
+	Updated add-on's info URL.<br>
+	Minor code changes.
 	]]>
 	</changes>
 	<dependencies>

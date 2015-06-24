@@ -307,7 +307,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                             // Alert the vulnerability to the main core
                             this.bingo(
                                     Alert.RISK_HIGH,
-                                    Alert.WARNING,
+                                    Alert.CONFIDENCE_MEDIUM,
                                     null, //URI
                                     null, //param
                                     payload, //attack
@@ -371,7 +371,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
                             // Alert the vulnerability to the main core
                             this.bingo(
                                     Alert.RISK_HIGH,
-                                    Alert.WARNING,
+                                    Alert.CONFIDENCE_MEDIUM,
                                     null, //URI
                                     null, //param
                                     payload, //attack
@@ -413,7 +413,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
             // Alert the vulnerability to the main core
             this.bingo(
                     Alert.RISK_HIGH,
-                    Alert.WARNING,
+                    Alert.CONFIDENCE_MEDIUM,
                     null, //URI
                     null, //param
                     getCallbackAttackPayload(challenge), //attack

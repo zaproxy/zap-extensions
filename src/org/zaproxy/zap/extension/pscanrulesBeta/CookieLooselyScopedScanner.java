@@ -56,7 +56,7 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {		
-		List<HttpCookie> cookies = msg.getResponseHeader().getHttpCookies();
+		List<HttpCookie> cookies = msg.getResponseHeader().getHttpCookies(msg.getRequestHeader().getHostName());
 		
 		// name of a host from which the response has been sent from
 		String host = msg.getRequestHeader().getHostName();

@@ -182,7 +182,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			} else if (ZestActionFail.Priority.HIGH.name().equals(zaf.getPriority())) {
 				risk = Alert.RISK_HIGH;
 			}
-			Alert alert = new Alert(getID(), risk, Alert.WARNING, e.getMessage());
+			Alert alert = new Alert(getID(), risk, Alert.CONFIDENCE_MEDIUM, e.getMessage());
 			
 			if (lastHref != null) {
 				alert.setHistoryRef(lastHref);

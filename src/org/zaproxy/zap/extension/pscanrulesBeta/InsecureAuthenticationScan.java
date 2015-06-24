@@ -99,7 +99,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 				if (    ( authHeaderValue.toLowerCase(Locale.ENGLISH).startsWith("basic ")) ||
 						( authHeaderValue.toLowerCase(Locale.ENGLISH).startsWith("digest ")) ) {				
 					int alertRisk=Alert.RISK_MEDIUM; //Medium by default.. maybe even high.
-					int alertLevel = Alert.WARNING; 
+					int alertLevel = Alert.CONFIDENCE_MEDIUM; 
 					String username=null, password=null;
 
 					//gets Basic or Digest.. (trailing spaces trimmed off)
@@ -236,7 +236,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 		if (authHeaders != null) {
 			for (String auth : authHeaders) {
 				if (auth.toLowerCase().indexOf("basic") > -1 || auth.toLowerCase().indexOf("digest") > -1) {
-					Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING,
+					Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM,
 							getName());
 					alert.setDetail(getDescription(),
 							msg.getRequestHeader().getURI().toString(),

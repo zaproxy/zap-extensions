@@ -1,23 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>15</version>
+	<version>16</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-    Solved Comparison operator in XpathInjectionPlugin (Issue 1189).<br>
-    Promoted Backup File Disclosure to beta<br>
-    Promoted Cross Domain Scanner to beta<br>
-    Promoted HeartBleed to beta<br>
-    Promoted Insecure HTTP Method to beta<br>
-    Promoted Remote Code Execution - CVE2012-1823 to beta<br>
-    Promoted Shell shock to beta<br>
-    Promoted Source Code Disclosure - CVE2012-1823 to beta<br>
-    Promoted Source Code Disclosure - SVN to beta<br>
-    Promoted Source Code Disclosure - WEB-INF to beta<br>
-    Fixed minor regex escaping issue with Source Code Disclosure - SVN (Issue 1377)<br>
-	Updated for ZAP 2.4
+	Minor code changes.
     ]]>
 	</changes>
 	<extensions>

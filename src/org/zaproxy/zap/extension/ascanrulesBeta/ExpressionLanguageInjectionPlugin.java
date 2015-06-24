@@ -183,7 +183,7 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
                 // Now create the alert message
                 this.bingo(
                         Alert.RISK_HIGH,
-                        Alert.WARNING,
+                        Alert.CONFIDENCE_MEDIUM,
                         null,
                         paramName,
                         payload,

@@ -68,7 +68,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
         Alert alert = new Alert(
                 getPluginId(),
                 Alert.RISK_MEDIUM,
-                Alert.WARNING,
+                Alert.CONFIDENCE_MEDIUM,
                 var.pattern.getAlertHeader()
             );
 
@@ -92,7 +92,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
         Alert alert = new Alert(
                 getPluginId(),
                 Alert.RISK_LOW,
-                Alert.WARNING,
+                Alert.CONFIDENCE_MEDIUM,
                 "Old Asp.Net version in use"
             );
 
@@ -136,7 +136,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
         Alert alert = new Alert(
                                 getPluginId(),
                                 Alert.RISK_HIGH,
-                                Alert.WARNING,
+                                Alert.CONFIDENCE_MEDIUM,
                                 "Viewstate without MAC signature (Sure)"
                             );
         alert.setDetail(

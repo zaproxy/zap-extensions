@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>10</version>
+	<version>11</version>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Updated for ZAP 2.4</changes>
+	<changes>Minor code changes.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.pscanrulesBeta.ExtensionPscanRulesBeta</extension>
 	</extensions>

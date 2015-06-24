@@ -192,7 +192,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 					// TODO attack should probably be the relevant FORM tag 
 					String attack = Constant.messages.getString("ascanbeta.noanticsrftokens.alert.attack");
 					String extraInfo = Constant.messages.getString("ascanbeta.noanticsrftokens.alert.extrainfo");
-					bingo(Alert.RISK_HIGH, Alert.WARNING, 
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, 
 							null,
 							attack, extraInfo, getSolution(),
 							getBaseMsg());
