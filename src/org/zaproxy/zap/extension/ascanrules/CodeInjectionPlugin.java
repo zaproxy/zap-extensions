@@ -215,7 +215,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                     // Now create the alert message
                     this.bingo(
                             Alert.RISK_HIGH, 
-                            Alert.WARNING, 
+                            Alert.CONFIDENCE_MEDIUM, 
                             getName() + " - PHP Code Injection",
                             getDescription(),
                             null,
@@ -275,7 +275,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                     // Now create the alert message
                     this.bingo(
                             Alert.RISK_HIGH, 
-                            Alert.WARNING, 
+                            Alert.CONFIDENCE_MEDIUM, 
                             getName() + " - ASP Code Injection",
                             getDescription(),
                             null,

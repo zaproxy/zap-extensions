@@ -165,7 +165,7 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
         if (matchBodyPattern(msg, patternErrorJava1, sb) && matchBodyPattern(msg, patternErrorJava2, null)) {
 
-            bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, param, attack, sb.toString(), msg);
+            bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, null, param, attack, sb.toString(), msg);
             return true;
         } else if (matchBodyPattern(msg, patternErrorVBScript, sb)
                 || matchBodyPattern(msg, patternErrorODBC1, sb)

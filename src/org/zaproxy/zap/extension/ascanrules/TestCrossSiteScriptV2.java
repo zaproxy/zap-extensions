@@ -172,7 +172,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            	if (context2.getTagAttribute() != null &&
         	            			context2.isInScriptAttribute()) {
         	            		// Yep, its vulnerable
-        						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, context2.getTarget(), 
+        						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, context2.getTarget(), 
         								"", contexts2.get(0).getTarget(), context2.getMsg());
         						attackWorked = true;
         						break;
@@ -189,7 +189,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            for (HtmlContext ctx : contexts2) {
         	            	if (ctx.isInUrlAttribute()) {
         	            		// Yep, its vulnerable
-        						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, ctx.getTarget(), 
+        						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, ctx.getTarget(), 
         							"", ctx.getTarget(), ctx.getMsg());
         						attackWorked = true;
         	            		break;
@@ -206,7 +206,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            		context.getSurroundingQuote() + " src=http://badsite.com", context, HtmlContext.IGNORE_TAG);
 
         	            if (contexts2.size() > 0) {
-    						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
+    						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
     							"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     						attackWorked = true;
         	            }
@@ -221,7 +221,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            		context.getSurroundingQuote() + "><script>alert(1);</script>", context, HtmlContext.IGNORE_TAG);
         	            if (contexts2.size() > 0) {
     	            		// Yep, its vulnerable
-    						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
+    						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
     								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     						attackWorked = true;
         	            }
@@ -236,7 +236,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            		context, HtmlContext.IGNORE_TAG);
         	            if (contexts2.size() > 0) {
     	            		// Yep, its vulnerable
-    						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
+    						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
     								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     						attackWorked = true;
     	            	}
@@ -250,7 +250,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     	            		"--><script>alert(1);</script><!--", context, HtmlContext.IGNORE_HTML_COMMENT);
     	            if (contexts2.size() > 0) {
 	            		// Yep, its vulnerable
-						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
+						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
 								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
 						attackWorked = true;
     	            } else {
@@ -259,7 +259,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 			            		"--><b onMouseOver=alert(1);>test</b><!--", context, HtmlContext.IGNORE_HTML_COMMENT);
         	            if (contexts2.size() > 0) {
 		            		// Yep, its vulnerable
-							bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
+							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
 									"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
 							attackWorked = true;
 			            }
@@ -273,7 +273,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            		"<script>alert(1);</script>", null, HtmlContext.IGNORE_PARENT);
         	            if (contexts2.size() > 0) {
         	            		// Yep, its vulnerable
-        						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
+        						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
         								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
         						attackWorked = true;
         	            } else {
@@ -284,7 +284,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     			            	if ("body".equalsIgnoreCase(context2.getParentTag()) ||
     			            			"script".equalsIgnoreCase(context2.getParentTag())) {
     			            		// Yep, its vulnerable
-    								bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
+    								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
     										"TBI Body tag", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     								attackWorked = true;
     								break;
@@ -298,7 +298,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            		context, HtmlContext.IGNORE_IN_SCRIPT);
         	            if (contexts2.size() > 0) {
        	            		// Yep, its vulnerable
-       						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
+       						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
        								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     						attackWorked = true;
         	            } else if ("script".equalsIgnoreCase(context.getParentTag())){
@@ -307,7 +307,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             	            		context.getSurroundingQuote() + ";alert(1);" + context.getSurroundingQuote(), context, 0);
             	            if (contexts2.size() > 0) {
            	            		// Yep, its vulnerable
-           						bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, contexts2.get(0).getTarget(), 
+           						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
            								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
         						attackWorked = true;
             	            }

@@ -134,7 +134,7 @@ public class TestInjectionCRLF extends AbstractAppParamPlugin {
         
         Matcher matcher = patternCookieTamper.matcher(msg.getResponseHeader().toString());
         if (matcher.find()) {
-            bingo(Alert.RISK_MEDIUM, Alert.WARNING, null, param, matcher.group(), attack, msg);
+            bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, null, param, matcher.group(), attack, msg);
             return true;
         }
         

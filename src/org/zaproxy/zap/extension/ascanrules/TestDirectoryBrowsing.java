@@ -113,7 +113,7 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
 	    
 	    boolean result = false;
 	    HttpMessage msg = getNewMsg();
-	    int reliability = Alert.WARNING;
+	    int reliability = Alert.CONFIDENCE_MEDIUM;
 	    StringBuilder evidence = new StringBuilder();
 	    
 	    try {

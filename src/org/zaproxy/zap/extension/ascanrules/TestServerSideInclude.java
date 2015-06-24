@@ -105,7 +105,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 	            sendAndReceive(msg);
 	    		//result = msg.getResponseBody().toString();
 	    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {
-	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_UNIX, msg);
+	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_UNIX, msg);
 	    			return;
 	    		}
 	
@@ -118,7 +118,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 	            sendAndReceive(msg);
 	    		//result = msg.getResponseBody().toString();
 	    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {    		    
-	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_UNIX2, msg);
+	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_UNIX2, msg);
 	    			return;
 	    		}
 	
@@ -133,7 +133,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 	            sendAndReceive(msg);
 	    		//result = msg.getResponseBody().toString();
 	    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
-	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_WIN, msg);
+	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_WIN, msg);
 	    			return;
 	    		}
 	
@@ -146,7 +146,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 	            sendAndReceive(msg);
 	    		//result = msg.getResponseBody().toString();
 	    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
-	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_WIN2, msg);
+	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_WIN2, msg);
 	    			return;
 	    		}
 	
