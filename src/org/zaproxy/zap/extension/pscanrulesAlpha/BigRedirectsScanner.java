@@ -35,7 +35,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
  * Big Redirects passive scan rule 
- * https://code.google.com/p/zaproxy/issues/detail?id=1257
+ * https://github.com/zaproxy/zaproxy/issues/1257
  * @author kingthorin+owaspzap@gmail.com
  */
 public class BigRedirectsScanner extends PluginPassiveScanner{

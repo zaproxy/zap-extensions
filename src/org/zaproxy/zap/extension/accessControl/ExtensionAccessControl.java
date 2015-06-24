@@ -234,7 +234,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		}
 		// If the session has changed, make sure we reload any ContextTrees for the existing context
 		// managers
-		// NOTE: if https://code.google.com/p/zaproxy/issues/detail?id=1316 is fixed, this could
+		// NOTE: if https://github.com/zaproxy/zaproxy/issues/1316 is fixed, this could
 		// move to the "loadContextData()" method
 		if (session != null) {
 			for (Context c : session.getContexts()) {

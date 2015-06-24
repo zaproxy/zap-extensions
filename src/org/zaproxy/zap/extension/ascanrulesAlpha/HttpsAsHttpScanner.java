@@ -32,7 +32,7 @@ import java.io.IOException;
 
 /**
  * Active scan rule which checks whether or not HTTPS content is also available via HTTP 
- * https://code.google.com/p/zaproxy/issues/detail?id=174
+ * https://github.com/zaproxy/zaproxy/issues/174
  * @author kingthorin+owaspzap@gmail.com
  */
 public class HttpsAsHttpScanner extends AbstractAppPlugin {

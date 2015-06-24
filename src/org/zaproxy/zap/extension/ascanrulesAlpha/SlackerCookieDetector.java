@@ -255,7 +255,7 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 	/**
 	 * This should be unique across all active and passive rules. The master
 	 * list:
-	 * http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
+	 * https://github.com/zaproxy/zaproxy/blob/develop/src/doc/alerts.xml
 	 */
 	@Override
 	public int getId() {
