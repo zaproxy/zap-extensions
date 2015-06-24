@@ -126,7 +126,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 	
 	private void raiseAlert(HttpMessage msg, int id, String paramName, String paramValue, 
 			String responseLocation) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.WARNING,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
 				getName());		
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()

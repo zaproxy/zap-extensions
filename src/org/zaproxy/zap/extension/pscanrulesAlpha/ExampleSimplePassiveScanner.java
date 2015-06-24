@@ -80,7 +80,7 @@ public class ExampleSimplePassiveScanner extends PluginPassiveScanner {
 		// For this example we're just going to raise the alert at random!
 		
 		if (rnd.nextInt(10) == 0) {
-		    Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING, 
+		    Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, 
 			    	getName());
 			    	alert.setDetail(
 			    		getDescription(), 

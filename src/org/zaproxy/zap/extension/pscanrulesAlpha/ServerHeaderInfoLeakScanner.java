@@ -69,7 +69,7 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 				if (matched) { //See if there's any version info.
 					//While an alpha string might be the server type (Apache, Netscape, IIS, etc) 
 					//that's much less of a head-start than actual version details.
-					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
+					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
 						getName()); 
 		    			alert.setDetail(
 		    					getDescription(), //Description

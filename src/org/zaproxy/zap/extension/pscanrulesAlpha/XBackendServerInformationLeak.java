@@ -62,7 +62,7 @@ public class XBackendServerInformationLeak extends PluginPassiveScanner{
 		if (xbsOption != null) { //Header Found
 			//It is set so lets check it. Should only be one but it's a vector so iterate to be sure.
 			for (String xbsDirective : xbsOption) {
-					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
+					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
 						getName()); 
 		    			alert.setDetail(
 		    					getDescription(), //Description

@@ -61,7 +61,7 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 		Vector<String> xpbOptions = msg.getResponseHeader().getHeaders("X-Powered-By");
 		if (xpbOptions != null) { //Header Found
 			for (String xpbDirective : xpbOptions) {
-				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
+				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
 					getName()); 
 		    		alert.setDetail(
 		    				getDescription(), //Description

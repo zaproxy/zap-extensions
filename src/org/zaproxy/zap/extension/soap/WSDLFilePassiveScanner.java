@@ -68,7 +68,7 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String evidence) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
 	    			this.getDescription(), 

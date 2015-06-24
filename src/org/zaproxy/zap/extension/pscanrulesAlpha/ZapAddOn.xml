@@ -1,25 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>5</version>
+	<version>6</version>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
-	<![CDATA[	
-	Tweaked "Source Code Disclosure" scanner to reduce false positives<br> 
-	Added "Insecure Component" scanner<br>
-	Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')<br>
-	Add Big Redirect scanner (Issue 1257)<br>
-	Fixed an issue in detecting SHA-512 Crypt hashes, and other hashes beginning with "$"<br>
-	Detect Node.js source code<br>
-	Report Apache vulnerabilities on Red Hat and CentOS as False Positives<br>
-	Detect Directory Browsing / Listings on Microsoft IIS<br>
-	Added Cacheable Content scanner<br>
-	Added Retrieved From Cache scanner<br>
-	Updated Insecure Component scanner to support Squid<br>
-	Added Image Location Scanner passive scanner<br>
-	Updated Insecure Component scanner vulnerability database for all products<br>
-	Updated for ZAP 2.4<br>
+	<![CDATA[
+	Minor code changes.
 	]]>
 	</changes>
 	<extensions>

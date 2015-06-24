@@ -73,7 +73,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String evidence) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
 	    			this.getDescription(), 

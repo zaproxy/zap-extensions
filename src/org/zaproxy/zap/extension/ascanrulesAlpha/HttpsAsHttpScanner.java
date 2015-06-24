@@ -144,7 +144,7 @@ public class HttpsAsHttpScanner extends AbstractAppPlugin {
 			String newUri = newRequest.getRequestHeader().getURI().toString();
 			
 			bingo(this.getRisk(), //Risk
-					Alert.WARNING, //Confidence/Reliability
+					Alert.CONFIDENCE_MEDIUM, //Confidence/Reliability
 					this.getName(), //Name
 					this.getDescription(), //Description
 					this.getBaseMsg().getRequestHeader().getURI().toString(), //Original URI
