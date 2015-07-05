@@ -15,6 +15,7 @@
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 	<!-- This assumes you also have the zaproxy_2.4 project (used for the weekly release -->
 	<property name="zap-2.4.plugin.dir" location="../../zaproxy_2.4/src/plugin" />
+	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.4" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
@@ -149,8 +150,12 @@
 			<delete file="${addon.libs.zip}" />
 
 			<!-- Remove search indexes previously generated, no longer needed. -->
-			<delete dir="${src}/org/zaproxy/zap/extension/@{name}/resources/help/JavaHelpSearch" />
-			<delete dir="${src}/org/zaproxy/zap/extension/@{name}/resources/help_*_*/JavaHelpSearch" />
+			<delete includeemptydirs="true" failonerror="false">
+				<fileset dir="${src}/org/zaproxy/zap/extension/@{name}/resources/">
+					<include name="help/JavaHelpSearch/**" />
+					<include name="help_*_*/JavaHelpSearch/**" />
+				</fileset>
+			</delete>
 
 			<!-- Include add-on files -->
 			<jar jarfile="${dist}/${file}" update="true" compress="true">
@@ -176,7 +181,7 @@
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
 				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
-				url="http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download" />
+				url="${zap.download.url}/${file}" />
 
 		</sequential>
 	</macrodef>
@@ -223,7 +228,7 @@
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
 				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
-				url="http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download" />
+				url="${zap.download.url}/${file}" />
 
 		</sequential>
 	</macrodef>
@@ -239,6 +244,7 @@
 		<build-addon name="browserView" />
 		<build-addon name="callgraph" />
 		<build-addon name="cmss" />
+		<build-addon name="codedx"/>
 		<build-addon name="help_bs_BA" />
 		<build-addon name="help_es_ES" />
 		<build-addon name="help_fr_FR" />
@@ -336,6 +342,10 @@
 		<build-deploy-addon name="cmss" />
 	</target>
 
+	<target name="deploy-codedx" description="deploy the codedx extension">
+		<build-deploy-addon name="codedx" />
+	</target>
+	
 	<target name="deploy-help-fr-FR" description="deploy the help_fr_FR add-on">
 		<build-deploy-help-addon name="help_fr_FR" />
 	</target>

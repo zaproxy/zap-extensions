@@ -7,7 +7,9 @@
 	<changes>
 	<![CDATA[
 	Updated add-on's info URL.<br>
-	Minor code changes.
+	Minor code changes.<br>
+	Added a new scanner to search for format string errors in compiled code.<br>
+	Change scanners to honour the technologies enabled (1618).
   	]]>
 	</changes>
 	<extensions>
@@ -17,6 +19,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.FormatString</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ProxyDisclosureScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RelativePathConfusionScanner</ascanrule>
@@ -30,6 +33,6 @@
 	<files>
 		<file>xml/example-ascan-file.txt</file>
 	</files>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.4.1</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

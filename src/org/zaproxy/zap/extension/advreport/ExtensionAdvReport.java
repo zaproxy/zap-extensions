@@ -37,12 +37,13 @@ import org.zaproxy.zap.view.ZapMenuItem;
  */
 public class ExtensionAdvReport extends ExtensionAdaptor {
 
-	public static final String NAME = "ExtensionNewReport";
+	public static final String NAME = "ExtensionAdvReport";
 	
-    private ZapMenuItem menuExample = null;
+    private ZapMenuItem menuCustomHtmlReport = null;
     private OptionDialog optionDialog = null;
     private ScopePanel scopetab = null;
-    private AdvancedPanel advancedtab = null;
+    private AlertsPanel alertstab = null;
+    private AlertDetailsPanel alertDetailstab = null;
     
     /**
      * 
@@ -73,16 +74,16 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
             super.hook(extensionHook);
             
             if (getView() != null) {
-                extensionHook.getHookMenu().addReportMenuItem(getMenuExample());
+                extensionHook.getHookMenu().addReportMenuItem(getMenuCustomHtmlReport());
             }
 
         }
 
-        private ZapMenuItem getMenuExample() {
-        if (menuExample == null) {
-                menuExample = new ZapMenuItem( "menu.report.html.generate" );
-                menuExample.setText("Customize HTML Report");
-                menuExample.addActionListener(new java.awt.event.ActionListener() {
+        private ZapMenuItem getMenuCustomHtmlReport() {
+        if (menuCustomHtmlReport == null) {
+                menuCustomHtmlReport = new ZapMenuItem( "menu.report.html.generate" );
+                menuCustomHtmlReport.setText("Customize HTML Report");
+                menuCustomHtmlReport.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
                 	getNewOptionFrame();
@@ -91,13 +92,13 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
                 }
             });
         }
-        return menuExample;
+        return menuCustomHtmlReport;
     }// zap menu item
         
         public void getNewOptionFrame(){
         	//optionframe.setPreferredSize( new Dimension(530,320) );
         	List<String> alertTypes= getAlertTypes();
-        	optionDialog = new OptionDialog(getScopeTab(),getAdvancedTab( alertTypes ) );
+        	optionDialog = new OptionDialog(getScopeTab(),getAlertsTab( alertTypes ), getAlertDetailsTab() );
         }
         
         private List<String> getAlertTypes() {
@@ -124,9 +125,14 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
         	return scopetab;
         }
         
-        private AdvancedPanel getAdvancedTab( List<String> alertTypes ){
-        	advancedtab = new AdvancedPanel( alertTypes, this );
-        	return advancedtab;
+        private AlertsPanel getAlertsTab( List<String> alertTypes ){
+        	alertstab = new AlertsPanel( alertTypes, this );
+        	return alertstab;
+        }
+        
+        private AlertDetailsPanel getAlertDetailsTab(){
+        	alertDetailstab = new AlertDetailsPanel( this );
+        	return alertDetailstab;
         }
         
         public String getReportName(){
@@ -138,22 +144,62 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
         }
         
         public List<String> getSelectedAlerts(){
-        	return advancedtab.getSelectedAlerts();
+        	return alertstab.getSelectedAlerts();
         }
         
         public boolean onlyInScope(){
         	return scopetab.onlyInScope();
         }
-        
+                
         public String getTemplate(){
         	return scopetab.getTemplate();
         }
+
+        public boolean alertDescription(){
+        	return alertDetailstab.description();
+        }
+
+        public boolean otherInfo(){
+        	return alertDetailstab.otherInfo();
+        }
         
+        public boolean solution(){
+        	return alertDetailstab.solution();
+        }
+        
+        public boolean reference(){
+        	return alertDetailstab.reference();
+        }
+        
+        public boolean cweid(){
+        	return alertDetailstab.cweid();
+        }
+        
+        public boolean wascid(){
+        	return alertDetailstab.wascid();
+        }
+        
+        public boolean requestHeader(){
+        	return alertDetailstab.requestHeader();
+        }
+        
+        public boolean responseHeader(){
+        	return alertDetailstab.responseHeader();
+        }
+        
+        public boolean requestBody(){
+        	return alertDetailstab.requestBody();
+        }
+
+        public boolean responseBody(){
+        	return alertDetailstab.responseBody();
+        }
+
         @Override
         public String getAuthor() {
                 return "\n Author: Chienli Ma";
         }
-
+ 
         @Override
         public URL getURL() {
                 try {

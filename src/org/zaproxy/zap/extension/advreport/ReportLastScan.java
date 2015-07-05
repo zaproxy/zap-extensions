@@ -32,6 +32,7 @@ package org.zaproxy.zap.extension.advreport;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,9 +42,11 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.ViewDelegate;
+//import org.parosproxy.paros.extension.report.ReportGenerator;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
@@ -54,6 +57,8 @@ import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.XMLStringUtil;
 import org.zaproxy.zap.view.ScanPanel;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
+import org.parosproxy.paros.db.*;
+
 
 public class ReportLastScan {
 
@@ -62,19 +67,24 @@ public class ReportLastScan {
     private static final String HTM_FILE_EXTENSION=".htm";
     private static final String HTML_FILE_EXTENSION=".html";
     
+    public static final String[] MSG_RISK = {"Informational", "Low", "Medium", "High"};
+    public static final String[] MSG_CONFIDENCE = {"False Positive", "Low", "Medium", "High", "Confirmed"};
+    
     public enum ReportType {HTML, XML}
 
     public ReportLastScan() {
     }
 
-    public StringBuilder generate(StringBuilder report, Model model, Boolean inScope, 
-    		                 List<String> selectedAlerts, String name, String description ) throws Exception {
+    public StringBuilder generate(StringBuilder report, Model model, Boolean inScope,
+    		                 List<String> selectedAlerts, String reportName, String reportDescription, Boolean alertDescription, 
+    		                 Boolean otherInfo, Boolean solution, Boolean reference, Boolean cweid, Boolean wascid,
+    		                 Boolean requestHeader, Boolean responseHeader, Boolean requestBody, Boolean responseBody ) 
+    		                		 throws Exception {
         report.append("<?xml version=\"1.0\"?>");
         report.append("<OWASPZAPReport version=\"").append(Constant.PROGRAM_VERSION).append("\" generated=\"").append(ReportGenerator.getCurrentDateTimeString()).append("\">\r\n");
-        // todo change name and desc to attribute of report
-        report.append("<name>").append(name).append("</name>");
-        report.append("<desc>").append(description).append("</desc>");
-        siteXML(report);
+        report.append("<reportname>").append(reportName).append("</reportname>\r\n");
+        report.append("<reportdesc>").append(reportDescription).append("</reportdesc>\r\n");
+        siteXML(report, alertDescription, otherInfo, solution, reference, cweid, wascid, requestHeader, responseHeader, requestBody, responseBody);
         report.append("</OWASPZAPReport>");
         
         // parse and rewrite xml report
@@ -82,14 +92,16 @@ public class ReportLastScan {
     		List<Context> contexts = model.getSession().getContexts();
     		report = ReportParser.deleteNotInScope(contexts, report);
         }
-        
         // delete unwanted alerts
         report = ReportParser.selectExpectedAlerts( report, selectedAlerts);
+        
         return report;
     }
 
-    private void siteXML(StringBuilder report) {
-        SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
+    private void siteXML(StringBuilder report, Boolean alertDescription, Boolean otherInfo, Boolean solution, Boolean reference, 
+    		Boolean cweid, Boolean wascid, Boolean requestHeader, Boolean responseHeader, Boolean requestBody, Boolean responseBody) {
+        
+    	SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
         SiteNode root = (SiteNode) siteMap.getRoot();
         int siteNumber = root.getChildCount();
         for (int i = 0; i < siteNumber; i++) {
@@ -101,22 +113,103 @@ public class ReportLastScan {
                     " host=\"" + XMLStringUtil.escapeControlChrs(hostAndPort[0])+ "\""+
                     " port=\"" + XMLStringUtil.escapeControlChrs(hostAndPort[1])+ "\""+
                     " ssl=\"" + String.valueOf(isSSL) + "\"" +
-                    ">";
+                    ">\r\n";
             StringBuilder extensionsXML = getExtensionsXML(site);
             String siteEnd = "</site>";
             report.append(siteStart);
             report.append(extensionsXML);
-            report.append(siteEnd);
+            
+            report.append("<alerts>");
+            List<Alert> alerts = site.getAlerts();
+            
+            for (Alert alert : alerts) {
+               
+               	report.append("<alertitem>\r\n");
+        		report.append("<pluginid>").append(alert.getPluginId()).append("</pluginid>\r\n");
+        		report.append("<alert>").append(alert.getAlert()).append("</alert>\r\n");
+        		report.append("<riskcode>").append(alert.getRisk()).append("</riskcode>\r\n");
+        		report.append("<confidence>").append(alert.getConfidence()).append("</confidence>\r\n");
+        		report.append("<riskdesc>").append(replaceEntity(MSG_RISK[alert.getRisk()] + " (" + MSG_CONFIDENCE[alert.getConfidence()] + ")")).append("</riskdesc>\r\n");
+        		if (alertDescription) {
+        			report.append("<desc>").append(paragraph(replaceEntity(alert.getDescription()))).append("</desc>\r\n");
+        		}
+        		if (solution) {
+        			report.append("<solution>").append(paragraph(replaceEntity(alert.getSolution()))).append("</solution>\r\n");
+        		}
+        		if (alert.getOtherInfo() != null && alert.getOtherInfo().length() > 0 && otherInfo) {
+                    report.append("<otherinfo>").append(breakNoSpaceString(replaceEntity(alert.getOtherInfo()))).append("</otherinfo>\r\n");
+                } 
+        		if (reference) {               
+        			report.append("<reference>" ).append(paragraph(replaceEntity(alert.getReference()))).append("</reference>\r\n");
+        		}
+        		if (alert.getCweId() > 0 && cweid) {
+        			report.append("<cweid>" ).append(alert.getCweId()).append("</cweid>\r\n");
+        		}
+        		if (alert.getWascId() > 0 && wascid) {
+        			report.append("<wascid>" ).append(alert.getWascId()).append("</wascid>\r\n");
+        		}
+        		report.append("  <uri>").append(breakNoSpaceString(replaceEntity(alert.getUri()))).append("</uri>\r\n");
+        		if (alert.getParam().length() > 0) {
+        			report.append("<param>").append(breakNoSpaceString(replaceEntity(alert.getParam()))).append("</param>\r\n");
+        		}
+        		if (alert.getAttack()!= null && alert.getAttack().length() > 0) {
+        			report.append("<attack>").append(breakNoSpaceString(replaceEntity(alert.getAttack()))).append("</attack>\r\n");
+        		}
+        		if (alert.getEvidence() != null && alert.getEvidence().length() > 0) {
+        			report.append("<evidence>").append(breakNoSpaceString(replaceEntity(alert.getEvidence()))).append("</evidence>\r\n");
+        		}
+        		if (requestHeader) {
+        			report.append("<requestheader>").append(paragraph(replaceEntity(alert.getMessage().getRequestHeader().toString()))).append("</requestheader>\r\n");
+        		}
+        		if (responseHeader) {
+    			report.append("<responseheader>").append(paragraph(replaceEntity(alert.getMessage().getResponseHeader().toString()))).append("</responseheader>\r\n");
+        		}
+        		if (alert.getMessage().getRequestBody().length() > 0 && requestBody) {
+        			report.append("<requestbody>").append(replaceEntity(alert.getMessage().getRequestBody().toString())).append("</requestbody>\r\n");
+            	}
+        		if (alert.getMessage().getResponseBody().length() > 0 && responseBody) {
+        			report.append("<responsebody>").append(replaceEntity(alert.getMessage().getResponseBody().toString())).append("</responsebody>\r\n");
+            	}
+
+        		report.append("</alertitem>\r\n");           	            	            	
+            }
+            
+            report.append("</alerts>\r\n");
+            report.append(siteEnd);           
         }
     }
     
+    public String paragraph(String text) {
+		String result = null;
+		result = "<p>" + text.replaceAll("\\r\\n","</p><p>").replaceAll("\\n","</p><p>") + "</p>";
+        result = result.replaceAll("&lt;ul&gt;", "<ul>").replaceAll("&lt;/ul&gt;", "</ul>").replaceAll("&lt;li&gt;", "<li>").replaceAll("&lt;/li&gt;", "</li>");
+        //result = text.replaceAll("\\r\\n","<br/>").replaceAll("\\n","<br/>");
+        return result;
+	}
+
+    public String replaceEntity(String text) {
+		String result = null;
+		if (text != null) {
+			result = ReportGenerator.entityEncode(text);
+		}
+		return result;
+	}
+
+    private String breakNoSpaceString(String text) {
+	        String result = null;
+	        if (text != null) {
+	        	result = text.replaceAll("&amp;","&amp;<wbr/>");
+	        }
+	        return result;
+	    }
+	  
     public StringBuilder getExtensionsXML(SiteNode site) {
         StringBuilder extensionXml = new StringBuilder();
         ExtensionLoader loader = Control.getSingleton().getExtensionLoader();
         int extensionCount = loader.getExtensionCount();
         for(int i=0; i<extensionCount; i++) {
             Extension extension = loader.getExtension(i);
-            if(extension instanceof XmlReporterExtension) {
+            if(extension instanceof XmlReporterExtension && extension.getName() != "ExtensionAlert") {
             	String xml_temp = ((XmlReporterExtension)extension).getXml(site);
                 extensionXml.append(xml_temp);
             }
@@ -165,12 +258,15 @@ public class ReportLastScan {
                 // get report contents
             	StringBuilder sb = new StringBuilder(500);
                 sb = this.generate(sb, model, extension.onlyInScope(), extension.getSelectedAlerts(), 
-                		               extension.getReportName(), extension.getReportDescription() );    
+                		               extension.getReportName(), extension.getReportDescription(), extension.alertDescription(),
+                		               extension.otherInfo(), extension.solution(), extension.reference(), extension.cweid(), extension.wascid(),
+                		               extension.requestHeader(), extension.responseHeader(), extension.requestBody(), extension.responseBody());    
                 
                 // select template and generate html file
                 File report = null;
                 String reportXSL="";
                 String extensionPath = Constant.getZapHome() + "/xml/";
+               
                 switch( extension.getTemplate()){
                   
                     case "Concise":

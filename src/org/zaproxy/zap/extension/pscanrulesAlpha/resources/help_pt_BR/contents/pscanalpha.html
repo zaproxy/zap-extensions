@@ -6,45 +6,45 @@ Passive Scan Rules - Alpha
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Passive Scan Rules - Alpha</h1>
-The following alpha quality passive scan rules are included in this add-on:
+<h1>Regras de verificação passiva - alfa</h1>
+As seguintes regras de verificação passiva de qualidade alfa estão incluídas neste complemento:
 
-<h2>ASP.NET ViewState Disclosure</h2>
-An ASP.NET ViewState was disclosed by the application/web server
+<h2>Exposição do ViewState do ASP.NET</h2>
+Um ViewState do ASP.NET foi exibido pelo servidor web/aplicativo
 
-<h2>ASP.NET ViewState Integrity</h2>
-The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client
+<h2>Integridade do ViewState do ASP.NET</h2>
+O aplicativo não usa um código de autenticação de mensagem (MAC) para proteger a integridade do ASP.NET ViewState, que pode ser violado por um cliente malicioso
 
-<h2>Base64 Disclosure</h2>
-Base64 encoded data was disclosed by the application/web server
+<h2>Exposição de Base64</h2>
+Dados codificados em Base64 foram exibidos pelo servidor web/aplicativo
 
-<h2>Missing Content Security Policy Header</h2>
-This checks response headers for the presence of a Content Security Policy header.
+<h2>Falta o cabeçalho/header da política de segurança de conteúdo</h2>
+Isto verifica os cabeçalhos de resposta para verificar a presença de um cabeçalho de política de segurança de conteúdo.
 
-<h2>Cookie poisoning</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
+<h2>Envenenamento de cookie</h2>
+Esta verificação confere a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde os parâmetros de cookie podem ser controlados. Isso é chamado ataque de cookie poisonining ou envenenamento de cookie e se torna explorável quando um atacante pode manipular o cookie de várias maneiras. Em alguns casos isso não vai ser explorável, mas permitir que parâmetros de URL definam valores de cookie é geralmente considerado um bug.
 
-<h2>Cross Domain Misconfiguration</h2>
-Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
-The current implementation looks at excessively permissive CORS headers.
+<h2>Configuração incorreta de domínio cruzado</h2>
+Busca passivamente respostas contendo configurações incorretas de Domínio Cruzado, que relaxam a política de "mesma origem" no navegador da web, por exemplo.<br>
+A implementação atual verifica cabeçalhos CORS excessivamente permissivos.
 
-<h2>Directory Browsing</h2>
-Passively scan responses for signatures that are indicative that Directory Browsing is possible.
+<h2>Pesquisa no diretório</h2>
+Busca passivamente assinaturas de respostas indicando de que a navegação em diretório é possível.
 
-<h2>Example File Passive Scanner</h2>
-This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Varredura passiva de arquivo-exemplo</h2>
+Este recurso implementa uma regra de varredura passiva que carrega strings de um arquivo que o usuário pode editar.<br>
+Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
-<h2>Example Simple Passive Scanner</h2>
-This implements a very simple example passive scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Exemplo de varredura passiva simples</h2>
+Aqui implementamos um exemplo muito simples de regra de varredura passiva.<br>
+Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
-<h2>Hash Disclosure</h2>
-Passively scan for password hashes disclosed by the web server. <br>
-Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
+<h2>Exposição de hash</h2>
+Vasculhar passivamente hashes de senhas exibidos pelo servidor web. <br>
+Estão incluídos vários formatos, inclusive alguns como MD4, MD5 e SHA *, às vezes usados para outros fins além de conter hashes de senhas. 
 
 <h2>HeartBleed</h2>
-Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
+Varreduras passivas à procura de respostas de cabeçalho HTTP indicando que o servidor está vulnerável à vulnerabilidade crítica  HeartBleed OpenSSL. 
 
 <h2>HTTP to HTTPS insecure transition in form post</h2>
 This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
