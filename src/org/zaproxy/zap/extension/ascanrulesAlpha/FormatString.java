@@ -58,11 +58,7 @@ public class FormatString extends AbstractAppParamPlugin  {
 	private static Logger log = Logger.getLogger(FormatString.class);
 	
 	@Override
-	public int getId() {
-		/*
-		 * This should be unique across all active and passive rules.
-		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
-		 */
+	public int getId() {	
 		return 30002;
 	}
 
@@ -70,7 +66,7 @@ public class FormatString extends AbstractAppParamPlugin  {
 	public String getName() {
 		// Strip off the "Format String Error: " part if implementing a real one ;)
 		if (vuln != null) {
-			return "Format String Error " + vuln.getAlert();
+			return "Format String Error";
 		}
 		return "Format String Error";
 	}
