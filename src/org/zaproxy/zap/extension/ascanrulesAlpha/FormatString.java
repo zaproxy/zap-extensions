@@ -39,6 +39,7 @@
  * THE SOFTWARE
  */
 
+
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;

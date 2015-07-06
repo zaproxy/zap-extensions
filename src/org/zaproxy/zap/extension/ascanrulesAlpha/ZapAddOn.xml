@@ -8,7 +8,7 @@
 	<![CDATA[
 	Updated add-on's info URL.<br>
 	Minor code changes.
-	Added a new scanner to search for format string errors.
+	Added a new scanner to search for format string errors in compiled code.
   	]]>
 	</changes>
 	<extensions>
