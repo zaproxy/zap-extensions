@@ -87,13 +87,13 @@ public class ScopePanel extends AbstractPanel{
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.EAST;
         this.add( onlyInScope, gbc );
-	    
+  	    
 	    // button line 
         gbc.insets = new Insets(0,0,0,0);
 	    gbc.gridx = 1;
         gbc.gridy++ ;
         JPanel buttonpane = new JPanel( new FlowLayout( FlowLayout.RIGHT ));
-        buttonpane.add( getCancleButton() );
+        buttonpane.add( getCancelButton() );
         buttonpane.add( getHTMLButton() );
         this.add( buttonpane, gbc );
 	}
@@ -114,16 +114,16 @@ public class ScopePanel extends AbstractPanel{
 		return (String)template.getSelectedItem();
 	}
 	
-	private JButton getCancleButton(){
-		JButton canclebutton = new JButton("Cancle");
-		canclebutton.addActionListener(
+	private JButton getCancelButton(){
+		JButton cancelbutton = new JButton("Cancel");
+		cancelbutton.addActionListener(
 				new ActionListener() {
 		            @Override
 		            public void actionPerformed(ActionEvent e) {
 		               extension.emitFrame();
 		            }
 		        });
-		return canclebutton;
+		return cancelbutton;
 	}
 	
 	private JButton getHTMLButton(){
@@ -137,7 +137,5 @@ public class ScopePanel extends AbstractPanel{
 		        });
 		return generatebutton;
 	}
-	
-	
 	
 }
