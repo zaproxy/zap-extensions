@@ -195,7 +195,7 @@ public class FuzzMessageLocationsPanel extends
                     if (processors.isEmpty()) {
                         payloadGenerators.add(payloadGenerator);
                     } else {
-                        payloadGenerators.add(wrapProcessedPayloadGenerator(payloadGenerator, processors));
+                        payloadGenerators.add(wrapProcessedPayloadGenerator((PayloadGenerator)payloadGenerator, processors));
                     }
                 }
             } else {

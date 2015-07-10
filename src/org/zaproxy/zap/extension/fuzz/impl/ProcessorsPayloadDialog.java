@@ -175,7 +175,7 @@ public class ProcessorsPayloadDialog extends AbstractFormDialog {
 
         @Override
         public PayloadProcessorTableEntry showModifyDialogue(PayloadProcessorTableEntry e) {
-            PayloadProcessorUI<?, ?, ?> processorUI = showModifyDialogueImpl(e.getPayloadProcessorUI());
+            PayloadProcessorUI<?, ?, ?> processorUI = showModifyDialogueImpl((PayloadProcessorUI)e.getPayloadProcessorUI());
 
             if (processorUI != null) {
                 e.setPayloadProcessorUI(processorUI);
