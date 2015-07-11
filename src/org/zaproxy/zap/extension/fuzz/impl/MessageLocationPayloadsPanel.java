@@ -230,7 +230,7 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
         @Override
         public PayloadTableEntry showModifyDialogue(PayloadTableEntry e) {
-            PayloadGeneratorUI<?, ?, ?> payloadGeneratorUI = showModifyDialogueHelper(e.getPayloadGeneratorUI());
+            PayloadGeneratorUI<?, ?, ?> payloadGeneratorUI = showModifyDialogueHelper((PayloadGeneratorUI)e.getPayloadGeneratorUI());
 
             if (payloadGeneratorUI != null) {
                 e.setPayloadGeneratorUI(payloadGeneratorUI);
