@@ -31,6 +31,7 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -38,6 +39,7 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiOther;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.api.API.RequestType;
 
 public class PlugNHackAPI extends ApiImplementor {
 
@@ -178,7 +180,6 @@ public class PlugNHackAPI extends ApiImplementor {
                         "HTTP/1.1 200 OK\r\n"
                         + "Pragma: no-cache\r\n"
                         + "Cache-Control: no-cache\r\n"
-                        + "Access-Control-Allow-Origin: *\r\n"
                         + "Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n"
                         + "Access-Control-Allow-Headers: ZAP-Header\r\n"
                         + "Content-Length: " + welcomePage.length()
@@ -202,7 +203,6 @@ public class PlugNHackAPI extends ApiImplementor {
                         "HTTP/1.1 200 OK\r\n"
                         + "Pragma: no-cache\r\n"
                         + "Cache-Control: no-cache\r\n"
-                        + "Access-Control-Allow-Origin: *\r\n"
                         + "Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n"
                         + "Access-Control-Allow-Headers: ZAP-Header\r\n"
                         + "Content-Length: " + manifest.length()
@@ -226,7 +226,6 @@ public class PlugNHackAPI extends ApiImplementor {
                         "HTTP/1.1 200 OK\r\n"
                         + "Pragma: no-cache\r\n"
                         + "Cache-Control: no-cache\r\n"
-                        + "Access-Control-Allow-Origin: *\r\n"
                         + "Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n"
                         + "Access-Control-Allow-Headers: ZAP-Header\r\n"
                         + "Content-Length: " + service.length()
@@ -259,7 +258,6 @@ public class PlugNHackAPI extends ApiImplementor {
                         + "Accept-Ranges: byte"
                         + "Pragma: no-cache\r\n"
                         + "Cache-Control: no-cache\r\n"
-                        + "Access-Control-Allow-Origin: *\r\n"
                         + "Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n"
                         + "Access-Control-Allow-Headers: ZAP-Header\r\n"
                         + "Content-Length: " + length + "\r\n");
@@ -284,6 +282,10 @@ public class PlugNHackAPI extends ApiImplementor {
             throw new ApiException(ApiException.Type.BAD_OTHER);
         }
     }
+
+	public void addCustomHeaders(String name, RequestType type, HttpResponseHeader header) {
+		header.addHeader("Access-Control-Allow-Origin", "*\r\n");
+	}
 
     @Override
     public HttpMessage handleShortcut(HttpMessage msg) throws ApiException {
