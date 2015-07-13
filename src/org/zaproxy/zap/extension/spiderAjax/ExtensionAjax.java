@@ -226,7 +226,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
 	public void spiderSite(SiteNode node, boolean inScope, AjaxSpiderParam params) {
 		if (getView() != null) {
-			getSpiderPanel().startScan(node.getHierarchicNodeName(), inScope, params);
+			getSpiderPanel().startScan(node.getHistoryReference().getURI().toString(), inScope, params);
 		}
 	}
 
