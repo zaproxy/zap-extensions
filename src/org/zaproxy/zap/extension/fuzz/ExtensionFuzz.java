@@ -168,7 +168,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
 
     private static FuzzerPayloadCategory loadJBroFuzzFuzzers() {
         List<FuzzerPayloadCategory> fuzzerCategories = new ArrayList<>();
-        Database jbroFuzzDB = new Database();
+        Database jbroFuzzDB = new Database(Constant.getZapHome() + "jbrofuzz/fuzzers.jbrf");
         List<String> categories = new ArrayList<>(Arrays.asList(jbroFuzzDB.getAllCategories()));
         Collections.sort(categories);
         List<String> subCategoryNames = new ArrayList<>(2);

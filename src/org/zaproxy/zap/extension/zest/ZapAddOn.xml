@@ -7,7 +7,7 @@
 	<changes>
 	<![CDATA[
 	Updated add-on's info URL.<br>
-	Minor code changes.
+	Other code changes.
 	]]>
 	</changes>
 	<dependencies>
@@ -39,6 +39,7 @@
 		<file>scripts/templates/standalone/Standalone default template.zst</file>
 		<file>scripts/templates/targeted/Resend as a GET request.zst</file>
 		<file>scripts/templates/targeted/Targeted default template.zst</file>
+		<file>jbrofuzz/fuzzers.jbrf</file>
 	</files>
 	<not-before-version>2.4.0</not-before-version>
 	<not-from-version/>

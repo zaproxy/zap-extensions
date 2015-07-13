@@ -11,7 +11,8 @@
     Properly load the 'Fuzzer HTTP Processor' templates.<br>
     Keep focus on results table, even if there's a payload reflection in the response (Issue 1442).<br>
     Update POST request's Content-Length by default.<br>
-    Remove status icon when uninstalling.
+    Remove status icon when uninstalling.<br>
+    Other code changes.
     ]]>
     </changes>
     <extensions>
@@ -23,6 +24,7 @@
         <file>scripts/templates/httpfuzzerprocessor/Fuzzer HTTP Processor default template.js</file>
         <file>scripts/templates/payloadgenerator/Payload Generator default template.js</file>
         <file>scripts/templates/payloadprocessor/Payload Processor default template.js</file>
+        <file>jbrofuzz/fuzzers.jbrf</file>
     </files>
     <not-before-version>2.4.0</not-before-version>
     <not-from-version/>

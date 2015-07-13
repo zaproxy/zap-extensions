@@ -16,7 +16,7 @@
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/java-getopt-1.0.13.jar"/>
 	<classpathentry kind="lib" path="lib/javax.inject-1.jar"/>
-	<classpathentry kind="lib" path="lib/JBroFuzz.jar"/>
+	<classpathentry kind="lib" path="lib/jbrofuzz-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/jericho-html-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/jgoodies-looks-2.4.0.jar"/>
@@ -31,6 +31,7 @@
 	<classpathentry kind="lib" path="lib/procyon-decompiler-0.5.25.jar"/>
 	<classpathentry kind="lib" path="lib/rsyntaxtextarea-2.5.6.jar"/>
 	<classpathentry kind="lib" path="lib/simple-odf-0.7-incubating.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.7.15-M1.jar"/>
 	<classpathentry kind="lib" path="lib/swing-layout-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-all-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
