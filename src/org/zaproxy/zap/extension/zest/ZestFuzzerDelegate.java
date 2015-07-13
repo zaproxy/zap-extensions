@@ -170,7 +170,7 @@ public class ZestFuzzerDelegate {
 
     private Database getDB() {
     	if (jbroFuzzDB == null) {
-    		jbroFuzzDB = new Database();
+    		jbroFuzzDB = new Database(Constant.getZapHome() + "jbrofuzz/fuzzers.jbrf");
     	}
     	return jbroFuzzDB;
     }
