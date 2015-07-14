@@ -7,7 +7,7 @@
 	<changes>
 	<![CDATA[
 	Minor code changes.<br>
-	Corrected the location from where default files are read.
+	Corrected the location from where default files are read (Issue 1700).
 	]]>
 	</changes>
 	<extensions>
