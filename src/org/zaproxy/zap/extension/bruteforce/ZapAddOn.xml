@@ -6,7 +6,8 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes.
+	Minor code changes.<br>
+	Corrected the location from where default files are read.
 	]]>
 	</changes>
 	<extensions>

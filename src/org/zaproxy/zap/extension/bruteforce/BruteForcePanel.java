@@ -103,7 +103,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 	private JComboBox<ForcedBrowseFile> fileSelect = null;
 	private DefaultComboBoxModel<ForcedBrowseFile> fileSelectModel = null;
 
-	private String fileDirectory = Constant.getInstance().DIRBUSTER_DIR;
+	private String fileDirectory = Constant.getZapHome() + "fuzzers/dirbuster";
 	private String customFileDirectory = Constant.getInstance().DIRBUSTER_CUSTOM_DIR;
 	private String fileExtension = ".txt";
 
