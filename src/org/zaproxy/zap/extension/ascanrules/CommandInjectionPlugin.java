@@ -64,7 +64,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     private static final String BASH_SPACE_REPLACEMENT = "${IFS}";
     
     // OS Command payloads for command Injection testing
-    private static final Map<String, Pattern> OS_PAYLOADS = new LinkedHashMap();
+    private static final Map<String, Pattern> OS_PAYLOADS = new LinkedHashMap<>();
     static {
         // No quote payloads
         OS_PAYLOADS.put("&" + NIX_TEST_CMD + "&", NIX_CTRL_PATTERN);
@@ -110,7 +110,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     private static final String  WIN_BLIND_TEST_CMD = "timeout /T {0}";
     
     // OS Command payloads for blind command Injection testing
-    private static final List<String> BLIND_OS_PAYLOADS = new LinkedList();
+    private static final List<String> BLIND_OS_PAYLOADS = new LinkedList<>();
     static {
         // No quote payloads
         BLIND_OS_PAYLOADS.add("&" + NIX_BLIND_TEST_CMD + "&");
