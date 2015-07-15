@@ -3,6 +3,9 @@
 
 	<property name="src" location="../src" />
 	<property name="src.version" value="1.7" />
+	<property name="test.src" location="../test" />
+	<property name="test.lib" location="../testlib" />
+	<property name="test.results.dir" value="results" />
 	<property name="build" location="build" />
 	<property name="build.lib.dir" location="lib" />
 	<property name="temp" location="temp" />
@@ -34,6 +37,7 @@
 		<delete dir="${dist}" includeEmptyDirs="true" />
 		<delete dir="${build}" includeEmptyDirs="true" />
 		<delete dir="${temp}" includeEmptyDirs="true" />
+		<delete dir="${test.results.dir}" includeEmptyDirs="true" />
 	</target>
 
 	<target name="init">
@@ -41,6 +45,7 @@
 		<mkdir dir="${dist}" />
 		<mkdir dir="${build}" />
 		<mkdir dir="${temp}" />
+		<mkdir dir="${test.results.dir}"/>
 	</target>
 
 	<target name="compile" depends="init" description="compile the source">
@@ -61,6 +66,42 @@
 				</fileset>
 			</classpath>
 		</javac>
+
+		<echo message="Compiling tests..." />
+		<javac srcdir="${test.src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
+			<classpath>
+				<fileset dir="${dist.lib.dir}">
+					<include name="**/*.jar" />
+				</fileset>
+				<pathelement location="${build}"/>
+				<fileset dir="${test.lib}">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="test" depends="clean, compile">
+		<junit printsummary="yes" haltonerror="true" failureproperty="TestsFailed">
+			<classpath>
+				<fileset dir="${dist.lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${test.lib}">
+					<include name="*.jar" />
+				</fileset>
+				<pathelement location="${build}"/>
+			</classpath>
+			<formatter type="plain"/>
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${test.results.dir}">
+				<fileset dir="${build}">
+					<include name="**/*UnitTest.class"/>
+					<exclude name="**/Abstract*Test.class"/>
+				</fileset>
+			</batchtest>
+		</junit>
+		<fail if="TestsFailed" message="Test(s) failed!" />
 	</target>
 
 	<macrodef name="generate-wiki" description="Generates the wiki of an add-on into zap-extensions wiki dir">

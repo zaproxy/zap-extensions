@@ -1,2 +1,2 @@
 language: java
-script: ant -buildfile build/build.xml compile
+script: ant -buildfile build/build.xml test
