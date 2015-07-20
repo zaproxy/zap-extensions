@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>15</version>
+	<version>16</version>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Generate the report (arg -quickout) even if view is initialised (Issue 1281).<br>
-	Updated for ZAP 2.4
+	Include API key in PNH URL (Issue 1714).<br>
 	]]>
 	</changes>
 	<extensions>
