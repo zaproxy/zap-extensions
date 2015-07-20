@@ -83,6 +83,7 @@ import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestRuntime;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
+import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -707,18 +708,28 @@ public class ZestZapUtils {
 		} else if (za.getRootExpression() instanceof ZestExpressionRegex) {
 			ZestExpressionRegex zhr = (ZestExpressionRegex) za
 					.getRootExpression();
-			if (zhr.isInverse()) {
-				return MessageFormat.format(Constant.messages
-						.getString("zest.fail.assert.headregex.exc"), zhr
-						.getRegex());
-			} else {
-				return MessageFormat.format(Constant.messages
-						.getString("zest.fail.assert.headregex.inc"), zhr
-						.getRegex());
+			switch (zhr.getVariableName()) {
+			case ZestVariables.REQUEST_BODY:
+			case ZestVariables.RESPONSE_BODY:
+				return getFailedAssertMessage("body", zhr.isInverse(), zhr.getRegex());
+			case ZestVariables.REQUEST_HEADER:
+			case ZestVariables.RESPONSE_HEADER:
+				return getFailedAssertMessage("head", zhr.isInverse(), zhr.getRegex());
+			default:
+				return getFailedAssertMessage("var", zhr.isInverse(), zhr.getVariableName(), zhr.getRegex());
 			}
 		}
 
 		return toUiString(za, true);
+	}
+
+	private static String getFailedAssertMessage(String varLocation, boolean inverse, Object... messageArgs) {
+		if (inverse) {
+			return MessageFormat.format(
+					Constant.messages.getString("zest.fail.assert." + varLocation + "regex.exc"),
+					messageArgs);
+		}
+		return MessageFormat.format(Constant.messages.getString("zest.fail.assert." + varLocation + "regex.inc"), messageArgs);
 	}
 
 	public static HttpMessage toHttpMessage(ZestRequest request,
