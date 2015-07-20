@@ -22,9 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 
-import net.sf.json.JSON;
 import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -33,13 +31,13 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.api.API;
+import org.zaproxy.zap.extension.api.API.RequestType;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiOther;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
-import org.zaproxy.zap.extension.api.API.RequestType;
 
 public class PlugNHackAPI extends ApiImplementor {
 
@@ -73,9 +71,9 @@ public class PlugNHackAPI extends ApiImplementor {
         this.addApiAction(new ApiAction(ACTION_START_MONITORING, new String[]{PARAM_URL}));
         this.addApiAction(new ApiAction(ACTION_STOP_MONITORING, new String[]{PARAM_ID}));
 
-        this.addApiOthers(new ApiOther(OTHER_PNH, false));
-        this.addApiOthers(new ApiOther(OTHER_MANIFEST, false));
-        this.addApiOthers(new ApiOther(OTHER_SERVICE, false));
+        this.addApiOthers(new ApiOther(OTHER_PNH));
+        this.addApiOthers(new ApiOther(OTHER_MANIFEST));
+        this.addApiOthers(new ApiOther(OTHER_SERVICE));
         this.addApiOthers(new ApiOther(OTHER_FIREFOX_ADDON, false));
 
         this.addApiShortcut(OTHER_PNH);
@@ -284,12 +282,22 @@ public class PlugNHackAPI extends ApiImplementor {
     }
 
 	public void addCustomHeaders(String name, RequestType type, HttpResponseHeader header) {
-		header.addHeader("Access-Control-Allow-Origin", "*\r\n");
+		// TODO severely restrict
+		header.addHeader("Access-Control-Allow-Origin", "*");
 	}
 
     @Override
     public HttpMessage handleShortcut(HttpMessage msg) throws ApiException {
         try {
+			// Ensure the API key has been supplied
+			JSONObject params = API.getParams(msg.getRequestHeader().getURI().getEscapedQuery());
+			String key = API.getInstance().getApiKey();
+			if (key != null && key.length() > 0) {
+				if ( ! params.has(API.API_KEY_PARAM) || ! key.equals(params.getString(API.API_KEY_PARAM))) {
+					throw new ApiException(ApiException.Type.BAD_API_KEY);
+				}
+			}
+
             if (msg.getRequestHeader().getURI().getPath().startsWith("/" + OTHER_PNH)) {
                 return this.handleApiOther(msg, OTHER_PNH, null);
         
@@ -310,7 +318,6 @@ public class PlugNHackAPI extends ApiImplementor {
         try {
             in = ExtensionPlugNHack.class.getResourceAsStream("resources/" + resource);
             MessageDigest md = MessageDigest.getInstance("SHA1");
-            //FileInputStream fis = new FileInputStream(in);
             byte[] dataBytes = new byte[1024];
             int nread = 0;
 
@@ -351,17 +358,12 @@ public class PlugNHackAPI extends ApiImplementor {
      */
     public static void main(String[] args) throws Exception {
         // Sanity check the json config files are valid!
-        JSON json;
+        //JSON json;
 
-        String manifest = ExtensionPlugNHack.getStringReource("resources/manifest.json");
+        //String manifest = ExtensionPlugNHack.getStringReource("resources/manifest.json");
         //System.out.println("Manifest = " + manifest);
-        json = JSONSerializer.toJSON(manifest);
-        System.out.println("Manifest OK? " + json);
-
-        String service = ExtensionPlugNHack.getStringReource("resources/service.json");
-        //System.out.println("Service = " + service);
-        json = JSONSerializer.toJSON(service);
-        System.out.println("Service OK? " + json);
+        //json = JSONSerializer.toJSON(manifest);
+        //System.out.println("Manifest OK? " + json);
 
         // Calculate the Firefox addon hash
 
@@ -369,7 +371,6 @@ public class PlugNHackAPI extends ApiImplementor {
         try {
             in = ExtensionPlugNHack.class.getResourceAsStream("resources/" + OTHER_FIREFOX_ADDON);
             MessageDigest md = MessageDigest.getInstance("SHA1");
-            //FileInputStream fis = new FileInputStream(in);
             byte[] dataBytes = new byte[1024];
             int nread = 0;
 

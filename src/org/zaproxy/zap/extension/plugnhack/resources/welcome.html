@@ -45,7 +45,7 @@ function install (aEvent)
       <p>
       	{{MSG.SETUP2}}
       	
-      	<b><a class="button" href="{{ROOT}}/OTHER/pnh/other/fx_pnh.xpi/?apikey={{APIKEY}}"
+      	<b><a class="button" href="{{ROOT}}/OTHER/pnh/other/fx_pnh.xpi"
     hash="sha1:{{HASH}}" onclick="return install(event);">{{MSG.FIREFOX}}</a></b>
 	  </p>
 	</div>
@@ -74,7 +74,7 @@ function install (aEvent)
 <script>
   var detected = false;
   var elements = ['setup','in_progress','success','failure','activated','actions'];
-  var manifest = {"detail":{"url":"{{ROOT}}/manifest"}};
+  var manifest = {"detail":{"url":"{{ROOT}}/manifest/?apikey={{APIKEY}}"}};
   // only show UI for the named elements
   var showUI = function(visible,data){
     function replaceTextContent(node, message) {
