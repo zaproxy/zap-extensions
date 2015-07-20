@@ -73,10 +73,7 @@ public class ExtensionInvoke extends ExtensionAdaptor {
 	    extensionHook.addOptionsParamSet(invokeParam);
 	    
 	    if (getView() != null) {
-	        List<InvokableApp> apps = invokeParam.getListInvokeEnabled();
-	        
 	        popupMenuInvokers = new PopupMenuInvokers();
-	        popupMenuInvokers.setApps(apps);
 	        
 	        @SuppressWarnings("unused")
 			ExtensionHookView pv = extensionHook.getHookView();
@@ -90,6 +87,12 @@ public class ExtensionInvoke extends ExtensionAdaptor {
 	@Override
 	public boolean canUnload() {
 		return true;
+	}
+	
+	@Override
+	public void optionsLoaded() {
+		List<InvokableApp> apps = invokeParam.getListInvokeEnabled();
+		popupMenuInvokers.setApps(apps);
 	}
 	
 	private AbstractParamPanel getOptionsInvokePanel() {

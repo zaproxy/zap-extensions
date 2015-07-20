@@ -4,7 +4,12 @@
 	<description>Invoke external applications passing context related information such as URLs and parameters</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Minor code changes.</changes>
+	<changes>
+	<![CDATA[
+	Minor code changes.<br>
+	Show applications immediately after ZAP re/start (Issue 1709).
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.invoke.ExtensionInvoke</extension>
 	</extensions>
