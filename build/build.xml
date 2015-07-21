@@ -163,8 +163,12 @@
 			<delete file="${addon.libs.zip}" />
 
 			<!-- Remove search indexes previously generated, no longer needed. -->
-			<delete dir="${src}/org/zaproxy/zap/extension/@{name}/resources/help/JavaHelpSearch" />
-			<delete dir="${src}/org/zaproxy/zap/extension/@{name}/resources/help_*_*/JavaHelpSearch" />
+			<delete includeemptydirs="true" failonerror="false">
+				<fileset dir="${src}/org/zaproxy/zap/extension/@{name}/resources/">
+					<include name="help/JavaHelpSearch/**" />
+					<include name="help_*_*/JavaHelpSearch/**" />
+				</fileset>
+			</delete>
 
 			<!-- Include add-on files -->
 			<jar jarfile="${dist}/${file}" update="true" compress="true">
