@@ -4,9 +4,9 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Invoke Applications" target="addon.invoke.concepts">
+	<tocitem text="Zap - Guia do Usuário" tocid="toplevelitem">
+		<tocitem text="Complementos" tocid="addons">
+			<tocitem text="Invocar aplicações" target="addon.invoke.concepts">
 				<tocitem text="Opções" target="addon.invoke.options" />
 			</tocitem>
 		</tocitem>

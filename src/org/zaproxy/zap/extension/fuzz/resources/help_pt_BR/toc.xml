@@ -4,15 +4,15 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+	<tocitem text="Zap - Guia do Usuário" tocid="toplevelitem">
+		<tocitem text="Complementos" tocid="addons">
 			<tocitem text="Fuzzer" image="addon.fuzzer.icon" target="addon.fuzzer.concepts">
-				<tocitem text="Options" target="addon.fuzzer.options" />
-				<tocitem text="Dialogue" target="addon.fuzzer.dialogue" />
-			    <tocitem text="Location Processors Dialog" target="addon.fuzzer.locations"/>
-    			<tocitem text="Payloads Dialog" target="addon.fuzzer.payloads"/>
-    			<tocitem text="Payload Processors Dialog" target="addon.fuzzer.processors"/>
-				<tocitem text="Tab" target="addon.fuzzer.tab" />
+				<tocitem text="Opções" target="addon.fuzzer.options" />
+				<tocitem text="Diálogo" target="addon.fuzzer.dialogue" />
+			    <tocitem text="Diálogo de processadores de localização" target="addon.fuzzer.locations"/>
+    			<tocitem text="Diálogo de cargas/payloads" target="addon.fuzzer.payloads"/>
+    			<tocitem text="Diálogo de processadores de carga" target="addon.fuzzer.processors"/>
+				<tocitem text="Aba" target="addon.fuzzer.tab" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

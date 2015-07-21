@@ -3,62 +3,62 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Fuzzer dialog
+Caixa de diálogo do difusor
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Fuzzer dialog</h1>
-This allows you to select the fuzzers to use when <a href="concepts.html">fuzzing </a> a request. 
+<h1>Diálogo do difusor/fuzzer</h1>
+Isso permite que você selecione os fuzzers quando usar <a href="concepts.html">fuzzing </a> num pedido/request. 
 
-<h3>Fuzz Locations tab</h3>
-To configure the fuzzing:<br/>
+<h3>Aba de localização do Fuzzing</h3>
+Para configurar a difusão/fuzzing:<br/>
 <ul>
-<li>Highlight a string you wish to fuzz in the Fuzz Locations tab</li>
-<li>Click the 'Add...' button to launch the <a href="payloads.html">Payloads dialog</a></li>
-<li>Add the payloads you want to use</li>
-<li>Click on the 'Processors...' button to launch the <a href="locations.html">Location Processors dialog</a> (if required)</li>
-<li>Click on the 'Start Fuzzer' button to start the fuzzing</li>
-<li>The results will then be listed in the <a href="tab.html">Fuzzer tab</a> select them to see the full requests and responses.</li>
+<li>Destacar uma string que você deseje usar em fuzzing na aba Fuzz Locations</li>
+<li>Clique no botão 'Adicionar...' para iniciar o <a href="payloads.html">diálogo de cargas</a></li>
+<li>Adicionar as cargas que você deseja usar</li>
+<li>Clique sobre o botão 'processadores...' para abrir a <a href="locations.html">caixa de diálogo localização processadores</a> (se necessário)</li>
+<li>Clique no botão 'Iniciar fuzzer' para iniciar a difusão</li>
+<li>Os resultados serão listados em seguida na <a href="tab.html">aba difusor.</a> Selecione-os para ver as solicitações e respostas.</li>
 </ul>
-You can also search for strings in the fuzz results using the 'Search tab'.
+Você também pode pesquisar seqüências de caracteres nos resultados de difusão usando a guia' Pesquisar'.
 
-<h3>Options tab</h3>
-This tab allows you to configure the options to be used when fuzzing.
+<h3>Aba de Opções</h3>
+Essa guia permite que você configure as opções para serem usadas na difusão/fuzzing.
 
-<h3>Message Processors tab</h3>
-Message Processors can access and change the fuzzing requests and responses, control the fuzzing process and interact with the ZAP UI.
+<h3>Aba de Processadores de mensagem</h3>
+Processadores de mensagem podem acessar e alterar as solicitações e respostas de fuzzing, controlar o processo de fuzzing/difusão e interagir com a interface do usuário do ZAP.
 <br><br>
-The following types of message processors are provided by default:
+Os seguintes tipos de processadores de mensagem são fornecidos por padrão:
 <ul>
-<li>Payload Reflection Detector</li>
-<li>Request Content-Length Updater</li>
-<li>User message processor</li>
+<li>Detector de reflexão de carga</li>
+<li>Atualizador de comprimento de conteúdo da request/solicitação</li>
+<li>Processador de mensagem do usuário</li>
 </ul>
-You can write custom HTTP Message Processor scripts, which allow you to 
+Você pode escrever scripts de processadores de mensagens HTTP, que lhe permitirão 
 <ul>
-<li>Obtain the list of payloads</li>
-<li>Stop fuzzing</li>
-<li>Increase the error count</li>
-<li>Send new messages</li>
-<li>Add messages to the Results tab[link]</li>
-<li>Set custom ‘state’ messages in the <a href="tab.html">Fuzzer tab</a></li>
-<li>Raise alerts</li>
+<li>Obter a lista de cargas/payloads</li>
+<li>Parar o Fuzzing</li>
+<li>Aumentar a contagem de erro</li>
+<li>Enviar novas mensagens</li>
+<li>Adicionar mensagens para a aba de resultados</li>
+<li>Colocar mensagens personalizadas de 'status' na <a href="tab.html">Aba fuzzer</a></li>
+<li>Criar alertas</li>
 </ul>
 
 <br><br>
-Add-ons can also define additional payload generators.
+Complementos também podem definir geradores de carga adicionais.
 
 
-<h2>Accessed via</h2>
+<h2>Acessado via</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Request tab</td><td>'Fuzz...' right click menu item</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites and History tab</td><td>Attack > Fuzz... menu items</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Tools menu </td><td>Attack > Fuzz... menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Aba de Request</td><td>'Fuzz...' item de menu de clique direito</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Guia histórico e sites</td><td>Ataque > Fuzz... itens de menu</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Menu ferramentas </td><td>Ataque > Fuzz... itens de menu</td></tr>
 </table>
 
-<h2>See also</h2>
+<h2>Veja também</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Conceitos de difusor</a></td></tr>
 </table>
 
 </body>

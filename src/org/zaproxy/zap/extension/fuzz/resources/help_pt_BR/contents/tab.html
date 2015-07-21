@@ -2,33 +2,30 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Fuzzer tab</title>
+<title>Aba do fuzzer (difusor)</title>
 </head>
 <body bgcolor="#ffffff">
-	<h1>Fuzzer tab</h1>
+	<h1>Aba do fuzzer (difusor)</h1>
 
-	The Fuzzer tab shows you the requests and responses performed when you
-	<a href="concepts.html">fuzz</a> a string.
-	<br> Selecting a row see the full requests and responses. You can also search for
-	strings in the fuzz results using the Search tab.
+	A aba do difusor mostra as solicitações e respostas realizadas quando você
+	<a href="concepts.html">faz difusão</a> de uma string.
+	<br> Selecionando uma linha você vê todas as solicitações e respostas. Você também pode procurar strings nos resultados do fuzzing usando a guia 'pesquisar'.
 	<br>
-	<h2>HTTP Fuzzer results</h2>
-	The results have to be manually assessed to know if any vulnerability was found.
-	<br> Meaning of values of the "State" column:
+	<h2>Resultados de difusor de HTTP</h2>
+	Os resultados têm de ser avaliados manualmente para saber se alguma vulnerabilidade foi encontrada.
+	<br> Significado dos valores na coluna "Estado":
 	<ul>
-		<li>"Error" - an error occurred while creating or sending/receiving the message
-			(for example: malformed HTTP message, time out while reading the response)</li>
-		<li>"Reflected" - the injected fuzz string (value of "Fuzz" column) was found in
-			the response body.</li>
+		<li>"Erro" - ocorreu um erro ao criar, enviar ou receber a mensagem (por exemplo: mensagem HTTP malformada, oui timeout na espera da resposta);</li>
+		<li>"Refletido" - a seqüência de caracteres de fuzz (difusão) injetada (valor da coluna "Fuzz") foi encontrada no corpo da resposta.</li>
 	</ul>
-	If this field is blank then it means that the message was successfully sent/received and the injected string was not detected in the response.<br>
+	Se este campo estiver em branco significa que a mensagem foi enviada/recebida com êxito e a seqüência de caracteres injetada não foi detectada na resposta.<br>
 
-	<h2>Right click menu</h2>
-	Right clicking on a row will bring up a menu which has the same options as the History tab.
+	<h2>Menu do botão direito</h2>
+	Clique com o botão direito em uma linha e aparecerá um menu que tem as mesmas opções que o guia 'Histórico'.
 
-	<h2>See also</h2>
+	<h2>Veja também</h2>
 	<table>
-		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+		<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Conceitos de difusor</a></td></tr>
 	</table>
 
 </body>

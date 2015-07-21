@@ -2,76 +2,70 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Options Applications screen</title>
+<title>Tela de opções de aplicações</title>
 </head>
 <body bgcolor="#ffffff">
-	<h1>Options Applications screen</h1>
+	<h1>Tela de opções de aplicações</h1>
 	<p>
-		This screen allows you to configure the <a href="concepts.html">applications</a> that
-		can be invoked.<br> By default there are no applications available, you need to add
-		all of the applications that you want to use.
+		Esta tela permite que você configure <a href="concepts.html">aplicações</a> que podem ser chamadas pelo ZAP.<br> Por padrão, há não há aplicativos disponíveis, você precisa adicionar todos aqueles que você deseja usar.
 	<h3>Nome para exibição</h3>
-	The name that will be used for this application in ZAP.
+	O nome que será usado para esta aplicação no ZAP.
 	<br>
 
 	<h3>Comando completo</h3>
-	The full path of the application you want to invoke.
-	<br> Only one command can be specified. If you want to run multiple commands in one
-	go, or set up environmental variables, then you should create a script or batch file and
-	then invoke this from ZAP.
+	O caminho completo do aplicativo que você deseja chamar.
+	<br> Apenas um comando pode ser especificado. Se você deseja executar vários comandos de uma vez, ou configurar as variáveis ambientais, deve criar um script ou arquivo em lotes e invocá-lo de dentro do ZAP.
 
 	<h3>Parâmetros</h3>
-	The parameters that ZAP should pass to the command.
-	<br> The following tags may be used to pass parameters:
+	Os parâmetros que ZAP deve passar para o comando.
+	<br> As seguintes tags podem ser usadas para passar parâmetros:
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%url%</td>
-			<td>the full url, e.g. 'http://localhost/test?a=b'</td>
+			<td>a url completa - por exemplo, 'http://localhost/test?a=b'</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%site%</td>
-			<td>the site, e.g. 'http://localhost:8080/'</td>
+			<td>o site - por exemplo, ' http://localhost:8080/ /'</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%host%</td>
-			<td>the hostname, e.g. 'localhost'</td>
+			<td>o nome do host - por exemplo, 'localhost'</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%port%</td>
-			<td>the port, e.g. '80'</td>
+			<td>a porta - por exemplo, '80'</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%cookie%</td>
-			<td>the first cookie field from the request header (if any)</td>
+			<td>o primeiro campo de cookie do cabeçalho da solicitação (se houver)</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%postdata%</td>
-			<td>the POST data sent, if any, with any newlines replaced with "\n"</td>
+			<td>os dados de postagem enviados, caso existam, com newlines substituídas por "\n"</td>
 		</tr>
 	</table>
-	So if a command accepted a URL using '-u' you would specify the parameters as: '-u %url%'
+	Então, se um comando aceita uma URL, usando '-u' você pode especificar parâmetros como: '-u %url%'
 
 	<h3>Capturar as Saídas</h3>
-	If checked then the command run and any output it generates will be displayed on the
-	<i>Output tab</i>.
-	<br> You should always use this options when running scripts or commands that do not
-	have a UI.
-	<br> You can also use this options for troubleshooting - if an application does not
-	run as expected then copy the command run and try it from a command line prompt.
+	Se marcada, o comando é executado e qualquer saída gerada é exibida na
+	<i>Aba da saída</i>.
+	<br> Você sempre deve usar estas opções ao executar scripts ou comandos que não têm uma interface da usuário.
+	<br> Você também pode usar essas opções para solução de problemas - se um aplicativo não funcionar conforme o esperado, então copie o comando e tente executar em um prompt de linha de comando.
 
-	<h3>Output to Note</h3>
-	If checked then any output will be appended to a
-	<i>Note</i> attached to the relevant
-	<i>History tab</i> record.
-	<br> Note that some nodes in the
-	<i>Sites tab</i> do not have associated
-	<i>History tab</i> records - for those nodes this option will have no effect.
+	<h3>Saída para Anotação</h3>
+	Se marcada, em seguida, qualquer saída será anexada a uma
+	<i>Nota</i> anexada ao registro da
+	<i>Aba de histórico</i> .
+	<br> Note que alguns nós na
+	<i>Aba de Sites</i> não têm uma
+	<i>Aba de histórico</i> com registros associados - para esses nós esta opção não tem efeito, não funciona.
 
 </body>
 </html>

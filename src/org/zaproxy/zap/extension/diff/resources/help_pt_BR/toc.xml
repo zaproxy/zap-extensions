@@ -4,8 +4,8 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+	<tocitem text="Zap - Guia do Usuário" tocid="toplevelitem">
+		<tocitem text="Complementos" tocid="addons">
 			<tocitem text="Diff" image="edit-diff" target="diff"/>
 		</tocitem>
 	</tocitem>
