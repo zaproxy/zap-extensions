@@ -29,7 +29,6 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.API.RequestType;
 import org.zaproxy.zap.extension.api.ApiAction;
@@ -281,9 +280,23 @@ public class PlugNHackAPI extends ApiImplementor {
         }
     }
 
-	public void addCustomHeaders(String name, RequestType type, HttpResponseHeader header) {
-		// TODO severely restrict
-		header.addHeader("Access-Control-Allow-Origin", "*");
+	public void addCustomHeaders(String name, RequestType type, HttpMessage msg) {
+		/*
+		 * Ideally this CORS header wouldnt be required, but to remove it will require  
+		 * changes to the Firefox pnh add-on.
+		 * In the meantime restrict its use as much as possible.
+		 */
+		
+		String origin = msg.getRequestHeader().getHeader("Origin");
+		if (this.extension.isSiteBeingMonitored(origin)) {
+			if ((RequestType.action.equals(type) &&
+				(ACTION_MONITOR.equals(name) || ACTION_ORACLE.equals(name))) ||
+				(RequestType.other.equals(type) &&
+						OTHER_MANIFEST.equals(name))) {
+				logger.debug("Adding CORS header for " + origin);
+				msg.getResponseHeader().addHeader("Access-Control-Allow-Origin", origin);
+			}
+		}
 	}
 
     @Override

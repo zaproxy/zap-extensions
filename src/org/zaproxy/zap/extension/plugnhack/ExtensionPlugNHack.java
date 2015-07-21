@@ -552,10 +552,26 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 	public boolean isBeingMonitored(String clientId) {
 		return this.mpm.isBeingMonitored(clientId);
 	}
+	
+	public boolean isSiteBeingMonitored(String site) {
+		if (site == null || site.length() == 0) {
+			logger.debug("isSiteBeingMonitored " + site + " returning false (empty site)");
+			return false;
+		}
+		for (MonitoredPage page : this.mpm.getActiveClients()) {
+			if (page.getURI().toString().startsWith(site)) {
+				logger.debug("isSiteBeingMonitored " + site + " returning true");
+				return true;
+			}
+		}
+		logger.debug("isSiteBeingMonitored " + site + 
+				" returning false (did not match any of the " + this.mpm.getActiveClients().size() + 
+				" pages actively monitored)");
+		return false;
+	}
 
     @Override
     public int getArrangeableListenerOrder() {
-        // TODO Auto-generated method stub
         return 101;
     }
 

@@ -4,7 +4,12 @@
 	<description>Supports the Mozilla Plug-n-Hack standard: https://developer.mozilla.org/en-US/docs/Plug-n-Hack.</description>
 	<author>ZAP Dev Team</author>
 	<url>https://developer.mozilla.org/en-US/docs/Plug-n-Hack</url>
-	<changes>Require API key before returning it (Issue 1714)</changes>
+	<changes>
+	<![CDATA[
+	Require API key before returning it (Issue 1714)<br>
+	Restrict use of CORS header in pnh (Issue 1716)
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack</extension>
 	</extensions>
