@@ -12,6 +12,7 @@
     Keep focus on results table, even if there's a payload reflection in the response (Issue 1442).<br>
     Update POST request's Content-Length by default.<br>
     Remove status icon when uninstalling.<br>
+    Fuzzers can't be expanded on OS X (Issue 1677) 
     Other code changes.
     ]]>
     </changes>

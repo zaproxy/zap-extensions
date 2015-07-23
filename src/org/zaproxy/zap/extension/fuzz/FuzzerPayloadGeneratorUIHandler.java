@@ -179,6 +179,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
             if (fileFuzzersCheckBoxTree == null) {
                 fileFuzzersCheckBoxTree = new JCheckBoxTree();
                 fileFuzzersCheckBoxTree.setRootVisible(false);
+                fileFuzzersCheckBoxTree.setShowsRootHandles(true);
 
                 DefaultMutableTreeNode root = new DefaultMutableTreeNode();
                 for (FuzzerPayloadCategory category : extensionFuzz.getFuzzersDir().getCategories()) {
