@@ -15,12 +15,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 
-public class AdvancedPanel extends JPanel{
+public class AlertsPanel extends JPanel{
 
 	private List<JCheckBox> selections;
 	private ExtensionAdvReport extension;
 	
-	public AdvancedPanel(List<String> alertTypes,ExtensionAdvReport extension){
+	public AlertsPanel(List<String> alertTypes,ExtensionAdvReport extension){
 		initialize(alertTypes);
 		this.extension = extension;
 	}
@@ -29,13 +29,14 @@ public class AdvancedPanel extends JPanel{
 		
 		// generate and ad labels
         selections = new ArrayList<JCheckBox>();
-        
+        //Alert selection Panel
 		JPanel selectionPanel = new JPanel();
 		selectionPanel.setLayout( new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
+		
 		for( String alertType: alertTypes ){
 			JLabel label = new JLabel(alertType);
 		    JCheckBox selection = new JCheckBox();
@@ -53,16 +54,15 @@ public class AdvancedPanel extends JPanel{
 			
 			gbc.gridy += 1;
 		}
-		
+		 				
         JPanel buttonpane = new JPanel( new FlowLayout( FlowLayout.RIGHT ));
-        buttonpane.add( getCancleButton() );
+        buttonpane.add( getCancelButton() );
         buttonpane.add( getHTMLButton() );
         
 		this.setLayout( new BorderLayout() );
 		this.add( new JLabel(" Alerts in Report : " ), BorderLayout.NORTH );
 		this.add( new JScrollPane( selectionPanel ), BorderLayout.CENTER );
-        this.add(buttonpane, BorderLayout.SOUTH);
-		
+	    this.add(buttonpane, BorderLayout.SOUTH);
 		
 	}
 	
@@ -81,16 +81,16 @@ public class AdvancedPanel extends JPanel{
 		return selectedAlerts;
 	}
 	
-	private JButton getCancleButton(){
-		JButton canclebutton = new JButton("Cancle");
-		canclebutton.addActionListener(
+	private JButton getCancelButton(){
+		JButton cancelbutton = new JButton("Cancel");
+		cancelbutton.addActionListener(
 				new ActionListener() {
 		            @Override
 		            public void actionPerformed(ActionEvent e) {
 		               extension.emitFrame();
 		            }
 		        });
-		return canclebutton;
+		return cancelbutton;
 	}
 	
 	private JButton getHTMLButton(){
@@ -104,7 +104,6 @@ public class AdvancedPanel extends JPanel{
 		        });
 		return generatebutton;
 	}
-	
 	
 }
 

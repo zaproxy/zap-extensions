@@ -20,13 +20,13 @@
 <p><h1>ZAP Scanning Report</h1></p>
 
 <!-- Report name and desc -->
-  <p><h3>Report name: </h3></p>
-  <xsl:value-of select="name"/>
-
-  <p><h3>Report description: </h3></p>
-  <xsl:value-of select="desc"/>
-
-
+  <p><h3>Report name: </h3>
+   <xsl:value-of select="reportname"/> </p>
+  
+  <p><h3>Report description: </h3> 
+  <xsl:value-of select="reportdesc"/> </p>
+  
+  
 <!-- for each site -->
 <xsl:for-each select="site">
   
@@ -48,27 +48,27 @@
       <td width="55%" align="center"><strong><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">Number 
         of Alerts</font></strong></td>
     </tr>
-    <tr bgcolor="#e8e8e8"> 
-      <td><font size="2" face="Arial, Helvetica, sans-serif"><a href="#high">High</a></font></td>
-      <td align="center"><font size="2" face="Arial, Helvetica, sans-serif">
+    <tr> 
+      <td bgcolor="#e8e8e8"><font size="2" face="Arial, Helvetica, sans-serif"><a href="#high">High</a></font></td>
+      <td bgcolor="red" align="center"><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">
       <xsl:value-of select="count(descendant::alertitem[riskcode='3'])"/>
       </font></td>
     </tr>
-    <tr bgcolor="#e8e8e8"> 
-      <td><font size="2" face="Arial, Helvetica, sans-serif"><a href="#medium">Medium</a></font></td>
-      <td align="center"><font size="2" face="Arial, Helvetica, sans-serif">
+    <tr> 
+      <td bgcolor="#e8e8e8"><font size="2" face="Arial, Helvetica, sans-serif"><a href="#medium">Medium</a></font></td>
+      <td bgcolor="orange" align="center"><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">
       <xsl:value-of select="count(descendant::alertitem[riskcode='2'])"/>
       </font></td>
     </tr>
-      <tr bgcolor="#e8e8e8"> 
-      <td><font size="2" face="Arial, Helvetica, sans-serif"><a href="#low">Low</a></font></td>
-      <td align="center"><font size="2" face="Arial, Helvetica, sans-serif">
+      <tr> 
+      <td bgcolor="#e8e8e8"><font size="2" face="Arial, Helvetica, sans-serif"><a href="#low">Low</a></font></td>
+      <td bgcolor="yellow" align="center"><font size="2" face="Arial, Helvetica, sans-serif">
       <xsl:value-of select="count(descendant::alertitem[riskcode='1'])"/>
       </font></td>
     </tr>
-      <tr bgcolor="#e8e8e8"> 
-      <td><font size="2" face="Arial, Helvetica, sans-serif"><a href="#info">Informational</a></font></td>
-      <td align="center"><font size="2" face="Arial, Helvetica, sans-serif">
+      <tr> 
+      <td bgcolor="#e8e8e8"><font size="2" face="Arial, Helvetica, sans-serif"><a href="#info">Informational</a></font></td>
+      <td bgcolor="green" align="center"><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">
       <xsl:value-of select="count(descendant::alertitem[riskcode='0'])"/>
       </font></td>
     </tr>
@@ -140,17 +140,17 @@
   <xsl:template match="alertitem">
 <p></p>
 <table width="100%" border="0">
-<xsl:apply-templates select="text()|alert|desc|uri|param|attack|otherinfo|solution|reference|cweid|wascid|p|br|wbr|ul|li"/>
+<xsl:apply-templates select="text()|alert|desc|uri|param|attack|otherinfo|solution|reference|cweid|wascid|requestheader|responseheader|requestbody|responsebody|p|br|wbr|ul|li"/>
 </table>
   </xsl:template>
 
   <xsl:template match="alert[following-sibling::riskcode='3']">
   <tr bgcolor="red" height="24">	
-    <td width="20%" valign="top"><strong><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">
+    <td width="20%" valign="top"><strong><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif">
     <a name="high"/>
     <xsl:value-of select="following-sibling::riskdesc"/>
     </font></strong></td>
-    <td width="80%"><strong><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">
+    <td width="80%"><strong><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif">
       <xsl:apply-templates select="text()"/>
 </font></strong></td>
   </tr>
@@ -159,11 +159,11 @@
   <xsl:template match="alert[following-sibling::riskcode='2']">
   <!-- ZAP: Changed the medium colour to orange -->
   <tr bgcolor="orange" height="24">	
-    <td width="20%" valign="top"><strong><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">
+    <td width="20%" valign="top"><strong><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif">
     <a name="medium"/>
     <xsl:value-of select="following-sibling::riskdesc"/>
 	</font></strong></td>
-    <td width="80%"><strong><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">
+    <td width="80%"><strong><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif">
       <xsl:apply-templates select="text()"/>
 </font></strong></td>
   </tr>
@@ -173,22 +173,22 @@
   <!-- ZAP: Changed the low colour to yellow -->
   <tr bgcolor="yellow" height="24">
     <a name="low"/>
-    <td width="20%" valign="top"><strong><font color="#000000" size="2" face="Arial, Helvetica, sans-serif">
+    <td width="20%" valign="top"><strong><font color="#000000" size="3" face="Arial, Helvetica, sans-serif">
     <xsl:value-of select="following-sibling::riskdesc"/>
 	</font></strong></td>
-    <td width="80%"><strong><font color="#000000" size="2" face="Arial, Helvetica, sans-serif">
+    <td width="80%"><strong><font color="#000000" size="3" face="Arial, Helvetica, sans-serif">
       <xsl:apply-templates select="text()"/>
 </font></strong></td>
   </tr>
   </xsl:template>
   
   <xsl:template match="alert[following-sibling::riskcode='0']">
-  <tr bgcolor="blue" height="24">	
-    <td width="20%" valign="top"><strong><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">
+  <tr bgcolor="green" height="24">	
+    <td width="20%" valign="top"><strong><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif">
     <a name="info"/>
     <xsl:value-of select="following-sibling::riskdesc"/>
 	</font></strong></td>
-    <td width="80%"><strong><font color="#FFFFFF" size="2" face="Arial, Helvetica, sans-serif">
+    <td width="80%"><strong><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif">
       <xsl:apply-templates select="text()"/>
 </font></strong></td>
   </tr>
@@ -209,6 +209,7 @@
  -->
 
   <xsl:template match="desc">
+  <xsl:if test="text() !=''">
   <tr bgcolor="#e8e8e8" valign="top"> 
     <td width="20%"><font size="2" face="Arial, Helvetica, sans-serif"><p>Description</p></font></td>
     <td width="80%">
@@ -216,19 +217,16 @@
     <xsl:apply-templates select="text()|*"/>
     </font></td>
   </tr>
-  <TR vAlign="top"> 
-    <TD colspan="2"> </TD>
-  </TR>
-  
+  </xsl:if>
   </xsl:template>
 
   <xsl:template match="uri">
   <tr bgcolor="#e8e8e8" valign="top"> 
-    <td width="20%"><blockquote><font size="2" face="Arial, Helvetica, sans-serif">URL</font></blockquote></td>
-    <td width="80%">
+    <td width="20%"><strong><font size="2" face="Arial, Helvetica, sans-serif">URL</font></strong></td>
+    <td width="80%"><strong>
     <font size="2" face="Arial, Helvetica, sans-serif">
     <xsl:apply-templates select="text()|*"/>
-    </font></td>
+    </font></strong></td>
   </tr>
   </xsl:template>
 
@@ -259,20 +257,17 @@
   <xsl:template match="otherinfo">
   <xsl:if test="text() !=''">
   <tr bgcolor="#e8e8e8" valign="top"> 
-    <td width="20%"><blockquote><font size="2" face="Arial, Helvetica, sans-serif">Other information</font></blockquote></td>
+    <td width="20%"><font size="2" face="Arial, Helvetica, sans-serif">Other Information</font></td>
     <td width="80%">
     <font size="2" face="Arial, Helvetica, sans-serif">
 	<xsl:apply-templates select="text()|*"/>
     </font></td>
   </tr>
   </xsl:if>
-
-  <TR vAlign="top"> 
-    <TD colspan="2"> </TD>
-  </TR>
   </xsl:template>
 
   <xsl:template match="solution">
+  <xsl:if test="text() !=''">
   <tr bgcolor="#e8e8e8" valign="top"> 
     <td width="20%"><font size="2" face="Arial, Helvetica, sans-serif"><p>Solution</p></font></td>
     <td width="80%">
@@ -280,9 +275,11 @@
 	<xsl:apply-templates select="text()|*"/>
 	</font></td>
   </tr>
+  </xsl:if>
   </xsl:template>
 
   <xsl:template match="reference">
+  <xsl:if test="text() !=''">
   <tr bgcolor="#e8e8e8" valign="top"> 
     <td width="20%"><font size="2" face="Arial, Helvetica, sans-serif"><p>Reference</p></font></td>
     <td width="80%">
@@ -290,9 +287,11 @@
 	<xsl:apply-templates select="text()|*"/>
     </font></td>
   </tr>
+  </xsl:if>
   </xsl:template>
   
   <xsl:template match="cweid">
+  <xsl:if test="text() !=''">
   <tr bgcolor="#e8e8e8" valign="top"> 
     <td width="20%"><font size="2" face="Arial, Helvetica, sans-serif"><p>CWE Id</p></font></td>
     <td width="80%">
@@ -300,9 +299,11 @@
 	<xsl:apply-templates select="text()|*"/>
     </font></td>
   </tr>
+  </xsl:if>
   </xsl:template>
   
   <xsl:template match="wascid">
+  <xsl:if test="text() !=''">
   <tr bgcolor="#e8e8e8" valign="top"> 
     <td width="20%"><font size="2" face="Arial, Helvetica, sans-serif"><p>WASC Id</p></font></td>
     <td width="80%">
@@ -310,8 +311,57 @@
 	<xsl:apply-templates select="text()|*"/>
     </font></td>
   </tr>
+  </xsl:if>
   </xsl:template>
   
+  <xsl:template match="requestheader">
+   <xsl:if test="text() !=''">
+  <tr bgcolor="#e8e8e8" valign="top"> 
+    <td width="20%"><blockquote><font size="2" face="Arial, Helvetica, sans-serif"><p>Request Header</p></font></blockquote></td>
+    <td width="80%">
+    <font size="2" face="Arial, Helvetica, sans-serif">
+	<xsl:apply-templates select="text()|*"/>
+    </font></td>
+  </tr>
+   </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="responseheader">
+  <xsl:if test="text() !=''">
+  <tr bgcolor="#e8e8e8" valign="top"> 
+    <td width="20%"><blockquote><font size="2" face="Arial, Helvetica, sans-serif"><p>Response Header</p></font></blockquote></td>
+    <td width="80%">
+    <font size="2" face="Arial, Helvetica, sans-serif">
+	<xsl:apply-templates select="text()|*"/>
+    </font></td>
+  </tr>
+  </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="requestbody">
+  <xsl:if test="text() !=''">
+  <tr bgcolor="#e8e8e8" valign="top"> 
+    <td width="20%"><blockquote><font size="2" face="Arial, Helvetica, sans-serif"><p>Request Body</p></font></blockquote></td>
+    <td width="80%">
+    <font size="2" face="Arial, Helvetica, sans-serif">
+	<xsl:apply-templates select="text()|*"/>
+    </font></td>
+  </tr>
+  </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="responsebody">
+  <xsl:if test="text() !=''">
+  <tr bgcolor="#e8e8e8" valign="top"> 
+    <td width="20%"><blockquote><font size="2" face="Arial, Helvetica, sans-serif"><p>Response Body</p></font></blockquote></td>
+    <td width="80%">
+    <font size="2" face="Arial, Helvetica, sans-serif">
+	<xsl:apply-templates select="text()|*"/>
+    </font></td>
+  </tr>
+  </xsl:if>
+  </xsl:template>
+    
   <xsl:template match="p">
   <p align="justify">
   <xsl:apply-templates select="text()|*"/>
