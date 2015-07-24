@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.params.HtmlParameterStats;
 
 public class GenerateTokensDialog extends AbstractDialog {
@@ -47,7 +48,7 @@ public class GenerateTokensDialog extends AbstractDialog {
 	private static final long serialVersionUID = 1L;
 	private JPanel jPanel = null;
 	
-	private JComboBox<Integer> numTokens = null;
+	private JComboBox<String> numTokens = null;
 	private JComboBox<String> paramType = null;
 	private JComboBox<String> paramName = null;
 	private JButton cancelButton = null;
@@ -134,9 +135,11 @@ public class GenerateTokensDialog extends AbstractDialog {
 					log.debug("getStartButton action " + arg0);
 					int numGen = -1;
 					try {
-						numGen = (Integer) getNumTokensField().getSelectedItem();
+						numGen = Integer.parseInt((String) getNumTokensField().getSelectedItem());
 					} catch (NumberFormatException e) {
-						// Ignore
+						View.getSingleton().showWarningDialog(GenerateTokensDialog.this, 
+								messages.getString("tokengen.generate.num.error"));
+						return;
 					}
 					extension.startTokenGeneration(httpMessage, numGen, 
 							new HtmlParameterStats("", 
@@ -174,19 +177,20 @@ public class GenerateTokensDialog extends AbstractDialog {
 	}
 	*/
 	
-	private JComboBox<Integer> getNumTokensField() {
+	private JComboBox<String> getNumTokensField() {
 		if (numTokens == null) {
 			numTokens = new JComboBox<>();
-			numTokens.addItem(10000);
-			numTokens.addItem(20000);
-			numTokens.addItem(30000);
-			numTokens.addItem(40000);
-			numTokens.addItem(50000);
-			numTokens.addItem(60000);
-			numTokens.addItem(70000);
-			numTokens.addItem(80000);
-			numTokens.addItem(90000);
-			numTokens.addItem(100000);
+			numTokens.setEditable(true);
+			numTokens.addItem("10000");
+			numTokens.addItem("20000");
+			numTokens.addItem("30000");
+			numTokens.addItem("40000");
+			numTokens.addItem("50000");
+			numTokens.addItem("60000");
+			numTokens.addItem("70000");
+			numTokens.addItem("80000");
+			numTokens.addItem("90000");
+			numTokens.addItem("100000");
 			numTokens.setSelectedIndex(1);
 		}
 		return numTokens;
