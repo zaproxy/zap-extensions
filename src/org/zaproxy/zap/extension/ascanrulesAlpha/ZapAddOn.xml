@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Updated add-on's info URL.<br>
-	Minor code changes.
+	Minor code changes.<br>
+	Added a new scanner to search for format string errors in compiled code.<br>
   	]]>
 	</changes>
 	<extensions>
@@ -17,6 +18,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.FormatString</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ProxyDisclosureScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RelativePathConfusionScanner</ascanrule>
