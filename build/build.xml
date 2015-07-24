@@ -242,7 +242,7 @@
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
 				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
-				url="http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download" />
+				url="${zap.download.url}/${file}" />
 
 		</sequential>
 	</macrodef>
