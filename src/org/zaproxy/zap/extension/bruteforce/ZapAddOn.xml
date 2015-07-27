@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Minor code changes.<br>
-	Corrected the location from where default files are read (Issue 1700).
+	Corrected the location from where default files are read (Issue 1700).<br>
+	Do not access view components when view is not initialised (Issue 1617).
 	]]>
 	</changes>
 	<extensions>

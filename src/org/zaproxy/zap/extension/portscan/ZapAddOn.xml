@@ -6,7 +6,8 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes.
+	Minor code changes.<br>
+	Do not access view components when view is not initialised (Issue 1617).
 	]]>
 	</changes>
 	<extensions>

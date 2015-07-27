@@ -131,6 +131,9 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
     @Override
     public void sessionChanged(final Session session) {
+        if (getView() == null) {
+            return;
+        }
         if (EventQueue.isDispatchThread()) {
             sessionChangedEventHandler(session);
 
@@ -172,8 +175,10 @@ public class ExtensionPortScan extends ExtensionAdaptor
     
     @Override
     public boolean onHttpRequestSend(HttpMessage msg) {
-        // The panel will handle duplicates
-        this.getPortScanPanel().addSite(msg.getRequestHeader().getHostName(), false);
+        if (getView() != null) {
+            // The panel will handle duplicates
+            this.getPortScanPanel().addSite(msg.getRequestHeader().getHostName(), false);
+        }
         return true;
     }
 
@@ -248,6 +253,10 @@ public class ExtensionPortScan extends ExtensionAdaptor
     }
 
     public List<Integer> getPorts(String site) {
+        if (getView() == null) {
+            return null;
+        }
+
         String siteName = PortScanPanel.cleanSiteName(site, false);
         PortScan scan = (PortScan) getPortScanPanel().getScanThread(siteName);
         if (scan != null) {
@@ -291,7 +300,9 @@ public class ExtensionPortScan extends ExtensionAdaptor
 	
 	@Override
 	public void sessionScopeChanged(Session session) {
-		this.getPortScanPanel().sessionScopeChanged(session);
+        if (getView() != null) {
+            this.getPortScanPanel().sessionScopeChanged(session);
+        }
 	}
 	
 	@Override

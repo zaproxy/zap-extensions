@@ -138,7 +138,9 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 	
 	@Override
 	public void optionsLoaded() {
-		this.getBruteForcePanel().setDefaultFile(this.getBruteForceParam().getDefaultFile());
+		if (getView() != null) {
+			this.getBruteForcePanel().setDefaultFile(this.getBruteForceParam().getDefaultFile());
+		}
 	}
 
 	protected void bruteForceSite (SiteNode siteNode) {
@@ -155,6 +157,10 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 	
 	@Override
 	public void sessionChanged(final Session session)  {
+        if (getView() == null) {
+            return;
+        }
+
 	    if (EventQueue.isDispatchThread()) {
 		    sessionChangedEventHandler(session);
 
@@ -198,7 +204,9 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
 	@Override
 	public boolean onHttpRequestSend(HttpMessage msg) {
-		this.getBruteForcePanel().addSite(msg.getRequestHeader().getURI());
+		if (getView() != null) {
+			this.getBruteForcePanel().addSite(msg.getRequestHeader().getURI());
+		}
 		return true;
 	}
 
@@ -263,7 +271,9 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 	}
 
 	public void refreshFileList() {
-		this.getBruteForcePanel().refreshFileList();
+		if (getView() != null) {
+			this.getBruteForcePanel().refreshFileList();
+		}
 	}
 	
 	public List<ForcedBrowseFile> getFileList() {
@@ -299,6 +309,9 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
 	@Override
 	public void sessionScopeChanged(Session session) {
+		if (getView() == null) {
+			return;
+		}
 		this.getBruteForcePanel().sessionScopeChanged(session);
 	}
 
