@@ -28,6 +28,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -308,6 +309,10 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 						return;
 					}
 				}            
+			}
+
+			if (inScope(Tech.WS.Tomcat)) {
+				return;
 			}
 
 			//if the above fails, get the entire WAR/EAR

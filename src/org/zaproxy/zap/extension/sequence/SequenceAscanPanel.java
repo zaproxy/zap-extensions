@@ -34,6 +34,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ascan.CustomScanPanel;
 import org.zaproxy.zap.extension.script.ScriptCollection;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.model.StructuralNode;
+import org.zaproxy.zap.model.StructuralSiteNode;
 import org.zaproxy.zap.model.Target;
 
 public class SequenceAscanPanel implements CustomScanPanel {
@@ -72,7 +74,7 @@ public class SequenceAscanPanel implements CustomScanPanel {
         if (selectedIncludeScripts != null && selectedIncludeScripts.size() > 0) {
         	try {
         		Session session = Model.getSingleton().getSession();
-				List<SiteNode> nodes = new ArrayList<SiteNode>();
+				List<StructuralNode> nodes = new ArrayList<StructuralNode>();
 				for (ScriptWrapper sw : selectedIncludeScripts) {
 					Extension extZest = Control.getSingleton().getExtensionLoader().getExtension("ExtensionZest");
 					if (extZest != null) {
@@ -87,7 +89,7 @@ public class SequenceAscanPanel implements CustomScanPanel {
 				    				HistoryReference hr = new HistoryReference(session, HistoryReference.TYPE_TEMPORARY, msg);
 									node = session.getSiteTree().addPath(hr);
 								}
-								nodes.add(node);
+								nodes.add(new StructuralSiteNode(node));
 							}
 						}
 					}

@@ -47,6 +47,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 import org.zaproxy.zap.network.HttpResponseBody;
@@ -74,6 +76,11 @@ public class FormatString extends AbstractAppParamPlugin  {
 	@Override
 	public String[] getDependency() {
 		return null;
+	}
+
+	@Override
+	public boolean targets(TechSet technologies) {
+		return technologies.includes(Tech.Lang.C);
 	}
 
 	@Override

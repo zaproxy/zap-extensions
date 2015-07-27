@@ -9,6 +9,7 @@
 	Updated add-on's info URL.<br>
 	Minor code changes.<br>
 	Added a new scanner to search for format string errors in compiled code.<br>
+	Change scanners to honour the technologies enabled (1618).
   	]]>
 	</changes>
 	<extensions>
