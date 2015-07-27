@@ -210,7 +210,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             return;
         }
 
-        if (inScope(Tech.Lang.PHP)) {
+        if (inScope(Tech.Lang.ASP)) {
             if (testAspInjection(paramName)) {
                 return;
             }
