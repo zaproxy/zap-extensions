@@ -275,13 +275,11 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 
 	private JXTable getMessageTable() {
 		if (this.msgTable == null) {
-			this.msgTable = new JXTable(this.getMessageModel());
+			this.msgTable = new ZapTable(this.getMessageModel());
 			this.msgTable.setName(CLIENTS_MESSAGE_TABLE_NAME);
 			this.setMessageTableColumnSizes();
 			//this.msgTable.setFont(new Font("Dialog", Font.PLAIN, 11));
-			this.msgTable.setDoubleBuffered(true);
 			this.msgTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			this.msgTable.setColumnControlVisible(true);
 			
 			this.msgTable.addMouseListener(new MouseAdapter() { 
 			    @Override

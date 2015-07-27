@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Require API key before returning it (Issue 1714)<br>
-	Restrict use of CORS header in pnh (Issue 1716)
+	Restrict use of CORS header in pnh (Issue 1716)<br>
+	Auto-scroll when new client events are available (Issue 1664)
 	]]>
 	</changes>
 	<extensions>
