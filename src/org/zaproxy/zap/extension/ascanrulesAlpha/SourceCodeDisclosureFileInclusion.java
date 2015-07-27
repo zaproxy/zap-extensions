@@ -311,7 +311,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 				}            
 			}
 
-			if (inScope(Tech.WS.Tomcat)) {
+			if (!inScope(Tech.WS.Tomcat)) {
 				return;
 			}
 

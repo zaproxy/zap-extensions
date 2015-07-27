@@ -430,7 +430,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 
 	@Override
 	public void sessionChanged(final Session session) {
-	    if (getView() != null) {
+	    if (getView() == null) {
 	        return;
 	    }
 
