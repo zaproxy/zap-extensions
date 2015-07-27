@@ -38,6 +38,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 import difflib.Delta;
 import difflib.DiffUtils;
@@ -316,6 +318,14 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	@Override
 	public String[] getDependency() {
 		return dependency;
+	}
+
+	@Override
+	public boolean targets(TechSet technologies) {
+		if (technologies.includes(Tech.Db)) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

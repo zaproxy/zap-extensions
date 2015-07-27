@@ -23,6 +23,7 @@
 // ZAP: 2012/08/01 Removed the "(non-Javadoc)" comments.
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
 // ZAP: 2013/03/03 Issue 546: Remove all template Javadoc comments
+// ZAP: 2015/07/27 Issue 1618: Target Technology Not Honored
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -37,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.zap.model.Tech;
 
 
 
@@ -125,9 +127,9 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
     			return;
     		}
     		
-    		if (matchBodyPattern(msg, patternIIS, evidence)) {
+    		if (inScope(Tech.WS.IIS) && matchBodyPattern(msg, patternIIS, evidence)) {
     			result = true;
-    		} else if (matchBodyPattern(msg, patternApache, evidence)) {
+    		} else if ((inScope(Tech.WS.Apache) || inScope(Tech.WS.Tomcat)) && matchBodyPattern(msg, patternApache, evidence)) {
     			result = true;
     		} else if (matchBodyPattern(msg, patternGeneralParent, evidence)) {
     			result = true;
