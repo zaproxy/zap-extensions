@@ -30,6 +30,8 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -78,6 +80,14 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
 	@Override
 	public String[] getDependency() {
 		return null;
+	}
+
+	@Override
+	public boolean targets(TechSet technologies) {
+		if (technologies.includes(Tech.Lang.PHP)) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

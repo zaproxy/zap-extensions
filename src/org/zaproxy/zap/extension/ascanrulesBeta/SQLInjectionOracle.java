@@ -27,6 +27,8 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 
 /**
@@ -147,6 +149,11 @@ public class SQLInjectionOracle extends AbstractAppParamPlugin {
 	@Override
 	public String[] getDependency() {        
 		return dependency;
+	}
+
+	@Override
+	public boolean targets(TechSet techonologies) {
+		return techonologies.includes(Tech.Db.Oracle);
 	}
 
 	@Override

@@ -6,7 +6,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor code changes.
+	Minor code changes.<br>
+	Change scanners to honour the technologies enabled (Issue 1618).
     ]]>
 	</changes>
 	<extensions>

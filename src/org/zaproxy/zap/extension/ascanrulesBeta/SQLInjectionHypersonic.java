@@ -19,6 +19,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -26,6 +27,8 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 
 /**
@@ -157,6 +160,11 @@ public class SQLInjectionHypersonic extends AbstractAppParamPlugin {
 	@Override
 	public String[] getDependency() {        
 		return dependency;
+	}
+
+	@Override
+	public boolean targets(TechSet techonologies) {
+		return techonologies.includes(Tech.Db.HypersonicSQL);
 	}
 
 	@Override

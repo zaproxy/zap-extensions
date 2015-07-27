@@ -35,6 +35,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 /**
  * Active Plugin for SQL injection testing and verification.
@@ -191,6 +193,11 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
     @Override
     public String[] getDependency() {
         return new String[]{};
+    }
+
+    @Override
+    public boolean targets(TechSet technologies) {
+        return technologies.includes(Tech.Db);
     }
 
     /**

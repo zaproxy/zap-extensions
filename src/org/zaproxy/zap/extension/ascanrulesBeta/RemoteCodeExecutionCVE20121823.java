@@ -27,6 +27,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -73,6 +75,14 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 	@Override
 	public String[] getDependency() {
 		return null;
+	}
+
+	@Override
+	public boolean targets(TechSet technologies) {
+		if (technologies.includes(Tech.Lang.PHP)) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

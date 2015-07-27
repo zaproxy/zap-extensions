@@ -176,7 +176,7 @@ public enum DBMSHelper {
         }        
     },
     
-    SQLITE(new Tech(Tech.Db, "SQLite"), new String[]{"sqlite", "sqlite3"}, 
+    SQLITE(Tech.Db.SQLite, new String[]{"sqlite", "sqlite3"}, 
             "||", 
             "CAST({0} AS VARCHAR(8000))", 
             "IFNULL({0},''' ''')", 
@@ -197,7 +197,7 @@ public enum DBMSHelper {
         }        
     },
     
-    ACCESS(new Tech(Tech.Db, "Microsoft Access"), new String[]{"msaccess", "access", "jet", "microsoft access"}, 
+    ACCESS(Tech.Db.Access, new String[]{"msaccess", "access", "jet", "microsoft access"}, 
             "&", 
             "CVAR({0})", 
             "IIF(LEN({0})=0,''' ''',{0})", 
@@ -225,7 +225,7 @@ public enum DBMSHelper {
         }
     },
     
-    FIREBIRD(new Tech(Tech.Db, "Firebird"), new String[]{"firebird", "mozilla firebird", "interbase", "ibase", "fb"}, 
+    FIREBIRD(Tech.Db.Firebird, new String[]{"firebird", "mozilla firebird", "interbase", "ibase", "fb"}, 
             "", 
             "CAST({0} AS VARCHAR(10000))", 
             "{0}", 
@@ -253,7 +253,7 @@ public enum DBMSHelper {
         }        
     },
     
-    MAXDB(new Tech(Tech.Db, "SAP MaxDB"), new String[]{"maxdb", "sap maxdb", "sap db"}, 
+    MAXDB(Tech.Db.MaxDB, new String[]{"maxdb", "sap maxdb", "sap db"}, 
             ",", 
             "REPLACE(CHR({0}),''' ''','''_''')", 
             "VALUE({0},''' ''')", 
@@ -265,7 +265,7 @@ public enum DBMSHelper {
         }        
     },
     
-    SYBASE(new Tech(Tech.Db, "Sybase"), new String[]{"sybase", "sybase sql server"}, 
+    SYBASE(Tech.Db.Sybase, new String[]{"sybase", "sybase sql server"}, 
             "+", 
             "CONVERT(NVARCHAR(4000),{0})", 
             "ISNULL({0},''' ''')", 
@@ -295,7 +295,7 @@ public enum DBMSHelper {
         }            
     },
     
-    DB2(new Tech(Tech.Db, "IBM DB2"), new String[]{"db2", "ibm db2", "ibmdb2"}, 
+    DB2(Tech.Db.Db2, new String[]{"db2", "ibm db2", "ibmdb2"}, 
             "||", 
             "RTRIM(CAST({0} AS CHAR(254)))", 
             "COALESCE({0},''' ''')", 

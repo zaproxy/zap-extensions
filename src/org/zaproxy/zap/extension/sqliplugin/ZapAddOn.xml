@@ -7,6 +7,7 @@
 	<changes><![CDATA[
             Split boundary and plugin definition in two different files<br>
             Updated all plugin and boundary files to the newest SQLMap database<br>
+            Changed to target DB tecnhonolgy (Issue 1618).
         ]]>
         </changes>
 	<extensions>
@@ -17,6 +18,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.4.1</not-before-version>
 	<not-from-version/>
 </zapaddon>
