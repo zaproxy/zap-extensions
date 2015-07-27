@@ -353,8 +353,10 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		if (model == null) {
 			model = new TechTableModel();
 			this.siteTechMap.put(site, model);
-			// Add to site pulldown
-			this.getTechPanel().addSite(site);
+			if (getView() != null) {
+				// Add to site pulldown
+				this.getTechPanel().addSite(site);
+			}
 		}
 		return model;
 	}
@@ -428,6 +430,10 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 
 	@Override
 	public void sessionChanged(final Session session) {
+	    if (getView() != null) {
+	        return;
+	    }
+
 	    if (EventQueue.isDispatchThread()) {
 		    sessionChangedEventHandler(session);
 
