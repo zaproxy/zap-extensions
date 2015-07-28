@@ -88,7 +88,7 @@ public class TableWebSocket extends ParosAbstractTable {
 								+ "channel_id BIGINT PRIMARY KEY,"
 								+ "host VARCHAR(255) NOT NULL,"
 								+ "port INTEGER NOT NULL,"
-								+ "url VARCHAR(255) NOT NULL,"
+								+ "url VARCHAR(2048) NOT NULL,"
 								+ "start_timestamp TIMESTAMP NOT NULL,"
 								+ "end_timestamp TIMESTAMP NULL,"
 								+ "history_id INTEGER NULL,"
