@@ -300,6 +300,7 @@
 		<build-addon name="fuzzdb" />
 		<build-addon name="gettingStarted" />
 		<build-addon name="help" />
+		<build-addon name="help_pt_BR" />
 		<build-addon name="onlineMenu" />
 		<build-addon name="pscanrules" />
 		<build-addon name="quickstart" />
@@ -385,6 +386,14 @@
   
 	<target name="deploy-help" description="deploy the help extension">
 		<build-deploy-help-addon name="help" />
+	</target>
+
+	<target name="build-help-pt-BR" description="builds the help_pt_BR add-on">
+		<build-help-addon name="help_pt_BR" />
+	</target>
+
+	<target name="deploy-help-pt-BR" description="deploy the help_pt_BR add-on">
+		<build-deploy-help-addon name="help_pt_BR" />
 	</target>
 
 	<target name="deploy-onlineMenu" description="deploy the onlineMenu extension">
