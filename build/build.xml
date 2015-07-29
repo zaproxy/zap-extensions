@@ -283,7 +283,6 @@
 		<build-bruteforce-addon />
 		<build-addon name="diff" />
 		<build-addon name="fuzz" />
-		<build-addon name="help_pt_BR" />
 		<build-addon name="importurls" />
 		<build-addon name="invoke" />
 		<build-addon name="jruby" />
@@ -376,14 +375,6 @@
 
 	<target name="generate-wiki-fuzz" description="Generates the wiki of fuzz">
 		<generate-wiki-core addon="fuzz" />
-	</target>
-
-	<target name="build-help-pt-BR" description="builds the help_pt_BR add-on">
-		<build-help-addon name="help_pt_BR" />
-	</target>
-
-	<target name="deploy-help-pt-BR" description="deploy the help_pt_BR add-on">
-		<build-deploy-help-addon name="help_pt_BR" />
 	</target>
 
   	<target name="deploy-importurls" description="deploy the importurls extension">
