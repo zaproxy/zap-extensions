@@ -56,26 +56,18 @@ public class ApiGenerator {
 		try {
 			JavaAPIGenerator japi = new JavaAPIGenerator("../zaproxy/src/org/zaproxy/clientapi/gen", true);
 			japi.generateJavaFiles(getApiImplementors());
-			japi = new JavaAPIGenerator("../zaproxy-2.4/src/org/zaproxy/clientapi/gen", true);
-			japi.generateJavaFiles(getApiImplementors());
 
 			NodeJSAPIGenerator napi = new NodeJSAPIGenerator("../zaproxy/nodejs/api/zapv2", true);
-			napi.generateNodeJSFiles(getApiImplementors());
-			napi = new NodeJSAPIGenerator("../zaproxy-2.4/nodejs/api/zapv2", true);
 			napi.generateNodeJSFiles(getApiImplementors());
 		
 			PhpAPIGenerator phapi = new PhpAPIGenerator("../zaproxy/php/api/zapv2/src/Zap", true);
 			phapi.generatePhpFiles(getApiImplementors());
-			phapi = new PhpAPIGenerator("../zaproxy-2.4/php/api/zapv2/src/Zap", true);
-			phapi.generatePhpFiles(getApiImplementors());
 
 			PythonAPIGenerator pyapi = new PythonAPIGenerator("../zaproxy/python/api/src/zapv2", true);
 			pyapi.generatePythonFiles(getApiImplementors());
-			pyapi = new PythonAPIGenerator("../zaproxy-2.4/python/api/src/zapv2", true);
-			pyapi.generatePythonFiles(getApiImplementors());
 
-			WikiAPIGenerator wapi = new WikiAPIGenerator("../zaproxy-wiki", true);
-			wapi.generateWikiFiles(getApiImplementors());
+			//WikiAPIGenerator wapi = new WikiAPIGenerator("../zaproxy-wiki", true);
+			//wapi.generateWikiFiles(getApiImplementors());
 			
 		} catch (IOException e) {
 			e.printStackTrace();
