@@ -28,6 +28,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.parosproxy.paros.view.View;
 
 public class ExtensionInvoke extends ExtensionAdaptor {
 
@@ -91,8 +92,10 @@ public class ExtensionInvoke extends ExtensionAdaptor {
 	
 	@Override
 	public void optionsLoaded() {
-		List<InvokableApp> apps = invokeParam.getListInvokeEnabled();
-		popupMenuInvokers.setApps(apps);
+		if (View.isInitialised()) {
+			List<InvokableApp> apps = invokeParam.getListInvokeEnabled();
+			popupMenuInvokers.setApps(apps);
+		}
 	}
 	
 	private AbstractParamPanel getOptionsInvokePanel() {

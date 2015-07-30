@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Invoke Applications</name>
-	<version>3</version>
+	<version>4</version>
 	<description>Invoke external applications passing context related information such as URLs and parameters</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
-	Show applications immediately after ZAP re/start (Issue 1709).
+	Fix NPE when running in daemon mode.
 	]]>
 	</changes>
 	<extensions>
@@ -17,6 +16,6 @@
 	<pscanrules/>
 	<filters/>
 	<files />
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.4.1</not-before-version>
 	<not-from-version/>
 </zapaddon>
