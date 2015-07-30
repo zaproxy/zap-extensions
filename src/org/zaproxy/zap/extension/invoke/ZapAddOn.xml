@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Invoke Applications</name>
-	<version>4</version>
+	<version>3</version>
 	<description>Invoke external applications passing context related information such as URLs and parameters</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Fix NPE when running in daemon mode.
-	]]>
+	Minor code changes.<br>
+	Show applications immediately after ZAP re/start (Issue 1709).]]>
 	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.invoke.ExtensionInvoke</extension>
