@@ -6,7 +6,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor code changes.
+	Minor code changes.<br>
+	Migrated Buffer Overflow Scanner from Alpha Status.<br>
     ]]>
 	</changes>
 	<extensions>
@@ -14,6 +15,7 @@
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.BackupFileDisclosure</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CrossDomainScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.ExpressionLanguageInjectionPlugin</ascanrule>
