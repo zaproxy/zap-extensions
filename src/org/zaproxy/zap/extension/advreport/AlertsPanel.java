@@ -25,17 +25,17 @@ public class AlertsPanel extends JPanel{
 
 	private List<JCheckBox> selections;
 	private ExtensionAdvReport extension;
-	
-    public static final String[] MSG_RISK = {"Informational", "Low", "Medium", "High"};
-	
+
+        public static final String[] MSG_RISK = {"Informational", "Low", "Medium", "High"};
+
 	public AlertsPanel(List<String> alertTypes,ExtensionAdvReport extension){
 		initialize(alertTypes);
 		this.extension = extension;
 	}
 
 	private void initialize( List<String> alertTypes ){
-		
-		// generate and ad labels
+
+	// generate and ad labels
         selections = new ArrayList<JCheckBox>();
         //Alert selection Panel
 		JPanel selectionPanel = new JPanel();
@@ -45,29 +45,29 @@ public class AlertsPanel extends JPanel{
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(2,5,30,10);
-		
+
 		selectionPanel.add(getRiskBox("High"), gbc);
 
 		gbc.gridx++;
 		selectionPanel.add(getRiskBox("Medium"), gbc);
-		
+
 		gbc.gridx++;
 		selectionPanel.add(getRiskBox("Low"), gbc);
-		
+
 		gbc.gridx++;
 		selectionPanel.add(getRiskBox("Informational"), gbc);
-		
+
 		gbc.insets = new Insets(0,20,2,0);
 		gbc.gridy = 1;
 		gbc.gridwidth = 4;
-		
+
 		for( String alertType: alertTypes ){
-			
+
 			JCheckBox selection = new JCheckBox();
 			selection.setText(alertType);
 			selection.setSelected( true );
 			selection.setName( alertType );
-			
+
 			gbc.gridx = 0;
 			gbc.anchor = GridBagConstraints.CENTER;
 			selectionPanel.add(selection, gbc);
@@ -75,32 +75,32 @@ public class AlertsPanel extends JPanel{
 			gbc.gridy += 1;
 
 		}
-		 				
+
         JPanel buttonpane = new JPanel( new FlowLayout( FlowLayout.RIGHT ));
         buttonpane.add( getCancelButton() );
         buttonpane.add( getHTMLButton() );
-        
+
 		this.setLayout( new BorderLayout() );
 		this.add( new JLabel(" Alerts in Report : " ), BorderLayout.NORTH );
 		this.add( new JScrollPane( selectionPanel ), BorderLayout.CENTER );
 	    this.add(buttonpane, BorderLayout.SOUTH);
-		
+
 	}
-	
+
 	private List<JCheckBox> getSelections(){
 		if( selections == null ){
 			selections = new ArrayList<JCheckBox>();
 		}
 		return selections;
 	}
-	
+
 	public List<String> getSelectedAlerts(){
 		List<String> selectedAlerts = new ArrayList<String>();
 		for( JCheckBox selection: selections ){
 			if( selection.isSelected() ) selectedAlerts.add( selection.getName());
 		}
 		return selectedAlerts;
-		
+
 	}
 
 	private JCheckBox getRiskBox(final String riskLevel){
@@ -119,7 +119,7 @@ public class AlertsPanel extends JPanel{
 				}
 			}
 		});
-		
+
 		return riskChk;
 	}
 
@@ -135,7 +135,7 @@ public class AlertsPanel extends JPanel{
         }
 		return alertTypes;
     }
-	
+
 	private JButton getCancelButton(){
 		JButton cancelbutton = new JButton("Cancel");
 		cancelbutton.addActionListener(
@@ -147,7 +147,7 @@ public class AlertsPanel extends JPanel{
 		        });
 		return cancelbutton;
 	}
-	
+
 	private JButton getHTMLButton(){
 		JButton generatebutton = new JButton("Generate HTML");
 		generatebutton.addActionListener(
@@ -157,4 +157,7 @@ public class AlertsPanel extends JPanel{
 		                extension.generateReport();
 		            }
 		        });
-		return generatebutton;
+		return generatebutton;
+	}
+
+}
