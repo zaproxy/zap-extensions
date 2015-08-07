@@ -6,7 +6,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor code changes.
+	Minor code changes.<br>
+	Issue 1600 - XFrameOptionScanner at High threshold don't alert on error responses.
 	]]>
 	</changes>
 	<extensions>
