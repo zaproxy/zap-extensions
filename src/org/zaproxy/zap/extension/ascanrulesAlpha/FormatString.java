@@ -42,35 +42,32 @@
 
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.model.Tech;
-import org.zaproxy.zap.model.TechSet;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 import org.zaproxy.zap.network.HttpResponseBody;
 
 public class FormatString extends AbstractAppParamPlugin  {
 
-	// wasc_7 is a buffer overflow ;)
-	private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_6");
-
+	
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanalpha.formatstring.";
+	private static final int PLUGIN_ID = 30002;
 	private static Logger log = Logger.getLogger(FormatString.class);
 	
 	@Override
-	public int getId() {	
-		return 30002;
+	public int getId() {
+		return PLUGIN_ID;
 	}
 
 	@Override
 	public String getName() {
-		if (vuln != null) {
-			return "Format String Error";
-		}
-		return "Format String Error";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 
 	@Override
@@ -79,16 +76,8 @@ public class FormatString extends AbstractAppParamPlugin  {
 	}
 
 	@Override
-	public boolean targets(TechSet technologies) {
-		return technologies.includes(Tech.Lang.C);
-	}
-
-	@Override
 	public String getDescription() {
-		if (vuln != null) {
-			return vuln.getDescription();
-		}
-		return "Failed to load vulnerability description from file";
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
 	}
 
 	@Override
@@ -98,25 +87,12 @@ public class FormatString extends AbstractAppParamPlugin  {
 
 	@Override
 	public String getSolution() {
-		if (vuln != null) {
-			return vuln.getSolution();
-		}
-		return "Failed to load vulnerability solution from file";
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}
 
 	@Override
 	public String getReference() {
-		if (vuln != null) {
-			StringBuilder sb = new StringBuilder();
-			for (String ref : vuln.getReferences()) {
-				if (sb.length() > 0) {
-					sb.append("\n");
-				}
-				sb.append(ref);
-			}
-			return sb.toString();
-		}
-		return "Failed to load vulnerability reference from file";
+		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
 
 	@Override
@@ -130,6 +106,14 @@ public class FormatString extends AbstractAppParamPlugin  {
 	 */
 	@Override
 	public void scan(HttpMessage msg, String param, String value) {
+		
+		if (this.isStop()) { // Check if the user stopped things
+			if (log.isDebugEnabled()) {
+				log.debug("Scanner "+this.getName()+" Stopping.");
+			}
+			return; // Stop!
+		}
+		
 		try {
 		
 			// This is where you change the 'good' request to attack the application
