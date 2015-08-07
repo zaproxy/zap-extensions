@@ -42,53 +42,51 @@
 
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.model.Tech;
-import org.zaproxy.zap.model.TechSet;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.model.Tech;    
+import org.zaproxy.zap.model.TechSet;  
+
 
 public class FormatString extends AbstractAppParamPlugin  {
 
-	// wasc_7 is a buffer overflow ;)
-	private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_6");
-
+	
+	/**
+	 * Prefix for internationalised messages used by this rule
+	 */
+	private static final String MESSAGE_PREFIX = "ascanalpha.formatstring.";
+	private static final int PLUGIN_ID = 30002;
 	private static Logger log = Logger.getLogger(FormatString.class);
 	
 	@Override
-	public int getId() {	
-		return 30002;
+	public int getId() {
+		return PLUGIN_ID;
 	}
 
 	@Override
 	public String getName() {
-		if (vuln != null) {
-			return "Format String Error";
-		}
-		return "Format String Error";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
-
+		
 	@Override
 	public String[] getDependency() {
 		return null;
 	}
-
+	
 	@Override
-	public boolean targets(TechSet technologies) {
-		return technologies.includes(Tech.Lang.C);
+	public boolean targets(TechSet technologies) { 
+		return technologies.includes(Tech.Lang.C); 
 	}
+
 
 	@Override
 	public String getDescription() {
-		if (vuln != null) {
-			return vuln.getDescription();
-		}
-		return "Failed to load vulnerability description from file";
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
 	}
 
 	@Override
@@ -98,25 +96,16 @@ public class FormatString extends AbstractAppParamPlugin  {
 
 	@Override
 	public String getSolution() {
-		if (vuln != null) {
-			return vuln.getSolution();
-		}
-		return "Failed to load vulnerability solution from file";
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}
 
 	@Override
 	public String getReference() {
-		if (vuln != null) {
-			StringBuilder sb = new StringBuilder();
-			for (String ref : vuln.getReferences()) {
-				if (sb.length() > 0) {
-					sb.append("\n");
-				}
-				sb.append(ref);
-			}
-			return sb.toString();
-		}
-		return "Failed to load vulnerability reference from file";
+		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+	}
+	
+	private String getError(char c) {
+		return Constant.messages.getString(MESSAGE_PREFIX + "error"+c);
 	}
 
 	@Override
@@ -130,13 +119,17 @@ public class FormatString extends AbstractAppParamPlugin  {
 	 */
 	@Override
 	public void scan(HttpMessage msg, String param, String value) {
+		
+		if (this.isStop()) { // Check if the user stopped things
+			if (log.isDebugEnabled()) {
+				log.debug("Scanner "+getName()+" Stopping.");
+			}
+			return; // Stop!
+		}
+		
 		try {
 		
-			// This is where you change the 'good' request to attack the application
-			// You can make multiple requests if needed
-			String errorFormatStringMessage = "Potential Format String Error.  The script closed the connection on a /%s";
-			String errorFormatStringMessage1 = "Potential Format String Error.  The script closed the connection on a /%s and /%x";
-			String errorFormatStringMessage2 = "Potential Format String Error.  The script closed the connection on a microsoft format string error";
+		
 			/*
 			 * This represents the meaning of format string variables.
 			 * %%  character (literal)  Reference  
@@ -194,12 +187,24 @@ public class FormatString extends AbstractAppParamPlugin  {
     			sendAndReceive(msg);
          		HttpResponseBody secondAttackResponseBody= msg.getResponseBody();
     			if (secondAttackResponseBody.length() > initialResponseLength + 20 && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK){
-    				bingo(getRisk(), Alert.CONFIDENCE_MEDIUM, null, param, initialMessage, errorFormatStringMessage1 ,msg);
+    				bingo(getRisk(), 
+    						Alert.CONFIDENCE_MEDIUM, 
+    						null, 
+    						param, 
+    						initialMessage, 
+    						getError('2') ,
+    						msg);
     			} else 
     			{
     				msg = getNewMsg();
         			setParameter(msg, param, initialAttackMessage);
-    				bingo(getRisk(), Alert.CONFIDENCE_MEDIUM, null, param, initialMessage, errorFormatStringMessage ,msg);
+    				bingo(getRisk(), 
+    						Alert.CONFIDENCE_MEDIUM, 
+    						null, 
+    						param, 
+    						initialMessage, 
+    						getError('1') ,
+    						msg);
     			}
     			return;
     		}
@@ -227,7 +232,13 @@ public class FormatString extends AbstractAppParamPlugin  {
 			sendAndReceive(msg);
 			if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR)
 			{
-				bingo(getRisk(), Alert.CONFIDENCE_MEDIUM, null, param, initialMessage, errorFormatStringMessage2 ,msg);
+				bingo(getRisk(), 
+						Alert.CONFIDENCE_MEDIUM, 
+						null,
+						param, 
+						initialMessage, 
+						getError('3') ,
+						msg);
 			}
 			return;	
 
