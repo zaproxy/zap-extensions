@@ -27,6 +27,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 
@@ -46,8 +47,22 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		boolean includeErrorResponses=true;
+		switch (this.getLevel()) {
+			case HIGH:	includeErrorResponses=false; break;  
+			case MEDIUM: 					
+			case DEFAULT: 
+			case LOW: 		
+			case OFF: } 
 		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()){
-			Vector<String> xFrameOption = msg.getResponseHeader().getHeaders(HttpHeader.X_FRAME_OPTION);
+			int responseStatus = msg.getResponseHeader().getStatusCode();
+			// If it's an error and we're not including error responses then just return without alerting
+			if (!includeErrorResponses && 
+					(HttpStatusCode.isServerError(responseStatus) ||
+					HttpStatusCode.isClientError(responseStatus))) {
+				return;
+			} 
+		Vector<String> xFrameOption = msg.getResponseHeader().getHeaders(HttpHeader.X_FRAME_OPTION);
 			if (xFrameOption != null) {
 				for (String xFrameOptionParam : xFrameOption) {
 					if (xFrameOptionParam.toLowerCase().indexOf("deny") < 0 && xFrameOptionParam.toLowerCase().indexOf("sameorigin") < 0 && xFrameOptionParam.toLowerCase().indexOf("allow-from") < 0) {
@@ -67,8 +82,8 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 		    		getDescription(isXFrameOptionsMissing), 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    xFrameOption,
-		    	    "", 
-		    	    "",
+		    	    "", //Attack
+		    	    getOtherInfo(), //OtherInfo
 		    	    getSolution(),
 		            getReference(), 
 		            "", // No evidence
@@ -101,6 +116,10 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 			return Constant.messages.getString(MESSAGE_PREFIX + "desc");
 	}
 
+	private String getOtherInfo() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo");
+	}
+	
 	private String getSolution() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}

@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>13</version>
+	<version>14</version>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor code changes.
+	Issue 1600 - XFrameOptionScanner, add handling to prevent alerts on error responses at High threshold.
 	]]>
 	</changes>
 	<extensions>
