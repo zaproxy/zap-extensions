@@ -7,7 +7,8 @@
 	<changes>
 	<![CDATA[
 	Minor code changes.<br>
-	Change scanners to honour the technologies enabled (Issue 1618).
+	Change scanners to honour the technologies enabled (Issue 1618).<br>
+	Added Buffer Overflow scanner to beta (Issue 1605).<br>
     ]]>
 	</changes>
 	<extensions>
@@ -15,6 +16,7 @@
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.BackupFileDisclosure</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CrossDomainScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.ExpressionLanguageInjectionPlugin</ascanrule>
