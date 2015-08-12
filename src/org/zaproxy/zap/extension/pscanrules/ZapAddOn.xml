@@ -6,7 +6,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 1600 - XFrameOptionScanner, add handling to prevent alerts on error responses at High threshold.
+	Issue 1600 - XFrameOptionScanner, add handling to prevent alerts on error responses at High threshold.<br>
+	Issue 760 - XContentTypeOptionsScanner, add handling to prevent alerts on error responses at High threshold.
 	]]>
 	</changes>
 	<extensions>
