@@ -46,17 +46,17 @@ Estão incluídos vários formatos, inclusive alguns como MD4, MD5 e SHA *, às 
 <h2>HeartBleed</h2>
 Varreduras passivas à procura de respostas de cabeçalho HTTP indicando que o servidor está vulnerável à vulnerabilidade crítica  HeartBleed OpenSSL. 
 
-<h2>HTTP to HTTPS insecure transition in form post</h2>
-This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
+<h2>Transição insegura de HTTP para HTTPS em post de formulário</h2>
+Esta verificação procura páginas inseguras em HTTP que hospedam formulários HTTPS. A questão é que uma página HTTP insegura pode facilmente ser sequestrada por MITM-man-in-the-middle e o formulário seguro em HTTPS pode ser substituído ou falsificado.
 
-<h2>HTTPS to HTTP insecure transition in form post</h2>
-This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
+<h2>Transição insegura de HTTPS para HTTP em post de formulário</h2>
+Esta verificação procura páginas seguras em HTTPS que hospedam formulários inseguros HTTP. A questão é que uma página segura está em transição para uma página insegura enquanto dados são enviados através de um formulário. O usuário pode pensar que está enviando dados para uma página segura, quando na verdade eles não está.
 
-<h2>Insecure Component</h2>
-Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs.<br>
-A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable.<br>
-Currently, the following server side products are supported:<br>
-Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
+<h2>Componente Inseguro</h2>
+Esta checagem passivamente verifica os cabeçalhos de resposta do servidor e conteúdo do corpo gerador procurando versões de produtos, que são então comparados com uma lista de versões do produto conhecido por ser vulnerável a vários CVEs.<br>
+Uma lista de escores de gravidade de CVEs e CVSS é a saída para cada produto registrado como vulnerável.<br>
+Pelo lado do servidor, são registrados atualmente os seguintes produtos:<br>
+Apache Tomcat application server (funcionalidade limitada devido à limitação do vazamento de informações pelo Tomcat)<br>
 Apache web server<br>
 mod_auth_radius Apache module<br>
 mod_fcgid Apache module<br>
@@ -87,7 +87,7 @@ Sun Java System Web Server<br>
 TornadoServer web server<br>
 WordPress<br>
 
-<h2>Image Location Scanner</h2>
+<h2>Scanner de localização de imagem</h2>
 <p>Passively scans for GPS location exposure in images during normal security
 assessments of websites.  Image Location Scanner assists in situations where
 end users may post profile images and possibly give away their home location,
