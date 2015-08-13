@@ -27,6 +27,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -46,7 +47,21 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		boolean includeErrorResponses=true;
+		switch (this.getLevel()) {
+			case HIGH:	includeErrorResponses=false; break;  
+			case MEDIUM: 					
+			case DEFAULT: 
+			case LOW: 		
+			case OFF: } 
 		if (msg.getResponseBody().length() > 0) {
+			int responseStatus = msg.getResponseHeader().getStatusCode();
+			// If it's an error and we're not including error responses then just return without alerting
+			if (!includeErrorResponses && 
+					(HttpStatusCode.isServerError(responseStatus) ||
+					HttpStatusCode.isClientError(responseStatus))) {
+				return;
+			} 
 			Vector<String> xContentTypeOptions = msg.getResponseHeader().getHeaders(HttpHeader.X_CONTENT_TYPE_OPTIONS);
 			if (xContentTypeOptions == null) {
 				this.raiseAlert(msg, id, "");
