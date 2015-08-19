@@ -88,7 +88,7 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
                             "Ensure that the secure flag is set for cookies containing such sensitive information.", 
 		            "http://www.owasp.org/index.php/Testing_for_cookies_attributes_(OWASP-SM-002)", 
 		            cookie, // evidence
-		            0,	// TODO CWE Id
+		            614, // CWE Id
 		            13,	// WASC Id - Info leakage
 		            msg);
 	
