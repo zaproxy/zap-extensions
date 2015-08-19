@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>6</version>
+	<version>7</version>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor code changes.
+		ImageLocationScanner detects more GPS tag varieties, scans png & tiff files, adds i18n.
 	]]>
 	</changes>
 	<extensions>
@@ -45,6 +45,8 @@
 	<files>
 		<file>xml/example-pscan-file.txt</file>
 		<file>vulnerabilities.db</file>
+		<file>licenses/metadata-extractor-license.txt</file>
+		<file>licenses/xmpcore-license.txt</file>
 	</files>
 	<not-before-version>2.4.0</not-before-version>
 	<not-from-version></not-from-version>
