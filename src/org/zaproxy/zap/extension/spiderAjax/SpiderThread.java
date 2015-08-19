@@ -194,7 +194,7 @@ public class SpiderThread implements Runnable {
         } catch (ProvisionException e) {
             logger.warn("Failed to start browser " + params.getBrowserId(), e);
             if (View.isInitialised()) {
-                ExtensionSelenium extSelenium = (ExtensionSelenium) Control.getSingleton()
+                ExtensionSelenium extSelenium = Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionSelenium.class);
                 Browser browser = Browser.getBrowserWithId(params.getBrowserId());

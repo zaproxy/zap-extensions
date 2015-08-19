@@ -47,6 +47,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.brk.BreakPanel;
 import org.zaproxy.zap.extension.search.SearchPanel;
 import org.zaproxy.zap.extension.tab.Tab;
@@ -246,8 +247,13 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	}
 	
 	private String getPlugNHackUrl() {
+		String apiKey = API.getInstance().getApiKey();
+		String keyStr = "";
+		if (apiKey != null && apiKey.length() > 0) {
+			keyStr = "?" + API.API_KEY_PARAM + "=" + apiKey;
+		}
 		return "http://" + Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp() + ":" + 
-				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort() + "/pnh/"; 
+				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort() + "/pnh/" + keyStr;
 	}
 
 	private ZapTextField getConfField () {

@@ -27,6 +27,8 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 /**
  * Active Plugin for Code Injection testing and verification.
@@ -97,6 +99,14 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
     @Override
     public String[] getDependency() {
         return new String[]{};
+    }
+
+    @Override
+    public boolean targets(TechSet techonologies) {
+        if (techonologies.includes(Tech.Lang.ASP) || techonologies.includes(Tech.Lang.PHP)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -190,11 +200,33 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                     + "] for Dynamic Code Injection vulnerabilites");
         }
 
-        // ------------------------------------------
-        // Start testing PHP Code Injection patterns
-        // ------------------------------------------
+        if (inScope(Tech.Lang.PHP)) {
+            if (testPhpInjection(paramName)) {
+                return;
+            }
+        }
+
+        if (isStop()) {
+            return;
+        }
+
+        if (inScope(Tech.Lang.ASP)) {
+            if (testAspInjection(paramName)) {
+                return;
+            }
+        }
+    }
+
+    /**
+     * Tests for injection vulnerabilities in PHP code.
+     *
+     * @param paramName the name of the parameter  will be used for testing for injection
+     * @return {@code true} if the vulnerability was found, {@code false} otherwise.
+     * @see #PHP_PAYLOADS
+     */
+    private boolean testPhpInjection(String paramName) {
         for (String phpPayload : PHP_PAYLOADS) {
-            msg = getNewMsg();
+            HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, phpPayload);
 
             if (log.isTraceEnabled()) {
@@ -215,7 +247,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                     // Now create the alert message
                     this.bingo(
                             Alert.RISK_HIGH, 
-                            Alert.WARNING, 
+                            Alert.CONFIDENCE_MEDIUM, 
                             getName() + " - PHP Code Injection",
                             getDescription(),
                             null,
@@ -227,7 +259,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                     
                     // All done. No need to look for vulnerabilities on subsequent 
                     // parameters on the same request (to reduce performance impact)
-                    return;                 
+                    return true;
                 }
 
             } catch (IOException ex) {
@@ -242,19 +274,27 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             if (isStop()) {
                 // Dispose all resources
                 // Exit the plugin
-                return;
+                break;
             }
         }
-            
-        // ------------------------------------------
-        // Continue testing ASP Code Injection patterns
-        // ------------------------------------------
+
+        return false;
+    }
+
+    /**
+     * Tests for injection vulnerabilities in ASP code.
+     *
+     * @param paramName the name of the parameter that will be used for testing for injection
+     * @return {@code true} if the vulnerability was found, {@code false} otherwise.
+     * @see #ASP_PAYLOADS
+     */
+    private boolean testAspInjection(String paramName) {
         Random rand = new Random();
         int bignum1 = 100000 + (int)(rand.nextFloat()*(999999 - 1000000 + 1));
         int bignum2 = 100000 + (int)(rand.nextFloat()*(999999 - 1000000 + 1));
         
         for (String aspPayload : ASP_PAYLOADS) {
-            msg = getNewMsg();
+            HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, MessageFormat.format(aspPayload, bignum1, bignum2));
             
             if (log.isTraceEnabled()) {
@@ -275,7 +315,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                     // Now create the alert message
                     this.bingo(
                             Alert.RISK_HIGH, 
-                            Alert.WARNING, 
+                            Alert.CONFIDENCE_MEDIUM, 
                             getName() + " - ASP Code Injection",
                             getDescription(),
                             null,
@@ -284,6 +324,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                             null,
                             getSolution(),
                             msg);
+                    return true;
                 }
 
             } catch (IOException ex) {
@@ -298,8 +339,10 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             if (isStop()) {
                 // Dispose all resources
                 // Exit the plugin
-                return;
+                break;
             }
         }       
+
+        return false;
     }
 }

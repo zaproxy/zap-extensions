@@ -195,7 +195,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	private OptionsAjaxSpider getOptionsSpiderPanel() {
 		if (optionsAjaxSpider == null) {
-			ExtensionSelenium extSelenium = (ExtensionSelenium) Control.getSingleton()
+			ExtensionSelenium extSelenium = Control.getSingleton()
 					.getExtensionLoader()
 					.getExtension(ExtensionSelenium.class);
 			optionsAjaxSpider = new OptionsAjaxSpider(this.getMessages(), extSelenium.createBrowsersComboBoxModel());
@@ -226,7 +226,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
 	public void spiderSite(SiteNode node, boolean inScope, AjaxSpiderParam params) {
 		if (getView() != null) {
-			getSpiderPanel().startScan(node.getHierarchicNodeName(), inScope, params);
+			getSpiderPanel().startScan(node.getHistoryReference().getURI().toString(), inScope, params);
 		}
 	}
 

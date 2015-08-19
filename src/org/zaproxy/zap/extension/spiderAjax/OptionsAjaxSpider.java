@@ -28,19 +28,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SortOrder;
 
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.BrowsersComboBoxModel;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
-import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
 public class OptionsAjaxSpider extends AbstractParamPanel {
 
@@ -180,7 +175,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	public void initParam(Object obj) {
 	    
 	    OptionsParam optionsParam = (OptionsParam) obj;
-	    AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
+	    AjaxSpiderParam ajaxSpiderParam = optionsParam.getParamSet(AjaxSpiderParam.class);
 	    getAjaxSpiderClickModel().setElems(ajaxSpiderParam.getElems());
 	    elemsOptionsPanel.setRemoveWithoutConfirmation(!ajaxSpiderParam.isConfirmRemoveElem());
 	    
@@ -210,7 +205,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	@Override
 	public void saveParam(Object obj) throws Exception  {; 
 		OptionsParam optionsParam = (OptionsParam) obj;
-		AjaxSpiderParam ajaxSpiderParam = (AjaxSpiderParam) optionsParam.getParamSet(AjaxSpiderParam.class);
+		AjaxSpiderParam ajaxSpiderParam = optionsParam.getParamSet(AjaxSpiderParam.class);
 		
 		ajaxSpiderParam.setClickElemsOnce(getClickElemsOnce().isSelected());
 		ajaxSpiderParam.setClickDefaultElems(getClickDefaultElems().isSelected());

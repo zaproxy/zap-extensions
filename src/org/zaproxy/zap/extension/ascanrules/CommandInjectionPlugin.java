@@ -34,6 +34,8 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -64,33 +66,34 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     private static final String BASH_SPACE_REPLACEMENT = "${IFS}";
     
     // OS Command payloads for command Injection testing
-    private static final Map<String, Pattern> OS_PAYLOADS = new LinkedHashMap();
+    private static final Map<String, Pattern> NIX_OS_PAYLOADS = new LinkedHashMap<>();
+    private static final Map<String, Pattern> WIN_OS_PAYLOADS = new LinkedHashMap<>();
     static {
         // No quote payloads
-        OS_PAYLOADS.put("&" + NIX_TEST_CMD + "&", NIX_CTRL_PATTERN);
-        OS_PAYLOADS.put(";" + NIX_TEST_CMD + ";", NIX_CTRL_PATTERN);
-        OS_PAYLOADS.put("&" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
-        OS_PAYLOADS.put("|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("&" + NIX_TEST_CMD + "&", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put(";" + NIX_TEST_CMD + ";", NIX_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("&" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         
         // Double quote payloads
-        OS_PAYLOADS.put("\"&" + NIX_TEST_CMD + "&\"", NIX_CTRL_PATTERN);
-        OS_PAYLOADS.put("\";" + NIX_TEST_CMD + ";\"", NIX_CTRL_PATTERN);
-        OS_PAYLOADS.put("\"&" + WIN_TEST_CMD + "&\"", WIN_CTRL_PATTERN);
-        OS_PAYLOADS.put("\"|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("\"&" + NIX_TEST_CMD + "&\"", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("\";" + NIX_TEST_CMD + ";\"", NIX_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("\"&" + WIN_TEST_CMD + "&\"", WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("\"|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         // Single quote payloads
-        OS_PAYLOADS.put("'&" + NIX_TEST_CMD + "&'", NIX_CTRL_PATTERN);
-        OS_PAYLOADS.put("';" + NIX_TEST_CMD + ";'", NIX_CTRL_PATTERN);
-        OS_PAYLOADS.put("'&" + WIN_TEST_CMD + "&'", WIN_CTRL_PATTERN);
-        OS_PAYLOADS.put("'|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("'&" + NIX_TEST_CMD + "&'", NIX_CTRL_PATTERN);
+        NIX_OS_PAYLOADS.put("';" + NIX_TEST_CMD + ";'", NIX_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("'&" + WIN_TEST_CMD + "&'", WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("'|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         
         // Special payloads   
-        OS_PAYLOADS.put("\n" + NIX_TEST_CMD + "\n", NIX_CTRL_PATTERN);  //force enter
-        OS_PAYLOADS.put("`" + NIX_TEST_CMD + "`", NIX_CTRL_PATTERN);    //backtick execution
-        OS_PAYLOADS.put("||" + NIX_TEST_CMD, NIX_CTRL_PATTERN);         //or control concatenation
-        OS_PAYLOADS.put("&&" + NIX_TEST_CMD, NIX_CTRL_PATTERN);         //and control concatenation
-        OS_PAYLOADS.put("|" + NIX_TEST_CMD + "#", NIX_CTRL_PATTERN);    //pipe & comment
+        NIX_OS_PAYLOADS.put("\n" + NIX_TEST_CMD + "\n", NIX_CTRL_PATTERN);  //force enter
+        NIX_OS_PAYLOADS.put("`" + NIX_TEST_CMD + "`", NIX_CTRL_PATTERN);    //backtick execution
+        NIX_OS_PAYLOADS.put("||" + NIX_TEST_CMD, NIX_CTRL_PATTERN);         //or control concatenation
+        NIX_OS_PAYLOADS.put("&&" + NIX_TEST_CMD, NIX_CTRL_PATTERN);         //and control concatenation
+        NIX_OS_PAYLOADS.put("|" + NIX_TEST_CMD + "#", NIX_CTRL_PATTERN);    //pipe & comment
         // FoxPro for running os commands
-        OS_PAYLOADS.put("run " + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         
         //Used for *nix
         //OS_PAYLOADS.put("\"|\"ld", null);
@@ -110,33 +113,34 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     private static final String  WIN_BLIND_TEST_CMD = "timeout /T {0}";
     
     // OS Command payloads for blind command Injection testing
-    private static final List<String> BLIND_OS_PAYLOADS = new LinkedList();
+    private static final List<String> NIX_BLIND_OS_PAYLOADS = new LinkedList<>();
+    private static final List<String> WIN_BLIND_OS_PAYLOADS = new LinkedList<>();
     static {
         // No quote payloads
-        BLIND_OS_PAYLOADS.add("&" + NIX_BLIND_TEST_CMD + "&");
-        BLIND_OS_PAYLOADS.add(";" + NIX_BLIND_TEST_CMD + ";");
-        BLIND_OS_PAYLOADS.add("&" + WIN_BLIND_TEST_CMD);
-        BLIND_OS_PAYLOADS.add("|" + WIN_BLIND_TEST_CMD);
+        NIX_BLIND_OS_PAYLOADS.add("&" + NIX_BLIND_TEST_CMD + "&");
+        NIX_BLIND_OS_PAYLOADS.add(";" + NIX_BLIND_TEST_CMD + ";");
+        WIN_BLIND_OS_PAYLOADS.add("&" + WIN_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("|" + WIN_BLIND_TEST_CMD);
         
         // Double quote payloads
-        BLIND_OS_PAYLOADS.add("\"&" + NIX_BLIND_TEST_CMD + "&\"");
-        BLIND_OS_PAYLOADS.add("\";" + NIX_BLIND_TEST_CMD + ";\"");
-        BLIND_OS_PAYLOADS.add("\"&" + WIN_BLIND_TEST_CMD + "&\"");
-        BLIND_OS_PAYLOADS.add("\"|" + WIN_BLIND_TEST_CMD);
+        NIX_BLIND_OS_PAYLOADS.add("\"&" + NIX_BLIND_TEST_CMD + "&\"");
+        NIX_BLIND_OS_PAYLOADS.add("\";" + NIX_BLIND_TEST_CMD + ";\"");
+        WIN_BLIND_OS_PAYLOADS.add("\"&" + WIN_BLIND_TEST_CMD + "&\"");
+        WIN_BLIND_OS_PAYLOADS.add("\"|" + WIN_BLIND_TEST_CMD);
         // Single quote payloads
-        BLIND_OS_PAYLOADS.add("'&" + NIX_BLIND_TEST_CMD + "&'");
-        BLIND_OS_PAYLOADS.add("';" + NIX_BLIND_TEST_CMD + ";'");
-        BLIND_OS_PAYLOADS.add("'&" + WIN_BLIND_TEST_CMD + "&'");
-        BLIND_OS_PAYLOADS.add("'|" + WIN_BLIND_TEST_CMD);
+        NIX_BLIND_OS_PAYLOADS.add("'&" + NIX_BLIND_TEST_CMD + "&'");
+        NIX_BLIND_OS_PAYLOADS.add("';" + NIX_BLIND_TEST_CMD + ";'");
+        WIN_BLIND_OS_PAYLOADS.add("'&" + WIN_BLIND_TEST_CMD + "&'");
+        WIN_BLIND_OS_PAYLOADS.add("'|" + WIN_BLIND_TEST_CMD);
         
         // Special payloads   
-        BLIND_OS_PAYLOADS.add("\n" + NIX_BLIND_TEST_CMD + "\n");  //force enter
-        BLIND_OS_PAYLOADS.add("`" + NIX_BLIND_TEST_CMD + "`");    //backtick execution
-        BLIND_OS_PAYLOADS.add("||" + NIX_BLIND_TEST_CMD);         //or control concatenation
-        BLIND_OS_PAYLOADS.add("&&" + NIX_BLIND_TEST_CMD);         //and control concatenation
-        BLIND_OS_PAYLOADS.add("|" + NIX_BLIND_TEST_CMD + "#");    //pipe & comment
+        NIX_BLIND_OS_PAYLOADS.add("\n" + NIX_BLIND_TEST_CMD + "\n");  //force enter
+        NIX_BLIND_OS_PAYLOADS.add("`" + NIX_BLIND_TEST_CMD + "`");    //backtick execution
+        NIX_BLIND_OS_PAYLOADS.add("||" + NIX_BLIND_TEST_CMD);         //or control concatenation
+        NIX_BLIND_OS_PAYLOADS.add("&&" + NIX_BLIND_TEST_CMD);         //and control concatenation
+        NIX_BLIND_OS_PAYLOADS.add("|" + NIX_BLIND_TEST_CMD + "#");    //pipe & comment
         // FoxPro for running os commands
-        BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
+        WIN_BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
     };
                 
     // Logger instance
@@ -172,6 +176,15 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     @Override
     public String[] getDependency() {
         return new String[]{};
+    }
+
+    @Override
+    public boolean targets(TechSet technologies) {
+        if (technologies.includes(Tech.OS.Linux) || technologies.includes(Tech.OS.MacOS)
+                || technologies.includes(Tech.OS.Windows)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -275,34 +288,69 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
         switch (this.getAttackStrength()) {
             case LOW:
-                // This works out as a total of 4+4 reqs / param
+                // This works out as a total of 2+2 reqs / param per tech
                 // Probably blind should be enabled only starting from MEDIUM (TBE)
-                targetCount = 4;
-                blindTargetCount = 4;
+                targetCount = 2;
+                blindTargetCount = 2;
                 break;
 
             case MEDIUM:
-                // This works out as a total of 12+12 reqs / param
-                targetCount = 12;
-                blindTargetCount = 12;
+                // This works out as a total of 6+6 reqs / param per tech
+                targetCount = 6;
+                blindTargetCount = 6;
                 break;
 
             case HIGH:
             case INSANE:
-                // This works out as a total of 18+18 reqs / param
-                targetCount = OS_PAYLOADS.size();
-                blindTargetCount = BLIND_OS_PAYLOADS.size();
+                // This works out as a total of 18+18 reqs / param if both techs are enabled
+                targetCount = Math.max(NIX_OS_PAYLOADS.size(), WIN_OS_PAYLOADS.size());
+                blindTargetCount = Math.max(NIX_BLIND_OS_PAYLOADS.size(), WIN_BLIND_OS_PAYLOADS.size());
                 break;
 
             default:
             // Default to off
         }
         
+        if (inScope(Tech.OS.Linux) || inScope(Tech.OS.MacOS)) {
+            if (testCommandInjection(paramName, value, targetCount, blindTargetCount, NIX_OS_PAYLOADS, NIX_BLIND_OS_PAYLOADS)) {
+                return;
+            }
+        }
+
+        if (isStop()) {
+            return;
+        }
+
+        if (inScope(Tech.OS.Windows)) {
+            if (testCommandInjection(paramName, value, targetCount, blindTargetCount, WIN_OS_PAYLOADS, WIN_BLIND_OS_PAYLOADS)) {
+                return;
+            }
+        }
+    }
+
+    /**
+     * Tests for injection vulnerabilities with the given payloads.
+     *
+     * @param paramName the name of the parameter that will be used for testing for injection
+     * @param value the value of the parameter that will be used for testing for injection
+     * @param targetCount the number of requests for normal payloads
+     * @param blindTargetCount the number of requests for blind payloads
+     * @param osPayloads the normal payloads
+     * @param blindOsPayloads the blind payloads
+     * @return {@code true} if the vulnerability was found, {@code false} otherwise.
+     */
+    private boolean testCommandInjection(
+            String paramName,
+            String value,
+            int targetCount,
+            int blindTargetCount,
+            Map<String, Pattern> osPayloads,
+            List<String> blindOsPayloads) {
         // Start testing OS Command Injection patterns
         // ------------------------------------------
         String payload;
         String paramValue;
-        Iterator<String> it = OS_PAYLOADS.keySet().iterator();
+        Iterator<String> it = osPayloads.keySet().iterator();
         List<Long> responseTimes = new ArrayList<>(targetCount);
         long elapsedTime;
         
@@ -315,7 +363,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // -----------------------------------------------
         for(int i = 0; it.hasNext() && (i < targetCount); i++) {
 
-            msg = getNewMsg();
+            HttpMessage msg = getNewMsg();
             payload = it.next();
             paramValue = value + payload;
             setParameter(msg, paramName, paramValue);
@@ -332,7 +380,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                                 
                 // Check if the injected content has been evaluated and printed
                 String content = msg.getResponseBody().toString();
-                Matcher matcher = OS_PAYLOADS.get(payload).matcher(content);
+                Matcher matcher = osPayloads.get(payload).matcher(content);
                 if (matcher.find()) {
                     // We Found IT!                    
                     // First do logging
@@ -351,7 +399,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
                     // All done. No need to look for vulnerabilities on subsequent 
                     // payloads on the same request (to reduce performance impact)
-                    return;                 
+                    return true;                 
                 }
 
             } catch (IOException ex) {
@@ -366,7 +414,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             if (isStop()) {
                 // Dispose all resources
                 // Exit the plugin
-                return;
+                return false;
             }
         }
         
@@ -383,10 +431,10 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         double deviation = getResponseTimeDeviation(responseTimes);
         double lowerLimit = (deviation >= 0) ? getResponseTimeAverage(responseTimes) + TIME_STDEV_COEFF * deviation : TIME_SLEEP_SEC * 1000;
 
-        it = BLIND_OS_PAYLOADS.iterator();
+        it = blindOsPayloads.iterator();
         
         for(int i = 0; it.hasNext() && (i < blindTargetCount); i++) {
-            msg = getNewMsg();
+            HttpMessage msg = getNewMsg();
             payload = it.next();
             
             paramValue = value + MessageFormat.format(payload, TIME_SLEEP_SEC);
@@ -424,7 +472,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
                     // All done. No need to look for vulnerabilities on subsequent 
                     // payloads on the same request (to reduce performance impact)
-                    return;           
+                    return true;           
                 }
 
             } catch (IOException ex) {
@@ -439,10 +487,11 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             if (isStop()) {
                 // Dispose all resources
                 // Exit the plugin
-                return;
+                return false;
             }
             
         }
+        return false;
     }
 
     /**

@@ -3,6 +3,9 @@
 
 	<property name="src" location="../src" />
 	<property name="src.version" value="1.7" />
+	<property name="test.src" location="../test" />
+	<property name="test.lib" location="../testlib" />
+	<property name="test.results.dir" value="results" />
 	<property name="build" location="build" />
 	<property name="build.lib.dir" location="lib" />
 	<property name="temp" location="temp" />
@@ -11,11 +14,12 @@
 	<property name="status" value="release" />
 	<property name="versions.file" location="${dist}/ZapVersions-${status}.xml" />
 	<property name="wiki.dir" location="../../zap-extensions-wiki" />
-	<property name="wiki.zaproxy.dir" location="../../zaproxy-wiki" />
+	<property name="wiki.zapcorehelp.dir" location="../../zap-core-help-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
-	<!-- This assumes you also have the zaproxy-2.4 project (used for the weekly release -->
-	<property name="zap-2.4.plugin.dir" location="../../zaproxy-2.4/src/plugin" />
+	<!-- This assumes you also have the zaproxy_2.4 project (used for the weekly release -->
+	<property name="zap-2.4.plugin.dir" location="../../zaproxy_2.4/src/plugin" />
+	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.4" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
@@ -34,6 +38,7 @@
 		<delete dir="${dist}" includeEmptyDirs="true" />
 		<delete dir="${build}" includeEmptyDirs="true" />
 		<delete dir="${temp}" includeEmptyDirs="true" />
+		<delete dir="${test.results.dir}" includeEmptyDirs="true" />
 	</target>
 
 	<target name="init">
@@ -41,6 +46,7 @@
 		<mkdir dir="${dist}" />
 		<mkdir dir="${build}" />
 		<mkdir dir="${temp}" />
+		<mkdir dir="${test.results.dir}"/>
 	</target>
 
 	<target name="compile" depends="init" description="compile the source">
@@ -61,21 +67,57 @@
 				</fileset>
 			</classpath>
 		</javac>
+
+		<echo message="Compiling tests..." />
+		<javac srcdir="${test.src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
+			<classpath>
+				<fileset dir="${dist.lib.dir}">
+					<include name="**/*.jar" />
+				</fileset>
+				<pathelement location="${build}"/>
+				<fileset dir="${test.lib}">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="test" depends="clean, compile">
+		<junit printsummary="yes" haltonerror="true" failureproperty="TestsFailed">
+			<classpath>
+				<fileset dir="${dist.lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+				<fileset dir="${test.lib}">
+					<include name="*.jar" />
+				</fileset>
+				<pathelement location="${build}"/>
+			</classpath>
+			<formatter type="plain"/>
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${test.results.dir}">
+				<fileset dir="${build}">
+					<include name="**/*UnitTest.class"/>
+					<exclude name="**/Abstract*Test.class"/>
+				</fileset>
+			</batchtest>
+		</junit>
+		<fail if="TestsFailed" message="Test(s) failed!" />
 	</target>
 
 	<macrodef name="generate-wiki" description="Generates the wiki of an add-on into zap-extensions wiki dir">
 		<attribute name="addOn"/>
 		<sequential>
 			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.dir}"
-				prefixlinkimages="https://zap-extensions.googlecode.com/svn/wiki/images/" tocpadding="0" />
+				prefixlinkimages="https://github.com/zaproxy/zap-extensions/wiki/images/" tocpadding="0" />
 		</sequential>
 	</macrodef>
 
-	<macrodef name="generate-wiki-core" description="Generates the wiki of an add-on into zaproxy wiki dir (normally for add-ons included in the main release)">
+	<macrodef name="generate-wiki-core" description="Generates the wiki of an add-on into zap-core-help wiki dir (normally for add-ons included in the main release)">
 		<attribute name="addOn"/>
 		<sequential>
-			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.zaproxy.dir}"
-				prefixlinkimages="https://zaproxy.googlecode.com/svn/wiki/images/" tocpadding="2" />
+			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.zapcorehelp.dir}"
+				prefixlinkimages="https://github.com/zaproxy/zap-core-help/wiki/images/" tocpadding="0" />
 		</sequential>
 	</macrodef>
 
@@ -95,11 +137,10 @@
 			<generatewiki basesrcdir="${src}/org/zaproxy/zap/extension/@{addOn}/resources" basedestdir="@{baseDestDir}"
 				helpcontentsdir="contents/" helpcontentsinclude=".*\.html"
 				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="@{prefixLinkImages}"
-				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.wiki"
-				helpfileextension=".html" wikifileextension=".wiki"
+				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.md"
+				helpfileextension=".html" wikifileextension=".md"
 				srctocfile="toc.xml" srcmapfile="map.jhm"
-				wikitocfilename="TableOfContents-${addOnCapitalised}" wikitocentryinitpadding="@{tocpadding}"
-				labels="UserGuide-${addOnCapitalised}-v${version}">
+				wikitocfilename="_SiderBar-${addOnCapitalised}" wikitocentryinitpadding="@{tocpadding}">
 
 				<!-- Default language is at root of dest dir -->
 				<helpdir src="help" dest="" />
@@ -163,8 +204,12 @@
 			<delete file="${addon.libs.zip}" />
 
 			<!-- Remove search indexes previously generated, no longer needed. -->
-			<delete dir="${src}/org/zaproxy/zap/extension/@{name}/resources/help/JavaHelpSearch" />
-			<delete dir="${src}/org/zaproxy/zap/extension/@{name}/resources/help_*_*/JavaHelpSearch" />
+			<delete includeemptydirs="true" failonerror="false">
+				<fileset dir="${src}/org/zaproxy/zap/extension/@{name}/resources/">
+					<include name="help/JavaHelpSearch/**" />
+					<include name="help_*_*/JavaHelpSearch/**" />
+				</fileset>
+			</delete>
 
 			<!-- Include add-on files -->
 			<jar jarfile="${dist}/${file}" update="true" compress="true">
@@ -190,7 +235,7 @@
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
 				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
-				url="http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download" />
+				url="${zap.download.url}/${file}" />
 
 		</sequential>
 	</macrodef>
@@ -237,7 +282,7 @@
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
 				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
-				url="http://sourceforge.net/projects/zaproxy/files/add-ons/${file}/download" />
+				url="${zap.download.url}/${file}" />
 
 		</sequential>
 	</macrodef>
@@ -255,6 +300,8 @@
 		<build-addon name="fuzzdb" />
 		<build-addon name="gettingStarted" />
 		<build-addon name="help" />
+		<build-addon name="help_pt_BR" />
+		<build-addon name="onlineMenu" />
 		<build-addon name="pscanrules" />
 		<build-addon name="quickstart" />
 		<build-addon name="reveal" />
@@ -309,10 +356,6 @@
 		<build-deploy-addon name="coreLang" />
 	</target>
 
-	<target name="generate-wiki-coreLang" description="Generates the wiki for the add-on">
-		<generate-wiki-core addon="coreLang" />
-	</target>
-
 	<target name="deploy-directorylistv1" description="deploys Directory List v1.0 add-on">
 		<build-deploy-addon name="directorylistv1" />
 	</target>
@@ -338,11 +381,27 @@
 	</target>
 
 	<target name="generate-wiki-gettingStarted" description="Generates the wiki of gettingStarted">
-		<generate-wiki addon="gettingStarted" />
+		<generate-wiki-core addon="gettingStarted" />
 	</target>
   
 	<target name="deploy-help" description="deploy the help extension">
 		<build-deploy-help-addon name="help" />
+	</target>
+
+	<target name="build-help-pt-BR" description="builds the help_pt_BR add-on">
+		<build-help-addon name="help_pt_BR" />
+	</target>
+
+	<target name="deploy-help-pt-BR" description="deploy the help_pt_BR add-on">
+		<build-deploy-help-addon name="help_pt_BR" />
+	</target>
+
+	<target name="deploy-onlineMenu" description="deploy the onlineMenu extension">
+		<build-deploy-addon name="onlineMenu" />
+	</target>
+
+	<target name="generate-wiki-onlineMenu" description="Generates the wiki of onlineMenu">
+		<generate-wiki-core addon="onlineMenu" />
 	</target>
 
 	<target name="deploy-pscanrules" description="deploy the passive scan rules">
@@ -416,6 +475,7 @@
 				<include name="directorylistv1-${status}-*.zap"/>
 				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="help-${status}-*.zap"/>
+				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
@@ -432,6 +492,7 @@
 				<include name="directorylistv1-${status}-*.zap"/>
 				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="help-${status}-*.zap"/>
+				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>
@@ -455,6 +516,7 @@
 				<include name="directorylistv1-${status}-*.zap"/>
 				<include name="gettingStarted-${status}-*.zap"/>
 				<include name="help-${status}-*.zap"/>
+				<include name="onlineMenu-${status}-*.zap"/>
 				<include name="pscanrules-${status}-*.zap"/>
 				<include name="quickstart-${status}-*.zap"/>
 				<include name="reveal-${status}-*.zap"/>

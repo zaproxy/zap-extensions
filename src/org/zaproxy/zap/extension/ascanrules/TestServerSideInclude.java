@@ -22,6 +22,7 @@
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2012/08/01 Removed the "(non-Javadoc)" comments.
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
+// ZAP: 2015/07/27 Issue 1618: Target Technology Not Honored
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -33,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 
 public class TestServerSideInclude extends AbstractAppParamPlugin {
@@ -65,6 +67,15 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
     @Override
     public String[] getDependency() {
         return null;
+    }
+
+    @Override
+    public boolean targets(TechSet technologies) {
+        if (technologies.includes(Tech.OS.Linux) || technologies.includes(Tech.OS.MacOS)
+                || technologies.includes(Tech.OS.Windows)) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -105,7 +116,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 	            sendAndReceive(msg);
 	    		//result = msg.getResponseBody().toString();
 	    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {
-	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_UNIX, msg);
+	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_UNIX, msg);
 	    			return;
 	    		}
 	
@@ -118,7 +129,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 	            sendAndReceive(msg);
 	    		//result = msg.getResponseBody().toString();
 	    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {    		    
-	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_UNIX2, msg);
+	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_UNIX2, msg);
 	    			return;
 	    		}
 	
@@ -133,7 +144,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 	            sendAndReceive(msg);
 	    		//result = msg.getResponseBody().toString();
 	    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
-	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_WIN, msg);
+	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_WIN, msg);
 	    			return;
 	    		}
 	
@@ -146,7 +157,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 	            sendAndReceive(msg);
 	    		//result = msg.getResponseBody().toString();
 	    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
-	    			bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, evidence.toString(), SSI_WIN2, msg);
+	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_WIN2, msg);
 	    			return;
 	    		}
 	
