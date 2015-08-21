@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Selenium</name>
-	<version>2</version>
+	<version>3</version>
 	<semver>1.0.0</semver><!-- This version should be kept in sync with the one of the extension. -->
 	<description>WebDriver provider and includes HtmlUnit browser</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Minor code changes.</changes>
+	<changes>Updated to use Selenium 2.47.1</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.selenium.ExtensionSelenium</extension>
 	</extensions>
