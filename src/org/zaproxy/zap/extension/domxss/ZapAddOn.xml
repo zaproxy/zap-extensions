@@ -1,0 +1,28 @@
+<zapaddon>
+	<name>DOM XSS Active scanner rule</name>
+	<version>1</version>
+	<description>DOM XSS Active scanner rule</description>
+	<author>ZAP Dev Team</author>
+	<url/>
+	<changes>
+    </changes>
+	<dependencies>
+		<addons>
+			<addon>
+				<id>selenium</id>
+				<semver>1.*</semver>
+			</addon>
+		</addons>
+	</dependencies>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.domxss.ExtensionDomXSS</extension>
+	</extensions>
+	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.domxss.TestDomXSS</ascanrule>
+	</ascanrules>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.4.1</not-before-version>
+	<not-from-version/>
+</zapaddon>

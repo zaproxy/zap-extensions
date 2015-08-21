@@ -245,6 +245,7 @@
 		<build-addon name="callgraph" />
 		<build-addon name="cmss" />
 		<build-addon name="codedx"/>
+		<build-addon name="domxss"/>
 		<build-addon name="help_bs_BA" />
 		<build-addon name="help_es_ES" />
 		<build-addon name="help_fr_FR" />
@@ -344,6 +345,10 @@
 
 	<target name="deploy-codedx" description="deploy the codedx extension">
 		<build-deploy-addon name="codedx" />
+	</target>
+	
+	<target name="deploy-domxss" description="deploy the domxss extension">
+		<build-deploy-addon name="domxss" />
 	</target>
 	
 	<target name="deploy-help-fr-FR" description="deploy the help_fr_FR add-on">
