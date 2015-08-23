@@ -9,6 +9,7 @@
 	Updated add-on's info URL.<br>
 	Minor code changes.<br>
 	Added a new scanner to search for format string errors in compiled code.<br>
+	Added a new scanner to search for integer overflows improperly handled in compiled code.<br>
 	Change scanners to honour the technologies enabled (1618).
   	]]>
 	</changes>
@@ -20,6 +21,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.FormatString</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.IntegerOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ProxyDisclosureScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RelativePathConfusionScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SlackerCookieDetector</ascanrule>
