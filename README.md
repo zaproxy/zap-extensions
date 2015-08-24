@@ -1,4 +1,4 @@
-This project contains extensions for the [OWASP Zed Attack Proxy](https://code.google.com/p/zaproxy) (ZAP).
+This project contains extensions for the [OWASP Zed Attack Proxy](https://github.com/zaproxy/zaproxy) (ZAP).
 
 It has just been migrated from Google Code, so some of the wiki links may well be broken - we will fix these in time ;)
 
