@@ -42,8 +42,6 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.api.API;
 
-import com.opera.core.systems.OperaDriver;
-
 /**
  * An {@code Extension} that provides {@code WebDriver} implementations for several {@code Browser}s.
  *
@@ -247,6 +245,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             capabilities.setCapability(InternetExplorerDriver.IE_USE_PRE_PROCESS_PROXY, true);
 
             return new InternetExplorerDriver(capabilities);
+            /* No longer supported in the Selenium standalone jar
+             * need to decide if we support older Opera versions 
         case OPERA:
             OperaDriver driver = new OperaDriver(capabilities);
             if (proxyAddress != null) {
@@ -257,6 +257,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             }
 
             return driver;
+            */
         case PHANTOM_JS:
             final ArrayList<String> cliArgs = new ArrayList<>(4);
             cliArgs.add("--ssl-protocol=any");
