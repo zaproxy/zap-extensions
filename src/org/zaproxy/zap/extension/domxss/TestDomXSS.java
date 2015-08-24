@@ -568,5 +568,23 @@ public class TestDomXSS extends AbstractAppPlugin {
 	public int getWascId() {
 		return 8;
 	}
+	
+    @Override
+    public AttackStrength[] getAttackStrengthsSupported() {
+        return new AttackStrength[] {
+        		AttackStrength.LOW,
+        		AttackStrength.MEDIUM,
+        		AttackStrength.HIGH,
+        		AttackStrength.INSANE
+        };
+    }
+
+    @Override
+    public AlertThreshold[] getAlertThresholdsSupported() {
+        return new AlertThreshold[] {
+        		AlertThreshold.LOW, 
+        		AlertThreshold.MEDIUM};
+    }
+
 }
 
