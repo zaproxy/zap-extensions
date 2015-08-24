@@ -1,19 +1,13 @@
 <zapaddon>
     <name>AdvFuzzer</name>
-    <version>2</version>
+    <version>3</version>
     <semver>1.0.1</semver>
     <description>Advanced fuzzer for manual testing</description>
     <author>ZAP Dev Team</author>
-    <url>https://code.google.com/p/zap-extensions/</url>
+    <url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts</url>
     <changes>
     <![CDATA[
-    Fix the help button in the Fuzzer dialogue and broken link in Fuzzer dialogue help page.<br>
-    Properly load the 'Fuzzer HTTP Processor' templates.<br>
-    Keep focus on results table, even if there's a payload reflection in the response (Issue 1442).<br>
-    Update POST request's Content-Length by default.<br>
-    Remove status icon when uninstalling.<br>
-    Fuzzers can't be expanded on OS X (Issue 1677) 
-    Other code changes.
+    Update add-on's info URL.<br>
     ]]>
     </changes>
     <extensions>
