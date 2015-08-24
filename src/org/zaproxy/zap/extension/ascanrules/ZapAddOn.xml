@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>18</version>
+	<version>19</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-        Improved "Path Traversal" scanner.<br>
-        Change scanners to honour the technologies enabled.
+        Issue 1146: variable 'param' is used instead of 'value'? in TestCrossSiteScriptV2.<br>
+        Handle cases where the response is the full XSS payload.
 	]]>
     </changes>
 	<extensions>

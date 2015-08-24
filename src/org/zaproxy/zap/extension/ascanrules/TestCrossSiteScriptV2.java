@@ -123,10 +123,11 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 		try {
 	    	// Inject the 'safe' eyecatcher and see where it appears
 			boolean attackWorked = false;
-			setParameter(msg, param, Constant.getEyeCatcher());
-            sendAndReceive(msg);
+            HttpMessage msg2 = getNewMsg();
+			setParameter(msg2, param, Constant.getEyeCatcher());
+            sendAndReceive(msg2);
             
-            HtmlContextAnalyser hca = new HtmlContextAnalyser(msg);
+            HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
             List<HtmlContext> contexts = hca.getHtmlContexts(Constant.getEyeCatcher(), null, 0);
             if (contexts.size() == 0) {
             	// Lower case?
@@ -138,9 +139,10 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             }
             if (contexts.size() == 0) {
             	// No luck - try again, appending the eyecatcher to the original value
-    			setParameter(msg, param, param + Constant.getEyeCatcher());
-                sendAndReceive(msg);
-                hca = new HtmlContextAnalyser(msg);
+    			msg2 = getNewMsg();
+    			setParameter(msg2, param, value + Constant.getEyeCatcher());
+                sendAndReceive(msg2);
+                hca = new HtmlContextAnalyser(msg2);
             	contexts = hca.getHtmlContexts(value + Constant.getEyeCatcher(), null, 0);
             }
             if (contexts.size() == 0) {
@@ -156,7 +158,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             }
             
             for (HtmlContext context : contexts) {
-            	// Loop through the returned contexts and lauch targetted attacks
+            	// Loop through the returned contexts and launch targeted attacks
             	if (attackWorked) {
             		break;
             	}
@@ -312,6 +314,25 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         						attackWorked = true;
             	            }
         	            }
+            		} else {
+            			// Last chance - is the payload actually the whole response?
+            			if (context.getTarget().equals(context.getMsg().getResponseBody().toString())) {
+            	            List<HtmlContext> contexts2 = performAttack (msg, param, 
+            	            		"<script>alert(1);</script>", null, 0);
+            	            if (contexts2.size() > 0) {
+           	            		// Yep, its vulnerable
+                    			if (contexts2.get(0).getMsg().getResponseHeader().isHtml()) {
+                    				bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(),
+           								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
+                    			} else {
+                    				bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, null, param, contexts2.get(0).getTarget(),
+                   						Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.nothtml"),
+           								contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
+                    				
+                    			}
+        						attackWorked = true;
+            	            }
+            			}
             		}
             	}
             }
