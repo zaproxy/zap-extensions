@@ -21,6 +21,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -38,12 +40,14 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class ExtensionAdvReport extends ExtensionAdaptor {
 
 	public static final String NAME = "ExtensionAdvReport";
+	public final Map<String, Integer> AlertTypeRisk = new HashMap<>();
 	
     private ZapMenuItem menuCustomHtmlReport = null;
     private OptionDialog optionDialog = null;
     private ScopePanel scopetab = null;
     private AlertsPanel alertstab = null;
     private AlertDetailsPanel alertDetailstab = null;
+    
     
     /**
      * 
@@ -97,7 +101,7 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
         
         public void getNewOptionFrame(){
         	//optionframe.setPreferredSize( new Dimension(530,320) );
-        	List<String> alertTypes= getAlertTypes();
+        	List<String> alertTypes = getAlertTypes();
         	optionDialog = new OptionDialog(getScopeTab(),getAlertsTab( alertTypes ), getAlertDetailsTab() );
         }
         
@@ -109,6 +113,8 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
             	String alertType = alert.getAlert();
             	if( alertTypes.contains( alertType) )continue;
             	alertTypes.add( alertType );
+            	AlertTypeRisk.put(alertType, alert.getRisk());
+            	
             }
 			return alertTypes;
 		}
