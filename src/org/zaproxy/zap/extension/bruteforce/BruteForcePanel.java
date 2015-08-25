@@ -401,6 +401,9 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 			pauseScanButton.setToolTipText(Constant.messages.getString("bruteforce.toolbar.button.pause"));
 			pauseScanButton.setSelectedToolTipText(Constant.messages.getString("bruteforce.toolbar.button.unpause"));
 			pauseScanButton.setIcon(new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/141.png")));
+			pauseScanButton.setRolloverIcon(new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/141.png")));
+			pauseScanButton.setSelectedIcon(new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/131.png")));
+			pauseScanButton.setRolloverSelectedIcon(new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/131.png")));
 			pauseScanButton.setEnabled(false);
 			pauseScanButton.addActionListener(new ActionListener () {
 				@Override

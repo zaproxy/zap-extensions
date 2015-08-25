@@ -1,10 +1,15 @@
 <zapaddon>
 	<name>Token generation and analysis</name>
-	<version>9</version>
+	<version>10</version>
 	<description>Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Allow the user to specify the number of requests (Issue 1711)</changes>
+	<changes>
+	<![CDATA[
+	Change active Pause Button to a Play button (Issue 1802).<br>
+	NOT RELEASED YET.
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.tokengen.ExtensionTokenGen</extension>
 	</extensions>

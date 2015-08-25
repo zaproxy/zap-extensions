@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Forced Browse</name>
-	<version>3</version>
+	<version>4</version>
 	<description>Forced browsing of files and directories using code from the OWASP DirBuster tool</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
-	Corrected the location from where default files are read (Issue 1700).<br>
-	Do not access view components when view is not initialised (Issue 1617).
+	Change active Pause Button to a Play button (Issue 1802).<br>
+	NOT RELEASED YET.
 	]]>
 	</changes>
 	<extensions>

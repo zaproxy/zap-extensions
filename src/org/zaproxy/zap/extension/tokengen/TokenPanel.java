@@ -263,6 +263,9 @@ public class TokenPanel extends AbstractPanel {
 			pauseScanButton.setToolTipText(extension.getMessages().getString("tokengen.toolbar.button.pause"));
 			pauseScanButton.setSelectedToolTipText(extension.getMessages().getString("tokengen.toolbar.button.unpause"));
 			pauseScanButton.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/141.png")));
+			pauseScanButton.setRolloverIcon(new ImageIcon(getClass().getResource("/resource/icon/16/141.png")));
+			pauseScanButton.setSelectedIcon(new ImageIcon(getClass().getResource("/resource/icon/16/131.png")));
+			pauseScanButton.setRolloverSelectedIcon(new ImageIcon(getClass().getResource("/resource/icon/16/131.png")));
 			pauseScanButton.setEnabled(false);
 			pauseScanButton.addActionListener(new ActionListener () {
 				@Override
