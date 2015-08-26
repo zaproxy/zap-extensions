@@ -1,14 +1,11 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>16</version>
+	<version>17</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
-	Change scanners to honour the technologies enabled (Issue 1618).<br>
-	Added Buffer Overflow scanner to beta (Issue 1605).<br>
     ]]>
 	</changes>
 	<extensions>
