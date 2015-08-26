@@ -1,15 +1,11 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>13</version>
+	<version>14</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-	Updated add-on's info URL.<br>
-	Minor code changes.<br>
-	Added a new scanner to search for format string errors in compiled code.<br>
-	Change scanners to honour the technologies enabled (1618).
   	]]>
 	</changes>
 	<extensions>
