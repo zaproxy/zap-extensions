@@ -7,6 +7,7 @@
 	<changes>
 	<![CDATA[
 	Moved Format String scanner from alpha to beta.<br>
+	Removing Buffer Overflow.<br>
     ]]>
 	</changes>
 	<extensions>
@@ -14,7 +15,6 @@
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.BackupFileDisclosure</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CrossDomainScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.ExpressionLanguageInjectionPlugin</ascanrule>
@@ -44,3 +44,4 @@
 	<not-before-version>2.4.1</not-before-version>
 	<not-from-version/>
 </zapaddon>
+
