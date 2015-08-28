@@ -6,12 +6,14 @@
 	<url/>
 	<changes>
 	<![CDATA[
+        Added Buffer Overflow scanner.
 	]]>
     </changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.ascanrules.ExtensionAscanRules</extension>
 	</extensions>
 	<ascanrules>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.CodeInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.CommandInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestCrossSiteScriptV2</ascanrule>
