@@ -224,7 +224,7 @@ public class WSDLCustomParser {
 				    
 		    	    /* Identifies operations for each endpoint.. */
 	    	        for(BindingOperation bindOp : operations){
-	    	        	String opDisplayName = "/" + bindOp.getName() + " (SOAP 1."+soapVersion+")";
+	    	        	String opDisplayName = "/" + bindOp.getName() + " (v1."+soapVersion+")";
 	    	        	sb.append("|\t|-- SOAP 1."+soapVersion+" Operation: "+bindOp.getName());
 	    	        	/* Adds this operation to the global operations chart. */
 	    	        	recordOperation(keyIndex, bindOp);	    	        	
@@ -491,15 +491,19 @@ public class WSDLCustomParser {
 				@Override
 				public void run() {
 					extHistory.addHistory(historyRef);
+					
+					// FIXME
 					/* Modifies the URI adding the SOAP operation name to avoid overwrites. It's done after
-					 * saving it in history so that the original URI is preserved for scanning tasks.*/
+					 * saving it in history so that the original URI is preserved for scanning tasks.
+					 * 
+					 * URI modification solution is only a workaround since it has size limitations
+					 * and, anyway, it is not an elegant solution.*/
 					try {
 						URI soapURI = message.getRequestHeader().getURI();
 						String soapStringURI = soapURI.getPath();
 						soapURI.setPath(soapStringURI+opDisplayName);
-						message.getRequestHeader().setURI(soapURI);
 					} catch (URIException e) {
-						e.printStackTrace();
+						log.warn(e.getMessage(), e);
 					}
 					Model.getSingleton().getSession().getSiteTree().addPath(historyRef, message);	
 				}

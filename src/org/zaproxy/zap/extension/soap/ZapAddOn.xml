@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>SOAP Scanner</name>
-	<version>3</version>
+	<version>2</version>
 	<description>Imports and scans WSDL files containing SOAP endpoints.</description>
 	<author>Alberto (albertov91)</author>
 	<url></url>
-	<changes>Version 3 fixes a problem where operations under the same location were overwritten.</changes>
+	<changes> Fixes a problem where operations under the same location were overwritten. Other minor fixes.</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.soap.ExtensionImportWSDL</extension>
 	</extensions>
