@@ -4,7 +4,7 @@
 	<description>Imports and scans WSDL files containing SOAP endpoints.</description>
 	<author>Alberto (albertov91)</author>
 	<url></url>
-	<changes>Minor code changes.</changes>
+	<changes> Fixes a problem where operations under the same location were overwritten. Other minor fixes.</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.soap.ExtensionImportWSDL</extension>
 	</extensions>
