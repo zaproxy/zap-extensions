@@ -6,6 +6,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
+	Moved Format String scanner from alpha to beta.<br>
+	Removing Buffer Overflow.<br>
     ]]>
 	</changes>
 	<extensions>
@@ -13,10 +15,10 @@
 	</extensions>
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.BackupFileDisclosure</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.CrossDomainScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.Csrftokenscan</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.ExpressionLanguageInjectionPlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.FormatString</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HeartBleedActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HPP</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.InsecureHTTPMethod</ascanrule>
@@ -39,6 +41,7 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.4.1</not-before-version>
 	<not-from-version/>
 </zapaddon>
+

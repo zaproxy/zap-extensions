@@ -11,11 +11,7 @@ Active Scan Rules - beta
 The following beta quality active scan rules are included in this add-on:
 
 <H2>Backup File Disclosure</H2>
-Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information
-
-<H2>Buffer Overflow</H2>
-Looks for indicators of buffer overflows in compiled code.  It does this by putting out large strings of input text and look for code crash
-and abnormal session closure.
+Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information.
 
 <H2>Cross-Domain Misconfiguration</H2>
 Checks if the web server is configured to allow Cross Domain access, from a malicious
@@ -23,6 +19,10 @@ third party service, for instance. Currently checks for wildcards in Adobe's cro
 SilverLight's clientaccesspolicy.xml. 
 
 <H2>CSRF Token</H2>
+
+<H2>Format String Error</H2>
+Looks for indicators of format string handling errors in compiled code.  It does this by putting out strings of input text based upon characters
+compiled C code anticipates to produce formatted output and look for code crash and abnormal session closures.
 
 <H2>Heartbleed OpenSSL Vulnerability</H2>
 Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability, by exploiting it.
