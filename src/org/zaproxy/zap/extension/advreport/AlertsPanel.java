@@ -3,11 +3,13 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -19,15 +21,17 @@ public class AlertsPanel extends JPanel{
 
 	private List<JCheckBox> selections;
 	private ExtensionAdvReport extension;
-	
+
+	private Map<String, String> alertTypeRisk = null;
+	//Alert types with corresponding risk Levels (High, Medium, Low, Informational)
 	public AlertsPanel(List<String> alertTypes,ExtensionAdvReport extension){
 		initialize(alertTypes);
 		this.extension = extension;
+		alertTypeRisk = extension.alertTypeRisk;
 	}
 
 	private void initialize( List<String> alertTypes ){
 		
-		// generate and ad labels
         selections = new ArrayList<JCheckBox>();
         //Alert selection Panel
 		JPanel selectionPanel = new JPanel();
@@ -36,23 +40,36 @@ public class AlertsPanel extends JPanel{
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(2,5,30,10);
+		
+		selectionPanel.add(getRiskBox("High"), gbc);
+		
+		gbc.gridx++;
+		selectionPanel.add(getRiskBox("Medium"),gbc);
+		
+		gbc.gridx++;
+		selectionPanel.add(getRiskBox("Low"),gbc);
+		
+		gbc.gridx++;
+		selectionPanel.add(getRiskBox("Informational"),gbc);
+		
+		gbc.insets = new Insets(0,20,2,0);
+		gbc.gridy = 1;
+		gbc.gridwidth = 4;
 		
 		for( String alertType: alertTypes ){
-			JLabel label = new JLabel(alertType);
+			
 		    JCheckBox selection = new JCheckBox();
+		    selection.setText(alertType);
 		    selection.setSelected( true );
 		    selection.setName( alertType );
 		    
 		    gbc.gridx = 0;
-		    gbc.anchor = GridBagConstraints.WEST;
-		    selectionPanel.add(label, gbc);
-			
-		    gbc.gridx = 1;
-		    gbc.anchor = GridBagConstraints.EAST;
+		    gbc.anchor = GridBagConstraints.CENTER;
 		    selectionPanel.add(selection, gbc);
 		    this.getSelections().add( selection );	
-			
 			gbc.gridy += 1;
+			
 		}
 		 				
         JPanel buttonpane = new JPanel( new FlowLayout( FlowLayout.RIGHT ));
@@ -81,6 +98,27 @@ public class AlertsPanel extends JPanel{
 		return selectedAlerts;
 	}
 	
+	
+	private JCheckBox getRiskBox(final String riskLevel){
+		JCheckBox riskChk = new JCheckBox();
+		riskChk.setText(riskLevel);
+		riskChk.setSelected(true);
+		riskChk.addItemListener(new java.awt.event.ItemListener() {
+			@Override
+			public void itemStateChanged(java.awt.event.ItemEvent e) {
+				boolean selected = (ItemEvent.SELECTED == e.getStateChange());
+				for (JCheckBox selection: selections ){
+					if(alertTypeRisk.get(selection.getName()) == riskLevel) {
+						selection.setSelected(selected);
+					}
+
+				}
+			}
+		});
+		
+		return riskChk;
+	}
+	
 	private JButton getCancelButton(){
 		JButton cancelbutton = new JButton("Cancel");
 		cancelbutton.addActionListener(
@@ -106,4 +144,3 @@ public class AlertsPanel extends JPanel{
 	}
 	
 }
-
