@@ -6,7 +6,6 @@
 	<classpathentry kind="lib" path="build/lib/zap-versions-0.0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/BrowserLauncher2-1_3.jar"/>
 	<classpathentry kind="lib" path="lib/bsh-2.0b4.jar"/>
-	<classpathentry kind="lib" path="lib/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-configuration-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
@@ -31,7 +30,6 @@
 	<classpathentry kind="lib" path="lib/procyon-decompiler-0.5.25.jar"/>
 	<classpathentry kind="lib" path="lib/rsyntaxtextarea-2.5.6.jar"/>
 	<classpathentry kind="lib" path="lib/simple-odf-0.7-incubating.jar"/>
-	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.7.15-M1.jar"/>
 	<classpathentry kind="lib" path="lib/swing-layout-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-all-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
@@ -49,5 +47,7 @@
 	<classpathentry kind="lib" path="lib/selenium-release-1.zap"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/zap-2.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.11.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
