@@ -33,8 +33,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.help.UnsupportedOperationException;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacement;
