@@ -32,7 +32,6 @@ package org.zaproxy.zap.extension.advreport;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,7 +45,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.ViewDelegate;
-//import org.parosproxy.paros.extension.report.ReportGenerator;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
@@ -57,7 +55,6 @@ import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.XMLStringUtil;
 import org.zaproxy.zap.view.ScanPanel;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
-import org.parosproxy.paros.db.*;
 
 
 public class ReportLastScan {

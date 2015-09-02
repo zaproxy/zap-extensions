@@ -13,7 +13,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import org.zaproxy.zap.view.LayoutHelper;
 
 
 public class AlertDetailsPanel extends JPanel{
