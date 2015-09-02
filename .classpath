@@ -30,7 +30,6 @@
 	<classpathentry kind="lib" path="lib/jfxrt.jar"/>
 	<classpathentry kind="lib" path="lib/jgraph-5.13.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/jgraphx-2.0.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/jhall.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/json-simple-1.1.1.jar"/>

@@ -136,7 +136,7 @@
             <local name="file" />
             <property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
 
-            <generatejavahelpsearchindexes jhalljar="../lib/jhall.jar"
+            <generatejavahelpsearchindexes jhalljar="lib/jhall.jar"
                     helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
                     <dirset dir="${build.classes.dir}/org/zaproxy/zap/extension/@{name}/resources/">
                             <include name="help" />
