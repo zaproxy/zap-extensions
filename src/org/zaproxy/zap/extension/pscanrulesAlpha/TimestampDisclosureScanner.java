@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 
 import org.apache.commons.httpclient.URIException;
-import org.apache.http.HttpHeaders;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -74,7 +73,7 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 	/**
 	 * ignore the following response headers for the purposes of the comparison, since they cause false positives
 	 */
-	private static final String [] RESPONSE_HEADERS_TO_IGNORE = {HttpHeader._KEEP_ALIVE, HttpHeaders.CACHE_CONTROL, HttpHeaders.ETAG, HttpHeaders.AGE};  
+	private static final String [] RESPONSE_HEADERS_TO_IGNORE = {HttpHeader._KEEP_ALIVE, HttpHeader.CACHE_CONTROL, "ETag", "Age"};  
 
 	/**
 	 * gets the name of the scanner
