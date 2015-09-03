@@ -10,6 +10,11 @@ Aktiv scan qaydaları
 <h1>Active Scan Rules</h1>
 The following release quality active scan rules are included in this add-on:
 
+<h2>Buffer Overflow</h2>
+
+Looks for indicators of buffer overflows in compiled code.  It does this by putting out large strings of input text and look for code crash
+and abnormal session closure.
+
 <h2>Code Injection</h2>
 
 This rule submits PHP and ASP attack strings as values for URL parameters in a request and examines the response to 

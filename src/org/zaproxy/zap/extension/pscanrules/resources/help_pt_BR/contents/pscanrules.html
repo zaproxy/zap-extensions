@@ -10,7 +10,16 @@ Regras de varredura passiva
 <h1>Regras de Varredura Passiva</h1>Foram incluídas neste complemento as  seguintes regras de varredura passiva, com qualidade de 'release' <h2>Erros de aplicativo</h2> <h2>Controle de Cache</h2> <h2>Falta do Tipo de Conteúdo</h2> <h2>Só Cookie HTTP</h2> <h2>Flag de segurança de cookie</h2> <h2>Inclusão de Cross Domain Script</h2> <h2>Proteção de Cabeçalho XSS</h2> <h2>Conteúdo misto</h2> <h2>AutoCompletar senha</h2> <h2>Exibição de endereço privado</h2> <h2>Id de sessão na reescrita de URL</h2> Este scanner verifica a existência de parâmetros do tipo token de sessão sendo reescritos na URL. 
 Para ajudar a reduzir falsos positivos, o scanner verifica o comprimento do valor do token; se o valor desse parâmetro não for maior que 8 caracteres de comprimento, o parâmetro é ignorado (ou seja: survey? sId = 5 não seriam sinalizado como vulnerável).
 
-<h2>X-Content-Type-Options</h2>  <h2>X-Frame-opção</h2>
+<h2>X-Content-Type-Options</h2>
+This scanner check for the Anti-MIME-Sniffing header X-Content-Type-Options and ensures it is set to 'nosniff'.
+At HIGH threshold this scanner does not alert on client or server error responses, for all other enabled 
+thresholds it alerts on all response types if the header is missing or set to something other than 'nosniff'.
+ 
+<h2>X-Frame-Option</h2>
+This scanner checks for the existence and validity of the X-FRAME-OPTIONS header. At HIGH threshold this scanner
+does not alert on client or server error responses, for all other enabled thresholds it alerts on all response 
+types if the header is missing or invalid. Invalid meaning that the header is present with no value, or that 
+the value is not as expected (i.e.: other than "DENY", "SAMEORIGIN", or "ALLOW-FROM"). 
 
 </body>
 </html>
