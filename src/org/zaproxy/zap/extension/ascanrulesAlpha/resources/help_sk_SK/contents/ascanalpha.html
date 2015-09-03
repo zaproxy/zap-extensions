@@ -9,10 +9,6 @@ Active Scan Rules - alpha
 <h1>Active Scan Rules - alpha</h1>
 The following alpha quality active scan rules are included in this add-on:
 
-<h2>Buffer Overflow</h2>
-Looks for indicators of buffer overflows in complied code.  It does this by putting out large strings of input text and look for code crash
-and abnormal session closure.
-
 <h2>Cookie Slack Detector</h2>
 Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid"
 
@@ -26,10 +22,6 @@ For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active
 
 <h2>Expression Language Injection</h2>
 The software constructs all or part of an expression language (EL) statement in a Java Server Page (JSP) using externally-influenced input from an upstream component, but it does not neutralize or incorrectly neutralizes special elements that could modify the intended EL statement before it is executed. In certain versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) in which Expression Language tags would be evaluated twice, which effectively exposed any application to EL injection. However, even for later versions, this weakness is still possible depending on configuration.
-
-+<h2>Format String Error</h2>
-Looks for indicators of format string handling errors in compiled code.  It does this by putting out strings of input text based upon characters
-compiled C code anticipates to produce formatted output and look for code crash and abnormal session closures.
 
 <h2>Source Code Disclosure - File Inclusion</h2>
 Uses local file inclusion techniques to scan for files containing source code on the web server.
