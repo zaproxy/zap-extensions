@@ -1,0 +1,17 @@
+<zapaddon>
+	<name>context Alert Filters</name>
+	<version>1</version>
+	<description>Allows you to automate the changing of alert risk levels</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>First version</changes>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.alertFilters.ExtensionAlertFilters</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.4.1</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>
