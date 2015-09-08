@@ -1,13 +1,11 @@
 <zapaddon>
 	<name>Forced Browse</name>
-	<version>4</version>
+	<version>5</version>
 	<description>Forced browsing of files and directories using code from the OWASP DirBuster tool</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Change active Pause Button to a Play button (Issue 1802).<br>
-	NOT RELEASED YET.
 	]]>
 	</changes>
 	<extensions>
