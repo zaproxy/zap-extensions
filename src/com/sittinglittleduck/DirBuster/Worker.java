@@ -21,10 +21,9 @@
  */
 package com.sittinglittleduck.DirBuster;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.regex.Matcher;
@@ -33,6 +32,9 @@ import java.util.regex.Pattern;
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NoHttpResponseException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -74,6 +76,7 @@ public class Worker implements Runnable
         this.threadId = threadId;
 
     }
+    
 
     /**
      * Run method of the thread
@@ -95,7 +98,7 @@ public class Worker implements Runnable
                 return;
             }
 
-            //this pasuses the thread
+            //this pauses the thread
             synchronized(this)
             {
                 while(pleaseWait)
@@ -115,9 +118,7 @@ public class Worker implements Runnable
                 }
             }
 
-
-            GetMethod httpget = null;
-            HeadMethod httphead = null;
+            HttpMethodBase httpMethod = null;
 
             try
             {
@@ -127,236 +128,55 @@ public class Worker implements Runnable
                 url = work.getWork();
                 int code = 0;
 
-                String responce = "";
-                String rawResponce = "";
+                String response = "";
+                String rawResponse = "";
+                
+                httpMethod = createHttpMethod(work.getMethod(), url.toString());
 
                 //if the work is a head request
                 if(work.getMethod().equalsIgnoreCase("HEAD"))
                 {
-                    if(Config.debug)
-                    {
-                        System.out.println("DEBUG Worker[" + threadId + "]: HEAD " + url.toString());
-                    }
-
-                    httphead = new HeadMethod(url.toString());
-
-                    //set the custom HTTP headers
-                    Vector HTTPheaders = manager.getHTTPHeaders();
-                    for(int a = 0; a < HTTPheaders.size(); a++)
-                    {
-                        HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
-                        /*
-                         * Host header has to be set in a different way!
-                         */
-                        if(httpHeader.getHeader().startsWith("Host"))
-                        {
-                            httphead.getParams().setVirtualHost(httpHeader.getValue());
-                        }
-                        else
-                        {
-                            httphead.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
-                        }
-
-                    }
-                    httphead.setFollowRedirects(Config.followRedirects);
-
-                    /*
-                     * this code is used to limit the number of request/sec
-                     */
-                    if(manager.isLimitRequests())
-                    {
-                        while(manager.getTotalDone() / ((System.currentTimeMillis() - manager.getTimestarted()) / 1000.0) > manager.getLimitRequestsTo())
-                        {
-                            Thread.sleep(100);
-                        }
-                    }
-                    /*
-                     * Send the head request
-                     */
-                    code = httpclient.executeMethod(httphead);
-                    if(Config.debug)
-                    {
-                        System.out.println("DEBUG Worker[" + threadId + "]: " + code + " " + url.toString());
-                    }
-                    httphead.releaseConnection();
+                    code = makeRequest(httpMethod);
+                    httpMethod.releaseConnection();
 
                 }
                 //if we are doing a get request
                 else if(work.getMethod().equalsIgnoreCase("GET"))
                 {
-                    //make the request;
-                    if(Config.debug)
-                    {
-                        System.out.println("DEBUG Worker[" + threadId + "]: GET " + url.toString());
+                	code = makeRequest(httpMethod);
+
+                    String rawHeader = getHeadersAsString(httpMethod);
+                    response = getResponseAsString(httpMethod);
+                    
+                    rawResponse = rawHeader + response;
+                    //clean the response
+                    
+                    if(Config.parseHTML && !work.getBaseCaseObj().isUseRegexInstead()) {
+                    	parseHtml(httpMethod, response);
                     }
-                    httpget = new GetMethod(url.toString());
-
-                    //set the custom HTTP headers
-                    Vector HTTPheaders = manager.getHTTPHeaders();
-                    for(int a = 0; a < HTTPheaders.size(); a++)
-                    {
-
-                        HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
-                        /*
-                         * Host header has to be set in a different way!
-                         */
-                        if(httpHeader.getHeader().startsWith("Host"))
-                        {
-                            httpget.getParams().setVirtualHost(httpHeader.getValue());
-                        }
-                        else
-                        {
-                            httpget.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
-                        }
-                    }
-                    httpget.setFollowRedirects(Config.followRedirects);
-
-                    /*
-                     * this code is used to limit the number of request/sec
-                     */
-                    if(manager.isLimitRequests())
-                    {
-                        while(manager.getTotalDone() / ((System.currentTimeMillis() - manager.getTimestarted()) / 1000.0) > manager.getLimitRequestsTo())
-                        {
-                            Thread.sleep(100);
-                        }
-                    }
-
-                    code = httpclient.executeMethod(httpget);
-
-                    if(Config.debug)
-                    {
-                        System.out.println("DEBUG Worker[" + threadId + "]: " + code + " " + url.toString());
-                    }
-
-                    //set up the input stream
-                    BufferedReader input = new BufferedReader(new InputStreamReader(httpget.getResponseBodyAsStream()));
-
-                    //save the headers into a string, used in viewing raw responce
-                    String rawHeader;
-                    rawHeader = httpget.getStatusLine() + "\r\n";
-                    Header[] headers = httpget.getResponseHeaders();
-
-                    StringBuffer buf = new StringBuffer();
-                    for(int a = 0; a < headers.length; a++)
-                    {
-                        buf.append(headers[a].getName() + ": " + headers[a].getValue() + "\r\n");
-                    }
-
-                    rawHeader = rawHeader + buf.toString();
-
-                    buf = new StringBuffer();
-                    //read in the responce body
-                    String line;
-                    while((line = input.readLine()) != null)
-                    {
-                        buf.append("\r\n" + line);
-                    }
-                    responce = buf.toString();
-                    input.close();
-
-                    rawResponce = rawHeader + responce;
-                    //clean the responce
-
-                    //parse the html of what we have found
-
-                    if(Config.parseHTML && !work.getBaseCaseObj().isUseRegexInstead())
-                    {
-                        Header contentType = httpget.getResponseHeader("Content-Type");
-
-                        if(contentType != null)
-                        {
-                            if(contentType.getValue().startsWith("text"))
-                            {
-                                manager.addHTMLToParseQueue(new HTMLparseWorkUnit(responce, work));
-                            }
-                        }
-                    }
-
-                    responce = FilterResponce.CleanResponce(responce, work);
+                    
+                    response = FilterResponce.CleanResponce(response, work);
 
                     Thread.sleep(10);
-                    httpget.releaseConnection();
+                    httpMethod.releaseConnection();
                 }
-                else
-                {
-                    //There is no need to deal with requests other than HEAD or GET
-                }
-
-
 
                 //if we need to check the against the base case
                 if(work.getMethod().equalsIgnoreCase("GET") && work.getBaseCaseObj().useContentAnalysisMode())
                 {
-                    if(code == 200)
+                    if(code == HttpStatus.SC_OK)
                     {
-                        if(Config.debug)
-                        {
-                            System.out.println("DEBUG Worker[" + threadId + "]: Base Case Check " + url.toString());
-                        }
-
-
-                        //TODO move this option to the Adv options
-                        //if the responce does not match the base case
-                        Pattern regexFindFile = Pattern.compile(".*file not found.*", Pattern.CASE_INSENSITIVE);
-
-                        Matcher m = regexFindFile.matcher(responce);
-
-                        //need to clean the base case of the item we are looking for
-                        String basecase = FilterResponce.removeItemCheckedFor(work.getBaseCaseObj().getBaseCase(), work.getItemToCheck());
-
-                        if(m.find())
-                        {
-                            //do nothing as we have a 404
-                        }
-                        else if(!responce.equalsIgnoreCase(basecase))
-                        {
-                            if(work.isDir())
-                            {
-                                if(Config.debug)
-                                {
-                                    System.out.println("DEBUG Worker[" + threadId + "]: Found Dir (base case)" + url.toString());
-                                }
-                                //we found a dir
-                                manager.foundDir(url, code, responce, basecase, rawResponce, work.getBaseCaseObj());
-                            }
-                            else
-                            {
-                                //found a file
-                                if(Config.debug)
-                                {
-                                    System.out.println("DEBUG Worker[" + threadId + "]: Found File (base case)" + url.toString());
-                                }
-                                manager.foundFile(url, code, responce, work.getBaseCaseObj().getBaseCase(), rawResponce, work.getBaseCaseObj());
-                            }
-                        }
+                        verifyResponseForValidRequests(code, response, rawResponse);
                     }
-                    else if(code == 404 || code == 400)
+                    else if(code == HttpStatus.SC_NOT_FOUND || code == HttpStatus.SC_BAD_REQUEST)
                     {
-                        //again do nothing as it is not there
+                    	if (Config.debug) {
+                    		System.out.println("DEBUG Worker[" + threadId + "]: " + code + " for: " + url.toString());
+                    	}
                     }
                     else
                     {
-                        if(work.isDir())
-                        {
-                            if(Config.debug)
-                            {
-                                System.out.println("DEBUG Worker[" + threadId + "]: Found Dir (base case)" + url.toString());
-                            }
-                            //we found a dir
-                            manager.foundDir(url, code, responce, work.getBaseCaseObj().getBaseCase(), rawResponce, work.getBaseCaseObj());
-                        }
-                        else
-                        {
-                            //found a file
-                            if(Config.debug)
-                            {
-                                System.out.println("DEBUG Worker[" + threadId + "]: Found File (base case)" + url.toString());
-                            }
-                            manager.foundFile(url, code, responce, work.getBaseCaseObj().getBaseCase(), rawResponce, work.getBaseCaseObj());
-                        }
-                    //manager.foundError(url, "Base Case Mode Error - Responce code came back as " + code + " it should have been 200");
-                    //manager.workDone();
+                    	notifyItemFound(code, response, rawResponse, work.getBaseCaseObj().getBaseCase());
                     }
                 }
                 /*
@@ -366,20 +186,13 @@ public class Worker implements Runnable
                 {
                     Pattern regexFindFile = Pattern.compile(work.getBaseCaseObj().getRegex());
 
-                    Matcher m = regexFindFile.matcher(rawResponce);
-                    /*
-                    System.out.println("======Trying to find======");
-                    System.out.println(work.getBaseCaseObj().getRegex());
-                    System.out.println("======In======");
-                    System.out.println(responce);
-                    System.out.println("======/In======");
-                     */
+                    Matcher m = regexFindFile.matcher(rawResponse);
+
                     if(m.find())
                     {
                         //do nothing as we have a 404
                         if(Config.debug)
                         {
-
                             System.out.println("DEBUG Worker[" + threadId + "]: Regex matched so it's a 404, " + url.toString());
                         }
 
@@ -388,75 +201,24 @@ public class Worker implements Runnable
                     {
                         if(Config.parseHTML)
                         {
-                            Header contentType = httpget.getResponseHeader("Content-Type");
-
-                            if(contentType != null)
-                            {
-                                if(contentType.getValue().startsWith("text"))
-                                {
-                                    manager.addHTMLToParseQueue(new HTMLparseWorkUnit(rawResponce, work));
-                                }
-                            }
+                            parseHtml(httpMethod, rawResponse);
                         }
-                        if(work.isDir())
-                        {
-                            if(Config.debug)
-                            {
-                                System.out.println("DEBUG Worker[" + threadId + "]: Found Dir (regex) " + url.toString());
-                            }
-                            //we found a dir
-                            manager.foundDir(url, code, responce, work.getBaseCaseObj().getBaseCase(), rawResponce, work.getBaseCaseObj());
-                        }
-                        else
-                        {
-                            //found a file
-                            if(Config.debug)
-                            {
-                                System.out.println("DEBUG Worker[" + threadId + "]: Found File (regex) " + url.toString());
-                            }
-                            manager.foundFile(url, code, responce, work.getBaseCaseObj().getBaseCase(), rawResponce, work.getBaseCaseObj());
-                        }
-                    //manager.foundError(url, "Base Case Mode Error - Responce code came back as " + code + " it should have been 200");
-                    //manager.workDone();
+                        
+                        notifyItemFound(code, response, rawResponse, work.getBaseCaseObj().getBaseCase());                        
                     }
 
 
                 }
-                //just check the responce code
+                //just check the response code
                 else
                 {
                     //if is not the fail code, a 404 or a 400 then we have a possible
-                    if(code != work.getBaseCaseObj().getFailCode() && code != 404 && code != 0 && code != 400)
+                    if(code != work.getBaseCaseObj().getFailCode() && verifyIfCodeIsValid(code))
                     {
                         if(work.getMethod().equalsIgnoreCase("HEAD"))
                         {
-                            if(Config.debug)
-                            {
-                                System.out.println("DEBUG Worker[" + threadId + "]: Getting responce via GET " + url.toString());
-                            }
-                            rawResponce = "";
-
-                            httpget = new GetMethod(url.toString());
-                            Vector HTTPheaders = manager.getHTTPHeaders();
-                            for(int a = 0; a < HTTPheaders.size(); a++)
-                            {
-                                HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
-                                httpget.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
-                            }
-                            httpget.setFollowRedirects(Config.followRedirects);
-
-                            /*
-                             * this code is used to limit the number of request/sec
-                             */
-                            if(manager.isLimitRequests())
-                            {
-                                while(manager.getTotalDone() / ((System.currentTimeMillis() - manager.getTimestarted()) / 1000.0) > manager.getLimitRequestsTo())
-                                {
-                                    Thread.sleep(100);
-                                }
-                            }
-
-                            int newCode = httpclient.executeMethod(httpget);
+                        	httpMethod = createHttpMethod("GET", url.toString());
+                        	int newCode = makeRequest(httpMethod);
 
                             //in some cases the second get can return a different result, than the first head request!
                             if(newCode != code)
@@ -464,71 +226,32 @@ public class Worker implements Runnable
                                 manager.foundError(url, "Return code for first HEAD, is different to the second GET: " + code + " - " + newCode);
                             }
 
-
-                            rawResponce = "";
                             //build a string version of the headers
-                            rawResponce = httpget.getStatusLine() + "\r\n";
-                            Header[] headers = httpget.getResponseHeaders();
+                            rawResponse = getHeadersAsString(httpMethod);
 
-                            StringBuffer buf = new StringBuffer();
-                            for(int a = 0; a < headers.length; a++)
-                            {
-                                buf.append(headers[a].getName() + ": " + headers[a].getValue() + "\r\n");
-                            }
-
-                            buf.append("\r\n");
-
-                            rawResponce = rawResponce + buf.toString();
-
-                            if(httpget.getResponseContentLength() > 0)
+                            if(httpMethod.getResponseContentLength() > 0)
                             {
 
-                                //get the http body
-                                BufferedReader input = new BufferedReader(new InputStreamReader(httpget.getResponseBodyAsStream()));
-
-                                String line;
-
-                                String tempResponce = "";
-
-                                buf = new StringBuffer();
-                                while((line = input.readLine()) != null)
-                                {
-                                    buf.append("\r\n" + line);
-                                }
-                                tempResponce = buf.toString();
-                                input.close();
-
-
-                                rawResponce = rawResponce + tempResponce;
-
-
-                                Header contentType = httpget.getResponseHeader("Content-Type");
+                                String responseBodyAsString = getResponseAsString(httpMethod);
+                                rawResponse = rawResponse + responseBodyAsString;
 
                                 if(Config.parseHTML)
                                 {
-                                    contentType = httpget.getResponseHeader("Content-Type");
-
-                                    if(contentType != null)
-                                    {
-                                        if(contentType.getValue().startsWith("text"))
-                                        {
-                                            manager.addHTMLToParseQueue(new HTMLparseWorkUnit(tempResponce, work));
-                                        }
-                                    }
+                                    parseHtml(httpMethod, responseBodyAsString);
                                 }
                             }
 
-                            httpget.releaseConnection();
+                            httpMethod.releaseConnection();
                         }
 
 
                         if(work.isDir())
                         {
-                            manager.foundDir(url, code, rawResponce, work.getBaseCaseObj());
+                            manager.foundDir(url, code, rawResponse, work.getBaseCaseObj());
                         }
                         else
                         {
-                            manager.foundFile(url, code, rawResponce, work.getBaseCaseObj());
+                            manager.foundFile(url, code, rawResponse, work.getBaseCaseObj());
                         }
                     }
                 }
@@ -573,19 +296,176 @@ public class Worker implements Runnable
             }
             finally
             {
-                if(httpget != null)
-                {
-                    httpget.releaseConnection();
-                }
-
-                if(httphead != null)
-                {
-                    httphead.releaseConnection();
-                }
+            	if (httpMethod != null){
+            		httpMethod.releaseConnection();
+            	}
             }
         }
 
     }
+    
+    private HttpMethodBase createHttpMethod (String method, String url) {
+    	switch (method.toUpperCase()) {
+    	case "HEAD":
+    		return new HeadMethod(url);	
+    	case "GET":
+    		return new GetMethod(url);		
+    	default:
+    		throw new IllegalStateException("Method not yet created");
+    	}
+    }
+     
+    private int makeRequest(HttpMethodBase httpMethod) throws HttpException, IOException, InterruptedException {
+    	if(Config.debug)
+        {
+            System.out.println("DEBUG Worker[" + threadId + "]: "+ httpMethod.getName() + " : " + url.toString());
+        }
+
+        //set the custom HTTP headers
+        Vector HTTPheaders = manager.getHTTPHeaders();
+        for(int a = 0; a < HTTPheaders.size(); a++)
+        {
+            HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
+            /*
+             * Host header has to be set in a different way!
+             */
+            if(httpHeader.getHeader().startsWith("Host"))
+            {
+            	httpMethod.getParams().setVirtualHost(httpHeader.getValue());
+            }
+            else
+            {
+            	httpMethod.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
+            }
+
+        }
+        httpMethod.setFollowRedirects(Config.followRedirects);
+
+        /*
+         * this code is used to limit the number of request/sec
+         */
+        if(manager.isLimitRequests())
+        {
+            while(manager.getTotalDone() / ((System.currentTimeMillis() - manager.getTimestarted()) / 1000.0) > manager.getLimitRequestsTo())
+            {
+                Thread.sleep(100);
+            }
+        }
+        /*
+         * Send the request
+         */
+        int code = httpclient.executeMethod(httpMethod);
+        
+        if(Config.debug)
+        {
+            System.out.println("DEBUG Worker[" + threadId + "]: " + code + " " + url.toString());
+        }
+		return code;
+    }
+
+	private boolean verifyIfCodeIsValid(int code) {
+		return code != HttpStatus.SC_NOT_FOUND && code != 0 && code != HttpStatus.SC_BAD_GATEWAY;
+	}
+
+
+	private void verifyResponseForValidRequests(int code, String response, String rawResponse) {
+		if(Config.debug)
+		{
+		    System.out.println("DEBUG Worker[" + threadId + "]: Base Case Check " + url.toString());
+		}
+
+
+		//TODO move this option to the Adv options
+		//if the response does not match the base case
+		Pattern regexFindFile = Pattern.compile(".*file not found.*", Pattern.CASE_INSENSITIVE);
+
+		Matcher m = regexFindFile.matcher(response);
+
+		//need to clean the base case of the item we are looking for
+		String basecase = FilterResponce.removeItemCheckedFor(work.getBaseCaseObj().getBaseCase(), work.getItemToCheck());
+
+		if(m.find())
+		{
+			System.out.println("DEBUG Worker[" + threadId + "]: 404 for: " + url.toString());
+		}
+		else if(!response.equalsIgnoreCase(basecase))
+		{
+			notifyItemFound(code, response, rawResponse, basecase);
+		}
+	}
+	
+	private void notifyItemFound(int code, String response, String rawResponse, String basecase, String type) {
+		if(work.isDir())
+		{
+		    if(Config.debug)
+		    {
+		        System.out.println("DEBUG Worker[" + threadId + "]: Found Dir (" + type +")" + url.toString());
+		    }
+		    //we found a dir
+		    manager.foundDir(url, code, response, basecase, rawResponse, work.getBaseCaseObj());
+		}
+		else
+		{
+		    //found a file
+		    if(Config.debug)
+		    {
+		        System.out.println("DEBUG Worker[" + threadId + "]: Found File (" + type +")" + url.toString());
+		    }
+		    manager.foundFile(url, code, response, basecase, rawResponse, work.getBaseCaseObj());
+		}
+	}
+	
+
+	private void notifyItemFound(int code, String response, String rawResponse, String basecase) {
+		notifyItemFound(code, response, rawResponse, basecase, "base case");		
+	}
+
+	private void parseHtml(HttpMethodBase httpMethod, String response) {
+		//parse the html of what we have found
+
+	    Header contentType = httpMethod.getResponseHeader("Content-Type");
+
+	    if(contentType != null)
+	    {
+	        if(contentType.getValue().startsWith("text"))
+	        {
+	            manager.addHTMLToParseQueue(new HTMLparseWorkUnit(response, work));
+	        }
+	    }
+		
+	}
+
+	private String getResponseAsString(HttpMethodBase httpMethod) throws IOException {		
+		Charset chartSet = getCharsetFrom(httpMethod);
+		return new String(httpMethod.getResponseBody(), chartSet);
+	}
+
+	private Charset getCharsetFrom(HttpMethodBase httpMethod) {
+		Charset chartSet;
+		
+		try {	
+			chartSet = Charset.forName(httpMethod.getRequestCharSet());
+		} catch (Exception ex) {
+			chartSet = Charset.forName("UTF-8");
+		}
+		return chartSet;
+	}
+
+	private String getHeadersAsString(HttpMethodBase httpMethod) {
+		Header[] headers = httpMethod.getResponseHeaders();
+		
+		StringBuilder builder = new StringBuilder(20 * (headers.length +1));
+		
+		builder.append(httpMethod.getStatusLine());
+		builder.append("\r\n");
+		
+		for (Header header : headers) {
+			builder.append(header.getName()).append(": ").append(header.getValue());
+			builder.append("\r\n");
+		}
+
+		return builder.append("\r\n").toString();
+	}
 
     /**
      * Method to call to pause the thread

@@ -1,1 +1,4 @@
-/bin/
+build/build/
+build/temp/
+build/zap-exts/
+bin/*
