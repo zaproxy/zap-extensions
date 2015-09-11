@@ -13,6 +13,10 @@
 #
 
 cgi-bin
+.git
+.svn
+.hg
+.bzr
 education
 betsie
 accessibility
@@ -49573,6 +49577,7 @@ fuzzhead
 ajax-a-new-approach-to-web-applications
 011100A
 CVSROOT
+CVS
 *docroot*
 backupfox
 test2
