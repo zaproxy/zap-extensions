@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>16</version>
+	<version>17</version>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Include API key in PNH URL (Issue 1714).<br>
+	 Add progress indications for quick scan launched from the command line (Issue 1891) <br>
 	]]>
 	</changes>
 	<extensions>
@@ -16,6 +16,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.4.2</not-before-version>
 	<not-from-version/>
 </zapaddon>
