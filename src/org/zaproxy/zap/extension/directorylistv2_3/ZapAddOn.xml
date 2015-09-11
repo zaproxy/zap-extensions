@@ -1,10 +1,13 @@
 <zapaddon>
 	<name>Directory List v2.3</name>
-	<version>2</version>
+	<version>3</version>
 	<description>Lists of directory names to be used with "Forced Browse" add-on.</description>
 	<author>ZAP Dev Team</author>
 	<url>https://owasp.org/index.php/DirBuster</url>
-	<changes>Updated for 2.4.0.</changes>
+	<changes>
+	<![CDATA[
+	Removed repeated files.<br>
+	]]></changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
