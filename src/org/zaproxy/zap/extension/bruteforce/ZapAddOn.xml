@@ -6,6 +6,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
+	Adding request count on Forced browser tab as specified on issue #1873
 	]]>
 	</changes>
 	<extensions>
