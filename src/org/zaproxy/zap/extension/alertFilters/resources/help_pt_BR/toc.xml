@@ -4,9 +4,9 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Context Alert Filters" target="addon.alertFilter"/>
+	<tocitem text="Guia do Usuário do ZAP" tocid="toplevelitem">
+		<tocitem text="Complementos" tocid="addons">
+			<tocitem text="Filtros de alerta de contexto" target="addon.alertFilter"/>
 		</tocitem>
 	</tocitem>
 </toc>

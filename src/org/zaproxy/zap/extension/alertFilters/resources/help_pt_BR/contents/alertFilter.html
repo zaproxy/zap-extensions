@@ -2,43 +2,25 @@
 <html>
 <head>
 <title>
-Context Alert Filters
+Filtros de alerta de contexto
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Context Alert Filters</h1>
+<h1>Filtros de alerta de contexto</h1>
 <p>
-Context Alert Filters allow you to automatically override the risk levels
-of any alerts raised by the active and passive scan rules within a context.
+Filtros de alerta de contexto permitem que você contorne automaticamente os níveis de risco de quaisquer alertas gerados pelas regras varreduras ativa e passiva dentro de um contexto.
 </p>
 <p>
-This add-on adds an 'Alert filters' panel to the contexts dialog.<br>
-The panel shows a list of all of the Alert filters along with buttons for 
-adding, removing and deleting them.
+Este complemento adiciona um painel de 'Filtros de Alerta' para a caixa de diálogo de contextos. <br>O painel mostra uma lista de todos os filtros de alerta junto com botões para adicionar, remover e excluí-los.
 </p>
 <p>
-The 'add' and 'modify' dialogs have the following fields: 
+As caixas de diálogo 'Adicionar' e 'Modificar' têm os seguintes campos: <h3>Alerta</h3> Menu pull down que contém todas as regras de alerta ativas e passivas atualmente instaladas.
 
-<h3>Alert</h3>
-A pull down containing all of the active and passive alert rules currently installed.
-
-<h3>New Level</h3>
-The new level to be assigned to any alerts raised that match the criteria defined by the rule.
+<h3>Novo nível</h3> O novo nível a ser atribuído a qualquer alerta gerado que corresponde aos critérios definidos pela regra.
  
-<h3>URL</h3>
-An optional URL.<br>
-If specified then this rule will be applied if the URL matches the URL of a raised alert.<br>
+<h3>URL</h3> Um URL opcional. <br>Se especificado, então esta regra será aplicada se a URL coincide com a URL de um alerta. <br><h3>URL é regex</h3> Se ligado, e uma URL for especificada, em seguida, a URL será tratada como uma expressão regex quando comparada com a URL do alerta. <br>Se não estiver ligado então qualquer URL especificada deve corresponder exatamente à URL do alerta.
 
-<h3>URL is regex</h3>
-If set and a URL is specified then the URL will be treated as a regex expression when compared with the URL of the alert.<br>
-If it is not set then any specified URL must exactly match the URL of the alert.
-
-<h3>Parameter</h3>
-An optional parameter.<br>
-If specified then this rule will be applied if the parameter exactly matches the parameter of a raised alert.<br>
-
-<h3>Enabled</h3>
-If set then this rule will be applied to all alerts raise against the given context.
+<h3>Parâmetro</h3> Um parâmetro opcional. <br>Se especificado, então esta regra será aplicada se o parâmetro corresponde exatamente ao parâmetro de alerta. <br><h3>Habilitado</h3> Se ligado/setado, então esta regra será aplicada a todos os alertas  em um determinado contexto.
 
 </body>
 </html>
