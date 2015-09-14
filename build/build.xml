@@ -17,8 +17,6 @@
 	<property name="wiki.zapcorehelp.dir" location="../../zap-core-help-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
-	<!-- This assumes you also have the zaproxy_2.4 project (used for the weekly release -->
-	<property name="zap-2.4.plugin.dir" location="../../zaproxy_2.4/src/plugin" />
 	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.4" />
 
 	<path id="build.classpath">
@@ -528,21 +526,6 @@
 				<include name="zest-${status}-*.zap"/>
 			</fileset>
 		</copy>
-		<copy todir="${zap-2.4.plugin.dir}">
-			<fileset dir="${dist}">
-				<include name="ascanrulesBeta-${status}-*.zap"/>
-				<include name="bruteforce-${status}-*.zap"/>
-				<include name="diff-${status}-*.zap"/>
-				<include name="fuzz-${status}-*.zap"/>
-				<include name="invoke-${status}-*.zap"/>
-				<include name="plugnhack-${status}-*.zap"/>
-				<include name="portscan-${status}-*.zap"/>
-				<include name="pscanrulesBeta-${status}-*.zap"/>
-				<include name="scripts-${status}-*.zap"/>
-				<include name="tips-${status}-*.zap"/>
-				<include name="zest-${status}-*.zap"/>
-			</fileset>
-		</copy>
 	</target>
 	
 	<target name="deploy-release" description="deploy extensions to be included in full releases">
@@ -550,18 +533,6 @@
 		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
-			<fileset dir="${dist}">
-				<include name="bruteforce-${status}-*.zap"/>
-				<include name="diff-${status}-*.zap"/>
-				<include name="fuzz-${status}-*.zap"/>
-				<include name="invoke-${status}-*.zap"/>
-				<include name="plugnhack-${status}-*.zap"/>
-				<include name="scripts-${status}-*.zap"/>
-				<include name="tips-${status}-*.zap"/>
-				<include name="zest-${status}-*.zap"/>
-			</fileset>
-		</copy>
-		<copy todir="${zap-2.4.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
