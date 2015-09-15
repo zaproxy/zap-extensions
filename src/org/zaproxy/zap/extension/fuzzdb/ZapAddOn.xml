@@ -210,8 +210,8 @@
 		<file>fuzzers/fuzzdb/wordlists-user-passwd/tomcat/tomcat_mgr_default_users.txt</file>
 		<file>fuzzers/fuzzdb/wordlists-user-passwd/unix-os/unix_passwords.txt</file>
 		<file>fuzzers/fuzzdb/wordlists-user-passwd/unix-os/unix_users.txt</file>
-       </files>
-        <not-before-version>2.4.0</not-before-version>
-        <not-from-version/>
+	</files>
+	<not-before-version>2.4.0</not-before-version>
+	<not-from-version/>
 </zapaddon>
 
