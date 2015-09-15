@@ -1,10 +1,10 @@
 <zapaddon>
         <name>FuzzDB</name>
         <version>4</version>
-        <description>FuzzDB files which can be used with the ZAP fuzzer</description>
-        <author>Adam Muntner</author>
+        <description>FuzzDB extension for ZAP fuzzer</description>
+        <author>Zap Dev Team/Adam Muntner</author>
         <url>https://github.com/fuzzdb-project/fuzzdb</url>
-        <changes>Refreshed from FuzzDB repo, removed non-fuzzer files from plugin list.</changes>
+        <changes>Refreshed from FuzzDB repo. Extension now only displays fuzz files.</changes>
         <extensions/>
         <ascanrules/>
         <pscanrules/>
