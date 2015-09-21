@@ -126,6 +126,10 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
 	private ScanTarget noSelectionScanTarget;
 
+	private JLabel requestCountNameLabel;
+
+	private JLabel requestCountValueLabel;
+
     private static Logger log = Logger.getLogger(BruteForcePanel.class);
     
     /**
@@ -226,6 +230,8 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
 			GridBagConstraints gridBagConstraints9 = new GridBagConstraints();
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			//Dummy
 			GridBagConstraints gridBagConstraintsx = new GridBagConstraints();
 			GridBagConstraints gridBagConstraintsy = new GridBagConstraints();
@@ -282,6 +288,16 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 			gridBagConstraints10.gridy = 0;
 			gridBagConstraints10.insets = new java.awt.Insets(0,0,0,0);
 			gridBagConstraints10.anchor = java.awt.GridBagConstraints.EAST;
+			
+			gridBagConstraints11.gridx = 10;
+			gridBagConstraints11.gridy = 0;
+			gridBagConstraints11.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints11.anchor = java.awt.GridBagConstraints.EAST;
+
+			gridBagConstraints12.gridx = 11;
+			gridBagConstraints12.gridy = 0;
+			gridBagConstraints12.insets = new java.awt.Insets(0,0,0,0);
+			gridBagConstraints12.anchor = java.awt.GridBagConstraints.EAST;
 
 			gridBagConstraintsx.gridx = 20;
 			gridBagConstraintsx.gridy = 0;
@@ -307,6 +323,8 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 			panelToolbar.add(getProgressBar(), gridBagConstraints8);
 			panelToolbar.add(getActiveScansNameLabel(), gridBagConstraints9);
 			panelToolbar.add(getActiveScansValueLabel(), gridBagConstraints10);
+			panelToolbar.add(getRequestCountNameLabel(), gridBagConstraints11);
+			panelToolbar.add(getRequestCountValueLabel(), gridBagConstraints12);
 
 			panelToolbar.add(new JLabel(), gridBagConstraintsx);	// Filler
 			//panelToolbar.add(getLaunchButton(), gridBagConstraintsx);
@@ -329,6 +347,22 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 			activeScansValueLabel.setText(String.valueOf(activeScans.size()));
 		}
 		return activeScansValueLabel;
+	}
+	
+	private JLabel getRequestCountNameLabel() {
+		if (requestCountNameLabel == null) {
+			requestCountNameLabel = new javax.swing.JLabel();
+			requestCountNameLabel.setText(Constant.messages.getString("bruteforce.toolbar.requestcount.label"));
+		}
+		return requestCountNameLabel;
+	}
+	
+	private JLabel getRequestCountValueLabel() {
+		if (requestCountValueLabel == null) {			
+			requestCountValueLabel = new javax.swing.JLabel();	
+			requestCountValueLabel.setText("0");
+		}
+		return requestCountValueLabel;
 	}
 	
 	private void setActiveScanLabels() {
@@ -603,6 +637,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 				getProgressBar().setValue(0);
 			}
 			
+			getRequestCountValueLabel().setText(String.valueOf(bruteForce.getWorkDone()));
 			getProgressBar().setValue(bruteForce.getWorkDone());
 			getProgressBar().setMaximum(bruteForce.getWorkTotal());
 			bruteForceTable.setModel(bruteForce.getModel());
@@ -769,6 +804,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 	@Override
 	public void scanProgress(ScanTarget scanTarget, int done, int todo) {
 		if (scanTarget.equals(currentSite)) {
+			getRequestCountValueLabel().setText(String.valueOf(done));
 			getProgressBar().setValue(done);
 			getProgressBar().setMaximum(todo);
 		}
@@ -800,7 +836,6 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 		}
 		bruteForceMap.clear();
 		activeScans.clear();
-		
 		setActiveScanLabels();
 		resetScanState();
 	}
@@ -808,6 +843,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 	private void resetScanState() {
 		resetScanButtonsAndProgressBarStates(false);
 		getProgressBar().setValue(0);
+		getRequestCountValueLabel().setText("0");
 		
 	}
 
