@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>20</version>
+	<version>21</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-        Added Buffer Overflow scanner.
+        Change Path Traversal scanner to also check HTML responses in decoded form.
 	]]>
     </changes>
 	<extensions>
