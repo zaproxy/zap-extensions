@@ -1,15 +1,15 @@
 <zapaddon>
-        <name>FuzzDB</name>
-        <version>4</version>
-        <description>FuzzDB extension for ZAP fuzzer</description>
-        <author>Zap Dev Team/Adam Muntner</author>
-        <url>https://github.com/fuzzdb-project/fuzzdb</url>
-        <changes>Refreshed from FuzzDB repo. Extension now only displays fuzz files.</changes>
-        <extensions/>
-        <ascanrules/>
-        <pscanrules/>
-        <filters/>
-        <files>
+	<name>FuzzDB</name>
+	<version>4</version>
+	<description>FuzzDB extension for ZAP fuzzer</description>
+	<author>Zap Dev Team/Adam Muntner</author>
+	<url>https://github.com/fuzzdb-project/fuzzdb</url>
+	<changes>Refreshed from FuzzDB repo. Extension now only displays fuzz files.</changes>
+	<extensions/>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
 		<file>fuzzers/fuzzdb/attack/all-attacks/all-attacks-unix.txt</file>
 		<file>fuzzers/fuzzdb/attack/all-attacks/all-attacks-win.txt</file>
 		<file>fuzzers/fuzzdb/attack/all-attacks/all-attacks-xplatform.txt</file>
