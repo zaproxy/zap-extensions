@@ -1,0 +1,19 @@
+<zapaddon>
+	<name>Revisit</name>
+	<version>1</version>
+	<description>Revisit a site at any time in the past using the session history</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>First version</changes>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.revisit.ExtensionRevisit</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
+		<file>example/ExampleFile.txt</file>
+	</files>
+	<not-before-version>2.4.2</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>

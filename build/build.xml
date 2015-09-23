@@ -303,6 +303,7 @@
 					</zipfileset>
 				</jar>
 			</build-addon>
+		<build-addon name="revisit" />
 		<build-addon name="saml" />
 		<build-addon name="sequence" />
 		<build-addon name="simpleExample" />
@@ -438,6 +439,10 @@
 		<generate-wiki addon="pscanrulesAlpha" />
 	</target>
 	
+    <target name="deploy-revisit" description="deploy the revisit extension">
+        <build-deploy-addon name="revisit" />
+    </target>
+
 	<target name="deploy-saml" description="deploy the SAML extension">
         <build-deploy-addon name="saml" />
     </target>
