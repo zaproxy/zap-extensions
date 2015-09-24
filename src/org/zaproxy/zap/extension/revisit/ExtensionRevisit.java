@@ -187,9 +187,6 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 								}
 								continue;
 							}
-							if (i == node.getHistoryReference().getHistoryId()) {
-								System.out.println("SBSB _did_ get to last record:/");
-							}
 							if (hr.getTimeSentMillis() < rs.getStartTime().getTime()) {
 								// Before specified range
 								log.debug("Before specified range: " + url);
