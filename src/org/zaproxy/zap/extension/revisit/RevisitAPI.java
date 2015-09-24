@@ -106,7 +106,7 @@ public class RevisitAPI extends ApiImplementor {
 						this.getParam(params, PARAM_SITE, ""), startDate, endDate);
 				return ApiResponseElement.OK;
 			} catch (ParseException e) {
-				throw new ApiException(Type.BAD_FORMAT, 
+				throw new ApiException(Type.ILLEGAL_PARAMETER, 
 						"Expected date format: " + ExtensionRevisit.dateFormat.toString());
 			}
 
