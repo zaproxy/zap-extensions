@@ -443,6 +443,10 @@
         <build-deploy-addon name="revisit" />
     </target>
 
+    <target name="generate-wiki-revisit" description="Generates the wiki of Revisit">
+        <generate-wiki addon="revisit" />
+    </target>
+
 	<target name="deploy-saml" description="deploy the SAML extension">
         <build-deploy-addon name="saml" />
     </target>
