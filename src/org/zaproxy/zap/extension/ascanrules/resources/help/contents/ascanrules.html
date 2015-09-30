@@ -49,6 +49,12 @@ This rule starts by submitting a unique 'safe' value and then spiders the whole 
 It then performs a series of attacks in the same way that the 'reflected' version does but in this case checks all of the 
 target locations in other pages. 
 
+<H2>CRLF Injection</H2>
+
+This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. If the response contains an identical Set-Cookie header,
+an alert is raised and the scanner returns immediately.
+
+
 <H2>Directory Browsing</H2>
 
 This rule checks to see if a request will provide access to a directory listing by examining the response body for patterns used with Apache, IIS
@@ -60,10 +66,10 @@ This rule submits a variety of URL redirect strings as parameter values in a req
 whether or not a redirect occurred and of what type. The cause of redirect is searched for in the "Location" and "Refresh" header fields, as well as by HTML meta tags
 and Javascript in the body of the response. An alert is raised including the redirection type and the scanner returns immediately.
 
-<H2>CRLF Injection</H2>
+<H2>Format String Error</H2>
+Looks for indicators of format string handling errors in compiled code.  It does this by putting out strings of input text based upon characters
+compiled C code anticipates to produce formatted output and look for code crash and abnormal session closures.
 
-This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. If the response contains an identical Set-Cookie header,
-an alert is raised and the scanner returns immediately.
 
 <H2>Parameter Tampering</H2>
 

@@ -6,7 +6,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-        Change Path Traversal scanner to also check HTML responses in decoded form.
+	   Change Path Traversal scanner to also check HTML responses in decoded form.<br>
+       Move Format String from Beta to Release.<br>
 	]]>
     </changes>
 	<extensions>
@@ -16,6 +17,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.CodeInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.CommandInjectionPlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.FormatString</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestCrossSiteScriptV2</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestDirectoryBrowsing</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestExternalRedirect</ascanrule>
