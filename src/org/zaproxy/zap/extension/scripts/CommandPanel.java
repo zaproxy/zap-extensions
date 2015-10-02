@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.FontUtils;
 
 public class CommandPanel extends AbstractPanel {
 
@@ -68,7 +69,7 @@ public class CommandPanel extends AbstractPanel {
 			((RTextScrollPane)jScrollPane).setLineNumbersEnabled(true);
 
 			jScrollPane.setName("ConsoleCommandjScrollPane");
-			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+			jScrollPane.setFont(FontUtils.getFont("Dialog"));
 		}
 		return jScrollPane;
 	}

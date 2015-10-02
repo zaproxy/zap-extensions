@@ -36,6 +36,8 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -99,7 +101,7 @@ public class OutputPanel extends AbstractPanel {
 
             final JButton clearButton = new JButton();
             clearButton.setToolTipText(Constant.messages.getString("scripts.output.clear.button.toolTip"));
-            clearButton.setIcon(CLEAR_ICON);
+            clearButton.setIcon(DisplayUtils.getScaledIcon(CLEAR_ICON));
             clearButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -112,8 +114,8 @@ public class OutputPanel extends AbstractPanel {
             		Constant.messages.getString("scripts.output.clearOnRun.button.disabled.toolTip"));
             clearOnRunButton.setSelectedToolTipText(
                     Constant.messages.getString("scripts.output.clearOnRun.button.enabled.toolTip"));
-            clearOnRunButton.setIcon(CLEAR_ON_RUN_DISABLED_ICON);
-            clearOnRunButton.setSelectedIcon(CLEAR_ON_RUN_ENABLED_ICON);
+            clearOnRunButton.setIcon(DisplayUtils.getScaledIcon(CLEAR_ON_RUN_DISABLED_ICON));
+            clearOnRunButton.setSelectedIcon(DisplayUtils.getScaledIcon(CLEAR_ON_RUN_ENABLED_ICON));
             clearOnRunButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -126,8 +128,8 @@ public class OutputPanel extends AbstractPanel {
             		Constant.messages.getString("scripts.output.scrolllock.button.disabled.toolTip"));
             scrollLockButton.setSelectedToolTipText(
                     Constant.messages.getString("scripts.output.scrolllock.button.enabled.toolTip"));
-            scrollLockButton.setIcon(SCROLL_LOCK_DISABLED_ICON);
-            scrollLockButton.setSelectedIcon(SCROLL_LOCK_ENABLED_ICON);
+            scrollLockButton.setIcon(DisplayUtils.getScaledIcon(SCROLL_LOCK_DISABLED_ICON));
+            scrollLockButton.setSelectedIcon(DisplayUtils.getScaledIcon(SCROLL_LOCK_ENABLED_ICON));
             scrollLockButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -147,7 +149,7 @@ public class OutputPanel extends AbstractPanel {
             		Constant.messages.getString("scripts.output.scriptLock.button.disabled.toolTip"));
             scriptLockButton.setSelectedToolTipText(
                     Constant.messages.getString("scripts.output.scriptLock.button.enabled.toolTip"));
-            scriptLockButton.setIcon(ExtensionScriptsUI.ICON);
+            scriptLockButton.setIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.ICON));
             scriptLockButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -175,7 +177,7 @@ public class OutputPanel extends AbstractPanel {
 			jScrollPane.setViewportView(getTxtOutput());
 			jScrollPane.setName("ConsoleScrollPane");
 			jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+			jScrollPane.setFont(FontUtils.getFont("Dialog"));
 		}
 		return jScrollPane;
 	}
@@ -189,7 +191,7 @@ public class OutputPanel extends AbstractPanel {
 			txtOutput = new ZapTextArea();
 			txtOutput.setEditable(false);
 			txtOutput.setLineWrap(true);
-			txtOutput.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			txtOutput.setFont(FontUtils.getFont("Dialog"));
 			txtOutput.setName("");
 			txtOutput.addMouseListener(new java.awt.event.MouseAdapter() { 
 

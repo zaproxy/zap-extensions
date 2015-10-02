@@ -17,7 +17,6 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
@@ -42,6 +41,7 @@ import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.FontUtils;
 
 public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyserListenner {
 
@@ -286,7 +286,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 			detailsScrollPane.setViewportView(getDetailsArea());
 			detailsScrollPane.setName("detailsScrollPane");
 			// Looks wrong unless monospaced 
-			detailsScrollPane.setFont(new Font(Font.MONOSPACED, java.awt.Font.PLAIN, 11));
+			detailsScrollPane.setFont(FontUtils.getFont("Dialog"));
 		}
 		return detailsScrollPane;
 	}
@@ -297,7 +297,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 			errorsScrollPane.setViewportView(getErrorsArea());
 			errorsScrollPane.setName("detailsScrollPane");
 			// Looks wrong unless monospaced 
-			errorsScrollPane.setFont(new Font(Font.MONOSPACED, java.awt.Font.PLAIN, 11));
+			errorsScrollPane.setFont(FontUtils.getFont("Dialog"));
 		}
 		return errorsScrollPane;
 	}
@@ -311,7 +311,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 			detailsArea = new TokenAnalysisDetailsArea();
 			detailsArea.setEditable(false);
 			detailsArea.setLineWrap(false);
-			detailsArea.setFont(new Font(Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+			detailsArea.setFont(FontUtils.getFont("Dialog"));
 			detailsArea.setName("DetailsArea");
 			detailsArea.addMouseListener(new java.awt.event.MouseAdapter() { 
 
@@ -342,7 +342,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 			errorsArea = new TokenAnalysisDetailsArea();
 			errorsArea.setEditable(false);
 			errorsArea.setLineWrap(false);
-			errorsArea.setFont(new Font(Font.MONOSPACED, java.awt.Font.PLAIN, 12));
+			errorsArea.setFont(FontUtils.getFont("Dialog"));
 			errorsArea.setName("ErrorsArea");
 			errorsArea.addMouseListener(new java.awt.event.MouseAdapter() { 
 

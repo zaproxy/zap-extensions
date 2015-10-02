@@ -32,6 +32,7 @@ import javax.swing.tree.TreeCellRenderer;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.OverlayIcon;
 
 /**
@@ -99,7 +100,7 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 			
 			if (node.isRoot() || node.getParent().isRoot()) {
 				// Top 2 levels use same icon .. for now ;)
-				setIcon(ExtensionScriptsUI.ICON);
+				setIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.ICON));
 				
 			} else if (userObject != null && userObject instanceof ScriptWrapper) {
 				OverlayIcon icon;
@@ -116,31 +117,31 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 				
 				if (engine != null) {
 					if (engine.getIcon() != null) {
-						icon = new OverlayIcon(engine.getIcon());
+						icon = new OverlayIcon(DisplayUtils.getScaledIcon(engine.getIcon()));
 					} else {
 						// Default to the blank script
-						icon = new OverlayIcon(ExtensionScriptsUI.ICON);
+						icon = new OverlayIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.ICON));
 					}
 					if (script.isChanged() && ! node.isTemplate()) {
-						icon.add(PENCIL_OVERLAY_ICON);
+						icon.add(DisplayUtils.getScaledIcon(PENCIL_OVERLAY_ICON));
 					}
 					if (script.isError() && ! node.isTemplate()) {
-						icon.add(WARNING_OVERLAY_ICON);
+						icon.add(DisplayUtils.getScaledIcon(WARNING_OVERLAY_ICON));
 					}
 					if (script.getType().isEnableable() && ! node.isTemplate()) {
 						if (script.isEnabled()) {
-							icon.add(TICK_OVERLAY_ICON);
+							icon.add(DisplayUtils.getScaledIcon(TICK_OVERLAY_ICON));
 						} else {
-							icon.add(CROSS_OVERLAY_ICON);
+							icon.add(DisplayUtils.getScaledIcon(CROSS_OVERLAY_ICON));
 						}
 					}
 				} else {
-					icon = new OverlayIcon(MISSING_ENGINE_ICON);
+					icon = new OverlayIcon(DisplayUtils.getScaledIcon(MISSING_ENGINE_ICON));
 				}
 				setIcon(icon);
 				
 			} else if (node.getType() != null) {
-				setIcon(node.getType().getIcon());
+				setIcon(DisplayUtils.getScaledIcon(node.getType().getIcon()));
 			}
 		}
 

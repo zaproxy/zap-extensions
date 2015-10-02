@@ -63,6 +63,7 @@ import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FilenameExtensionFilter;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapToggleButton;
@@ -217,7 +218,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 			panelToolbar.setFloatable(false);
 			panelToolbar.setRollover(true);
 			panelToolbar.setPreferredSize(new java.awt.Dimension(800,30));
-			panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			panelToolbar.setFont(FontUtils.getFont("Dialog"));
 			panelToolbar.setName("BruteForceToolbar");
 			
 			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
@@ -529,7 +530,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
 			jScrollPane.setViewportView(getBruteForceTable());
-			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+			jScrollPane.setFont(FontUtils.getFont("Dialog"));
 		}
 		return jScrollPane;
 	}

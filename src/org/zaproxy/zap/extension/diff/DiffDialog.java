@@ -50,6 +50,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class DiffDialog extends AbstractDialog implements AdjustmentListener {
@@ -173,7 +174,7 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 		if (txtDisplayLeft == null) {
 			txtDisplayLeft = new JTextArea();
 			txtDisplayLeft.setEditable(false);
-			txtDisplayLeft.setFont(new Font("Dialog", java.awt.Font.PLAIN, 12));
+			txtDisplayLeft.setFont(FontUtils.getFont("Dialog"));
 		}
 		return txtDisplayLeft;
 	}
@@ -182,7 +183,7 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 		if (txtDisplayRight == null) {
 			txtDisplayRight = new JTextArea();
 			txtDisplayRight.setEditable(false);
-			txtDisplayRight.setFont(new Font("Dialog", java.awt.Font.PLAIN, 12));
+			txtDisplayRight.setFont(FontUtils.getFont("Dialog"));
 		}
 		return txtDisplayRight;
 	}

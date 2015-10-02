@@ -33,6 +33,7 @@ import org.parosproxy.paros.common.AbstractParam;
 import org.zaproxy.zap.model.GenericScanner;
 import org.zaproxy.zap.model.ScanListenner;
 import org.zaproxy.zap.model.ScanThread;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ScanPanel;
 
 public class PortScanPanel extends ScanPanel implements ScanListenner {
@@ -76,7 +77,7 @@ public class PortScanPanel extends ScanPanel implements ScanListenner {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
 			jScrollPane.setViewportView(getPortScanResultsTable());
-			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+			jScrollPane.setFont(FontUtils.getFont("Dialog"));
 		}
 		return jScrollPane;
 	}

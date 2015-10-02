@@ -67,6 +67,8 @@ import org.zaproxy.zap.extension.scripts.dialogs.CopyScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.EditScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.LoadScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.NewScriptDialog;
+import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ScanPanel2;
 
@@ -142,7 +144,7 @@ public class ScriptsListPanel extends AbstractPanel {
 			panelToolbar.setFloatable(false);
 			panelToolbar.setRollover(true);
 			panelToolbar.setPreferredSize(new Dimension(800,30));
-			panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			panelToolbar.setFont(FontUtils.getFont("Dialog"));
 			panelToolbar.setName("ScriptsListToolbar");
 			
 			int i = 1;
@@ -158,7 +160,8 @@ public class ScriptsListPanel extends AbstractPanel {
 	private JButton getLoadButton() {
 		if (loadButton == null) {
 			loadButton = new JButton();
-			loadButton.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/047.png")));	// 'open folder' icon
+			loadButton.setIcon(DisplayUtils.getScaledIcon(
+					new ImageIcon(ZAP.class.getResource("/resource/icon/16/047.png"))));	// 'open folder' icon
 			loadButton.setToolTipText(Constant.messages.getString("scripts.list.toolbar.button.load"));
 
 			loadButton.addActionListener(new java.awt.event.ActionListener() { 
@@ -174,7 +177,8 @@ public class ScriptsListPanel extends AbstractPanel {
 	private JButton getSaveButton() {
 		if (saveButton == null) {
 			saveButton = new JButton();
-			saveButton.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/096.png")));	// 'diskette' icon
+			saveButton.setIcon(DisplayUtils.getScaledIcon(
+					new ImageIcon(ZAP.class.getResource("/resource/icon/16/096.png"))));	// 'diskette' icon
 			saveButton.setToolTipText(Constant.messages.getString("scripts.list.toolbar.button.save"));
 			saveButton.setEnabled(false);
 
@@ -196,8 +200,8 @@ public class ScriptsListPanel extends AbstractPanel {
 	private JButton getNewScriptButton() {
 		if (newScriptButton == null) {
 			newScriptButton = new JButton();
-			newScriptButton.setIcon(new ImageIcon(
-					ScriptsListPanel.class.getResource("/org/zaproxy/zap/extension/scripts/resources/icons/script-add.png")));
+			newScriptButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(
+					ScriptsListPanel.class.getResource("/org/zaproxy/zap/extension/scripts/resources/icons/script-add.png"))));
 			newScriptButton.setToolTipText(Constant.messages.getString("scripts.list.toolbar.button.new"));
 			
 			newScriptButton.addActionListener(new java.awt.event.ActionListener() { 
@@ -215,7 +219,8 @@ public class ScriptsListPanel extends AbstractPanel {
 	private JButton getOptionsButton() {
 		if (optionsButton == null) {
 			optionsButton = new JButton();
-			optionsButton.setIcon(new ImageIcon(ScanPanel2.class.getResource("/resource/icon/16/041.png")));
+			optionsButton.setIcon(DisplayUtils.getScaledIcon(
+					new ImageIcon(ScanPanel2.class.getResource("/resource/icon/16/041.png"))));
 			optionsButton.setToolTipText(Constant.messages.getString("scripts.list.toolbar.button.options"));
 			
 			optionsButton.addActionListener(new java.awt.event.ActionListener() { 
@@ -434,7 +439,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
-			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+			jScrollPane.setFont(FontUtils.getFont("Dialog"));
 			jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			jScrollPane.setViewportView(getTree());
 		}

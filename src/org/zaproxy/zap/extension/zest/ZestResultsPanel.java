@@ -34,6 +34,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
@@ -85,7 +86,7 @@ public class ZestResultsPanel extends AbstractPanel {
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
-			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+			jScrollPane.setFont(FontUtils.getFont("Dialog"));
 			jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			jScrollPane.setViewportView(getResultsTable());
 		}
