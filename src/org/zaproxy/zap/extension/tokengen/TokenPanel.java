@@ -47,6 +47,7 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -163,7 +164,7 @@ public class TokenPanel extends AbstractPanel {
 			panelToolbar.setFloatable(false);
 			panelToolbar.setRollover(true);
 			panelToolbar.setPreferredSize(new java.awt.Dimension(800,30));
-			panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			panelToolbar.setFont(FontUtils.getFont("Dialog"));
 			panelToolbar.setName("TokenToolbar");
 			
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
@@ -313,7 +314,7 @@ public class TokenPanel extends AbstractPanel {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
 			jScrollPane.setViewportView(getInitialMessage());
-			jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+			jScrollPane.setFont(FontUtils.getFont("Dialog"));
 		}
 		return jScrollPane;
 	}
@@ -322,7 +323,7 @@ public class TokenPanel extends AbstractPanel {
 		if (initialMessage == null) {
 			initialMessage = new JTextPane();
 			initialMessage.setEditable(false);
-			initialMessage.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			initialMessage.setFont(FontUtils.getFont("Dialog"));
 			initialMessage.setContentType("text/html");
 			initialMessage.setText(extension.getMessages().getString("tokengen.label.initialMessage"));
 		}

@@ -54,6 +54,8 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
+import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -160,10 +162,11 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 			clientToolbar.setFloatable(false);
 			clientToolbar.setEnabled(true);
 			clientToolbar.setRollover(true);
-			clientToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			clientToolbar.setFont(FontUtils.getFont("Dialog"));
 			
 			JButton customBreak = new JButton();
-			customBreak.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/break_add.png")));
+			customBreak.setIcon(DisplayUtils.getScaledIcon(
+					new ImageIcon(ZAP.class.getResource("/resource/icon/16/break_add.png"))));
 			customBreak.setToolTipText(Constant.messages.getString("plugnhack.client.button.custom.tooltip"));
 			customBreak.addActionListener(new ActionListener(){
 				@Override
@@ -174,8 +177,8 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 			
 			final ZapToggleButton activeSwitch = new ZapToggleButton();
 			activeSwitch.setSelected(true);
-			activeSwitch.setIcon(ExtensionPlugNHack.CLIENT_INACTIVE_ICON);
-			activeSwitch.setSelectedIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON);
+			activeSwitch.setIcon(DisplayUtils.getScaledIcon(ExtensionPlugNHack.CLIENT_INACTIVE_ICON));
+			activeSwitch.setSelectedIcon(DisplayUtils.getScaledIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON));
 			activeSwitch.setToolTipText(Constant.messages.getString("plugnhack.client.button.active.off"));
 			activeSwitch.setSelectedToolTipText(Constant.messages.getString("plugnhack.client.button.active.on"));
 			activeSwitch.addActionListener(new ActionListener(){
@@ -220,7 +223,7 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 	private JTextPane getInitialMessage() {
 		JTextPane initialMessage = new JTextPane();
 		initialMessage.setEditable(false);
-		initialMessage.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+		initialMessage.setFont(FontUtils.getFont("Dialog"));
 		initialMessage.setContentType("text/html");
 		initialMessage.setText(Constant.messages.getString("plugnhack.label.initialMessage"));
 		return initialMessage;
@@ -278,7 +281,6 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
 			this.msgTable = new ZapTable(this.getMessageModel());
 			this.msgTable.setName(CLIENTS_MESSAGE_TABLE_NAME);
 			this.setMessageTableColumnSizes();
-			//this.msgTable.setFont(new Font("Dialog", Font.PLAIN, 11));
 			this.msgTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			
 			this.msgTable.addMouseListener(new MouseAdapter() { 

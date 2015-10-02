@@ -45,6 +45,8 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.tab.Tab;
+import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class ConsolePanel extends AbstractPanel implements Tab {
@@ -108,7 +110,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 			panelToolbar.setFloatable(false);
 			panelToolbar.setRollover(true);
 			panelToolbar.setPreferredSize(new java.awt.Dimension(800,30));
-			panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			panelToolbar.setFont(FontUtils.getFont("Dialog"));
 			panelToolbar.setName("ParamsToolbar");
 			
 			panelToolbar.add(this.getRunButton(), LayoutHelper.getGBC(0, 0, 1, 0.0D));
@@ -151,7 +153,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		if (runButton == null) {
 			runButton = new JButton();
 			runButton.setText(Constant.messages.getString("scripts.toolbar.label.run"));
-			runButton.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/131.png")));	// 'play' icon
+			runButton.setIcon(DisplayUtils.getScaledIcon(
+					new ImageIcon(ZAP.class.getResource("/resource/icon/16/131.png"))));	// 'play' icon
 			runButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.run"));
 			runButton.setEnabled(false);
 
@@ -168,7 +171,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private JButton getStopButton() {
 		if (stopButton == null) {
 			stopButton = new JButton();
-			stopButton.setIcon(new ImageIcon(ZAP.class.getResource("/resource/icon/16/142.png")));	// 'stop' icon
+			stopButton.setIcon(DisplayUtils.getScaledIcon(
+					new ImageIcon(ZAP.class.getResource("/resource/icon/16/142.png"))));	// 'stop' icon
 			stopButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.stop"));
 			stopButton.setEnabled(false);
 

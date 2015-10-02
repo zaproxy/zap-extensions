@@ -36,6 +36,7 @@ import javax.swing.filechooser.FileFilter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.utils.ZapTextField;
 
@@ -144,7 +145,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
         editConfidentialText = new ZapTextArea();
         editConfidentialText.setLineWrap(true);
         editConfidentialText.setRows(4);
-        editConfidentialText.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+        editConfidentialText.setFont(FontUtils.getFont("Dialog"));
       }
 	return editConfidentialText;
 	}
@@ -287,7 +288,7 @@ public class OptionsAlertReportExportPanel extends AbstractParamPanel {
 							javax.swing.border.TitledBorder.DEFAULT_POSITION, 
 							new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11), 
 							java.awt.Color.black));*/
-			editPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+			editPane.setFont(FontUtils.getFont("Dialog"));
 			editPane.setLayout(new GridBagLayout());
 			editPane.setAutoscrolls(true);
 			

@@ -37,6 +37,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.FontUtils;
 
 public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 
@@ -113,6 +114,10 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 		setCloseCurlyBraces(false);
 		setCloseMarkupTags(false);
 		setClearWhitespaceLinesEnabled(false);
+		
+		// Correct the font size
+		this.setFont(FontUtils.getFont(this.getFont().getFontName()));
+
 	}
 	
 	@Override

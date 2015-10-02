@@ -28,6 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class ClientListCellRenderer extends JPanel implements ListCellRenderer<MonitoredPage> {
@@ -55,7 +57,7 @@ public class ClientListCellRenderer extends JPanel implements ListCellRenderer<M
         id.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         id.setPreferredSize(new java.awt.Dimension(100,15));
         id.setMinimumSize(new java.awt.Dimension(80,15));
-        id.setFont(new java.awt.Font("Default", java.awt.Font.PLAIN, 12));
+        id.setFont(FontUtils.getFont(FontUtils.Size.standard));
         id.setOpaque(true);
 
         url = new JLabel();
@@ -64,7 +66,7 @@ public class ClientListCellRenderer extends JPanel implements ListCellRenderer<M
         url.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         url.setPreferredSize(new java.awt.Dimension(320,15));
         url.setMinimumSize(new java.awt.Dimension(320,15));
-        url.setFont(new java.awt.Font("Default", java.awt.Font.PLAIN, 12));
+        url.setFont(FontUtils.getFont(FontUtils.Size.standard));
         url.setOpaque(true);
 
 
@@ -72,7 +74,7 @@ public class ClientListCellRenderer extends JPanel implements ListCellRenderer<M
         if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
         	this.setSize(328, 11);
         }
-        this.setFont(new java.awt.Font("Default", java.awt.Font.PLAIN, 12));
+        this.setFont(FontUtils.getFont(FontUtils.Size.standard));
 
         this.add(id, LayoutHelper.getGBC(1, 0, 1, 0.0D, new Insets(0,0,0,0)));
         this.add(url, LayoutHelper.getGBC(2, 0, 1, 1.0D, new Insets(0,0,0,0)));
@@ -89,11 +91,11 @@ public class ClientListCellRenderer extends JPanel implements ListCellRenderer<M
 		}
         
         if (page.isActive()) {
-        	id.setIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON);
+        	id.setIcon(DisplayUtils.getScaledIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON));
         } else {
-        	id.setIcon(ExtensionPlugNHack.CLIENT_INACTIVE_ICON);
+        	id.setIcon(DisplayUtils.getScaledIcon(ExtensionPlugNHack.CLIENT_INACTIVE_ICON));
         }
-        url.setIcon(page.getIcon());
+        url.setIcon(DisplayUtils.getScaledIcon(page.getIcon()));
         
         if (isSelected) {
         	id.setBackground(list.getSelectionBackground());
