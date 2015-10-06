@@ -350,6 +350,10 @@
 		<build-deploy-addon name="accessControl" />
 	</target>
 
+	<target name="generate-wiki-accessControl" description="Generates the wiki for Access Control Testing">
+		<generate-wiki addon="accessControl" />
+	</target>
+
 	<target name="deploy-advreport" description="deploy the advanced reporting extension">
 		<build-deploy-addon name="advreport" />
 	</target>
@@ -361,7 +365,6 @@
 	<target name="generate-wiki-alertFilters" description="Generates the wiki of alert filters">
 		<generate-wiki addon="alertFilters" />
 	</target>
-
 
 	<target name="deploy-amf" description="deploys AMF add-on">
 		<build-deploy-addon name="amf" />
