@@ -3,9 +3,10 @@
 	<version>15</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
-	<url>https://github.com/zaproxy/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
+	<url>https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAscanrulesAlphaAscanalpha</url>
 	<changes>
 	<![CDATA[
+	Update add-on's info URL.<br>
   	]]>
 	</changes>
 	<extensions>
