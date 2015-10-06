@@ -1,12 +1,11 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>14</version>
+	<version>15</version>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-extensions/wiki/AddOn_ascanrulesAlpha</url>
 	<changes>
 	<![CDATA[
-	Deleted Format String.<br>
   	]]>
 	</changes>
 	<extensions>
