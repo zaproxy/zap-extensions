@@ -134,7 +134,7 @@ public class SSLServer {
     public void updateCompress(){
 	for (int v = 0x0300; v <= 0x0303; v ++) {
 	    ServerHello sh = connect(isa, v, CIPHER_SUITES.keySet());
-	    if (sh.compression == 1) {
+	    if (sh != null && sh.compression == 1) {
 		defcomp = true;
 	    }
 	    else{
