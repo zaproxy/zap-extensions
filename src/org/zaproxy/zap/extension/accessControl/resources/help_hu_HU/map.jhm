@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+    <mapID target="accessControl.icon" url="contents/images/accesscontrol.png" />
+    <mapID target="accessControl.concepts" url="contents/concepts.html" />
+	<mapID target="accessControl.tab" url="contents/tab.html" />
+	<mapID target="accessControl.contextOptions" url="contents/contextOptions.html" />
+</map>
