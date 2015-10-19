@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Passive Scan Rules
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Passive Scan Rules</h1>
+The following release quality passive scan rules are included in this add-on:
+
+<h2>Application Errors</h2>        
+ 
+<h2>Cache Control</h2>
+
+<h2>Content Type Missing</h2>
+
+<h2>Cookie HTTP Only</h2>
+
+<h2>Cookie Secure Flag</h2>
+
+<h2>Cross Domain Script Inclusion</h2>
+
+<h2>Header XSS Protection</h2>
+
+<h2>Mixed Content</h2>
+
+<h2>Password Autocomplete</h2>
+
+<h2>Private Address Disclosure</h2>
+
+<h2>Session Id in URL Rewrite</h2>
+This scanner checks for the existence of session token type parameters being rewritten to the URL. 
+To help reduce false positives the scanner checks the length of the token value,  if the value of the parameter 
+is not greater than 8 characters in length then the parameter is ignored 
+(i.e.: survey?sId=5 would not be flagged as vulnerable).
+
+<h2>X-Content-Type-Options</h2>
+This scanner check for the Anti-MIME-Sniffing header X-Content-Type-Options and ensures it is set to 'nosniff'.
+At HIGH threshold this scanner does not alert on client or server error responses, for all other enabled 
+thresholds it alerts on all response types if the header is missing or set to something other than 'nosniff'.
+ 
+<h2>X-Frame-Option</h2>
+This scanner checks for the existence and validity of the X-FRAME-OPTIONS header. At HIGH threshold this scanner
+does not alert on client or server error responses, for all other enabled thresholds it alerts on all response 
+types if the header is missing or invalid. Invalid meaning that the header is present with no value, or that 
+the value is not as expected (i.e.: other than "DENY", "SAMEORIGIN", or "ALLOW-FROM"). 
+
+</body>
+</html>
