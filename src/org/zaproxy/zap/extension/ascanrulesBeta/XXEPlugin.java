@@ -23,13 +23,13 @@ import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -86,10 +86,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
 
     // API for the specific challenge/response model
     // Should be a common object for all this plugin instances
-    private static final XXEPluginAPI pluginApi = new XXEPluginAPI();
-    static {
-        API.getInstance().registerApiImplementor(pluginApi);
-    }
+    private static XXEPluginAPI pluginApi;
     
     // Logger instance
     private static final Logger log = Logger.getLogger(XXEPlugin.class);
@@ -207,8 +204,12 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
 
     @Override
     public void init() {
-        // to do
-        
+        if (pluginApi == null) {
+            ExtensionAscanRulesBeta ext = Control.getSingleton()
+                    .getExtensionLoader()
+                    .getExtension(ExtensionAscanRulesBeta.class);
+            pluginApi = ext.getXXEPluginAPI();
+        }
     }
 
     /**

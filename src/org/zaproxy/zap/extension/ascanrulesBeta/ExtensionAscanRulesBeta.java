@@ -20,6 +20,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
+import org.zaproxy.zap.extension.api.API;
 
 /**
  * A null extension just to cause the message bundle and help file to get loaded 
@@ -27,6 +28,13 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
  *
  */
 public class ExtensionAscanRulesBeta extends ExtensionAdaptor {
+
+	/**
+	 * An API end point for the specific challenge/response model of {@code XXEPlugin}.
+	 * 
+	 * @see XXEPlugin
+	 */
+	private XXEPluginAPI xxePluginApi;
 
 	public ExtensionAscanRulesBeta() {
 		super();
@@ -51,5 +59,29 @@ public class ExtensionAscanRulesBeta extends ExtensionAdaptor {
 	@Override
 	public boolean canUnload() {
 		return true;
+	}
+
+	@Override
+	public void unload() {
+		super.unload();
+
+		if (xxePluginApi != null) {
+			API.getInstance().removeApiImplementor(xxePluginApi);
+		}
+	}
+
+	XXEPluginAPI getXXEPluginAPI() {
+		if (xxePluginApi == null) {
+			createXXEPluginAPI();
+		}
+		return xxePluginApi;
+	}
+
+	private synchronized void createXXEPluginAPI() {
+		if (xxePluginApi == null) {
+			XXEPluginAPI api = new XXEPluginAPI();
+			API.getInstance().registerApiImplementor(api);
+			xxePluginApi = api;
+		}
 	}
 }
