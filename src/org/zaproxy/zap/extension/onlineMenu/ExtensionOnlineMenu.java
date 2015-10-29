@@ -41,6 +41,8 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
     public static final String ZAP_EXTENSIONS_PAGE		= "https://github.com/zaproxy/zap-extensions";
     public static final String ZAP_DOWNLOADS_PAGE		= "https://github.com/zaproxy/zaproxy/wiki/Downloads";
     public static final String ZAP_WIKI_PAGE			= "https://github.com/zaproxy/zaproxy/wiki";
+    public static final String ZAP_FAQ_PAGE				= "https://github.com/zaproxy/zaproxy/wiki/FAQtoplevel";
+    public static final String ZAP_NEWSLETTERS_PAGE		= "https://github.com/zaproxy/zaproxy/wiki/Newsletters";
     public static final String ZAP_USER_GROUP_PAGE		= "https://groups.google.com/group/zaproxy-users";
     public static final String ZAP_DEV_GROUP_PAGE		= "https://groups.google.com/group/zaproxy-develop";
     public static final String ZAP_ISSUES_PAGE			= "https://github.com/zaproxy/zaproxy/issues";
@@ -108,6 +110,28 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
 				}
 			});
 			extensionHook.getHookMenu().addOnlineMenuItem(menuWiki);
+
+			// FAQ
+			ZapMenuItem menuFAQ = new ZapMenuItem("onlineMenu.faq");
+			menuFAQ.setEnabled(DesktopUtils.canOpenUrlInBrowser());
+			menuFAQ.addActionListener(new java.awt.event.ActionListener() { 
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {    
+					DesktopUtils.openUrlInBrowser(ZAP_FAQ_PAGE);
+				}
+			});
+			extensionHook.getHookMenu().addOnlineMenuItem(menuFAQ);
+
+			// Newsletters
+			ZapMenuItem menuNews = new ZapMenuItem("onlineMenu.news");
+			menuNews.setEnabled(DesktopUtils.canOpenUrlInBrowser());
+			menuNews.addActionListener(new java.awt.event.ActionListener() { 
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {    
+					DesktopUtils.openUrlInBrowser(ZAP_NEWSLETTERS_PAGE);
+				}
+			});
+			extensionHook.getHookMenu().addOnlineMenuItem(menuNews);
 
 			// UserGroup
 			ZapMenuItem menuUserGroup = new ZapMenuItem("onlineMenu.usergroup");
