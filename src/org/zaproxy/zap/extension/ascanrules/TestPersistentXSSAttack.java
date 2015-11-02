@@ -130,7 +130,7 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 				sourceMsg.getRequestHeader().getURI().toString());
     	
 		try {
-			Set<HttpMessage> sinks = PersistentXSSUtils.getSinksForSource(sourceMsg, param);
+			Set<Integer> sinks = PersistentXSSUtils.getSinksIdsForSource(sourceMsg, param);
 
 			if (sinks != null) {
 				// Loop through each one
@@ -141,7 +141,12 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 	            sendAndReceive(sourceMsg);
 
 	            // Check each sink
-	            for (HttpMessage sinkMsg : sinks) {
+	            for (Integer sinkMsgId : sinks) {
+	                HttpMessage sinkMsg = PersistentXSSUtils.getMessage(sinkMsgId);
+	                if (sinkMsg == null) {
+	                    continue;
+	                }
+
 	            	sinkMsg = sinkMsg.cloneRequest();
 		            sendAndReceive(sinkMsg);
 		            

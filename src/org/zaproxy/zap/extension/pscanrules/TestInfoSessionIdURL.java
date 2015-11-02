@@ -26,8 +26,12 @@
 // ZAP: 2013/07/19 Issue 366: "Other Info" for "Session ID in URL rewrite" not always correct
 // ZAP: 2013/10/12 Issue 809: Converted to a passive scan rule and added some new features
 // ZAP: 2014/11/09 Issue 1396: Add min length check to reduce false positives
+// ZAP: 2015/09/23 Issue 1594: Change matching mechanism
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +42,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
+import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -48,6 +53,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Active plugin developed by Paros team
  *
  * @author yhawke
+ * @author kingthorin+owaspzap
  *
  */
 public class TestInfoSessionIdURL extends PluginPassiveScanner {
@@ -147,88 +153,56 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        // Simplify everything using only getQuery()???
+
+        TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
+        
+        if (urlParams.isEmpty()) {
+    		return; //No params, no need to proceed
+    	}
+        
         String uri = msg.getRequestHeader().getURI().toString();
-        String sessionIdPair;
-        String sessionIdValue;
-        String sessionIdName;
-        Pattern pattern;
-        Matcher matcher;
-
-        // Alternative implementation
-        // we search for all params looking for one session element
-        // maybe more efficient because we don't build Patterns any time
-        //String[] params = msg.getParamNames();
-
-        // The Session ID list option param
+        
+        // The Session ID list from option param (panel)
         OptionsParam options = Model.getSingleton().getOptionsParam();
-        HttpSessionsParam sessionOptions =
-                options.getParamSet(HttpSessionsParam.class);
-
-        // Loop on all possible 
-        // session id variables (looking all along the url)
-        // -----------------------------------------------------
-        // We've to rebuild every time the patterns because
-        // the user could change options during the session
-        // so we have to be sure that we search for the 
-        // session ids that have really been selected (or added)
-        // -----------------------------------------------------
-        for (String sessionid : sessionOptions.getDefaultTokensEnabled()) {
-            pattern = Pattern.compile("(\\Q" + sessionid + "\\E)=[^\\&]+", Pattern.CASE_INSENSITIVE);
-            matcher = pattern.matcher(uri);
-
-            if (matcher.find()) {
-                // Get the overall sessionvar=value pattern
-                sessionIdPair = matcher.group(0);
-                // Get the value portion
-                sessionIdValue = matcher.group(0).split("=")[1];
-                // Get the sessionvar name
-                sessionIdName = matcher.group(1);
-
-                // In passive mode there not exists any KB available
-                // This was the old implementation
-                // --------------------------------------------------
-                //String kb = getKb().getString("sessionId/nameValue");
-                //if (kb == null || !kb.equals(sessionIdValue)) {
-                //    getKb().add("sessionId/nameValue", sessionIdValue);
-                //    bingo(Alert.RISK_LOW, Alert.WARNING, uri, null, "", null, sessionIdValue, base);
-                //}                
-                //kb = getKb().getString("sessionId/name");
-                //getKb().add("sessionId/name", sessionIdName);
-
-                if (sessionIdValue.length() > SESSION_TOKEN_MIN_LENGTH) { 
-	                
+        HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
+        List<String> sessionIds = sessionOptions.getDefaultTokensEnabled();
+        for (HtmlParameter param: urlParams) { //Iterate through the parameters
+        	//If the parameter name is one of those on the Session Token list from the options panel
+        	if (sessionIds.contains(param.getName().toLowerCase(Locale.ROOT))) { 
+        		//If the param value length is greater than MIN_LENGTH (therefore there is a value)
+        		if (param.getValue().length() > SESSION_TOKEN_MIN_LENGTH) {
 	                // Raise an alert according to Passive Scan Rule model
 	                // description, uri, param, attack, otherInfo, 
 	                // solution, reference, evidence, cweId, wascId, msg
-	                Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_MEDIUM, getName());
+	                Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_HIGH, getName());
 	                alert.setDetail(
 	                        getDescription(),
 	                        uri,
-	                        sessionIdName,
-	                        sessionIdPair,
-	                        "",
+	                        param.getName(), // param
+	                        "", // attack
+	                        "", // otherinfo
 	                        getSolution(),
 	                        getReference(),
-	                        sessionIdPair, // evidence
+	                        param.getValue(), // evidence
 	                        getCweId(), // CWE Id
 	                        getWascId(), // WASC Id - Info leakage
 	                        msg);
 	
 	                parent.raiseAlert(id, alert);
-	
-	                // Now try to check if there exists a 
-	                // referer inside the content
+	                
+	        	    // Now try to check if there exists a referer inside the content
+	                // i.e.: There is an external link for which 
+	                // a referer header would be passed including this session token
 	                try {
 	                    checkSessionIDExposure(msg, id);
-	
 	                } catch (URIException e) {
 	                }
-	
-	                break;
-	            }
-            }
-        }
+	                // We don't break on this one.
+	                // There shouldn't be more than one per URL but bizarre things do happen.
+	                // Improbable doesn't mean impossible.
+        		}
+        	}
+        }    
     }
     
     // External link Response finder regex
@@ -309,7 +283,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
 
                     parent.raiseAlert(id, alert);
 
-                    break;
+                    break; // Only need one
                 }
             }
         }

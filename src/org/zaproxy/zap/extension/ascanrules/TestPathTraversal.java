@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -443,11 +444,10 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         sendAndReceive(msg);
 
         // does it match the pattern specified for that file name?
-        String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-        Matcher matcher = pattern.matcher(response);
+        String match = getResponseMatch(msg, pattern);
 
         //if the output matches, and we get a 200
-        if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) && matcher.find()) {
+        if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) && match != null) {
             bingo(
                     Alert.RISK_HIGH,
                     Alert.CONFIDENCE_MEDIUM,
@@ -455,7 +455,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     param,
                     newValue,
                     null,
-                    matcher.group(),
+                    match,
                     msg);
 
             // All done. No need to look for vulnerabilities on subsequent parameters
@@ -464,6 +464,23 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         }
 
         return false;
+    }
+
+    private static String getResponseMatch(HttpMessage message, Pattern pattern) {
+        if (message.getResponseHeader().isHtml()) {
+            Matcher matcher = pattern.matcher(StringEscapeUtils.unescapeHtml(message.getResponseBody().toString()));
+            if (matcher.find()) {
+                return matcher.group();
+            }
+        }
+
+        String response = message.getResponseHeader().toString() + message.getResponseBody().toString();
+        Matcher matcher = pattern.matcher(response);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+
+        return null;
     }
 
     @Override

@@ -18,7 +18,6 @@
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 	<!-- This assumes you also have the zaproxy_2.4 project (used for the weekly release -->
-	<property name="zap-2.4.plugin.dir" location="../../zaproxy_2.4/src/plugin" />
 	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.4" />
 
 	<path id="build.classpath">
@@ -59,7 +58,8 @@
 		</condition>
 		
 		<!-- Compile the java code from ${src} into ${build} -->
-		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
+		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8"
+			excludes="org/zaproxy/zap/extension/*/files/**,org/zaproxy/zap/extension/*/resources/**">
 			<classpath>
 				<fileset dir="${dist.lib.dir}">
 					<include name="**/*.jar" />
@@ -469,23 +469,6 @@
 		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
-			<fileset dir="${dist}">
-				<include name="ascanrules-${status}-*.zap"/>
-				<include name="coreLang-${status}-*.zap"/>
-				<include name="directorylistv1-${status}-*.zap"/>
-				<include name="gettingStarted-${status}-*.zap"/>
-				<include name="help-${status}-*.zap"/>
-				<include name="onlineMenu-${status}-*.zap"/>
-				<include name="pscanrules-${status}-*.zap"/>
-				<include name="quickstart-${status}-*.zap"/>
-				<include name="reveal-${status}-*.zap"/>
-				<include name="saverawmessage-${status}-*.zap"/>
-				<include name="selenium-${status}-*.zap"/>
-				<include name="spiderAjax-${status}-*.zap"/>
-				<include name="websocket-${status}-*.zap"/>
-			</fileset>
-		</copy>
-		<copy todir="${zap-2.4.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="ascanrules-${status}-*.zap"/>
 				<include name="coreLang-${status}-*.zap"/>

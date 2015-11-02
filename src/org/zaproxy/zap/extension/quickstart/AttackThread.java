@@ -103,6 +103,7 @@ public class AttackThread extends Thread {
 						extSpider.stopScan(spiderId);
 						break;
 					}
+					extension.notifyProgress(Progress.spider, extSpider.getScan(spiderId).getProgress());
 				}
 			} catch (InterruptedException e) {
 				// Ignore
@@ -147,6 +148,7 @@ public class AttackThread extends Thread {
 					if (this.stopAttack) {
 						extAscan.stopScan(scanId);
 					}
+					extension.notifyProgress(Progress.ascan, extAscan.getScan(scanId).getProgress());
 				}
 			} catch (InterruptedException e) {
 				// Ignore

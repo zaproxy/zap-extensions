@@ -56,11 +56,15 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	private QuickStartPanel quickStartPanel = null;
 	private AttackThread attackThread = null;
 	
-	private CommandLineArgument[] arguments = new CommandLineArgument[2];
+	private CommandLineArgument[] arguments = new CommandLineArgument[3];
     private static final int ARG_QUICK_URL_IDX = 0;
     private static final int ARG_QUICK_OUT_IDX = 1;
+    private static final int ARG_QUICK_PROGRESS_IDX = 2;
+    private static final String SPIN_CHRS = "|/-\\|/-\\"; 
     
     private boolean runningFromCmdLine = false;
+    private boolean showProgress = false;
+    private int spinner = 0;
 
     public ExtensionQuickStart() {
         super();
@@ -144,6 +148,8 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	public void notifyProgress(AttackThread.Progress progress) {
 		if (View.isInitialised()) {
 			this.getQuickStartPanel().notifyProgress(progress);
+		} else if (this.runningFromCmdLine && this.showProgress) {
+			System.out.println(Constant.messages.getString("quickstart.cmdline.progress." + progress.name()));
 		}
     	switch (progress) {
     	case notstarted:
@@ -157,6 +163,29 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
     		this.runningFromCmdLine = false;
     		break;
     	}
+	}
+	
+	public void notifyProgress(AttackThread.Progress progress, int percent) {
+		if (this.runningFromCmdLine && this.showProgress) {
+			int scale = 5;	// 20 chrs seems about right..
+			System.out.print("[");
+			for (int i=0; i < 100/scale; i++) {
+				if (i+1 <= percent/scale) {
+					System.out.print("=");
+				} else {
+					System.out.print(" ");
+				}
+			}
+			System.out.print("] " + percent + "% ");
+			if (percent < 100) {
+				// Print out a v simple spinner so its obvious something is still happening
+				System.out.print(SPIN_CHRS.charAt(this.spinner % SPIN_CHRS.length()) + "\r");
+				this.spinner++;
+			} else {
+				System.out.print("\n");
+				this.spinner = 0;
+			}
+		}
 	}
 
 	public void stopAttack() {
@@ -219,6 +248,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 
 	    		this.runningFromCmdLine = true;
 
+			    if (arguments[ARG_QUICK_PROGRESS_IDX].isEnabled()) {
+			    	this.showProgress = true;
+			    }
+
 				while (this.runningFromCmdLine) {
 					// Loop until the attack thread completes
 					try {
@@ -256,6 +289,8 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
         		"-quickurl [target url]: " + Constant.messages.getString("quickstart.cmdline.url.help"));
         arguments[ARG_QUICK_OUT_IDX] = new CommandLineArgument("-quickout", 1, null, "", 
         		"-quickout [output filename]: " + Constant.messages.getString("quickstart.cmdline.out.help"));
+        arguments[ARG_QUICK_PROGRESS_IDX] = new CommandLineArgument("-quickprogress", 0, null, "", 
+        		"-quickprogress: " + Constant.messages.getString("quickstart.cmdline.progress.help"));
         return arguments;
     }
 

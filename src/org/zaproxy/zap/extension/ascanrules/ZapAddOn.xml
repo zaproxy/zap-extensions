@@ -1,12 +1,14 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>20</version>
+	<version>21</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-        Added Buffer Overflow scanner.
+	   Change Path Traversal scanner to also check HTML responses in decoded form.<br>
+       Move Format String from Beta to Release.<br>
+       Improve memory usage when scanning for persistent XSS vulnerabilities (Issue 1974).<br>
 	]]>
     </changes>
 	<extensions>
@@ -16,6 +18,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.BufferOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.CodeInjectionPlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.CommandInjectionPlugin</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrules.FormatString</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestCrossSiteScriptV2</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestDirectoryBrowsing</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrules.TestExternalRedirect</ascanrule>
