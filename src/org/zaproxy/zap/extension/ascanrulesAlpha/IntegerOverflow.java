@@ -104,6 +104,10 @@ public class IntegerOverflow extends AbstractAppParamPlugin  {
 		if (checkStop() == true) {
 			return;
 		}
+		if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR)// Check to see if the page closed initially
+		{
+			return;//Stop
+		}
 			
 			String returnAttack = randomIntegerString(4);// The number of full length ints to send.		
 			if (attackVector(param, '1', returnAttack) == true) {
