@@ -41,6 +41,8 @@
 
 
 package org.zaproxy.zap.extension.ascanrules;
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -125,6 +127,11 @@ public class FormatString extends AbstractAppParamPlugin  {
 				log.debug("Scanner "+getName()+" Stopping.");
 			}
 			return; // Stop!
+		}
+		
+		if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR)// Check to see if the page closed initially
+		{
+			return;//Stop
 		}
 		
 		try {
@@ -251,7 +258,7 @@ public class FormatString extends AbstractAppParamPlugin  {
 
 
 			
-		} catch (Exception e) {
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}	
 	}

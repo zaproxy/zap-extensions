@@ -29,6 +29,8 @@ package org.zaproxy.zap.extension.ascanrules;
 
 
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -37,6 +39,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 
 public class BufferOverflow extends AbstractAppParamPlugin  {
@@ -62,7 +66,12 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
 	public String[] getDependency() {
 		return null;
 	}
-
+	
+	@Override
+	public boolean targets(TechSet technologies) { 
+		return technologies.includes(Tech.Lang.C); 
+	}
+	
 	@Override
 	public String getDescription() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
@@ -105,6 +114,10 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
 			}
 			return; // Stop!
 		}
+		if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR)// Check to see if the page closed initially
+		{
+			return;//Stop
+		}
 		
 		try {
 			// This is where you change the 'good' request to attack the application
@@ -135,7 +148,7 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
 				return;	
 
 			
-		} catch (Exception e) {
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}	
 	}

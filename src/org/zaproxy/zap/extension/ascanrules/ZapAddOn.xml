@@ -6,9 +6,11 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	   Change Path Traversal scanner to also check HTML responses in decoded form.<br>
+	   Change Path Traversal scanner to also check HTML responses in decoded form.<br> 
        Move Format String from Beta to Release.<br>
        Improve memory usage when scanning for persistent XSS vulnerabilities (Issue 1974).<br>
+       Fix False Positives in Buffer Overflow.<br>  
+       Fixed False Positives in Format String.<br>
 	]]>
     </changes>
 	<extensions>
