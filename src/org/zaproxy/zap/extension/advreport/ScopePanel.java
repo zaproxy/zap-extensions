@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 
 
@@ -47,20 +48,20 @@ public class ScopePanel extends AbstractPanel{
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.NORTHWEST;
-		this.add( new JLabel("Name : "), gbc );
+		this.add( new JLabel(Constant.messages.getString("advreport.scopepanel.name")), gbc );
 		
 		gbc.gridx++ ;
-		name = new JTextArea(" Report ");
+		name = new JTextArea(Constant.messages.getString("advreport.scopepanel.report"));
 		this.add( new JScrollPane(name, JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), gbc );
         
         // description line 
         gbc.gridy++ ;
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.NORTHWEST;
-        this.add( new JLabel("Description : "), gbc );
+        this.add( new JLabel(Constant.messages.getString("advreport.scopepanel.description")), gbc );
  
         gbc.gridx++;
-		description = new JTextArea( " Description ", 3, 30 );
+		description = new JTextArea(Constant.messages.getString("advreport.scopepanel.desc"), 3, 30 );
 		description.setLineWrap( true );
         this.add( new JScrollPane( description ), gbc );
         
@@ -68,9 +69,11 @@ public class ScopePanel extends AbstractPanel{
         gbc.gridx = 0 ;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.WEST;
-	    this.add( new JLabel("Template : "), gbc );
+	    this.add( new JLabel(Constant.messages.getString("advreport.scopepanel.template")), gbc );
 	    
-	    String[] selection = {"Traditional", "Separated Sites", "Concise" };
+	    String[] selection = {Constant.messages.getString("advreport.scopepanel.template.traditional"), 
+	    		              Constant.messages.getString("advreport.scopepanel.template.separated"), 
+	    		              Constant.messages.getString("advreport.scopepanel.template.concise")};
 	    template = new JComboBox<>( selection );
 	    template.setSelectedIndex(0);
 	    gbc.gridx++;
