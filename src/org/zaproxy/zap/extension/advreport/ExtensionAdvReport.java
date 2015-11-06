@@ -87,7 +87,7 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
         private ZapMenuItem getMenuCustomHtmlReport() {
         if (menuCustomHtmlReport == null) {
                 menuCustomHtmlReport = new ZapMenuItem( "menu.report.html.generate" );
-                menuCustomHtmlReport.setText("Customize HTML Report");
+                menuCustomHtmlReport.setText(Constant.messages.getString("advreport.menu.customize"));
                 menuCustomHtmlReport.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {

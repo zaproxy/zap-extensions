@@ -10,11 +10,14 @@ import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import org.parosproxy.paros.Constant;
 
 
 public class AlertsPanel extends JPanel{
@@ -42,16 +45,16 @@ public class AlertsPanel extends JPanel{
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(2,5,30,10);
 		
-		selectionPanel.add(getRiskBox("High"), gbc);
+		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.high")), gbc);
 		
 		gbc.gridx++;
-		selectionPanel.add(getRiskBox("Medium"),gbc);
+		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.medium")),gbc);
 		
 		gbc.gridx++;
-		selectionPanel.add(getRiskBox("Low"),gbc);
+		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.low")),gbc);
 		
 		gbc.gridx++;
-		selectionPanel.add(getRiskBox("Informational"),gbc);
+		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.info")),gbc);
 		
 		gbc.insets = new Insets(0,20,2,0);
 		gbc.gridy = 1;
@@ -77,7 +80,7 @@ public class AlertsPanel extends JPanel{
         buttonpane.add( getHTMLButton() );
         
 		this.setLayout( new BorderLayout() );
-		this.add( new JLabel(" Alerts in Report : " ), BorderLayout.NORTH );
+		this.add( new JLabel(Constant.messages.getString("advreport.alertspanel.label") ), BorderLayout.NORTH );
 		this.add( new JScrollPane( selectionPanel ), BorderLayout.CENTER );
 	    this.add(buttonpane, BorderLayout.SOUTH);
 		
@@ -120,7 +123,7 @@ public class AlertsPanel extends JPanel{
 	}
 	
 	private JButton getCancelButton(){
-		JButton cancelbutton = new JButton("Cancel");
+		JButton cancelbutton = new JButton(Constant.messages.getString("advreport.cancel"));
 		cancelbutton.addActionListener(
 				new ActionListener() {
 		            @Override
@@ -132,7 +135,7 @@ public class AlertsPanel extends JPanel{
 	}
 	
 	private JButton getHTMLButton(){
-		JButton generatebutton = new JButton("Generate HTML");
+		JButton generatebutton = new JButton(Constant.messages.getString("advreport.generate"));
 		generatebutton.addActionListener(
 				new ActionListener() {
 		            @Override

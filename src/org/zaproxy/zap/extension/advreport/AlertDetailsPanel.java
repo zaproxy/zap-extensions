@@ -14,6 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.parosproxy.paros.Constant;
+
 
 public class AlertDetailsPanel extends JPanel{
 
@@ -50,7 +52,7 @@ public class AlertDetailsPanel extends JPanel{
 				
 		//Include Description
 	    description = new JCheckBox();
-	    description.setText("Description");
+	    description.setText(Constant.messages.getString("advreport.alertdetails.description"));
 	    gbc.gridy = 0;
 	    gbc.gridx = 0;
 	    gbc.anchor = GridBagConstraints.WEST;
@@ -59,37 +61,37 @@ public class AlertDetailsPanel extends JPanel{
      
 		//Include Other Info
 		otherInfo = new JCheckBox();
-		otherInfo.setText("Other Info");
+		otherInfo.setText(Constant.messages.getString("advreport.alertdetails.otherinfo"));
         gbc.gridy++;
         optionpanel.add( otherInfo, gbc );
         
 		//Include Solution  
 	    solution = new JCheckBox();
-	    solution.setText("Solution");
+	    solution.setText(Constant.messages.getString("advreport.alertdetails.solution"));
         gbc.gridy++;
         optionpanel.add( solution, gbc );
         
 		//Include Reference	    
 	    reference = new JCheckBox();
-	    reference.setText("Reference");
+	    reference.setText(Constant.messages.getString("advreport.alertdetails.reference"));
         gbc.gridy++;
         optionpanel.add( reference, gbc );
         
 		//Include CWE Id
 	    cweid = new JCheckBox();
-	    cweid.setText("CWE Id");
+	    cweid.setText(Constant.messages.getString("advreport.alertdetails.cweid"));
         gbc.gridy++;
         optionpanel.add( cweid, gbc );
         
 		//Include WASC ID
 	    wascid= new JCheckBox();
-	    wascid.setText("WASC Id");
+	    wascid.setText(Constant.messages.getString("advreport.alertdetails.wascid"));
         gbc.gridy++;
         optionpanel.add( wascid, gbc );
 
 		//Include Request Header
 	    requestHeader = new JCheckBox();
-	    requestHeader.setText("Request Header");
+	    requestHeader.setText(Constant.messages.getString("advreport.alertdetails.requestheader"));
         gbc.gridx = 1;
      	gbc.gridy = 0;
      	gbc.anchor = GridBagConstraints.EAST;
@@ -98,19 +100,19 @@ public class AlertDetailsPanel extends JPanel{
         
 		//Include Response Header
 	    responseHeader = new JCheckBox();
-	    responseHeader.setText("Response Header");
+	    responseHeader.setText(Constant.messages.getString("advreport.alertdetails.responseheader"));
         gbc.gridy++;
         optionpanel.add( responseHeader, gbc );
         
 		//Include Request Body
 	    requestBody = new JCheckBox();
-        requestBody.setText("Request Body");
+        requestBody.setText(Constant.messages.getString("advreport.alertdetails.requestbody"));
 	    gbc.gridy++;
         optionpanel.add( requestBody, gbc );
         
 		//Include Response Body
 	    responseBody = new JCheckBox();
-	    responseBody.setText("Response Body");
+	    responseBody.setText(Constant.messages.getString("advreport.alertdetails.responsebody"));
         gbc.gridy++;
         optionpanel.add( responseBody, gbc );
 
@@ -119,7 +121,7 @@ public class AlertDetailsPanel extends JPanel{
         buttonpane.add( getHTMLButton() );
         
 		this.setLayout( new BorderLayout() );
-		this.add( new JLabel(" Alert Details in Report : " ), BorderLayout.NORTH );
+		this.add( new JLabel(Constant.messages.getString("advreport.alertdetails.label")), BorderLayout.NORTH );
 	    this.add( new JScrollPane( optionpanel ), BorderLayout.CENTER );
         this.add(buttonpane, BorderLayout.SOUTH);
 
@@ -166,7 +168,7 @@ public class AlertDetailsPanel extends JPanel{
 	}
 	
 	private JButton getCancelButton(){
-		JButton cancelbutton = new JButton("Cancel");
+		JButton cancelbutton = new JButton(Constant.messages.getString("advreport.cancel"));
 		cancelbutton.addActionListener(
 				new ActionListener() {
 		            @Override
@@ -178,7 +180,7 @@ public class AlertDetailsPanel extends JPanel{
 	}
 	
 	private JButton getHTMLButton(){
-		JButton generatebutton = new JButton("Generate HTML");
+		JButton generatebutton = new JButton(Constant.messages.getString("advreport.generate"));
 		generatebutton.addActionListener(
 				new ActionListener() {
 		            @Override
