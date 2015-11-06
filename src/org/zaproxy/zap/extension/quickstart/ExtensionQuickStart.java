@@ -144,12 +144,20 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 		attackThread.start();
 
 	}
-	
+
 	public void notifyProgress(AttackThread.Progress progress) {
+		this.notifyProgress(progress, (String)null);
+	}
+
+	public void notifyProgress(AttackThread.Progress progress, String msg) {
 		if (View.isInitialised()) {
-			this.getQuickStartPanel().notifyProgress(progress);
+			this.getQuickStartPanel().notifyProgress(progress, msg);
 		} else if (this.runningFromCmdLine && this.showProgress) {
-			System.out.println(Constant.messages.getString("quickstart.cmdline.progress." + progress.name()));
+			if (msg != null) {
+				System.out.println(msg);
+			} else {
+				System.out.println(Constant.messages.getString("quickstart.cmdline.progress." + progress.name()));
+			}
 		}
     	switch (progress) {
     	case notstarted:
