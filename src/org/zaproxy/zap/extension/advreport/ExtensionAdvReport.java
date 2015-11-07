@@ -103,7 +103,7 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
         public void getNewOptionFrame(){
         	//optionframe.setPreferredSize( new Dimension(530,320) );
         	List<String> alertTypes = getAlertTypes();
-        	optionDialog = new OptionDialog(getScopeTab(),getAlertsTab( alertTypes ), getAlertDetailsTab() );
+        	optionDialog = new OptionDialog(this, getScopeTab(),getAlertsTab( alertTypes ), getAlertDetailsTab() );
         }
         
         private List<String> getAlertTypes() {
@@ -128,7 +128,7 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
         }
 
 		private ScopePanel getScopeTab(){
-        	scopetab = new ScopePanel( this );	
+        	scopetab = new ScopePanel();	
         	return scopetab;
         }
         
@@ -138,7 +138,7 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
         }
         
         private AlertDetailsPanel getAlertDetailsTab(){
-        	alertDetailstab = new AlertDetailsPanel( this );
+        	alertDetailstab = new AlertDetailsPanel();
         	return alertDetailstab;
         }
         
@@ -219,4 +219,5 @@ public class ExtensionAdvReport extends ExtensionAdaptor {
 		public void emitFrame() {
 			optionDialog.setVisible(false);
 		}
+		
 }

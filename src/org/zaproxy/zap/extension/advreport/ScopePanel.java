@@ -1,17 +1,12 @@
 package org.zaproxy.zap.extension.advreport;
 
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -26,14 +21,12 @@ public class ScopePanel extends AbstractPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private ExtensionAdvReport extension = null;
 	private JTextArea name, description;
 	private JComboBox template;
 	private JCheckBox onlyInScope;
 	
-	public ScopePanel( ExtensionAdvReport extension){
+	public ScopePanel(){
 		initialize();
-		this.extension = extension;
 	}
 	
 	private void initialize(){
@@ -90,15 +83,7 @@ public class ScopePanel extends AbstractPanel{
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.EAST;
         this.add( onlyInScope, gbc );
-  	    
-	    // button line 
-        gbc.insets = new Insets(0,0,0,0);
-	    gbc.gridx = 1;
-        gbc.gridy++ ;
-        JPanel buttonpane = new JPanel( new FlowLayout( FlowLayout.RIGHT ));
-        buttonpane.add( getCancelButton() );
-        buttonpane.add( getHTMLButton() );
-        this.add( buttonpane, gbc );
+
 	}
 	
 	public String getReportName(){
@@ -116,29 +101,5 @@ public class ScopePanel extends AbstractPanel{
 	public String getTemplate(){
 		return (String)template.getSelectedItem();
 	}
-	
-	private JButton getCancelButton(){
-		JButton cancelbutton = new JButton(Constant.messages.getString("advreport.cancel"));
-		cancelbutton.addActionListener(
-				new ActionListener() {
-		            @Override
-		            public void actionPerformed(ActionEvent e) {
-		               extension.emitFrame();
-		            }
-		        });
-		return cancelbutton;
-	}
-	
-	private JButton getHTMLButton(){
-		JButton generatebutton = new JButton(Constant.messages.getString("advreport.generate"));
-		generatebutton.addActionListener(
-				new ActionListener() {
-		            @Override
-		            public void actionPerformed(ActionEvent e) {
-		                extension.generateReport();
-		            }
-		        });
-		return generatebutton;
-	}
-	
+		
 }
