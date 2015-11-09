@@ -18,12 +18,18 @@
 			<td>-quickout</td>
 			<td>XMLレポートを書き込むファイルを指定します。「インライン」かつデーモンモードで設定されていない場合、レポートは規定の出力ストリームに書き込まれます。</td>
 		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>-quickprogress</td>
+			<td>Show ascii progress bars, if started with the -cmd flag.</td>
+		</tr>
 	</table>
 
 	<br>
 	<p>例:
 	<ul>
-		<li>ZAPを「インライン」モードで開始、対象アプリケーション「http://example.com/」を攻撃し、規定の出力ストリームにレポートを書き込む。 <pre>-cmd -quickurl http://example.com/</pre>
+		<li>Start ZAP in 'inline' mode with ascii progress bars, attack the target application http://example.com/
+			and write the report to default output stream: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
 		</li>
 		<li>ZAPをUIにて開始、対象アプリケーション「http://example.com/」を攻撃、ファイルにレポートを書き込む。 <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
 		</li>
