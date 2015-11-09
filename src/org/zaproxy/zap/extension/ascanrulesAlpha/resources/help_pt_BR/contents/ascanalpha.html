@@ -8,11 +8,21 @@ Regras de varredura Ativa - alfa
 <body bgcolor="#ffffff">
 <h1>Regras de varredura ativa - alfa</h1> As seguintes regras de varredura ativa qualidade alfa estão incluídas neste complemento: <h2>Detector de folga/slack de Cookie</h2>Testa os cookies para detectar se alguns não têm nenhum efeito no tamanho da resposta quando omitidos, especialmente cookies contendo o nome "sessão" ou "userid" <h2>Scanner ativo de arquivo exemplo</h2>Este implementa um exemplo de regra de verificação ativa que carrega strings a partir de um arquivo que o usuário pode editar.<br>Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html <h2>Exemplo simples Scanner ativo</h2> isso implementa a regra de verificação ativa um exemplo muito simples. <br>Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html <h2>Injeção de linguagem de expressão</h2> o software constrói todo ou parte de uma instrução de linguagem (EL) de expressão em uma página de servidor de Java (JSP) usando influenciado externamente a entrada de um componente upstream, mas ele não neutralizar ou incorretamente neutraliza elementos especiais que poderiam modificar a instrução EL pretendida antes de ser executado. Em certas versões do Spring 3.0.5 e anteriormente, houve uma vulnerabilidade (CVE-2011-2730) na qual tags de EL podiam ser avaliadas duas vezes, e isso  expunha qualquer aplicação a uma EL injection. Apesar disso, mesmo para versões posteriores, esta vulnerabilidade é ainda possível, dependendo da configuração.
 
-<h2>Exibição de código fonte - Inclusão de arquivo</h2> Utiliza técnicas de inclusão de arquivo para procurar por arquivos contendo código-fonte no servidor web.
+<h2>Integer Overflow Error</h2>
+Looks for indicators of integer overflows in compiled code that causes the web server to crash.  It does 
+this by putting out multiple strings of integers designed to try and stimulate bad responses.
 
-<h2>Exibição de código fonte - Git</h2> Usa os metadados do repositório de código fonte Git para buscar arquivos contendo código-fonte no servidor web.
+<h2>Source Code Disclosure - File Inclusion</h2>
+Uses local file inclusion techniques to scan for files containing source code on the web server.
 
-<h2>HTTPS como scanner HTTP</h2> Esta varredura ativa tenta acessar via HTTP conteúdo que originalmente foi acessado via HTTPS (SSL/TLS).
+<h2>Source Code Disclosure - Git</h2>
+Uses Git source code repository metadata to scan for files containing source code on the web server.
+
+<h2>HTTPS As HTTP Scanner</h2>
+This active scanner attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
+
+<h2>User Agent Fuzzer</h2>
+This active scanner checks for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). The scanner compares the response statuscode and the hashcode of the response body with the original response.
 
 </body>
 </html>

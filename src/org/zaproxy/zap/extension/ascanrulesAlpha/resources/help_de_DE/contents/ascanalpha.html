@@ -23,6 +23,10 @@ For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active
 <h2>Expression Language Injection</h2>
 The software constructs all or part of an expression language (EL) statement in a Java Server Page (JSP) using externally-influenced input from an upstream component, but it does not neutralize or incorrectly neutralizes special elements that could modify the intended EL statement before it is executed. In certain versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) in which Expression Language tags would be evaluated twice, which effectively exposed any application to EL injection. However, even for later versions, this weakness is still possible depending on configuration.
 
+<h2>Integer Overflow Error</h2>
+Looks for indicators of integer overflows in compiled code that causes the web server to crash.  It does 
+this by putting out multiple strings of integers designed to try and stimulate bad responses.
+
 <h2>Source Code Disclosure - File Inclusion</h2>
 Uses local file inclusion techniques to scan for files containing source code on the web server.
 
@@ -31,6 +35,9 @@ Uses Git source code repository metadata to scan for files containing source cod
 
 <h2>HTTPS As HTTP Scanner</h2>
 This active scanner attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
+
+<h2>User Agent Fuzzer</h2>
+This active scanner checks for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). The scanner compares the response statuscode and the hashcode of the response body with the original response.
 
 </body>
 </html>
