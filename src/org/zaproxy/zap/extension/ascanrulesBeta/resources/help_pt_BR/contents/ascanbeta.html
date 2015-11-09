@@ -11,37 +11,71 @@ Regras de Varredura Ativa - beta
 
 <h2>Erro de configuração de domínios cruzados</h2> Verifica se o servidor web está configurado para permitir acesso Cross Domain, um serviço de terceiros mal-intencionado, por exemplo. Atualmente checa se há caracteres curinga no arquivo crossdomain.xml da Adobe e em clientaccesspolicy.xml do SilverLight. 
 
-<h2>Token de CSRF</h2>  <h2>Erro de formato de string</h2> Procura indícios de erros de manipulação de strings no código compilado.  Isso é feito gerando-se strings com textos de entrada baseados em caracteres. O código C compilado antecipa a saída formatada e procura por crash de código e encerramento de sessão anormal.
+<h2>CSRF Token</h2>
 
-<h2>Vulnerabilidade do Heartbleed OpenSSL</h2> Detecta se o servidor web é vulnerável a vulnerabilidade do OpenSSL Heartbleed, explorando isso.
+<h2>Heartbleed OpenSSL Vulnerability</h2>
+Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability, by exploiting it.
 
-<h2>HPP</h2>  <h2>Método de HTTP inseguro</h2> Detecta (e explora, dependendo das configurações de varredura) conhecidos métodos de HTTP inseguros, habilitados para a URL.
+<h2>HPP</h2>
 
-<h2>Injeção de LDAP</h2> Injeção de LDAP pode ser possível. Pode ser possível para um atacante contornar controles de autenticação, visualizar e modificar dados no diretório LDAP.
+<h2>Insecure HTTP Method</h2>
+Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL.
 
-<h2>Execução remota de código - CVE-2012-1823</h2> Detecta CVE-2012-1823 para fazer execução remota de código em servidor web com base em PHP-CGI.
+<h2>LDAP Injection</h2>
+LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
 
-<h2>Fixação de sessão</h2> Fixação de sessão pode ser possível. Se esse problema ocorre com uma URL de login (onde o usuário se autentica para o aplicativo), então a URL pode ter sido dada a uma vítima por um invasor, juntamente com uma identificação de sessão fixa, para depois assumir a identidade da vítima usando a identificação de determinada sessão. Se o problema ocorre com uma página que não é de login, a URL e o id de sessão fixa podem ser usados por um invasor somente para controlar as ações de um usuário não-autenticado. Se a vulnerabilidade ocorre em um campo de cookie ou um de formulário (parâmetro POST) em vez de ocorrer num parâmetro de URL (GET), então alguma outra vulnerabilidade pode também ser necessária para utilização do campo de cookie no navegador da vítima, para então permitir que a vulnerabilidade seja explorada.
+<h2>Remote Code Execution - CVE-2012-1823</h2>
+Detect CVE-2012-1823 to perform Remote Code Execution on a PHP-CGI based web server.
 
-<h2>ShellShock - CVE-2014-6271</h2>  Esta varredura executa dois (2) ataques para detectar servidores vulneráveis a CVE-2014-6271, também conhecido como ShellShock. <br>O primeiro é um simples ataque refletido e o segundo é um ataque de tempo determinado.
+<h2>Session Fixation</h2>
+Session Fixation may be possible. If this issue occurs with a login URL (where the user authenticates themselves to the application), then the URL may be given by an attacker, along with a fixed session id, to a victim, in order to later assume the identity of the victim using the given session id. If the issue occurs with a non-login page, the URL and fixed session id may only be used by an attacker to track an unauthenticated user's actions. If the vulnerability occurs on a cookie field or a form field (POST parameter) rather than on a URL (GET) parameter, then some other vulnerability may also be required in order to set the cookie field on the victim's browser, to allow the vulnerability to be exploited.
 
-<h2>Exposição de código de fonte - CVE-2012-1823</h2> Exploit CVE-2012-1823 para expor o código-fonte no lado do servidor PHP, em um servidor de web com base em PHP-CGI.
+<h2>ShellShock - CVE-2014-6271</h2>
 
-<h2>Exposição de código fonte - SVN</h2> Usa os metadados de repositório do código fonte Subversion para procurar por arquivos contendo código-fonte no servidor web.
+This scanner perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
+The first is a simple reflected attack and the second is a time based attack.
 
-<h2>Exposição de código fonte - /WEB-INF</h2> Explora a presença de uma pasta /WEB-INF desprotegida para baixar e descompilar classes Java, para exibir o código-fonte Java.
+<h2>Source Code Disclosure - CVE-2012-1823</h2>
+Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.
 
-<h2>SQL Injection - Hypersonic, baseada em tempo</h2>  Esta varredura usa sintaxe específica de SQL Hypersonic para tentar induzir atrasos na declaração SQL chamada pela página. <br>Se a query não-modificada não é afetada pelo retatrdo, e se o retardo na query modificada pode ser controlado, isso é indicativo de uma vulnerabilidade de injeção SQL baseada em um banco de dados Hypersonic SQL. <br>Esta varredura é sensível a tempo e só deve ser usada em uma tentativa de encontrar vulnerabilidades de injeção SQL difíceis e não óbvias em um banco de dados Hypersonic suspeito. <br>Por esta razão, o número de threads de varredura ativa deve ser definido para o mínimo, para minimizar a carga sobre o servidor web, servidor de aplicativos e banco de dados, a fim de evitar falsos positivos causados por atrasos de carga em vez de atrasos de injeção de SQL. <br>A varredura testa somente vulnerabilidades de injeção SQL baseadas em tempo. 
+<h2>Source Code Disclosure - SVN</h2>
+Uses Subversion source code repository metadata to scan for files containing source code on the web server.
 
-<h2>SQL injection - MySQL, com base em tempo</h2>  Semelhante ao scanner Hypersonic, mas específico para a sintaxe do MySQL. 
+<h2>Source Code Disclosure - /WEB-INF</h2>
+Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose Java source code.
 
-<h2>SQL injection - Oracle, com base em tempo</h2>  Semelhante ao scanner Hypersonic, mas específico para a sintaxe do Oracle. 
+<h2>SQL Injection - Hypersonic, time based</h2>
 
-<h2>Injeção de SQL - Postgresql, com base com base em tempo</h2>  Semelhante ao scanner Hypersonic, mas específico para a sintaxe SQL do PostgreSQL. 
+This scanner uses Hypersonic-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
+If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
+it is indicative of a time-based SQL Injection vulnerability in a Hypersonic SQL database. <br>
+This scanner is time sensitive, and should only be used in an attempt find find stubborn and un-obvious SQL 
+injection vulnerabilities in a suspected Hypersonic database. <br>
+For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
+to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
+load delays rather than by SQL injection delays. <br>
+The scanner tests only for time-based SQL injection vulnerabilities. 
 
-<h2>Enumeração de usernames</h2> Pode ser possível fazer enumeração de nomes de usuário com base em diferentes respostas HTTP quando usernames válidos e inválidos são fornecidos. Isso aumenta significativamente a probabilidade de sucesso com ataques de brute force de senha contra o sistema. Observe que falsos positivos às vezes podem ser minimizados aumentando a opção 'Força de ataque' no ZAP.  Por favor verificar manualmente o campo 'Other Info' para confirmar se este é realmente um problema.
+<h2>SQL Injection - MySQL, time based</h2>
 
-<h2>Injeção de XPath</h2>  <h2>XXE</h2>  <h2>Padding no Oracle</h2>
+Similar to the Hypersonic scanner, but specific to the MySQL RDBMS and SQL syntax. 
+
+<h2>SQL Injection - Oracle, time based</h2>
+
+Similar to the Hypersonic scanner, but specific to the Oracle RDBMS and SQL syntax. 
+
+<h2>SQL Injection - Postgresql, time based</h2>
+
+Similar to the Hypersonic scanner, but specific to the PostgreSQL RDBMS and SQL syntax. 
+
+<h2>Username Enumeration</h2>
+It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
+
+<h2>Xpath Injection</h2>
+
+<h2>XXE</h2>
+
+<h2>Padding Oracle</h2>
 
 </body>
 </html>
