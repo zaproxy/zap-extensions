@@ -90,7 +90,7 @@ public class TestDomXSS extends AbstractAppPlugin {
     
     @Override
     public int getId() {
-        return 40025;
+        return 40026;
     }
 
     @Override
