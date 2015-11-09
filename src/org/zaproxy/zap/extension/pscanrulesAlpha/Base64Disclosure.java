@@ -272,13 +272,13 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
 						//the Base64 decoded data is not a valid ViewState (even though it may have a valid ViewStatet pre-amble) 
 						//so treat it as normal Base64 data, and raise an informational alert.
-						if ( base64evidence!=null && base64evidence.length() > 0) {
+						if ( base64evidence.length() > 0) {
 							Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getName() );
 							alert.setDetail(
 									getDescription(), 
 									msg.getRequestHeader().getURI().toString(), 
 									"", //param
-									viewstatexml.substring(0, Math.min(32000, viewstatexml.length())), //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+									null,
 									getExtraInfo(msg, base64evidence, decodeddata),  //other info
 									getSolution(), 
 									getReference(), 
