@@ -32,7 +32,6 @@ import difflib.DiffRow.Tag;
 import difflib.DiffUtils;
 import difflib.InsertDelta;
 import difflib.Patch;
-import difflib.StringUtills;
 
 /**
  * ZAP note.
@@ -241,8 +240,9 @@ public class ZapDiffRowGenerator {
      //revised = StringUtills.normalize(revised);
 
      // wrap to the column width
-     original = StringUtills.wrapText(original, this.columnWidth);
-     revised = StringUtills.wrapText(revised, this.columnWidth);
+     // ZAP: Don't word wrap, it adds br tags. The word wrap should be done by view component.
+     // original = StringUtills.wrapText(original, this.columnWidth);
+     // revised = StringUtills.wrapText(revised, this.columnWidth);
 
      List<DiffRow> diffRows = new ArrayList<DiffRow>();
      int endPos = 0;
@@ -257,8 +257,9 @@ public class ZapDiffRowGenerator {
          //orig.setLines(StringUtills.normalize((List<String>) orig.getLines()));
          //rev.setLines(StringUtills.normalize((List<String>) rev.getLines()));
 
-         orig.setLines(StringUtills.wrapText((List<String>) orig.getLines(), this.columnWidth));
-         rev.setLines(StringUtills.wrapText((List<String>) rev.getLines(), this.columnWidth));
+         // ZAP: Don't word wrap, it adds br tags. The word wrap should be done by view component.
+         // orig.setLines(StringUtills.wrapText((List<String>) orig.getLines(), this.columnWidth));
+         // rev.setLines(StringUtills.wrapText((List<String>) rev.getLines(), this.columnWidth));
 
          // catch the equal prefix for each chunk
          for (String line : original.subList(endPos, orig.getPosition())) {

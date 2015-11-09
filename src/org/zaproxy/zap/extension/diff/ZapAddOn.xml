@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Diff</name>
-	<version>5</version>
+	<version>6</version>
 	<description>Displays a dialog showing the differences between 2 requests or responses. It uses diffutils and diff_match_patch</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Added 'Lock Scrolling' checkbox so that this can be disabled if required.<br>
-	Updated for ZAP 2.4
+	Do not add line break tags to resultant diff (Issue 1571)<br>
 	]]>
 	</changes>
 	<extensions>
