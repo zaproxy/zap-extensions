@@ -100,7 +100,7 @@ public class AlertsPanel extends JPanel{
 			public void itemStateChanged(java.awt.event.ItemEvent e) {
 				boolean selected = (ItemEvent.SELECTED == e.getStateChange());
 				for (JCheckBox selection: selections ){
-					if(alertTypeRisk.get(selection.getName()) == riskLevel) {
+					if(alertTypeRisk.get(selection.getName()).equals(riskLevel)) {
 						selection.setSelected(selected);
 					}
 
