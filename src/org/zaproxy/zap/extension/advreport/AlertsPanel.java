@@ -1,17 +1,13 @@
 package org.zaproxy.zap.extension.advreport;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,13 +19,11 @@ import org.parosproxy.paros.Constant;
 public class AlertsPanel extends JPanel{
 
 	private List<JCheckBox> selections;
-	private ExtensionAdvReport extension;
 
 	private Map<String, String> alertTypeRisk = null;
 	//Alert types with corresponding risk Levels (High, Medium, Low, Informational)
 	public AlertsPanel(List<String> alertTypes,ExtensionAdvReport extension){
 		initialize(alertTypes);
-		this.extension = extension;
 		alertTypeRisk = extension.alertTypeRisk;
 	}
 
@@ -74,15 +68,10 @@ public class AlertsPanel extends JPanel{
 			gbc.gridy += 1;
 			
 		}
-		 				
-        JPanel buttonpane = new JPanel( new FlowLayout( FlowLayout.RIGHT ));
-        buttonpane.add( getCancelButton() );
-        buttonpane.add( getHTMLButton() );
         
 		this.setLayout( new BorderLayout() );
 		this.add( new JLabel(Constant.messages.getString("advreport.alertspanel.label") ), BorderLayout.NORTH );
 		this.add( new JScrollPane( selectionPanel ), BorderLayout.CENTER );
-	    this.add(buttonpane, BorderLayout.SOUTH);
 		
 	}
 	
@@ -121,29 +110,5 @@ public class AlertsPanel extends JPanel{
 		
 		return riskChk;
 	}
-	
-	private JButton getCancelButton(){
-		JButton cancelbutton = new JButton(Constant.messages.getString("advreport.cancel"));
-		cancelbutton.addActionListener(
-				new ActionListener() {
-		            @Override
-		            public void actionPerformed(ActionEvent e) {
-		               extension.emitFrame();
-		            }
-		        });
-		return cancelbutton;
-	}
-	
-	private JButton getHTMLButton(){
-		JButton generatebutton = new JButton(Constant.messages.getString("advreport.generate"));
-		generatebutton.addActionListener(
-				new ActionListener() {
-		            @Override
-		            public void actionPerformed(ActionEvent e) {
-		                extension.generateReport();
-		            }
-		        });
-		return generatebutton;
-	}
-	
+		
 }
