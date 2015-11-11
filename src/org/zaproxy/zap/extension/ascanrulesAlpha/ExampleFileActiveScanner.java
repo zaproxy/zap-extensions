@@ -32,6 +32,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 /**
  * An example active scan rule, for more details see 
@@ -63,6 +65,12 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
+	public boolean targets(TechSet technologies) { // This method allows the programmer or user to restrict when a 
+		//scanner is run based on the technologies selected.  For example, to restrict the scanner to run just when 
+		//C language is selected 
+		return technologies.includes(Tech.Lang.C); 
+	}
+		
 	public String getDescription() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
 	}
@@ -148,7 +156,7 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
 				}
 			}
 			
-		} catch (Exception e) {
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}	
 	}
