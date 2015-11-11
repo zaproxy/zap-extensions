@@ -30,6 +30,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.utils.HirshbergMatcher;
 
 /**
  * The LDAPInjection plugin identifies LDAP injection vulnerabilities with LDAP based login pages, and LDAP searches
@@ -88,7 +89,7 @@ public class LDAPInjection extends AbstractAppParamPlugin {
     }
     
     // use Hirshberg to calculate longest common substring between two strings.
-    private static final Hirshberg hirshberg = new Hirshberg ();
+    private static final HirshbergMatcher hirshberg = new HirshbergMatcher ();
 
     @Override
     public int getId() {
@@ -453,7 +454,7 @@ public class LDAPInjection extends AbstractAppParamPlugin {
 			return 100;
 		if ( a.length() == 0 || b.length() == 0)
 			return 0;
-		String lcs = hirshberg.lcs(a, b);
+		String lcs = hirshberg.getLCS(a, b);
 		//log.debug("Got LCS: "+ lcs); 
 		//get the percentage match against the longer of the 2 strings
 		return (int) ( ( ((double)lcs.length()) / Math.max (a.length(), b.length())) * 100) ;
