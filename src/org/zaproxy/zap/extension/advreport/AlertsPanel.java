@@ -39,16 +39,16 @@ public class AlertsPanel extends JPanel{
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(2,5,30,10);
 		
-		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.high")), gbc);
+		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.high"), "High"), gbc);
 		
 		gbc.gridx++;
-		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.medium")),gbc);
+		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.medium"), "Medium"),gbc);
 		
 		gbc.gridx++;
-		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.low")),gbc);
+		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.low"), "Low"),gbc);
 		
 		gbc.gridx++;
-		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.info")),gbc);
+		selectionPanel.add(getRiskBox(Constant.messages.getString("advreport.alertspanel.risk.info"), "Informational"),gbc);
 		
 		gbc.insets = new Insets(0,20,2,0);
 		gbc.gridy = 1;
@@ -91,7 +91,7 @@ public class AlertsPanel extends JPanel{
 	}
 	
 	
-	private JCheckBox getRiskBox(final String riskLevel){
+	private JCheckBox getRiskBox(final String riskLevel, final String riskName){
 		JCheckBox riskChk = new JCheckBox();
 		riskChk.setText(riskLevel);
 		riskChk.setSelected(true);
@@ -100,7 +100,7 @@ public class AlertsPanel extends JPanel{
 			public void itemStateChanged(java.awt.event.ItemEvent e) {
 				boolean selected = (ItemEvent.SELECTED == e.getStateChange());
 				for (JCheckBox selection: selections ){
-					if(alertTypeRisk.get(selection.getName()) == riskLevel) {
+					if(alertTypeRisk.get(selection.getName()) == riskName) {
 						selection.setSelected(selected);
 					}
 
