@@ -56,6 +56,17 @@ public class ExtensionDiff extends ExtensionAdaptor {
     	return true;
     }
 
+    @Override
+    public void unload() {
+        if (getView() != null) {
+            if (diffDialog != null) {
+                diffDialog.dispose();
+                diffDialog = null;
+            }
+        }
+        super.unload();
+    }
+
 	/**
 	 * This method initializes this
 	 * 
