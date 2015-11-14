@@ -287,6 +287,7 @@
 		<build-addon name="callgraph" />
 		<build-addon name="cmss" />
 		<build-addon name="codedx"/>
+		<build-addon name="customreport"/>
 		<build-addon name="domxss"/>
 		<build-addon name="help_bs_BA" />
 		<build-addon name="help_es_ES" />
@@ -354,10 +355,6 @@
 		<generate-wiki addon="accessControl" />
 	</target>
 
-	<target name="deploy-advreport" description="deploy the advanced reporting extension">
-		<build-deploy-addon name="advreport" />
-	</target>
-
 	<target name="deploy-alertFilters" description="deploy the alert filters">
 		<build-deploy-addon name="alertFilters" />
 	</target>
@@ -400,6 +397,10 @@
 
 	<target name="deploy-codedx" description="deploy the codedx extension">
 		<build-deploy-addon name="codedx" />
+	</target>
+	
+	<target name="deploy-customreport" description="deploy the custom reporting extension">
+		<build-deploy-addon name="customreport" />
 	</target>
 	
 	<target name="deploy-domxss" description="deploy the domxss extension">
