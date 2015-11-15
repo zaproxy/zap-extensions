@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.io.IOException;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
@@ -25,6 +26,8 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -65,6 +68,13 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
 		return null;
 	}
 
+	@Override
+	public boolean targets(TechSet technologies) {  // This method allows the programmer or user to restrict when a 
+		//scanner is run based on the technologies selected.  For example, to restrict the scanner to run just when 
+		//C language is selected 
+		return technologies.includes(Tech.Lang.C); 
+	}
+	
 	@Override
 	public String getDescription() {
 		if (vuln != null) {
@@ -136,7 +146,7 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
 				return;
 			}
 			
-		} catch (Exception e) {
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}	
 	}
