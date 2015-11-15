@@ -43,6 +43,8 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.HttpFuzzerReflection
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.HttpFuzzerReflectionDetectorUIHandler;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.RequestContentLengthUpdaterProcessorUIHandler;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.UserHttpFuzzerMessageProcessorUIHandler;
+import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator.HttpFuzzerMessageProcessorTagStateHighlighter;
+import org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator.HttpFuzzerMessageProcessorTagUIHandler;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzAttackPopupMenuItem;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzerResultStateHighlighter;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationReplacers;
@@ -152,6 +154,9 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
                 httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(new AntiCsrfHttpFuzzerMessageProcessorUIHandler(
                         extensionAntiCSRF));
             }
+
+            httpFuzzerHandler.addFuzzerMessageProcessorUIHandler(new HttpFuzzerMessageProcessorTagUIHandler());
+            addFuzzResultStateHighlighter(new HttpFuzzerMessageProcessorTagStateHighlighter());
         }
     }
 
