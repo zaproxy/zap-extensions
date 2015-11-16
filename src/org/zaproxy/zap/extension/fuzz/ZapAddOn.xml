@@ -11,6 +11,7 @@
     Fix an error that prevented the use of empty strings as payloads (Issue 1948).<br>
     Fix exception while closing ZAP with running fuzz processes.<br>
     Show the correct Payload Generator script when showing modify dialogue.<br>
+    Correctly use the number of payloads from script for calculation of progress (Issue 1881).<br>
     ]]>
     </changes>
     <extensions>
