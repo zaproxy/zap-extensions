@@ -162,7 +162,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
 
         @Override
         public void setPayloadGeneratorUI(ScriptStringPayloadGeneratorAdapterUI payloadGeneratorUI) {
-            scriptComboBox.setSelectedItem(payloadGeneratorUI.getScriptWrapper());
+            scriptComboBox.setSelectedItem(new ScriptUIEntry(payloadGeneratorUI.getScriptWrapper()));
         }
 
         @Override

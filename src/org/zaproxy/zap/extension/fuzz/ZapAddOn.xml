@@ -8,6 +8,7 @@
     <changes>
     <![CDATA[
     Add HTTP processor for tagging fuzz results.<br>
+    Show the correct Payload Generator script when showing modify dialogue.<br>
     ]]>
     </changes>
     <extensions>
