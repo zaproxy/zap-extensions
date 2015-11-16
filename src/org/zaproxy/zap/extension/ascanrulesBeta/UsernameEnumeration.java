@@ -38,6 +38,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.HirshbergMatcher;
 
 import difflib.Delta;
 import difflib.DiffUtils;
@@ -540,8 +541,8 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 	 * @return the Longest Common Subsequence of a and b
 	 */
 	public String longestCommonSubsequence (String a, String b) {
-		Hirshberg hirschberg = new Hirshberg();
-		return hirschberg.lcs(a, b);
+		HirshbergMatcher hirschberg = new HirshbergMatcher();
+		return hirschberg.getLCS(a, b);
 	}
 
 	@Override

@@ -8,6 +8,7 @@
 	<![CDATA[
 	Removing Format String.<br>
 	Fix unloading issue (Issue 1972).<br>
+	Slightly improve performance of "LDAP Injection" and "Username Enumeration".<br>
     ]]>
 	</changes>
 	<extensions>
