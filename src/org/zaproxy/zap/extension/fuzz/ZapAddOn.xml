@@ -10,6 +10,7 @@
     Add HTTP processor for tagging fuzz results.<br>
     Fix an error that prevented the use of empty strings as payloads (Issue 1948).<br>
     Fix exception while closing ZAP with running fuzz processes.<br>
+    Show the correct Payload Generator script when showing modify dialogue.<br>
     ]]>
     </changes>
     <extensions>
