@@ -199,7 +199,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
     }
 
     protected FuzzerTaskSubmitter createFuzzerTaskSubmitter() {
-        return new FuzzerTaskSubmitter("ZAP-FuzzerTaskSubmitter-" + fuzzerScanId);
+        return new FuzzerTaskSubmitter("ZAP-FuzzerTaskSubmitter-" + fuzzerScanId, fuzzerOptions.getThreadCount() * 3);
     }
 
     protected boolean submitFuzzerTask(AbstractFuzzerTask<M> task) {
@@ -510,8 +510,12 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
      */
     private class FuzzerTaskSubmitter extends Thread {
 
-        public FuzzerTaskSubmitter(String threadName) {
+        private final long maxNumberOfLiveTasks;
+        private long totalTasksSubmitted;
+
+        public FuzzerTaskSubmitter(String threadName, long maxNumberOfLiveTasks) {
             super(threadName);
+            this.maxNumberOfLiveTasks = maxNumberOfLiveTasks;
         }
 
         @Override
@@ -537,6 +541,17 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
         private void submitTasks() {
             while (multipleMessageLocationsReplacer.hasNext() && !isStopped()) {
+                while ((totalTasksSubmitted - tasksDoneCount.get()) > maxNumberOfLiveTasks && !isStopped()) {
+                    try {
+                        sleep(25);
+                    } catch (InterruptedException ignore) {
+                    }
+                }
+
+                if (isStopped()) {
+                    return;
+                }
+
                 boolean taskSubmitted = false;
                 do {
                     acquireScanStateLock();
@@ -560,6 +575,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
                             failedReplacementInFuzzeMessage(taskId, e, multipleMessageLocationsReplacer.currentReplacements());
                         }
                         taskSubmitted = true;
+                        totalTasksSubmitted++;
                     }
                 } while (!taskSubmitted && !isStopped());
             }
