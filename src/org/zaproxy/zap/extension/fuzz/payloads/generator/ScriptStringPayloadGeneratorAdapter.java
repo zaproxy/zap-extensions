@@ -50,6 +50,22 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
         this.scriptWrapper = scriptWrapper;
     }
 
+    public ScriptStringPayloadGeneratorAdapter(ScriptWrapper scriptWrapper, ScriptStringPayloadGenerator script) {
+        if (scriptWrapper == null) {
+            throw new IllegalArgumentException("Parameter scriptWrapper must not be null.");
+        }
+        if (!ScriptStringPayloadGenerator.TYPE_NAME.equals(scriptWrapper.getTypeName())) {
+            throw new IllegalArgumentException("Parameter scriptWrapper must wrap a script of type \""
+                    + ScriptStringPayloadGenerator.TYPE_NAME + "\".");
+        }
+        if (script == null) {
+            throw new IllegalArgumentException("Parameter script must not be null.");
+        }
+        this.scriptWrapper = scriptWrapper;
+        this.scriptPayloadGenerator = script;
+        this.initialised = true;
+    }
+
     @Override
     public long getNumberOfPayloads() {
         if (!initialised) {
