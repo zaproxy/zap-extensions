@@ -1,13 +1,13 @@
 <zapaddon>
     <name>AdvFuzzer</name>
-    <version>3</version>
-    <semver>1.0.1</semver>
+    <version>4</version>
+    <semver>2.0.0</semver>
     <description>Advanced fuzzer for manual testing</description>
     <author>ZAP Dev Team</author>
     <url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts</url>
     <changes>
     <![CDATA[
-    Update add-on's info URL.<br>
+    Add HTTP processor for tagging fuzz results.<br>
     ]]>
     </changes>
     <extensions>
