@@ -8,6 +8,7 @@
     <changes>
     <![CDATA[
     Add HTTP processor for tagging fuzz results.<br>
+    Fix an error that prevented the use of empty strings as payloads (Issue 1948).<br>
     ]]>
     </changes>
     <extensions>

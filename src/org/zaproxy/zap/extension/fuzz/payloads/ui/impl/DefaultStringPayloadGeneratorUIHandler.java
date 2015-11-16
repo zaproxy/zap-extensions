@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -142,7 +141,7 @@ public class DefaultStringPayloadGeneratorUIHandler implements
             if (multiline) {
                 return new DefaultStringPayloadGenerator(value);
             }
-            return new DefaultStringPayloadGenerator(Arrays.asList(value.split("\r?\n")));
+            return new DefaultStringPayloadGenerator(Arrays.asList(value.split("\r?\n", -1)));
         }
 
         @Override
@@ -246,15 +245,6 @@ public class DefaultStringPayloadGeneratorUIHandler implements
 
         @Override
         public boolean validate() {
-            if (getContentsTextArea().getText().isEmpty()) {
-                JOptionPane.showMessageDialog(
-                        null,
-                        Constant.messages.getString("fuzz.payloads.generator.strings.warnNoContent.message"),
-                        Constant.messages.getString("fuzz.payloads.generator.strings.warnNoContent.title"),
-                        JOptionPane.INFORMATION_MESSAGE);
-                getContentsTextArea().requestFocusInWindow();
-                return false;
-            }
             return true;
         }
 
