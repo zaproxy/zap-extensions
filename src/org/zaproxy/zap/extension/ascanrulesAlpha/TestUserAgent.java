@@ -35,7 +35,7 @@ public class TestUserAgent extends AbstractAppPlugin {
 
     private static final Logger log = Logger.getLogger(TestUserAgent.class);
 
-    private static final int PLUGIN_ID = 10050;
+    private static final int PLUGIN_ID = 10104;
     private static final String MESSAGE_PREFIX = "ascanalpha.testuseragent.";
     private static final String USER_AGENT_PARAM_NAME = Constant.messages.getString(MESSAGE_PREFIX + "useragentparmname");
 
