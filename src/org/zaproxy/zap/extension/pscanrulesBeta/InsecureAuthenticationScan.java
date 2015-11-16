@@ -199,7 +199,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 	 */
 	@Override
 	public int getPluginId() {
-		return 40017;  
+		return 10105;  
 	}
 
 	/**

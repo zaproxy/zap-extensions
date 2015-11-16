@@ -1,10 +1,14 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>11</version>
+	<version>12</version>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
-	<changes>Minor code changes.</changes>
+	<changes>
+	<![CDATA[
+	Change (duplicated) scanner ID of Weak Authentication Method, now it's 10105.<br>
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.pscanrulesBeta.ExtensionPscanRulesBeta</extension>
 	</extensions>
