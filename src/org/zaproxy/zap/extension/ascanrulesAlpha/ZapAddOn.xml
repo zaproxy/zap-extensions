@@ -9,6 +9,7 @@
 	Update add-on's info URL.<br>
 	Added Integer Overflow scanner.<br>
 	Added new scanner User Agent Fuzzer. The scanner checks for differences in response based on fuzzed User Agent.<br>
+	Slightly improve performance of "Source Code Disclosure - File Inclusion".<br>
   	]]>
 	</changes>
 	<extensions>

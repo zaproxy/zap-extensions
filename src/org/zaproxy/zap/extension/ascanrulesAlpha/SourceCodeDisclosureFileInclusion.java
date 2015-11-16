@@ -31,6 +31,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
+import org.zaproxy.zap.utils.HirshbergMatcher;
 
 /**
  * a scanner that looks for application source code disclosure using path traversal techniques
@@ -92,7 +93,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 	 * Hirshberg class for longest common substring calculation.  
 	 * Damn you John McKenna and your dynamic programming techniques!
 	 */
-	Hirshberg hirshberg = new Hirshberg ();
+	HirshbergMatcher hirshberg = new HirshbergMatcher ();
 
 	/**
 	 * the threshold for whether 2 responses match. depends on the alert threshold set in the GUI. not final or static.
@@ -461,7 +462,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 			return 100;
 		if ( a.length() == 0 || b.length() == 0)
 			return 0;
-		String lcs = hirshberg.lcs(a, b);
+		String lcs = hirshberg.getLCS(a, b);
 		if (log.isDebugEnabled()) {
 			log.debug("Got LCS: "+ lcs);
 		}
