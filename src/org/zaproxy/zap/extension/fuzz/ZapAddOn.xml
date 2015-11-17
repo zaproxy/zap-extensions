@@ -15,6 +15,8 @@
     Show the number of payloads from the script in Fuzzer dialogue (Issue 1887).<br>
     Improve memory usage (Issue 2051).<br>
     Correct the delay used when sending messages.<br>
+    Improve stop time.<br>
+    Fix (potential) thread leak after stopping a paused fuzzer.<br>
     ]]>
     </changes>
     <extensions>

@@ -249,7 +249,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
     public void resumeScan() {
         acquireScanStateLock();
         try {
-            if (resumeScanImpl()) {
+            if (resumeScanImpl(state)) {
                 state = State.RUNNING;
             }
         } finally {
@@ -257,7 +257,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         }
     }
 
-    private boolean resumeScanImpl() {
+    private boolean resumeScanImpl(State state) {
         if (State.PAUSED.equals(state)) {
             fuzzerTaskExecutor.resume();
             unpauseCondition.signalAll();
@@ -277,11 +277,19 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         try {
             if (!State.NOT_STARTED.equals(state) && !State.FINISHED.equals(state) && !State.STOPPED.equals(state)) {
                 logger.info("Stopping fuzzer...");
+                State previousState = state;
                 state = State.STOPPED;
 
-                resumeScanImpl();
+                fuzzerTaskExecutor.shutdown();
+                resumeScanImpl(previousState);
 
-                shutdownExecutorNow();
+                // Temporarily release the lock to allow task threads and listeners to query the state of the fuzzer.
+                releaseScanStateLock();
+                try {
+                    shutdownExecutorNow();
+                } finally {
+                    acquireScanStateLock();
+                }
             }
         } finally {
             releaseScanStateLock();
@@ -304,15 +312,14 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         fuzzerTaskExecutor.removeExecutorTerminatedListener(executorTerminatedListener);
         fuzzerTaskExecutor = null;
 
-        state = State.FINISHED;
-
-        // Temporarily release the lock to allow listeners to query the state of the fuzzer.
-        releaseScanStateLock();
+        acquireScanStateLock();
         try {
-            notifyListenersFuzzerCompleted(successfully);
+            state = State.FINISHED;
         } finally {
-            acquireScanStateLock();
+            releaseScanStateLock();
         }
+
+        notifyListenersFuzzerCompleted(successfully);
 
         logger.info(successfully ? "Fuzzer completed." : "Fuzzer stopped.");
     }
