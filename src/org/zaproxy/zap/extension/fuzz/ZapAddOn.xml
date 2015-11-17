@@ -14,6 +14,7 @@
     Correctly use the number of payloads from script for calculation of progress (Issue 1881).<br>
     Show the number of payloads from the script in Fuzzer dialogue (Issue 1887).<br>
     Improve memory usage (Issue 2051).<br>
+    Correct the delay used when sending messages.<br>
     ]]>
     </changes>
     <extensions>

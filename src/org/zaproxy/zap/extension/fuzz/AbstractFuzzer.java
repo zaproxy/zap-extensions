@@ -186,6 +186,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         if (fuzzerOptions.getSendMessageDelay() > 0) {
             PausableScheduledThreadPoolExecutor executor = new PausableScheduledThreadPoolExecutor(poolSize, threadFactory);
             executor.setDefaultDelay(fuzzerOptions.getSendMessageDelay(), fuzzerOptions.getSendMessageDelayTimeUnit());
+            executor.setIncrementalDefaultDelay(true);
             return executor;
         }
 
