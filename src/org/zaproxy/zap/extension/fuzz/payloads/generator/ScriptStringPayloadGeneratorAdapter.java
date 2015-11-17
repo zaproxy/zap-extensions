@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultStringPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
@@ -32,7 +33,11 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  */
 public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerator {
 
+    private static final Logger LOGGER = Logger.getLogger(ScriptStringPayloadGeneratorAdapter.class);
+
     private final ScriptWrapper scriptWrapper;
+    private boolean initialised;
+    private ScriptStringPayloadGenerator scriptPayloadGenerator;
 
     public ScriptStringPayloadGeneratorAdapter(ScriptWrapper scriptWrapper) {
         if (scriptWrapper == null) {
@@ -45,13 +50,48 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
         this.scriptWrapper = scriptWrapper;
     }
 
+    public ScriptStringPayloadGeneratorAdapter(ScriptWrapper scriptWrapper, ScriptStringPayloadGenerator script) {
+        if (scriptWrapper == null) {
+            throw new IllegalArgumentException("Parameter scriptWrapper must not be null.");
+        }
+        if (!ScriptStringPayloadGenerator.TYPE_NAME.equals(scriptWrapper.getTypeName())) {
+            throw new IllegalArgumentException("Parameter scriptWrapper must wrap a script of type \""
+                    + ScriptStringPayloadGenerator.TYPE_NAME + "\".");
+        }
+        if (script == null) {
+            throw new IllegalArgumentException("Parameter script must not be null.");
+        }
+        this.scriptWrapper = scriptWrapper;
+        this.scriptPayloadGenerator = script;
+        this.initialised = true;
+    }
+
     @Override
     public long getNumberOfPayloads() {
+        if (!initialised) {
+            try {
+                scriptPayloadGenerator = initialiseImpl(scriptWrapper);
+            } catch (Exception e) {
+                LOGGER.warn("Failed to initialise '" + scriptWrapper.getName() + "':", e);
+            }
+            initialised = true;
+        }
+
+        if (scriptPayloadGenerator != null) {
+            try {
+                return scriptPayloadGenerator.getNumberOfPayloads();
+            } catch (Exception e) {
+                LOGGER.warn("Failed to obtain number of payloads from script '" + scriptWrapper.getName() + "':", e);
+            }
+        }
         return UNKNOWN_NUMBER_OF_PAYLOADS;
     }
 
     @Override
     public ResettableAutoCloseableIterator<StringPayload> iterator() {
+        if (scriptPayloadGenerator != null) {
+            return new ScriptPayloadGeneratorIterator(scriptWrapper, scriptPayloadGenerator);
+        }
         return new ScriptPayloadGeneratorIterator(scriptWrapper);
     }
 
@@ -70,10 +110,18 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
             this.scriptWrapper = scriptWrapper;
         }
 
+        public ScriptPayloadGeneratorIterator(
+                ScriptWrapper scriptWrapper,
+                ScriptStringPayloadGenerator scriptPayloadGenerator) {
+            this.scriptWrapper = scriptWrapper;
+            this.scriptPayloadGenerator = scriptPayloadGenerator;
+            this.initialised = true;
+        }
+
         @Override
         public boolean hasNext() {
             if (!initialised) {
-                initialise();
+                scriptPayloadGenerator = initialise(scriptWrapper);
                 initialised = true;
             }
 
@@ -88,7 +136,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
                 // The same applies to all other script try-catch blocks.
                 // For example, when a variable or function is not defined it throws:
                 // jdk.nashorn.internal.runtime.ECMAException
-                handleScriptException(e);
+                handleScriptException(scriptWrapper, e);
             }
 
             // Unreachable code, handleScriptException(Exception) throws PayloadGenerationException.
@@ -100,7 +148,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
             try {
                 return new DefaultStringPayload(scriptPayloadGenerator.next());
             } catch (Exception e) {
-                handleScriptException(e);
+                handleScriptException(scriptWrapper, e);
             }
 
             // Unreachable code, handleScriptException(Exception) throws PayloadGenerationException.
@@ -116,7 +164,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
             try {
                 scriptPayloadGenerator.reset();
             } catch (Exception e) {
-                handleScriptException(e);
+                handleScriptException(scriptWrapper, e);
             }
         }
 
@@ -125,30 +173,38 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
             try {
                 scriptPayloadGenerator.close();
             } catch (Exception e) {
-                handleScriptException(e);
+                handleScriptException(scriptWrapper, e);
             }
         }
 
-        private void initialise() throws PayloadGenerationException {
-            ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-            if (extensionScript != null) {
-                try {
-                    scriptPayloadGenerator = extensionScript.getInterface(scriptWrapper, ScriptStringPayloadGenerator.class);
-                } catch (Exception e) {
-                    handleScriptException(e);
-                }
+        private static ScriptStringPayloadGenerator initialise(ScriptWrapper scriptWrapper) throws PayloadGenerationException {
+            try {
+                return initialiseImpl(scriptWrapper);
+            } catch (Exception e) {
+                handleScriptException(scriptWrapper, e);
             }
+            return null;
         }
 
-        private void handleScriptException(Exception cause) throws PayloadGenerationException {
-            ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-            if (extensionScript != null) {
-                extensionScript.setError(scriptWrapper, cause);
-                extensionScript.setEnabled(scriptWrapper, false);
-            }
-
+        private static void handleScriptException(ScriptWrapper scriptWrapper, Exception cause) throws PayloadGenerationException {
+            handleScriptExceptionImpl(scriptWrapper, cause);
             throw new PayloadGenerationException("Failed to generate the payload:", cause);
         }
+    }
 
+    private static ScriptStringPayloadGenerator initialiseImpl(ScriptWrapper scriptWrapper) throws Exception {
+        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        if (extensionScript != null) {
+            return extensionScript.getInterface(scriptWrapper, ScriptStringPayloadGenerator.class);
+        }
+        return null;
+    }
+
+    private static void handleScriptExceptionImpl(ScriptWrapper scriptWrapper, Exception cause) {
+        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        if (extensionScript != null) {
+            extensionScript.setError(scriptWrapper, cause);
+            extensionScript.setEnabled(scriptWrapper, false);
+        }
     }
 }
