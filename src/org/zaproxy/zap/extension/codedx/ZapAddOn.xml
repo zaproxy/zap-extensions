@@ -1,10 +1,10 @@
 <zapaddon>
 	<name>Code Dx Extension</name>
-	<version>1</version>
+	<version>2</version>
 	<description>includes request and response data in xml reports</description>
 	<author>Code Dx, Inc.</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>Rework HTML tags in reports</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.codedx.CodeDxExtension</extension>
 	</extensions>

@@ -123,21 +123,21 @@ public class ReportLastScan {
                
                	report.append("<alertitem>\r\n");
         		report.append("<pluginid>").append(alert.getPluginId()).append("</pluginid>\r\n");
-        		report.append("<alert>").append(alert.getAlert()).append("</alert>\r\n");
+        		report.append("<alert>").append(replaceEntity(alert.getAlert())).append("</alert>\r\n");
         		report.append("<riskcode>").append(alert.getRisk()).append("</riskcode>\r\n");
         		report.append("<confidence>").append(alert.getConfidence()).append("</confidence>\r\n");
         		report.append("<riskdesc>").append(replaceEntity(MSG_RISK[alert.getRisk()] + " (" + MSG_CONFIDENCE[alert.getConfidence()] + ")")).append("</riskdesc>\r\n");
         		if (alertDescription) {
-        			report.append("<desc>").append(paragraph(replaceEntity(alert.getDescription()))).append("</desc>\r\n");
+        			report.append("<desc>").append(replaceEntity(paragraph(alert.getDescription()))).append("</desc>\r\n");
         		}
         		if (solution) {
-        			report.append("<solution>").append(paragraph(replaceEntity(alert.getSolution()))).append("</solution>\r\n");
+        			report.append("<solution>").append(replaceEntity(paragraph(alert.getSolution()))).append("</solution>\r\n");
         		}
         		if (alert.getOtherInfo() != null && alert.getOtherInfo().length() > 0 && otherInfo) {
-                    report.append("<otherinfo>").append(breakNoSpaceString(replaceEntity(alert.getOtherInfo()))).append("</otherinfo>\r\n");
+                    report.append("<otherinfo>").append(replaceEntity(alert.getOtherInfo())).append("</otherinfo>\r\n");
                 } 
         		if (reference) {               
-        			report.append("<reference>" ).append(paragraph(replaceEntity(alert.getReference()))).append("</reference>\r\n");
+        			report.append("<reference>" ).append(replaceEntity(paragraph(alert.getReference()))).append("</reference>\r\n");
         		}
         		if (alert.getCweId() > 0 && cweid) {
         			report.append("<cweid>" ).append(alert.getCweId()).append("</cweid>\r\n");
@@ -145,15 +145,15 @@ public class ReportLastScan {
         		if (alert.getWascId() > 0 && wascid) {
         			report.append("<wascid>" ).append(alert.getWascId()).append("</wascid>\r\n");
         		}
-        		report.append("  <uri>").append(breakNoSpaceString(replaceEntity(alert.getUri()))).append("</uri>\r\n");
+        		report.append("  <uri>").append(replaceEntity(alert.getUri())).append("</uri>\r\n");
         		if (alert.getParam().length() > 0) {
-        			report.append("<param>").append(breakNoSpaceString(replaceEntity(alert.getParam()))).append("</param>\r\n");
+        			report.append("<param>").append(replaceEntity(alert.getParam())).append("</param>\r\n");
         		}
         		if (alert.getAttack()!= null && alert.getAttack().length() > 0) {
-        			report.append("<attack>").append(breakNoSpaceString(replaceEntity(alert.getAttack()))).append("</attack>\r\n");
+        			report.append("<attack>").append(replaceEntity(alert.getAttack())).append("</attack>\r\n");
         		}
         		if (alert.getEvidence() != null && alert.getEvidence().length() > 0) {
-        			report.append("<evidence>").append(breakNoSpaceString(replaceEntity(alert.getEvidence()))).append("</evidence>\r\n");
+        			report.append("<evidence>").append(replaceEntity(alert.getEvidence())).append("</evidence>\r\n");
         		}
         		if (requestHeader) {
         			report.append("<requestheader>").append(paragraph(replaceEntity(alert.getMessage().getRequestHeader().toString()))).append("</requestheader>\r\n");
@@ -177,11 +177,7 @@ public class ReportLastScan {
     }
     
     public String paragraph(String text) {
-		String result = null;
-		result = "<p>" + text.replaceAll("\\r\\n","</p><p>").replaceAll("\\n","</p><p>") + "</p>";
-        result = result.replaceAll("&lt;ul&gt;", "<ul>").replaceAll("&lt;/ul&gt;", "</ul>").replaceAll("&lt;li&gt;", "<li>").replaceAll("&lt;/li&gt;", "</li>");
-        //result = text.replaceAll("\\r\\n","<br/>").replaceAll("\\n","<br/>");
-        return result;
+		return "<p>" + text.replaceAll("\\r\\n","</p><p>").replaceAll("\\n","</p><p>") + "</p>";
 	}
 
     public String replaceEntity(String text) {
@@ -192,14 +188,6 @@ public class ReportLastScan {
 		return result;
 	}
 
-    private String breakNoSpaceString(String text) {
-	        String result = null;
-	        if (text != null) {
-	        	result = text.replaceAll("&amp;","&amp;<wbr/>");
-	        }
-	        return result;
-	    }
-	  
     public StringBuilder getExtensionsXML(SiteNode site) {
         StringBuilder extensionXml = new StringBuilder();
         ExtensionLoader loader = Control.getSingleton().getExtensionLoader();
