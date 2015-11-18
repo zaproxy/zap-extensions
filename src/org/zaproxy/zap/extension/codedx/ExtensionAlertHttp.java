@@ -58,21 +58,13 @@ public class ExtensionAlertHttp extends ExtensionAlert {
 
         StringBuilder sb = new StringBuilder(200); // ZAP: Changed the type to StringBuilder.
         sb.append(getHTML(alert));
-        sb.append("  <uri>").append(ReportGenerator.entityEncode(uri).replaceAll("&amp;", "&amp;<wbr/>")).append("</uri>\r\n");
-        sb.append("  <param>")
-                .append(ReportGenerator.entityEncode(param).replaceAll("&amp;", "&amp;<wbr/>"))
-                .append("</param>\r\n");
-        sb.append("  <attack>")
-                .append(ReportGenerator.entityEncode(attack).replaceAll("&amp;", "&amp;<wbr/>"))
-                .append("</attack>\r\n");
+        sb.append("  <uri>").append(ReportGenerator.entityEncode(uri)).append("</uri>\r\n");
+        sb.append("  <param>").append(ReportGenerator.entityEncode(param)).append("</param>\r\n");
+        sb.append("  <attack>").append(ReportGenerator.entityEncode(attack)).append("</attack>\r\n");
         if (evidence != null && evidence.length() > 0) {
-            sb.append("  <evidence>")
-                    .append(ReportGenerator.entityEncode(evidence).replaceAll("&amp;", "&amp;<wbr/>"))
-                    .append("</evidence>\r\n");
+            sb.append("  <evidence>").append(ReportGenerator.entityEncode(evidence)).append("</evidence>\r\n");
         }
-        sb.append("  <otherinfo>")
-                .append(ReportGenerator.entityEncode(otherInfo).replaceAll("&amp;", "&amp;<wbr/>"))
-                .append("</otherinfo>\r\n");
+        sb.append("  <otherinfo>").append(ReportGenerator.entityEncode(otherInfo)).append("</otherinfo>\r\n");
         return sb.toString();
     }
 
