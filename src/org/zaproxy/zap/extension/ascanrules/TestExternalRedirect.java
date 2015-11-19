@@ -480,22 +480,22 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
     private String getRedirectionReason(int type) {
         switch (type) {
             case REDIRECT_LOCATION_HEADER:
-                return Constant.messages.getString("ascanrules.extredirect.reason.location.header");
+                return Constant.messages.getString(MESSAGE_PREFIX + "reason.location.header");
             
             case REDIRECT_LOCATION_META:
-                return Constant.messages.getString("ascanrules.extredirect.reason.location.meta");
+                return Constant.messages.getString(MESSAGE_PREFIX + "reason.location.meta");
                 
             case REDIRECT_REFRESH_HEADER:
-                return Constant.messages.getString("ascanrules.extredirect.reason.refresh.header");
+                return Constant.messages.getString(MESSAGE_PREFIX + "reason.refresh.header");
                 
             case REDIRECT_REFRESH_META:
-                return Constant.messages.getString("ascanrules.extredirect.reason.refresh.meta");
+                return Constant.messages.getString(MESSAGE_PREFIX + "reason.refresh.meta");
    
             case REDIRECT_JAVASCRIPT:
-                return Constant.messages.getString("ascanrules.extredirect.reason.javascript");
+                return Constant.messages.getString(MESSAGE_PREFIX + "reason.javascript");
         }
         
-        return Constant.messages.getString("ascanrules.extredirect.reason.notfound");
+        return Constant.messages.getString(MESSAGE_PREFIX + "reason.notfound");
     }
 
     /**
