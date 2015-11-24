@@ -17,6 +17,7 @@
     Correct the delay used when sending messages.<br>
     Improve stop time.<br>
     Fix (potential) thread leak after stopping a paused fuzzer.<br>
+    Allow to preview payloads generated or from external sources (Issue 1896)<br>
     ]]>
     </changes>
     <extensions>
