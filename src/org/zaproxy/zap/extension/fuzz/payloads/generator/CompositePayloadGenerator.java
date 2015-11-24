@@ -71,28 +71,20 @@ public class CompositePayloadGenerator<T, E extends Payload<T>> implements Paylo
 
     private static class CompositeIterator<T, E extends Payload<T>> implements ResettableAutoCloseableIterator<E> {
 
-        private List<PayloadGenerator<T, E>> payloadGenerators;
+        private final List<ResettableAutoCloseableIterator<E>> allIterators;
         private Iterator<E> iteratorChain;
-        private List<ResettableAutoCloseableIterator<E>> allIterators;
 
         public CompositeIterator(List<PayloadGenerator<T, E>> payloadGenerators) {
-            this.payloadGenerators = payloadGenerators;
-
-            initIterator();
+            allIterators = new ArrayList<>(payloadGenerators.size());
+            for (PayloadGenerator<T, E> payloadGenerator : payloadGenerators) {
+                allIterators.add(payloadGenerator.iterator());
+            }
+            initIteratorChain();
         }
 
-        private void initIterator() {
-            allIterators = new ArrayList<>();
-            IteratorChain itChain = new IteratorChain();
-            for (PayloadGenerator<T, E> payloadGenerator : payloadGenerators) {
-                @SuppressWarnings("resource")
-                ResettableAutoCloseableIterator<E> iterator = payloadGenerator.iterator();
-                itChain.addIterator(iterator);
-                allIterators.add(iterator);
-            }
-
+        private void initIteratorChain() {
             @SuppressWarnings("unchecked")
-            Iterator<E> iterators = itChain;
+            Iterator<E> iterators = new IteratorChain(allIterators);
             iteratorChain = iterators;
         }
 
@@ -112,7 +104,10 @@ public class CompositePayloadGenerator<T, E extends Payload<T>> implements Paylo
 
         @Override
         public void reset() {
-            initIterator();
+            for (ResettableAutoCloseableIterator<E> iterator : allIterators) {
+                iterator.reset();
+            }
+            initIteratorChain();
         }
 
         @Override
