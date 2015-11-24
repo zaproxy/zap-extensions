@@ -38,6 +38,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
     private final ScriptWrapper scriptWrapper;
     private boolean initialised;
     private ScriptStringPayloadGenerator scriptPayloadGenerator;
+    private long numberOfPayloads;
 
     public ScriptStringPayloadGeneratorAdapter(ScriptWrapper scriptWrapper) {
         if (scriptWrapper == null) {
@@ -48,6 +49,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
                     + ScriptStringPayloadGenerator.TYPE_NAME + "\".");
         }
         this.scriptWrapper = scriptWrapper;
+        this.numberOfPayloads = -1;
     }
 
     public ScriptStringPayloadGeneratorAdapter(ScriptWrapper scriptWrapper, ScriptStringPayloadGenerator script) {
@@ -64,10 +66,15 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
         this.scriptWrapper = scriptWrapper;
         this.scriptPayloadGenerator = script;
         this.initialised = true;
+        this.numberOfPayloads = -1;
     }
 
     @Override
     public long getNumberOfPayloads() {
+        if (numberOfPayloads >= 0) {
+            return numberOfPayloads;
+        }
+
         if (!initialised) {
             try {
                 scriptPayloadGenerator = initialiseImpl(scriptWrapper);
@@ -79,7 +86,8 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
 
         if (scriptPayloadGenerator != null) {
             try {
-                return scriptPayloadGenerator.getNumberOfPayloads();
+                numberOfPayloads = scriptPayloadGenerator.getNumberOfPayloads();
+                return numberOfPayloads;
             } catch (Exception e) {
                 LOGGER.warn("Failed to obtain number of payloads from script '" + scriptWrapper.getName() + "':", e);
             }
@@ -90,14 +98,17 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
     @Override
     public ResettableAutoCloseableIterator<StringPayload> iterator() {
         if (scriptPayloadGenerator != null) {
-            return new ScriptPayloadGeneratorIterator(scriptWrapper, scriptPayloadGenerator);
+            ScriptPayloadGeneratorIterator iterator = new ScriptPayloadGeneratorIterator(scriptWrapper, scriptPayloadGenerator);
+            // Use the existing script instance just once, otherwise it could be used by multiple iterators at the same time
+            scriptPayloadGenerator = null;
+            return iterator;
         }
         return new ScriptPayloadGeneratorIterator(scriptWrapper);
     }
 
     @Override
     public ScriptStringPayloadGeneratorAdapter copy() {
-        return this;
+        return new ScriptStringPayloadGeneratorAdapter(scriptWrapper);
     }
 
     private static class ScriptPayloadGeneratorIterator implements ResettableAutoCloseableIterator<StringPayload> {
