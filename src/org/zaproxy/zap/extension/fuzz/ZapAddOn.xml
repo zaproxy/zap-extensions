@@ -18,6 +18,7 @@
     Improve stop time.<br>
     Fix (potential) thread leak after stopping a paused fuzzer.<br>
     Allow to preview payloads generated or from external sources (Issue 1896)<br>
+    Fix the location where the characters are added in expand payload processor.<br>
     ]]>
     </changes>
     <extensions>

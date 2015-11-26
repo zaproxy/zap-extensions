@@ -72,11 +72,11 @@ public class ExpandStringProcessor implements StringPayloadProcessor {
 
         switch (position) {
         case END:
-            expandedValue.append(valuePayload);
+            expandedValue.insert(0, valuePayload);
             break;
         case BEGIN:
         default:
-            expandedValue.insert(0, valuePayload);
+            expandedValue.append(valuePayload);
         }
 
         payload.setValue(expandedValue.toString());
