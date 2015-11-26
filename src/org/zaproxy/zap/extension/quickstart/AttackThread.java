@@ -20,14 +20,11 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.text.MessageFormat;
 
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -73,7 +70,7 @@ public class AttackThread extends Thread {
 			
 			if (startNode == null) {
 				logger.debug("Failed to access URL " + urlString);
-				// Dont notify progress here - it will have been done where we know more about the problem
+				extension.notifyProgress(Progress.failed);
 				return;
 			}
 	        if (stopAttack) {
@@ -166,9 +163,7 @@ public class AttackThread extends Thread {
         
         } catch (Exception e) {
         	logger.error(e.getMessage(), e);
-			extension.notifyProgress(Progress.failed,
-					MessageFormat.format(
-							Constant.messages.getString("quickstart.progress.failed.reason"), e.getMessage()));
+	        extension.notifyProgress(Progress.failed);
 		}
 	}
 	
@@ -180,16 +175,11 @@ public class AttackThread extends Thread {
 			getHttpSender().sendAndReceive(msg,true);
 		
 	        if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
-				extension.notifyProgress(Progress.failed,
-						MessageFormat.format(
-								Constant.messages.getString("quickstart.progress.failed.code"),
-								msg.getResponseHeader().getStatusCode()));
-
+				extension.notifyProgress(Progress.failed);
 	            return null;
 	        }
 	        
 	        if (msg.getResponseHeader().isEmpty()) {
-	        	extension.notifyProgress(Progress.failed);
 	        	return null;
 	        }
 	        
@@ -214,14 +204,7 @@ public class AttackThread extends Thread {
 					// Ignore
 				}
 			}
-		} catch (UnknownHostException e1) {
-			extension.notifyProgress(Progress.failed,
-					Constant.messages.getString("quickstart.progress.failed.badhost"));
 		} catch (Exception e1) {
-        	logger.error(e1.getMessage(), e1);
-			extension.notifyProgress(Progress.failed,
-					MessageFormat.format(
-							Constant.messages.getString("quickstart.progress.failed.reason"), e1.getMessage()));
 			return null;
 		}
 		return startNode;

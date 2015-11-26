@@ -7,7 +7,6 @@
 	<changes>
 	<![CDATA[
 	 Add progress indications for quick scan launched from the command line (Issue 1891) <br>
-	 Improve Quick Attack error messages (Issue 2032) <br>
 	]]>
 	</changes>
 	<extensions>
