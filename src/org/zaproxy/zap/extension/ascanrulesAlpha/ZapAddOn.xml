@@ -10,6 +10,7 @@
 	Added Integer Overflow scanner.<br>
 	Added new scanner User Agent Fuzzer. The scanner checks for differences in response based on fuzzed User Agent.<br>
 	Slightly improve performance of "Source Code Disclosure - File Inclusion".<br>
+	Demoted LDAP rule due to performance issues
   	]]>
 	</changes>
 	<extensions>
@@ -20,6 +21,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
         <ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.IntegerOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.LDAPInjection</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ProxyDisclosureScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.RelativePathConfusionScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SlackerCookieDetector</ascanrule>
