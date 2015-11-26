@@ -310,7 +310,15 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	}
 
 	protected void notifyProgress(AttackThread.Progress progress) {
-		progressLabel.setText(Constant.messages.getString("quickstart.progress." + progress.name()));
+		this.notifyProgress(progress, null);
+	}
+
+	protected void notifyProgress(AttackThread.Progress progress, String msg) {
+		if (msg == null) {
+			progressLabel.setText(Constant.messages.getString("quickstart.progress." + progress.name()));
+		} else {
+			progressLabel.setText(msg);
+		}
 		switch (progress) {
 		case complete:
 			getAttackButton().setEnabled(true);
