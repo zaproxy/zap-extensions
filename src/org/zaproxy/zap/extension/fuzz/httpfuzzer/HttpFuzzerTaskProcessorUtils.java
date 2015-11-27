@@ -139,6 +139,15 @@ public class HttpFuzzerTaskProcessorUtils {
         httpFuzzer.stopScan();
     }
 
+    public List<Object> getPayloads() {
+        return payloads;
+    }
+
+    /**
+     * @deprecated (2.0.0) Use {@link #getPayloads()} instead.
+     */
+    @Deprecated
+    @SuppressWarnings("javadoc")
     public List<Object> getPaylaods() {
         return payloads;
     }
