@@ -19,12 +19,19 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
@@ -34,6 +41,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.RegexPayloadGeneratorUIHandler.RegexPayloadGeneratorUI;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 
@@ -137,17 +145,25 @@ public class RegexPayloadGeneratorUIHandler implements
         private static final int DEFAULT_MAX_PAYLOADS = 1000;
         private static final int DEFAULT_MAX_LENGTH = 0;
 
+        private static final int MAX_NUMBER_PAYLOADS_PREVIEW = 250;
+
         private static final String CONTENTS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.regex.label");
         private static final String MAX_PAYLOADS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.maxPayloads.label");
         private static final String MAX_PAYLOADS_FIELD_TOOL_TIP = Constant.messages.getString("fuzz.payloads.generator.regex.maxPayloads.tooltip");
         private static final String MAX_LENGTH_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.maxLength");
         private static final String MAX_LENGTH_FIELD_TOOL_TIP = Constant.messages.getString("fuzz.payloads.generator.regex.maxLength.tooltip");
 
+        private static final String PAYLOADS_PREVIEW_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.payloadsPreview.label");
+        private static final String PAYLOADS_PREVIEW_GENERATE_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.regex.payloadsPreviewGenerate.label");
+
         private JPanel fieldsPanel;
 
         private ZapTextField regexTextField;
         private ZapNumberSpinner maxPayloadsNumberSpinner;
         private ZapNumberSpinner maxLengthNumberSpinner;
+
+        private JTextArea payloadsPreviewTextArea;
+        private JButton payloadsPreviewGenerateButton;
 
         public RegexPayloadGeneratorUIPanel() {
             fieldsPanel = new JPanel();
@@ -164,18 +180,25 @@ public class RegexPayloadGeneratorUIHandler implements
             JLabel maxLengthLabel = new JLabel(MAX_LENGTH_FIELD_LABEL);
             maxLengthLabel.setLabelFor(getMaxLengthNumberSpinner());
             maxLengthLabel.setToolTipText(MAX_LENGTH_FIELD_TOOL_TIP);
+            JLabel payloadsPreviewLabel = new JLabel(PAYLOADS_PREVIEW_FIELD_LABEL);
+            payloadsPreviewLabel.setLabelFor(getPayloadsPreviewTextArea());
+
+            JScrollPane payloadsPreviewScrollPane = new JScrollPane(getPayloadsPreviewTextArea());
 
             layout.setHorizontalGroup(layout.createSequentialGroup()
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                     .addComponent(regexLabel)
                                     .addComponent(multilineLabel)
-                                    .addComponent(maxLengthLabel))
+                                    .addComponent(maxLengthLabel)
+                                    .addComponent(payloadsPreviewLabel))
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addComponent(getRegexTextField())
                                     .addComponent(getMaxPayloadsNumberSpinner())
-                                    .addComponent(getMaxLengthNumberSpinner())));
+                                    .addComponent(getMaxLengthNumberSpinner())
+                                    .addComponent(getPayloadsPreviewGenerateButton())
+                                    .addComponent(payloadsPreviewScrollPane)));
 
             layout.setVerticalGroup(layout.createSequentialGroup()
                     .addGroup(
@@ -189,13 +212,39 @@ public class RegexPayloadGeneratorUIHandler implements
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(maxLengthLabel)
-                                    .addComponent(getMaxLengthNumberSpinner())));
+                                    .addComponent(getMaxLengthNumberSpinner()))
+                    .addComponent(getPayloadsPreviewGenerateButton())
+                    .addGroup(
+                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(payloadsPreviewLabel)
+                                    .addComponent(payloadsPreviewScrollPane)));
         }
 
         private ZapTextField getRegexTextField() {
             if (regexTextField == null) {
                 regexTextField = new ZapTextField();
                 regexTextField.setColumns(25);
+                regexTextField.getDocument().addDocumentListener(new DocumentListener() {
+
+                    @Override
+                    public void removeUpdate(DocumentEvent e) {
+                        update();
+                    }
+
+                    @Override
+                    public void insertUpdate(DocumentEvent e) {
+                        update();
+                    }
+
+                    @Override
+                    public void changedUpdate(DocumentEvent e) {
+                        update();
+                    }
+
+                    private void update() {
+                        getPayloadsPreviewGenerateButton().setEnabled(!regexTextField.getText().isEmpty());
+                    }
+                });
             }
             return regexTextField;
         }
@@ -216,6 +265,54 @@ public class RegexPayloadGeneratorUIHandler implements
             return maxLengthNumberSpinner;
         }
 
+        private JButton getPayloadsPreviewGenerateButton() {
+            if (payloadsPreviewGenerateButton == null) {
+                payloadsPreviewGenerateButton = new JButton(PAYLOADS_PREVIEW_GENERATE_FIELD_LABEL);
+                payloadsPreviewGenerateButton.setEnabled(false);
+
+                payloadsPreviewGenerateButton.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        updatePayloadsPreviewTextArea();
+                    }
+                });
+            }
+            return payloadsPreviewGenerateButton;
+        }
+
+        private JTextArea getPayloadsPreviewTextArea() {
+            if (payloadsPreviewTextArea == null) {
+                payloadsPreviewTextArea = new JTextArea(15, 10);
+                payloadsPreviewTextArea.setEditable(false);
+            }
+            return payloadsPreviewTextArea;
+        }
+
+        private void updatePayloadsPreviewTextArea() {
+            StringBuilder contents = new StringBuilder();
+            try {
+                try (ResettableAutoCloseableIterator<StringPayload> payloads = new RegexPayloadGenerator(
+                        getRegexTextField().getText(),
+                        MAX_NUMBER_PAYLOADS_PREVIEW,
+                        getMaxLengthNumberSpinner().getValue().intValue()).iterator()) {
+                    for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && payloads.hasNext(); i++) {
+                        if (contents.length() > 0) {
+                            contents.append('\n');
+                        }
+                        contents.append(payloads.next().getValue());
+                    }
+                }
+                getPayloadsPreviewTextArea().setEnabled(true);
+            } catch (Exception ignore) {
+                contents.setLength(0);
+                contents.append(Constant.messages.getString("fuzz.payloads.generator.regex.payloadsPreview.error"));
+                getPayloadsPreviewTextArea().setEnabled(false);
+            }
+            getPayloadsPreviewTextArea().setText(contents.toString());
+            getPayloadsPreviewTextArea().setCaretPosition(0);
+        }
+
         @Override
         public void init(MessageLocation messageLocation) {
         }
@@ -230,6 +327,7 @@ public class RegexPayloadGeneratorUIHandler implements
             getRegexTextField().setText(payloadGeneratorUI.getRegex());
             getMaxPayloadsNumberSpinner().setValue(payloadGeneratorUI.getMaxPayloads());
             getMaxLengthNumberSpinner().setValue(payloadGeneratorUI.getMaxPayloadLength());
+            getPayloadsPreviewGenerateButton().setEnabled(true);
         }
 
         @Override
@@ -244,6 +342,7 @@ public class RegexPayloadGeneratorUIHandler implements
             getRegexTextField().discardAllEdits();
             getMaxPayloadsNumberSpinner().setValue(DEFAULT_MAX_PAYLOADS);
             getMaxLengthNumberSpinner().setValue(DEFAULT_MAX_LENGTH);
+            getPayloadsPreviewTextArea().setText("");
         }
 
         @Override

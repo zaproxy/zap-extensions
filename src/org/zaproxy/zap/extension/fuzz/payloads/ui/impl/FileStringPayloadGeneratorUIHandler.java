@@ -39,7 +39,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.parosproxy.paros.Constant;
@@ -50,6 +54,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.FileStringPayloadGeneratorUIHandler.FileStringPayloadGeneratorUI;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 
@@ -179,6 +184,8 @@ public class FileStringPayloadGeneratorUIHandler implements
 
         private static final int DEFAULT_LIMIT_NUMBER = 1000;
 
+        private static final int MAX_NUMBER_PAYLOADS_PREVIEW = 500;
+
         private static final String FILE_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.file.file.label");
         private static final String FILE_CHOOSER_BUTTON_LABEL = Constant.messages.getString("fuzz.payloads.generator.file.file.button");
         private static final String FILE_DESCRIPTION = Constant.messages.getString("fuzz.payloads.generator.file.file.description");
@@ -191,6 +198,7 @@ public class FileStringPayloadGeneratorUIHandler implements
         private static final String IGNORE_EMPTY_LINES_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.file.ignoreEmptyLines.label");
         private static final String IGNORE_EMPTY_LINES_FIELD_TOOL_TIP = Constant.messages.getString("fuzz.payloads.generator.file.ignoreEmptyLines.tooltip");
         private static final String IGNORE_FIRST_LINE_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.file.ignoreFirstLine.label");
+        private static final String PAYLOADS_PREVIEW_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.file.payloadsPreview.label");
 
         private JPanel fieldsPanel;
 
@@ -202,6 +210,7 @@ public class FileStringPayloadGeneratorUIHandler implements
         private ZapTextField commentTokenTextField;
         private JCheckBox ignoreEmptyLinesCheckBox;
         private JCheckBox ignoreFirstLineCheckBox;
+        private JTextArea payloadsPreviewTextArea;
 
         private long numberOfPayloads;
 
@@ -228,6 +237,10 @@ public class FileStringPayloadGeneratorUIHandler implements
             ignoreEmptyLinesLabel.setLabelFor(getIgnoreEmptyLinesCheckBox());
             JLabel ignoreFirstLineLabel = new JLabel(IGNORE_FIRST_LINE_FIELD_LABEL);
             ignoreFirstLineLabel.setLabelFor(getIgnoreFirstLineCheckBox());
+            JLabel payloadsPreviewLabel = new JLabel(PAYLOADS_PREVIEW_FIELD_LABEL);
+            payloadsPreviewLabel.setLabelFor(getPayloadsPreviewTextArea());
+
+            JScrollPane payloadsPreviewScrollPane = new JScrollPane(getPayloadsPreviewTextArea());
 
             layout.setHorizontalGroup(layout.createSequentialGroup()
                     .addGroup(
@@ -238,7 +251,8 @@ public class FileStringPayloadGeneratorUIHandler implements
                                     .addComponent(limitValueLabel)
                                     .addComponent(commentTokenLabel)
                                     .addComponent(ignoreEmptyLinesLabel)
-                                    .addComponent(ignoreFirstLineLabel))
+                                    .addComponent(ignoreFirstLineLabel)
+                                    .addComponent(payloadsPreviewLabel))
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addGroup(
@@ -250,7 +264,8 @@ public class FileStringPayloadGeneratorUIHandler implements
                                     .addComponent(getLimitNumberSpinner())
                                     .addComponent(getCommentTokenTextField())
                                     .addComponent(getIgnoreEmptyLinesCheckBox())
-                                    .addComponent(getIgnoreFirstLineCheckBox())));
+                                    .addComponent(getIgnoreFirstLineCheckBox())
+                                    .addComponent(payloadsPreviewScrollPane)));
 
             layout.setVerticalGroup(layout.createSequentialGroup()
                     .addGroup(
@@ -281,7 +296,11 @@ public class FileStringPayloadGeneratorUIHandler implements
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(ignoreFirstLineLabel)
-                                    .addComponent(getIgnoreFirstLineCheckBox())));
+                                    .addComponent(getIgnoreFirstLineCheckBox()))
+                    .addGroup(
+                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(payloadsPreviewLabel)
+                                    .addComponent(payloadsPreviewScrollPane)));
         }
 
         private JTextField getFileTextField() {
@@ -333,6 +352,7 @@ public class FileStringPayloadGeneratorUIHandler implements
                             lastSelectedDirectory = selectedFile.toPath().getParent();
 
                             getFileTextField().setText(selectedFile.getAbsolutePath());
+                            updatePayloadsPreviewTextArea();
                         }
 
                     }
@@ -341,9 +361,55 @@ public class FileStringPayloadGeneratorUIHandler implements
             return fileChooserButton;
         }
 
+        private void updatePayloadsPreviewTextArea() {
+            StringBuilder contents = new StringBuilder(MAX_NUMBER_PAYLOADS_PREVIEW * 25);
+            if (!getFileTextField().getText().isEmpty()) {
+                try {
+                    int numberOfPayloads = FileStringPayloadGenerator.calculateNumberOfPayloads(
+                            Paths.get(getFileTextField().getText()),
+                            (Charset) getCharsetComboBox().getSelectedItem(),
+                            MAX_NUMBER_PAYLOADS_PREVIEW,
+                            getCommentTokenTextField().getText(),
+                            getIgnoreEmptyLinesCheckBox().isSelected(),
+                            getIgnoreFirstLineCheckBox().isSelected());
+
+                    FileStringPayloadGenerator payloadGenerator = new FileStringPayloadGenerator(
+                            Paths.get(getFileTextField().getText()),
+                            (Charset) getCharsetComboBox().getSelectedItem(),
+                            MAX_NUMBER_PAYLOADS_PREVIEW,
+                            getCommentTokenTextField().getText(),
+                            getIgnoreEmptyLinesCheckBox().isSelected(),
+                            getIgnoreFirstLineCheckBox().isSelected(),
+                            numberOfPayloads);
+                    try (ResettableAutoCloseableIterator<StringPayload> payloads = payloadGenerator.iterator()) {
+                        for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && payloads.hasNext(); i++) {
+                            if (contents.length() > 0) {
+                                contents.append('\n');
+                            }
+                            contents.append(payloads.next().getValue());
+                        }
+                    }
+                    getPayloadsPreviewTextArea().setEnabled(true);
+                } catch (Exception ignore) {
+                    contents.setLength(0);
+                    contents.append(Constant.messages.getString("fuzz.payloads.generator.file.payloadsPreview.error"));
+                    getPayloadsPreviewTextArea().setEnabled(false);
+                }
+            }
+            getPayloadsPreviewTextArea().setText(contents.toString());
+            getPayloadsPreviewTextArea().setCaretPosition(0);
+        }
+
         private JComboBox<Charset> getCharsetComboBox() {
             if (charsetComboBox == null) {
                 charsetComboBox = new JComboBox<>(new DefaultComboBoxModel<>(CHARSETS));
+                charsetComboBox.addItemListener(new ItemListener() {
+
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        updatePayloadsPreviewTextArea();
+                    }
+                });
             }
             return charsetComboBox;
         }
@@ -376,6 +442,27 @@ public class FileStringPayloadGeneratorUIHandler implements
             if (commentTokenTextField == null) {
                 commentTokenTextField = new ZapTextField(FileStringPayloadGenerator.DEFAULT_COMMENT_TOKEN);
                 commentTokenTextField.setColumns(25);
+                commentTokenTextField.getDocument().addDocumentListener(new DocumentListener() {
+
+                    @Override
+                    public void removeUpdate(DocumentEvent e) {
+                        update();
+                    }
+
+                    @Override
+                    public void insertUpdate(DocumentEvent e) {
+                        update();
+                    }
+
+                    @Override
+                    public void changedUpdate(DocumentEvent e) {
+                        update();
+                    }
+
+                    private void update() {
+                        updatePayloadsPreviewTextArea();
+                    }
+                });
             }
             return commentTokenTextField;
         }
@@ -384,6 +471,13 @@ public class FileStringPayloadGeneratorUIHandler implements
             if (ignoreEmptyLinesCheckBox == null) {
                 ignoreEmptyLinesCheckBox = new JCheckBox();
                 ignoreEmptyLinesCheckBox.setToolTipText(IGNORE_EMPTY_LINES_FIELD_TOOL_TIP);
+                ignoreEmptyLinesCheckBox.addItemListener(new ItemListener() {
+
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        updatePayloadsPreviewTextArea();
+                    }
+                });
             }
             return ignoreEmptyLinesCheckBox;
         }
@@ -391,8 +485,23 @@ public class FileStringPayloadGeneratorUIHandler implements
         private JCheckBox getIgnoreFirstLineCheckBox() {
             if (ignoreFirstLineCheckBox == null) {
                 ignoreFirstLineCheckBox = new JCheckBox();
+                ignoreFirstLineCheckBox.addItemListener(new ItemListener() {
+
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        updatePayloadsPreviewTextArea();
+                    }
+                });
             }
             return ignoreFirstLineCheckBox;
+        }
+
+        private JTextArea getPayloadsPreviewTextArea() {
+            if (payloadsPreviewTextArea == null) {
+                payloadsPreviewTextArea = new JTextArea(5, 10);
+                payloadsPreviewTextArea.setEditable(false);
+            }
+            return payloadsPreviewTextArea;
         }
 
         @Override
@@ -413,6 +522,7 @@ public class FileStringPayloadGeneratorUIHandler implements
             getCommentTokenTextField().setText(payloadGeneratorUI.getCommentToken());
             getIgnoreEmptyLinesCheckBox().setSelected(payloadGeneratorUI.isIgnoreEmptyLines());
             numberOfPayloads = payloadGeneratorUI.getNumberOfPayloads();
+            updatePayloadsPreviewTextArea();
         }
 
         @Override
@@ -437,6 +547,7 @@ public class FileStringPayloadGeneratorUIHandler implements
             getCommentTokenTextField().discardAllEdits();
             getIgnoreEmptyLinesCheckBox().setSelected(false);
             numberOfPayloads = 0;
+            getPayloadsPreviewTextArea().setText("");
         }
 
         @Override
