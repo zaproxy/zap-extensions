@@ -94,7 +94,7 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
 
         @Override
         public boolean isMutable() {
-            return false;
+            return true;
         }
 
         @Override
@@ -154,18 +154,13 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
 
         @Override
         public void setPayloadProcessorUI(ScriptStringPayloadProcessorAdapterUI payloadProcessorUI) {
-            scriptComboBox.setSelectedItem(payloadProcessorUI.getScriptWrapper());
+            scriptComboBox.setSelectedItem(new ScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
         }
 
         @Override
         public ScriptStringPayloadProcessorAdapterUI getPayloadProcessorUI() {
             return new ScriptStringPayloadProcessorAdapterUI(
                     ((ScriptUIEntry) scriptComboBox.getSelectedItem()).getScriptWrapper());
-        }
-
-        @Override
-        public void clear() {
-            scriptComboBox.setSelectedIndex(-1);
         }
 
         @Override
