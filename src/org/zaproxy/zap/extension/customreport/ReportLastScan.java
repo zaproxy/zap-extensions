@@ -1,22 +1,20 @@
 /*
- *
- * Paros and its related class files.
+ * Zed Attack Proxy (ZAP) and its related class files.
  * 
- * Paros is an HTTP/HTTPS proxy for assessing web application security.
- * Copyright (C) 2003-2004 Chinotec Technologies Company
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the Clarified Artistic License
- * as published by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * Clarified Artistic License for more details.
- * 
- * You should have received a copy of the Clarified Artistic License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *   http://www.apache.org/licenses/LICENSE-2.0 
+ *   
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ * This file is based on the Paros code file ReportLastScan.java
  */
 // ZAP: 2011/10/01 Fixed filename problem (issue 161)
 // ZAP: 2012/01/24 Changed outer XML (issue 268) c/o Alla
