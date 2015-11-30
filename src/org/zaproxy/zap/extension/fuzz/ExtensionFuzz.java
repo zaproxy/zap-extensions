@@ -132,6 +132,8 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     private FuzzerPayloadCategory fuzzerPayloadJBroFuzzCategory;
     private FuzzersDir fuzzersDir;
 
+    private List<FuzzersDirChangeListener> fuzzersDirChangeListeners;
+
     private List<FuzzerHandler<?, ?>> fuzzerHandlers;
     private FuzzerHandler<?, ?> defaultFuzzerHandler;
     private ScriptType scriptTypeGenerator;
@@ -457,6 +459,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         if (fuzzOptionsPanel != null) {
             fuzzOptionsPanel.setFuzzersDir(fuzzersDir);
         }
+        notifyFuzzersDirChanged();
     }
 
     private static String createSubCategoryFullName(List<String> categories) {
@@ -674,17 +677,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
 
         @Override
         public void added(Path file) {
-            List<FuzzerPayloadCategory> newCategories = new ArrayList<>(fuzzersDir.getCategories());
-            FuzzerPayloadCategory customFuzzerFilesCategory = newCategories.remove(0);
-
-            List<FuzzerPayloadSource> customFiles = new ArrayList<>(
-                    customFuzzerFilesCategory.getFuzzerPayloadSources().size() + 1);
-            customFiles.addAll(customFuzzerFilesCategory.getFuzzerPayloadSources());
-            customFiles.add(new FuzzerPayloadFileSource(file));
-
-            newCategories.add(0, createCustomFuzzerFilesCategory(customFiles));
-
-            fuzzersDir = new FuzzersDir(newCategories);
+            addCustomFileFuzzer(file);
         }
 
     }
@@ -739,5 +732,68 @@ public class ExtensionFuzz extends ExtensionAdaptor {
             }
             showFuzzerDialog(selection.getFuzzerHandler(), selection.getMessage());
         }
+    }
+
+    public void addCustomFileFuzzer(Path file) {
+        if (file == null) {
+            return;
+        }
+        String fileName = file.getFileName().toString();
+        for (FuzzerPayloadSource customFile : fuzzersDir.getCategories().get(0).getFuzzerPayloadSources()) {
+            if (fileName.equals(customFile.getName())) {
+                return;
+            }
+        }
+        List<FuzzerPayloadCategory> newCategories = new ArrayList<>(fuzzersDir.getCategories());
+        FuzzerPayloadCategory customFuzzerFilesCategory = newCategories.remove(0);
+
+        List<FuzzerPayloadSource> customFiles = new ArrayList<>(customFuzzerFilesCategory.getFuzzerPayloadSources().size() + 1);
+        customFiles.addAll(customFuzzerFilesCategory.getFuzzerPayloadSources());
+        customFiles.add(new FuzzerPayloadFileSource(file));
+
+        newCategories.add(0, createCustomFuzzerFilesCategory(customFiles));
+
+        fuzzersDir = new FuzzersDir(newCategories);
+        notifyFuzzersDirChanged();
+    }
+
+    private void notifyFuzzersDirChanged() {
+        if (fuzzersDirChangeListeners != null) {
+            for (FuzzersDirChangeListener listener : getFuzzersDirChangeListeners()) {
+                listener.fuzzersDirChanged(fuzzersDir);
+            }
+        }
+    }
+
+    public void addFuzzersDirChangeListener(FuzzersDirChangeListener listener) {
+        if (listener == null || getFuzzersDirChangeListeners().contains(listener)) {
+            return;
+        }
+        getFuzzersDirChangeListeners().add(listener);
+    }
+
+    public void removeFuzzersDirChangeListener(FuzzersDirChangeListener listener) {
+        if (listener == null || fuzzersDirChangeListeners == null) {
+            return;
+        }
+        getFuzzersDirChangeListeners().remove(listener);
+    }
+
+    private List<FuzzersDirChangeListener> getFuzzersDirChangeListeners() {
+        if (fuzzersDirChangeListeners == null) {
+            createFuzzersDirChangeListeners();
+        }
+        return fuzzersDirChangeListeners;
+    }
+
+    private synchronized void createFuzzersDirChangeListeners() {
+        if (fuzzersDirChangeListeners == null) {
+            fuzzersDirChangeListeners = new ArrayList<>(2);
+        }
+    }
+
+    public interface FuzzersDirChangeListener {
+
+        void fuzzersDirChanged(FuzzersDir fuzzersDir);
     }
 }

@@ -43,7 +43,6 @@ import org.zaproxy.zap.extension.fuzz.payloads.generator.ScriptStringPayloadGene
 import org.zaproxy.zap.extension.fuzz.payloads.generator.ScriptStringPayloadGeneratorAdapter;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
-import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.ScriptStringPayloadGeneratorAdapterUIHandler.ScriptStringPayloadGeneratorAdapterUI;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -143,8 +142,8 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
     }
 
     public static class ScriptStringPayloadGeneratorAdapterUIPanel
-            implements
-            PayloadGeneratorUIPanel<String, StringPayload, ScriptStringPayloadGeneratorAdapter, ScriptStringPayloadGeneratorAdapterUI> {
+            extends
+            AbstractPersistentPayloadGeneratorUIPanel<String, StringPayload, ScriptStringPayloadGeneratorAdapter, ScriptStringPayloadGeneratorAdapterUI> {
 
         private static final int MAX_NUMBER_PAYLOADS_PREVIEW = 250;
 
@@ -174,7 +173,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                     }
                 }
             });
-            getPayloadsPreviewGenerateButton().setEnabled(scriptComboBox.getSelectedIndex() >= 0);
+            setPreviewAndSaveButtonsEnabled(scriptComboBox.getSelectedIndex() >= 0);
 
             fieldsPanel = new JPanel();
 
@@ -198,7 +197,10 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addComponent(scriptComboBox)
-                                    .addComponent(getPayloadsPreviewGenerateButton())
+                                    .addGroup(
+                                            layout.createSequentialGroup()
+                                                    .addComponent(getPayloadsPreviewGenerateButton())
+                                                    .addComponent(getSaveButton()))
                                     .addComponent(payloadsPreviewScrollPane)));
 
             layout.setVerticalGroup(layout.createSequentialGroup()
@@ -206,7 +208,10 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                             layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(scriptLabel)
                                     .addComponent(scriptComboBox))
-                    .addComponent(getPayloadsPreviewGenerateButton())
+                    .addGroup(
+                            layout.createParallelGroup()
+                                    .addComponent(getPayloadsPreviewGenerateButton())
+                                    .addComponent(getSaveButton()))
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(payloadsPreviewLabel)
@@ -238,17 +243,13 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
         }
 
         private void updatePayloadsPreviewTextArea() {
-            if (!validateScriptImpl()) {
+            ScriptStringPayloadGeneratorAdapter scriptPayloadGenerator = getPayloadGenerator();
+            if (scriptPayloadGenerator == null) {
                 return;
             }
-            ScriptUIEntry scriptUIEntry = ((ScriptUIEntry) scriptComboBox.getSelectedItem());
-            ScriptWrapper scriptWrapper = scriptUIEntry.getScriptWrapper();
-            ScriptStringPayloadGenerator scriptPayloadGenerator = scriptUIEntry.getScriptPayloadGenerator();
             StringBuilder contents = new StringBuilder();
             try {
-                try (ResettableAutoCloseableIterator<StringPayload> itPayloads = new ScriptStringPayloadGeneratorAdapter(
-                        scriptWrapper,
-                        scriptPayloadGenerator).iterator()) {
+                try (ResettableAutoCloseableIterator<StringPayload> itPayloads = scriptPayloadGenerator.iterator()) {
                     for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && itPayloads.hasNext(); i++) {
                         if (contents.length() > 0) {
                             contents.append('\n');
@@ -276,8 +277,13 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
         }
 
         private void updatePreviewFor(ScriptUIEntry entry) {
-            getPayloadsPreviewGenerateButton().setEnabled(!entry.getScriptWrapper().isError());
+            setPreviewAndSaveButtonsEnabled(!entry.getScriptWrapper().isError());
             getPayloadsPreviewTextArea().setText("");
+        }
+
+        private void setPreviewAndSaveButtonsEnabled(boolean enabled) {
+            getPayloadsPreviewGenerateButton().setEnabled(enabled);
+            getSaveButton().setEnabled(enabled);
         }
 
         @Override
@@ -292,7 +298,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
             if (scriptUIEntry != null) {
                 scriptUIEntry.setScriptPayloadGenerator(payloadGeneratorUI.getScriptStringPayloadGenerator());
             }
-            getPayloadsPreviewGenerateButton().setEnabled(true);
+            setPreviewAndSaveButtonsEnabled(true);
         }
 
         @Override
@@ -303,12 +309,22 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
         }
 
         @Override
+        protected ScriptStringPayloadGeneratorAdapter getPayloadGenerator() {
+            if (!validateScriptImpl()) {
+                return null;
+            }
+            ScriptUIEntry scriptUIEntry = ((ScriptUIEntry) scriptComboBox.getSelectedItem());
+            ScriptWrapper scriptWrapper = scriptUIEntry.getScriptWrapper();
+            return new ScriptStringPayloadGeneratorAdapter(scriptWrapper, scriptUIEntry.getScriptPayloadGenerator());
+        }
+
+        @Override
         public void clear() {
             for (int i = 0; i < scriptComboBox.getItemCount(); i++) {
                 scriptComboBox.getItemAt(i).setScriptPayloadGenerator(null);
             }
             getPayloadsPreviewTextArea().setText("");
-            getPayloadsPreviewGenerateButton().setEnabled(false);
+            setPreviewAndSaveButtonsEnabled(false);
         }
 
         @Override
@@ -362,7 +378,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                         handleScriptExceptionImpl(
                                 scriptWrapper,
                                 Constant.messages.getString("fuzz.payloads.generator.script.warnNoInterface.message"));
-                        getPayloadsPreviewGenerateButton().setEnabled(false);
+                        setPreviewAndSaveButtonsEnabled(false);
                         return false;
                     }
                 } catch (Exception e) {
@@ -373,7 +389,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                             Constant.messages.getString("fuzz.payloads.generator.script.warnNoInterface.title"),
                             JOptionPane.INFORMATION_MESSAGE);
                     LOGGER.warn("Failed to initialise '" + scriptWrapper.getName() + "': " + e.getMessage());
-                    getPayloadsPreviewGenerateButton().setEnabled(false);
+                    setPreviewAndSaveButtonsEnabled(false);
                     return false;
                 }
                 scriptUIEntry.setScriptPayloadGenerator(scriptPayloadGenerator);

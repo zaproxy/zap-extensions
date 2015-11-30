@@ -22,6 +22,7 @@
     Allow to modify the selected Payload Processor script.<br>
     Show current payloads when adding/modifying processors (Issue 1898).<br>
     Allow to preview processing of payloads (Issue 1931).<br>
+    Allow to save (to file) String, Regex, File and Script payloads (Issue 1932).<br>
     ]]>
     </changes>
     <extensions>
