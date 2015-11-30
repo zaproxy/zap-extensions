@@ -86,6 +86,8 @@
         <build-addon name="fuzzdb" />
         <build-addon name="gettingStarted" />
 	<build-addon name="help" />
+	<build-addon name="help_pt_BR" />
+	<build-addon name="onlineMenu" />
         <build-addon name="pscanrules" />
         <build-addon name="quickstart" />
         <build-addon name="reveal" />
@@ -93,7 +95,7 @@
 	<build-addon name="selenium" />
         <build-addon name="spiderAjax" />
         <build-addon name="websocket" />
-		
+        		
     </target>
     
     <!-- Plugin specific build -->
