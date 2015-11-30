@@ -77,14 +77,13 @@
 
 		<delete file="${versions.file}"/>
 		
-		<!-- Keep in alphabetical order ;) -->
+		<!-- Keep in alphabetical order ;) -->		
 		<build-addon name="alertReport" />
 		<build-addon name="ascanrulesBeta" />
 		<build-addon name="beanshell" />
 		<build-bruteforce-addon />
 		<build-addon name="diff" />
 		<build-addon name="fuzz" />
-		<build-addon name="help_pt_BR" />
 		<build-addon name="importurls" />
 		<build-addon name="invoke" />
 		<build-addon name="jruby" />
@@ -99,7 +98,6 @@
 		<build-tokengen-addon />
 		<build-addon name="treetools" />
 		<build-addon name="zest" />
-		
     </target>
     
     <!-- Plugin specific build -->
