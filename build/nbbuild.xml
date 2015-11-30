@@ -78,31 +78,40 @@
         <delete file="${versions.file}"/>
                 
         <!-- 'Standard' addons (keep in alphabetical order ;) -->
-        <build-addon name="accessControl" />
-        <build-addon name="amf" />
-        <build-addon name="ascanrulesAlpha" />
-        <build-addon name="birtreports" />
-        <build-addon name="browserView" />
-        <build-addon name="callgraph" />
-        <build-addon name="cmss" />
-        <build-addon name="highlighter" />
-        <build-addon name="httpsInfo" />
-        <build-addon name="importLogFiles" />
-	<build-addon name="pscanrulesAlpha" >
-		<!-- Add the extra classes required -->
-		<jar jarfile="${dist.dir}/${file}" update="true" compress="true">
-			<zipfileset dir="${build.dir}" prefix="">
-				<include name="com/veggiespam/imagelocationscanner/**"/>
-			</zipfileset>
-		</jar>
-	</build-addon>
-        <build-addon name="saml" />
-        <build-addon name="sequence" />
-        <build-addon name="simpleExample" />
-        <build-addon name="sniTerminator" />
-        <build-addon name="soap" />
-        <build-addon name="sse" />
-        <build-addon name="wappalyzer" />		
+		<build-addon name="accessControl" />
+		<build-addon name="alertFilters" />
+		<build-addon name="amf" />
+		<build-addon name="ascanrulesAlpha" />
+		<build-addon name="birtreports" />
+		<build-addon name="browserView" />
+		<build-addon name="callgraph" />
+		<build-addon name="cmss" />
+		<build-addon name="codedx"/>
+		<build-addon name="customreport"/>
+		<build-addon name="domxss"/>
+		<build-addon name="help_bs_BA" />
+		<build-addon name="help_es_ES" />
+		<build-addon name="help_fr_FR" />
+		<build-addon name="help_ja_JP" />
+		<build-addon name="highlighter" />
+		<build-addon name="httpsInfo" />
+		<build-addon name="importLogFiles" />
+		<build-addon name="pscanrulesAlpha" >
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist.dir}/${file}" update="true" compress="true">
+					<zipfileset dir="${build.dir}" prefix="">
+						<include name="com/veggiespam/imagelocationscanner/**"/>
+					</zipfileset>
+				</jar>
+			</build-addon>
+		<build-addon name="revisit" />
+		<build-addon name="saml" />
+		<build-addon name="sequence" />
+		<build-addon name="simpleExample" />
+		<build-addon name="sniTerminator" />
+		<build-addon name="soap" />
+		<build-addon name="sse" />
+		<build-addon name="wappalyzer" />
     </target>
 
     <!--     
