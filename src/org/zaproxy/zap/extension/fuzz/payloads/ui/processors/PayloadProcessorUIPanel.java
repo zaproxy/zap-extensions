@@ -35,6 +35,8 @@ public interface PayloadProcessorUIPanel<T1, T2 extends Payload<T1>, T3 extends 
 
     T4 getPayloadProcessorUI();
 
+    T3 getPayloadProcessor();
+
     void clear();
 
     boolean validate();

@@ -115,6 +115,11 @@ public class JavaScriptEscapeProcessorUIHandler implements
         }
 
         @Override
+        public JavaScriptEscapeProcessor getPayloadProcessor() {
+            return JavaScriptEscapeProcessor.INSTANCE;
+        }
+
+        @Override
         public String getHelpTarget() {
             // THC add help page...
             return null;

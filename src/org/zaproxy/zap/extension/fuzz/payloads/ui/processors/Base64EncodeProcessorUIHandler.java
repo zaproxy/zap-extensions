@@ -187,6 +187,13 @@ public class Base64EncodeProcessorUIHandler implements
         }
 
         @Override
+        public Base64EncodeProcessor getPayloadProcessor() {
+            return new Base64EncodeProcessor(
+                    (Charset) getCharsetComboBox().getSelectedItem(),
+                    getBreakLinesCheckBox().isSelected());
+        }
+
+        @Override
         public String getHelpTarget() {
             // THC add help page...
             return null;

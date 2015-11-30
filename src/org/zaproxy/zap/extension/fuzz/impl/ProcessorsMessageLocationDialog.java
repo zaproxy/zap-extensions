@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.fuzz.impl;
 
 import java.awt.Dialog;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,6 +37,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUI;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.AbstractFormDialog;
 import org.zaproxy.zap.view.AbstractMultipleOrderedOptionsBaseTablePanel;
 
@@ -58,6 +60,8 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
     private PayloadProcessorsContainer processorsUIHandlers;
 
     private List<PayloadProcessorTableEntry> processors;
+
+    private ResettableAutoCloseableIterator<Payload<?>> payloads;
 
     private MessageLocation messageLocation;
     private JLabel messageLocationLabel;
@@ -124,6 +128,7 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
     @Override
     protected void clearFields() {
         messageLocation = null;
+        payloads = null;
         processorsTablePanel.setProcessors(Collections.<PayloadProcessorTableEntry> emptyList());
     }
 
@@ -182,7 +187,8 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
             AddProcessorDialog addProcessorDialog = new AddProcessorDialog(
                     ProcessorsMessageLocationDialog.this,
                     processorsUIHandlers,
-                    messageLocation);
+                    messageLocation,
+                    getProcessedPayloads());
             addProcessorDialog.pack();
             addProcessorDialog.setVisible(true);
 
@@ -200,7 +206,7 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
 
         @Override
         public PayloadProcessorTableEntry showModifyDialogue(PayloadProcessorTableEntry e) {
-            PayloadProcessorUI<?, ?, ?> processorUI = showModifyDialogueImpl((PayloadProcessorUI)e.getPayloadProcessorUI());
+            PayloadProcessorUI<?, ?, ?> processorUI = showModifyDialogueImpl(e, (PayloadProcessorUI)e.getPayloadProcessorUI());
 
             if (processorUI != null) {
                 e.setPayloadProcessorUI(processorUI);
@@ -210,11 +216,12 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
         }
 
         private <T, T0 extends Payload<T>, T1 extends PayloadProcessor<T, T0>, T2 extends PayloadProcessorUI<T, T0, T1>> T2 showModifyDialogueImpl(
-                T2 payloadGeneratorUI) {
+                PayloadProcessorTableEntry e, T2 payloadGeneratorUI) {
             ModifyProcessorDialog<T, T0, T1, T2> modifyProcessorDialog = new ModifyProcessorDialog<>(
                     ProcessorsMessageLocationDialog.this,
                     processorsUIHandlers.getPanel(payloadGeneratorUI),
-                    payloadGeneratorUI);
+                    payloadGeneratorUI,
+                    getProcessedPayloads(e.getOrder() - 1));
             modifyProcessorDialog.pack();
             modifyProcessorDialog.setVisible(true);
 
@@ -254,5 +261,27 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
     public void setPayloadProcessors(List<PayloadProcessorTableEntry> processors) {
         this.processors = processors;
         this.processorsTablePanel.setProcessors(processors);
+    }
+
+    public void setPayloads(ResettableAutoCloseableIterator<Payload<?>> payloads) {
+        this.payloads = payloads;
+    }
+
+    private ResettableAutoCloseableIterator<Payload<?>> getProcessedPayloads() {
+        return getProcessedPayloads(-1);
+    }
+
+    private ResettableAutoCloseableIterator<Payload<?>> getProcessedPayloads(int numberOfProcessors) {
+        List<PayloadProcessor<?, Payload<?>>> currentProcessors = new ArrayList<>();
+        int count = 0;
+        for (PayloadProcessorTableEntry processorEntry : processorsTablePanel.getProcessors()) {
+            if (numberOfProcessors > -1 && count >= numberOfProcessors) {
+                break;
+            }
+            currentProcessors
+                    .add((PayloadProcessor<?, Payload<?>>) processorEntry.getPayloadProcessorUI().getPayloadProcessor());
+            count++;
+        }
+        return new PayloadsProcessedIterator(payloads, currentProcessors);
     }
 }

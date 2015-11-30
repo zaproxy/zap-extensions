@@ -41,6 +41,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUIHandlersRegistry;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.StringUIUtils;
 import org.zaproxy.zap.view.AbstractMultipleOrderedOptionsBaseTablePanel;
 
@@ -182,6 +183,7 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
                     processorsDialog.setMessageLocation(messageLocation);
                     processorsDialog.setPayloadProcessors(payloadTableEntry.getPayloadProcessors());
+                    processorsDialog.setPayloads((ResettableAutoCloseableIterator<Payload<?>>) payloadTableEntry.getPayloadGeneratorUI().getPayloadGenerator().iterator());
                     processorsDialog.setVisible(true);
 
                     payloadTableEntry.setPayloadProcessors(processorsDialog.getProcessors());

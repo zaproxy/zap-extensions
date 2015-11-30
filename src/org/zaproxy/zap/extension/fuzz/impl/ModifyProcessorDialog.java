@@ -30,6 +30,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUIPanel;
+import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
 public class ModifyProcessorDialog<T0, T01 extends Payload<T0>, T1 extends PayloadProcessor<T0, T01>, T2 extends PayloadProcessorUI<T0, T01, T1>>
@@ -46,10 +47,15 @@ public class ModifyProcessorDialog<T0, T01 extends Payload<T0>, T1 extends Paylo
 
     private PayloadProcessorUIPanel<T0, T01, T1, T2> contentPanel;
 
-    public ModifyProcessorDialog(Dialog owner, PayloadProcessorUIPanel<T0, T01, T1, T2> panel, T2 processorUI) {
+    private PayloadPreviewPanel previewPanel;
+
+    public ModifyProcessorDialog(Dialog owner, PayloadProcessorUIPanel<T0, T01, T1, T2> panel, T2 processorUI, ResettableAutoCloseableIterator<Payload<?>> payloads) {
         super(owner, DIALOG_TITLE, false);
 
         nameType = processorUI.getName();
+
+        previewPanel = new PayloadPreviewPanel(payloads);
+        previewPanel.setPayloadProcessorUIPanel(panel);
 
         contentPanel = panel;
         contentPanel.setPayloadProcessorUI(processorUI);
@@ -82,14 +88,16 @@ public class ModifyProcessorDialog<T0, T01 extends Payload<T0>, T1 extends Paylo
                                 .addGroup(
                                         groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                                 nameTypeLabel)))
-                .addComponent(contentPanel.getComponent()));
+                .addComponent(contentPanel.getComponent())
+                .addComponent(previewPanel.getPanel()));
 
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
                 .addGroup(
                         groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(typeLabel)
                                 .addComponent(nameTypeLabel))
-                .addComponent(contentPanel.getComponent()));
+                .addComponent(contentPanel.getComponent())
+                .addComponent(previewPanel.getPanel()));
 
         return fieldsPanel;
     }
@@ -102,6 +110,7 @@ public class ModifyProcessorDialog<T0, T01 extends Payload<T0>, T1 extends Paylo
     @Override
     protected void clearFields() {
         contentPanel.clear();
+        previewPanel.clear();
     }
 
     @Override

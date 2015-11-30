@@ -30,9 +30,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUIPanel;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
@@ -57,10 +59,13 @@ public class AddProcessorDialog extends AbstractFormDialog {
 
     private PayloadProcessorUIPanel<?, ?, ?, ?> currentPanel;
 
-    public AddProcessorDialog(Dialog owner, PayloadProcessorsContainer processorsUIHandlers, MessageLocation messageLocation) {
+    private PayloadPreviewPanel previewPanel;
+
+    public AddProcessorDialog(Dialog owner, PayloadProcessorsContainer processorsUIHandlers, MessageLocation messageLocation, ResettableAutoCloseableIterator<Payload<?>> payloads) {
         super(owner, DIALOG_TITLE, false);
 
         this.processorsUIHandlers = processorsUIHandlers;
+        previewPanel = new PayloadPreviewPanel(payloads);
 
         getPayloadUIHandlersComboBox().setSelectedIndex(-1);
         for (PayloadProcessorUIPanel<?, ?, ?, ?> panel : processorsUIHandlers.getPanels()) {
@@ -100,14 +105,16 @@ public class AddProcessorDialog extends AbstractFormDialog {
                                 .addGroup(
                                         groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                                 getPayloadUIHandlersComboBox())))
-                .addComponent(contentsPanel));
+                .addComponent(contentsPanel)
+                .addComponent(previewPanel.getPanel()));
 
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
                 .addGroup(
                         groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(typeLabel)
                                 .addComponent(getPayloadUIHandlersComboBox()))
-                .addComponent(contentsPanel));
+                .addComponent(contentsPanel)
+                .addComponent(previewPanel.getPanel()));
 
         return fieldsPanel;
     }
@@ -123,6 +130,7 @@ public class AddProcessorDialog extends AbstractFormDialog {
             panel.clear();
         }
         contentsPanel.removeAll();
+        previewPanel.clear();
     }
 
     @Override
@@ -155,6 +163,9 @@ public class AddProcessorDialog extends AbstractFormDialog {
 
                         currentPanel = processorsUIHandlers.getPanel(panelName);
                         contentsPanelCardLayout.show(contentsPanel, panelName);
+
+                        previewPanel.resetPreview();
+                        previewPanel.setPayloadProcessorUIPanel(currentPanel);
 
                         setHelpTarget(currentPanel.getHelpTarget());
                     }

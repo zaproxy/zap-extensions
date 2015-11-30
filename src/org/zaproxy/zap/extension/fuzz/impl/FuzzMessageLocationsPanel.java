@@ -110,6 +110,7 @@ public class FuzzMessageLocationsPanel extends
 
                 processorsDialog.setMessageLocation(locationEntry.getLocation());
                 processorsDialog.setPayloadProcessors(locationEntry.getProcessors());
+                processorsDialog.setPayloads(getPayloads(locationEntry));
                 processorsDialog.setVisible(true);
 
                 locationEntry.setProcessors(processorsDialog.getProcessors());
@@ -224,6 +225,37 @@ public class FuzzMessageLocationsPanel extends
             processors.add((PayloadProcessor<T1, T2>) processorTableEntry.getPayloadProcessorUI().getPayloadProcessor());
         }
         return new ProcessedPayloadGenerator<>(payloadGenerator, processors);
+    }
+
+    private static ResettableAutoCloseableIterator<Payload<?>> getPayloads(FuzzLocationTableEntry locationEntry) {
+        List<PayloadGenerator<?, ? extends Payload<?>>> payloadGenerators;
+        List<PayloadTableEntry> payloadTableEntries = locationEntry.getPayloads();
+        if (!payloadTableEntries.isEmpty()) {
+            payloadGenerators = new ArrayList<>(payloadTableEntries.size());
+            for (PayloadTableEntry payloadTableEntry : payloadTableEntries) {
+                PayloadGenerator<?, ? extends Payload<?>> payloadGenerator = payloadTableEntry.getPayloadGeneratorUI()
+                        .getPayloadGenerator();
+                List<PayloadProcessorTableEntry> processors = payloadTableEntry.getPayloadProcessors();
+                if (processors.isEmpty()) {
+                    payloadGenerators.add(payloadGenerator);
+                } else {
+                    payloadGenerators.add(new PayloadsProcessedIterator(payloadGenerator.iterator(), convert(processors)));
+                }
+            }
+        } else {
+            payloadGenerators = Collections.emptyList();
+        }
+
+        return new CompositePayloadGenerator(payloadGenerators).iterator();
+    }
+
+    private static List<PayloadProcessor<?, ? extends Payload<?>>> convert(
+            List<PayloadProcessorTableEntry> processorTableEntries) {
+        List<PayloadProcessor<?, ? extends Payload<?>>> processors = new ArrayList<>(processorTableEntries.size());
+        for (PayloadProcessorTableEntry processorTableEntry : processorTableEntries) {
+            processors.add(processorTableEntry.getPayloadProcessorUI().getPayloadProcessor());
+        }
+        return processors;
     }
 
 }

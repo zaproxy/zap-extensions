@@ -283,6 +283,20 @@ public class ExpandStringProcessorUIHandler implements
         }
 
         @Override
+        public ExpandStringProcessor getPayloadProcessor() {
+            if (!validate()) {
+                return null;
+            }
+            ExpandStringProcessor.Position position = (getBeginPositionRadioButton().isSelected()
+                    ? ExpandStringProcessor.Position.BEGIN
+                    : ExpandStringProcessor.Position.END);
+            return new ExpandStringProcessor(
+                    position,
+                    getValueTextField().getText(),
+                    getLengthNumberSpinner().getValue().intValue());
+        }
+
+        @Override
         public String getHelpTarget() {
             // THC add help page...
             return null;

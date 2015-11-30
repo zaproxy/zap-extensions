@@ -20,6 +20,8 @@
     Allow to preview payloads generated or from external sources (Issue 1896)<br>
     Fix the location where the characters are added in expand payload processor.<br>
     Allow to modify the selected Payload Processor script.<br>
+    Show current payloads when adding/modifying processors (Issue 1898).<br>
+    Allow to preview processing of payloads (Issue 1931).<br>
     ]]>
     </changes>
     <extensions>
