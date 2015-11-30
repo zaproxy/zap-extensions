@@ -27,7 +27,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessorAdapter;
@@ -39,6 +41,8 @@ import org.zaproxy.zap.utils.SortedComboBoxModel;
 public class ScriptStringPayloadProcessorAdapterUIHandler
         implements
         PayloadProcessorUIHandler<String, StringPayload, ScriptStringPayloadProcessorAdapter, ScriptStringPayloadProcessorAdapterUI> {
+
+    private static final Logger LOGGER = Logger.getLogger(ScriptStringPayloadProcessorAdapterUIHandler.class);
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.script.name");
 
@@ -174,7 +178,42 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
                 scriptComboBox.requestFocusInWindow();
                 return false;
             }
+
+            ScriptUIEntry scriptUIEntry = ((ScriptUIEntry) scriptComboBox.getSelectedItem());
+            ScriptWrapper scriptWrapper = scriptUIEntry.getScriptWrapper();
+            try {
+                ScriptStringPayloadProcessor scriptPayloadGenerator = initialiseImpl(scriptWrapper);
+                if (scriptPayloadGenerator == null) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            Constant.messages.getString("fuzz.payload.processor.script.warnNoInterface.message"),
+                            Constant.messages.getString("fuzz.payload.processor.script.warnNoInterface.title"),
+                            JOptionPane.INFORMATION_MESSAGE);
+                    handleScriptExceptionImpl(
+                            scriptWrapper,
+                            Constant.messages.getString("fuzz.payload.processor.script.warnNoInterface.message"));
+                    return false;
+                }
+            } catch (Exception e) {
+                handleScriptExceptionImpl(scriptWrapper, e);
+                JOptionPane.showMessageDialog(
+                        null,
+                        Constant.messages.getString("fuzz.payload.processor.script.warnNoInterface.message"),
+                        Constant.messages.getString("fuzz.payload.processor.script.warnNoInterface.title"),
+                        JOptionPane.INFORMATION_MESSAGE);
+                LOGGER.warn("Failed to validate '" + scriptWrapper.getName() + "': " + e.getMessage());
+                return false;
+            }
             return true;
+        }
+
+        @Override
+        public ScriptStringPayloadProcessorAdapter getPayloadProcessor() {
+            if (!validate()) {
+                return null;
+            }
+            return new ScriptStringPayloadProcessorAdapter(
+                    ((ScriptUIEntry) scriptComboBox.getSelectedItem()).getScriptWrapper());
         }
 
         @Override
@@ -243,6 +282,30 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
                 return scriptName.compareTo(other.scriptName);
             }
 
+        }
+    }
+
+    private static ScriptStringPayloadProcessor initialiseImpl(ScriptWrapper scriptWrapper) throws Exception {
+        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        if (extensionScript != null) {
+            return extensionScript.getInterface(scriptWrapper, ScriptStringPayloadProcessor.class);
+        }
+        return null;
+    }
+
+    private static void handleScriptExceptionImpl(ScriptWrapper scriptWrapper, Exception cause) {
+        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        if (extensionScript != null) {
+            extensionScript.setError(scriptWrapper, cause);
+            extensionScript.setEnabled(scriptWrapper, false);
+        }
+    }
+
+    private static void handleScriptExceptionImpl(ScriptWrapper scriptWrapper, String error) {
+        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        if (extensionScript != null) {
+            extensionScript.setError(scriptWrapper, error);
+            extensionScript.setEnabled(scriptWrapper, false);
         }
     }
 }

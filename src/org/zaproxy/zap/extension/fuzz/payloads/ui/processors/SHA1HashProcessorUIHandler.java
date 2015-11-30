@@ -117,6 +117,11 @@ public class SHA1HashProcessorUIHandler implements
         }
 
         @Override
+        public SHA1HashProcessor getPayloadProcessor() {
+            return new SHA1HashProcessor((Charset) getCharsetComboBox().getSelectedItem(), getUpperCaseCheckBox().isSelected());
+        }
+
+        @Override
         public String getHelpTarget() {
             // THC add help page...
             return null;

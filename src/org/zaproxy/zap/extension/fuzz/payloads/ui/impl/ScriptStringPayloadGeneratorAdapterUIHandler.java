@@ -159,7 +159,6 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
         private JButton payloadsPreviewGenerateButton;
 
         public ScriptStringPayloadGeneratorAdapterUIPanel(List<ScriptWrapper> scriptWrappers) {
-            System.out.println("ScriptStringPayloadGeneratorAdapterUIPanel.<init>");
             scriptComboBox = new JComboBox<>(new SortedComboBoxModel<ScriptUIEntry>());
             for (ScriptWrapper scriptWrapper : scriptWrappers) {
                 if (scriptWrapper.isEnabled()) {

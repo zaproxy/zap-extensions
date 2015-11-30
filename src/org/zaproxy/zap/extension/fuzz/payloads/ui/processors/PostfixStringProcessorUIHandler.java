@@ -169,6 +169,14 @@ public class PostfixStringProcessorUIHandler implements
         }
 
         @Override
+        public PostfixStringProcessor getPayloadProcessor() {
+            if (!validate()) {
+                return null;
+            }
+            return new PostfixStringProcessor(getValueTextField().getText());
+        }
+
+        @Override
         public String getHelpTarget() {
             // THC add help page...
             return null;

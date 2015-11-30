@@ -115,6 +115,11 @@ public class JavaScriptUnescapeProcessorUIHandler implements
         }
 
         @Override
+        public JavaScriptUnescapeProcessor getPayloadProcessor() {
+            return JavaScriptUnescapeProcessor.INSTANCE;
+        }
+
+        @Override
         public String getHelpTarget() {
             // THC add help page...
             return null;

@@ -116,6 +116,11 @@ public class Base64DecodeProcessorUIHandler implements
         }
 
         @Override
+        public Base64DecodeProcessor getPayloadProcessor() {
+            return new Base64DecodeProcessor((Charset) getCharsetComboBox().getSelectedItem());
+        }
+
+        @Override
         public String getHelpTarget() {
             // THC add help page...
             return null;

@@ -169,6 +169,14 @@ public class PrefixStringProcessorUIHandler implements
         }
 
         @Override
+        public PrefixStringProcessor getPayloadProcessor() {
+            if (!validate()) {
+                return null;
+            }
+            return new PrefixStringProcessor(getValueTextField().getText());
+        }
+
+        @Override
         public String getHelpTarget() {
             // THC add help page...
             return null;

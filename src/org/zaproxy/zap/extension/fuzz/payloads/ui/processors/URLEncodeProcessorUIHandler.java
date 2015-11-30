@@ -115,6 +115,11 @@ public class URLEncodeProcessorUIHandler implements
         }
 
         @Override
+        public URLEncodeProcessor getPayloadProcessor() {
+            return new URLEncodeProcessor((Charset) getCharsetComboBox().getSelectedItem());
+        }
+
+        @Override
         public String getHelpTarget() {
             // THC add help page...
             return null;
