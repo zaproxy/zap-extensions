@@ -46,5 +46,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.8.11.1.jar"/>
+	<classpathentry kind="lib" path="lib/generex-0.0.5-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/automaton-1.11-8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
