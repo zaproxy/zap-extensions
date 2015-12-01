@@ -44,6 +44,11 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
         return new JBroFuzzerPayloadGenerator(database, prototypeId);
     }
 
+    @Override
+    public StringPayloadGenerator getPayloadGenerator(int limit) {
+        return new JBroFuzzerPayloadGenerator(database, prototypeId, limit);
+    }
+
     private static class JBroFuzzerPayloadGenerator implements StringPayloadGenerator {
 
         private final Database database;
@@ -51,6 +56,10 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
         private final long numberOfPayloads;
 
         public JBroFuzzerPayloadGenerator(Database database, String prototypeId) {
+            this(database, prototypeId, -1);
+        }
+
+        public JBroFuzzerPayloadGenerator(Database database, String prototypeId, int limit) {
             if (database == null) {
                 throw new IllegalArgumentException("Parameter database must not be null.");
             }
@@ -70,7 +79,11 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
             } catch (NoSuchFuzzerException ignore) {
                 // The existence was already validated.
             }
-            this.numberOfPayloads = nrPaylaods;
+            if (limit <= 0) {
+                this.numberOfPayloads = nrPaylaods;
+            } else {
+                this.numberOfPayloads = Math.min(limit, nrPaylaods);
+            }
         }
 
         @Override
@@ -81,7 +94,7 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
         @Override
         public ResettableAutoCloseableIterator<StringPayload> iterator() {
             try {
-                return new JBroFuzzerIterator(database.createFuzzer(prototypeId, 1));
+                return new JBroFuzzerIterator(database.createFuzzer(prototypeId, 1), numberOfPayloads);
             } catch (NoSuchFuzzerException ignore) {
                 // The existence was already validated.
                 return null;
@@ -96,23 +109,32 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
         private static class JBroFuzzerIterator implements ResettableAutoCloseableIterator<StringPayload> {
 
             private final Fuzzer fuzzer;
+            private final long limit;
+            private long count;
 
-            public JBroFuzzerIterator(Fuzzer fuzzer) {
+            public JBroFuzzerIterator(Fuzzer fuzzer, long limit) {
                 this.fuzzer = fuzzer;
+                this.limit = limit;
+                this.count = 0;
             }
 
             @Override
             public boolean hasNext() {
+                if (count >= limit) {
+                    return false;
+                }
                 return fuzzer.hasNext();
             }
 
             @Override
             public StringPayload next() {
+                count++;
                 return new DefaultStringPayload(fuzzer.next());
             }
 
             @Override
             public void reset() {
+                count = 0;
                 fuzzer.resetCurrentValue();
             }
 

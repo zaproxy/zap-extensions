@@ -35,6 +35,8 @@ public abstract class FuzzerPayloadSource implements Comparable<FuzzerPayloadSou
 
     public abstract StringPayloadGenerator getPayloadGenerator();
 
+    public abstract StringPayloadGenerator getPayloadGenerator(int limit);
+
     @Override
     public int compareTo(FuzzerPayloadSource other) {
         if (other == null) {
