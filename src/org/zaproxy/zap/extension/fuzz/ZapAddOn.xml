@@ -23,6 +23,8 @@
     Show current payloads when adding/modifying processors (Issue 1898).<br>
     Allow to preview processing of payloads (Issue 1931).<br>
     Allow to save (to file) String, Regex, File and Script payloads (Issue 1932).<br>
+    Fix issues in generation of payloads from regular expressions (Issue 1884).<br>
+    Add support for regex repetitions (Issue 1885).<br>
     ]]>
     </changes>
     <extensions>
@@ -31,6 +33,7 @@
     </extensions>
     <filters/>
     <files>
+        <file>licenses/fuzz/dk.brics.automaton-license.txt</file>
         <file>scripts/templates/httpfuzzerprocessor/Fuzzer HTTP Processor default template.js</file>
         <file>scripts/templates/payloadgenerator/Payload Generator default template.js</file>
         <file>scripts/templates/payloadprocessor/Payload Processor default template.js</file>
