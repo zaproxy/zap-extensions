@@ -38,7 +38,6 @@ import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.RegexPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
-import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.RegexPayloadGeneratorUIHandler.RegexPayloadGeneratorUI;
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
@@ -139,8 +138,8 @@ public class RegexPayloadGeneratorUIHandler implements
 
     }
 
-    public static class RegexPayloadGeneratorUIPanel implements
-            PayloadGeneratorUIPanel<String, StringPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
+    public static class RegexPayloadGeneratorUIPanel extends
+            AbstractPersistentPayloadGeneratorUIPanel<String, StringPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
 
         private static final int DEFAULT_MAX_PAYLOADS = 1000;
         private static final int DEFAULT_MAX_LENGTH = 0;
@@ -197,7 +196,10 @@ public class RegexPayloadGeneratorUIHandler implements
                                     .addComponent(getRegexTextField())
                                     .addComponent(getMaxPayloadsNumberSpinner())
                                     .addComponent(getMaxLengthNumberSpinner())
-                                    .addComponent(getPayloadsPreviewGenerateButton())
+                                    .addGroup(
+                                            layout.createSequentialGroup()
+                                                    .addComponent(getPayloadsPreviewGenerateButton())
+                                                    .addComponent(getSaveButton()))
                                     .addComponent(payloadsPreviewScrollPane)));
 
             layout.setVerticalGroup(layout.createSequentialGroup()
@@ -213,7 +215,10 @@ public class RegexPayloadGeneratorUIHandler implements
                             layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(maxLengthLabel)
                                     .addComponent(getMaxLengthNumberSpinner()))
-                    .addComponent(getPayloadsPreviewGenerateButton())
+                    .addGroup(
+                            layout.createParallelGroup()
+                                    .addComponent(getPayloadsPreviewGenerateButton())
+                                    .addComponent(getSaveButton()))
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(payloadsPreviewLabel)
@@ -242,11 +247,16 @@ public class RegexPayloadGeneratorUIHandler implements
                     }
 
                     private void update() {
-                        getPayloadsPreviewGenerateButton().setEnabled(!regexTextField.getText().isEmpty());
+                        setPreviewAndSaveButtonsEnabled(!regexTextField.getText().isEmpty());
                     }
                 });
             }
             return regexTextField;
+        }
+
+        private void setPreviewAndSaveButtonsEnabled(boolean enabled) {
+            getPayloadsPreviewGenerateButton().setEnabled(enabled);
+            getSaveButton().setEnabled(enabled);
         }
 
         private ZapNumberSpinner getMaxPayloadsNumberSpinner() {
@@ -327,13 +337,24 @@ public class RegexPayloadGeneratorUIHandler implements
             getRegexTextField().setText(payloadGeneratorUI.getRegex());
             getMaxPayloadsNumberSpinner().setValue(payloadGeneratorUI.getMaxPayloads());
             getMaxLengthNumberSpinner().setValue(payloadGeneratorUI.getMaxPayloadLength());
-            getPayloadsPreviewGenerateButton().setEnabled(true);
+            setPreviewAndSaveButtonsEnabled(true);
         }
 
         @Override
         public RegexPayloadGeneratorUI getPayloadGeneratorUI() {
             return new RegexPayloadGeneratorUI(getRegexTextField().getText(), getMaxPayloadsNumberSpinner().getValue()
                     .intValue(), getMaxLengthNumberSpinner().getValue().intValue());
+        }
+
+        @Override
+        protected RegexPayloadGenerator getPayloadGenerator() {
+            if (!validate()) {
+                return null;
+            }
+            return new RegexPayloadGenerator(
+                    getRegexTextField().getText(),
+                    getMaxPayloadsNumberSpinner().getValue().intValue(),
+                    getMaxLengthNumberSpinner().getValue().intValue());
         }
 
         @Override

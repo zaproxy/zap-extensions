@@ -51,7 +51,6 @@ import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
-import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.FileStringPayloadGeneratorUIHandler.FileStringPayloadGeneratorUI;
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
@@ -174,8 +173,8 @@ public class FileStringPayloadGeneratorUIHandler implements
 
     }
 
-    public static class FileStringPayloadGeneratorUIPanel implements
-            PayloadGeneratorUIPanel<String, StringPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
+    public static class FileStringPayloadGeneratorUIPanel extends
+            AbstractPersistentPayloadGeneratorUIPanel<String, StringPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
 
         private static final Charset[] CHARSETS = {
                 StandardCharsets.UTF_8,
@@ -265,7 +264,8 @@ public class FileStringPayloadGeneratorUIHandler implements
                                     .addComponent(getCommentTokenTextField())
                                     .addComponent(getIgnoreEmptyLinesCheckBox())
                                     .addComponent(getIgnoreFirstLineCheckBox())
-                                    .addComponent(payloadsPreviewScrollPane)));
+                                    .addComponent(payloadsPreviewScrollPane)
+                                    .addComponent(getSaveButton())));
 
             layout.setVerticalGroup(layout.createSequentialGroup()
                     .addGroup(
@@ -300,7 +300,8 @@ public class FileStringPayloadGeneratorUIHandler implements
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(payloadsPreviewLabel)
-                                    .addComponent(payloadsPreviewScrollPane)));
+                                    .addComponent(payloadsPreviewScrollPane))
+                    .addComponent(getSaveButton()));
         }
 
         private JTextField getFileTextField() {
@@ -352,6 +353,7 @@ public class FileStringPayloadGeneratorUIHandler implements
                             lastSelectedDirectory = selectedFile.toPath().getParent();
 
                             getFileTextField().setText(selectedFile.getAbsolutePath());
+                            getSaveButton().setEnabled(true);
                             updatePayloadsPreviewTextArea();
                         }
 
@@ -523,11 +525,27 @@ public class FileStringPayloadGeneratorUIHandler implements
             getIgnoreEmptyLinesCheckBox().setSelected(payloadGeneratorUI.isIgnoreEmptyLines());
             numberOfPayloads = payloadGeneratorUI.getNumberOfPayloads();
             updatePayloadsPreviewTextArea();
+            getSaveButton().setEnabled(true);
         }
 
         @Override
         public FileStringPayloadGeneratorUI getPayloadGeneratorUI() {
             return new FileStringPayloadGeneratorUI(
+                    Paths.get(getFileTextField().getText()),
+                    (Charset) getCharsetComboBox().getSelectedItem(),
+                    getLimitCheckBox().isSelected() ? getLimitNumberSpinner().getValue().intValue() : -1,
+                    getCommentTokenTextField().getText(),
+                    getIgnoreEmptyLinesCheckBox().isSelected(),
+                    getIgnoreFirstLineCheckBox().isSelected(),
+                    numberOfPayloads);
+        }
+
+        @Override
+        protected FileStringPayloadGenerator getPayloadGenerator() {
+            if (!validate()) {
+                return null;
+            }
+            return new FileStringPayloadGenerator(
                     Paths.get(getFileTextField().getText()),
                     (Charset) getCharsetComboBox().getSelectedItem(),
                     getLimitCheckBox().isSelected() ? getLimitNumberSpinner().getValue().intValue() : -1,
@@ -548,6 +566,7 @@ public class FileStringPayloadGeneratorUIHandler implements
             getIgnoreEmptyLinesCheckBox().setSelected(false);
             numberOfPayloads = 0;
             getPayloadsPreviewTextArea().setText("");
+            getSaveButton().setEnabled(false);
         }
 
         @Override

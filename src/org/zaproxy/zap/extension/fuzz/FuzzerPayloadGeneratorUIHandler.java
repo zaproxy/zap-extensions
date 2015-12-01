@@ -35,6 +35,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.fuzz.ExtensionFuzz.FuzzersDirChangeListener;
 import org.zaproxy.zap.extension.fuzz.FuzzerPayloadGeneratorUIHandler.FuzzerPayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
@@ -159,6 +160,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
         private static final int MAX_NUMBER_PAYLOADS_PREVIEW = 30;
 
         private final ExtensionFuzz extensionFuzz;
+        private final FuzzersDirChangeListener fuzzersDirChangeListener;
 
         private JPanel fieldsPanel;
 
@@ -169,6 +171,14 @@ public class FuzzerPayloadGeneratorUIHandler implements
         public FuzzerPayloadGeneratorUIPanel(ExtensionFuzz extensionFuzz) {
             this.extensionFuzz = extensionFuzz;
 
+            this.fuzzersDirChangeListener = new FuzzersDirChangeListener() {
+
+                @Override
+                public void fuzzersDirChanged(FuzzersDir fuzzersDir) {
+                    createFileFuzzersCheckBoxTreeModel();
+                }
+            };
+            
             fieldsPanel = new JPanel();
 
             GroupLayout layout = new GroupLayout(fieldsPanel);
@@ -211,40 +221,6 @@ public class FuzzerPayloadGeneratorUIHandler implements
                 fileFuzzersCheckBoxTree = new JCheckBoxTree();
                 fileFuzzersCheckBoxTree.setRootVisible(false);
                 fileFuzzersCheckBoxTree.setShowsRootHandles(true);
-
-                DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-                for (FuzzerPayloadCategory category : extensionFuzz.getFuzzersDir().getCategories()) {
-                    addNodes(category, root);
-                }
-
-                fileFuzzersCheckBoxTree.setModel(new DefaultTreeModel(root));
-                // Following two statements are a hack to make the check boxes of the nodes to render correctly
-                fileFuzzersCheckBoxTree.expandAll();
-                fileFuzzersCheckBoxTree.collapseAll();
-
-                TreePath treePath = null;
-                if (!extensionFuzz.getFuzzOptions().isCustomDefaultCategory()) {
-                    String defaultCategory = extensionFuzz.getFuzzOptions().getDefaultCategoryName();
-                    root = (DefaultMutableTreeNode) fileFuzzersCheckBoxTree.getModel().getRoot();
-                    @SuppressWarnings("unchecked")
-                    Enumeration<DefaultMutableTreeNode> nodes = root.breadthFirstEnumeration();
-                    while (nodes.hasMoreElements()) {
-                        DefaultMutableTreeNode node = nodes.nextElement();
-                        Object object = node.getUserObject();
-                        if (object instanceof FuzzerPayloadCategory) {
-                            if (defaultCategory.equals(((FuzzerPayloadCategory) object).getFullName())) {
-                                treePath = new TreePath(node.getPath());
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (treePath == null) {
-                    treePath = fileFuzzersCheckBoxTree.getPathForRow(0);
-                }
-                defaultCategoryTreePath = treePath;
-
                 fileFuzzersCheckBoxTree.addCheckChangeEventListener(new CheckChangeEventListener() {
 
                     @Override
@@ -253,8 +229,50 @@ public class FuzzerPayloadGeneratorUIHandler implements
                     }
                 });
                 fileFuzzersCheckBoxTree.setVisibleRowCount(10);
+
+                createFileFuzzersCheckBoxTreeModel();
             }
             return fileFuzzersCheckBoxTree;
+        }
+
+        private void createFileFuzzersCheckBoxTreeModel() {
+            List<FuzzerPayloadSource> currentSelections = getSelectedFuzzers();
+
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+            for (FuzzerPayloadCategory category : extensionFuzz.getFuzzersDir().getCategories()) {
+                addNodes(category, root);
+            }
+
+            fileFuzzersCheckBoxTree.setModel(new DefaultTreeModel(root));
+            // Following two statements are a hack to make the check boxes of the nodes to render correctly
+            fileFuzzersCheckBoxTree.expandAll();
+            fileFuzzersCheckBoxTree.collapseAll();
+
+            TreePath treePath = null;
+            if (!extensionFuzz.getFuzzOptions().isCustomDefaultCategory()) {
+                String defaultCategory = extensionFuzz.getFuzzOptions().getDefaultCategoryName();
+                root = (DefaultMutableTreeNode) fileFuzzersCheckBoxTree.getModel().getRoot();
+                @SuppressWarnings("unchecked")
+                Enumeration<DefaultMutableTreeNode> nodes = root.breadthFirstEnumeration();
+                while (nodes.hasMoreElements()) {
+                    DefaultMutableTreeNode node = nodes.nextElement();
+                    Object object = node.getUserObject();
+                    if (object instanceof FuzzerPayloadCategory) {
+                        if (defaultCategory.equals(((FuzzerPayloadCategory) object).getFullName())) {
+                            treePath = new TreePath(node.getPath());
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (treePath == null) {
+                treePath = fileFuzzersCheckBoxTree.getPathForRow(0);
+            }
+            defaultCategoryTreePath = treePath;
+
+            setSelectedFuzzers(currentSelections);
+            getFileFuzzersCheckBoxTree().expandPath(defaultCategoryTreePath);
         }
 
         private static void addNodes(FuzzerPayloadCategory category, DefaultMutableTreeNode node) {
@@ -310,6 +328,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
         @Override
         public void init(MessageLocation messageLocation) {
+            extensionFuzz.addFuzzersDirChangeListener(fuzzersDirChangeListener);
             resetFileFuzzersCheckBoxTree();
             getFileFuzzersCheckBoxTree().expandPath(defaultCategoryTreePath);
         }
@@ -373,6 +392,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
         @Override
         public void clear() {
             getPayloadsPreviewTextArea().setText("");
+            extensionFuzz.removeFuzzersDirChangeListener(fuzzersDirChangeListener);
         }
 
         @Override

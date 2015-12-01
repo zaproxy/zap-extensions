@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +36,6 @@ import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.DefaultStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
-import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultStringPayloadGeneratorUIHandler.DefaultStringPayloadGeneratorUI;
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.StringUIUtils;
@@ -151,8 +152,8 @@ public class DefaultStringPayloadGeneratorUIHandler implements
 
     }
 
-    public static class DefaultStringPayloadGeneratorUIPanel implements
-            PayloadGeneratorUIPanel<String, StringPayload, DefaultStringPayloadGenerator, DefaultStringPayloadGeneratorUI> {
+    public static class DefaultStringPayloadGeneratorUIPanel extends
+            AbstractPersistentPayloadGeneratorUIPanel<String, StringPayload, DefaultStringPayloadGenerator, DefaultStringPayloadGeneratorUI> {
 
         private static final String CONTENTS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.strings.contents.label");
         private static final String MULTILINE_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.strings.multiline.label");
@@ -186,7 +187,8 @@ public class DefaultStringPayloadGeneratorUIHandler implements
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addComponent(contentsScrollPane)
-                                    .addComponent(getMultilineCheckBox())));
+                                    .addComponent(getMultilineCheckBox())
+                                    .addComponent(getSaveButton())));
 
             layout.setVerticalGroup(layout.createSequentialGroup()
                     .addGroup(
@@ -196,7 +198,10 @@ public class DefaultStringPayloadGeneratorUIHandler implements
                     .addGroup(
                             layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(multilineLabel)
-                                    .addComponent(getMultilineCheckBox())));
+                                    .addComponent(getMultilineCheckBox()))
+                    .addComponent(getSaveButton()));
+
+            getSaveButton().setEnabled(true);
         }
 
         private ZapTextArea getContentsTextArea() {
@@ -212,6 +217,13 @@ public class DefaultStringPayloadGeneratorUIHandler implements
             if (multilineCheckBox == null) {
                 multilineCheckBox = new JCheckBox();
                 multilineCheckBox.setToolTipText(MULTILINE_FIELD_TOOLTIP);
+                multilineCheckBox.addItemListener(new ItemListener() {
+
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        getSaveButton().setEnabled(e.getStateChange() != ItemEvent.SELECTED);
+                    }
+                });
             }
             return multilineCheckBox;
         }
@@ -234,6 +246,11 @@ public class DefaultStringPayloadGeneratorUIHandler implements
         @Override
         public DefaultStringPayloadGeneratorUI getPayloadGeneratorUI() {
             return new DefaultStringPayloadGeneratorUI(getContentsTextArea().getText(), getMultilineCheckBox().isSelected());
+        }
+
+        @Override
+        protected DefaultStringPayloadGenerator getPayloadGenerator() {
+            return new DefaultStringPayloadGenerator(Arrays.asList(getContentsTextArea().getText().split("\r?\n", -1)));
         }
 
         @Override
