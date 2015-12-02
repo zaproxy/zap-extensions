@@ -305,8 +305,8 @@ public class FuzzerPayloadGeneratorUIHandler implements
                     count++;
 
                     contents.append(payloadsSource.getName()).append('\n');
-                    try (ResettableAutoCloseableIterator<StringPayload> payloads = payloadsSource.getPayloadGenerator()
-                            .iterator()) {
+                    try (ResettableAutoCloseableIterator<StringPayload> payloads = payloadsSource
+                            .getPayloadGenerator(MAX_NUMBER_PAYLOADS_PREVIEW + 1).iterator()) {
                         for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && payloads.hasNext(); i++) {
                             contents.append("  ").append(i + 1).append(": ").append(payloads.next().getValue()).append('\n');
                         }

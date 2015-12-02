@@ -42,4 +42,9 @@ public class FuzzerPayloadFileSource extends FuzzerPayloadSource {
         return new FileStringPayloadGenerator(file);
     }
 
+    @Override
+    public StringPayloadGenerator getPayloadGenerator(int limit) {
+        return new FileStringPayloadGenerator(file, limit);
+    }
+
 }
