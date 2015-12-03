@@ -25,7 +25,7 @@
 	<classpathentry kind="lib" path="lib/odfdom-java-0.8.8-incubating.jar"/>
 	<classpathentry kind="lib" path="lib/pdfbox-1.8.7.jar"/>
 	<classpathentry kind="lib" path="lib/procyon-decompiler-0.5.25.jar"/>
-	<classpathentry kind="lib" path="lib/rsyntaxtextarea-2.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/rsyntaxtextarea-2.5.8.jar"/>
 	<classpathentry kind="lib" path="lib/simple-odf-0.7-incubating.jar"/>
 	<classpathentry kind="lib" path="lib/swing-layout-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-all-1.6.4.jar"/>
