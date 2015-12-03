@@ -25,6 +25,7 @@
     Allow to save (to file) String, Regex, File and Script payloads (Issue 1932).<br>
     Fix issues in generation of payloads from regular expressions (Issue 1884).<br>
     Add support for regex repetitions (Issue 1885).<br>
+    Allow to modify the payloads of File and File Fuzzers (Issue 1897).<br>
     ]]>
     </changes>
     <extensions>

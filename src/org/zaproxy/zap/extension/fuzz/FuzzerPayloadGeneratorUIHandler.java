@@ -19,12 +19,15 @@
  */
 package org.zaproxy.zap.extension.fuzz;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -38,10 +41,12 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz.FuzzersDirChangeListener;
 import org.zaproxy.zap.extension.fuzz.FuzzerPayloadGeneratorUIHandler.FuzzerPayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
-import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
+import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.AbstractPersistentPayloadGeneratorUIPanel;
+import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.ModifyPayloadsPanel;
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.JCheckBoxTree;
@@ -84,6 +89,18 @@ public class FuzzerPayloadGeneratorUIHandler implements
         private final List<FuzzerPayloadSource> selectedFuzzers;
         private int numberOfPayloads;
 
+        private Path file;
+        private String description;
+        private boolean temporary;
+
+        public FuzzerPayloadGeneratorUI(Path file, String description, int numberOfPayloads) {
+            this.file = file;
+            this.description = description;
+            this.temporary = true;
+            this.selectedFuzzers = Collections.emptyList();
+            this.numberOfPayloads = numberOfPayloads;
+        }
+
         public FuzzerPayloadGeneratorUI(List<FuzzerPayloadSource> selectedFuzzers) {
             this.selectedFuzzers = Collections.unmodifiableList(new ArrayList<>(selectedFuzzers));
             this.numberOfPayloads = -1;
@@ -91,6 +108,14 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
         public List<FuzzerPayloadSource> getSelectedFuzzers() {
             return selectedFuzzers;
+        }
+
+        public Path getFile() {
+            return file;
+        }
+
+        public boolean isTemporary() {
+            return temporary;
         }
 
         @Override
@@ -105,6 +130,10 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
         @Override
         public String getDescription() {
+            if (temporary) {
+                return description;
+            }
+
             StringBuilder descriptionBuilder = new StringBuilder();
             for (FuzzerPayloadSource selectedFuzzer : selectedFuzzers) {
                 if (descriptionBuilder.length() > 100) {
@@ -136,6 +165,34 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
         @Override
         public FuzzerPayloadGenerator getPayloadGenerator() {
+            if (temporary) {
+                return new FuzzerPayloadGenerator(Collections.<PayloadGenerator<String, StringPayload>> emptyList()) {
+
+                    private FileStringPayloadGenerator delegate = new FileStringPayloadGenerator(
+                            file,
+                            StandardCharsets.UTF_8,
+                            -1,
+                            "",
+                            false,
+                            false,
+                            numberOfPayloads);
+
+                    @Override
+                    public PayloadGenerator<String, StringPayload> copy() {
+                        return delegate.copy();
+                    }
+
+                    @Override
+                    public long getNumberOfPayloads() {
+                        return delegate.getNumberOfPayloads();
+                    }
+
+                    @Override
+                    public ResettableAutoCloseableIterator<StringPayload> iterator() {
+                        return delegate.iterator();
+                    }
+                };
+            }
             List<PayloadGenerator<String, StringPayload>> generators = new ArrayList<>();
             for (FuzzerPayloadSource selectedFuzzer : selectedFuzzers) {
                 generators.add(selectedFuzzer.getPayloadGenerator());
@@ -150,8 +207,8 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
     }
 
-    public static class FuzzerPayloadGeneratorUIPanel implements
-            PayloadGeneratorUIPanel<String, StringPayload, FuzzerPayloadGenerator, FuzzerPayloadGeneratorUI> {
+    public static class FuzzerPayloadGeneratorUIPanel extends
+            AbstractPersistentPayloadGeneratorUIPanel<String, StringPayload, FuzzerPayloadGenerator, FuzzerPayloadGeneratorUI> {
 
         private static final String FILE_FUZZERS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.fileFuzzers.files.label");
         private static final String PAYLOADS_PREVIEW_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.fileFuzzers.payloadsPreview.label");
@@ -163,10 +220,16 @@ public class FuzzerPayloadGeneratorUIHandler implements
         private final FuzzersDirChangeListener fuzzersDirChangeListener;
 
         private JPanel fieldsPanel;
+        private GroupLayout mainLayout;
+
+        private JPanel addPanel;
+        private ModifyFileFuzzersPayloadsPanel modifyPanel;
 
         private JCheckBoxTree fileFuzzersCheckBoxTree;
         private TreePath defaultCategoryTreePath;
         private JTextArea payloadsPreviewTextArea;
+
+        private boolean modifyFileContents;
 
         public FuzzerPayloadGeneratorUIPanel(ExtensionFuzz extensionFuzz) {
             this.extensionFuzz = extensionFuzz;
@@ -179,11 +242,11 @@ public class FuzzerPayloadGeneratorUIHandler implements
                 }
             };
             
-            fieldsPanel = new JPanel();
+            addPanel = new JPanel();
 
-            GroupLayout layout = new GroupLayout(fieldsPanel);
-            fieldsPanel.setLayout(layout);
-            layout.setAutoCreateGaps(true);
+            GroupLayout layoutAddPanel = new GroupLayout(addPanel);
+            addPanel.setLayout(layoutAddPanel);
+            layoutAddPanel.setAutoCreateGaps(true);
 
             JLabel fileFuzzersLabel = new JLabel(FILE_FUZZERS_FIELD_LABEL);
             fileFuzzersLabel.setLabelFor(getFileFuzzersCheckBoxTree());
@@ -193,27 +256,41 @@ public class FuzzerPayloadGeneratorUIHandler implements
             JScrollPane scrollPane = new JScrollPane(getFileFuzzersCheckBoxTree());
             JScrollPane payloadsPreviewScrollPane = new JScrollPane(getPayloadsPreviewTextArea());
 
-            layout.setHorizontalGroup(
-                    layout.createSequentialGroup()
+            layoutAddPanel.setHorizontalGroup(
+                    layoutAddPanel.createSequentialGroup()
                             .addGroup(
-                                    layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                    layoutAddPanel.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                             .addComponent(fileFuzzersLabel)
                                             .addComponent(payloadsPreviewLabel))
                             .addGroup(
-                                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                    layoutAddPanel.createParallelGroup(GroupLayout.Alignment.LEADING)
                                             .addComponent(scrollPane)
                                             .addComponent(payloadsPreviewScrollPane)));
 
-            layout.setVerticalGroup(
-                    layout.createSequentialGroup()
+            layoutAddPanel.setVerticalGroup(
+                    layoutAddPanel.createSequentialGroup()
                             .addGroup(
-                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                             .addComponent(fileFuzzersLabel)
                                             .addComponent(scrollPane))
                             .addGroup(
-                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                             .addComponent(payloadsPreviewLabel)
                                             .addComponent(payloadsPreviewScrollPane)));
+
+            fieldsPanel = new JPanel();
+            mainLayout = new GroupLayout(fieldsPanel);
+            fieldsPanel.setLayout(mainLayout);
+
+            mainLayout.setHorizontalGroup(mainLayout.createSequentialGroup().addComponent(addPanel));
+            mainLayout.setVerticalGroup(mainLayout.createSequentialGroup().addComponent(addPanel));
+        }
+
+        private ModifyFileFuzzersPayloadsPanel getModifyPanel() {
+            if (modifyPanel == null) {
+                modifyPanel = new ModifyFileFuzzersPayloadsPanel(createSaveButton());
+            }
+            return modifyPanel;
         }
 
         private JCheckBoxTree getFileFuzzersCheckBoxTree() {
@@ -330,7 +407,8 @@ public class FuzzerPayloadGeneratorUIHandler implements
         public void init(MessageLocation messageLocation) {
             extensionFuzz.addFuzzersDirChangeListener(fuzzersDirChangeListener);
             resetFileFuzzersCheckBoxTree();
-            getFileFuzzersCheckBoxTree().expandPath(defaultCategoryTreePath);
+            createFileFuzzersCheckBoxTreeModel();
+            modifyFileContents = false;
         }
 
         private void resetFileFuzzersCheckBoxTree() {
@@ -346,8 +424,11 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
         @Override
         public void setPayloadGeneratorUI(FuzzerPayloadGeneratorUI payloadGeneratorUI) {
-            setSelectedFuzzers(payloadGeneratorUI.getSelectedFuzzers());
-            updatePayloadsPreviewTextArea();
+            modifyFileContents = true;
+            mainLayout.replace(addPanel, getModifyPanel().getPanel());
+
+            getModifyPanel()
+                    .setPayloadGeneratorUI(payloadGeneratorUI, !payloadGeneratorUI.isTemporary(), payloadGeneratorUI.getFile());
         }
 
         private void setSelectedFuzzers(List<FuzzerPayloadSource> fileFuzzers) {
@@ -373,7 +454,20 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
         @Override
         public FuzzerPayloadGeneratorUI getPayloadGeneratorUI() {
+            if (modifyFileContents) {
+                return getModifyPanel().getFileStringPayloadGeneratorUI();
+            }
             return new FuzzerPayloadGeneratorUI(getSelectedFuzzers());
+        }
+        
+        @Override
+        protected FuzzerPayloadGenerator getPayloadGenerator() {
+            if (modifyFileContents) {
+                if (getModifyPanel().isValidForPersistence()) {
+                    return getModifyPanel().getPayloadGenerator();
+                }
+            }
+            return null;
         }
 
         private List<FuzzerPayloadSource> getSelectedFuzzers() {
@@ -391,12 +485,21 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
         @Override
         public void clear() {
+            if (modifyFileContents) {
+                getModifyPanel().clear();
+                mainLayout.replace(getModifyPanel().getPanel(), addPanel);
+                return;
+            }
             getPayloadsPreviewTextArea().setText("");
             extensionFuzz.removeFuzzersDirChangeListener(fuzzersDirChangeListener);
         }
 
         @Override
         public boolean validate() {
+            if (modifyFileContents) {
+                return getModifyPanel().validate();
+            }
+
             if (hasSelections()) {
                 return true;
             }
@@ -423,6 +526,30 @@ public class FuzzerPayloadGeneratorUIHandler implements
         public String getHelpTarget() {
             // THC add help page...
             return null;
+        }
+
+        private static class ModifyFileFuzzersPayloadsPanel
+                extends ModifyPayloadsPanel<String, StringPayload, FuzzerPayloadGenerator, FuzzerPayloadGeneratorUI> {
+
+            public ModifyFileFuzzersPayloadsPanel(JButton saveButton) {
+                super(saveButton);
+            }
+
+            @Override
+            public FuzzerPayloadGenerator getPayloadGenerator() {
+                return new FuzzerPayloadGenerator(Collections.<PayloadGenerator<String, StringPayload>> emptyList()) {
+
+                    @Override
+                    public ResettableAutoCloseableIterator<StringPayload> iterator() {
+                        return new TextAreaPayloadIterator(getPayloadsTextArea());
+                    }
+                };
+            }
+
+            @Override
+            protected FuzzerPayloadGeneratorUI createPayloadGeneratorUI(int numberOfPayloads) {
+                return new FuzzerPayloadGeneratorUI(getFile(), getPayloadGeneratorUI().getDescription(), numberOfPayloads);
+            }
         }
     }
 

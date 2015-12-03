@@ -93,6 +93,21 @@ public class FileStringPayloadGeneratorUIHandler implements
         private final boolean ignoreFirstLine;
         private long numberOfPayloads;
 
+        private boolean temporary;
+        private String fileName;
+
+        public FileStringPayloadGeneratorUI(String fileName, Path file, long numberOfPayloads) {
+            this(file,
+                 StandardCharsets.UTF_8,
+                 -1,
+                 "",
+                 false,
+                 false,
+                 numberOfPayloads);
+            this.temporary = true;
+            this.fileName = fileName;
+        }
+
         public FileStringPayloadGeneratorUI(
                 Path file,
                 Charset charset,
@@ -134,6 +149,10 @@ public class FileStringPayloadGeneratorUIHandler implements
             return ignoreFirstLine;
         }
 
+        public boolean isTemporary() {
+            return temporary;
+        }
+
         @Override
         public Class<FileStringPayloadGenerator> getPayloadGeneratorClass() {
             return FileStringPayloadGenerator.class;
@@ -146,6 +165,9 @@ public class FileStringPayloadGeneratorUIHandler implements
 
         @Override
         public String getDescription() {
+            if (temporary) {
+                return fileName;
+            }
             return file.getFileName().toString();
         }
 
@@ -200,6 +222,10 @@ public class FileStringPayloadGeneratorUIHandler implements
         private static final String PAYLOADS_PREVIEW_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.file.payloadsPreview.label");
 
         private JPanel fieldsPanel;
+        private GroupLayout mainLayout;
+
+        private JPanel addPanel;
+        private ModifyFileStringPayloadsPanel modifyPanel;
 
         private JTextField fileTextField;
         private JButton fileChooserButton;
@@ -215,12 +241,14 @@ public class FileStringPayloadGeneratorUIHandler implements
 
         private Path lastSelectedDirectory;
 
-        public FileStringPayloadGeneratorUIPanel() {
-            fieldsPanel = new JPanel();
+        private boolean modifyFileContents;
 
-            GroupLayout layout = new GroupLayout(fieldsPanel);
-            fieldsPanel.setLayout(layout);
-            layout.setAutoCreateGaps(true);
+        public FileStringPayloadGeneratorUIPanel() {
+            addPanel = new JPanel();
+
+            GroupLayout layoutAddPanel = new GroupLayout(addPanel);
+            addPanel.setLayout(layoutAddPanel);
+            layoutAddPanel.setAutoCreateGaps(true);
 
             JLabel fileLabel = new JLabel(FILE_FIELD_LABEL);
             fileLabel.setLabelFor(getFileButton());
@@ -241,9 +269,9 @@ public class FileStringPayloadGeneratorUIHandler implements
 
             JScrollPane payloadsPreviewScrollPane = new JScrollPane(getPayloadsPreviewTextArea());
 
-            layout.setHorizontalGroup(layout.createSequentialGroup()
+            layoutAddPanel.setHorizontalGroup(layoutAddPanel.createSequentialGroup()
                     .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                     .addComponent(fileLabel)
                                     .addComponent(charsetLabel)
                                     .addComponent(limitLabel)
@@ -253,9 +281,9 @@ public class FileStringPayloadGeneratorUIHandler implements
                                     .addComponent(ignoreFirstLineLabel)
                                     .addComponent(payloadsPreviewLabel))
                     .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.LEADING)
                                     .addGroup(
-                                            layout.createSequentialGroup()
+                                            layoutAddPanel.createSequentialGroup()
                                                     .addComponent(getFileTextField())
                                                     .addComponent(getFileButton()))
                                     .addComponent(getCharsetComboBox())
@@ -267,41 +295,55 @@ public class FileStringPayloadGeneratorUIHandler implements
                                     .addComponent(payloadsPreviewScrollPane)
                                     .addComponent(getSaveButton())));
 
-            layout.setVerticalGroup(layout.createSequentialGroup()
+            layoutAddPanel.setVerticalGroup(layoutAddPanel.createSequentialGroup()
                     .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(fileLabel)
                                     .addComponent(getFileTextField())
                                     .addComponent(getFileButton()))
                     .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(charsetLabel)
                                     .addComponent(getCharsetComboBox()))
                     .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(limitLabel)
                                     .addComponent(getLimitCheckBox()))
                     .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(limitValueLabel)
                                     .addComponent(getLimitNumberSpinner()))
                     .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(commentTokenLabel)
                                     .addComponent(getCommentTokenTextField()))
                     .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(ignoreEmptyLinesLabel)
                                     .addComponent(getIgnoreEmptyLinesCheckBox()))
                     .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(ignoreFirstLineLabel)
                                     .addComponent(getIgnoreFirstLineCheckBox()))
                     .addGroup(
-                            layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(payloadsPreviewLabel)
                                     .addComponent(payloadsPreviewScrollPane))
                     .addComponent(getSaveButton()));
+
+            fieldsPanel = new JPanel();
+            mainLayout = new GroupLayout(fieldsPanel);
+            fieldsPanel.setLayout(mainLayout);
+
+            mainLayout.setHorizontalGroup(mainLayout.createSequentialGroup().addComponent(addPanel));
+            mainLayout.setVerticalGroup(mainLayout.createSequentialGroup().addComponent(addPanel));
+        }
+
+        private ModifyFileStringPayloadsPanel getModifyPanel() {
+            if (modifyPanel == null) {
+                modifyPanel = new ModifyFileStringPayloadsPanel(createSaveButton());
+            }
+            return modifyPanel;
         }
 
         private JTextField getFileTextField() {
@@ -508,6 +550,7 @@ public class FileStringPayloadGeneratorUIHandler implements
 
         @Override
         public void init(MessageLocation messageLocation) {
+            modifyFileContents = false;
         }
 
         @Override
@@ -517,19 +560,18 @@ public class FileStringPayloadGeneratorUIHandler implements
 
         @Override
         public void setPayloadGeneratorUI(FileStringPayloadGeneratorUI payloadGeneratorUI) {
-            getFileTextField().setText(payloadGeneratorUI.getFile().toString());
-            getCharsetComboBox().setSelectedItem(payloadGeneratorUI.getCharset());
-            getLimitCheckBox().setSelected(payloadGeneratorUI.getLimit() >= 0);
-            getLimitNumberSpinner().setValue((int) payloadGeneratorUI.getLimit());
-            getCommentTokenTextField().setText(payloadGeneratorUI.getCommentToken());
-            getIgnoreEmptyLinesCheckBox().setSelected(payloadGeneratorUI.isIgnoreEmptyLines());
-            numberOfPayloads = payloadGeneratorUI.getNumberOfPayloads();
-            updatePayloadsPreviewTextArea();
-            getSaveButton().setEnabled(true);
+            modifyFileContents = true;
+            mainLayout.replace(addPanel, getModifyPanel().getPanel());
+
+            getModifyPanel()
+                    .setPayloadGeneratorUI(payloadGeneratorUI, !payloadGeneratorUI.isTemporary(), payloadGeneratorUI.getFile());
         }
 
         @Override
         public FileStringPayloadGeneratorUI getPayloadGeneratorUI() {
+            if (modifyFileContents) {
+                return getModifyPanel().getFileStringPayloadGeneratorUI();
+            }
             return new FileStringPayloadGeneratorUI(
                     Paths.get(getFileTextField().getText()),
                     (Charset) getCharsetComboBox().getSelectedItem(),
@@ -542,6 +584,12 @@ public class FileStringPayloadGeneratorUIHandler implements
 
         @Override
         protected FileStringPayloadGenerator getPayloadGenerator() {
+            if (modifyFileContents) {
+                if (getModifyPanel().isValidForPersistence()) {
+                    return getModifyPanel().getPayloadGenerator();
+                }
+                return null;
+            }
             if (!validate()) {
                 return null;
             }
@@ -557,6 +605,11 @@ public class FileStringPayloadGeneratorUIHandler implements
 
         @Override
         public void clear() {
+            if (modifyFileContents) {
+                getModifyPanel().clear();
+                mainLayout.replace(getModifyPanel().getPanel(), addPanel);
+                return;
+            }
             getFileTextField().setText("");
             getCharsetComboBox().setSelectedIndex(0);
             getLimitCheckBox().setSelected(false);
@@ -571,6 +624,10 @@ public class FileStringPayloadGeneratorUIHandler implements
 
         @Override
         public boolean validate() {
+            if (modifyFileContents) {
+                return getModifyPanel().validate();
+            }
+
             if (getFileTextField().getText().isEmpty()) {
                 JOptionPane.showMessageDialog(
                         null,
@@ -604,6 +661,30 @@ public class FileStringPayloadGeneratorUIHandler implements
         public String getHelpTarget() {
             // THC add help page...
             return null;
+        }
+
+        private static class ModifyFileStringPayloadsPanel
+                extends ModifyPayloadsPanel<String, StringPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
+
+            public ModifyFileStringPayloadsPanel(JButton saveButton) {
+                super(saveButton);
+            }
+
+            @Override
+            public FileStringPayloadGenerator getPayloadGenerator() {
+                return new FileStringPayloadGenerator(getFile(), 1) {
+
+                    @Override
+                    public ResettableAutoCloseableIterator<StringPayload> iterator() {
+                        return new TextAreaPayloadIterator(getPayloadsTextArea());
+                    }
+                };
+            }
+
+            @Override
+            protected FileStringPayloadGeneratorUI createPayloadGeneratorUI(int numberOfPayloads) {
+                return new FileStringPayloadGeneratorUI(getPayloadGeneratorUI().getDescription(), getFile(), numberOfPayloads);
+            }
         }
     }
 }
