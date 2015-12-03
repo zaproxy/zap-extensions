@@ -88,7 +88,7 @@ public class TableWebSocket extends ParosAbstractTable {
 								+ "channel_id BIGINT PRIMARY KEY,"
 								+ "host VARCHAR(255) NOT NULL,"
 								+ "port INTEGER NOT NULL,"
-								+ "url VARCHAR(255) NOT NULL,"
+								+ "url VARCHAR(1048576) NOT NULL,"
 								+ "start_timestamp TIMESTAMP NOT NULL,"
 								+ "end_timestamp TIMESTAMP NULL,"
 								+ "history_id INTEGER NULL,"
@@ -580,7 +580,9 @@ public class TableWebSocket extends ParosAbstractTable {
 						addIdOnSuccess = true;
 						logger.info("insert channel: " + channel.toString());
 					}
-			
+
+					if(logger.isDebugEnabled()) {logger.debug("url (length " + channel.url.length() + "):" + channel.url);}
+
 					stmt.setString(1, channel.host);
 					stmt.setInt(2, channel.port);
 					stmt.setString(3, channel.url);
