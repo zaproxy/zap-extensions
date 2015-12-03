@@ -99,6 +99,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		super.init();
 		
 		ajaxSpiderApi = new AjaxSpiderAPI(this);
+        this.ajaxSpiderApi.addApiOptions(getAjaxSpiderParam());
 	}
 
 	/**
