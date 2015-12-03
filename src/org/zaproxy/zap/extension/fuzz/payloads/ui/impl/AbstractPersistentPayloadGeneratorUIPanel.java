@@ -50,7 +50,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-abstract class AbstractPersistentPayloadGeneratorUIPanel<T1, T2 extends Payload<T1>, T3 extends PayloadGenerator<T1, T2>, T4 extends PayloadGeneratorUI<T1, T2, T3>>
+public abstract class AbstractPersistentPayloadGeneratorUIPanel<T1, T2 extends Payload<T1>, T3 extends PayloadGenerator<T1, T2>, T4 extends PayloadGeneratorUI<T1, T2, T3>>
         implements PayloadGeneratorUIPanel<T1, T2, T3, T4> {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractPersistentPayloadGeneratorUIPanel.class);
@@ -62,27 +62,32 @@ abstract class AbstractPersistentPayloadGeneratorUIPanel<T1, T2 extends Payload<
 
     protected JButton getSaveButton() {
         if (saveButton == null) {
-            saveButton = new JButton(SAVE_BUTTON_LABEL);
-            saveButton.setToolTipText(SAVE_BUTTON_TOOL_TIP);
-            saveButton.setEnabled(false);
-            saveButton.setIcon(
-                    DisplayUtils.getScaledIcon(
-                            new ImageIcon(
-                                    AbstractPersistentPayloadGeneratorUIPanel.class.getResource("/resource/icon/16/096.png"))));
-            saveButton.addActionListener(new ActionListener() {
+            saveButton = createSaveButton();
+        }
+        return saveButton;
+    }
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    T3 payloadGenerator = getPayloadGenerator();
-                    if (payloadGenerator != null) {
-                        Path file = getFile();
-                        if (file != null) {
-                            saveToFile(payloadGenerator, file);
-                        }
+    protected JButton createSaveButton() {
+        JButton saveButton = new JButton(SAVE_BUTTON_LABEL);
+        saveButton.setToolTipText(SAVE_BUTTON_TOOL_TIP);
+        saveButton.setEnabled(false);
+        saveButton.setIcon(
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(
+                                AbstractPersistentPayloadGeneratorUIPanel.class.getResource("/resource/icon/16/096.png"))));
+        saveButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                T3 payloadGenerator = getPayloadGenerator();
+                if (payloadGenerator != null) {
+                    Path file = getFile();
+                    if (file != null) {
+                        saveToFile(payloadGenerator, file);
                     }
                 }
-            });
-        }
+            }
+        });
         return saveButton;
     }
 
