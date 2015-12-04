@@ -5,7 +5,7 @@
 	<author>ZAP Dev Team</author>
 	<version>9</version>
 	<url>https://crowdin.com/project/owasp-zap</url>
-	<changes>Updated for 2.4.2</changes>
+	<changes>Updated for 2.4.3</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.coreLang.ExtensionCoreLanguages</extension>
 	</extensions>
@@ -13,8 +13,8 @@
 	<pscanrules/>
 	<filters/>
 	<files>
-		<file>lang/ZAP_2.4.2_language_pack.1.zaplang</file>
+		<file>lang/ZAP_2.4.3_language_pack.1.zaplang</file>
 	</files>
-	<not-before-version>2.4.2</not-before-version>
+	<not-before-version>2.4.3</not-before-version>
 	<not-from-version/>
 </zapaddon>
