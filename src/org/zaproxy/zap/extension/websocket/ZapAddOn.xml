@@ -7,15 +7,35 @@
 	<changes>
 	<![CDATA[
 	Fix issue with length of handshake's url (Issue 2097).<br>
+	Restore fuzzing capabilities (Issue 1905).<br>
 	]]>
 	</changes>
+	<classnames>
+		<restricted>org.zaproxy.zap.extension.websocket.fuzz</restricted>
+	</classnames>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.websocket.ExtensionWebSocket</extension>
+		<extension v="1">
+			<classname>org.zaproxy.zap.extension.websocket.fuzz.ExtensionWebSocketFuzzer</classname>
+			<classnames>
+				<allowed>org.zaproxy.zap.extension.websocket.fuzz</allowed>
+			</classnames>
+			<dependencies>
+				<addons>
+					<addon>
+						<id>fuzz</id>
+						<semver>2.*</semver>
+					</addon>
+				</addons>
+			</dependencies>
+		</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
 	<filters/>
-	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<files>
+		<file>scripts/templates/websocketfuzzerprocessor/Fuzzer WebSocket Processor default template.js</file>
+	</files>
+	<not-before-version>2.4.3</not-before-version>
 	<not-from-version/>
 </zapaddon>

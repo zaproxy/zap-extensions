@@ -732,6 +732,23 @@ public abstract class WebSocketProxy {
 		}
 	}
 
+	public boolean send(WebSocketMessageDTO msg) throws IOException {
+		logger.info("send custom message");
+		WebSocketMessage message = createWebSocketMessage(msg);
+
+		OutputStream out;
+		if (msg.isOutgoing) {
+			// an outgoing message is caught by the local listener
+			// and forwarded to its output stream
+			out = localListener.getOutputStream();
+		} else {
+			// an incoming message is caught by the remote listener
+			out = remoteListener.getOutputStream();
+		}
+
+		return message.forward(out);
+	}
+
 	public boolean isClientMode() {
 		return isClientMode;
 	}

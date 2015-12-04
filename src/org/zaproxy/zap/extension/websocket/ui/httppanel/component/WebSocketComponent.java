@@ -36,11 +36,15 @@ import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
 import org.zaproxy.zap.extension.search.SearchMatch;
 import org.zaproxy.zap.extension.search.SearchableHttpPanelComponent;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
+import org.zaproxy.zap.extension.websocket.messagelocations.WebSocketMessageLocation;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.models.StringWebSocketPanelViewModel;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.WebSocketPanelTextView;
+import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.view.messagelocation.MessageLocationHighlight;
+import org.zaproxy.zap.view.messagelocation.MessageLocationHighlighter;
 
-public class WebSocketComponent implements HttpPanelComponentInterface, SearchableHttpPanelComponent {
+public class WebSocketComponent implements HttpPanelComponentInterface, SearchableHttpPanelComponent, MessageLocationHighlighter {
 	
 	public static final String NAME = "WebSocketComponent";
 
@@ -260,7 +264,50 @@ public class WebSocketComponent implements HttpPanelComponentInterface, Searchab
 	}
 
 	@Override
-	public HttpPanelView setSelectedView(String arg0) {
-		return null;
+	public HttpPanelView setSelectedView(String viewName) {
+		return views.setSelectedView(viewName);
 	}
+
+    @Override
+    public boolean supports(MessageLocation location) {
+        if (!(location instanceof WebSocketMessageLocation)) {
+            return false;
+        }
+
+        return views.supports(location);
+    }
+
+    @Override
+    public boolean supports(Class<? extends MessageLocation> classLocation) {
+        if (!(WebSocketMessageLocation.class.isAssignableFrom(classLocation))) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public MessageLocationHighlight highlight(MessageLocation location) {
+        if (!(location instanceof WebSocketMessageLocation)) {
+            return null;
+        }
+
+        return views.highlight(location);
+    }
+
+    @Override
+    public MessageLocationHighlight highlight(MessageLocation location, MessageLocationHighlight highlight) {
+        if (!(location instanceof WebSocketMessageLocation)) {
+            return null;
+        }
+
+        return views.highlight(location, highlight);
+    }
+
+    @Override
+    public void removeHighlight(MessageLocation location, MessageLocationHighlight highlightReference) {
+        if (!(location instanceof WebSocketMessageLocation)) {
+            return;
+        }
+        views.removeHighlight(location, highlightReference);
+    }
 }

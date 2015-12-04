@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
+import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
@@ -66,13 +67,11 @@ public class WebSocketProxyListenerBreak implements WebSocketObserver {
 		
 		// message is safe => no need to set onlyIfInScope parameter to true
         
-		/* TODO re-implement support for fuzzing
         if (message instanceof WebSocketFuzzMessageDTO) {
         	// as this message was sent by some fuzzer, do not catch it
         	continueNotifying = true;
         	return continueNotifying;
         }
-        */
     	
         if (!wsMessage.isFinished()) {
         	boolean isRequest = (wsMessage.getDirection().equals(Direction.OUTGOING));

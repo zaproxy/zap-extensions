@@ -156,12 +156,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	private Mode mode;
 
 	/**
-	 * Link to {@link ExtensionFuzz}.
-	 */
-	// TODO re-implement support for fuzzing
-	//private WebSocketFuzzerHandler fuzzHandler;
-
-	/**
 	 * Messages for some {@link WebSocketProxy} on this list are just
 	 * forwarded, but not stored nor shown in UI.
 	 */
@@ -306,18 +300,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			payloadFilter = new FilterWebSocketPayload(this, wsPanel.getChannelsModel());
 			addWebSocketFilter(payloadFilter);
 			
-			// setup fuzzable extension
-			/* TODO re-implement support for fuzzing
-			ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
-			if (extFuzz != null) {
-				hookMenu.addPopupMenuItem(new ShowFuzzMessageInWebSocketsTabMenuItem(getWebSocketPanel()));
-				
-				fuzzHandler = new WebSocketFuzzerHandler(storage.getTable());
-				extFuzz.addFuzzerHandler(WebSocketMessageDTO.class, fuzzHandler);
-				addAllChannelObserver(fuzzHandler);
-			}
-			*/
-			
 			// add exclude/include scope
 			hookMenu.addPopupMenuItem(new PopupIncludeWebSocketContextMenu());
 			hookMenu.addPopupMenuItem(new PopupExcludeWebSocketContextMenu());
@@ -376,14 +358,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		if (extBreak != null) {
 			extBreak.removeBreakpointsUiManager(getBrkManager());
 		}
-		
-		// clear up fuzzable extension
-		/* TODO re-implement support for fuzzing
-		ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
-		if (extFuzz != null) {
-			extFuzz.removeFuzzerHandler(WebSocketMessageDTO.class);
-		}
-		*/
 		
 		removeWebSocketFilter(payloadFilter);
 		
@@ -827,12 +801,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			logger.error("Unable to retrieve current channelId value!", e);
 		}
 		*/
-		
-		/* TODO re-implement support for fuzzing
-		if (fuzzHandler != null) {
-			fuzzHandler.resume();
-		}
-		*/
 
 		List<String> ignoredList = new ArrayList<>();
 		try {
@@ -873,12 +841,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		if (wsFilterListener != null) {
 			wsFilterListener.reset();
 		}
-		
-		/* TODO re-implement support for fuzzing
-		if (fuzzHandler != null) {
-			fuzzHandler.pause();
-		}
-		*/
 	}
 
 	@Override
@@ -910,6 +872,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 	}
 	
+	public WebSocketStorage getStorage() {
+		return storage;
+	}
+
 	/*
 	 * ************************************************************************
 	 * GUI specific code follows here now. It is accessed only by methods hook()
