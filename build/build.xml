@@ -402,6 +402,10 @@
 	<target name="deploy-customreport" description="deploy the custom reporting extension">
 		<build-deploy-addon name="customreport" />
 	</target>
+
+	<target name="generate-wiki-customreport" description="Generates the wiki of custom reporting extension">
+		<generate-wiki addon="customreport" />
+	</target>
 	
 	<target name="deploy-domxss" description="deploy the domxss extension">
 		<build-deploy-addon name="domxss" />
