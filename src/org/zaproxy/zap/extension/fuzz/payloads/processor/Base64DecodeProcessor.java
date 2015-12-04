@@ -25,9 +25,9 @@ import java.nio.charset.Charset;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.encoder.Base64;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
-public class Base64DecodeProcessor extends AbstractCharsetProcessor<String, StringPayload> implements StringPayloadProcessor {
+public class Base64DecodeProcessor extends AbstractCharsetProcessor<DefaultPayload> implements DefaultPayloadProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(Base64DecodeProcessor.class);
 
@@ -44,7 +44,7 @@ public class Base64DecodeProcessor extends AbstractCharsetProcessor<String, Stri
     }
 
     @Override
-    public StringPayload process(StringPayload payload) {
+    public DefaultPayload process(DefaultPayload payload) {
         try {
             payload.setValue(new String(Base64.decode(payload.getValue(), Base64.NO_OPTIONS), getCharsetName()));
         } catch (UnsupportedEncodingException ignore) {

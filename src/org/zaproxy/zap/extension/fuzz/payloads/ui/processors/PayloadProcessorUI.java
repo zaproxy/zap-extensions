@@ -22,9 +22,9 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 
-public interface PayloadProcessorUI<T1, T2 extends Payload<T1>, T3 extends PayloadProcessor<T1, T2>> {
+public interface PayloadProcessorUI<T extends Payload, T2 extends PayloadProcessor<T>> {
 
-    Class<T3> getPayloadProcessorClass();
+    Class<T2> getPayloadProcessorClass();
 
     String getName();
 
@@ -32,7 +32,7 @@ public interface PayloadProcessorUI<T1, T2 extends Payload<T1>, T3 extends Paylo
 
     boolean isMutable();
 
-    T3 getPayloadProcessor();
+    T2 getPayloadProcessor();
 
-    PayloadProcessorUI<T1, T2, T3> copy();
+    PayloadProcessorUI<T, T2> copy();
 }

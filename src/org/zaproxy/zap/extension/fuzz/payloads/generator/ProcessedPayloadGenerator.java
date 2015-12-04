@@ -27,12 +27,12 @@ import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.utils.EmptyResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public class ProcessedPayloadGenerator<T1, T2 extends Payload<T1>> implements PayloadGenerator<T1, T2> {
+public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGenerator<T> {
 
-    private final PayloadGenerator<T1, T2> payloadGenerator;
-    private final List<PayloadProcessor<T1, T2>> processors;
+    private final PayloadGenerator<T> payloadGenerator;
+    private final List<PayloadProcessor<T>> processors;
 
-    public ProcessedPayloadGenerator(PayloadGenerator<T1, T2> payloadGenerator, List<PayloadProcessor<T1, T2>> processors) {
+    public ProcessedPayloadGenerator(PayloadGenerator<T> payloadGenerator, List<PayloadProcessor<T>> processors) {
         this.payloadGenerator = payloadGenerator;
         this.processors = processors;
     }
@@ -43,26 +43,26 @@ public class ProcessedPayloadGenerator<T1, T2 extends Payload<T1>> implements Pa
     }
 
     @Override
-    public ResettableAutoCloseableIterator<T2> iterator() {
+    public ResettableAutoCloseableIterator<T> iterator() {
         return new ProcessedPayaloadGeneratorIterator<>(payloadGenerator, processors);
     }
 
     @Override
-    public ProcessedPayloadGenerator<T1, T2> copy() {
+    public ProcessedPayloadGenerator<T> copy() {
         return new ProcessedPayloadGenerator<>(payloadGenerator, processors);
     }
 
-    private static class ProcessedPayaloadGeneratorIterator<T, E extends Payload<T>> implements
+    private static class ProcessedPayaloadGeneratorIterator<E extends Payload> implements
             ResettableAutoCloseableIterator<E> {
 
-        private final PayloadGenerator<T, E> payloadGenerator;
-        private final List<PayloadProcessor<T, E>> processors;
+        private final PayloadGenerator<E> payloadGenerator;
+        private final List<PayloadProcessor<E>> processors;
 
         private ResettableAutoCloseableIterator<E> payloadIterator;
 
         public ProcessedPayaloadGeneratorIterator(
-                PayloadGenerator<T, E> payloadGenerator,
-                List<PayloadProcessor<T, E>> processors) {
+                PayloadGenerator<E> payloadGenerator,
+                List<PayloadProcessor<E>> processors) {
             this.payloadGenerator = payloadGenerator;
             this.processors = processors;
 
@@ -84,7 +84,7 @@ public class ProcessedPayloadGenerator<T1, T2 extends Payload<T1>> implements Pa
         @Override
         public E next() {
             E value = payloadIterator.next();
-            for (PayloadProcessor<T, E> processor : processors) {
+            for (PayloadProcessor<E> processor : processors) {
                 try {
                     value = processor.process(value);
                 } catch (PayloadProcessingException e) {

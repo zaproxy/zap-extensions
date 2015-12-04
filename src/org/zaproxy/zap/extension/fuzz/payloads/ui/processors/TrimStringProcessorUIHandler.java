@@ -26,14 +26,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.TrimStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.TrimStringProcessorUIHandler.TrimStringProcessorUI;
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
 public class TrimStringProcessorUIHandler implements
-        PayloadProcessorUIHandler<String, StringPayload, TrimStringProcessor, TrimStringProcessorUI> {
+        PayloadProcessorUIHandler<DefaultPayload, TrimStringProcessor, TrimStringProcessorUI> {
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.trim.name");
 
@@ -57,7 +57,7 @@ public class TrimStringProcessorUIHandler implements
         return new TrimStringProcessorUIPanel();
     }
 
-    public static class TrimStringProcessorUI implements PayloadProcessorUI<String, StringPayload, TrimStringProcessor> {
+    public static class TrimStringProcessorUI implements PayloadProcessorUI<DefaultPayload, TrimStringProcessor> {
 
         private final int length;
 
@@ -104,7 +104,7 @@ public class TrimStringProcessorUIHandler implements
     }
 
     public static class TrimStringProcessorUIPanel extends
-            AbstractProcessorUIPanel<String, StringPayload, TrimStringProcessor, TrimStringProcessorUI> {
+            AbstractProcessorUIPanel<DefaultPayload, TrimStringProcessor, TrimStringProcessorUI> {
 
         private static final String LENGTH_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.expand.length.label");
 

@@ -22,8 +22,7 @@ package org.zaproxy.zap.extension.fuzz;
 import org.owasp.jbrofuzz.core.Database;
 import org.owasp.jbrofuzz.core.Fuzzer;
 import org.owasp.jbrofuzz.core.NoSuchFuzzerException;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultStringPayload;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.StringPayloadGenerator;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
@@ -92,7 +91,7 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
         }
 
         @Override
-        public ResettableAutoCloseableIterator<StringPayload> iterator() {
+        public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
             try {
                 return new JBroFuzzerIterator(database.createFuzzer(prototypeId, 1), numberOfPayloads);
             } catch (NoSuchFuzzerException ignore) {
@@ -102,11 +101,11 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
         }
 
         @Override
-        public PayloadGenerator<String, StringPayload> copy() {
+        public PayloadGenerator<DefaultPayload> copy() {
             return this;
         }
 
-        private static class JBroFuzzerIterator implements ResettableAutoCloseableIterator<StringPayload> {
+        private static class JBroFuzzerIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
 
             private final Fuzzer fuzzer;
             private final long limit;
@@ -127,9 +126,9 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
             }
 
             @Override
-            public StringPayload next() {
+            public DefaultPayload next() {
                 count++;
-                return new DefaultStringPayload(fuzzer.next());
+                return new DefaultPayload(fuzzer.next());
             }
 
             @Override

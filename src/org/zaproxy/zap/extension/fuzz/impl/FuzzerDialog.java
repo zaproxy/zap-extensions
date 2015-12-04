@@ -65,7 +65,7 @@ public class FuzzerDialog<M extends Message, FO extends FuzzerOptions, FMP exten
     private JPanel messageFuzzLocationsPanel = null;
     private FuzzerOptionsPanel<FO> optionsPanel = null;
 
-    private List<PayloadGeneratorMessageLocation<?, ?>> fuzzLocations;
+    private List<PayloadGeneratorMessageLocation<?>> fuzzLocations;
     private FuzzerMessageProcessorsTablePanel<M, FMP> fuzzerMessageProcessorsTablePanel;
 
     public FuzzerDialog(
@@ -229,7 +229,7 @@ public class FuzzerDialog<M extends Message, FO extends FuzzerOptions, FMP exten
         return null;
     }
 
-    public List<PayloadGeneratorMessageLocation<?, ?>> getFuzzLocations() {
+    public List<PayloadGeneratorMessageLocation<?>> getFuzzLocations() {
         return fuzzLocations;
     }
 

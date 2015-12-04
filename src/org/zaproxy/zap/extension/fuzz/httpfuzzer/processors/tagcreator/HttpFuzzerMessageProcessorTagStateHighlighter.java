@@ -19,13 +19,13 @@
  */
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors.tagcreator;
 
+import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.ui.HttpFuzzerResultStateHighlighter;
 import org.zaproxy.zap.view.table.decorator.NoteTableCellItemIconHighlighter;
-
-import javax.swing.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class HttpFuzzerMessageProcessorTagStateHighlighter implements HttpFuzzerResultStateHighlighter {
 

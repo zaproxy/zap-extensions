@@ -22,12 +22,12 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.JavaScriptEscapeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.JavaScriptEscapeProcessorUIHandler.JavaScriptEscapeProcessorUI;
 
 public class JavaScriptEscapeProcessorUIHandler implements
-        PayloadProcessorUIHandler<String, StringPayload, JavaScriptEscapeProcessor, JavaScriptEscapeProcessorUI> {
+        PayloadProcessorUIHandler<DefaultPayload, JavaScriptEscapeProcessor, JavaScriptEscapeProcessorUI> {
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.javascriptEscape.name");
 
@@ -52,7 +52,7 @@ public class JavaScriptEscapeProcessorUIHandler implements
     }
 
     public static class JavaScriptEscapeProcessorUI implements
-            PayloadProcessorUI<String, StringPayload, JavaScriptEscapeProcessor> {
+            PayloadProcessorUI<DefaultPayload, JavaScriptEscapeProcessor> {
 
         public static final JavaScriptEscapeProcessorUI INSTANCE = new JavaScriptEscapeProcessorUI();
 
@@ -92,7 +92,7 @@ public class JavaScriptEscapeProcessorUIHandler implements
     }
 
     public static class JavaScriptEscapeProcessorUIPanel extends
-            AbstractProcessorUIPanel<String, StringPayload, JavaScriptEscapeProcessor, JavaScriptEscapeProcessorUI> {
+            AbstractProcessorUIPanel<DefaultPayload, JavaScriptEscapeProcessor, JavaScriptEscapeProcessorUI> {
 
         private JPanel fieldsPanel;
 

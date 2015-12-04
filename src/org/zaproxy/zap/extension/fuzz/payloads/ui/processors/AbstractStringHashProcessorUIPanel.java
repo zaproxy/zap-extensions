@@ -27,12 +27,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.AbstractStringHashProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractStringHashProcessorUIPanel.AbstractStringHashProcessorUI;
 
 public abstract class AbstractStringHashProcessorUIPanel<T1 extends AbstractStringHashProcessor, T2 extends AbstractStringHashProcessorUI<T1>>
-        extends AbstractCharsetProcessorUIPanel<String, StringPayload, T1, T2> {
+        extends AbstractCharsetProcessorUIPanel<DefaultPayload, T1, T2> {
 
     protected static final String UPPER_CASE_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.hash.upperCase.label");
 
@@ -101,7 +101,7 @@ public abstract class AbstractStringHashProcessorUIPanel<T1 extends AbstractStri
     }
 
     public static abstract class AbstractStringHashProcessorUI<T extends AbstractStringHashProcessor> extends
-            AbstractCharsetProcessorUI<String, StringPayload, T> {
+            AbstractCharsetProcessorUI<DefaultPayload, T> {
 
         private final boolean upperCase;
 

@@ -25,13 +25,13 @@ import java.text.MessageFormat;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.SHA1HashProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractStringHashProcessorUIPanel.AbstractStringHashProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.SHA1HashProcessorUIHandler.SHA1HashProcessorUI;
 
 public class SHA1HashProcessorUIHandler implements
-        PayloadProcessorUIHandler<String, StringPayload, SHA1HashProcessor, SHA1HashProcessorUI> {
+        PayloadProcessorUIHandler<DefaultPayload, SHA1HashProcessor, SHA1HashProcessorUI> {
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.sha1Hash.name");
 

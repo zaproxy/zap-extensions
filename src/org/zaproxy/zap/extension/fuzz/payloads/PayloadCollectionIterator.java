@@ -24,7 +24,7 @@ import java.util.Iterator;
 
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public class PayloadCollectionIterator<T, E extends Payload<T>> implements ResettableAutoCloseableIterator<E> {
+public class PayloadCollectionIterator<E extends Payload> implements ResettableAutoCloseableIterator<E> {
 
     private final Collection<E> payloads;
     private Iterator<E> payloadIterator;

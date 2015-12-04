@@ -137,7 +137,7 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
     @SuppressWarnings("unchecked")
     private HttpFuzzer createFuzzer(
             HttpMessage message,
-            List<PayloadGeneratorMessageLocation<?, ?>> fuzzLocations,
+            List<PayloadGeneratorMessageLocation<?>> fuzzLocations,
             HttpFuzzerOptions options,
             List<HttpFuzzerMessageProcessor> processors) {
         if (fuzzLocations.isEmpty()) {
@@ -158,7 +158,7 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
         }
         SortedSet<MessageLocationReplacementGenerator<?, ?>> messageLocationReplacementGenerators = new TreeSet<>();
 
-        for (PayloadGeneratorMessageLocation<?, ?> fuzzLocation : fuzzLocations) {
+        for (PayloadGeneratorMessageLocation<?> fuzzLocation : fuzzLocations) {
             messageLocationReplacementGenerators.add(fuzzLocation);
         }
         multipleMessageLocationsReplacer.init(replacer, messageLocationReplacementGenerators);

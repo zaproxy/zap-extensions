@@ -32,17 +32,17 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  * A {@code PayloadGenerator} composed of several {@code PayloadGenerator}s, allowing them to be viewed/handled as a single
  * {@code PayloadGenerator}.
  */
-public class CompositePayloadGenerator<T, E extends Payload<T>> implements PayloadGenerator<T, E> {
+public class CompositePayloadGenerator<E extends Payload> implements PayloadGenerator<E> {
 
-    private final List<PayloadGenerator<T, E>> payloadGenerators;
+    private final List<PayloadGenerator<E>> payloadGenerators;
 
-    public CompositePayloadGenerator(List<PayloadGenerator<T, E>> payloadGenerators) {
+    public CompositePayloadGenerator(List<PayloadGenerator<E>> payloadGenerators) {
         if (payloadGenerators == null) {
             throw new IllegalArgumentException("Parameter payloadGenerators must not be null.");
         }
 
         this.payloadGenerators = new ArrayList<>(payloadGenerators.size());
-        for (PayloadGenerator<T, E> payloadGenerator : payloadGenerators) {
+        for (PayloadGenerator<E> payloadGenerator : payloadGenerators) {
             this.payloadGenerators.add(payloadGenerator.copy());
         }
     }
@@ -50,7 +50,7 @@ public class CompositePayloadGenerator<T, E extends Payload<T>> implements Paylo
     @Override
     public long getNumberOfPayloads() {
         int size = 0;
-        for (PayloadGenerator<T, E> payloadGenerator : payloadGenerators) {
+        for (PayloadGenerator<E> payloadGenerator : payloadGenerators) {
             size += payloadGenerator.getNumberOfPayloads();
         }
         return size;
@@ -65,18 +65,18 @@ public class CompositePayloadGenerator<T, E extends Payload<T>> implements Paylo
     }
 
     @Override
-    public PayloadGenerator<T, E> copy() {
+    public PayloadGenerator<E> copy() {
         return new CompositePayloadGenerator<>(payloadGenerators);
     }
 
-    private static class CompositeIterator<T, E extends Payload<T>> implements ResettableAutoCloseableIterator<E> {
+    private static class CompositeIterator<E extends Payload> implements ResettableAutoCloseableIterator<E> {
 
         private final List<ResettableAutoCloseableIterator<E>> allIterators;
         private Iterator<E> iteratorChain;
 
-        public CompositeIterator(List<PayloadGenerator<T, E>> payloadGenerators) {
+        public CompositeIterator(List<PayloadGenerator<E>> payloadGenerators) {
             allIterators = new ArrayList<>(payloadGenerators.size());
-            for (PayloadGenerator<T, E> payloadGenerator : payloadGenerators) {
+            for (PayloadGenerator<E> payloadGenerator : payloadGenerators) {
                 allIterators.add(payloadGenerator.iterator());
             }
             initIteratorChain();

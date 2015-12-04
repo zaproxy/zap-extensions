@@ -22,12 +22,12 @@ package org.zaproxy.zap.extension.fuzz.payloads.generator;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public class EmptyPayloadGenerator<T1, T2 extends Payload<T1>> implements PayloadGenerator<T1, T2> {
+public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerator<T> {
 
-    private final T2 value;
+    private final T value;
     private final int numberOfPayloads;
 
-    public EmptyPayloadGenerator(T2 value, int numberOfPayloads) {
+    public EmptyPayloadGenerator(T value, int numberOfPayloads) {
         if (value == null) {
             throw new IllegalArgumentException("Parameter value must not be null.");
         }
@@ -45,16 +45,16 @@ public class EmptyPayloadGenerator<T1, T2 extends Payload<T1>> implements Payloa
     }
 
     @Override
-    public ResettableAutoCloseableIterator<T2> iterator() {
+    public ResettableAutoCloseableIterator<T> iterator() {
         return new ValueRepeaterIterator<>(value, numberOfPayloads);
     }
 
     @Override
-    public PayloadGenerator<T1, T2> copy() {
+    public PayloadGenerator<T> copy() {
         return new EmptyPayloadGenerator<>(value, numberOfPayloads);
     }
 
-    private static class ValueRepeaterIterator<T, E extends Payload<T>> implements ResettableAutoCloseableIterator<E> {
+    private static class ValueRepeaterIterator<E extends Payload> implements ResettableAutoCloseableIterator<E> {
 
         private final E value;
         private final int repeat;

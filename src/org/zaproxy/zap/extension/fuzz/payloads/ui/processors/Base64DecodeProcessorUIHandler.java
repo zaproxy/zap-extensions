@@ -25,13 +25,13 @@ import java.text.MessageFormat;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.Base64DecodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractCharsetProcessorUIPanel.AbstractCharsetProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.Base64DecodeProcessorUIHandler.Base64DecodeProcessorUI;
 
 public class Base64DecodeProcessorUIHandler implements
-        PayloadProcessorUIHandler<String, StringPayload, Base64DecodeProcessor, Base64DecodeProcessorUI> {
+        PayloadProcessorUIHandler<DefaultPayload, Base64DecodeProcessor, Base64DecodeProcessorUI> {
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.base64Decode.name");
 
@@ -56,7 +56,7 @@ public class Base64DecodeProcessorUIHandler implements
     }
 
     public static class Base64DecodeProcessorUI extends
-            AbstractCharsetProcessorUI<String, StringPayload, Base64DecodeProcessor> {
+            AbstractCharsetProcessorUI<DefaultPayload, Base64DecodeProcessor> {
 
         public Base64DecodeProcessorUI(Charset charset) {
             super(charset);
@@ -97,7 +97,7 @@ public class Base64DecodeProcessorUIHandler implements
     }
 
     public static class Base64DecodeProcessorUIPanel extends
-            AbstractCharsetProcessorUIPanel<String, StringPayload, Base64DecodeProcessor, Base64DecodeProcessorUI> {
+            AbstractCharsetProcessorUIPanel<DefaultPayload, Base64DecodeProcessor, Base64DecodeProcessorUI> {
 
         private JPanel fieldsPanel;
 

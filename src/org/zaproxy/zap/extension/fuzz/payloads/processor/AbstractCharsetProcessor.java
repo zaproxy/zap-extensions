@@ -29,13 +29,12 @@ import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 /**
  * A {@code PayloadProcessor} that has/uses a {@code Charset} in the processing of {@code Payload}s.
  * 
- * @param <T> the type of contained in the payload
- * @param <S> the type of payload
+ * @param <T> the type of payload
  * @see Charset
  * @see Payload
  * @see PayloadProcessor
  */
-public abstract class AbstractCharsetProcessor<T, S extends Payload<T>> implements PayloadProcessor<T, S> {
+public abstract class AbstractCharsetProcessor<T extends Payload> implements PayloadProcessor<T> {
 
     /**
      * The {@code Charset}, never {@code null}.

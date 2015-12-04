@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
 /**
- * Tagging interface for {@code PayloadGenerator}s of {@code StringPayload}s.
+ * Tagging interface for {@code PayloadGenerator}s of {@code DefaultPayload}s.
  */
-public interface StringPayloadGenerator extends PayloadGenerator<String, StringPayload> {
+public interface StringPayloadGenerator extends PayloadGenerator<DefaultPayload> {
 
 }

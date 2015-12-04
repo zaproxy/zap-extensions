@@ -48,14 +48,14 @@ public class AddPayloadDialog extends AbstractFormDialog {
 
     private JComboBox<String> payloadUIHandlersComboBox;
 
-    private PayloadGeneratorUI<?, ?, ?> selectedPayloadGeneratorUI;
+    private PayloadGeneratorUI<?, ?> selectedPayloadGeneratorUI;
 
     private CardLayout contentsPanelCardLayout;
     private JPanel contentsPanel;
 
     private PayloadGeneratorsContainer payloadGeneratorsUIHandlers;
 
-    private PayloadGeneratorUIPanel<?, ?, ?, ?> currentPanel;
+    private PayloadGeneratorUIPanel<?, ?, ?> currentPanel;
 
     public AddPayloadDialog(
             Window owner,
@@ -66,7 +66,7 @@ public class AddPayloadDialog extends AbstractFormDialog {
         this.payloadGeneratorsUIHandlers = payloadGeneratorsUIHandlers;
 
         getPayloadUIHandlersComboBox().setSelectedIndex(-1);
-        for (PayloadGeneratorUIPanel<?, ?, ?, ?> panel : payloadGeneratorsUIHandlers.getPanels()) {
+        for (PayloadGeneratorUIPanel<?, ?, ?> panel : payloadGeneratorsUIHandlers.getPanels()) {
             panel.init(messageLocation);
         }
 
@@ -122,7 +122,7 @@ public class AddPayloadDialog extends AbstractFormDialog {
 
     @Override
     protected void clearFields() {
-        for (PayloadGeneratorUIPanel<?, ?, ?, ?> panel : payloadGeneratorsUIHandlers.getPanels()) {
+        for (PayloadGeneratorUIPanel<?, ?, ?> panel : payloadGeneratorsUIHandlers.getPanels()) {
             panel.clear();
         }
         contentsPanel.removeAll();
@@ -138,7 +138,7 @@ public class AddPayloadDialog extends AbstractFormDialog {
         selectedPayloadGeneratorUI = currentPanel.getPayloadGeneratorUI();
     }
 
-    public PayloadGeneratorUI<?, ?, ?> getPayloadGeneratorUI() {
+    public PayloadGeneratorUI<?, ?> getPayloadGeneratorUI() {
         return selectedPayloadGeneratorUI;
     }
 

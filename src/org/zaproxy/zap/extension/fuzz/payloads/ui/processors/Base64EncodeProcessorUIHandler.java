@@ -28,13 +28,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.Base64EncodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractCharsetProcessorUIPanel.AbstractCharsetProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.Base64EncodeProcessorUIHandler.Base64EncodeProcessorUI;
 
 public class Base64EncodeProcessorUIHandler implements
-        PayloadProcessorUIHandler<String, StringPayload, Base64EncodeProcessor, Base64EncodeProcessorUI> {
+        PayloadProcessorUIHandler<DefaultPayload, Base64EncodeProcessor, Base64EncodeProcessorUI> {
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.base64Encode.name");
 
@@ -59,7 +59,7 @@ public class Base64EncodeProcessorUIHandler implements
     }
 
     public static class Base64EncodeProcessorUI extends
-            AbstractCharsetProcessorUI<String, StringPayload, Base64EncodeProcessor> {
+            AbstractCharsetProcessorUI<DefaultPayload, Base64EncodeProcessor> {
 
         private final boolean breakLines;
 
@@ -113,7 +113,7 @@ public class Base64EncodeProcessorUIHandler implements
     }
 
     public static class Base64EncodeProcessorUIPanel extends
-            AbstractCharsetProcessorUIPanel<String, StringPayload, Base64EncodeProcessor, Base64EncodeProcessorUI> {
+            AbstractCharsetProcessorUIPanel<DefaultPayload, Base64EncodeProcessor, Base64EncodeProcessorUI> {
 
         private static final String BREAK_LINES_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.base64Encode.breakLines.label");
 

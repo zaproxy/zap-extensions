@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.fuzz.payloads.generator;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public interface PayloadGenerator<T1, T2 extends Payload<T1>> extends Iterable<T2> {
+public interface PayloadGenerator<E extends Payload> extends Iterable<E> {
 
     final long UNKNOWN_NUMBER_OF_PAYLOADS = 0;
 
@@ -48,7 +48,7 @@ public interface PayloadGenerator<T1, T2 extends Payload<T1>> extends Iterable<T
      * @see PayloadGenerationException
      */
     @Override
-    public ResettableAutoCloseableIterator<T2> iterator();
+    public ResettableAutoCloseableIterator<E> iterator();
 
     /**
      * Returns a copy of this payload generator.
@@ -57,5 +57,5 @@ public interface PayloadGenerator<T1, T2 extends Payload<T1>> extends Iterable<T
      *
      * @return a new {@code PayloadGenerator} whose contents are equal to this payload generator.
      */
-    PayloadGenerator<T1, T2> copy();
+    PayloadGenerator<E> copy();
 }

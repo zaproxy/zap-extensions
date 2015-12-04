@@ -40,7 +40,7 @@ import javax.swing.tree.TreePath;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz.FuzzersDirChangeListener;
 import org.zaproxy.zap.extension.fuzz.FuzzerPayloadGeneratorUIHandler.FuzzerPayloadGeneratorUI;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
@@ -54,7 +54,7 @@ import org.zaproxy.zap.view.JCheckBoxTree.CheckChangeEvent;
 import org.zaproxy.zap.view.JCheckBoxTree.CheckChangeEventListener;
 
 public class FuzzerPayloadGeneratorUIHandler implements
-        PayloadGeneratorUIHandler<String, StringPayload, FuzzerPayloadGenerator, FuzzerPayloadGeneratorUI> {
+        PayloadGeneratorUIHandler<DefaultPayload, FuzzerPayloadGenerator, FuzzerPayloadGeneratorUI> {
 
     private static final String PAYLOAD_GENERATOR_NAME = Constant.messages.getString("fuzz.payloads.generator.fileFuzzers.name");
 
@@ -84,7 +84,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
         return new FuzzerPayloadGeneratorUIPanel(extensionFuzz);
     }
 
-    public static class FuzzerPayloadGeneratorUI implements PayloadGeneratorUI<String, StringPayload, FuzzerPayloadGenerator> {
+    public static class FuzzerPayloadGeneratorUI implements PayloadGeneratorUI<DefaultPayload, FuzzerPayloadGenerator> {
 
         private final List<FuzzerPayloadSource> selectedFuzzers;
         private int numberOfPayloads;
@@ -166,7 +166,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
         @Override
         public FuzzerPayloadGenerator getPayloadGenerator() {
             if (temporary) {
-                return new FuzzerPayloadGenerator(Collections.<PayloadGenerator<String, StringPayload>> emptyList()) {
+                return new FuzzerPayloadGenerator(Collections.<PayloadGenerator<DefaultPayload>> emptyList()) {
 
                     private FileStringPayloadGenerator delegate = new FileStringPayloadGenerator(
                             file,
@@ -178,7 +178,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
                             numberOfPayloads);
 
                     @Override
-                    public PayloadGenerator<String, StringPayload> copy() {
+                    public PayloadGenerator<DefaultPayload> copy() {
                         return delegate.copy();
                     }
 
@@ -188,12 +188,12 @@ public class FuzzerPayloadGeneratorUIHandler implements
                     }
 
                     @Override
-                    public ResettableAutoCloseableIterator<StringPayload> iterator() {
+                    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
                         return delegate.iterator();
                     }
                 };
             }
-            List<PayloadGenerator<String, StringPayload>> generators = new ArrayList<>();
+            List<PayloadGenerator<DefaultPayload>> generators = new ArrayList<>();
             for (FuzzerPayloadSource selectedFuzzer : selectedFuzzers) {
                 generators.add(selectedFuzzer.getPayloadGenerator());
             }
@@ -208,7 +208,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
     }
 
     public static class FuzzerPayloadGeneratorUIPanel extends
-            AbstractPersistentPayloadGeneratorUIPanel<String, StringPayload, FuzzerPayloadGenerator, FuzzerPayloadGeneratorUI> {
+            AbstractPersistentPayloadGeneratorUIPanel<DefaultPayload, FuzzerPayloadGenerator, FuzzerPayloadGeneratorUI> {
 
         private static final String FILE_FUZZERS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.fileFuzzers.files.label");
         private static final String PAYLOADS_PREVIEW_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.fileFuzzers.payloadsPreview.label");
@@ -382,7 +382,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
                     count++;
 
                     contents.append(payloadsSource.getName()).append('\n');
-                    try (ResettableAutoCloseableIterator<StringPayload> payloads = payloadsSource
+                    try (ResettableAutoCloseableIterator<DefaultPayload> payloads = payloadsSource
                             .getPayloadGenerator(MAX_NUMBER_PAYLOADS_PREVIEW + 1).iterator()) {
                         for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && payloads.hasNext(); i++) {
                             contents.append("  ").append(i + 1).append(": ").append(payloads.next().getValue()).append('\n');
@@ -529,7 +529,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
         }
 
         private static class ModifyFileFuzzersPayloadsPanel
-                extends ModifyPayloadsPanel<String, StringPayload, FuzzerPayloadGenerator, FuzzerPayloadGeneratorUI> {
+                extends ModifyPayloadsPanel<DefaultPayload, FuzzerPayloadGenerator, FuzzerPayloadGeneratorUI> {
 
             public ModifyFileFuzzersPayloadsPanel(JButton saveButton) {
                 super(saveButton);
@@ -537,10 +537,10 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
             @Override
             public FuzzerPayloadGenerator getPayloadGenerator() {
-                return new FuzzerPayloadGenerator(Collections.<PayloadGenerator<String, StringPayload>> emptyList()) {
+                return new FuzzerPayloadGenerator(Collections.<PayloadGenerator<DefaultPayload>> emptyList()) {
 
                     @Override
-                    public ResettableAutoCloseableIterator<StringPayload> iterator() {
+                    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
                         return new TextAreaPayloadIterator(getPayloadsTextArea());
                     }
                 };

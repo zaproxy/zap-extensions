@@ -32,7 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.DefaultStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
@@ -42,7 +42,7 @@ import org.zaproxy.zap.utils.StringUIUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 
 public class DefaultStringPayloadGeneratorUIHandler implements
-        PayloadGeneratorUIHandler<String, StringPayload, DefaultStringPayloadGenerator, DefaultStringPayloadGeneratorUI> {
+        PayloadGeneratorUIHandler<DefaultPayload, DefaultStringPayloadGenerator, DefaultStringPayloadGeneratorUI> {
 
     private static final String PAYLOAD_GENERATOR_NAME = Constant.messages.getString("fuzz.payloads.generator.strings.name");
 
@@ -69,7 +69,7 @@ public class DefaultStringPayloadGeneratorUIHandler implements
     }
 
     public static class DefaultStringPayloadGeneratorUI implements
-            PayloadGeneratorUI<String, StringPayload, DefaultStringPayloadGenerator> {
+            PayloadGeneratorUI<DefaultPayload, DefaultStringPayloadGenerator> {
 
         private final boolean multiline;
         private final String value;
@@ -153,7 +153,7 @@ public class DefaultStringPayloadGeneratorUIHandler implements
     }
 
     public static class DefaultStringPayloadGeneratorUIPanel extends
-            AbstractPersistentPayloadGeneratorUIPanel<String, StringPayload, DefaultStringPayloadGenerator, DefaultStringPayloadGeneratorUI> {
+            AbstractPersistentPayloadGeneratorUIPanel<DefaultPayload, DefaultStringPayloadGenerator, DefaultStringPayloadGeneratorUI> {
 
         private static final String CONTENTS_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.strings.contents.label");
         private static final String MULTILINE_FIELD_LABEL = Constant.messages.getString("fuzz.payloads.generator.strings.multiline.label");

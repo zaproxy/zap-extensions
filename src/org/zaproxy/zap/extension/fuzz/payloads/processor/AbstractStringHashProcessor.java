@@ -25,10 +25,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.codec.binary.Hex;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
-public abstract class AbstractStringHashProcessor extends AbstractCharsetProcessor<String, StringPayload> implements
-        StringPayloadProcessor {
+public abstract class AbstractStringHashProcessor extends AbstractCharsetProcessor<DefaultPayload> implements
+        DefaultPayloadProcessor {
 
     protected static final Hex HEX_ASCII = new Hex(StandardCharsets.US_ASCII.name());
 
@@ -71,7 +71,7 @@ public abstract class AbstractStringHashProcessor extends AbstractCharsetProcess
     protected abstract MessageDigest getMessageDigest();
 
     @Override
-    public StringPayload process(StringPayload payload) {
+    public DefaultPayload process(DefaultPayload payload) {
         MessageDigest messageDigest = getMessageDigest();
         messageDigest.reset();
         messageDigest.update(payload.getValue().getBytes(getCharset()));

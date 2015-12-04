@@ -21,13 +21,11 @@ package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
 import javax.script.ScriptException;
 
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
-
 /**
- * An interface for scripts that process the value of {@code StringPayload}s.
+ * An interface for scripts that process the value of {@code DefaultPayload}s.
  *
  * @see #TYPE_NAME
- * @see StringPayload
+ * @see org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload
  * @see ScriptStringPayloadProcessorAdapter
  */
 public interface ScriptStringPayloadProcessor {

@@ -33,17 +33,17 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUIP
 public class PayloadProcessorsContainer {
 
     private final String defaultPanelName;
-    private Map<String, PayloadProcessorUIPanel<?, ?, ?, ?>> panels;
-    private Map<Class<?>, PayloadProcessorUIPanel<?, ?, ?, ?>> panelsMap;
+    private Map<String, PayloadProcessorUIPanel<?, ?, ?>> panels;
+    private Map<Class<?>, PayloadProcessorUIPanel<?, ?, ?>> panelsMap;
 
     public PayloadProcessorsContainer(
-            Collection<PayloadProcessorUIHandler<?, ?, ?, ?>> payloadUIHandlers,
+            Collection<PayloadProcessorUIHandler<?, ?, ?>> payloadUIHandlers,
             String defaultPanelName) {
         this.panels = new HashMap<>();
         this.panelsMap = new HashMap<>();
 
         String panelName = defaultPanelName;
-        for (PayloadProcessorUIHandler<?, ?, ?, ?> payloadUIHandler : payloadUIHandlers) {
+        for (PayloadProcessorUIHandler<?, ?, ?> payloadUIHandler : payloadUIHandlers) {
             addHelper(payloadUIHandler);
             panels.put(payloadUIHandler.getName(), panelsMap.get(payloadUIHandler.getPayloadProcessorUIClass()));
         }
@@ -54,8 +54,8 @@ public class PayloadProcessorsContainer {
         this.defaultPanelName = panelName;
     }
 
-    private <T1, T2 extends Payload<T1>, T3 extends PayloadProcessor<T1, T2>, T4 extends PayloadProcessorUI<T1, T2, T3>> void addHelper(
-            PayloadProcessorUIHandler<T1, T2, T3, T4> payloadUIHandler) {
+    private <T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>> void addHelper(
+            PayloadProcessorUIHandler<T, T2, T3> payloadUIHandler) {
         panelsMap.put(
                 payloadUIHandler.getPayloadProcessorUIClass(),
                 payloadUIHandler.getPayloadProcessorUIPanelClass().cast(payloadUIHandler.createPanel()));
@@ -69,22 +69,22 @@ public class PayloadProcessorsContainer {
         return defaultPanelName;
     }
 
-    public PayloadProcessorUIPanel<?, ?, ?, ?> getPanel(String name) {
+    public PayloadProcessorUIPanel<?, ?, ?> getPanel(String name) {
         return panels.get(name);
     }
 
-    public <T1, T2 extends Payload<T1>, T3 extends PayloadProcessor<T1, T2>, T4 extends PayloadProcessorUI<T1, T2, T3>, T5 extends PayloadProcessorUIPanel<T1, T2, T3, T4>> T5 getPanel(
-            T4 PayloadProcessorUI) {
-        PayloadProcessorUIPanel<?, ?, ?, ?> panel = panelsMap.get(PayloadProcessorUI.getClass());
+    public <T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>, T4 extends PayloadProcessorUIPanel<T, T2, T3>> T4 getPanel(
+            T3 PayloadProcessorUI) {
+        PayloadProcessorUIPanel<?, ?, ?> panel = panelsMap.get(PayloadProcessorUI.getClass());
         if (panel != null) {
             @SuppressWarnings("unchecked")
-            T5 panelCasted = (T5) panel;
+            T4 panelCasted = (T4) panel;
             return panelCasted;
         }
         return null;
     }
 
-    public Collection<PayloadProcessorUIPanel<?, ?, ?, ?>> getPanels() {
+    public Collection<PayloadProcessorUIPanel<?, ?, ?>> getPanels() {
         return panels.values();
     }
 }

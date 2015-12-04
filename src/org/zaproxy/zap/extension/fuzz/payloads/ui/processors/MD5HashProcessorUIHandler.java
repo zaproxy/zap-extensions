@@ -25,13 +25,13 @@ import java.text.MessageFormat;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.MD5HashProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractStringHashProcessorUIPanel.AbstractStringHashProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.MD5HashProcessorUIHandler.MD5HashProcessorUI;
 
 public class MD5HashProcessorUIHandler implements
-        PayloadProcessorUIHandler<String, StringPayload, MD5HashProcessor, MD5HashProcessorUI> {
+        PayloadProcessorUIHandler<DefaultPayload, MD5HashProcessor, MD5HashProcessorUI> {
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.md5Hash.name");
 

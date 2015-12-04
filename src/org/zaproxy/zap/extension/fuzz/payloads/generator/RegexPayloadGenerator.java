@@ -24,15 +24,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultStringPayload;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 import com.mifmif.common.regex.Generex;
 import com.mifmif.common.regex.util.Iterator;
 
 /**
- * A {@code StringPayloadGenerator} that generates {@code StringPayload}s based on a regular expression.
+ * A {@code StringPayloadGenerator} that generates {@code DefaultPayload}s based on a regular expression.
+ * 
+ * @see DefaultPayload
  */
 public class RegexPayloadGenerator implements StringPayloadGenerator {
 
@@ -77,7 +78,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
     }
 
     @Override
-    public ResettableAutoCloseableIterator<StringPayload> iterator() {
+    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
         return new RegexIterator(generator, maxPayloads);
     }
 
@@ -190,7 +191,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         return (int) generator.matchedStringsSize(max);
     }
 
-    private static class RegexIterator implements ResettableAutoCloseableIterator<StringPayload> {
+    private static class RegexIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
 
         private final Generex generex;
         private final int maxPayloads;
@@ -212,9 +213,9 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public StringPayload next() {
+        public DefaultPayload next() {
             count++;
-            return new DefaultStringPayload(iterator.next());
+            return new DefaultPayload(iterator.next());
         }
 
         @Override

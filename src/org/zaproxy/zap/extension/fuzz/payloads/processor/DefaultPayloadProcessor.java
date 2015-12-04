@@ -17,12 +17,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.fuzz.payloads;
+package org.zaproxy.zap.extension.fuzz.payloads.processor;
+
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
 /**
- * Tagging interface for {@code String} {@code Payload}s.
+ * Tagging interface for {@code PayloadProcessor}s of {@code DefaultPayload}s.
  * 
- * @see Payload
+ * @see PayloadProcessor
+ * @see DefaultPayload
  */
-public interface StringPayload extends Payload<String> {
+public interface DefaultPayloadProcessor extends PayloadProcessor<DefaultPayload> {
 }

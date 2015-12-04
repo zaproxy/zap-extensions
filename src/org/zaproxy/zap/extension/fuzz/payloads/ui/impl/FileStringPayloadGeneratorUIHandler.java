@@ -47,7 +47,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
@@ -58,7 +58,7 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 
 public class FileStringPayloadGeneratorUIHandler implements
-        PayloadGeneratorUIHandler<String, StringPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
+        PayloadGeneratorUIHandler<DefaultPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
 
     private static final String PAYLOAD_GENERATOR_NAME = Constant.messages.getString("fuzz.payloads.generator.file.name");
 
@@ -83,7 +83,7 @@ public class FileStringPayloadGeneratorUIHandler implements
     }
 
     public static class FileStringPayloadGeneratorUI implements
-            PayloadGeneratorUI<String, StringPayload, FileStringPayloadGenerator> {
+            PayloadGeneratorUI<DefaultPayload, FileStringPayloadGenerator> {
 
         private final Path file;
         private final Charset charset;
@@ -196,7 +196,7 @@ public class FileStringPayloadGeneratorUIHandler implements
     }
 
     public static class FileStringPayloadGeneratorUIPanel extends
-            AbstractPersistentPayloadGeneratorUIPanel<String, StringPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
+            AbstractPersistentPayloadGeneratorUIPanel<DefaultPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
 
         private static final Charset[] CHARSETS = {
                 StandardCharsets.UTF_8,
@@ -425,7 +425,7 @@ public class FileStringPayloadGeneratorUIHandler implements
                             getIgnoreEmptyLinesCheckBox().isSelected(),
                             getIgnoreFirstLineCheckBox().isSelected(),
                             numberOfPayloads);
-                    try (ResettableAutoCloseableIterator<StringPayload> payloads = payloadGenerator.iterator()) {
+                    try (ResettableAutoCloseableIterator<DefaultPayload> payloads = payloadGenerator.iterator()) {
                         for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && payloads.hasNext(); i++) {
                             if (contents.length() > 0) {
                                 contents.append('\n');
@@ -664,7 +664,7 @@ public class FileStringPayloadGeneratorUIHandler implements
         }
 
         private static class ModifyFileStringPayloadsPanel
-                extends ModifyPayloadsPanel<String, StringPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
+                extends ModifyPayloadsPanel<DefaultPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
 
             public ModifyFileStringPayloadsPanel(JButton saveButton) {
                 super(saveButton);
@@ -675,7 +675,7 @@ public class FileStringPayloadGeneratorUIHandler implements
                 return new FileStringPayloadGenerator(getFile(), 1) {
 
                     @Override
-                    public ResettableAutoCloseableIterator<StringPayload> iterator() {
+                    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
                         return new TextAreaPayloadIterator(getPayloadsTextArea());
                     }
                 };
