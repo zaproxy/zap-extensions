@@ -40,7 +40,7 @@
 	<classpathentry kind="lib" path="testlib/powermock-mockito-1.4.12-full.jar"/>
 	<classpathentry kind="lib" path="testlib/simple-5.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/selenium-release-3.zap"/>
-	<classpathentry kind="lib" path="lib/zap-2.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/zap-2.4.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/metadata-extractor-2.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/xmpcore-5.1.2.jar"/>
