@@ -32,7 +32,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
-public class ModifyPayloadDialog<T1, T2 extends Payload<T1>, T3 extends PayloadGenerator<T1, T2>, T4 extends PayloadGeneratorUI<T1, T2, T3>>
+public class ModifyPayloadDialog<T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>>
         extends AbstractFormDialog {
 
     private static final long serialVersionUID = 8111848758566016134L;
@@ -42,11 +42,11 @@ public class ModifyPayloadDialog<T1, T2 extends Payload<T1>, T3 extends PayloadG
     private static final String CONFIRM_BUTTON_LABEL = Constant.messages.getString("fuzz.fuzzer.dialog.modify.payload.button.confirm");
 
     private final String nameType;
-    private T4 payloadGeneratorUI;
+    private T3 payloadGeneratorUI;
 
-    private PayloadGeneratorUIPanel<T1, T2, T3, T4> contentPanel;
+    private PayloadGeneratorUIPanel<T, T2, T3> contentPanel;
 
-    public ModifyPayloadDialog(Window owner, PayloadGeneratorUIPanel<T1, T2, T3, T4> panel, T4 payloadGeneratorUI) {
+    public ModifyPayloadDialog(Window owner, PayloadGeneratorUIPanel<T, T2, T3> panel, T3 payloadGeneratorUI) {
         super(owner, DIALOG_TITLE, false);
 
         nameType = payloadGeneratorUI.getName();
@@ -115,7 +115,7 @@ public class ModifyPayloadDialog<T1, T2 extends Payload<T1>, T3 extends PayloadG
         payloadGeneratorUI = contentPanel.getPayloadGeneratorUI();
     }
 
-    public T4 getPayloadGeneratorUI() {
+    public T3 getPayloadGeneratorUI() {
         return payloadGeneratorUI;
     }
 }

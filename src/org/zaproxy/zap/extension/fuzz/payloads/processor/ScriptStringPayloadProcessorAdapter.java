@@ -20,19 +20,19 @@
 package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
 import org.parosproxy.paros.control.Control;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 /**
- * A {@code StringPayloadProcessor} that delegates the processing of the value of a {@code StringPayload} to a
- * {@code StringPayloadProcessorScript}.
+ * A {@code DefaultPayloadProcessor} that delegates the processing of the value of a {@code DefaultPayload} to a
+ * {@code DefaultPayloadProcessorScript}.
  *
- * @see StringPayload
- * @see StringPayloadProcessor
+ * @see DefaultPayload
+ * @see DefaultPayloadProcessor
  * @see ScriptStringPayloadProcessor
  */
-public class ScriptStringPayloadProcessorAdapter implements StringPayloadProcessor {
+public class ScriptStringPayloadProcessorAdapter implements DefaultPayloadProcessor {
 
     private final ScriptWrapper scriptWrapper;
     private boolean initialised;
@@ -50,7 +50,7 @@ public class ScriptStringPayloadProcessorAdapter implements StringPayloadProcess
     }
 
     @Override
-    public StringPayload process(StringPayload payload) throws PayloadProcessingException {
+    public DefaultPayload process(DefaultPayload payload) throws PayloadProcessingException {
         if (!initialised) {
             initialise();
             initialised = true;
@@ -98,7 +98,7 @@ public class ScriptStringPayloadProcessorAdapter implements StringPayloadProcess
     }
 
     @Override
-    public PayloadProcessor<String, StringPayload> copy() {
+    public PayloadProcessor<DefaultPayload> copy() {
         return new ScriptStringPayloadProcessorAdapter(scriptWrapper);
     }
 }

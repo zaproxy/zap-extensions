@@ -37,7 +37,7 @@ import javax.swing.JTextArea;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.ScriptStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.ScriptStringPayloadGeneratorAdapter;
@@ -52,7 +52,7 @@ import org.zaproxy.zap.utils.SortedComboBoxModel;
 
 public class ScriptStringPayloadGeneratorAdapterUIHandler
         implements
-        PayloadGeneratorUIHandler<String, StringPayload, ScriptStringPayloadGeneratorAdapter, ScriptStringPayloadGeneratorAdapterUI> {
+        PayloadGeneratorUIHandler<DefaultPayload, ScriptStringPayloadGeneratorAdapter, ScriptStringPayloadGeneratorAdapterUI> {
 
     private static final Logger LOGGER = Logger.getLogger(ScriptStringPayloadGeneratorAdapterUIHandler.class);
 
@@ -86,7 +86,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
     }
 
     public static class ScriptStringPayloadGeneratorAdapterUI implements
-            PayloadGeneratorUI<String, StringPayload, ScriptStringPayloadGeneratorAdapter> {
+            PayloadGeneratorUI<DefaultPayload, ScriptStringPayloadGeneratorAdapter> {
 
         private final ScriptWrapper scriptWrapper;
         private ScriptStringPayloadGenerator scriptPayloadGenerator;
@@ -143,7 +143,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
 
     public static class ScriptStringPayloadGeneratorAdapterUIPanel
             extends
-            AbstractPersistentPayloadGeneratorUIPanel<String, StringPayload, ScriptStringPayloadGeneratorAdapter, ScriptStringPayloadGeneratorAdapterUI> {
+            AbstractPersistentPayloadGeneratorUIPanel<DefaultPayload, ScriptStringPayloadGeneratorAdapter, ScriptStringPayloadGeneratorAdapterUI> {
 
         private static final int MAX_NUMBER_PAYLOADS_PREVIEW = 250;
 
@@ -249,7 +249,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
             }
             StringBuilder contents = new StringBuilder();
             try {
-                try (ResettableAutoCloseableIterator<StringPayload> itPayloads = scriptPayloadGenerator.iterator()) {
+                try (ResettableAutoCloseableIterator<DefaultPayload> itPayloads = scriptPayloadGenerator.iterator()) {
                     for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && itPayloads.hasNext(); i++) {
                         if (contents.length() > 0) {
                             contents.append('\n');

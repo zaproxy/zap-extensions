@@ -22,13 +22,13 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 
-public interface PayloadProcessorUIHandler<T1, T2 extends Payload<T1>, T3 extends PayloadProcessor<T1, T2>, T4 extends PayloadProcessorUI<T1, T2, T3>> {
+public interface PayloadProcessorUIHandler<T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>> {
 
     String getName();
 
-    Class<T4> getPayloadProcessorUIClass();
+    Class<T3> getPayloadProcessorUIClass();
 
-    Class<? extends PayloadProcessorUIPanel<T1, T2, T3, T4>> getPayloadProcessorUIPanelClass();
+    Class<? extends PayloadProcessorUIPanel<T, T2, T3>> getPayloadProcessorUIPanelClass();
 
-    PayloadProcessorUIPanel<T1, T2, T3, T4> createPanel();
+    PayloadProcessorUIPanel<T, T2, T3> createPanel();
 }

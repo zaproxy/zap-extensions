@@ -21,14 +21,14 @@ package org.zaproxy.zap.extension.fuzz;
 
 import java.util.List;
 
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.CompositePayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.StringPayloadGenerator;
 
-class FuzzerPayloadGenerator extends CompositePayloadGenerator<String, StringPayload> implements StringPayloadGenerator {
+class FuzzerPayloadGenerator extends CompositePayloadGenerator<DefaultPayload> implements StringPayloadGenerator {
 
-    public FuzzerPayloadGenerator(List<PayloadGenerator<String, StringPayload>> payloadGenerators) {
+    public FuzzerPayloadGenerator(List<PayloadGenerator<DefaultPayload>> payloadGenerators) {
         super(payloadGenerators);
     }
 

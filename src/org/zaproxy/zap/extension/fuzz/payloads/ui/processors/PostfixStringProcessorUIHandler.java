@@ -25,13 +25,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PostfixStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PostfixStringProcessorUIHandler.PostfixStringProcessorUI;
 import org.zaproxy.zap.utils.ZapTextField;
 
 public class PostfixStringProcessorUIHandler implements
-        PayloadProcessorUIHandler<String, StringPayload, PostfixStringProcessor, PostfixStringProcessorUI> {
+        PayloadProcessorUIHandler<DefaultPayload, PostfixStringProcessor, PostfixStringProcessorUI> {
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.postfixString.name");
 
@@ -55,7 +55,7 @@ public class PostfixStringProcessorUIHandler implements
         return new PostfixStringProcessorUIPanel();
     }
 
-    public static class PostfixStringProcessorUI implements PayloadProcessorUI<String, StringPayload, PostfixStringProcessor> {
+    public static class PostfixStringProcessorUI implements PayloadProcessorUI<DefaultPayload, PostfixStringProcessor> {
 
         private final String value;
 
@@ -100,7 +100,7 @@ public class PostfixStringProcessorUIHandler implements
     }
 
     public static class PostfixStringProcessorUIPanel extends
-            AbstractProcessorUIPanel<String, StringPayload, PostfixStringProcessor, PostfixStringProcessorUI> {
+            AbstractProcessorUIPanel<DefaultPayload, PostfixStringProcessor, PostfixStringProcessorUI> {
 
         private static final String VALUE_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.postfixString.value.label");
 

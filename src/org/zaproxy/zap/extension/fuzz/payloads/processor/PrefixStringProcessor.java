@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
-public class PrefixStringProcessor implements StringPayloadProcessor {
+public class PrefixStringProcessor implements DefaultPayloadProcessor {
 
     private final String prefixValue;
 
@@ -30,7 +30,7 @@ public class PrefixStringProcessor implements StringPayloadProcessor {
     }
 
     @Override
-    public StringPayload process(StringPayload payload) {
+    public DefaultPayload process(DefaultPayload payload) {
         payload.setValue(prefixValue + payload.getValue());
         return payload;
     }

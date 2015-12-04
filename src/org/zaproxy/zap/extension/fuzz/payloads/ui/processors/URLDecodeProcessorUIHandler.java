@@ -25,13 +25,13 @@ import java.text.MessageFormat;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.URLDecodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractCharsetProcessorUIPanel.AbstractCharsetProcessorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.URLDecodeProcessorUIHandler.URLDecodeProcessorUI;
 
 public class URLDecodeProcessorUIHandler implements
-        PayloadProcessorUIHandler<String, StringPayload, URLDecodeProcessor, URLDecodeProcessorUI> {
+        PayloadProcessorUIHandler<DefaultPayload, URLDecodeProcessor, URLDecodeProcessorUI> {
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.urlDecode.name");
 
@@ -55,7 +55,7 @@ public class URLDecodeProcessorUIHandler implements
         return new URLDecodeProcessorUIPanel();
     }
 
-    public static class URLDecodeProcessorUI extends AbstractCharsetProcessorUI<String, StringPayload, URLDecodeProcessor> {
+    public static class URLDecodeProcessorUI extends AbstractCharsetProcessorUI<DefaultPayload, URLDecodeProcessor> {
 
         public URLDecodeProcessorUI(Charset charset) {
             super(charset);
@@ -96,7 +96,7 @@ public class URLDecodeProcessorUIHandler implements
     }
 
     public static class URLDecodeProcessorUIPanel extends
-            AbstractCharsetProcessorUIPanel<String, StringPayload, URLDecodeProcessor, URLDecodeProcessorUI> {
+            AbstractCharsetProcessorUIPanel<DefaultPayload, URLDecodeProcessor, URLDecodeProcessorUI> {
 
         private JPanel fieldsPanel;
 

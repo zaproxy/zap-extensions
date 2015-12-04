@@ -19,13 +19,13 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
 /**
- * A {@code StringPayloadProcessor} that allows to expand the payload up to a given length appending a given value to begin or
+ * A {@code DefaultPayloadProcessor} that allows to expand the payload up to a given length appending a given value to begin or
  * end of the payload.
  */
-public class ExpandStringProcessor implements StringPayloadProcessor {
+public class ExpandStringProcessor implements DefaultPayloadProcessor {
 
     public enum Position {
         BEGIN,
@@ -58,7 +58,7 @@ public class ExpandStringProcessor implements StringPayloadProcessor {
     }
 
     @Override
-    public StringPayload process(StringPayload payload) {
+    public DefaultPayload process(DefaultPayload payload) {
         String valuePayload = payload.getValue();
         if (valuePayload.length() >= length) {
             return payload;

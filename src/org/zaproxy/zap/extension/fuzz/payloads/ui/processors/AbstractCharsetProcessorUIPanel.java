@@ -33,8 +33,8 @@ import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.AbstractCharsetProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.AbstractCharsetProcessorUIPanel.AbstractCharsetProcessorUI;
 
-public abstract class AbstractCharsetProcessorUIPanel<T1, T2 extends Payload<T1>, T3 extends AbstractCharsetProcessor<T1, T2>, T4 extends AbstractCharsetProcessorUI<T1, T2, T3>>
-        extends AbstractProcessorUIPanel<T1, T2, T3, T4> {
+public abstract class AbstractCharsetProcessorUIPanel<T extends Payload, T2 extends AbstractCharsetProcessor<T>, T3 extends AbstractCharsetProcessorUI<T, T2>>
+        extends AbstractProcessorUIPanel<T, T2, T3> {
 
     protected static final String CHARSET_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.charset.charset.label");
 
@@ -67,7 +67,7 @@ public abstract class AbstractCharsetProcessorUIPanel<T1, T2 extends Payload<T1>
     }
 
     @Override
-    public void setPayloadProcessorUI(T4 payloadProcessorUI) {
+    public void setPayloadProcessorUI(T3 payloadProcessorUI) {
         getCharsetComboBox().setSelectedItem(payloadProcessorUI.getCharset());
     }
 
@@ -88,8 +88,8 @@ public abstract class AbstractCharsetProcessorUIPanel<T1, T2 extends Payload<T1>
         return fieldsPanel;
     }
 
-    public static abstract class AbstractCharsetProcessorUI<T1, T2 extends Payload<T1>, T3 extends AbstractCharsetProcessor<T1, T2>>
-            implements PayloadProcessorUI<T1, T2, T3> {
+    public static abstract class AbstractCharsetProcessorUI<T extends Payload, T2 extends AbstractCharsetProcessor<T>>
+            implements PayloadProcessorUI<T, T2> {
 
         private final Charset charset;
 

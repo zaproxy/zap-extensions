@@ -40,16 +40,15 @@ import javax.swing.text.BadLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultStringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ZapTextArea;
 
-public abstract class ModifyPayloadsPanel<T1, T2 extends Payload<T1>, T3 extends PayloadGenerator<T1, T2>, T4 extends PayloadGeneratorUI<T1, T2, T3>> {
+public abstract class ModifyPayloadsPanel<T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> {
 
     private final Logger logger = Logger.getLogger(getClass());
 
@@ -68,7 +67,7 @@ public abstract class ModifyPayloadsPanel<T1, T2 extends Payload<T1>, T3 extends
     private boolean createTempFile;
     private boolean externalEditor;
 
-    private T4 payloadGeneratorUI;
+    private T3 payloadGeneratorUI;
 
     public ModifyPayloadsPanel(JButton saveButton) {
         this.fieldsPanel = new JPanel();
@@ -100,9 +99,9 @@ public abstract class ModifyPayloadsPanel<T1, T2 extends Payload<T1>, T3 extends
                         .addComponent(saveButton));
     }
 
-    public abstract T3 getPayloadGenerator();
+    public abstract T2 getPayloadGenerator();
 
-    public T4 getFileStringPayloadGeneratorUI() {
+    public T3 getFileStringPayloadGeneratorUI() {
         int numberOfPayloads = 0;
         if (externalEditor) {
             if (createTempFile) {
@@ -121,7 +120,7 @@ public abstract class ModifyPayloadsPanel<T1, T2 extends Payload<T1>, T3 extends
         return createPayloadGeneratorUI(numberOfPayloads);
     }
 
-    protected abstract T4 createPayloadGeneratorUI(int numberOfPayloads);
+    protected abstract T3 createPayloadGeneratorUI(int numberOfPayloads);
 
     public boolean isValidForPersistence() {
         return saveButton.isEnabled();
@@ -175,15 +174,15 @@ public abstract class ModifyPayloadsPanel<T1, T2 extends Payload<T1>, T3 extends
         return false;
     }
 
-    private boolean writeToFile(T3 payloadGenerator, Path file) {
+    private boolean writeToFile(T2 payloadGenerator, Path file) {
         try (BufferedWriter bw = Files.newBufferedWriter(
                 file,
                 StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING);
-             ResettableAutoCloseableIterator<T2> it = payloadGenerator.iterator()) {
+             ResettableAutoCloseableIterator<T> it = payloadGenerator.iterator()) {
             while (it.hasNext()) {
-                bw.write(it.next().getValue().toString());
+                bw.write(it.next().getValue());
                 if (it.hasNext()) {
                     bw.write('\n');
                 }
@@ -205,7 +204,7 @@ public abstract class ModifyPayloadsPanel<T1, T2 extends Payload<T1>, T3 extends
         return file;
     }
 
-    protected T4 getPayloadGeneratorUI() {
+    protected T3 getPayloadGeneratorUI() {
         return payloadGeneratorUI;
     }
 
@@ -217,7 +216,7 @@ public abstract class ModifyPayloadsPanel<T1, T2 extends Payload<T1>, T3 extends
         return payloadsTextArea;
     }
 
-    public void setPayloadGeneratorUI(T4 payloadGeneratorUI, boolean temporary, Path file) {
+    public void setPayloadGeneratorUI(T3 payloadGeneratorUI, boolean temporary, Path file) {
         this.payloadGeneratorUI = payloadGeneratorUI;
         createTempFile = temporary;
         this.file = file;
@@ -285,10 +284,10 @@ public abstract class ModifyPayloadsPanel<T1, T2 extends Payload<T1>, T3 extends
         getPayloadsTextArea().setText(Constant.messages.getString("fuzz.payloads.generator.generic.edit.warnTooBig"));
     }
 
-    private void updatePayloadsTextArea(T3 fileStringPayloadGenerator) {
+    private void updatePayloadsTextArea(T2 fileStringPayloadGenerator) {
         StringBuilder contents = new StringBuilder(2500);
         try {
-            try (ResettableAutoCloseableIterator<T2> payloads = fileStringPayloadGenerator.iterator()) {
+            try (ResettableAutoCloseableIterator<T> payloads = fileStringPayloadGenerator.iterator()) {
                 while (payloads.hasNext()) {
                     if (contents.length() > 0) {
                         contents.append('\n');
@@ -319,7 +318,7 @@ public abstract class ModifyPayloadsPanel<T1, T2 extends Payload<T1>, T3 extends
         payloadGeneratorUI = null;
     }
 
-    protected static class TextAreaPayloadIterator implements ResettableAutoCloseableIterator<StringPayload> {
+    protected static class TextAreaPayloadIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
 
         private final JTextArea payloadsTextArea;
         private final int numberOfPayloads;
@@ -339,13 +338,13 @@ public abstract class ModifyPayloadsPanel<T1, T2 extends Payload<T1>, T3 extends
         }
 
         @Override
-        public StringPayload next() {
+        public DefaultPayload next() {
             try {
                 int offset = payloadsTextArea.getLineStartOffset(line);
                 int length = payloadsTextArea.getLineEndOffset(line) - offset;
 
                 line++;
-                return new DefaultStringPayload(payloadsTextArea.getText(offset, length - 1));
+                return new DefaultPayload(payloadsTextArea.getText(offset, length - 1));
             } catch (BadLocationException ignore) {
             }
             return null;

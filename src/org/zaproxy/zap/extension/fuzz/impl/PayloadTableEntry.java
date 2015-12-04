@@ -30,12 +30,12 @@ import org.zaproxy.zap.utils.Orderable;
 public class PayloadTableEntry implements Orderable {
 
     private int order;
-    private PayloadGeneratorUI<?, ? extends Payload<?>, ? extends PayloadGenerator<?, ? extends Payload<?>>> payloadGeneratorUI;
+    private PayloadGeneratorUI<? extends Payload, ? extends PayloadGenerator<? extends Payload>> payloadGeneratorUI;
     private List<PayloadProcessorTableEntry> payloadProcessors;
 
     public PayloadTableEntry(
             int order,
-            PayloadGeneratorUI<?, ? extends Payload<?>, ? extends PayloadGenerator<?, ? extends Payload<?>>> payloadGeneratorUI) {
+            PayloadGeneratorUI<? extends Payload, ? extends PayloadGenerator<? extends Payload>> payloadGeneratorUI) {
         this.order = order;
 
         this.payloadGeneratorUI = payloadGeneratorUI;
@@ -43,11 +43,11 @@ public class PayloadTableEntry implements Orderable {
     }
 
     public void setPayloadGeneratorUI(
-            PayloadGeneratorUI<?, ? extends Payload<?>, ? extends PayloadGenerator<?, ? extends Payload<?>>> payloadGeneratorUI) {
+            PayloadGeneratorUI<? extends Payload, ? extends PayloadGenerator<? extends Payload>> payloadGeneratorUI) {
         this.payloadGeneratorUI = payloadGeneratorUI;
     }
 
-    public PayloadGeneratorUI<?, ? extends Payload<?>, ? extends PayloadGenerator<?, ? extends Payload<?>>> getPayloadGeneratorUI() {
+    public PayloadGeneratorUI<? extends Payload, ? extends PayloadGenerator<? extends Payload>> getPayloadGeneratorUI() {
         return payloadGeneratorUI;
     }
 

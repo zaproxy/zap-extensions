@@ -19,17 +19,12 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads;
 
-public class DefaultStringPayload implements StringPayload {
+public class DefaultPayload implements Payload {
 
     private String value;
 
-    public DefaultStringPayload(String value) {
+    public DefaultPayload(String value) {
         setValue(value);
-    }
-
-    @Override
-    public Class<String> getTypeArgument() {
-        return String.class;
     }
 
     @Override
@@ -43,15 +38,20 @@ public class DefaultStringPayload implements StringPayload {
      * @throws IllegalArgumentException if {@code value} is null.
      */
     @Override
-    public void setValue(String value) {
+    public void setValue(Object value) {
         if (value == null) {
             throw new IllegalArgumentException("Parameter value must not be null.");
         }
-        this.value = value;
+        this.value = value.toString();
     }
 
     @Override
-    public DefaultStringPayload copy() {
-        return new DefaultStringPayload(value);
+    public DefaultPayload copy() {
+        return new DefaultPayload(value);
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }

@@ -20,22 +20,26 @@
 package org.zaproxy.zap.extension.fuzz.payloads;
 
 /**
- * @param <T> the type of the value of this payload
- * @see StringPayload
+ * A payload used for fuzzing.
  */
-public interface Payload<T> {
-
-    Class<T> getTypeArgument();
+public interface Payload {
 
     /**
-     * Gets the value of the payload.
+     * Gets value of the payload, as {@code String}.
      *
      * @return the value of the payload.
-     * @see #setValue(Object)
      */
-    T getValue();
+    String getValue();
 
-    void setValue(T value);
+    /**
+     * Sets value of the payload.
+     * <p>
+     * Implementations might ignore the value, if not appropriate (for example, if it's a numeric payload but it's being set a
+     * String).
+     *
+     * @param value the new value
+     */
+    void setValue(Object value);
 
     /**
      * Returns a copy of this payload.
@@ -44,5 +48,5 @@ public interface Payload<T> {
      *
      * @return a new {@code Payload} whose contents are equal to this payload.
      */
-    Payload<T> copy();
+    Payload copy();
 }

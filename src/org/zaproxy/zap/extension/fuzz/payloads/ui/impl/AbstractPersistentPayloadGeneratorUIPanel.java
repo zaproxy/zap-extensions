@@ -50,8 +50,8 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-public abstract class AbstractPersistentPayloadGeneratorUIPanel<T1, T2 extends Payload<T1>, T3 extends PayloadGenerator<T1, T2>, T4 extends PayloadGeneratorUI<T1, T2, T3>>
-        implements PayloadGeneratorUIPanel<T1, T2, T3, T4> {
+public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>>
+        implements PayloadGeneratorUIPanel<T, T2, T3> {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractPersistentPayloadGeneratorUIPanel.class);
 
@@ -79,7 +79,7 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T1, T2 extends P
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                T3 payloadGenerator = getPayloadGenerator();
+                T2 payloadGenerator = getPayloadGenerator();
                 if (payloadGenerator != null) {
                     Path file = getFile();
                     if (file != null) {
@@ -99,15 +99,15 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T1, T2 extends P
         return fileNameDialogue.getSelectedFile().toPath();
     }
 
-    private void saveToFile(T3 payloadGenerator, Path file) {
+    private void saveToFile(T2 payloadGenerator, Path file) {
         try (BufferedWriter bw = Files.newBufferedWriter(
                 file,
                 StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING);
-             ResettableAutoCloseableIterator<T2> it = payloadGenerator.iterator()) {
+             ResettableAutoCloseableIterator<T> it = payloadGenerator.iterator()) {
             while (it.hasNext()) {
-                bw.write(it.next().getValue().toString());
+                bw.write(it.next().getValue());
                 if (it.hasNext()) {
                     bw.write('\n');
                 }
@@ -127,7 +127,7 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T1, T2 extends P
         }
     }
 
-    protected abstract T3 getPayloadGenerator();
+    protected abstract T2 getPayloadGenerator();
 
     private static class FileChooser extends JFileChooser {
 

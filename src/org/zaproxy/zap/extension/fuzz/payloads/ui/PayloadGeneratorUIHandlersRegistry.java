@@ -31,7 +31,7 @@ public final class PayloadGeneratorUIHandlersRegistry {
 
     private static PayloadGeneratorUIHandlersRegistry instance;
 
-    private Map<Class<?>, PayloadGeneratorUIHandler<?, ?, ?, ?>> payloadUIHandlers;
+    private Map<Class<?>, PayloadGeneratorUIHandler<?, ?, ?>> payloadUIHandlers;
     private String nameDefaultPayloadGenerator;
 
     public static PayloadGeneratorUIHandlersRegistry getInstance() {
@@ -51,13 +51,13 @@ public final class PayloadGeneratorUIHandlersRegistry {
         payloadUIHandlers = new HashMap<>();
     }
 
-    public <T1, T2 extends Payload<T1>, T3 extends PayloadGenerator<T1, T2>, T4 extends PayloadGeneratorUI<T1, T2, T3>, T5 extends PayloadGeneratorUIHandler<T1, T2, T3, T4>> void registerPayloadUI(
+    public < T2 extends Payload, T3 extends PayloadGenerator< T2>, T4 extends PayloadGeneratorUI< T2, T3>, T5 extends PayloadGeneratorUIHandler< T2, T3, T4>> void registerPayloadUI(
             Class<T3> payloadGeneratorClass,
             T5 uiHandler) {
         payloadUIHandlers.put(payloadGeneratorClass, uiHandler);
     }
 
-    public <T1, T2 extends Payload<T1>, T3 extends PayloadGenerator<T1, T2>, T4 extends PayloadGeneratorUI<T1, T2, T3>, T5 extends PayloadGeneratorUIHandler<T1, T2, T3, T4>> T5 getPayloadGeneratorUIHandler(
+    public < T2 extends Payload, T3 extends PayloadGenerator< T2>, T4 extends PayloadGeneratorUI< T2, T3>, T5 extends PayloadGeneratorUIHandler< T2, T3, T4>> T5 getPayloadGeneratorUIHandler(
             Class<T3> payloadGeneratorClass) {
         Object object = payloadUIHandlers.get(payloadGeneratorClass);
         if (object == null) {
@@ -68,16 +68,16 @@ public final class PayloadGeneratorUIHandlersRegistry {
         return handler;
     }
 
-    public Collection<PayloadGeneratorUIHandler<?, ?, ?, ?>> getPayloadGeneratorUIHandlers() {
+    public Collection<PayloadGeneratorUIHandler<?, ?, ?>> getPayloadGeneratorUIHandlers() {
         return Collections.unmodifiableCollection(payloadUIHandlers.values());
     }
 
-    public <T1, T2 extends Payload<T1>, T3 extends PayloadGenerator<T1, T2>, T4 extends PayloadGeneratorUI<T1, T2, T3>, T5 extends PayloadGeneratorUIHandler<T1, T2, T3, T4>> void removePayloadGeneratorUIHandler(
+    public < T2 extends Payload, T3 extends PayloadGenerator< T2>, T4 extends PayloadGeneratorUI< T2, T3>, T5 extends PayloadGeneratorUIHandler< T2, T3, T4>> void removePayloadGeneratorUIHandler(
             Class<T3> payloadClass) {
         payloadUIHandlers.remove(payloadClass);
     }
 
-    public <T1, T2 extends Payload<T1>, T3 extends PayloadGenerator<T1, T2>, T4 extends PayloadGeneratorUI<T1, T2, T3>, T5 extends PayloadGeneratorUIHandler<T1, T2, T3, T4>> void setDefaultPayloadGenerator(
+    public < T2 extends Payload, T3 extends PayloadGenerator< T2>, T4 extends PayloadGeneratorUI< T2, T3>, T5 extends PayloadGeneratorUIHandler< T2, T3, T4>> void setDefaultPayloadGenerator(
             T5 uiHandler) {
         if (payloadUIHandlers.containsValue(uiHandler)) {
             nameDefaultPayloadGenerator = uiHandler.getName();

@@ -20,9 +20,9 @@
 package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
-public class JavaScriptEscapeProcessor implements StringPayloadProcessor {
+public class JavaScriptEscapeProcessor implements DefaultPayloadProcessor {
 
     public static final JavaScriptEscapeProcessor INSTANCE = new JavaScriptEscapeProcessor();
 
@@ -30,7 +30,7 @@ public class JavaScriptEscapeProcessor implements StringPayloadProcessor {
     }
 
     @Override
-    public StringPayload process(StringPayload payload) {
+    public DefaultPayload process(DefaultPayload payload) {
         payload.setValue(StringEscapeUtils.escapeJavaScript(payload.getValue()));
         return payload;
     }

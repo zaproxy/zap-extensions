@@ -27,8 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.log4j.Logger;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultStringPayload;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 /**
@@ -177,7 +176,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
     }
 
     @Override
-    public ResettableAutoCloseableIterator<StringPayload> iterator() {
+    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
         return new FileIterator(file, charset, numberOfPayloads, commentToken, ignoreTrimmedEmptyLines, ignoreFirstLine);
     }
 
@@ -186,7 +185,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
         return this;
     }
 
-    private static class FileIterator implements ResettableAutoCloseableIterator<StringPayload> {
+    private static class FileIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
 
         private final Path file;
         private final Charset charset;
@@ -221,7 +220,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public StringPayload next() {
+        public DefaultPayload next() {
             try {
                 init();
 
@@ -247,7 +246,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
             }
         }
 
-        private StringPayload readNextPayload() {
+        private DefaultPayload readNextPayload() {
             if (reader == null) {
                 throw new PayloadGenerationException("Failed to read the file.");
             }
@@ -264,7 +263,7 @@ public class FileStringPayloadGenerator implements StringPayloadGenerator {
                     }
 
                     if (lineValid) {
-                        return new DefaultStringPayload(line);
+                        return new DefaultPayload(line);
                     }
                 }
             } catch (IOException e) {

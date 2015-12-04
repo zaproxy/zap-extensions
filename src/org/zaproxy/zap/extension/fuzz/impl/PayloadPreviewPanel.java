@@ -56,16 +56,16 @@ class PayloadPreviewPanel {
     private static final int MAX_NUMBER_PAYLOADS_PREVIEW = 50;
 
     private final JPanel mainPanel;
-    private final ResettableAutoCloseableIterator<Payload<?>> payloads;
+    private final ResettableAutoCloseableIterator<Payload> payloads;
 
     private JButton payloadsPreviewGenerateButton;
 
     private JTextArea currentPayloadsTextArea;
     private JTextArea processedPayloadsTextArea;
 
-    private PayloadProcessorUIPanel<?, ?, ?, ?> payloadProcessorUIPanel;
+    private PayloadProcessorUIPanel<?, ?, ?> payloadProcessorUIPanel;
 
-    public PayloadPreviewPanel(ResettableAutoCloseableIterator<Payload<?>> payloads) {
+    public PayloadPreviewPanel(ResettableAutoCloseableIterator<Payload> payloads) {
         this.payloads = payloads;
 
         JLabel currentPayloadsLabel = new JLabel(CURRENT_PAYLOADS_FIELD_LABEL);
@@ -101,10 +101,10 @@ class PayloadPreviewPanel {
 
         updatePayloadsTextArea(
                 getCurrentPayloadsTextArea(),
-                (PayloadProcessor<?, Payload<?>>) NullPayloadProcessor.NULL_PAYLOAD_PROCESSOR);
+                NullPayloadProcessor.getNullPayloadProcessor());
     }
 
-    public void setPayloadProcessorUIPanel(PayloadProcessorUIPanel<?, ?, ?, ?> panel) {
+    public void setPayloadProcessorUIPanel(PayloadProcessorUIPanel<?, ?, ?> panel) {
         this.payloadProcessorUIPanel = panel;
         getPayloadsPreviewGenerateButton().setEnabled(panel != null);
     }
@@ -144,7 +144,7 @@ class PayloadPreviewPanel {
         return processedPayloadsTextArea;
     }
 
-    private void updatePayloadsTextArea(JTextArea textArea, PayloadProcessor<?, Payload<?>> processor) {
+    private void updatePayloadsTextArea(JTextArea textArea, PayloadProcessor<Payload> processor) {
         if (payloads == null || processor == null) {
             return;
         }
@@ -181,7 +181,7 @@ class PayloadPreviewPanel {
     private void updateProcessedPayloadsTextArea() {
         updatePayloadsTextArea(
                 getProcessedPayloadsTextArea(),
-                (PayloadProcessor<?, Payload<?>>) payloadProcessorUIPanel.getPayloadProcessor());
+                (PayloadProcessor<Payload>) payloadProcessorUIPanel.getPayloadProcessor());
     }
 
     public JPanel getPanel() {
@@ -193,19 +193,23 @@ class PayloadPreviewPanel {
         getProcessedPayloadsTextArea().setText("");
     }
 
-    private static class NullPayloadProcessor<T1, T2 extends Payload<T1>> implements PayloadProcessor<T1, T2> {
+    private static class NullPayloadProcessor<T extends Payload> implements PayloadProcessor<T> {
 
-        @SuppressWarnings("rawtypes")
-        public static final NullPayloadProcessor NULL_PAYLOAD_PROCESSOR = new NullPayloadProcessor();
+        private static final NullPayloadProcessor<?> NULL_PAYLOAD_PROCESSOR = new NullPayloadProcessor<>();
 
         @Override
-        public T2 process(T2 payload) throws PayloadProcessingException {
+        public T process(T payload) throws PayloadProcessingException {
             return payload;
         }
 
         @Override
-        public PayloadProcessor<T1, T2> copy() {
+        public PayloadProcessor<T> copy() {
             return this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public static <T extends Payload> NullPayloadProcessor<T> getNullPayloadProcessor() {
+            return (NullPayloadProcessor<T>) NullPayloadProcessor.NULL_PAYLOAD_PROCESSOR;
         }
     }
 

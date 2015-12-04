@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ExpandStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.ExpandStringProcessorUIHandler.ExpandStringProcessorUI;
 import org.zaproxy.zap.model.MessageLocation;
@@ -37,7 +37,7 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 
 public class ExpandStringProcessorUIHandler implements
-        PayloadProcessorUIHandler<String, StringPayload, ExpandStringProcessor, ExpandStringProcessorUI> {
+        PayloadProcessorUIHandler<DefaultPayload, ExpandStringProcessor, ExpandStringProcessorUI> {
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.expand.name");
 
@@ -61,7 +61,7 @@ public class ExpandStringProcessorUIHandler implements
         return new ExpandStringProcessorUIPanel();
     }
 
-    public static class ExpandStringProcessorUI implements PayloadProcessorUI<String, StringPayload, ExpandStringProcessor> {
+    public static class ExpandStringProcessorUI implements PayloadProcessorUI<DefaultPayload, ExpandStringProcessor> {
 
         private final boolean begin;
         private final String value;
@@ -129,7 +129,7 @@ public class ExpandStringProcessorUIHandler implements
     }
 
     public static class ExpandStringProcessorUIPanel implements
-            PayloadProcessorUIPanel<String, StringPayload, ExpandStringProcessor, ExpandStringProcessorUI> {
+            PayloadProcessorUIPanel<DefaultPayload, ExpandStringProcessor, ExpandStringProcessorUI> {
 
         private static final String POSITION_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.expand.position.label");
         private static final String BEGIN_POSITION_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.expand.position.begin.label");

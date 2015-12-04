@@ -33,7 +33,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PayloadProcessorUIP
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
-public class ModifyProcessorDialog<T0, T01 extends Payload<T0>, T1 extends PayloadProcessor<T0, T01>, T2 extends PayloadProcessorUI<T0, T01, T1>>
+public class ModifyProcessorDialog<T0 extends Payload, T1 extends PayloadProcessor<T0>, T2 extends PayloadProcessorUI<T0, T1>>
         extends AbstractFormDialog {
 
     private static final long serialVersionUID = 8111848758566016134L;
@@ -45,11 +45,11 @@ public class ModifyProcessorDialog<T0, T01 extends Payload<T0>, T1 extends Paylo
     private final String nameType;
     private T2 payloadProcessorUI;
 
-    private PayloadProcessorUIPanel<T0, T01, T1, T2> contentPanel;
+    private PayloadProcessorUIPanel<T0, T1, T2> contentPanel;
 
     private PayloadPreviewPanel previewPanel;
 
-    public ModifyProcessorDialog(Dialog owner, PayloadProcessorUIPanel<T0, T01, T1, T2> panel, T2 processorUI, ResettableAutoCloseableIterator<Payload<?>> payloads) {
+    public ModifyProcessorDialog(Dialog owner, PayloadProcessorUIPanel<T0, T1, T2> panel, T2 processorUI, ResettableAutoCloseableIterator<Payload> payloads) {
         super(owner, DIALOG_TITLE, false);
 
         nameType = processorUI.getName();

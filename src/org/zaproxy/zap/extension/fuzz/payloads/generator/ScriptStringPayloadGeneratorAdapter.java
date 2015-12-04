@@ -21,8 +21,7 @@ package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultStringPayload;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
@@ -96,7 +95,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
     }
 
     @Override
-    public ResettableAutoCloseableIterator<StringPayload> iterator() {
+    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
         if (scriptPayloadGenerator != null) {
             ScriptPayloadGeneratorIterator iterator = new ScriptPayloadGeneratorIterator(scriptWrapper, scriptPayloadGenerator);
             // Use the existing script instance just once, otherwise it could be used by multiple iterators at the same time
@@ -111,7 +110,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
         return new ScriptStringPayloadGeneratorAdapter(scriptWrapper);
     }
 
-    private static class ScriptPayloadGeneratorIterator implements ResettableAutoCloseableIterator<StringPayload> {
+    private static class ScriptPayloadGeneratorIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
 
         private final ScriptWrapper scriptWrapper;
         private boolean initialised;
@@ -155,9 +154,9 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
         }
 
         @Override
-        public StringPayload next() {
+        public DefaultPayload next() {
             try {
-                return new DefaultStringPayload(scriptPayloadGenerator.next());
+                return new DefaultPayload(scriptPayloadGenerator.next());
             } catch (Exception e) {
                 handleScriptException(scriptWrapper, e);
             }

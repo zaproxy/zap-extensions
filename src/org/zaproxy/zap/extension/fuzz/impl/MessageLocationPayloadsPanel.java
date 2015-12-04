@@ -183,7 +183,7 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
                     processorsDialog.setMessageLocation(messageLocation);
                     processorsDialog.setPayloadProcessors(payloadTableEntry.getPayloadProcessors());
-                    processorsDialog.setPayloads((ResettableAutoCloseableIterator<Payload<?>>) payloadTableEntry.getPayloadGeneratorUI().getPayloadGenerator().iterator());
+                    processorsDialog.setPayloads((ResettableAutoCloseableIterator<Payload>) payloadTableEntry.getPayloadGeneratorUI().getPayloadGenerator().iterator());
                     processorsDialog.setVisible(true);
 
                     payloadTableEntry.setPayloadProcessors(processorsDialog.getProcessors());
@@ -216,7 +216,7 @@ public class MessageLocationPayloadsPanel extends JPanel {
             addPayloadDialog.pack();
             addPayloadDialog.setVisible(true);
 
-            PayloadGeneratorUI<?, ?, ?> payloadGeneratorUI = addPayloadDialog.getPayloadGeneratorUI();
+            PayloadGeneratorUI<?, ?> payloadGeneratorUI = addPayloadDialog.getPayloadGeneratorUI();
             if (payloadGeneratorUI == null) {
                 return null;
             }
@@ -232,7 +232,7 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
         @Override
         public PayloadTableEntry showModifyDialogue(PayloadTableEntry e) {
-            PayloadGeneratorUI<?, ?, ?> payloadGeneratorUI = showModifyDialogueHelper((PayloadGeneratorUI)e.getPayloadGeneratorUI());
+            PayloadGeneratorUI<?, ?> payloadGeneratorUI = showModifyDialogueHelper((PayloadGeneratorUI)e.getPayloadGeneratorUI());
 
             if (payloadGeneratorUI != null) {
                 e.setPayloadGeneratorUI(payloadGeneratorUI);
@@ -241,9 +241,9 @@ public class MessageLocationPayloadsPanel extends JPanel {
             return null;
         }
 
-        private <T1, T2 extends Payload<T1>, T3 extends PayloadGenerator<T1, T2>, T4 extends PayloadGeneratorUI<T1, T2, T3>> T4 showModifyDialogueHelper(
-                T4 payloadGeneratorUI) {
-            ModifyPayloadDialog<T1, T2, T3, T4> modifyPayloadDialog = new ModifyPayloadDialog<>(
+        private <T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> T3 showModifyDialogueHelper(
+                T3 payloadGeneratorUI) {
+            ModifyPayloadDialog<T, T2, T3> modifyPayloadDialog = new ModifyPayloadDialog<>(
                     parent,
                     payloadGeneratorsUIHandlers.getPanel(payloadGeneratorUI),
                     payloadGeneratorUI);

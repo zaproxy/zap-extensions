@@ -34,7 +34,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.RegexPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandler;
@@ -45,7 +45,7 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 
 public class RegexPayloadGeneratorUIHandler implements
-        PayloadGeneratorUIHandler<String, StringPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
+        PayloadGeneratorUIHandler<DefaultPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
 
     private static final String PAYLOAD_GENERATOR_NAME = Constant.messages.getString("fuzz.payloads.generator.regex.name");
 
@@ -69,7 +69,7 @@ public class RegexPayloadGeneratorUIHandler implements
         return new RegexPayloadGeneratorUIPanel();
     }
 
-    public static class RegexPayloadGeneratorUI implements PayloadGeneratorUI<String, StringPayload, RegexPayloadGenerator> {
+    public static class RegexPayloadGeneratorUI implements PayloadGeneratorUI<DefaultPayload, RegexPayloadGenerator> {
 
         private final String regex;
         private final int maxPayloads;
@@ -137,7 +137,7 @@ public class RegexPayloadGeneratorUIHandler implements
     }
 
     public static class RegexPayloadGeneratorUIPanel extends
-            AbstractPersistentPayloadGeneratorUIPanel<String, StringPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
+            AbstractPersistentPayloadGeneratorUIPanel<DefaultPayload, RegexPayloadGenerator, RegexPayloadGeneratorUI> {
 
         private static final int DEFAULT_MAX_PAYLOADS = 1000;
 
@@ -287,7 +287,7 @@ public class RegexPayloadGeneratorUIHandler implements
             }
             StringBuilder contents = new StringBuilder();
             try {
-                try (ResettableAutoCloseableIterator<StringPayload> payloads = payloadGenerator.iterator()) {
+                try (ResettableAutoCloseableIterator<DefaultPayload> payloads = payloadGenerator.iterator()) {
                     for (int i = 0; i < MAX_NUMBER_PAYLOADS_PREVIEW && payloads.hasNext(); i++) {
                         if (contents.length() > 0) {
                             contents.append('\n');

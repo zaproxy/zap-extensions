@@ -50,25 +50,25 @@ public class AddProcessorDialog extends AbstractFormDialog {
 
     private JComboBox<String> payloadUIHandlersComboBox;
 
-    private PayloadProcessorUI<?, ?, ?> selectedPayloadProcessorUI;
+    private PayloadProcessorUI<?, ?> selectedPayloadProcessorUI;
 
     private CardLayout contentsPanelCardLayout;
     private JPanel contentsPanel;
 
     private PayloadProcessorsContainer processorsUIHandlers;
 
-    private PayloadProcessorUIPanel<?, ?, ?, ?> currentPanel;
+    private PayloadProcessorUIPanel<?, ?, ?> currentPanel;
 
     private PayloadPreviewPanel previewPanel;
 
-    public AddProcessorDialog(Dialog owner, PayloadProcessorsContainer processorsUIHandlers, MessageLocation messageLocation, ResettableAutoCloseableIterator<Payload<?>> payloads) {
+    public AddProcessorDialog(Dialog owner, PayloadProcessorsContainer processorsUIHandlers, MessageLocation messageLocation, ResettableAutoCloseableIterator<Payload> payloads) {
         super(owner, DIALOG_TITLE, false);
 
         this.processorsUIHandlers = processorsUIHandlers;
         previewPanel = new PayloadPreviewPanel(payloads);
 
         getPayloadUIHandlersComboBox().setSelectedIndex(-1);
-        for (PayloadProcessorUIPanel<?, ?, ?, ?> panel : processorsUIHandlers.getPanels()) {
+        for (PayloadProcessorUIPanel<?, ?, ?> panel : processorsUIHandlers.getPanels()) {
             panel.init(messageLocation);
         }
 
@@ -126,7 +126,7 @@ public class AddProcessorDialog extends AbstractFormDialog {
 
     @Override
     protected void clearFields() {
-        for (PayloadProcessorUIPanel<?, ?, ?, ?> panel : processorsUIHandlers.getPanels()) {
+        for (PayloadProcessorUIPanel<?, ?, ?> panel : processorsUIHandlers.getPanels()) {
             panel.clear();
         }
         contentsPanel.removeAll();
@@ -143,7 +143,7 @@ public class AddProcessorDialog extends AbstractFormDialog {
         selectedPayloadProcessorUI = currentPanel.getPayloadProcessorUI();
     }
 
-    public PayloadProcessorUI<?, ?, ?> getPayloadProcessorUI() {
+    public PayloadProcessorUI<?, ?> getPayloadProcessorUI() {
         return selectedPayloadProcessorUI;
     }
 

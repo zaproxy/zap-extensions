@@ -61,7 +61,7 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
 
     private List<PayloadProcessorTableEntry> processors;
 
-    private ResettableAutoCloseableIterator<Payload<?>> payloads;
+    private ResettableAutoCloseableIterator<? extends Payload> payloads;
 
     private MessageLocation messageLocation;
     private JLabel messageLocationLabel;
@@ -192,7 +192,7 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
             addProcessorDialog.pack();
             addProcessorDialog.setVisible(true);
 
-            PayloadProcessorUI<?, ?, ?> processorUI = addProcessorDialog.getPayloadProcessorUI();
+            PayloadProcessorUI<?, ?> processorUI = addProcessorDialog.getPayloadProcessorUI();
             if (processorUI == null) {
                 return null;
             }
@@ -206,7 +206,7 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
 
         @Override
         public PayloadProcessorTableEntry showModifyDialogue(PayloadProcessorTableEntry e) {
-            PayloadProcessorUI<?, ?, ?> processorUI = showModifyDialogueImpl(e, (PayloadProcessorUI)e.getPayloadProcessorUI());
+            PayloadProcessorUI<?, ?> processorUI = showModifyDialogueImpl(e, (PayloadProcessorUI)e.getPayloadProcessorUI());
 
             if (processorUI != null) {
                 e.setPayloadProcessorUI(processorUI);
@@ -215,9 +215,9 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
             return null;
         }
 
-        private <T, T0 extends Payload<T>, T1 extends PayloadProcessor<T, T0>, T2 extends PayloadProcessorUI<T, T0, T1>> T2 showModifyDialogueImpl(
+        private <T0 extends Payload, T1 extends PayloadProcessor<T0>, T2 extends PayloadProcessorUI<T0, T1>> T2 showModifyDialogueImpl(
                 PayloadProcessorTableEntry e, T2 payloadGeneratorUI) {
-            ModifyProcessorDialog<T, T0, T1, T2> modifyProcessorDialog = new ModifyProcessorDialog<>(
+            ModifyProcessorDialog<T0, T1, T2> modifyProcessorDialog = new ModifyProcessorDialog<>(
                     ProcessorsMessageLocationDialog.this,
                     processorsUIHandlers.getPanel(payloadGeneratorUI),
                     payloadGeneratorUI,
@@ -263,23 +263,23 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
         this.processorsTablePanel.setProcessors(processors);
     }
 
-    public void setPayloads(ResettableAutoCloseableIterator<Payload<?>> payloads) {
+    public void setPayloads(ResettableAutoCloseableIterator<? extends Payload> payloads) {
         this.payloads = payloads;
     }
 
-    private ResettableAutoCloseableIterator<Payload<?>> getProcessedPayloads() {
+    private ResettableAutoCloseableIterator<Payload> getProcessedPayloads() {
         return getProcessedPayloads(-1);
     }
 
-    private ResettableAutoCloseableIterator<Payload<?>> getProcessedPayloads(int numberOfProcessors) {
-        List<PayloadProcessor<?, Payload<?>>> currentProcessors = new ArrayList<>();
+    private ResettableAutoCloseableIterator<Payload> getProcessedPayloads(int numberOfProcessors) {
+        List<PayloadProcessor<Payload>> currentProcessors = new ArrayList<>();
         int count = 0;
         for (PayloadProcessorTableEntry processorEntry : processorsTablePanel.getProcessors()) {
             if (numberOfProcessors > -1 && count >= numberOfProcessors) {
                 break;
             }
             currentProcessors
-                    .add((PayloadProcessor<?, Payload<?>>) processorEntry.getPayloadProcessorUI().getPayloadProcessor());
+                    .add((PayloadProcessor<Payload>) processorEntry.getPayloadProcessorUI().getPayloadProcessor());
             count++;
         }
         return new PayloadsProcessedIterator(payloads, currentProcessors);

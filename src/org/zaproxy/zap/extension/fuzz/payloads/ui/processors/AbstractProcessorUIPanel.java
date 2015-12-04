@@ -23,8 +23,8 @@ import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.model.MessageLocation;
 
-public abstract class AbstractProcessorUIPanel<T1, T2 extends Payload<T1>, T3 extends PayloadProcessor<T1, T2>, T4 extends PayloadProcessorUI<T1, T2, T3>>
-        implements PayloadProcessorUIPanel<T1, T2, T3, T4> {
+public abstract class AbstractProcessorUIPanel<T extends Payload, T2 extends PayloadProcessor<T>, T3 extends PayloadProcessorUI<T, T2>>
+        implements PayloadProcessorUIPanel<T, T2, T3> {
 
     @Override
     public void init(MessageLocation messageLocation) {

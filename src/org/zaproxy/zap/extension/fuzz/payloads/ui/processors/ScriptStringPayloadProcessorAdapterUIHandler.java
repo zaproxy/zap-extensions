@@ -30,7 +30,7 @@ import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessorAdapter;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.ScriptStringPayloadProcessorAdapterUIHandler.ScriptStringPayloadProcessorAdapterUI;
@@ -40,7 +40,7 @@ import org.zaproxy.zap.utils.SortedComboBoxModel;
 
 public class ScriptStringPayloadProcessorAdapterUIHandler
         implements
-        PayloadProcessorUIHandler<String, StringPayload, ScriptStringPayloadProcessorAdapter, ScriptStringPayloadProcessorAdapterUI> {
+        PayloadProcessorUIHandler<DefaultPayload, ScriptStringPayloadProcessorAdapter, ScriptStringPayloadProcessorAdapterUI> {
 
     private static final Logger LOGGER = Logger.getLogger(ScriptStringPayloadProcessorAdapterUIHandler.class);
 
@@ -74,7 +74,7 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
     }
 
     public static class ScriptStringPayloadProcessorAdapterUI implements
-            PayloadProcessorUI<String, StringPayload, ScriptStringPayloadProcessorAdapter> {
+            PayloadProcessorUI<DefaultPayload, ScriptStringPayloadProcessorAdapter> {
 
         private final ScriptWrapper scriptWrapper;
 
@@ -120,7 +120,7 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
 
     public static class ScriptStringPayloadProcessorAdapterUIPanel
             extends
-            AbstractProcessorUIPanel<String, StringPayload, ScriptStringPayloadProcessorAdapter, ScriptStringPayloadProcessorAdapterUI> {
+            AbstractProcessorUIPanel<DefaultPayload, ScriptStringPayloadProcessorAdapter, ScriptStringPayloadProcessorAdapterUI> {
 
         private static final String SCRIPT_FIELD_LABEL = Constant.messages.getString("fuzz.payload.processor.script.script.label");
 

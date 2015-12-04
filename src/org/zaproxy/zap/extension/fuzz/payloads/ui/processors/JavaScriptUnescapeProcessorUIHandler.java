@@ -22,12 +22,12 @@ package org.zaproxy.zap.extension.fuzz.payloads.ui.processors;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.JavaScriptUnescapeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.JavaScriptUnescapeProcessorUIHandler.JavaScriptUnescapeProcessorUI;
 
 public class JavaScriptUnescapeProcessorUIHandler implements
-        PayloadProcessorUIHandler<String, StringPayload, JavaScriptUnescapeProcessor, JavaScriptUnescapeProcessorUI> {
+        PayloadProcessorUIHandler<DefaultPayload, JavaScriptUnescapeProcessor, JavaScriptUnescapeProcessorUI> {
 
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.payload.processor.javascriptUnescape.name");
 
@@ -52,7 +52,7 @@ public class JavaScriptUnescapeProcessorUIHandler implements
     }
 
     public static class JavaScriptUnescapeProcessorUI implements
-            PayloadProcessorUI<String, StringPayload, JavaScriptUnescapeProcessor> {
+            PayloadProcessorUI<DefaultPayload, JavaScriptUnescapeProcessor> {
 
         public static final JavaScriptUnescapeProcessorUI INSTANCE = new JavaScriptUnescapeProcessorUI();
 
@@ -92,7 +92,7 @@ public class JavaScriptUnescapeProcessorUIHandler implements
     }
 
     public static class JavaScriptUnescapeProcessorUIPanel extends
-            AbstractProcessorUIPanel<String, StringPayload, JavaScriptUnescapeProcessor, JavaScriptUnescapeProcessorUI> {
+            AbstractProcessorUIPanel<DefaultPayload, JavaScriptUnescapeProcessor, JavaScriptUnescapeProcessorUI> {
 
         private JPanel fieldsPanel;
 

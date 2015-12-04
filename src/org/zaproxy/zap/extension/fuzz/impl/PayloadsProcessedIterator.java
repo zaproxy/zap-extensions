@@ -29,14 +29,14 @@ import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessingExcept
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessor;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
-class PayloadsProcessedIterator<T, E extends Payload<T>> implements ResettableAutoCloseableIterator<E>, PayloadGenerator<T, E> {
+class PayloadsProcessedIterator<E extends Payload> implements ResettableAutoCloseableIterator<E>, PayloadGenerator<E> {
 
-    private final List<PayloadProcessor<T, E>> processors;
+    private final List<PayloadProcessor<E>> processors;
     private ResettableAutoCloseableIterator<E> payloadIterator;
 
     public PayloadsProcessedIterator(
             ResettableAutoCloseableIterator<E> payloadIterator,
-            List<PayloadProcessor<T, E>> processors) {
+            List<PayloadProcessor<E>> processors) {
         this.payloadIterator = payloadIterator;
         this.processors = new ArrayList<>(processors);
     }
@@ -49,7 +49,7 @@ class PayloadsProcessedIterator<T, E extends Payload<T>> implements ResettableAu
     @Override
     public E next() {
         E value = (E) payloadIterator.next().copy();
-        for (PayloadProcessor<T, E> processor : processors) {
+        for (PayloadProcessor<E> processor : processors) {
             try {
                 value = processor.process(value);
             } catch (PayloadProcessingException e) {
@@ -87,7 +87,7 @@ class PayloadsProcessedIterator<T, E extends Payload<T>> implements ResettableAu
     }
 
     @Override
-    public PayloadGenerator<T, E> copy() {
+    public PayloadGenerator<E> copy() {
         return this;
     }
 }

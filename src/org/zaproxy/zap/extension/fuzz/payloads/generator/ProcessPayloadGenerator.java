@@ -29,8 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.zaproxy.zap.extension.fuzz.payloads.DefaultStringPayload;
-import org.zaproxy.zap.extension.fuzz.payloads.StringPayload;
+import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 public class ProcessPayloadGenerator implements StringPayloadGenerator {
@@ -94,7 +93,7 @@ public class ProcessPayloadGenerator implements StringPayloadGenerator {
     }
 
     @Override
-    public ResettableAutoCloseableIterator<StringPayload> iterator() {
+    public ResettableAutoCloseableIterator<DefaultPayload> iterator() {
         return new ApplicationPayloadIterator(numberOfInvocations, processBuilder, failOnErrorOutput);
     }
 
@@ -103,7 +102,7 @@ public class ProcessPayloadGenerator implements StringPayloadGenerator {
         return this;
     }
 
-    private static class ApplicationPayloadIterator implements ResettableAutoCloseableIterator<StringPayload> {
+    private static class ApplicationPayloadIterator implements ResettableAutoCloseableIterator<DefaultPayload> {
 
         private final int numberOfInvocations;
         private final ProcessBuilder processBuilder;
@@ -122,9 +121,9 @@ public class ProcessPayloadGenerator implements StringPayloadGenerator {
         }
 
         @Override
-        public StringPayload next() {
+        public DefaultPayload next() {
             count++;
-            return new DefaultStringPayload(invokeProcess());
+            return new DefaultPayload(invokeProcess());
         }
 
         private String invokeProcess() {
