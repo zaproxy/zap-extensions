@@ -88,7 +88,7 @@ public class TableWebSocket extends ParosAbstractTable {
 								+ "channel_id BIGINT PRIMARY KEY,"
 								+ "host VARCHAR(255) NOT NULL,"
 								+ "port INTEGER NOT NULL,"
-								+ "url VARCHAR(255) NOT NULL,"
+								+ "url VARCHAR(2096) NOT NULL,"
 								+ "start_timestamp TIMESTAMP NOT NULL,"
 								+ "end_timestamp TIMESTAMP NULL,"
 								+ "history_id INTEGER NULL,"
@@ -583,6 +583,7 @@ public class TableWebSocket extends ParosAbstractTable {
 			
 					stmt.setString(1, channel.host);
 					stmt.setInt(2, channel.port);
+					logger.debug("url (length " + channel.url.length() + "):" + channel.url);
 					stmt.setString(3, channel.url);
 					stmt.setTimestamp(4, (channel.startTimestamp != null) ? new Timestamp(channel.startTimestamp) : null);
 					stmt.setTimestamp(5, (channel.endTimestamp != null) ? new Timestamp(channel.endTimestamp) : null);
