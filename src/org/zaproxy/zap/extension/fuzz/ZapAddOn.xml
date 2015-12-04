@@ -26,6 +26,7 @@
     Fix issues in generation of payloads from regular expressions (Issue 1884).<br>
     Add support for regex repetitions (Issue 1885).<br>
     Allow to modify the payloads of File and File Fuzzers (Issue 1897).<br>
+    Show the correct Fuzzer HTTP Processor script when showing modify dialogue.<br>
     ]]>
     </changes>
     <extensions>

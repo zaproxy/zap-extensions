@@ -168,7 +168,7 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
 
         @Override
         public void setFuzzerMessageProcessorUI(FuzzerHttpMessageScriptProcessorAdapterUI payloadProcessorUI) {
-            scriptComboBox.setSelectedItem(payloadProcessorUI.getScriptWrapper());
+            scriptComboBox.setSelectedItem(new ScriptUIEntry(payloadProcessorUI.getScriptWrapper()));
         }
 
         @Override
