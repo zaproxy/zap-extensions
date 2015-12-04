@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>9</version>
+	<version>10</version>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes and fix of exception.<br>
-	Removed fuzzing code - will need to be re-implemented for new adv fuzzing
+	Fix issue with length of handshake's url (Issue 2097).<br>
 	]]>
 	</changes>
 	<extensions>
