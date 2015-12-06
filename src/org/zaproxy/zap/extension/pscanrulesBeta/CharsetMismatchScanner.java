@@ -18,7 +18,6 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
-
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
@@ -27,6 +26,7 @@ import net.htmlparser.jericho.StartTagType;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -44,10 +44,34 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 	 * Prefix for internationalized messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanbeta.charsetmismatch.";
+	
+	private static enum MismatchType {
+		NO_MISMATCH_METACONTENTTYPE_MISSING,
+		HEADER_METACONTENTYPE_MISMATCH,
+		HEADER_METACHARSET_MISMATCH,
+		METACONTENTTYPE_METACHARSET_MISMATCH,
+		XML_MISMATCH
+	};
 
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
+	}
+	
+	public String getVariant(MismatchType currentType) {
+		switch (currentType) {
+			case NO_MISMATCH_METACONTENTTYPE_MISSING://no_mismatch_metacontenttype_missing
+				return Constant.messages.getString(MESSAGE_PREFIX + "variant.no_mismatch_metacontenttype_missing");
+			case HEADER_METACONTENTYPE_MISMATCH://header_metacontentype_mismatch
+				return Constant.messages.getString(MESSAGE_PREFIX + "variant.header_metacontentype_mismatch");
+			case HEADER_METACHARSET_MISMATCH://header_metacharset_mismatch
+				return Constant.messages.getString(MESSAGE_PREFIX + "variant.header_metacharset_mismatch");
+			case METACONTENTTYPE_METACHARSET_MISMATCH://metacontenttype_metacharset_mismatch
+				return Constant.messages.getString(MESSAGE_PREFIX + "variant.metacontenttype_metacharset_mismatch");
+			case XML_MISMATCH:
+				default:
+					return "";
+		}
 	}
 
 	@Override
@@ -63,38 +87,80 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 		
 		// Charset specified in the Content-Type header
 		String headerCharset = msg.getResponseHeader().getCharset();
-		
+
  		// TODO: If Content-Type in the Header doesn't specify a charset, or
 		// the Content-Type header is missing - should we raise some different 
 		// alert? Ignore such case for now.
 		if (headerCharset == null) {
-			return;
+			return; // No header == No alert
 		}
-		
 		headerCharset = headerCharset.trim();
 		
 		if (isResponseHTML(msg, source)) { // Check HTML response charset
-			// Looking for <META HTTP-EQUIV="Content-Type" CONTENT="...">
+			// Looking for:
+			//     <META http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+			//     <META charset="utf-8">
 			// TODO: could there be more than single "Content-Type" meta per HTML?
 			
+			String bodyContentCharset = "";
+			String metaCharset = "";
+			
 			List<Element> metaElements = source.getAllElements(HTMLElementName.META);
+
 			if (metaElements != null) {
 				for (Element metaElement : metaElements) {
+					// Ref: http://www.w3.org/TR/html401/charset.html#h-5.2.2
 					String httpEquiv = metaElement.getAttributeValue("http-equiv");
 					String bodyContentType = metaElement.getAttributeValue("content");
-					
+					// Ref: http://www.w3.org/TR/html5/document-metadata.html#charset
+					metaCharset = metaElement.getAttributeValue("charset");				
+						
 					// If META element defines HTTP-EQUIV and CONTENT attributes, 
-					// compare charset values 
+					// or META element defines charset
+					// get charset values 
 					if (httpEquiv != null && bodyContentType != null && 
 							httpEquiv.equalsIgnoreCase("content-type")) {
-						String bodyContentCharset = getBodyContentCharset(bodyContentType);
-						if (!headerCharset.equalsIgnoreCase(bodyContentCharset)) {
-							raiseAlert(msg, id, getExtraInfoHTMLMessage(bodyContentCharset, 
-									headerCharset));
-						}
+						bodyContentCharset = getBodyContentCharset(bodyContentType);
 					}
 				}
-			}				
+				boolean hasBodyCharset = true;
+				boolean hasMetaCharset = true;
+				//Plugin Threshold as defined in by the user via policy/settings
+				AlertThreshold pluginThreshold = this.getLevel(); 
+				
+				if(bodyContentCharset==null || bodyContentCharset.isEmpty()) {
+					hasBodyCharset = false; //Got http-equiv and content but no charset
+				}
+				if(metaCharset==null || metaCharset.isEmpty()) {
+					hasMetaCharset = false;
+				}
+				
+				if (hasBodyCharset && hasMetaCharset) {
+					// If Threshold is HIGH be picky and check the two body declarations against each other
+					if (pluginThreshold == AlertThreshold.HIGH && 
+							!bodyContentCharset.equalsIgnoreCase(metaCharset)) {
+						raiseAlert(msg, id, metaCharset, bodyContentCharset, MismatchType.METACONTENTTYPE_METACHARSET_MISMATCH); // body declarations inconsistent with each other
+					}
+				}
+				if (hasBodyCharset) {
+					// Check the body content type charset declaration against the header
+					if (!bodyContentCharset.equalsIgnoreCase(headerCharset)) {
+						raiseAlert(msg, id, headerCharset, bodyContentCharset, MismatchType.HEADER_METACONTENTYPE_MISMATCH);// body declaration doesn't match header
+					}
+				}
+				if (hasMetaCharset) {
+					// Check the body meta charset declaration against the header
+					if (!metaCharset.equalsIgnoreCase(headerCharset)) {
+						raiseAlert(msg, id, headerCharset, metaCharset, MismatchType.HEADER_METACHARSET_MISMATCH);//body declaration doesn't match header
+					} 
+					// If Threshold is HIGH be picky and report that 
+					// only a meta charset declaration might be insufficient coverage for older clients
+					if (pluginThreshold == AlertThreshold.HIGH &&
+							hasBodyCharset==false){
+						raiseAlert(msg, id, "", "", MismatchType.NO_MISMATCH_METACONTENTTYPE_MISSING);//body declaration does match header but may overlook older clients
+					}
+				}
+			}		
 		} else if (isResponseXML(msg, source)) { // Check XML response charset
 			// We're interested in the 'encoding' attribute defined in the XML 
 			// declaration tag (<?xml enconding=".."?>
@@ -105,9 +171,8 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 			if (xmlDeclarationTags.size() > 0) {
 				StartTag xmlDeclarationTag = xmlDeclarationTags.get(0);
 				String encoding = xmlDeclarationTag.getAttributeValue("encoding");
-				
 				if (!headerCharset.equalsIgnoreCase(encoding)) {
-					raiseAlert(msg, id, getExtraInfoXMLMessage(encoding, headerCharset));
+					raiseAlert(msg, id, headerCharset, encoding, MismatchType.XML_MISMATCH);
 				} 
 			}
 		}
@@ -130,7 +195,8 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 	}
 	
 	private boolean isResponseXML(HttpMessage message, Source source) {
-		return source.isXML();
+		//Return true if source or response is identified as XML
+		return source.isXML() || message.getResponseHeader().isXml();
 	}
 		
 	private String getBodyContentCharset(String bodyContentType) {
@@ -150,12 +216,16 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 		return charset;
 	}
 
-	private void raiseAlert(HttpMessage msg, int id, String extraInfo) {
+	private void raiseAlert(HttpMessage msg, int id, String firstCharset, String secondCharset, MismatchType currentMismatch) {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_LOW,
-				getName());
-		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), "content-type", getExploitMessage(), extraInfo,
-				getSolutionMessage(), getReferenceMessage(), 
+				getName() +" "+ getVariant(currentMismatch));//Compound name (to account for variant designations, and muitiple alerts on single URI)
+		alert.setDetail(getDescriptionMessage()+"\n\n"+getExploitMessage(), 
+				msg.getRequestHeader().getURI().toString(), //URI 
+				"", //Param
+				"", //Attack
+				getExtraInfo(firstCharset, secondCharset, currentMismatch),
+				getSolutionMessage(), //Solution
+				getReferenceMessage(), //Refs
 				"",	// No Evidence
 				0,	// TODO CWE Id
 				0,	// TODO WASC Id
@@ -194,15 +264,28 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 		return Constant.messages.getString(MESSAGE_PREFIX + "exploit");
 	}
 
-	private String getExtraInfoHTMLMessage(String contentCharset,
-			String headerCharset) {
-		return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.html", 
-				contentCharset, headerCharset);
+	private String getExtraInfo(String firstCharset, String secondCharset, MismatchType mismatchType) {
+		
+		String extraInfo = "";
+		
+		switch (mismatchType) {
+		case NO_MISMATCH_METACONTENTTYPE_MISSING://no_mismatch_metacontenttype_missing
+			extraInfo=Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.html.no_mismatch_metacontenttype_missing");
+			break;
+		case HEADER_METACONTENTYPE_MISMATCH://header_metacontentype_mismatch
+			extraInfo=Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.html.header_metacontentype_mismatch", firstCharset, secondCharset);
+			break;
+		case HEADER_METACHARSET_MISMATCH://header_metacharset_mismatch
+			extraInfo=Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.html.header_metacharset_mismatch", firstCharset, secondCharset);
+			break;
+		case METACONTENTTYPE_METACHARSET_MISMATCH://metacontenttype_metacharset_mismatch
+			extraInfo=Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.html.metacontenttype_metacharset_mismatch", firstCharset, secondCharset);
+			break;
+		case XML_MISMATCH:
+			extraInfo=Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.xml", firstCharset, secondCharset);
+			break;
+		}
+		return extraInfo;
 	}
-
-	private String getExtraInfoXMLMessage(String contentCharset,
-			String headerCharset) {
-		return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.xml", 
-				contentCharset, headerCharset);
-	}
+	
 }
