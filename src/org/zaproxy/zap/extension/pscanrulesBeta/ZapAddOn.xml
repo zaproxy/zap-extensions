@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>12</version>
+	<version>13</version>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Change (duplicated) scanner ID of Weak Authentication Method, now it's 10105.<br>
+	Issue 1966: Charset Mismatch passive scanner now handles HTML5 meta charset, and multiple conditions.<br>
 	]]>
 	</changes>
 	<extensions>
