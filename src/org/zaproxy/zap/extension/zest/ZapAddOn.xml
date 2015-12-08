@@ -1,14 +1,11 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>19</version>
+	<version>20</version>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Updated add-on's info URL.<br>
-	Correct the message shown in failed asserts (Issue 1647).<br>
-	Other code changes.
 	]]>
 	</changes>
 	<dependencies>
