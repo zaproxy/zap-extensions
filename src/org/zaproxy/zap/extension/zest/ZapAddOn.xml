@@ -6,6 +6,7 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
+	Add missing error messages for 'Assign variable via string delimiters'.<br>
 	]]>
 	</changes>
 	<dependencies>
