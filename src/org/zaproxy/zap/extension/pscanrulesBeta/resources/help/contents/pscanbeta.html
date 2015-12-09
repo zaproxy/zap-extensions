@@ -11,7 +11,25 @@ Passive Scan Rules - Beta
 The following beta quality passive scan rules are included in this add-on:
 
 <H2>Charset Mismatch</H2>
-This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.
+<p>This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.</p>
+<p>The scanner handles various conditions depending on the Threshold set for the scanner, as follows:</p>
+<ul>
+  <li>All Thresholds:
+    <ul>
+      <li>Header Versus Meta Content-Type Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Content-Type tag.</li>
+      <li>Header Versus Meta Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Charset tag.</li>
+    </ul>
+  </li>
+  <li>Low Threshold:
+    <ul>
+      <li>Meta Content-Type Charset Missing - The response doesn't contain a META Content-Type declaration, which may overlook older clients.</li>
+      <li>Meta Charset Versus Meta Content-Type Charset - The response contains both a META Content-Type declaration and a META Charset declaration, and they don't match.</li>
+    </ul>
+  </li>
+</ul>
+Further reference:<br>
+<a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
+<a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
 
 <H2>Cookie - Loosely Scoped</H2>
 Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.

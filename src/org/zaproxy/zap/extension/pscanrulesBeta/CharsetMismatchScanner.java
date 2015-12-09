@@ -136,8 +136,8 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 				}
 				
 				if (hasBodyCharset && hasMetaCharset) {
-					// If Threshold is HIGH be picky and check the two body declarations against each other
-					if (pluginThreshold == AlertThreshold.HIGH && 
+					// If Threshold is LOW be picky and check the two body declarations against each other
+					if (pluginThreshold == AlertThreshold.LOW && 
 							!bodyContentCharset.equalsIgnoreCase(metaCharset)) {
 						raiseAlert(msg, id, metaCharset, bodyContentCharset, MismatchType.METACONTENTTYPE_METACHARSET_MISMATCH); // body declarations inconsistent with each other
 					}
@@ -153,9 +153,9 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 					if (!metaCharset.equalsIgnoreCase(headerCharset)) {
 						raiseAlert(msg, id, headerCharset, metaCharset, MismatchType.HEADER_METACHARSET_MISMATCH);//body declaration doesn't match header
 					} 
-					// If Threshold is HIGH be picky and report that 
+					// If Threshold is LOW be picky and report that 
 					// only a meta charset declaration might be insufficient coverage for older clients
-					if (pluginThreshold == AlertThreshold.HIGH &&
+					if (pluginThreshold == AlertThreshold.LOW &&
 							hasBodyCharset==false){
 						raiseAlert(msg, id, "", "", MismatchType.NO_MISMATCH_METACONTENTTYPE_MISSING);//body declaration does match header but may overlook older clients
 					}
