@@ -1,15 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>18</version>
+	<version>19</version>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Removing Format String.<br>
-	Fix unloading issue (Issue 1972).<br>
-	Slightly improve performance of "LDAP Injection" and "Username Enumeration".<br>
-	Demoted LDAP rule due to performance issues
+	Adding Integer Overflow Scanner.<br>
     ]]>
 	</changes>
 	<extensions>
@@ -23,6 +20,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HeartBleedActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.HPP</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.InsecureHTTPMethod</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.IntegerOverflow</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.PaddingOraclePlugin</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.RemoteCodeExecutionCVE20121823</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesBeta.SessionFixation</ascanrule>

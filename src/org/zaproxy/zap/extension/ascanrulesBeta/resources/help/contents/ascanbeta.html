@@ -28,6 +28,10 @@ Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability,
 <H2>Insecure HTTP Method</H2>
 Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL.
 
+<H2>Integer Overflow Error</H2>
+Looks for indicators of integer overflows in compiled code that causes the web server to crash.  It does 
+this by putting out multiple strings of integers designed to try and stimulate bad responses.
+
 <H2>Remote Code Execution - CVE-2012-1823</H2>
 Detect CVE-2012-1823 to perform Remote Code Execution on a PHP-CGI based web server.
 

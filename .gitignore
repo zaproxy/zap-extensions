@@ -2,3 +2,4 @@ build/build/
 build/temp/
 build/zap-exts/
 bin/*
+/bin/
