@@ -28,11 +28,11 @@ import org.zaproxy.zap.extension.api.JavaAPIGenerator;
 import org.zaproxy.zap.extension.api.NodeJSAPIGenerator;
 import org.zaproxy.zap.extension.api.PhpAPIGenerator;
 import org.zaproxy.zap.extension.api.PythonAPIGenerator;
-import org.zaproxy.zap.extension.api.WikiAPIGenerator;
 import org.zaproxy.zap.extension.reveal.RevealAPI;
 import org.zaproxy.zap.extension.selenium.SeleniumAPI;
 import org.zaproxy.zap.extension.selenium.SeleniumOptions;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderAPI;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 
 public class ApiGenerator {
 
@@ -47,7 +47,12 @@ public class ApiGenerator {
 		//	php/api/zapv2/src/Zap/Zapv2.php
 		//	python/api/src/zapv2/__init__.py
 
-		list.add(new AjaxSpiderAPI(null));
+		ApiImplementor api;
+
+		api = new AjaxSpiderAPI(null);
+		api.addApiOptions(new AjaxSpiderParam());
+		list.add(api);
+
 		list.add(new RevealAPI(null));
 		list.add(new SeleniumAPI(new SeleniumOptions()));
 
