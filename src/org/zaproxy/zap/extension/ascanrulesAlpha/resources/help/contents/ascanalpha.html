@@ -23,10 +23,6 @@ For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active
 <H2>Expression Language Injection</H2>
 The software constructs all or part of an expression language (EL) statement in a Java Server Page (JSP) using externally-influenced input from an upstream component, but it does not neutralize or incorrectly neutralizes special elements that could modify the intended EL statement before it is executed. In certain versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) in which Expression Language tags would be evaluated twice, which effectively exposed any application to EL injection. However, even for later versions, this weakness is still possible depending on configuration.
 
-<H2>Integer Overflow Error</H2>
-Looks for indicators of integer overflows in compiled code that causes the web server to crash.  It does 
-this by putting out multiple strings of integers designed to try and stimulate bad responses.
-
 <H2>LDAP Injection</H2>
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
 
