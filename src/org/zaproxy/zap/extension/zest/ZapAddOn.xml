@@ -8,6 +8,7 @@
 	<![CDATA[
 	Add missing error messages for 'Assign variable via string delimiters'.<br>
 	Add missing field (operand B) in 'Assign variable to a calculation' dialogue.<br>
+	Send authentication requests with ZAP's configurations (Issue 2114).<br>
 	]]>
 	</changes>
 	<dependencies>
