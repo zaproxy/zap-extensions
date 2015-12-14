@@ -162,6 +162,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 			ZestAssignCalc za = (ZestAssignCalc) assign;
 			this.addTextField(FIELD_VARIABLE, assign.getVariableName());
 			this.addTextField(FIELD_OPERAND_A, za.getOperandA());
+			this.addTextField(FIELD_OPERAND_B, za.getOperandB());
 			this.addComboField(FIELD_OPERATION, 
 					new String[] {
 					Constant.messages.getString("zest.dialog.assign.oper.add"),
