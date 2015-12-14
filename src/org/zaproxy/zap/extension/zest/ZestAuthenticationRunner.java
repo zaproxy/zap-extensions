@@ -18,13 +18,14 @@
 
 package org.zaproxy.zap.extension.zest;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.script.ScriptException;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
+import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -35,6 +36,7 @@ import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.Authen
 public class ZestAuthenticationRunner extends ZestZapRunner implements AuthenticationScript {
 
 	private ZestScriptWrapper script = null;
+	private AuthenticationHelper helper;
 	
 	public ZestAuthenticationRunner(ExtensionZest extension, ZestScriptWrapper script) {
 		super(extension, script);
@@ -60,16 +62,11 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 	public HttpMessage authenticate(AuthenticationHelper helper, Map<String, String> paramsValues,
 			GenericAuthenticationCredentials credentials) throws ScriptException {
 
+		this.helper = helper;
+
 		try {
 			paramsValues.put("Username", credentials.getParam("Username"));
 			paramsValues.put("Password", credentials.getParam("Password"));
-
-			// Use a custom HttpClient so we can set the proper HttpState and CookiePolicy, in order
-			// to properly remember any cookie changes during the authentication
-			HttpClient newClient = new HttpClient();
-			newClient.setState(helper.getCorrespondingHttpState());
-			newClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-			this.setHttpClient(newClient);
 
 			this.run(script.getZestScript(), paramsValues);
 
@@ -90,5 +87,13 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 		} catch (Exception e) {
 			throw new ScriptException(e);
 		}
+	}
+
+	@Override
+	public ZestResponse send(ZestRequest request) throws IOException {
+		HttpMessage msg = ZestZapUtils.toHttpMessage(request, null);
+		msg.setRequestingUser(helper.getRequestingUser());
+		helper.sendAndReceive(msg, request.isFollowRedirects());
+		return ZestZapUtils.toZestResponse(msg);
 	}
 }
