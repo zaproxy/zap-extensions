@@ -50,6 +50,11 @@ public class CodeDxExtension extends ExtensionAdaptor {
     }
 
     @Override
+    public boolean canUnload() {
+        return true;
+    }
+
+    @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
