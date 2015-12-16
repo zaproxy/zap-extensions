@@ -17,8 +17,13 @@
  */
 package org.zaproxy.zap.extension.httpsInfo;
 
+import java.awt.EventQueue;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -33,6 +38,8 @@ import org.parosproxy.paros.extension.ExtensionHook;
 public class RightClickMenu extends ExtensionAdaptor {
 
     private MenuEntry httpsEntry = null;
+    private List<MDialog> dialogues;
+    private boolean unloaded;
 
     public RightClickMenu() {
         super();
@@ -45,6 +52,29 @@ public class RightClickMenu extends ExtensionAdaptor {
 
     private void initialize() {
         this.setName("PopupMenu");
+	}
+
+	@Override
+	public void init() {
+		super.init();
+
+		dialogues = new ArrayList<>();
+	}
+
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
+
+	@Override
+	public void unload() {
+		super.unload();
+		unloaded = true;
+
+		while (!dialogues.isEmpty()) {
+			// When disposed the dialogue is removed from the list 
+			dialogues.get(0).dispose();
+		}
 	}
 	
     public void hook(ExtensionHook extensionHook) {
@@ -62,8 +92,7 @@ public class RightClickMenu extends ExtensionAdaptor {
 	private MenuEntry getPopupMsgMenuExample() {
 		if (httpsEntry  == null) {
 			httpsEntry = new MenuEntry(
-					this.getMessageString("httpsInfo.httpsInfo.menuitem"));
-			httpsEntry.setExtension(this);
+					this.getMessageString("httpsInfo.httpsInfo.menuitem"), this);
 		}
 		return httpsEntry;
 	}
@@ -91,4 +120,42 @@ public class RightClickMenu extends ExtensionAdaptor {
 		}
 	}
 
+	void showSslTlsInfo(String hostname) {
+		new Thread(new BackgroundThread(hostname)).start();
+	}
+
+	private class BackgroundThread implements Runnable {
+
+		private String servername;
+
+		public BackgroundThread(String servername) {
+			this.servername = servername;
+		}
+
+		@Override
+		public void run() {
+			final SSLServer mServer = new SSLServer(servername);
+			if (unloaded) {
+				return;
+			}
+			EventQueue.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					if (unloaded) {
+						return;
+					}
+					MDialog d = new MDialog(mServer);
+					dialogues.add(d);
+					d.addWindowListener(new WindowAdapter() {
+
+						@Override
+						public void windowClosed(WindowEvent e) {
+							dialogues.remove(e.getSource());
+						}
+					});
+				}
+			});
+		}
+	}
 }
