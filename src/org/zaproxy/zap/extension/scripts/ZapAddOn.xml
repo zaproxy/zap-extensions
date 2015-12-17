@@ -1,13 +1,11 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>15</version> <!-- SNAPSHOT - not released! -->
+	<version>16</version>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Issue 1653: Support context menu key for trees.<br>
-	Updated add-on's info URL.
 	]]>
 	</changes>
 	<extensions>

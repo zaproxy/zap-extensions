@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyListener;
 
@@ -64,7 +65,7 @@ public class CommandPanel extends AbstractPanel {
 	 */    
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
-			jScrollPane = new RTextScrollPane(getTxtOutput(), false);
+			jScrollPane = new RTextScrollPane((Component) getTxtOutput(), false);
 			
 			((RTextScrollPane)jScrollPane).setLineNumbersEnabled(true);
 
