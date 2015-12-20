@@ -138,5 +138,8 @@ This checks response headers for the presence of X-Backend-Server details.
 This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
 A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
 
+<H2>X-ChromeLogger-Data Header Information Leak</H2>
+This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
+
 </BODY>
 </HTML>
