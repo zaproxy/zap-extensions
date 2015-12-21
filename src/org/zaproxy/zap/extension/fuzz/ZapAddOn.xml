@@ -1,32 +1,13 @@
 <zapaddon>
     <name>AdvFuzzer</name>
-    <version>4</version>
-    <semver>2.0.0</semver>
+    <version>5</version>
+    <semver>2.0.1</semver>
     <description>Advanced fuzzer for manual testing</description>
     <author>ZAP Dev Team</author>
     <url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts</url>
     <changes>
     <![CDATA[
-    Add HTTP processor for tagging fuzz results.<br>
-    Fix an error that prevented the use of empty strings as payloads (Issue 1948).<br>
-    Fix exception while closing ZAP with running fuzz processes.<br>
-    Show the correct Payload Generator script when showing modify dialogue.<br>
-    Correctly use the number of payloads from script for calculation of progress (Issue 1881).<br>
-    Show the number of payloads from the script in Fuzzer dialogue (Issue 1887).<br>
-    Improve memory usage (Issue 2051).<br>
-    Correct the delay used when sending messages.<br>
-    Improve stop time.<br>
-    Fix (potential) thread leak after stopping a paused fuzzer.<br>
-    Allow to preview payloads generated or from external sources (Issue 1896)<br>
-    Fix the location where the characters are added in expand payload processor.<br>
-    Allow to modify the selected Payload Processor script.<br>
-    Show current payloads when adding/modifying processors (Issue 1898).<br>
-    Allow to preview processing of payloads (Issue 1931).<br>
-    Allow to save (to file) String, Regex, File and Script payloads (Issue 1932).<br>
-    Fix issues in generation of payloads from regular expressions (Issue 1884).<br>
-    Add support for regex repetitions (Issue 1885).<br>
-    Allow to modify the payloads of File and File Fuzzers (Issue 1897).<br>
-    Show the correct Fuzzer HTTP Processor script when showing modify dialogue.<br>
+    Fix modification of file and file fuzzers in Windows.<br>
     ]]>
     </changes>
     <extensions>

@@ -26,7 +26,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.PosixFilePermissions;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -162,8 +161,8 @@ public abstract class ModifyPayloadsPanel<T extends Payload, T2 extends PayloadG
         try {
             file = Files.createTempFile(
                     null,
-                    ".tmp.txt",
-                    PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-r-----")));
+                    ".tmp.txt");
+            file.toFile().deleteOnExit();
             createTempFile = false;
             return true;
         } catch (IOException e) {
