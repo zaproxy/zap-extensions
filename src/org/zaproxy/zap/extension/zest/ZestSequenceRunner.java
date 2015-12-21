@@ -22,10 +22,14 @@ package org.zaproxy.zap.extension.zest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestActionFailException;
@@ -38,6 +42,7 @@ import org.mozilla.zest.core.v1.ZestRequest;
 import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
@@ -49,6 +54,9 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.SequenceScript;
+import org.zaproxy.zap.model.StructuralNode;
+import org.zaproxy.zap.model.StructuralSiteNode;
+import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 
 public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript {
@@ -335,8 +343,9 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 
 	@Override
 	public void scanSequence() {
-		SiteNode fakeRoot = new SiteNode(null, 11, "");
-		SiteNode fakeDirectory = new SiteNode(null, 11, "");
+		String name = Constant.messages.getString("zest.script.sequence.scanname", script.getName());
+		SiteNode fakeRoot = new SiteNode(null, 11, name);
+		SiteNode fakeDirectory = new SiteNode(null, 11, name);
 
 		for(ZestStatement stmt : script.getZestScript().getStatements()) {
 			try {
@@ -357,7 +366,17 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 			}
 		}
 		fakeRoot.add(fakeDirectory);
-		getActiveScanner().startScan(fakeRoot);
+
+		URI uri = null;
+		try {
+			// Use dummy URI for fake nodes
+			uri = new URI("http://zest-scan-sequence.zap/", true);
+		} catch (URIException ignore) {
+			// It's a valid URI.
+		}
+		Target target = new SequenceTarget(new SequenceStructuralSiteNode(fakeRoot, name, uri), name);
+		target.setRecurse(true);
+		getActiveScanner().startScan(target);
 	}
 
 	private SiteNode messageToSiteNode(HttpMessage msg)
@@ -386,5 +405,87 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 			extAscan = Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.class);
 		}
 		return extAscan;
+	}
+
+	private static class SequenceStructuralSiteNode extends StructuralSiteNode {
+
+		private final String customName;
+		private final URI customURI;
+		private final SequenceStructuralSiteNode childNode;
+
+		public SequenceStructuralSiteNode(SiteNode rootNode, String customName, URI customURI) {
+			super(rootNode);
+			this.customName = customName;
+			this.customURI = customURI;
+			this.childNode = new SequenceStructuralSiteNode((SiteNode) rootNode.getChildAt(0), customName, customURI, null);
+		}
+
+		private SequenceStructuralSiteNode(SiteNode node, String customName, URI customURI, Object dummy) {
+			super(node);
+			this.customName = customName;
+			this.customURI = customURI;
+			this.childNode = null;
+		}
+
+		@Override
+		public String getName() {
+			return customName;
+		}
+
+		@Override
+		public URI getURI() {
+			return customURI;
+		}
+
+		@Override
+		public Iterator<StructuralNode> getChildIterator() {
+			if (childNode != null) {
+				return new SingleStructuralSiteNodeIterator(childNode);
+			}
+			return super.getChildIterator();
+		}
+
+		private static class SingleStructuralSiteNodeIterator implements Iterator<StructuralNode> {
+
+			private final SequenceStructuralSiteNode node;
+			private boolean exhausted;
+
+			public SingleStructuralSiteNodeIterator(SequenceStructuralSiteNode node) {
+				this.node = node;
+			}
+
+			@Override
+			public boolean hasNext() {
+				return !exhausted;
+			}
+
+			@Override
+			public StructuralSiteNode next() {
+				if (exhausted) {
+					throw new NoSuchElementException("No more (fake) sequence nodes.");
+				}
+				exhausted = true;
+				return node;
+			}
+
+			@Override
+			public void remove() {
+			}
+		}
+	}
+
+	private static class SequenceTarget extends Target {
+
+		private final String displayName;
+
+		public SequenceTarget(StructuralSiteNode node, String displayName) {
+			super(node);
+			this.displayName = displayName;
+		}
+
+		@Override
+		public String getDisplayName() {
+			return displayName;
+		}
 	}
 }
