@@ -34,11 +34,12 @@ import org.parosproxy.paros.model.SiteNode;
 public class MenuEntry extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
-    private RightClickMenu extension = null;
+    private final RightClickMenu extension;
     private SiteNode node = null;
 
-    public MenuEntry(String label) {
+    public MenuEntry(String label, RightClickMenu extension) {
 	super(label);
+	this.extension = extension;
 	init();
     }
     public void init(){
@@ -46,8 +47,7 @@ public class MenuEntry extends ExtensionPopupMenuItem {
 
 	    @Override
 	    public void actionPerformed(java.awt.event.ActionEvent e) {
-		Thread bt = new Thread(new BackgroundThread(getHostName(node.getNodeName())));
-		bt.start();
+	        extension.showSslTlsInfo(getHostName(node.getNodeName()));
 	    }
 	});
     }
@@ -73,21 +73,4 @@ public class MenuEntry extends ExtensionPopupMenuItem {
 	}
 	return host;
     }
-    public void setExtension(RightClickMenu extension) {
-	this.extension = extension;
-    }
-
-class BackgroundThread implements Runnable{
-	 private String servername;
-	 public BackgroundThread(String servername){
-	  this.servername = servername;
-	 }
-	 
-	 @Override
-	 public void run() {
-		SSLServer mServer = new SSLServer(servername);
-		MDialog d = new MDialog(mServer);
-	 }
-
-	}
 }
