@@ -1,10 +1,14 @@
 <zapaddon>
 	<name>Code Dx Extension</name>
-	<version>2</version>
+	<version>3</version>
 	<description>includes request and response data in xml reports</description>
 	<author>Code Dx, Inc.</author>
 	<url></url>
-	<changes>Rework HTML tags in reports</changes>
+	<changes>
+	<![CDATA[
+	Allow to update/uninstall the add-on without restarting ZAP.<br>
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.codedx.CodeDxExtension</extension>
 	</extensions>
