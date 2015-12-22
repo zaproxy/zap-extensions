@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>7</version>
+	<version>8</version>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-		ImageLocationScanner detects more GPS tag varieties, scans png & tiff files, adds i18n.<br>
-		Fix exception when scanning with "Base64 Disclosure" (Issue 2037).
+		Add passive scanner to identify info leaks via X-ChromeLogger-Data or X-ChromePhp-Data.
 	]]>
 	</changes>
 	<extensions>
@@ -40,6 +39,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledJavascriptEventScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XBackendServerInformationLeak</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XChromeLoggerDataInfoLeakScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XPoweredByHeaderInfoLeakScanner</pscanrule>
 	</pscanrules>
 	<filters/>
