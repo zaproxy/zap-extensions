@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
@@ -64,6 +65,12 @@ public class WebSocketMessagesView implements Runnable {
 		displayQueue = new Vector<>();
 	}
 	
+	public void setModel(WebSocketMessagesViewModel model) {
+		this.model = model;
+		view.setModel(model);
+		view.setRowSorter(new TableRowSorter<>(model));
+	}
+
 	/**
 	 * Lazy initializes the view component.
 	 * 
@@ -220,6 +227,7 @@ public class WebSocketMessagesView implements Runnable {
                             responsePanel.setMessage(msg, true);
                             responsePanel.setTabFocus();
                         }
+                        getViewComponent().requestFocusInWindow();
                     }
                 });
                 

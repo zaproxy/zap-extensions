@@ -42,6 +42,7 @@ import org.parosproxy.paros.db.DbUtils;
 import org.parosproxy.paros.db.paros.ParosAbstractTable;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
+import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
@@ -88,7 +89,7 @@ public class TableWebSocket extends ParosAbstractTable {
 								+ "channel_id BIGINT PRIMARY KEY,"
 								+ "host VARCHAR(255) NOT NULL,"
 								+ "port INTEGER NOT NULL,"
-								+ "url VARCHAR(255) NOT NULL,"
+								+ "url VARCHAR(1048576) NOT NULL,"
 								+ "start_timestamp TIMESTAMP NOT NULL,"
 								+ "end_timestamp TIMESTAMP NULL,"
 								+ "history_id INTEGER NULL,"
@@ -367,7 +368,6 @@ public class TableWebSocket extends ParosAbstractTable {
 				
 				int channelId = rs.getInt("channel_id");
 				WebSocketChannelDTO channel = getChannel(channelId);
-				/* TODO re-implement support for fuzzing
 
 				if (rs.getInt("fuzz_id") != 0) {
 					WebSocketFuzzMessageDTO fuzzMessage = new WebSocketFuzzMessageDTO(channel);
@@ -379,8 +379,6 @@ public class TableWebSocket extends ParosAbstractTable {
 				} else {
 					message = new WebSocketMessageDTO(channel);
 				}
-				*/
-				message = new WebSocketMessageDTO(channel);
 				
 				message.id = rs.getInt("message_id");
 				message.setTime(rs.getTimestamp("timestamp"));
@@ -499,7 +497,6 @@ public class TableWebSocket extends ParosAbstractTable {
 			where.add(whereExpr.toString());
 		}
 
-		/* TODO re-implement support for fuzzing
 		if (criteria instanceof WebSocketFuzzMessageDTO) {
 			WebSocketFuzzMessageDTO fuzzCriteria = (WebSocketFuzzMessageDTO) criteria;
 			if (fuzzCriteria.fuzzId != null) {
@@ -507,7 +504,6 @@ public class TableWebSocket extends ParosAbstractTable {
 				where.add("f.fuzz_id = ?");
 			}
 		}
-		*/
 		
 		where.trimToSize();
 		params.trimToSize();
@@ -580,7 +576,9 @@ public class TableWebSocket extends ParosAbstractTable {
 						addIdOnSuccess = true;
 						logger.info("insert channel: " + channel.toString());
 					}
-			
+
+					if(logger.isDebugEnabled()) {logger.debug("url (length " + channel.url.length() + "):" + channel.url);}
+
 					stmt.setString(1, channel.host);
 					stmt.setInt(2, channel.port);
 					stmt.setString(3, channel.url);
@@ -658,7 +656,6 @@ public class TableWebSocket extends ParosAbstractTable {
 					psInsertMessage.setBoolean(8, message.isOutgoing);
 					psInsertMessage.execute();
 					
-					/* TODO re-implement support for fuzzing
 					if (message instanceof WebSocketFuzzMessageDTO) {
 						WebSocketFuzzMessageDTO fuzzMessage = (WebSocketFuzzMessageDTO) message;
 						psInsertFuzz.setInt(1, fuzzMessage.fuzzId);
@@ -668,7 +665,6 @@ public class TableWebSocket extends ParosAbstractTable {
 						psInsertFuzz.setString(5, fuzzMessage.fuzz);
 						psInsertFuzz.execute();
 					}
-					*/
 					
 					message = messagesBuffer.poll();
 				} while (message != null);

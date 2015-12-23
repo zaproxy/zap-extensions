@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-configuration-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/crawljax-core-3.6.jar"/>
 	<classpathentry kind="lib" path="lib/diffutils-1.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/fuzz-beta-4.zap"/>
 	<classpathentry kind="lib" path="lib/guice-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/htmlunit-2.15.jar"/>
@@ -16,7 +17,7 @@
 	<classpathentry kind="lib" path="lib/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/odfdom-java-0.8.8-incubating.jar"/>
-	<classpathentry kind="lib" path="lib/rsyntaxtextarea-2.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/rsyntaxtextarea-2.5.8.jar"/>
 	<classpathentry kind="lib" path="lib/simple-odf-0.7-incubating.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-all-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
@@ -31,9 +32,9 @@
 	<classpathentry kind="lib" path="testlib/objenesis-1.2.jar"/>
 	<classpathentry kind="lib" path="testlib/powermock-mockito-1.4.12-full.jar"/>
 	<classpathentry kind="lib" path="testlib/simple-5.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/selenium-server-standalone-2.47.1.jar"/>
-	<classpathentry kind="lib" path="lib/zap-2.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/selenium-server-standalone-2.48.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="lib/zap-2.4.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
