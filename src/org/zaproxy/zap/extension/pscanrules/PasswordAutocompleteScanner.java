@@ -38,6 +38,7 @@ public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.passwordautocompletescanner.";
+	private static final int PLUGIN_ID = 10012;
 	
 	private PassiveScanThread parent = null;
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -54,7 +55,7 @@ public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		return 10012;
+		return PLUGIN_ID;
 	}
 
 	@Override
@@ -85,18 +86,18 @@ public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 								if (autoComplete == null || ! autoComplete.equalsIgnoreCase("OFF")) {
 									
 									Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
-										"Password Autocomplete in browser");
+										getName());
 										alert.setDetail(
-											"AUTOCOMPLETE attribute is not disabled in HTML FORM/INPUT element containing password type input.  Passwords may be stored in browsers and retrieved.", 
-											msg.getRequestHeader().getURI().toString(),
-											inputElement.getName(), 
-											"",
-											"", 
-											"Turn off AUTOCOMPLETE attribute in form or individual input elements containing password by using AUTOCOMPLETE='OFF'", 
-											"http://msdn.microsoft.com/library/default.asp?url=/workshop/author/forms/autocomplete_ovr.asp", 
+											getDescription(), //Description
+											msg.getRequestHeader().getURI().toString(),//URI
+											inputElement.getName(), //Param
+											"", //Attack
+											"", //OtherInfo
+											getSolution(), //Solution
+											getReference(), //Refs
 											inputElement.toString(), // Evidence - the relevant element
 								            525,	// CWE Id
-								            0,	// TODO WASC Id
+								            15,	// WASC Id 15 - Application Misconfiguration
 											msg);
 									
 									parent.raiseAlert(id, alert);
@@ -116,5 +117,17 @@ public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
+	}
+	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
+
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
+
+	private String getReference() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
 }
