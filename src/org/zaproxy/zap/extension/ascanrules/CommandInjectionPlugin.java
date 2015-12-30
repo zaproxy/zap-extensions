@@ -44,6 +44,7 @@ import org.zaproxy.zap.model.Vulnerability;
  * https://www.owasp.org/index.php/Command_Injection
  * 
  * @author yhawke (2013)
+ * @author kingthorin+owaspzap@gmail.com (2015)
  */
 public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
@@ -61,6 +62,10 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     private static final String  WIN_TEST_CMD = "type %SYSTEMROOT%\\win.ini";
     private static final Pattern WIN_CTRL_PATTERN = Pattern.compile("\\[fonts\\]");
     
+    // PowerShell Command constants
+    private static final String PS_TEST_CMD = "get-help";
+    private static final Pattern PS_CTRL_PATTERN = Pattern.compile("get-help|cmdlets|get-alias", Pattern.CASE_INSENSITIVE);
+    
     // Useful if space char isn't allowed by filters
     // http://www.blackhatlibrary.net/Command_Injection
     private static final String BASH_SPACE_REPLACEMENT = "${IFS}";
@@ -68,23 +73,28 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     // OS Command payloads for command Injection testing
     private static final Map<String, Pattern> NIX_OS_PAYLOADS = new LinkedHashMap<>();
     private static final Map<String, Pattern> WIN_OS_PAYLOADS = new LinkedHashMap<>();
+    private static final Map<String, Pattern> PS_PAYLOADS = new LinkedHashMap<>();
     static {
         // No quote payloads
         NIX_OS_PAYLOADS.put("&" + NIX_TEST_CMD + "&", NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put(";" + NIX_TEST_CMD + ";", NIX_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("&" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        PS_PAYLOADS.put(";" + PS_TEST_CMD, PS_CTRL_PATTERN);
         
         // Double quote payloads
         NIX_OS_PAYLOADS.put("\"&" + NIX_TEST_CMD + "&\"", NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("\";" + NIX_TEST_CMD + ";\"", NIX_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("\"&" + WIN_TEST_CMD + "&\"", WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("\"|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        PS_PAYLOADS.put("\";" + PS_TEST_CMD, PS_CTRL_PATTERN);
+
         // Single quote payloads
         NIX_OS_PAYLOADS.put("'&" + NIX_TEST_CMD + "&'", NIX_CTRL_PATTERN);
         NIX_OS_PAYLOADS.put("';" + NIX_TEST_CMD + ";'", NIX_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("'&" + WIN_TEST_CMD + "&'", WIN_CTRL_PATTERN);
         WIN_OS_PAYLOADS.put("'|" + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        PS_PAYLOADS.put("';" + PS_TEST_CMD, PS_CTRL_PATTERN);
         
         // Special payloads   
         NIX_OS_PAYLOADS.put("\n" + NIX_TEST_CMD + "\n", NIX_CTRL_PATTERN);  //force enter
@@ -94,6 +104,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         NIX_OS_PAYLOADS.put("|" + NIX_TEST_CMD + "#", NIX_CTRL_PATTERN);    //pipe & comment
         // FoxPro for running os commands
         WIN_OS_PAYLOADS.put("run " + WIN_TEST_CMD, WIN_CTRL_PATTERN);
+        PS_PAYLOADS.put(";" + PS_TEST_CMD + " #", PS_CTRL_PATTERN); //chain & comment
         
         //Used for *nix
         //OS_PAYLOADS.put("\"|\"ld", null);
@@ -111,27 +122,34 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     private static final String  NIX_BLIND_TEST_CMD = "sleep {0}s";
     // Windows Blind OS Command constants
     private static final String  WIN_BLIND_TEST_CMD = "timeout /T {0}";
+    // PowerSHell Blind Command constants
+    private static final String  PS_BLIND_TEST_CMD = "start-sleep -s {0}";
     
     // OS Command payloads for blind command Injection testing
     private static final List<String> NIX_BLIND_OS_PAYLOADS = new LinkedList<>();
     private static final List<String> WIN_BLIND_OS_PAYLOADS = new LinkedList<>();
+    private static final List<String> PS_BLIND_PAYLOADS = new LinkedList<>();
     static {
         // No quote payloads
         NIX_BLIND_OS_PAYLOADS.add("&" + NIX_BLIND_TEST_CMD + "&");
         NIX_BLIND_OS_PAYLOADS.add(";" + NIX_BLIND_TEST_CMD + ";");
         WIN_BLIND_OS_PAYLOADS.add("&" + WIN_BLIND_TEST_CMD);
         WIN_BLIND_OS_PAYLOADS.add("|" + WIN_BLIND_TEST_CMD);
+        PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD);
         
         // Double quote payloads
         NIX_BLIND_OS_PAYLOADS.add("\"&" + NIX_BLIND_TEST_CMD + "&\"");
         NIX_BLIND_OS_PAYLOADS.add("\";" + NIX_BLIND_TEST_CMD + ";\"");
         WIN_BLIND_OS_PAYLOADS.add("\"&" + WIN_BLIND_TEST_CMD + "&\"");
         WIN_BLIND_OS_PAYLOADS.add("\"|" + WIN_BLIND_TEST_CMD);
+        PS_BLIND_PAYLOADS.add("\";" + PS_BLIND_TEST_CMD);
+        
         // Single quote payloads
         NIX_BLIND_OS_PAYLOADS.add("'&" + NIX_BLIND_TEST_CMD + "&'");
         NIX_BLIND_OS_PAYLOADS.add("';" + NIX_BLIND_TEST_CMD + ";'");
         WIN_BLIND_OS_PAYLOADS.add("'&" + WIN_BLIND_TEST_CMD + "&'");
         WIN_BLIND_OS_PAYLOADS.add("'|" + WIN_BLIND_TEST_CMD);
+        PS_BLIND_PAYLOADS.add("';" + PS_BLIND_TEST_CMD);
         
         // Special payloads   
         NIX_BLIND_OS_PAYLOADS.add("\n" + NIX_BLIND_TEST_CMD + "\n");  //force enter
@@ -141,6 +159,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         NIX_BLIND_OS_PAYLOADS.add("|" + NIX_BLIND_TEST_CMD + "#");    //pipe & comment
         // FoxPro for running os commands
         WIN_BLIND_OS_PAYLOADS.add("run " + WIN_BLIND_TEST_CMD);
+        PS_BLIND_PAYLOADS.add(";" + PS_BLIND_TEST_CMD + " #"); //chain & comment
     };
                 
     // Logger instance
@@ -288,23 +307,22 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
         switch (this.getAttackStrength()) {
             case LOW:
-                // This works out as a total of 2+2 reqs / param per tech
+                // This works out as a total of 2+2 reqs / param per tech / per interface (i.e.: on windows we check both commandline and then powershell)
                 // Probably blind should be enabled only starting from MEDIUM (TBE)
                 targetCount = 2;
                 blindTargetCount = 2;
                 break;
 
             case MEDIUM:
-                // This works out as a total of 6+6 reqs / param per tech
+                // This works out as a total of 6+6 reqs / param per tech / per interface (i.e.: on windows we check both commandline and then powershell)
                 targetCount = 6;
                 blindTargetCount = 6;
                 break;
 
             case HIGH:
             case INSANE:
-                // This works out as a total of 18+18 reqs / param if both techs are enabled
-                targetCount = Math.max(NIX_OS_PAYLOADS.size(), WIN_OS_PAYLOADS.size());
-                blindTargetCount = Math.max(NIX_BLIND_OS_PAYLOADS.size(), WIN_BLIND_OS_PAYLOADS.size());
+                targetCount = Math.max(PS_PAYLOADS.size(), (Math.max(NIX_OS_PAYLOADS.size(), WIN_OS_PAYLOADS.size())));
+                blindTargetCount = Math.max(PS_BLIND_PAYLOADS.size(), (Math.max(NIX_BLIND_OS_PAYLOADS.size(), WIN_BLIND_OS_PAYLOADS.size())));
                 break;
 
             default:
@@ -322,8 +340,17 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         }
 
         if (inScope(Tech.OS.Windows)) {
+        	//Windows Command Prompt
             if (testCommandInjection(paramName, value, targetCount, blindTargetCount, WIN_OS_PAYLOADS, WIN_BLIND_OS_PAYLOADS)) {
                 return;
+            }
+            //Check if the user has stopped the scan
+            if (isStop()) {
+                return;
+            }
+            //Windows PowerShell
+            if (testCommandInjection(paramName, value, targetCount, blindTargetCount, PS_PAYLOADS, PS_BLIND_PAYLOADS)) {
+            	return;
             }
         }
     }
@@ -390,7 +417,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                     this.bingo(
                             Alert.RISK_HIGH, 
                             Alert.CONFIDENCE_MEDIUM,
-                            null,
+                            msg.getRequestHeader().getURI().toString(),
                             paramName,
                             paramValue, 
                             null,
@@ -463,7 +490,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                     this.bingo(
                             Alert.RISK_HIGH, 
                             Alert.CONFIDENCE_MEDIUM,
-                            null,
+                            msg.getRequestHeader().getURI().toString(),
                             paramName,
                             paramValue, 
                             null,
