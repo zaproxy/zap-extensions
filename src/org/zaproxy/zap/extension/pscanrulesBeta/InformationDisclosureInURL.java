@@ -38,6 +38,9 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 
 public class InformationDisclosureInURL extends PluginPassiveScanner {
 
+	private static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosureinurl.";
+	private static final int PLUGIN_ID = 10024;
+	
 	private PassiveScanThread parent = null;
 	private static final String URLSensitiveInformationFile = "xml/URL-information-disclosure-messages.txt";
 	private static final Logger logger = Logger.getLogger(InformationDisclosureInURL.class);
@@ -50,19 +53,19 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 		for (HtmlParameter urlParam : urlParams) {
 			if (doesParamNameContainsSensitiveInformation(urlParam.getName())) {
 				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(), 
-						"The URL contains potentially sensitive information");
+						Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.sensitiveinfo"));
 			}
 			if (isCreditCard(urlParam.getValue())) {
 				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(),
-						"The URL appears to contain credit card information");
+						Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"));
 			}
 			if (isEmailAddress(urlParam.getValue())) {
 				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(),
-						"The URL contains email address(es)");
+						Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.email"));
 			}
 			if (isUsSSN(urlParam.getValue())) {
 				this.raiseAlert(msg, id, urlParam.getName(), urlParam.getValue(),
-						"The URL appears to contain US Social Security Number(s)");
+						Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn"));
 			}
 		}
 	}
@@ -76,16 +79,16 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
-		    			"The request appeared to contain sensitive information leaked in the URL. This can violate PCI and most organizational compliance policies. You can configure the list of strings for this check to add or remove values specific to your environment", 
+		    		getDescription(), 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    param,
-		    	    other, 
 		    	    "",
-		    	    "Do not pass sensitive information in URI's", 
+		    	    other,
+		    	    getSolution(), 
 		            "", 
 					evidence,	// Evidence
-					0,	// TODO CWE Id
-		            13,	// WASC Id - Info leakage
+					200,	// CWE Id 200 - Information Exposure
+		            13,	// WASC Id 13 - Info leakage
 		            msg);
 	
     	parent.raiseAlert(id, alert);
@@ -142,12 +145,20 @@ public class InformationDisclosureInURL extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Information Disclosure - Sensitive Informations in URL";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
+	}
+	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
+	
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}
 	
 	@Override
 	public int getPluginId() {
-		return 10024;
+		return PLUGIN_ID;
 	}
 	
 	private boolean isEmailAddress(String emailAddress) {

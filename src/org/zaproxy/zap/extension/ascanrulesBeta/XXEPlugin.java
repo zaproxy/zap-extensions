@@ -22,7 +22,9 @@ import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -40,6 +42,9 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlugin {
 
+	private static final String MESSAGE_PREFIX = "ascanbeta.xxeplugin.";
+	private static final int PLUGIN_ID = 90023;
+	
     // Get the correct vulnerability description from WASC
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_43");
     private static final int CHALLENGE_LENGTH = 16;
@@ -97,7 +102,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
      */
     @Override
     public int getId() {
-        return 90023;
+        return PLUGIN_ID;
     }
 
     /**
@@ -106,7 +111,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
      */
     @Override
     public String getName() {
-        return "XML External Entity Attack";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     /**

@@ -27,6 +27,7 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
@@ -42,6 +43,9 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 
+	private static final String MESSAGE_PREFIX = "pscanbeta.servletparameterpollutionscanner.";
+	private static final int PLUGIN_ID = 10026;
+	
 	private PassiveScanThread parent = null;
 	private static final Logger logger = Logger.getLogger(ServletParameterPollutionScanner.class);
 
@@ -57,7 +61,7 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		return 10026;
+		return PLUGIN_ID;
 	}
 
 	@Override
@@ -95,8 +99,8 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 					    		getSolution(), 
 					            getReference(), 
 					    		formElement.getFirstStartTag().toString(), // evidence - just include the first <form ..> element 
-								0,	// TODO CWE Id
-								0,	// TODO WASC Id
+								20,	// CWE Id 20 - Improper Input Validation
+								20,	// WASC Id 20 - Improper Input Handling
 					            msg);
 
 				    parent.raiseAlert(id, alert);
@@ -110,12 +114,11 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-    	return "HTTP Parameter Override";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
     public String getDescription() {
-    	return "Unspecified form action: HTTP parameter override attack potentially possible.\n" +
-    			"This is a known problem with Java Servlets but other platforms may also be vulnerable.";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     public int getCategory() {
@@ -123,11 +126,11 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
     }
 
     public String getSolution() {
-    	return "All forms must specify the action URL";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     public String getReference() {
-    	return "http://java.net/attachments/lists/servlet-spec/jsr340-experts/2012-06/15/OnParameterPollutionAttacks.pdf";
+    	return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
 }

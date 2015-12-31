@@ -44,6 +44,9 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class Csrftokenscan extends AbstractAppPlugin {
 
+	private static final String MESSAGE_PREFIX = "ascanbeta.csrftokenscan.";
+	private static final int PLUGIN_ID = 20012;
+	
 	// WASC Threat Classification (WASC-9)
 	private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
 
@@ -60,7 +63,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	 */
 	@Override
 	public int getId() {
-		return 20012;
+		return PLUGIN_ID;
 	}
 
 	/**
@@ -68,7 +71,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	 */
 	@Override
 	public String getName() {
-		return "Anti CSRF Tokens Scanner";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 
 	/**
@@ -193,7 +196,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 					String attack = Constant.messages.getString("ascanbeta.noanticsrftokens.alert.attack");
 					String extraInfo = Constant.messages.getString("ascanbeta.noanticsrftokens.alert.extrainfo");
 					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, 
-							null,
+							getBaseMsg().getRequestHeader().getURI().toString(),
 							attack, extraInfo, getSolution(),
 							getBaseMsg());
 				}
