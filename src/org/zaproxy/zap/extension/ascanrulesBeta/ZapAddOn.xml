@@ -9,6 +9,7 @@
 	<![CDATA[
 	Adding Integer Overflow Scanner.<br>
 	Issue 823: i18n (internationalise) beta active scan rules.<br>
+	Issue 1713: Source Code Disclosure SVN Throws False Positive - Fixed.<br>
     ]]>
 	</changes>
 	<extensions>

@@ -26,6 +26,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -49,6 +51,24 @@ import org.zaproxy.zap.model.Vulnerability;
 public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 
 	/**
+	* if we got a 404 or a redirect specifically, then this is NOT a match
+	* note that since we are simply relying on the file existing or not, we 
+	* will not attempt any fuzzy matching. Old school.
+	* Checks based on this are necessary, otherwise a recursive scan on nodes 
+	* in the url path cause lots of false positives.
+	* 	MOVED_PERMANENTLY - 301
+	* 	FOUND - 302
+	* 	SEE_OTHER - 303
+	* 	NOT_MODIFIED - 304
+	* 	USE_PROXY - 305 (306 is currently unused)
+	* 	TEMPORARY_REDIRECT - 307
+	* 	NOT_FOUND - 404
+	*/
+	private static final List<Integer> UNWANTED_RESPONSE_CODES= Arrays.asList(301,302,303,304,305,307,404);
+	
+	private static final String MESSAGE_PREFIX = "ascanbeta.sourcecodedisclosure.svnbased.";
+	
+	/**
 	 * details of the vulnerability which we are attempting to find 
 	 * 34 = "Predictable Resource Location"
 	 */
@@ -68,6 +88,11 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 	private static final Pattern PATTERN_JAVA = Pattern.compile("class");  //Java is compiled, not interpreted, but this helps with my test cases.
 	private static final Pattern PATTERN_HTML = Pattern.compile("<html");  //helps eliminate some common false positives in the case of 403s, 302s, etc
 
+	@Override
+	public void init() {
+
+	}
+	
 	/**
 	 * returns the plugin id
 	 */
@@ -81,7 +106,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 	 */
 	@Override
 	public String getName() {
-		return Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.name");
+		return Constant.messages.getString(MESSAGE_PREFIX+"name");
 	}
 
 	@Override
@@ -91,10 +116,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 
 	@Override
 	public String getDescription() {
-		if (vuln != null) {
-			return vuln.getDescription();
-		}
-		return "Failed to load vulnerability description from file";
+		return Constant.messages.getString("ascanbeta.sourcecodedisclosure.desc");
 	}
 
 	@Override
@@ -104,10 +126,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 
 	@Override
 	public String getSolution() {
-		if (vuln != null) {
-			return vuln.getSolution();
-		}
-		return "Failed to load vulnerability solution from file";
+		return Constant.messages.getString(MESSAGE_PREFIX+"soln");
 	}
 
 	@Override
@@ -125,10 +144,10 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 		return "Failed to load vulnerability reference from file";
 	}
 
-	@Override
-	public void init() {
+	public String getExtraInfo(String urlfilename, String attackFilename) {
+				return Constant.messages.getString(MESSAGE_PREFIX+"extrainfo", urlfilename, attackFilename);
 	}
-
+	
 	@Override
 	public void scan() {
 		//at Low or Medium strength, do not attack URLs which returned "Not Found"
@@ -136,7 +155,7 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 		if ( (attackStrength==AttackStrength.LOW||attackStrength==AttackStrength.MEDIUM) 
 				&& (getBaseMsg().getResponseHeader().getStatusCode() == HttpStatus.SC_NOT_FOUND))
 			return;
-
+		
 		// scan the node itself (ie, at URL level, rather than at parameter level)
 		if (log.isDebugEnabled()) {
 			log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
@@ -212,7 +231,23 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 	public int getWascId() {
 		return 34;  //Predictable Resource Location
 	}
-
+	
+	private boolean shouldStop(AlertThreshold alertThreshold, int statusCode) {
+		//At MEDIUM or HIGH ignore all client and server error responses
+		if ((alertThreshold==AlertThreshold.MEDIUM || alertThreshold==AlertThreshold.HIGH) && 
+			(HttpStatusCode.isClientError(statusCode) || HttpStatusCode.isServerError(statusCode))) {
+				return true; 
+		}
+		return false;
+	}
+	
+	private int getConfidence(int statusCode) {
+		if (HttpStatusCode.isClientError(statusCode) || HttpStatusCode.isServerError(statusCode)) {
+			return Alert.CONFIDENCE_LOW; //Less confident due to response status code
+		}
+		return Alert.CONFIDENCE_MEDIUM;
+	}
+	
 	/**
 	 * finds the source code for the given file, using SVN metadata on the server (if this is available)
 	 * @param uri the URI of a file, whose source code we want to find
@@ -220,6 +255,8 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 	 */
 	private boolean findSourceCodeSVN(HttpMessage originalMessage) throws Exception {
 
+		AlertThreshold alertThreshold = getAlertThreshold();
+		
 		//SVN formats 1-10 (format 11 is not used) are supported by this logic.
 		//TODO: The SQLite based (and centralised, except for pre-release formats which we don't plan to support) ".svn/wc.db" style used from SVN format 12 through to 31 
 		//(and possibly later formats) is not yet supported here. It's a work in progress.
@@ -255,18 +292,14 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 			//svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
 			sendAndReceive(svnsourcefileattackmsg, false);  //do not follow redirects
 
-			//if we got a 404 or a redirect specifically, then this is NOT a match
-			//note that since we are simply relying on the file existing or not, we 
-			//will not attempt any fuzzy matching. Old school.
-			//this check is necessary, otherwise a recursive scan on nodes in the url path cause lots of false positives.
-			if (	svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND &&  //404
-					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.MOVED_PERMANENTLY && //301
-					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.FOUND && //302
-					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.SEE_OTHER	&& //303
-					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_MODIFIED && //304
-					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.USE_PROXY && //305 (306 is currently unused)
-					svnsourcefileattackmsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.TEMPORARY_REDIRECT //307
-					) {
+			int attackmsgResponseStatusCode = svnsourcefileattackmsg.getResponseHeader().getStatusCode();
+			
+			if (shouldStop(alertThreshold, attackmsgResponseStatusCode)) {
+				return false; 
+			}
+				
+			if (!UNWANTED_RESPONSE_CODES.contains(attackmsgResponseStatusCode)) {//If the response is wanted (not on the unwanted list)
+
 				String attackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/text-base/" + urlfilename + ".svn-base";
 				if (log.isDebugEnabled()) {
 					log.debug("The contents for request '"+ attackFilename + "' do not return 404 or 3**, so we possibly have the source code using SVN < 1.7");					
@@ -275,14 +308,14 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 				//if not, just try it (could be a false positive, but hey)    			
 				if (dataMatchesExtension (svnsourcefileattackmsg.getResponseBody().getBytes(), fileExtension)) {
 					//if we get to here, is is very likely that we have source file inclusion attack. alert it.
-					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
-							Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.name"),
-							Constant.messages.getString("ascanbeta.sourcecodedisclosure.desc"), 
+					bingo(Alert.RISK_HIGH, getConfidence(attackmsgResponseStatusCode),
+							getName(),
+							getDescription(), 
 							getBaseMsg().getRequestHeader().getURI().getURI(),
 							null, 
 							attackFilename,
-							Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.extrainfo", urlfilename, attackFilename),
-							Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.soln"),
+							getExtraInfo(urlfilename, attackFilename),
+							getSolution(),
 							null,
 							svnsourcefileattackmsg
 							);
@@ -325,18 +358,13 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 				//svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
 				sendAndReceive(svnWCDBAttackMsg, false);  //do not follow redirects
 	
-				//if we got a 404 or a redirect specifically, then this is NOT a match
-				//note that since we are simply relying on the file existing or not, we 
-				//will not attempt any fuzzy matching. Old school.
-				//this check is necessary, otherwise a recursive scan on nodes in the url path cause lots of false positives.
-				if (	svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND &&  //404
-						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.MOVED_PERMANENTLY && //301
-						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.FOUND && //302
-						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.SEE_OTHER	&& //303
-						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_MODIFIED && //304
-						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.USE_PROXY && //305 (306 is currently unused)
-						svnWCDBAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.TEMPORARY_REDIRECT //307
-						) {
+				int svnWCDBAttackMsgStatusCode = svnWCDBAttackMsg.getResponseHeader().getStatusCode();
+				
+				if (shouldStop(alertThreshold, svnWCDBAttackMsgStatusCode)) {
+					return false;
+				}	
+
+				if (!UNWANTED_RESPONSE_CODES.contains(svnWCDBAttackMsgStatusCode)) {//If the response is wanted (not on the unwanted list)
 					//calculate the path used to access the wc.db, as well as the matching relpath to query the wc.db
 					//since the relpath is calculated from the original message URL path, after removing the base used in the wc.db url path
 					String wcdbAttackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/wc.db";
@@ -423,18 +451,14 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 										//svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
 										sendAndReceive(svnSourceFileAttackMsg, false);  //do not follow redirects
 
-										//if we got a 404 or a redirect specifically, then this is NOT a match
-										//note that since we are simply relying on the file existing or not, we 
-										//will not attempt any fuzzy matching. Old school.
-										//this check is necessary, otherwise a recursive scan on nodes in the url path cause lots of false positives.
-										if (	svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_FOUND &&  //404
-												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.MOVED_PERMANENTLY && //301
-												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.FOUND && //302
-												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.SEE_OTHER	&& //303
-												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.NOT_MODIFIED && //304
-												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.USE_PROXY && //305 (306 is currently unused)
-												svnSourceFileAttackMsg.getResponseHeader().getStatusCode() !=  HttpStatusCode.TEMPORARY_REDIRECT //307
-												) {
+										int svnSourceFileAttackMsgStatusCode = svnSourceFileAttackMsg.getResponseHeader().getStatusCode();
+										
+										if (shouldStop(alertThreshold, svnSourceFileAttackMsgStatusCode)) {
+											return false;
+										}	
+										
+										if (!UNWANTED_RESPONSE_CODES.contains(svnSourceFileAttackMsgStatusCode)) {//If the response is wanted (not on the unwanted list)
+
 											String attackFilename = uri.getScheme() + "://" + uri.getAuthority() + pathminusfilename + ".svn/" + svnFilename;
 											if (log.isDebugEnabled()) {
 												log.debug("The contents for request '"+ attackFilename + "' do not return 404 or 3**, so we possibly have the source code using SVN >= 1.7");					
@@ -443,14 +467,14 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 											//if not, just try it (could be a false positive, but hey)    			
 											if (dataMatchesExtension (svnSourceFileAttackMsg.getResponseBody().getBytes(), fileExtension)) {
 												//if we get to here, is is very likely that we have source file inclusion attack. alert it.
-												bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
-														Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.name"),
-														Constant.messages.getString("ascanbeta.sourcecodedisclosure.desc"), 
+												bingo(Alert.RISK_HIGH, getConfidence(svnSourceFileAttackMsgStatusCode),
+														getName(),
+														getDescription(), 
 														getBaseMsg().getRequestHeader().getURI().getURI(),
 														null, 
 														attackFilename,
-														Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.extrainfo", urlfilename, attackFilename),
-														Constant.messages.getString("ascanbeta.sourcecodedisclosure.svnbased.soln"),
+														getExtraInfo(urlfilename, attackFilename), 
+														getSolution(),
 														null,
 														svnSourceFileAttackMsg
 														);
