@@ -180,7 +180,7 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 							Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.soln"), 
 							Constant.messages.getString("pscanbeta.authenticationcredentialscaptured.refs"), 
 							"",	// No Evidence
-							0,	// TODO CWE Id
+							287,	// CWE Id - Improper authentication
 							1,	// WASC Id - Insufficient authentication
 							msg);
 					//raise the alert
@@ -245,8 +245,8 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 							getSolution(),
 							getReference(),
 							"",	// No Evidence
-							326,	// TODO CWE Id
-							0,	// TODO WASC Id
+							326,	// CWE Id - Inadequate Encryption Strength
+							4,	// WASC Id - Insufficient Transport Layer Protection
 							msg);
 					parent.raiseAlert(id, alert);
 				}
