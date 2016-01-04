@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>15</version>
+	<version>16</version>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 1594 - TestInfoSessionIdURL overhaul matching mechanism.
+	Issue 823 - i18n (internationalise) release passive scan rules.
 	]]>
 	</changes>
 	<extensions>

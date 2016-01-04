@@ -39,6 +39,7 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.crossdomainscriptinclusionscanner.";
+	private static final int PLUGIN_ID = 10017;
 	
 	private PassiveScanThread parent = null;
 	private static final Logger logger = Logger.getLogger(CrossDomainScriptInclusionScanner.class);
@@ -67,16 +68,16 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
-		    			"The page at the following URL includes one or more script files from a third-party domain", 
+		    		getDescription(), 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    crossDomainScript,
 		    	    "", 
 		    	    "",
-		    	    "Ensure JavaScript source files are loaded from only trusted sources, and the sources can't be controlled by end users of the application", 
+		    	    getSolution(), 
 		            "", 
 		            crossDomainScript, // evidence
-		            0,	// TODO CWE Id
-		            0,	// TODO WASC Id
+		            829,	// CWE Id 829 - Inclusion of Functionality from Untrusted Control Sphere
+		            15,	// WASC Id 15 - Application Misconfiguration
 		            msg);
 	
     	parent.raiseAlert(id, alert);
@@ -89,14 +90,22 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 	
 	@Override
 	public int getPluginId() {
-		return 10017;
+		return PLUGIN_ID;
 	}
 
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
+	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
 
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
+	
 	private boolean isScriptFromOtherDomain (String host, String scriptURL){
 		if (!scriptURL.startsWith("//") && (scriptURL.startsWith("/") || scriptURL.startsWith("./") || scriptURL.startsWith("../"))) {
 			return false;

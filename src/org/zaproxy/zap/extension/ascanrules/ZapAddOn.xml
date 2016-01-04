@@ -1,11 +1,12 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>22</version>
+	<version>23</version>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
+	Issue 823 - i18n (internationalise) release active scan rules.
 	]]>
     </changes>
 	<extensions>

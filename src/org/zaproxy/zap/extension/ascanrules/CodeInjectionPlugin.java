@@ -248,7 +248,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                     this.bingo(
                             Alert.RISK_HIGH, 
                             Alert.CONFIDENCE_MEDIUM, 
-                            getName() + " - PHP Code Injection",
+                            Constant.messages.getString(MESSAGE_PREFIX + "name.php"),
                             getDescription(),
                             null,
                             paramName,
@@ -316,7 +316,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                     this.bingo(
                             Alert.RISK_HIGH, 
                             Alert.CONFIDENCE_MEDIUM, 
-                            getName() + " - ASP Code Injection",
+                            Constant.messages.getString(MESSAGE_PREFIX + "name.asp"),
                             getDescription(),
                             null,
                             paramName,

@@ -35,9 +35,9 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.cookiehttponlyscanner.";
+	private static final int PLUGIN_ID = 10010;
 	
 	private PassiveScanThread parent = null;
-	//private Logger logger = Logger.getLogger(this.getClass());
 
 	@Override
 	public void setParent (PassiveScanThread parent) {
@@ -74,17 +74,15 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 	
 	private void raiseAlert(HttpMessage msg, int id, String cookie) {
 	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
-		    	"Cookie set without HttpOnly flag");
+		    	getName());
 		    	alert.setDetail(
-		    		"A cookie has been set without the HttpOnly flag, which means that the cookie can be accessed by JavaScript. " +
-		    		"If a malicious script can be run on this page then the cookie will be accessible and can be transmitted to another site. " +
-		    		"If this is a session cookie then session hijacking may be possible.", 
+		    		getDescription(), 
 		    		msg.getRequestHeader().getURI().toString(),
 		    		cookie, "", "",
-		    		"Ensure that the HttpOnly flag is set for all cookies.", 
-		            "www.owasp.org/index.php/HttpOnly", 
+		    		getSolution(), 
+		            getReference(), 
 		            cookie, // evidence
-		            0,	// TODO CWE Id
+		            16,	// CWE Id 16 - Configuration
 		            13,	// WASC Id - Info leakage
 		            msg);
 	
@@ -94,12 +92,23 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		return 10010;
+		return PLUGIN_ID;
 	}
 
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
-
+	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
+	
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
+	
+	private String getReference() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+	}
 }

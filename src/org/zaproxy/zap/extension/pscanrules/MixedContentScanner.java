@@ -37,6 +37,7 @@ public class MixedContentScanner extends PluginPassiveScanner {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.mixedcontentscanner.";
+	private static final int PLUGIN_ID=10040;
 	
 	private PassiveScanThread parent = null;
 
@@ -53,7 +54,7 @@ public class MixedContentScanner extends PluginPassiveScanner {
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		if (!msg.getRequestHeader().isSecure()) {
-			// If SSL isn't used then this check isnt relevant
+			// If SSL/TLS isn't used then this check isn't relevant
 			return;
 		}
 		List<MixedContent> list = new ArrayList<MixedContent>();
@@ -116,24 +117,22 @@ public class MixedContentScanner extends PluginPassiveScanner {
 	}
 	
 	private void raiseAlert(HttpMessage msg, int id, String first, String all, boolean incScript) {
-		String name = "Secure page includes mixed content";
+		String name = getName();
 		int risk = Alert.RISK_LOW;
 		if (incScript) {
-			name = "Secure page includes mixed content, including scripts";
+			name = Constant.messages.getString(MESSAGE_PREFIX + "name.inclscripts");
 			risk = Alert.RISK_MEDIUM;
 		}
 	    Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, name);
     	alert.setDetail(
-    	    "The page includes mixed content, ie content accessed via http instead of https.", 
+    	    getDescription(), 
     	    msg.getRequestHeader().getURI().toString(),
     	    "", first, all,
-    	    "A page that is available over TLS must be comprised completely of content which is transmitted over TLS. \n" +
-    	    "The page must not contain any content that is transmitted over unencrypted HTTP.\n" +
-    	    "This includes content from unrelated third party sites.",
-            "https://www.owasp.org/index.php/Transport_Layer_Protection_Cheat_Sheet", 
+    	    getSolution(),
+            getReference(), 
             first, // evidence
-            0,	// TODO CWE Id
-            0,	// TODO WASC Id
+            311,	// CWE Id 311 - Missing Encryption of Sensitive Data
+            4,	// WASC Id 4 - Insufficient Transport Layer Protection
             msg);
 	
     	parent.raiseAlert(id, alert);
@@ -142,12 +141,24 @@ public class MixedContentScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		return 10040;
+		return PLUGIN_ID;
 	}
 
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
+	}
+	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
+	
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
+	
+	private String getReference() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
 	
 	private class MixedContent {

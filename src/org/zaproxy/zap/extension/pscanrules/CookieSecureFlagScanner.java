@@ -35,9 +35,9 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.cookiesecureflagscanner.";
+	private static final int PLUGIN_ID=10011;
 	
 	private PassiveScanThread parent = null;
-	//private Logger logger = Logger.getLogger(this.getClass());
 
 	@Override
 	public void setParent (PassiveScanThread parent) {
@@ -78,15 +78,13 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
 	}
 	
 	private void raiseAlert(HttpMessage msg, int id, String cookie) {
-	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
-		    	"Cookie set without secure flag");
+	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM,	getName());
 		    	alert.setDetail(
-		    	    "A cookie has been set without the secure flag, which means that the cookie can be accessed via unencrypted connections.", 
+		    	    getDescription(), 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    cookie, "", "",
-		    	    "Whenever a cookie contains sensitive information or is a session token, then it should always be passed using an encrypted tunnel. " +
-                            "Ensure that the secure flag is set for cookies containing such sensitive information.", 
-		            "http://www.owasp.org/index.php/Testing_for_cookies_attributes_(OWASP-SM-002)", 
+		    	    getSolution(), 
+		            getReference(), 
 		            cookie, // evidence
 		            614, // CWE Id
 		            13,	// WASC Id - Info leakage
@@ -98,11 +96,23 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		return 10011;
+		return PLUGIN_ID;
 	}
 
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
+	}
+	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
+	
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
+	
+	private String getReference() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
 }
