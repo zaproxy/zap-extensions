@@ -11,6 +11,7 @@ PHP Warning
 PHP Error
 Warning: Cannot modify header information - headers already sent
 mysqli error is
+mysql error is
 404 SC_NOT_FOUND
 ASP.NET_SessionId
 servlet error:
@@ -26,3 +27,5 @@ access denied for user
 incorrect syntax near
 Unclosed quotation mark before the character string
 There seems to have been a problem with the
+customErrors mode
+This error page might contain sensitive information because ASP.NET
