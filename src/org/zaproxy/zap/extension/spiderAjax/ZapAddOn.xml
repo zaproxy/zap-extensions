@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Ajax Spider</name>
-	<version>14</version>
+	<version>15</version>
 	<description>Allows you to spider sites that make heavy use of JavaScript using Crawljax</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
-	Issue 2102: Allow ajax spider options to be set via the API.<br>
+	Fix issue that prevented the spider from clicking all elements set in the options (Issue 2151).<br>
 	]]>
 	</changes>
 	<dependencies>
