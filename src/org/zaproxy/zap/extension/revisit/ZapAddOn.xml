@@ -1,10 +1,14 @@
 <zapaddon>
 	<name>Revisit</name>
-	<version>1</version>
+	<version>2</version>
 	<description>Revisit a site at any time in the past using the session history</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>
+	<![CDATA[
+	Allow to update/uninstall the add-on without restarting ZAP.<br>
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.revisit.ExtensionRevisit</extension>
 	</extensions>
