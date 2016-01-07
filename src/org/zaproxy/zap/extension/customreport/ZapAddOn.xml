@@ -1,10 +1,14 @@
 <zapaddon>
         <name>CustomReport</name>
-        <version>1</version>
+        <version>2</version>
         <description>New HTML report module allows users to customize report content.</description>
         <author>Chienli Ma</author>
         <url></url>
-        <changes></changes>
+        <changes>
+        <![CDATA[
+        Allow to update/uninstall the add-on without restarting ZAP.<br>
+        ]]>
+        </changes>
         <dependson/>
         <extensions>
                 <extension>org.zaproxy.zap.extension.customreport.ExtensionCustomReport</extension>
