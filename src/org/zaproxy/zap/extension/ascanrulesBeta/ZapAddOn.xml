@@ -7,7 +7,7 @@
 	<changes>
 	<![CDATA[
 	Adding Integer Overflow Scanner.<br>
-	Issue 823: i18n (internationalise) release active scan rules.<br>
+	Issue 823: i18n (internationalise) beta active scan rules.<br>
     ]]>
 	</changes>
 	<extensions>
