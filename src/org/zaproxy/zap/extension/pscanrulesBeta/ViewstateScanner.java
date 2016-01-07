@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.encoder.Base64;
 import org.parosproxy.paros.network.HttpMessage;
@@ -22,6 +23,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class ViewstateScanner extends PluginPassiveScanner {
 	
+	private static final String MESSAGE_PREFIX = "pscanbeta.viewstatescanner.";
+	private static final int PLUGIN_ID = 10032;
 	
     private PassiveScanThread parent = null;
     private static Pattern hiddenFieldPattern = Pattern.compile("__.*");
@@ -78,11 +81,11 @@ public class ViewstateScanner extends PluginPassiveScanner {
                 "",
                 "",
                 var.getResultExtract().toString(), 
-                "Verify the provided information isn't confidential.",
+                getSolution(),//Solution
                 "",
 				"",	// No Evidence
-				0,	// TODO CWE Id
-				0,	// TODO WASC Id
+				16,	// CWE Id 16 - Configuration
+				14,	// WASC Id - Server Misconfiguration
                 msg);
         
         parent.raiseAlert(id, alert);
@@ -93,18 +96,18 @@ public class ViewstateScanner extends PluginPassiveScanner {
                 getPluginId(),
                 Alert.RISK_LOW,
                 Alert.CONFIDENCE_MEDIUM,
-                "Old Asp.Net version in use"
+                Constant.messages.getString(MESSAGE_PREFIX + "oldver.name")
             );
 
         alert.setDetail(
-                "*** EXPERIMENTAL ***\nThis website uses ASP.NET version 1.0 or 1.1.\n\n",
+        		Constant.messages.getString(MESSAGE_PREFIX + "oldver.desc"),
                 msg.getRequestHeader().getURI().toString(),
                 "", "", "",
-                "Ensure the engaged framework is still supported by Microsoft",
+                Constant.messages.getString(MESSAGE_PREFIX + "oldver.soln"),
                 "",
 				"",	// No Evidence
-				0,	// TODO CWE Id
-				0,	// TODO WASC Id
+				16,	// CWE Id 16 - Configuration
+				14,	// WASC Id - Server Misconfiguration
                 msg);
         
         parent.raiseAlert(id, alert);
@@ -116,17 +119,17 @@ public class ViewstateScanner extends PluginPassiveScanner {
                                 getPluginId(),
                                 Alert.RISK_HIGH,
                                 Alert.CONFIDENCE_LOW,
-                                "Viewstate without MAC signature (Unsure)"
+                                Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.name")
                             );
         alert.setDetail(
-                "*** EXPERIMENTAL ***\nThis website uses ASP.NET's Viewstate but maybe without any MAC.\n\n",
+        		Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.desc"),
                 msg.getRequestHeader().getURI().toString(),
                 "", "", "",
-                "Ensure the MAC is set for all pages on this website.",
-                "msdn.microsoft.com/en-us/library/ff649308.aspx",
+                Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.soln"),
+                Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.refs"),
 				"",	// No Evidence
-				0,	// TODO CWE Id
-				0,	// TODO WASC Id
+				642,	// CWE Id 642 - External Control of Critical State Data
+				14,	// WASC Id 14 - Server Misconfiguration
                 msg);
 
         parent.raiseAlert(id, alert);
@@ -137,17 +140,17 @@ public class ViewstateScanner extends PluginPassiveScanner {
                                 getPluginId(),
                                 Alert.RISK_HIGH,
                                 Alert.CONFIDENCE_MEDIUM,
-                                "Viewstate without MAC signature (Sure)"
+                                Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.name")
                             );
         alert.setDetail(
-            "*** EXPERIMENTAL ***\nThis website uses ASP.NET's Viewstate but without any MAC.\n\n",
+        		Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.desc"),
             msg.getRequestHeader().getURI().toString(),
             "", "", "",
-            "Ensure the MAC is set for all pages on this website.",
-            "msdn.microsoft.com/en-us/library/ff649308.aspx",
+            Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.soln"),
+            Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.refs"),
 			"",	// No Evidence
-			0,	// TODO CWE Id
-			0,	// TODO WASC Id
+			642,	// CWE Id 642 - External Control of Critical State Data
+			14,	// WASC Id 14 - Server Misconfiguration
             msg);
 
         parent.raiseAlert(id, alert);
@@ -158,17 +161,17 @@ public class ViewstateScanner extends PluginPassiveScanner {
                                 getPluginId(),
                                 Alert.RISK_INFO,
                                 Alert.RISK_INFO,
-                                "Split viewstate in use"
+                                Constant.messages.getString(MESSAGE_PREFIX + "split.name")
                             );
         alert.setDetail(
-            "*** EXPERIMENTAL ***\nThis website uses ASP.NET's Viewstate and its value is split into several chunks\n",
+        	Constant.messages.getString(MESSAGE_PREFIX + "split.desc"),
             msg.getRequestHeader().getURI().toString(),
             "", "", "",
-            "None - the guys running the server may have tuned the configuration as this isn't the default setting",
+            Constant.messages.getString(MESSAGE_PREFIX + "split.soln"),
             "",
 			"",	// No Evidence
-			0,	// TODO CWE Id
-			0,	// TODO WASC Id
+			16,	// CWE Id 16 - Configuration
+			14,	// WASC Id - Server Misconfiguration
             msg);
 
         parent.raiseAlert(id, alert);
@@ -176,7 +179,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
 
     @Override
     public int getPluginId() {
-        return 10032;
+        return PLUGIN_ID;
     }
 
     @Override
@@ -187,15 +190,19 @@ public class ViewstateScanner extends PluginPassiveScanner {
 
     @Override
     public String getName() {
-        return "Viewstate Scanner";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
+    
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
 
 
     private Map<String, StartTag> getHiddenFields(Source source) {
         List<StartTag> result = source.getAllStartTags("input");
 
         // Searching for name only tags only makes sense for Asp.Net 1.1 websites
-        // TODO: Enhance this ugly code code
+        // TODO: Enhance this ugly code 
         List<StartTag> hiddenNames = source.getAllStartTags("name", hiddenFieldPattern);
         for (StartTag st : hiddenNames)
             if (! result.contains(st))
@@ -204,7 +211,7 @@ public class ViewstateScanner extends PluginPassiveScanner {
         // Creating a key:StartTag map based on the previous results
         Map<String, StartTag> stMap = new TreeMap<>();
         for (StartTag st : result) {
-        	// TODO: fix exception occuring here (st == null?)
+        	// TODO: fix exception occurring here (st == null?)
             String name = (st.getAttributeValue("id") == null) ? st.getAttributeValue("name") : st.getAttributeValue("id");
              
             // <input type="hidden" /> will generate a null pointer exception otherwise
@@ -262,18 +269,18 @@ public class ViewstateScanner extends PluginPassiveScanner {
     	
     	EMAIL(
     			Pattern.compile("[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}", Pattern.CASE_INSENSITIVE),
-    			"Emails found in the viewstate",
-    			"The following emails were found being serialized in the viewstate field:",
-    			"Email pattern - http://www.regular-expressions.info/regexbuddy/email.html"),
+    			Constant.messages.getString(MESSAGE_PREFIX + "content.email.name"),
+    			Constant.messages.getString(MESSAGE_PREFIX + "content.email.desc"),
+    			Constant.messages.getString(MESSAGE_PREFIX + "content.email.pattern.source")),
     	
     	// TODO: once the viewstate parser is implemented, filter out all the version numbers of the serialized objects which also trigger this filter
     	// Example: Microsoft.SharePoint.WebControls.SPControlMode, Microsoft.SharePoint, Version=12.0.0.0, Culture=neutral, 
     	// TODO: maybe replace this regex by a tigher rule, avoiding detecting 999.999.999.999
     	IPADDRESS(
     			Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"),
-    			"Potential IP addresses found in the viewstate",
-    			"The following potential IP addresses were found being serialized in the viewstate field:",
-    			"IP pattern - http://www.regular-expressions.info/examples.html");
+    			Constant.messages.getString(MESSAGE_PREFIX + "content.ip.name"),
+    			Constant.messages.getString(MESSAGE_PREFIX + "content.ip.desc"),
+    			Constant.messages.getString(MESSAGE_PREFIX + "content.ip.pattern.source"));
 
     	ViewstateAnalyzerPattern(Pattern p, String alertHeader, String alertDescription, String sourceRegex) {
     		this.pattern = p;

@@ -36,6 +36,9 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 
+	private static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosuredebugerrors.";
+	private static final int PLUGIN_ID = 10023;
+	
 	private PassiveScanThread parent = null;
 	private static final String debugErrorFile = "xml/debug-error-messages.txt";
 	private static final Logger logger = Logger.getLogger(InformationDisclosureDebugErrors.class);
@@ -60,15 +63,15 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
-		    			"The response request appeared to contain common error messages returned by platforms such as ASP.NET, and Web-servers such as IIS and Apache. You can configure the list of common debug messages", 
+		    		getDescription(), 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    "",
 		    	    "", 
 		    	    "",
-		    	    "Disable debugging messages before pushing to production", 
+		    	    getSolution(), 
 		            "", 
 					infoDisclosureDBError,	// Evidence
-					0,	// TODO CWE Id
+					200,	// CWE Id 200 - Information Exposure
 		            13,	// WASC Id - Info leakage
 		            msg);
 	
@@ -128,11 +131,19 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Information Disclosure - Debug Error Messages";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
+	}
+	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
+	
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}
 	
 	@Override
 	public int getPluginId() {
-		return 10023;
+		return PLUGIN_ID;
 	}
 }

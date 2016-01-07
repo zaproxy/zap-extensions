@@ -216,7 +216,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                             this.bingo(
                                     Alert.RISK_HIGH,
                                     Alert.CONFIDENCE_MEDIUM,
-                                    null,
+                                    msg.getRequestHeader().getURI().toString(),
                                     paramName,
                                     msg.getRequestHeader().getURI().toString(),
                                     null,
@@ -243,7 +243,7 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                             this.bingo(
                                     Alert.RISK_HIGH,
                                     Alert.CONFIDENCE_MEDIUM,
-                                    null,
+                                    msg.getRequestHeader().getURI().toString(),
                                     paramName,
                                     msg.getRequestHeader().getURI().toString(),
                                     null,

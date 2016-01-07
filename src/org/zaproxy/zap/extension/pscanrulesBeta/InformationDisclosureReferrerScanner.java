@@ -41,6 +41,9 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
+	private static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosurereferrerscanner.";
+	private static final int PLUGIN_ID = 10025;
+	
 	private PassiveScanThread parent = null;
 	private static final String URLSensitiveInformationFile = "xml/URL-information-disclosure-messages.txt";
 	private static final Logger logger = Logger.getLogger(InformationDisclosureReferrerScanner.class);
@@ -53,16 +56,16 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 			String evidence;
 			for (String referrerValue : referrer) {
 				if ((evidence = doesURLContainsSensitiveInformation(referrerValue)) != null) {
-					this.raiseAlert(msg, id, evidence, "The URL in the referrer appears to contain sensitive infomation");
+					this.raiseAlert(msg, id, evidence, Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.sensitiveinfo"));
 				}
 				if ((evidence = doesContainCreditCard(referrerValue)) != null) {
-					this.raiseAlert(msg, id, evidence, "The URL in the referrer appears to contain credit card information");
+					this.raiseAlert(msg, id, evidence, Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"));
 				}
 				if ((evidence = doesContainEmailAddress(referrerValue)) != null) {
-					this.raiseAlert(msg, id, evidence, "The URL in the referrer contains email address(es)");
+					this.raiseAlert(msg, id, evidence, Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.email"));
 				}
 				if ((evidence = doesContainUsSSN(referrerValue)) != null) {
-					this.raiseAlert(msg, id, evidence, "The URL in the referrer appears to contain US Social Security Number(s)");
+					this.raiseAlert(msg, id, evidence, Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn"));
 				}	
 			}
 		}
@@ -89,16 +92,16 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
-		    			"The HTTP Header may have leaked a potentially sensitive parameter to another domain. This can violate PCI and most organizational compliance policies. You can configure the list of strings for this check to add or remove values specific to your environment", 
+		    		getDescription(), 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    "",
 		    	    "", 
 		    	    other,
-		    	    "Do not pass sensitive information in URI's", 
+		    	    getSolution(), 
 		            "", 
 					evidence,	// Evidence
-					0,	// TODO CWE Id
-		            13,	// WASC Id - Info leakage
+					200,	// CWE Id 200 - Information Exposure
+		            13,	// WASC Id 13 - Info leakage
 		            msg);
 	
     	parent.raiseAlert(id, alert);
@@ -158,7 +161,7 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		return 10025;
+		return PLUGIN_ID;
 	}
 	
 	@Override
@@ -168,7 +171,15 @@ public class InformationDisclosureReferrerScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return "Information Disclosure - Sensitive Information in HTTP Referrer Header";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
+	}
+	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
+	
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}
 	
 	private String doesContainEmailAddress(String emailAddress) {

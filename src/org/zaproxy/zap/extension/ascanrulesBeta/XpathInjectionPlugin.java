@@ -18,7 +18,9 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -34,6 +36,9 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class XpathInjectionPlugin extends AbstractAppParamPlugin {
 
+	private static final String MESSAGE_PREFIX = "ascanbeta.xpathinjectionplugin.";
+	private static final int PLUGIN_ID = 90021;
+	
     // Evil payloads able to generate 
     // an XML explicit error as described in
     // https://www.owasp.org/index.php/Testing_for_XML_Injection
@@ -94,7 +99,7 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public int getId() {
-        return 90021;
+        return PLUGIN_ID;
     }
 
     /**
@@ -104,7 +109,7 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        return "XPath Injection Plugin";
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     /**
@@ -277,7 +282,7 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
                         this.bingo(
                                 Alert.RISK_HIGH,
                                 Alert.CONFIDENCE_HIGH,
-                                getName() + " - XPath Injection",
+                                getName(),
                                 getDescription(),
                                 null,
                                 paramName,

@@ -39,7 +39,10 @@ import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class InformationDisclosureSuspiciousComments extends PluginPassiveScanner {
-
+	
+	private static final String MESSAGE_PREFIX = "pscanbeta.informationdisclosuresuspiciouscomments.";
+	private static final int PLUGIN_ID = 10027;
+	
 	private PassiveScanThread parent = null;
 	private static final String databaseErrorFile = "xml/suspicious-comments.txt";
 	private static final Logger logger = Logger.getLogger(InformationDisclosureSuspiciousComments.class);
@@ -107,16 +110,16 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
 		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
-		    		"The response appears to contain suspicious comments which may help an attacker", 
+		    		getDescription(), 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    "",
 		    	    "", 
 		    	    detail,
-		    	    "Remove all comments that return information that may help an attacker and fix any underlying problems they refer to", 
+		    	    getSolution(), 
 		            "", 
 					"",	// No Evidence
-					0,	// TODO CWE Id
-		            13,	// WASC Id - Info leakage
+					200,	// CWE Id 200 - Information Exposure
+		            13,	// WASC Id 13 - Info leakage
 		            msg);
 	
     	parent.raiseAlert(id, alert);
@@ -158,11 +161,19 @@ public class InformationDisclosureSuspiciousComments extends PluginPassiveScanne
 
 	@Override
 	public String getName() {
-		return "Information Disclosure - Suspicious Comments";
+		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
+	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
+	
 	@Override
 	public int getPluginId() {
-		return 10027;
+		return PLUGIN_ID;
 	}
 }

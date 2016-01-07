@@ -184,7 +184,7 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
                 this.bingo(
                         Alert.RISK_HIGH,
                         Alert.CONFIDENCE_MEDIUM,
-                        null,
+                        msg.getRequestHeader().getURI().toString(),
                         paramName,
                         payload,
                         null,
