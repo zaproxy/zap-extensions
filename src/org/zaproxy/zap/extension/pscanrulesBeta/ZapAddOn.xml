@@ -7,8 +7,8 @@
 	<changes>
 	<![CDATA[
 	Issue 1966: Charset Mismatch passive scanner now handles HTML5 meta charset, and multiple conditions.<br>
-	Issue 316: 'Information Disclosure - Debug Error' added mysql and ASP.Net messages.
-	Issue 823: i18n (internationalise) release passive scan rules.<br>
+	Issue 316: 'Information Disclosure - Debug Error' added mysql and ASP.Net messages.<br>
+	Issue 823: i18n (internationalise) beta passive scan rules.<br>
 	]]>
 	</changes>
 	<extensions>
