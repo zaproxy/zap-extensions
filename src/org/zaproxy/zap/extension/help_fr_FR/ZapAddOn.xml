@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Help - French</name>
 	<version>4</version>
+	<status>alpha</status>
 	<description>French version of the ZAP help file.</description>
 	<author>ZAP Crowdin Team</author>
 	<url>https://crowdin.com/project/owasp-zap-help</url>

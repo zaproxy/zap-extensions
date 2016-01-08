@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Access Control Testing</name>
 	<version>1</version>
+	<status>alpha</status>
 	<description>Adds a set of tools for testing access control in web applications.</description>
 	<author>ZAP Dev Team</author>
 	<url />

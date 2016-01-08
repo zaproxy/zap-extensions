@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>context Alert Filters</name>
 	<version>1</version>
+	<status>alpha</status>
 	<description>Allows you to automate the changing of alert risk levels</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

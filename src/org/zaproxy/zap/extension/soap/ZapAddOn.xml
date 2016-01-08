@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>SOAP Scanner</name>
 	<version>2</version>
+	<status>alpha</status>
 	<description>Imports and scans WSDL files containing SOAP endpoints.</description>
 	<author>Alberto (albertov91)</author>
 	<url></url>

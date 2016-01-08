@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Log File Importer</name>
 	<version>3</version>
+	<status>alpha</status>
 	<description>Allows you to import log files from ModSecurity and files previously exported from ZAP</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/MozillaMentorship_ImportingModSecurityLogs

@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Browser View</name>
 	<version>4</version>
+	<status>alpha</status>
 	<description>Adds an option to render HTML responses like a browser</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

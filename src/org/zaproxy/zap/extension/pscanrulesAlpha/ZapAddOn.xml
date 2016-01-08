@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
 	<version>8</version>
+	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
