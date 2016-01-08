@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>SVN Digger files</name>
 	<version>3</version>
+	<status>beta</status>
 	<description>SVN Digger files which can be used with ZAP forced browsing</description>
 	<author>ZAP Dev Team</author>
 	<url>http://www.mavitunasecurity.com/blog/svn-digger-better-lists-for-forced-browsing/</url>

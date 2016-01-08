@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Script Console</name>
 	<version>16</version>
+	<status>beta</status>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>

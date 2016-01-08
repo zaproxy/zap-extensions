@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Port Scanner</name>
 	<version>7</version>
+	<status>beta</status>
 	<description>Allows to port scan a target server</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

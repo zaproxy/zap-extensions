@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Invoke Applications</name>
 	<version>3</version>
+	<status>beta</status>
 	<description>Invoke external applications passing context related information such as URLs and parameters</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
 	<version>19</version>
+	<status>beta</status>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
