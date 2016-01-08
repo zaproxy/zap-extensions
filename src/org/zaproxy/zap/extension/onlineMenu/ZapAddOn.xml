@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Online menus</name>
 	<version>4</version>
+	<status>release</status>
 	<description>ZAP Online menu items</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsOnlineMenuOnlineMenu</url>

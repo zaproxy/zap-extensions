@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>WebSockets</name>
 	<version>10</version>
+	<status>release</status>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

@@ -2,6 +2,7 @@
 	<name>Selenium</name>
 	<version>4</version>
 	<semver>1.0.0</semver><!-- This version should be kept in sync with the one of the extension. -->
+	<status>release</status>
 	<description>WebDriver provider and includes HtmlUnit browser</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

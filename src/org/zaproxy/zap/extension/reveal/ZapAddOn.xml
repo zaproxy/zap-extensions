@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Reveal</name>
 	<version>2</version>
+	<status>release</status>
 	<description>Show hidden fields and enable disabled fields</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

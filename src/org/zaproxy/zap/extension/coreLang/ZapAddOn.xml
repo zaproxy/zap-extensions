@@ -4,6 +4,7 @@
 	<description>Translations of the core language files</description>
 	<author>ZAP Dev Team</author>
 	<version>9</version>
+	<status>release</status>
 	<url>https://crowdin.com/project/owasp-zap</url>
 	<changes>Updated for 2.4.3</changes>
 	<extensions>

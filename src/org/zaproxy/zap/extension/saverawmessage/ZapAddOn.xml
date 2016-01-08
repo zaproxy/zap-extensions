@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Save Raw Message</name>
 	<version>2</version>
+	<status>release</status>
 	<description>Allows to save content of HTTP messages as binary</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
