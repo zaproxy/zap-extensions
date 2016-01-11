@@ -84,6 +84,21 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
 
         }
 
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
+
+    @Override
+    public void unload() {
+        super.unload();
+
+        if (optionDialog != null) {
+            optionDialog.dispose();
+            optionDialog = null;
+        }
+    }
+
         private ZapMenuItem getMenuCustomHtmlReport() {
         if (menuCustomHtmlReport == null) {
                 menuCustomHtmlReport = new ZapMenuItem( "menu.report.html.generate" );
@@ -91,6 +106,10 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
                 menuCustomHtmlReport.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
+                    if (optionDialog != null) {
+                        optionDialog.requestFocusInWindow();
+                        return;
+                    }
                 	getNewOptionFrame();
                 	optionDialog.setVisible(true);
                 	optionDialog.centerFrame();
@@ -124,7 +143,7 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
             ReportLastScan report = new ReportLastScan();
             
 		    report.generateReport(this.getView(), this.getModel(), this  );
-		    this.optionDialog.setVisible( false );
+		    this.emitFrame();
         }
 
 		private ScopePanel getScopeTab(){
@@ -218,6 +237,8 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
 
 		public void emitFrame() {
 			optionDialog.setVisible(false);
+			optionDialog.dispose();
+			optionDialog = null;
 		}
 		
 }
