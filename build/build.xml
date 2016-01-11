@@ -368,14 +368,6 @@
 		<build-deploy-addon name="directorylistv2_3_lc" />
 	</target>
 
-	<target name="deploy-exampleRightClickMsg" description="deploy the exampleRightClickMsg extension">
-		<build-deploy-addon name="exampleRightClickMsg" />
-	</target>
-
-	<target name="deploy-exampleTopMenu" description="deploy the exampleTopMenu extension">
-		<build-deploy-addon name="exampleTopMenu" />
-	</target>
-
 	<target name="deploy-gettingStarted" description="deploy the gettingStarted extension">
 		<build-deploy-addon name="gettingStarted" />
 	</target>
