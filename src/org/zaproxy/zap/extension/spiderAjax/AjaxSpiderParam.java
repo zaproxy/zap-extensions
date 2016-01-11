@@ -22,7 +22,9 @@ package org.zaproxy.zap.extension.spiderAjax;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationUtils;
 import org.apache.commons.configuration.ConversionException;
+import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.log4j.Logger;
 import org.zaproxy.zap.common.VersionedAbstractParam;
@@ -278,6 +280,19 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             // Remove old version element, from now on the version is saved as an attribute of root element
             getConfig().clearProperty(OLD_CONFIG_VERSION_KEY);
         }
+    }
+
+    // TODO remove the override once AbstractParam is released with the clone method fixed (see Issue 2151).
+    @Override
+    public AjaxSpiderParam clone() {
+        try {
+            AjaxSpiderParam clone = new AjaxSpiderParam();
+            clone.load((FileConfiguration) ConfigurationUtils.cloneConfiguration(getConfig()));
+            return clone;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     public int getNumberOfBrowsers() {
