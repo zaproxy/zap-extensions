@@ -23,7 +23,9 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +34,16 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HtmlParameter.Type;
 import org.parosproxy.paros.network.HttpHeader;
@@ -73,6 +78,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
 	// The name is public so that other extensions can access it
 	public static final String NAME = "ExtensionRevisit";
+	private static final List<Class<?>> DEPENDENCIES;
 	
 	// The i18n prefix, by default the package name - defined in one place to make it easier
 	// to copy and change this example
@@ -80,11 +86,19 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
 	public static final String ICON_RESOURCE = "/resource/icon/16/026.png";
 	public static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+	static {
+		List<Class<?>> dependencies = new ArrayList<>(2);
+		dependencies.add(ExtensionHistory.class);
+		dependencies.add(ExtensionAntiCSRF.class);
+		DEPENDENCIES = Collections.unmodifiableList(dependencies);
+	}
 	
     private Logger log = Logger.getLogger(this.getClass());
     
     private Map<String, TimeRange> sites = new HashMap<String, TimeRange>();
 	private RevisitDialog revisitDialog;
+	private RevisitAPI revisitAPI;
 
 	/**
      * 
@@ -110,10 +124,17 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 	}
 	
 	@Override
+	public void init() {
+		super.init();
+		revisitAPI = new RevisitAPI(this);
+	}
+	
+	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
 	    
 	    extensionHook.addProxyListener(this);
+	    extensionHook.addSessionListener(new SessionChangedListenerImpl());
 	    
 	    if (getView() != null) {
 	    	// Register our popup menu item
@@ -125,7 +146,41 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 	    					Constant.messages.getString(PREFIX + ".popup.disable.title"), false));
 	    }
 
-	    API.getInstance().registerApiImplementor(new RevisitAPI(this));
+	    API.getInstance().registerApiImplementor(revisitAPI);
+	}
+	
+	@Override
+	public List<Class<?>> getDependencies() {
+		return DEPENDENCIES;
+	}
+
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
+
+	@Override
+	public void unload() {
+		super.unload();
+
+		if (revisitDialog != null) {
+			revisitDialog.dispose();
+			revisitDialog = null;
+
+			removeRevisitIconSiteNodes();
+		}
+
+		API.getInstance().removeApiImplementor(revisitAPI);
+	}
+
+	private void removeRevisitIconSiteNodes() {
+		SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
+		SiteNode root = (SiteNode) siteMap.getRoot();
+		@SuppressWarnings("unchecked")
+		Enumeration<SiteNode> en = root.breadthFirstEnumeration();
+		while (en.hasMoreElements()) {
+			en.nextElement().removeCustomIcon(ICON_RESOURCE);
+		}
 	}
 
 	@Override
@@ -469,6 +524,28 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 		}
 		public Date getEndTime() {
 			return endTime;
+		}
+	}
+
+	private class SessionChangedListenerImpl implements SessionChangedListener {
+
+		@Override
+		public void sessionChanged(Session session) {
+		}
+
+		@Override
+		public void sessionAboutToChange(Session session) {
+			if (!sites.isEmpty()) {
+				sites = new HashMap<>();
+			}
+		}
+
+		@Override
+		public void sessionScopeChanged(Session session) {
+		}
+
+		@Override
+		public void sessionModeChanged(Mode mode) {
 		}
 	}
 }
