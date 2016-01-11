@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Plug-n-Hack Configuration</name>
 	<version>9</version>
+	<status>beta</status>
 	<description>Supports the Mozilla Plug-n-Hack standard: https://developer.mozilla.org/en-US/docs/Plug-n-Hack.</description>
 	<author>ZAP Dev Team</author>
 	<url>https://developer.mozilla.org/en-US/docs/Plug-n-Hack</url>

@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Report alert generator</name>
 	<version>14</version>
+	<status>beta</status>
 	<description>Allows you to generate reports for alerts you specify in pdf or odt format</description>
 	<author>Talsoft SRL</author>
 	<url>http://www.talsoft.com.ar</url>

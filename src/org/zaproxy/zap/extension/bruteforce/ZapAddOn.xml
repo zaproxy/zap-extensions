@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Forced Browse</name>
 	<version>5</version>
+	<status>beta</status>
 	<description>Forced browsing of files and directories using code from the OWASP DirBuster tool</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

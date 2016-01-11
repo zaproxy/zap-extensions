@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Advanced SQLInjection Scanner</name>
 	<version>9</version>
+	<status>beta</status>
 	<description>An advanced active injection bundle for SQLi (derived by SQLMap)</description>
 	<author>Andrea Pompili (Yhawke)</author>
 	<url/>

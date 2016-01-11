@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>TreeTools</name>
 	<version>6</version>
+	<status>beta</status>
 	<description>Tools to add functionality to the tree view.</description>
 	<author>Carl Sampson</author>
 	<url/>

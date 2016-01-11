@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Diff</name>
 	<version>6</version>
+	<status>beta</status>
 	<description>Displays a dialog showing the differences between 2 requests or responses. It uses diffutils and diff_match_patch</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

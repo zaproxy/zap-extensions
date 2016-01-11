@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>BeanShell Console</name>
 	<version>5</version>
+	<status>beta</status>
 	<description>Provides a BeanShell Console</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
