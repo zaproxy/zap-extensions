@@ -11,6 +11,7 @@
 	Add missing field (operand B) in 'Assign variable to a calculation' dialogue.<br>
 	Send authentication requests with ZAP's configurations (Issue 2114).<br>
 	Fix "Active scan sequence" (Issue 2120).<br>
+	Fix exception while opening a dialogue.<br>
 	]]>
 	</changes>
 	<dependencies>
