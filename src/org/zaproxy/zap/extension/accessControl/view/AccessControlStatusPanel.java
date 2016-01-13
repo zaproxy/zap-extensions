@@ -230,14 +230,16 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					File targetFile = selectReportLocation();
+					if (targetFile == null) {
+						return;
+					}
+
 					File generatedFile = null;
-					if (targetFile != null) {
-						try {
-							generatedFile = extension.generateAccessControlReport(getSelectedContext()
-									.getIndex(), targetFile);
-						} catch (ParserConfigurationException e1) {
-							e1.printStackTrace();
-						}
+					try {
+						generatedFile = extension.generateAccessControlReport(getSelectedContext()
+								.getIndex(), targetFile);
+					} catch (ParserConfigurationException e1) {
+						log.error("Failed to generate access control report:", e1);
 					}
 					// Check if the generation was OK
 					if (generatedFile == null) {
