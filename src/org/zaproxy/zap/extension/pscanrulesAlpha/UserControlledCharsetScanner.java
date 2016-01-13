@@ -111,6 +111,9 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 			}
 			
 			String bodyContentCharset = getBodyContentCharset(bodyContentType);
+			if (bodyContentCharset == null) {
+				continue;
+			}
 	        for (HtmlParameter param: params) {        	        	
 	            if (bodyContentCharset.equalsIgnoreCase(param.getValue())) {
 	            	raiseAlert(msg, id, "META", "Content-Type", param, bodyContentCharset);
