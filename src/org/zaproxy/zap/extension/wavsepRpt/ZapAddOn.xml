@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Wavsep report generator</name>
 	<version>1</version>
+	<status>alpha</status>
 	<description>Wavsep report generator.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Sequence</name>
 	<version>2</version>
+	<status>alpha</status>
 	<description>Gives the possibility of defining a sequence of requests to be scanned.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

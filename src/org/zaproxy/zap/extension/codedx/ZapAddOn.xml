@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Code Dx Extension</name>
 	<version>3</version>
+	<status>alpha</status>
 	<description>includes request and response data in xml reports</description>
 	<author>Code Dx, Inc.</author>
 	<url></url>

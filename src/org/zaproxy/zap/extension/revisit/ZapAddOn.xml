@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Revisit</name>
 	<version>2</version>
+	<status>alpha</status>
 	<description>Revisit a site at any time in the past using the session history</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

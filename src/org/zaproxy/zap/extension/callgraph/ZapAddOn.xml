@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Call Graph</name>
 	<version>3</version>
+	<status>alpha</status>
 	<description>Allows the user to view a call graph of the selected resources</description>
 	<author>Colm O'Flaherty</author>
 	<url></url>

@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Highlighter</name>
 	<version>6</version>
+	<status>alpha</status>
 	<description>Allows you to highlight strings in the request and response tabs.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

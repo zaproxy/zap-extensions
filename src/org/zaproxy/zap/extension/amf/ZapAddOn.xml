@@ -1,6 +1,7 @@
 <zapaddon>
     <name>AMF</name>
     <version>1</version>
+    <status>alpha</status>
     <description>Adds support for AMF messages</description>
     <author>ZAP Dev Team</author>
     <url/>

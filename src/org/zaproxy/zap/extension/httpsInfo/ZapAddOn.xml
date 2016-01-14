@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>HttpsInfo</name>
 	<version>7</version>
+	<status>alpha</status>
 	<description>Adds Https status information</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

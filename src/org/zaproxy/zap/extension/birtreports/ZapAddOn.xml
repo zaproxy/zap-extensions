@@ -1,6 +1,7 @@
 <zapaddon>
         <name>birtreports</name>
         <version>2</version>
+        <status>alpha</status>
         <description>Alert reports using BIRT report API</description>
         <author>Johanna Curiel And Rauf Butt</author>
         <url/>

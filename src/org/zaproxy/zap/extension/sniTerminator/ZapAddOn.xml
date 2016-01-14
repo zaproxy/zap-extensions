@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>SNI Terminator</name>
 	<version>3</version>
+	<status>alpha</status>
 	<description>Transparent HTTP proxying</description>
 	<author>ZAP Dev Team</author>
 	<dependencies>

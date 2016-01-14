@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Technology detection using Wappalyzer</name>
 	<version>5</version>
+	<status>alpha</status>
 	<description>Technology detection using Wappalyzer: wappalyzer.com</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

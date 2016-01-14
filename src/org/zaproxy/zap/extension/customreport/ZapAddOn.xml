@@ -1,6 +1,7 @@
 <zapaddon>
         <name>CustomReport</name>
         <version>2</version>
+        <status>alpha</status>
         <description>New HTML report module allows users to customize report content.</description>
         <author>Chienli Ma</author>
         <url></url>

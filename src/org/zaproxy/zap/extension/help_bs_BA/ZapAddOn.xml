@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Help - Bosnian</name>
 	<version>4</version>
+	<status>alpha</status>
 	<description>Bosnian version of the ZAP help file.</description>
 	<author>ZAP Crowdin Team</author>
 	<url>https://crowdin.com/project/owasp-zap-help</url>
