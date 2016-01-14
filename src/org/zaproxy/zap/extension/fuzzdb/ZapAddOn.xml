@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Fuzzdb files</name>
 	<version>3</version>
+	<status>release</status>
 	<description>Fuzzdb v1.09 files which can be used with the ZAP fuzzer</description>
 	<author>ZAP Dev Team</author>
 	<url>http://code.google.com/p/fuzzdb/</url>

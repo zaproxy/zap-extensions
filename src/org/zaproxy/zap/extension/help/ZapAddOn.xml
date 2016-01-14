@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Help - English</name>
 	<version>5</version>
+	<status>release</status>
 	<description>English (master) version of the ZAP help file.</description>
 	<author>ZAP Crowdin Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpIntro</url>

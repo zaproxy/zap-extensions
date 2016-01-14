@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Quick Start</name>
 	<version>17</version>
+	<status>release</status>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>

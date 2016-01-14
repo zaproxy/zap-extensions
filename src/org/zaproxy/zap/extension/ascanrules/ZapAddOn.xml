@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Active scanner rules</name>
 	<version>23</version>
+	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>

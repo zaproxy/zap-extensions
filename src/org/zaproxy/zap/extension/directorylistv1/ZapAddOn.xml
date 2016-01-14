@@ -1,6 +1,7 @@
 <zapaddon>
 	<name>Directory List v1.0</name>
 	<version>3</version>
+	<status>release</status>
 	<description>List of directory names to be used with "Forced Browse" add-on.</description>
 	<author>ZAP Dev Team</author>
 	<url>https://owasp.org/index.php/DirBuster</url>
