@@ -7,7 +7,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 823 - i18n (internationalise) release passive scan rules.
+	Issue 823 - i18n (internationalise) release passive scan rules.<br>
+	Add CWE and WASC IDs to passive scanners which may have been lacking those details.<br>
 	]]>
 	</changes>
 	<extensions>
