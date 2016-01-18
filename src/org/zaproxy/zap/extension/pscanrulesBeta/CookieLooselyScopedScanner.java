@@ -140,8 +140,8 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 				Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", host, sbCookies),
 				getSolutionMessage(), getReferenceMessage(), 
 				"",	// No Evidence
-				0,	// TODO CWE Id
-				0,	// TODO WASC Id
+				565, // CWE-565: Reliance on Cookies without Validation and Integrity Checking
+				15,	// WASC-15: Application Misconfiguration
 				msg);
 
 		parent.raiseAlert(id, alert);

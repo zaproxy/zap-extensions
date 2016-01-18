@@ -547,8 +547,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 
 	@Override
 	public int getCweId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 200; //CWE-200: Information Exposure
 	}
 
 	@Override

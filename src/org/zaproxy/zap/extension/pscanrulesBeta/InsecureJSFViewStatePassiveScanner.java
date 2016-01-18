@@ -226,8 +226,8 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 				getSolution(),
 				getReference(),
 				"",	// No Evidence
-				0,	// TODO CWE Id
-				0,	// TODO WASC Id
+				16,	// CWE Id 16 - Configuration
+				14,	// WASC Id - Server Misconfiguration
 				msg);
 
 		parent.raiseAlert(id, alert);

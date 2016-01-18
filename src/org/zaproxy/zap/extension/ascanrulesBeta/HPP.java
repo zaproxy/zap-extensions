@@ -313,14 +313,13 @@ public class HPP extends AbstractAppPlugin {
 
 	@Override
 	public int getCweId() {
-		return 352;
+		return 20; //CWE-20: Improper Input Validation
 	}
 
 
 	@Override
 	public int getWascId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 20; //WASC-20: Improper Input Handling
 	}
 	
 }
