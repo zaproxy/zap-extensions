@@ -124,8 +124,8 @@ public class ImageLocationScanner extends PluginPassiveScanner {
 			    		getSolution(), 
 			            getReference(), 
                         getAlertDetailPrefix()  + " " + hasGPS,	// Evidence
-			            0,	// CWE Id
-			            0,	// WASC Id
+			            200, // CWE-200: Information Exposure
+			            13,	// WASC-13: Information Leakage
 			            msg);
 				
 		    	parent.raiseAlert(id, alert);

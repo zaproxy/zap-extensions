@@ -148,8 +148,8 @@ public class UserControlledJavascriptEventScanner extends PluginPassiveScanner {
 				getExtraInfoMessage(msg, htmlAttribute, param),
 				getSolutionMessage(), getReferenceMessage(),  
 				"",	// No evidence
-				0,	// TODO CWE Id
-				0,	// TODO WASC Id
+				20,	// CWE-20: Improper Input Validation
+				20,	// WASC-20: Improper Input Handling
 				msg);  
 
 		parent.raiseAlert(id, alert);

@@ -351,7 +351,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 					getReference(), 
 					evidence,	
 					540,	//Information Exposure Through Source Code
-					34,		//Predictable Resource Location (TODO: is this really the case here?)
+					13,		//WASC-13: Information Leakage
 					msg);  
 			parent.raiseAlert(id, alert);
 		}

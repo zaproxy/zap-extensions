@@ -91,8 +91,6 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 		//script-src 'unsafe-inline'
 		//script-src 'unsafe-eval'
 		
-		//TODO: set the CVEID etc below
-
 		if (!cspHeaderFound || !xCspHeaderFound || !xWebKitHeaderFound) { //at least one of the headers wasn't found 
 			Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
 				getName()); 
@@ -105,8 +103,8 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 						getSolution(), //Solution
 						getReference(), //References
 						"",	// Evidence
-						0, // 
-						0,	//
+						16, // CWE-16: Configuration
+						15,	//WASC-15: Application Misconfiguration
 						msg); //HttpMessage
 		   	parent.raiseAlert(id, alert);
 		}

@@ -9,6 +9,7 @@
 	<![CDATA[
 	Deleted Integer Overflow scanner.<br>
 	Issue 823: i18n (internationalise) alpha rules.<br>
+	Add CWE and WASC IDs to active scanners which may have been lacking those details.<br>
   	]]>
 	</changes>
 	<extensions>
