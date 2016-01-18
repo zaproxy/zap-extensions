@@ -5,8 +5,8 @@
 
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Reveal" image="addon.reveal.images.enabled" target="addon.reveal.concepts"/>
+		<tocitem text="Bővítmények" tocid="addons">
+			<tocitem text="Feltár" image="addon.reveal.images.enabled" target="addon.reveal.concepts"/>
 		</tocitem>
 	</tocitem>
 </toc>

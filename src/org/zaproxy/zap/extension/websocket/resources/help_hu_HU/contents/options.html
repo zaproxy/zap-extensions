@@ -19,7 +19,7 @@ If you want to ignore just one specific channel, check out the WebSocket specifi
 
 
 <h3>Break on all</h3>
-In the <i>Break</i> toolbar, there are two buttons:
+In the <i>Szünet</i> toolbar, there are two buttons:
 <ul>
 	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all requests</i></li>
 	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all responses</i></li>
@@ -30,14 +30,14 @@ By default this option is disabled. In this case only HTTP messages are caught, 
 
 
 <h3>Break on Ping &amp; Pong messages</h3>
-<i>PING</i> and <i>PONG</i> messages are often used by WebSocket servers to determine the health of the current connection. If you catch an incoming <i>PING</i> message, the browser is not able to return a <i>PONG</i> message immediately, resulting in a bad latency value.
+<i>PING</i> és <i>PONG</i> messages are often used by WebSocket servers to determine the health of the current connection. If you catch an incoming <i>PING</i> message, the browser is not able to return a <i>PONG</i> message immediately, resulting in a bad latency value.
 <br><br>
-If this option is disabled no <i>PING</i> or <i>PONG</i> message is caught when you:
+If this option is disabled no <i>PING</i> vagy <i>PONG</i> message is caught when you:
 <ul>
 	<li>set a breakpoint on <u>all requests</u> or <u>all responses</u>, <i>or</i></li>
 	<li>step through to the next request or response and a <i>PING</i> or <i>PONG</i> message arrives</li>
 </ul>
-This setting does not affect breakpoints that are set explicitly on <i>PING</i> or <i>PONG</i> messages. You can view such explicit breakpoints in the <i>Breakpoints tab</i>.
+This setting does not affect breakpoints that are set explicitly on <i>PING</i> vagy <i>PONG</i> messages. You can view such explicit breakpoints in the <i>Breakpoints tab</i>.
 
 </body>
 </html>
