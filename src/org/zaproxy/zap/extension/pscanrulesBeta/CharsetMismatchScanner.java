@@ -227,8 +227,8 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 				getSolutionMessage(), //Solution
 				getReferenceMessage(), //Refs
 				"",	// No Evidence
-				0,	// TODO CWE Id
-				0,	// TODO WASC Id
+				16,	// CWE-16: Configuration
+				15,	// WASC-15: Application Misconfiguration
 				msg);
 
 		parent.raiseAlert(id, alert);

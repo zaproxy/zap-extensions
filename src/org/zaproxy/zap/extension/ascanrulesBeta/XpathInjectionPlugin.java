@@ -183,15 +183,13 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
-     * http://cwe.mitre.org/data/definitions/91.html
+     * http://cwe.mitre.org/data/definitions/643.html
      *
      * @return the official CWE id
      */
     @Override
     public int getCweId() {
-        // I'm not sure mapping is correct 
-        // (it refers to general XML injection)
-        return 91;
+        return 643; //CWE-643: Improper Neutralization of Data within XPath Expressions ('XPath Injection');
     }
 
     /**

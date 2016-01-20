@@ -193,7 +193,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				    		getSolution(), 
 				            getReference(), 
 							attack,	// Evidence
-							0,	// TODO CWE Id
+							352, // CWE-352: Cross-Site Request Forgery (CSRF)
 							9,	// WASC Id
 				            msg);
 
