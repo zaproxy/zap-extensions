@@ -597,8 +597,8 @@ public class CacheableScanner extends PluginPassiveScanner{
 				Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "soln"), //Solution
 				Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "refs"), //References
 				evidence,	// Evidence
-				0,	// 0 - there is no CWE for non-cachable contents
-	            0,	// 0 - there is no WASC for non-cachable contents 
+				524, // CWE-524: Information Exposure Through Caching
+				13,	// WASC-13: Information Leakage
 				msg); //HttpMessage
 		parent.raiseAlert(id, alert);
 	}
@@ -620,8 +620,8 @@ public class CacheableScanner extends PluginPassiveScanner{
 				Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "soln"), //Solution
 				Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "refs"), //References
 				evidence,	// Evidence
-				0,	// 0 - there is no CWE for storable but non-cacheable contents
-	            0,	// 0 - there is no WASC for storable but non-cacheable contents 
+				524, // CWE-524: Information Exposure Through Caching
+				13,	// WASC-13: Information Leakage
 				msg); //HttpMessage
 		parent.raiseAlert(id, alert);
 	}

@@ -84,12 +84,12 @@ public class HttpsAsHttpScanner extends AbstractAppPlugin {
 
 	@Override
 	public int getCweId() {
-		return 0; // The CWE id
+		return 311; // CWE-311: Missing Encryption of Sensitive Data
 	}
 
 	@Override
 	public int getWascId() {
-		return 0; // The WASC ID
+		return 4; // WASC-04: Insufficient Transport Layer Protection
 	}
 
 	@Override

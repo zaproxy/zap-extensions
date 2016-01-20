@@ -74,8 +74,8 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 			    			getSolution(), //Solution
 			    			getReference(), //References
 			    			"",	// Evidence
-			    			0,	// CWE Id
-			    			0,	// WASC Id
+							16, // CWE-16: Configuration
+							15,	//WASC-15: Application Misconfiguration
 			    			msg); //HttpMessage
 			    		parent.raiseAlert(id, alert);
 				}
