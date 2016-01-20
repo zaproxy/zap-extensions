@@ -36,8 +36,8 @@ public class OptionsZestIgnoreHeadersTableModel extends AbstractTableModel {
 				Constant.messages.getString("zest.options.label.ignore"),
 				Constant.messages.getString("zest.options.label.header")};
     
-    private List<String> allHeaders = null;
-    private List<String> ignoredHeaders = null;
+    private List<String> allHeaders = Collections.emptyList();
+    private List<String> ignoredHeaders = Collections.emptyList();
     
     /**
      * 
