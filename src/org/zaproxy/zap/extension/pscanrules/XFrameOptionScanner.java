@@ -87,8 +87,8 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 		    	    getSolution(),
 		            getReference(), 
 		            "", // No evidence
-		            0,	
-		            0,	
+		            16,	//CWE-16: Configuration
+		            15,	//WASC-15: Application Misconfiguration 
 		            msg);
 	
     	parent.raiseAlert(id, alert);

@@ -88,8 +88,8 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 		    	    getSolution(), // Soln 
 		            getReference(), // Refs
 		            "", // Evidence
-		            0,	// TODO CWE Id
-		            15,	
+		            16,	// CWE-16: Configuration
+		            15,	// WASC15: Application Misconfiguration
 		            msg);
 	
     	parent.raiseAlert(id, alert);

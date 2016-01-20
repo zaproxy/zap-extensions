@@ -161,7 +161,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public int getWascId() {
-        return 0;
+        return 20; //WASC-20: Improper Input Handling
     }
 
     /**

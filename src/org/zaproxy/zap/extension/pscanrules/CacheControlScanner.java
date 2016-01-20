@@ -85,8 +85,8 @@ public class CacheControlScanner extends PluginPassiveScanner {
 		    	    getSolution(), 
 		            getReference(), 
 		            cacheControl, // Highlight if it's wrong...
-		            525,
-		            0,	// TODO WASC Id
+		            525, //CWE
+		            13,	// WASC-13: Information Leakage
 		            msg);
 	
     	parent.raiseAlert(id, alert);
