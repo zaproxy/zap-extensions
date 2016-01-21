@@ -5,10 +5,10 @@
 
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Scripts" image="addon.scripts.icon" target="addon.scripts.scripts">
-				<tocitem text="Console" target="addon.scripts.console" />
-				<tocitem text="Tree" target="addon.scripts.tree" />
+		<tocitem text="Bővítmények" tocid="addons">
+			<tocitem text="Parancsfájlok" image="addon.scripts.icon" target="addon.scripts.scripts">
+				<tocitem text="Konzol" target="addon.scripts.console" />
+				<tocitem text="Fa" target="addon.scripts.tree" />
 			</tocitem>
 		</tocitem>
 	</tocitem>
