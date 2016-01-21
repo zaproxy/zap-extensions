@@ -11,6 +11,7 @@
 	Issue 823: i18n (internationalise) beta active scan rules.<br>
 	Issue 1713: Source Code Disclosure SVN Throws False Positive - Fixed.<br>
 	Add CWE and WASC IDs to active scanners which may have been lacking those details.<br>
+	Create help for scanners which were missing entries.<br>
     ]]>
 	</changes>
 	<extensions>

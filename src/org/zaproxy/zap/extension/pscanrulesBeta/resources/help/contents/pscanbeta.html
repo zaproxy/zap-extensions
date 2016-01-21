@@ -35,24 +35,46 @@ Further reference:<br>
 Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.
 
 <H2>CSRF Countermeasures</H2>
+The CSRFCountermeasures plugin identifies "potential" vulnerabilities with the lack of known CSRF 
+countermeasures in pages with forms.
 
 <H2>Information Disclosure: Debug Errors</H2>
+This passive scanner checks the content of web responses for known Debug Error message fragments.
+Access to such details may provide a malicious individual with means by which to further abuse the web site.
+They may also leak data not specifically meant for end user consumption.
 
 <H2>Information Disclosure: In URL</H2>
+Attempts to identify the existence of sensitive details within the visited URIs themselves 
+(this may include parameters, document names, directory names, etc.).
 
 <H2>Information Disclosure: Referrer</H2>
+Identifies the existence of sensitive details within the the Referrer header field of HTTP requests
+(this may include parameters, document names, directory names, etc.).
 
 <H2>Information Disclosure: Suspicious Comments</H2>
+Analyzes web content to identify comments which contain potentially sensitive details. Which may lead to 
+further attack or exposure of unintended data.
 
 <H2>Insecure Authentication</H2>
 HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
 
-<H2>Insecure JSF View State</H2>
+<H2>Insecure JSF ViewState</H2>
 The response at the following URL contains a ViewState value that has no cryptographic protections.
 
 <H2>Servlet Parameter Pollution</H2>
+Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
+Java Servlet spec calls for aggregation of query string and post data elements which may result in 
+unintended handling of user controlled data. This may impact other frameworks and technologies as well.
 
-<H2>Viewstate</H2>
+<H2>VIEWSTATE</H2>
+Attempts to identify VIEWSTATE parameters and analyze said parameters for various best practices or protective 
+measures such as: 
+<ul>
+	<li>Those based on ASP.NET 1.0 and 1.1.</li>
+	<li>VIEWSTATE Lacking signature.</li>
+	<li>Split VIEWSTATE.</li>
+	<li>VIEWSTATE containing email or IP patterns.</li>
+</ul>
 
 </BODY>
 </HTML>
