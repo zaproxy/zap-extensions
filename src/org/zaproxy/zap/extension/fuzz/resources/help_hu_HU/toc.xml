@@ -12,7 +12,7 @@
 			    <tocitem text="Location Processors Dialog" target="addon.fuzzer.locations"/>
     			<tocitem text="Payloads Dialog" target="addon.fuzzer.payloads"/>
     			<tocitem text="Payload Processors Dialog" target="addon.fuzzer.processors"/>
-				<tocitem text="Tab" target="addon.fuzzer.tab" />
+				<tocitem text="Fül" target="addon.fuzzer.tab" />
 			</tocitem>
 		</tocitem>
 	</tocitem>
