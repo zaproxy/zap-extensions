@@ -120,6 +120,7 @@ The scanner tests only for time-based SQL injection vulnerabilities.
 
 <H2>Username Enumeration</H2>
 It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
+This scanner is skipped if there are no contexts defined that use Form-based Authentication, and only runs against the URL identified as the login URL of a context.
 
 <H2>XPath Injection</H2>
 As described by OWASP: "XPath Injection attacks occur when a web site uses user-supplied information to 
