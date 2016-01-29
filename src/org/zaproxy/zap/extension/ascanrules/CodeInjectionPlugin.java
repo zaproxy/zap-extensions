@@ -229,8 +229,8 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, phpPayload);
 
-            if (log.isTraceEnabled()) {
-                log.trace("Testing [" + paramName + "] = [" + phpPayload + "]");
+            if (log.isDebugEnabled()) {
+                log.debug("Testing [" + paramName + "] = [" + phpPayload + "]");
             }
             
             try {
@@ -241,8 +241,10 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                 if (msg.getResponseBody().toString().contains(PHP_CONTROL_TOKEN)) {
                     // We Found IT!                     
                     // First do logging
-                    log.info("[PHP Code Injection Found] on parameter [" + paramName 
-                            + "] with payload [" + phpPayload + "]");
+                    if (log.isDebugEnabled()) {
+                        log.debug("[PHP Code Injection Found] on parameter [" + paramName 
+                                + "] with payload [" + phpPayload + "]");
+                    }
                     
                     // Now create the alert message
                     this.bingo(
@@ -297,8 +299,8 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, MessageFormat.format(aspPayload, bignum1, bignum2));
             
-            if (log.isTraceEnabled()) {
-                log.trace("Testing [" + paramName + "] = [" + aspPayload + "]");
+            if (log.isDebugEnabled()) {
+                log.debug("Testing [" + paramName + "] = [" + aspPayload + "]");
             }
 
             try {
@@ -309,8 +311,10 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                 if (msg.getResponseBody().toString().contains(Integer.toString(bignum1*bignum2))) {
                     // We Found IT!
                     // First do logging
-                    log.info("[ASP Code Injection Found] on parameter [" + paramName 
-                            + "]  with payload [" + aspPayload + "]");
+                    if (log.isDebugEnabled()) {
+                        log.debug("[ASP Code Injection Found] on parameter [" + paramName 
+                                + "]  with payload [" + aspPayload + "]");
+                    }
                     
                     // Now create the alert message
                     this.bingo(
