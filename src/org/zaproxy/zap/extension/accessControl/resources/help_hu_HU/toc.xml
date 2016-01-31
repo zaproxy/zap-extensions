@@ -5,7 +5,7 @@
 
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+		<tocitem text="Bővítmények" tocid="addons">
 			<tocitem text="Access Control Testing" image="accessControl.icon" target="accessControl.concepts" >
 				<tocitem text="Fül" target="accessControl.tab"/>
 				<tocitem text="Context Options" target="accessControl.contextOptions"/>
