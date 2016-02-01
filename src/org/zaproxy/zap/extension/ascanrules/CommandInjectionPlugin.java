@@ -411,7 +411,9 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 if (matcher.find()) {
                     // We Found IT!                    
                     // First do logging
-                    log.info("[OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                    if (log.isDebugEnabled()) {
+                        log.debug("[OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                    }
                     
                     // Now create the alert message
                     this.bingo(
@@ -484,7 +486,9 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                     
                     // We Found IT!                    
                     // First do logging
-                    log.info("[Blind OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                    if (log.isDebugEnabled()) {
+                        log.debug("[Blind OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                    }
                     
                     // Now create the alert message
                     this.bingo(

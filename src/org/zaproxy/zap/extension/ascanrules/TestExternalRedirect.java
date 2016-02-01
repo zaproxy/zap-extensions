@@ -288,9 +288,11 @@ public class TestExternalRedirect extends AbstractAppParamPlugin {
                 if (redirectType != NO_REDIRECT) {
                     // We Found IT!                    
                     // First do logging
-                    logger.info("[External Redirection Found] on parameter [" + param 
-                            + "] with payload [" + payload 
-                            + "]");
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("[External Redirection Found] on parameter [" + param 
+                                + "] with payload [" + payload 
+                                + "]");
+                    }
                     
                     // Now create the alert message
                     this.bingo(
