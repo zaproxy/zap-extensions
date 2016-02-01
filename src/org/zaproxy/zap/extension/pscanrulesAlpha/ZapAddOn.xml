@@ -9,6 +9,7 @@
 	<![CDATA[
 		Add CWE and WASC IDs to passive scanners which may have been lacking those details.<br>
 		Fix exception when scanning with "User Controllable Charset" scanner.<br>
+		Fix exception when scanning with "Image Location Scanner" scanner.<br>
 	]]>
 	</changes>
 	<extensions>

@@ -89,6 +89,9 @@ public class ImageLocationScanner extends PluginPassiveScanner {
         String fileName;
 		try {
 			fileName = uri.getName();
+			if (fileName == null) {
+				fileName = "";
+			}
 		} catch (URIException e) {
 			// e.printStackTrace();
 			// If we cannot decode the URL, then just set filename to empty.
