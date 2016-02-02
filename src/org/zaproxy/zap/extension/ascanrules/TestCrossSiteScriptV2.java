@@ -99,6 +99,10 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     
     private List<HtmlContext> performAttack (HttpMessage msg, String param, String attack,
     		HtmlContext targetContext, int ignoreFlags) {
+        if (isStop()) {
+            return null;
+        }
+
 		HttpMessage msg2 = msg.cloneRequest();
 		setParameter(msg2, param, attack);
         try {
@@ -108,6 +112,10 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
+
+        if (isStop()) {
+            return null;
+        }
 
         HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
         if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
@@ -127,6 +135,10 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 			setParameter(msg2, param, Constant.getEyeCatcher());
             sendAndReceive(msg2);
             
+            if (isStop()) {
+                return;
+            }
+
             HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
             List<HtmlContext> contexts = hca.getHtmlContexts(Constant.getEyeCatcher(), null, 0);
             if (contexts.size() == 0) {
@@ -149,6 +161,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             	// No luck - lets just try a direct attack
 	            List<HtmlContext> contexts2 = performAttack (msg, param, 
 	            		"'\"<script>alert(1);</script>", null, 0);
+                if (contexts2 == null) {
+                    return;
+                }
 	            if (contexts2.size() > 0) {
             		// Yep, its vulnerable
 					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, null, param, contexts2.get(0).getTarget(), 
@@ -159,7 +174,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             
             for (HtmlContext context : contexts) {
             	// Loop through the returned contexts and launch targeted attacks
-            	if (attackWorked) {
+            	if (attackWorked || isStop()) {
             		break;
             	}
             	if (context.getTagAttribute() != null) {
@@ -169,6 +184,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             			// Good chance this will be vulnerable
         				// Try a simple alert attack
         	            List<HtmlContext> contexts2 = performAttack (msg, param, ";alert(1)", context, 0);
+                        if (contexts2 == null) {
+                            break;
+                        }
         	            
         	            for (HtmlContext context2 : contexts2) {
         	            	if (context2.getTagAttribute() != null &&
@@ -187,6 +205,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         			} else if (context.isInUrlAttribute()) {
         				// Its a url attribute
         	            List<HtmlContext> contexts2 = performAttack (msg, param, "javascript:alert(1);", context, 0);
+                        if (contexts2 == null) {
+                            break;
+                        }
 
         	            for (HtmlContext ctx : contexts2) {
         	            	if (ctx.isInUrlAttribute()) {
@@ -206,6 +227,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             			// Its in an attribute in a tag which supports src attributes
         	            List<HtmlContext> contexts2 = performAttack (msg, param, 
         	            		context.getSurroundingQuote() + " src=http://badsite.com", context, HtmlContext.IGNORE_TAG);
+                        if (contexts2 == null) {
+                            break;
+                        }
 
         	            if (contexts2.size() > 0) {
     						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -221,6 +245,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         				// Try a simple alert attack
         	            List<HtmlContext> contexts2 = performAttack (msg, param, 
         	            		context.getSurroundingQuote() + "><script>alert(1);</script>", context, HtmlContext.IGNORE_TAG);
+                        if (contexts2 == null) {
+                            break;
+                        }
         	            if (contexts2.size() > 0) {
     	            		// Yep, its vulnerable
     						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -236,6 +263,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            List<HtmlContext> contexts2 = performAttack (msg, param, 
         	            		context.getSurroundingQuote() + " onMouseOver=" + context.getSurroundingQuote() + "alert(1);", 
         	            		context, HtmlContext.IGNORE_TAG);
+                        if (contexts2 == null) {
+                            break;
+                        }
         	            if (contexts2.size() > 0) {
     	            		// Yep, its vulnerable
     						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -250,6 +280,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             		// Try breaking out of the comment
     	            List<HtmlContext> contexts2 = performAttack (msg, param, 
     	            		"--><script>alert(1);</script><!--", context, HtmlContext.IGNORE_HTML_COMMENT);
+                    if (contexts2 == null) {
+                        break;
+                    }
     	            if (contexts2.size() > 0) {
 	            		// Yep, its vulnerable
 						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -259,6 +292,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     	            	// Maybe they're blocking script tags
         	            contexts2 = performAttack (msg, param, 
 			            		"--><b onMouseOver=alert(1);>test</b><!--", context, HtmlContext.IGNORE_HTML_COMMENT);
+                        if (contexts2 == null) {
+                            break;
+                        }
         	            if (contexts2.size() > 0) {
 		            		// Yep, its vulnerable
 							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -273,6 +309,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         				// Try a simple alert attack
         	            List<HtmlContext> contexts2 = performAttack (msg, param, 
         	            		"<script>alert(1);</script>", null, HtmlContext.IGNORE_PARENT);
+                        if (contexts2 == null) {
+                            break;
+                        }
         	            if (contexts2.size() > 0) {
         	            		// Yep, its vulnerable
         						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -282,6 +321,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            	// Maybe they're blocking script tags
             	            contexts2 = performAttack (msg, param, 
     			            		"<b onMouseOver=alert(1);>test</b>", context, HtmlContext.IGNORE_PARENT);
+                            if (contexts2 == null) {
+                                break;
+                            }
     			            for (HtmlContext context2 : contexts2) {
     			            	if ("body".equalsIgnoreCase(context2.getParentTag()) ||
     			            			"script".equalsIgnoreCase(context2.getParentTag())) {
@@ -298,6 +340,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            List<HtmlContext> contexts2 = performAttack (msg, param, 
         	            		"</" + context.getParentTag() + "><script>alert(1);</script><" + context.getParentTag() + ">", 
         	            		context, HtmlContext.IGNORE_IN_SCRIPT);
+                        if (contexts2 == null) {
+                            break;
+                        }
         	            if (contexts2.size() > 0) {
        	            		// Yep, its vulnerable
        						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -307,6 +352,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            	// its in a script tag...
             	            contexts2 = performAttack (msg, param, 
             	            		context.getSurroundingQuote() + ";alert(1);" + context.getSurroundingQuote(), context, 0);
+                            if (contexts2 == null) {
+                                break;
+                            }
             	            if (contexts2.size() > 0) {
            	            		// Yep, its vulnerable
            						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -319,6 +367,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             			if (context.getTarget().equals(context.getMsg().getResponseBody().toString())) {
             	            List<HtmlContext> contexts2 = performAttack (msg, param, 
             	            		"<script>alert(1);</script>", null, 0);
+                            if (contexts2 == null) {
+                                break;
+                            }
             	            if (contexts2.size() > 0) {
            	            		// Yep, its vulnerable
                     			if (contexts2.get(0).getMsg().getResponseHeader().isHtml()) {

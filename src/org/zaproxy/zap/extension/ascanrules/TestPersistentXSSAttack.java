@@ -100,6 +100,10 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
     
     private List<HtmlContext> performAttack (HttpMessage sourceMsg, String param, String attack,
     		HttpMessage sinkMsg, HtmlContext targetContext, int ignoreFlags) {
+        if (isStop()) {
+            return null;
+        }
+
 		HttpMessage sourceMsg2 = sourceMsg.cloneRequest();
 		setParameter(sourceMsg2, param, attack);
         try {
@@ -108,12 +112,20 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 			log.error(e.getMessage(), e);
 		}
         
+        if (isStop()) {
+            return null;
+        }
+
 		HttpMessage sinkMsg2 = sinkMsg.cloneRequest();
         try {
 			sendAndReceive(sinkMsg2);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
+
+        if (isStop()) {
+            return null;
+        }
 
         HtmlContextAnalyser hca = new HtmlContextAnalyser(sinkMsg2);
         if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
@@ -142,6 +154,10 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 
 	            // Check each sink
 	            for (Integer sinkMsgId : sinks) {
+                    if (isStop()) {
+                        break;
+                    }
+
 	                HttpMessage sinkMsg = PersistentXSSUtils.getMessage(sinkMsgId);
 	                if (sinkMsg == null) {
 	                    continue;
@@ -155,7 +171,7 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		            
 		            for (HtmlContext context : contexts) {
 		            	// Loop through the returned contexts and lauch targetted attacks
-		            	if (attackWorked) {
+		            	if (attackWorked || isStop()) {
 		            		break;
 		            	}
 		            	if (context.getTagAttribute() != null) {
@@ -165,6 +181,9 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		            			// Good chance this will be vulnerable
 		        				// Try a simple alert attack
 		        	            List<HtmlContext> contexts2 = performAttack (sourceMsg, param, ";alert(1)", sinkMsg, context, 0);
+                                if (contexts2 == null) {
+                                    break;
+                                }
 		        	            
 		        	            for (HtmlContext context2 : contexts2) {
 		        	            	if (context2.getTagAttribute() != null &&
@@ -183,6 +202,9 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		        			} else if (context.isInUrlAttribute()) {
 		        				// Its a url attribute
 		        	            List<HtmlContext> contexts2 = performAttack (sourceMsg, param, "javascript:alert(1);", sinkMsg, context, 0);
+		        	            if (contexts2 == null) {
+		        	                break;
+		        	            }
 
 		        	            for (HtmlContext ctx : contexts2) {
 		        	            	if (ctx.isInUrlAttribute()) {
@@ -202,6 +224,9 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		            			// Its in an attribute in a tag which supports src attributes
 		        	            List<HtmlContext> contexts2 = performAttack (sourceMsg, param, 
 		        	            		context.getSurroundingQuote() + " src=http://badsite.com", sinkMsg, context, HtmlContext.IGNORE_TAG);
+                                if (contexts2 == null) {
+                                    break;
+                                }
 		
 		        	            if (contexts2.size() > 0) {
 		    						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -217,6 +242,10 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		        				// Try a simple alert attack
 		        	            List<HtmlContext> contexts2 = performAttack (sourceMsg, param, 
 		        	            		context.getSurroundingQuote() + "><script>alert(1);</script>", sinkMsg, context, HtmlContext.IGNORE_TAG);
+                                if (contexts2 == null) {
+                                    break;
+                                }
+
 		        	            if (contexts2.size() > 0) {
 		    	            		// Yep, its vulnerable
 		    						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -232,6 +261,10 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		        	            List<HtmlContext> contexts2 = performAttack (sourceMsg, param, 
 		        	            		context.getSurroundingQuote() + " onMouseOver=" + context.getSurroundingQuote() + "alert(1);", 
 		        	            		sinkMsg, context, HtmlContext.IGNORE_TAG);
+                                if (contexts2 == null) {
+                                    break;
+                                }
+
 		        	            if (contexts2.size() > 0) {
 		    	            		// Yep, its vulnerable
 		    						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -246,6 +279,10 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		            		// Try breaking out of the comment
 		    	            List<HtmlContext> contexts2 = performAttack (sourceMsg, param, 
 		    	            		"--><script>alert(1);</script><!--", sinkMsg, context, HtmlContext.IGNORE_HTML_COMMENT);
+                            if (contexts2 == null) {
+                                break;
+                            }
+
 		    	            if (contexts2.size() > 0) {
 			            		// Yep, its vulnerable
 								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -255,7 +292,7 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		    	            	// Maybe they're blocking script tags
 		        	            contexts2 = performAttack (sourceMsg, param, 
 					            		"--><b onMouseOver=alert(1);>test</b><!--", sinkMsg, context, HtmlContext.IGNORE_HTML_COMMENT);
-		        	            if (contexts2.size() > 0) {
+		        	            if (contexts2 != null && contexts2.size() > 0) {
 				            		// Yep, its vulnerable
 									bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
 											otherInfo, contexts2.get(0).getMsg());
@@ -269,6 +306,10 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		        				// Try a simple alert attack
 		        	            List<HtmlContext> contexts2 = performAttack (sourceMsg, param, 
 		        	            		"<script>alert(1);</script>", sinkMsg, null, HtmlContext.IGNORE_PARENT);
+	                            if (contexts2 == null) {
+	                                break;
+	                            }
+
 		        	            if (contexts2.size() > 0) {
 		        	            		// Yep, its vulnerable
 		        						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -278,6 +319,10 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		        	            	// Maybe they're blocking script tags
 		            	            contexts2 = performAttack (sourceMsg, param, 
 		    			            		"<b onMouseOver=alert(1);>test</b>", sinkMsg, context, HtmlContext.IGNORE_PARENT);
+		                            if (contexts2 == null) {
+		                                break;
+		                            }
+
 		    			            for (HtmlContext context2 : contexts2) {
 		    			            	if ("body".equalsIgnoreCase(context2.getParentTag()) ||
 		    			            			"script".equalsIgnoreCase(context2.getParentTag())) {
@@ -294,6 +339,10 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		        	            List<HtmlContext> contexts2 = performAttack (sourceMsg, param, 
 		        	            		"</" + context.getParentTag() + "><script>alert(1);</script><" + context.getParentTag() + ">", 
 		        	            		sinkMsg, context, HtmlContext.IGNORE_IN_SCRIPT);
+	                            if (contexts2 == null) {
+	                                break;
+	                            }
+
 		        	            if (contexts2.size() > 0) {
 		       	            		// Yep, its vulnerable
 		       						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
@@ -304,7 +353,7 @@ public class TestPersistentXSSAttack extends AbstractAppParamPlugin {
 		            	            contexts2 = performAttack (sourceMsg, param, 
 		            	            		context.getSurroundingQuote() + ";alert(1);" + context.getSurroundingQuote(), 
 		            	            		sinkMsg, context, 0);
-		            	            if (contexts2.size() > 0) {
+		            	            if (contexts2 != null && contexts2.size() > 0) {
 		           	            		// Yep, its vulnerable
 		           						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
 		           								otherInfo, contexts2.get(0).getMsg());

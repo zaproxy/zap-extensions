@@ -25,6 +25,7 @@
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
 // ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
 // ZAP: 2013/03/03 Issue 546: Remove all template Javadoc comments
+// ZAP: 2016/02/02 Add isStop() checks
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.regex.Pattern;
@@ -122,7 +123,7 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
             return;
         }
 
-        for (int i = 0; i < PARAM_LIST.length; i++) {
+        for (int i = 0; i < PARAM_LIST.length && !isStop(); i++) {
             msg = getNewMsg();
             if (i == 0) {
                 // remove entire parameter when i=0;
