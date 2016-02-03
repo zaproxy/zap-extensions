@@ -19,14 +19,17 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.StringReader;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -154,7 +157,14 @@ public class HPP extends AbstractAppPlugin {
 					log.debug("Injecting payload...");
 					HttpMessage newMsg = getNewMsg();
 					newMsg.setGetParams(tags);
-					sendAndReceive(newMsg);
+					try {
+						sendAndReceive(newMsg);
+					} catch (IllegalStateException|UnknownHostException ex) {
+						log.info("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+								" when accessing: " + newMsg.getRequestHeader().getURI().toString() + 
+								"\n The target may have replied with a poorly formed redirect due to our input.");
+						return;
+					}
 					
 					// We check all the links of the response to find our payload
 					s = new Source(new StringReader(newMsg.getResponseBody().toString()));
