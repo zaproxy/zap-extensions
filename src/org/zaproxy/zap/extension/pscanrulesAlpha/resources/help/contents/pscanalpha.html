@@ -110,8 +110,9 @@ This checks response headers for the presence of a server header that contains v
 <H2>Source Code Disclosure</H2>
 Application Source Code was disclosed by the web server
 
-<H2>Missing Strict Transport Security Header</H2>
-This checks HTTPS response headers for the presence of a HTTP Strict Transport Security header.
+<H2>Strict Transport Security Header Scanner</H2>
+This scanner checks HTTPS response headers for the presence of a HTTP Strict Transport Security header (alerts if it is not found).
+Also checks if the HTTP Strict Transport Security (HSTS) header contains a max-age directive with value 0, which instructs clients to reset the entire HSTS Policy associated with the HSTS Host.
 
 <H2>Timestamp Disclosure</H2>
 A timestamp was disclosed by the application/web server
