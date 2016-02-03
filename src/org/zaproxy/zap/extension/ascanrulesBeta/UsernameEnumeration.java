@@ -36,6 +36,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.HirshbergMatcher;
@@ -74,6 +75,9 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 	 */
 	private boolean debugEnabled = log.isDebugEnabled(); 
 
+	private static ExtensionAuthentication extAuth = (ExtensionAuthentication) Control.getSingleton()
+			.getExtensionLoader().getExtension(ExtensionAuthentication.NAME);
+	
 	@Override
 	public int getId() {
 		return 40023;
@@ -117,8 +121,13 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 		//this.debugEnabled = true;
 
 		if ( this.debugEnabled ) log.debug("Initialising");
+		
+		if(!shouldContinue(extAuth.getModel().getSession().getContexts())) {
+			log.info("There does not appear to be any configured contexts using Form-based Authentication. Further attempts during the current scan will be skipped.");
+			this.getParent().pluginSkipped(this); //If there's no context we should just skip this plugin
+			return; //No need to continue
+		}
 	}
-
 
 	/**
 	 * looks for username enumeration in the login page, by changing the username field to be a valid / invalid user, and looking for differences in the response
@@ -141,9 +150,7 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 
 			// Are we dealing with a login url in any of the contexts of which this uri is part
 			URI requestUri = getBaseMsg().getRequestHeader().getURI();
-			ExtensionAuthentication extAuth = (ExtensionAuthentication) Control.getSingleton()
-					.getExtensionLoader().getExtension(ExtensionAuthentication.NAME);
-
+			
 			// using the session, get the list of contexts for the url
 			List<Context> contextList = extAuth.getModel().getSession()
 					.getContextsForUrl(requestUri.getURI());
@@ -160,15 +167,18 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 						// fragment, and POST params
 						// are possibly different from the login page.
 						loginUrl = true;
-						break;
+						log.info(requestUri.toString()+" falls within a context, and is the defined Login URL. Scanning for possible Username Enumeration vulnerability.");
+						break;//Stop checking
 					}
 				}
 			}
 						
 			//the Username Enumeration scanner will only run for logon pages
 			if (loginUrl == false) {
-				log.info("For the Username Enumeration scanner to actually scan this URL, the URL *must* be added to a context, and flagged as the login request in that context!");
-				return;
+				if(this.debugEnabled) {
+					log.debug(requestUri.toString()+" is not a defined Login URL.");
+				}
+				return;//No need to continue for this URL
 			}
 
 			//find all params set in the request (GET/POST/Cookie)
@@ -545,6 +555,17 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 		return hirschberg.getLCS(a, b);
 	}
 
+	private boolean shouldContinue(List<Context> contextList) {
+		boolean hasAuth = false;
+		for (Context context : contextList) {
+			if(context.getAuthenticationMethod() instanceof FormBasedAuthenticationMethod) {
+				hasAuth = true;
+				break; //No need to loop further
+			}
+		}
+		return hasAuth;
+	}
+	
 	@Override
 	public int getCweId() {
 		return 200; //CWE-200: Information Exposure
