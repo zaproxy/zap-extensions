@@ -64,7 +64,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     
     // PowerShell Command constants
     private static final String PS_TEST_CMD = "get-help";
-    private static final Pattern PS_CTRL_PATTERN = Pattern.compile("get-help|cmdlets|get-alias", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PS_CTRL_PATTERN = Pattern.compile("(?:\\sget-help)|cmdlet|get-alias", Pattern.CASE_INSENSITIVE);
     
     // Useful if space char isn't allowed by filters
     // http://www.blackhatlibrary.net/Command_Injection
