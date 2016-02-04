@@ -240,6 +240,70 @@
 		</sequential>
 	</macrodef>
 
+	<macrodef name="build-addon-without-help-indexes" description="build the specified addon">
+			<attribute name="name"/>
+			<element name="extra-actions" implicit="true" optional="true" />
+			<sequential>
+				<local name="zapaddon.version" />
+				<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+				<local name="file" />
+				<property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
+
+				<local name="addon.libs.zip" />
+				<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
+
+				<delete file="${addon.libs.zip}" failonerror="true" />
+				<zip destfile="${addon.libs.zip}" whenempty="create">
+					<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/@{name}/lib/" includes="*.jar" erroronmissingdir="false" />
+				</zip>
+
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="org/zaproxy/zap/extension/@{name}/**"/>
+					</zipfileset>
+					<zipfileset dir="${src}" prefix="">
+						<include name="org/zaproxy/zap/extension/@{name}/Messages*"/>
+					</zipfileset>
+					<zipfileset dir="${src}" prefix="">
+						<include name="org/zaproxy/zap/extension/@{name}/resources/**"/>
+					</zipfileset>
+					<zipfileset src="${addon.libs.zip}">
+						<exclude name="META-INF/*.DSA" />
+						<exclude name="META-INF/*.SF" />
+					</zipfileset>
+					<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+				</jar>
+				<delete file="${addon.libs.zip}" />
+
+				<!-- Include add-on files -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${src}/org/zaproxy/zap/extension/@{name}/files/" prefix="" erroronmissingdir="false" />
+				</jar>
+
+				<!-- allow callers to do extra actions before generating the hash and determine the size of the file -->
+				<extra-actions />
+
+				<local name="length" />
+				<length file="${dist}/${file}" property="length" />
+
+				<local name="sha1hash" />
+				<checksum file="${dist}/${file}"  algorithm="SHA-1"  property="sha1hash"/>
+
+				<local name="hash" />
+				<property name="hash"  value="SHA1:${sha1hash}"/>
+
+				<local name="yyyymmdd" />
+				<tstamp>
+					<format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+				</tstamp>
+
+				<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
+					addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+					url="${zap.download.url}/${file}" />
+
+			</sequential>
+		</macrodef>
+	
 	<macrodef name="build-help-addon" description="build the specified addon">
 		<attribute name="name"/>
 		<element name="extra-actions" implicit="true" optional="true" />
@@ -334,6 +398,17 @@
 		</sequential>
 	</macrodef>
 
+	<macrodef name="build-deploy-addon-without-help-indexes" description="build and deploy the specified addon">
+		<attribute name="name"/>
+		<sequential>
+			<antcall target="clean" />
+			<antcall target="compile" />
+
+			<build-addon-without-help-indexes name="@{name}" />
+			<deploy-addon name="@{name}" />
+		</sequential>
+	</macrodef>
+	
 	<macrodef name="build-deploy-help-addon" description="build and deploy the specified help addon">
 		<attribute name="name"/>
 		<sequential>
@@ -348,6 +423,10 @@
 		<build-deploy-addon name="ascanrules" />
 	</target>
 
+	<target name="deploy-ascanrules-without-help-indexes" description="deploy the active scan rules">
+		<build-deploy-addon-without-help-indexes name="ascanrules" />
+	</target>
+	
 	<target name="generate-wiki-ascanrules" description="Generates the wiki of active scan rules">
 		<generate-wiki-core addon="ascanrules" />
 	</target>
@@ -400,6 +479,10 @@
 		<build-deploy-addon name="pscanrules" />
 	</target>
 
+	<target name="deploy-pscanrules-without-help-indexes" description="deploy the passive scan rules">
+		<build-deploy-addon-without-help-indexes name="pscanrules" />
+	</target>
+	
 	<target name="generate-wiki-pscanrules" description="Generates the wiki of passive scan rules">
 		<generate-wiki-core addon="pscanrules" />
 	</target>
