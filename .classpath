@@ -15,7 +15,7 @@
 	<classpathentry kind="lib" path="lib/flex-messaging-core.jar"/>
 	<classpathentry kind="lib" path="lib/groovy-2.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/groovy-xml-2.0.4.jar"/>
-	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb-2.3.3.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/jericho-html-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/jfxrt.jar"/>
