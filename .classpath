@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="lib/diffutils-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/fuzz-beta-4.zap"/>
 	<classpathentry kind="lib" path="lib/guice-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb-2.3.3.jar"/>
 	<classpathentry kind="lib" path="lib/htmlunit-2.15.jar"/>
 	<classpathentry kind="lib" path="lib/javax.inject-1.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
