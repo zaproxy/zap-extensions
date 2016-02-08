@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Technology detection using Wappalyzer</name>
-	<version>5</version>
+	<version>6</version>
 	<status>alpha</status>
 	<description>Technology detection using Wappalyzer: wappalyzer.com</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Do not access view components when view is not initialised (Issue 1617).</changes>
+	<changes>Updated for latest wappalyzer data.</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer</extension>
 	</extensions>
@@ -15,6 +15,6 @@
 	</pscanrules>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.4.3</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
