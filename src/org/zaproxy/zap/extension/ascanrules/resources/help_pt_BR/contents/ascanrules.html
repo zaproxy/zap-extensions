@@ -7,7 +7,7 @@ Regras de Varredura ativa
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Regras de Varredura Ativa - alfa</h1> Este complemento traz as seguintes regras de varredura ativa em qualidade alfa: <h2>Buffer Overflow</h2> procura por indícios de estouro de pilha (buffer overflow) no código.  Isso é feito com o lançamento de grandes seqüências de caracteres de texto de entrada e busca por código de crash e encerramento anormal da sessão.
+<h1>Regras de Varredura Ativas</h1> As regras que estão incluídas neste complemento são: <h2>Buffer Overflow</h2> Esta regra procura por indicadores de estouro de pilha no código compilado.  Isso é feito com o lançamento de grandes seqüências de caracteres de texto de entrada e busca por código de crash e encerramento anormal da sessão.
 
 <h2>Injeção de código</h2> Esta regra envia strings de ataque em PHP e ASP como valores de parâmetros de URL em uma solicitação e analisa a resposta para ver como se esses valores foram tratados pelo servidor. Primeiro, as requests são construídas e enviadas contendo instruções em PHP injetadas, para criar um token. No caso de haver uma correspondência entre o token e o conteúdo no corpo da resposta, o ZAP gera um alerta e pára imediatamente.
 Se não existem semelhanças, o scanner vai construir pedidos com várias seqüências de strings ASP injetadas que instruem o servidor para escrever na resposta o produto de dois números inteiros gerados aleatoriamente. Se o corpo da resposta coincide com o produto, um alerta é gerado.
