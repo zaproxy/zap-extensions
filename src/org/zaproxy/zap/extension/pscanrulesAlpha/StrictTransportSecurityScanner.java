@@ -21,6 +21,8 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.htmlparser.jericho.Source;
 
@@ -41,6 +43,14 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 	private static final String MESSAGE_PREFIX = "pscanalpha.stricttransportsecurity.";
 	private static final int PLUGIN_ID = 10035;
 	
+	//max-age=0 disabled HSTS. It's allowed by the spec,
+	//and is used to reset browser's settings for HSTS.
+	//If found raise an INFO alert.
+	//Pattern accounts for potential spaces and quotes
+	private static final Pattern BAD_MAX_AGE_PATT = Pattern.compile("max-age\\s*=\\s*\'*\"*\\s*0\\s*\"*\'*\\s*", Pattern.CASE_INSENSITIVE);
+	
+	private enum VulnType {HSTS_MISSING, HSTS_MAX_AGE_DISABLED};
+	
 	private PassiveScanThread parent = null;
 	private static final Logger logger = Logger.getLogger(StrictTransportSecurityScanner.class);
 	
@@ -54,6 +64,26 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 		// Only checking the response for this plugin
 	}
 	
+	private void raiseAlert(VulnType currentVT, String evidence, HttpMessage msg, int id) {
+		Alert alert = new Alert(getPluginId(), //PluginID
+					currentVT == VulnType.HSTS_MISSING ? Alert.RISK_LOW : Alert.RISK_INFO, //Risk (if missing low, otherwise info)
+					Alert.CONFIDENCE_HIGH, //Reliability
+					getAlertElement(currentVT, "name")); //Name
+	    		alert.setDetail(
+	    			getAlertElement(currentVT, "desc"), //Description
+	    			msg.getRequestHeader().getURI().toString(), //URI
+	    			"",	// Param
+	    			"", // Attack
+	    			"", // Other info
+	    			getAlertElement(currentVT, "soln"), //Solution
+	    			getAlertElement(currentVT, "refs"), //References
+	    			evidence,	// Evidence
+					16, // CWE-16: Configuration
+					15,	//WASC-15: Application Misconfiguration
+	    			msg); //HttpMessage
+	    		parent.raiseAlert(id, alert);
+	}
+	
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
@@ -63,22 +93,17 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 			//Content available via both HTTPS and HTTP is a separate though related issue
 			Vector<String> STSOption = msg.getResponseHeader().getHeaders("Strict-Transport-Security");
 			if (STSOption == null) { // Header NOT found
-				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
-						getName()); //Name
-			    		alert.setDetail(
-			    			getDescription(), //Description
-			    			msg.getRequestHeader().getURI().toString(), //URI
-			    			"",	// Param
-			    			"", // Attack
-			    			"", // Other info
-			    			getSolution(), //Solution
-			    			getReference(), //References
-			    			"",	// Evidence
-							16, // CWE-16: Configuration
-							15,	//WASC-15: Application Misconfiguration
-			    			msg); //HttpMessage
-			    		parent.raiseAlert(id, alert);
+					raiseAlert(VulnType.HSTS_MISSING, null, msg, id);
+					return; //No point continuing
+			} else { 
+				for (String stsHeader : STSOption) {
+					Matcher matcher = BAD_MAX_AGE_PATT.matcher(stsHeader);
+					if (matcher.find()) { 
+						String evidence = matcher.group();
+						raiseAlert(VulnType.HSTS_MAX_AGE_DISABLED, evidence, msg, id);
+					}
 				}
+			}
 		}
 	    if (logger.isDebugEnabled()) {
 	    	logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
@@ -92,19 +117,20 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 	
 	@Override
 	public String getName() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
+		return Constant.messages.getString(MESSAGE_PREFIX + "scanner.name");
 	}
 	
-	private String getDescription() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
-
-	private String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
-
-	private String getReference() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+	private String getAlertElement(VulnType currentVT, String element) {
+		String elementValue="";
+		switch (currentVT) {
+			case HSTS_MISSING:
+				elementValue=Constant.messages.getString(MESSAGE_PREFIX + element);
+				break;
+			case HSTS_MAX_AGE_DISABLED:
+				elementValue=Constant.messages.getString(MESSAGE_PREFIX + "max.age." + element);
+				break;
+		}
+		return elementValue;
 	}
 
 }
