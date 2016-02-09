@@ -30,6 +30,7 @@ import javax.swing.JMenuItem;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
+import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
 
 public class PopupMenuEvidence extends ExtensionPopupMenuItem {
@@ -60,12 +61,7 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
-    	final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-    	// Remove any old submenus
-    	for (PopupMenuEvidenceSearch menu : this.subMenus) {
-			mainPopupMenuItems.remove(menu);
-    	}
-    	this.subMenus.clear();
+        clearSubMenus();
     	
         if (invoker.getName() != null && invoker.getName().equals(TechPanel.PANEL_NAME)) {
             Application app = extension.getSelectedApp();
@@ -89,6 +85,15 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
         }
         return false;
     }
+
+    private void clearSubMenus() {
+        final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
+        // Remove any old submenus
+        for (PopupMenuEvidenceSearch menu : this.subMenus) {
+            mainPopupMenuItems.remove(menu);
+        }
+        this.subMenus.clear();
+    }
     
     private void addSubMenu(String label, Pattern p, ExtensionSearch.Type type) {
     	// TODO add prefix for pattern types?
@@ -97,6 +102,11 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
 		menu.setMenuIndex(this.getMenuIndex());
 		View.getSingleton().getPopupList().add(menu);
 		this.subMenus.add(menu);
+    }
+
+    @Override
+    public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
+        clearSubMenus();
     }
 
     @Override

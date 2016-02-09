@@ -299,7 +299,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	
 	@Override
 	public boolean canUnload() {
-		return false;
+		return true;
 	}
 
 	@Override

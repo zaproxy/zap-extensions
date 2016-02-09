@@ -1,11 +1,15 @@
 <zapaddon>
 	<name>Technology detection using Wappalyzer</name>
-	<version>6</version>
+	<version>7</version>
 	<status>alpha</status>
 	<description>Technology detection using Wappalyzer: wappalyzer.com</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for latest wappalyzer data.</changes>
+	<changes>
+	<![CDATA[
+	Allow to update/uninstall the add-on without restarting ZAP.<br>
+	]]>
+	</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer</extension>
 	</extensions>
