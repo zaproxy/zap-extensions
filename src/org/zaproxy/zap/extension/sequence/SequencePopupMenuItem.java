@@ -4,8 +4,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
@@ -16,48 +16,45 @@ public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
 	
-	private ExtensionScript extScript = null;
+	private final ExtensionScript extScript;
 	public static final Logger logger = Logger.getLogger(SequencePopupMenuItem.class);
 	private ExtensionSequence extension = null;
 	
 
-	public SequencePopupMenuItem(ExtensionSequence extension) {
+	public SequencePopupMenuItem(ExtensionSequence extension, ExtensionScript extensionScript) {
 		super();
 		this.extension = extension;
+		this.extScript = extensionScript;
 		initialize();
 	}
 	
 	private void initialize() {
-		// TODO: Add i18n key for this string.
-		this.setText("Active scan sequence");
+		this.setText(extension.getMessages().getString("sequence.popupmenuitem.activeScanSequence"));
 		
 		this.addActionListener(new java.awt.event.ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					ScriptWrapper wrapper = (ScriptWrapper)getExtScript().getScriptUI().getSelectedNode().getUserObject();
-					SequenceScript scr = getExtScript().getInterface(wrapper, SequenceScript.class);
-					extension.setDirectScanScript(wrapper);
-					scr.scanSequence();
+					ScriptWrapper wrapper = (ScriptWrapper)extScript.getScriptUI().getSelectedNode().getUserObject();
+					SequenceScript scr = extScript.getInterface(wrapper, SequenceScript.class);
+					if (scr != null) {
+						extension.setDirectScanScript(wrapper);
+						scr.scanSequence();
+					} else {
+						View.getSingleton().showMessageDialog(
+								extension.getMessages().getString("sequence.popupmenuitem.script.error.interface"));
+					}
 				} catch(Exception ex) {
-					logger.info("An exception occurred while starting an active scan for a sequence script: " + ex.getMessage(), ex);	
+					logger.warn("An exception occurred while starting an active scan for a sequence script:", ex);	
 				}
 			}
 		});
-	}
-	
-	
-	private ExtensionScript getExtScript() {
-		if(extScript == null) {
-			extScript = (ExtensionScript) Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-		}
-		return extScript;
 	}
 
 	@Override
 	public boolean isEnableForComponent(Component invoker) {
 		if(isScriptTree(invoker)) {
-			ScriptNode node = this.getExtScript().getScriptUI().getSelectedNode();
+			ScriptNode node = extScript.getScriptUI().getSelectedNode();
 			if(node != null) {
 				if(node.isTemplate()) {
 					return false;
@@ -79,9 +76,9 @@ public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
 	}
 	
 	public boolean isScriptTree(Component component) {
-		return this.getExtScript().getScriptUI() != null
+		return this.extScript.getScriptUI() != null
 		&& component != null
-		&& this.getExtScript().getScriptUI().getTreeName()
+		&& this.extScript.getScriptUI().getTreeName()
 		.equals(component.getName());
 		}
 	}

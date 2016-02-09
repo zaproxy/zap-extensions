@@ -32,6 +32,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ascan.CustomScanPanel;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptCollection;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.model.StructuralNode;
@@ -43,11 +44,17 @@ public class SequenceAscanPanel implements CustomScanPanel {
 	private SequencePanel sequencePanel = null;
 	public static final Logger logger = Logger.getLogger(SequenceAscanPanel.class);
 
+	private final ExtensionScript extensionScript;
+
+	public SequenceAscanPanel(ExtensionScript extensionScript) {
+		this.extensionScript = extensionScript;
+	}
+
 	@Override
 	public Object[] getContextSpecificObjects() {
         List<ScriptWrapper> selectedIncludeScripts = getPanel(false).getSelectedIncludeScripts();
 
-        if (selectedIncludeScripts != null && selectedIncludeScripts.size() > 0) {
+        if (!selectedIncludeScripts.isEmpty()) {
         	return new Object[] {new ScriptCollection(selectedIncludeScripts.get(0).getType(), selectedIncludeScripts)};
         }
 
@@ -62,7 +69,7 @@ public class SequenceAscanPanel implements CustomScanPanel {
 	@Override
 	public SequencePanel getPanel(boolean init) {
 		if (sequencePanel == null || init) {
-			sequencePanel = new SequencePanel();
+			sequencePanel = new SequencePanel(extensionScript);
 		}
 		return sequencePanel;
 	}
@@ -71,26 +78,22 @@ public class SequenceAscanPanel implements CustomScanPanel {
 	public Target getTarget() {
         List<ScriptWrapper> selectedIncludeScripts = getPanel(false).getSelectedIncludeScripts();
         
-        if (selectedIncludeScripts != null && selectedIncludeScripts.size() > 0) {
+        if (!selectedIncludeScripts.isEmpty()) {
         	try {
         		Session session = Model.getSingleton().getSession();
-				List<StructuralNode> nodes = new ArrayList<StructuralNode>();
+				List<StructuralNode> nodes = new ArrayList<>();
 				for (ScriptWrapper sw : selectedIncludeScripts) {
 					Extension extZest = Control.getSingleton().getExtensionLoader().getExtension("ExtensionZest");
 					if (extZest != null) {
 						Method method = extZest.getClass().getMethod("getAllRequestsInScript", ScriptWrapper.class);
-						if (method == null) {
-							logger.error("Failed to find ExtensionZest.getAllRequestsInScript method");
-						} else {
-							List<HttpMessage> msgs = (List<HttpMessage>)method.invoke(extZest, sw);
-							for (HttpMessage msg : msgs) {
-								SiteNode node = session.getSiteTree().findNode(msg, false);
-								if (node == null) {
-				    				HistoryReference hr = new HistoryReference(session, HistoryReference.TYPE_TEMPORARY, msg);
-									node = session.getSiteTree().addPath(hr);
-								}
-								nodes.add(new StructuralSiteNode(node));
+						List<HttpMessage> msgs = (List<HttpMessage>)method.invoke(extZest, sw);
+						for (HttpMessage msg : msgs) {
+							SiteNode node = session.getSiteTree().findNode(msg, false);
+							if (node == null) {
+			    				HistoryReference hr = new HistoryReference(session, HistoryReference.TYPE_TEMPORARY, msg);
+								node = session.getSiteTree().addPath(hr);
 							}
+							nodes.add(new StructuralSiteNode(node));
 						}
 					}
 				}

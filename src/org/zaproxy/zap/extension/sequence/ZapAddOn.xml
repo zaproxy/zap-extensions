@@ -1,11 +1,16 @@
 <zapaddon>
 	<name>Sequence</name>
-	<version>2</version>
+	<version>3</version>
 	<status>alpha</status>
 	<description>Gives the possibility of defining a sequence of requests to be scanned.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated to latest core changes.</changes>
+	<changes>
+	<![CDATA[
+	Allow to dynamically unload the add-on.<br>
+	Other code changes.<br>
+	]]>
+	</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.sequence.ExtensionSequence</extension>
 	</extensions>

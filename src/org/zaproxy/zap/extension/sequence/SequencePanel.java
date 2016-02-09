@@ -33,10 +33,10 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.AbstractTableModel;
 
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.AbstractParamContainerPanel;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
@@ -49,28 +49,27 @@ public class SequencePanel extends AbstractParamPanel {
 	private static final long serialVersionUID = 1L;
 
 	private JTable tblSequence;
+	private SequenceScriptsTableModel scriptsTableModel;
+
+	private static final String PANEL_DESCRIPTION_LABEL = Constant.messages.getString("sequence.custom.tab.description");
 
 	private static final String BTNINCLUDESELECT = Constant.messages.getString("sequence.custom.tab.selectall.label");
 	private static final String BTNINCLUDEDESELECT = Constant.messages.getString("sequence.custom.tab.deselectall.label");
 	
 	private static final String TBLSEQHEADER0 = Constant.messages.getString("sequence.custom.tab.name.header");
 	private static final String TBLSEQHEADER1 = Constant.messages.getString("sequence.custom.tab.inc.header");
-	private static final String TBLSEQHEADER2 = Constant.messages.getString("sequence.custom.tab.script.header");
 	
 	private static final String HELPSTRING = "ui.dialogs.sequence";
 
 	private JButton btnInclude = null; 
 	private JButton btnHelp = null;
-
-	private boolean creating = false;
-
 	
 	/**
-	 * Creates a new instance of the Sequence Panel,
-	 * @param parent The Custom Scan Dialog, where the Sequence Panel will be added.
+	 * Creates a new instance of the Sequence Panel.
+	 * 
+	 * @param extensionScript the extension used to obtain the Sequence scripts.
 	 */
-	public SequencePanel() {
-		creating = true;
+	public SequencePanel(ExtensionScript extensionScript) {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
@@ -78,7 +77,7 @@ public class SequencePanel extends AbstractParamPanel {
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 
-		JLabel labelTop = new JLabel("Sequences are defined as scripts.");
+		JLabel labelTop = new JLabel(PANEL_DESCRIPTION_LABEL);
 		GridBagConstraints gbc_labelTop = new GridBagConstraints();
 		gbc_labelTop.anchor = GridBagConstraints.NORTHWEST;
 		gbc_labelTop.insets = new Insets(15, 15, 5, 0);
@@ -90,14 +89,16 @@ public class SequencePanel extends AbstractParamPanel {
 		btnInclude.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				boolean selectScripts;
 				if(btnInclude.getText().equals(BTNINCLUDESELECT)) {
-					setBooleanColumn(1, true);
+					selectScripts = true;
 					btnInclude.setText(BTNINCLUDEDESELECT);
 				}
 				else {
-					setBooleanColumn(1, false);
+					selectScripts = false;
 					btnInclude.setText(BTNINCLUDESELECT);
 				}
+				scriptsTableModel.setAllSelected(selectScripts);
 			}
 		});
 		GridBagConstraints gbc_btnInclude = new GridBagConstraints();
@@ -119,45 +120,18 @@ public class SequencePanel extends AbstractParamPanel {
 
 		tblSequence = new JTable();
 		
-		tblSequence.setModel(new DefaultTableModel(
-				new Object[][] {
-				},
-				new String[] {
-						TBLSEQHEADER0, TBLSEQHEADER1, TBLSEQHEADER2
-				}
-				) {
-			private static final long serialVersionUID = 1L;
-			@SuppressWarnings("rawtypes")
-			Class[] columnTypes = new Class[] {
-				String.class, Boolean.class, ScriptWrapper.class
-			};
-			@Override
-			@SuppressWarnings({ "unchecked", "rawtypes" })
-			public Class getColumnClass(int columnIndex) {
-				return columnTypes[columnIndex];
-			}
+		scriptsTableModel = new SequenceScriptsTableModel(extensionScript.getScripts(ExtensionSequence.TYPE_SEQUENCE));
+		tblSequence.setModel(scriptsTableModel);
 
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				if(column == 0)	{
-					return false;
-				}
-				return super.isCellEditable(row, column);
-			}
-		});
 		tblSequence.getColumnModel().getColumn(0).setPreferredWidth(525);
 		tblSequence.getColumnModel().getColumn(0).setMinWidth(25);
 		tblSequence.getColumnModel().getColumn(1).setPreferredWidth(100);
 		tblSequence.getColumnModel().getColumn(1).setMinWidth(100);
-		tblSequence.getColumnModel().getColumn(2).setPreferredWidth(0);
-		tblSequence.getColumnModel().getColumn(2).setMinWidth(0);
-		tblSequence.getColumnModel().getColumn(2).setMaxWidth(0);
 		scrollPane.setViewportView(tblSequence);
-		loadTableValues();
+
 
 		// TODO no help available yet
 		//add(getHelpButton());
-		creating = false;
 	}
 
 	private JButton getHelpButton() {
@@ -180,43 +154,12 @@ public class SequencePanel extends AbstractParamPanel {
 		return btnHelp;
 	}
 
-	private void loadTableValues() {
-		List<ScriptWrapper> scripts = getSequenceScripts();
-		DefaultTableModel dtm = (DefaultTableModel)tblSequence.getModel();
-
-		for(int i = 0; i < scripts.size(); i++) {
-			Object[] row = new Object[3];
-
-			ScriptWrapper sw = scripts.get(i);
-			row[0] = sw.getName();
-			row[1] = false;
-			row[2] = sw;
-			dtm.addRow(row);
-
-		}
-		tblSequence.setModel(dtm);
-	}
-
-	private void setBooleanColumn(int columnIndex, boolean value) {
-		for(int row = 0; row < tblSequence.getRowCount(); row++){
-			tblSequence.setValueAt(value, row, columnIndex);
-		}
-	}
-
 	/**
 	 * Gets a list of Sequence Scripts, that were selected in the "Include" column.
 	 * @return A list of the selected Sequence scripts in the "Include" column.
 	 */
 	public List<ScriptWrapper> getSelectedIncludeScripts() {
-		ArrayList<ScriptWrapper> sw = new ArrayList<ScriptWrapper>();
-		for(int i = 0; i < tblSequence.getModel().getRowCount(); i++) {
-			boolean selected = (boolean)tblSequence.getValueAt(i, 1);
-			if(selected) {
-				ScriptWrapper script = (ScriptWrapper)tblSequence.getValueAt(i, 2);
-				sw.add(script);
-			}
-		}
-		return sw;
+		return scriptsTableModel.getSelectedScripts();
 	}
 
 	
@@ -239,12 +182,116 @@ public class SequencePanel extends AbstractParamPanel {
 		return null;
 	}
 	
-	/**
-	 * Fetches all the Sequence Scripts.
-	 * @return A list of all Sequence Scripts.
-	 */
-	private List<ScriptWrapper> getSequenceScripts() {
-		ExtensionScript extScript = (ExtensionScript) Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-		return extScript.getScripts("sequence");
+	private static class SequenceScriptsTableModel extends AbstractTableModel {
+
+		private static final long serialVersionUID = 1L;
+
+		private static final String[] COLUMN_NAMES = { TBLSEQHEADER0, TBLSEQHEADER1 };
+
+		private static final int COLUMN_COUNT = COLUMN_NAMES.length;
+
+		private final List<ScriptWrapperUI> scriptsUI;
+
+		public SequenceScriptsTableModel(List<ScriptWrapper> scripts) {
+			scriptsUI = new ArrayList<>(scripts.size());
+			for (ScriptWrapper sw : scripts) {
+				scriptsUI.add(new ScriptWrapperUI(sw));
+			}
+		}
+
+		@Override
+		public String getColumnName(int col) {
+			return COLUMN_NAMES[col];
+		}
+
+		@Override
+		public int getColumnCount() {
+			return COLUMN_COUNT;
+		}
+
+		@Override
+		public int getRowCount() {
+			return scriptsUI.size();
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			if (columnIndex == 1) {
+				return Boolean.valueOf(scriptsUI.get(rowIndex).isSelected());
+			}
+			return scriptsUI.get(rowIndex).getName();
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			if (column == 1) {
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+			if (columnIndex == 1) {
+				scriptsUI.get(rowIndex).setSelected(((Boolean) aValue).booleanValue());
+				fireTableCellUpdated(rowIndex, columnIndex);
+			}
+		}
+
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			if (columnIndex == 1) {
+				return Boolean.class;
+			}
+			return String.class;
+		}
+
+		public List<ScriptWrapper> getSelectedScripts() {
+			ArrayList<ScriptWrapper> sws = new ArrayList<>(scriptsUI.size());
+			for (ScriptWrapperUI swUI : scriptsUI) {
+				if (swUI.isSelected()) {
+					sws.add(swUI.getScriptWrapper());
+				}
+			}
+			sws.trimToSize();
+			return sws;
+		}
+
+		public void setAllSelected(boolean selected) {
+			final int size = scriptsUI.size();
+			if (size > 0) {
+				for (ScriptWrapperUI swUI : scriptsUI) {
+					swUI.setSelected(selected);
+				}
+
+				fireTableChanged(new TableModelEvent(this, 0, size - 1, 1, TableModelEvent.UPDATE));
+			}
+		}
+
+		private static class ScriptWrapperUI {
+
+			private final ScriptWrapper script;
+			private boolean selected;
+
+			public ScriptWrapperUI(ScriptWrapper script) {
+				this.script = script;
+			}
+
+			public boolean isSelected() {
+				return selected;
+			}
+
+			public void setSelected(boolean selected) {
+				this.selected = selected;
+			}
+
+			public String getName() {
+				return script.getName();
+			}
+
+			public ScriptWrapper getScriptWrapper() {
+				return script;
+			}
+		}
 	}
 }
