@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.sequence;
 
 import java.net.HttpCookie;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Scanner;
 import org.parosproxy.paros.core.scanner.ScannerHook;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -45,14 +47,24 @@ import org.zaproxy.zap.extension.script.SequenceScript;
 
 public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
+	private static final List<Class<?>> DEPENDENCIES;
+
 	private ExtensionScript extScript;
 	private ExtensionActiveScan extActiveScan;
 	public static final Logger logger = Logger.getLogger(ExtensionSequence.class);
 	public static final ImageIcon ICON = new ImageIcon(ExtensionSequence.class.getResource("/org/zaproxy/zap/extension/sequence/resources/icons/script-sequence.png"));
 	public static final String TYPE_SEQUENCE = "sequence";
 
+	static {
+		List<Class<?>> dependencies = new ArrayList<>(1);
+		dependencies.add(ExtensionScript.class);
+		DEPENDENCIES = Collections.unmodifiableList(dependencies);
+	}
+
 	private List<ScriptWrapper> directScripts = null;
-	private SequenceAscanPanel sequencePanel = new SequenceAscanPanel();
+	private SequenceAscanPanel sequencePanel;
+
+	private ScriptType scriptType;
 
 	public ExtensionSequence() {
 		super("ExtensionSequence");
@@ -60,19 +72,40 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 		
 	}
 	
-	public void postInit() {
+	@Override
+	public void initView(ViewDelegate view) {
+		super.initView(view);
+
 		ExtensionActiveScan extAscan = getExtActiveScan();
 		if (extAscan != null) {
-			extAscan.addCustomScanPanel(sequencePanel);
+			sequencePanel = new SequenceAscanPanel(getExtScript());
 		}
 	}
 	
+	@Override
+	public void postInit() {
+		if (sequencePanel != null) {
+			getExtActiveScan().addCustomScanPanel(sequencePanel);
+		}
+	}
+
+	@Override
+	public List<Class<?>> getDependencies() {
+		return DEPENDENCIES;
+	}
+	
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
+	
+	@Override
 	public void unload() {
 		super.unload();
-		ExtensionActiveScan extAscan = getExtActiveScan();
-		if (extAscan != null) {
-			extAscan.removeCustomScanPanel(sequencePanel);
+		if (sequencePanel != null) {
+			getExtActiveScan().removeCustomScanPanel(sequencePanel);
 		}
+		getExtScript().removeScripType(scriptType);
 	}
 
 	@Override
@@ -89,11 +122,14 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 	@Override
 	public void hook(ExtensionHook extensionhook) {
 		super.hook(extensionhook);
-		//Create a new sequence script type and register
-		ScriptType type = new ScriptType(TYPE_SEQUENCE, "script.type.sequence", ICON, false, new String[] {"append"});
-		getExtScript().registerScriptType(type);
 		
-		extensionhook.getHookMenu().addPopupMenuItem(new SequencePopupMenuItem(this));
+		//Create a new sequence script type and register
+		scriptType = new ScriptType(TYPE_SEQUENCE, "script.type.sequence", ICON, false, new String[] {"append"});
+		getExtScript().registerScriptType(scriptType);
+
+		if (getView() != null) {
+			extensionhook.getHookMenu().addPopupMenuItem(new SequencePopupMenuItem(this, getExtScript()));
+		}
 
 		//Add class as a scannerhook (implements the scannerhook interface)
 		extensionhook.addScannerHook(this);
@@ -155,7 +191,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 	}
 	
 	public void setDirectScanScript(ScriptWrapper script) {
-		directScripts = new ArrayList<ScriptWrapper>();
+		directScripts = new ArrayList<>();
 		directScripts.add(script);
 	}
 
@@ -167,14 +203,14 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
 	private ExtensionScript getExtScript() {
 		if(extScript == null) {
-			extScript = (ExtensionScript) Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+			extScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
 		}
 		return extScript;
 	}
 
 	private ExtensionActiveScan getExtActiveScan(){
 		if(extActiveScan == null){
-			extActiveScan = (ExtensionActiveScan) Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.class);
+			extActiveScan = Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.class);
 		}
 		return extActiveScan;
 	}
