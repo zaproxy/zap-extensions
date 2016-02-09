@@ -18,7 +18,11 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Random;
+
+import org.apache.commons.httpclient.InvalidRedirectLocationException;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -171,8 +175,16 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
         try {
             // Set the expression value
             setParameter(msg, paramName, payload);
+            try {
             // Send the request and retrieve the response
             sendAndReceive(msg);
+            } catch (InvalidRedirectLocationException|URIException|
+            		UnknownHostException|IllegalArgumentException ex) {
+            	log.info("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+						"\n The target may have replied with a poorly formed redirect due to our input.");
+            	return;
+            }
             // Check if the resulting content contains the executed addition
             if (msg.getResponseBody().toString().contains(addedString)) {
                 // We Found IT!

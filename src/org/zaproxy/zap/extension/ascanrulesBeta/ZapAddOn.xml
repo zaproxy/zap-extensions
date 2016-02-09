@@ -13,6 +13,7 @@
 	Add CWE and WASC IDs to active scanners which may have been lacking those details.<br>
 	Create help for scanners which were missing entries.<br>
 	Issue 2180: Adjust logging, and implement plugin skip if runtime requirements not met.</br>
+	Issue 2174: Adjust logging, catch specific exceptions.
     ]]>
 	</changes>
 	<extensions>
