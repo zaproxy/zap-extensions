@@ -351,6 +351,7 @@
 		<build-addon name="callgraph" />
 		<build-addon name="cmss" />
 		<build-addon name="codedx"/>
+		<build-addon name="communityScripts"/>
 		<build-addon name="customreport"/>
 		<build-addon name="domxss"/>
 		<build-addon name="help_bs_BA" />
@@ -479,6 +480,14 @@
 		<build-deploy-addon name="codedx" />
 	</target>
 	
+	<target name="deploy-communityScripts" description="deploy the communityScripts extension">
+		<build-deploy-addon name="communityScripts" />
+	</target>
+	
+	<target name="generate-wiki-communityScripts" description="Generates the wiki for communityScripts">
+		<generate-wiki addon="communityScripts" />
+	</target>
+
 	<target name="deploy-customreport" description="deploy the custom reporting extension">
 		<build-deploy-addon name="customreport" />
 	</target>

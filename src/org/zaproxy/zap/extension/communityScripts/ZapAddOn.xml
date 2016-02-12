@@ -1,0 +1,81 @@
+<zapaddon>
+	<name>Community Scripts</name>
+	<version>1</version>
+	<status>alpha</status>
+	<description>Useful ZAP scripts written by the ZAP community.</description>
+	<author>ZAP Community</author>
+	<url>https://github.com/zaproxy/community-scripts</url>
+	<changes>
+	<![CDATA[
+	First packaged version<br>
+	]]>
+	</changes>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.communityScripts.ExtensionCommunityScripts</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
+		<file>community-scripts/active/README.md</file>
+		<file>community-scripts/active/gof_lite.js</file>
+		<file>community-scripts/authentication/MediaWikiApiAuthentication.js</file>
+		<file>community-scripts/authentication/MediaWikiAuthentication.js</file>
+		<file>community-scripts/authentication/README.md</file>
+		<file>community-scripts/httpfuzzerprocessor/README.md</file>
+		<file>community-scripts/httpfuzzerprocessor/http_status_code_filter.py</file>
+		<file>community-scripts/httpsender/Capture and Replace Anti CSRF Token.js</file>
+		<file>community-scripts/httpsender/README.md</file>
+		<file>community-scripts/passive/CookieHTTPOnly.js</file>
+		<file>community-scripts/passive/Find Credit Cards.js</file>
+		<file>community-scripts/passive/Find Emails.js</file>
+		<file>community-scripts/passive/Find HTML Comments.js</file>
+		<file>community-scripts/passive/Find Hashes.js</file>
+		<file>community-scripts/passive/Find Internal IPs.js</file>
+		<file>community-scripts/passive/Mutliple Security Header Check.js</file>
+		<file>community-scripts/passive/README.md</file>
+		<file>community-scripts/passive/RPO.js</file>
+		<file>community-scripts/passive/Server Header Disclosure.js</file>
+		<file>community-scripts/passive/X-Powered-By_header_checker.js</file>
+		<file>community-scripts/passive/clacks.js</file>
+		<file>community-scripts/passive/f5_bigip_cookie_internal_ip.js</file>
+		<file>community-scripts/passive/find base64 strings.js</file>
+		<file>community-scripts/payloadgenerator/README.md</file>
+		<file>community-scripts/payloadgenerator/bruteforce.py</file>
+		<file>community-scripts/payloadprocessor/README.md</file>
+		<file>community-scripts/payloadprocessor/deflate_gzip_encoding.py</file>
+		<file>community-scripts/proxy/Change all POSTs to GETs.zst</file>
+		<file>community-scripts/proxy/Drop requests not in scope.js</file>
+		<file>community-scripts/proxy/Drop requests via URL regexes.zst</file>
+		<file>community-scripts/proxy/README.md</file>
+		<file>community-scripts/proxy/Remove CSP.zst</file>
+		<file>community-scripts/proxy/Replace in request body.zst</file>
+		<file>community-scripts/proxy/Replace in request header.zst</file>
+		<file>community-scripts/proxy/Replace in response body.zst</file>
+		<file>community-scripts/proxy/Replace in response header.zst</file>
+		<file>community-scripts/proxy/Return fake response.js</file>
+		<file>community-scripts/proxy/Useragent Replace.js</file>
+		<file>community-scripts/proxy/WAF_Bypass.js</file>
+		<file>community-scripts/sequence/README.md</file>
+		<file>community-scripts/standalone/Active scan rule list.js</file>
+		<file>community-scripts/standalone/Loop through history table.js</file>
+		<file>community-scripts/standalone/Open Fortune 500 websites in a browser.zst</file>
+		<file>community-scripts/standalone/Persona Create Account.zst</file>
+		<file>community-scripts/standalone/README.md</file>
+		<file>community-scripts/standalone/Run report.js</file>
+		<file>community-scripts/standalone/Traverse sites tree.js</file>
+		<file>community-scripts/targeted/ElasticSearchExploit.js</file>
+		<file>community-scripts/targeted/Find HTML comments.js</file>
+		<file>community-scripts/targeted/Find largest subtree.js</file>
+		<file>community-scripts/targeted/README.md</file>
+		<file>community-scripts/targeted/Remove 302s.js</file>
+		<file>community-scripts/targeted/Resend as a GET request.zst</file>
+		<file>community-scripts/targeted/Search www.xssposed.org for known XSS.js</file>
+		<file>community-scripts/targeted/curl_command_generator.js</file>
+		<file>community-scripts/targeted/json_csrf_poc_generator</file>
+		<file>community-scripts/targeted/search cvedetails using target server header.js</file>
+		<file>community-scripts/variant/README.md</file>
+	</files>
+	<not-before-version>2.4.3</not-before-version>
+	<not-from-version/>
+</zapaddon>

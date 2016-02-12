@@ -1,0 +1,220 @@
+{
+  "about": "This is a Zest script. For more details about Zest visit https://developer.mozilla.org/en-US/docs/Zest",
+  "zestVersion": "0.8",
+  "title": "Persona Create Account",
+  "description": "Create a new Persona account using a random Mailinator email address.\nThe script logs into Mailinator to click on the confirmation email.",
+  "prefix": "",
+  "type": "StandAlone",
+  "parameters": {
+    "tokenStart": "{{",
+    "tokenEnd": "}}",
+    "tokens": {},
+    "elementType": "ZestVariables"
+  },
+  "statements": [
+    {
+      "comment": "Register a new random Mailinator acc with Persona",
+      "index": 1,
+      "elementType": "ZestComment"
+    },
+    {
+      "windowHandle": "firefox",
+      "browserType": "firefox",
+      "url": "https://login.persona.org/",
+      "index": 2,
+      "elementType": "ZestClientLaunch"
+    },
+    {
+      "windowHandle": "firefox",
+      "type": "partiallinktext",
+      "element": "Sign In",
+      "index": 3,
+      "elementType": "ZestClientElementClick"
+    },
+    {
+      "minInt": 0,
+      "maxInt": 2147483647,
+      "variableName": "rnd",
+      "index": 4,
+      "elementType": "ZestAssignRandomInteger"
+    },
+    {
+      "string": "zap-persona-{{rnd}}",
+      "variableName": "name",
+      "index": 5,
+      "elementType": "ZestAssignString"
+    },
+    {
+      "string": "{{name}}@mailinator.com",
+      "variableName": "email",
+      "index": 6,
+      "elementType": "ZestAssignString"
+    },
+    {
+      "windowHandle": "login",
+      "url": "https://login.persona.org/sign_in",
+      "regex": false,
+      "index": 7,
+      "elementType": "ZestClientWindowHandle"
+    },
+    {
+      "comment": "Fill in the Persona popup window",
+      "index": 8,
+      "elementType": "ZestComment"
+    },
+    {
+      "value": "{{email}}",
+      "windowHandle": "firefox",
+      "type": "id",
+      "element": "authentication_email",
+      "index": 9,
+      "elementType": "ZestClientElementSendKeys"
+    },
+    {
+      "windowHandle": "firefox",
+      "type": "id",
+      "element": "authentication_email",
+      "index": 10,
+      "elementType": "ZestClientElementSubmit"
+    },
+    {
+      "value": "{{email}}",
+      "windowHandle": "firefox",
+      "type": "id",
+      "element": "password",
+      "index": 11,
+      "elementType": "ZestClientElementSendKeys"
+    },
+    {
+      "value": "{{email}}",
+      "windowHandle": "firefox",
+      "type": "id",
+      "element": "vpassword",
+      "index": 12,
+      "elementType": "ZestClientElementSendKeys"
+    },
+    {
+      "windowHandle": "firefox",
+      "type": "id",
+      "element": "password",
+      "index": 13,
+      "elementType": "ZestClientElementSubmit"
+    },
+    {
+      "milliseconds": 2000,
+      "index": 14,
+      "elementType": "ZestActionSleep"
+    },
+    {
+      "comment": "Log into Mailinator",
+      "index": 15,
+      "elementType": "ZestComment"
+    },
+    {
+      "windowHandle": "mailinator",
+      "browserType": "firefox",
+      "url": "http://mailinator.com/inbox.jsp?to\u003d{{name}}",
+      "index": 16,
+      "elementType": "ZestClientLaunch"
+    },
+    {
+      "set": {
+        "start": 0,
+        "end": 20,
+        "step": 1,
+        "elementType": "ZestLoopTokenIntegerSet"
+      },
+      "statements": [
+        {
+          "comment": "Loop, sleeping for 1 sec until the confirm email arrives, then click on it",
+          "index": 2,
+          "elementType": "ZestComment"
+        },
+        {
+          "rootExpression": {
+            "windowHandle": "mailinator",
+            "type": "partiallinktext",
+            "element": "Persona",
+            "not": false,
+            "elementType": "ZestExpressionClientElementExists"
+          },
+          "ifStatements": [
+            {
+              "windowHandle": "mailinator",
+              "type": "partiallinktext",
+              "element": "Persona",
+              "index": 0,
+              "elementType": "ZestClientElementClick"
+            },
+            {
+              "index": 0,
+              "elementType": "ZestControlLoopBreak"
+            }
+          ],
+          "elseStatements": [
+            {
+              "milliseconds": 1000,
+              "index": 4,
+              "elementType": "ZestActionSleep"
+            },
+            {
+              "message": "sleeping..",
+              "index": 5,
+              "elementType": "ZestActionPrint"
+            }
+          ],
+          "index": 1,
+          "elementType": "ZestConditional"
+        }
+      ],
+      "variableName": "",
+      "index": 17,
+      "elementType": "ZestLoopInteger"
+    },
+    {
+      "windowHandle": "mailinator",
+      "frameIndex": 1,
+      "frameName": "",
+      "parent": false,
+      "index": 17,
+      "elementType": "ZestClientSwitchToFrame"
+    },
+    {
+      "windowHandle": "mailinator",
+      "type": "partiallinktext",
+      "element": "Confirm your",
+      "index": 18,
+      "elementType": "ZestClientElementClick"
+    },
+    {
+      "comment": "Go to the new Persona window and login",
+      "index": 19,
+      "elementType": "ZestComment"
+    },
+    {
+      "windowHandle": "confirm",
+      "url": "https://login.persona.org/verify_email_address.*",
+      "regex": true,
+      "index": 19,
+      "elementType": "ZestClientWindowHandle"
+    },
+    {
+      "value": "{{email}}",
+      "windowHandle": "confirm",
+      "type": "id",
+      "element": "password",
+      "index": 20,
+      "elementType": "ZestClientElementSendKeys"
+    },
+    {
+      "windowHandle": "confirm",
+      "type": "id",
+      "element": "password",
+      "index": 21,
+      "elementType": "ZestClientElementSubmit"
+    }
+  ],
+  "authentication": [],
+  "index": 0,
+  "elementType": "ZestScript"
+}
