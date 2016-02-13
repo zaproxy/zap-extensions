@@ -722,11 +722,13 @@ public class SQLiUnionEngine {
         int found = -1;
         
         if (orderByTest(1) && !orderByTest(new Integer(SQLiPayloadManager.randomInt()))) {
-            log.info("ORDER BY technique seems to be usable. "
-                    + "This should reduce the time needed "
-                    + "to find the right number "
-                    + "of query columns. Automatically extending the "
-                    + "range for current UNION query injection technique test");
+            if (log.isDebugEnabled()) {
+                log.debug("ORDER BY technique seems to be usable. "
+                        + "This should reduce the time needed "
+                        + "to find the right number "
+                        + "of query columns. Automatically extending the "
+                        + "range for current UNION query injection technique test");
+            }
 
             int lowCols = 1;
             int highCols = ORDER_BY_STEP;
@@ -817,7 +819,9 @@ public class SQLiUnionEngine {
         if (lowerCount == 1) {
             int found = orderByTechnique();
             if (found >= 0) {
-                log.info("target url appears to have " + found + " column in query");
+                if (log.isDebugEnabled()) {
+                    log.debug("target url appears to have " + found + " column in query");
+                }
                 return found;
             }
         }

@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.httpclient.CircularRedirectException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
@@ -44,6 +45,9 @@ import org.zaproxy.zap.model.TechSet;
  * @author yhawke (2013)
  */
 public class SQLInjectionPlugin extends AbstractAppParamPlugin {
+
+    private static final String SCANNER_MESSAGE_PREFIX = "sqliplugin.scanner.";
+    private static final String ALERT_MESSAGE_PREFIX = SCANNER_MESSAGE_PREFIX + "alert.";
 
     // ------------------------------------------------------------------
     // Plugin Constants
@@ -144,7 +148,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getName() {
-        return "Advanced SQL Injection";
+        return Constant.messages.getString(SCANNER_MESSAGE_PREFIX + "name");
     }
 
     /**
@@ -153,7 +157,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getDescription() {
-        return "A SQL injection may be possible using the attached payload";
+        return Constant.messages.getString(ALERT_MESSAGE_PREFIX + "desc");
     }
 
     /**
@@ -162,18 +166,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getSolution() {
-        return "Do not trust client side input, even if there is client side validation in place.\n"
-                + "In general, type check all data on the server side.\n"
-                + "If the application uses JDBC, use PreparedStatement or CallableStatement, with parameters passed by '?'\n"
-                + "If the application uses ASP, use ADO Command Objects with strong type checking and parameterized queries.\n"
-                + "If database Stored Procedures can be used, use them.\n"
-                + "Do *not* concatenate strings into queries in the stored procedure, or use 'exec', 'exec immediate', or equivalent functionality!\n"
-                + "Do not create dynamic SQL queries using simple string concatenation.\n"
-                + "Escape all data received from the client.\n"
-                + "Apply a 'whitelist' of allowed characters, or a 'blacklist' of disallowed characters in user input.\n"
-                + "Apply the privilege of least privilege by using the least privileged database user possible.\n"
-                + "In particular, avoid using the 'sa' or 'db-owner' database users. This does not eliminate SQL injection, but minimizes its impact.\n"
-                + "Grant the minimum database access that is necessary for the application.";
+        return Constant.messages.getString(ALERT_MESSAGE_PREFIX + "soln");
     }
 
     /**
@@ -182,8 +175,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public String getReference() {
-        return "https://www.owasp.org/index.php/Top_10_2010-A1\n"
-                + "https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet";
+        return Constant.messages.getString(ALERT_MESSAGE_PREFIX + "refs");
     }
 
     /**
@@ -752,31 +744,18 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 if (!responseMatcher.isComparable()) {
                                     // We Found IT! 
                                     // Now create the alert message
-                                    StringBuilder info = new StringBuilder();
-                                    info.append("The page results were successfully manipulated using the boolean conditions [");
-                                    info.append(reqPayload);
-                                    info.append("] and [");
-                                    info.append(cmpPayload);
-                                    info.append("]\nThe parameter value being modified was ");
-                                    info.append("stripped from the HTML output for the purposes of the comparison.\n");
-                                    info.append("Data was returned for the original parameter.\n");
-                                    info.append("The vulnerability was detected by successfully restricting the data originally returned, by manipulating the parameter");
+                                    String info = Constant.messages.getString(
+                                            ALERT_MESSAGE_PREFIX + "info.booleanbased",
+                                            reqPayload,
+                                            cmpPayload);
 
                                     // Do logging
-                                    log.info("[BOOLEAN-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                    if (log.isDebugEnabled()) {
+                                        log.debug("[BOOLEAN-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                    }
                                     
                                     // Alert the vulnerability to the main core
-                                    this.bingo(
-                                            Alert.RISK_HIGH,
-                                            Alert.CONFIDENCE_MEDIUM, 
-                                            getName() + " - " + title,
-                                            getDescription(),
-                                            null,
-                                            parameter,
-                                            reqPayload,
-                                            info.toString(),
-                                            getSolution(),
-                                            tempMsg);
+                                    raiseAlert(title, parameter, reqPayload, info, tempMsg);
 
                                     // Close the boundary/where iteration
                                     injectable = true;
@@ -845,30 +824,17 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             if ((output != null) && output.equals("1")) {
                                 // We Found IT! 
                                 // Now create the alert message
-                                StringBuilder info = new StringBuilder();
-                                info.append("RDBMS [");
-                                info.append(currentDbms.getName());
-                                info.append("] likely, given error message fragment [");
-                                info.append(checkString);
-                                info.append("] in HTML results.\n"
-                                        + "The vulnerability was detected by manipulating the parameter to cause "
-                                        + "a database error message to be returned and recognised");
+                                String info = Constant.messages.getString(
+                                        ALERT_MESSAGE_PREFIX + "info.errorbased",
+                                        currentDbms.getName(),
+                                        checkString);
 
                                 // Do logging
-                                log.info("[ERROR-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                if (log.isDebugEnabled()) {
+                                    log.debug("[ERROR-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                }
 
-                                // Alert the vulnerability to the main core
-                                this.bingo(
-                                        Alert.RISK_HIGH,
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        getName() + " - " + title,
-                                        getDescription(),
-                                        null,
-                                        parameter,
-                                        reqPayload,
-                                        info.toString(),
-                                        getSolution(),
-                                        tempMsg);
+                                raiseAlert(title, parameter, reqPayload, info, tempMsg);
                                 
                                 
                                 // Close the boundary/where iteration                                    
@@ -945,32 +911,19 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                                 if (lastResponseTime >= lowerLimit) {
                                     // We Found IT! 
                                     // Now create the alert message
-                                    StringBuilder info = new StringBuilder();
-                                    info.append("The query time is controllable using parameter value [");
-                                    info.append(reqPayload);
-                                    info.append("], which caused the request to take [");
-                                    info.append(lastResponseTime);
-                                    info.append("] milliseconds, when the original unmodified query with value [");
-                                    info.append(payloadValue);
-                                    info.append("] took on average [");
-                                    info.append(getResponseTimeAverage());
-                                    info.append("] milliseconds");
+                                    String info = Constant.messages.getString(
+                                            ALERT_MESSAGE_PREFIX + "info.timebased",
+                                            reqPayload,
+                                            lastResponseTime,
+                                            payloadValue,
+                                            getResponseTimeAverage());
 
                                     // Do logging
-                                    log.info("[TIME-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                    if (log.isDebugEnabled()) {
+                                        log.debug("[TIME-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                    }
 
-                                    // Alert the vulnerability to the main core
-                                    this.bingo(
-                                            Alert.RISK_HIGH,
-                                            Alert.CONFIDENCE_MEDIUM,
-                                            getName() + " - " + title,
-                                            getDescription(),
-                                            null,
-                                            parameter,
-                                            reqPayload,
-                                            info.toString(),
-                                            getSolution(),
-                                            tempMsg);
+                                    raiseAlert(title, parameter, reqPayload, info, tempMsg);
 
                                     // Close the boundary/where iteration
                                     injectable = true;
@@ -1024,28 +977,18 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
                             if (engine.isUnionPayloadExploitable()) {
                                 // We Found IT! 
                                 // Now create the alert message
-                                StringBuilder info = new StringBuilder();
-                                info.append("RDBMS [");
-                                info.append(currentDbms.getName());
-                                info.append("] likely, given UNION-specific error message fragment for [");
-                                info.append(engine.getExploitColumnsCount());
-                                info.append("] columns\nThe vulnerability was detected by manipulating the parameter with an SQL 'UNION' clause to cause a database error message to be returned and recognised.");
+                                String info = Constant.messages.getString(
+                                        ALERT_MESSAGE_PREFIX + "info.unionbased",
+                                        currentDbms.getName(),
+                                        engine.getExploitColumnsCount());
 
                                 // Do logging
-                                log.info("[UNION-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                if (log.isDebugEnabled()) {
+                                    log.debug("[UNION-BASED Injection Found] " + title + " with payload [" + reqPayload + "] on parameter '" + parameter + "'");
+                                }
 
                                 // Alert the vulnerability to the main core
-                                this.bingo(
-                                        Alert.RISK_HIGH,
-                                        Alert.CONFIDENCE_MEDIUM,
-                                        getName() + " - " + title,
-                                        getDescription(),
-                                        null,
-                                        parameter,
-                                        engine.getExploitPayload(),
-                                        info.toString(),
-                                        getSolution(),
-                                        engine.getExploitMessage());
+                                raiseAlert(title, parameter, engine.getExploitPayload(), info, engine.getExploitMessage());
                                 
                                 // Close the boundary/where iteration                                    
                                 injectable = true;
@@ -1084,9 +1027,23 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         }
         
         // check if the parameter is not injectable
-        if (injectableTechniques == 0) {
-            log.info("Parameter '" + parameter + "' is not injectable");
+        if (injectableTechniques == 0 && log.isDebugEnabled()) {
+            log.debug("Parameter '" + parameter + "' is not injectable");
         }
+    }
+
+    private void raiseAlert(String subTitle, String parameter, String payload, String otherInfo, HttpMessage message) {
+        this.bingo(
+                Alert.RISK_HIGH,
+                Alert.CONFIDENCE_MEDIUM, 
+                Constant.messages.getString(ALERT_MESSAGE_PREFIX + "name", subTitle),
+                getDescription(),
+                null,
+                parameter,
+                payload,
+                otherInfo,
+                getSolution(),
+                message);
     }
 
     /**
@@ -1099,6 +1056,10 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      * @return
      */
     public HttpMessage sendPayload(String paramName, String payload, boolean recordResponseTime) {
+        if (isStop()) {
+            return null;
+        }
+
         HttpMessage tempMsg;
 
         // Get the HTTP request
@@ -1135,9 +1096,9 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             sendAndReceive(tempMsg, true);
             lastResponseTime = System.currentTimeMillis() - lastResponseTime;
 
-            // If trace is enabled log the entire request sent to the target
-            if (log.isTraceEnabled()) {
-                log.trace(tempMsg.getRequestHeader().toString() + "\n" + tempMsg.getRequestBody().toString());
+            // If debug is enabled log the entire request sent to the target
+            if (log.isDebugEnabled()) {
+                log.debug(tempMsg.getRequestHeader().toString() + "\n" + tempMsg.getRequestBody().toString());
             }
 
             // generic SQL warning/error messages            
