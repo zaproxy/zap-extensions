@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.net.SocketException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -196,6 +197,9 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 			catch (java.net.SocketTimeoutException e) {
 				//to be expected occasionally, if the base query was one that contains some parameters exploiting time based SQL injection?
 				if ( this.debugEnabled ) log.debug("The Base Time Check timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"]");
+			} catch (SocketException ex) {
+				if ( this.debugEnabled ) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + " when accessing: " + msgTimeBaseline.getRequestHeader().getURI().toString());
+				return; // No need to keep going
 			}
 			long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
 			//if the time was very slow (because JSP was being compiled on first call, for instance)
@@ -210,6 +214,9 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 				catch (java.net.SocketTimeoutException e) {
 					//to be expected occasionally, if the base query was one that contains some parameters exploiting time based SQL injection?
 					if ( this.debugEnabled ) log.debug("Base Time Check 2 timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"]");
+				} catch (SocketException ex) {
+					if ( this.debugEnabled ) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + " when accessing: " + msgTimeBaseline.getRequestHeader().getURI().toString());
+					return; // No need to keep going
 				}
 				long originalTimeUsed2 = System.currentTimeMillis() - originalTimeStarted2;
 				if ( originalTimeUsed2 > 5000 ) {
@@ -244,7 +251,10 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 				}
 				catch (java.net.SocketTimeoutException e) {
 					//to be expected occasionally, if the contains some parameters exploiting time based SQL injection
-					if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+					if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msg3.getRequestHeader().getMethod()+"] URL ["+msg3.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+				} catch (SocketException ex) {
+					if ( this.debugEnabled ) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + " when accessing: " + msg3.getRequestHeader().getURI().toString());
+					return; // No need to keep going
 				}
 				long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
 
