@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Community Scripts</name>
-	<version>1</version>
+	<version>2</version>
 	<status>alpha</status>
 	<description>Useful ZAP scripts written by the ZAP community.</description>
 	<author>ZAP Community</author>
 	<url>https://github.com/zaproxy/community-scripts</url>
 	<changes>
 	<![CDATA[
-	First packaged version<br>
+	Fixed bug which prevents ZAP configs from being saved correctly<br>
 	]]>
 	</changes>
 	<extensions>

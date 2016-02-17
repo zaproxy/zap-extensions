@@ -53,11 +53,12 @@ public class ExtensionCommunityScripts extends ExtensionAdaptor {
 
 	@Override
 	public String getName() {
-		if (Constant.messages.containsKey("communityScripts.name")) {
-			return Constant.messages.getString("communityScripts.name");
-		}
-		// Needed for initialisation when the message file wont have been loaded
-		return "Community Scripts";
+		return "ExtensionCommunityScripts";
+	}
+
+	@Override
+	public String getUIName() {
+		return Constant.messages.getString("communityScripts.name");
 	}
 
 	@Override
