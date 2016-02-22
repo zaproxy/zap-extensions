@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.net.SocketException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -222,6 +223,9 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 			catch (java.net.SocketTimeoutException e) {
 				//to be expected occasionally, if the base query was one that contains some parameters exploiting time based SQL injection?
 				if ( this.debugEnabled ) log.debug("The Base Time Check timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"]");
+			} catch (SocketException ex) {
+				if ( this.debugEnabled ) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + " when accessing: " + msgTimeBaseline.getRequestHeader().getURI().toString());
+				return; // No need to keep going
 			}
 			long originalTimeUsed = System.currentTimeMillis() - originalTimeStarted;
 			//end of timing baseline check
@@ -249,6 +253,9 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 				catch (java.net.SocketTimeoutException e) {
 					//this is to be expected, if we start sending slow queries to the database.  ignore it in this case.. and just get the time.
 					if ( this.debugEnabled ) log.debug("The time check query timed out on ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+				} catch (SocketException ex) {
+					if ( this.debugEnabled ) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + " when accessing: " + msgTimeBaseline.getRequestHeader().getURI().toString());
+					return; // No need to keep going
 				}
 				long modifiedTimeUsed = System.currentTimeMillis() - modifiedTimeStarted;
 
