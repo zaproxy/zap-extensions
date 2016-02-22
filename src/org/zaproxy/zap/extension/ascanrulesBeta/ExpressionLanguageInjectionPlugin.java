@@ -180,7 +180,7 @@ public class ExpressionLanguageInjectionPlugin extends AbstractAppParamPlugin {
             sendAndReceive(msg);
             } catch (InvalidRedirectLocationException|URIException|
             		UnknownHostException|IllegalArgumentException ex) {
-            	log.info("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+            	if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
 						" when accessing: " + msg.getRequestHeader().getURI().toString() + 
 						"\n The target may have replied with a poorly formed redirect due to our input.");
             	return;

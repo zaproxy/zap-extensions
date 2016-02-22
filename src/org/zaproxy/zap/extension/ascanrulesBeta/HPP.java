@@ -160,7 +160,7 @@ public class HPP extends AbstractAppPlugin {
 					try {
 						sendAndReceive(newMsg);
 					} catch (IllegalStateException|UnknownHostException ex) {
-						log.info("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
 								" when accessing: " + newMsg.getRequestHeader().getURI().toString() + 
 								"\n The target may have replied with a poorly formed redirect due to our input.");
 						return;
