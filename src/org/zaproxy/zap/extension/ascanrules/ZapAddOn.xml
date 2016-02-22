@@ -11,6 +11,7 @@
 	Issue 2001 - Add PowerShell variants to CommandInjection Plugin.<br>
 	Add CWE and WASC IDs to active scanners which may have been lacking those details.<br>
 	Add missing skip/stop checks to some scanners (Issue 1734).<br>
+	Remote File Include FP if original title includes 'Google' (Issue 2240).<br> 
 	]]>
     </changes>
 	<extensions>

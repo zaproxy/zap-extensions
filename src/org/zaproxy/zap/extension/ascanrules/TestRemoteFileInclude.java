@@ -67,9 +67,8 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title>Google</title>"),
-        Pattern.compile("<title>Google</title>"),
-        Pattern.compile("<title.*Google.*/title>"),
-        Pattern.compile("<title.*Google.*/title>")
+        Pattern.compile("<title.*?Google.*?/title>"),
+        Pattern.compile("<title.*?Google.*?/title>")
     };
     /**
      * The number of requests we will send per parameter, based on the attack
@@ -164,6 +163,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
             if (log.isDebugEnabled()) {
                 log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
             }
+            String origResponse = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
 
             // Set number of prefixes to check on the remote file names
             switch (this.getAttackStrength()) {
@@ -189,6 +189,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
             }
 
             Matcher matcher;
+            Matcher origMatcher;
 
             if (log.isDebugEnabled()) {
                 log.debug("Checking [" + getBaseMsg().getRequestHeader().getMethod() + "] [" + getBaseMsg().getRequestHeader().getURI()
@@ -214,10 +215,17 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
                     matcher = REMOTE_FILE_PATTERNS[i].matcher(response);
                     //if the output matches, and we get a 200
                     if (matcher.find() && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
-                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
-                                null, param, matcher.group(), null, msg);
-                        // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact) 
-                        return;
+                    	// And check that this isnt exactly the same as the original response
+                        origMatcher = REMOTE_FILE_PATTERNS[i].matcher(origResponse);
+                        if (origMatcher.find() && origMatcher.group().equals(matcher.group())) {
+                        	// Its the same as before
+                            log.debug("Not reporting alert - same title as original: " + matcher.group());
+                        } else {
+	                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
+	                                null, param, prefix + target, null, matcher.group(), msg);
+	                        // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact) 
+	                        return;
+                        }
                     }
                     
                     // Check if the scan has been stopped
