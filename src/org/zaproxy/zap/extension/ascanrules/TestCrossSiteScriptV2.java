@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.List;
+import java.net.UnknownHostException;
 
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
@@ -107,7 +108,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 		setParameter(msg2, param, attack);
         try {
 			sendAndReceive(msg2);
-    	} catch (InvalidRedirectLocationException e) {
+    	} catch (InvalidRedirectLocationException|UnknownHostException e) {
     		// Not an error, just means we probably attacked the redirect location
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -133,7 +134,12 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 			boolean attackWorked = false;
             HttpMessage msg2 = getNewMsg();
 			setParameter(msg2, param, Constant.getEyeCatcher());
-            sendAndReceive(msg2);
+            try {
+    			sendAndReceive(msg2);
+        	} catch (InvalidRedirectLocationException|UnknownHostException e) {
+        		// Not an error, just means we probably attacked the redirect location
+        		// Try the second eye catcher
+        	}
             
             if (isStop()) {
                 return;
@@ -153,7 +159,12 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             	// No luck - try again, appending the eyecatcher to the original value
     			msg2 = getNewMsg();
     			setParameter(msg2, param, value + Constant.getEyeCatcher());
-                sendAndReceive(msg2);
+                try {
+        			sendAndReceive(msg2);
+            	} catch (InvalidRedirectLocationException|UnknownHostException e) {
+            		//Second eyecatcher failed for some reason, no need to continue
+            		return;
+            	}              
                 hca = new HtmlContextAnalyser(msg2);
             	contexts = hca.getHtmlContexts(value + Constant.getEyeCatcher(), null, 0);
             }
@@ -387,8 +398,6 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             		}
             	}
             }
-    	} catch (InvalidRedirectLocationException e) {
-    		// Not an error, just means we probably attacked the redirect location
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

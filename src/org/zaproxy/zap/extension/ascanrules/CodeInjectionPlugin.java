@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.Random;
 
@@ -235,7 +236,13 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             
             try {
                 // Send the request and retrieve the response
-                sendAndReceive(msg, false);
+            	try {
+            		sendAndReceive(msg, false);
+            	} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg.getRequestHeader().getURI().toString());
+					continue; //Advance in the PHP payload loop, no point continuing on this payload
+				} 
                 
                 // Check if the injected content has been evaluated and printed
                 if (msg.getResponseBody().toString().contains(PHP_CONTROL_TOKEN)) {
@@ -305,8 +312,14 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
 
             try {
                 // Send the request and retrieve the response
-                sendAndReceive(msg, false);
-                
+            	try {
+            		sendAndReceive(msg, false);
+            	} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg.getRequestHeader().getURI().toString());
+					continue; //Advance in the ASP payload loop, no point continuing on this payload
+				}
+            	
                 // Check if the injected content has been evaluated and printed
                 if (msg.getResponseBody().toString().contains(Integer.toString(bignum1*bignum2))) {
                     // We Found IT!

@@ -28,8 +28,12 @@
 // ZAP: 2016/02/02 Add isStop() checks
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.InvalidRedirectLocationException;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -113,7 +117,12 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
         try {
             sendAndReceive(normalMsg);
-        } catch (Exception e) {
+        } catch (InvalidRedirectLocationException|SocketException|IllegalStateException|IllegalArgumentException|URIException|UnknownHostException ex) {
+			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+					" when accessing: " + normalMsg.getRequestHeader().getURI().toString() + 
+					"\n The target may have replied with a poorly formed redirect due to our input.");
+			return; //Something went wrong, no point continuing
+		} catch (Exception e) {
             // ZAP: Log exceptions
             log.warn(e.getMessage(), e);
             return;
@@ -135,11 +144,17 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
             }
             try {
-                sendAndReceive(msg);
+            	try {
+            		sendAndReceive(msg);
+            	} catch (InvalidRedirectLocationException|SocketException|IllegalStateException|IllegalArgumentException|URIException|UnknownHostException ex) {
+        			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+        					" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+        					"\n The target may have replied with a poorly formed redirect due to our input.");
+        			continue; //Something went wrong, move on to the next item in the PARAM_LIST
+        		}
                 if (checkResult(msg, param, attack, normalMsg.getResponseBody().toString())) {
                     return;
                 }
-
             } catch (Exception e) {
                 // ZAP: Log exceptions
                 log.warn(e.getMessage(), e);

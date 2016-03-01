@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -208,8 +209,15 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
                     msg = getNewMsg();
                     setParameter(msg, param, prefix + target);
 
-                    //send the modified request, and see what we get back
-                    sendAndReceive(msg);
+                  //send the modified request, and see what we get back
+                    try {
+                    	sendAndReceive(msg);
+                    } catch (IllegalStateException|UnknownHostException ex) {
+            			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+            					" when accessing: " + msg.getRequestHeader().getURI().toString());
+            			continue; //Something went wrong, continue to the next target in the loop
+            		} 
+                    
                     //does it match the pattern specified for that file name?
                     String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
                     matcher = REMOTE_FILE_PATTERNS[i].matcher(response);
@@ -239,7 +247,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
             }
 
         } catch (Exception e) {
-            log.error("Error scanning parameters for Path Traversal: " + e.getMessage());
+            log.error("Error scanning parameters for Path Traversal: " + e.getMessage() + " Caused by: " + e.getCause());
         }
     }
 

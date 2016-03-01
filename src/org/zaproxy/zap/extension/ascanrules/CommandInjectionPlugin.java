@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -401,7 +402,14 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             
             try {                
                 // Send the request and retrieve the response
-                sendAndReceive(msg, false);
+                try {
+                    sendAndReceive(msg, false);
+                } catch (SocketException ex) {
+        			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+        					" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+        					"\n The target may have replied with a poorly formed redirect due to our input.");
+        			continue; //Something went wrong, move to next payload iteration
+                }
                 elapsedTime = msg.getTimeElapsedMillis();
                 responseTimes.add(elapsedTime);
                                 
@@ -475,7 +483,14 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             
             try {                
                 // Send the request and retrieve the response
-                sendAndReceive(msg, false);
+                try {
+                    sendAndReceive(msg, false);
+                } catch (SocketException ex) {
+        			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+        					" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+        					"\n The target may have replied with a poorly formed redirect due to our input.");
+        			continue; //Something went wrong, move to next blind iteration
+                }
                 elapsedTime = msg.getTimeElapsedMillis();
 
                 // Check if enough time has passed                            
