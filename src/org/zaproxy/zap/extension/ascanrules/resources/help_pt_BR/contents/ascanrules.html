@@ -20,61 +20,25 @@ Se não existem semelhanças, o scanner vai construir pedidos com várias seqü�
 
 <h2>Cross Site Scripting (persistente)</h2>  Esta regra começa enviando um valor exclusivo 'seguro' e, em seguida, percorre todo o aplicativo para encontrar todos os locais em que ocorre aquele valor. <br>Em seguida, executa uma série de ataques da mesma forma que a versão 'refletida' faz, mas neste caso verifica todas as localizações do alvo em outras páginas. 
 
-<h2>CRLF Injection</h2>
-
-This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. If the response contains an identical Set-Cookie header,
-an alert is raised and the scanner returns immediately.
+<h2>Injeção CRLF</h2>  Esta regra envia vários caracteres especiais CRLF antes de um cabeçalho "Set-Cookie" injetado como parâmetro para o servidor. Se a resposta contém um cabeçalho Set-Cookie idêntico, um alerta é gerado e o scanner pára imediatamente.
 
 
-<h2>Directory Browsing</h2>
+<h2>Pesquisa de diretório</h2>  Esta regra verifica se uma solicitação vai fornecer acesso a uma listagem de diretório, buscando no corpo de resposta os padrões usados com Apache, IIS e outros servidores web.
 
-This rule checks to see if a request will provide access to a directory listing by examining the response body for patterns used with Apache, IIS
-and other web server software.
+<h2>Redirecionamento externo</h2>  Essa regra envia uma variedade de URLs de redirecionamento como parâmetros em uma solicitação e, em seguida, examina os cabeçalhos e corpos de respostas para determinar se redirecionamento ocorreu e de que tipo foi. A causa de redirecionamento é procurada nos campos de cabeçalho "Location" e "Refresh", bem como em tags meta HTML e Javascript no corpo da resposta. Um alerta é gerado, incluindo o tipo de redirecionamento, e o scanner pára imediatamente.
 
-<h2>External Redirect</h2>
-
-This rule submits a variety of URL redirect strings as parameter values in a request, then examines the headers and bodies of responses to determine
-whether or not a redirect occurred and of what type. The cause of redirect is searched for in the "Location" and "Refresh" header fields, as well as by HTML meta tags
-and Javascript in the body of the response. An alert is raised including the redirection type and the scanner returns immediately.
-
-<h2>Format String Error</h2>
-Looks for indicators of format string handling errors in compiled code.  It does this by putting out strings of input text based upon characters
-compiled C code anticipates to produce formatted output and look for code crash and abnormal session closures.
++ <h2>Erro de formato de string</h2> Procura por indicadores de erro de tratamento de formato cd string em código compilado.  Isso é feito gerando-se strings com textos de entrada baseados em caracteres. O código C compilado antecipa a saída formatada e procura por crash de código e encerramento de sessão anormal.
 
 
-<h2>Parameter Tampering</h2>
+<h2>Adulteração de parâmetro</h2>  Esta regra envia pedidos com valores de parâmetro que podem causar erros a serem exibidos para o usuário se manuseados incorretamente. As respostas são conferidas para garantir que retornem um código de erro de status de servidor, para ser comparado com uma resposta HTTP normal e certificar-se de não disparar nenhum alerta se o mau parâmetro não tem efeito na saída. Finalmente, o conteúdo do corpo de resposta é comparado com vários padrões que podem ser encontrados em erros Java servlet, Microsoft VBScript, OLE DB, JET, PHP e Tomcat. Se uma semelhança for encontrada, um alerta é gerado e o scanner para imediatamente.
 
-This rule submits requests with parameter values known to cause errors to be displayed to the user if handled improperly. Responses are checked to make sure that they return
-a server error status code, then compared with a normal HTTP response to make sure it does not raise an alert if the bad parameter has no effect on output. Finally, the content
-of the reponse body is compared against various patterns that may be found in Java servlet, Microsoft VBScript, OLE DB, JET, PHP and Tomcat errors. If a match is found, an alert is raised and
-the scanner returns immediately.
+<h2>Travessia de path</h2>  Esta regra tenta acessar arquivos e diretórios fora da raiz do documento da web, através da construção de várias combinações de prefixos pathname e alvos de arquivo local para o Windows e sistemas * NIX, bem como Java servlets. Se o corpo da resposta corresponder a um padrão semelhante ao atual arquivo de destino, um alerta é gerado e o scanner pára imediatamente. Se não houver sucesso com nenhum dos alvos de arquivo local, tenta-se travessia de path usando o nome de arquivo na URL. Se enviando um nome de arquivo qualquer não retornar um código de status OK mas se isso acontecer usando-se o nome do arquivo real sim, um alerta é gerado e o scanner pára imediatamente.
 
-<h2>Path Traversal</h2>
+<h2>Inclusão de arquivos remotos</h2>  Essa regra apresenta uma série de requests com URLs externos como valores de parâmetro e busca uma correspondência entre o corpo da resposta e o título da página hospedada nessas URLs. Se houver uma coincidência entre a string esperada e o corpo de resposta, e se o cabeçalho retornou um código de status de 200, um alerta é gerado e o scanner pára imediatamente.
 
-This rule attempts to access files and directories outside of the web document root by constructing various combinations of pathname prefixes
-and local file targets for Windows and *NIX systems as well as Java servlets. If the body of the response matches a pattern corresponding to the
-current target file an alert is raised and the scanner returns immediately. If none of the common local file targets succeed, path traversal is 
-attempted using the filename in the URL. As long as submitting an arbitrary filename does not return an OK status code but the real filename does, an alert is raised
-and the scanner returns immediately.
+<h2>Server Side Include / Inclusão pelo lado do servidor</h2>  Esta regra verifica qual sistema operacional o servidor está executando e, em seguida, envia solicitações com uma diretiva de SSI HTML correspondente como um valor de parâmetro. Se o corpo de resposta corresponde a um padrão indicando que o SSI foi bem sucedido, um alerta é gerado e o scanner pára imediatamente.
 
-<h2>Remote File Include</h2>
-
-This rule submits a series of requests with external URLs as parameter values and looks for a match between the the response body and the title of the page
-hosted at those URLs. If there is a match between the expected string and the response body, and the header returned a status code of 200, an alert is raised and the scanner
-returns immediately.
-
-<h2>Server Side Include</h2>
-
-This rule checks to see what OS the server is running on, then sends requests with a corresponding HTML SSI directive as a parameter value. If the response body matches
-a pattern indicating the SSI was successful, an alert is raised and the scanner returns immediately.
-
-<h2>SQL Injection</h2>
-
-This scanner scans for SQL Injection vulnerabilities in an RDBMS-independent fashion, 
-by attacking url parameters and form parameters with fragments of valid and invalid SQL syntax, using error based, 
-boolean based, Union based, and stacked query SQL Injection techniques. <br>
-This scanner may be able to fingerprint the RDBMS if the application throws a known RDBMS specific SQL error message. <br>
-This scanner does not exploit any RDBMS specific techniques, and so is the best SQL injection scanner to use as a starting point. 
+<h2>Injeção de SQL/SQL Injection</h2>  Esta varredura busca vulnerabilidades de injeção SQL de forma independente do tipo de banco de dados ativo, atacando os parâmetros url e parâmetros de formulário, com fragmentos de sintaxe SQL válidos e inválidos, usando técnicas de injeção SQL baseadas em erros, aritmética booleana, união e pilha. <br>Esta varredura pode ser capaz de descobrir qual o banco de dados em uso, caso o aplicativo apresente uma mensagem de erro SQL de um banco de dados conhecido. <br>Esta varredura não explora quaisquer técnicas específicas de bancos de dados, e assim é uma das melhores em SQLi para usar como ponto de partida. 
 
 </body>
 </html>
