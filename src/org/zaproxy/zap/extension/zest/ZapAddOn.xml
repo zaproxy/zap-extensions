@@ -12,6 +12,7 @@
 	Send authentication requests with ZAP's configurations (Issue 2114).<br>
 	Fix "Active scan sequence" (Issue 2120).<br>
 	Fix exception while opening a dialogue.<br>
+	Support httpsender scripts (Issue 2293).<br>
 	]]>
 	</changes>
 	<dependencies>
@@ -29,6 +30,7 @@
 	<files>
 		<file>scripts/templates/active/Active default template.zst</file>
 		<file>scripts/templates/authentication/Authentication default template.zst</file>
+		<file>scripts/templates/httpsender/HttpSender default template.zst</file>
 		<file>scripts/templates/passive/301-302 body.zst</file>
 		<file>scripts/templates/passive/Passive default template.zst</file>
 		<file>scripts/templates/proxy/Change all POSTs to GETs.zst</file>

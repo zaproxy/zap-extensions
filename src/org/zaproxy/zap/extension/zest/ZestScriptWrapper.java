@@ -130,6 +130,9 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		} else if (class1.isAssignableFrom(ZestTargetedRunner.class)) {
 			return (T) new ZestTargetedRunner(this.getExtension(), this.clone());
 			
+		} else if (class1.isAssignableFrom(ZestHttpSenderRunner.class)) {
+			return (T) new ZestHttpSenderRunner(this.getExtension(), this.clone());
+			
 		} else if (class1.isAssignableFrom(ZestProxyRunner.class)) {
 			return (T) new ZestProxyRunner(this.getExtension(), this.clone());
 			
