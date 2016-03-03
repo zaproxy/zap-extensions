@@ -14,6 +14,8 @@
 	Fix exception while opening a dialogue.<br>
 	Cannot use auth script in daemon mode (Issue 2294).<br>
 	Support httpsender scripts (Issue 2293).<br>
+	Cant paste variable into new request dialog (Issue 2007).<br>
+	Script context menu has duplicated items (Issue 2106).<br>
 	]]>
 	</changes>
 	<dependencies>

@@ -331,7 +331,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 
 	@Override
 	public ZestScriptWrapper getScript() {
-		return extension.getZestTreeModel().getScriptWrapper(node);
+		return extension.getZestTreeModel().getScriptWrapper(this.parent);
 	}
 	
 }

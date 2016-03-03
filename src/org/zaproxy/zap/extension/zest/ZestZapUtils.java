@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.zest;
 
-import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -931,8 +930,7 @@ public class ZestZapUtils {
 
 			public void mouseAction(java.awt.event.MouseEvent e) {
 				// right mouse button action
-				if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0
-						|| e.isPopupTrigger()) {
+				if (e.isPopupTrigger()) {
 					View.getSingleton().getPopupMenu()
 							.show(e.getComponent(), e.getX(), e.getY());
 				}
