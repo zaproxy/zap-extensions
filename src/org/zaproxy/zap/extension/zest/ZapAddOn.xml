@@ -12,6 +12,7 @@
 	Send authentication requests with ZAP's configurations (Issue 2114).<br>
 	Fix "Active scan sequence" (Issue 2120).<br>
 	Fix exception while opening a dialogue.<br>
+	Cannot use auth script in daemon mode (Issue 2294).<br>
 	]]>
 	</changes>
 	<dependencies>
