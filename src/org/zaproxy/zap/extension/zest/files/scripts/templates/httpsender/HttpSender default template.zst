@@ -14,7 +14,7 @@
   },
   "statements": [
     {
-      "comment": "HttpSender scripts are called for every request and response made through or by ZAP.\nIf the response.url parameter is null then the script has been called for a response, otherwise it will have been called for a request.\nThe zap.initiator parameter defined the initiator - see ZAP documentation for more details.",
+      "comment": "HttpSender scripts are called for every request and response made through or by ZAP.\nIf the response.url parameter is empty then the script has been called for a response, otherwise it will have been called for a request.\nThe zap.initiator parameter defined the initiator - see ZAP documentation for more details.",
       "index": 1,
       "elementType": "ZestComment"
     },

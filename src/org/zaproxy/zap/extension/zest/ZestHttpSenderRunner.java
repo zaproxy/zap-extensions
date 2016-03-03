@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestRequest;
+import org.mozilla.zest.core.v1.ZestResponse;
 import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -43,6 +45,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 	private ZestScriptWrapper script = null;
 	private HttpMessage msg = null;
 	private ExtensionZest extension = null;
+	private HttpSenderScriptHelper helper= null;
 
 	private Logger logger = Logger.getLogger(ZestHttpSenderRunner.class);
 
@@ -56,6 +59,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 	public void sendingRequest(HttpMessage msg, int initiator,
 			HttpSenderScriptHelper helper) throws ScriptException {
 		logger.debug("Zest sendingRequest script: " + this.script.getName());
+		this.helper = helper;
 		this.msg = msg;
 		try {
 			// Create the previous request so the script has something to run against
@@ -90,12 +94,6 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 			
 			msg.setRequestBody(this.getVariable(ZestVariables.REQUEST_BODY));
 			msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
-			
-			if (ZestScriptWrapper.ZAP_BREAK_VARIABLE_VALUE.equals(
-					script.getZestScript().getParameters().getVariable(ZestScriptWrapper.ZAP_BREAK_VARIABLE_NAME))) {
-				// The intercept action was invoked
-				msg.setForceIntercept(true);
-			}
 
 		} catch (Exception e) {
 			throw new ScriptException(e);
@@ -112,9 +110,6 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 			ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true, extension.getParam());
 			req.setResponse(ZestZapUtils.toZestResponse(msg));
 			
-			// Unset the 'break' flag (in case it was set in the request path
-			msg.setForceIntercept(false);
-
 			Map<String, String> params = new HashMap<String, String>();
 			params.put(ZAP_INITIATOR, Integer.toString(initiator));
 
@@ -151,6 +146,13 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 		alert.setMessage(msg);
 		alert.setUri(msg.getRequestHeader().getURI().toString());
 		super.alertFound(alert);
+	}
+
+	@Override
+	public ZestResponse send(ZestRequest request) throws IOException {
+		HttpMessage msg = ZestZapUtils.toHttpMessage(request, null);
+		helper.getHttpSender().sendAndReceive(msg, request.isFollowRedirects());
+		return ZestZapUtils.toZestResponse(msg);
 	}
 
 }
