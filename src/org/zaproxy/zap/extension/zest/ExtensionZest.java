@@ -1656,8 +1656,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	@Override
 	public void scriptAdded(ScriptWrapper script, boolean display) {
-		if (View.isInitialised() && this.getExtScript().getScriptUI() != null
-				&& script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+		if (script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
 
 			ScriptNode typeNode = this.getExtScript().getTreeModel()
 					.getTypeNode(script.getTypeName());
@@ -1682,7 +1681,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 			this.getZestTreeModel().addScript(parentNode, zsw);
 
-			if (display) {
+			if (display && View.isInitialised()) {
 				this.updated(parentNode);
 				this.display(zsw, parentNode, true);
 				this.dialogManager.showZestEditScriptDialog(parentNode, zsw, false);
