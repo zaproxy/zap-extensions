@@ -830,15 +830,16 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		logger.debug("addToParent parent=" + parent.getNodeName() + " new="
 				+ newChild.getElementType());
 		ScriptNode node;
-		if (ZestZapUtils.getElement(parent) instanceof ZestScript) {
-			ZestScript zc = (ZestScript) ZestZapUtils.getElement(parent);
+		ZestElement parentElement = ZestZapUtils.getElement(parent);
+		if (parentElement instanceof ZestScript) {
+			ZestScript zc = (ZestScript) parentElement;
 			zc.add(newChild);
 			node = this.getZestTreeModel().addToNode(parent, newChild);
-		} else if (ZestZapUtils.getElement(parent) instanceof ZestConditional) {
+		} else if (parentElement instanceof ZestConditional) {
 			if (ZestZapUtils.getShadowLevel(parent) == 0) {
 				parent = (ScriptNode) parent.getParent().getChildAfter(parent);
 			}
-			ZestConditional zc = (ZestConditional) ZestZapUtils.getElement(parent);
+			ZestConditional zc = (ZestConditional) parentElement;
 			if (ZestZapUtils.getShadowLevel(parent) == 2) {
 				zc.addElse(newChild);
 			} else {
@@ -846,13 +847,15 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			}
 			node = this.getZestTreeModel().addToNode(parent, newChild);
 
-		} else if (ZestZapUtils.getElement(parent) instanceof ZestLoop<?>) {
-			ZestLoop<?> zl = (ZestLoop<?>) ZestZapUtils.getElement(parent);
+		} else if (parentElement instanceof ZestLoop<?>) {
+			ZestLoop<?> zl = (ZestLoop<?>) parentElement;
 			zl.addStatement(newChild);
 			node = this.getZestTreeModel().addToNode(parent, newChild);
+		} else if (parentElement instanceof ZestStatement) {
+			node = this.getZestTreeModel().addAfterNode(parent.getParent(), parent, newChild);
 		} else {
 			throw new IllegalArgumentException("Unexpected parent node: "
-					+ ZestZapUtils.getElement(parent) + " "
+					+ parentElement + " "
 					+ parent.getNodeName());
 		}
 		this.updated(node);

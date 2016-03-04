@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -39,6 +40,7 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 
 	private JTextComponent lastInvoker = null;
     private ZestScriptWrapper script = null;
+    private List<ExtensionPopupMenuItem> subMenus = new ArrayList<ExtensionPopupMenuItem>();
 
 	/**
 	 * This method initializes 
@@ -65,6 +67,13 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
+    	// Remove any existing ones
+		final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
+    	for (ExtensionPopupMenuItem subMenu : this.subMenus) {
+    		mainPopupMenuItems.remove(subMenu);
+    	}
+    	this.subMenus.clear();
+    	
         if (invoker instanceof JTextComponent) {
         	// Need to be optimistic so invoker is initialised
         	setLastInvoker((JTextComponent) invoker);
@@ -99,6 +108,7 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 	        	ExtensionPopupMenuItem piicm = new ZestPasteVariableMenu(script, lastInvoker, var);
 	        	piicm.setMenuIndex(this.getMenuIndex());
 				mainPopupMenuItems.add(piicm);
+				this.subMenus.add(piicm);
 			}
 		}
 	}
