@@ -196,7 +196,6 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 			if (getExtScript().getScriptUI() != null) {
 				ZestTreeTransferHandler th = new ZestTreeTransferHandler(this);
-				getExtScript().getScriptUI().addScriptTreeTransferHandler(ZestScriptWrapper.class, th);
 				getExtScript().getScriptUI().addScriptTreeTransferHandler(ZestElementWrapper.class, th);
 			}
 

@@ -32,6 +32,7 @@ import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestConditional;
 import org.mozilla.zest.core.v1.ZestContainer;
+import org.mozilla.zest.core.v1.ZestScript;
 import org.mozilla.zest.core.v1.ZestStatement;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -62,9 +63,13 @@ public class ZestTreeTransferHandler extends TransferHandler {
     	Object uo = dragNode.getUserObject();
     	if (! (uo instanceof ZestElementWrapper)) {
     		// Can only drag elements 
+    		return false;
     	}
     	ZestElementWrapper dragZew = (ZestElementWrapper) uo;
-    	if (! (dragZew.getElement() instanceof ZestStatement)) {
+    	if (dragZew.getElement() instanceof ZestScript) {
+    		// Never let scripts be dragged
+        	return false;
+    	} else if (! (dragZew.getElement() instanceof ZestStatement)) {
     		// Dont support other elements yet
         	//logger.debug("canImport cant drag to a non ZestStatement " + dragZew.getElement().getClass().getCanonicalName());
         	return false;
