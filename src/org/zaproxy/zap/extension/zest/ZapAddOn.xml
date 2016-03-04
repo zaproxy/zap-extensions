@@ -16,6 +16,7 @@
 	Support httpsender scripts (Issue 2293).<br>
 	Cant paste variable into new request dialog (Issue 2007).<br>
 	Script context menu has duplicated items (Issue 2106).<br>
+	Exception while adding Zest Condition (Issue 2296).<br>
 	]]>
 	</changes>
 	<dependencies>
