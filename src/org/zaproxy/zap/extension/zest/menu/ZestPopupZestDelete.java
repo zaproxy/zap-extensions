@@ -21,9 +21,9 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
+import java.util.List;
 
-import javax.swing.JTree;
-
+import org.apache.log4j.Logger;
 import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -38,6 +38,8 @@ import org.zaproxy.zap.extension.zest.ZestZapUtils;
 public class ZestPopupZestDelete extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final Logger logger = Logger.getLogger(ZestPopupZestDelete.class);
 
 	private ExtensionZest extension = null;
 
@@ -86,22 +88,26 @@ public class ZestPopupZestDelete extends ExtensionPopupMenuItem {
     public boolean isEnableForComponent(Component invoker) {
 		if (extension.isScriptTree(invoker)) {
             try {
-                JTree tree = (JTree) invoker;
-                if (tree.getLastSelectedPathComponent() != null) {
-                    ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
-                    // Cant delete root, and children of root are scripts - have to close these...
-                    // TODO ^ these checks
-                    return ZestZapUtils.isZestNode(node) &&
-                    		! (ZestZapUtils.getElement(node) instanceof ZestScript) &&
-                    		 ZestZapUtils.getShadowLevel(node)==0;
-                    /*
-                    return (node != null && ! node.isRoot() && ! node.getParent().isRoot()
-                    		&& ! node.isShadow() && 
-                    		! ZestTreeElement.isSubclass(node.getZestElement(), ZestTreeElement.Type.COMMON_TESTS));
-                    		*/
+                List<ScriptNode> selectedNodes = extension.getSelectedZestNodes();
+                if (selectedNodes.isEmpty()) {
+                    return false;
                 }
-            } catch (Exception e) {}
-            
+       			this.setEnabled(true);
+            	for (ScriptNode node : selectedNodes) {
+                    if (node == null || node.isRoot() || node.isTemplate() || ! ZestZapUtils.isZestNode(node)) {
+                    	return false;
+                    } else if ((ZestZapUtils.getElement(node) instanceof ZestScript)) {
+                    	// Theres another popup for removing the whole script
+                    	return false;
+                    } else if (ZestZapUtils.getShadowLevel(node) > 0) {
+                    	// Dont allow these to be deleted directly, but still show the option
+               			this.setEnabled(false);
+                    }
+            	}
+            	return true;
+            } catch (Exception e) {
+            	logger.error(e.getMessage(), e);
+            }
         }
         return false;
     }
