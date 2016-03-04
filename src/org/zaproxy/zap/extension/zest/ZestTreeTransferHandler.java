@@ -121,6 +121,10 @@ public class ZestTreeTransferHandler extends TransferHandler {
         		}
         	}
         }
+    	if (childIndex == dragNode.getParent().getIndex(dragNode)) {
+        	//logger.debug("canImport cant paste into the same location");
+    		return false;
+    	}
         
     	return true;
     }
