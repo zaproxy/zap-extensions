@@ -2,34 +2,30 @@
 <html>
 <head>
 <title>
-DOM XSS Active Scan Rule
+Regra de Scan ativo DOM XSS
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>DOM XSS Active Scan Rule</h1>
+<h1>Regra de Scan ativo DOM XSS</h1>
 <p>
-An Active Scan rule for detecting DOM XSS vulnerabilities.
+Uma regra de Active Scan para detectar vulnerabilidades XSS DOM.
 <p>
-It launches browser windows and sends attack payloads to all of the relevant DOM elements.<br>
-As it launches browser windows it is not suitable for headless environments,
-and will take significantly longer than other (non browser based) rules. 
+Lança janelas do navegador e envia payloads de ataque para todos os elementos relevantes do DOM. <br>Como lança janelas do navegador não é adequado para ambientes sem head e vai demorar significativamente mais do que outras regras (não baseadas em navegador). 
 </p>
 <p>
-This version only supports Firefox.<br>
-Future versions may support other browsers.
+Esta versão suporta apenas o Firefox. <br>Versões de futuro podem oferecer suporte a outros navegadores.
 </p>
 <p>
-The following Attack Strengths are supported, and related directly to the number of attack payloads used:
+As forças de ataque a seguir são suportadas e diretamente relacionadas com o número de cargas de ataque utilizado:
 <ul>
-<li>LOW: 2 attack payloads 
-<li>MEDIUM: 4 attack payloads 
-<li>HIGH: 6 attack payloads 
-<li>INSANE: 8 attack payloads 
+<li>BAIXO: 2 cargas de ataque 
+<li>MÉDIO: 4 cargas de ataque 
+<li>ALTO: 6 cargas de ataque 
+<li>INSANE: 8 cargas de ataque 
 </ul>
 </p>
 <p>
-The rule will only report one DOM XSS vulnerability per node, unless the LOW Alert threshold
-is used, in which case it will keep trying all of the specified payloads. 
+A regra só relatará uma vulnerabilidade de XSS DOM por nó, a menos que o limiar de alerta de baixo é usado, nesse caso, vou continuar tentando todas as cargas especificadas. 
 </p>
 
 </body>
