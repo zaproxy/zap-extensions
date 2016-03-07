@@ -7,6 +7,7 @@
 	<url/>
 	<changes>
 	<![CDATA[
+	Prevent XXE vulnerability.<br>
 	Issue 2174: Adjust logging, catch specific exceptions.<br>
 	Issue 2178: SQLInjectionMySQL - adjust logging, catch specific exceptions.<br>
 	Issue 2179: SQLInjectionPostgresql - adjust logging, catch specific exceptions.<br>

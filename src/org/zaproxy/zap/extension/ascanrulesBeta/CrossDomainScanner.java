@@ -134,6 +134,10 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 			
 			//parse the file. If it's not parseable, it might have been because of a 404
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();;
+			docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			docBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			docBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			docBuilderFactory.setExpandEntityReferences(false);
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();;
 			XPath xpath = (XPath) XPathFactory.newInstance().newXPath();
 				
