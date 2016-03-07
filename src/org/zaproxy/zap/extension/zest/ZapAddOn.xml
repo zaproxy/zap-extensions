@@ -18,6 +18,8 @@
 	Script context menu has duplicated items (Issue 2106).<br>
 	Exception while adding Zest Condition (Issue 2296).<br>
 	Should not be able to delete THEN statement (Issue 2295).<br>
+	Statement lost after drag and drop (Issue 2299).<br>
+	It's possible to drag the script node (Issue 2302).<br>
 	]]>
 	</changes>
 	<dependencies>
