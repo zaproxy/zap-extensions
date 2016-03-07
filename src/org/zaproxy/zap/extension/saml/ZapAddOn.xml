@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Internationalise and show 'SAML Actions' menu.<br>
+	Prevent XXE vulnerability.<br>
 	]]>
 	</changes>
     <dependson/>
