@@ -6,7 +6,8 @@
 	<author>Andrea Pompili (Yhawke)</author>
 	<url/>
 	<changes><![CDATA[
-	Log level adjustements.<br>
+	Prevent XXE vulnerability.<br>
+	Log level adjustments.<br>
 	Internationalisation of scanner and alert's data.<br>
 	Check for skip/stop more often.<br>
         ]]>

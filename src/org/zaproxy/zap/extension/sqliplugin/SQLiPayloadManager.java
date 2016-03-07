@@ -126,6 +126,10 @@ public class SQLiPayloadManager {
 
         // Load all boundaries from resources
         SAXBuilder builder = new SAXBuilder();
+        builder.setExpandEntities(false);
+        builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        builder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
         InputStream is = this.getClass().getResourceAsStream(BOUNDARY_FILE);
         Document doc = builder.build(is);
         Element rootNode = doc.getRootElement();
