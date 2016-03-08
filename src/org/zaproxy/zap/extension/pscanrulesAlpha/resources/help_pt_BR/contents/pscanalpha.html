@@ -88,21 +88,12 @@ TornadoServer web server<br>
 WordPress<br>
 
 <h2>Scanner de localização de imagem</h2>
-<p>Passively scans for GPS location exposure in images during normal security
-assessments of websites.  Image Location Scanner assists in situations where
-end users may post profile images and possibly give away their home location,
-e.g. a dating site or children's chatroom.  A whitepaper on this can be found
-at http://veggiespam.com/ils/</p>
+<p>Busca passivamente localização de GPS em imagens durante as avaliações de segurança normais de sites.  O scanner de localização de imagens auxilia em situações onde os usuários finais podem postar imagens de perfis e possivelmente dar sua localização em casa, por exemplo, um site de namoro ou sala de chat de crianças.  Um whitepaper sobre isso pode ser encontrado em http://veggiespam.com/ils/</p>
 
-<p>Note: In order for this plug-in to operate, ZAP must be configured to
-receive and process images.  To do this, go to the ZAP Options panel (Tools
-&rarr; Options), choose Display, and enable the checkbox for "Process images in
-HTTP requests/responses".  In addition, ZAP images cannot be filtered out via
-the settings "Global Exclude URL" or the Session Properties for "Exclude from
-Proxy". </p>
+<p>Nota: Para este plug-in operar, o ZAP deve ser configurado para receber e processar imagens.  Para fazer isso, vá para o painel de opções ZAP (ferramentas &rarr; opções), escolha Exibir e habilitar a caixa de verificação "Processar imagens em solicitações/respostas HTTP".  Além disso, as imagens não podem ser filtradas através das configurações "Exclusão Global de URL" ou propriedades de sessão para "Excluir do Proxy". </p>
 
-<h2>Open redirect</h2>
-Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
+<h2>Redirecionamento aberto</h2>
+Redirecionamentos abertos são uma das Topo Ten vulnerabilidades 2010 da OWASP. Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde redirecionamentos diretos são possíveis. Redirecionamentos abertos ocorrem quando um aplicativo permite entrada fornecida pelo usuário (por exemplo, http://nottrusted.com) controlar um redirecionamento externo. Este é geralmente uma maneira muito precisa de encontrar onde os redirecionamentos 301 ou 302 podem ser explorados por remetentes de spam ou ataques de phishing
 
 <h2>Server Header Version Information Leak</h2>
 This checks response headers for the presence of a server header that contains version details.
