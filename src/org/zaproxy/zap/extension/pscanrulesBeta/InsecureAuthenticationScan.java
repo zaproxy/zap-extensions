@@ -240,11 +240,12 @@ public class InsecureAuthenticationScan extends PluginPassiveScanner {
 							getName());
 					alert.setDetail(getDescription(),
 							msg.getRequestHeader().getURI().toString(),
-							"", HttpHeader.WWW_AUTHENTICATE + ": " + auth,
+							"",
+							"",
 							"",
 							getSolution(),
 							getReference(),
-							"",	// No Evidence
+							HttpHeader.WWW_AUTHENTICATE + ": " + auth,
 							326,	// CWE Id - Inadequate Encryption Strength
 							4,	// WASC Id - Insufficient Transport Layer Protection
 							msg);
