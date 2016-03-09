@@ -42,7 +42,9 @@
 
 package org.zaproxy.zap.extension.ascanrules;
 import java.io.IOException;
+import java.net.UnknownHostException;
 
+import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -152,7 +154,14 @@ public class FormatString extends AbstractAppParamPlugin  {
 			msg = getNewMsg();
 			String initialMessage = "ZAP";
 			setParameter(msg, param, initialMessage);
-			sendAndReceive(msg);
+			try {
+				sendAndReceive(msg);
+			} catch (InvalidRedirectLocationException|UnknownHostException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+						"\n The target may have replied with a poorly formed redirect due to our input.");
+				return; //Something went wrong, no point continuing
+			}
 			HttpResponseBody initialResponseBody= msg.getResponseBody();
 			int initialResponseLength = initialResponseBody.length();
 		//  The following section of the code attacks GNU and generic C compiler format 
@@ -176,7 +185,14 @@ public class FormatString extends AbstractAppParamPlugin  {
 
 			msg = getNewMsg();
 			setParameter(msg, param, initialAttackMessage);
-			sendAndReceive(msg);
+			try {
+				sendAndReceive(msg);
+			} catch (InvalidRedirectLocationException|UnknownHostException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+						"\n The target may have replied with a poorly formed redirect due to our input.");
+				return; //Something went wrong, no point continuing
+			}
      		if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR)
     		{
     			String secondAttackMessage ;	
@@ -191,8 +207,15 @@ public class FormatString extends AbstractAppParamPlugin  {
 
     			msg = getNewMsg();
     			setParameter(msg, param, secondAttackMessage);
-    			sendAndReceive(msg);
-         		HttpResponseBody secondAttackResponseBody= msg.getResponseBody();
+    			try {
+    				sendAndReceive(msg);
+    			} catch (InvalidRedirectLocationException|UnknownHostException ex) {
+    				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+    						" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+    						"\n The target may have replied with a poorly formed redirect due to our input.");
+    				return; //Something went wrong, no point continuing
+    			}         		
+    			HttpResponseBody secondAttackResponseBody= msg.getResponseBody();
     			if (secondAttackResponseBody.length() > initialResponseLength + 20 && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK){
     				bingo(getRisk(), 
     						Alert.CONFIDENCE_MEDIUM, 
@@ -242,7 +265,14 @@ public class FormatString extends AbstractAppParamPlugin  {
 			String microsoftAttackMessage = sb2.toString();
 			msg = getNewMsg();
 			setParameter(msg, param, microsoftAttackMessage);
-			sendAndReceive(msg);
+			try {
+				sendAndReceive(msg);
+			} catch (InvalidRedirectLocationException|UnknownHostException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+						"\n The target may have replied with a poorly formed redirect due to our input.");
+				return; //Something went wrong, no point continuing
+			}			
 			if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR)
 			{
 				bingo(getRisk(), 

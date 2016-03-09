@@ -18,6 +18,8 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -351,7 +353,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             setParameter(msg, param, NON_EXISTANT_FILENAME);
 
             //send the modified message (with a hopefully non-existent filename), and see what we get back
-            sendAndReceive(msg);
+			try {
+	            sendAndReceive(msg);
+			} catch (SocketException|IllegalStateException|UnknownHostException|IllegalArgumentException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + msg.getRequestHeader().getURI().toString());
+				return; //Something went wrong, no point continuing
+			}
 
             //do some pattern matching on the results.
             Pattern errorPattern = Pattern.compile("Exception|Error");
@@ -376,7 +384,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     setParameter(msg, param, prefixedUrlfilename);
 
                     //send the modified message (with the url filename), and see what we get back
-                    sendAndReceive(msg);
+        			try {
+        	            sendAndReceive(msg);
+        			} catch (SocketException|IllegalStateException|UnknownHostException|IllegalArgumentException ex) {
+        				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+        						" when accessing: " + msg.getRequestHeader().getURI().toString());
+        				continue; //Something went wrong, move to the next prefix in the loop
+        			}
 
                     //did we get an Exception or an Error?
                     errorMatcher = errorPattern.matcher(msg.getResponseBody().toString());
@@ -441,7 +455,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         }
 
         // send the modified request, and see what we get back
-        sendAndReceive(msg);
+		try {
+            sendAndReceive(msg);
+		} catch (SocketException|IllegalStateException|UnknownHostException|IllegalArgumentException ex) {
+			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+					" when accessing: " + msg.getRequestHeader().getURI().toString());
+			return false; //Something went wrong, no point continuing
+		}
 
         // does it match the pattern specified for that file name?
         String match = getResponseMatch(msg, pattern);
