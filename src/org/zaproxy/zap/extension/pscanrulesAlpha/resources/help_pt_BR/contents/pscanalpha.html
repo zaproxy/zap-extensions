@@ -95,23 +95,23 @@ WordPress<br>
 <h2>Redirecionamento aberto</h2>
 Redirecionamentos abertos são uma das Topo Ten vulnerabilidades 2010 da OWASP. Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde redirecionamentos diretos são possíveis. Redirecionamentos abertos ocorrem quando um aplicativo permite entrada fornecida pelo usuário (por exemplo, http://nottrusted.com) controlar um redirecionamento externo. Este é geralmente uma maneira muito precisa de encontrar onde os redirecionamentos 301 ou 302 podem ser explorados por remetentes de spam ou ataques de phishing
 
-<h2>Server Header Version Information Leak</h2>
-This checks response headers for the presence of a server header that contains version details.
+<h2>Vazamento de informações de versão do servidor no cabeçalho/header</h2>
+Esta verificação checa os cabeçalhos de resposta para a presença de um cabeçalho de servidor que contém detalhes de versão.
 
-<h2>Source Code Disclosure</h2>
-Application Source Code was disclosed by the web server
+<h2>Exposição de código fonte</h2>
+Código fonte da aplicação exposto pelo servidor web
 
-<h2>Missing Strict Transport Security Header</h2>
-This checks HTTPS response headers for the presence of a HTTP Strict Transport Security header.
+<h2>Falta de cabeçalho de segurança de transporte estrito/Strict Transport</h2>
+Isto verifica os cabeçalhos de resposta HTTPS para a presença de um cabeçalho HTTP Strict Transport Security.
 
-<h2>Timestamp Disclosure</h2>
-A timestamp was disclosed by the application/web server
+<h2>Exposição de timestamp</h2>
+Um timestamp foi exposto pelo servidor web/aplicativo
 
-<h2>User controllable HTML element attribute (potential XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
+<h2>Atributo de elemento HTML controlável pelo usuário (potencial XSS)</h2>
+Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde redirecionamentos diretos são possíveis. Isto fornece detecção de hot spot para XSS (cross site scripting), o que exigirá uma revisão por um analista de segurança para determinar a capacidade de exploração.
 
-<h2>User controllable charset</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
+<h2>Conjunto de caracteres controlável pelo usuário</h2>
+Esta verificação confere a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde declarações de Content-Type ou de meta tag de conjunto de caracteres podem ser controlados pelo usuário. Tais declarações de charset sempre devem ser declaradas pelo aplicativo. Se um invasor pode controlar o conjunto de caracteres de resposta, eles pode manipular o HTML para executar XSS ou outros ataques.
 
 <h2>User controllable javascript event (XSS)</h2>
 This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
