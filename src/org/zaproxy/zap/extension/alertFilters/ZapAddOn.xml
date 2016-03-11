@@ -9,6 +9,7 @@
 	<![CDATA[
 	Updated to use alertIds from 2.4.3+<br>
 	Misc minor bug fixes<br>
+	HTML report reports the filtered false positives as true results (Issue 2311)
 	]]>
     </changes>
 	<extensions>
