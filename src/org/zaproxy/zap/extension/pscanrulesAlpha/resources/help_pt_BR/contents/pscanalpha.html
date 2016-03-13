@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Passive Scan Rules - Alpha
+Regras de varredura Passiva - Alfa
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -113,21 +113,21 @@ Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da st
 <h2>Conjunto de caracteres controlável pelo usuário</h2>
 Esta verificação confere a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde declarações de Content-Type ou de meta tag de conjunto de caracteres podem ser controlados pelo usuário. Tais declarações de charset sempre devem ser declaradas pelo aplicativo. Se um invasor pode controlar o conjunto de caracteres de resposta, eles pode manipular o HTML para executar XSS ou outros ataques.
 
-<h2>User controllable javascript event (XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+<h2>Evento de javascript controlável pelo usuário (XSS)</h2>
+Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde certos valores de atributos de HTML podem ser controlados. Isto proporciona detecção de hot-spot para XSS (cross-site scripting) que exigirá mais revisões por um analista de segurança para determinar a vulnerabilidade              
 
-<h2>User controllable javascript property (XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+<h2>Propriedade de javascript controlável pelo usuário (XSS)</h2>
+Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde a URL em certas propriedades de javascript (ex: createElement scr) podem ser controladas. Isto fornece detecção de hot spot para XSS (cross site scripting), o que exigirá uma revisão por um analista de segurança para determinar a capacidade de exploração.            
 
-<h2>X-Powered-By Header Information Leak</h2>
-This checks response headers for the presence of X-Powered-By details.
+<h2>Vazamento de informações de cabeçalho X-Powered-By</h2>
+Isto verifica os cabeçalhos de resposta para a presença de detalhes tipo X-Powered-By.
 
-<h2>X-Backend-Server Header Information Leak</h2>
-This checks response headers for the presence of X-Backend-Server details.
+<h2>Vazamento de informações de cabeçalho X-Backend-server</h2>
+Isto verifica os cabeçalhos de resposta para a presença de detalhes de X-backend-server.
 
-<h2>Big Redirect</h2>
-This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
-A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
+<h2>Grande Redirecionamento</h2>
+Esta verificação prevê o tamanho de várias respostas de tipo de redirecionamento e gera um alerta se a resposta for maior que o tamanho previsto. 
+Uma resposta de redirecionamento grande pode indicar que embora um redirecionamento esteja acontecendo a página realmente tinha conteúdo (que pode revelar informações confidenciais, PII, etc).
 
 </body>
 </html>
