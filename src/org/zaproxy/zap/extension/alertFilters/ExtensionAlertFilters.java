@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -39,6 +41,8 @@ import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.ZAP;
@@ -55,6 +59,9 @@ import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ContextDataFactory;
+import org.zaproxy.zap.model.SessionStructure;
+import org.zaproxy.zap.model.StructuralNode;
+import org.zaproxy.zap.model.StructuralSiteNode;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.ContextPanelFactory;
 
@@ -84,8 +91,9 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	private Map<Integer, ContextAlertFilterManager> contextManagers = new HashMap<>();
 	
 	private ExtensionAlert extAlert = null;
+	private ExtensionHistory extHistory = null;
 	private AlertFilterAPI api = null;
-	private int lastAlert = 0;
+	private int lastAlert = -1;
 
 	private static Map<String, Integer> nameToId = new HashMap<String, Integer>();
 	private static Map<Integer, String> idToName = new HashMap<Integer, String>();
@@ -173,6 +181,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
+	    
+	    extensionHook.addSessionListener(this);
 	    
 		// Register this as a context data factory
 		Model.getSingleton().addContextDataFactory(this);
@@ -308,97 +318,167 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	
 	private ExtensionAlert getExtAlert() {
 		if (extAlert == null) {
-			extAlert = (ExtensionAlert) Control.getSingleton().getExtensionLoader().getExtension(
-					ExtensionAlert.NAME);
+			extAlert = Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
 		}
 		return extAlert;
+	}
+	
+	private ExtensionHistory getExtHistory() {
+		if (extHistory == null) {
+			extHistory = Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
+		}
+		return extHistory;
 	}
 	
 	@Override
 	public void eventReceived(Event event) {
 		TableAlert tableAlert = Model.getSingleton().getDb().getTableAlert();
-		RecordAlert recordAlert;
-		while (true) {
+
+		String alertId = event.getParameters().get(AlertEventPublisher.ALERT_ID);
+		if (alertId != null) {
+			// From 2.4.3 an alertId is included with these events, which makes life much simpler!
 			try {
-				this.lastAlert ++;
-				recordAlert = tableAlert.read(this.lastAlert);
-				if (recordAlert == null) {
-					this.lastAlert--;
+				handleAlert(tableAlert.read(Integer.parseInt(alertId)));
+			} catch (Exception e) {
+				log.error("Error handling alert", e);
+			}
+		} else {
+			// Required for pre 2.4.3 versions
+			RecordAlert recordAlert;
+			while (true) {
+				try {
+					this.lastAlert ++;
+					recordAlert = tableAlert.read(this.lastAlert);
+					if (recordAlert == null) {
+						break;
+					}
+					handleAlert(recordAlert);
+					
+				} catch (DatabaseException e) {
 					break;
 				}
-				String uri = recordAlert.getUri();
-				log.debug("Alert: " + this.lastAlert + " URL: " + uri);
-				// Loop through rules and apply as necessary..
-				for (ContextAlertFilterManager mgr : this.contextManagers.values()) {
-					Context context = Model.getSingleton().getSession().getContext(mgr.getContextId());
-					if (context.isInContext(uri)) {
-						log.debug("Is in context " + context.getIndex() + 
-								" got " + mgr.getAlertFilters().size() + " filters");
-						// Its in this context
-						for (AlertFilter filter : mgr.getAlertFilters()) {
-							if (! filter.isEnabled()) {
-								// rule ids dont match
-								log.debug("Filter disabled");
+			}
+			// The loop will always go 1 further than necessary
+			this.lastAlert--;
+		}
+	}
+	
+	private void handleAlert(final RecordAlert recordAlert) {
+		final Alert alert = this.getAlert(recordAlert);
+		if (alert == null || alert.getHistoryRef() == null) {
+			log.error("No alert or href for " + recordAlert.getAlertId() + " " + recordAlert.getHistoryId());
+		} else {
+			if (alert.getHistoryRef().getSiteNode() != null) {
+				this.handleAlert(alert);
+			} else {
+				// Have to add the SiteNode on the EDT
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run() {
+						try {
+							StructuralNode node = SessionStructure.addPath(Model.getSingleton().getSession(), alert.getHistoryRef(), 
+									alert.getHistoryRef().getHttpMessage());
+							
+							if (node instanceof StructuralSiteNode) {
+								StructuralSiteNode ssn = (StructuralSiteNode) node;
+								alert.getHistoryRef().setSiteNode(ssn.getSiteNode());
+							}
+							handleAlert(alert);
+						} catch (Exception e) {
+							log.error("Error handling alert", e);
+						}
+					}});
+			}
+		}
+	}
+
+
+	private void handleAlert(Alert alert) {
+		String uri = alert.getUri();
+		log.debug("Alert: " + this.lastAlert + " URL: " + uri);
+		// Loop through rules and apply as necessary..
+		for (ContextAlertFilterManager mgr : this.contextManagers.values()) {
+			Context context = Model.getSingleton().getSession().getContext(mgr.getContextId());
+			if (context.isInContext(uri)) {
+				log.debug("Is in context " + context.getIndex() + 
+						" got " + mgr.getAlertFilters().size() + " filters");
+				// Its in this context
+				for (AlertFilter filter : mgr.getAlertFilters()) {
+					if (! filter.isEnabled()) {
+						// rule ids dont match
+						log.debug("Filter disabled");
+						continue;
+					}
+					if (filter.getRuleId() != alert.getPluginId()) {
+						// rule ids dont match
+						log.debug("Filter didnt match plugin id: " + 
+								filter.getRuleId() + " != " + alert.getPluginId());
+						continue;
+					}
+					if (filter.getUrl() != null && filter.getUrl().length() > 0) {
+						if (filter.isRegex()) {
+							Pattern p = Pattern.compile(filter.getUrl());
+							if (! p.matcher(uri).matches()) {
+								// URL pattern doesnt match
+								log.debug("Filter didnt match URL regex: " + filter.getUrl() + " url: " + uri);
 								continue;
 							}
-							if (filter.getRuleId() != recordAlert.getPluginId()) {
-								// rule ids dont match
-								log.debug("Filter didnt match plugin id: " + 
-										filter.getRuleId() + " != " + recordAlert.getPluginId());
-								continue;
-							}
-							if (filter.getUrl() != null && filter.getUrl().length() > 0) {
-								if (filter.isRegex()) {
-									Pattern p = Pattern.compile(filter.getUrl());
-									if (! p.matcher(uri).matches()) {
-										// URL pattern doesnt match
-										log.debug("Filter didnt match URL regex: " + filter.getUrl() + " url: " + uri);
-										continue;
-									}
-								} else if (!filter.getUrl().equals(uri)) {
-									// URL doesnt match
-									log.debug("Filter didnt match URL: " + filter.getUrl());
-									continue;
-								}
-							}
-							if (filter.getParameter() != null && filter.getParameter().length() > 0) {
-								if (! filter.getParameter().equals(recordAlert.getParam())) {
-									// Parameter doesnt match
-									log.debug("Filter didnt match parameter: " + filter.getParameter() + 
-											" != " + recordAlert.getParam());
-									continue;
-								}
-							}
-							Alert alert = new Alert(recordAlert);
-							if (filter.getNewRisk() == -1) {
-								alert.setRiskConfidence(alert.getRisk(), Alert.CONFIDENCE_FALSE_POSITIVE);
-							} else {
-								alert.setRiskConfidence(filter.getNewRisk(), alert.getConfidence());
-							}
-							try {
-								log.debug("Filter matched, setting Alert with plugin id : " + recordAlert.getPluginId() + " to " + filter.getNewRisk());
-								getExtAlert().updateAlert(alert);
-								getExtAlert().updateAlertInTree(null, alert);
-							} catch (Exception e) {
-								log.error(e.getMessage(), e);
-							}
-							break;
+						} else if (!filter.getUrl().equals(uri)) {
+							// URL doesnt match
+							log.debug("Filter didnt match URL: " + filter.getUrl());
+							continue;
 						}
 					}
+					if (filter.getParameter() != null && filter.getParameter().length() > 0) {
+						if (! filter.getParameter().equals(alert.getParam())) {
+							// Parameter doesnt match
+							log.debug("Filter didnt match parameter: " + filter.getParameter() + 
+									" != " + alert.getParam());
+							continue;
+						}
+					}
+					Alert updAlert = alert;
+					Alert origAlert = updAlert.newInstance();
+					if (filter.getNewRisk() == -1) {
+						updAlert.setRiskConfidence(alert.getRisk(), Alert.CONFIDENCE_FALSE_POSITIVE);
+					} else {
+						updAlert.setRiskConfidence(filter.getNewRisk(), alert.getConfidence());
+					}
+					try {
+						log.debug("Filter matched, setting Alert with plugin id : " + alert.getPluginId() + " to " + filter.getNewRisk());
+						getExtAlert().updateAlert(updAlert);
+						getExtAlert().updateAlertInTree(origAlert, updAlert);
+						if (alert.getHistoryRef() != null) {
+							alert.getHistoryRef().updateAlert(updAlert);
+							if (alert.getHistoryRef().getSiteNode() != null) {
+								// Needed if the same alert was raised on another href for the same SiteNode
+								alert.getHistoryRef().getSiteNode().updateAlert(updAlert);
+							}
+						}
+					} catch (Exception e) {
+						log.error(e.getMessage(), e);
+					}
+					break;
 				}
-				
-			} catch (DatabaseException e) {
-				this.lastAlert--;
-				break;
 			}
-			
 		}
 
+	}
+	
+	private Alert getAlert(RecordAlert recordAlert) {
+		int historyId = recordAlert.getHistoryId();
+		if (historyId > 0) {
+			HistoryReference href = this.getExtHistory().getHistoryReference(historyId);
+			return new Alert(recordAlert, href);
+		} else {
+			// Not ideal :/
+			return new Alert(recordAlert);
+		}
 	}
 
 	@Override
 	public void sessionChanged(Session session) {
-		this.lastAlert = 0;
+		this.lastAlert = -1;
 	}
 
 	@Override

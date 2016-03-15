@@ -1,11 +1,17 @@
 <zapaddon>
 	<name>context Alert Filters</name>
-	<version>1</version>
+	<version>2</version>
 	<status>alpha</status>
 	<description>Allows you to automate the changing of alert risk levels</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>
+	<![CDATA[
+	Updated to use alertIds from 2.4.3+<br>
+	Misc minor bug fixes<br>
+	HTML report reports the filtered false positives as true results (Issue 2311)
+	]]>
+    </changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.alertFilters.ExtensionAlertFilters</extension>
 	</extensions>
