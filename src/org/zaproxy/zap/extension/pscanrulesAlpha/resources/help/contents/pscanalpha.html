@@ -21,7 +21,7 @@ Base64 encoded data was disclosed by the application/web server
 <H2>Missing Content Security Policy Header</H2>
 This checks response headers for the presence of a Content Security Policy header.
 
-<H2>Cookie poisoning</H2>
+<H2>Cookie Poisoning</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
 
 <H2>Cross Domain Misconfiguration</H2>
@@ -46,15 +46,15 @@ Various formats are including, including some formats such as MD4, MD5, and SHA*
 <H2>HeartBleed</H2>
 Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
 
-<H2>HTTP to HTTPS insecure transition in form post</H2>
+<H2>HTTP to HTTPS Insecure Transition in Form Post</H2>
 This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
 
-<H2>HTTPS to HTTP insecure transition in form post</H2>
+<H2>HTTPS to HTTP Insecure Transition in Form Post</H2>
 This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
 
 <H2>Insecure Component</H2>
-Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs.<br>
-A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable.<br>
+Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 
+A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable. 
 Currently, the following server side products are supported:<br>
 Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
 Apache web server<br>
@@ -101,7 +101,7 @@ HTTP requests/responses".  In addition, ZAP images cannot be filtered out via
 the settings "Global Exclude URL" or the Session Properties for "Exclude from
 Proxy". </p>
 
-<H2>Open redirect</H2>
+<H2>Open Redirect</H2>
 Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
 
 <H2>Server Header Version Information Leak</H2>
@@ -117,16 +117,16 @@ Also checks if the HTTP Strict Transport Security (HSTS) header contains a max-a
 <H2>Timestamp Disclosure</H2>
 A timestamp was disclosed by the application/web server
 
-<H2>User controllable HTML element attribute (potential XSS)</H2>
+<H2>User Controllable HTML Element Attribute (Potential XSS)</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
 
-<H2>User controllable charset</H2>
+<H2>User Controllable Charset</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
 
-<H2>User controllable javascript event (XSS)</H2>
+<H2>User Controllable Javascript Event (XSS)</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 
-<H2>User controllable javascript property (XSS)</H2>
+<H2>User Controllable Javascript Property (XSS)</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 
 <H2>X-Powered-By Header Information Leak</H2>
