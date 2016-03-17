@@ -226,6 +226,14 @@ public class HttpFuzzerResultsTableModel extends
 
         return results.get(row.intValue()).getPayloads();
     }
+    
+    public List<String> getHeaders() {
+        List<String> headers = new ArrayList<>(getColumnCount());
+        for (int i = 0; i < getColumnCount(); i++ ) {
+            headers.add(getColumnName(i));
+        }
+        return headers;
+    }
 
     static class FuzzResultTableEntry extends DefaultHistoryReferencesTableEntry {
 
@@ -263,6 +271,24 @@ public class HttpFuzzerResultsTableModel extends
             return customStates;
         }
 
+        public List<Object> getValuesOfHeaders() {
+            List<Object> values = new ArrayList<>();
+            values.add(getTaskId());
+            values.add(getType());
+            values.add(getRequestTimestamp());
+            values.add(getMethod());
+            values.add(getUri());
+            values.add(getStatusCode());
+            values.add(getReason());
+            values.add(getRtt());
+            values.add(getRequestHeaderSize());
+            values.add(getRequestBodySize());
+            values.add(getResponseHeaderSize());
+            values.add(getResponseBodySize());
+            values.add(getHighestAlert());
+            values.add(getPayloads());
+            return values;
+        }
     }
 
     public List<SearchResult> search(Pattern pattern, boolean inverse) {

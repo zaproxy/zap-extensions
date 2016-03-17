@@ -48,5 +48,6 @@
 	<classpathentry kind="lib" path="lib/generex-0.0.5-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/automaton-1.11-8.jar"/>
 	<classpathentry kind="lib" path="lib/zap-2.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-csv-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
