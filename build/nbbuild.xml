@@ -79,7 +79,6 @@
                 
         <!-- 'Standard' addons (keep in alphabetical order ;) -->
 		<build-addon name="accessControl" />
-		<build-addon name="alertFilters" />
 		<build-addon name="amf" />
 		<build-addon name="ascanrulesAlpha" />
 		<build-addon name="birtreports" />
