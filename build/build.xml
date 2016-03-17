@@ -383,6 +383,7 @@
 		<delete file="${versions.file}"/>
 		
 		<!-- Keep in alphabetical order ;) -->
+		<build-addon name="alertFilters" />
 		<build-addon name="alertReport" />
 		<build-addon name="ascanrulesBeta" />
 		<build-addon name="beanshell" />
@@ -448,6 +449,20 @@
 			<deploy-addon name="@{name}" />
 		</sequential>
 	</macrodef>
+
+	<target name="deploy-alertFilters" description="deploy the alert filters">
+		<build-deploy-addon name="alertFilters" />
+	</target>
+
+	<target name="deploy-alertFilters-without-help-indexes" description="deploy the alert filters, without building help indexes">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="alertFilters" />
+	</target>
+
+	<target name="generate-wiki-alertFilters" description="Generates the wiki of alert filters">
+		<generate-wiki addon="alertFilters" />
+	</target>
+
 
 	<target name="deploy-alertReport" description="deploy the Alert Report ZAP extension">
 		<build-deploy-addon name="alertReport" />
@@ -599,6 +614,7 @@
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
+				<include name="alertFilters-${status}-*.zap"/>
 				<include name="ascanrulesBeta-${status}-*.zap"/>
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
