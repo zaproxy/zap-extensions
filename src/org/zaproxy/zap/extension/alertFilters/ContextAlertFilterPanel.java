@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.alertFilters;
 
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.GridBagLayout;
 
 import javax.swing.JCheckBox;
@@ -103,7 +104,14 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 			super(model);
 			this.extension = extension;
 
-			getTable().getColumnExt(0).setMaxWidth(70);
+			Component rendererComponent;
+			if (getTable().getColumnExt(0).getHeaderRenderer()==null) {// If there isn't a header renderer then get the default renderer
+				rendererComponent = getTable().getTableHeader().getDefaultRenderer().getTableCellRendererComponent(null, getTable().getColumnExt(0).getHeaderValue(), false, false, 0, 0);
+			} else {// If there is a custom renderer then get it
+				rendererComponent = getTable().getColumnExt(0).getHeaderRenderer().getTableCellRendererComponent(null, getTable().getColumnExt(0).getHeaderValue(), false, false, 0, 0);
+			}
+			
+			getTable().getColumnExt(0).setMaxWidth(rendererComponent.getMaximumSize().width);
 			getTable().setSortOrder(1, SortOrder.ASCENDING);
 			getTable().packAll();
 		}
