@@ -2,7 +2,7 @@
 	<name>Context Alert Filters</name>
 	<version>2</version>
 	<status>beta</status>
-	<description>Allows you to automate the changing of alert risk levels</description>
+	<description>Allows you to automate the changing of alert risk levels.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
@@ -11,6 +11,7 @@
 	Misc minor bug fixes<br>
 	HTML report reports the filtered false positives as true results (Issue 2311)<br>
 	Promoted to beta and added icon<br>
+	Various minor UI improvements<br>
 	]]>
     </changes>
 	<extensions>

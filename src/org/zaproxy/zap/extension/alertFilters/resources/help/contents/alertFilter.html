@@ -12,9 +12,9 @@ Context Alert Filters allow you to automatically override the risk levels
 of any alerts raised by the active and passive scan rules within a context.
 </p>
 <p>
-This add-on adds an 'Alert filters' panel to the contexts dialog.<br>
+This add-on adds an 'Alert Filters' panel to the contexts dialog.<br>
 The panel shows a list of all of the Alert filters along with buttons for 
-adding, removing and deleting them.
+adding, removing, and deleting them.
 </p>
 <p>
 To use this add-on you will need to:
@@ -24,7 +24,7 @@ To use this add-on you will need to:
 <li>Select the contexts' 'Alert filters' panel</li>
 <li>Click 'Add' and fill in the details for each alert you want to override</li>
 </ul>
-Note that the alert filters will only be applied to new alerts not to any alerts that were
+Note: The alert filters will only be applied to new alerts, not to any alerts that were
 already present when the filter was created. 
 </p>
 <p>
@@ -33,14 +33,14 @@ The 'add' and 'modify' dialogs have the following fields:
 <H3>Alert</H3>
 A pull down containing all of the active and passive alert rules currently installed.
 
-<H3>New Level</H3>
-The new level to be assigned to any alerts raised that match the criteria defined by the rule.
+<H3>New Risk Level</H3>
+The new risk level to be assigned to any alerts raised that match the criteria defined by the rule.
  
 <H3>URL</H3>
 An optional URL.<br>
 If specified then this rule will be applied if the URL matches the URL of a raised alert.<br>
 
-<H3>URL is regex</H3>
+<H3>URL is Regex?</H3>
 If set and a URL is specified then the URL will be treated as a regex expression when compared with the URL of the alert.<br>
 If it is not set then any specified URL must exactly match the URL of the alert.
 

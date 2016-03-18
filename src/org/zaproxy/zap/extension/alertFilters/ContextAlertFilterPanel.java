@@ -103,11 +103,9 @@ public class ContextAlertFilterPanel extends AbstractContextPropertiesPanel {
 			super(model);
 			this.extension = extension;
 
-			getTable().getColumnExt(0).setPreferredWidth(20);
-			getTable().getColumnExt(1).setPreferredWidth(50);
-			getTable().getColumnExt(2).setMaxWidth(30);
-			getTable().getColumnExt(3).setPreferredWidth(20);
+			getTable().getColumnExt(0).setMaxWidth(70);
 			getTable().setSortOrder(1, SortOrder.ASCENDING);
+			getTable().packAll();
 		}
 
 		@Override
