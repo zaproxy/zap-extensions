@@ -343,7 +343,6 @@
 		
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
 		<build-addon name="accessControl" />
-		<build-addon name="alertFilters" />
 		<build-addon name="amf" />
 		<build-addon name="ascanrulesAlpha" />
 		<build-addon name="birtreports" />
@@ -429,14 +428,6 @@
 
 	<target name="generate-wiki-accessControl" description="Generates the wiki for Access Control Testing">
 		<generate-wiki addon="accessControl" />
-	</target>
-
-	<target name="deploy-alertFilters" description="deploy the alert filters">
-		<build-deploy-addon name="alertFilters" />
-	</target>
-
-	<target name="generate-wiki-alertFilters" description="Generates the wiki of alert filters">
-		<generate-wiki addon="alertFilters" />
 	</target>
 
 	<target name="deploy-amf" description="deploys AMF add-on">
@@ -604,7 +595,6 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="accessControl-${status}-*.zap"/>
-				<include name="alertFilters-${status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
 			</fileset>
