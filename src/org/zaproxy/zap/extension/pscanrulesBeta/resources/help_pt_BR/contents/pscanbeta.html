@@ -3,38 +3,19 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Passive Scan Rules - Beta
+Regras de varredura passiva - Beta
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Passive Scan Rules - Beta</h1>
-The following beta quality passive scan rules are included in this add-on:
+<h1>Regras de varredura Passiva - Beta</h1> As seguintes regras de varredura passiva de qualidade beta estão incluídas neste complemento: <h2> Incompatibilidade de Conjunto de Caracteres</h2> Esta verificação identifica respostas onde o cabeçalho HTTP Content-Type declara um charset diferente do conjunto de caracteres definido pelo corpo do HTML ou XML. Quando há essa incompatibilidade de charsets do cabeçalho HTTP e do corpo os navegadores da Web pode ser forçados a entrar num indesejável sniffing de conteúdo para determinar o conjunto de caracteres correto para o conteúdo.
 
-<h2>Charset Mismatch</h2>
-This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.
+<h2>Cookie - escopo vago</h2> Cookies podem ter o escopo definido por domínio ou caminho. Esta checagem só está preocupada com domínio. O escopo de domínio aplicado a um cookie determina quais domínios podem acessá-lo. Por exemplo, um cookie pode ter escopo estritamente para um subdomínio, por exemplo, de www.nottrusted.com ou ser vago em relação ao escopo de um domínio pai, por exemplo nottrusted.com. Neste último caso, qualquer subdomínio de nottrusted.com pode acessar o cookie. Cookies com escopos pouco definidos assim são comuns em mega-aplicações como google.com e live.com.
 
-<h2>Cookie - Loosely Scoped</h2>
-Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.
+<h2>Contramedidas CSRF</h2>  <h2>Exposição de informações: Erros de Depuração</h2>  <h2>Exposição de informações: na URL</h2>  <h2>Exposição de informações: Referrer</h2>  <h2>Exposição de informações: comentários suspeitos</h2>  <h2>Autenticação insegura</h2> Autenticação HTTP básica ou digest tem sido usada sobre conexão não-segura. As credenciais podem ser lidas e depois reutilizadas por alguém com acesso à rede.
 
-<h2>CSRF Countermeasures</h2>
+<h2>Estado de visualização de JSF inseguro</h2> A resposta na URL seguinte contém um valor ViewState que não tem proteções criptográficas.
 
-<h2>Information Disclosure: Debug Errors</h2>
-
-<h2>Information Disclosure: In URL</h2>
-
-<h2>Information Disclosure: Referrer</h2>
-
-<h2>Information Disclosure: Suspicious Comments</h2>
-
-<h2>Insecure Authentication</h2>
-HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
-
-<h2>Insecure JSF View State</h2>
-The response at the following URL contains a ViewState value that has no cryptographic protections.
-
-<h2>Servlet Parameter Pollution</h2>
-
-<h2>Viewstate</h2>
+<h2>Poluição de Parâmetro de servlet</h2>  <h2>ViewState</h2>
 
 </body>
 </html>
