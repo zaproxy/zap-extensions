@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Advanced SQLInjection Scanner</name>
-	<version>10</version>
+	<version>11</version>
 	<status>beta</status>
 	<description>An advanced active injection bundle for SQLi (derived by SQLMap)</description>
 	<author>Andrea Pompili (Yhawke)</author>
 	<url/>
 	<changes><![CDATA[
-	Prevent XXE vulnerability.<br>
-	Log level adjustments.<br>
-	Internationalisation of scanner and alert's data.<br>
-	Check for skip/stop more often.<br>
+            Added EXP error based payloads<br>
+            Preserved the space in commented suffixes<br>
         ]]>
         </changes>
 	<extensions>

