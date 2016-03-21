@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.net.SocketException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -498,7 +499,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					//System.out.println("Attacking [" + msg + "], parameter [" + param + "] with value ["+ sqlErrValue + "]");
 
 					//send the message with the modified parameters
-					sendAndReceive(msg1, false); //do not follow redirects
+					try {
+						sendAndReceive(msg1, false); //do not follow redirects
+					} catch (SocketException ex) {
+						if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+								" when accessing: " + msg1.getRequestHeader().getURI().toString());
+						continue; //Something went wrong, continue to the next prefixString in the loop
+					}
 					countErrorBasedRequests++;
 
 					//now check the results against each pattern in turn, to try to identify a database, or even better: a specific database.
@@ -586,7 +593,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//so to work around this, simply re-run the query again now at this point.
 			//Note that we are not counting this request in our max number of requests to be issued
 			refreshedmessage = getNewMsg();
-			sendAndReceive(refreshedmessage, false); //do not follow redirects
+			try {
+				sendAndReceive(refreshedmessage, false); //do not follow redirects
+			} catch (SocketException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + refreshedmessage.getRequestHeader().getURI().toString());
+				return; //Something went wrong, no point continuing
+			}
 
 			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
 			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
@@ -614,7 +627,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					HttpMessage msg4 = getNewMsg();
 					setParameter(msg4, param, modifiedParamValue);
 
-					sendAndReceive(msg4, false); //do not follow redirects
+					try {
+						sendAndReceive(msg4, false); //do not follow redirects
+					} catch (SocketException ex) {
+						if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+								" when accessing: " + msg4.getRequestHeader().getURI().toString());
+						return; //Something went wrong, no point continuing
+					}
 					countExpressionBasedRequests++;
 
 					String modifiedExpressionOutputUnstripped = msg4.getResponseBody().toString();
@@ -642,7 +661,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							HttpMessage msg4Confirm = getNewMsg();
 							setParameter(msg4Confirm, param, modifiedParamValueConfirm);
 
-							sendAndReceive(msg4Confirm, false); //do not follow redirects
+							try {
+								sendAndReceive(msg4Confirm, false); //do not follow redirects
+							} catch (SocketException ex) {
+								if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+										" when accessing: " + msg4Confirm.getRequestHeader().getURI().toString());
+								continue; //Something went wrong, continue to the next item in the loop
+							}
 							countExpressionBasedRequests++;
 
 							String confirmExpressionOutputUnstripped = msg4Confirm.getResponseBody().toString();
@@ -725,7 +750,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//so to work around this, simply re-run the query again now at this point.
 			//Note that we are not counting this request in our max number of requests to be issued
 			refreshedmessage = getNewMsg();
-			sendAndReceive(refreshedmessage, false); //do not follow redirects
+			try {
+				sendAndReceive(refreshedmessage, false); //do not follow redirects
+			} catch (SocketException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + refreshedmessage.getRequestHeader().getURI().toString());
+				return; //Something went wrong, no point continuing
+			}
 
 			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
 			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
@@ -748,7 +779,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				setParameter(msg2, param, sqlBooleanAndTrueValue);
 
 				//send the AND with an additional TRUE statement tacked onto the end. Hopefully it will return the same results as the original (to find a vulnerability)
-				sendAndReceive(msg2, false); //do not follow redirects
+				try {
+					sendAndReceive(msg2, false); //do not follow redirects
+				} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg2.getRequestHeader().getURI().toString());
+					continue; //Something went wrong, continue to the next item in the loop
+				}
 				countBooleanBasedRequests++;
 
 				//String resBodyAND = msg2.getResponseBody().toString();
@@ -771,7 +808,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 						setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
 
-						sendAndReceive(msg2_and_false, false); //do not follow redirects
+						try {
+							sendAndReceive(msg2_and_false, false); //do not follow redirects
+						} catch (SocketException ex) {
+							if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+									" when accessing: " + msg2_and_false.getRequestHeader().getURI().toString());
+							continue; //Something went wrong, continue on to the next item in the loop
+						}
 						countBooleanBasedRequests++;
 
 						//String resBodyANDFalse = stripOff(msg2_and_false.getResponseBody().toString(), SQL_LOGIC_AND_FALSE[i]);
@@ -826,7 +869,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							}
 							HttpMessage msg2_or_true = getNewMsg();
 							setParameter(msg2_or_true, param, orValue);
-							sendAndReceive(msg2_or_true, false); //do not follow redirects
+							try {
+								sendAndReceive(msg2_or_true, false); //do not follow redirects
+							} catch (SocketException ex) {
+								if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+										" when accessing: " + msg2_or_true.getRequestHeader().getURI().toString());
+								continue; //Something went wrong, continue on to the next item in the loop
+							}
 							countBooleanBasedRequests++;
 
 							//String resBodyORTrue = stripOff(msg2_or_true.getResponseBody().toString(), orValue);
@@ -922,7 +971,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				String sqlBooleanAndFalseValue = origParamValue + SQL_LOGIC_AND_FALSE[i];
 
 				setParameter(msg2, param, sqlBooleanOrTrueValue);				
-				sendAndReceive(msg2, false); //do not follow redirects
+				try {
+					sendAndReceive(msg2, false); //do not follow redirects
+				} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg2.getRequestHeader().getURI().toString());
+					continue; //Something went wrong, continue on to the next item in the loop
+				}
 				countBooleanBasedRequests++;
 
 				String resBodyORTrueUnstripped = msg2.getResponseBody().toString();
@@ -936,7 +991,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					//if we can also restrict it back to the original results by appending a " and 1=2", then "Winner Winner, Chicken Dinner". 
 					HttpMessage msg2_and_false = getNewMsg();
 					setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
-					sendAndReceive(msg2_and_false, false); //do not follow redirects
+					try {
+						sendAndReceive(msg2_and_false, false); //do not follow redirects
+					} catch (SocketException ex) {
+						if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+								" when accessing: " + msg2_and_false.getRequestHeader().getURI().toString());
+						continue; //Something went wrong, continue on to the next item in the loop
+					}
 					countBooleanBasedRequests++;
 
 					String resBodyANDFalseUnstripped = msg2_and_false.getResponseBody().toString();
@@ -985,7 +1046,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				String sqlUnionValue = origParamValue + SQL_UNION_APPENDAGES[sqlUnionStringIndex];
 				setParameter(msg3, param, sqlUnionValue);
 				//send the message with the modified parameters
-				sendAndReceive(msg3, false); //do not follow redirects
+				try {
+					sendAndReceive(msg3, false); //do not follow redirects
+				} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg3.getRequestHeader().getURI().toString());
+					continue; //Something went wrong, continue on to the next item in the loop
+				}
 				countUnionBasedRequests++;
 
 				//now check the results.. look first for UNION specific error messages in the output that were not there in the original output
@@ -1054,7 +1121,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//so to work around this, simply re-run the query again now at this point.
 			//Note that we are not counting this request in our max number of requests to be issued
 			refreshedmessage = getNewMsg();
-			sendAndReceive(refreshedmessage, false); //do not follow redirects
+			try {
+				sendAndReceive(refreshedmessage, false); //do not follow redirects
+			} catch (SocketException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + refreshedmessage.getRequestHeader().getURI().toString());
+				return; //Something went wrong, no point continuing
+			}
 
 			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
 			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
@@ -1068,7 +1141,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				HttpMessage msg5 = getNewMsg();
 				setParameter(msg5, param, modifiedParamValue);
 
-				sendAndReceive(msg5, false); //do not follow redirects
+				try {
+					sendAndReceive(msg5, false); //do not follow redirects
+				} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg5.getRequestHeader().getURI().toString());
+					return; //Something went wrong, no point continuing
+				}
 				countOrderByBasedRequests++;
 
 				String modifiedAscendingOutputUnstripped = msg5.getResponseBody().toString();
@@ -1094,7 +1173,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						HttpMessage msg5Confirm = getNewMsg();
 						setParameter(msg5Confirm, param, modifiedParamValueConfirm);
 
-						sendAndReceive(msg5Confirm, false); //do not follow redirects
+						try {
+							sendAndReceive(msg5Confirm, false); //do not follow redirects
+						} catch (SocketException ex) {
+							if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+									" when accessing: " + msg5Confirm.getRequestHeader().getURI().toString());
+							continue; //Something went wrong, continue on to the next item in the loop
+						}
 						countOrderByBasedRequests++;
 
 						String confirmOrderByOutputUnstripped = msg5Confirm.getResponseBody().toString();

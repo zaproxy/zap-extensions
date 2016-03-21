@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="lib/diffutils-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/fuzz-beta-4.zap"/>
 	<classpathentry kind="lib" path="lib/guice-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb-2.3.3.jar"/>
 	<classpathentry kind="lib" path="lib/htmlunit-2.15.jar"/>
 	<classpathentry kind="lib" path="lib/javax.inject-1.jar"/>
 	<classpathentry kind="lib" path="lib/jdom.jar"/>
@@ -32,9 +32,9 @@
 	<classpathentry kind="lib" path="testlib/objenesis-1.2.jar"/>
 	<classpathentry kind="lib" path="testlib/powermock-mockito-1.4.12-full.jar"/>
 	<classpathentry kind="lib" path="testlib/simple-5.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/selenium-server-standalone-2.48.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/zap-2.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/selenium-server-standalone-2.52.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

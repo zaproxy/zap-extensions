@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -64,7 +65,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     
     // PowerShell Command constants
     private static final String PS_TEST_CMD = "get-help";
-    private static final Pattern PS_CTRL_PATTERN = Pattern.compile("get-help|cmdlets|get-alias", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PS_CTRL_PATTERN = Pattern.compile("(?:\\sget-help)|cmdlet|get-alias", Pattern.CASE_INSENSITIVE);
     
     // Useful if space char isn't allowed by filters
     // http://www.blackhatlibrary.net/Command_Injection
@@ -401,7 +402,14 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             
             try {                
                 // Send the request and retrieve the response
-                sendAndReceive(msg, false);
+                try {
+                    sendAndReceive(msg, false);
+                } catch (SocketException ex) {
+        			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+        					" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+        					"\n The target may have replied with a poorly formed redirect due to our input.");
+        			continue; //Something went wrong, move to next payload iteration
+                }
                 elapsedTime = msg.getTimeElapsedMillis();
                 responseTimes.add(elapsedTime);
                                 
@@ -411,7 +419,9 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 if (matcher.find()) {
                     // We Found IT!                    
                     // First do logging
-                    log.info("[OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                    if (log.isDebugEnabled()) {
+                        log.debug("[OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                    }
                     
                     // Now create the alert message
                     this.bingo(
@@ -473,7 +483,14 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             
             try {                
                 // Send the request and retrieve the response
-                sendAndReceive(msg, false);
+                try {
+                    sendAndReceive(msg, false);
+                } catch (SocketException ex) {
+        			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+        					" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+        					"\n The target may have replied with a poorly formed redirect due to our input.");
+        			continue; //Something went wrong, move to next blind iteration
+                }
                 elapsedTime = msg.getTimeElapsedMillis();
 
                 // Check if enough time has passed                            
@@ -484,7 +501,9 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                     
                     // We Found IT!                    
                     // First do logging
-                    log.info("[Blind OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                    if (log.isDebugEnabled()) {
+                        log.debug("[Blind OS Command Injection Found] on parameter [" + paramName + "] with value [" + paramValue + "]");
+                    }
                     
                     // Now create the alert message
                     this.bingo(

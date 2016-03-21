@@ -30,6 +30,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -127,7 +128,15 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
 			msg = getNewMsg();
 			String returnAttack = randomCharacterString(2100);
 			setParameter(msg, param, returnAttack);
-			sendAndReceive(msg);
+			try {
+				sendAndReceive(msg);
+			} catch (UnknownHostException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+						"\n The target may have replied with a poorly formed redirect due to our input.");
+				return; //Something went wrong no point continuing
+			}
+			
 			HttpResponseHeader requestReturn = msg.getResponseHeader();			
 			// This is where BASE baseResponseBody was you detect potential vulnerabilities in the response
     		String chkerrorheader = requestReturn.getHeadersAsString();

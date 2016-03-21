@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.text.MessageFormat;
 import java.util.Random;
 
@@ -229,20 +230,28 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, phpPayload);
 
-            if (log.isTraceEnabled()) {
-                log.trace("Testing [" + paramName + "] = [" + phpPayload + "]");
+            if (log.isDebugEnabled()) {
+                log.debug("Testing [" + paramName + "] = [" + phpPayload + "]");
             }
             
             try {
                 // Send the request and retrieve the response
-                sendAndReceive(msg, false);
+            	try {
+            		sendAndReceive(msg, false);
+            	} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg.getRequestHeader().getURI().toString());
+					continue; //Advance in the PHP payload loop, no point continuing on this payload
+				} 
                 
                 // Check if the injected content has been evaluated and printed
                 if (msg.getResponseBody().toString().contains(PHP_CONTROL_TOKEN)) {
                     // We Found IT!                     
                     // First do logging
-                    log.info("[PHP Code Injection Found] on parameter [" + paramName 
-                            + "] with payload [" + phpPayload + "]");
+                    if (log.isDebugEnabled()) {
+                        log.debug("[PHP Code Injection Found] on parameter [" + paramName 
+                                + "] with payload [" + phpPayload + "]");
+                    }
                     
                     // Now create the alert message
                     this.bingo(
@@ -297,20 +306,28 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, MessageFormat.format(aspPayload, bignum1, bignum2));
             
-            if (log.isTraceEnabled()) {
-                log.trace("Testing [" + paramName + "] = [" + aspPayload + "]");
+            if (log.isDebugEnabled()) {
+                log.debug("Testing [" + paramName + "] = [" + aspPayload + "]");
             }
 
             try {
                 // Send the request and retrieve the response
-                sendAndReceive(msg, false);
-                
+            	try {
+            		sendAndReceive(msg, false);
+            	} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg.getRequestHeader().getURI().toString());
+					continue; //Advance in the ASP payload loop, no point continuing on this payload
+				}
+            	
                 // Check if the injected content has been evaluated and printed
                 if (msg.getResponseBody().toString().contains(Integer.toString(bignum1*bignum2))) {
                     // We Found IT!
                     // First do logging
-                    log.info("[ASP Code Injection Found] on parameter [" + paramName 
-                            + "]  with payload [" + aspPayload + "]");
+                    if (log.isDebugEnabled()) {
+                        log.debug("[ASP Code Injection Found] on parameter [" + paramName 
+                                + "]  with payload [" + aspPayload + "]");
+                    }
                     
                     // Now create the alert message
                     this.bingo(

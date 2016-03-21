@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,9 +68,8 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title>Google</title>"),
-        Pattern.compile("<title>Google</title>"),
-        Pattern.compile("<title.*Google.*/title>"),
-        Pattern.compile("<title.*Google.*/title>")
+        Pattern.compile("<title.*?Google.*?/title>"),
+        Pattern.compile("<title.*?Google.*?/title>")
     };
     /**
      * The number of requests we will send per parameter, based on the attack
@@ -164,6 +164,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
             if (log.isDebugEnabled()) {
                 log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
             }
+            String origResponse = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
 
             // Set number of prefixes to check on the remote file names
             switch (this.getAttackStrength()) {
@@ -189,6 +190,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
             }
 
             Matcher matcher;
+            Matcher origMatcher;
 
             if (log.isDebugEnabled()) {
                 log.debug("Checking [" + getBaseMsg().getRequestHeader().getMethod() + "] [" + getBaseMsg().getRequestHeader().getURI()
@@ -207,17 +209,31 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
                     msg = getNewMsg();
                     setParameter(msg, param, prefix + target);
 
-                    //send the modified request, and see what we get back
-                    sendAndReceive(msg);
+                  //send the modified request, and see what we get back
+                    try {
+                    	sendAndReceive(msg);
+                    } catch (IllegalStateException|UnknownHostException ex) {
+            			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+            					" when accessing: " + msg.getRequestHeader().getURI().toString());
+            			continue; //Something went wrong, continue to the next target in the loop
+            		} 
+                    
                     //does it match the pattern specified for that file name?
                     String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
                     matcher = REMOTE_FILE_PATTERNS[i].matcher(response);
                     //if the output matches, and we get a 200
                     if (matcher.find() && msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
-                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
-                                null, param, matcher.group(), null, msg);
-                        // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact) 
-                        return;
+                    	// And check that this isnt exactly the same as the original response
+                        origMatcher = REMOTE_FILE_PATTERNS[i].matcher(origResponse);
+                        if (origMatcher.find() && origMatcher.group().equals(matcher.group())) {
+                        	// Its the same as before
+                            log.debug("Not reporting alert - same title as original: " + matcher.group());
+                        } else {
+	                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
+	                                null, param, prefix + target, null, matcher.group(), msg);
+	                        // All done. No need to look for vulnerabilities on subsequent parameters on the same request (to reduce performance impact) 
+	                        return;
+                        }
                     }
                     
                     // Check if the scan has been stopped
@@ -231,7 +247,7 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
             }
 
         } catch (Exception e) {
-            log.error("Error scanning parameters for Path Traversal: " + e.getMessage());
+            log.error("Error scanning parameters for Path Traversal: " + e.getMessage() + " Caused by: " + e.getCause());
         }
     }
 
