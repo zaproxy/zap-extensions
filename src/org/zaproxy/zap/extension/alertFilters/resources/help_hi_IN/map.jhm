@@ -4,5 +4,6 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
+	<mapID target="flags-icon" url="contents/images/flags.png" />
     <mapID target="addon.alertFilter" url="contents/alertFilter.html" />
 </map>
