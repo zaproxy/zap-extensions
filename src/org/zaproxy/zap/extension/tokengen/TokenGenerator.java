@@ -18,6 +18,8 @@
 package org.zaproxy.zap.extension.tokengen;
 
 import java.net.SocketTimeoutException;
+import java.util.Iterator;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.SwingWorker;
@@ -27,6 +29,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HtmlParameter;
 import org.zaproxy.zap.extension.params.HtmlParameterStats;
 
 public class TokenGenerator extends SwingWorker<Void, Void> {
@@ -40,6 +43,7 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 	private boolean paused = false;
 	private long requestDelayDuration;
 	private TimeUnit requestDelayTimeUnit;
+	private boolean shouldRemoveCookie = false;
     private static Logger log = Logger.getLogger(TokenGenerator.class);
 
 	private HttpSender getHttpSender() {
@@ -52,6 +56,23 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
+		TreeSet<HtmlParameter> cookies = this.httpMessage.getRequestHeader().getCookieParams();
+		HttpMessage msg = this.httpMessage.cloneRequest();
+
+		if (shouldRemoveCookie && targetToken.getType() == HtmlParameter.Type.cookie) {
+			Iterator<HtmlParameter> iter = cookies.iterator();
+			while (iter.hasNext()) {
+				HtmlParameter cookie = iter.next();
+				if (cookie.getName().equals(targetToken.getName())) {
+					iter.remove();
+					break;
+				}
+			}
+			msg.getRequestHeader().setCookieParams(cookies);
+		} else {
+			msg.getRequestHeader().setHeader(HttpHeader.COOKIE, null);
+		}
+
 		for (int i=0; i < numberTokens; i++) {
 			while (paused && ! this.stopGenerating) {
 				try {
@@ -64,12 +85,9 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 				break;
 			}
 
-			HttpMessage msg = this.httpMessage.cloneRequest();
-
 			requestDelayTimeUnit.sleep(requestDelayDuration);
 
 			try {
-				msg.getRequestHeader().setHeader(HttpHeader.COOKIE, null);
 				this.getHttpSender().sendAndReceive(msg, true);
 			} catch (SocketTimeoutException ste) {
 				log.debug("A timout occurred while sending a request to generate a token. Reducing sent count, initiating supplemental request.");
@@ -122,5 +140,9 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 		}
 		this.requestDelayDuration = duration;
 		this.requestDelayTimeUnit = timeUnit;
+	}
+
+	public void setShouldRemoveCookie(boolean shouldRemoveCookie) {
+		this.shouldRemoveCookie = shouldRemoveCookie;
 	}
 }

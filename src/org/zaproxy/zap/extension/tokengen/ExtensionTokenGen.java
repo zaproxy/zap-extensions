@@ -286,7 +286,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	}
 
 	@SuppressWarnings("fallthrough")
-	public void startTokenGeneration(HttpMessage msg, int numGen, HtmlParameterStats htmlParameterStats) {
+	public void startTokenGeneration(HttpMessage msg, int numGen, HtmlParameterStats htmlParameterStats, boolean shouldRemoveCookie) {
 		switch (Control.getSingleton().getMode()) {
 		case safe:
 			throw new IllegalStateException("Token generation is not allowed in Safe mode");
@@ -320,6 +320,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 			gen.setNumberTokens(numGen / numThreads);	// TODO what about remainder?
 			gen.setTargetToken(htmlParameterStats);
 			gen.setRequestDelay(getTokenParam().getRequestDelayInMs(), TimeUnit.MILLISECONDS);
+			gen.setShouldRemoveCookie(shouldRemoveCookie);
 			gen.execute();
 			this.runningGenerators++;
 		}

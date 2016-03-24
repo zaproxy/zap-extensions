@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,6 +55,8 @@ public class GenerateTokensDialog extends AbstractDialog {
 	private JComboBox<String> numTokens = null;
 	private JComboBox<String> paramType = null;
 	private JComboBox<String> paramName = null;
+	private JLabel removeCookiesLabel = null;
+	private JCheckBox shouldRemoveCookieCheckBox = null;
 	private JButton cancelButton = null;
 	private JButton startButton = null;
 
@@ -102,8 +105,10 @@ public class GenerateTokensDialog extends AbstractDialog {
 			jPanel.add(getParamType(), getGBC(1, 0, 3, 0.0D));
 			jPanel.add(new JLabel(messages.getString("tokengen.generate.label.name")), getGBC(0, 1, 1, 0.25D));
 			jPanel.add(getParamName(), getGBC(1, 1, 3, 0.0D));
-			jPanel.add(new JLabel(messages.getString("tokengen.generate.label.numTokens")), getGBC(0, 2, 1, 0.25D));
-			jPanel.add(getNumTokensField(), getGBC(1, 2, 3, 0.0D));
+			jPanel.add(getRemoveCookiesLabel(), getGBC(0, 2, 1, 0.25D));
+			jPanel.add(getShouldRemoveCookieCheckBox(), getGBC(1, 2, 3, 0.0D));
+			jPanel.add(new JLabel(messages.getString("tokengen.generate.label.numTokens")), getGBC(0, 3, 1, 0.25D));
+			jPanel.add(getNumTokensField(), getGBC(1, 3, 3, 0.0D));
 			jPanel.add(getCancelButton(), getGBC(2, 4, 1, 0.25));
 			jPanel.add(getStartButton(), getGBC(3, 4, 1, 0.25));
 		}
@@ -162,10 +167,11 @@ public class GenerateTokensDialog extends AbstractDialog {
 						}
 					}
 					
-					extension.startTokenGeneration(httpMessage, numGen, 
-							new HtmlParameterStats("", 
-									(String)getParamName().getSelectedItem(), 
-									HtmlParameter.Type.valueOf((String)getParamType().getSelectedItem()), null, null));
+					extension.startTokenGeneration(httpMessage, numGen,
+							new HtmlParameterStats("", (String) getParamName().getSelectedItem(),
+									HtmlParameter.Type.valueOf((String) getParamType().getSelectedItem()), null, null),
+							getShouldRemoveCookieCheckBox().isSelected()
+									&& getShouldRemoveCookieCheckBox().isEnabled()); // Could be selected but not enabled for non-cookie types
 					setVisible(false);
 				}});
 		}
@@ -278,6 +284,9 @@ public class GenerateTokensDialog extends AbstractDialog {
 						}
 						getParamName().setEnabled(params != null && params.size() > 0);
 						getStartButton().setEnabled(params != null && params.size() > 0);
+						getShouldRemoveCookieCheckBox()
+								.setEnabled(HtmlParameter.Type.cookie.name().equals(paramType.getSelectedItem()));
+						getRemoveCookiesLabel().setEnabled(HtmlParameter.Type.cookie.name().equals(paramType.getSelectedItem()));
 					}
 				}
 			});
@@ -290,6 +299,20 @@ public class GenerateTokensDialog extends AbstractDialog {
 			paramName = new JComboBox<>();
 		}
 		return paramName;
+	}
+
+	private JCheckBox getShouldRemoveCookieCheckBox() {
+		if (shouldRemoveCookieCheckBox == null) {
+			shouldRemoveCookieCheckBox = new JCheckBox();
+		}
+		return shouldRemoveCookieCheckBox;
+	}
+	
+	private JLabel getRemoveCookiesLabel() {
+		if (removeCookiesLabel == null) {
+			removeCookiesLabel = new JLabel(messages.getString("tokengen.generate.label.remove.cookies"));
+		}
+		return removeCookiesLabel;
 	}
 
 	public void setExtension(ExtensionTokenGen extension) {

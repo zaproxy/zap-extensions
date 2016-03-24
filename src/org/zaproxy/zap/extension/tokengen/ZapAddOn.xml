@@ -13,6 +13,7 @@
 	Allow to configure the number of threads.<br>
 	Allow to delay the requests.<br>
 	Update minimum ZAP version to 2.6.0.<br>
+	Deletes the cookie in question before sending the request.<br>
 	]]>
 	</changes>
 	<extensions>
