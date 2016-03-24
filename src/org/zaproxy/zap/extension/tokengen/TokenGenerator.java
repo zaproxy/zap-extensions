@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.tokengen;
 
 import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.SwingWorker;
 
@@ -37,6 +38,8 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 	private ExtensionTokenGen extension = null;
 	private boolean stopGenerating = false;
 	private boolean paused = false;
+	private long requestDelayDuration;
+	private TimeUnit requestDelayTimeUnit;
     private static Logger log = Logger.getLogger(TokenGenerator.class);
 
 	private HttpSender getHttpSender() {
@@ -62,6 +65,8 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 			}
 
 			HttpMessage msg = this.httpMessage.cloneRequest();
+
+			requestDelayTimeUnit.sleep(requestDelayDuration);
 
 			try {
 				msg.getRequestHeader().setHeader(HttpHeader.COOKIE, null);
@@ -111,4 +116,11 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 		this.paused = paused;
 	}
 
+	public void setRequestDelay(long duration, TimeUnit timeUnit) {
+		if (timeUnit == null) {
+			throw new IllegalArgumentException("The parameter timeUnit must not be null.");
+		}
+		this.requestDelayDuration = duration;
+		this.requestDelayTimeUnit = timeUnit;
+	}
 }

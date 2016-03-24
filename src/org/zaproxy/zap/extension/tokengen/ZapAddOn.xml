@@ -11,6 +11,7 @@
 	Respect the current mode and react to changes.<br>
 	Inform of running test (e.g. on session change, add-on uninstall).<br>
 	Allow to configure the number of threads.<br>
+	Allow to delay the requests.<br>
 	]]>
 	</changes>
 	<extensions>

@@ -33,6 +33,7 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
  * It allows to change the following options:
  * <ul>
  * <li>Number of threads for the token generation;</li>
+ * <li>The request delay;</li>
  * </ul>
  * 
  * @see TokenParam
@@ -53,15 +54,28 @@ public class TokenOptionsPanel extends AbstractParamPanel {
             .getString("tokengen.optionspanel.option.threadsperscan");
 
     /**
+     * The label for the request delay option.
+     */
+    private static final String REQUEST_DELAY_LABEL = Constant.messages.getString("tokengen.optionspanel.option.requestdelay");
+
+    /**
      * The number spinner for the number of threads per scan.
      */
     private ZapNumberSpinner threadsPerScanNumberSpinner;
+
+    /**
+     * The number spinner for the request delay.
+     */
+    private ZapNumberSpinner requestDelayNumberSpinner;
 
     public TokenOptionsPanel() {
         super();
 
         JLabel threadsPerScanLabel = new JLabel(THREADS_PER_SCAN_LABEL);
         threadsPerScanNumberSpinner = new ZapNumberSpinner(1, TokenParam.DEFAULT_THREADS_PER_SCAN, 50);
+
+        JLabel requestDelayLabel = new JLabel(REQUEST_DELAY_LABEL);
+        requestDelayNumberSpinner = new ZapNumberSpinner(0, TokenParam.DEFAULT_REQUEST_DELAY_IN_MS, Integer.MAX_VALUE);
 
         setName(NAME);
 
@@ -72,11 +86,26 @@ public class TokenOptionsPanel extends AbstractParamPanel {
         layout.setAutoCreateContainerGaps(true);
 
         layout.setHorizontalGroup(
-                layout.createSequentialGroup().addComponent(threadsPerScanLabel).addComponent(threadsPerScanNumberSpinner));
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(threadsPerScanLabel)
+                                        .addComponent(requestDelayLabel))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(threadsPerScanNumberSpinner)
+                                        .addComponent(requestDelayNumberSpinner)));
 
         layout.setVerticalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(threadsPerScanLabel).addComponent(
-                        threadsPerScanNumberSpinner));
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(threadsPerScanLabel)
+                                        .addComponent(threadsPerScanNumberSpinner))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(requestDelayLabel)
+                                        .addComponent(requestDelayNumberSpinner)));
     }
 
     @Override
@@ -84,6 +113,7 @@ public class TokenOptionsPanel extends AbstractParamPanel {
         TokenParam options = ((OptionsParam) obj).getParamSet(TokenParam.class);
 
         threadsPerScanNumberSpinner.setValue(options.getThreadsPerScan());
+        requestDelayNumberSpinner.setValue(options.getRequestDelayInMs());
     }
 
     @Override
@@ -91,6 +121,7 @@ public class TokenOptionsPanel extends AbstractParamPanel {
         TokenParam options = ((OptionsParam) obj).getParamSet(TokenParam.class);
 
         options.setThreadsPerScan(threadsPerScanNumberSpinner.getValue());
+        options.setRequestDelayInMs(requestDelayNumberSpinner.getValue());
     }
 
     @Override

@@ -25,11 +25,14 @@ import org.zaproxy.zap.common.VersionedAbstractParam;
  * It allows to change, programmatically, the following options:
  * <ul>
  * <li>Number of threads for the token generation;</li>
+ * <li>The request delay;</li>
  * </ul>
  */
 public class TokenParam extends VersionedAbstractParam {
 
     protected static final int DEFAULT_THREADS_PER_SCAN = 5;
+
+    protected static final int DEFAULT_REQUEST_DELAY_IN_MS = 0;
 
     /**
      * The version of the configurations. Used to keep track of configurations changes between releases, if updates are needed.
@@ -45,7 +48,11 @@ public class TokenParam extends VersionedAbstractParam {
 
     private static final String THREADS_PER_SCAN = PARAM_BASE_KEY + ".threadsPerScan";
 
+    private static final String REQUEST_DELAY_IN_MS = PARAM_BASE_KEY + ".requestDelayInMs";
+
     private int threadsPerScan = DEFAULT_THREADS_PER_SCAN;
+
+    private int requestDelayInMs = DEFAULT_REQUEST_DELAY_IN_MS;
 
     public TokenParam() {
     }
@@ -68,6 +75,8 @@ public class TokenParam extends VersionedAbstractParam {
     @Override
     protected void parseImpl() {
         setThreadsPerScanImpl(getConfig().getInt(THREADS_PER_SCAN, DEFAULT_THREADS_PER_SCAN));
+
+        requestDelayInMs = getConfig().getInt(REQUEST_DELAY_IN_MS, DEFAULT_REQUEST_DELAY_IN_MS);
     }
 
     private void setThreadsPerScanImpl(int threadsPerScan) {
@@ -83,4 +92,12 @@ public class TokenParam extends VersionedAbstractParam {
         getConfig().setProperty(THREADS_PER_SCAN, this.threadsPerScan);
     }
 
+    public int getRequestDelayInMs() {
+        return requestDelayInMs;
+    }
+
+    public void setRequestDelayInMs(int requestDelayInMs) {
+        this.requestDelayInMs = requestDelayInMs;
+        getConfig().setProperty(REQUEST_DELAY_IN_MS, this.requestDelayInMs);
+    }
 }
