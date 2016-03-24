@@ -10,6 +10,7 @@
 	Deleted Integer Overflow scanner.<br>
 	Issue 823: i18n (internationalise) alpha rules.<br>
 	Add CWE and WASC IDs to active scanners which may have been lacking those details.<br>
+	Issue 2207: Added Http Only Site Active scan rule.<br>
   	]]>
 	</changes>
 	<extensions>
@@ -18,6 +19,7 @@
 	<ascanrules>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpOnlySite</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.LDAPInjection</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ProxyDisclosureScanner</ascanrule>
