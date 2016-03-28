@@ -14,15 +14,14 @@ Você alguma vez quis navegar um aplicativo que você testou com o ZAP em um mom
 O Add-on permite a você instruir o ZAP para retornar o conteúdo do histórico entre datas especificadas, ao invés de encaminhar os requests para o site. <br>Isso permite que você aparentemente navegue e use um site ao qual já não tem mais acesso. <br>Também permite que veja como ele era entre momentos determinados, o que é útil se o aplicativo mudou desde então. <br><br>Ao retornar páginas do histórico do ZAP, rodapés flutuantes são inseridos nas páginas HTML, para dar uma indicação visual que estas páginas são geradas pelo ZAP. <br> O ZAP retornará páginas que foram o resultado de solicitações de GET e de POST sempre que encontrar aqueles que correspondam a essas solicitações. <br>A correspondência acontecerá apenas se todos os parâmetros de URL e POST forem os mesmos, ignorando a ordem e quaisquer tokens CSRF conhecidos. <br>Se nenhuma página correspondente puder ser encontrada no histórico, uma página 404 personalizada será retornada, com os links para a mesma página, caso tenha sido  chamada com parâmetros diferentes ou fora do período de tempo especificado. <br><br>Este complemento adiciona menus de botão direito na Árvore de Sites:
 </p>
 <h3>Habilitar revisita</h3>
-When selected a popup will be shown which asks for the start and end times to be used.<br>
-The start time defaults to the time of the first request in the session.<br>
-The end time defaults to the time of the last request in the session.<br>
-If any of the time elements (for example 'day of the month') have not changed then those elements will be disabled.<br>
-If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site,
-and a 'calendar' icon added to the site node in the History tree.
+Quando selecionado, será exibido um pop-up que pede para os momentos de início e de fim a serem usados.<br>
+O momento de início padrão é o instante do primeiro request da sessão.<br>
+O momento final padrão é o momento da última solicitação da sessão.<br>
+Se qualquer dos elementos de tempo (por exemplo ' dia do mês') não mudaram, então esses elementos serão desabilitados.<br>
+Se o botão OK for acionado, então a funcionalidade de revisita será habilitada para o site selecionado e um ícone de 'Calendário' será adicionado ao nó do site na árvore do histórico.
 
 <h3>Desativar revisita</h3>
-When selected then the revisit functionality will be disabled for the selected site.
+Quando selecionada, a funcionalidade de revisitar será desabilitada para o site selecionado.
 
 <h2>API</h2>
 O complemento na suporta os seguintes endpoints de API:<br><br>
