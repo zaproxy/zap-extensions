@@ -4,9 +4,9 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Revisit" image="revisit-icon" target="revisit"/>
+	<tocitem text="ZAP guia do usuário" tocid="toplevelitem">
+		<tocitem text="Complementos" tocid="addons">
+			<tocitem text="Revisitar" image="revisit-icon" target="revisit"/>
 		</tocitem>
 	</tocitem>
 </toc>
