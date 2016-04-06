@@ -492,8 +492,17 @@ public class SourceCodeDisclosureSVN extends AbstractAppPlugin {
 									}
 								}
 							}
+							catch (SQLException sqlEx) {
+								StringBuilder errorSb=new StringBuilder(300);
+								errorSb.append("Error executing SQL on temporary SVN SQLite database '");
+								errorSb.append(sqliteConnectionUrl);
+								errorSb.append("': ");
+								errorSb.append(sqlEx);
+								errorSb.append("\nThe saved response likely wasn't a SQLite db.");
+								log.debug(errorSb);
+							}
 							catch (Exception e) {
-								log.error ("Error executing SQL on temporary SVN SQLite database '"+ sqliteConnectionUrl + "': "+ e);
+								log.debug("An error has occurred, related to the temporary SVN SQLite DB. "+e);
 							}
 							finally {
 								//the JDBC driver in use does not play well with "try with resource" construct. I tried!
