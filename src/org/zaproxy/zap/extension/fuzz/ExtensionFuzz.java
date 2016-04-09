@@ -70,6 +70,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.processor.ExpandStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.JavaScriptEscapeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.JavaScriptUnescapeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.MD5HashProcessor;
+import org.zaproxy.zap.extension.fuzz.payloads.generator.NumberPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PostfixStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PrefixStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.SHA1HashProcessor;
@@ -83,6 +84,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.processor.URLEncodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandlersRegistry;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultStringPayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.FileStringPayloadGeneratorUIHandler;
+import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.NumberPayloadGeneratorAdapterUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.RegexPayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.ScriptStringPayloadGeneratorAdapterUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.Base64DecodeProcessorUIHandler;
@@ -222,6 +224,8 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         // TODO
         // payloadGeneratorsUIRegistry.registerPayloadUI(ProcessPayloadGenerator.class, new ProcessPayloadGeneratorUIHandler());
         payloadGeneratorsUIRegistry.registerPayloadUI(RegexPayloadGenerator.class, new RegexPayloadGeneratorUIHandler());
+
+        payloadGeneratorsUIRegistry.registerPayloadUI(NumberPayloadGenerator.class, new NumberPayloadGeneratorAdapterUIHandler());
 
         PayloadProcessorUIHandlersRegistry payloadProcessorsUIRegistry = PayloadProcessorUIHandlersRegistry.getInstance();
         payloadProcessorsUIRegistry.registerProcessorUIHandler(
