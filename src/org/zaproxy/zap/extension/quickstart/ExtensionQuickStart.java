@@ -40,14 +40,16 @@ import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.report.ReportLastScan;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 
-public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChangedListener, CommandLineListener {
+public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChangedListener, CommandLineListener, OptionsChangedListener {
 	
 	public static final String NAME = "ExtensionQuickStart";
 	protected static final String SCRIPT_CONSOLE_HOME_PAGE = Constant.ZAP_HOMEPAGE;
@@ -94,6 +96,8 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	        extensionHook.getHookView().addWorkPanel(getQuickStartPanel());
 	        
 	        ExtensionHelp.enableHelpKey(getQuickStartPanel(), "quickstart");
+	        
+	    	extensionHook.addOptionsChangedListener(this);
 	    }
         extensionHook.addSessionListener(this);
 
@@ -431,5 +435,11 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public void optionsChanged(OptionsParam optionsParam) {
+		//PnH button has the same enable state as the API
+		getQuickStartPanel().updatePnhPanelElements(optionsParam.getApiParam().isEnabled());		
 	}
 }

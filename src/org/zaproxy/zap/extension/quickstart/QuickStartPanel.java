@@ -259,10 +259,23 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	private ZapTextField getConfField () {
 		if (confField == null) {
 			confField = new ZapTextField();
-			confField.setText(getPlugNHackUrl());
 			confField.setEditable(false);
+			updateConfField(Model.getSingleton().getOptionsParam().getApiParam().isEnabled());
 		}
 		return confField;
+	}
+	
+	private void updateConfField(boolean apiState) {
+		if (confField == null) {
+			return;
+		}
+		//PnH URL Field has the same enable state as the API
+		confField.setEnabled(apiState);
+		if (apiState) {
+			confField.setText(getPlugNHackUrl());
+		} else {
+			confField.setText(Constant.messages.getString("quickstart.mitm.api.disabled"));
+		}
 	}
 	
 	private JButton getConfButton() {
@@ -273,6 +286,8 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 			confButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(
 					QuickStartPanel.class.getResource("/org/zaproxy/zap/extension/quickstart/resources/plug.png"))));
 
+			updateConfButton(Model.getSingleton().getOptionsParam().getApiParam().isEnabled());
+			
 			confButton.addActionListener(new java.awt.event.ActionListener() { 
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -283,6 +298,24 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		return confButton;
 	}
 
+	private void updateConfButton(boolean apiState) {
+		if (confButton == null) {
+			return;
+		}
+		//PnH button has the same enable state as the API
+		confButton.setEnabled(apiState);
+		if (apiState) {
+			confButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.mitm"));
+		} else {
+			confButton.setToolTipText(Constant.messages.getString("quickstart.mitm.api.disabled"));
+		}
+	}
+	
+	public void updatePnhPanelElements(boolean apiState) {
+		updateConfButton(apiState);
+		updateConfField(apiState);
+	}
+	
 	boolean attackUrl () {
 		URL url;
 		try {
