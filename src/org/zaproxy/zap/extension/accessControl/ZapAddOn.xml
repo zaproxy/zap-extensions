@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fix an exception when cancelling the "Save" access control report dialogue.<br>
+	Do not allow to dynamically uninstall, not yet supported.<br>
 	]]> 
 	</changes>
 	<dependson />
