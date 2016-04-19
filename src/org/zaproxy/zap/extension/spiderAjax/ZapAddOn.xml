@@ -9,6 +9,7 @@
 	<![CDATA[
 	Fix issue that prevented the spider from clicking all elements set in the options (Issue 2151).<br>
 	Minor update in help pages.<br>
+	Suppress log of innocuous warning.<br>
 	]]>
 	</changes>
 	<dependencies>
