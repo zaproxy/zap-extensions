@@ -353,6 +353,7 @@
 		<build-addon name="communityScripts"/>
 		<build-addon name="customreport"/>
 		<build-addon name="domxss"/>
+		<build-addon name="exportReport" />
 		<build-addon name="help_bs_BA" />
 		<build-addon name="help_es_ES" />
 		<build-addon name="help_fr_FR" />
@@ -493,6 +494,14 @@
 	
 	<target name="generate-wiki-domxss" description="Generates the wiki of domxss extension">
 		<generate-wiki addon="domxss" />
+	</target>
+
+	<target name="deploy-exportReport" description="deploy the export report extension">
+        <build-deploy-addon name="exportReport" />
+	</target>
+
+	<target name="generate-wiki-exportReport" description="Generates the wiki of export report extension">
+		<generate-wiki addon="exportReport" />
 	</target>
 
 	<target name="deploy-help-fr-FR" description="deploy the help_fr_FR add-on">
