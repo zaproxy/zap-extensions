@@ -131,7 +131,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 	@Override
 	public boolean canUnload() {
-		return true;
+		return false;
 	}
 
 	@Override
