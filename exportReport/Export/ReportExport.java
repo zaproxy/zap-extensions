@@ -82,9 +82,6 @@ import org.xml.sax.SAXException;
  */
 
 public class ReportExport {
-
-	private static final String[] MSG_RISK = { "Informational", "Low", "Medium", "High" };
-	private static final String[] MSG_CONFIDENCE = { "False Positive", "Low", "Medium", "High", "Confirmed" };
 	
 	private static String entityEncode(String text) throws UnsupportedEncodingException {
 		String result = text;
@@ -118,16 +115,16 @@ public class ReportExport {
 		report.setReportVersion(entityEncode(reportVersion));
 		report.setDesc(entityEncode(reportDesc));
 
-		String description = Constant.messages.getString("exportReport.details.description").toString();
-		String solution = Constant.messages.getString("exportReport.details.solution").toString();
-		String otherinfo = Constant.messages.getString("exportReport.details.otherinfo").toString();
-		String reference = Constant.messages.getString("exportReport.details.reference").toString();
-		String cweid = Constant.messages.getString("exportReport.details.cweid").toString();
-		String wascid = Constant.messages.getString("exportReport.details.wascid").toString();
-		String requestheader = Constant.messages.getString("exportReport.details.requestheader").toString();
-		String responseheader = Constant.messages.getString("exportReport.details.responseheader").toString();
-		String requestbody = Constant.messages.getString("exportReport.details.requestbody").toString();
-		String responsebody = Constant.messages.getString("exportReport.details.responsebody").toString();
+		String description = Constant.messages.getString("exportReport.details.description");
+		String solution = Constant.messages.getString("exportReport.details.solution");
+		String otherinfo = Constant.messages.getString("exportReport.details.otherinfo");
+		String reference = Constant.messages.getString("exportReport.details.reference");
+		String cweid = Constant.messages.getString("exportReport.details.cweid");
+		String wascid = Constant.messages.getString("exportReport.details.wascid");
+		String requestheader = Constant.messages.getString("exportReport.details.requestheader");
+		String responseheader = Constant.messages.getString("exportReport.details.responseheader");
+		String requestbody = Constant.messages.getString("exportReport.details.requestbody");
+		String responsebody = Constant.messages.getString("exportReport.details.responsebody");
 
 		try {
 			for (int i = 0; i < siteNumber; i++) {
@@ -147,7 +144,7 @@ public class ReportExport {
 				String temp = "";
 				for (Alert alert : alerts) {
 					
-					if(!alertSeverity.contains(MSG_RISK[alert.getRisk()])) {
+					if(!alertSeverity.contains(Alert.MSG_RISK[alert.getRisk()])) {
 						continue;
 					}
 
@@ -155,8 +152,8 @@ public class ReportExport {
 					item.setPluginID(entityEncode(Integer.toString(alert.getPluginId())));
 					item.setAlert(entityEncode(alert.getAlert()));
 					item.setRiskCode(entityEncode(Integer.toString(alert.getRisk())));
-					item.setRiskDesc(entityEncode(MSG_RISK[alert.getRisk()]));
-					item.setConfidence(entityEncode(MSG_CONFIDENCE[alert.getConfidence()]));
+					item.setRiskDesc(entityEncode(Alert.MSG_RISK[alert.getRisk()]));
+					item.setConfidence(entityEncode(Alert.MSG_CONFIDENCE[alert.getConfidence()]));
 
 					for (int j = 0; j < alertDetails.size(); j++) {
 						if (alertDetails.get(j).equalsIgnoreCase(description))

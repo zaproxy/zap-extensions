@@ -162,25 +162,25 @@ public class ExtensionExportReport extends ExtensionAdaptor
 	{
 		// PanelAlertRisk
 		alertSeverity.clear();
-		alertSeverity.add(Constant.messages.getString("exportReport.risk.severity.high").toString());
-		alertSeverity.add(Constant.messages.getString("exportReport.risk.severity.medium").toString());
-		alertSeverity.add(Constant.messages.getString("exportReport.risk.severity.low").toString());
-		alertSeverity.add(Constant.messages.getString("exportReport.risk.severity.info").toString());
+		alertSeverity.add(Constant.messages.getString("exportReport.risk.severity.high"));
+		alertSeverity.add(Constant.messages.getString("exportReport.risk.severity.medium"));
+		alertSeverity.add(Constant.messages.getString("exportReport.risk.severity.low"));
+		alertSeverity.add(Constant.messages.getString("exportReport.risk.severity.info"));
 
 		// PanelAlertDetails
 		alertDetails.clear();
-		alertDetails.add(Constant.messages.getString("exportReport.details.cweid").toString());
-		alertDetails.add(Constant.messages.getString("exportReport.details.wascid").toString());
-		alertDetails.add(Constant.messages.getString("exportReport.details.description").toString());
-		alertDetails.add(Constant.messages.getString("exportReport.details.otherinfo").toString());
-		alertDetails.add(Constant.messages.getString("exportReport.details.solution").toString());
-		alertDetails.add(Constant.messages.getString("exportReport.details.reference").toString());
+		alertDetails.add(Constant.messages.getString("exportReport.details.cweid"));
+		alertDetails.add(Constant.messages.getString("exportReport.details.wascid"));
+		alertDetails.add(Constant.messages.getString("exportReport.details.description"));
+		alertDetails.add(Constant.messages.getString("exportReport.details.otherinfo"));
+		alertDetails.add(Constant.messages.getString("exportReport.details.solution"));
+		alertDetails.add(Constant.messages.getString("exportReport.details.reference"));
 
 		alertAdditional.clear();
-		alertAdditional.add(Constant.messages.getString("exportReport.details.requestheader").toString());
-		alertAdditional.add(Constant.messages.getString("exportReport.details.responseheader").toString());
-		alertAdditional.add(Constant.messages.getString("exportReport.details.requestbody").toString());
-		alertAdditional.add(Constant.messages.getString("exportReport.details.responsebody").toString());
+		alertAdditional.add(Constant.messages.getString("exportReport.details.requestheader"));
+		alertAdditional.add(Constant.messages.getString("exportReport.details.responseheader"));
+		alertAdditional.add(Constant.messages.getString("exportReport.details.requestbody"));
+		alertAdditional.add(Constant.messages.getString("exportReport.details.responsebody"));
 
 		maxList = (alertDetails.size() + alertAdditional.size());
 	}

@@ -119,7 +119,7 @@ public class ExportReport {
 				show = true;
 				break;
 			case Utils.bootstrap:
-				view.showMessageDialog(MessageFormat.format("Bootstrap: Currently unavilable, expected release is v2.0.", new Object[] { absolutePath }));
+				view.showMessageDialog("Bootstrap: Currently unavilable, expected release is v2.0.");
 				f_view = null;
 				break;
 			case Utils.xml:
@@ -134,11 +134,11 @@ public class ExportReport {
 				deleteFile(path + fileName + ".xml", "The merged XML file: ");
 				break;
 			case Utils.pdf:
-				view.showMessageDialog(MessageFormat.format("PDF: Currently unavilable, expected release is v2.0.", new Object[] { absolutePath }));
+				view.showMessageDialog("PDF: Currently unavilable, expected release is v2.0.");
 				f_view = null;
 				break;
 			case Utils.doc:
-				view.showMessageDialog(MessageFormat.format("DOC: Currently unavilable, expected release is v2.0.", new Object[] { absolutePath }));
+				view.showMessageDialog("DOC: Currently unavilable, expected release is v2.0.");
 				f_view = null;
 				break;
 			default:
@@ -208,7 +208,7 @@ public class ExportReport {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			view.showWarningDialog(Constant.messages.getString("Error occured, please see log for further details."));
+			view.showWarningDialog("Error occured, please see log for further details.");
 		}
 	}
 
