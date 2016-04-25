@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>17</version>
+	<version>18</version>
 	<status>release</status>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	 Add progress indications for quick scan launched from the command line (Issue 1891) <br>
-	 Improve Quick Attack error messages (Issue 2032) <br>
+	 Issue 1271: Quickstart PnH panel components should mirror the enabled state of the API (i.e.: If API disabled, disable PnH components).<br>
 	]]>
 	</changes>
 	<extensions>
