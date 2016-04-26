@@ -34,7 +34,6 @@ import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
 import org.parosproxy.paros.extension.manualrequest.MessageSender;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
-import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
@@ -54,7 +53,7 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
 	
 	private WebSocketPanelSender sender;
 
-	private HttpPanelRequest requestPanel;
+	private WebSocketSendPanel requestPanel;
 	private WebSocketMessagePanel wsMessagePanel;
 	private ChannelSortedListModel channelsModel;
 
@@ -120,7 +119,7 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
 	}
 
 	@Override
-	protected HttpPanelRequest getRequestPanel() {
+	protected WebSocketSendPanel getRequestPanel() {
 		if (requestPanel == null) {
 			requestPanel = new WebSocketSendPanel(true, configurationKey);
 			requestPanel.setEnableViewSelect(true);
@@ -182,6 +181,10 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
 		msg.readableOpcode = WebSocketMessage.opcode2string(msg.opcode);
 		
 		setMessage(msg);
+	}
+
+	public void unload() {
+		getRequestPanel().unload();
 	}
 	
 	private static final class WebSocketMessagePanel extends JPanel {

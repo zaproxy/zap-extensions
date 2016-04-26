@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.websocket.manualsend;
 import javax.swing.JComboBox;
 
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
+import org.zaproxy.zap.view.HttpPanelManager;
 
 /**
  * Craft custom WebSocket message and send them. Avoid HTTP method panel to
@@ -39,5 +40,9 @@ public class WebSocketSendPanel extends HttpPanelRequest {
 		if (comboChangeMethod == null) {
 			comboChangeMethod = new JComboBox<>();
 		}
+	}
+
+	public void unload() {
+		HttpPanelManager.getInstance().removeRequestPanel(this);
 	}
 }
