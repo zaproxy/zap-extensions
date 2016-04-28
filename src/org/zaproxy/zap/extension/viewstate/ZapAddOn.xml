@@ -1,0 +1,18 @@
+<zapaddon>
+	<name>ViewState</name>
+	<version>1</version>			<!-- Integer than increments with each (released) change -->
+	<status>alpha</status>			<!-- alpha/beta/release -->
+	<description>ASP/JSF ViewState Decoder and Editor</description>
+	<author>Calum Hutton</author>
+	<url/>							
+	<changes/>					
+	<extensions>
+		<extension>org.zaproxy.zap.extension.viewstate.ExtensionHttpPanelViewStateView</extension>	
+	</extensions>				
+	<ascanrules/>					
+	<pscanrules/>				
+	<filters/>						
+	<files/>						
+	<not-before-version>2.4.0</not-before-version>		
+	<not-from-version/>			
+</zapaddon>
