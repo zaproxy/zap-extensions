@@ -549,7 +549,7 @@
 	</target>
 	
 	<target name="deploy-serverSentEvents" description="deploy the Server-Sent Events extension">
-		<build-deploy-addon name="serverSentEvents" />
+		<build-deploy-addon name="sse" />
 	</target>
 
     <target name="generate-wiki-serverSentEvents" description="Generates the wiki of Server-Sent Events">
