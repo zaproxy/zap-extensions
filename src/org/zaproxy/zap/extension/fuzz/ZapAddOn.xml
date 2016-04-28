@@ -9,6 +9,7 @@
     <changes>
     <![CDATA[
     Fix modification of file and file fuzzers in Windows.<br>
+    Correctly inform when the fuzzers directory is not writable.<br>
     ]]>
     </changes>
     <extensions>

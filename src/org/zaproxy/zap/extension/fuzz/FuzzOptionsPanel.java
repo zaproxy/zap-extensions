@@ -328,7 +328,7 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
                         copyFile = confirmOverwrite();
                     } else if (!Files.isWritable(newFile.getParent())) {
                         View.getSingleton().showWarningDialog(
-                                resourceBundle.getString("fuzz.options.add.dirperms.error")
+                                resourceBundle.getString("fuzz.options.add.file.dirperms.error")
                                         + newFile.getParent().toAbsolutePath());
                     } else {
                         copyFile = true;
