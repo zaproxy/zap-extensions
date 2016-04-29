@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Server-Sent Events</name>
-	<version>8</version>
+	<version>9</version>
 	<status>alpha</status>
 	<description>Allows you to view Server-Sent Events (SSE) communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for ZAP 2.4</changes>
+	<changes></changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.sse.ExtensionServerSentEvents</extension>
 	</extensions>
