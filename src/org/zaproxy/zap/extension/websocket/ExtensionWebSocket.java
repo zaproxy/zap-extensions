@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -278,7 +279,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			hookView.addOptionPanel(getOptionsPanel());
 			
 			// add 'Exclude from WebSockets' menu item to WebSocket tab context menu
-			hookMenu.addPopupMenuItem(new ExcludeFromWebSocketsMenuItem(this, storage.getTable()));
+			hookMenu.addPopupMenuItem(new ExcludeFromWebSocketsMenuItem(this));
 
 			// setup Session Properties
 			sessionExcludePanel =  new SessionExcludeFromWebSocket(this);
@@ -790,6 +791,20 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				}
 			}
 		}
+	}
+
+	/**
+	 * Gets the channels that match the given {@code criteria}.
+	 *
+	 * @param criteria the criteria
+	 * @return a {@code List} containing the channels that match the given {@code criteria}.
+	 * @throws DatabaseException if an error occurred while obtain the channel.
+	 */
+	public List<WebSocketChannelDTO> getChannels(WebSocketChannelDTO criteria) throws DatabaseException {
+		if (storage != null) {
+			return storage.getTable().getChannels(criteria);
+		}
+		return Collections.emptyList();
 	}
 
 	/**
