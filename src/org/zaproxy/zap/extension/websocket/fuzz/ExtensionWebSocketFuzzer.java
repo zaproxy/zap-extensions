@@ -139,10 +139,13 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
     public void unload() {
         super.unload();
 
+        ExtensionFuzz extensionFuzz = Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
+        extensionFuzz.removeFuzzerHandler(websocketFuzzerHandler);
+
         ExtensionWebSocket extensionWebSocket = Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionWebSocket.class);
-        extensionWebSocket.addAllChannelObserver(getAllChannelObserver());
+        extensionWebSocket.removeAllChannelObserver(getAllChannelObserver());
 
         ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
