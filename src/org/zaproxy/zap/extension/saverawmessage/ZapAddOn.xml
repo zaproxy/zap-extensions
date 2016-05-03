@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Save Raw Message</name>
-	<version>2</version>
+	<version>3</version>
 	<status>release</status>
 	<description>Allows to save content of HTTP messages as binary</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Safe menu item will now be enabled in protected and safe modes (Issue 1278).</changes>
+	<changes>Remember last selected directory (Issue 2446).</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.saverawmessage.ExtensionSaveRawHttpMessage</extension>
 	</extensions>
