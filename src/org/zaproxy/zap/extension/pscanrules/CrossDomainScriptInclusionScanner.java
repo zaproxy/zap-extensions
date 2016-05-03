@@ -28,9 +28,12 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.model.Context;
 
 
 public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
@@ -56,7 +59,7 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 			if (sourceElements != null) {
 				for (Element sourceElement : sourceElements) {
 					String src = sourceElement.getAttributeValue("src");
-						if (src != null && isScriptFromOtherDomain(msg.getRequestHeader().getHostName(), src)) {
+						if (src != null && isScriptFromOtherDomain(msg.getRequestHeader().getHostName(), src, msg)) {
 							this.raiseAlert(msg, id, src);
 						}	
 				}	
@@ -106,20 +109,32 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}
 	
-	private boolean isScriptFromOtherDomain (String host, String scriptURL){
+	private boolean isScriptFromOtherDomain (String host, String scriptURL, HttpMessage msg){
 		if (!scriptURL.startsWith("//") && (scriptURL.startsWith("/") || scriptURL.startsWith("./") || scriptURL.startsWith("../"))) {
 			return false;
 		}
-		boolean result = false;
+		boolean otherDomain = false;
 		try {
 			URI scriptURI = new URI(scriptURL, true);
+			String scriptURIStr = scriptURI.toString();
 			String scriptHost = scriptURI.getHost();
 			if(scriptHost != null && !scriptHost.toLowerCase().equals(host.toLowerCase())){
-				result = true;
-			} 
+				otherDomain = true;
+			}
+			if(otherDomain && Plugin.AlertThreshold.HIGH.equals(this.getLevel())) {
+				//Get a list of contexts that contain the original URL
+				List<Context> contextList=Model.getSingleton().getSession().getContextsForUrl(msg.getRequestHeader().getURI().toString());
+				for (Context context : contextList) {
+					if(context.isInContext(scriptURIStr)) {
+						//The scriptURI is in a context that the original URI is in
+						//At HIGH Threshold consider this an OK cross domain inclusion
+						return false; //No need to loop further
+					}
+				}
+			}
 		}catch (URIException e) {
 			logger.debug("Error: " + e.getMessage());
 		}
-		return result;
+		return otherDomain;
 	}
 }

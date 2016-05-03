@@ -10,6 +10,7 @@
 	Issue 823 - i18n (internationalise) release passive scan rules.<br>
 	Add CWE and WASC IDs to passive scanners which may have been lacking those details.<br>
 	Issue 2405 - Accommodate responses with multiple Cache-Control headers.<br>
+	Issue 395 - Add handling for allowed cross domain hosts (via context definition at HIGH threshold).<br>
 	]]>
 	</changes>
 	<extensions>
