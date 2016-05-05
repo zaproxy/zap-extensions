@@ -104,7 +104,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
 
     @Override
     public boolean targets(TechSet techonologies) {
-        if (techonologies.includes(Tech.Lang.ASP) || techonologies.includes(Tech.Lang.PHP)) {
+        if (techonologies.includes(Tech.ASP) || techonologies.includes(Tech.PHP)) {
             return true;
         }
         return false;
@@ -201,7 +201,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
                     + "] for Dynamic Code Injection vulnerabilites");
         }
 
-        if (inScope(Tech.Lang.PHP)) {
+        if (inScope(Tech.PHP)) {
             if (testPhpInjection(paramName)) {
                 return;
             }
@@ -211,7 +211,7 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
             return;
         }
 
-        if (inScope(Tech.Lang.ASP)) {
+        if (inScope(Tech.ASP)) {
             if (testAspInjection(paramName)) {
                 return;
             }

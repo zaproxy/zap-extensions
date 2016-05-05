@@ -190,7 +190,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
      */
     @Override
     public void save() {
-    	AjaxSpiderParam params = (AjaxSpiderParam)this.extension.getAjaxSpiderParam().clone();
+    	AjaxSpiderParam params = this.extension.getAjaxSpiderParam().clone();
     	
         if (getExtSelenium() != null && ! this.isEmptyField(FIELD_BROWSER)) {
         	String browserName = this.getStringValue(FIELD_BROWSER);

@@ -70,7 +70,7 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
 	
 	@Override
 	public boolean targets(TechSet technologies) { 
-		return technologies.includes(Tech.Lang.C); 
+		return technologies.includes(Tech.C); 
 	}
 	
 	@Override

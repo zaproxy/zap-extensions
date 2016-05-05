@@ -76,8 +76,8 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     @Override
     public boolean targets(TechSet technologies) {
-        if (technologies.includes(Tech.OS.Linux) || technologies.includes(Tech.OS.MacOS)
-                || technologies.includes(Tech.OS.Windows)) {
+        if (technologies.includes(Tech.Linux) || technologies.includes(Tech.MacOS)
+                || technologies.includes(Tech.Windows)) {
             return true;
         }
         return false;
