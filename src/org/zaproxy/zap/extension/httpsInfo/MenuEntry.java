@@ -21,7 +21,6 @@ import java.awt.Component;
 
 import javax.swing.JTree;
 
-
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.SiteNode;
 
@@ -33,44 +32,48 @@ import org.parosproxy.paros.model.SiteNode;
  */
 public class MenuEntry extends ExtensionPopupMenuItem {
 
-    private static final long serialVersionUID = 1L;
-    private final RightClickMenu extension;
-    private SiteNode node = null;
+	private static final long serialVersionUID = 1L;
+	private final RightClickMenu extension;
+	private SiteNode node = null;
 
-    public MenuEntry(String label, RightClickMenu extension) {
-	super(label);
-	this.extension = extension;
-	init();
-    }
-    public void init(){
-	this.addActionListener(new java.awt.event.ActionListener() { 
+	public MenuEntry(String label, RightClickMenu extension) {
+		super(label);
+		this.extension = extension;
+		init();
+	}
 
-	    @Override
-	    public void actionPerformed(java.awt.event.ActionEvent e) {
-	        extension.showSslTlsInfo(getHostName(node.getNodeName()));
-	    }
-	});
-    }
-    @Override
-    public boolean isEnableForComponent(Component invoker) {
-	if (invoker instanceof JTree) {
-	    JTree tree = (JTree) invoker;
-	    if(tree.getLastSelectedPathComponent() instanceof SiteNode){
-		node = (SiteNode) tree.getLastSelectedPathComponent();
-		if (node.getNodeName().startsWith("https://")) {
-		    this.setEnabled(true);
-		    return true;
+	public void init() {
+		this.addActionListener(new java.awt.event.ActionListener() {
+
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				extension.showSslTlsInfo(getHostName(node.getNodeName()));
+			}
+		});
+	}
+
+	@Override
+	public boolean isEnableForComponent(Component invoker) {
+		if (invoker instanceof JTree) {
+			JTree tree = (JTree) invoker;
+			if (tree.getLastSelectedPathComponent() instanceof SiteNode) {
+				node = (SiteNode) tree.getLastSelectedPathComponent();
+				if (node.getNodeName().startsWith("https://")) {
+					this.setEnabled(true);
+					return true;
+				}
+			}
 		}
-	    }
+		return false;
 	}
-	return false;
-    }
-    public String getHostName(String name){
-	String host = name;
-	host = host.substring(8);
-	while(!Character.isDigit(host.charAt(host.length()-1)) && !Character.isLetter(host.charAt(host.length()-1))){
-	    host = host.substring(0, host.length()-1);
+
+	public String getHostName(String name) {
+		String host = name;
+		host = host.substring(8);
+		while (!Character.isDigit(host.charAt(host.length() - 1))
+				&& !Character.isLetter(host.charAt(host.length() - 1))) {
+			host = host.substring(0, host.length() - 1);
+		}
+		return host;
 	}
-	return host;
-    }
 }
