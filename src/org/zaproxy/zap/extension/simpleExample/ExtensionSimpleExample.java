@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.simpleExample;
 
 import java.awt.CardLayout;
+import java.awt.Font;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,12 +34,15 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-/*
- * An example ZAP extension which adds a top level menu item. 
+/**
+ * An example ZAP extension which adds a top level menu item, a pop up menu item and a status panel.
+ * <p>
+ * {@link ExtensionAdaptor} classes are the main entry point for adding/loading functionalities provided by the add-ons.
  * 
- * This class is defines the extension.
+ * @see #hook(ExtensionHook)
  */
 public class ExtensionSimpleExample extends ExtensionAdaptor {
 
@@ -56,34 +60,15 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
 
 	private static final String EXAMPLE_FILE = "example/ExampleFile.txt";
 	
-    private ZapMenuItem menuExample = null;
-	private RightClickMsgMenu popupMsgMenuExample = null;
-	private AbstractPanel statusPanel = null;
+	private ZapMenuItem menuExample;
+	private RightClickMsgMenu popupMsgMenuExample;
+	private AbstractPanel statusPanel;
 
-    private Logger log = Logger.getLogger(this.getClass());
+    private static final Logger LOGGER = Logger.getLogger(ExtensionSimpleExample.class);
 
-	/**
-     * 
-     */
     public ExtensionSimpleExample() {
-        super();
- 		initialize();
+        super(NAME);
     }
-
-    /**
-     * @param name
-     */
-    public ExtensionSimpleExample(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 * 
-	 */
-	private void initialize() {
-        this.setName(NAME);
-	}
 	
 	@Override
 	public void hook(ExtensionHook extensionHook) {
@@ -101,6 +86,23 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
 
 	}
 
+	@Override
+	public boolean canUnload() {
+		// The extension can be dynamically unloaded, all resources used/added can be freed/removed from core.
+		return true;
+	}
+
+	@Override
+	public void unload() {
+		super.unload();
+
+		// In this example it's not necessary to override the method, as there's nothing to unload
+		// manually, the components added through the class ExtensionHook (in hook(ExtensionHook))
+		// are automatically removed by the base unload() method.
+		// If you use/add other components through other methods you might need to free/remove them
+		// here (if the extension declares that can be unloaded, see above method).
+	}
+
 	private AbstractPanel getStatusPanel() {
 		if (statusPanel == null) {
 			statusPanel = new AbstractPanel();
@@ -109,7 +111,8 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
 	        statusPanel.setIcon(ICON);
 	        JTextPane pane = new JTextPane();
 			pane.setEditable(false);
-			pane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+			// Obtain (and set) a font with the size defined in the options
+			pane.setFont(FontUtils.getFont("Dialog", Font.PLAIN));
 			pane.setContentType("text/html");
 			pane.setText(Constant.messages.getString(PREFIX + ".panel.msg"));
 			statusPanel.add(pane);
@@ -159,7 +162,7 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
 			View.getSingleton().getOutputPanel().setTabFocus();
 		} catch (Exception e) {
 			// Something unexpected went wrong, write the error to the log
-			log.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
