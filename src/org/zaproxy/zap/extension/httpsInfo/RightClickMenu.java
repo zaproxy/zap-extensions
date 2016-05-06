@@ -37,21 +37,21 @@ import org.parosproxy.paros.extension.ExtensionHook;
  */
 public class RightClickMenu extends ExtensionAdaptor {
 
-    private MenuEntry httpsEntry = null;
-    private List<MDialog> dialogues;
-    private boolean unloaded;
+	private MenuEntry httpsEntry = null;
+	private List<MDialog> dialogues;
+	private boolean unloaded;
 
-    public RightClickMenu() {
-        super();
- 		initialize();
-    }
+	public RightClickMenu() {
+		super();
+		initialize();
+	}
 
-    public RightClickMenu(String name) {
-        super(name);
-    }
+	public RightClickMenu(String name) {
+		super(name);
+	}
 
-    private void initialize() {
-        this.setName("PopupMenu");
+	private void initialize() {
+		this.setName("PopupMenu");
 	}
 
 	@Override
@@ -72,35 +72,35 @@ public class RightClickMenu extends ExtensionAdaptor {
 		unloaded = true;
 
 		while (!dialogues.isEmpty()) {
-			// When disposed the dialogue is removed from the list 
+			// When disposed the dialogue is removed from the list
 			dialogues.get(0).dispose();
 		}
 	}
-	
-    public void hook(ExtensionHook extensionHook) {
-	    super.hook(extensionHook);
-	    
-	    if (getView() != null) {
-	    	// Register our popup menu item, as long as we're not running as a daemon
-		MenuEntry entry = getPopupMsgMenuExample();
-		
-	    	extensionHook.getHookMenu().addPopupMenuItem(entry);
-	    }
+
+	public void hook(ExtensionHook extensionHook) {
+		super.hook(extensionHook);
+
+		if (getView() != null) {
+			// Register our popup menu item, as long as we're not running as a
+			// daemon
+			MenuEntry entry = getPopupMsgMenuExample();
+
+			extensionHook.getHookMenu().addPopupMenuItem(entry);
+		}
 
 	}
 
 	private MenuEntry getPopupMsgMenuExample() {
-		if (httpsEntry  == null) {
-			httpsEntry = new MenuEntry(
-					this.getMessageString("httpsInfo.httpsInfo.menuitem"), this);
+		if (httpsEntry == null) {
+			httpsEntry = new MenuEntry(this.getMessageString("httpsInfo.httpsInfo.menuitem"), this);
 		}
 		return httpsEntry;
 	}
 
-	public String getMessageString (String key) {
+	public String getMessageString(String key) {
 		return Constant.messages.getString(key);
 	}
-	
+
 	@Override
 	public String getAuthor() {
 		return Constant.ZAP_TEAM;
