@@ -51,6 +51,7 @@ import com.crawljax.core.configuration.BrowserConfiguration;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurationBuilder;
 import com.crawljax.core.configuration.ProxyConfiguration;
+import com.crawljax.core.plugin.OnBrowserCreatedPlugin;
 import com.crawljax.core.plugin.Plugins;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.inject.ProvisionException;
@@ -173,6 +174,8 @@ public class SpiderThread implements Runnable {
 		configurationBuilder.setMaximumDepth(params.getMaxCrawlDepth());
 		configurationBuilder.setMaximumRunTime(params.getMaxDuration(),TimeUnit.MINUTES);
 		configurationBuilder.crawlRules().clickOnce(params.isClickElemsOnce());
+		
+		configurationBuilder.addPlugin(DummyPlugin.DUMMY_PLUGIN);
 				
 		return configurationBuilder.build();
 	}
@@ -358,6 +361,23 @@ public class SpiderThread implements Runnable {
 					configuration.getProxyConfiguration().getPort()), filterAttributes, crawlWaitEvent, crawlWaitReload);
 			plugins.runOnBrowserCreatedPlugins(embeddedBrowser);
 			return embeddedBrowser;
+		}
+	}
+
+	/**
+	 * A {@link com.crawljax.core.plugin.Plugin} that does nothing, used only to suppress log warning when the
+	 * {@link CrawljaxRunner} is started.
+	 * 
+	 * @see SpiderThread#createCrawljaxConfiguration()
+	 * @see SpiderThread#run()
+	 */
+	private static class DummyPlugin implements OnBrowserCreatedPlugin {
+
+		public static final DummyPlugin DUMMY_PLUGIN = new DummyPlugin();
+
+		@Override
+		public void onBrowserCreated(EmbeddedBrowser arg0) {
+			// Nothing to do.
 		}
 	}
 }

@@ -28,7 +28,6 @@ import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
-import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 
 /**
  * Menu Item for Popup. Used in WebSockets tab, when you click on some message
@@ -39,15 +38,12 @@ public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuIte
 
 	private static final Logger logger = Logger.getLogger(ExcludeFromWebSocketsMenuItem.class);
     
-    private final TableWebSocket table;
-
 	private ExtensionWebSocket extWs;
     
-    public ExcludeFromWebSocketsMenuItem(ExtensionWebSocket extWs, TableWebSocket table) {
+    public ExcludeFromWebSocketsMenuItem(ExtensionWebSocket extWs) {
         super();
 
         this.extWs = extWs;
-        this.table = table;
     }
 
 	@Override
@@ -106,7 +102,7 @@ public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuIte
 		channel.id = message.channel.id;
 		
 		try {
-			List<WebSocketChannelDTO> channels = table.getChannels(channel);
+			List<WebSocketChannelDTO> channels = extWs.getChannels(channel);
 			if (channels.size() == 1) {
 				return channels.get(0);
 			}

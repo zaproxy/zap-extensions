@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -136,6 +137,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	private Map<Integer, WebSocketProxy> wsProxies;
 
 	/**
+	 * Database table.
+	 */
+	private TableWebSocket table;
+
+	/**
 	 * Interface to database.
 	 */
 	private WebSocketStorage storage;
@@ -195,7 +201,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	
     @Override
     public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
-		TableWebSocket table = new TableWebSocket();
+		table = new TableWebSocket();
 		db.addDatabaseListener(table);
 		try {
 			table.databaseOpen(db.getDatabaseServer());
@@ -273,7 +279,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			hookView.addOptionPanel(getOptionsPanel());
 			
 			// add 'Exclude from WebSockets' menu item to WebSocket tab context menu
-			hookMenu.addPopupMenuItem(new ExcludeFromWebSocketsMenuItem(this, storage.getTable()));
+			hookMenu.addPopupMenuItem(new ExcludeFromWebSocketsMenuItem(this));
 
 			// setup Session Properties
 			sessionExcludePanel =  new SessionExcludeFromWebSocket(this);
@@ -318,8 +324,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				extManReqEdit.addManualSendEditor(sendDialog);
 				hookMenu.addToolsMenuItem(sendDialog.getMenuItem());
 				
+				resenderDialog = createReSendDialog(sender);
+
 				// add 'Resend Message' menu item to WebSocket tab context menu
-				hookMenu.addPopupMenuItem(new ResendWebSocketMessageMenuItem(createReSendDialog(sender)));
+				hookMenu.addPopupMenuItem(new ResendWebSocketMessageMenuItem(resenderDialog));
 				
 				
 				// setup persistent connection listener for http manual send editor
@@ -350,9 +358,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		Control control = Control.getSingleton();
 		ExtensionLoader extLoader = control.getExtensionLoader();
 		
-		// clear up Session Properties
-		getView().getSessionDialog().removeParamPanel(sessionExcludePanel);
-		
 		// clear up Breakpoints
 		ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
 		if (extBreak != null) {
@@ -375,8 +380,24 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			}
 		}
 		
+		if (table != null) {
+			getModel().getDb().removeDatabaseListener(table);
+		}
+
 		if (getView() != null) {
+			getWebSocketPanel().unload();
+
+			getView().getSessionDialog().removeParamPanel(sessionExcludePanel);
+
 			clearupWebSocketsForWorkPanel();
+
+			if (sendDialog != null) {
+				sendDialog.unload();
+			}
+
+			if (resenderDialog != null) {
+				resenderDialog.unload();
+			}
 		}
 	}
 
@@ -397,6 +418,19 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 */
 	public void addAllChannelObserver(WebSocketObserver observer) {
 		allChannelObservers.add(observer);
+	}
+
+	/**
+	 * Removes the given {@code observer}, that was attached to every channel connected.
+	 * 
+	 * @param observer the observer to be removed
+	 * @throws IllegalArgumentException if the given {@code observer} is {@code null}.
+	 */
+	public void removeAllChannelObserver(WebSocketObserver observer) {
+		if (observer == null) {
+			throw new IllegalArgumentException("The parameter observer must not be null.");
+		}
+		allChannelObservers.remove(observer);
 	}
 
 	/**
@@ -760,6 +794,20 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	}
 
 	/**
+	 * Gets the channels that match the given {@code criteria}.
+	 *
+	 * @param criteria the criteria
+	 * @return a {@code List} containing the channels that match the given {@code criteria}.
+	 * @throws DatabaseException if an error occurred while obtain the channel.
+	 */
+	public List<WebSocketChannelDTO> getChannels(WebSocketChannelDTO criteria) throws DatabaseException {
+		if (storage != null) {
+			return storage.getTable().getChannels(criteria);
+		}
+		return Collections.emptyList();
+	}
+
+	/**
 	 * If given channel is blacklisted, then nothing should be stored. Moreover
 	 * it should not appear in user interface, but messages should be forwarded.
 	 * 
@@ -909,6 +957,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Send custom WebSocket messages.
 	 */
 	private ManualWebSocketSendEditorDialog sendDialog;
+
+	/**
+	 * Resends custom WebSocket messages.
+	 */
+	private ManualWebSocketSendEditorDialog resenderDialog;
 
 	private WebSocketPanel getWebSocketPanel() {
 		if (panel == null) {

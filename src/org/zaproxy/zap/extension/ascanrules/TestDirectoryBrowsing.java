@@ -127,9 +127,9 @@ public class TestDirectoryBrowsing extends AbstractAppPlugin {
     			return;
     		}
     		
-    		if (inScope(Tech.WS.IIS) && matchBodyPattern(msg, patternIIS, evidence)) {
+    		if (inScope(Tech.IIS) && matchBodyPattern(msg, patternIIS, evidence)) {
     			result = true;
-    		} else if ((inScope(Tech.WS.Apache) || inScope(Tech.WS.Tomcat)) && matchBodyPattern(msg, patternApache, evidence)) {
+    		} else if ((inScope(Tech.Apache) || inScope(Tech.Tomcat)) && matchBodyPattern(msg, patternApache, evidence)) {
     			result = true;
     		} else if (matchBodyPattern(msg, patternGeneralParent, evidence)) {
     			result = true;

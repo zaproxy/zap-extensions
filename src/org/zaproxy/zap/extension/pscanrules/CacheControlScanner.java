@@ -51,16 +51,15 @@ public class CacheControlScanner extends PluginPassiveScanner {
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		if (msg.getRequestHeader().isSecure() && !msg.getRequestHeader().getURI().toString().toLowerCase().endsWith(".css") && !msg.getResponseHeader().isImage() && msg.getResponseBody().length() > 0) {
-			Vector<String> cacheControl = msg.getResponseHeader().getHeaders(HttpHeader.CACHE_CONTROL);
-			if (cacheControl != null) {
-				for (String cacheControlDirective : cacheControl) {
-					if (cacheControlDirective.toLowerCase().indexOf("no-store") < 0 || cacheControlDirective.toLowerCase().indexOf("no-cache") < 0 || cacheControlDirective.toLowerCase().indexOf("must-revalidate") < 0 || cacheControlDirective.toLowerCase().indexOf("private") < 0) {
-						this.raiseAlert(msg, id, cacheControlDirective);
-					}
-				}
-			}
-			else { // No cache control header at all
-				this.raiseAlert(msg, id, null);
+			Vector<String> cacheControlVect = msg.getResponseHeader().getHeaders(HttpHeader.CACHE_CONTROL);
+			String cacheControlHeaders = (cacheControlVect != null) ? cacheControlVect.toString().toLowerCase() : "";
+
+			if (cacheControlHeaders.isEmpty() || //No Cache-Control header at all 
+					cacheControlHeaders.indexOf("no-store") < 0 || 
+					cacheControlHeaders.indexOf("no-cache") < 0 || 
+					cacheControlHeaders.indexOf("must-revalidate") < 0 ||
+					cacheControlHeaders.indexOf("private") < 0) {
+				this.raiseAlert(msg, id, null); //Didn't find a header on the request that matched the criteria
 			}
 			
 			Vector<String> pragma = msg.getResponseHeader().getHeaders(HttpHeader.PRAGMA);

@@ -796,4 +796,11 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 		this.table = table;
 		this.messagesModel.setTable(table);
 	}
+
+	public void unload() {
+		if (filterDialog != null) {
+			filterDialog.dispose();
+			filterDialog = null;
+		}
+	}
 }

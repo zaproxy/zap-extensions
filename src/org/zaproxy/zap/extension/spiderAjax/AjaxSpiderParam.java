@@ -259,6 +259,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         }
     }
 
+    @SuppressWarnings({"fallthrough"})
     @Override
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {

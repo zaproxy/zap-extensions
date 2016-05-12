@@ -29,7 +29,9 @@ A cookie set with the secure flag will not be sent during a plain HTTP session.
 
 <H2>Cross Domain Script Inclusion</H2>
 Validates whether or not scripts are included from domains other than the domain hosting the content. 
-By looking at the "src" attributes of "script" tags in the response.
+By looking at the "src" attributes of "script" tags in the response. 
+<ul><li>Allowed Cross-Domain Hosts: 
+At HIGH threshold if a script URL falls within a context that also includes the URL of the base message no alerts will be raised.</li></ul> 
 
 <H2>Header XSS Protection</H2>
 Checks for the existence of and value/setting of the X-XSS-Protection header. 

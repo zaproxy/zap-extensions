@@ -200,8 +200,8 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
     @Override
     public boolean targets(TechSet technologies) {
-        if (technologies.includes(Tech.OS.Linux) || technologies.includes(Tech.OS.MacOS)
-                || technologies.includes(Tech.OS.Windows)) {
+        if (technologies.includes(Tech.Linux) || technologies.includes(Tech.MacOS)
+                || technologies.includes(Tech.Windows)) {
             return true;
         }
         return false;
@@ -330,7 +330,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             // Default to off
         }
         
-        if (inScope(Tech.OS.Linux) || inScope(Tech.OS.MacOS)) {
+        if (inScope(Tech.Linux) || inScope(Tech.MacOS)) {
             if (testCommandInjection(paramName, value, targetCount, blindTargetCount, NIX_OS_PAYLOADS, NIX_BLIND_OS_PAYLOADS)) {
                 return;
             }
@@ -340,7 +340,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             return;
         }
 
-        if (inScope(Tech.OS.Windows)) {
+        if (inScope(Tech.Windows)) {
         	//Windows Command Prompt
             if (testCommandInjection(paramName, value, targetCount, blindTargetCount, WIN_OS_PAYLOADS, WIN_BLIND_OS_PAYLOADS)) {
                 return;

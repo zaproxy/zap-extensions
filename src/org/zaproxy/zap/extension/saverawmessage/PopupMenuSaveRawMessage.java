@@ -26,7 +26,6 @@ import java.text.MessageFormat;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.Logger;
@@ -36,6 +35,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.popup.PopupMenuHttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
+import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
 
@@ -52,7 +52,8 @@ class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
 	
 	private static final String FILE_DESCRIPTION = Constant.messages.getString("saveraw.file.description");
 	private static final String ERROR_SAVE = Constant.messages.getString("saveraw.file.save.error");
-	private static final String CONFIRM_OVERWRITE = Constant.messages.getString("saveraw.file.overwrite.warning");
+
+	private static final String RAW_FILE_EXTENSION = ".raw";
 
 	private static enum MessageComponent {
 		REQUEST,
@@ -175,6 +176,11 @@ class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
 
         @Override
         public void performAction(HttpMessage httpMessage) {
+            File file = getOutputFile();
+            if (file == null) {
+                return;
+            }
+
             byte[] bytes = new byte[0];
 
             byte[] bytesHeader;
@@ -209,18 +215,6 @@ class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
                 break;
             }
 
-            File file = getOutputFile();
-            if (file == null) {
-                return;
-            }
-
-            if (file.exists()) {
-                int rc = View.getSingleton().showConfirmDialog(CONFIRM_OVERWRITE);
-                if (rc == JOptionPane.CANCEL_OPTION) {
-                    return;
-                }
-            }
-
             writeToFile(file, bytes);
         }
 
@@ -241,24 +235,36 @@ class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
     }
 
     private static File getOutputFile() {
-        JFileChooser chooser = new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
-        chooser.setFileFilter(new RawFileFilter());
-        File file = null;
-        int rc = chooser.showSaveDialog(View.getSingleton().getMainFrame());
+        SaveRawFileChooser fileChooser = new SaveRawFileChooser();
+        int rc = fileChooser.showSaveDialog(View.getSingleton().getMainFrame());
         if (rc == JFileChooser.APPROVE_OPTION) {
-            file = chooser.getSelectedFile();
-            if (file == null) {
-                return file;
-            }
-            String fileName = file.getAbsolutePath();
-            if (!fileName.endsWith(".raw")) {
-                fileName += ".raw";
-                file = new File(fileName);
-            }
-            return file;
-
+            return fileChooser.getSelectedFile();
         }
-        return file;
+        return null;
+    }
+
+    private static class SaveRawFileChooser extends WritableFileChooser {
+
+        private static final long serialVersionUID = -5743352709683023906L;
+
+        public SaveRawFileChooser() {
+            super(Model.getSingleton().getOptionsParam().getUserDirectory());
+            setFileFilter(new RawFileFilter());
+        }
+
+        @Override
+        public void approveSelection() {
+            File file = getSelectedFile();
+            if (file != null) {
+                String fileName = file.getAbsolutePath();
+                if (!fileName.endsWith(RAW_FILE_EXTENSION)) {
+                    fileName += RAW_FILE_EXTENSION;
+                    setSelectedFile(new File(fileName));
+                }
+            }
+
+            super.approveSelection();
+        }
     }
 
 	private static final class RawFileFilter extends FileFilter {
@@ -267,7 +273,7 @@ class PopupMenuSaveRawMessage extends PopupMenuHttpMessageContainer {
 		public boolean accept(File file) {
 			if (file.isDirectory()) {
 				return true;
-			} else if (file.isFile() && file.getName().endsWith(".raw")) {
+			} else if (file.isFile() && file.getName().endsWith(RAW_FILE_EXTENSION)) {
 				return true;
 			}
 			return false;

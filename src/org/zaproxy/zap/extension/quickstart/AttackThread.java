@@ -126,11 +126,11 @@ public class AttackThread extends Thread {
 				return;
 			}
 
-			if (startNode.isLeaf() && !((SiteNode)startNode.getParent()).isRoot()
-	        		 && !((SiteNode)startNode.getParent().getParent()).isRoot()) {
+			if (startNode.isLeaf() && !startNode.getParent().isRoot()
+	        		 && !startNode.getParent().getParent().isRoot()) {
 	        	// Start node is a leaf and isnt root or a top level app (eg www.example.com/app1)
 	        	// Go up a level
-	        	startNode = (SiteNode)startNode.getParent();
+	        	startNode = startNode.getParent();
 	        }
 			
 			ExtensionActiveScan extAscan = (ExtensionActiveScan) Control.getSingleton().getExtensionLoader().getExtension(ExtensionActiveScan.NAME);
