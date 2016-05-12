@@ -1,0 +1,22 @@
+<zapaddon>
+	<name>Export Report</name>
+	<version>1</version>
+	<status>alpha</status>
+	<description>Report Export module that allows users to customize content and export in a desired format.</description>
+	<author>Goran Sarenkapa - JordanGS</author>
+	<url></url>
+	<changes>First version</changes>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.exportreport.ExtensionExportReport</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
+		<file>xml/merge.xml.xsl</file>
+		<file>xml/report.html.xsl</file>
+		<file>licenses/SpringUtilities-license.txt</file>
+	</files>
+	<not-before-version>2.4.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>
