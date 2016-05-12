@@ -25,7 +25,7 @@ import javax.swing.ImageIcon;
  * SPONSOR		:	RYERSON UNIVERSITY
  */
 
-class FileType
+public class FileType
 {
 	private int		index;
 	private String	search;
