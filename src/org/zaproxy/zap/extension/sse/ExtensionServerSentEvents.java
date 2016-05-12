@@ -174,6 +174,10 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor implements Persi
 		try {
 			table.databaseOpen(db.getDatabaseServer());
 			
+			if (panel != null) {
+				panel.setTable(table);
+			}
+
 			if (storage == null) {
 				storage = new EventStreamStorage(table);
 				addObserver(storage);

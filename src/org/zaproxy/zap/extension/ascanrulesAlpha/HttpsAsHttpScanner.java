@@ -55,14 +55,17 @@ public class HttpsAsHttpScanner extends AbstractAppPlugin {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
+	@Override
 	public String getDescription() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
 	}
 
+	@Override
 	public String getSolution() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}
 
+	@Override
 	public String getReference() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
@@ -100,61 +103,68 @@ public class HttpsAsHttpScanner extends AbstractAppPlugin {
 	@Override
 	public void scan() {
 		
-		if (this.isStop()) { // Check if the user stopped things
-			if (log.isDebugEnabled()) {
-				log.debug("Scanner "+this.getName()+" Stopping.");
+		if (!getBaseMsg().getRequestHeader().isSecure()) { //Base request isn't HTTPS
+			if (log.isDebugEnabled()) { 
+				log.debug ("The original request was not HTTPS, so there is not much point in looking further.");
 			}
-			return; // Stop!
+			return;	
 		}
 		
-		if (!this.getBaseMsg().getRequestHeader().isSecure()) { //Base request isn't HTTPS
-			if (log.isDebugEnabled())  log.debug ("The original request was not HTTPS, so there is not much point in looking further.");
-			return;	//Get out
-		}
-		
-		int originalStatusCode = this.getBaseMsg().getResponseHeader().getStatusCode();
+		int originalStatusCode = getBaseMsg().getResponseHeader().getStatusCode();
 		if (originalStatusCode == HttpStatusCode.NOT_FOUND || originalStatusCode == 0) {
-			if (log.isDebugEnabled())  log.debug ("The original request was not successfuly completed (status = "+ originalStatusCode +"), so there is not much point in looking further.");
-			return;	//Get out		
+			if (log.isDebugEnabled()) {
+				log.debug ("The original request was not successfuly completed (status = "+ originalStatusCode +"), so there is not much point in looking further.");
+			}
+			return;		
 		}
 		
 		if (log.isDebugEnabled()) {
-			log.debug("Checking if " + this.getBaseMsg().getRequestHeader().getURI() + " is available via HTTP.");
+			log.debug("Checking if " + getBaseMsg().getRequestHeader().getURI() + " is available via HTTP.");
 		}
 		
-		HttpMessage newRequest = this.getNewMsg();
+		HttpMessage newRequest = getNewMsg();
 		
 		try{
 			newRequest.getRequestHeader().setSecure(false); //https becomes http
-			log.info("**"+newRequest.getRequestHeader().getURI());
+			if (log.isDebugEnabled()) {
+				log.debug("**"+newRequest.getRequestHeader().getURI());
+			}
 		} catch (URIException e) {
 			log.error("Error creating HTTP URL from HTTPS URL:", e);
-			return; //Get out
+			return; 
 		}
 
+		//Check if the user stopped things. One request per URL so check before sending the request
+		if (isStop()) { 
+			if (log.isDebugEnabled()) {
+				log.debug("Scanner "+getName()+" Stopping.");
+			}
+			return; 
+		}
+		
 		try {
 			sendAndReceive(newRequest, false);
 		} catch (IOException e) {
 			log.error("Error scanning a request via HTTP when the original was HTTPS:", e);
-			return; //Get out
+			return; 
 		}
 		
 		if (newRequest.getResponseHeader().getStatusCode() == HttpStatusCode.OK) { // 200 Success
 
 			String newUri = newRequest.getRequestHeader().getURI().toString();
 			
-			bingo(this.getRisk(), //Risk
+			bingo(getRisk(), //Risk
 					Alert.CONFIDENCE_MEDIUM, //Confidence/Reliability
-					this.getName(), //Name
-					this.getDescription(), //Description
-					this.getBaseMsg().getRequestHeader().getURI().toString(), //Original URI
+					getName(), //Name
+					getDescription(), //Description
+					getBaseMsg().getRequestHeader().getURI().toString(), //Original URI
 					null, //Param
 					"", //Attack
-					newUri, //OtherInfo 
-					this.getSolution(), //Solution
+					Constant.messages.getString(MESSAGE_PREFIX+"otherinfo", newUri), //OtherInfo 
+					getSolution(), //Solution
 					newUri, //Evidence
-					this.getCweId(), //CWE ID
-					this.getWascId(), //WASC ID
+					getCweId(), //CWE ID
+					getWascId(), //WASC ID
 					newRequest); //HTTPMessage
 		}
 	}

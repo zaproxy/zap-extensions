@@ -2,48 +2,32 @@
 <html>
 <head>
 <title>
-Revisit
+Revisitar
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Revisit</h1>
+<h1>Revisitar</h1>
 <p>
-Have you ever wanted to be able to browse an application you tested with ZAP at a specific time, 
-perhaps when you dont have access to it, or after its been changed in some way?<br>
-If so then this add-on is for you!
+Você alguma vez quis navegar um aplicativo que você testou com o ZAP em um momento específico - talvez quando você não tenha mais acesso a ele, ou depois que ele foi alterado de alguma maneira? <br>-Então este complemento é para você!
 </p>
 <p>
-The add-on allows you to instruct ZAP to return content from the ZAP history between specified
-dates rather than forwarding the requests to the site.<br>
-This allows you to apparently browse and use a website that you no longer have access to.<br>
-It also allows you to see what it looked like at between specific times, which is useful if 
-the application has since changed.<br>
-<br>
-When returning pages from the ZAP history floating footers are injected into HTML pages to
-give a visual clue that these pages are generated from ZAP.<br>
-ZAP will return pages that were the result of both GET and POST requests as long as it finds ones that match.<br>
-Pages only match if all URL and POST parameters are the same, ignoring the order and any known CSRF tokens.<br>
-If no matching page can be found in the history then a custom 404 page is returned which will
-include links to the same page if it has been invoked with different parameters or outside of the time period specified.<br>
-<br>
-This add-on adds right click menus to the Sites tree:
+O Add-on permite a você instruir o ZAP para retornar o conteúdo do histórico entre datas especificadas, ao invés de encaminhar os requests para o site. <br>Isso permite que você aparentemente navegue e use um site ao qual já não tem mais acesso. <br>Também permite que veja como ele era entre momentos determinados, o que é útil se o aplicativo mudou desde então. <br><br>Ao retornar páginas do histórico do ZAP, rodapés flutuantes são inseridos nas páginas HTML, para dar uma indicação visual que estas páginas são geradas pelo ZAP. <br> O ZAP retornará páginas que foram o resultado de solicitações de GET e de POST sempre que encontrar aqueles que correspondam a essas solicitações. <br>A correspondência acontecerá apenas se todos os parâmetros de URL e POST forem os mesmos, ignorando a ordem e quaisquer tokens CSRF conhecidos. <br>Se nenhuma página correspondente puder ser encontrada no histórico, uma página 404 personalizada será retornada, com os links para a mesma página, caso tenha sido  chamada com parâmetros diferentes ou fora do período de tempo especificado. <br><br>Este complemento adiciona menus de botão direito na Árvore de Sites:
 </p>
-<h3>Enable Revisit</h3>
-When selected a popup will be shown which asks for the start and end times to be used.<br>
-The start time defaults to the time of the first request in the session.<br>
-The end time defaults to the time of the last request in the session.<br>
-If any of the time elements (for example 'day of the month') have not changed then those elements will be disabled.<br>
-If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site,
-and a 'calendar' icon added to the site node in the History tree.
+<h3>Habilitar revisita</h3>
+Quando selecionado, será exibido um pop-up que pede para os momentos de início e de fim a serem usados.<br>
+O momento de início padrão é o instante do primeiro request da sessão.<br>
+O momento final padrão é o momento da última solicitação da sessão.<br>
+Se qualquer dos elementos de tempo (por exemplo ' dia do mês') não mudaram, então esses elementos serão desabilitados.<br>
+Se o botão OK for acionado, então a funcionalidade de revisita será habilitada para o site selecionado e um ícone de 'Calendário' será adicionado ao nó do site na árvore do histórico.
 
-<h3>Disable Revisit</h3>
-When selected then the revisit functionality will be disabled for the selected site.
+<h3>Desativar revisita</h3>
+Quando selecionada, a funcionalidade de revisitar será desabilitada para o site selecionado.
 
 <h2>API</h2>
-The add on supports the following API endpoints:<br><br>
-revisit / view / revisitList Returns the list of sites enabled for revisit<br>
-revisit / action / revisitSiteOn Turns revisit on for the specified site. Dates must use the format: "yyyy/MM/dd HH:mm:ss"<br> 
-revisit / action / revisitSiteOff  Turns revisit off for the specified site
+O complemento na suporta os seguintes endpoints de API:<br><br>
+revisit / view / revisitList Retorna a lista de sites habilitados para revisita<br>
+revisitar / ação / revisitSiteOn Habilita revisita para o site especificado. Datas devem usar o formato: "AAAA/MM/dd hh:mm:ss"<br> 
+revisitar / ação / revisitSiteOff Desabilita revisita para o site especificado
 
 </body>
 </html>
