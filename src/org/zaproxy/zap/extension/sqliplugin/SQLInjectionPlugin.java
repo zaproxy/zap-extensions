@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.CircularRedirectException;
+import org.apache.commons.httpclient.RedirectException;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -1105,13 +1106,18 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
             if (errorPattern.matcher(tempMsg.getResponseBody().toString()).find()) {
                 lastErrorPageUID = lastRequestUID;
             }
-
-        } catch (CircularRedirectException cre) {
-            //Do not try to internationalise this.. we need an error message in any event..
-            //if it's in English, it's still better than not having it at all.
-            log.warn("SQL Injection vulnerability check failed for parameter ["
-                    + paramName + "] because a Circular Exception occurred, exiting the plugin", cre);
             
+        } catch (RedirectException | URIException e) {
+            if (log.isDebugEnabled()) {
+                StringBuilder strBuilder = new StringBuilder(150);
+                strBuilder.append("SQL Injection vulnerability check failed for parameter [")
+                        .append(paramName)
+                        .append("] and payload [")
+                        .append(payload)
+                        .append("] due to: ")
+                        .append(e.getClass().getCanonicalName());
+                log.debug(strBuilder.toString(), e);
+            }
             return null;
             
         } catch (IOException ex) {
