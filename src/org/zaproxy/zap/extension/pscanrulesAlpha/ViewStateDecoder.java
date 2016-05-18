@@ -155,6 +155,7 @@ public class ViewStateDecoder {
 			this.indentationlevel--;
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append ("</booleanarray>\n");
+			return representation;
 		case 0x05:
 		case 0x1E:
 			//String

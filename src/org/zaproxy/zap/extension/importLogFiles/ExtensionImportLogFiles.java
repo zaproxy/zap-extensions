@@ -63,6 +63,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
         this.setName("ExtensionImportLogFiles");
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
@@ -259,7 +260,6 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
                 parsed.add(sc.next());
             }
             sc.close();
-            reader.close();
             return parsed;
         } catch (IOException x) {
             log.error(x.getMessage(), x);

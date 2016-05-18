@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class SamlManualEditor extends JFrame {
 
+    private static final long serialVersionUID = 1L;
     private JTextPane msgPane;
     private JButton btnResend;
     private JButton btnReset;

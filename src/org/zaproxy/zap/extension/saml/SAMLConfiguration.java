@@ -185,7 +185,7 @@ public class SAMLConfiguration implements AttributeListener {
      * @return unmarshalled object
      * @throws SAMLException
      */
-    private Object loadXMLObject(Class clazz, File file) throws SAMLException {
+    private Object loadXMLObject(Class<?> clazz, File file) throws SAMLException {
         try {
             JAXBContext context = JAXBContext.newInstance(clazz);
             Unmarshaller unmarshaller = context.createUnmarshaller();

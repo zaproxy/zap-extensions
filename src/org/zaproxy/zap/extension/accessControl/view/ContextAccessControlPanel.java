@@ -258,7 +258,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
 	private static ExtensionUserManagement getUsersManagementExtension() {
 		if (usersExtension == null) {
-			usersExtension = (ExtensionUserManagement) Control.getSingleton().getExtensionLoader()
+			usersExtension = Control.getSingleton().getExtensionLoader()
 					.getExtension(ExtensionUserManagement.class);
 			if (usersExtension == null) {
 				throw new IllegalStateException(

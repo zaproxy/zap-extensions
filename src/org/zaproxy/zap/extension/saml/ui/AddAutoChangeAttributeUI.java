@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 
 public class AddAutoChangeAttributeUI extends JDialog {
 
+    private static final long serialVersionUID = 1L;
     private JComboBox<Attribute> comboBoxAttribSelect;
     private JTextField txtAttribValues;
 

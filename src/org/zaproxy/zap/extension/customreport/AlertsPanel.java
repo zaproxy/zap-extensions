@@ -35,6 +35,8 @@ import org.parosproxy.paros.Constant;
 
 public class AlertsPanel extends JPanel{
 
+	private static final long serialVersionUID = 1L;
+
 	private List<JCheckBox> selections;
 
 	private Map<String, String> alertTypeRisk = null;

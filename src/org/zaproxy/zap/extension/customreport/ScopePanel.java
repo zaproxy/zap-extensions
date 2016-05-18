@@ -39,7 +39,7 @@ public class ScopePanel extends AbstractPanel{
 	private static final long serialVersionUID = 1L;
 	
 	private JTextArea name, description;
-	private JComboBox template;
+	private JComboBox<String> template;
 	private JCheckBox onlyInScope;
 	
 	public ScopePanel(){

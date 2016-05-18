@@ -9,6 +9,7 @@ import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 public class SAMLResendMenuItem extends PopupMenuItemHttpMessageContainer {
 
+    private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(SAMLResendMenuItem.class); 
 
     public SAMLResendMenuItem(String label) {
