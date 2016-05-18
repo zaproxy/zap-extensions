@@ -1,14 +1,13 @@
 <zapaddon>
     <name>SAML Extension</name>
-    <version>5</version>
+    <version>6</version>
     <status>alpha</status>
     <description>Detect, Show, Edit, Fuzz SAML requests</description>
     <author>ZAP Dev Team</author>
     <url>https://github.com/zaproxy/zaproxy</url>
 	<changes>
 	<![CDATA[
-	Internationalise and show 'SAML Actions' menu.<br>
-	Prevent XXE vulnerability.<br>
+	Use ZAP's home directory for SAML configuration file.<br>
 	]]>
 	</changes>
     <dependson/>
