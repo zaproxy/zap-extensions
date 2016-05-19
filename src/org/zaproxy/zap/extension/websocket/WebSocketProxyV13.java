@@ -413,9 +413,9 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 			}
 			
 			if (isText(opcode)) {
-				logger.info("got text frame payload");
+				logger.debug("got text frame payload");
 			} else if (isBinary(opcode)) {
-				logger.info("got binary frame payload");				
+				logger.debug("got binary frame payload");				
 			} else {
 				if (opcode == OPCODE_CLOSE) {
 					if (payload.length > 1) {

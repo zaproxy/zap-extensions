@@ -763,7 +763,9 @@ public abstract class WebSocketProxy {
 	 * @throws IOException
 	 */
 	public void sendAndNotify(WebSocketMessageDTO msg) throws IOException {
-		logger.info("send custom message");
+		if (logger.isDebugEnabled()) {
+			logger.debug("sending custom message");
+		}
 		WebSocketMessage message = createWebSocketMessage(msg);
 		
 		OutputStream out;
@@ -782,7 +784,9 @@ public abstract class WebSocketProxy {
 	}
 
 	public boolean send(WebSocketMessageDTO msg) throws IOException {
-		logger.info("send custom message");
+		if (logger.isDebugEnabled()) {
+			logger.debug("sending custom message");
+		}
 		WebSocketMessage message = createWebSocketMessage(msg);
 
 		OutputStream out;

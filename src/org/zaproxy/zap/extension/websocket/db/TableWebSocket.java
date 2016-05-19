@@ -574,7 +574,9 @@ public class TableWebSocket extends ParosAbstractTable {
 						// proceed with insert
 						stmt = psInsertChannel;
 						addIdOnSuccess = true;
-						logger.info("insert channel: " + channel.toString());
+						if (logger.isDebugEnabled()) {
+							logger.debug("insert channel: " + channel.toString());
+						}
 					}
 
 					if(logger.isDebugEnabled()) {logger.debug("url (length " + channel.url.length() + "):" + channel.url);}
@@ -634,7 +636,9 @@ public class TableWebSocket extends ParosAbstractTable {
 						throw new SQLException("channel not inserted: " + message.channel.id);
 					}
 					
-					logger.info("insert message: " + message.toString());
+					if (logger.isDebugEnabled()) {
+						logger.debug("insert message: " + message.toString());
+					}
 
 					psInsertMessage.setInt(1, message.id);
 					psInsertMessage.setInt(2, message.channel.id);
