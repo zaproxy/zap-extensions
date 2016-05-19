@@ -57,6 +57,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
@@ -503,11 +504,21 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 */
 	public void addWebSocketsChannel(HttpMessage handshakeMessage, Socket localSocket, Socket remoteSocket, InputStream remoteReader) {
 		try {			
+			HttpRequestHeader requestHeader = handshakeMessage.getRequestHeader();
+			String targetHost = requestHeader.getHostName();
+			int targetPort = requestHeader.getHostPort();
 			if (logger.isDebugEnabled()) {
-				String source = (localSocket != null) ? localSocket.getInetAddress().toString() + ":" + localSocket.getPort() : "ZAP";
-				String destination = remoteSocket.getInetAddress() + ":" + remoteSocket.getPort();
+				StringBuilder logMessage = new StringBuilder(200);
+				logMessage.append("Got WebSockets channel from ");
+				if (localSocket != null) {
+					logMessage.append(localSocket.getInetAddress()).append(':').append(localSocket.getPort());
+				} else {
+					logMessage.append("ZAP");
+				}
+				logMessage.append(" to ");
+				logMessage.append(targetHost).append(':').append(targetPort);
 				
-				logger.debug("Got WebSockets channel from " + source + " to " + destination);
+				logger.debug(logMessage.toString());
 			}
 			
 			// parse HTTP handshake
@@ -516,7 +527,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			String wsVersion = parseWebSocketVersion(handshakeMessage);
 	
 			WebSocketProxy wsProxy = null;
-			wsProxy = WebSocketProxy.create(wsVersion, localSocket, remoteSocket, wsProtocol, wsExtensions);
+			wsProxy = WebSocketProxy.create(wsVersion, localSocket, remoteSocket, targetHost, targetPort, wsProtocol, wsExtensions);
 			
 			// set other observers and handshake reference, before starting listeners
 			for (WebSocketObserver observer : allChannelObservers) {

@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Unload WebSockets components during uninstallation.<br>
+	Use hostname/port of the handshake message to build the name of the channel.<br>
 	]]>
 	</changes>
 	<classnames>
