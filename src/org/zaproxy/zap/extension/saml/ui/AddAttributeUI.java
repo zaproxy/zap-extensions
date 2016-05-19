@@ -1,21 +1,30 @@
 package org.zaproxy.zap.extension.saml.ui;
 
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.zaproxy.zap.extension.saml.Attribute;
 import org.zaproxy.zap.extension.saml.AttributeListener;
 import org.zaproxy.zap.extension.saml.SamlI18n;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 public class AddAttributeUI extends JFrame {
 
+    private static final long serialVersionUID = 1L;
     private JTextField textFieldAttributeName;
     private JTextField textFieldViewName;
     private JTextField textFieldXpath;
@@ -112,7 +121,7 @@ public class AddAttributeUI extends JFrame {
                 XPathFactory xFactory = XPathFactory.newInstance();
                 XPath xpath = xFactory.newXPath();
                 try {
-                    XPathExpression expression = xpath.compile(textFieldXpath.getText());
+                    xpath.compile(textFieldXpath.getText());
                 } catch (XPathExpressionException e1) {
                     error += SamlI18n.getMessage("saml.addattrib.error.invalidxpath")+"\n";
                 }

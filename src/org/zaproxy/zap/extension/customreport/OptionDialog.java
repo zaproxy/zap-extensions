@@ -31,6 +31,7 @@ import org.parosproxy.paros.view.AbstractFrame;
 
 public class OptionDialog extends AbstractFrame{
 	
+	private static final long serialVersionUID = 1L;
 	private ExtensionCustomReport extension = null;
 	
 	public OptionDialog( ExtensionCustomReport extension, ScopePanel scopepanel, AlertsPanel alertspanel,

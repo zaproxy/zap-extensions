@@ -44,7 +44,7 @@ public abstract class ChallengeCallbackAPI extends ApiImplementor {
     private static final Logger logger = Logger.getLogger(ChallengeCallbackAPI.class);
     
     // The registered callbacks for this API
-    private final TreeMap<String, RegisteredCallback> regCallbacks = new TreeMap();
+    private final TreeMap<String, RegisteredCallback> regCallbacks = new TreeMap<String, RegisteredCallback>();
 
     /**
      * Default contructor
@@ -71,7 +71,6 @@ public abstract class ChallengeCallbackAPI extends ApiImplementor {
      */
     public void cleanExpiredCallbacks() {
         long now = System.currentTimeMillis();
-        RegisteredCallback rcback;
         Iterator<Map.Entry<String, RegisteredCallback>> it = regCallbacks.entrySet().iterator();
         Map.Entry<String, RegisteredCallback> entry;
         

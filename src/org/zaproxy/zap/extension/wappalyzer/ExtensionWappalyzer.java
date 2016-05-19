@@ -119,6 +119,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void parseJson(String jsonStr) {
 		
 		try {

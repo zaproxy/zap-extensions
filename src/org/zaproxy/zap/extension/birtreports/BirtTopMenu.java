@@ -67,6 +67,7 @@ public class BirtTopMenu extends ExtensionAdaptor {
                         this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());
         }
        
+        @SuppressWarnings("deprecation")
         @Override
         public void hook(ExtensionHook extensionHook) {
             super.hook(extensionHook);

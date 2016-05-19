@@ -72,7 +72,7 @@ public class ExampleSimpleActiveScanner extends AbstractAppParamPlugin {
 	public boolean targets(TechSet technologies) {  // This method allows the programmer or user to restrict when a 
 		//scanner is run based on the technologies selected.  For example, to restrict the scanner to run just when 
 		//C language is selected 
-		return technologies.includes(Tech.Lang.C); 
+		return technologies.includes(Tech.C); 
 	}
 	
 	@Override

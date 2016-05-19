@@ -83,7 +83,7 @@ public class SniTermPanel extends AbstractParamPanel {
 	@Override
 	public void initParam(Object obj) {
 		final OptionsParam options = (OptionsParam) obj;
-		final SniTermParam param = (SniTermParam) options.getParamSet(SniTermParam.class);
+		final SniTermParam param = options.getParamSet(SniTermParam.class);
 		this.getTxtProxyIp().setText(param.getServerAddress());
 		this.getSpinnerProxyPort().setValue(param.getServerPort());
 	}
@@ -96,7 +96,7 @@ public class SniTermPanel extends AbstractParamPanel {
 	@Override
 	public void saveParam(Object obj) throws Exception {
 		final OptionsParam options = (OptionsParam) obj;
-		final SniTermParam param = (SniTermParam) options.getParamSet(SniTermParam.class);
+		final SniTermParam param = options.getParamSet(SniTermParam.class);
 		boolean changed = false;
 		if (!param.getServerAddress().equals(this.getTxtProxyIp().getText())) {
 			param.setServerAddress(this.getTxtProxyIp().getText());

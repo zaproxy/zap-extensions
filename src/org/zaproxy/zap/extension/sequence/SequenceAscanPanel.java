@@ -86,6 +86,7 @@ public class SequenceAscanPanel implements CustomScanPanel {
 					Extension extZest = Control.getSingleton().getExtensionLoader().getExtension("ExtensionZest");
 					if (extZest != null) {
 						Method method = extZest.getClass().getMethod("getAllRequestsInScript", ScriptWrapper.class);
+						@SuppressWarnings("unchecked")
 						List<HttpMessage> msgs = (List<HttpMessage>)method.invoke(extZest, sw);
 						for (HttpMessage msg : msgs) {
 							SiteNode node = session.getSiteTree().findNode(msg, false);

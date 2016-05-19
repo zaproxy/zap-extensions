@@ -329,7 +329,7 @@ public class ContextAccessRulesManager {
 		while (en.hasMoreElements()) {
 			// Unfortunately the enumeration isn't genericized so we need to downcast when calling
 			// nextElement():
-			SiteTreeNode node = (SiteTreeNode) en.nextElement();
+			SiteTreeNode node = en.nextElement();
 			rules.remove(node);
 		}
 

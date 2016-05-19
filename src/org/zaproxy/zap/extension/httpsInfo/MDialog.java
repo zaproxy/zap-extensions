@@ -10,15 +10,18 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
 import org.parosproxy.paros.view.AbstractFrame;
 
 public class MDialog extends AbstractFrame {
+	private static final long serialVersionUID = 1L;
 	boolean ordered = false;
 	Map<String, Integer> versionStrings;
 	SSLServer server;
@@ -47,7 +50,6 @@ public class MDialog extends AbstractFrame {
 	public void init() {
 		general = new JTextArea();
 		general.setEditable(false);
-		JScrollPane scroll = new JScrollPane(general);
 		spinnerPref = new JLabel("Supported Versions");
 		cipherSuites = new JTextArea();
 		cipherSuites.setEditable(false);
@@ -71,7 +73,7 @@ public class MDialog extends AbstractFrame {
 		});
 		versionStrings = new HashMap<String, Integer>();
 		for (int v : server.getSupportedVersions()) {
-			versionStrings.put(server.versionString(v), v);
+			versionStrings.put(SSLServer.versionString(v), v);
 		}
 		Object[] list = versionStrings.keySet().toArray();
 		String[] slist = new String[list.length];
@@ -79,7 +81,7 @@ public class MDialog extends AbstractFrame {
 			slist[i] = list[i].toString();
 		}
 		Arrays.sort(slist);
-		suppVers = new JComboBox(slist);
+		suppVers = new JComboBox<String>(slist);
 		suppVers.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -154,7 +156,7 @@ public class MDialog extends AbstractFrame {
 		int x = 0;
 		try {
 			for (int c : server.getSupportedCipherSuites().get(versionStrings.get(suppVers.getSelectedItem()))) {
-				cs.append((ordered ? x + "." : "  ") + "      " + server.cipherSuiteString(c) + "\n");
+				cs.append((ordered ? x + "." : "  ") + "      " + SSLServer.cipherSuiteString(c) + "\n");
 				x++;
 			}
 

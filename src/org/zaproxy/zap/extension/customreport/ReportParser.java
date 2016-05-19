@@ -38,11 +38,12 @@ public class ReportParser {
 		}
         
 	    Element report = doc.getRootElement();
-	    List sites = report.elements("site");
+	    @SuppressWarnings("unchecked")
+        List<Element> sites = report.elements("site");
 	    
 	    // iterate through sites
 	    for ( int site_i=sites.size()-1 ; site_i>=0 ; site_i-- ) {
-	    	   Element site = (Element) sites.get(site_i);
+	    	   Element site = sites.get(site_i);
 	    	   if (contexts.size() == 0){
 	    		   sites.remove(site);
 	    		   continue;
@@ -59,6 +60,7 @@ public class ReportParser {
 	    return new StringBuilder( doc.asXML());
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static StringBuilder selectExpectedAlerts( StringBuilder sb, List<String> selectedAlerts ){
 
 		Document doc = null;
@@ -68,19 +70,19 @@ public class ReportParser {
 			e.printStackTrace();
 		}
 	    Element report = doc.getRootElement();
-	    List sites = report.elements("site");
+	    List<Element> sites = report.elements("site");
 	    
 	    // iterate through sites
 	    for ( int site_i=0 ; site_i<sites.size() ;site_i++ ) {
-	    	   Element site = (Element) sites.get(site_i);
+	    	   Element site = sites.get(site_i);
 	    	   if ( site == null ) continue;
                
 	    	   // iterate every alerts
 	    	   Element alertRoot = site.element("alerts");
-	    	   List alerts = alertRoot.elements("alertitem");
+	    	   List<Element> alerts = alertRoot.elements("alertitem");
 	    	   
                for( int alert_i = 0; alert_i < alerts.size(); alert_i++ ){
-            	   Element alert = (Element)alerts.get(alert_i);
+            	   Element alert = alerts.get(alert_i);
             	   
             	   String alertname = alert.elementText("alert");
             	   // delete is not selected

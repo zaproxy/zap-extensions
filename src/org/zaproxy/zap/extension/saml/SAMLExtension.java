@@ -10,6 +10,7 @@ import org.zaproxy.zap.extension.saml.ui.SamlExtentionSettingsUI;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuMessageContainer;
 
 import javax.swing.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
@@ -33,6 +34,7 @@ public class SAMLExtension extends ExtensionAdaptor {
         return Constant.ZAP_TEAM;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);

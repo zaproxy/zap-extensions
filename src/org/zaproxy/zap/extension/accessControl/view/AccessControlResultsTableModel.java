@@ -166,6 +166,7 @@ public class AccessControlResultsTableModel extends
 			case UNKNOWN:
 				return resultUnknownIcon;
 			}
+			return null;
 		default:
 			return null;
 		}

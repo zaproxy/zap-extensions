@@ -71,7 +71,7 @@ public class AlertReport implements IAlertReport{
 	        
 	        oldid = alerts.get(0).getPluginId();
 	    	for (Alert alert : alerts) {
-	            if (alert.getReliability() != Alert.CONFIDENCE_FALSE_POSITIVE) {
+	            if (alert.getConfidence() != Alert.CONFIDENCE_FALSE_POSITIVE) {
 	            	
 	            	newid = alert.getPluginId();
 	            	if (newid == oldid & count > countTotal)

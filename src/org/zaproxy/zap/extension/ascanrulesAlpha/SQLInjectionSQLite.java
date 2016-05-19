@@ -213,7 +213,7 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 
 	@Override
 	public boolean targets(TechSet technologies) {
-		return technologies.includes(Tech.Db.SQLite);
+		return technologies.includes(Tech.SQLite);
 	}
 
 	@Override

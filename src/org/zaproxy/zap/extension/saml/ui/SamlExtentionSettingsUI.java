@@ -15,6 +15,7 @@ import java.util.Set;
 
 public class SamlExtentionSettingsUI extends JFrame implements PassiveAttributeChangeListener, AttributeListener {
 
+    private static final long serialVersionUID = 1L;
     private JScrollPane settingsScrollPane;
     private JCheckBox chckbxEnablePassiveChanger;
     private JCheckBox chckbxRemoveMessageSignatures;

@@ -32,6 +32,7 @@ import org.parosproxy.paros.Constant;
 
 public class AlertDetailsPanel extends JPanel{
 
+	private static final long serialVersionUID = 1L;
 	private JCheckBox description = null;
 	private JCheckBox otherInfo = null;
 	private JCheckBox solution = null;
