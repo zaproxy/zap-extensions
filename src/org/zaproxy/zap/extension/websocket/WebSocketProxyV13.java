@@ -59,6 +59,13 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 	}
 
 	/**
+	 * @see WebSocketProxy#WebSocketProxy(Socket, Socket, String, int)
+	 */
+	public WebSocketProxyV13(Socket localSocket, Socket remoteSocket, String targetHost, int targetPort) throws WebSocketException {
+		super(localSocket, remoteSocket, targetHost, targetPort);
+	}
+
+	/**
 	 * @see WebSocketProxy#createWebSocketMessage(InputStream, byte)
 	 */
 	@Override
