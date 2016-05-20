@@ -636,11 +636,11 @@
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
+				<include name="alertFilters-${status}-*.zap"/>
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
 				<include name="fuzz-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
-				<include name="plugnhack-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="tips-${status}-*.zap"/>
 				<include name="zest-${status}-*.zap"/>
