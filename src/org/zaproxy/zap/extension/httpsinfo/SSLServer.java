@@ -25,7 +25,7 @@
  * SOFTWARE.
  * ----------------------------------------------------------------------
  */
-package org.zaproxy.zap.extension.httpsInfo;
+package org.zaproxy.zap.extension.httpsinfo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -54,11 +54,11 @@ public class SSLServer {
 	private Integer maxStr;
 	private Integer minStr;
 
-	public SSLServer(String name) {
+	public SSLServer(String name) throws IOException {
 		this(name, 443);
 	}
 
-	public SSLServer(String name, int port) {
+	public SSLServer(String name, int port) throws IOException {
 		if (port <= 0 || port > 65535) {
 			port = 443;
 		}
@@ -102,10 +102,12 @@ public class SSLServer {
 		return this.minStr;
 	}
 
-	public void updateSupportedVersions() {
+	public void updateSupportedVersions() throws IOException {
+		int exceptionCount = 0;
 		for (int v = 0x0300; v <= 0x0303; v++) {
 			ServerHello sh = connect(isa, v, CIPHER_SUITES.keySet());
 			if (sh == null) {
+				exceptionCount++;// Count connect failures
 				continue;
 			}
 			sv.add(sh.protoVersion);
@@ -114,6 +116,11 @@ public class SSLServer {
 
 		if (sh2 != null) {
 			sv.add(0x0200);
+		} else {
+			exceptionCount++;// Count connect failures
+		}
+		if (exceptionCount == 5) {// Failed to connect all 5 times, throw IOException
+			throw new IOException("Failed to connect to server after 5 attempts.");
 		}
 	}
 
@@ -129,8 +136,6 @@ public class SSLServer {
 	}
 
 	public void updateSupportedCS() {
-		Set<Integer> lastSuppCS = null;
-
 		for (int v : sv) {
 			if (v == 0x0200) {
 				ServerHelloSSLv2 sh2 = connectV2(isa);
@@ -311,12 +316,13 @@ public class SSLServer {
 				return null;
 			}
 			byte[] ch = makeClientHello(version, cipherSuites);
-			OutputRecord orec = new OutputRecord(s.getOutputStream());
-			orec.setType(HANDSHAKE);
-			orec.setVersion(version);
-			orec.write(ch);
-			orec.flush();
-			return new ServerHello(s.getInputStream());
+			try (OutputRecord orec = new OutputRecord(s.getOutputStream())) {
+				orec.setType(HANDSHAKE);
+				orec.setVersion(version);
+				orec.write(ch);
+				orec.flush();
+				return new ServerHello(s.getInputStream());
+			}
 		} catch (IOException ioe) {
 			// ignored
 		} finally {
@@ -628,11 +634,13 @@ public class SSLServer {
 			MessageDigest md = MessageDigest.getInstance("SHA1");
 			md.update(buf, off, len);
 			byte[] hv = md.digest();
-			Formatter f = new Formatter();
-			for (byte b : hv) {
-				f.format("%02x", b & 0xFF);
+			try(Formatter f = new Formatter()) {
+				for (byte b : hv) {
+					f.format("%02x", b & 0xFF);
+				}
+				String retVal=f.toString();
+				return retVal;
 			}
-			return f.toString();
 		} catch (NoSuchAlgorithmException nsae) {
 			throw new Error(nsae);
 		}

@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+HTTPS Info Add-on
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1>HTTPS Info Add-on</H1>
+
+The HTTPS Info add-on is accessed via the context menu within the Sites Tree or History table. 
+It displays a dialog in which various summary information is displayed
+regarding the target server's HTTPS configuration, and the offered SSL/TLS cipher suites.
+
+<H2>General</H2>
+The top portion of the dialog is devoted to general details of the SSL/TLS configuration. Such as:
+<ul>
+<li>Minimum Cipher Strength</li>
+<li>Maximum Cipher Strength</li>
+<li>Compression Support</li>
+<li>BEAST Status (Vulnerable/Protected)</li>
+<li>CRIME Status (Vulnerable/Protected)</li>
+</ul>
+If vulnerabilities are detected then Alerts are raised. 
+
+<H2>Cipher Suites</H2>
+The bottom portion of the dialog is devoted to enumeration/listing of the specific Cipher Suites the 
+target server offers, grouped by protocol (SSLv2, SSLv3, TLSv1, TLSv1.1, etc.).
+
+The "Determine Server Preference" button iterates through the list of available Cipher Suites in order
+to determine the order with which the server would "prefer" to select Cipher Suites.
+
+</BODY>
+</HTML>

@@ -2,16 +2,17 @@
 	<name>HttpsInfo</name>
 	<version>7</version>
 	<status>alpha</status>
-	<description>Adds Https status information</description>
+	<description>Displays HTTPS status information.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
 	Allow to update/uninstall the add-on without restarting ZAP.<br>
+	Issue 758 - General re-working of the extension.<br>
 	]]>
 	</changes>
 	<extensions>
-	    <extension>org.zaproxy.zap.extension.httpsInfo.RightClickMenu</extension>
+	    <extension>org.zaproxy.zap.extension.httpsinfo.ExtensionHttpsInfo</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
