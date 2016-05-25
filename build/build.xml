@@ -358,6 +358,7 @@
 		<build-addon name="ascanrulesAlpha" />
 		<build-addon name="birtreports" />
 		<build-addon name="browserView" />
+		<build-addon name="bugTracker" />
 		<build-addon name="callgraph" />
 		<build-addon name="cmss" />
 		<build-addon name="codedx"/>
@@ -475,6 +476,10 @@
 
     <target name="deploy-browserView" description="deploy the browser extension">
         <build-deploy-addon name="browserView" />
+    </target>
+
+    <target name="deploy-bugTracker" description="deploy the bug tracker extension">
+        <build-deploy-addon name="bugTracker" />
     </target>
     
 	<target name="generate-wiki-browserView" description="Generates the wiki of browser extension">

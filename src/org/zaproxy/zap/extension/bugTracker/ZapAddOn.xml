@@ -1,0 +1,17 @@
+<zapaddon>
+	<name>Bug Tracker</name>
+	<version>1</version>
+	<status>alpha</status>
+	<description>Bug Tracker extension.</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>First version</changes>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.bugTracker.ExtensionBugTracker</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<not-before-version>2.4.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>
