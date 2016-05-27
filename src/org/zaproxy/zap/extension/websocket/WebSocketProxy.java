@@ -34,9 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
 
 /**
  * Intercepts WebSocket communication and forwards frames. Code is inspired by
@@ -732,15 +730,7 @@ public abstract class WebSocketProxy {
 		
 		HistoryReference handshakeRef = getHandshakeReference();
 		if (handshakeRef != null) {
-			try {
-				dto.url = handshakeRef.getHttpMessage().getRequestHeader().getURI().toString();
-			} catch (HttpMalformedHeaderException e) {
-				dto.url = "";
-				logger.error("HttpMessage for WebSockets-handshake not found!");
-			} catch (DatabaseException e) {
-				dto.url = "";
-				logger.error("HttpMessage for WebSockets-handshake not found!");
-			}
+			dto.url = handshakeRef.getURI().toString();
 			dto.historyId = handshakeRef.getHistoryId();
 		} else {
 			dto.url = "";
