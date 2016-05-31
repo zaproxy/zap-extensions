@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>10</version>
+	<version>11</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-		XPoweredByHeaderInfoLeakScanner modify evidence (Issue 2575)<br>
-		ContentSecurityPolicyMissingScanner to only check for older CSP headers at Low threshold<br>
-		CacheableScanner: Add other information in attack and remove evidence (Issue 2573)<br>
+		Issue 2538: Strict-Transport-Security Header Scanner additional variants.<br>
 	]]>
 	</changes>
 	<extensions>
