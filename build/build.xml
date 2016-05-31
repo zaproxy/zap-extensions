@@ -453,6 +453,10 @@
 		<build-deploy-addon name="directorylistv2_3_lc" />
 	</target>
 
+	<target name="deploy-fuzzdb" description="Deploys the FuzzDB add-on">
+		<build-deploy-addon name="fuzzdb" />
+	</target>
+
 	<target name="deploy-gettingStarted" description="deploy the gettingStarted extension">
 		<build-deploy-addon name="gettingStarted" />
 	</target>
