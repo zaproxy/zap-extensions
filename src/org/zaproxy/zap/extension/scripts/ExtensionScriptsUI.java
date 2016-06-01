@@ -667,7 +667,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		}
 
 		ScriptNode node = getSelectedNode();
-		if (node.getUserObject() != null && (node.getUserObject() instanceof ScriptWrapper)) {
+		if (node != null && node.getUserObject() instanceof ScriptWrapper) {
 			ScriptWrapper scriptWrapper = (ScriptWrapper) node.getUserObject();
 			if (ExtensionScript.hasSameScriptEngine(scriptWrapper, scriptEngineWrapper)) {
 				displayScript(scriptWrapper);
@@ -682,7 +682,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		}
 
 		ScriptNode node = getSelectedNode();
-		if (node.getUserObject() != null && (node.getUserObject() instanceof ScriptWrapper)) {
+		if (node != null && node.getUserObject() instanceof ScriptWrapper) {
 			ScriptWrapper scriptWrapper = (ScriptWrapper) node.getUserObject();
 			if (ExtensionScript.hasSameScriptEngine(scriptWrapper, scriptEngineWrapper)) {
 				displayType(scriptWrapper.getType());
