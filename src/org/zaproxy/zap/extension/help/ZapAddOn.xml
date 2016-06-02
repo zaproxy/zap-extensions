@@ -1,16 +1,16 @@
 <zapaddon>
 	<name>Help - English</name>
-	<version>5</version>
+	<version>6</version>
 	<status>release</status>
 	<description>English (master) version of the ZAP help file.</description>
 	<author>ZAP Crowdin Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpIntro</url>
-	<changes>Updated for 2.4.3</changes>
+	<changes>Updated for 2.5.0</changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.3</not-before-version>
+	<not-before-version>2.5.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
