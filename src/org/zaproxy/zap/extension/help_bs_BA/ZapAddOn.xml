@@ -1,16 +1,16 @@
 <zapaddon>
 	<name>Help - Bosnian</name>
-	<version>4</version>
+	<version>5</version>
 	<status>alpha</status>
 	<description>Bosnian version of the ZAP help file.</description>
 	<author>ZAP Crowdin Team</author>
 	<url>https://crowdin.com/project/owasp-zap-help</url>
-	<changes>Updated for 2.4.3</changes>
+	<changes>Updated for 2.5.0</changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.3</not-before-version>
+	<not-before-version>2.5.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
