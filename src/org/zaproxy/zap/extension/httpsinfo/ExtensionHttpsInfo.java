@@ -15,43 +15,51 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.httpsInfo;
+package org.zaproxy.zap.extension.httpsinfo;
 
 import java.awt.EventQueue;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
-/*
- * An example ZAP extension which adds a right click menu item to all of the main
- * tabs which list messages. 
- * 
- * This class is defines the extension.
- */
-public class RightClickMenu extends ExtensionAdaptor {
+public class ExtensionHttpsInfo extends ExtensionAdaptor {
 
-	private MenuEntry httpsEntry = null;
+	public static final String NAME = "ExtensionHttpsInfo";
+	public static final String ICON_PATH = "/org/zaproxy/zap/extension/httpsinfo/resources/icon.png";
+	private static final Logger LOGGER = Logger.getLogger(ExtensionHttpsInfo.class);
+	private static final List<Class<?>> DEPENDENCIES;
+	static {
+		List<Class<?>> dep = new ArrayList<>(1);
+		dep.add(ExtensionAlert.class);
+
+		DEPENDENCIES = Collections.unmodifiableList(dep);
+	}
+
+	private MenuEntry httpsEntry;
 	private List<MDialog> dialogues;
 	private boolean unloaded;
 
-	public RightClickMenu() {
+	public ExtensionHttpsInfo() {
 		super();
-		initialize();
 	}
 
-	public RightClickMenu(String name) {
-		super(name);
-	}
-
-	private void initialize() {
-		this.setName("PopupMenu");
+	@Override
+	public List<Class<?>> getDependencies() {
+		return DEPENDENCIES;
 	}
 
 	@Override
@@ -77,22 +85,20 @@ public class RightClickMenu extends ExtensionAdaptor {
 		}
 	}
 
+	@Override
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 
 		if (getView() != null) {
-			// Register our popup menu item, as long as we're not running as a
-			// daemon
-			MenuEntry entry = getPopupMsgMenuExample();
-
-			extensionHook.getHookMenu().addPopupMenuItem(entry);
+			extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgMenu());
 		}
 
 	}
 
-	private MenuEntry getPopupMsgMenuExample() {
+	private MenuEntry getPopupMsgMenu() {
 		if (httpsEntry == null) {
-			httpsEntry = new MenuEntry(this.getMessageString("httpsInfo.httpsInfo.menuitem"), this);
+			httpsEntry = new MenuEntry(this.getMessageString("httpsinfo.rightclick.menuitem"), this);
+			httpsEntry.setIcon(new ImageIcon(ExtensionHttpsInfo.class.getResource(ICON_PATH)));
 		}
 		return httpsEntry;
 	}
@@ -108,7 +114,7 @@ public class RightClickMenu extends ExtensionAdaptor {
 
 	@Override
 	public String getDescription() {
-		return Constant.messages.getString("httpsInfo.httpsInfo.desc");
+		return Constant.messages.getString("httpsinfo.desc");
 	}
 
 	@Override
@@ -120,21 +126,30 @@ public class RightClickMenu extends ExtensionAdaptor {
 		}
 	}
 
-	void showSslTlsInfo(String hostname) {
-		new Thread(new BackgroundThread(hostname)).start();
+	void showSslTlsInfo(String hostname, HttpMessage msg) {
+		new Thread(new BackgroundThread(hostname, msg)).start();
 	}
 
 	private class BackgroundThread implements Runnable {
 
 		private String servername;
+		private HttpMessage baseMessage;
 
-		public BackgroundThread(String servername) {
+		public BackgroundThread(String servername, HttpMessage msg) {
+			this.baseMessage = msg;
 			this.servername = servername;
 		}
 
 		@Override
 		public void run() {
-			final SSLServer mServer = new SSLServer(servername);
+			final SSLServer mServer;
+			try {
+				mServer = new SSLServer(servername);
+			} catch (IOException ioe) {
+				getView().showWarningDialog(Constant.messages.getString("httpsinfo.failure.dialog.message"));
+				LOGGER.info("Could not establish a SSL/TLS connection with the server. " + ioe.getMessage());
+				return;
+			}
 			if (unloaded) {
 				return;
 			}
@@ -145,7 +160,7 @@ public class RightClickMenu extends ExtensionAdaptor {
 					if (unloaded) {
 						return;
 					}
-					MDialog d = new MDialog(mServer);
+					MDialog d = new MDialog(mServer, baseMessage);
 					dialogues.add(d);
 					d.addWindowListener(new WindowAdapter() {
 

@@ -158,12 +158,13 @@
 
 	<macrodef name="build-addon" description="build the specified addon">
 		<attribute name="name"/>
+		<attribute name="addonid" default="@{name}" />
 		<element name="extra-actions" implicit="true" optional="true" />
 		<sequential>
 			<local name="zapaddon.version" />
 			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
 			<local name="file" />
-			<property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
+			<property name="file" value="@{addonid}-${status}-${zapaddon.version}.zap" />
 
 			<generatejavahelpsearchindexes jhalljar="${build.lib.dir}/jhall.jar"
 				helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
@@ -230,7 +231,7 @@
 			</tstamp>
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				addonid="@{addonid}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
 				url="${zap.download.url}/${file}" />
 
 		</sequential>
@@ -238,12 +239,13 @@
 
 	<macrodef name="build-addon-without-help-indexes" description="build the specified addon">
 				<attribute name="name"/>
+				<attribute name="addonid" default="@{name}" />
 				<element name="extra-actions" implicit="true" optional="true" />
 				<sequential>
 					<local name="zapaddon.version" />
 					<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
 					<local name="file" />
-					<property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
+					<property name="file" value="@{addonid}-${status}-${zapaddon.version}.zap" />
 
 					<local name="addon.libs.zip" />
 					<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
@@ -294,7 +296,7 @@
 					</tstamp>
 
 					<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-						addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+						addonid="@{addonid}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
 						url="${zap.download.url}/${file}" />
 
 				</sequential>
@@ -367,7 +369,7 @@
 		<build-addon name="help_fr_FR" />
 		<build-addon name="help_ja_JP" />
 		<build-addon name="highlighter" />
-		<build-addon name="httpsInfo" />
+		<build-addon name="httpsinfo" />
 		<build-addon name="importLogFiles" />
 		<build-addon name="pscanrulesAlpha" >
 				<!-- Add the extra classes required -->
@@ -402,23 +404,25 @@
 
 	<macrodef name="build-deploy-addon" description="build and deploy the specified addon">
 		<attribute name="name"/>
+		<attribute name="addonid" default="@{name}" />
 		<sequential>
 			<antcall target="clean" />
 			<antcall target="compile" />
 
-			<build-addon name="@{name}" />
-			<deploy-addon name="@{name}" />
+			<build-addon name="@{name}" addonid="@{addonid}" />
+			<deploy-addon name="@{addonid}" />
 		</sequential>
 	</macrodef>
 
 	<macrodef name="build-deploy-addon-without-help-indexes" description="build and deploy the specified addon">
 		<attribute name="name"/>
+		<attribute name="addonid" default="@{name}" />
 		<sequential>
 			<antcall target="clean" />
 			<antcall target="compile" />
 
-			<build-addon-without-help-indexes name="@{name}" />
-			<deploy-addon name="@{name}" />
+			<build-addon-without-help-indexes name="@{name}" addonid="@{addonid}" />
+			<deploy-addon name="@{addonid}" />
 		</sequential>
 	</macrodef>
 	
@@ -517,10 +521,18 @@
 		<build-deploy-addon name="highlighter" />
 	</target>
   
-  	<target name="deploy-httpsInfo" description="deploy the httpsInfo extension">
-		<build-deploy-addon name="httpsInfo" />
+  	<target name="deploy-httpsinfo" description="deploy the httpsInfo extension">
+  		<build-deploy-addon name="httpsinfo" addonid="httpsInfo" />
 	</target>
 
+  	<target name="deploy-httpsinfo-without-help-indexes" description="deploy the httpsInfo extension">
+		<build-deploy-addon-without-help-indexes name="httpsinfo" addonid="httpsInfo" />
+	</target>
+	
+	<target name="generate-wiki-httpsinfo" description="Generates the wiki of HTTPS Info Add-on">
+		<generate-wiki addon="httpsinfo" />
+	</target>
+	
 	<target name="deploy-importLogFiles" description="deploy the importLogFiles extension">
 		<build-deploy-addon name="importLogFiles" />
 	</target>
