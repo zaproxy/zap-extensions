@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Community Scripts</name>
-	<version>2</version>
+	<version>3</version>
 	<status>alpha</status>
 	<description>Useful ZAP scripts written by the ZAP community.</description>
 	<author>ZAP Community</author>
 	<url>https://github.com/zaproxy/community-scripts</url>
 	<changes>
 	<![CDATA[
-	Fixed bug which prevents ZAP configs from being saved correctly<br>
+	Updated with the latest scripts for 2.5.0<br>
 	]]>
 	</changes>
 	<extensions>
@@ -38,6 +38,8 @@
 		<file>community-scripts/passive/Server Header Disclosure.js</file>
 		<file>community-scripts/passive/X-Powered-By_header_checker.js</file>
 		<file>community-scripts/passive/clacks.js</file>
+		<file>community-scripts/passive/detect_csp_notif_and_reportonly.js</file>
+		<file>community-scripts/passive/detect_samesite_protection.js</file>
 		<file>community-scripts/passive/f5_bigip_cookie_internal_ip.js</file>
 		<file>community-scripts/passive/find base64 strings.js</file>
 		<file>community-scripts/payloadgenerator/README.md</file>
@@ -64,6 +66,7 @@
 		<file>community-scripts/standalone/README.md</file>
 		<file>community-scripts/standalone/Run report.js</file>
 		<file>community-scripts/standalone/Traverse sites tree.js</file>
+		<file>community-scripts/standalone/domainFinder.js</file>
 		<file>community-scripts/targeted/ElasticSearchExploit.js</file>
 		<file>community-scripts/targeted/Find HTML comments.js</file>
 		<file>community-scripts/targeted/Find largest subtree.js</file>
