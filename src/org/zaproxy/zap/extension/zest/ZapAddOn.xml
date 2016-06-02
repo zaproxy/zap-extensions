@@ -1,25 +1,13 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>20</version>
+	<version>21</version>
 	<status>beta</status>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Add missing error messages for 'Assign variable via string delimiters'.<br>
-	Add missing field (operand B) in 'Assign variable to a calculation' dialogue.<br>
-	Send authentication requests with ZAP's configurations (Issue 2114).<br>
-	Fix "Active scan sequence" (Issue 2120).<br>
-	Fix exception while opening a dialogue.<br>
-	Cannot use auth script in daemon mode (Issue 2294).<br>
-	Support httpsender scripts (Issue 2293).<br>
-	Cant paste variable into new request dialog (Issue 2007).<br>
-	Script context menu has duplicated items (Issue 2106).<br>
-	Exception while adding Zest Condition (Issue 2296).<br>
-	Should not be able to delete THEN statement (Issue 2295).<br>
-	Statement lost after drag and drop (Issue 2299).<br>
-	It's possible to drag the script node (Issue 2302).<br>
+	Fix (UI) exceptions related to Zest Results tab.<br>
 	]]>
 	</changes>
 	<dependencies>

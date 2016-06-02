@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -32,6 +33,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableModel;
 import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
@@ -65,6 +67,17 @@ public class ZestResultsTableModel extends
 
     @Override
     public void clear() {
+        if (View.isInitialised() && !EventQueue.isDispatchThread()) {
+            EventQueue.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    clear();
+                }
+            });
+            return;
+        }
+
         results = new ArrayList<>();
         historyIdToRow = new TreeMap<>();
 
@@ -132,7 +145,18 @@ public class ZestResultsTableModel extends
     }
 
     @Override
-    public void addEntry(ZestResultsTableEntry entry) {
+    public void addEntry(final ZestResultsTableEntry entry) {
+        if (View.isInitialised() && !EventQueue.isDispatchThread()) {
+            EventQueue.invokeLater(new Runnable() {
+                
+                @Override
+                public void run() {
+                    addEntry(entry);
+                }
+            });
+            return;
+        }
+
         int index = results.size();
         results.add(entry);
         historyIdToRow.put(entry.getHistoryId(), Integer.valueOf(index));
