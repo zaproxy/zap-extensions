@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>18</version>
+	<version>19</version>
 	<status>release</status>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	 Issue 1271: Quickstart PnH panel components should mirror the enabled state of the API (i.e.: If API disabled, disable PnH components).<br>
+	 PnH message shown even if add-on not installed.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -17,6 +17,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.2</not-before-version>
+	<not-before-version>2.5.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

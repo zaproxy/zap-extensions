@@ -163,19 +163,23 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		if (Control.getSingleton().getExtensionLoader().getExtension("ExtensionPlugNHack") != null) {
 			// Plug-n-Hack extension has been installed - this makes configuration much easier :)
 			if (DesktopUtils.canOpenUrlInBrowser()) {
+				panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.pnhmsg")), 
+						LayoutHelper.getGBC(0, 6, 5, 1.0D, new Insets(5,5,5,5)));
+				
 				panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.mitm")), 
-						LayoutHelper.getGBC(0, 6, 1, 0.0D, new Insets(5,5,5,5)));
-				panelContent.add(this.getConfButton(), LayoutHelper.getGBC(1, 6, 1, 0.0D));
+						LayoutHelper.getGBC(0, 7, 1, 0.0D, new Insets(5,5,5,5)));
+				
+				panelContent.add(this.getConfButton(), LayoutHelper.getGBC(1, 7, 1, 0.0D));
 
 				panelContent.add(new JLabel(
 						Constant.messages.getString("quickstart.label.mitmalt")),
-						LayoutHelper.getGBC(0, 7, 1, 0.0D, new Insets(5,5,5,5)));
+						LayoutHelper.getGBC(0, 8, 1, 0.0D, new Insets(5,5,5,5)));
 			} else {
 				panelContent.add(new JLabel(
 						Constant.messages.getString("quickstart.label.mitmurl")),
-						LayoutHelper.getGBC(0, 7, 1, 0.0D, new Insets(5,5,5,5)));
+						LayoutHelper.getGBC(0, 8, 1, 0.0D, new Insets(5,5,5,5)));
 			}
-			panelContent.add(this.getConfField(), LayoutHelper.getGBC(1, 7, 3, 0.25D));
+			panelContent.add(this.getConfField(), LayoutHelper.getGBC(1, 8, 3, 0.25D));
 			
 		} else {
 			panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.helpmsg")), 
