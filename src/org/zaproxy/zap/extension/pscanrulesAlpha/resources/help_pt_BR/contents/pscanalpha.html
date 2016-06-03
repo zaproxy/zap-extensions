@@ -21,7 +21,7 @@ Dados codificados em Base64 foram exibidos pelo servidor web/aplicativo
 <h2>Falta o cabeçalho/header da política de segurança de conteúdo</h2>
 Isto verifica os cabeçalhos de resposta para verificar a presença de um cabeçalho de política de segurança de conteúdo.
 
-<h2>Envenenamento de cookie</h2>
+<h2>Cookie Poisoning</h2>
 Esta verificação confere a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde os parâmetros de cookie podem ser controlados. Isso é chamado ataque de cookie poisonining ou envenenamento de cookie e se torna explorável quando um atacante pode manipular o cookie de várias maneiras. Em alguns casos isso não vai ser explorável, mas permitir que parâmetros de URL definam valores de cookie é geralmente considerado um bug.
 
 <h2>Configuração incorreta de domínio cruzado</h2>
@@ -46,17 +46,17 @@ Estão incluídos vários formatos, inclusive alguns como MD4, MD5 e SHA *, às 
 <h2>HeartBleed</h2>
 Varreduras passivas à procura de respostas de cabeçalho HTTP indicando que o servidor está vulnerável à vulnerabilidade crítica  HeartBleed OpenSSL. 
 
-<h2>Transição insegura de HTTP para HTTPS em post de formulário</h2>
+<h2>HTTP to HTTPS Insecure Transition in Form Post</h2>
 Esta verificação procura páginas inseguras em HTTP que hospedam formulários HTTPS. A questão é que uma página HTTP insegura pode facilmente ser sequestrada por MITM-man-in-the-middle e o formulário seguro em HTTPS pode ser substituído ou falsificado.
 
-<h2>Transição insegura de HTTPS para HTTP em post de formulário</h2>
+<h2>HTTPS to HTTP Insecure Transition in Form Post</h2>
 Esta verificação procura páginas seguras em HTTPS que hospedam formulários inseguros HTTP. A questão é que uma página segura está em transição para uma página insegura enquanto dados são enviados através de um formulário. O usuário pode pensar que está enviando dados para uma página segura, quando na verdade eles não está.
 
 <h2>Componente Inseguro</h2>
-Esta checagem passivamente verifica os cabeçalhos de resposta do servidor e conteúdo do corpo gerador procurando versões de produtos, que são então comparados com uma lista de versões do produto conhecido por ser vulnerável a vários CVEs.<br>
-Uma lista de escores de gravidade de CVEs e CVSS é a saída para cada produto registrado como vulnerável.<br>
-Pelo lado do servidor, são registrados atualmente os seguintes produtos:<br>
-Apache Tomcat application server (funcionalidade limitada devido à limitação do vazamento de informações pelo Tomcat)<br>
+Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 
+A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable. 
+Currently, the following server side products are supported:<br>
+Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
 Apache web server<br>
 mod_auth_radius Apache module<br>
 mod_fcgid Apache module<br>
@@ -92,42 +92,46 @@ WordPress<br>
 
 <p>Nota: Para este plug-in operar, o ZAP deve ser configurado para receber e processar imagens.  Para fazer isso, vá para o painel de opções ZAP (ferramentas &rarr; opções), escolha Exibir e habilitar a caixa de verificação "Processar imagens em solicitações/respostas HTTP".  Além disso, as imagens não podem ser filtradas através das configurações "Exclusão Global de URL" ou propriedades de sessão para "Excluir do Proxy". </p>
 
-<h2>Redirecionamento aberto</h2>
-Redirecionamentos abertos são uma das Topo Ten vulnerabilidades 2010 da OWASP. Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde redirecionamentos diretos são possíveis. Redirecionamentos abertos ocorrem quando um aplicativo permite entrada fornecida pelo usuário (por exemplo, http://nottrusted.com) controlar um redirecionamento externo. Este é geralmente uma maneira muito precisa de encontrar onde os redirecionamentos 301 ou 302 podem ser explorados por remetentes de spam ou ataques de phishing
+<h2>Open Redirect</h2>
+Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
 
 <h2>Vazamento de informações de versão do servidor no cabeçalho/header</h2>
-Esta verificação checa os cabeçalhos de resposta para a presença de um cabeçalho de servidor que contém detalhes de versão.
+This checks response headers for the presence of a server header that contains version details.
 
 <h2>Exposição de código fonte</h2>
-Código fonte da aplicação exposto pelo servidor web
+Application Source Code was disclosed by the web server
 
-<h2>Falta de cabeçalho de segurança de transporte estrito/Strict Transport</h2>
-Isto verifica os cabeçalhos de resposta HTTPS para a presença de um cabeçalho HTTP Strict Transport Security.
+<h2>Strict Transport Security Header Scanner</h2>
+This scanner checks HTTPS response headers for the presence of a HTTP Strict Transport Security header (alerts if it is not found).
+Also checks if the HTTP Strict Transport Security (HSTS) header contains a max-age directive with value 0, which instructs clients to reset the entire HSTS Policy associated with the HSTS Host.
 
 <h2>Exposição de timestamp</h2>
-Um timestamp foi exposto pelo servidor web/aplicativo
+A timestamp was disclosed by the application/web server
 
-<h2>Atributo de elemento HTML controlável pelo usuário (potencial XSS)</h2>
-Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde redirecionamentos diretos são possíveis. Isto fornece detecção de hot spot para XSS (cross site scripting), o que exigirá uma revisão por um analista de segurança para determinar a capacidade de exploração.
+<h2>User Controllable HTML Element Attribute (Potential XSS)</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
 
-<h2>Conjunto de caracteres controlável pelo usuário</h2>
-Esta verificação confere a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde declarações de Content-Type ou de meta tag de conjunto de caracteres podem ser controlados pelo usuário. Tais declarações de charset sempre devem ser declaradas pelo aplicativo. Se um invasor pode controlar o conjunto de caracteres de resposta, eles pode manipular o HTML para executar XSS ou outros ataques.
+<h2>User Controllable Charset</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
 
-<h2>Evento de javascript controlável pelo usuário (XSS)</h2>
-Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde certos valores de atributos de HTML podem ser controlados. Isto proporciona detecção de hot-spot para XSS (cross-site scripting) que exigirá mais revisões por um analista de segurança para determinar a vulnerabilidade              
+<h2>User Controllable Javascript Event (XSS)</h2>
+Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde redirecionamentos diretos são possíveis. Isto fornece detecção de hot spot para XSS (cross site scripting), o que exigirá uma revisão por um analista de segurança para determinar a capacidade de exploração.            
 
-<h2>Propriedade de javascript controlável pelo usuário (XSS)</h2>
-Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde a URL em certas propriedades de javascript (ex: createElement scr) podem ser controladas. Isto fornece detecção de hot spot para XSS (cross site scripting), o que exigirá uma revisão por um analista de segurança para determinar a capacidade de exploração.            
+<h2>User Controllable Javascript Property (XSS)</h2>
+This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 
 <h2>Vazamento de informações de cabeçalho X-Powered-By</h2>
-Isto verifica os cabeçalhos de resposta para a presença de detalhes tipo X-Powered-By.
+This checks response headers for the presence of X-Powered-By details.
 
 <h2>Vazamento de informações de cabeçalho X-Backend-server</h2>
-Isto verifica os cabeçalhos de resposta para a presença de detalhes de X-backend-server.
+This checks response headers for the presence of X-Backend-Server details.
 
 <h2>Grande Redirecionamento</h2>
-Esta verificação prevê o tamanho de várias respostas de tipo de redirecionamento e gera um alerta se a resposta for maior que o tamanho previsto. 
-Uma resposta de redirecionamento grande pode indicar que embora um redirecionamento esteja acontecendo a página realmente tinha conteúdo (que pode revelar informações confidenciais, PII, etc).
+This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
+A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
+
+<h2>X-ChromeLogger-Data Header Information Leak</h2>
+This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
 
 </body>
 </html>
