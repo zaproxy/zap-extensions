@@ -11,24 +11,42 @@ Règles d'analyse passive
 The following release quality passive scan rules are included in this add-on:
 
 <h2>Application Errors</h2>        
+ Check server responses for HTTP 500 - Internal Server Error type responses or those that contain a known error string.
  
 <h2>Cache Control</h2>
+Checks "Cache-Control" and "Pragma" response headers against general industry best practice settings for protection of sensitive content. 
 
 <h2>Content Type Missing</h2>
+Raises an alert if the response is lacking a Content-Type header or if the header exists but the value is empty.
 
-<h2>Cookie HTTP Only</h2>
+<h2>Cookie HttpOnly</h2>
+Ensures that as cookies are set they are flagged HttpOnly. The HttpOnly flag indicates to browsers that the cookie 
+being set should be acted upon by client side script (such as JavaScript).
 
 <h2>Cookie Secure Flag</h2>
+Looks for cookies set during HTTPS sessions, raises an alert for those that are set but do not include the secure flag.
+A cookie set with the secure flag will not be sent during a plain HTTP session.
 
 <h2>Cross Domain Script Inclusion</h2>
+Validates whether or not scripts are included from domains other than the domain hosting the content. 
+By looking at the "src" attributes of "script" tags in the response. 
+<ul><li>Allowed Cross-Domain Hosts: 
+At HIGH threshold if a script URL falls within a context that also includes the URL of the base message no alerts will be raised.</li></ul> 
 
 <h2>Header XSS Protection</h2>
+Checks for the existence of and value/setting of the X-XSS-Protection header. 
+This response header can be used to configure a user-agent's built in reflective XSS protection.
 
 <h2>Mixed Content</h2>
+For content served via HTTPS analyse all the src attributes in the response looking for those sourced
+via plain HTTP.
 
 <h2>Password Autocomplete</h2>
+Looks for "password" type input fields and checks for the setting "autocomplete=off".
 
 <h2>Private Address Disclosure</h2>
+Checks response content for inclusion of RFC 1918 IPv4 addresses. A malicious user might leverage knowledge
+of internal addressing to perform social engineering attacks or other exploits.
 
 <h2>Session Id in URL Rewrite</h2>
 This scanner checks for the existence of session token type parameters being rewritten to the URL. 
