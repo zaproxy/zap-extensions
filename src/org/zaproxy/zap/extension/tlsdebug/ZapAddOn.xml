@@ -1,0 +1,17 @@
+<zapaddon>
+	<name>TLS Debug</name>
+	<version>1</version>
+	<description>Provides a tab which allows to quickly debug a TLS/SSL connection</description>
+	<author>P.M.J. Roth</author>
+	<url></url>
+	<changes/>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.tlsdebug.ExtensionTlsDebug</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.4.0</not-before-version>
+	<not-from-version/>
+</zapaddon>

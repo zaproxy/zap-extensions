@@ -403,6 +403,7 @@
 		<build-addon name="sniTerminator" />
 		<build-addon name="soap" />
 		<build-addon name="sse" />
+		<build-addon name="tlsdebug" />
 		<build-addon name="viewstate" />
 		<build-addon name="wappalyzer" />
 
@@ -637,6 +638,10 @@
     
     <target name="deploy-soap" description="deploy the SOAP scanning extension">
 		<build-deploy-addon name="soap" />
+	</target>
+	  
+	<target name="deploy-tlsDebug" description="deploy the tlsDebug extension">
+		<build-deploy-addon name="tlsdebug" />
 	</target>
 	
 	<target name="deploy-viewstate" description="deploy the viewstate extension">
