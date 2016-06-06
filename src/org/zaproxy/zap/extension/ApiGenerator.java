@@ -28,21 +28,25 @@ import org.zaproxy.zap.extension.api.JavaAPIGenerator;
 import org.zaproxy.zap.extension.api.NodeJSAPIGenerator;
 import org.zaproxy.zap.extension.api.PhpAPIGenerator;
 import org.zaproxy.zap.extension.api.PythonAPIGenerator;
-import org.zaproxy.zap.extension.api.WikiAPIGenerator;
 import org.zaproxy.zap.extension.importLogFiles.ImportLogAPI;
 
 public class ApiGenerator {
+
+	private static final String JAVA_OUTPUT_DIR = "../zap-api-java/subprojects/zap-clientapi/src/main/java/org/zaproxy/clientapi/gen";
+
+	private static final String PYTHON_OUTPUT_DIR = "../zap-api-python/src/zapv2/";
 
 	public static List<ApiImplementor> getApiImplementors() {
 		List<ApiImplementor> list = new ArrayList<ApiImplementor>();
 		
 		// If you implement an API for an _alpha_ add-on please add it here (in alphabetical order)
 		// so that all of the client APIs are generated
-		// Note that the following zaproxy(-2.4) files will also need to be edited manually:
-		//	src/org/zaproxy/clientapi/core/clientApi.java
+		// Note that the following files will also need to be edited manually:
+		//    __init__.py (in zap-api-python project)
+		//    ClientApi.java (in zap-api-java project)
+		// In zaproxy project:
 		// 	nodejs/api/zapv2/index.js
 		//	php/api/zapv2/src/Zap/Zapv2.php
-		//	python/api/src/zapv2/__init__.py
 
 		list.add(new ImportLogAPI(null));
 
@@ -54,7 +58,7 @@ public class ApiGenerator {
 	 */
 	public static void main(String[] args) {
 		try {
-			JavaAPIGenerator japi = new JavaAPIGenerator("../zaproxy/src/org/zaproxy/clientapi/gen", true);
+			JavaAPIGenerator japi = new JavaAPIGenerator(JAVA_OUTPUT_DIR, true);
 			japi.generateJavaFiles(getApiImplementors());
 
 			NodeJSAPIGenerator napi = new NodeJSAPIGenerator("../zaproxy/nodejs/api/zapv2", true);
@@ -63,7 +67,7 @@ public class ApiGenerator {
 			PhpAPIGenerator phapi = new PhpAPIGenerator("../zaproxy/php/api/zapv2/src/Zap", true);
 			phapi.generatePhpFiles(getApiImplementors());
 
-			PythonAPIGenerator pyapi = new PythonAPIGenerator("../zaproxy/python/api/src/zapv2", true);
+			PythonAPIGenerator pyapi = new PythonAPIGenerator(PYTHON_OUTPUT_DIR, true);
 			pyapi.generatePythonFiles(getApiImplementors());
 
 			//WikiAPIGenerator wapi = new WikiAPIGenerator("../zaproxy-wiki", true);
