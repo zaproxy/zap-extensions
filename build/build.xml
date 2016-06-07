@@ -369,7 +369,7 @@
 		<build-addon name="help_fr_FR" />
 		<build-addon name="help_ja_JP" />
 		<build-addon name="highlighter" />
-		<build-addon name="httpsinfo" />
+		<build-addon name="httpsinfo" addonid="httpsInfo" />
 		<build-addon name="importLogFiles" />
 		<build-addon name="pscanrulesAlpha" >
 				<!-- Add the extra classes required -->
