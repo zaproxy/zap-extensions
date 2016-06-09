@@ -74,6 +74,15 @@ public class HttpFuzzerResultsTable extends HistoryReferencesTable {
         // Sort on task ID
         setSortOrder(0, SortOrder.ASCENDING);
     }
+    
+    public String getCustomStateValue(Map<String, Object> customState) {
+        for (HttpFuzzerResultStateHighlighter highlighter : fuzzResultStateHighlighter.highlighters) {
+            if (highlighter.isHighlighted(customState)) {
+                return highlighter.getLabel();
+            }
+        }
+        return "";
+    }
 
     public void addFuzzResultStateHighlighter(HttpFuzzerResultStateHighlighter highlighter) {
         fuzzResultStateHighlighter.addStateHighlighter(highlighter);

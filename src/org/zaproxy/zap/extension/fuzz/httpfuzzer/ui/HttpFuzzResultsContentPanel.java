@@ -19,12 +19,20 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.ui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -33,10 +41,14 @@ import javax.swing.JToolBar;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.fuzz.FuzzResultsContentPanel;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzer;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerListener;
 import org.zaproxy.zap.view.ZapToggleButton;
+import org.zaproxy.zap.view.widgets.WritableFileChooser;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 
 public class HttpFuzzResultsContentPanel extends JPanel implements FuzzResultsContentPanel<HttpMessage, HttpFuzzer> {
 
@@ -117,6 +129,39 @@ public class HttpFuzzResultsContentPanel extends JPanel implements FuzzResultsCo
         toolbar.add(Box.createHorizontalStrut(16));
         toolbar.add(showErrorsToggleButton);
 
+        JButton button = new JButton(Constant.messages.getString("fuzz.httpfuzzer.results.toolbar.button.export"));
+        button.setIcon(new ImageIcon(HttpFuzzResultsContentPanel.class.getResource("/resource/icon/16/115.png")));
+        button.addActionListener((new AbstractAction() {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            WritableFileChooser chooser = new WritableFileChooser();
+            chooser.setSelectedFile(new File(Constant.messages.getString("fuzz.httpfuzzer.results.toolbar.button.export.defaultName")));
+            if (chooser.showSaveDialog(View.getSingleton().getMainFrame()) == WritableFileChooser.APPROVE_OPTION) {
+                String file = chooser.getSelectedFile().toString();
+                if (!file.endsWith(".csv")) {
+                    file += ".csv";
+                }
+                try(CSVPrinter pw = new CSVPrinter(Files.newBufferedWriter(chooser.getSelectedFile().toPath(), StandardCharsets.UTF_8), CSVFormat.DEFAULT)) {
+                    pw.printRecord(currentFuzzer.getMessagesModel().getHeaders());
+                    int count = currentFuzzer.getMessagesModel().getRowCount();
+                    for (int i = 0; i < count; i++) {
+                        List<Object> valueOfRow = currentFuzzer.getMessagesModel().getEntry(i).getValuesOfHeaders();
+                        String customStateValue = fuzzResultTable.getCustomStateValue(currentFuzzer.getMessagesModel().getEntry(i).getCustomStates());
+                        valueOfRow.add(13, customStateValue);
+                        pw.printRecord(valueOfRow);
+                    }
+                    JOptionPane.showMessageDialog(View.getSingleton().getMainFrame(), Constant.messages.getString("fuzz.httpfuzzer.results.toolbar.button.export.showMessageSuccessful"));
+                } catch(Exception ex) {
+                    JOptionPane.showMessageDialog(View.getSingleton().getMainFrame(), Constant.messages.getString("fuzz.httpfuzzer.results.toolbar.button.export.showMessageError") + "\n" + ex.getLocalizedMessage());
+                    logger.error("Export Failed: " + ex);
+                }
+            }
+         }
+    }));
+        toolbar.add(Box.createHorizontalGlue());
+        toolbar.add(button);
         mainPanel = new JPanel(new BorderLayout());
 
         fuzzResultTable = new HttpFuzzerResultsTable(RESULTS_PANEL_NAME, EMPTY_RESULTS_MODEL);
