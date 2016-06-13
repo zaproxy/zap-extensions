@@ -1,26 +1,14 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>23</version>
+	<version>24</version>
 	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 823 - i18n (internationalise) release active scan rules.<br>
-	Issue 2001 - Add PowerShell variants to CommandInjection Plugin.<br>
-	Add CWE and WASC IDs to active scanners which may have been lacking those details.<br>
-	Add missing skip/stop checks to some scanners (Issue 1734).<br>
-	Remote File Include FP if original title includes 'Google' (Issue 2240).<br> 
-	Issue 2264: TestPathTraversal - adjust logging, catch specific exceptions.<br>
-	Issue 2265: TestRemoteFileInclude - adjust logging, catch specific exceptions.<br>
-	Issue 2266: TestCrossSiteScriptV2 - adjust logging, catch specific exceptions.<br>
-	Issue 2267 & 1860: TestSQLInjection - adjust logging, catch specific exceptions.<br>
-	Issue 2268: CodeInjectionPlugin - adjust logging, catch specific exceptions.<br>
-	Issue 2269: BufferOverflow - adjust logging, catch specific exceptions.<br>
-	Issue 2270: FormatString - adjust logging, catch specific exceptions.<br>
-	Issue 2271: TestParameterTamper - adjust logging, catch specific exceptions.<br>
-	Issue 1550: CommandInjectionPlugin - adjust logging, catch specific exceptions.<br>
+	TestPathTraversal - catch InvalidRedirectLocationException and URIException.<br>
+	TestRemoteFileInclude - adjust logging (debug not error).<br>
 	]]>
     </changes>
 	<extensions>
