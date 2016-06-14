@@ -41,7 +41,7 @@ public class FuzzOptions extends VersionedAbstractParam {
 
     public static final int DEFAULT_RETRIES_ON_IO_ERROR = 3;
 
-    public static final int DEFAULT_MAX_ERRORS_ALLOWED = 25;
+    public static final int DEFAULT_MAX_ERRORS_ALLOWED = 1000;
 
     public static final int DEFAULT_MAX_FUZZERS_IN_UI = 5;
 

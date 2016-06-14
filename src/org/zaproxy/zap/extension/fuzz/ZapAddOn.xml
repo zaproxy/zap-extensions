@@ -9,6 +9,7 @@
     <changes>
     <![CDATA[
     Added Export button to export results as CSV file.<br>
+    Enable "Limit maximum errors" by default and increase the default number.<br>
     ]]>
     </changes>
     <extensions>

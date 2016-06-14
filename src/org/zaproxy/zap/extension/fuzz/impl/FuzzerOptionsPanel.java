@@ -75,6 +75,7 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         retriesOnIOErrorLabel.setLabelFor(retriesOnIOErrorNumberSpinner);
 
         maxErrorsAllowedEnabledCheckBox = new JCheckBox();
+        maxErrorsAllowedEnabledCheckBox.setSelected(true);
         JLabel maxErrorsAllowedEnabledLabel = new JLabel(
                 resourceBundle.getString("fuzz.fuzzer.dialog.tab.options.label.maxErrorsAllowedEnabled"));
         maxErrorsAllowedEnabledLabel.setLabelFor(maxErrorsAllowedEnabledCheckBox);
@@ -88,7 +89,6 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
         });
 
         maxErrorsAllowedNumberSpinner = new ZapNumberSpinner(0, defaultOptions.getMaxErrorsAllowed(), Integer.MAX_VALUE);
-        maxErrorsAllowedNumberSpinner.setEnabled(false);
         JLabel maxErrorsAllowedLabel = new JLabel(resourceBundle.getString("fuzz.options.label.maxErrorsAllowed"));
         maxErrorsAllowedLabel.setLabelFor(maxErrorsAllowedNumberSpinner);
 
@@ -316,7 +316,7 @@ public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
     public void reset() {
         defaultThreadsPerFuzzerSlider.setValue(defaultOptions.getThreadCount());
         retriesOnIOErrorNumberSpinner.setValue(defaultOptions.getRetriesOnIOError());
-        maxErrorsAllowedEnabledCheckBox.setSelected(false);
+        maxErrorsAllowedEnabledCheckBox.setSelected(true);
         maxErrorsAllowedNumberSpinner.setValue(defaultOptions.getMaxErrorsAllowed());
         defaultFuzzDelayInMsSlider.setValue((int) defaultOptions.getSendMessageDelay());
         depthFirstPayloadReplacementStrategyRadioButton.setSelected(MessageLocationsReplacementStrategy.DEPTH_FIRST == defaultOptions.getPayloadsReplacementStrategy());
