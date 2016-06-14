@@ -18,6 +18,8 @@
 
 package org.zaproxy.zap.extension.coreLang;
 
+import java.nio.file.Paths;
+
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.zaproxy.zap.extension.lang.LangImporter;
@@ -52,7 +54,7 @@ public class ExtensionCoreLanguages extends ExtensionAdaptor {
     @Override
     public void postInstall() {
     	// Import the language file
-    	LangImporter.importLanguagePack(Constant.getZapHome() + "/lang/ZAP_2.4.3_language_pack.1.zaplang");
+    	LangImporter.importLanguagePack(Paths.get(Constant.getZapHome(), getAddOn().getFiles().get(0)).toString());
     }
 
 }
