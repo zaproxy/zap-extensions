@@ -20,14 +20,19 @@ package org.zaproxy.zap.extension.amf;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ViewDelegate;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.extension.httppanel.component.split.request.RequestSplitComponent;
 import org.zaproxy.zap.extension.httppanel.component.split.response.ResponseSplitComponent;
-import org.zaproxy.zap.extension.httppanel.view.DefaultHttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelDefaultViewSelector;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
+import org.zaproxy.zap.extension.httppanel.view.impl.models.http.request.RequestBodyByteHttpPanelViewModel;
+import org.zaproxy.zap.extension.httppanel.view.impl.models.http.response.ResponseBodyByteHttpPanelViewModel;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelDefaultViewSelectorFactory;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
+
+import flex.messaging.io.ClassAliasRegistry;
 
 public class ExtensionAMF extends ExtensionAdaptor {
 
@@ -42,11 +47,26 @@ public class ExtensionAMF extends ExtensionAdaptor {
         super.hook(extensionHook);
         if (getView() != null) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
+            panelManager.addRequestViewFactory(RequestSplitComponent.NAME, new RequestAMFTextViewFactory());
+            panelManager.addRequestDefaultViewSelectorFactory(
+                    RequestSplitComponent.NAME,
+                    new RequestAMFTextViewDefaultViewSelectorFactory());
+
             panelManager.addResponseViewFactory(ResponseSplitComponent.NAME, new ResponseAMFTextViewFactory());
             panelManager.addResponseDefaultViewSelectorFactory(
                     ResponseSplitComponent.NAME,
                     new ResponseAMFTextViewDefaultViewSelectorFactory());
         }
+    }
+
+    @Override
+    public void initView(ViewDelegate view) {
+        super.initView(view);
+
+        // Register alias used by BlazeDS.
+        ClassAliasRegistry registry = ClassAliasRegistry.getRegistry();
+        registry.registerAlias("DSC", flex.messaging.messages.CommandMessageExt.class.getName());
+        registry.registerAlias("DSK", flex.messaging.messages.AcknowledgeMessageExt.class.getName());
     }
 
     @Override
@@ -58,6 +78,17 @@ public class ExtensionAMF extends ExtensionAdaptor {
     public void unload() {
         if (getView() != null) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
+            panelManager.removeRequestViewFactory(RequestSplitComponent.NAME, RequestAMFTextViewFactory.NAME);
+            panelManager.removeRequestViews(
+                    RequestSplitComponent.NAME,
+                    RequestAMFTextView.NAME,
+                    RequestSplitComponent.ViewComponent.BODY);
+
+            panelManager.removeRequestDefaultViewSelectorFactoryAndDefaultViewSelectorsAdded(
+                    RequestSplitComponent.NAME,
+                    RequestAMFTextViewDefaultViewSelector.NAME,
+                    RequestSplitComponent.ViewComponent.BODY);
+
             panelManager.removeResponseViewFactory(ResponseSplitComponent.NAME, ResponseAMFTextViewFactory.NAME);
             panelManager.removeResponseViews(
                     ResponseSplitComponent.NAME,
@@ -74,6 +105,86 @@ public class ExtensionAMF extends ExtensionAdaptor {
         }
     }
 
+    private static final class RequestAMFTextViewFactory implements HttpPanelViewFactory {
+
+        public static final String NAME = "RequestAMFViewFactory";
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public HttpPanelView getNewView() {
+            return new RequestAMFTextView(new RequestBodyByteHttpPanelViewModel());
+        }
+
+        @Override
+        public Object getOptions() {
+            return RequestSplitComponent.ViewComponent.BODY;
+        }
+    }
+
+    private static final class RequestAMFTextViewDefaultViewSelector implements HttpPanelDefaultViewSelector {
+
+        public static final String NAME = "RequestAMFTextViewDefaultViewSelector";
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public boolean matchToDefaultView(Message aMessage) {
+            return RequestAMFTextView.isAMF(aMessage);
+        }
+
+        @Override
+        public String getViewName() {
+            return RequestAMFTextView.NAME;
+        }
+
+        @Override
+        public int getOrder() {
+            return 20;
+        }
+    }
+
+    private static final class RequestAMFTextViewDefaultViewSelectorFactory implements HttpPanelDefaultViewSelectorFactory {
+
+        public static final String NAME = "RequestAMFTextViewDefaultViewSelectorFactory";
+
+        private static HttpPanelDefaultViewSelector defaultViewSelector = null;
+
+        private HttpPanelDefaultViewSelector getDefaultViewSelector() {
+            if (defaultViewSelector == null) {
+                createViewSelector();
+            }
+            return defaultViewSelector;
+        }
+
+        private synchronized void createViewSelector() {
+            if (defaultViewSelector == null) {
+                defaultViewSelector = new RequestAMFTextViewDefaultViewSelector();
+            }
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public HttpPanelDefaultViewSelector getNewDefaultViewSelector() {
+            return getDefaultViewSelector();
+        }
+
+        @Override
+        public Object getOptions() {
+            return RequestSplitComponent.ViewComponent.BODY;
+        }
+    }
+
     private static final class ResponseAMFTextViewFactory implements HttpPanelViewFactory {
 
         public static final String NAME = "ResponseAMFViewFactory";
@@ -85,7 +196,7 @@ public class ExtensionAMF extends ExtensionAdaptor {
 
         @Override
         public HttpPanelView getNewView() {
-            return new ResponseAMFTextView(new DefaultHttpPanelViewModel());
+            return new ResponseAMFTextView(new ResponseBodyByteHttpPanelViewModel());
         }
 
         @Override
