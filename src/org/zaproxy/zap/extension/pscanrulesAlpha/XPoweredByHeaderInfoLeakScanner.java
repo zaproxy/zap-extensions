@@ -39,6 +39,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 
 	private static final String MESSAGE_PREFIX = "pscanalpha.xpoweredbyheaderinfoleak.";
+	private static final String HEADER_NAME = "X-Powered-By";
 	private static final int PLUGIN_ID = 10037;
 	
 	private PassiveScanThread parent = null;
@@ -58,7 +59,7 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
 	
-		Vector<String> xpbOptions = msg.getResponseHeader().getHeaders("X-Powered-By");
+		Vector<String> xpbOptions = msg.getResponseHeader().getHeaders(HEADER_NAME);
 		if (xpbOptions != null) { //Header Found
 			for (String xpbDirective : xpbOptions) {
 				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
@@ -71,7 +72,7 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 		    				"", // Other info
 		    				getSolution(), //Solution
 		    				getReference(), //References
-		    				xpbDirective,	// Evidence - Return the X-Powered-By Header info
+		    				HEADER_NAME, // Evidence - Return the header name
 		    				200, // CWE Id
 		    				13,	// WASC Id
 		    				msg); //HttpMessage
