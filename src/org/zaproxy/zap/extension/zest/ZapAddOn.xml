@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>21</version>
+	<version>22</version>
 	<status>beta</status>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Fix (UI) exceptions related to Zest Results tab.<br>
+	Change Sequence scripts to not use Sites tree nodes directly.<br>
 	]]>
 	</changes>
 	<dependencies>
