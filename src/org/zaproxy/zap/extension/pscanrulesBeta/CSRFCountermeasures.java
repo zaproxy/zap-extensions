@@ -180,7 +180,6 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				String tokenNamesFlattened = tokenNames.toString();
 				
 				String desc = Constant.messages.getString("pscanbeta.noanticsrftokens.desc");
-				String attack = Constant.messages.getString("pscanbeta.noanticsrftokens.alert.attack");
 				String extraInfo = Constant.messages.getString("pscanbeta.noanticsrftokens.alert.extrainfo", tokenNamesFlattened, formDetails);
 				
 			    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM,  getName());
@@ -188,11 +187,11 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 			    			desc + "\n"+getDescription(), 
 				    		msg.getRequestHeader().getURI().toString(),
 				    		"",  //parameter: none.
-				    		attack, 
+				    		"", 
 				    		extraInfo,
 				    		getSolution(), 
 				            getReference(), 
-							attack,	// Evidence
+							"",	// Evidence
 							352, // CWE-352: Cross-Site Request Forgery (CSRF)
 							9,	// WASC Id
 				            msg);

@@ -1,18 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>13</version>
+	<version>14</version>
 	<status>beta</status>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 1966: Charset Mismatch passive scanner now handles HTML5 meta charset, and multiple conditions.<br>
-	Issue 316: 'Information Disclosure - Debug Error' added mysql and ASP.Net messages.<br>
-	Issue 823: i18n (internationalise) beta passive scan rules.<br>
-	Issue 2230: Weak Auth Passive Scanner - Evidence vs Attack.<br>
-	Add CWE and WASC IDs to passive scanners which may have been lacking those details.<br>
-	Create help for scanners which were missing entries.<br>
+	Issue 2576: CSRFCountermeasures, remove unneeded Attack and Evidence messages.<br>
 	]]>
 	</changes>
 	<extensions>
