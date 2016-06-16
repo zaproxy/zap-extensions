@@ -3,10 +3,10 @@
 	<name>Core Language Files</name>
 	<description>Translations of the core language files</description>
 	<author>ZAP Dev Team</author>
-	<version>10</version>
+	<version>11</version>
 	<status>release</status>
 	<url>https://crowdin.com/project/owasp-zap</url>
-	<changes>Updated for 2.5.0</changes>
+	<changes>Fix installation issue.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.coreLang.ExtensionCoreLanguages</extension>
 	</extensions>
@@ -14,6 +14,7 @@
 	<pscanrules/>
 	<filters/>
 	<files>
+		<!-- Note: the declaration order of the file(s) is important in this add-on, see ExtensionCoreLanguages.postInstall() -->
 		<file>lang/ZAP_2.5.0_language_pack.1.zaplang</file>
 	</files>
 	<not-before-version>2.5.0</not-before-version>
