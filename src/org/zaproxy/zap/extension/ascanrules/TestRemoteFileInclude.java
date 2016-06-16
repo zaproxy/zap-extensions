@@ -247,7 +247,10 @@ public class TestRemoteFileInclude extends AbstractAppParamPlugin {
             }
 
         } catch (Exception e) {
-            log.error("Error scanning parameters for Path Traversal: " + e.getMessage() + " Caused by: " + e.getCause());
+        	if (log.isDebugEnabled()) {
+                log.debug("Error checking [" + getBaseMsg().getRequestHeader().getMethod() + "] [" + getBaseMsg().getRequestHeader().getURI()
+                        + "], parameter [" + param + "] for Remote File Include. " + e.getMessage());
+            }
         }
     }
 
