@@ -352,10 +352,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 				if(stmt instanceof ZestRequest) {
 					ZestRequest req = (ZestRequest)stmt;
 					HttpMessage msg = ZestZapUtils.toHttpMessage(req, req.getResponse());
-					SiteNode node = Model.getSingleton().getSession().getSiteTree().findNode(msg);
-					if (node == null) {
-						node = messageToSiteNode(msg);
-					}
+					SiteNode node = messageToSiteNode(msg);
 					if (node != null) {
 						fakeDirectory.add(node);
 					}
