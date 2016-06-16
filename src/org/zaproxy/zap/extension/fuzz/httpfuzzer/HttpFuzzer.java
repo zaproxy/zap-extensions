@@ -166,7 +166,7 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
             errorsModel.addFuzzerError(
                     taskId,
                     Constant.messages.getString("fuzz.httpfuzzer.results.error.source.httpfuzzer"),
-                    Constant.messages.getString("fuzz.httpfuzzer.results.error.message.failedSendOriginalMessage"));
+                    Constant.messages.getString("fuzz.httpfuzzer.results.error.message.maxErrorsReached"));
         }
     }
 
