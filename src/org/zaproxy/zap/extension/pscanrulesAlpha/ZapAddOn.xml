@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>9</version>
+	<version>10</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-		Add CWE and WASC IDs to passive scanners which may have been lacking those details.<br>
-		Fix exception when scanning with "User Controllable Charset" scanner.<br>
-		Fix exception when scanning with "Image Location Scanner" scanner.<br>
-		Strict-Transport-Security Header Scanner added support for max-age=0 per rfc6797.<br>
+		XPoweredByHeaderInfoLeakScanner modify evidence (Issue 2575)<br>
 	]]>
 	</changes>
 	<extensions>
