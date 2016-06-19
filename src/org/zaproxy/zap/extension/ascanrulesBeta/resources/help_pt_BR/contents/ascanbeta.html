@@ -3,135 +3,59 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Active Scan Rules - Beta
+Regras de Varredura Ativa - beta
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Active Scan Rules - Beta</h1>
-The following beta quality active scan rules are included in this add-on:
-
-<h2>Backup File Disclosure</h2>
-Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information.
+<h1>Regras de varredura ativa - beta</h1> Este complemento contém as seguintes regras de varredura ativa em qualidade beta: <h2>Revelação de arquivos de Backup</h2> Busca cópias de arquivos de backup no web server com nomes de arquivo triviais, que podem revelar informações confidenciais.
 
 <h2>Erro de configuração de domínios cruzados</h2> Verifica se o servidor web está configurado para permitir acesso Cross Domain, um serviço de terceiros mal-intencionado, por exemplo. Atualmente checa se há caracteres curinga no arquivo crossdomain.xml da Adobe e em clientaccesspolicy.xml do SilverLight. 
 
-<h2>CSRF Token</h2>
-Scans for the existence of anti-CSRF tokens. 
-Alerts on requests which do not appear to contain anti-CSRF tokens.
+<h2>Token de CSRF</h2> Verifica a existência de tokens de anti-CSRF. 
+Alerta em solicitações que não parecem conter tokens anti-CSRF.
 
-<h2>Expression Language Injection</h2>
-Checks if the web application is subject to Expression Language (EL) injection attacks, which occur
-when an application fails to sufficiently neutralize special elements that could modify the intended EL 
-statement before it is executed.
+<h2>Injeção de linguagem de expressão</h2> Verifica se o aplicativo da web está sujeita a ataques de injeção de linguagem de expressão (EL), que ocorrem quando um aplicativo não consegue neutralizar suficientemente elementos especiais que poderiam modificar a instrução EL pretendida antes de ser executado.
 
-<h2>Heartbleed OpenSSL Vulnerability</h2>
-Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability, by exploiting it.
-For further details refer to CVE-2014-0160.
+<h2>Vulnerabilidade do Heartbleed OpenSSL</h2> Detecta se o servidor web é vulnerável a vulnerabilidade do OpenSSL Heartbleed, explorando isso.
+Para mais detalhes consulte CVE-2014-0160.
 
-<h2>HTTP Parameter Pollution (HPP)</h2>
-Supplying duplicate or numerous HTTP parameters with the same name may cause an application or website
-to interpret values in unintended ways. By leveraging these effects, a malicious individual
-may be able to bypass input validation, trigger errors or modify internal variable values. 
-There are difference in treatment of duplicate parameters impacting both clients (browsers) and servers.
+<h2>Poluição do parâmetro HTTP (HPP)</h2> Fornece duplicados (ou numerosos) parâmetros HTTP com o mesmo nom, o que pode causar um aplicativo ou site interpretar valores de maneiras inesperadas. Aproveitando estes efeitos, um indivíduo mal-intencionado pode ser capaz de ignorar a validação de entrada, provocar erros ou modificar os valores de variáveis internos. 
+Há diferença no tratamento dos parâmetros duplicados, impactando os clientes (navegadores) e servidores.
 
-<h2>Insecure HTTP Method</h2>
-Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL.
+<h2>HPP</h2> <h2>Método de HTTP inseguro</h2> Detecta (e explora, dependendo das configurações de varredura) conhecidos métodos de HTTP inseguros, habilitados para a URL.
 
-<h2>Integer Overflow Error</h2>
-Looks for indicators of integer overflows in compiled code that causes the web server to crash.  It does 
-this by putting out multiple strings of integers designed to try and stimulate bad responses.
+<h2>Erro de estouro de número inteiro</h2> Procura por indicadores de estouros de número inteiro no código compilado, o que faz com que o servidor web cair.  Ele faz isso, colocando para fora várias cadeias de caracteres de inteiros projetados para tentar estimular respostas ruins.
 
-<h2>Padding Oracle</h2>
-This scanner attempts to manipulate the padding of encrypted strings to trigger an error response 
-indicating a likely padding oracle vulnerability. 
-Such a vulnerability can affect any application or framework that uses encryption improperly, such as 
-some versions of ASP.net, Java Server Faces, and Mono.
+<h2>Padding Oracle</h2> Esta varredura tenta manipular o padding de strings criptografadas para desencadear uma resposta de erro indicando uma provável vulnerabilidade de padding Oracle. 
+Tal uma vulnerabilidade pode afetar qualquer aplicativo ou framework que usa criptografia incorretamente, como algumas versões do ASP.net, Java Server Faces e Mono.
 
-<h2>Remote Code Execution - CVE-2012-1823</h2>
-Detect CVE-2012-1823 to perform Remote Code Execution on a PHP-CGI based web server.
+<h2>Execução remota de código - CVE-2012-1823</h2> Detecta CVE-2012-1823 para fazer execução remota de código em servidor web com base em PHP-CGI.
 
-<h2>Session Fixation</h2>
-Session Fixation may be possible. If this issue occurs with a login URL (where the user authenticates themselves to the application), then the URL may be given by an attacker, along with a fixed session id, to a victim, in order to later assume the identity of the victim using the given session id. If the issue occurs with a non-login page, the URL and fixed session id may only be used by an attacker to track an unauthenticated user's actions. If the vulnerability occurs on a cookie field or a form field (POST parameter) rather than on a URL (GET) parameter, then some other vulnerability may also be required in order to set the cookie field on the victim's browser, to allow the vulnerability to be exploited.
+<h2>Fixação de sessão</h2> Fixação de sessão pode ser possível. Se esse problema ocorre com uma URL de login (onde o usuário se autentica para o aplicativo), então a URL pode ter sido dada a uma vítima por um invasor, juntamente com uma identificação de sessão fixa, para depois assumir a identidade da vítima usando a identificação de determinada sessão. Se o problema ocorre com uma página que não é de login, a URL e o id de sessão fixa podem ser usados por um invasor somente para controlar as ações de um usuário não-autenticado. Se a vulnerabilidade ocorre em um campo de cookie ou num de formulário (parâmetro POST) em vez de ocorrer num parâmetro de URL (GET), então alguma outra vulnerabilidade pode também ser necessária para utilização do campo de cookie no navegador da vítima, para então permitir que a vulnerabilidade seja explorada.
 
-<h2>ShellShock - CVE-2014-6271</h2>
+<h2>ShellShock - CVE-2014-6271</h2>  Esta varredura executa dois ataques para detectar servidores vulneráveis a CVE-2014-6271, também conhecido como ShellShock. <br>O primeiro é um simples ataque refletido e o segundo é um ataque de tempo determinado.
 
-This scanner perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
-The first is a simple reflected attack and the second is a time based attack.
+<h2>Exposição de código de fonte - CVE-2012-1823</h2> Exploit CVE-2012-1823 para expor o código-fonte no lado do servidor PHP, em um servidor de web com base em PHP-CGI.
 
-<h2>Source Code Disclosure - CVE-2012-1823</h2>
-Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.
+<h2>Exposição de código fonte - SVN</h2> Usa os metadados de repositório do código fonte Subversion para procurar por arquivos contendo código-fonte no servidor web.
 
-<h2>Source Code Disclosure - SVN</h2>
-Uses Subversion source code repository metadata to scan for files containing source code on the web server.
+<h2>Exposição de código fonte - /WEB-INF</h2> Explora a presença de uma pasta /WEB-INF desprotegida para baixar e descompilar classes Java, para exibir o código-fonte Java.
 
-<h2>Source Code Disclosure - /WEB-INF</h2>
-Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose Java source code.
+<h2>SQL Injection - Hypersonic, baseada em tempo</h2> Esta varredura usa sintaxe específica de SQL Hypersonic para tentar induzir atrasos na declaração SQL chamada pela página. <br>Se a query não-modificada não é afetada pelo retardo, e se o retardo na query modificada pode ser controlado, isso é indicativo de uma vulnerabilidade de injeção SQL baseada em um banco de dados Hypersonic SQL. <br>Esta varredura é sensível a tempo e só deve ser usada em uma tentativa de encontrar vulnerabilidades de injeção SQL difíceis e não óbvias em um banco de dados Hypersonic suspeito. <br>Por esta razão, o número de threads de varredura ativa deve ser definido para o mínimo, para minimizar a carga sobre o servidor web, servidor de aplicativos e banco de dados, a fim de evitar falsos positivos causados por atrasos de carga em vez de atrasos de injeção de SQL. <br>A varredura testa somente vulnerabilidades de injeção SQL baseadas em tempo. 
 
-<h2>SQL Injection - Hypersonic (Time Based)</h2>
+<h2>SQL Injection - Hypersonic, baseada em tempo</h2> Esta varredura usa sintaxe específica de SQL Hypersonic para tentar induzir atrasos na declaração SQL chamada pela página. <br>Se a query não-modificada não é afetada pelo retardo, e se o retardo na query modificada pode ser controlado, isso é indicativo de uma vulnerabilidade de injeção SQL baseada em um banco de dados Hypersonic SQL. <br>Esta varredura é sensível a tempo e só deve ser usada em uma tentativa de encontrar vulnerabilidades de injeção SQL difíceis e não óbvias em um banco de dados Hypersonic suspeito. <br>Por esta razão, o número de threads de varredura ativa deve ser definido para o mínimo, para minimizar a carga sobre o servidor web, servidor de aplicativos e banco de dados, a fim de evitar falsos positivos causados por atrasos de carga em vez de atrasos de injeção de SQL. <br>o scanner testa somente para vulnerabilidades de injeção SQL baseada em tempo. 
 
-This scanner uses Hypersonic-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a Hypersonic SQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected Hypersonic database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
+<h2>SQL Injection - Hypersonic, baseada em tempo</h2> Esta varredura usa sintaxe específica de SQL Hypersonic para tentar induzir atrasos na declaração SQL chamada pela página. <br>Se a query não-modificada não é afetada pelo retardo, e se o retardo na query modificada pode ser controlado, isso é indicativo de uma vulnerabilidade de injeção SQL baseada em um banco de dados Hypersonic SQL. <br>Esta varredura é sensível a tempo e só deve ser usada em uma tentativa de encontrar vulnerabilidades de injeção SQL difíceis e não óbvias em um banco de dados Hypersonic suspeito. <br>Por esta razão, o número de threads de varredura ativa deve ser definido para o mínimo, para minimizar a carga sobre o servidor web, servidor de aplicativos e banco de dados, a fim de evitar falsos positivos causados por atrasos de carga em vez de atrasos de injeção de SQL. <br>o scanner testa somente para vulnerabilidades de injeção SQL baseada em tempo. 
 
-<h2>SQL Injection - MySQL (Time Based)</h2>
+<h2>SQL Injection - Hypersonic, baseada em tempo</h2> Esta varredura usa sintaxe específica de SQL Hypersonic para tentar induzir atrasos na declaração SQL chamada pela página. <br>Se a query não-modificada não é afetada pelo retardo, e se o retardo na query modificada pode ser controlado, isso é indicativo de uma vulnerabilidade de injeção SQL baseada em um banco de dados Hypersonic SQL. <br>Esta varredura é sensível a tempo e só deve ser usada em uma tentativa de encontrar vulnerabilidades de injeção SQL difíceis e não óbvias em um banco de dados Hypersonic suspeito. <br>Por esta razão, o número de threads de varredura ativa deve ser definido para o mínimo, para minimizar a carga sobre o servidor web, servidor de aplicativos e banco de dados, a fim de evitar falsos positivos causados por atrasos de carga em vez de atrasos de injeção de SQL. <br>o scanner testa somente para vulnerabilidades de injeção SQL baseada em tempo. 
 
-This scanner uses MySQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a MySQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected MySQL database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
+<h2>Enumeração de usernames</h2> Pode ser possível fazer enumeração de nomes de usuário com base em diferentes respostas HTTP quando usernames válidos e inválidos são fornecidos. Isso aumenta significativamente a probabilidade de sucesso com ataques de brute force de senha contra o sistema. Observe que falsos positivos às vezes podem ser minimizados aumentando a opção 'Força de ataque' no ZAP.  Por favor verificar manualmente o campo 'Other Info' para confirmar se este é realmente um problema.
+Este scanner é ignorada se há que nenhum contextos definidos que usam autenticação baseada em formulário e só funciona contra o URL identificado como a URL de login de um contexto.
 
-<h2>SQL Injection - Oracle (Time Based)</h2>
+<h2>Injeção de XPath</h2> Conforme descrito pelo OWASP: "ataques de injeção de XPath ocorrem quando um site da web usa informações fornecidas pelo usuário para construir uma consulta XPath para dados XML. Enviando informações intencionalmente malformadas em site da web, um invasor pode descobrir como os dados XML são estruturados, ou dados de acesso que ele normalmente não pode ter acesso. Ele pode até mesmo ser capaz de elevar seus privilégios no site se os dados XML está sendo usados para autenticação (como um arquivo de usuário baseada em XML) ou autorização." Este scanner tenta identificar tais fraquezas.
 
-This scanner uses Oracle-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a Oracle SQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected Oracle database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
-
-<h2>SQL Injection - PostgreSQL (Time Based)</h2>
-
-This scanner uses PostgreSQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a PostgreSQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected PostgreSQL database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
-
-<h2>Username Enumeration</h2>
-It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
-This scanner is skipped if there are no contexts defined that use Form-based Authentication, and only runs against the URL identified as the login URL of a context.
-
-<h2>XPath Injection</h2>
-As described by OWASP: "XPath Injection attacks occur when a web site uses user-supplied information to 
-construct an XPath query for XML data. By sending intentionally malformed information into the web site, 
-an attacker can find out how the XML data is structured, or access data that he may not normally have access 
-to. He may even be able to elevate his privileges on the web site if the XML data is being used for 
-authentication (such as an XML based user file) or authorization." This scanner attempts to identify such 
-weaknesses.
-
-<h2>XXE</h2>
-This component attempts to identify applications which are subject to XML eXternal Entity (XXE) attacks.
-Applications which parse XML input may be subject to XXE when weakly or poorly configured parsers 
-handle XML input containing reference to an external entity such as a local file, HTTP requests to 
-internal or tertiary systems, etc.
+<h2>XXE</h2> Este componente tenta identificar aplicações sujeitas a ataques externos de entidade (XXE) XML.
+Aplicativos que fazem parsing de XML de entrada podem estar sujeitas a XXE quando parsers fracamente ou mal configurados analisadores manipulam a entrada em XML contndo a referência a uma entidade externa, tal como um arquivo local, solicitações HTTP para sistemas internos ou terciários, etc.
 
 </body>
 </html>
