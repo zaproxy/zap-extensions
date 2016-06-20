@@ -27,6 +27,7 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -57,6 +58,12 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
+		
+		if (! msg.getResponseHeader().isHtml() &&
+				! this.getLevel().equals(AlertThreshold.LOW)) {
+			// Only really applies to HTML responses, but also check on Low threshold
+			return;
+		}
 	
 		//Get the various CSP headers
 		boolean cspHeaderFound = false, xCspHeaderFound = false, xWebKitHeaderFound=false;
@@ -64,20 +71,23 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 		//Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but Internet Exploder
 		Vector<String> cspOptions = msg.getResponseHeader().getHeaders("Content-Security-Policy");
 		//If it's not null or empty then we found one
-		if (cspOptions != null && cspOptions.isEmpty() == false) 
+		if (cspOptions != null && cspOptions.isEmpty() == false) { 
 			cspHeaderFound = true;
+		}
 		
 		//X-Content-Security-Policy is an older header, supported by Firefox 4.0+, and IE 10+ (in a limited fashion)
 		Vector<String> xcspOptions = msg.getResponseHeader().getHeaders("X-Content-Security-Policy");
 		//If it's not null or empty then we found one
-		if (xcspOptions != null && xcspOptions.isEmpty() == false) 
+		if (xcspOptions != null && xcspOptions.isEmpty() == false) { 
 			xCspHeaderFound = true;
+		}
 		
 		//X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
 		Vector<String> xwkcspOptions = msg.getResponseHeader().getHeaders("X-WebKit-CSP");
 		//If it's not null or empty then we found one
-		if (xwkcspOptions !=null && xwkcspOptions.isEmpty() == false) 
+		if (xwkcspOptions !=null && xwkcspOptions.isEmpty() == false) { 
 			xWebKitHeaderFound = true;
+		}
 		
 		//TODO: parse the CSP values out, and look at them in more detail.  In particular, look for things like...
 		//script-src *
@@ -90,8 +100,12 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 		//frame-src *
 		//script-src 'unsafe-inline'
 		//script-src 'unsafe-eval'
-		
-		if (!cspHeaderFound || !xCspHeaderFound || !xWebKitHeaderFound) { //at least one of the headers wasn't found 
+
+		if (!cspHeaderFound ||
+				(this.getLevel().equals(AlertThreshold.LOW) &&
+						(!xCspHeaderFound || !xWebKitHeaderFound))) {
+			// Always report if the latest header isnt found,
+			// but only report if the older ones arent present at Low threshold 
 			Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
 				getName()); 
 				alert.setDetail(
