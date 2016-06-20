@@ -62,6 +62,9 @@ import org.zaproxy.zap.extension.script.ScriptUI;
 public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     private static final Logger log = Logger.getLogger(ZestZapRunner.class);
+
+	// TODO Replace the value (12) with HistoryReference.TYPE_ZEST_SCRIPT once released with core
+	private static final int ZEST_HISTORY_REFERENCE_TYPE = 12;
 	
 	private ExtensionZest extension;
 	private ZestScriptWrapper wrapper = null;
@@ -287,7 +290,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			HttpMessage msg = ZestZapUtils.toHttpMessage(request, response);
 			
 			ZestResultWrapper zrw = new ZestResultWrapper(Model.getSingleton().getSession(), 
-					11 /* Change to HistoryReference.TYPE_ZEST */, msg, request.getIndex());
+					ZEST_HISTORY_REFERENCE_TYPE, msg, request.getIndex());
 			
 			lastResult = zrw;
 
@@ -343,8 +346,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		scanner.addScannerListener(this);
 		
 		if (this.lastResult != null) {
-			SiteNode fakeRoot = new SiteNode(null, 11, "");
-			SiteNode sn = new SiteNode(null, 11, "");
+			SiteNode fakeRoot = new SiteNode(null, ZEST_HISTORY_REFERENCE_TYPE, "");
+			SiteNode sn = new SiteNode(null, ZEST_HISTORY_REFERENCE_TYPE, "");
 			sn.setHistoryReference(this.lastResult);
 			fakeRoot.add(sn);
 			scanning = true;
@@ -428,7 +431,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	public void notifyNewMessage(HttpMessage msg) {
 		try {
 			ZestResultWrapper zrw = new ZestResultWrapper(Model.getSingleton().getSession(), 
-					11 /* Change to HistoryReference.TYPE_ZEST */, msg, -1);
+					ZEST_HISTORY_REFERENCE_TYPE, msg, -1);
 			zrw.setType(ZestResultWrapper.Type.scanAction);
 			
 			this.notifyResponse(zrw);
