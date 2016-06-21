@@ -9,6 +9,7 @@
 	<![CDATA[
 		XPoweredByHeaderInfoLeakScanner modify evidence (Issue 2575)<br>
 		ContentSecurityPolicyMissingScanner to only check for older CSP headers at Low threshold<br>
+		CacheableScanner: Add other information in attack and remove evidence (Issue 2573)<br>
 	]]>
 	</changes>
 	<extensions>
