@@ -1,15 +1,12 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>11</version>
+	<version>12</version>
 	<status>release</status>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Unload WebSockets components during uninstallation.<br>
-	Use hostname/port of the handshake message to build the name of the channel.<br>
-	Adjust log levels, from INFO to DEBUG.<br>
 	]]>
 	</changes>
 	<classnames>

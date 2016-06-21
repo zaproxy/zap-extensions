@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.ws.WebServiceException;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.manualrequest.MessageSender;
@@ -51,33 +49,28 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
     }
     
     @Override
-    public void handleSendMessage(Message aMessage) throws WebServiceException {
+    public void handleSendMessage(Message aMessage) throws IOException {
         final WebSocketMessageDTO websocketMessage = (WebSocketMessageDTO)aMessage;
     	
         if (websocketMessage.channel == null || websocketMessage.channel.id == null) {
     		logger.warn("Invalid WebSocket channel selected. Unable to send manual crafted message!");
-    		throw new WebServiceException(Constant.messages.getString("websocket.manual_send.fail.invalid_channel") 
+    		throw new IllegalArgumentException(Constant.messages.getString("websocket.manual_send.fail.invalid_channel") 
     				+ " " + Constant.messages.getString("websocket.manual_send.fail"));
     	}
         
         if (websocketMessage.opcode == null) {
     		logger.warn("Invalid WebSocket opcode selected. Unable to send manual crafted message!");
-    		throw new WebServiceException(Constant.messages.getString("websocket.manual_send.fail.invalid_opcode") 
+    		throw new IllegalArgumentException(Constant.messages.getString("websocket.manual_send.fail.invalid_opcode") 
     				+ " " + Constant.messages.getString("websocket.manual_send.fail"));
     	}
     	
-        try {
-        	WebSocketProxy wsProxy = getDelegate(websocketMessage.channel.id);
-        	if (!websocketMessage.isOutgoing && wsProxy.isClientMode()) {
-        		logger.warn("Invalid WebSocket direction 'incoming' selected for Proxy in Client Mode. Unable to send manual crafted message!");
-        		throw new WebServiceException(Constant.messages.getString("websocket.manual_send.fail.invalid_direction_client_mode") 
-        				+ " " + Constant.messages.getString("websocket.manual_send.fail"));
-        	}
-        	wsProxy.sendAndNotify(websocketMessage);
-        } catch (final IOException ioe) {
-        	logger.warn(ioe.getMessage(), ioe);
-            throw new WebServiceException("IO error in sending WebSocket message.");
-        }
+    	WebSocketProxy wsProxy = getDelegate(websocketMessage.channel.id);
+    	if (!websocketMessage.isOutgoing && wsProxy.isClientMode()) {
+    		logger.warn("Invalid WebSocket direction 'incoming' selected for Proxy in Client Mode. Unable to send manual crafted message!");
+    		throw new IllegalArgumentException(Constant.messages.getString("websocket.manual_send.fail.invalid_direction_client_mode") 
+    				+ " " + Constant.messages.getString("websocket.manual_send.fail"));
+    	}
+    	wsProxy.sendAndNotify(websocketMessage);
     }
     
     @Override
@@ -85,10 +78,10 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
         
     }
     
-    private WebSocketProxy getDelegate(Integer channelId) throws WebServiceException {
+    private WebSocketProxy getDelegate(Integer channelId) {
     	if (!connectedProxies.containsKey(channelId)) {
     		logger.warn("Selected WebSocket channel is not connected. Unable to send manual crafted message!");
-    		throw new WebServiceException(Constant.messages.getString("websocket.manual_send.fail.disconnected_channel") 
+    		throw new IllegalArgumentException(Constant.messages.getString("websocket.manual_send.fail.disconnected_channel") 
     				+ " " + Constant.messages.getString("websocket.manual_send.fail"));
     	}
         return connectedProxies.get(channelId);
