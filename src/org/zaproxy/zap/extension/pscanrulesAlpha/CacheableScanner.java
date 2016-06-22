@@ -363,6 +363,7 @@ public class CacheableScanner extends PluginPassiveScanner{
 			long lifetime = -1;
 			boolean lifetimeFound = false;
 			String freshEvidence = null;
+			String otherInfo = null;
 			
 			//1: calculate the freshness lifetime of the request, using the following checks, with the following priority, as specified by rfc7234.
 			//	1a:Get the "s-maxage" response directive value (if duplicates exist, the values are invalid)
@@ -498,7 +499,8 @@ public class CacheableScanner extends PluginPassiveScanner{
 				lifetimeFound = true;
 				lifetime = 60 * 60 * 24 * 365;
 				//a liberal heuristic was assumed, for which no actual evidence exists
-				freshEvidence = Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "evidence.liberallifetimeheuristic");
+				freshEvidence = null;
+				otherInfo = Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "otherinfo.liberallifetimeheuristic");
 			}
 			
 			if (logger.isDebugEnabled()) logger.debug(msg.getRequestHeader().getURI().getURI() + " has a caching lifetime of "+lifetime);
@@ -517,7 +519,7 @@ public class CacheableScanner extends PluginPassiveScanner{
 			if (lifetime > age) {
 				//fresh, so it can be retrieved from the cache
 				if (logger.isDebugEnabled()) logger.debug(msg.getRequestHeader().getURI().getURI() + " is retrievable from the cache (cacheable), since it is fresh");
-				alertStorableCacheable (msg, id, freshEvidence);
+				alertStorableCacheable (msg, id, freshEvidence, otherInfo);
 				return;
 			} else {
 				//stale!
@@ -555,7 +557,7 @@ public class CacheableScanner extends PluginPassiveScanner{
 				//TODO: check for any known Cache Control Extensions here, before making a final call on the retrievability of the cached data.
 				if (staleRetrieveAllowed) {
 					//no directives were configured to prevent stale responses being retrieved (without validation)
-					alertStorableCacheable(msg, id, Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "evidence.staleretrievenotblocked"));
+					alertStorableCacheable(msg, id, "", Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "otherinfo.staleretrievenotblocked"));
 				} else {
 					//the directives do not allow stale responses to be retrieved
 					//we saw just one other scenario where this could happen: where the response was cached, but the "no-cache" response directive was specified
@@ -631,15 +633,16 @@ public class CacheableScanner extends PluginPassiveScanner{
 	 * @param msg
 	 * @param id
 	 * @param evidence
+	 * @param otherInfo
 	 */
-	public void alertStorableCacheable (HttpMessage msg, int id, String evidence) {
+	public void alertStorableCacheable (HttpMessage msg, int id, String evidence, String otherInfo) {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "name"));
 		alert.setDetail(
 				Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "desc"), //Description
 				msg.getRequestHeader().getURI().toString(), //URI
 				"",	// Param
 				"", // Attack
-				"", // Other info
+				otherInfo, // Other info
 				Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "soln"), //Solution
 				Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "refs"), //References
 				evidence,	// Evidence
