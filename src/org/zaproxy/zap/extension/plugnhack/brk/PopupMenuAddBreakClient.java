@@ -75,7 +75,7 @@ public class PopupMenuAddBreakClient extends ExtensionPopupMenuItem {
             try {
                 messageTable = (JTable) invoker;
                 int[] rows = messageTable.getSelectedRows();
-                if (rows.length == 1 && extension.canAddBreakpoint()) {
+                if (rows.length == 1) {
                     this.setEnabled(true);
                 } else {
                     this.setEnabled(false);

@@ -57,7 +57,8 @@ public abstract class ClientBreakDialog extends AbstractDialog {
 
     public ClientBreakDialog(ExtensionPlugNHack extension, 
     		ClientBreakpointsUiManagerInterface breakPointsManager) throws HeadlessException {
-        super(View.getSingleton().getMainFrame(), false);
+        super(View.getSingleton().getMainFrame(), true);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.extension = extension;
         this.breakPointsManager = breakPointsManager;
 
