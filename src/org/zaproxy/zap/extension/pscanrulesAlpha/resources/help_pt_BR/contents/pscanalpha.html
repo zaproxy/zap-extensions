@@ -19,38 +19,40 @@ O aplicativo não usa um código de autenticação de mensagem (MAC) para proteg
 Dados codificados em Base64 foram exibidos pelo servidor web/aplicativo
 
 <h2>Falta o cabeçalho/header da política de segurança de conteúdo</h2>
-Isto verifica os cabeçalhos de resposta para verificar a presença de um cabeçalho de política de segurança de conteúdo.
+This checks HTML response headers for the presence of a Content Security Policy header.<br>
+By default this rule checks for the presence of the "Content-Security-Policy" header, 
+and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
 
 <h2>Cookie Poisoning</h2>
-Esta verificação confere a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde os parâmetros de cookie podem ser controlados. Isso é chamado ataque de cookie poisonining ou envenenamento de cookie e se torna explorável quando um atacante pode manipular o cookie de várias maneiras. Em alguns casos isso não vai ser explorável, mas permitir que parâmetros de URL definam valores de cookie é geralmente considerado um bug.
+This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
 
 <h2>Configuração incorreta de domínio cruzado</h2>
-Busca passivamente respostas contendo configurações incorretas de Domínio Cruzado, que relaxam a política de "mesma origem" no navegador da web, por exemplo.<br>
-A implementação atual verifica cabeçalhos CORS excessivamente permissivos.
+Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
+The current implementation looks at excessively permissive CORS headers.
 
 <h2>Pesquisa no diretório</h2>
-Busca passivamente assinaturas de respostas indicando de que a navegação em diretório é possível.
+Passively scan responses for signatures that are indicative that Directory Browsing is possible.
 
 <h2>Varredura passiva de arquivo-exemplo</h2>
-Este recurso implementa uma regra de varredura passiva que carrega strings de um arquivo que o usuário pode editar.<br>
-Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
+For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
 <h2>Exemplo de varredura passiva simples</h2>
-Aqui implementamos um exemplo muito simples de regra de varredura passiva.<br>
-Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+This implements a very simple example passive scan rule.<br>
+For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
 <h2>Exposição de hash</h2>
-Vasculhar passivamente hashes de senhas exibidos pelo servidor web. <br>
-Estão incluídos vários formatos, inclusive alguns como MD4, MD5 e SHA *, às vezes usados para outros fins além de conter hashes de senhas. 
+Passively scan for password hashes disclosed by the web server. <br>
+Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
 
 <h2>HeartBleed</h2>
-Varreduras passivas à procura de respostas de cabeçalho HTTP indicando que o servidor está vulnerável à vulnerabilidade crítica  HeartBleed OpenSSL. 
+Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
 
 <h2>HTTP to HTTPS Insecure Transition in Form Post</h2>
-Esta verificação procura páginas inseguras em HTTP que hospedam formulários HTTPS. A questão é que uma página HTTP insegura pode facilmente ser sequestrada por MITM-man-in-the-middle e o formulário seguro em HTTPS pode ser substituído ou falsificado.
+This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
 
 <h2>HTTPS to HTTP Insecure Transition in Form Post</h2>
-Esta verificação procura páginas seguras em HTTPS que hospedam formulários inseguros HTTP. A questão é que uma página segura está em transição para uma página insegura enquanto dados são enviados através de um formulário. O usuário pode pensar que está enviando dados para uma página segura, quando na verdade eles não está.
+This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
 
 <h2>Componente Inseguro</h2>
 Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 
@@ -115,7 +117,7 @@ This check looks at user-supplied input in query string parameters and POST data
 This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
 
 <h2>User Controllable Javascript Event (XSS)</h2>
-Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde redirecionamentos diretos são possíveis. Isto fornece detecção de hot spot para XSS (cross site scripting), o que exigirá uma revisão por um analista de segurança para determinar a capacidade de exploração.            
+This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 
 <h2>User Controllable Javascript Property (XSS)</h2>
 This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
