@@ -397,7 +397,8 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 		if (View.isInitialised()) {
 			// Show the tab in case its been closed
 			this.setTabFocus();
-			this.foundCount ++;
+			this.foundCount = 0;
+			this.foundLabel.setText(Integer.toString(this.foundCount));
 		}
 		try {
 			this.runnable = extension.createSpiderThread(site, inScope, params, this);
