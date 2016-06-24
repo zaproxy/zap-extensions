@@ -2,33 +2,30 @@
 <html>
 <head>
 <title>
-HTTPS Info Add-on
+Complemento de informação HTTPS
 </title>
 </head>
 <body bgcolor="#ffffff">
 <h1>Complemento de informação HTTPS</h1>
 
 O complemento de informação HTTPS é acessado através do menu de contexto dentro da árvore de Sites ou da tabela de histórico. 
-It displays a dialog in which various summary information is displayed
-regarding the target server's HTTPS configuration, and the offered SSL/TLS cipher suites.
+Ele exibe uma caixa de diálogo na qual várias informações de resumo são exibidas referindo-se à configuração de HTTPS do servidor de destino, e as suítes de cifras SSL/TLS.
 
-<h2>General</h2>
-The top portion of the dialog is devoted to general details of the SSL/TLS configuration. Such as:
+<h2>Geral</h2>
+A parte superior da caixa de diálogo é dedicada aos detalhes gerais da configuração do SSL/TLS. Tais como:
 <ul>
-<li>Minimum Cipher Strength</li>
-<li>Maximum Cipher Strength</li>
-<li>Compression Support</li>
-<li>BEAST Status (Vulnerable/Protected)</li>
-<li>CRIME Status (Vulnerable/Protected)</li>
+<li>Força mínima da cifra</li>
+<li>Força máxima da cifra</li>
+<li>Suporte a compressão</li>
+<li>BEAST Status (Vulnerável/Protegido)</li>
+<li>CRIME Status (Vulnerável/Protegido)</li>
 </ul>
-If vulnerabilities are detected then Alerts are raised. 
+Se forem detectadas vulnerabilidades alertas são gerados. 
 
-<h2>Cipher Suites</h2>
-The bottom portion of the dialog is devoted to enumeration/listing of the specific Cipher Suites the 
-target server offers, grouped by protocol (SSLv2, SSLv3, TLSv1, TLSv1.1, etc.).
+<h2>Suites de cifras</h2>
+A parte inferior da caixa de diálogo dedica-se à enumeração/listagem das Cipher Suites específicas, oferecidas pelo servidor de destino, agrupadas por protocolo (SSLv2, SSLv3, TLSv1, TLSv1.1, etc.).
 
-The "Determine Server Preference" button iterates through the list of available Cipher Suites in order
-to determine the order with which the server would "prefer" to select Cipher Suites.
+O botão de "Determinar Preferência de servidor" exibe a lista de Cipher Suites disponíveis para determinar a ordem com que o servidor "prefere" selecionar Cipher Suites.
 
 </body>
 </html>
