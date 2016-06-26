@@ -7,73 +7,66 @@ Regras de varredura passiva - Beta
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Passive Scan Rules - Beta</h1>
-The following beta quality passive scan rules are included in this add-on:
+<h1>Regras de varredura passiva - Beta</h1>
+As seguintes regras de verificação passiva de qualidade beta estão incluídas neste complemento:
 
-<h2>Charset Mismatch</h2>
-<p>This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.</p>
-<p>The scanner handles various conditions depending on the Threshold set for the scanner, as follows:</p>
+<h2>Incompatibilidade de charset</h2>
+<p>Esta verificação identifica respostas onde o Content-Type do cabeçalho HTTP declara um charset diferente do charset definido pelo corpo do HTML ou XML. Quando há essa incompatibilidade de charsets do cabeçalho HTTP e do corpo os navegadores da Web podem ser forçados a entrar num indesejável sniffing de conteúdo para determinar o conjunto de caracteres correto daquele conteúdo.</p>
+<p>O scanner lida com várias condições dependendo do limite definido para o scanner, como segue:</p>
 <ul>
-  <li>All Thresholds:
+  <li>Todos os limiares:
     <ul>
-      <li>Header Versus Meta Content-Type Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Content-Type tag.</li>
-      <li>Header Versus Meta Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Charset tag.</li>
+      <li>Header Versus Meta Content-Type Charset - a declaração no cabeçalho HTTP Content-Type não combina com o que é declarado em uma tag META Content-Type.</li>
+      <li>Header Versus Meta Content-Type Charset - a declaração no cabeçalho HTTP Content-Type não combina com o que é declarado em uma tag META Charset.</li>
     </ul>
   </li>
-  <li>Low Threshold:
+  <li>Limiar Low:
     <ul>
-      <li>Meta Content-Type Charset Missing - The response doesn't contain a META Content-Type declaration, which may overlook older clients.</li>
-      <li>Meta Charset Versus Meta Content-Type Charset - The response contains both a META Content-Type declaration and a META Charset declaration, and they don't match.</li>
+      <li>Falta de Meta Content-Type Charset - a resposta não contém uma declaração META Content-Type, que pode ignorar os 'clientes' mais antigos.</li>
+      <li>Meta Charset Versus Meta Content-Type Charset - A resposta contém uma declaração META Content-Type e também uma declaração de META Charset e elas não combinam.</li>
     </ul>
   </li>
 </ul>
-Further reference:<br>
+Mais referências em:<br>
 <a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
 <a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
 
-<h2>Cookie - Loosely Scoped</h2>
-Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.
+<h2>Cookie com escopo muito amplo</h2>
+Cookies podem ter escopo de domínio ou caminho. Esta checagem só está preocupada com domínio. O escopo de domínio aplicado a um cookie determina quais domínios podem acessá-lo. Por exemplo, um cookie pode ter escopo estritamente para um subdomínio, como www.nottrusted.com ou ser vago em relação ao escopo de um domínio pai, como nottrusted.com. Neste último caso, qualquer subdomínio de nottrusted.com pode acessar o cookie. Cookies com escopos pouco definidos assim são comuns em mega-aplicações como google.com e live.com.
 
-<h2>CSRF Countermeasures</h2>
-The CSRFCountermeasures plugin identifies "potential" vulnerabilities with the lack of known CSRF 
-countermeasures in pages with forms.
+<h2>Contramedidas CSRF</h2>
+O plugin CSRFCountermeasures identifica vulnerabilidades "potenciais" com a falta de contramedidas CSRF conhecidas nas páginas contendo formulários.
 
-<h2>Information Disclosure: Debug Errors</h2>
-This passive scanner checks the content of web responses for known Debug Error message fragments.
-Access to such details may provide a malicious individual with means by which to further abuse the web site.
-They may also leak data not specifically meant for end user consumption.
+<h2>Exposição de informações: Erros de depuração</h2>
+Este scanner passivo verifica o conteúdo das respostas de web para fragmentos de mensagens de erro de depuração conhecidos.
+Acesso a tais detalhes pode fornecer a um indivíduo mal-intencionado os meios para abusar do site.
+Pode haver também vazamento de dados não especificamente destinados a consumo do usuário final.
 
-<h2>Information Disclosure: In URL</h2>
-Attempts to identify the existence of sensitive details within the visited URIs themselves 
-(this may include parameters, document names, directory names, etc.).
+<h2>Exposição de informações: Em URL</h2>
+Tenta identificar a existência de detalhes sensíveis dentro das URIs visitadas (isso pode incluir parâmetros, nomes de documentos, nomes de diretórios, etc.).
 
-<h2>Information Disclosure: Referrer</h2>
-Identifies the existence of sensitive details within the the Referrer header field of HTTP requests
-(this may include parameters, document names, directory names, etc.).
+<h2>Exposição de informações: Referrer</h2>
+Identifica a existência de detalhes sensíveis dentro do campo Referrer no cabeçalho das solicitações HTTP (isso pode incluir parâmetros, nomes de documento, nomes de diretórios, etc.).
 
-<h2>Information Disclosure: Suspicious Comments</h2>
-Analyzes web content to identify comments which contain potentially sensitive details. Which may lead to 
-further attack or exposure of unintended data.
+<h2>Exposição de informações: Comentários suspeitos</h2>
+Analisa o conteúdo para identificar comentários que contêm detalhes potencialmente sensíveis, o que pode conduzir a outros ataques ou exposição de outros dados.
 
-<h2>Insecure Authentication</h2>
-HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
+<h2>Autenticação insegura</h2>
+HTTP básico ou autenticação digest tem sido utilizado em uma conexão insegura. As credenciais podem ser lidas e reutilizadas por alguém com acesso à rede.
 
-<h2>Insecure JSF ViewState</h2>
-The response at the following URL contains a ViewState value that has no cryptographic protections.
+<h2>Viewstate JSF Inseguro</h2>
+A resposta à URL seguinte contém um valor de Viewstate que não tem proteção criptográfica.
 
-<h2>Servlet Parameter Pollution</h2>
-Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
-Java Servlet spec calls for aggregation of query string and post data elements which may result in 
-unintended handling of user controlled data. This may impact other frameworks and technologies as well.
+<h2>Poluição de Parâmetro de servlet</h2>
+Procura conteúdo de resposta para formulários HTML que falham na especificação de um elemento de ação. A versão 3 do Java Servlet spec pede agregação string de query e elementos de dados de post que podem resultar em manipulação involuntária de dados controlados pelo usuário. Isto pode impactar outras plataformas e tecnologias também.
 
 <h2>VIEWSTATE</h2>
-Attempts to identify VIEWSTATE parameters and analyze said parameters for various best practices or protective 
-measures such as: 
+Tenta identificar parâmetros VIEWSTATE e analisar tais parâmetros para várias 'melhores práticas' ou medidas de proteção, tais como: 
 <ul>
-	<li>Those based on ASP.NET 1.0 and 1.1.</li>
-	<li>VIEWSTATE Lacking signature.</li>
-	<li>Split VIEWSTATE.</li>
-	<li>VIEWSTATE containing email or IP patterns.</li>
+	<li>Os baseados em ASP.NET 1.0 e 1.1.</li>
+	<li>VIEWSTATE faltando assinatura.</li>
+	<li>VIEWSTATE dividido.</li>
+	<li>VIEWSTATE contendo e-mail ou endereços IP.</li>
 </ul>
 
 </body>
