@@ -19,46 +19,45 @@ O aplicativo não usa um código de autenticação de mensagem (MAC) para proteg
 Dados codificados em Base64 foram exibidos pelo servidor web/aplicativo
 
 <h2>Falta o cabeçalho/header da política de segurança de conteúdo</h2>
-This checks HTML response headers for the presence of a Content Security Policy header.<br>
-By default this rule checks for the presence of the "Content-Security-Policy" header, 
-and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
+Isto verifica os cabeçalhos de resposta para verificar a presença de um cabeçalho de política de segurança de conteúdo.<br>
+Por padrão esta regra verifica a presença do cabeçalho "Content-Security-Policy" e em limiar Low também verifica se os cabeçalhos têm headers "X-WebKit-CSP" e "X-Content-Security-Policy".
 
 <h2>Cookie Poisoning</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
+Esta verificação confere a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde os parâmetros de cookie podem ser controlados. Isso é chamado ataque de cookie poisonining ou envenenamento de cookie e se torna explorável quando um atacante pode manipular o cookie de várias maneiras. Em alguns casos isso não vai ser explorável, mas permitir que parâmetros de URL definam valores de cookie é geralmente considerado um bug.
 
 <h2>Configuração incorreta de domínio cruzado</h2>
-Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
-The current implementation looks at excessively permissive CORS headers.
+Busca passivamente respostas contendo configurações incorretas de Domínio Cruzado, que relaxam a política de "mesma origem" no navegador da web, por exemplo.<br>
+A implementação atual verifica cabeçalhos CORS excessivamente permissivos.
 
 <h2>Pesquisa no diretório</h2>
-Passively scan responses for signatures that are indicative that Directory Browsing is possible.
+Busca passivamente assinaturas de respostas indicando de que a navegação em diretório é possível.
 
 <h2>Varredura passiva de arquivo-exemplo</h2>
-This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+Este recurso implementa uma regra de varredura passiva que carrega strings de um arquivo que o usuário pode editar.<br>
+Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
 <h2>Exemplo de varredura passiva simples</h2>
-This implements a very simple example passive scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+Aqui implementamos um exemplo muito simples de regra de varredura passiva.<br>
+Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
 <h2>Exposição de hash</h2>
-Passively scan for password hashes disclosed by the web server. <br>
-Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
+Busca passivamente hashes de senhas exibidos pelo servidor web. <br>
+Estão incluídos vários formatos, inclusive alguns como MD4, MD5 e SHA *, às vezes usados para outros fins além de conter hashes de senhas. 
 
 <h2>HeartBleed</h2>
-Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
+Varre passivamente à procura de respostas de cabeçalho HTTP indicando que o servidor está vulnerável à vulnerabilidade crítica  HeartBleed OpenSSL. 
 
-<h2>HTTP to HTTPS Insecure Transition in Form Post</h2>
-This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
+<h2>Transição insegura de HTTP para HTTPS em post de formulário</h2>
+Esta verificação procura páginas inseguras em HTTP que hospedam formulários HTTPS. A questão é que uma página HTTP insegura pode facilmente ser sequestrada por MITM-man-in-the-middle e o formulário seguro em HTTPS pode ser substituído ou falsificado.
 
-<h2>HTTPS to HTTP Insecure Transition in Form Post</h2>
-This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
+<h2>Transição insegura de HTTP para HTTPS em post de formulário</h2>
+Esta verificação procura páginas seguras em HTTPS que hospedam formulários inseguros HTTP. A questão é que uma página segura está em transição para uma página insegura enquanto dados são enviados através de um formulário. O usuário pode pensar que está enviando dados para uma página segura, quando na verdade não está.
 
 <h2>Componente Inseguro</h2>
-Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 
-A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable. 
-Currently, the following server side products are supported:<br>
-Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
+Esta checagem passivamente verifica os cabeçalhos de resposta do servidor e conteúdo do corpo gerador procurando versões de produtos, que são então comparados com uma lista de versões do produto conhecido por ser vulnerável a vários CVEs. 
+Uma lista de escores de gravidade de CVEs e CVSS é a saída para cada produto registrado como vulnerável. 
+Pelo lado do servidor, são registrados atualmente os seguintes produtos:<br>
+Apache Tomcat application server (funcionalidade limitada devido à limitação do vazamento de informações pelo Tomcat)<br>
 Apache web server<br>
 mod_auth_radius Apache module<br>
 mod_fcgid Apache module<br>
@@ -95,45 +94,45 @@ WordPress<br>
 <p>Nota: Para este plug-in operar, o ZAP deve ser configurado para receber e processar imagens.  Para fazer isso, vá para o painel de opções ZAP (ferramentas &rarr; opções), escolha Exibir e habilitar a caixa de verificação "Processar imagens em solicitações/respostas HTTP".  Além disso, as imagens não podem ser filtradas através das configurações "Exclusão Global de URL" ou propriedades de sessão para "Excluir do Proxy". </p>
 
 <h2>Open Redirect</h2>
-Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
+Redirecionamentos abertos são uma das Top Ten vulnerabilidades 2010 da OWASP. Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde redirecionamentos diretos são possíveis. Redirecionamentos abertos ocorrem quando um aplicativo permite entrada fornecida pelo usuário (por exemplo, http://nottrusted.com) para controlar um redirecionamento externo. Este é geralmente uma maneira muito precisa de encontrar onde os redirecionamentos 301 ou 302 podem ser explorados por remetentes de spam ou ataques de phishing
 
 <h2>Vazamento de informações de versão do servidor no cabeçalho/header</h2>
-This checks response headers for the presence of a server header that contains version details.
+Esta verificação checa os cabeçalhos de resposta para a presença de um cabeçalho de servidor que contém detalhes de versão.
 
 <h2>Exposição de código fonte</h2>
-Application Source Code was disclosed by the web server
+Código fonte da aplicação exposto pelo servidor web
 
-<h2>Strict Transport Security Header Scanner</h2>
-This scanner checks HTTPS response headers for the presence of a HTTP Strict Transport Security header (alerts if it is not found).
-Also checks if the HTTP Strict Transport Security (HSTS) header contains a max-age directive with value 0, which instructs clients to reset the entire HSTS Policy associated with the HSTS Host.
+<h2> Scanner de Strict Transport Security Header</h2>
+Esta varredura verifica os cabeçalhos de resposta HTTPS para a presença de um cabeçalho HTTP Strict Transport Security (alerta se não for encontrado).
+Também verifica se o cabeçalho HTTP Strict Transport Security (HST) contém uma diretiva de max-age com valor 0, que instrui os clientes para redefinirem toda a política HSTS associada com o Host do HSTS.
 
 <h2>Exposição de timestamp</h2>
-A timestamp was disclosed by the application/web server
+Um timestamp foi exposto pelo servidor web/aplicativo
 
-<h2>User Controllable HTML Element Attribute (Potential XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
+<h2>Atributo de elemento HTML controlável pelo usuário (potencial XSS)</h2>
+Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde certos valores de atributos de HTML podem ser controlados.  Isto proporciona detecção de hot-spot para XSS (cross-site scripting) que exigirá mais revisões por um analista de segurança para determinar a vulnerabilidade
 
-<h2>User Controllable Charset</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
+<h2>Conjunto de caracteres (charset) controlável pelo usuário</h2>
+Esta verificação confere a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde declarações de Content-Type ou de meta tag de conjunto de caracteres podem ser controlados pelo usuário. Tais declarações de charset sempre devem ser declaradas pelo aplicativo. Se um invasor pode controlar o conjunto de caracteres de resposta, eles pode manipular o HTML para executar XSS ou outros ataques.
 
-<h2>User Controllable Javascript Event (XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+<h2>Evento de javascript controlável pelo usuário (XSS)</h2>
+Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde certos valores de atributos de HTML podem ser controlados.  Isto proporciona detecção de hot-spot para XSS (cross-site scripting) que exigirá mais revisões por um analista de segurança para determinar a vulnerabilidade            
 
-<h2>User Controllable Javascript Property (XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+<h2>Propriedade de javascript controlável pelo usuário (XSS)</h2>
+Esta verificação busca a entrada fornecida pelo usuário nos parâmetros da string de query e nos dados de POST para identificar onde a URL em certas propriedades de javascript (ex: createElement scr) podem ser controladas. Isto proporciona detecção de hot-spot para XSS (cross-site scripting) que exigirá mais revisões por um analista de segurança para determinar a vulnerabilidade            
 
 <h2>Vazamento de informações de cabeçalho X-Powered-By</h2>
-This checks response headers for the presence of X-Powered-By details.
+Isto verifica os cabeçalhos de resposta para a presença de detalhes tipo X-Powered-By.
 
 <h2>Vazamento de informações de cabeçalho X-Backend-server</h2>
-This checks response headers for the presence of X-Backend-Server details.
+Isto verifica os cabeçalhos de resposta para a presença de detalhes de X-backend-server.
 
 <h2>Grande Redirecionamento</h2>
-This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
-A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
+Esta verificação prevê o tamanho de várias respostas de tipo de redirecionamento e gera um alerta se a resposta for maior que o tamanho previsto. 
+Uma resposta de redirecionamento grande pode indicar que embora um redirecionamento esteja acontecendo a página realmente tinha conteúdo (que pode revelar informações confidenciais, PII, etc).
 
-<h2>X-ChromeLogger-Data Header Information Leak</h2>
-This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
+<h2>Vazamento de informações de cabeçalho X-ChromeLogger-Data</h2>
+Isto verifica nos cabeçalhos de resposta a presença de detalhes X-ChromeLogger-Data ou X-ChromePhp-Data.
 
 </body>
 </html>
