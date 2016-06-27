@@ -156,7 +156,7 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
         alert.setDetail(
                 getDescription(),
                 msg.getRequestHeader().getURI().toString(),
-                "N/A",
+                "",
                 "",
                 "",
                 getSolution(),

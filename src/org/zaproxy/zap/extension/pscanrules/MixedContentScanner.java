@@ -127,7 +127,7 @@ public class MixedContentScanner extends PluginPassiveScanner {
     	alert.setDetail(
     	    getDescription(), 
     	    msg.getRequestHeader().getURI().toString(),
-    	    "", first, all,
+    	    "", "", all,
     	    getSolution(),
             getReference(), 
             first, // evidence
