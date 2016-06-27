@@ -7,30 +7,29 @@
 <body bgcolor="#ffffff">
 <h1>Scripts</h1>
 <p>
-The ZAP Script Add-on allows you to run scripts that can be embedded within ZAP and can access internal ZAP data structures.<br/>
-It supports any scripting language that supports JSR 223 (http://www.jcp.org/en/jsr/detail?id=223) , including:
+O complemento de Script do ZAP permite que você execute scripts que podem ser incorporados dentro do ZAP e podem acessar estruturas internas de dados do ZAP.<br/>
+Ele oferece suporte a qualquer linguagem de script que ofereça suporte a JSR 223 (http://www.jcp.org/en/jsr/detail?id=223), incluindo:
 <ul>
-<li>ECMAScript / Javascript (included by default)</li>
-<li>Zest https://developer.mozilla.org/en-US/docs/zest (included by default)</li>
+<li>ECMAScript / Javascript (incluído por padrão)</li>
+<li>Zest https://developer.mozilla.org/en-US/docs/zest (padrão)</li>
 <li>Groovy http://groovy.codehaus.org/</li>
 <li>Python http://www.jython.org</li>
 <li>Ruby - http://jruby.org/</li>
-<li>and many more...</li> 
+<li>e muitos mais...</li> 
 </ul>
 
-<b>WARNING - scripts run with the same permissions as ZAP, so do not run any scripts that you do not trust!</b>
+<b>AVISO - scripts são executados com as mesmas permissões que o ZAP, portanto não execute quaisquer scripts nos quais não confie!</b>
 
-<h2>Script types</h2>
-Different types of scripts are supported:
+<h2>Tipos de scripts</h2>
+Diferentes tipos de scripts são suportados:
 <ul>
-<li>Stand Alone - scripts that are self contained and are only run when your start them manually</li>
-<li>Active Rules - these run as part of the Active Scanner and can be individually enabled</li>
-<li>Passive Rules - these run as part of the Passive Scanner and can be individually enabled</li> 
-<li>Proxy Rules - these run 'inline', can change every request and response and can be individually enabled. They can also trigger break points</li> 
-<li>Targeted Rules - scripts that invoked with a target URL and are only run when your start them manually</li>
-<li>Authentication - scripts that invoked when authentication is performed for a Context. To be used, they need to
-be selected when configuring the Script-Based Authentication Method for a Context. </li> 
-<li>Script Input Vectors  - scripts for defining exactly what ZAP should attack</li> 
+<li>Stand Alone - scripts que são independentes, e só são executados quando iniciados manualmente</li>
+<li>Regras Ativas - estes são executados como parte da Varredura Ativa e podem ser habilitados individualmente</li>
+<li>Regras passivas - estas são executadas como parte da Varredura passiva e podem ser habilitadas individualmente</li> 
+<li>Regras de Proxy - estas rodam 'inline', podem alterar a cada solicitação e resposta, e podem ser habilitadas individualmente. Também podem criar pontos de interrupção</li> 
+<li>Regras com Alvos - scripts que quando invocados com um URL de destino e rodam apenas quando são iniciados manualmente</li>
+<li>Autenticação - scripts chamados quando a autenticação é executada para um contexto. Para serem usados, eles precisam ser selecionados ao configurar o Método de autenticação baseado em Script para um contexto. </li> 
+<li>Vetores de entrada de script - scripts para definir exatamente o que o ZAP deve atacar</li> 
 </ul>
 All scripts that are run automatically are initially 'disabled' - you must enable them via the <a href="tree.html">The Scripts 'tree' tab</a>
 before they will run.<br/>
