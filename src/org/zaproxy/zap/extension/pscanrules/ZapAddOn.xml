@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>16</version>
+	<version>17</version>
 	<status>release</status>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 823 - i18n (internationalise) release passive scan rules.<br>
-	Add CWE and WASC IDs to passive scanners which may have been lacking those details.<br>
-	Issue 2405 - Accommodate responses with multiple Cache-Control headers.<br>
-	Issue 395 - Add handling for allowed cross domain hosts (via context definition at HIGH threshold).<br>
+	Correctly check that the cookie being set has the Secure and HttpOnly attributes.<br>
 	]]>
 	</changes>
 	<extensions>
