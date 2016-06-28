@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import net.htmlparser.jericho.Source;
 
+import org.apache.commons.collections.iterators.IteratorChain;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -36,6 +37,8 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.cookiehttponlyscanner.";
 	private static final int PLUGIN_ID = 10010;
+
+	private static final String HTTP_ONLY_COOKIE_ATTRIBUTE = "HttpOnly";
 	
 	private PassiveScanThread parent = null;
 
@@ -51,23 +54,23 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		IteratorChain iterator = new IteratorChain();
 		Vector<String> cookies1 = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE);
 
 		if (cookies1 != null) {
-			for (String cookie : cookies1) {
-				if (cookie.toLowerCase().indexOf("httponly") < 0) {
-					this.raiseAlert(msg, id, cookie);
-				}
-			}
+			iterator.addIterator(cookies1.iterator());
 		}
 
 		Vector<String> cookies2 = msg.getResponseHeader().getHeaders(HttpHeader.SET_COOKIE2);
 		
 		if (cookies2 != null) {
-			for (String cookie : cookies2) {
-				if (cookie.toLowerCase().indexOf("httponly") < 0) {
-					this.raiseAlert(msg, id, cookie);
-				}
+			iterator.addIterator(cookies2.iterator());
+		}
+
+		while (iterator.hasNext()) {
+			String headerValue = (String) iterator.next();
+			if (!SetCookieUtils.hasAttribute(headerValue, HTTP_ONLY_COOKIE_ATTRIBUTE)) {
+				this.raiseAlert(msg, id, headerValue);
 			}
 		}
 	}
