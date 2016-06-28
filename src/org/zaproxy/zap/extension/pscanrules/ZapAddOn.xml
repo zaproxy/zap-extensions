@@ -8,6 +8,8 @@
 	<changes>
 	<![CDATA[
 	Correctly check that the cookie being set has the Secure and HttpOnly attributes.<br>
+	Do not set the attack field for Private IP Disclosure and Secure Pages Include Mixed Content.<br>
+	Remove "N/A" parameter from the alert of Application Error Disclosure.<br>
 	]]>
 	</changes>
 	<extensions>

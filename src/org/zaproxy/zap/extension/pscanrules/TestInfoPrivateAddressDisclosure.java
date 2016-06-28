@@ -127,7 +127,7 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
                     this.getDescription(),
                     msg.getRequestHeader().getURI().toString(),
                     "",
-                    firstOne,
+                    "",
                     sbTxtFound.toString(),
                     this.getSolution(),
                     this.getReference(),
