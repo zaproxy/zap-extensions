@@ -51,9 +51,10 @@ public abstract class WebSocketBreakDialog extends AbstractDialog {
 	private JScrollPane jScrollPane = null;
 
     public WebSocketBreakDialog(WebSocketBreakpointsUiManagerInterface breakPointsManager, ChannelSortedListModel channelsModel) throws HeadlessException {
-        super(View.getSingleton().getMainFrame(), false);
+        super(View.getSingleton().getMainFrame(), true);
         
         this.breakPointsManager = breakPointsManager;
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         
         wsUiHelper = new WebSocketUiHelper();
         wsUiHelper.setChannelsModel(channelsModel);

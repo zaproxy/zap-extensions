@@ -76,7 +76,7 @@ public class PopupMenuAddBreakWebSocket extends ExtensionPopupMenuItem {
             try {
                 tableWebSocket = (JTable) invoker;
                 int[] rows = tableWebSocket.getSelectedRows();
-                if (rows.length == 1 && extension.canAddBreakpoint()) {
+                if (rows.length == 1) {
                     this.setEnabled(true);
                 } else {
                     this.setEnabled(false);

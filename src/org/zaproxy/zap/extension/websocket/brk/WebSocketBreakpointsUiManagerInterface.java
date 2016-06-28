@@ -57,7 +57,6 @@ public class WebSocketBreakpointsUiManagerInterface implements BreakpointsUiMana
 
     @Override
     public void handleAddBreakpoint(Message aMessage) {
-        extensionBreak.dialogShown(ExtensionBreak.DialogType.ADD);
         showAddDialog(aMessage);
     }
 
@@ -67,7 +66,6 @@ public class WebSocketBreakpointsUiManagerInterface implements BreakpointsUiMana
 
     @Override
     public void handleEditBreakpoint(BreakpointMessageInterface breakpoint) {
-        extensionBreak.dialogShown(ExtensionBreak.DialogType.EDIT);
         showEditDialog((WebSocketBreakpointMessage)breakpoint);
     }
 
@@ -98,11 +96,6 @@ public class WebSocketBreakpointsUiManagerInterface implements BreakpointsUiMana
         }
     }
 
-    void hideAddDialog() {
-        addDialog.dispose();
-        extensionBreak.dialogClosed();
-    }
-    
     private void populateEditDialogAndSetVisible(WebSocketBreakpointMessage breakpoint) {
         editDialog.setBreakpoint(breakpoint);
         editDialog.setVisible(true);
@@ -115,10 +108,5 @@ public class WebSocketBreakpointsUiManagerInterface implements BreakpointsUiMana
         } else if (!editDialog.isVisible()) {
             populateEditDialogAndSetVisible(breakpoint);
         }
-    }
-
-    void hideEditDialog() {
-        editDialog.dispose();
-        extensionBreak.dialogClosed();
     }
 }
