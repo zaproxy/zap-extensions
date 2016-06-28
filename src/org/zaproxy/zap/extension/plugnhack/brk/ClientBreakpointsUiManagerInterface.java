@@ -54,7 +54,6 @@ public class ClientBreakpointsUiManagerInterface implements BreakpointsUiManager
 
     @Override
     public void handleAddBreakpoint(Message aMessage) {
-        extensionBreak.dialogShown(ExtensionBreak.DialogType.ADD);
         showAddDialog(aMessage);
     }
 
@@ -64,7 +63,6 @@ public class ClientBreakpointsUiManagerInterface implements BreakpointsUiManager
 
     @Override
     public void handleEditBreakpoint(BreakpointMessageInterface breakpoint) {
-        extensionBreak.dialogShown(ExtensionBreak.DialogType.EDIT);
         showEditDialog((ClientBreakpointMessage)breakpoint);
     }
 
@@ -94,11 +92,6 @@ public class ClientBreakpointsUiManagerInterface implements BreakpointsUiManager
             populateAddDialogAndSetVisible(aMessage);
         }
     }
-
-    void hideAddDialog() {
-        addDialog.dispose();
-        extensionBreak.dialogClosed();
-    }
     
     private void populateEditDialogAndSetVisible(ClientBreakpointMessage breakpoint) {
         editDialog.setBreakpoint(breakpoint);
@@ -112,11 +105,6 @@ public class ClientBreakpointsUiManagerInterface implements BreakpointsUiManager
         } else if (!editDialog.isVisible()) {
             populateEditDialogAndSetVisible(breakpoint);
         }
-    }
-
-    void hideEditDialog() {
-        editDialog.dispose();
-        extensionBreak.dialogClosed();
     }
 
 }

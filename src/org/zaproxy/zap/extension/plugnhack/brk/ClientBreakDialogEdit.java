@@ -57,7 +57,7 @@ public class ClientBreakDialogEdit extends ClientBreakDialog {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     breakpoint = null;
-                    breakPointsManager.hideEditDialog();
+                    dispose();
                 }
 			};
 		}
@@ -74,7 +74,7 @@ public class ClientBreakDialogEdit extends ClientBreakDialog {
 					try {
 						breakPointsManager.editBreakpoint(breakpoint, getClientBreakpointMessage());
 	                    breakpoint = null;
-	                    breakPointsManager.hideEditDialog();
+	                    dispose();
 					} catch (PatternSyntaxException e) {
 						// show popup
 						View.getSingleton().showWarningDialog(Constant.messages.getString("filter.replacedialog.invalidpattern"));

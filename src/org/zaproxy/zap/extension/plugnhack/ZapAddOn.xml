@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Plug-n-Hack Configuration</name>
-	<version>9</version>
+	<version>10</version>
 	<status>beta</status>
 	<description>Supports the Mozilla Plug-n-Hack standard: https://developer.mozilla.org/en-US/docs/Plug-n-Hack.</description>
 	<author>ZAP Dev Team</author>
 	<url>https://developer.mozilla.org/en-US/docs/Plug-n-Hack</url>
 	<changes>
 	<![CDATA[
-	Require API key before returning it (Issue 1714)<br>
-	Restrict use of CORS header in pnh (Issue 1716)<br>
-	Auto-scroll when new client events are available (Issue 1664)
+	Make breakpoint dialogues modal.<br>
 	]]>
 	</changes>
 	<extensions>
