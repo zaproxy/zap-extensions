@@ -190,7 +190,22 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
 
     @Override
     public boolean targets(TechSet technologies) {
-        return technologies.includes(Tech.Db);
+        if (technologies.includes(Tech.Db)) {
+            return true;
+        }
+
+        for (SQLiTest test : SQLiPayloadManager.getInstance().getTests()) {
+            if (test.getDetails() == null) {
+                continue;
+            }
+
+            for (DBMSHelper dbms : test.getDetails().getDbms()) {
+                if (technologies.includes(dbms.getTech())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
