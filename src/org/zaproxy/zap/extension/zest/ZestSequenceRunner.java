@@ -63,6 +63,10 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 
 	private ZestScriptWrapper script = null; 
 	private static final Logger logger = Logger.getLogger(ZestSequenceRunner.class);
+
+	// TODO Replace the value (17) with HistoryReference.TYPE_SEQUENCE_TEMPORARY once released with core
+	private static final int SEQUENCE_HISTORY_TYPE = 17;
+
 	private static final Map<String, String> EMPTYPARAMS = new HashMap<String, String>();
 	private AbstractPlugin currentPlugin = null;
 	private ZestResponse tempLastResponse = null;
@@ -344,8 +348,8 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 	@Override
 	public void scanSequence() {
 		String name = Constant.messages.getString("zest.script.sequence.scanname", script.getName());
-		SiteNode fakeRoot = new SiteNode(null, 11, name);
-		SiteNode fakeDirectory = new SiteNode(null, 11, name);
+		SiteNode fakeRoot = new SiteNode(null, SEQUENCE_HISTORY_TYPE, name);
+		SiteNode fakeDirectory = new SiteNode(null, SEQUENCE_HISTORY_TYPE, name);
 
 		for(ZestStatement stmt : script.getZestScript().getStatements()) {
 			try {
@@ -380,8 +384,8 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
 	{
 		SiteNode temp = null;
 		try {
-			temp = new SiteNode(null, 11, "");
-			HistoryReference ref = new HistoryReference(getHistory().getModel().getSession(), HistoryReference.TYPE_RESERVED_11, msg);
+			temp = new SiteNode(null, SEQUENCE_HISTORY_TYPE, "");
+			HistoryReference ref = new HistoryReference(getHistory().getModel().getSession(), SEQUENCE_HISTORY_TYPE, msg);
 			getHistory().addHistory(ref);
 			temp.setHistoryReference(ref);
 		} catch(Exception e) {
