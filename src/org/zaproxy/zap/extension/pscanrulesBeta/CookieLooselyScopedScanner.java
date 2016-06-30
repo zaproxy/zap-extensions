@@ -136,7 +136,7 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 		}		
 		
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
-				.getURI().toString(), null, getExploitMessage(), 
+				.getURI().toString(), null, "", 
 				Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", host, sbCookies),
 				getSolutionMessage(), getReferenceMessage(), 
 				"",	// No Evidence
@@ -171,9 +171,5 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 
 	private String getReferenceMessage() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-	}
-
-	private String getExploitMessage() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "exploit");
 	}
 }

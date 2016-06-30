@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Issue 2576: CSRFCountermeasures, remove unneeded Attack and Evidence messages.<br>
+	Issue 2574: CookieLooselyScopedScanner, remove attack field and update description.<br>
 	]]>
 	</changes>
 	<extensions>
