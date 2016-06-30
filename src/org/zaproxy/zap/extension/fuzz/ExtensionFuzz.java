@@ -388,9 +388,15 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     }
 
     private void readFuzzersDir() {
+        Path fuzzerDirectory = Paths.get(Constant.getInstance().FUZZER_DIR);
+        if (!Files.isDirectory(fuzzerDirectory)) {
+            fuzzersDir = new FuzzersDir(Collections.<FuzzerPayloadCategory>emptyList());
+            return;
+        }
+
         try {
             Files.walkFileTree(
-                    Paths.get(Constant.getInstance().FUZZER_DIR),
+                    fuzzerDirectory,
                     Collections.<FileVisitOption> emptySet(),
                     Integer.MAX_VALUE,
                     new SimpleFileVisitor<Path>() {

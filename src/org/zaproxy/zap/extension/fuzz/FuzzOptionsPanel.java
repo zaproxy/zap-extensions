@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
@@ -326,6 +327,16 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
                     boolean copyFile = false;
                     if (Files.exists(newFile)) {
                         copyFile = confirmOverwrite();
+                    } else if (!Files.exists(newFile.getParent())) {
+                        try {
+                            Files.createDirectories(newFile.getParent());
+                            copyFile = true;
+                        } catch (IOException ex) {
+                            View.getSingleton().showWarningDialog(
+                                    MessageFormat.format(
+                                            resourceBundle.getString("fuzz.options.add.file.fail.error.create.dirs"),
+                                            newFile.getParent()));
+                        }
                     } else if (!Files.isWritable(newFile.getParent())) {
                         View.getSingleton().showWarningDialog(
                                 resourceBundle.getString("fuzz.options.add.file.dirperms.error")
