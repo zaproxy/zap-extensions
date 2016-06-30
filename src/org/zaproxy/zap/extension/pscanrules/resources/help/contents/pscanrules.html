@@ -59,11 +59,16 @@ This scanner check for the Anti-MIME-Sniffing header X-Content-Type-Options and 
 At HIGH threshold this scanner does not alert on client or server error responses, for all other enabled 
 thresholds it alerts on all response types if the header is missing or set to something other than 'nosniff'.
  
-<H2>X-Frame-Option</H2>
-This scanner checks for the existence and validity of the X-FRAME-OPTIONS header. At HIGH threshold this scanner
+<H2>X-Frame-Options Header Scanner</H2>
+This scanner checks for the existence and validity of the X-Frame-Options header. At HIGH threshold this scanner
 does not alert on client or server error responses, for all other enabled thresholds it alerts on all response 
-types if the header is missing or invalid. Invalid meaning that the header is present with no value, or that 
-the value is not as expected (i.e.: other than "DENY", "SAMEORIGIN", or "ALLOW-FROM"). 
+types. The following conditions may result in an alert:
+<ul> 
+ <li><b>X-Frame-Options Header Not Set: </b> If the X-Frame-Options header is missing from the response completely.</li>
+ <li><b>Multiple X-Frame-Options Header Entries: </b> When more than one X-Frame-Options header is detected on the response.</li>
+ <li><b>X-Frame-Options Defined via META (Non-compliant with Spec): </b> A "http-equiv" entry was found in the response that attempts to define X-Frame-Options, which is not supported by the specification.</li>
+ <li><b>X-Frame-Options Setting Malformed: </b> The header is present with no value, or the value is not as expected (i.e.: other than "DENY", "SAMEORIGIN", or "ALLOW-FROM").</li>
+</ul>
 
 </BODY>
 </HTML>

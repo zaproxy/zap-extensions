@@ -19,8 +19,11 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.List;
 import java.util.Vector;
 
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
 import org.parosproxy.paros.Constant;
@@ -39,6 +42,8 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.xframeoptionsscanner.";
 	private static final int PLUGIN_ID = 10020;
+		
+	private enum VulnType {XFO_MISSING, XFO_MULTIPLE_HEADERS, XFO_META, XFO_MALFORMED_SETTING};
 	
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -54,6 +59,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 			case DEFAULT: 
 			case LOW: 		
 			case OFF: } 
+		
 		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()){
 			int responseStatus = msg.getResponseHeader().getStatusCode();
 			// If it's an error and we're not including error responses then just return without alerting
@@ -66,27 +72,37 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 			if (xFrameOption != null) {
 				for (String xFrameOptionParam : xFrameOption) {
 					if (xFrameOptionParam.toLowerCase().indexOf("deny") < 0 && xFrameOptionParam.toLowerCase().indexOf("sameorigin") < 0 && xFrameOptionParam.toLowerCase().indexOf("allow-from") < 0) {
-						this.raiseAlert(msg, id, xFrameOptionParam, false);
+						raiseAlert(msg, id, xFrameOptionParam, VulnType.XFO_MALFORMED_SETTING);
 					}
 				}
+				if (xFrameOption.size() > 1) { //Multiple headers
+					raiseAlert(msg, id, "", VulnType.XFO_MULTIPLE_HEADERS);
+				}
 			} else {
-				this.raiseAlert(msg, id, "", true);
+				raiseAlert(msg, id, "", VulnType.XFO_MISSING);
+			}
+			
+			String metaXFO = getMetaXFOEvidence(source);
+			
+			if (metaXFO != null) {
+				//XFO found defined by META tag
+				raiseAlert(msg, id, metaXFO, VulnType.XFO_META);
 			}
 		}
 	}
 
-	private void raiseAlert(HttpMessage msg, int id, String xFrameOption, boolean isXFrameOptionsMissing) {
+	private void raiseAlert(HttpMessage msg, int id, String evidence, VulnType currentVT) {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, 
-		    	getName());
+		    	getAlertElement(currentVT, "name"));
 		    	alert.setDetail(
-		    		getDescription(isXFrameOptionsMissing), 
+		    		getAlertElement(currentVT, "desc"), 
 		    	    msg.getRequestHeader().getURI().toString(),
-		    	    xFrameOption,
+		    	    "",//Param
 		    	    "", //Attack
-		    	    getOtherInfo(), //OtherInfo
-		    	    getSolution(),
-		            getReference(), 
-		            "", // No evidence
+		    	    "", //OtherInfo
+		    	    getAlertElement(currentVT, "soln"),
+		    	    getAlertElement(currentVT, "refs"), 
+		            evidence, //Evidence
 		            16,	//CWE-16: Configuration
 		            15,	//WASC-15: Application Misconfiguration 
 		            msg);
@@ -109,22 +125,42 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 		return PLUGIN_ID;
 	}
 	
-	private String getDescription(boolean isMissing) {
-		if (isMissing) //Not set at all
-			return Constant.messages.getString(MESSAGE_PREFIX + "missing.desc");
-		else //Set improperly?
-			return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
-
-	private String getOtherInfo() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo");
+	private String getAlertElement(VulnType currentVT, String element) {
+		switch (currentVT) {
+			case XFO_MISSING:
+				return Constant.messages.getString(MESSAGE_PREFIX + "missing." + element);
+			case XFO_MULTIPLE_HEADERS:
+				return Constant.messages.getString(MESSAGE_PREFIX + "multiple.header." + element);
+			case XFO_META:
+				return Constant.messages.getString(MESSAGE_PREFIX + "compliance.meta." + element);
+			case XFO_MALFORMED_SETTING:
+				return Constant.messages.getString(MESSAGE_PREFIX + "compliance.malformed.setting." + element);
+			default:
+				return "";
+		}
 	}
 	
-	private String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
+	/**
+	 * Checks the source of the response for XFO being set via a META tag which is explicitly
+	 * not supported per the spec (rfc7034). 
+	 * 
+	 * @param source the source of the response to be analyzed.
+	 * @return returns a string if XFO was set via META (for use as alert evidence) otherwise return {@code null}.
+	 * @see <a href="https://tools.ietf.org/html/rfc7034#section-4"> RFC 7034 Section 4</a>
+	 */
+	private String getMetaXFOEvidence(Source source) {
+		List<Element> metaElements = source.getAllElements(HTMLElementName.META);
+		String httpEquiv;
 
-	private String getReference() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+		if (metaElements != null) {
+			for (Element metaElement : metaElements) {
+				httpEquiv = metaElement.getAttributeValue("http-equiv");
+				if (HttpHeader.X_FRAME_OPTION.equalsIgnoreCase(httpEquiv)) {
+					return httpEquiv;
+				}
+			}
+		}
+		return null;
 	}
+	
 }
