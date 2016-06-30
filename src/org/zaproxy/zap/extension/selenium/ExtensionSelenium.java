@@ -263,7 +263,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             cliArgs.add("--ssl-protocol=any");
             cliArgs.add("--ignore-ssl-errors=yes");
 
-            cliArgs.add("--webdriver-logfile=" + Constant.getZapHome() + "/phantomjsdriver.log");
+            cliArgs.add("--webdriver-logfile=" + Constant.getZapHome() + "phantomjsdriver.log");
             cliArgs.add("--webdriver-loglevel=WARN");
 
             capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cliArgs);
