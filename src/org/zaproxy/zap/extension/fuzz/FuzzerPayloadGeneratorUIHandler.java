@@ -19,24 +19,41 @@
  */
 package org.zaproxy.zap.extension.fuzz;
 
+import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionEvent;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreePath;
 
+import org.jdesktop.swingx.JXFindBar;
+import org.jdesktop.swingx.decorator.Highlighter;
+import org.jdesktop.swingx.renderer.StringValues;
+import org.jdesktop.swingx.search.AbstractSearchable;
+import org.jdesktop.swingx.search.SearchFactory;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz.FuzzersDirChangeListener;
 import org.zaproxy.zap.extension.fuzz.FuzzerPayloadGeneratorUIHandler.FuzzerPayloadGeneratorUI;
@@ -225,7 +242,9 @@ public class FuzzerPayloadGeneratorUIHandler implements
         private JPanel addPanel;
         private ModifyFileFuzzersPayloadsPanel modifyPanel;
 
+        private FindBar findBar;
         private JCheckBoxTree fileFuzzersCheckBoxTree;
+        private TreeSearchable treeSearchable;
         private TreePath defaultCategoryTreePath;
         private JTextArea payloadsPreviewTextArea;
 
@@ -264,7 +283,10 @@ public class FuzzerPayloadGeneratorUIHandler implements
                                             .addComponent(payloadsPreviewLabel))
                             .addGroup(
                                     layoutAddPanel.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                            .addComponent(scrollPane)
+                                    .addGroup(
+                                            layoutAddPanel.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                    .addComponent(getFindBar())
+                                                    .addComponent(scrollPane))
                                             .addComponent(payloadsPreviewScrollPane)));
 
             layoutAddPanel.setVerticalGroup(
@@ -272,7 +294,10 @@ public class FuzzerPayloadGeneratorUIHandler implements
                             .addGroup(
                                     layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                             .addComponent(fileFuzzersLabel)
-                                            .addComponent(scrollPane))
+                                            .addGroup(
+                                                    layoutAddPanel.createSequentialGroup()
+                                                            .addComponent(getFindBar())
+                                                            .addComponent(scrollPane)))
                             .addGroup(
                                     layoutAddPanel.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                             .addComponent(payloadsPreviewLabel)
@@ -293,11 +318,19 @@ public class FuzzerPayloadGeneratorUIHandler implements
             return modifyPanel;
         }
 
+        private FindBar getFindBar() {
+            if (findBar == null) {
+                findBar = new FindBar();
+            }
+            return findBar;
+        }
+
         private JCheckBoxTree getFileFuzzersCheckBoxTree() {
             if (fileFuzzersCheckBoxTree == null) {
                 fileFuzzersCheckBoxTree = new JCheckBoxTree();
                 fileFuzzersCheckBoxTree.setRootVisible(false);
                 fileFuzzersCheckBoxTree.setShowsRootHandles(true);
+                fileFuzzersCheckBoxTree.setSelectionModel(new DefaultTreeSelectionModel());
                 fileFuzzersCheckBoxTree.addCheckChangeEventListener(new CheckChangeEventListener() {
 
                     @Override
@@ -306,6 +339,22 @@ public class FuzzerPayloadGeneratorUIHandler implements
                     }
                 });
                 fileFuzzersCheckBoxTree.setVisibleRowCount(10);
+
+                treeSearchable = new TreeSearchable(fileFuzzersCheckBoxTree);
+                getFindBar().setSearchable(treeSearchable);
+
+                fileFuzzersCheckBoxTree.getActionMap().put("find", new AbstractAction() {
+
+                    private static final long serialVersionUID = 2509106064246847016L;
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent(getFindBar());
+                    }
+                });
+
+                KeyStroke findStroke = SearchFactory.getInstance().getSearchAccelerator();
+                fileFuzzersCheckBoxTree.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(findStroke, "find");
 
                 createFileFuzzersCheckBoxTreeModel();
             }
@@ -350,6 +399,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
             setSelectedFuzzers(currentSelections);
             getFileFuzzersCheckBoxTree().expandPath(defaultCategoryTreePath);
+            treeSearchable.reload();
         }
 
         private static void addNodes(FuzzerPayloadCategory category, DefaultMutableTreeNode node) {
@@ -409,6 +459,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
             resetFileFuzzersCheckBoxTree();
             createFileFuzzersCheckBoxTreeModel();
             modifyFileContents = false;
+            getFindBar().clear();
         }
 
         private void resetFileFuzzersCheckBoxTree() {
@@ -549,6 +600,124 @@ public class FuzzerPayloadGeneratorUIHandler implements
             @Override
             protected FuzzerPayloadGeneratorUI createPayloadGeneratorUI(int numberOfPayloads) {
                 return new FuzzerPayloadGeneratorUI(getFile(), getPayloadGeneratorUI().getDescription(), numberOfPayloads);
+            }
+        }
+
+        // Based on SwingX's (org.jdesktop.swingx.search.)TreeSearchable, but uses a plain JTree
+        private static class TreeSearchable extends AbstractSearchable {
+
+            private static final Highlighter[] EMPTY_HIGHLIGHTER = {};
+
+            private final JTree tree;
+            private final Map<Integer, TreePath> rows;
+
+            public TreeSearchable(JTree tree) {
+                this.tree = tree;
+                this.rows = new HashMap<>();
+            }
+
+            public void reload() {
+                rows.clear();
+
+                DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) tree.getModel().getRoot();
+                @SuppressWarnings("unchecked")
+                Enumeration<DefaultMutableTreeNode> nodes = rootNode.preorderEnumeration();
+                for (int i = 0; nodes.hasMoreElements(); i++) {
+                    rows.put(i, new TreePath(nodes.nextElement().getPath()));
+                }
+            }
+
+            @Override
+            protected void findMatchAndUpdateState(Pattern pattern, int startRow, boolean backwards) {
+                SearchResult searchResult = null;
+                if (backwards) {
+                    for (int index = startRow; index >= 0 && searchResult == null; index--) {
+                        searchResult = findMatchAt(pattern, index);
+                    }
+                } else {
+                    for (int index = startRow; index < getSize() && searchResult == null; index++) {
+                        searchResult = findMatchAt(pattern, index);
+                    }
+                }
+                updateState(searchResult);
+
+            }
+
+            @Override
+            protected SearchResult findExtendedMatch(Pattern pattern, int row) {
+                return findMatchAt(pattern, row);
+            }
+
+            private SearchResult findMatchAt(Pattern pattern, int row) {
+                TreePath path = rows.get(row);
+                if (path == null) {
+                    return null;
+                }
+
+                String text = StringValues.TO_STRING.getString(path.getLastPathComponent());
+                if (text == null || text.isEmpty()) {
+                    return null;
+                }
+
+                Matcher matcher = pattern.matcher(text);
+                if (matcher.find()) {
+                    return createSearchResult(matcher, row, 0);
+                }
+                return null;
+            }
+
+            @Override
+            protected int getSize() {
+                return rows.size();
+            }
+
+            @Override
+            public JTree getTarget() {
+                return tree;
+            }
+
+            @Override
+            protected void moveMatchMarker() {
+                if (!hasMatch()) {
+                    return;
+                }
+                TreePath path = rows.get(lastSearchResult.getFoundRow());
+                tree.setSelectionPath(path);
+                tree.scrollPathToVisible(path);
+            }
+
+            @Override
+            protected void removeHighlighter(Highlighter searchHighlighter) {
+            }
+
+            @Override
+            protected Highlighter[] getHighlighters() {
+                return EMPTY_HIGHLIGHTER;
+            }
+
+            @Override
+            protected void addHighlighter(Highlighter highlighter) {
+            }
+
+        }
+
+        private static class FindBar extends JXFindBar {
+
+            private static final long serialVersionUID = 2420176685611349205L;
+
+            public void clear() {
+                if (searchField == null) {
+                    return;
+                }
+                searchField.setText("");
+            }
+
+            @Override
+            protected void build() {
+                setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+                add(searchField);
+                add(findNext);
+                add(findPrevious);
             }
         }
     }

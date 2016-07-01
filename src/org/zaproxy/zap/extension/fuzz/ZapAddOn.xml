@@ -11,6 +11,7 @@
     Added Export button to export results as CSV file.<br>
     Enable "Limit maximum errors" by default and increase the default number.<br>
     Add SHA-512 Hash payload processor (Issue 2643).<br>
+    Allow to search the fuzzer file names when selecting them.<br>
     ]]>
     </changes>
     <extensions>
