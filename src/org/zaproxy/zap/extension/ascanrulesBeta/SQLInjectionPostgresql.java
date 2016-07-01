@@ -21,6 +21,7 @@ import java.net.SocketException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -51,7 +52,7 @@ import org.zaproxy.zap.model.TechSet;
  * - allows stacked queries via JDBC driver or in PHP??? 
  * - Constants in select must be in single quotes, not doubles (like Hypersonic).
  * - supports UDFs  (very interesting!!)
- * - 5 second delay select statement (not taking into account casting, etc): SELECT pg_sleep(5)
+ * - 5 (by default) second delay select statement (not taking into account casting, etc): SELECT pg_sleep(5)
  * - metadata select statement: TODO
  * 
  *  @author 70pointer
@@ -62,11 +63,15 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 
 	private int doTimeMaxRequests = 0;
 
+	private int sleep = 5;
 
 	/**
 	 * Postgresql one-line comment
 	 */
 	public static final String SQL_ONE_LINE_COMMENT = " -- ";
+
+	private static final String ORIG_VALUE_TOKEN = "<<<<ORIGINALVALUE>>>>";
+	private static final String SLEEP_TOKEN = "<<<<SLEEP>>>>";
 
 	/**
 	 * create a map of SQL related error message fragments, and map them back to the RDBMS that they are associated with
@@ -84,13 +89,13 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 
 
 	/**
-	 * the 5 second sleep function in Postgresql
+	 * The sleep function in Postgresql
 	 * cast it back to an int, so we can use it in nested select statements and stuff.
 	 */
-	private static String SQL_POSTGRES_TIME_FUNCTION = "case when cast(pg_sleep(5) as varchar) > '' then 0 else 1 end";
+	private static String SQL_POSTGRES_TIME_FUNCTION = "case when cast(pg_sleep(" + SLEEP_TOKEN + ") as varchar) > '' then 0 else 1 end";
 
 	/**
-	 * Postgres specific time based injection strings. each for 5 seconds
+	 * Postgres specific time based injection strings.
 	 */
 
 	//issue with "+" symbols in here: 
@@ -109,18 +114,18 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 		SQL_POSTGRES_TIME_FUNCTION + SQL_ONE_LINE_COMMENT,
 		"'" + SQL_POSTGRES_TIME_FUNCTION + SQL_ONE_LINE_COMMENT,
 		"\"" + SQL_POSTGRES_TIME_FUNCTION + SQL_ONE_LINE_COMMENT,
-		"<<<<ORIGINALVALUE>>>> / "+SQL_POSTGRES_TIME_FUNCTION+" ",				// Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
-		"<<<<ORIGINALVALUE>>>>' / "+SQL_POSTGRES_TIME_FUNCTION+" / '",			// Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
-		"<<<<ORIGINALVALUE>>>>\" / "+SQL_POSTGRES_TIME_FUNCTION+" / \"",			// Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
-		"<<<<ORIGINALVALUE>>>> where 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT,	// Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>>' where 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT,	// Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>>\" where 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT,// Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>> and 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>>' and 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>>\" and 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>> or 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT,		// Param in WHERE clause. 
-		"<<<<ORIGINALVALUE>>>>' or 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause. 
-		"<<<<ORIGINALVALUE>>>>\" or 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause.
+		ORIG_VALUE_TOKEN + " / "+SQL_POSTGRES_TIME_FUNCTION+" ",				// Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
+		ORIG_VALUE_TOKEN + "' / "+SQL_POSTGRES_TIME_FUNCTION+" / '",			// Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
+		ORIG_VALUE_TOKEN + "\" / "+SQL_POSTGRES_TIME_FUNCTION+" / \"",			// Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
+		ORIG_VALUE_TOKEN + " where 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT,	// Param in SELECT/UPDATE/DELETE clause.
+		ORIG_VALUE_TOKEN + "' where 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT,	// Param in SELECT/UPDATE/DELETE clause.
+		ORIG_VALUE_TOKEN + "\" where 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT,// Param in SELECT/UPDATE/DELETE clause.
+		ORIG_VALUE_TOKEN + " and 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause.
+		ORIG_VALUE_TOKEN + "' and 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause.
+		ORIG_VALUE_TOKEN + "\" and 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause.
+		ORIG_VALUE_TOKEN + " or 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT,		// Param in WHERE clause. 
+		ORIG_VALUE_TOKEN + "' or 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause. 
+		ORIG_VALUE_TOKEN + "\" or 0 in (select "+SQL_POSTGRES_TIME_FUNCTION+" )" + SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause.
 	};
 
 
@@ -155,7 +160,7 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 
 	@Override
 	public boolean targets(TechSet techonologies) {
-		return techonologies.includes(Tech.Db.PostgreSQL);
+		return techonologies.includes(Tech.PostgreSQL);
 	}
 
 	@Override
@@ -200,6 +205,15 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
 			doTimeBased=true; doTimeMaxRequests=100;
 		}
+		// Read the sleep value from the configs
+		try {
+			this.sleep = this.getConfig().getInt("rules.common.sleep", 5);
+		} catch (ConversionException e) {
+			log.debug("Invalid value for 'rules.common.sleep': " + this.getConfig().getString("rules.common.sleep"));
+		}
+		if ( this.debugEnabled ) {
+			log.debug("Sleep set to " + sleep + " seconds");
+		}
 	}
 
 
@@ -240,7 +254,10 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 					timeBasedSQLindex < SQL_POSTGRES_TIME_REPLACEMENTS.length && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
 					timeBasedSQLindex ++) {
 				HttpMessage msgAttack = getNewMsg();
-				String newTimeBasedInjectionValue = SQL_POSTGRES_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", paramValue);
+				String newTimeBasedInjectionValue = 
+						SQL_POSTGRES_TIME_REPLACEMENTS[timeBasedSQLindex].
+							replace (ORIG_VALUE_TOKEN, paramValue).
+							replace(SLEEP_TOKEN, Integer.toString(sleep));
 
 				setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
 
@@ -261,8 +278,8 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 
 				if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on field: ["+paramName+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
 
-				if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
-					//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
+				if (modifiedTimeUsed >= (originalTimeUsed + (sleep * 1000))) {
+					//takes more than 5 (by default) extra seconds => likely time based SQL injection. Raise it 
 					String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, paramValue, originalTimeUsed);
 					String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", paramName, newTimeBasedInjectionValue);
 

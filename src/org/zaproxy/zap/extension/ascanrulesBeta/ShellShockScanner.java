@@ -19,6 +19,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.util.Vector;
 
+import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -44,6 +45,8 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
 	
 	// Use a standard HTTP response header, to make sure the header is not dropped by load balancers, proxies, etc
 	private final String evidence = "ShellShock-Vulnerable";
+
+	private int sleep = 5;
 
 	/**
 	 * returns the plugin id
@@ -88,6 +91,15 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
 
 	@Override
 	public void init() {		
+		// Read the sleep value from the configs
+		try {
+			this.sleep = this.getConfig().getInt("rules.common.sleep", 5);
+		} catch (ConversionException e) {
+			log.debug("Invalid value for 'rules.common.sleep': " + this.getConfig().getString("rules.common.sleep"));
+		}
+		if ( log.isDebugEnabled() ) {
+			log.debug("Sleep set to " + sleep + " seconds");
+		}
 	}
 
 	@Override	
@@ -127,20 +139,20 @@ public class ShellShockScanner extends AbstractAppParamPlugin {
 			// With PHP, the evidence will come out in the body (this will be caught by the timing based attack)
 			boolean vulnerable = false;
 			HttpMessage msg2 = getNewMsg();
-			attack = "() { :;}; /bin/sleep 5";
+			attack = "() { :;}; /bin/sleep " + sleep;
 			
 			setParameter(msg2, paramName, attack);
 			sendAndReceive(msg2, false); //do not follow redirects
 			long attackElapsedTime = msg2.getTimeElapsedMillis();
 			
-			if (attackElapsedTime > 5000) {
+			if (attackElapsedTime > sleep * 1000) {
 				vulnerable = true;
 		        if (!Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold()) && attackElapsedTime > 6000) {
 					// Could be that the server is overloaded, try a safe request
 					HttpMessage safeMsg = getNewMsg();
 					sendAndReceive(safeMsg, false); //do not follow redirects
-					if (safeMsg.getTimeElapsedMillis() > 5000 && 
-							(safeMsg.getTimeElapsedMillis() - attackElapsedTime) < 5000) {
+					if (safeMsg.getTimeElapsedMillis() > sleep * 1000 && 
+							(safeMsg.getTimeElapsedMillis() - attackElapsedTime) < sleep * 1000) {
 						// Looks like the server is just overloaded
 						vulnerable = false;
 					}
