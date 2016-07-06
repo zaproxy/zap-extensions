@@ -1,22 +1,20 @@
 <zapaddon>
 	<name>Technology detection using Wappalyzer</name>
-	<version>7</version>
+	<version>8</version>
 	<status>alpha</status>
 	<description>Technology detection using Wappalyzer: wappalyzer.com</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Allow to update/uninstall the add-on without restarting ZAP.<br>
+	Remove the use of passive scan rule.<br>
 	]]>
 	</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer</extension>
 	</extensions>
 	<ascanrules/>
-	<pscanrules>
-		<pscanrule>org.zaproxy.zap.extension.wappalyzer.WappalyzerPassiveScanner</pscanrule>
-	</pscanrules>
+	<pscanrules/>
 	<filters/>
 	<files/>
 	<not-before-version>2.4.3</not-before-version>
