@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -192,14 +193,9 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     public void save() {
     	AjaxSpiderParam params = this.extension.getAjaxSpiderParam().clone();
     	
-        if (getExtSelenium() != null && ! this.isEmptyField(FIELD_BROWSER)) {
-        	String browserName = this.getStringValue(FIELD_BROWSER);
-        	List<BrowserUI> browserList = getExtSelenium().getBrowserUIList();
-        	for (BrowserUI bui : browserList) {
-        		if (browserName.equals(bui.getName())) {
-        			params.setBrowserId(bui.getBrowser().getId());
-        		}
-        	}
+        Browser selectedBrowser = getSelectedBrowser();
+        if (selectedBrowser != null) {
+            params.setBrowserId(selectedBrowser.getId());
         }
 
         if (this.getBoolValue(FIELD_ADVANCED)) {
@@ -217,11 +213,47 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     	this.extension.spiderSite(this.startNode, this.getBoolValue(FIELD_IN_SCOPE), params);
     }
 
+    /**
+     * Gets the selected browser.
+     *
+     * @return the selected browser, {@code null} if none selected
+     */
+    private Browser getSelectedBrowser() {
+        if (isEmptyField(FIELD_BROWSER)) {
+            return null;
+        }
+
+        String browserName = this.getStringValue(FIELD_BROWSER);
+        List<BrowserUI> browserList = getExtSelenium().getBrowserUIList();
+        for (BrowserUI bui : browserList) {
+            if (browserName.equals(bui.getName())) {
+                return bui.getBrowser();
+            }
+        }
+        return null;
+    }
+
     @Override
     public String validateFields() {
 
         if (this.startNode == null) {
             return Constant.messages.getString("spiderajax.scandialog.nostart.error");
+        }
+
+        Browser selectedBrowser = getSelectedBrowser();
+        if (selectedBrowser == null) {
+            return null;
+        }
+
+        if (Browser.PHANTOM_JS.getId() == selectedBrowser.getId()) {
+            try {
+                String host = startNode.getHistoryReference().getURI().getHost();
+                if ("localhost".equalsIgnoreCase(host) || "127.0.0.1".equals(host) || "[::1]".equals(host)) {
+                    return Constant.messages.getString("spiderajax.warn.message.phantomjs.bug.invalid.target");
+                }
+            } catch (URIException e) {
+                logger.warn("Failed to get host:", e);
+            }
         }
 
         return null;

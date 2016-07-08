@@ -19,13 +19,10 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import javax.swing.ImageIcon;
 
-import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
@@ -92,19 +89,6 @@ public class PopupMenuAjaxSite extends PopupMenuItemSiteNodeContainer {
 	@Override
 	public void performAction(SiteNode node) {
 	    if (node != null) {
-            if (Browser.PHANTOM_JS.getId() == extension.getAjaxSpiderParam().getBrowserId()) {
-                try {
-                    String host = node.getHistoryReference().getURI().getHost();
-                    if ("localhost".equalsIgnoreCase(host) || "127.0.0.1".equals(host) || "[::1]".equals(host)) {
-                        View.getSingleton().showWarningDialog(
-                                extension.getMessages().getString("spiderajax.warn.message.phantomjs.bug.invalid.target"));
-                        return;
-                    }
-                } catch (URIException e) {
-                    logger.warn("Failed to get host:", e);
-                }
-            }
-	        
 	    	extension.showScanDialog(node);
 	    }
 	}
