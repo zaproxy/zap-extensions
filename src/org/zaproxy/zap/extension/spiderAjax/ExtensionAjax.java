@@ -216,15 +216,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		spiderDialog.setVisible(true);
 	}
 
-	/**
-	 *  calls the spider
-	 * @param node
-	 * @param incPort
-	 */
-	public void spiderSite(SiteNode node, boolean inScope) {
-		this.spiderSite(node, inScope, getAjaxSpiderParam());
-	}
-
 	public void spiderSite(SiteNode node, boolean inScope, AjaxSpiderParam params) {
 		if (getView() != null) {
 			getSpiderPanel().startScan(node.getHistoryReference().getURI().toString(), inScope, params);
