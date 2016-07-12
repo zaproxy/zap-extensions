@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fixed the issue that prevented the ajaxSpider from resetting the crawled url count to zero while starting a new scan (Issue 2610).<br>
+	Warn always if attempting to AJAX spider "localhost" with PhantomJS.<br>
 	]]>
 	</changes>
 	<dependencies>
