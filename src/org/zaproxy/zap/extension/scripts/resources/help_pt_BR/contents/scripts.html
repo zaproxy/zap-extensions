@@ -31,56 +31,53 @@ Diferentes tipos de scripts são suportados:
 <li>Autenticação - scripts chamados quando a autenticação é executada para um contexto. Para serem usados, eles precisam ser selecionados ao configurar o Método de autenticação baseado em Script para um contexto. </li> 
 <li>Vetores de entrada de script - scripts para definir exatamente o que o ZAP deve atacar</li> 
 </ul>
-All scripts that are run automatically are initially 'disabled' - you must enable them via the <a href="tree.html">The Scripts 'tree' tab</a>
-before they will run.<br/>
-If an error occurs when they run then they will be disabled.<br/>
-When you select the script then the last error will be shown in the <a href="console.html">Script Console tab</a>.<br/>
-Targeted scripts can be invoked by right clicking on a record in the Sites or History tabs and selecting the 'Invoke with script...' menu item.
+Todos os scripts que são executados automaticamente são inicialmente 'desabilitados' - você deve habilitá-los através da <a href="tree.html">Aba da Árvore de Scripts</a>
+antes que eles possam rodar.<br/>
+Se ocorrer um erro quando eles rodam então eles serão desabilitados.<br/>
+Quando você selecionar o script, o último erro será mostrado na <a href="console.html">Aba do Console de Script</a>.<br/>
+Scripts de alvo podem ser chamados pelo botão direito do mouse em um registro na aba de histórico ou de Sites e também selecionando o item de menu 'Chamar com script.'.
 </p>
 <p>
 
-All scripting languages can be used for all script types, but only those languages that have been downloaded from the ZAP Marketplace
-will typically have templates. However you may well be able to adapt a template for another language.<br/>
-If your favourite language is not available on the Marketplace then please raise a new issue via the "Online/Report an issue" menu item.<br/>
-In the meantime you can just place the relevant jars in the 'lib' directory (not the 'plugin' directory) and restart ZAP.<br/>
+Todas as linguagens de script podem ser usadas para todos os tipos de script, mas apenas aquelas que foram baixadas da loja do ZAP terão templates. No entanto, você pode ser capaz de adaptar um template para outra linguagem. <br/> Se sua linguagem preferida não está disponível na loja, por favor crie uma pergunta através do item de menu "Online/aponte um problema". <br/> Enquanto isso, você pode apenas colocar as questões relevantes no diretório 'lib' (não no diretório 'plugin') e reiniciar o ZAP.<br/>
 </p>
 
-<h2>Global Variables</h2>
-Variables can be shared between all scripts via the class org.zaproxy.zap.extension.script.ScriptVars.<br/>
-For example in Javascript you can use this class as follows:<br/><br/>
+<h2>Variáveis globais</h2>
+As variáveis podem ser compartilhadas entre todos os scripts através da classe org.zaproxy.zap.extension.script.ScriptVars.<br/>
+Por exemplo em Javascript você pode usar essa classe assim:<br/><br/>
 <code>
 org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/>
 org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
 </code>
 
-<h2>Script Variables</h2>
-Variables can be shared between separate invocations of the same script via the same org.zaproxy.zap.extension.script.ScriptVars class.<br/>
-For example in Javascript you can use this class as follows:<br/><br/>
+<h2>Variáveis de script</h2>
+As variáveis podem ser compartilhadas entre chamadas isoladas de um mesmo script através da mesma classe org.zaproxy.zap.extension.script.ScriptVars.<br/>
+Por exemplo em Javascript você pode usar essa classe assim:<br/><br/>
 <code>
 org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name","value")<br/>
 org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
 </code>
 <br/>
-Note that these methods are only usable from scripting languages that provide access to the ScriptContext (like Javascript).
+Observe que esses métodos só são utilizáveis com linguagens de script que proporcionam acesso para o ScriptContext (como Javascript).
 
-<h2>See also</h2>
+<h2>Veja também</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="console.html">The Script Console tab</a></td><td></td>
+	<td><a href="console.html">Aba do Console de Script</a></td><td></td>
 </tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="tree.html">The Scripts 'tree' tab</a></td><td></td>
+	<td><a href="tree.html">Aba da Árvore de Scripts</a></td><td></td>
 </tr>
 </table>
 
-<h2>External links</h2>
+<h2>Links externos</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td>https://github.com/zaproxy/zaproxy/wiki/InternalDetails</td>
-	<td>ZAP internal objects</td></tr>
+	<td>ZAP objetos internos</td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td>https://github.com/zaproxy/zaproxy/wiki/JavaDocs</td>
