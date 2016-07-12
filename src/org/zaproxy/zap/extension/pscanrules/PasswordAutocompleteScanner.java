@@ -20,16 +20,16 @@ package org.zaproxy.zap.extension.pscanrules;
 import java.util.Date;
 import java.util.List;
 
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.HTMLElementName;
-import net.htmlparser.jericho.Source;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 
 public class PasswordAutocompleteScanner extends PluginPassiveScanner {
@@ -84,13 +84,19 @@ public class PasswordAutocompleteScanner extends PluginPassiveScanner {
 								
 								autoComplete = inputElement.getAttributeValue("AUTOCOMPLETE");
 								if (autoComplete == null || ! autoComplete.equalsIgnoreCase("OFF")) {
+									String param = inputElement.getName();
+									if (inputElement.getAttributeValue("id") != null) {
+										param = inputElement.getAttributeValue("id");
+									} else if (inputElement.getAttributeValue("name") != null) {
+										param = inputElement.getAttributeValue("name");
+									}
 									
 									Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 										getName());
 										alert.setDetail(
 											getDescription(), //Description
 											msg.getRequestHeader().getURI().toString(),//URI
-											inputElement.getName(), //Param
+											param,
 											"", //Attack
 											"", //OtherInfo
 											getSolution(), //Solution
