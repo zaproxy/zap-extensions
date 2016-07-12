@@ -12,6 +12,7 @@
     Enable "Limit maximum errors" by default and increase the default number.<br>
     Improve error handling when reading/writing files from/to fuzzers directory.<br>
     Add SHA-512 Hash payload processor (Issue 2643).<br>
+    Allow to search the fuzzer file names when selecting them.<br>
     ]]>
     </changes>
     <extensions>
