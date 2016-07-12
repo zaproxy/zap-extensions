@@ -223,7 +223,7 @@ public class SamlManualEditor extends JFrame {
      * @param msg
      */
     private void updateResponse(HttpMessage msg) {
-        respBodyTextPane.setText(msg.getResponseBody().createCachedString("UTF-8"));
+        respBodyTextPane.setText(msg.getResponseBody().toString());
         respHeadTextPane.setText(msg.getResponseHeader().toString());
         tabbedPane.setSelectedIndex(1);
     }
