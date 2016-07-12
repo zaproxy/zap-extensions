@@ -74,6 +74,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.processor.PostfixStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PrefixStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.SHA1HashProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.SHA256HashProcessor;
+import org.zaproxy.zap.extension.fuzz.payloads.processor.SHA512HashProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.ScriptStringPayloadProcessorAdapter;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.TrimStringProcessor;
@@ -95,6 +96,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PostfixStringProces
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.PrefixStringProcessorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.SHA1HashProcessorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.SHA256HashProcessorUIHandler;
+import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.SHA512HashProcessorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.ScriptStringPayloadProcessorAdapterUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.TrimStringProcessorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.URLDecodeProcessorUIHandler;
@@ -246,6 +248,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                 new PrefixStringProcessorUIHandler());
         payloadProcessorsUIRegistry.registerProcessorUIHandler(SHA1HashProcessor.class, new SHA1HashProcessorUIHandler());
         payloadProcessorsUIRegistry.registerProcessorUIHandler(SHA256HashProcessor.class, new SHA256HashProcessorUIHandler());
+        payloadProcessorsUIRegistry.registerProcessorUIHandler(SHA512HashProcessor.class, new SHA512HashProcessorUIHandler());
         payloadProcessorsUIRegistry.registerProcessorUIHandler(TrimStringProcessor.class, new TrimStringProcessorUIHandler());
         payloadProcessorsUIRegistry.registerProcessorUIHandler(URLDecodeProcessor.class, new URLDecodeProcessorUIHandler());
         URLEncodeProcessorUIHandler urlEncodeProcessorUIHandler = new URLEncodeProcessorUIHandler();
