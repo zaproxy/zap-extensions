@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
@@ -77,6 +79,19 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	private Map <String, TechTableModel> siteTechMap = new HashMap <String, TechTableModel>();
 
 	private static final Logger logger = Logger.getLogger(ExtensionWappalyzer.class);
+
+	/**
+	 * The dependencies of the extension.
+	 */
+	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
+
+	static {
+		List<Class<?>> dependencies = new ArrayList<>(1);
+		dependencies.add(ExtensionPassiveScan.class);
+		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
+	}
+
+	private WappalyzerPassiveScanner passiveScanner;
 
 	/**
 	 * TODO
@@ -267,6 +282,13 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	}
 
 	@Override
+	public void init() {
+		super.init();
+
+		passiveScanner = new WappalyzerPassiveScanner();
+	}
+	
+	@Override
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
 
@@ -279,6 +301,9 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	        extensionHook.getHookView().addStatusPanel(getTechPanel());
 	        extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuEvidence());
 	    }
+
+		ExtensionPassiveScan extPScan = Control.getSingleton().getExtensionLoader().getExtension(ExtensionPassiveScan.class);
+		extPScan.addPassiveScanner(passiveScanner);
 
 	}
 
@@ -301,6 +326,19 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	@Override
 	public boolean canUnload() {
 		return true;
+	}
+
+	@Override
+	public void unload() {
+		super.unload();
+
+		ExtensionPassiveScan extPScan = Control.getSingleton().getExtensionLoader().getExtension(ExtensionPassiveScan.class);
+		extPScan.removePassiveScanner(passiveScanner);
+	}
+
+	@Override
+	public List<Class<?>> getDependencies() {
+		return EXTENSION_DEPENDENCIES;
 	}
 
 	@Override

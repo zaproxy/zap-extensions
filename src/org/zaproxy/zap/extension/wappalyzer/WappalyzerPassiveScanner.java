@@ -28,13 +28,14 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.pscan.PassiveScanner;
 
-public class WappalyzerPassiveScanner extends PluginPassiveScanner {
+public class WappalyzerPassiveScanner implements PassiveScanner {
 
 	private ExtensionWappalyzer extension = null;
 	private List<Application> applications = null;
@@ -141,6 +142,43 @@ public class WappalyzerPassiveScanner extends PluginPassiveScanner {
 	
 	@Override
 	public void setParent(PassiveScanThread parent) {
+		// Does not apply.
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		// Does not apply.
+	}
+
+	@Override
+	public AlertThreshold getLevel() {
+		return AlertThreshold.MEDIUM;
+	}
+
+	@Override
+	public void setLevel(AlertThreshold level) {
+		// Does not apply.
+	}
+
+	// @Override
+	public boolean appliesToHistoryType(int historyType) {
+		// TODO replace with core code once available
+		// return PluginPassiveScanner.getDefaultHistoryTypes().contains(historyType);
+
+		switch (historyType) {
+		case HistoryReference.TYPE_PROXIED:
+		case HistoryReference.TYPE_ZAP_USER:
+		case HistoryReference.TYPE_SPIDER:
+		case HistoryReference.TYPE_SPIDER_AJAX:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 }
