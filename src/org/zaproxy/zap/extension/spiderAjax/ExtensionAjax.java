@@ -17,6 +17,9 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
+import java.awt.Event;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
@@ -44,6 +48,7 @@ import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.view.ZapMenuItem;
 
 /**
  * Main class of the plugin, it instantiates the rest of them.
@@ -66,6 +71,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
 	private SpiderPanel spiderPanel = null;
 	private PopupMenuAjaxSite popupMenuSpiderSite = null;
+	private ZapMenuItem menuItemCustomScan;
 	private AjaxSpiderDialog spiderDialog = null;
 	private OptionsAjaxSpider optionsAjaxSpider = null;
 	private List<String> excludeList = null;
@@ -121,6 +127,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSite());
+			extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
 			ExtensionHelp.enableHelpKey(getSpiderPanel(), "addon.spiderajax.tab");
 		}
 	}
@@ -188,6 +195,27 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			popupMenuSpiderSite = new PopupMenuAjaxSite(this.getMessages().getString("spiderajax.site.popup"), this);
 		}
 		return popupMenuSpiderSite;
+	}
+
+	private ZapMenuItem getMenuItemCustomScan() {
+		if (menuItemCustomScan == null) {
+			menuItemCustomScan = new ZapMenuItem(
+					"spiderajax.menu.tools.label",
+					KeyStroke.getKeyStroke(
+							KeyEvent.VK_X,
+							Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK,
+							false));
+			menuItemCustomScan.setEnabled(Control.getSingleton().getMode() != Mode.safe);
+
+			menuItemCustomScan.addActionListener(new java.awt.event.ActionListener() {
+
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					showScanDialog(null);
+				}
+			});
+		}
+		return menuItemCustomScan;
 	}
 
 	/**
@@ -324,6 +352,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		public void sessionModeChanged(Mode mode) {
 			if (getView() != null) {
 				getSpiderPanel().sessionModeChanged(mode);
+				getMenuItemCustomScan().setEnabled(mode != Mode.safe);
 			}
 		}
 	}
