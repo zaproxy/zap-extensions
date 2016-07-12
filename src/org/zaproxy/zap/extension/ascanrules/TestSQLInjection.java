@@ -1459,4 +1459,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	public int getWascId() {
 		return 19;
 	}
+
+	@Override
+	public TechSet getTechSet() {
+		TechSet techSet = super.getTechSet();
+		if (techSet != null) {
+			return techSet;
+		}
+		return TechSet.AllTech;
+	}
 }
