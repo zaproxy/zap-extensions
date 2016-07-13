@@ -2,23 +2,19 @@
 <html>
 <head>
 <title>
-SNI Terminator
+Exterminador SNI
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>SNI Terminator</h1>
+<h1>Exterminador SNI</h1>
 <p>
-SNI Terminator allows you to use ZAP as a transparent HTTPS proxy for clients which support SNI.
+O Terminator SNI permite que você use o ZAP como um proxy HTTPS transparente para os clientes que suportam SNI.
 </p>
 <p>
-Since ZAP already works pretty well as a transparent HTTP proxy, this allows you to set up a testing LANs (or VMs) where all HTTP and HTTPS traffic is proxied regardless of software settings.
+Com o ZAP já funciona muito bem como um proxy HTTP transparente, isso permite a você configurar uma LANs (ou VMs) de teste onde todo o tráfego HTTP e HTTPS é intermediado por proxy, independentemente das configurações de software.
 </p>
 <p>
-For example, if you have a Linux machine you use for testing, you can do something like the following to forward all HTTP and HTTPS traffic to your ZAP instance running on 192.168.0.14:<br>
-<code>
-iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to-destination 192.168.0.14:8443<br>
-iptables -t nat -A OUTPUT -p tcp --dport 80 -j DNAT --to-destination 192.168.0.14:8080
-</code>
+Por exemplo, se você tiver uma máquina Linux que você usa para testes, pode fazer algo como o seguinte para encaminhar o tráfego de todos os HTTP e HTTPS para sua instância ZAP rodando em 192.168.0.14::<br> <code> iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to-destination 192.168.0.14:8443<br> iptables -t nat -A OUTPUT -p tcp --dport 80 -j DNAT --to-destination 192.168.0.14:8080 </code>
 </p>
 </body>
 </html>
