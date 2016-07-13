@@ -117,6 +117,7 @@ public class CommandPanel extends AbstractPanel {
 
 	public void clear() {
 	    getTxtOutput().setText("");
+	    getTxtOutput().discardAllEdits();
 	}
 
 	public String getCommandScript() {
@@ -125,6 +126,7 @@ public class CommandPanel extends AbstractPanel {
 	
 	protected void appendToCommandScript (String str) {
 		getTxtOutput().append(str);
+		getTxtOutput().discardAllEdits();
 		getTxtOutput().requestFocus();
 	}
 	

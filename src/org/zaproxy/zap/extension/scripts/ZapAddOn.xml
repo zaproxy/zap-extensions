@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>16</version>
+	<version>17</version>
 	<status>beta</status>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Fix exceptions when installing/uninstalling script engines, with no script selected.<br>
+	Discard undoable edits after setting a script (Isssue 2675).<br>
 	]]>
 	</changes>
 	<extensions>
