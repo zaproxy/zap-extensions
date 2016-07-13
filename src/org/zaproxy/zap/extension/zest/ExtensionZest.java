@@ -23,9 +23,11 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
@@ -692,8 +694,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				if (zsw.isIncLengthAssertion()) {
 					req.addAssertion(new ZestAssertion(
 							new ZestExpressionLength(
-									ZestVariables.RESPONSE_BODY, msg
-											.getResponseBody().length(), zsw
+									ZestVariables.RESPONSE_BODY, getResponseBodyLength(msg), zsw
 											.getLengthApprox())));
 				}
 
@@ -754,6 +755,22 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 			}
+		}
+	}
+
+	private static int getResponseBodyLength(HttpMessage message) {
+		// The following code mimics the behaviour of HttpMethodBase.getResponseBodyAsString() which is the method used by the
+		// Zest engine to obtain the response body after sending a request.
+		byte[] body = message.getResponseBody().getBytes();
+		String charset = message.getResponseHeader().getCharset();
+		if (charset == null) {
+			charset = StandardCharsets.ISO_8859_1.name();
+		}
+
+		try {
+			return new String(body, charset).length();
+		} catch (UnsupportedEncodingException e) {
+			return new String(body).length();
 		}
 	}
 
