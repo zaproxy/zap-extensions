@@ -5,6 +5,6 @@
 
 <index version="2.0">
     <indexitem text="Selenium" target="addon.selenium.intro" />
-    <indexitem text="Selenium Options" target="addon.selenium.options" />
-    <indexitem text="Selenium API" target="addon.selenium.api" />
+    <indexitem text="Opções do Selenium" target="addon.selenium.options" />
+    <indexitem text="API Selenium" target="addon.selenium.api" />
 </index>

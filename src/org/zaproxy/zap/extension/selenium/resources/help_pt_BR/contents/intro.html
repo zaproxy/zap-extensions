@@ -7,10 +7,8 @@
 <body bgcolor="#ffffff">
 	<h1>Selenium</h1>
 
-	<p>The Selenium add-on provides WebDrivers, for other add-ons, to invoke and remotely
-		control web browsers. It's also bundled the HtmlUnit web browser, an headless Java based
-		web browser.
-	<p>The following web browsers are supported:
+	<p>O complemento Selenium fornece WebDrivers, para outros complementos, para invocar e controlar remotamente navegadores da web. Ele traz embutido o HtmlUnit, navegador web baseado em Java headless.
+	<p>Há suporte para os seguintes navegadores web:
 	<ul>
 		<li>Chrome</li>
 		<li>Firefox</li>
@@ -20,50 +18,38 @@
 		<li>PhantomJS</li>
 		<li>Safari</li>
 	</ul>
-	<p>To use Firefox, Chrome, Internet Explorer, Opera, PhantomJS and Safari, you must
-		have them installed in your system.
+	<p>Para usar o Firefox, Chrome, Internet Explorer, Opera e Safari PhantomJS, você deve tê-los instalados em seu sistema.
 	<p>
-		Some of the web browsers require extra configurations, done in <a href="options.html">Options
-			Selenium screen</a>, to access and control them:
+		Alguns dos navegadores web exigem configurações extras, feitas <a href="options.html">na tela de opções Selenium</a>; para acessar e controlá-los:
 	<ul>
-		<li>Chrome - requires ChromeDriver, if not on the system's PATH, it can be set in
-			the options. For more information on ChromeDriver and how to obtain it refer to <a
-			href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
+		<li>Chrome - requer ChromeDriver, se não no caminho do sistema, pode ser definido nas opções. Para obter mais informações sobre ChromeDriver e como obtê-lo vá ao <a
+			href="https://sites.google.com/a/chromium.org/chromedriver/">site ChromeDriver</a>.
 		</li>
-		<li>PhantomJS - requires PhantomJS binary, if not on the system's PATH, it can be
-			set in the options. For more information on PhantomJS and how to obtain it refer to <a
-			href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
-			using PhantomJS).
+		<li>PhantomJS - requer PhantomJS binário, se não no caminho do sistema, ele pode ser definido nas opções. Para obter mais informações sobre PhantomJS e como obtê-lo vá ao <a
+			href="http://phantomjs.org/">site de PhantomJS</a> (ver nota de rodapé para ressalva quando usando PhantomJS).
 		</li>
-		<li>Internet Explorer - requires IEDriverServer, if not on the system's PATH, it
-			can be set in the options. For more information on IEDriverServer refer to <a
-			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">IEDriverServer
-				website</a> (see footer note for caveat when using Internet Explorer).
+		<li>Internet Explorer - necessita de IEDriverServer, se não no caminho do sistema, ele pode ser definido nas opções. Para obter mais informações sobre IEDriverServer referem-se ao <a
+			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">site de IEDriverServer</a> (ver nota de rodapé para ressalva ao usar o Internet Explorer).
 		</li>
 	</ul>
 
 	<p>
-		<strong>PhantomJS Note:</strong> There's an issue (<a
-			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
-		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Until a fix is
-		available is advised to not use it in those cases. Some add-ons might choose to show
-		warning message when that happens.
+		<strong>PhantomJS Nota:</strong> Há um problema (<a
+			href="https://github.com/ariya/phantomjs/issues/11342">problema #11342</a>) que impede que sites no localhost, 127.0.0.1 e:: 1 de serem proxies através do ZAP. Até que uma solução apareçaé aconselhável não usá-lo nesses casos. Algumas extensões podem mostrar mensagens de alerta quando isso acontecer.
 	<p>
-		<strong>Internet Explorer Note:</strong> Not all versions of Internet Explorer work out
-		of the box, refer to <a
-			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer
-			website</a> for more details on how to configure them.
-	<h2>See also</h2>
+		<strong>Nota sobre o Internet Explorer:</strong> Nem todas as versões de Internet Explorer funcionam na hora <a
+			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">Vá ao Site IEDriverServer</a> para mais detalhes sobre como configurá-lo.
+	<h2>Veja também</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">Options Selenium screen</a></td>
-			<td>for an overview of the Selenium Options</td>
+			<td><a href="options.html">Tela de opções Selenium</a></td>
+			<td>para uma visão geral das opções Selenium</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="api.html">API</a></td>
-			<td>for an overview of the Selenium API</td>
+			<td>para uma visão geral da API do Selenium</td>
 		</tr>
 	</table>
 
