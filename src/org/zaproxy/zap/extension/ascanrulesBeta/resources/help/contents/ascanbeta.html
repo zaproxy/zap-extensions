@@ -19,8 +19,12 @@ third party service, for instance. Currently checks for wildcards in Adobe's cro
 SilverLight's clientaccesspolicy.xml. 
 
 <H2>CSRF Token</H2>
-Scans for the existence of anti-CSRF tokens. 
-Alerts on requests which do not appear to contain anti-CSRF tokens.
+Scans for the existence of Anti-CSRF tokens. <br>
+Alerts on requests which do not appear to contain Anti-CSRF tokens.<br>
+Post 2.5.0 you can specify a comma separated list of identifiers in the 
+<code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
+Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
+Only use this feature to ignore FORMs that you know are safe, for example search forms.
 
 <H2>Expression Language Injection</H2>
 Checks if the web application is subject to Expression Language (EL) injection attacks, which occur

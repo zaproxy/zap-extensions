@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.htmlparser.jericho.Element;
@@ -28,6 +29,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -119,10 +121,26 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 			logger.debug("Found " + formElements.size() + " forms");
 			
 			StringBuilder sb = new StringBuilder();
+			String evidence = "";
 			int i = 1;
+			
+			List<String> ignoreList = new ArrayList<String>();
+			String ignoreConf = Model.getSingleton().getOptionsParam().getConfig().
+					getString("rules.csrf.ignorelist");
+			if (ignoreConf != null && ignoreConf.length() > 0) {
+				logger.debug("Using ignore list: " + ignoreConf);
+				for (String str : ignoreConf.split(",")) {
+					String strTrim = str.trim();
+					if (strTrim.length() > 0) {
+						ignoreList.add(strTrim);
+					}
+				}
+			}
+			int ignoredForms = 0;
 			
 			for (Element formElement : formElements) {
 				logger.debug("FORM ["+ formElement + "] has parent ["+ formElement.getParentElement()+"]");
+				StringBuilder sbForm = new StringBuilder();
 				//if the form has no parent, it is pretty likely invalid HTML (or Javascript!!!), so we will not report
 				//any alerts on it.  
 				//ie. This logic is necessary to eliminate false positives on non-HTML files.
@@ -131,13 +149,13 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 					foundCsrfToken=true;  //do not report a missing anti-CSRF field on this form
 					continue;
 				}
-					
+				if (formOnIgnoreList(formElement, ignoreList)) {
+					ignoredForms++;
+					continue;
+				}
 				
 				List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
-				if (sb.length() > 0) {
-					sb.append("], ");
-				} 
-				sb.append("[Form "+i+": ");
+				sbForm.append("[Form "+i+": ");
 				
 				if (inputElements != null && inputElements.size() > 0) {
 					// Loop through all of the INPUT elements
@@ -145,6 +163,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 					for (Element inputElement : inputElements) {
 						String attId = inputElement.getAttributeValue("ID");
 						if (attId != null) {
+							sbForm.append("\"" + attId + "\" ");
 							for (String tokenName : tokenNames) {
 								if (tokenName.equalsIgnoreCase(attId)) {
 									foundCsrfToken = true;
@@ -154,7 +173,10 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 						}
 						String name = inputElement.getAttributeValue("NAME");
 						if (name != null) {
-							sb.append("\""+name + "\" ");
+							if (attId == null) {
+								// Dont bother recording both
+								sbForm.append("\"" + name + "\" ");
+							}
 							for (String tokenName : tokenNames) {
 								if (tokenName.equalsIgnoreCase(name)) {
 									foundCsrfToken = true;
@@ -167,13 +189,21 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				if (foundCsrfToken) {
 					break;
 				}
+				if (sb.length() > 0) {
+					sb.append("], ");
+				} 
+				sb.append(sbForm.toString());
+				if (evidence.length() == 0) {
+					// Give the first FORM tag as evidence
+					evidence = formElement.getFirstElement().getStartTag().toString();
+				}
 				i++;
 			}
 			if (sb.length() > 0) {
 				sb.append(']');
 			}
 			
-			if (!foundCsrfToken) {
+			if (!foundCsrfToken && formElements.size() > ignoredForms) {
 				//No known Anti-CSRF tokens found in a form. Not a vulnerability per-se.
 				//but alert it, as a low priority
 				String formDetails = sb.toString();
@@ -191,7 +221,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				    		extraInfo,
 				    		getSolution(), 
 				            getReference(), 
-							"",	// Evidence
+							evidence,	// Evidence
 							352, // CWE-352: Cross-Site Request Forgery (CSRF)
 							9,	// WASC Id
 				            msg);
@@ -203,6 +233,25 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 			logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
 		}
 		
+	}
+
+	private boolean formOnIgnoreList(Element formElement, List<String> ignoreList) {
+		String id = formElement.getAttributeValue("id");
+		String name = formElement.getAttributeValue("name");
+		for (String ignore : ignoreList) {
+			if (ignore.equals(id)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ignoring form with id = " + id);
+				}
+				return true;
+			} else if (ignore.equals(name)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Ignoring form with name = " + name);
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
