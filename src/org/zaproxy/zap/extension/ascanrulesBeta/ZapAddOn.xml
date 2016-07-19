@@ -1,18 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>20</version>
+	<version>21</version>
 	<status>beta</status>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Prevent XXE vulnerability.<br>
-	Issue 2174: Adjust logging, catch specific exceptions.<br>
-	Issue 2178: SQLInjectionMySQL - adjust logging, catch specific exceptions.<br>
-	Issue 2179: SQLInjectionPostgresql - adjust logging, catch specific exceptions.<br>
-	Issue 2272: SQLInjectionHypersonic - adjust logging, catch specific exceptions.<br>
-	Issue 2177: SourceCodeDisclosureSVN - adjust logging.<br>
+	Support changing the length of time used in timing attacks via config options.<br>
     ]]>
 	</changes>
 	<extensions>

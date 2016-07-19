@@ -21,6 +21,7 @@ import java.net.SocketException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -55,7 +56,7 @@ import org.zaproxy.zap.model.TechSet;
  * - allows stacked queries via JDBC driver. 
  * - Constants in select must be in single quotes, not doubles (like Oracle).
  * - supports UDFs in the form of Java code (very interesting!!)
- * - 5 second delay select statement: select "java.lang.Thread.sleep"(5000) from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'
+ * - x second delay select statement: select "java.lang.Thread.sleep"(5000) from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'
  * - metadata select statement: select TABLE_NAME, COLUMN_NAME, TYPE_NAME, COLUMN_SIZE, DECIMAL_DIGITS, IS_NULLABLE from INFORMATION_SCHEMA.SYSTEM_COLUMNS		
  * 
  *  @author 70pointer
@@ -68,11 +69,16 @@ public class SQLInjectionHypersonic extends AbstractAppParamPlugin {
 	private int doUnionMaxRequests = 0;	//TODO: use in Union based, when we implement it
 	private int doTimeMaxRequests = 0;
 
+	// note this is in milliseconds
+	private int sleep = 5000;
 
 	/**
 	 * Hypersonic one-line comment
 	 */
 	public static final String SQL_ONE_LINE_COMMENT = " -- ";
+
+	private static final String ORIG_VALUE_TOKEN = "<<<<ORIGINALVALUE>>>>";
+	private static final String SLEEP_TOKEN = "<<<<SLEEP>>>>";
 
 	/**
 	 * create a map of SQL related error message fragments, and map them back to the RDBMS that they are associated with
@@ -94,13 +100,13 @@ public class SQLInjectionHypersonic extends AbstractAppParamPlugin {
 
 
 	/**
-	 * the 5 second sleep function in Hypersonic SQL
+	 * the sleep function in Hypersonic SQL
 	 */
-	private static String SQL_HYPERSONIC_TIME_FUNCTION = "\"java.lang.Thread.sleep\"(5000)";
+	private static String SQL_HYPERSONIC_TIME_FUNCTION = "\"java.lang.Thread.sleep\"(" + SLEEP_TOKEN + ")";
 
 
 	/**
-	 * Hypersonic specific time based injection strings. each for 5 seconds
+	 * Hypersonic specific time based injection strings.
 	 */
 
 	//issue with "+" symbols in here: 
@@ -119,17 +125,17 @@ public class SQLInjectionHypersonic extends AbstractAppParamPlugin {
 		"\"; select "+ SQL_HYPERSONIC_TIME_FUNCTION+ " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"+ SQL_ONE_LINE_COMMENT,
 		"); select "+ SQL_HYPERSONIC_TIME_FUNCTION+ " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"+ SQL_ONE_LINE_COMMENT,
 		SQL_HYPERSONIC_TIME_FUNCTION,	
-		"<<<<ORIGINALVALUE>>>> / "+SQL_HYPERSONIC_TIME_FUNCTION+" ",
-		"<<<<ORIGINALVALUE>>>>' / "+SQL_HYPERSONIC_TIME_FUNCTION+" / '",
-		"<<<<ORIGINALVALUE>>>>\" / "+SQL_HYPERSONIC_TIME_FUNCTION+" / \"",			
-		"<<<<ORIGINALVALUE>>>> and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>' and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>\" and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>) and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>> or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>' or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>\" or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
-		"<<<<ORIGINALVALUE>>>>) or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		ORIG_VALUE_TOKEN + " / "+SQL_HYPERSONIC_TIME_FUNCTION+" ",
+		ORIG_VALUE_TOKEN + "' / "+SQL_HYPERSONIC_TIME_FUNCTION+" / '",
+		ORIG_VALUE_TOKEN + "\" / "+SQL_HYPERSONIC_TIME_FUNCTION+" / \"",			
+		ORIG_VALUE_TOKEN + " and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		ORIG_VALUE_TOKEN + "' and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		ORIG_VALUE_TOKEN + "\" and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		ORIG_VALUE_TOKEN + ") and exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		ORIG_VALUE_TOKEN + " or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		ORIG_VALUE_TOKEN + "' or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		ORIG_VALUE_TOKEN + "\" or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
+		ORIG_VALUE_TOKEN + ") or exists ( select "+SQL_HYPERSONIC_TIME_FUNCTION+" from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"+ SQL_ONE_LINE_COMMENT, 	// Param in WHERE clause somewhere
 	};
 
 
@@ -214,6 +220,15 @@ public class SQLInjectionHypersonic extends AbstractAppParamPlugin {
 			doTimeBased=true; doTimeMaxRequests=100;
 			doUnionBased=true; doUnionMaxRequests=100;
 		}
+		// Read the sleep value from the configs - note this is in milliseconds
+		try {
+			this.sleep = this.getConfig().getInt("rules.common.sleep", 5) * 1000;
+		} catch (ConversionException e) {
+			log.debug("Invalid value for 'rules.common.sleep': " + this.getConfig().getString("rules.common.sleep"));
+		}
+		if ( this.debugEnabled ) {
+			log.debug("Sleep set to " + sleep + " milliseconds");
+		}
 	}
 
 
@@ -254,7 +269,10 @@ public class SQLInjectionHypersonic extends AbstractAppParamPlugin {
 					timeBasedSQLindex < SQL_HYPERSONIC_TIME_REPLACEMENTS.length && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
 					timeBasedSQLindex ++) {
 				HttpMessage msgAttack = getNewMsg();
-				String newTimeBasedInjectionValue = SQL_HYPERSONIC_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", paramValue);
+				String newTimeBasedInjectionValue = 
+						SQL_HYPERSONIC_TIME_REPLACEMENTS[timeBasedSQLindex].
+							replace (ORIG_VALUE_TOKEN, paramValue).
+							replace(SLEEP_TOKEN, Integer.toString(sleep));
 
 				setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
 
@@ -275,8 +293,8 @@ public class SQLInjectionHypersonic extends AbstractAppParamPlugin {
 
 				if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on field: ["+paramName+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
 
-				if (modifiedTimeUsed >= (originalTimeUsed + 5000)) {
-					//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
+				if (modifiedTimeUsed >= (originalTimeUsed + sleep)) {
+					//takes more than 5 (by default) extra seconds => likely time based SQL injection. Raise it 
 					String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, paramValue, originalTimeUsed);
 					String attack = Constant.messages.getString("ascanbeta.sqlinjection.alert.booleanbased.attack", paramName, newTimeBasedInjectionValue);
 

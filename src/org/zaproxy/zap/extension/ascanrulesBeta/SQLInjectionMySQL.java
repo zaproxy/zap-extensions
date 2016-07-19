@@ -21,6 +21,7 @@ import java.net.SocketException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -54,11 +55,15 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 	
 	private int doTimeMaxRequests = 0;
 	
+	private int sleep = 5;
 
 	/**
 	 * MySQL one-line comment
 	 */
 	public static final String SQL_ONE_LINE_COMMENT = " -- ";
+	
+	private static final String ORIG_VALUE_TOKEN = "<<<<ORIGINALVALUE>>>>";
+	private static final String SLEEP_TOKEN = "<<<<SLEEP>>>>";
 
 	/**
 	 * create a map of SQL related error message fragments, and map them back to the RDBMS that they are associated with
@@ -75,37 +80,37 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 	
 	
 	/**
-	 * MySQL specific time based injection strings. each for 5 seconds
+	 * MySQL specific time based injection strings.
 	 */
 	
 	//Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these examples below (see * comment)
 	//TODO: maybe add support for ')' after the original value, before the sleeps
 	private static String[] SQL_MYSQL_TIME_REPLACEMENTS = {
 		//LOW
-		"<<<<ORIGINALVALUE>>>> / sleep(5) ",				// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
-		"<<<<ORIGINALVALUE>>>>' / sleep(5) / '",			// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
-		"<<<<ORIGINALVALUE>>>>\" / sleep(5) / \"",			// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
+		ORIG_VALUE_TOKEN + " / sleep(" + SLEEP_TOKEN + ") ",				// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
+		ORIG_VALUE_TOKEN + "' / sleep(" + SLEEP_TOKEN + ") / '",			// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
+		ORIG_VALUE_TOKEN + "\" / sleep(" + SLEEP_TOKEN + ") / \"",			// MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is OFF. Try without a comment, to target use of the field in the SELECT clause, but also in the WHERE clauses.
 		//MEDIUM
-		"<<<<ORIGINALVALUE>>>> and 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>>' and 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>>\" and 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
+		ORIG_VALUE_TOKEN + " and 0 in (select sleep(" + SLEEP_TOKEN + ") )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
+		ORIG_VALUE_TOKEN + "' and 0 in (select sleep(" + SLEEP_TOKEN + ") )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
+		ORIG_VALUE_TOKEN + "\" and 0 in (select sleep(" + SLEEP_TOKEN + ") )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.
 		//HIGH
-		"<<<<ORIGINALVALUE>>>> where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,	// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>>' where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,	// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>>\" where 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.	
-		"<<<<ORIGINALVALUE>>>> or 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT,		// MySQL >= 5.0.12. Param in WHERE clause. 
-		"<<<<ORIGINALVALUE>>>>' or 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause. 
-		"<<<<ORIGINALVALUE>>>>\" or 0 in (select sleep(5) )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.				
+		ORIG_VALUE_TOKEN + " where 0 in (select sleep(" + SLEEP_TOKEN + ") )" + SQL_ONE_LINE_COMMENT,	// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		ORIG_VALUE_TOKEN + "' where 0 in (select sleep(" + SLEEP_TOKEN + ") )" + SQL_ONE_LINE_COMMENT,	// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		ORIG_VALUE_TOKEN + "\" where 0 in (select sleep(" + SLEEP_TOKEN + ") )" + SQL_ONE_LINE_COMMENT,// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.	
+		ORIG_VALUE_TOKEN + " or 0 in (select sleep(" + SLEEP_TOKEN + ") )" + SQL_ONE_LINE_COMMENT,		// MySQL >= 5.0.12. Param in WHERE clause. 
+		ORIG_VALUE_TOKEN + "' or 0 in (select sleep(" + SLEEP_TOKEN + ") )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause. 
+		ORIG_VALUE_TOKEN + "\" or 0 in (select sleep(" + SLEEP_TOKEN + ") )" + SQL_ONE_LINE_COMMENT, 	// MySQL >= 5.0.12. Param in WHERE clause.				
 		//INSANE	
-		"<<<<ORIGINALVALUE>>>> where 0 in (select sleep(5) ) " ,						// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>>' where 0 in (select sleep(5) ) and ''='" ,				// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>>\" where 0 in (select sleep(5) ) and \"\"=\"" ,			// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-		"<<<<ORIGINALVALUE>>>> and 0 in (select sleep(5) ) " , 							// MySQL >= 5.0.12. Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>>' and 0 in (select sleep(5) ) and ''='" , 				// MySQL >= 5.0.12. Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>>\" and 0 in (select sleep(5) ) and \"\"=\"" , 			// MySQL >= 5.0.12. Param in WHERE clause.
-		"<<<<ORIGINALVALUE>>>> or 0 in (select sleep(5) ) " ,							// MySQL >= 5.0.12. Param in WHERE clause. 
-		"<<<<ORIGINALVALUE>>>>' or 0 in (select sleep(5) ) and ''='", 					// MySQL >= 5.0.12. Param in WHERE clause. 
-		"<<<<ORIGINALVALUE>>>>\" or 0 in (select sleep(5) ) and \"\"=\"", 				// MySQL >= 5.0.12. Param in WHERE clause.
+		ORIG_VALUE_TOKEN + " where 0 in (select sleep(" + SLEEP_TOKEN + ") ) " ,						// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		ORIG_VALUE_TOKEN + "' where 0 in (select sleep(" + SLEEP_TOKEN + ") ) and ''='" ,				// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		ORIG_VALUE_TOKEN + "\" where 0 in (select sleep(" + SLEEP_TOKEN + ") ) and \"\"=\"" ,			// MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+		ORIG_VALUE_TOKEN + " and 0 in (select sleep(" + SLEEP_TOKEN + ") ) " , 							// MySQL >= 5.0.12. Param in WHERE clause.
+		ORIG_VALUE_TOKEN + "' and 0 in (select sleep(" + SLEEP_TOKEN + ") ) and ''='" , 				// MySQL >= 5.0.12. Param in WHERE clause.
+		ORIG_VALUE_TOKEN + "\" and 0 in (select sleep(" + SLEEP_TOKEN + ") ) and \"\"=\"" , 			// MySQL >= 5.0.12. Param in WHERE clause.
+		ORIG_VALUE_TOKEN + " or 0 in (select sleep(" + SLEEP_TOKEN + ") ) " ,							// MySQL >= 5.0.12. Param in WHERE clause. 
+		ORIG_VALUE_TOKEN + "' or 0 in (select sleep(" + SLEEP_TOKEN + ") ) and ''='", 					// MySQL >= 5.0.12. Param in WHERE clause. 
+		ORIG_VALUE_TOKEN + "\" or 0 in (select sleep(" + SLEEP_TOKEN + ") ) and \"\"=\"", 				// MySQL >= 5.0.12. Param in WHERE clause.
 	};
 	
 
@@ -141,7 +146,7 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 
 	@Override
 	public boolean targets(TechSet techonologies) {
-		return techonologies.includes(Tech.Db.MySQL);
+		return techonologies.includes(Tech.MySQL);
 	}
 
 	@Override
@@ -178,6 +183,17 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 		} else if ( this.getAttackStrength() == AttackStrength.INSANE) {
 			doTimeBased=true; doTimeMaxRequests=100;
 		}
+
+		// Read the sleep value from the configs
+		try {
+			this.sleep = this.getConfig().getInt("rules.common.sleep", 5);
+		} catch (ConversionException e) {
+			log.debug("Invalid value for 'rules.common.sleep': " + this.getConfig().getString("rules.common.sleep"));
+		}
+		if ( this.debugEnabled ) {
+			log.debug("Sleep set to " + sleep + " seconds");
+		}
+		
 	}
 
 
@@ -206,7 +222,7 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 			//then the rest of the time based logic will fail.  Lets double-check for that scenario by requesting the url again.  
 			//If it comes back in a more reasonable time, we will use that time instead as our baseline.  If it come out in a slow fashion again, 
 			//we will abort the check on this URL, since we will only spend lots of time trying request, when we will (very likely) not get positive results.
-			if (originalTimeUsed > 5000) {
+			if (originalTimeUsed > sleep * 1000) {
 				long originalTimeStarted2 = System.currentTimeMillis();
 				try {
 					sendAndReceive(msgTimeBaseline, false); //do not follow redirects
@@ -219,7 +235,7 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 					return; // No need to keep going
 				}
 				long originalTimeUsed2 = System.currentTimeMillis() - originalTimeStarted2;
-				if ( originalTimeUsed2 > 5000 ) {
+				if ( originalTimeUsed2 > sleep * 1000 ) {
 					//no better the second time around.  we need to bale out.
 					if ( this.debugEnabled ) log.debug("Both base time checks 1 and 2 for ["+msgTimeBaseline.getRequestHeader().getMethod()+"] URL ["+msgTimeBaseline.getRequestHeader().getURI().getURI()+"] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.");
 					return;
@@ -240,7 +256,10 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 					timeBasedSQLindex < SQL_MYSQL_TIME_REPLACEMENTS.length && doTimeBased && countTimeBasedRequests < doTimeMaxRequests; 
 					timeBasedSQLindex ++) {
 				HttpMessage msg3 = getNewMsg();
-				String newTimeBasedInjectionValue = SQL_MYSQL_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", originalParamValue);
+				String newTimeBasedInjectionValue = 
+						SQL_MYSQL_TIME_REPLACEMENTS[timeBasedSQLindex].
+								replace(ORIG_VALUE_TOKEN, originalParamValue).
+								replace(SLEEP_TOKEN, Integer.toString(sleep));
 				setParameter(msg3, paramName, newTimeBasedInjectionValue);
 
 				//send it.
@@ -260,10 +279,10 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 
 				if ( this.debugEnabled ) log.debug ("Time Based SQL Injection test: ["+ newTimeBasedInjectionValue + "] on field: ["+paramName+"] with value ["+newTimeBasedInjectionValue+"] took "+ modifiedTimeUsed + "ms, where the original took "+ originalTimeUsed + "ms");
 
-				//add some small leeway on the 5 seconds, since adding a 5 second delay in the SQL query will not cause the request
-				//to take a full 5 seconds longer to run than the original..
-				if (modifiedTimeUsed >= (originalTimeUsed + 5000 - 200)) {  
-					//takes more than 5 extra seconds => likely time based SQL injection. Raise it 
+				//add some small leeway on the time, since adding a 5 (by default) second delay in the SQL query will not cause the request
+				//to take a full 5 (by default) seconds longer to run than the original..
+				if (modifiedTimeUsed >= (originalTimeUsed + (sleep * 1000) - 200)) {  
+					//takes more than 5 (by default) extra seconds => likely time based SQL injection. Raise it 
 
 					//Likely a SQL Injection. Raise it
 					String extraInfo = Constant.messages.getString("ascanbeta.sqlinjection.alert.timebased.extrainfo", newTimeBasedInjectionValue, modifiedTimeUsed, originalParamValue, originalTimeUsed);

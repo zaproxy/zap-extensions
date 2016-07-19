@@ -59,7 +59,9 @@ Session Fixation may be possible. If this issue occurs with a login URL (where t
 <H2>ShellShock - CVE-2014-6271</H2>
 
 This scanner perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
-The first is a simple reflected attack and the second is a time based attack.
+The first is a simple reflected attack and the second is a time based attack.<br>
+<br>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
 <H2>Source Code Disclosure - CVE-2012-1823</H2>
 Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.
@@ -80,7 +82,9 @@ injection vulnerabilities in a suspected Hypersonic database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
 to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
 load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
+The scanner tests only for time-based SQL injection vulnerabilities.<br>
+<br>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
 <H2>SQL Injection - MySQL (Time Based)</H2>
 
@@ -92,7 +96,9 @@ injection vulnerabilities in a suspected MySQL database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
 to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
 load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
+The scanner tests only for time-based SQL injection vulnerabilities.<br>
+<br>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
 <H2>SQL Injection - Oracle (Time Based)</H2>
 
@@ -104,7 +110,9 @@ injection vulnerabilities in a suspected Oracle database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
 to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
 load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
+The scanner tests only for time-based SQL injection vulnerabilities.<br>
+<br>
+Note that this rule does not currently allow you to change the length of time used for the timing attacks due to the way the delay is caused. 
 
 <H2>SQL Injection - PostgreSQL (Time Based)</H2>
 
@@ -116,7 +124,9 @@ injection vulnerabilities in a suspected PostgreSQL database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
 to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
 load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
+The scanner tests only for time-based SQL injection vulnerabilities.<br>
+<br>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
 <H2>Username Enumeration</H2>
 It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
