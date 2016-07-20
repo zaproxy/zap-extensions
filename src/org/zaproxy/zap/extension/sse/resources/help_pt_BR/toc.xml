@@ -4,11 +4,11 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+	<tocitem text="ZAP - Guia do Usuário" tocid="toplevelitem">
+		<tocitem text="Complementos" tocid="addons">
 			<tocitem text="Eventos do Servidor" image="html5connectivity" >
-		    	<tocitem text="Introduction" target="sse.introduction"/>
-				<tocitem text="Tab" target="sse.tab"/>
+		    	<tocitem text="Introdução" target="sse.introduction"/>
+				<tocitem text="Aba" target="sse.tab"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
