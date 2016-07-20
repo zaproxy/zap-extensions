@@ -1,14 +1,14 @@
 <zapaddon>
 	<name>Invoke Applications</name>
-	<version>3</version>
+	<version>4</version>
 	<status>beta</status>
 	<description>Invoke external applications passing context related information such as URLs and parameters</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
-	Show applications immediately after ZAP re/start (Issue 1709).]]>
+	Allow to invoke the applications in all UI components that show HTTP messages.<br>
+	]]>
 	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.invoke.ExtensionInvoke</extension>
