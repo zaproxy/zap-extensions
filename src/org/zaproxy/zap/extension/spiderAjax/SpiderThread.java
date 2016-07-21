@@ -18,7 +18,6 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.EventQueue;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
@@ -60,11 +58,9 @@ public class SpiderThread implements Runnable {
 
 	private static final String LOCAL_PROXY_IP = "127.0.0.1";
 
-	// crawljax config
-	private String url = null;
-	private AjaxSpiderParam params = null;
+	private final String displayName;
+	private final AjaxSpiderTarget target;
 	private CrawljaxRunner crawljax;
-	private final boolean spiderInScope;
 	private boolean running;
 	private final Session session;
 	private static final Logger logger = Logger.getLogger(SpiderThread.class);
@@ -78,25 +74,22 @@ public class SpiderThread implements Runnable {
 	private int proxyPort;
 
 	/**
+	 * Constructs a {@code SpiderThread} for the given target.
 	 * 
-	 * @param url
-	 * @param extension
-	 * @param inScope
+	 * @param displayName the name of the scan, must not be {@code null}.
+	 * @param target the target, must not be {@code null}.
+	 * @param extension the extension, must not be {@code null}.
+	 * @param spiderListener the listener, must not be {@code null}.
 	 */
-	SpiderThread(String url, ExtensionAjax extension, boolean inScope, AjaxSpiderParam params, SpiderListener spiderListener) throws URIException {
-		this.url = url;
-		this.params = params;
-		this.spiderInScope = inScope;
+	SpiderThread(String displayName, AjaxSpiderTarget target, ExtensionAjax extension, SpiderListener spiderListener) {
+		this.displayName = displayName;
+		this.target = target;
 		this.running = false;
 		spiderListeners = new ArrayList<>(2);
 		spiderListeners.add(spiderListener);
 		this.session = extension.getModel().getSession();
 		this.exclusionList = session.getExcludeFromSpiderRegexs();
-		try {
-			this.targetHost = new java.net.URI(url).getHost();
-		} catch(URISyntaxException e) {
-			throw new URIException(e.getReason());
-		}
+		this.targetHost = target.getStartUri().getHost();
 
 		createOutOfScopeResponse(extension.getMessages().getString("spiderajax.outofscope.response"));
 
@@ -144,36 +137,37 @@ public class SpiderThread implements Runnable {
 	}
 	
 	public CrawljaxConfiguration createCrawljaxConfiguration() {
-		CrawljaxConfigurationBuilder configurationBuilder = CrawljaxConfiguration.builderFor(this.url);
+		CrawljaxConfigurationBuilder configurationBuilder = CrawljaxConfiguration.builderFor(target.getStartUri().toString());
 
 		configurationBuilder.setProxyConfig(ProxyConfiguration.manualProxyOn(LOCAL_PROXY_IP, proxyPort));
 
 		configurationBuilder.setBrowserConfig(new BrowserConfiguration(
 				com.crawljax.browser.EmbeddedBrowser.BrowserType.FIREFOX,
-				params.getNumberOfBrowsers(),
-				new AjaxSpiderBrowserBuilder(params.getBrowserId())));
+				target.getOptions().getNumberOfBrowsers(),
+				new AjaxSpiderBrowserBuilder(target.getOptions().getBrowserId())));
 
-		if (params.isClickDefaultElems()) {
+		if (target.getOptions().isClickDefaultElems()) {
 			configurationBuilder.crawlRules().clickDefaultElements();
 		} else {
-			for (String elem : params.getElemsNames()) {
+			for (String elem : target.getOptions().getElemsNames()) {
 				configurationBuilder.crawlRules().click(elem);
 			}
 		}
 
-		configurationBuilder.crawlRules().insertRandomDataInInputForms(params.isRandomInputs());
-		configurationBuilder.crawlRules().waitAfterEvent(params.getEventWait(),TimeUnit.MILLISECONDS);
-		configurationBuilder.crawlRules().waitAfterReloadUrl(params.getReloadWait(),TimeUnit.MILLISECONDS);
+		configurationBuilder.crawlRules().followExternalLinks(true);
+		configurationBuilder.crawlRules().insertRandomDataInInputForms(target.getOptions().isRandomInputs());
+		configurationBuilder.crawlRules().waitAfterEvent(target.getOptions().getEventWait(),TimeUnit.MILLISECONDS);
+		configurationBuilder.crawlRules().waitAfterReloadUrl(target.getOptions().getReloadWait(),TimeUnit.MILLISECONDS);
 
-		if (params.getMaxCrawlStates() == 0) {
+		if (target.getOptions().getMaxCrawlStates() == 0) {
 			configurationBuilder.setUnlimitedStates();
 		} else {
-			configurationBuilder.setMaximumStates(params.getMaxCrawlStates());
+			configurationBuilder.setMaximumStates(target.getOptions().getMaxCrawlStates());
 		}
 				
-		configurationBuilder.setMaximumDepth(params.getMaxCrawlDepth());
-		configurationBuilder.setMaximumRunTime(params.getMaxDuration(),TimeUnit.MINUTES);
-		configurationBuilder.crawlRules().clickOnce(params.isClickElemsOnce());
+		configurationBuilder.setMaximumDepth(target.getOptions().getMaxCrawlDepth());
+		configurationBuilder.setMaximumRunTime(target.getOptions().getMaxDuration(),TimeUnit.MINUTES);
+		configurationBuilder.crawlRules().clickOnce(target.getOptions().isClickElemsOnce());
 		
 		configurationBuilder.addPlugin(DummyPlugin.DUMMY_PLUGIN);
 				
@@ -185,7 +179,7 @@ public class SpiderThread implements Runnable {
 	 */
 	@Override
 	public void run() {
-		logger.info("Running crawljax targeting " + this.url );
+		logger.info("Running Crawljax: " + displayName);
 		this.running = true;
 		notifyListenersSpiderStarted();
 		logger.info("Starting proxy...");
@@ -195,12 +189,12 @@ public class SpiderThread implements Runnable {
 			crawljax = new CrawljaxRunner(createCrawljaxConfiguration());
 			crawljax.call();
         } catch (ProvisionException e) {
-            logger.warn("Failed to start browser " + params.getBrowserId(), e);
+            logger.warn("Failed to start browser " + target.getOptions().getBrowserId(), e);
             if (View.isInitialised()) {
                 ExtensionSelenium extSelenium = Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionSelenium.class);
-                Browser browser = Browser.getBrowserWithId(params.getBrowserId());
+                Browser browser = Browser.getBrowserWithId(target.getOptions().getBrowserId());
                 View.getSingleton().showWarningDialog(extSelenium.getWarnMessageFailedToStart(browser));
             }
 		} catch (Exception e) {
@@ -211,7 +205,7 @@ public class SpiderThread implements Runnable {
 			stopProxy();
 			logger.info("Proxy stopped.");
 			notifyListenersSpiderStoped();
-			logger.info("Finished crawljax targeting " + this.url );
+			logger.info("Finished Crawljax: " + displayName);
 		}
 	}
 
@@ -266,7 +260,12 @@ public class SpiderThread implements Runnable {
 		public boolean onHttpRequestSend(HttpMessage httpMessage) {
 			boolean excluded = false;
 			final String uri = httpMessage.getRequestHeader().getURI().toString();
-			if (spiderInScope) {
+			if (target.getContext() != null) {
+				if (!target.getContext().isInContext(uri)) {
+					logger.debug("Excluding request [" + uri + "] not in specified context.");
+					excluded = true;
+				}
+			} else if (target.isInScopeOnly()) {
 				if (!session.isInScope(uri)) {
 					logger.debug("Excluding request [" + uri + "] not in scope.");
 					excluded = true;
@@ -289,6 +288,7 @@ public class SpiderThread implements Runnable {
 				return true;
 			}
 
+			httpMessage.setRequestingUser(target.getUser());
 			return false;
 		}
 

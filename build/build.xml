@@ -378,7 +378,7 @@
 		<build-addon name="reveal" />
 		<build-addon name="saverawmessage" />
 		<build-selenium-addon />
-		<build-addon name="spiderAjax" />
+		<build-spiderajax-addon />
 		<build-addon name="websocket" />
 
 	</target>
@@ -540,8 +540,22 @@
 		<generate-wiki-core addon="selenium" />
 	</target>
 
-	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
-		<build-deploy-addon name="spiderAjax" />
+	<macrodef name="build-spiderajax-addon" description="Builds AJAX Spider add-on">
+		<sequential>
+			<build-addon name="spiderAjax">
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="com/crawljax/core/**"/>
+					</zipfileset>
+				</jar>
+			</build-addon>
+		</sequential>
+	</macrodef>
+
+	<target name="deploy-spiderAjax" depends="clean, compile" description="deploy the spiderAjax extension">
+		<build-spiderajax-addon />
+		<deploy-addon name="spiderAjax" />
 	</target>
 
 	<target name="generate-wiki-spiderAjax" description="Generates the wiki of spiderAjax">
