@@ -23,6 +23,21 @@ For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active
 <H2>Expression Language Injection</H2>
 The software constructs all or part of an expression language (EL) statement in a Java Server Page (JSP) using externally-influenced input from an upstream component, but it does not neutralize or incorrectly neutralizes special elements that could modify the intended EL statement before it is executed. In certain versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) in which Expression Language tags would be evaluated twice, which effectively exposed any application to EL injection. However, even for later versions, this weakness is still possible depending on configuration.
 
+<H2>HTTP Only Site</H2>
+This active scanner checks whether an HTTP site is served under HTTPS.
+
+<H2>Httpoxy</H2>
+This active scanner checks whether a site is using the HTTP Proxy header specified in the request.<br>
+It sets up an HTTP proxy which listens to all interfaces on a randomly assigned free port.
+It then sends a series of requests to the target server with the HTTP Proxy header set to each of the available
+IP addresses and the port that it is listening on.
+If a request is received on the new port then the server is very likely to be vulnerable.<br>
+<b>IMPORTANT</b> - the computer that ZAP is running on must accept incoming requests on arbitrary ports -
+if a firewall prevents incoming connections then this rule will not work. 
+
+<H2>HTTPS As HTTP Scanner</H2>
+This active scanner attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
+
 <H2>LDAP Injection</H2>
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
 
@@ -31,12 +46,6 @@ Uses local file inclusion techniques to scan for files containing source code on
 
 <H2>Source Code Disclosure - Git</H2>
 Uses Git source code repository metadata to scan for files containing source code on the web server.
-
-<H2>HTTP Only Site</H2>
-This active scanner checks whether an HTTP site is served under HTTPS.
-
-<H2>HTTPS As HTTP Scanner</H2>
-This active scanner attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
 
 <H2>User Agent Fuzzer</H2>
 This active scanner checks for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). The scanner compares the response statuscode and the hashcode of the response body with the original response.

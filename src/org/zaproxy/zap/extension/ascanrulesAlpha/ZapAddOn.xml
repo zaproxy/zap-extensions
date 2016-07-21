@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>16</version>
+	<version>17</version>
 	<status>alpha</status>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAscanrulesAlphaAscanalpha</url>
 	<changes>
 	<![CDATA[
-	Deleted Integer Overflow scanner.<br>
-	Issue 823: i18n (internationalise) alpha rules.<br>
-	Add CWE and WASC IDs to active scanners which may have been lacking those details.<br>
-	Issue 2207: Added Http Only Site Active scan rule.<br>
+	Added Httpoxy scanner.<br>
   	]]>
 	</changes>
 	<extensions>
@@ -20,6 +17,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpOnlySite</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpoxyScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.LDAPInjection</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ProxyDisclosureScanner</ascanrule>
