@@ -19,6 +19,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,8 @@ public class Csrftokenscan extends AbstractAppPlugin {
 
 	private static final String MESSAGE_PREFIX = "ascanbeta.csrftokenscan.";
 	private static final int PLUGIN_ID = 20012;
+
+	private List<String> ignoreList = new ArrayList<String>();
 	
 	// WASC Threat Classification (WASC-9)
 	private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
@@ -135,7 +138,16 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	 */
 	@Override
 	public void init() {
-
+		String ignoreConf = getConfig().getString("rules.csrf.ignorelist");
+		if (ignoreConf != null && ignoreConf.length() > 0) {
+			log.debug("Using ignore list: " + ignoreConf);
+			for (String str : ignoreConf.split(",")) {
+				String strTrim = str.trim();
+				if (strTrim.length() > 0) {
+					ignoreList.add(strTrim);
+				}
+			}
+		}
 	}
 
 	/**
@@ -147,63 +159,94 @@ public class Csrftokenscan extends AbstractAppPlugin {
 
 		boolean vuln = false;
 		Map<String, String> tagsMap = new HashMap<>();
-		Source s;
+		Source s1;
 		try {		
 			// We parse the HTML of the response
-			s = new Source(new StringReader(getBaseMsg().getResponseBody().toString()));
+			s1 = new Source(new StringReader(getBaseMsg().getResponseBody().toString()));
 
-			/* If the page has input fields, it performs a potential critical
-			 * action and it will be vulnerable to CSRF if not proved otherwise*/
-			if (!s.getAllElements(HTMLElementName.INPUT).isEmpty()) {
-				vuln = true;
-				log.debug("The page has parameters marked temporary vulnerable");
+			List<Element> formElements = s1.getAllElements(HTMLElementName.FORM);
 			
-				// We store the hidden input fields in a hash map.
-				List<Element> iElements = s.getAllElements(HTMLElementName.INPUT);
-				for (Element element : iElements) {
-					if (isHiddenInputElement(element) && hasNameAttribute(element)) {
-						final String name = element.getAttributeValue("name");
-						final String value = getNonNullValueAttribute(element);
+			int formIdx = 0;
+			for (Element formElement : formElements) {
+				
+				if (formOnIgnoreList(formElement)) {
+					continue;
+				}
+				
+				// Assume the worst
+				vuln = true;
+				List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
+				for (Element inputElement : inputElements) {
+					if (isHiddenInputElement(inputElement) && hasNameAttribute(inputElement)) {
+						final String name = inputElement.getAttributeValue("name");
+						final String value = getNonNullValueAttribute(inputElement);
 						tagsMap.put(name, value);
 						log.debug("Input Tag: " + name + ", " + value);
 					}
+					
 				}
-	
 				// We clean up the cookies and perform again the request
+				// TODO wont this loose our session if we are authenticated?
 				HttpMessage newMsg = getNewMsg();
 				newMsg.setCookieParams(new TreeSet<HtmlParameter>());
 				sendAndReceive(newMsg);
 	
 				// We parse the HTML of the response
-				s = new Source(new StringReader(newMsg.getResponseBody().toString()));
-				iElements = s.getAllElements(HTMLElementName.INPUT);
-	
-				// We store the hidden input fields in a hash map.
-				for (Element element2 : iElements) {
-					if (isHiddenInputElement(element2) && hasNameAttribute(element2)) {
-						final String name = element2.getAttributeValue("name");
-						final String newValue = getNonNullValueAttribute(element2);
-						final String oldValue = tagsMap.get(name);
-						if (oldValue != null && !newValue.equals(oldValue)) {
-							log.debug("Found Anti-CSRF token: " + name + ", " + newValue);
-							vuln = false;
+				Source s2 = new Source(new StringReader(newMsg.getResponseBody().toString()));
+				List<Element> form2Elements = s2.getAllElements(HTMLElementName.FORM);
+				if (form2Elements.size() > formIdx) {
+					
+					List<Element> iElements = form2Elements.get(formIdx).getAllElements(HTMLElementName.INPUT);
+					
+					// We store the hidden input fields in a hash map.
+					for (Element element2 : iElements) {
+						if (isHiddenInputElement(element2) && hasNameAttribute(element2)) {
+							final String name = element2.getAttributeValue("name");
+							final String newValue = getNonNullValueAttribute(element2);
+							final String oldValue = tagsMap.get(name);
+							if (oldValue != null && !newValue.equals(oldValue)) {
+								log.debug("Found Anti-CSRF token: " + name + ", " + newValue);
+								vuln = false;
+							}
 						}
 					}
+					// If vulnerable, generates the alert
+					if (vuln) {
+						String evidence = formElement.getFirstElement().getStartTag().toString();
+						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, 
+								getBaseMsg().getRequestHeader().getURI().toString(),
+								"",	// No param 
+								"", // No attack
+								"", // No otherinfo
+								evidence,
+								getBaseMsg());
+					}
 				}
-				// If vulnerable, generates the alert
-				if (vuln) {
-					// TODO attack should probably be the relevant FORM tag 
-					String attack = Constant.messages.getString("ascanbeta.noanticsrftokens.alert.attack");
-					String extraInfo = Constant.messages.getString("ascanbeta.noanticsrftokens.alert.extrainfo");
-					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, 
-							getBaseMsg().getRequestHeader().getURI().toString(),
-							attack, extraInfo, getSolution(),
-							getBaseMsg());
-				}
+
+				formIdx++;
 			}
 		} catch (IOException e) {
 			log.error(e);
 		}
+	}
+
+	private boolean formOnIgnoreList(Element formElement) {
+		String id = formElement.getAttributeValue("id");
+		String name = formElement.getAttributeValue("name");
+		for (String ignore : ignoreList) {
+			if (ignore.equals(id)) {
+				if (log.isDebugEnabled()) {
+					log.debug("Ignoring form with id = " + id);
+				}
+				return true;
+			} else if (ignore.equals(name)) {
+				if (log.isDebugEnabled()) {
+					log.debug("Ignoring form with name = " + name);
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
     private static boolean isHiddenInputElement(Element inputElement) {

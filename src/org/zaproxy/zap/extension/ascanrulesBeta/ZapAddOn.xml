@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Support changing the length of time used in timing attacks via config options.<br>
+	Support ignoring specified forms when checking for CSRF vulnerabilities.<br>
     ]]>
 	</changes>
 	<extensions>
