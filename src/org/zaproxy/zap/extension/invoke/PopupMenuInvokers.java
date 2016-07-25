@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.invoke;
 import java.util.List;
 
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuHttpMessageContainer;
 
 public class PopupMenuInvokers extends PopupMenuHttpMessageContainer {
@@ -46,17 +45,6 @@ public class PopupMenuInvokers extends PopupMenuHttpMessageContainer {
     @Override
     protected boolean isButtonEnabledForNumberOfSelectedMessages(int numberOfSelectedMessages) {
         return true;
-    }
-
-    @Override
-    protected boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
-        switch (invoker) {
-        case SITES_PANEL:
-        case HISTORY_PANEL:
-            return true;
-        default:
-            return false;
-        }
     }
 
     public void setApps(List<InvokableApp> apps) {
