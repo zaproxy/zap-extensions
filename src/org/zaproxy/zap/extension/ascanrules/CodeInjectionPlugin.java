@@ -103,8 +103,8 @@ public class CodeInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     @Override
-    public boolean targets(TechSet techonologies) {
-        if (techonologies.includes(Tech.ASP) || techonologies.includes(Tech.PHP)) {
+    public boolean targets(TechSet technologies) {
+        if (technologies.includes(Tech.ASP) || technologies.includes(Tech.PHP)) {
             return true;
         }
         return false;
