@@ -145,8 +145,8 @@ public class SQLInjectionMySQL extends AbstractAppParamPlugin {
 	}
 
 	@Override
-	public boolean targets(TechSet techonologies) {
-		return techonologies.includes(Tech.MySQL);
+	public boolean targets(TechSet technologies) {
+		return technologies.includes(Tech.MySQL);
 	}
 
 	@Override

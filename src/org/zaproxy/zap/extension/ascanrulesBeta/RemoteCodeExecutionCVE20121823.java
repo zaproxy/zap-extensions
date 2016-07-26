@@ -79,7 +79,7 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 
 	@Override
 	public boolean targets(TechSet technologies) {
-		if (technologies.includes(Tech.Lang.PHP)) {
+		if (technologies.includes(Tech.PHP)) {
 			return true;
 		}
 		return false;
