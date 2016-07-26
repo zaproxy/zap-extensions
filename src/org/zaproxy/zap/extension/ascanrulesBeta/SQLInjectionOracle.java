@@ -152,8 +152,8 @@ public class SQLInjectionOracle extends AbstractAppParamPlugin {
 	}
 
 	@Override
-	public boolean targets(TechSet techonologies) {
-		return techonologies.includes(Tech.Db.Oracle);
+	public boolean targets(TechSet technologies) {
+		return technologies.includes(Tech.Oracle);
 	}
 
 	@Override

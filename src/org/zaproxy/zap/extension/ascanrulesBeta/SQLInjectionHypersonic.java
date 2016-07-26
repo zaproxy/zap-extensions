@@ -170,8 +170,8 @@ public class SQLInjectionHypersonic extends AbstractAppParamPlugin {
 	}
 
 	@Override
-	public boolean targets(TechSet techonologies) {
-		return techonologies.includes(Tech.Db.HypersonicSQL);
+	public boolean targets(TechSet technologies) {
+		return technologies.includes(Tech.HypersonicSQL);
 	}
 
 	@Override

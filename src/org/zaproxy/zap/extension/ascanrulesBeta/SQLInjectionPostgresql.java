@@ -159,8 +159,8 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 	}
 
 	@Override
-	public boolean targets(TechSet techonologies) {
-		return techonologies.includes(Tech.PostgreSQL);
+	public boolean targets(TechSet technologies) {
+		return technologies.includes(Tech.PostgreSQL);
 	}
 
 	@Override
