@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 		Issue 2538: Strict-Transport-Security Header Scanner additional variants.<br>
+		Issue 2716: Implement a passive check for cookies without SameSite set.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -18,6 +19,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.Base64Disclosure</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.BigRedirectsScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CacheableScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CookieSameSiteScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ContentSecurityPolicyMissingScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CrossDomainMisconfiguration</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.DirectoryBrowsingScanner</pscanrule>
