@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Utility class to extract/parse/check Set-Cookie header values.
  */
@@ -60,6 +63,85 @@ class SetCookieUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * Return the value of the specified attribute in the given Set-Cookie header value, or null if it is not present.
+     *
+     * @param headerValue the value of the header
+     * @param attributeName the name of the attribute
+     * @return the attribute value, or null if it is not present
+     */
+    public static String getAttributeValue(String headerValue, String attributeName) {
+        validateParameterNotNull(headerValue, "headerValue");
+        validateParameterNotNull(attributeName, "attributeName");
+
+        if (headerValue.isEmpty() || attributeName.isEmpty()) {
+            return null;
+        }
+
+        String[] cookieElements = headerValue.split(";");
+        if (cookieElements.length == 1 || !isCookieNameValuePairValid(cookieElements[0])) {
+            return null;
+        }
+
+        for (int i = 1; i < cookieElements.length; i++) {
+            String[] attribute = cookieElements[i].split("=", 2);
+            if (attribute.length > 1 && 
+                    attributeName.equalsIgnoreCase(attribute[0].trim())) {
+                return attribute[1].trim();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the name of the cookie in the given Set-Cookie header value, or null if not found.
+     *
+     * @param cookieHeaderValue the value of the header value
+     * @return the name of the cookie, or null if not found
+     */
+    public static String getCookieName(String cookieHeaderValue) {
+        validateParameterNotNull(cookieHeaderValue, "cookieHeaderValue");
+
+        if (cookieHeaderValue.isEmpty()) {
+            return null;
+        }
+
+        int nameValuePairIdx = cookieHeaderValue.indexOf('=');
+        if (nameValuePairIdx == NOT_FOUND) {
+            return null;
+        }
+
+        return cookieHeaderValue.substring(0, nameValuePairIdx).trim();
+    }
+
+    /**
+     * Returns the relevant SetCookie or SetCookie2 line as well as just the cookie name, or null if not found.
+     * Typically used for the evidence field in alerts as it does not include the cookie value.
+     *
+     * @param header the full header
+     * @param cookieHeaderValue the value of the header value
+     * @return SetCookie(2) plus name of the cookie, or null if not found
+     */
+    public static String getSetCookiePlusName(String header, String cookieHeaderValue) {
+        validateParameterNotNull(header, "header");
+        validateParameterNotNull(cookieHeaderValue, "cookieHeaderValue");
+
+        if (header.isEmpty() || cookieHeaderValue.isEmpty()) {
+            return null;
+        }
+        String name = getCookieName(cookieHeaderValue);
+
+        // First find the right line
+        Pattern pattern = Pattern.compile("Set-Cookie.*" + Pattern.quote(cookieHeaderValue), Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(header);
+        if (matcher.find()) {
+            // Found a line that matches
+            String match = matcher.group();
+            return match.substring(0, match.indexOf(name) + name.length());
+        }
+        return null;
     }
 
     private static boolean isCookieNameValuePairValid(String nameValuePair) {

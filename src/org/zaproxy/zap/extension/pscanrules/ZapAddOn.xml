@@ -1,17 +1,15 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>17</version>
+	<version>18</version>
 	<status>release</status>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Correctly check that the cookie being set has the Secure and HttpOnly attributes.<br>
-	Do not set the attack field for Private IP Disclosure and Secure Pages Include Mixed Content.<br>
-	Remove "N/A" parameter from the alert of Application Error Disclosure.<br>
-	Issue 2539 - X-Frame-Options passive scanner, add compliance variants.<br>
-	Corrected Password Autocomplete parameter in alert
+	Only report issues on errors and redirects at LOW threshold.<br>
+	Only report X-Frame-Options issues at LOW threshold if CSP 'frame-ancestors' element present.<br> 
+	Issue 2732: False positives for security headers missing due to redirections.<br>
 	]]>
 	</changes>
 	<extensions>

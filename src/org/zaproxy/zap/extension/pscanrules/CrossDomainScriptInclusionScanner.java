@@ -46,6 +46,7 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 	
 	private PassiveScanThread parent = null;
 	private static final Logger logger = Logger.getLogger(CrossDomainScriptInclusionScanner.class);
+	private Model model = null;
 	
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -59,15 +60,24 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 			if (sourceElements != null) {
 				for (Element sourceElement : sourceElements) {
 					String src = sourceElement.getAttributeValue("src");
-						if (src != null && isScriptFromOtherDomain(msg.getRequestHeader().getHostName(), src, msg)) {
-							this.raiseAlert(msg, id, src);
-						}	
+					if (src != null && isScriptFromOtherDomain(msg.getRequestHeader().getHostName(), src, msg)) {
+						String integrity = sourceElement.getAttributeValue("integrity");
+						if (integrity == null || integrity.trim().length() == 0) {
+							/*
+							 * If it has an integrity value assume its fine
+							 * We dont check the integrity value is valid because
+							 * 1. pscan rules cant make new requests and
+							 * 2. the browser will check it anyway
+							 */
+							this.raiseAlert(msg, id, src, sourceElement.toString());
+						}
+					}	
 				}	
 			}
 		}
 	}
 
-	private void raiseAlert(HttpMessage msg, int id, String crossDomainScript) {
+	private void raiseAlert(HttpMessage msg, int id, String crossDomainScript, String evidence) {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
@@ -78,7 +88,7 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 		    	    "",
 		    	    getSolution(), 
 		            "", 
-		            crossDomainScript, // evidence
+		            evidence,
 		            829,	// CWE Id 829 - Inclusion of Functionality from Untrusted Control Sphere
 		            15,	// WASC Id 15 - Application Misconfiguration
 		            msg);
@@ -109,6 +119,20 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}
 	
+	private Model getModel() {
+		if (this.model == null) {
+			this.model = Model.getSingleton();
+		}
+		return this.model;
+	}
+	
+	/*
+	 * Just for use in the unit tests
+	 */
+	protected void setModel(Model model) {
+		this.model = model;
+	}
+	
 	private boolean isScriptFromOtherDomain (String host, String scriptURL, HttpMessage msg){
 		if (!scriptURL.startsWith("//") && (scriptURL.startsWith("/") || scriptURL.startsWith("./") || scriptURL.startsWith("../"))) {
 			return false;
@@ -121,13 +145,13 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 			if(scriptHost != null && !scriptHost.toLowerCase().equals(host.toLowerCase())){
 				otherDomain = true;
 			}
-			if(otherDomain && Plugin.AlertThreshold.HIGH.equals(this.getLevel())) {
+			if(otherDomain && ! Plugin.AlertThreshold.LOW.equals(this.getLevel())) {
 				//Get a list of contexts that contain the original URL
-				List<Context> contextList=Model.getSingleton().getSession().getContextsForUrl(msg.getRequestHeader().getURI().toString());
+				List<Context> contextList = getModel().getSession().getContextsForUrl(msg.getRequestHeader().getURI().toString());
 				for (Context context : contextList) {
 					if(context.isInContext(scriptURIStr)) {
 						//The scriptURI is in a context that the original URI is in
-						//At HIGH Threshold consider this an OK cross domain inclusion
+						//At MEDIUM and HIGH Threshold consider this an OK cross domain inclusion
 						return false; //No need to loop further
 					}
 				}

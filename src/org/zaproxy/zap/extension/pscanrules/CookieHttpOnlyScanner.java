@@ -75,16 +75,18 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 		}
 	}
 	
-	private void raiseAlert(HttpMessage msg, int id, String cookie) {
+	private void raiseAlert(HttpMessage msg, int id, String headerValue) {
 	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
 		    		getDescription(), 
 		    		msg.getRequestHeader().getURI().toString(),
-		    		cookie, "", "",
+		    		SetCookieUtils.getCookieName(headerValue), 
+		    		"", "",
 		    		getSolution(), 
 		            getReference(), 
-		            cookie, // evidence
+		            SetCookieUtils.getSetCookiePlusName(
+		            		msg.getResponseHeader().toString(), headerValue),
 		            16,	// CWE Id 16 - Configuration
 		            13,	// WASC Id - Info leakage
 		            msg);
