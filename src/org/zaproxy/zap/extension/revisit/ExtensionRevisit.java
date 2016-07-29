@@ -104,23 +104,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
      * 
      */
     public ExtensionRevisit() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionRevisit(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 * 
-	 */
-	private void initialize() {
-        this.setName(NAME);
+        super(NAME);
 	}
 	
 	@Override

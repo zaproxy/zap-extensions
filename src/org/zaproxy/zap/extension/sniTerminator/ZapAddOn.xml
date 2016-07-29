@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>SNI Terminator</name>
-	<version>4</version>
+	<version>5</version>
 	<status>alpha</status>
 	<description>Transparent HTTP proxying</description>
 	<author>ZAP Dev Team</author>
@@ -8,7 +8,7 @@
 		<javaversion>1.8</javaversion>
 	</dependencies>
 	<url>http://www.computerist.org/blog/2014/07/23/Transparent-HTTPS-proxying-with-ZAP/</url>
-	<changes>Update library to work with newer versions of ZAP.</changes>
+	<changes>Minor code changes.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.sniTerminator.ExtensionSniTerminator</extension>
 	</extensions>

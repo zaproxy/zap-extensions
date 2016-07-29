@@ -107,19 +107,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	 */
 	
 	public ExtensionWappalyzer() {
-		super();
-		initialize();
-	}
-
-	/**
-	 * @param name
-	 */
-	public ExtensionWappalyzer(String name) {
-		super(name);
-	}
-
-	private void initialize() {
-		this.setName(NAME);
+		super(NAME);
 		this.setOrder(201);
 		
 		try {

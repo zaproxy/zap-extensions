@@ -1,10 +1,11 @@
 <zapaddon>
 	<name>WAFP Extension</name>
-	<version>1</version>
+	<version>2</version>
 	<status>alpha</status>
 	<description>Fingerprint web applications</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy</url>
+	<changes>Minor code changes.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.cmss.CMSSTopMenu</extension>
 	</extensions>

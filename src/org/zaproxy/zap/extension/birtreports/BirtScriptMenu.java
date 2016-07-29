@@ -43,23 +43,7 @@ public class BirtScriptMenu extends ExtensionAdaptor {
      *
      */
     public BirtScriptMenu() {
-        super();
-                initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public BirtScriptMenu(String name) {
-        super(name);
-    }
-
-        /**
-         * This method initializes this
-         *
-         */
-        private void initialize() {
-        this.setName("BirtScriptMenu");
+        super("BirtScriptMenu");
         // Load extension specific language files - these are held in the extension jar
         messages = ResourceBundle.getBundle(
                         this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());
