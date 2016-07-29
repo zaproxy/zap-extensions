@@ -71,8 +71,7 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
     private AllChannelObserver allChannelObserver;
 
     public ExtensionWebSocketFuzzer() {
-        super();
-        setName("ExtensionWebSocketFuzzer");
+        super("ExtensionWebSocketFuzzer");
     }
 
     @Override

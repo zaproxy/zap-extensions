@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Getting Started with ZAP Guide</name>
-	<version>5</version>
+	<version>6</version>
 	<status>release</status>
 	<description>A short Getting Started with ZAP Guide</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for the new 2.5 guide</changes>
+	<changes>Minor code changes.</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.gettingStarted.ExtensionGettingStarted</extension>
 	</extensions>

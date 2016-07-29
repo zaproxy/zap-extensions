@@ -69,23 +69,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
     private int spinner = 0;
 
     public ExtensionQuickStart() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionQuickStart(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-        this.setName(NAME);
-        //this.setOrder(0);
+        super(NAME);
 	}
 	
 	@Override

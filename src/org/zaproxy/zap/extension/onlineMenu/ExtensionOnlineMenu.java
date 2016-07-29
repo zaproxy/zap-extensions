@@ -53,23 +53,7 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
 	private static final String PREFIX = "onlineMenu";
 
     public ExtensionOnlineMenu() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionOnlineMenu(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 * 
-	 */
-	private void initialize() {
-        this.setName(NAME);
+        super(NAME);
 	}
 	
 	@Override
