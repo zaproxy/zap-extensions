@@ -239,7 +239,6 @@ class DialogAddApp extends AbstractFormDialog {
     protected ZapTextField getFullCommandTextField() {
         if (fullCommandTextField == null) {
             fullCommandTextField = new ZapTextField(20);
-            fullCommandTextField.setEditable(false);
             fullCommandTextField.getDocument().addDocumentListener(getConfirmButtonValidatorDocListener());
         }
 
@@ -290,7 +289,6 @@ class DialogAddApp extends AbstractFormDialog {
     protected ZapTextField getWorkingDirTextField() {
         if (workingDirTextField == null) {
             workingDirTextField = new ZapTextField(20);
-            workingDirTextField.setEditable(false);
         }
 
         return workingDirTextField;
