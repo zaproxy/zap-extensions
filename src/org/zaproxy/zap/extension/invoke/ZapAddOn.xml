@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Allow to invoke the applications in all UI components that show HTTP messages.<br>
+	Allow to manually specify the application path and working directory (Issue 2708).<br>
 	]]>
 	</changes>
 	<extensions>
