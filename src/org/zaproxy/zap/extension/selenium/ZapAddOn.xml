@@ -1,12 +1,18 @@
 <zapaddon>
 	<name>Selenium</name>
-	<version>6</version>
+	<version>7</version>
 	<semver>1.0.0</semver><!-- This version should be kept in sync with the one of the extension. -->
 	<status>release</status>
 	<description>WebDriver provider and includes HtmlUnit browser</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Fix issue that prevented PhantomJS from starting (Issue 2636)</changes>
+	<changes>
+	<![CDATA[
+	Allow to use Firefox 47.0.1 (Issue 2739).<br>
+	Allow to manually specify the paths to binaries and WebDrivers in the options.<br>
+	Allow to choose which Firefox binary is used.<br>
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.selenium.ExtensionSelenium</extension>
 	</extensions>

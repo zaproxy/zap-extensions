@@ -238,6 +238,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         case CHROME:
             return new ChromeDriver(capabilities);
         case FIREFOX:
+            String binaryPath = System.getProperty(SeleniumOptions.FIREFOX_BINARY_SYSTEM_PROPERTY);
+            if (binaryPath != null && !binaryPath.isEmpty()) {
+                capabilities.setCapability(FirefoxDriver.BINARY, binaryPath);
+            }
             return new FirefoxDriver(capabilities);
         case HTML_UNIT:
             return new HtmlUnitDriver(capabilities);
