@@ -19,6 +19,8 @@
 package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.script.ScriptException;
@@ -35,6 +37,9 @@ import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.Authen
 
 public class ZestAuthenticationRunner extends ZestZapRunner implements AuthenticationScript {
 
+	private static final String USERNAME = "Username";
+	private static final String PASSWORD = "Password";
+
 	private ZestScriptWrapper script = null;
 	private AuthenticationHelper helper;
 	
@@ -45,17 +50,35 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 
 	@Override
 	public String[] getRequiredParamsNames() {
-		return new String[] { "LoginURL", "Method" };
+		List<String> requiredParameters = new ArrayList<>();
+		for (String[] vars : script.getZestScript().getParameters().getVariables()) {
+			String variableName = vars[0];
+			if (!isCredentialParameter(variableName) && vars[1].length() == 0) {
+				requiredParameters.add(variableName);
+			}
+		}
+		return requiredParameters.toArray(new String[requiredParameters.size()]);
+	}
+
+	private static boolean isCredentialParameter(String variableName) {
+		return USERNAME.equals(variableName) || PASSWORD.equals(variableName);
 	}
 
 	@Override
 	public String[] getOptionalParamsNames() {
-		return new String[] {};
+		List<String> optionalParameters = new ArrayList<>();
+		for (String[] vars : script.getZestScript().getParameters().getVariables()) {
+			String variableName = vars[0];
+			if (!isCredentialParameter(variableName) && vars[1].length() != 0) {
+				optionalParameters.add(variableName);
+			}
+		}
+		return optionalParameters.toArray(new String[optionalParameters.size()]);
 	}
 
 	@Override
 	public String[] getCredentialsParamsNames() {
-		return new String[] { "Username", "Password" };
+		return new String[] { USERNAME, PASSWORD };
 	}
 
 	@Override
@@ -65,8 +88,8 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 		this.helper = helper;
 
 		try {
-			paramsValues.put("Username", credentials.getParam("Username"));
-			paramsValues.put("Password", credentials.getParam("Password"));
+			paramsValues.put(USERNAME, credentials.getParam(USERNAME));
+			paramsValues.put(PASSWORD, credentials.getParam(PASSWORD));
 
 			this.run(script.getZestScript(), paramsValues);
 

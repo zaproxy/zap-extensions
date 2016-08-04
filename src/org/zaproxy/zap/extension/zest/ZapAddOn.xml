@@ -9,6 +9,7 @@
 	<![CDATA[
 	Change Sequence scripts to not use Sites tree nodes directly.<br>
 	Correct assertion of response body length when using charset (Issue 2669).<br>
+	Require just the parameters defined in the Authentication script (Issue 2734).<br>
 	]]>
 	</changes>
 	<dependencies>
