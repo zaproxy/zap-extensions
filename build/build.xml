@@ -461,6 +461,14 @@
 		<generate-wiki addon="ascanrulesAlpha" />
 	</target>
 
+	<target name="deploy-authstats" description="deploy the authstats extension">
+		<build-deploy-addon name="authstats" />
+	</target>
+
+	<target name="generate-wiki-authstats" description="Generates the wiki of authStats extension">
+		<generate-wiki addon="authstats" />
+	</target>
+
 	<target name="deploy-birtreports" description="deploy the birtreports extension">
 		<build-deploy-addon name="birtreports" />
 	</target>
