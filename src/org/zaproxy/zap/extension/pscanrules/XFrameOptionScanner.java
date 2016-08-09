@@ -28,11 +28,12 @@ import net.htmlparser.jericho.Source;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
+import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class XFrameOptionScanner extends PluginPassiveScanner {
 
@@ -42,6 +43,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.xframeoptionsscanner.";
 	private static final int PLUGIN_ID = 10020;
+	boolean includedInCsp;
 		
 	private enum VulnType {XFO_MISSING, XFO_MULTIPLE_HEADERS, XFO_META, XFO_MALFORMED_SETTING};
 	
@@ -52,23 +54,39 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		boolean includeErrorResponses=true;
-		switch (this.getLevel()) {
-			case HIGH:	includeErrorResponses=false; break;  
-			case MEDIUM: 					
-			case DEFAULT: 
-			case LOW: 		
-			case OFF: } 
+		boolean includeErrorsAndRedirects = false;
+
+		if (AlertThreshold.LOW.equals(this.getLevel())) {
+			includeErrorsAndRedirects = true; 
+		} else {
+			if (! msg.getResponseHeader().isHtml()) {
+				return;
+			}
+		}
 		
 		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()){
 			int responseStatus = msg.getResponseHeader().getStatusCode();
-			// If it's an error and we're not including error responses then just return without alerting
-			if (!includeErrorResponses && 
+			// If it's an error/redirect and we're not including them then just return without alerting
+			if (!includeErrorsAndRedirects && 
 					(HttpStatusCode.isServerError(responseStatus) ||
-					HttpStatusCode.isClientError(responseStatus))) {
+					HttpStatusCode.isClientError(responseStatus) ||
+					HttpStatusCode.isRedirection(responseStatus))) {
 				return;
-			} 
-		Vector<String> xFrameOption = msg.getResponseHeader().getHeaders(HttpHeader.X_FRAME_OPTION);
+			}
+			// CSP takes precedence
+			includedInCsp = false;
+			Vector<String> csp = msg.getResponseHeader().getHeaders("Content-Security-Policy");
+			if (csp != null && csp.toString().contains("frame-ancestors")) {
+				// We could do more parsing here, but that will be non trivial
+				includedInCsp = true;
+			}
+			
+			if (includedInCsp && ! AlertThreshold.LOW.equals(this.getLevel())) {
+				// No need to check the X-Frame-Options header
+				return;
+			}
+			
+			Vector<String> xFrameOption = msg.getResponseHeader().getHeaders(HttpHeader.X_FRAME_OPTION);
 			if (xFrameOption != null) {
 				for (String xFrameOptionParam : xFrameOption) {
 					if (xFrameOptionParam.toLowerCase().indexOf("deny") < 0 && xFrameOptionParam.toLowerCase().indexOf("sameorigin") < 0 && xFrameOptionParam.toLowerCase().indexOf("allow-from") < 0) {
@@ -92,14 +110,21 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String evidence, VulnType currentVT) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, 
+		int risk = Alert.RISK_MEDIUM;
+		String other = "";
+		if (this.includedInCsp) {
+			risk = Alert.RISK_LOW;
+			other = Constant.messages.getString(MESSAGE_PREFIX + "incInCsp");
+		}
+		
+		Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, 
 		    	getAlertElement(currentVT, "name"));
 		    	alert.setDetail(
 		    		getAlertElement(currentVT, "desc"), 
 		    	    msg.getRequestHeader().getURI().toString(),
-		    	    "",//Param
+		    	    HttpHeader.X_FRAME_OPTION,//Param
 		    	    "", //Attack
-		    	    "", //OtherInfo
+		    	    other, //OtherInfo
 		    	    getAlertElement(currentVT, "soln"),
 		    	    getAlertElement(currentVT, "refs"), 
 		            evidence, //Evidence
@@ -156,7 +181,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 			for (Element metaElement : metaElements) {
 				httpEquiv = metaElement.getAttributeValue("http-equiv");
 				if (HttpHeader.X_FRAME_OPTION.equalsIgnoreCase(httpEquiv)) {
-					return httpEquiv;
+					return metaElement.toString();
 				}
 			}
 		}

@@ -80,15 +80,16 @@ public class CookieSecureFlagScanner extends PluginPassiveScanner {
 		}
 	}
 	
-	private void raiseAlert(HttpMessage msg, int id, String cookie) {
+	private void raiseAlert(HttpMessage msg, int id, String headerValue) {
 	    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM,	getName());
 		    	alert.setDetail(
 		    	    getDescription(), 
 		    	    msg.getRequestHeader().getURI().toString(),
-		    	    cookie, "", "",
+		    	    SetCookieUtils.getCookieName(headerValue), "", "",
 		    	    getSolution(), 
 		            getReference(), 
-		            cookie, // evidence
+		            SetCookieUtils.getSetCookiePlusName(
+		            		msg.getResponseHeader().toString(), headerValue),
 		            614, // CWE Id
 		            13,	// WASC Id - Info leakage
 		            msg);
