@@ -169,9 +169,11 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
             extensionSearch.removeCustomHttpSearcher(httpFuzzerSearcher);
         }
 
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-        if (extensionScript != null) {
-            extensionScript.removeScripType(scriptType);
+        if (getView() != null) {
+            ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+            if (extensionScript != null) {
+                extensionScript.removeScripType(scriptType);
+            }
         }
     }
 
