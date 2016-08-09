@@ -316,11 +316,13 @@ public class ExtensionFuzz extends ExtensionAdaptor {
             fuzzScansPanel.unload();
         }
 
-        ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        if (getView() != null) {
+            ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
 
-        if (extensionScript != null) {
-            extensionScript.removeScripType(scriptTypeGenerator);
-            extensionScript.removeScripType(scriptTypeProcessor);
+            if (extensionScript != null) {
+                extensionScript.removeScripType(scriptTypeGenerator);
+                extensionScript.removeScripType(scriptTypeProcessor);
+            }
         }
     }
 
