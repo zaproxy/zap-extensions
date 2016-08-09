@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Make breakpoint dialogues modal.<br>
+	Fix exception during the unload of the add-on, when in daemon mode.<br>
 	]]>
 	</changes>
 	<classnames>
