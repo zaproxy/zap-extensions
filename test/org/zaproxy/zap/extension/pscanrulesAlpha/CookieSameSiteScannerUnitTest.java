@@ -21,49 +21,17 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import net.htmlparser.jericho.Source;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.Alert;
+
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
-import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CookieSameSiteScannerUnitTest {
+public class CookieSameSiteScannerUnitTest extends PassiveScannerTest {
 
-	private CookieSameSiteScanner rule;
-	private PassiveScanThread parent;
-	private List<Alert> alertsRaised;
-
-    @BeforeClass
-    public static void beforeClass() {
-        Constant.messages = Mockito.mock(I18N.class);
-    }
-
-	@Before
-	public void setUp() throws Exception {
-		alertsRaised = new ArrayList<>();
-		parent = new PassiveScanThread(null, null, new ExtensionAlert()) {
-			@Override
-			public void raiseAlert(int arg0, Alert arg1) {
-				alertsRaised.add(arg1);
-			}
-		};
-		rule = new CookieSameSiteScanner();
-		rule.setParent(parent );
+	@Override
+	protected PluginPassiveScanner createScanner() {
+		return new CookieSameSiteScanner();
 	}
 
     @Test
@@ -71,7 +39,7 @@ public class CookieSameSiteScannerUnitTest {
 		
 		HttpMessage msg = new HttpMessage();
 		msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-		
+
 		msg.setResponseBody("<html></html>");
 		msg.setResponseHeader(
 				"HTTP/1.1 200 OK\r\n" +
@@ -79,9 +47,7 @@ public class CookieSameSiteScannerUnitTest {
 				"Set-Cookie: test=123; Path=/; HttpOnly\r\n" +
 				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
 				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
-		String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-		Source source = new Source(response);
-		rule.scanHttpResponseReceive(msg, rule.getPluginId(), source);
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
 		assertThat(alertsRaised.size(), equalTo(1));
 		assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
@@ -100,9 +66,7 @@ public class CookieSameSiteScannerUnitTest {
 				"Server: Apache-Coyote/1.1\r\n" +
 				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
 				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
-		String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-		Source source = new Source(response);
-		rule.scanHttpResponseReceive(msg, rule.getPluginId(), source);
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
 		assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -120,9 +84,7 @@ public class CookieSameSiteScannerUnitTest {
 				"Set-Cookie: test=123; Path=/; SameSite=Lax; HttpOnly\r\n" +
 				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
 				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
-		String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-		Source source = new Source(response);
-		rule.scanHttpResponseReceive(msg, rule.getPluginId(), source);
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
 		assertThat(alertsRaised.size(), equalTo(0));
 	}
@@ -140,9 +102,7 @@ public class CookieSameSiteScannerUnitTest {
 				"Set-Cookie: test=123; Path=/; SameSite=strICt; HttpOnly\r\n" +
 				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
 				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
-		String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-		Source source = new Source(response);
-		rule.scanHttpResponseReceive(msg, rule.getPluginId(), source);
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
 		assertThat(alertsRaised.size(), equalTo(0));
 	}
@@ -161,9 +121,7 @@ public class CookieSameSiteScannerUnitTest {
 				"Set-Cookie: test=123; Path=/; HttpOnly\r\n" +
 				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
 				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
-		String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-		Source source = new Source(response);
-		rule.scanHttpResponseReceive(msg, rule.getPluginId(), source);
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
 		assertThat(alertsRaised.size(), equalTo(1));
 		assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
@@ -183,9 +141,7 @@ public class CookieSameSiteScannerUnitTest {
 				"Set-Cookie: test=123; Path=/; SameSite=badVal; HttpOnly\r\n" +
 				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
 				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
-		String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-		Source source = new Source(response);
-		rule.scanHttpResponseReceive(msg, rule.getPluginId(), source);
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
 		assertThat(alertsRaised.size(), equalTo(1));
 		assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
@@ -205,9 +161,7 @@ public class CookieSameSiteScannerUnitTest {
 				"Set-Cookie: test=123; Path=/; SameSite; HttpOnly\r\n" +
 				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
 				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
-		String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
-		Source source = new Source(response);
-		rule.scanHttpResponseReceive(msg, rule.getPluginId(), source);
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
 		assertThat(alertsRaised.size(), equalTo(1));
 		assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
