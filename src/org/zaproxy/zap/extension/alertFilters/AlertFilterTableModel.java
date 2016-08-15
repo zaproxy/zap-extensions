@@ -54,7 +54,7 @@ public class AlertFilterTableModel extends AbstractMultipleOptionsTableModel<Ale
 	}
 
 	/**
-	 * Instantiates a new user table model.
+	 * Instantiates a new alert filter table model.
 	 */
 	public AlertFilterTableModel() {
 		this.alertFilters = new ArrayList<>();
@@ -129,9 +129,9 @@ public class AlertFilterTableModel extends AbstractMultipleOptionsTableModel<Ale
 	}
 	
 	/**
-	 * Adds a new user to this model
+	 * Adds a new alert filter to this model
 	 *
-	 * @param af the user
+	 * @param af the alert filter being added
 	 */
 	public void addAlertFilter(AlertFilter af){
 		this.alertFilters.add(af);

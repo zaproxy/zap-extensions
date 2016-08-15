@@ -82,7 +82,7 @@ public class ContextAlertFilterManager {
 	/**
 	 * Adds an alertFilter.
 	 * 
-	 * @param alertFilter the alertFilter
+	 * @param alertFilter the alertFilter being added 
 	 */
 	public void addAlertFilter(AlertFilter alertFilter) {
 		alertFilters.add(alertFilter);
@@ -91,7 +91,7 @@ public class ContextAlertFilterManager {
 	/**
 	 * Removes an alertFilter.
 	 * 
-	 * @param alertFilter the alertFilter
+	 * @param alertFilter the alertFilter being removed 
 	 */
 	public boolean removeAlertFilter(AlertFilter alertFilter) {
 		return alertFilters.remove(alertFilter);

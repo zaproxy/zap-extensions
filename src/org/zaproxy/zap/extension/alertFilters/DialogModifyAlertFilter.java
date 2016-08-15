@@ -25,9 +25,6 @@ import org.parosproxy.paros.Constant;
 
 public class DialogModifyAlertFilter extends DialogAddAlertFilter {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7828871270310672334L;
 	private static final String DIALOG_TITLE = 
 			Constant.messages.getString("alertFilters.dialog.modify.title");
