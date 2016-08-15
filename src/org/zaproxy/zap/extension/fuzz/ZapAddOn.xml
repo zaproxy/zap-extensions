@@ -9,6 +9,7 @@
     <changes>
     <![CDATA[
     Fix exception during the unload of the add-on, when in daemon mode.<br>
+    Update Content-Length for all request methods, not just POST (Issue 2766).<br>
     ]]>
     </changes>
     <extensions>

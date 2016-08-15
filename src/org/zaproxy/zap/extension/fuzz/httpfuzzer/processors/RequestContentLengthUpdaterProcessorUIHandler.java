@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.AbstractHttpFuzzerMessageProcessorUIPanel;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessorUI;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessorUIHandler;
@@ -76,8 +75,6 @@ public class RequestContentLengthUpdaterProcessorUIHandler implements
             HttpFuzzerMessageProcessorUI<RequestContentLengthUpdaterProcessor> {
 
         public static final RequestContentLengthUpdatedProcessorUI INSTANCE = new RequestContentLengthUpdatedProcessorUI();
-        private static final RequestContentLengthUpdaterProcessor PROCESSOR_INSTANCE = new RequestContentLengthUpdaterProcessor(
-                HttpRequestHeader.POST);
 
         public RequestContentLengthUpdatedProcessorUI() {
         }
@@ -99,7 +96,7 @@ public class RequestContentLengthUpdaterProcessorUIHandler implements
 
         @Override
         public RequestContentLengthUpdaterProcessor getFuzzerMessageProcessor() {
-            return PROCESSOR_INSTANCE;
+            return RequestContentLengthUpdaterProcessor.getInstance();
         }
 
         @Override
