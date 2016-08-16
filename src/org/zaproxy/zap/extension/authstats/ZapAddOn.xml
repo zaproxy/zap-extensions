@@ -1,0 +1,22 @@
+<zapaddon>
+	<name>Authentication Statistics</name>
+	<version>1</version>
+	<status>alpha</status>
+	<description>Records logged in/out statistics for all contexts in scope.</description>
+	<author>ZAP Core Team</author>
+	<url>https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAuthstatsAuthStats</url>
+	<changes>
+	<![CDATA[
+	First version<br>
+	]]>
+	</changes>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.authstats.ExtensionAuthStats</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.5.0</not-before-version>
+	<not-from-version/>
+</zapaddon>
