@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Import files containing URLs</name>
-	<version>2</version>
+	<version>3</version>
 	<status>beta</status>
 	<description>Adds an option to import a file of URLs. The file must be plain text with one URL per line.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Promoted to beta, updated for ZAP 2.4</changes>
+	<changes>Issue 1643: Add an API end point for importing URLs from file.</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.importurls.ExtensionImportUrls</extension>
 	</extensions>
