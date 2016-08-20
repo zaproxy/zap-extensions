@@ -77,28 +77,41 @@
 
         <delete file="${versions.file}"/>
 		
-        <!-- Keep in alphabetical order ;) -->		
-        <build-addon name="ascanrules" />
-        <build-addon name="coreLang" />
-        <build-addon name="directorylistv1" />
-        <build-addon name="directorylistv2_3" />
-        <build-addon name="directorylistv2_3_lc" />
-        <build-addon name="fuzzdb" />
-        <build-addon name="gettingStarted" />
+	<!-- Keep in alphabetical order ;) -->	
+	<build-addon name="ascanrules" />
+	<build-addon name="coreLang" />
+	<build-addon name="directorylistv1" />
+	<build-addon name="directorylistv2_3" />
+	<build-addon name="directorylistv2_3_lc" />
+	<build-addon name="fuzzdb" />
+	<build-addon name="gettingStarted" />
 	<build-addon name="help" />
 	<build-addon name="help_pt_BR" />
 	<build-addon name="onlineMenu" />
-        <build-addon name="pscanrules" />
-        <build-addon name="quickstart" />
-        <build-addon name="reveal" />
-        <build-addon name="saverawmessage" />
-	<build-addon name="selenium" />
-        <build-addon name="spiderAjax" />
-        <build-addon name="websocket" />
+	<build-addon name="pscanrules" />
+	<build-addon name="quickstart" />
+	<build-addon name="reveal" />
+	<build-addon name="saverawmessage" />
+	<build-selenium-addon />
+	<build-addon name="spiderAjax" />
+	<build-addon name="websocket" />
         		
     </target>
     
     <!-- Plugin specific build -->
+    <macrodef name="build-selenium-addon" description="Builds Selenium add-on">
+    	<sequential>
+    		<build-addon name="selenium">
+    			<!-- Add the extra classes required -->
+    			<jar jarfile="${dist.dir}/${file}" update="true" compress="true">
+    				<zipfileset dir="${build.classes.dir}" prefix="">
+    					<include name="org/openqa/selenium/phantomjs/**"/>
+    				</zipfileset>
+    			</jar>
+    		</build-addon>
+    	</sequential>
+    </macrodef>
+    
     <macrodef name="build-bruteforce-addon" description="Builds bruteforce add-on">
         <sequential>
             <build-addon name="bruteforce">
