@@ -36,11 +36,10 @@ import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ApiUtils;
 
 /**
- * The API for manipulating {@link User Users}.
+ * The API for manipulating {@link AlertFilter alert filters}.
  */
 public class AlertFilterAPI extends ApiImplementor {
 

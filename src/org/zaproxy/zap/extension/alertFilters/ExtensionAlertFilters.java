@@ -82,7 +82,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	public static final String CONTEXT_CONFIG_ALERT_FILTERS = Context.CONTEXT_CONFIG + ".alertFilters";
 	public static final String CONTEXT_CONFIG_ALERT_FILTER = CONTEXT_CONFIG_ALERT_FILTERS + ".filter";
 	
-	private static final int TYPE_ALERT_FILTER = 500; // RecordContext.TYPE_USER
+	private static final int TYPE_ALERT_FILTER = 500; // RecordContext
 
 	/** The alertFilter panels, mapped to each context. */
 	private Map<Integer, ContextAlertFilterPanel> alertFilterPanelsMap = new HashMap<>();
@@ -102,9 +102,6 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	
     private Logger log = Logger.getLogger(this.getClass());
 
-	/**
-     * 
-     */
     public ExtensionAlertFilters() {
         super();
  		initialize();
@@ -220,8 +217,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	/**
 	 * Gets the context alert filter manager for a given context.
 	 * 
-	 * @param contextId the context id
-	 * @return the context alert filter manager
+	 * @param contextId the context id the manager relates to
+	 * @return the context alert filter manager for the given context
 	 */
 	public ContextAlertFilterManager getContextAlertFilterManager(int contextId) {
 		ContextAlertFilterManager manager = contextManagers.get(contextId);
@@ -292,8 +289,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	/**
 	 * Gets the context panel for a given context.
 	 * 
-	 * @param contextId the context id
-	 * @return the context panel
+	 * @param contextId the context id the panel should relate to
+	 * @return the context panel for the given context
 	 */
 	private ContextAlertFilterPanel getContextPanel(int contextId) {
 		ContextAlertFilterPanel panel = this.alertFilterPanelsMap.get(contextId);

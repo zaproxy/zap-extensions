@@ -130,18 +130,18 @@ public class AlertFilter extends Enableable {
 	 * @param alertFilter the AlertFilter
 	 * @return the encoded string
 	 */
-	public static String encode(AlertFilter alertFilteruser) {
+	public static String encode(AlertFilter alertFilter) {
 		StringBuilder out = new StringBuilder();
-		out.append(alertFilteruser.isEnabled()).append(FIELD_SEPARATOR);
-		out.append(alertFilteruser.getRuleId()).append(FIELD_SEPARATOR);
-		out.append(alertFilteruser.getNewRisk()).append(FIELD_SEPARATOR);
-		if (alertFilteruser.url != null) {
-			out.append(Base64.encodeBase64String(alertFilteruser.url.getBytes()));
+		out.append(alertFilter.isEnabled()).append(FIELD_SEPARATOR);
+		out.append(alertFilter.getRuleId()).append(FIELD_SEPARATOR);
+		out.append(alertFilter.getNewRisk()).append(FIELD_SEPARATOR);
+		if (alertFilter.url != null) {
+			out.append(Base64.encodeBase64String(alertFilter.url.getBytes()));
 		}
 		out.append(FIELD_SEPARATOR);
-		out.append(alertFilteruser.isRegex()).append(FIELD_SEPARATOR);
-		if (alertFilteruser.parameter != null) {
-			out.append(Base64.encodeBase64String(alertFilteruser.parameter.getBytes()));
+		out.append(alertFilter.isRegex()).append(FIELD_SEPARATOR);
+		if (alertFilter.parameter != null) {
+			out.append(Base64.encodeBase64String(alertFilter.parameter.getBytes()));
 		}
 		out.append(FIELD_SEPARATOR);
 		// log.debug("Encoded AlertFilter: " + out.toString());
@@ -149,10 +149,10 @@ public class AlertFilter extends Enableable {
 	}
 
 	/**
-	 * Decodes an User from an encoded string. The string provided as input should have been
+	 * Decodes an alert filter from an encoded string. The string provided as input should have been
 	 * obtained through calls to {@link #encode(AlertFilter)}.
 	 * @param encodedString the encoded string
-	 * @return the user
+	 * @return the decoded alert filter
 	 */
 	protected static AlertFilter decode(int contextId, String encodedString) {
 		String[] pieces = encodedString.split(FIELD_SEPARATOR, -1);

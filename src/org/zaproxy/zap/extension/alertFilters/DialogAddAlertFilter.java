@@ -50,7 +50,6 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 	private static final String CONFIRM_BUTTON_LABEL = 
 			Constant.messages.getString("alertFilters.dialog.add.button.confirm");
 
-	//private ExtensionAlertFilters extension = null;
 	private JPanel fieldsPanel;
 	private JCheckBox enabledCheckBox;
 	private JComboBox<String> alertCombo;
@@ -70,7 +69,6 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 	 */
 	public DialogAddAlertFilter(Dialog owner, ExtensionAlertFilters extension) {
 		super(owner, DIALOG_TITLE);
-		//this.extension = extension;
 	}
 
 	/**
@@ -83,7 +81,6 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 	 */
 	public DialogAddAlertFilter(Dialog owner, ExtensionAlertFilters extension, String title) {
 		super(owner, title);
-		//this.extension = extension;
 	}
 
 	/**
@@ -131,6 +128,13 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 	@Override
 	protected void clearFields() {
 		this.enabledCheckBox.setSelected(true);
+		this.alertCombo.setSelectedIndex(0);
+		this.newLevelCombo.setSelectedIndex(0);
+		this.urlTextField.setText("");
+		this.urlTextField.discardAllEdits();
+		this.regexCheckBox.setSelected(false);
+		this.paramTextField.setText("");
+		this.paramTextField.discardAllEdits();
 		this.setConfirmButtonEnabled(true);
 	}
 
