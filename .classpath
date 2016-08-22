@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="org/zaproxy/zap/extension/*/files/" kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-configuration-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
@@ -32,6 +33,7 @@
 	<classpathentry kind="lib" path="testlib/objenesis-1.2.jar"/>
 	<classpathentry kind="lib" path="testlib/powermock-mockito-1.4.12-full.jar"/>
 	<classpathentry kind="lib" path="testlib/simple-5.0.2.jar"/>
+	<classpathentry kind="lib" path="testlib/nanohttpd-webserver-2.1.1-jar-with-dependencies.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/zap-2.4.3.jar"/>
