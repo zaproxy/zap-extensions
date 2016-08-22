@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzResult;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerMessageProcessor;
@@ -65,7 +66,10 @@ public class RequestContentLengthUpdaterProcessor implements HttpFuzzerMessagePr
             return message;
         }
 
-        message.getRequestHeader().setContentLength(message.getRequestBody().length());
+        if (message.getRequestHeader().getHeader(HttpHeader.CONTENT_LENGTH) != null || message.getRequestBody().length() != 0) {
+            message.getRequestHeader().setContentLength(message.getRequestBody().length());
+        }
+
         return message;
     }
 
