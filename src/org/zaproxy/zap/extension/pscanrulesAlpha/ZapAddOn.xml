@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>11</version>
+	<version>12</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-		Issue 2538: Strict-Transport-Security Header Scanner additional variants.<br>
-		Issue 2716: Implement a passive check for cookies without SameSite set.<br>
+		Refactoring the x-powered-by scanner to raise one alert if it finds repetitive headers.<br>
 	]]>
 	</changes>
 	<extensions>
