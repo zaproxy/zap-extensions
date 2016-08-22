@@ -8,7 +8,6 @@
 	<changes>
 	<![CDATA[
 	TestPathTraversal - catch InvalidRedirectLocationException and URIException.<br>
-	TestPathTraversal - added support for the Directory Browsing of the root directory.<br>
 	TestRemoteFileInclude - adjust logging (debug not error).<br>
 	Run SQL Injection if any DB tech is enabled but skip specific non-applicable error checks.<br>
 	Issue 2624: Improve Error Logging in PathTraversal Plugin.<br>
