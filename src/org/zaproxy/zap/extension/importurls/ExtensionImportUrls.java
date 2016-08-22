@@ -45,6 +45,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportUrls extends ExtensionAdaptor {
@@ -53,8 +54,10 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
 
 	private static final String THREAD_PREFIX = "ZAP-Import-Urls-";
 
-    private ZapMenuItem menuImportUrls = null;
+    private ZapMenuItem menuImportUrls;
     private int threadId = 1;
+
+    private ImportUrlsAPI api;
 
 	private static Logger log = Logger.getLogger(ExtensionImportUrls.class);
 
@@ -85,6 +88,9 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
 	    if (getView() != null) {
 	        extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrls());
 	    }
+	    
+	    this.api = new ImportUrlsAPI(this);
+	    API.getInstance().registerApiImplementor(api);
 	}
 
 	@Override
@@ -95,6 +101,7 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
 	    if (getView() != null) {
 	    	extLoader.removeToolsMenuItem(getMenuImportUrls());
 	    }
+		API.getInstance().removeApiImplementor(api);
 	}
 
 	private ZapMenuItem getMenuImportUrls() {
@@ -149,13 +156,18 @@ public class ExtensionImportUrls extends ExtensionAdaptor {
 			StringBuilder outputLine;
 			while ((line = in.readLine()) != null) {
 				if (! line.startsWith("#") && line.trim().length() > 0) {
-					if (line.startsWith("GET\t")) {
-						// ZAP exports urls to a file in this format, so makes sence to cope with it
-						line = line.substring(4);
+					if (!line.startsWith("http")) {
+						// ZAP exports urls to a file in which each line starts with the HTTP Method (verb) 
+						// followed by a tab, so makes sense to cope with it.
+						// Otherwise assume complete URLs starting with http(s) scheme.
+						int tabIdx = line.indexOf("\t");
+						if (tabIdx > -1) {
+							line = line.substring(line.indexOf("\t")).trim();
+						}
 					}
 					outputLine = new StringBuilder();
 					try {
-						outputLine.append("GET " + line + "\t");
+						outputLine.append("GET").append("\t").append(line).append("\t");
 						HttpMessage msg = new HttpMessage(new URI(line, false));
 						sender.sendAndReceive(msg, true);
 						persistMessage(msg);
