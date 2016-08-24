@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>24</version>
+	<version>25</version>
 	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	TestPathTraversal - catch InvalidRedirectLocationException and URIException.<br>
-	TestRemoteFileInclude - adjust logging (debug not error).<br>
-	Run SQL Injection if any DB tech is enabled but skip specific non-applicable error checks.<br>
-	Issue 2624: Improve Error Logging in PathTraversal Plugin.<br>
+	Issue 1211 - SQLi Scanner may raise seemingly duplicate alerts (fixed).<br>
 	]]>
     </changes>
 	<extensions>

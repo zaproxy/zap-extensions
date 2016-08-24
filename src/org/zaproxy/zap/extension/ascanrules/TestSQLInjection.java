@@ -927,7 +927,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 							sqlInjectionFoundForUrl = true;
 
-							continue; //to the next entry in SQL_AND
+							break; // No further need to loop through SQL_AND
 
 						} else {
 							//the results of the always false condition are the same as for the original unmodified parameter
@@ -987,7 +987,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 								sqlInjectionFoundForUrl = true;
 								//booleanBasedSqlInjectionFoundForParam = true;  //causes us to skip past the other entries in SQL_AND.  Only one will expose a vuln for a given param, since the database column is of only 1 type
 
-								continue;
+								break; // No further need to loop
 							}
 						}
 					} //if the results of the "AND 1=1" match the original query, we may be onto something.
@@ -1103,7 +1103,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	
 						sqlInjectionFoundForUrl = true;
 	
-						continue; //to the next entry
+						break; // No further need to loop
 						}
 					}
 				}	
@@ -1262,6 +1262,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 									extraInfo, getSolution(), "", msg5);
 
 							sqlInjectionFoundForUrl = true;
+							break;  // No further need to loop 
 						}
 					}
 				//bale out if we were asked nicely
