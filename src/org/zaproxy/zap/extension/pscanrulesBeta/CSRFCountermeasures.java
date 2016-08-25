@@ -90,7 +90,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 	 */
 	@Override
 	public int getPluginId() {
-		return 40014;
+		return 10202;
 	}
 
 	/**

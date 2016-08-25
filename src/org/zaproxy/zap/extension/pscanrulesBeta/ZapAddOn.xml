@@ -10,6 +10,7 @@
 	Issue 2576: CSRFCountermeasures, remove unneeded Attack and Evidence messages.<br>
 	Issue 2574: CookieLooselyScopedScanner, remove attack field and update description.<br>
 	Support ignoring specified forms when checking for CSRF vulnerabilities.<br>
+	Correct the plugin ID of Absence of Anti-CSRF Tokens from 40014 to 10202.<br>
 	]]>
 	</changes>
 	<extensions>
