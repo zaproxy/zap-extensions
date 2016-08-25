@@ -8,7 +8,7 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="پورٹ سکین" image="addon.portscan.icon" target="addon.portscan.concepts">
 				<tocitem text="Options" target="addon.portscan.options" />
-				<tocitem text="Tab" target="addon.portscan.tab" />
+				<tocitem text="ٹیب" target="addon.portscan.tab" />
 			</tocitem>
 		</tocitem>
 	</tocitem>
