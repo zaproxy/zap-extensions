@@ -1,11 +1,13 @@
 <zapaddon>
 	<name>Bug Tracker</name>
-	<version>1</version>
+	<version>2</version>
 	<status>alpha</status>
 	<description>Bug Tracker extension.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>
+	Added help for the add-on
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.bugtracker.ExtensionBugTracker</extension>
 	</extensions>
