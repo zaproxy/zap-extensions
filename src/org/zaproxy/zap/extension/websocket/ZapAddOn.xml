@@ -9,6 +9,7 @@
 	<![CDATA[
 	Make breakpoint dialogues modal.<br>
 	Fix exception during the unload of the add-on, when in daemon mode.<br>
+	Correct fuzz location overlap detection with same start index.<br>
 	]]>
 	</changes>
 	<classnames>
