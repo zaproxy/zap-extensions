@@ -32,7 +32,6 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
-
 public class PopupMenuEvidence extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
@@ -41,16 +40,10 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
     
     private List<PopupMenuEvidenceSearch> subMenus = new ArrayList<PopupMenuEvidenceSearch>();
 
-	/**
-     * 
-     */
     public PopupMenuEvidence() {
         super();
     }
 
-    /**
-     * @param label
-     */
     public PopupMenuEvidence(String label) {
         super(label);
     }

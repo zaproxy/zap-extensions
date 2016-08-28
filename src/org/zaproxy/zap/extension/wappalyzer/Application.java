@@ -116,10 +116,4 @@ public class Application {
 		this.icon = icon;
 	}
 
-	// TODO global js variables - cant use?
-	//private Pattern env;
-	
-	
-	
-
 }
