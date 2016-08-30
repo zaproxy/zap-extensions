@@ -21,22 +21,23 @@ import java.awt.Event;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
-import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.ProxyListenerLog;
 import org.parosproxy.paros.model.HistoryReference;
@@ -47,6 +48,8 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -122,8 +125,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		if (getView() != null) {
 			extensionHook.addSessionListener(new SpiderSessionChangedListener());
 
-			@SuppressWarnings("unused")
-			ExtensionHookView pv = extensionHook.getHookView();
 			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAjaxSite());
@@ -236,18 +237,108 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		if (spiderDialog == null) {
 			spiderDialog = 
 				new AjaxSpiderDialog(this, View.getSingleton().getMainFrame(), DisplayUtils.getScaledDimension(700, 500));
-			spiderDialog.init(node);
+			spiderDialog.init(new Target(node));
 		} else if (node != null) {
-			spiderDialog.init(node);
+			spiderDialog.init(new Target(node));
 		}
 		
 		spiderDialog.setVisible(true);
 	}
 
-	public void spiderSite(SiteNode node, boolean inScope, AjaxSpiderParam params) {
-		if (getView() != null) {
-			getSpiderPanel().startScan(node.getHistoryReference().getURI().toString(), inScope, params);
+	/**
+	 * Starts a new spider scan using the given target.
+	 * <p>
+	 * The spider scan will use the most appropriate display name created from the given target.
+	 *
+	 * @param target the target that will be spidered
+	 * @see #startScan(String, AjaxSpiderTarget)
+	 * @throws IllegalStateException if the target is not allowed in the current
+	 *             {@link org.parosproxy.paros.control.Control.Mode mode}.
+	 */
+	public void startScan(AjaxSpiderTarget target) {
+		startScan(createDisplayName(target), target);
+	}
+
+	/**
+	 * Creates the display name for the given target.
+	 *
+	 * @param target the target that will be spidered
+	 * @return a {@code String} containing the display name, never {@code null}
+	 */
+	String createDisplayName(AjaxSpiderTarget target) {
+		if (target.getContext() != null) {
+			return Constant.messages.getString("context.prefixName", target.getContext().getName());
+		} else if (target.isInScopeOnly()) {
+			return Constant.messages.getString("target.allInScope");
+		} else if (target.getStartUri() == null) {
+			return Constant.messages.getString("target.empty");
 		}
+		return abbreviateDisplayName(target.getStartUri().toString());
+	}
+
+	/**
+	 * Abbreviates (the middle of) the given display name if greater than 30 characters.
+	 *
+	 * @param displayName the display name that might be abbreviated
+	 * @return the, possibly, abbreviated display name
+	 */
+	private static String abbreviateDisplayName(String displayName) {
+		return StringUtils.abbreviateMiddle(displayName, "..", 30);
+	}
+
+	/**
+	 * Starts a new spider scan, with the given display name and using the given target.
+	 * <p>
+	 * <strong>Note:</strong> The preferred method to start the scan is with {@link #startScan(AjaxSpiderTarget)}, unless a
+	 * custom display name is really needed.
+	 * 
+	 * @param displayName the name of the scan (to be displayed in UI)
+	 * @param target the target that will be spidered
+	 * @throws IllegalStateException if the target is not allowed in the current
+	 *             {@link org.parosproxy.paros.control.Control.Mode mode}.
+	 */
+	@SuppressWarnings("fallthrough")
+	public void startScan(String displayName, AjaxSpiderTarget target) {
+		if (getView() != null) {
+			switch (Control.getSingleton().getMode()) {
+			case safe:
+				throw new IllegalStateException("Scans are not allowed in Safe mode");
+			case protect:
+				String uri = target.getStartUri().toString();
+				if (!getModel().getSession().isInScope(uri)) {
+					throw new IllegalStateException(
+							"Scans are not allowed on targets not in scope when in Protected mode: " + uri);
+				}
+			case standard:
+			case attack:
+			default:
+				// No problem
+				break;
+			}
+
+			getSpiderPanel().startScan(displayName, target);
+		}
+	}
+
+	URI getFirstUriInContext(Context context) {
+		return findFirstUriInContext(context, (SiteNode) getModel().getSession().getSiteTree().getRoot());
+	}
+
+	private static URI findFirstUriInContext(Context context, SiteNode node) {
+		@SuppressWarnings("unchecked")
+		Enumeration<SiteNode> en = node.children();
+		while (en.hasMoreElements()) {
+			SiteNode childNode = en.nextElement();
+			if (context.isInContext(childNode)) {
+				return URI.create(childNode.getHistoryReference().getURI().toString());
+			}
+
+			URI uri = findFirstUriInContext(context, childNode);
+			if (uri != null) {
+				return uri;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -298,12 +389,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		}
 	}
 	
-	SpiderThread createSpiderThread(String url, boolean inScope, SpiderListener spiderListener) throws URIException {
-		return this.createSpiderThread(url, inScope, getAjaxSpiderParam(), spiderListener);
-	}
-	
-	SpiderThread createSpiderThread(String url, boolean inScope, AjaxSpiderParam params, SpiderListener spiderListener) throws URIException {
-		SpiderThread spiderThread = new SpiderThread(url, this, inScope, params, spiderListener);
+	SpiderThread createSpiderThread(String displayName, AjaxSpiderTarget target, SpiderListener spiderListener) {
+		SpiderThread spiderThread = new SpiderThread(displayName, target, this, spiderListener);
 		spiderThread.addSpiderListener(getSpiderListener());
 		
 		return spiderThread;
@@ -341,6 +428,9 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			ajaxSpiderApi.reset();
 			if (getView() != null) {
 				getSpiderPanel().reset();
+				if (spiderDialog != null) {
+					spiderDialog.reset();
+				}
 			}
 		}
 

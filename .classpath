@@ -39,5 +39,7 @@
 	<classpathentry kind="lib" path="lib/zap-2.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/selenium-server-standalone-2.53.1.jar"/>
 	<classpathentry kind="lib" path="lib/htmlunit-driver-standalone-2.21.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/jgrapht-0.8.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

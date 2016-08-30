@@ -10,6 +10,9 @@
 	Allow to show the AJAX Spider dialogue through Tools menu (and keyboard shortcut).<br>
 	Fixed the issue that prevented the ajaxSpider from resetting the crawled url count to zero while starting a new scan (Issue 2610).<br>
 	Warn always if attempting to AJAX spider "localhost" with PhantomJS.<br>
+	Allow to spider a context (Issue 1955).<br>
+	Allow to spider as a user (Issue 1956).<br>
+	Allow to manually specify the start URL in AJAX Spider dialogue (Issue 1957).<br>
 	]]>
 	</changes>
 	<dependencies>

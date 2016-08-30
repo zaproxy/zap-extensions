@@ -35,7 +35,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.KeyStroke;
 
-import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -220,7 +219,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	private void resetPanelState() {
 		this.activeScans = new ArrayList<>();
 		this.setActiveScanLabels();
-		this.getStartScanButton().setEnabled(true);
+		this.getStartScanButton().setEnabled(!Mode.safe.equals(Control.getSingleton().getMode()));
 		this.getStopScanButton().setEnabled(false);
 	}
 	
@@ -387,32 +386,27 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 		filterStatus.setToolTipText(filter.toLongString());
 	}
 
-	
 	/**
+	 * Starts a new scan with the given name and target.
 	 * 
-	 * @param site the targeted site
-	 * @param inScope if it is in scope
+	 * @param displayName the display name of the new scan
+	 * @param target the target of the scan
 	 */
-	public void startScan(String site, boolean inScope, AjaxSpiderParam params) {
+	public void startScan(String displayName, AjaxSpiderTarget target) {
 		if (View.isInitialised()) {
 			// Show the tab in case its been closed
 			this.setTabFocus();
 			this.foundCount = 0;
 			this.foundLabel.setText(Integer.toString(this.foundCount));
 		}
-		try {
-			this.runnable = extension.createSpiderThread(site, inScope, params, this);
-		} catch (URIException e) {
-			logger.error(e);
-			return;
-		}
+		this.runnable = extension.createSpiderThread(displayName, target, this);
 		this.getStartScanButton().setEnabled(false);
 		this.getStopScanButton().setEnabled(true);
-		this.activeScans.add(site);
+		this.activeScans.add(displayName);
 		this.setActiveScanLabels();
 		spiderResultsTableModel.clear();
 		visitedUrls.clear();
-		this.targetSite = site;
+		this.targetSite = displayName;
 		try {
 			new Thread(runnable).start();
 		} catch (Exception e) {

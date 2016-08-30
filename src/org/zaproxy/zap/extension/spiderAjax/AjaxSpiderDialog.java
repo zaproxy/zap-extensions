@@ -23,17 +23,27 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.URIException;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.BrowserUI;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.users.ExtensionUserManagement;
+import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class AjaxSpiderDialog extends StandardFieldsDialog {
@@ -44,6 +54,8 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 		/*"spiderajax.scandialog.tab.elements"*/};
 
     private static final String FIELD_START = "spiderajax.scandialog.label.start";
+    private static final String FIELD_CONTEXT = "spiderajax.scandialog.label.context";
+    private static final String FIELD_USER = "spiderajax.scandialog.label.user";
     private static final String FIELD_IN_SCOPE = "spiderajax.scandialog.label.inscope";
     private static final String FIELD_BROWSER = "spiderajax.scandialog.label.browser";
     private static final String FIELD_ADVANCED = "spiderajax.scandialog.label.adv";
@@ -63,31 +75,48 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     private ExtensionAjax extension = null;
     private ExtensionSelenium extSel = null;
 
-    private SiteNode startNode = null;
+    private JButton[] extraButtons;
+
+    private Target target;
 	private AjaxSpiderParam params = null;
 	//private OptionsAjaxSpiderTableModel ajaxSpiderClickModel = null;
+
+    private final ExtensionUserManagement extUserMgmt;
 
     public AjaxSpiderDialog(ExtensionAjax ext, Frame owner, Dimension dim) {
         super(owner, "spiderajax.scandialog.title", dim, LABELS);
         
         this.extension = ext;
+        this.extUserMgmt = Control.getSingleton().getExtensionLoader().getExtension(ExtensionUserManagement.class);
     }
 
-    public void init(SiteNode startNode) {
-        if (startNode != null) {
+    public void init(Target target) {
+        if (target != null) {
             // If one isnt specified then leave the previously selected one
-            this.startNode = startNode;
+            this.target = target;
         }
         
-        logger.debug("init " + this.startNode);
+        logger.debug("init " + this.target);
         if (params == null) {
         	params = this.extension.getAjaxSpiderParam();
         }
 
         this.removeAllFields();
 
-        this.addNodeSelectField(0, FIELD_START, this.startNode, false, false);
+        this.addTargetSelectField(0, FIELD_START, this.target, true, false);
+        this.addComboField(0, FIELD_CONTEXT, new String[] {}, "");
+        this.addComboField(0, FIELD_USER, new String[] {}, "");
         this.addCheckBoxField(0, FIELD_IN_SCOPE, false);
+        this.addFieldListener(FIELD_IN_SCOPE, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean selected = getBoolValue(FIELD_IN_SCOPE);
+
+                getField(FIELD_CONTEXT).setEnabled(!selected && ((JComboBox<?>) getField(FIELD_CONTEXT)).getItemCount() > 1);
+                getField(FIELD_USER).setEnabled(!selected && ((JComboBox<?>) getField(FIELD_USER)).getItemCount() > 1);
+            }
+        });
         
         if (getExtSelenium() != null) {
         	List<Browser> browserList = getExtSelenium().getConfiguredBrowsers();
@@ -108,6 +137,13 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 
         this.addPadding(0);
 
+        this.addFieldListener(FIELD_CONTEXT, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setUsers();
+            }
+        });
+
         this.addFieldListener(FIELD_ADVANCED, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -117,9 +153,12 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             }
         });
 
-        if (startNode != null) {
-            // Set up the fields if a node has been specified, otherwise leave as previously set
-	        this.siteNodeSelected(FIELD_START, this.startNode);
+        if (target != null) {
+            this.targetSelected(FIELD_START, this.target);
+            this.setUsers();
+        } else {
+            getField(FIELD_CONTEXT).setEnabled(false);
+            getField(FIELD_USER).setEnabled(false);
         }
 
         this.setAdvancedOptions(params.isShowAdvancedDialog());
@@ -174,16 +213,100 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     }
 
     @Override
-    public void siteNodeSelected(String field, SiteNode node) {
-        if (node != null) {
-            // The user has selected a new node
-            this.startNode = node;
+    public void targetSelected(String field, Target target) {
+        boolean contextSelected = false;
+        List<String> ctxNames = new ArrayList<String>();
+        if (target != null) {
+            this.target = target;
+            if (target.getStartNode() != null) {
+                Session session = Model.getSingleton().getSession();
+                List<Context> contexts = session.getContextsForNode(target.getStartNode());
+                ctxNames.add("");
+                for (Context context : contexts) {
+                    ctxNames.add(context.getName());
+                }
+
+            } else if (target.getContext() != null) {
+                ctxNames.add(target.getContext().getName());
+                contextSelected = true;
+            }
         }
+        this.setComboFields(FIELD_CONTEXT, ctxNames, "");
+        this.getField(FIELD_CONTEXT).setEnabled(ctxNames.size() > 1);
+        this.getField(FIELD_IN_SCOPE).setEnabled(!contextSelected);
+    }
+    
+    private Context getSelectedContext() {
+        String ctxName = this.getStringValue(FIELD_CONTEXT);
+        if (this.extUserMgmt != null && ! this.isEmptyField(FIELD_CONTEXT)) {
+            Session session = Model.getSingleton().getSession();
+            return session.getContext(ctxName);
+        }
+        return null;
+    }
+
+    private User getSelectedUser() {
+        Context context = this.getSelectedContext();
+        if (context != null && extUserMgmt != null) {
+            String userName = this.getStringValue(FIELD_USER);
+            List<User> users = this.extUserMgmt.getContextUserAuthManager(context.getIndex()).getUsers();
+            for (User user : users) {
+                if (userName.equals(user.getName())) {
+                    return user;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void setUsers() {
+        boolean contextSelected = false;
+        Context context = this.getSelectedContext();
+        List<String> userNames = new ArrayList<>();
+        if (context != null && extUserMgmt != null) {
+            List<User> users = extUserMgmt.getContextUserAuthManager(context.getIndex()).getUsers();
+            userNames.add("");
+            for (User user : users) {
+                userNames.add(user.getName());
+            }
+            contextSelected = true;
+        }
+        this.setComboFields(FIELD_USER, userNames, "");
+        this.getField(FIELD_USER).setEnabled(userNames.size() > 1);
+        this.getField(FIELD_IN_SCOPE).setEnabled(!contextSelected);
+    }
+
+    /**
+     * Resets the spider dialogue to its default state.
+     */
+    public void reset() {
+        // Reset to the global options
+        params = null;
+        target = null;
+
+        init(target);
+        repaint();
     }
 
     @Override
     public String getSaveButtonText() {
         return Constant.messages.getString("spiderajax.scandialog.button.scan");
+    }
+
+    @Override
+    public JButton[] getExtraButtons() {
+        if (extraButtons == null) {
+            JButton resetButton = new JButton(Constant.messages.getString("spiderajax.scandialog.button.reset"));
+            resetButton.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+                    reset();
+                }
+            });
+
+            extraButtons = new JButton[]{resetButton};
+        }
+        return extraButtons;
     }
 
     /**
@@ -210,7 +333,39 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         	
         }
 
-    	this.extension.spiderSite(this.startNode, this.getBoolValue(FIELD_IN_SCOPE), params);
+        URI startUri = null;
+        if (!this.getStringValue(FIELD_START).equals(getTargetText(target))) {
+            startUri = URI.create(getStringValue(FIELD_START));
+        } else {
+            SiteNode startNode = target.getStartNode();
+            if (startNode != null) {
+                startUri = URI.create(startNode.getHistoryReference().getURI().toString());
+            } else if (target.getContext() != null) {
+                startUri = extension.getFirstUriInContext(target.getContext());
+            }
+        }
+
+        if (startUri == null) {
+            return;
+        }
+
+        AjaxSpiderTarget.Builder targetBuilder = AjaxSpiderTarget.newBuilder(extension.getModel().getSession())
+                .setInScopeOnly(getBoolValue(FIELD_IN_SCOPE))
+                .setOptions(params)
+                .setStartUri(startUri);
+
+        User user = getSelectedUser();
+        if (user != null) {
+            targetBuilder.setUser(user);
+        } else {
+            Context context = getSelectedContext();
+            if (context == null && target != null && target.getContext() != null) {
+                context = target.getContext();
+            }
+            targetBuilder.setContext(context);
+        }
+
+        this.extension.startScan(targetBuilder.build());
     }
 
     /**
@@ -235,24 +390,73 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 
     @Override
     public String validateFields() {
+        if (extension.isSpiderRunning()) {
+            return Constant.messages.getString("spiderajax.scandialog.alreadyrunning.error");
+        }
 
-        if (this.startNode == null) {
+        if (Control.Mode.safe == Control.getSingleton().getMode()) {
+            // The dialogue shouldn't be shown when in safe mode but if it is warn.
+            return Constant.messages.getString("spiderajax.scandialog.notSafe.error");
+        }
+
+        if (this.isEmptyField(FIELD_START)) {
             return Constant.messages.getString("spiderajax.scandialog.nostart.error");
+        }
+
+        URI startUri = null;
+        Context context = getSelectedContext();
+        if (!getStringValue(FIELD_START).equals(getTargetText(target))) {
+            String url = this.getStringValue(FIELD_START);
+            try {
+                // Need both constructors as they catch slightly different issues ;)
+                startUri = new URI(url);
+                new URL(url);
+            } catch (Exception e) {
+                return Constant.messages.getString("spiderajax.scandialog.nostart.error");
+            }
+        } else if (this.target != null) {
+            if (!this.target.isValid()) {
+                return Constant.messages.getString("spiderajax.scandialog.nostart.error");
+            }
+
+            SiteNode startNode = target.getStartNode();
+            if (startNode != null) {
+                startUri = URI.create(startNode.getHistoryReference().getURI().toString());
+            } else if (context != null) {
+                startUri = extension.getFirstUriInContext(context);
+            }
+        }
+
+        if (startUri == null) {
+            if (context != null) {
+                return Constant.messages.getString("spiderajax.scandialog.nostart.context.error");
+            }
+            return Constant.messages.getString("spiderajax.scandialog.nostart.error");
+        }
+
+        if (context != null && !context.isInContext(startUri.toString())) {
+            return Constant.messages.getString("spiderajax.scandialog.startNotInContext.error");
+        }
+
+        if (!extension.getModel().getSession().isInScope(startUri.toString())) {
+            if (Control.getSingleton().getMode() == Control.Mode.protect) {
+                return Constant.messages.getString("spiderajax.scandialog.startProtectedMode.error");
+            }
+
+            if (getBoolValue(FIELD_IN_SCOPE)) {
+                return Constant.messages.getString("spiderajax.scandialog.startNotInScope.error");
+            }
         }
 
         Browser selectedBrowser = getSelectedBrowser();
         if (selectedBrowser == null) {
-            return null;
+            return Constant.messages.getString("spiderajax.scandialog.nobrowser.error");
         }
 
         if (Browser.PHANTOM_JS.getId() == selectedBrowser.getId()) {
-            try {
-                String host = startNode.getHistoryReference().getURI().getHost();
-                if ("localhost".equalsIgnoreCase(host) || "127.0.0.1".equals(host) || "[::1]".equals(host)) {
-                    return Constant.messages.getString("spiderajax.warn.message.phantomjs.bug.invalid.target");
-                }
-            } catch (URIException e) {
-                logger.warn("Failed to get host:", e);
+            String host = startUri.getHost();
+            if ("localhost".equalsIgnoreCase(host) || "127.0.0.1".equals(host) || "[::1]".equals(host)) {
+                return Constant.messages.getString("spiderajax.warn.message.phantomjs.bug.invalid.target");
             }
         }
 
