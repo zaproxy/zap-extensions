@@ -26,7 +26,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 
-
 public class PopupMenuEvidenceSearch extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
@@ -35,9 +34,6 @@ public class PopupMenuEvidenceSearch extends ExtensionPopupMenuItem {
     private Pattern pattern = null;
     private ExtensionSearch.Type type = null;
 
-    /**
-     * @param label
-     */
     public PopupMenuEvidenceSearch(String label, Pattern pattern, ExtensionSearch.Type type) {
         super(label);
         this.pattern = pattern;
@@ -49,9 +45,6 @@ public class PopupMenuEvidenceSearch extends ExtensionPopupMenuItem {
 		this.extension = extension;
 	}
 
-    /**
-	 * This method initialises this
-	 */
 	private void initialize() {
 		// TODO add prefix for pattern type?
         this.setText(pattern.pattern());
@@ -83,7 +76,6 @@ public class PopupMenuEvidenceSearch extends ExtensionPopupMenuItem {
         return false;
     }
     
-
     @Override
     public boolean isSafe() {
     	return true;

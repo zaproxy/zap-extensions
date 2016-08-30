@@ -118,13 +118,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		super(name);
 	}
 
-	/**
-	 * This method initializes this
-	 */
-	@SuppressWarnings("unchecked")
 	private void initialize() {
 		this.setName(NAME);
-		// TODO - something sensible
 		this.setOrder(201);
 		
 		try {
@@ -510,19 +505,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 			}
 			this.getTechPanel().addSite(site);
 		}
-		/*
-		try {
-			List<RecordParam> params = Model.getSingleton().getDb().getTableParam().getAll();
-			
-			for (RecordParam param : params) {
-				SiteParameters sps = this.getSiteParameters(param.getSite());
-				sps.addParam(param.getSite(), param);
-				
-			}
-		} catch (SQLException e) {
-            logger.error(e.getMessage(), e);
-		}
-		*/
+
 	}
 
 	@Override

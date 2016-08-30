@@ -55,25 +55,16 @@ public class TechPanel extends AbstractPanel {
 	private String currentSite = null;
 	private JComboBox<String> siteSelect = null;
 	private SortedComboBoxModel<String> siteModel = new SortedComboBoxModel<>();
-	//private JButton optionsButton = null;
 
 	private JXTable techTable = null;
 	private TechTableModel techModel = new TechTableModel();
-	
-    //private static Log log = LogFactory.getLog(ParamsPanel.class);
-    
-    /**
-     * 
-     */
+   
     public TechPanel(ExtensionWappalyzer extension) {
         super();
         this.extension = extension;
  		initialize();
     }
 
-	/**
-	 * This method initializes this
-	 */
 	private  void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
@@ -84,12 +75,12 @@ public class TechPanel extends AbstractPanel {
 		this.setMnemonic(Constant.messages.getChar("wappalyzer.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
 	}
+	
 	/**
 	 * This method initializes panelCommand	
 	 * 	
 	 * @return javax.swing.JPanel	
-	 */    
-	/**/
+	 */
 	private javax.swing.JPanel getPanelCommand() {
 		if (panelCommand == null) {
 
@@ -120,7 +111,6 @@ public class TechPanel extends AbstractPanel {
 		}
 		return panelCommand;
 	}
-	/**/
 
 	private javax.swing.JToolBar getPanelToolbar() {
 		if (panelToolbar == null) {
@@ -163,8 +153,6 @@ public class TechPanel extends AbstractPanel {
 			gridBagConstraintsx.fill = java.awt.GridBagConstraints.HORIZONTAL;
 
 			JLabel t1 = new JLabel();
-
-			//panelToolbar.add(getOptionsButton(), gridBagConstraints0);
 
 			panelToolbar.add(new JLabel(Constant.messages.getString("wappalyzer.toolbar.site.label")), gridBagConstraints1);
 			panelToolbar.add(getSiteSelect(), gridBagConstraints2);

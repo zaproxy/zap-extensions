@@ -34,6 +34,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
+import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class WappalyzerPassiveScanner implements PassiveScanner {
 
@@ -42,9 +43,6 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 
 	private static final Logger logger = Logger.getLogger(WappalyzerPassiveScanner.class);
 
-	/**
-	 * Prefix for internationalized messages used by this rule
-	 */
 	public WappalyzerPassiveScanner() {
 		super();
 	}
@@ -165,20 +163,9 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 		// Does not apply.
 	}
 
-	// @Override
+	@Override
 	public boolean appliesToHistoryType(int historyType) {
-		// TODO replace with core code once available
-		// return PluginPassiveScanner.getDefaultHistoryTypes().contains(historyType);
-
-		switch (historyType) {
-		case HistoryReference.TYPE_PROXIED:
-		case HistoryReference.TYPE_ZAP_USER:
-		case HistoryReference.TYPE_SPIDER:
-		case HistoryReference.TYPE_SPIDER_AJAX:
-			return true;
-		default:
-			return false;
-		}
+		return PluginPassiveScanner.getDefaultHistoryTypes().contains(historyType);
 	}
 
 }
