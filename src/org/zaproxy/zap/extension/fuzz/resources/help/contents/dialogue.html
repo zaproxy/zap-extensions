@@ -26,26 +26,10 @@ You can also search for strings in the fuzz results using the 'Search tab'.
 This tab allows you to configure the options to be used when fuzzing.
 
 <H3>Message Processors tab</H3>
-Message Processors can access and change the fuzzing requests and responses, control the fuzzing process and interact with the ZAP UI.
-<br><br>
-The following types of message processors are provided by default:
-<ul>
-<li>Payload Reflection Detector</li>
-<li>Request Content-Length Updater</li>
-<li>User message processor</li>
-</ul>
-You can write custom HTTP Message Processor scripts, which allow you to 
-<ul>
-<li>Obtain the list of payloads</li>
-<li>Stop fuzzing</li>
-<li>Increase the error count</li>
-<li>Send new messages</li>
-<li>Add messages to the Results tab[link]</li>
-<li>Set custom ‘state’ messages in the <a href="tab.html">Fuzzer tab</a></li>
-<li>Raise alerts</li>
-</ul>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.<br>
+The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
 
-<br><br>
+<p>
 Add-ons can also define additional payload generators.
 
 
