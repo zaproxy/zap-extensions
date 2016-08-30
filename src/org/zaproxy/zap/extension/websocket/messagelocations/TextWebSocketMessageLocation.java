@@ -99,7 +99,10 @@ public class TextWebSocketMessageLocation implements WebSocketMessageLocation {
 
         TextWebSocketMessageLocation otherTextLocation = (TextWebSocketMessageLocation) otherLocation;
         if (start == otherTextLocation.getStart()) {
-            return (start == end) ? end == otherTextLocation.getEnd() : false;
+            if (start == end) {
+                return end == otherTextLocation.getEnd();
+            }
+            return otherTextLocation.getStart() != otherTextLocation.getEnd();
         }
         if (start < otherTextLocation.getStart()) {
             return end > otherTextLocation.getStart();
