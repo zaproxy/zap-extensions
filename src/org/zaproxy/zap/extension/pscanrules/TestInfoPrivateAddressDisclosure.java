@@ -36,6 +36,10 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
+/**
+ * Plugin that scans the content for private IP V4 addresses as well as 
+ * Amazon EC2 private hostnames (for example, ip-12-34-56-78).
+ */
 public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
 
 	/**
@@ -44,38 +48,25 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
 	private static final String MESSAGE_PREFIX = "pscanrules.testinfoprivateaddressdisclosure.";
 	
     private static final String REGULAR_IP_OCTET = "\\b(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})";
-    private static final String REGULAR_PORTS = "\\b(6553[0-5]|65[0-5][0-2][0-9]|6[0-4][0-9]{4}|[0-5]?[0-9]{0,4})";
+    private static final String REGULAR_PORTS = "\\b(6553[0-5]|65[0-5][0-2][0-9]|6[0-4][0-9]{3}|[0-5]?[0-9]{0,4})";
     
-    // Private IP's including localhost
+    // Private IP's and internal AWS-hostnames including localhost
+    /**
+     * Pattern for private IP V4 addresses as well as Amazon EC2 private hostnames
+     */
     public static final Pattern patternPrivateIP = Pattern.compile(
             "("
             + "10\\.(" + REGULAR_IP_OCTET + "\\.){2}" + REGULAR_IP_OCTET + "|"
             + "172\\." + "\\b(3[01]|2[0-9]|1[6-9])\\." + REGULAR_IP_OCTET + "\\." + REGULAR_IP_OCTET + "|"
             + "192\\.168\\." + REGULAR_IP_OCTET + "\\." + REGULAR_IP_OCTET + "|"
             //find IPs from AWS hostnames such as "ip-10-2-3-200"
-            + "10\\-(" + REGULAR_IP_OCTET + "\\-){2}" + REGULAR_IP_OCTET + "|"
-            + "172\\-" + "\\b(3[01]|2[0-9]|1[6-9])\\-" + REGULAR_IP_OCTET + "\\-" + REGULAR_IP_OCTET + "|"
-            + "192\\-168\\-" + REGULAR_IP_OCTET + "\\-" + REGULAR_IP_OCTET             
+            + "ip\\-10\\-(" + REGULAR_IP_OCTET + "\\-){2}" + REGULAR_IP_OCTET + "|"
+            + "ip\\-172\\-" + "\\b(3[01]|2[0-9]|1[6-9])\\-" + REGULAR_IP_OCTET + "\\-" + REGULAR_IP_OCTET + "|"
+            + "ip\\-192\\-168\\-" + REGULAR_IP_OCTET + "\\-" + REGULAR_IP_OCTET             
             + ")"
             + "(\\:" + REGULAR_PORTS + ")?",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+            Pattern.MULTILINE);
     
-    /*"(10\\." +
-     "\\b((([0-1]?[0-9]?|2[0-4])[0-9])|25[0-5])\\." +
-     "\\b((([0-1]?[0-9]?|2[0-4])[0-9])|25[0-5])\\." +
-     "\\b((([0-1]?[0-9]?|2[0-4])[0-9])|25[0-5])" +
-     "|" +
-     "172\\." +
-     "\\b(1[6-9]|2[0-9]|3[01])\\." +
-     "\\b((([0-1]?[0-9]?|2[0-4])[0-9])|25[0-5])\\." +
-     "\\b((([0-1]?[0-9]?|2[0-4])[0-9])|25[0-5])" +
-     "|" +
-     "192\\.168\\." +
-     "\\b((([0-1]?[0-9]?|2[0-4])[0-9])|25[0-5])\\." +
-     "\\b((([0-1]?[0-9]?|2[0-4])[0-9])|25[0-5]))"
-     , PATTERN_PARAM);
-     */
-    //"(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}|172\\.\\d{2,2}\\.\\d{1,3}\\.\\d{1,3}|192\\.168\\.\\d{1,3}\\.\\d{1,3})", PATTERN_PARAM);
     
     private PassiveScanThread parent = null;
 
