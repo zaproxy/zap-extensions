@@ -19,10 +19,10 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import net.htmlparser.jericho.Source;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.ContentMatcher;
@@ -44,8 +44,7 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
 	
     // Name of the file related to pattern's definition list
     private static final String APP_ERRORS_FILE = "/org/zaproxy/zap/extension/pscanrules/resources/application_errors.xml";
-    // Evidence used for Internal Server Error occurrence
-    private static final String EVIDENCE_INTERNAL_SERVER_ERROR = "HTTP 500 Internal server error";
+
     // Inner Content Matcher component with pattern definitions
     private static final ContentMatcher matcher = 
     		ContentMatcher.getInstance(ApplicationErrorScanner.class.getResourceAsStream(APP_ERRORS_FILE));
@@ -130,13 +129,13 @@ public class ApplicationErrorScanner extends PluginPassiveScanner {
 
         // First check if it's an INTERNAL SERVER ERROR
         int status = msg.getResponseHeader().getStatusCode();
-        if (status == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+        if (status == HttpStatusCode.INTERNAL_SERVER_ERROR) {
             // We found it!
             // The AS raise an Internal Error
             // so a possible disclosure can be found
-            raiseAlert(msg, id, EVIDENCE_INTERNAL_SERVER_ERROR);
-            
-        } else if (status != HttpStatus.SC_NOT_FOUND) {
+            raiseAlert(msg, id, msg.getResponseHeader().getPrimeHeader());
+
+        } else if (status != HttpStatusCode.NOT_FOUND) {
             String evidence = matcher.findInContent(msg.getResponseBody().toString());
             if (evidence != null) {
                 // We found it!

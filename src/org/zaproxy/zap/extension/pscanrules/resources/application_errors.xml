@@ -102,7 +102,7 @@ Elaborated by yhawke 2013
   <Pattern type="regex">(?i)&lt;h2&gt;\s&lt;i&gt;Syntax\serror\s(\([^\)]*\))?(in\sstring)?\sin\squery\sexpression\s'[^\.]*\.&lt;/i&gt;\s&lt;/h2&gt;&lt;/span&gt;</Pattern>
   <Pattern type="regex">(?i)&lt;font\sface=\"Arial\"\ssize=2&gt;Syntax\serror\s(.*)?in\squery\sexpression\s'(.*)\.&lt;/font&gt;</Pattern>
   <Pattern type="regex">(?i)&lt;b&gt;Warning&lt;/b&gt;:\s\spg_exec\(\)\s\[\&lt;a\shref='function.pg\-exec\'\&gt;function\.pg-exec\&lt;/a&gt;\]\:\sQuery failed:\sERROR:\s\ssyntax error at or near \&amp;quot\;\\\&amp;quot; at character \d+ in\s&lt;b&gt;.*&lt;/b&gt;</Pattern>
-  <Pattern type="regex">(?)System\.Data\.OleDb\.OleDbException\:\sSyntax\serror\s\([^)]*?\)\sin\squery\sexpression\s.*</Pattern>
+  <Pattern type="regex">(?i)System\.Data\.OleDb\.OleDbException\:\sSyntax\serror\s\([^)]*?\)\sin\squery\sexpression\s.*</Pattern>
   <Pattern type="regex">(?i)System\.Data\.OleDb\.OleDbException\:\sSyntax\serror\sin\sstring\sin\squery\sexpression\s</Pattern>
   <Pattern type="regex">&lt;font style="COLOR: black; FONT: 8pt/11pt verdana"&gt;\s+(\[Macromedia\]\[SQLServer\sJDBC\sDriver\]\[SQLServer\]|Syntax\serror\sin\sstring\sin\squery\sexpression\s)</Pattern>
   <Pattern type="regex">(?i)The Error Occurred in &lt;b&gt;(.*): line.*&lt;\/b&gt;&lt;br&gt;</Pattern>
