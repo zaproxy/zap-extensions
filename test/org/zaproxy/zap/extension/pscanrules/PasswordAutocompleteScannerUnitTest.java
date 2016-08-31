@@ -42,7 +42,7 @@ public class PasswordAutocompleteScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Test
-	public void noForm() throws HttpMalformedHeaderException {
+	public void shouldPassIfThereIsNoFormAtAll() throws HttpMalformedHeaderException {
 		HttpMessage msg = createHttpMessage("<html><body></body></html>");
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
@@ -50,7 +50,7 @@ public class PasswordAutocompleteScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Test
-	public void acOffInForm() throws HttpMalformedHeaderException {
+	public void shouldPassWithAutocompleteInFormTag() throws HttpMalformedHeaderException {
 		String body = "<html>" +
 				"<form method='POST' action='dologin' autocomplete='off'>" +
 				"Name: <input name='usr' value='' type='text'>" +
@@ -64,7 +64,7 @@ public class PasswordAutocompleteScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Test
-	public void acOffInPass() throws HttpMalformedHeaderException {
+	public void shouldPassWithAutocompleteInPasswordField() throws HttpMalformedHeaderException {
 		String body = "<html>" +
 				"<form method='POST' action='dologin'>" +
 				"Name: <input name='usr' value='' type='text'>" +
@@ -77,7 +77,7 @@ public class PasswordAutocompleteScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Test
-	public void acOffTypo() throws HttpMalformedHeaderException {
+	public void shouldRaiseAlertIfThereIsATypoInTheAutocompleteAttributeInTheFormTag() throws HttpMalformedHeaderException {
 		String body = "<html>" +
 				"<form method='POST' action='dologin' autocomplete='pff'>" +
 				"Name: <input name='usr' value='' type='text'>" +
@@ -93,7 +93,51 @@ public class PasswordAutocompleteScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Test
-	public void noAcAttrib() throws HttpMalformedHeaderException {
+	public void shouldRaiseAlertIfThereIsATypoInTheAutocompleteAttributeInThePasswordField() throws HttpMalformedHeaderException {
+		String body = "<html>" +
+				"<form method='POST' action='dologin'>" +
+				"Name: <input name='usr' value='' type='text'>" +
+				"Pass: <input name='pw' type='password' autocomplete='pff'>" +
+				"<input type='submit' value='Login'/>" +
+				"</form></html>";
+		HttpMessage msg = createHttpMessage(body);
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+		assertThat(alertsRaised.size(), equalTo(1));
+		assertThat(alertsRaised.get(0).getParam(), equalTo("pw"));
+		assertThat(alertsRaised.get(0).getEvidence(), equalTo("<input name='pw' type='password' autocomplete='pff'>"));
+	}
+
+	@Test
+	public void shouldRaiseAlertIfThereIsNoNameAndNoIdInThePasswordField() throws HttpMalformedHeaderException {
+		String body = "<html>" +
+				"<form method='POST' action='dologin'>" +
+				"Name: <input name='usr' value='' type='text'>" +
+				"Pass: <input type='password' autocomplete='off'>" +
+				"<input type='submit' value='Login'/>" +
+				"</form></html>";
+		HttpMessage msg = createHttpMessage(body);
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+		assertThat(alertsRaised.size(), equalTo(0));
+	}
+
+	@Test
+	public void shouldRaiseAlertIfThereIsNoTypeInThePasswordField() throws HttpMalformedHeaderException {
+		String body = "<html>" +
+				"<form method='POST' action='dologin'>" +
+				"Name: <input name='usr' value='' type='text'>" +
+				"Pass: <input name='pw' autocomplete='off'>" +
+				"<input type='submit' value='Login'/>" +
+				"</form></html>";
+		HttpMessage msg = createHttpMessage(body);
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+		assertThat(alertsRaised.size(), equalTo(0));
+	}
+
+	@Test
+	public void shouldRaiseAlertIfPasswordFieldAndFormHasNoAutocomplete() throws HttpMalformedHeaderException {
 		String body = "<html>" +
 				"<form method='POST' action='dologin'>" +
 				"Name: <input name='usr' value='' type='text'>" +
@@ -108,7 +152,7 @@ public class PasswordAutocompleteScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Test
-	public void acOffInWrongTag() throws HttpMalformedHeaderException {
+	public void shouldRaiseAlertIfAutocompleteIsInWrongTag() throws HttpMalformedHeaderException {
 		String body = "<html>" +
 				"<form method='POST' action='dologin'>" +
 				"Name: <input name='usr' value='' type='text' autocomplete='off'>" +
@@ -123,7 +167,7 @@ public class PasswordAutocompleteScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Test
-	public void tworFormsOneAcOffForm() throws HttpMalformedHeaderException {
+	public void shouldRaiseAlertIfThereIsInTwoFormsOnlyOneAutocompleteInTheFormTag() throws HttpMalformedHeaderException {
 		String body = "<html>" +
 				"<form method='POST' action='login1' autocomplete='off'>" +
 				"Name: <input name='usr1' value='' type='text'>" +
@@ -144,7 +188,7 @@ public class PasswordAutocompleteScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Test
-	public void tworFormsOneAcOffTag() throws HttpMalformedHeaderException {
+	public void shouldRaiseAlertIfThereIsInTwoFormsOnlyOneAutocompleteInThePasswordField() throws HttpMalformedHeaderException {
 		String body = "<html>" +
 				"<form method='POST' action='login1'>" +
 				"Name: <input name='usr1' value='' type='text'>" +
@@ -165,7 +209,7 @@ public class PasswordAutocompleteScannerUnitTest extends PassiveScannerTest {
 	}
 
 	@Test
-	public void tworFormNoAcAttrib() throws HttpMalformedHeaderException {
+	public void shouldRaiseAlertIfThereIsInTwoFormsNoAutocompleteAtAll() throws HttpMalformedHeaderException {
 		String body = "<html>" +
 				"<form method='POST' action='login1'>" +
 				"Name: <input name='usr1' value='' type='text'>" +
