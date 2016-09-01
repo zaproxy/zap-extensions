@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Tips and Tricks</name>
-	<version>5</version>
+	<version>6</version>
 	<status>beta</status>
 	<description>Display ZAP Tips and Tricks</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated help page to show latest tips, fix typos and use proper charset.</changes>
+	<changes>Minor code changes.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.tips.ExtensionTipsAndTricks</extension>
 	</extensions>

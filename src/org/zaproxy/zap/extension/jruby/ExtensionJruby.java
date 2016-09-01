@@ -46,22 +46,7 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 	private ScriptEngine rubyScriptEngine = null;
 
 	public ExtensionJruby() {
-		super();
-		initialize();
-	}
-
-	/**
-	 * @param name
-	 */
-	public ExtensionJruby(String name) {
-		super(name);
-	}
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-		this.setName(NAME);
+		super(NAME);
 		this.setOrder(76);
 	}
 

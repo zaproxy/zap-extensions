@@ -66,22 +66,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
      * 
      */
     public ExtensionBruteForce() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionBruteForce(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-        this.setName("ExtensionBruteForce");
+        super("ExtensionBruteForce");
         this.setOrder(32);
 	}
 	

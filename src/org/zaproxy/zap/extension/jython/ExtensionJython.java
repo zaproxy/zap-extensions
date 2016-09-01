@@ -42,22 +42,7 @@ public class ExtensionJython extends ExtensionAdaptor {
 	private ExtensionScript extScript = null;
 
 	public ExtensionJython() {
-		super();
-		initialize();
-	}
-
-	/**
-	 * @param name
-	 */
-	public ExtensionJython(String name) {
-		super(name);
-	}
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-		this.setName(NAME);
+		super(NAME);
 		this.setOrder(74);
 	}
 

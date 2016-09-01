@@ -157,22 +157,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	public ExtensionZest() {
-		super();
-		initialize();
-	}
-
-	/**
-	 * @param name
-	 */
-	public ExtensionZest(String name) {
-		super(name);
-	}
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-		this.setName(NAME);
+		super(NAME);
 		this.setOrder(73); // Almost looks like ZE ;)
 	}
 

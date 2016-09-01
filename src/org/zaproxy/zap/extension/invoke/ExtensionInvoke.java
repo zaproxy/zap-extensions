@@ -42,22 +42,7 @@ public class ExtensionInvoke extends ExtensionAdaptor {
      * 
      */
     public ExtensionInvoke() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionInvoke(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-        this.setName("ExtensionInvoke");
+        super("ExtensionInvoke");
         this.setOrder(46);
 	}
 	

@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Token generation and analysis</name>
-	<version>10</version>
+	<version>11</version>
 	<status>beta</status>
 	<description>Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Change active Pause Button to a Play button (Issue 1802).<br>
+	Minor code changes.<br>
 	]]>
 	</changes>
 	<extensions>

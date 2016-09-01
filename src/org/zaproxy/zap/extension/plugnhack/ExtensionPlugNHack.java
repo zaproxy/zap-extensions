@@ -158,12 +158,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 	 */
 	
 	public ExtensionPlugNHack() {
-		super();
-		initialize();
-	}
-
-    private void initialize() {
-        this.setName(NAME);
+		super(NAME);
         this.setOrder(101);
     }
     

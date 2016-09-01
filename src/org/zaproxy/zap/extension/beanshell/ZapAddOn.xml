@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>BeanShell Console</name>
-	<version>5</version>
+	<version>6</version>
 	<status>beta</status>
 	<description>Provides a BeanShell Console</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for ZAP 2.4</changes>
+	<changes>Minor code changes.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.beanshell.ExtensionBeanShell</extension>
 	</extensions>
