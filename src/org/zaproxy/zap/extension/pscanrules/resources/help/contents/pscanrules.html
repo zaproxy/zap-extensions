@@ -52,8 +52,10 @@ via plain HTTP.
 Looks for "password" type input fields and checks for the setting "autocomplete=off".
 
 <H2>Private Address Disclosure</H2>
-Checks response content for inclusion of RFC 1918 IPv4 addresses. A malicious user might leverage knowledge
-of internal addressing to perform social engineering attacks or other exploits.
+Checks the response content for inclusion of RFC 1918 IPv4 addresses as well as 
+Amazon EC2 private hostnames (for example, ip-10-0-56-78). This information can give an attacker 
+useful information about the IP address scheme of the internal network, and might be helpful for 
+further attacks targeting internal systems.
 
 <H2>Session Id in URL Rewrite</H2>
 This scanner checks for the existence of session token type parameters being rewritten to the URL. 
