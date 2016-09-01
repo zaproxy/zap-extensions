@@ -266,7 +266,9 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 * @return a {@code String} containing the display name, never {@code null}
 	 */
 	String createDisplayName(AjaxSpiderTarget target) {
-		if (target.getContext() != null) {
+		if (target.isSubtreeOnly()) {
+			return abbreviateDisplayName(HttpPrefixUriValidator.getNormalisedPrefix(target.getStartUri().toString()));
+		} else if (target.getContext() != null) {
 			return Constant.messages.getString("context.prefixName", target.getContext().getName());
 		} else if (target.isInScopeOnly()) {
 			return Constant.messages.getString("target.allInScope");

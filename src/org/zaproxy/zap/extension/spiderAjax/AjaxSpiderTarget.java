@@ -35,13 +35,21 @@ public final class AjaxSpiderTarget {
     private final Context context;
     private final User user;
     private final AjaxSpiderParam options;
+    private final boolean subtreeOnly;
 
-    private AjaxSpiderTarget(URI startUri, boolean inScopeOnly, Context context, User user, AjaxSpiderParam options) {
+    private AjaxSpiderTarget(
+            URI startUri,
+            boolean inScopeOnly,
+            Context context,
+            User user,
+            AjaxSpiderParam options,
+            boolean subtreeOnly) {
         this.startUri = startUri;
         this.inScopeOnly = inScopeOnly;
         this.context = context;
         this.user = user;
         this.options = options;
+        this.subtreeOnly = subtreeOnly;
     }
 
     /**
@@ -83,6 +91,15 @@ public final class AjaxSpiderTarget {
     }
 
     /**
+     * Tells whether or not the spider should spider only a subtree.
+     *
+     * @return {@code true} to spider only a subtree, {@code false} otherwise.
+     */
+    public boolean isSubtreeOnly() {
+        return subtreeOnly;
+    }
+
+    /**
      * Gets the options for spidering.
      *
      * @return the options, never {@code null}.
@@ -112,6 +129,7 @@ public final class AjaxSpiderTarget {
         private Context context;
         private User user;
         private AjaxSpiderParam options;
+        private boolean subtreeOnly;
 
         /**
          * Constructs a {@code Builder} with the given session
@@ -195,6 +213,18 @@ public final class AjaxSpiderTarget {
         }
 
         /**
+         * Sets whether or not the spider should spider only a subtree.
+         *
+         * @param subtreeOnly {@code true} to spider only a subtree, {@code false} otherwise.
+         * @return this builder
+         */
+        public Builder setSubtreeOnly(boolean subtreeOnly) {
+            this.subtreeOnly = subtreeOnly;
+
+            return this;
+        }
+
+        /**
          * Builds a new target using the configurations previously set.
          *
          * @return a new {@code AjaxSpiderTarget} with configurations previously set.
@@ -222,7 +252,7 @@ public final class AjaxSpiderTarget {
                 throw new IllegalStateException("The starting URI is not in scope.");
             }
 
-            return new AjaxSpiderTarget(startUri, inScopeOnly, context, user, options);
+            return new AjaxSpiderTarget(startUri, inScopeOnly, context, user, options, subtreeOnly);
         }
     }
 }

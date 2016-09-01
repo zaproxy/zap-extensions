@@ -29,6 +29,10 @@ If set then any URLs which are out of scope will be ignored.
 <p>
 <strong>Note:</strong> The option <code>Just in scope</code> is mutually exclusive with <code>Context</code> option, if one is used the other is ignored.
 
+<h3>Spider Subtree Only</h3>
+If set then the spider will only access resources that are under the starting point (URI).
+When evaluating if a resource is found within the specified subtree, the spider considers only the scheme, host, port, and path components of the URI.
+
 <h3>Browser</h3>
 
 The type of browser to use.<br>
