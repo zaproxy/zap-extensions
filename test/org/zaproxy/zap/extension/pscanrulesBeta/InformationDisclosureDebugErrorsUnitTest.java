@@ -47,23 +47,22 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 			String debugError = data[i];
 			
 			HttpMessage msg = new HttpMessage();
-			msg.setRequestHeader("GET " + URI + " HTTP/1.1");
-	        
-	        msg.setResponseBody("<html>" + debugError + "</html>");
-	        msg.setResponseHeader(
-	                "HTTP/1.1 200 OK\r\n" +
-	                "Server: Apache-Coyote/1.1\r\n" +
-	                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-	                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
-	        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-
-	        assertThat(alertsRaised.size(), equalTo(i + 1));
-	        assertThat(alertsRaised.get(i).getCweId(), equalTo(200));
-	        assertThat(alertsRaised.get(i).getWascId(), equalTo(13));
-	        assertThat(alertsRaised.get(i).getEvidence(), equalTo(debugError));	
+			msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
+			msg.setResponseBody("<html>" + debugError + "</html>");
+			msg.setResponseHeader(
+					"HTTP/1.1 200 OK\r\n" +
+					"Server: Apache-Coyote/1.1\r\n" +
+					"Content-Type: text/html;charset=ISO-8859-1\r\n" +
+					"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+			rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+			
+			assertThat(alertsRaised.size(), equalTo(i + 1));
+			assertThat(alertsRaised.get(i).getCweId(), equalTo(200));
+			assertThat(alertsRaised.get(i).getWascId(), equalTo(13));
+			assertThat(alertsRaised.get(i).getEvidence(), equalTo(debugError));
 		}
 	}
-	
+
 	@Test
 	public void passesIfNoDebugErrorsDisclosed() throws HttpMalformedHeaderException {
 		String[] data = new String[] {
@@ -72,22 +71,21 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 				"What to Do If You Get a 404",
 				"500"
 		};
-		
+
 		for (int i = 0; i < data.length; i++) {
 			String debugError = data[i];
 			
 			HttpMessage msg = new HttpMessage();
-			msg.setRequestHeader("GET " + URI + " HTTP/1.1");
-	        
-	        msg.setResponseBody("<html>" + debugError + "</html>");
-	        msg.setResponseHeader(
-	                "HTTP/1.1 200 OK\r\n" +
-	                "Server: Apache-Coyote/1.1\r\n" +
-	                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-	                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
-	        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-
-	        assertThat(alertsRaised.size(), equalTo(0));
+			msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
+			msg.setResponseBody("<html>" + debugError + "</html>");
+			msg.setResponseHeader(
+					"HTTP/1.1 200 OK\r\n" +
+					"Server: Apache-Coyote/1.1\r\n" +
+					"Content-Type: text/html;charset=ISO-8859-1\r\n" +
+					"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+			rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+			
+			assertThat(alertsRaised.size(), equalTo(0));
 		}		
 	}
 }
