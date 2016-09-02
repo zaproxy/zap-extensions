@@ -536,6 +536,15 @@
 		<generate-wiki addon="communityScripts" />
 	</target>
 
+	<target name="deploy-cspscanner" description="deploy the CSP Scanner">
+		<build-deploy-addon name="cspscanner" />
+	</target>
+
+	<target name="deploy-cspscanner-without-help-indexes" description="deploy the CSP scanner">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="cspscanner" />
+	</target>
+	
 	<target name="deploy-customreport" description="deploy the custom reporting extension">
 		<build-deploy-addon name="customreport" />
 	</target>
