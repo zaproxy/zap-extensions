@@ -57,23 +57,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
     private Random random = new Random();
 
     public ExtensionTipsAndTricks() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionTipsAndTricks(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 * 
-	 */
-	private void initialize() {
-        this.setName(NAME);
+        super(NAME);
 	}
 	
 	@Override

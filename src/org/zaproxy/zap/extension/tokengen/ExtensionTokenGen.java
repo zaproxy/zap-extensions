@@ -65,23 +65,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
      * 
      */
     public ExtensionTokenGen() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionTokenGen(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 * 
-	 */
-	private void initialize() {
-        this.setName(NAME);
+        super(NAME);
         this.setI18nPrefix("tokengen");
 	}
 	

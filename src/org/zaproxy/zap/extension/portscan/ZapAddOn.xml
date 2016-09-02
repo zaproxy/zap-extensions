@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Port Scanner</name>
-	<version>7</version>
+	<version>8</version>
 	<status>beta</status>
 	<description>Allows to port scan a target server</description>
 	<author>ZAP Dev Team</author>
@@ -8,7 +8,6 @@
 	<changes>
 	<![CDATA[
 	Minor code changes.<br>
-	Do not access view components when view is not initialised (Issue 1617).
 	]]>
 	</changes>
 	<extensions>

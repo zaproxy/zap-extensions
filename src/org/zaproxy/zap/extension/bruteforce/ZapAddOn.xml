@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Forced Browse</name>
-	<version>5</version>
+	<version>6</version>
 	<status>beta</status>
 	<description>Forced browsing of files and directories using code from the OWASP DirBuster tool</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Adding request count on Forced browser tab as specified on issue #1873
+	Minor code changes.
 	]]>
 	</changes>
 	<extensions>

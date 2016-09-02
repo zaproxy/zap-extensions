@@ -40,15 +40,8 @@ public class ExtensionDiff extends ExtensionAdaptor {
      * 
      */
     public ExtensionDiff() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionDiff(String name) {
-        super(name);
+        super("ExtensionDiff");
+        this.setOrder(75);
     }
 
     @Override
@@ -66,17 +59,6 @@ public class ExtensionDiff extends ExtensionAdaptor {
         }
         super.unload();
     }
-
-	/**
-	 * This method initializes this
-	 * 
-	 * @return void
-	 */
-	private void initialize() {
-        this.setName("ExtensionDiff");
-        this.setOrder(75);
-	}
-	
 
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);

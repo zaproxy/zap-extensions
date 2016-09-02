@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>22</version>
+	<version>23</version>
 	<status>beta</status>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Change Sequence scripts to not use Sites tree nodes directly.<br>
-	Correct assertion of response body length when using charset (Issue 2669).<br>
-	Require just the parameters defined in the Authentication script (Issue 2734).<br>
+	Minor code changes.<br>
 	]]>
 	</changes>
 	<dependencies>

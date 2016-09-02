@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Diff</name>
-	<version>6</version>
+	<version>7</version>
 	<status>beta</status>
 	<description>Displays a dialog showing the differences between 2 requests or responses. It uses diffutils and diff_match_patch</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Do not add line break tags to resultant diff (Issue 1571)<br>
-	Automatically close the diff dialogue when uninstalling.<br>
+	Minor code changes.<br>
 	]]>
 	</changes>
 	<extensions>

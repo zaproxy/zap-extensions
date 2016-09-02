@@ -92,22 +92,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	}
 
     public ExtensionScriptsUI() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionScriptsUI(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-        this.setName(NAME);
+        super(NAME);
 		// Make sure this extension is loaded after the ExtensionScript and after the
 		// ExtensionAuthentication, so the Popup for using the scripts as authentication is properly
 		// enabled (it needs the authentication method types to already be registered).

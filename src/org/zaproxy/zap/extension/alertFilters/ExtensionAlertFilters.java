@@ -103,16 +103,16 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
     private Logger log = Logger.getLogger(this.getClass());
 
     public ExtensionAlertFilters() {
-        super();
- 		initialize();
+        super(NAME);
     }
 
-    /**
-     * @param name
-     */
-    public ExtensionAlertFilters(String name) {
-        super(name);
- 		initialize();
+    @Override
+    public void init() {
+        super.init();
+
+        ZAP.getEventBus().registerConsumer(this, 
+                AlertEventPublisher.getPublisher().getPublisherName(), 
+                new String[] {AlertEventPublisher.ALERT_ADDED_EVENT});
     }
 
 	private static ExtensionActiveScan getExtAscan() {
@@ -161,18 +161,6 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 			getAllRuleNames();
 		}
 		return idToName.get(Integer.valueOf(ruleId));
-	}
-
-
-	/**
-	 * This method initializes this
-	 * 
-	 */
-	private void initialize() {
-        this.setName(NAME);
-        ZAP.getEventBus().registerConsumer(this, 
-        		AlertEventPublisher.getPublisher().getPublisherName(), 
-        		new String[] {AlertEventPublisher.ALERT_ADDED_EVENT});
 	}
 	
 	@Override

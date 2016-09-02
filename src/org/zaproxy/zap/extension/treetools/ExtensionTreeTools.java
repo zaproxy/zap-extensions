@@ -33,22 +33,7 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
      * 
      */
     public ExtensionTreeTools() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionTreeTools(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-        this.setName("TreeTools");
+        super("TreeTools");
         this.setOrder(667);	// Want this to be as low as possible :)
 	}
 	

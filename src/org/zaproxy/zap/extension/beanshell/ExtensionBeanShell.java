@@ -39,22 +39,7 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
      * 
      */
     public ExtensionBeanShell() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionBeanShell(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-        this.setName("ExtensionBeanShell");
+        super("ExtensionBeanShell");
         this.setOrder(38);
 	}
 	

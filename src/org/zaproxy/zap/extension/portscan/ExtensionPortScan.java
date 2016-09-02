@@ -61,23 +61,8 @@ public class ExtensionPortScan extends ExtensionAdaptor
      *
      */
     public ExtensionPortScan() {
-        super();
+        super("ExtensionPortScan");
         this.setI18nPrefix("ports");
-        initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionPortScan(String name) {
-        super(name);
-    }
-
-    /**
-     * This method initializes this
-     */
-    private void initialize() {
-        this.setName("ExtensionPortScan");
         this.setOrder(34);
     }
 

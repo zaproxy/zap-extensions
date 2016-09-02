@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Invoke Applications</name>
-	<version>4</version>
+	<version>5</version>
 	<status>beta</status>
 	<description>Invoke external applications passing context related information such as URLs and parameters</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Allow to invoke the applications in all UI components that show HTTP messages.<br>
-	Allow to manually specify the application path and working directory (Issue 2708).<br>
+	Minor code changes.<br>
 	]]>
 	</changes>
 	<extensions>
