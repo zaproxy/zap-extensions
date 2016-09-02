@@ -5,6 +5,7 @@
 	<property name="src.version" value="1.7" />
 	<property name="test.src" location="../test" />
 	<property name="test.lib" location="../testlib" />
+	<property name="test.build" location="buildtest" />
 	<property name="test.results.dir" value="results" />
 	<property name="build" location="build" />
 	<property name="build.lib.dir" location="lib" />
@@ -36,6 +37,7 @@
 		<delete dir="${dist}" includeEmptyDirs="true" />
 		<delete dir="${build}" includeEmptyDirs="true" />
 		<delete dir="${temp}" includeEmptyDirs="true" />
+		<delete dir="${test.build}" includeEmptyDirs="true" />
 		<delete dir="${test.results.dir}" includeEmptyDirs="true" />
 	</target>
 
@@ -44,6 +46,7 @@
 		<mkdir dir="${dist}" />
 		<mkdir dir="${build}" />
 		<mkdir dir="${temp}" />
+		<mkdir dir="${test.build}" />
 		<mkdir dir="${test.results.dir}"/>
 	</target>
 
@@ -72,12 +75,13 @@
 		</javac>
 
 		<echo message="Compiling tests..." />
-		<javac srcdir="${test.src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
+		<javac srcdir="${test.src}" destdir="${test.build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
 			<compilerarg value="-Xlint:all"/>
 			<compilerarg value="-Xlint:-path"/>
 			<compilerarg value="-Xlint:-options"/>
 			<compilerarg value="-Werror"/>
 			<classpath>
+				<pathelement location="${build}"/>
 				<fileset dir="${dist.lib.dir}">
 					<include name="**/*.jar" />
 				</fileset>
@@ -90,20 +94,31 @@
 	</target>
 
 	<target name="test" depends="clean, compile">
+		<echo message="Copying add-on resources..." />
+		<copy todir="${test.build}">
+			<fileset dir="${src}">
+				<include name="org/zaproxy/zap/extension/*/resources/**" />
+				<!-- Probably not needed but include (just) the main help files and Messages.properties -->
+				<exclude name="org/zaproxy/zap/extension/*/resources/help_*/**" />
+				<exclude name="org/zaproxy/zap/extension/*/resources/Messages_*.properties" />
+			</fileset>
+		</copy>
+		<echo message="Running tests..." />
 		<junit printsummary="yes" haltonerror="true" failureproperty="TestsFailed">
 			<classpath>
+				<pathelement location="${test.build}"/>
+				<pathelement location="${build}"/>
 				<fileset dir="${dist.lib.dir}">
 					<include name="*.jar" />
 				</fileset>
 				<fileset dir="${test.lib}">
 					<include name="*.jar" />
 				</fileset>
-				<pathelement location="${build}"/>
 			</classpath>
 			<formatter type="plain"/>
 			<formatter type="xml"/>
 			<batchtest fork="yes" todir="${test.results.dir}">
-				<fileset dir="${build}">
+				<fileset dir="${test.build}">
 					<include name="**/*UnitTest.class"/>
 					<exclude name="**/Abstract*Test.class"/>
 				</fileset>
