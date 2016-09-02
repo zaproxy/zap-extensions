@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
@@ -60,6 +62,7 @@ public class SpiderThread implements Runnable {
 
 	private final String displayName;
 	private final AjaxSpiderTarget target;
+	private final HttpPrefixUriValidator httpPrefixUriValidator;
 	private CrawljaxRunner crawljax;
 	private boolean running;
 	private final Session session;
@@ -84,6 +87,15 @@ public class SpiderThread implements Runnable {
 	SpiderThread(String displayName, AjaxSpiderTarget target, ExtensionAjax extension, SpiderListener spiderListener) {
 		this.displayName = displayName;
 		this.target = target;
+		HttpPrefixUriValidator validator = null;
+		try {
+			validator = target.isSubtreeOnly()
+					? new HttpPrefixUriValidator(new URI(target.getStartUri().toASCIIString(), true))
+					: null;
+		} catch (URIException e) {
+			logger.error("Failed to create subtree validator:", e);
+		}
+		this.httpPrefixUriValidator = validator;
 		this.running = false;
 		spiderListeners = new ArrayList<>(2);
 		spiderListeners.add(spiderListener);
@@ -260,7 +272,10 @@ public class SpiderThread implements Runnable {
 		public boolean onHttpRequestSend(HttpMessage httpMessage) {
 			boolean excluded = false;
 			final String uri = httpMessage.getRequestHeader().getURI().toString();
-			if (target.getContext() != null) {
+			if (httpPrefixUriValidator != null && !httpPrefixUriValidator.isValid(httpMessage.getRequestHeader().getURI())) {
+				logger.debug("Excluding request [" + uri + "] not under subtree.");
+				excluded = true;
+			} else if (target.getContext() != null) {
 				if (!target.getContext().isInContext(uri)) {
 					logger.debug("Excluding request [" + uri + "] not in specified context.");
 					excluded = true;

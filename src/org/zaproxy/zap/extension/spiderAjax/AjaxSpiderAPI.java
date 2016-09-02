@@ -69,6 +69,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	private static final String PARAM_IN_SCOPE = "inScope";
 	private static final String PARAM_START = "start";
 	private static final String PARAM_COUNT = "count";
+	private static final String PARAM_SUBTREE_ONLY = "subtreeOnly";
 
 	private enum SpiderStatus {
 		STOPPED,
@@ -89,14 +90,14 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 		this.extension = extension;
 		this.historyReferences = Collections.emptyList();
 
-		ApiAction scan = new ApiAction(ACTION_START_SCAN, null, new String[] { PARAM_URL, PARAM_IN_SCOPE, PARAM_CONTEXT_NAME });
+		ApiAction scan = new ApiAction(ACTION_START_SCAN, null, new String[] { PARAM_URL, PARAM_IN_SCOPE, PARAM_CONTEXT_NAME, PARAM_SUBTREE_ONLY });
 		scan.setDescriptionTag("spiderajax.api.action.scan");
 		this.addApiAction(scan);
 
 		ApiAction scanAsUser = new ApiAction(
 				ACTION_START_SCAN_AS_USER,
 				new String[] { PARAM_CONTEXT_NAME, PARAM_USER_NAME },
-				new String[] { PARAM_URL });
+				new String[] { PARAM_URL, PARAM_SUBTREE_ONLY });
 		scanAsUser.setDescriptionTag("spiderajax.api.action.scanAsUser");
 		this.addApiAction(scanAsUser);
 		this.addApiAction(new ApiAction(ACTION_STOP_SCAN));
@@ -129,7 +130,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 					context = ApiUtils.getContextByName(contextName);
 				}
 			}
-			startScan(url, null, context, getParam(params, PARAM_IN_SCOPE, false));
+			startScan(url, null, context, getParam(params, PARAM_IN_SCOPE, false), getParam(params, PARAM_SUBTREE_ONLY, false));
 			break;
 
 		case ACTION_START_SCAN_AS_USER:
@@ -145,7 +146,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 				throw new ApiException(Type.USER_NOT_FOUND, PARAM_USER_NAME);
 			}
 
-			startScan(urlUserScan, user, context, getParam(params, PARAM_IN_SCOPE, false));
+			startScan(urlUserScan, user, context, getParam(params, PARAM_IN_SCOPE, false), getParam(params, PARAM_SUBTREE_ONLY, false));
 			break;
 
 		case ACTION_STOP_SCAN:
@@ -188,9 +189,10 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	 * @param user the user, might be {@code null} if spidering a context with URLs already accessed.
 	 * @param context the context to spider, might be {@code null}.
 	 * @param inScopeOnly if should just spider in scope. Spider of context takes precedence.
+	 * @param subtreeOnly if the scan should be done only under a site's subtree
 	 * @throws ApiException if there's an error with the data provided, for example, no starting URL when one is required.
 	 */
-	private void startScan(String url, User user, Context context, boolean inScopeOnly) throws ApiException {
+	private void startScan(String url, User user, Context context, boolean inScopeOnly, boolean subtreeOnly) throws ApiException {
 		URI startURI = null;
 		boolean validateUrl = true;
 		if (url == null || url.isEmpty()) {
@@ -241,7 +243,8 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 		AjaxSpiderTarget.Builder targetBuilder = AjaxSpiderTarget.newBuilder(extension.getModel().getSession())
 				.setInScopeOnly(inScopeOnly)
 				.setOptions(extension.getAjaxSpiderParam())
-				.setStartUri(startURI);
+				.setStartUri(startURI)
+				.setSubtreeOnly(subtreeOnly);
 
 		if (user != null) {
 			targetBuilder.setUser(user);

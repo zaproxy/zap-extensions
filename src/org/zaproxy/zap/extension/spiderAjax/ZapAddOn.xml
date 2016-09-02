@@ -13,6 +13,7 @@
 	Allow to spider a context (Issue 1955).<br>
 	Allow to spider as a user (Issue 1956).<br>
 	Allow to manually specify the start URL in AJAX Spider dialogue (Issue 1957).<br>
+	Allow to spider just a site's subtree (Issue 2847).<br>
 	]]>
 	</changes>
 	<dependencies>

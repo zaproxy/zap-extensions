@@ -57,6 +57,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_CONTEXT = "spiderajax.scandialog.label.context";
     private static final String FIELD_USER = "spiderajax.scandialog.label.user";
     private static final String FIELD_IN_SCOPE = "spiderajax.scandialog.label.inscope";
+    private static final String FIELD_SUBTREE_ONLY = "spiderajax.scandialog.label.spiderSubtreeOnly"; 
     private static final String FIELD_BROWSER = "spiderajax.scandialog.label.browser";
     private static final String FIELD_ADVANCED = "spiderajax.scandialog.label.adv";
     
@@ -80,6 +81,15 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     private Target target;
 	private AjaxSpiderParam params = null;
 	//private OptionsAjaxSpiderTableModel ajaxSpiderClickModel = null;
+
+    /**
+     * Flag that holds the previous checked state of the "Subtree Only" checkbox.
+     * <p>
+     * Used to restore the previous checked state between dialogue invocations.
+     * 
+     * @see #FIELD_SUBTREE_ONLY
+     */
+    private boolean subtreeOnlyPreviousCheckedState;
 
     private final ExtensionUserManagement extUserMgmt;
 
@@ -107,6 +117,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         this.addComboField(0, FIELD_CONTEXT, new String[] {}, "");
         this.addComboField(0, FIELD_USER, new String[] {}, "");
         this.addCheckBoxField(0, FIELD_IN_SCOPE, false);
+        this.addCheckBoxField(0, FIELD_SUBTREE_ONLY, subtreeOnlyPreviousCheckedState);
         this.addFieldListener(FIELD_IN_SCOPE, new ActionListener() {
 
             @Override
@@ -352,7 +363,8 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         AjaxSpiderTarget.Builder targetBuilder = AjaxSpiderTarget.newBuilder(extension.getModel().getSession())
                 .setInScopeOnly(getBoolValue(FIELD_IN_SCOPE))
                 .setOptions(params)
-                .setStartUri(startUri);
+                .setStartUri(startUri)
+                .setSubtreeOnly(getBoolValue(FIELD_SUBTREE_ONLY));
 
         User user = getSelectedUser();
         if (user != null) {
@@ -364,6 +376,8 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             }
             targetBuilder.setContext(context);
         }
+
+        subtreeOnlyPreviousCheckedState = getBoolValue(FIELD_SUBTREE_ONLY);
 
         this.extension.startScan(targetBuilder.build());
     }
@@ -423,6 +437,9 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             if (startNode != null) {
                 startUri = URI.create(startNode.getHistoryReference().getURI().toString());
             } else if (context != null) {
+                if (getBoolValue(FIELD_SUBTREE_ONLY)) {
+                    return Constant.messages.getString("spiderajax.scandialog.nostart.subtreeOnly.error");
+                }
                 startUri = extension.getFirstUriInContext(context);
             }
         }
