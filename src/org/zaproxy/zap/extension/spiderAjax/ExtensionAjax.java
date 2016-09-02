@@ -89,16 +89,6 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	 */
 	public ExtensionAjax() throws ClassNotFoundException {
 		super(NAME);
-		initialize();
-	}
-
-
-	/**
-	 * This method initializes this
-	 * 
-	 */
-	private void initialize() {
-		this.setName(NAME);
 		this.setI18nPrefix("spiderajax");
 		this.setOrder(234);
 	}
