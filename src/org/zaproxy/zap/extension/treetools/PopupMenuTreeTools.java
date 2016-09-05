@@ -30,47 +30,25 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 public class PopupMenuTreeTools extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
-	private Component invoker = null;
-	/**
-    
-    /**
-     * 
-     */
+	private JTree sitesTree;
+
     public PopupMenuTreeTools() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param label
-     */
-    public PopupMenuTreeTools(String label) {
-        super(label);
-    }
-
-    /**
-	 * This method initializes this
-	 */
-	private void initialize() {
-        this.setText(Constant.messages.getString("treetools.popop"));
+        super(Constant.messages.getString("treetools.popop"));
         
         this.addActionListener(new java.awt.event.ActionListener() { 
 
         	@Override
         	public void actionPerformed(java.awt.event.ActionEvent e) {        		
-        		 if (invoker.getName().equals("treeSite")) {
-         	        JTree tree = (JTree) invoker;
-                    TreePath[] paths = tree.getSelectionPaths();
-                    for (int i = 0; i < paths.length; i++) {
-                    	TreePath t = paths[i];   
-                    	if (tree.isExpanded(t)) {                    		
-                    		expandOrCollapseFromNode(t, false);
-                    	}
-                    	else {
-                    		expandOrCollapseFromNode(t, true);
-                    	}
-                    }
-        		 }
+                TreePath[] paths = sitesTree.getSelectionPaths();
+                for (int i = 0; i < paths.length; i++) {
+                	TreePath t = paths[i];   
+                	if (sitesTree.isExpanded(t)) {
+                		expandOrCollapseFromNode(t, false);
+                	}
+                	else {
+                		expandOrCollapseFromNode(t, true);
+                	}
+                }
         	}
         });
 			
@@ -78,31 +56,29 @@ public class PopupMenuTreeTools extends ExtensionPopupMenuItem {
 	
 	@SuppressWarnings("unchecked")
 	private void expandOrCollapseFromNode(TreePath parent, boolean expand) {
-		JTree tree = (JTree) invoker;
-		TreeNode tn = (TreeNode) ((TreePath) parent).getLastPathComponent();
+		TreeNode tn = (TreeNode) parent.getLastPathComponent();
 		
 		if (tn.getChildCount() > 0) {
 			for (Enumeration<TreeNode> e = tn.children(); e.hasMoreElements();) {
-				  TreeNode n = (TreeNode) e.nextElement();	
-				  TreePath path = parent.pathByAddingChild(n);
+				  TreePath path = parent.pathByAddingChild(e.nextElement());
 				  expandOrCollapseFromNode(path, expand);
 			}
 		}
 		
 		if (expand) { 
-			tree.expandPath(parent);
+			sitesTree.expandPath(parent);
 		}
 		else {
-			tree.collapsePath(parent);
+			sitesTree.collapsePath(parent);
 		}
 	}
 	
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (invoker instanceof JTree) {
-        	this.invoker = invoker;
             JTree tree = (JTree) invoker;
-            if (tree.getName().equals("treeSite")) {
+            if ("treeSite".equals(tree.getName())) {
+                this.sitesTree = tree;
 				this.setEnabled(true);
                 return true;
             }
