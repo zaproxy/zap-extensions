@@ -628,6 +628,11 @@
         <build-deploy-addon name="wappalyzer" />
     </target>
 
+	<target name="deploy-wappalyzer-without-help-indexes" description="deploy the Wappalyzer extension">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="wappalyzer" />
+	</target>
+	
 	<target name="generate-wiki-wappalyzer" description="Generates the wiki of wappalyzer">
 		<generate-wiki addon="wappalyzer" />
 	</target>

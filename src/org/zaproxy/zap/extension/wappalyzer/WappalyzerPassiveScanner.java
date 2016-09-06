@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
@@ -41,7 +43,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 	private ExtensionWappalyzer extension = null;
 	private List<Application> applications = null;
 
-	private static final Logger logger = Logger.getLogger(WappalyzerPassiveScanner.class);
+	private static final Logger LOGGER = Logger.getLogger(WappalyzerPassiveScanner.class);
 
 	public WappalyzerPassiveScanner() {
 		super();
@@ -73,7 +75,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 					String url = msg.getRequestHeader().getURI().toString();
 					for (AppPattern p : app.getUrl()) {
 						if (p.getPattern().matcher(url).find()) {
-							logger.debug("WAPP URL matched " + app.getName());
+							LOGGER.debug("WAPP URL matched " + app.getName());
 							found = true;
 							break;
 						}
@@ -84,7 +86,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 								String header = msg.getResponseHeader().getHeader(entry.getKey());
 								if (header != null) {
 									if (entry.getValue().getPattern().matcher(header).find()) {
-										logger.debug("WAPP header matched " + app.getName());
+										LOGGER.debug("WAPP header matched " + app.getName());
 										found = true;
 										break;
 									}
@@ -96,9 +98,28 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 						String body = msg.getResponseBody().toString();
 						for (AppPattern p : app.getHtml()) {
 							if (p.getPattern().matcher(body).find()) {
-								logger.debug("WAPP body matched " + app.getName());
+								LOGGER.debug("WAPP body matched " + app.getName());
 								found = true;
 								break;
+							}
+						}
+					}
+					if (! found) {
+						List<Element> metaElements = source.getAllElements(HTMLElementName.META);
+						for (Element metaElement : metaElements) {
+							for (Map<String, AppPattern> sp : app.getMetas()) {
+								for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
+									String name = metaElement.getAttributeValue("name");
+									String content = metaElement.getAttributeValue("content");
+									if (name != null && content != null) {
+										if (name.equals(entry.getKey())
+												&& entry.getValue().getPattern().matcher(content).find()) {
+											LOGGER.debug("WAPP meta matched " + app.getName());
+											found = true;
+											break;
+										}
+									}
+								}
 							}
 						}
 					}
@@ -106,7 +127,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 						String body = msg.getResponseBody().toString();
 						for (AppPattern p : app.getScript()) {
 							if (p.getPattern().matcher(body).find()) {
-								logger.debug("WAPP script matched " + app.getName());
+								LOGGER.debug("WAPP script matched " + app.getName());
 								found = true;
 								break;
 							}
@@ -115,11 +136,11 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 					}
 					if (found) {
 						String site = msg.getRequestHeader().getHostName() + ":" + msg.getRequestHeader().getHostPort();
-						logger.debug("WAPP adding " + app.getName() + " to " + site);
+						LOGGER.debug("WAPP adding " + app.getName() + " to " + site);
 						this.extension.addApplicationsToSite(site, app);
 					}
 				}
-				logger.debug("WAPP took " + (new Date().getTime() - start.getTime()));
+					LOGGER.debug("WAPP took " + (new Date().getTime() - start.getTime()));
 			}
 		}
 	}
