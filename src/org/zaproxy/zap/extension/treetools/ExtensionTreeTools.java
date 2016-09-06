@@ -27,11 +27,8 @@ import org.parosproxy.paros.extension.ExtensionHook;
 public class ExtensionTreeTools extends ExtensionAdaptor {
 	
 	public static final String NAME = "TreeTools";
-	private PopupMenuTreeTools popupMenuTreeTools = null;
-	//private ExtensionHook hook = null;  chs removed when going from alpha to beta
-	/**
-     * 
-     */
+	private PopupMenuTreeTools popupMenuTreeTools;
+
     public ExtensionTreeTools() {
         super("TreeTools");
         this.setOrder(667);	// Want this to be as low as possible :)
@@ -40,7 +37,6 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
 	@Override
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
-	    //hook = extensionHook;  chs removed when going from alpha to beta
 	    if (getView() != null) {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuTreeTools());
 	    }
