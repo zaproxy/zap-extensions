@@ -88,7 +88,7 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 		
 		// if Domain attribute hasn't been specified, the cookie
 		// is scoped with the response host
-		if (cookieDomain == null) {
+		if (cookieDomain == null || cookieDomain.isEmpty()) {
 			return false;
 		}
 		
@@ -96,12 +96,16 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 		String[] cookieDomains = cookie.getDomain().split("\\.");
 		// Split host FQDN into sub-domains
 		String[] hostDomains = host.split("\\.");		
-		
+
+		boolean isFromTheSameDomain = isCookieAndHostHaveTheSameDomain(cookieDomains, hostDomains);
+		if (!isFromTheSameDomain) {
+			return true;
+		}
 		// if cookie domain doesn't start with '.', and the domain is
 		// not a second-level domain (example.com), the cookie Domain and 
 		// host values should match exactly
-		if (!cookieDomain.startsWith(".") && cookieDomains.length > 2) {
-			return cookieDomain.equals(host);
+		if (!cookieDomain.startsWith(".") && cookieDomains.length >= 2 && !isFromTheSameDomain) {
+			return !cookieDomain.equals(host);
 		}
 		
 		// otherwise, remove the '.' and compare the result with the host
@@ -124,6 +128,20 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 		}
 		
 		// so, the right-most domains matched, the cookie is loosely scoped		
+		return true;
+	}
+
+	private boolean isCookieAndHostHaveTheSameDomain(String[] cookieDomains, String[] hostDomains) {
+		if (cookieDomains == null || hostDomains == null || cookieDomains[0].equalsIgnoreCase("null")
+				|| hostDomains[0].equalsIgnoreCase("null")) { // this happens  when we don't have any host domain
+			return true;
+		}
+		if (!cookieDomains[cookieDomains.length - 1].equalsIgnoreCase(hostDomains[hostDomains.length - 1])) {
+			return false;
+		}
+		if (!cookieDomains[cookieDomains.length - 2].equalsIgnoreCase(hostDomains[hostDomains.length - 2])) {
+			return false;
+		}
 		return true;
 	}
 

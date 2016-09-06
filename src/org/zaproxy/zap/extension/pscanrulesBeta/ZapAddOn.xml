@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>16</version>
+	<version>17</version>
 	<status>beta</status>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Added some keywords to the list of suspicious comments. <br/>
+	Improve the domain matching in CookieLooselyScopedScanner.<br/>
 	]]>
 	</changes>
 	<extensions>
