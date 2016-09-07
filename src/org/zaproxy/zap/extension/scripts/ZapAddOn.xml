@@ -7,7 +7,7 @@
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Discard undoable edits after setting a script (Isssue 2675).<br>
+	Discard undoable edits after setting a script (Issue 2675).<br>
 	]]>
 	</changes>
 	<extensions>
