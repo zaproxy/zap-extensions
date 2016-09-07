@@ -7,7 +7,7 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
+	Always show the expected URL in request statements (Issue 2854).<br>
 	]]>
 	</changes>
 	<dependencies>
