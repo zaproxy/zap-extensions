@@ -284,6 +284,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		return null;
 	}
 
+	@Override
 	public void handleResponse(ZestRequest request, ZestResponse response) throws ZestAssertFailException {
     	log.debug("handleResponse " + request.getElementType());
 	    try {
@@ -446,6 +447,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 	}
 
 
+	@Override
 	public String getVariable(String name) {
 		if (log.isDebugEnabled()) {
 			String value = super.getVariable(name);
@@ -464,6 +466,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		}
 	}
 	
+	@Override
 	public void setVariable(String name, String value) {
 		if (log.isDebugEnabled()) {
 			String val = value;

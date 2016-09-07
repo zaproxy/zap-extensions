@@ -125,6 +125,7 @@ public class ZestAssertionsDialog extends StandardFieldsDialog implements ZestDi
 		return list;
 	}
 
+	@Override
 	public void save() {
 		if (assertion.getRootExpression() instanceof ZestExpressionLength) {
 			ZestExpressionLength za = (ZestExpressionLength) assertion.getRootExpression();

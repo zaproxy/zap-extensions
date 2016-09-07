@@ -66,6 +66,7 @@ public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
 		return true;
 	}
 
+	@Override
 	public boolean isEnableForComponent(Component invoker) {
 		if (extension.isScriptTree(invoker)) {
 			List<ScriptNode> selectedNodes = extension.getSelectedZestNodes();

@@ -101,6 +101,7 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
     	return map;
     }
 
+	@Override
 	public void save() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

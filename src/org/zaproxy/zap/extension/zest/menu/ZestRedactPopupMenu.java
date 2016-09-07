@@ -55,6 +55,7 @@ public class ZestRedactPopupMenu extends ExtensionPopupMenuItem {
                 });
         }
 
+    @Override
     public boolean isEnableForComponent(Component invoker) {
         if (invoker instanceof HttpPanelSyntaxHighlightTextArea && extension.getExtScript().getScriptUI() != null) {
                         HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;

@@ -130,6 +130,7 @@ public abstract class ZestClientElementDialog extends StandardFieldsDialog imple
 		return add;
 	}
 
+	@Override
 	public void save() {
 		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
 		client.setType(getSelectedElementType());

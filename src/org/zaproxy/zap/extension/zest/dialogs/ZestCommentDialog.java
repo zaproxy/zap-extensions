@@ -70,6 +70,7 @@ public class ZestCommentDialog extends StandardFieldsDialog implements ZestDialo
 		this.addMultilineField(FIELD_COMMENT, za.getComment());
 	}
 
+	@Override
 	public void save() {
 		comment.setComment(this.getStringValue(FIELD_COMMENT));
 

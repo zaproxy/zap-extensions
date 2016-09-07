@@ -118,6 +118,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		return zestScript;
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getInterface(Class<T> class1) throws ScriptException, IOException {
 		// Clone the wrapper so that we get a new instance every time
@@ -152,6 +153,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		return extension;
 	}
 	
+	@Override
 	protected ZestScriptWrapper clone() {
 		this.original.setContents(this.getContents());
 		ZestScriptWrapper clone = new ZestScriptWrapper(this.original);

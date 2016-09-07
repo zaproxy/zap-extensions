@@ -163,6 +163,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 		}
 	}
 
+	@Override
 	public void save() {
 		try {
 			this.request.setUrl(new URL(this.getStringValue(FIELD_URL)));

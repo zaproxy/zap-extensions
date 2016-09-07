@@ -58,6 +58,7 @@ public class ZestParameterizePopupMenu extends ExtensionPopupMenuItem {
         });
     }
 
+    @Override
     public boolean isEnableForComponent(Component invoker) {
         if (invoker instanceof HttpPanelSyntaxHighlightTextArea && extension.getExtScript().getScriptUI() != null) {
             HttpPanelSyntaxHighlightTextArea panel = (HttpPanelSyntaxHighlightTextArea)invoker;

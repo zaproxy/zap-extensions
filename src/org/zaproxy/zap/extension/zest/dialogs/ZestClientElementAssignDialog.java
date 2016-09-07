@@ -55,6 +55,7 @@ public class ZestClientElementAssignDialog extends ZestClientElementDialog imple
 		this.addFieldListener(FIELD_ATTRIBUTE, ZestZapUtils.stdMenuAdapter()); 
 	}
 
+	@Override
 	public void saveFields() {
 		((ZestClientElementAssign)this.getClient()).setAttribute(this.getStringValue(FIELD_ATTRIBUTE));
 	}

@@ -66,6 +66,7 @@ public class ZestParameterDialog extends StandardFieldsDialog implements ZestDia
 	}
 	
 
+	@Override
 	public void save() {
 		if (add) {
 			this.model.add(this.getStringValue(FIELD_PARAM_NAME), this.getStringValue(FIELD_PARAM_VALUE));

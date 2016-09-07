@@ -286,6 +286,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
         return paramsModel;
     }
 
+	@Override
 	public void save() {
 		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
 		client.setBrowserType(this.getSelectedBrowserType());

@@ -120,6 +120,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
 			}});
     }
 
+    @Override
     public String getSaveButtonText() {
     	return Constant.messages.getString("zest.dialog.script.record.save");
     }
@@ -172,6 +173,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         return list;
     }
     
+    @Override
     public void save() {
     	// Create a new script
     	

@@ -81,6 +81,7 @@ public class ZestClientAssignCookieDialog extends StandardFieldsDialog implement
 		this.addTextField(FIELD_COOKIE, client.getCookieName());
 	}
 
+	@Override
 	public void save() {
 		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
 		client.setVariableName(this.getStringValue(FIELD_VARIABLE));

@@ -66,6 +66,7 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 		return true;
 	}
 
+	@Override
 	public boolean isEnableForComponent(Component invoker) {
 		if (extension.isScriptTree(invoker)) {
 			ScriptNode node = extension.getSelectedZestNode();

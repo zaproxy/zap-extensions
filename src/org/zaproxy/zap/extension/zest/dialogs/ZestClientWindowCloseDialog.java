@@ -78,6 +78,7 @@ public class ZestClientWindowCloseDialog extends StandardFieldsDialog implements
 		this.addNumberField(FIELD_SLEEP_IN_SECS, 0, 60, client.getSleepInSeconds());
 	}
 
+	@Override
 	public void save() {
 		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
 		client.setSleepInSeconds(this.getIntValue(FIELD_SLEEP_IN_SECS));

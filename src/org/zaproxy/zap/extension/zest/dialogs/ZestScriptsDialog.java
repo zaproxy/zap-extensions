@@ -320,6 +320,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         return null;
     }
 
+    @Override
     public void save() {
         script.setTitle(this.getStringValue(FIELD_TITLE));
         script.setDescription(this.getStringValue(FIELD_DESC));
