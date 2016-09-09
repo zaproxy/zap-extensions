@@ -23,11 +23,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
 public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest {
 	private static final String URI = "https://www.example.com/";
+	private static final String defaultErrorMessage = "Internal Server Error";
 	
 	@Override
 	protected InformationDisclosureDebugErrors createScanner() {
@@ -45,10 +47,11 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 		
 		for (int i = 0; i < data.length; i++) {
 			String debugError = data[i];
+			String responseBody = "<html>" + debugError + "</html>"; 
 			
 			HttpMessage msg = new HttpMessage();
 			msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-			msg.setResponseBody("<html>" + debugError + "</html>");
+			msg.setResponseBody(responseBody);
 			msg.setResponseHeader(
 					"HTTP/1.1 200 OK\r\n" +
 					"Server: Apache-Coyote/1.1\r\n" +
@@ -57,10 +60,75 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 			rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 			
 			assertThat(alertsRaised.size(), equalTo(i + 1));
-			assertThat(alertsRaised.get(i).getCweId(), equalTo(200));
-			assertThat(alertsRaised.get(i).getWascId(), equalTo(13));
-			assertThat(alertsRaised.get(i).getEvidence(), equalTo(debugError));
+			
+			Alert alert = alertsRaised.get(i);
+			assertThat(alert.getMessage().getResponseBody().toString(), equalTo(responseBody));
+			assertThat(alert.getUri(), equalTo(URI));
+			assertThat(alert.getRisk(), equalTo(Alert.RISK_LOW));
+			assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+			assertThat(alert.getCweId(), equalTo(200));
+			assertThat(alert.getWascId(), equalTo(13));
+			assertThat(alert.getEvidence(), equalTo(debugError));
 		}
+	}
+	
+	@Test
+	public void alertsIfMixedCaseDebugErrorsDisclosed() throws HttpMalformedHeaderException {
+		int expectedAlerts = 0;
+		
+		// Test the normal error message
+		HttpMessage msg = new HttpMessage();
+		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
+		msg.setResponseBody("<html>" + defaultErrorMessage + "</html>");
+		msg.setResponseHeader(
+				"HTTP/1.1 200 OK\r\n" +
+				"Server: Apache-Coyote/1.1\r\n" +
+				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
+				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+		
+		expectedAlerts++;
+		assertThat(alertsRaised.size(), equalTo(expectedAlerts));
+		Alert alert = alertsRaised.get(expectedAlerts - 1);
+		assertThat(alert.getCweId(), equalTo(200));
+		assertThat(alert.getWascId(), equalTo(13));
+		assertThat(alert.getEvidence(), equalTo(defaultErrorMessage));
+		
+		// Test the lower-case error message
+		msg = new HttpMessage();
+		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
+		msg.setResponseBody("<html>" + defaultErrorMessage.toLowerCase() + "</html>");
+		msg.setResponseHeader(
+				"HTTP/1.1 200 OK\r\n" +
+				"Server: Apache-Coyote/1.1\r\n" +
+				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
+				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+		
+		expectedAlerts++;
+		assertThat(alertsRaised.size(), equalTo(expectedAlerts));
+		alert = alertsRaised.get(expectedAlerts - 1);
+		assertThat(alert.getCweId(), equalTo(200));
+		assertThat(alert.getWascId(), equalTo(13));
+		assertThat(alert.getEvidence(), equalTo(defaultErrorMessage.toLowerCase()));
+		
+		// Test the upper-case error message
+		msg = new HttpMessage();
+		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
+		msg.setResponseBody("<html>" + defaultErrorMessage.toUpperCase() + "</html>");
+		msg.setResponseHeader(
+				"HTTP/1.1 200 OK\r\n" +
+				"Server: Apache-Coyote/1.1\r\n" +
+				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
+				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+		
+		expectedAlerts++;
+		assertThat(alertsRaised.size(), equalTo(expectedAlerts));
+		alert = alertsRaised.get(expectedAlerts - 1);
+		assertThat(alert.getCweId(), equalTo(200));
+		assertThat(alert.getWascId(), equalTo(13));
+		assertThat(alert.getEvidence(), equalTo(defaultErrorMessage.toUpperCase()));
 	}
 
 	@Test
@@ -87,5 +155,35 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 			
 			assertThat(alertsRaised.size(), equalTo(0));
 		}		
+	}
+	
+	@Test
+	public void passesIfResponseIsEmpty() throws HttpMalformedHeaderException {
+		HttpMessage msg = new HttpMessage();
+		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
+		msg.setResponseBody("");
+		msg.setResponseHeader(
+				"HTTP/1.1 200 OK\r\n" +
+				"Server: Apache-Coyote/1.1\r\n" +
+				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
+				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+		
+		assertThat(alertsRaised.size(), equalTo(0));
+	}
+	
+	@Test
+	public void passesIfResponseIsNotText() throws HttpMalformedHeaderException {
+		HttpMessage msg = new HttpMessage();
+		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
+		msg.setResponseBody(defaultErrorMessage);
+		msg.setResponseHeader(
+				"HTTP/1.1 200 OK\r\n" +
+				"Server: Apache-Coyote/1.1\r\n" +
+				"Content-Type: application/octet-stream;charset=ISO-8859-1\r\n" +
+				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+		
+		assertThat(alertsRaised.size(), equalTo(0));
 	}
 }
