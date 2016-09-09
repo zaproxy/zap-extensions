@@ -9,6 +9,7 @@
 	<![CDATA[
 	Support changing the length of time used in timing attacks via config options.<br>
 	Support ignoring specified forms when checking for CSRF vulnerabilities.<br>
+	Do not attempt to parse empty cross domain policy files.<br>
     ]]>
 	</changes>
 	<extensions>

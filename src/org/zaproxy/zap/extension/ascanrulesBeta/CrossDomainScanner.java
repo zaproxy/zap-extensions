@@ -20,6 +20,14 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
@@ -32,10 +40,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import javax.xml.xpath.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPathFactory;
 
 
 /**
@@ -72,6 +76,9 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 	 */
 	static final String SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE = "clientaccesspolicy.xml";
 
+	private DocumentBuilder docBuilder;
+	private XPath xpath;
+	
 	/**
 	 * returns the plugin id
 	 */
@@ -115,6 +122,17 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 	
 	@Override
 	public void init() {
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		try {
+			docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			docBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			docBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			docBuilderFactory.setExpandEntityReferences(false);
+			docBuilder = docBuilderFactory.newDocumentBuilder();
+			xpath = XPathFactory.newInstance().newXPath();
+		} catch (ParserConfigurationException e) {
+			log.error("Failed to create document builder:", e);
+		}
 	}
 
 	/**
@@ -122,25 +140,36 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 	 */
 	@Override
 	public void scan() {
+		if (docBuilder == null) {
+			return;
+		}
 
 		try {
 			//get the network details for the attack
 			URI originalURI = this.getBaseMsg().getRequestHeader().getURI();
 			
+			scanAdobeCrossdomainPolicyFile(originalURI);
+
+			scanSilverlightCrossdomainPolicyFile(originalURI);
+
+		} catch (Exception e) {
+			//needed to catch exceptions from the "finally" statement 
+			log.error("Error scanning a node for Cross Domain misconfigurations: " + e.getMessage(), e);
+		}
+	}
+
+	private void scanAdobeCrossdomainPolicyFile(URI originalURI) throws IOException, XPathExpressionException {
 			//retrieve the Adobe cross domain policy file, and assess it
 			HttpMessage crossdomainmessage= new HttpMessage (new URI(originalURI.getScheme(), originalURI.getAuthority(), "/"+ADOBE_CROSS_DOMAIN_POLICY_FILE, null, null));
 			sendAndReceive(crossdomainmessage, false);
+
+			if (crossdomainmessage.getResponseBody().length() == 0) {
+				return;
+			}
+
 			byte [] crossdomainmessagebytes = crossdomainmessage.getResponseBody().getBytes();
 			
 			//parse the file. If it's not parseable, it might have been because of a 404
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();;
-			docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-			docBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-			docBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			docBuilderFactory.setExpandEntityReferences(false);
-			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();;
-			XPath xpath = (XPath) XPathFactory.newInstance().newXPath();
-				
 			try {
 				//work around the "no protocol" issue by wrapping the content in a ByteArrayInputStream
 				Document adobeXmldoc = docBuilder.parse(new InputSource(new ByteArrayInputStream(crossdomainmessagebytes)));
@@ -192,10 +221,17 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 				log.debug("An error occurred trying to parse "+ADOBE_CROSS_DOMAIN_POLICY_FILE+" as XML: "+ e);
 			}
 			
+		}
 
+	private void scanSilverlightCrossdomainPolicyFile(URI originalURI) throws IOException, XPathExpressionException {
 			//retrieve the Silverlight client access policy file, and assess it.
 			HttpMessage clientaccesspolicymessage= new HttpMessage (new URI(originalURI.getScheme(), originalURI.getAuthority(), "/"+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE, null, null));
 			sendAndReceive(clientaccesspolicymessage, false);
+
+			if (clientaccesspolicymessage.getResponseBody().length() == 0) {
+				return;
+			}
+
 			byte [] clientaccesspolicymessagebytes = clientaccesspolicymessage.getResponseBody().getBytes();
 			
 			//parse the file. If it's not parseable, it might have been because of a 404			
@@ -229,12 +265,6 @@ public class CrossDomainScanner extends AbstractHostPlugin {
 				// Could well be a 404 or equivalent
 				log.debug("An error occurred trying to parse "+SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE+" as XML: "+ e);
 			}
-
-			
-		} catch (Exception e) {
-			//needed to catch exceptions from the "finally" statement 
-			log.error("Error scanning a node for Cross Domain misconfigurations: " + e.getMessage(), e);
-		}
 	}
 
 	@Override
