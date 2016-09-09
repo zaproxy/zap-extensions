@@ -31,6 +31,12 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
 
+    private static final String BASE_RESOURCE_KEY = "pscanrules.xframeoptionsscanner.";
+    private static final String NAME_HEADER_NOT_SET = BASE_RESOURCE_KEY + "missing.name";
+    private static final String NAME_MULTIPLE_HEADERS = BASE_RESOURCE_KEY + "multiple.header.name";
+    private static final String NAME_DEFINED_IN_META = BASE_RESOURCE_KEY + "compliance.meta.name";
+    private static final String NAME_MALFORMED = BASE_RESOURCE_KEY + "compliance.malformed.setting.name";
+
     @Override
     protected XFrameOptionScanner createScanner() {
         return new XFrameOptionScanner();
@@ -141,6 +147,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
@@ -163,6 +170,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
@@ -223,6 +231,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
@@ -283,6 +292,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_MULTIPLE_HEADERS));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
@@ -306,9 +316,11 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(2));
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+        assertThat(alertsRaised.get(1), hasNameLoadedWithKey(NAME_DEFINED_IN_META));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(1).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(1).getEvidence(), equalTo(
@@ -334,6 +346,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_DEFINED_IN_META));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(
@@ -356,6 +369,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_MALFORMED));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("STUFF"));
@@ -377,6 +391,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_HEADER_NOT_SET));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
@@ -438,6 +453,7 @@ public class XFrameOptionsScannerUnitTest extends PassiveScannerTest {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0), hasNameLoadedWithKey(NAME_MALFORMED));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.X_FRAME_OPTION));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("BAD"));
