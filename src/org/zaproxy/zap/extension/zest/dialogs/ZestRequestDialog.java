@@ -63,6 +63,9 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String BEGIN_TOKEN_DELIMITER = "{{";
+	private static final String END_TOKEN_DELIMITER = "}}";
+
 	private ExtensionZest extension = null;
 	private ScriptNode parent = null;
 	private ScriptNode node = null;
@@ -109,12 +112,16 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 		
 		// Request tab
 		this.addNodeSelectField(0, FIELD_URL, null, true, false);
-		if (request.getUrl() != null) {
-			this.setFieldValue(FIELD_URL, request.getUrl().toString());
+		String url;
+		if (request.getUrlToken() != null) {
+			url = request.getUrlToken();
+		} else if (request.getUrl() != null) {
+			url = request.getUrl().toString();
 		} else {
-			this.setFieldValue(FIELD_URL, request.getUrlToken());
+			url = "";
 		}
-		this.addComboField(0, FIELD_METHOD, new String[] {"GET", "POST", "{{" + ZestVariables.REQUEST_METHOD + "}}"}, request.getMethod());
+		this.setFieldValue(FIELD_URL, url);
+		this.addComboField(0, FIELD_METHOD, new String[] {"GET", "POST", BEGIN_TOKEN_DELIMITER + ZestVariables.REQUEST_METHOD + END_TOKEN_DELIMITER}, request.getMethod());
 		this.addCheckBoxField(0, FIELD_FOLLOW_REDIR, request.isFollowRedirects());
 		this.addMultilineField(0, FIELD_HEADERS, request.getHeaders());
 		this.addMultilineField(0, FIELD_BODY, request.getData());
@@ -164,11 +171,17 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 	}
 
 	public void save() {
-		try {
-			this.request.setUrl(new URL(this.getStringValue(FIELD_URL)));
-		} catch (MalformedURLException e) {
-			// Assume this is because it includes a token
-			this.request.setUrlToken(this.getStringValue(FIELD_URL));
+		String url = getStringValue(FIELD_URL);
+		if (url.contains(BEGIN_TOKEN_DELIMITER) && url.contains(END_TOKEN_DELIMITER)) {
+			setUrlToken(request, url);
+		} else {
+			try {
+				request.setUrl(new URL(url));
+				request.setUrlToken(null);
+			} catch (MalformedURLException e) {
+				// Assume this is because it includes a token
+				setUrlToken(request, url);
+			}
 		}
 		this.request.setMethod(this.getStringValue(FIELD_METHOD));
 		this.request.setHeaders(this.getStringValue(FIELD_HEADERS));
@@ -201,6 +214,11 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 			this.extension.display(node, false);
 		}
 
+	}
+
+	private static void setUrlToken(ZestRequest request, String urlToken) {
+		request.setUrlToken(urlToken);
+		request.setUrl(null);
 	}
 
     private JButton getAddButton () {

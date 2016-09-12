@@ -479,4 +479,12 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			super.setVariable(name, value);
 		}
 	}
+
+	@Override
+	public ZestResponse send(ZestRequest request) throws IOException {
+		if (request.getUrl() == null) {
+			throw new IOException("Request does not contain a request-uri.");
+		}
+		return super.send(request);
+	}
 }
