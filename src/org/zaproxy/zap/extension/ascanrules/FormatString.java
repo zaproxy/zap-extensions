@@ -166,9 +166,8 @@ public class FormatString extends AbstractAppParamPlugin  {
 			int initialResponseLength = initialResponseBody.length();
 		//  The following section of the code attacks GNU and generic C compiler format 
 		//	string errors.  It does not attack specific Microsoft format string  errors.
-			String initialAttackMessage = initialMessage;
 			StringBuilder sb = new StringBuilder();
-			sb.append(initialAttackMessage);
+			sb.append(initialMessage);
 			int i;
 			//  Use a large number of %s in series;  Because `%s' displays memory from an address
 			//  that is supplied on the stack, where a lot of other data is stored, too, our 
@@ -181,21 +180,20 @@ public class FormatString extends AbstractAppParamPlugin  {
 				sb.append("%n%s");
 			}
 			sb.append('\n');
-			initialAttackMessage = sb.toString();
+			String initialAttackPayload = sb.toString();
 
-			msg = getNewMsg();
-			setParameter(msg, param, initialAttackMessage);
+			HttpMessage intialAttackMsg = getNewMsg();
+			setParameter(intialAttackMsg, param, initialAttackPayload);
 			try {
-				sendAndReceive(msg);
+				sendAndReceive(intialAttackMsg);
 			} catch (InvalidRedirectLocationException|UnknownHostException ex) {
 				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-						" when accessing: " + msg.getRequestHeader().getURI().toString() + 
+						" when accessing: " + intialAttackMsg.getRequestHeader().getURI().toString() + 
 						"\n The target may have replied with a poorly formed redirect due to our input.");
 				return; //Something went wrong, no point continuing
 			}
-     		if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR)
+     		if (intialAttackMsg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR)
     		{
-    			String secondAttackMessage ;	
     			StringBuilder sb1 = new StringBuilder();
     			sb1.append(initialMessage);
     			for (i=0;i<10;i++)
@@ -203,10 +201,10 @@ public class FormatString extends AbstractAppParamPlugin  {
     				sb1.append("%x");
     			}
     			sb1.append('\n');
-    			secondAttackMessage = sb1.toString();
+    			String secondAttackPayload = sb1.toString();
 
     			msg = getNewMsg();
-    			setParameter(msg, param, secondAttackMessage);
+    			setParameter(msg, param, secondAttackPayload);
     			try {
     				sendAndReceive(msg);
     			} catch (InvalidRedirectLocationException|UnknownHostException ex) {
@@ -221,20 +219,18 @@ public class FormatString extends AbstractAppParamPlugin  {
     						Alert.CONFIDENCE_MEDIUM, 
     						null, 
     						param, 
-    						initialMessage, 
+    						secondAttackPayload, 
     						getError('2') ,
     						msg);
     			} else 
     			{
-    				msg = getNewMsg();
-        			setParameter(msg, param, initialAttackMessage);
     				bingo(getRisk(), 
     						Alert.CONFIDENCE_MEDIUM, 
     						null, 
     						param, 
-    						initialMessage, 
+    						initialAttackPayload, 
     						getError('1') ,
-    						msg);
+    						intialAttackMsg);
     			}
     			return;
     		}
@@ -279,7 +275,7 @@ public class FormatString extends AbstractAppParamPlugin  {
 						Alert.CONFIDENCE_MEDIUM, 
 						null,
 						param, 
-						initialMessage, 
+						microsoftAttackMessage, 
 						getError('3') ,
 						msg);
 			}

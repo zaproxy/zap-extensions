@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Issue 1211 - SQLi Scanner may raise seemingly duplicate alerts (fixed).<br>
+	Use correct HTTP message and attack for alerts of "Format String Error".<br>
 	]]>
     </changes>
 	<extensions>
