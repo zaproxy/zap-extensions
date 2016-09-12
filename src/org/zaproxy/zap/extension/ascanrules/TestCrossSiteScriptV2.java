@@ -337,10 +337,10 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                             }
     			            for (HtmlContext context2 : contexts2) {
     			            	if ("body".equalsIgnoreCase(context2.getParentTag()) ||
-    			            			"script".equalsIgnoreCase(context2.getParentTag())) {
+    			            			"b".equalsIgnoreCase(context2.getParentTag())) {
     			            		// Yep, its vulnerable
     								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
-    										"TBI Body tag", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
+    										"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
     								attackWorked = true;
     								break;
     			            	}
