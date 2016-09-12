@@ -26,19 +26,14 @@ import net.htmlparser.jericho.Source;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.ScannerTestUtils;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.utils.I18N;
 
-@RunWith(MockitoJUnitRunner.class)
-public abstract class PassiveScannerTest {
+public abstract class PassiveScannerTest extends ScannerTestUtils {
 
     protected PluginPassiveScanner rule;
     protected PassiveScanThread parent;
@@ -46,7 +41,7 @@ public abstract class PassiveScannerTest {
 
     @BeforeClass
     public static void beforeClass() {
-        Constant.messages = Mockito.mock(I18N.class);
+        mockMessages(new ExtensionPscanRulesBeta());
     }
 
     public PassiveScannerTest() {
