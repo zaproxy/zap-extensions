@@ -19,18 +19,32 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import net.htmlparser.jericho.Source;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyVararg;
+import static org.mockito.Mockito.when;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -47,6 +61,24 @@ public abstract class PassiveScannerTest {
     @BeforeClass
     public static void beforeClass() {
         Constant.messages = Mockito.mock(I18N.class);
+
+        final ResourceBundle msg = getExtensionResourceBundle(new ExtensionPscanRules());
+        when(Constant.messages.getString(anyString())).thenAnswer(new Answer<String>() {
+
+            @Override
+            public String answer(InvocationOnMock invocation) {
+                return msg.getString((String) invocation.getArguments()[0]);
+            }
+        });
+
+        when(Constant.messages.getString(anyString(), anyVararg())).thenAnswer(new Answer<String>() {
+
+            @Override
+            public String answer(InvocationOnMock invocation) {
+                Object[] args = invocation.getArguments();
+                return MessageFormat.format(msg.getString((String) args[0]), Arrays.copyOfRange(args, 1, args.length));
+            }
+        });
     }
 
     public PassiveScannerTest() {
@@ -70,6 +102,34 @@ public abstract class PassiveScannerTest {
     
     protected Source createSource(HttpMessage msg) {
         return new Source(msg.getResponseHeader().toString() + msg.getResponseBody().toString());
+    }
+
+    protected static Matcher<Alert> hasNameLoadedWithKey(final String key) {
+        return new BaseMatcher<Alert>() {
+
+            @Override
+            public boolean matches(Object actualValue) {
+                return ((Alert) actualValue).getAlert().equals(Constant.messages.getString(key));
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("alert name ").appendValue(Constant.messages.getString(key));
+            }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                description.appendText("was ").appendValue(((Alert) item).getAlert());
+            }
+        };
+    }
+
+    private static ResourceBundle getExtensionResourceBundle(Extension ext) {
+        return ResourceBundle.getBundle(
+                ext.getClass().getPackage().getName() + ".resources." + Constant.MESSAGES_PREFIX,
+                Locale.ROOT,
+                ext.getClass().getClassLoader(),
+                ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES));
     }
 
 }
