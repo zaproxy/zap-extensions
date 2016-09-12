@@ -19,17 +19,12 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -37,9 +32,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
@@ -54,13 +47,12 @@ import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.testng.reporters.Files;
+import org.zaproxy.zap.extension.ScannerTestUtils;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 //import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ClassLoaderUtil;
-import org.zaproxy.zap.utils.I18N;
 
-@RunWith(MockitoJUnitRunner.class)
-public abstract class ActiveScannerTest {
+public abstract class ActiveScannerTest extends ScannerTestUtils {
 
     private static final String INSTALL_PATH = "test/resources/install";
     private static final File HOME_DIR = new File("test/resources/home");
@@ -103,11 +95,7 @@ public abstract class ActiveScannerTest {
 
         // Init all the things
         Constant.getInstance();
-        I18N i18n = Mockito.mock(I18N.class);
-        given(i18n.getString(anyString())).willReturn("");
-        given(i18n.getString(anyString(), anyObject())).willReturn("");
-        given(i18n.getLocal()).willReturn(Locale.getDefault());
-        Constant.messages = i18n;
+        mockMessages(new ExtensionAscanRules());
         Control.initSingletonForTesting();
         Model.getSingleton();
 
