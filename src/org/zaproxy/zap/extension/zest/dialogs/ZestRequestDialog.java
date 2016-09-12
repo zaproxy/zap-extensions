@@ -170,6 +170,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 		}
 	}
 
+	@Override
 	public void save() {
 		String url = getStringValue(FIELD_URL);
 		if (url.contains(BEGIN_TOKEN_DELIMITER) && url.contains(END_TOKEN_DELIMITER)) {

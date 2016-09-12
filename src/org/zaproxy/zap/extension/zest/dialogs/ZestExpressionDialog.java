@@ -228,6 +228,7 @@ public class ZestExpressionDialog extends StandardFieldsDialog implements ZestDi
 		return list;
 	}
 
+	@Override
 	public void save() {
 		if (expression instanceof ZestExpressionRegex) {
 			ZestExpressionRegex zc = (ZestExpressionRegex) expression;

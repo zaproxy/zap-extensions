@@ -67,6 +67,7 @@ public class ZestParameterizeDialog extends StandardFieldsDialog {
 	}
 	
 
+	@Override
 	public void save() {
 		this.extension.perameterize(script, node, request, this.getStringValue(FIELD_REPLACE_STRING),
 			this.getStringValue(FIELD_TOKEN), this.getBoolValue(FIELD_IN_CURRENT), replaceInAdded);

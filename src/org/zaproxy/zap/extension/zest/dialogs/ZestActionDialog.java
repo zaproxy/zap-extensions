@@ -330,6 +330,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 		return vals;
 	}
 
+	@Override
 	public void save() {
 		if (action instanceof ZestActionScan) {
 			ZestActionScan za = (ZestActionScan) action;

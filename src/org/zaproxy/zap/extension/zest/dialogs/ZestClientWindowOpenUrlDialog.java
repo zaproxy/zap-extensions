@@ -78,6 +78,7 @@ public class ZestClientWindowOpenUrlDialog extends StandardFieldsDialog implemen
 		this.addTextField(FIELD_URL, client.getUrl());
 	}
 
+	@Override
 	public void save() {
 		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
 		client.setUrl(this.getStringValue(FIELD_URL));

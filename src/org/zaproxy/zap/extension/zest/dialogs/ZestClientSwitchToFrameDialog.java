@@ -113,6 +113,7 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
 		
 	}
 
+	@Override
 	public void save() {
 		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
 		client.setFrameName(this.getStringValue(FIELD_FRAME_NAME));

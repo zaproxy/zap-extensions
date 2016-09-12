@@ -62,6 +62,7 @@ public class ZestRedactDialog extends StandardFieldsDialog {
 	}
 	
 
+	@Override
 	public void save() {
 		
 		if (this.getBoolValue(FIELD_IN_CURRENT)) {

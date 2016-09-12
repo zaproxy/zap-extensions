@@ -226,6 +226,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 
 	}
 
+	@Override
 	public void save() {
 		
 		assign.setVariableName(this.getStringValue(FIELD_VARIABLE));

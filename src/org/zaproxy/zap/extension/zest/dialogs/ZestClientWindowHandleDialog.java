@@ -77,6 +77,7 @@ public class ZestClientWindowHandleDialog extends StandardFieldsDialog implement
 		this.addFieldListener(FIELD_URL, ZestZapUtils.stdMenuAdapter()); 
 	}
 
+	@Override
 	public void save() {
 		client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
 		client.setUrl(this.getStringValue(FIELD_URL));

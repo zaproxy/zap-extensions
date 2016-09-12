@@ -69,6 +69,7 @@ public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
     	return true;
     }
 	    
+    @Override
     public boolean isEnableForComponent(Component invoker) {
 		String var = ZestVariables.RESPONSE_BODY;
 		if (extension.isScriptTree(invoker)) {
