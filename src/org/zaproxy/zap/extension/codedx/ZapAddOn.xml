@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Code Dx Extension</name>
-	<version>3</version>
+	<version>4</version>
 	<status>alpha</status>
 	<description>includes request and response data in xml reports</description>
 	<author>Code Dx, Inc.</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Allow to update/uninstall the add-on without restarting ZAP.<br>
+	Minor code changes.<br>
 	]]>
 	</changes>
 	<extensions>

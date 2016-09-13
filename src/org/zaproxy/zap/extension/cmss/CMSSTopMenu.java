@@ -42,23 +42,7 @@ public class CMSSTopMenu extends ExtensionAdaptor {
      * 
      */
     public CMSSTopMenu() {
-        super();
-                initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public CMSSTopMenu(String name) {
-        super(name);
-    }
-
-        /**
-         * This method initializes this
-         * 
-         */
-        private void initialize() {
-        this.setName("ExtensionTopMenu");
+        super("ExtensionTopMenu");
         // Load extension specific language files - these are held in the extension jar
         messages = ResourceBundle.getBundle(
                         this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());

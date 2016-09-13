@@ -45,23 +45,7 @@ public class BirtTopMenu extends ExtensionAdaptor {
      *
      */
     public BirtTopMenu() {
-        super();
-        initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public BirtTopMenu(String name) {
-        super(name);
-    }
-
-        /**
-         * This method initializes this
-         *
-         */
-        private void initialize() {
-        this.setName("BirtTopMenu");
+        super("BirtTopMenu");
         // Load extension specific language files - these are held in the extension jar
         messages = ResourceBundle.getBundle(
                         this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());

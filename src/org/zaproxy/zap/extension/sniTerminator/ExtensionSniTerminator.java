@@ -54,23 +54,7 @@ public class ExtensionSniTerminator extends ExtensionAdaptor {
      * 
      */
     public ExtensionSniTerminator() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionSniTerminator(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 * 
-	 */
-	private void initialize() {
-        this.setName(NAME);
+        super(NAME);
 	}
 	
 	@Override

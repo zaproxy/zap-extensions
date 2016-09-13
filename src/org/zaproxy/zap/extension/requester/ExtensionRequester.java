@@ -51,16 +51,7 @@ public class ExtensionRequester extends ExtensionAdaptor {
 	private RequesterOptionsPanel requesterOptionsPanel;
 	
 	public ExtensionRequester() {
-		super();		
-		initialize();
-	}
-
-	public ExtensionRequester(String name) {
-		super(name);
-	}	
-
-	private void initialize() {
-		this.setName(NAME);
+		super(NAME);
 		this.setOrder(211);		
 	}	
 	

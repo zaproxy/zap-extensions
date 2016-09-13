@@ -41,12 +41,7 @@ public class CodeDxExtension extends ExtensionAdaptor {
     public List<Alert> alerts;
 
     public CodeDxExtension() {
-        super();
-        initialize();
-    }
-
-    private void initialize() {
-        this.setName(NAME);
+        super(NAME);
     }
 
     @Override

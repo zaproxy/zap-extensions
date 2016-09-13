@@ -54,23 +54,7 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
      * 
      */
     public ExtensionCustomReport() {
-        super();
-        initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionCustomReport(String name) {
-        super(name);
-    }
-
-        /**
-         * This method initializes this
-         * 
-         */
-        private void initialize() {
-        this.setName("ExtensionCustomReport");
+        super("ExtensionCustomReport");
         }
         
 		@Override

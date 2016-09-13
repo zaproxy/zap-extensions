@@ -51,16 +51,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
     private ImportLogAPI importLogAPI;
     
     public ExtensionImportLogFiles() {
-        super();
-        initialize();
-    }
-
-    public ExtensionImportLogFiles(String name) {
-        super(name);
-    }
-
-    private void initialize() {
-        this.setName("ExtensionImportLogFiles");
+        super("ExtensionImportLogFiles");
     }
 
     @SuppressWarnings("deprecation")

@@ -181,23 +181,7 @@ public class ExtensionWavsepReport extends ExtensionAdaptor {
      * 
      */
     public ExtensionWavsepReport() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionWavsepReport(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 * 
-	 */
-	private void initialize() {
-        this.setName(NAME);
+        super(NAME);
 	}
 	
 	@Override

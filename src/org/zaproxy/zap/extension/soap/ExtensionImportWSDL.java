@@ -55,23 +55,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	private WSDLCustomParser parser = new WSDLCustomParser();
 	
 	public ExtensionImportWSDL() {
-		super();
-		initialize();
-	}
-
-	/**
-	 * @param name
-	 */
-	public ExtensionImportWSDL(String name) {
-		super(name);
-		initialize();
-	}
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-		this.setName(NAME);
+		super(NAME);
 		this.setOrder(158);
 	}
 
