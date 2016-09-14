@@ -403,6 +403,7 @@
 		<build-addon name="sniTerminator" />
 		<build-addon name="soap" />
 		<build-addon name="sse" />
+		<build-addon name="viewstate" />
 		<build-addon name="wappalyzer" />
 
 	</target>
@@ -636,6 +637,10 @@
     
     <target name="deploy-soap" description="deploy the SOAP scanning extension">
 		<build-deploy-addon name="soap" />
+	</target>
+	
+	<target name="deploy-viewstate" description="deploy the viewstate extension">
+		<build-deploy-addon name="viewstate" />
 	</target>
 		
     <target name="deploy-wappalyzer" description="deploy the Wappalyzer extension">
