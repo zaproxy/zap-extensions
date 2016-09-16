@@ -166,5 +166,34 @@ public abstract class ScannerTestUtils {
             }
         };
     }
+    
+    
+    /**
+     * Creates a matcher that matches when the examined {@code Alert} has a other info that contains the string loaded with the given
+     * key.
+     *
+     * @param key the key for the name
+     * @return the name matcher
+     */
+    protected static Matcher<Alert> containsOtherInfoLoadedWithKey(final String key, final Object... params) {
+        return new BaseMatcher<Alert>() {
+
+            @Override
+            public boolean matches(Object actualValue) {
+                return ((Alert) actualValue).getOtherInfo().contains(Constant.messages.getString(key, params));
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("alert other info contains ").appendValue(Constant.messages.getString(key, params));
+            }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                description.appendText("was ").appendValue(((Alert) item).getOtherInfo());
+            }
+        };
+    }
+
 
 }
