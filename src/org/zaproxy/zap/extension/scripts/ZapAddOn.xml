@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>17</version>
+	<version>18</version>
 	<status>beta</status>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Discard undoable edits after setting a script (Issue 2675).<br>
+	Remove unused resource messages (Issue 2386).<br>
 	]]>
 	</changes>
 	<extensions>
@@ -17,6 +17,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.5.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
