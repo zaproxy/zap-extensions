@@ -71,6 +71,12 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
             	for (AppPattern p : app.getHtml()) {
             		this.addSubMenu("HTML", p.getPattern(), ExtensionSearch.Type.Response);
             	}
+            	for (Map<String,AppPattern> mp : app.getMetas()) {
+					for (Map.Entry<String, AppPattern> entry : mp.entrySet()) {
+						Pattern p = Pattern.compile(entry.getKey() + ".*" + entry.getValue().getPattern().pattern());
+						this.addSubMenu("META", p, ExtensionSearch.Type.Response);
+						}
+	            	}
             	for (AppPattern p : app.getScript()) {
             		this.addSubMenu("SCRIPT", p.getPattern(), ExtensionSearch.Type.Response);
             	}

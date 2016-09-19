@@ -96,7 +96,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	/**
 	 * TODO
 	 * Implementaion
-	 * 		Meta tags
 	 * 		Version handling
 	 * 		Confidence handling
 	 * 		Add API calls - need to test for daemon mode (esp revisits)
@@ -141,10 +140,11 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 				app.setName(appName);
 				app.setWebsite(appData.getString("website"));
 				app.setCategories(this.jsonToCategoryList(appData.get("cats")));
-				app.setHeaders(this.jsonToHeadersList(appData.get("headers")));
+				app.setHeaders(this.jsonToAppPatternMapList(appData.get("headers")));
 				app.setUrl(this.jsonToPatternList(appData.get("url")));
 				app.setHtml(this.jsonToPatternList(appData.get("html")));
 				app.setScript(this.jsonToPatternList(appData.get("script")));
+				app.setMetas(this.jsonToAppPatternMapList(appData.get("meta")));
 				app.setImplies(this.jsonToStringList(appData.get("implies")));
 				
 				URL icon = ExtensionWappalyzer.class.getResource( RESOURCE + "/icons/" + appName + ".png");
@@ -189,7 +189,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Map<String, AppPattern>> jsonToHeadersList(Object json) {
+	private List<Map<String, AppPattern>> jsonToAppPatternMapList(Object json) {
 		List<Map<String, AppPattern>> list = new ArrayList<Map<String, AppPattern>>();
 		AppPattern ap;
 		if (json instanceof JSONObject) {

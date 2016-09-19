@@ -9,6 +9,7 @@
 	<![CDATA[
 	Remove the use of passive scan rule.<br>
 	Minor code cleanup.<br>
+	Add support for wappalyzer META tag checks.<br>
 	]]>
 	</changes>
 	<extensions>
