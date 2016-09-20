@@ -66,13 +66,19 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 		}
 	
 		//Get the various CSP headers
-		boolean cspHeaderFound = false, xCspHeaderFound = false, xWebKitHeaderFound=false;
+		boolean cspHeaderFound = false, cspROHeaderFound = false, xCspHeaderFound = false, xWebKitHeaderFound=false;
 		
 		//Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but Internet Exploder
 		Vector<String> cspOptions = msg.getResponseHeader().getHeaders("Content-Security-Policy");
 		//If it's not null or empty then we found one
 		if (cspOptions != null && cspOptions.isEmpty() == false) { 
 			cspHeaderFound = true;
+		}
+		
+		Vector<String> cspROOptions = msg.getResponseHeader().getHeaders("Content-Security-Policy-Report-Only");
+		//If it's not null or empty then we found one
+		if (cspROOptions != null && cspROOptions.isEmpty() == false) { 
+			cspROHeaderFound = true;
 		}
 		
 		//X-Content-Security-Policy is an older header, supported by Firefox 4.0+, and IE 10+ (in a limited fashion)
@@ -106,19 +112,38 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 						(!xCspHeaderFound || !xWebKitHeaderFound))) {
 			// Always report if the latest header isnt found,
 			// but only report if the older ones arent present at Low threshold 
-			Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
-				getName()); 
+			Alert alert = new Alert(getPluginId(), // PluginID
+					cspROHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW, // Risk
+					Alert.CONFIDENCE_MEDIUM, // Reliability
+					getName());
+			alert.setDetail(getAlertAtrribute("desc"), // Description
+					msg.getRequestHeader().getURI().toString(), // URI
+					"", // Param
+					"", // Attack
+					"", // Other info
+					getAlertAtrribute("soln"), // Solution
+					getAlertAtrribute("refs"), // References
+					"", // Evidence
+					16, // CWE-16: Configuration
+					15, // WASC-15: Application Misconfiguration
+					msg); // HttpMessage
+			parent.raiseAlert(id, alert);
+		}
+		
+		if (cspROHeaderFound) {
+			Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
+					getAlertAtrribute("ro.name")); 
 				alert.setDetail(
-						getDescription(), //Description
+						getAlertAtrribute("ro.desc"), //Description
 						msg.getRequestHeader().getURI().toString(), //URI
 						"",	// Param
 						"", // Attack
 						"", // Other info
-						getSolution(), //Solution
-						getReference(), //References
+						getAlertAtrribute("soln"), //Solution
+						getAlertAtrribute("ro.refs"), //References
 						"",	// Evidence
 						16, // CWE-16: Configuration
-						15,	//WASC-15: Application Misconfiguration
+						15,	// WASC-15: Application Misconfiguration
 						msg); //HttpMessage
 		   	parent.raiseAlert(id, alert);
 		}
@@ -138,16 +163,8 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
-	private String getDescription() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
-
-	private String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
-
-	private String getReference() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+	private String getAlertAtrribute(String key) {
+		return Constant.messages.getString(MESSAGE_PREFIX + key);
 	}
 
 }

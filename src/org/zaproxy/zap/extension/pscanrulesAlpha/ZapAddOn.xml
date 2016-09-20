@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 		Refactoring the x-powered-by scanner to raise one alert if it finds repetitive headers.<br>
+		Update the CSP scanner to handle the Content-Security-Policy-Report-Only header.<br>
 	]]>
 	</changes>
 	<extensions>
