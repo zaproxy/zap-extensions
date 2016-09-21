@@ -22,6 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,8 +39,10 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.AbstractFrame;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 public class MDialog extends AbstractFrame {
@@ -82,6 +85,8 @@ public class MDialog extends AbstractFrame {
 	}
 
 	public void init() {
+		checkProxyChainEnabled();
+		
 		general = new JTextArea();
 		general.setEditable(false);
 		general.setRows(10);
@@ -321,5 +326,19 @@ public class MDialog extends AbstractFrame {
 				4, // WASC ID
 				baseMessage); // HTTPMessage
 		extensionAlert.alertFound(alert, baseMessage.getHistoryRef());
+	}
+	
+	/**
+	 * Check if ZAP is configured to use an outbound proxy. If it is then warn via a GUI dialog. 
+	 * Results may be inaccurate, representing the connection to the proxy instead of the 
+	 * connection to the target.
+	 */
+	private void checkProxyChainEnabled() {
+		if (Model.getSingleton().getOptionsParam().getConnectionParam().isUseProxyChain()) {
+			String warningMsg = MessageFormat.format(
+					Constant.messages.getString("httpsinfo.warn.outgoing.proxy.enabled"),
+					Constant.messages.getString("httpsinfo.name"));
+			View.getSingleton().showWarningDialog(warningMsg);
+		}
 	}
 }
