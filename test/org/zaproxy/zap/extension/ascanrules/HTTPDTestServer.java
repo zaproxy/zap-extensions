@@ -28,6 +28,14 @@ public class HTTPDTestServer extends NanoHTTPD {
     
     private List<NanoServerHandler> handlers = 
             new ArrayList<NanoServerHandler>();
+    
+    private NanoServerHandler handler404 = new NanoServerHandler(""){
+        @Override
+        Response serve(IHTTPSession session) {
+            return new Response(
+                    Response.Status.NOT_FOUND, MIME_HTML, 
+                    "<html><head><title>404</title></head><body>404 Not Found</body></html>");
+        }};
 
     public HTTPDTestServer(int port) {
         super(port);
@@ -40,7 +48,7 @@ public class HTTPDTestServer extends NanoHTTPD {
                 return handler.serve(session);
             }
         }
-        return null;
+        return handler404.serve(session);
     }
 
     public void addHandler (NanoServerHandler handler) {
@@ -49,6 +57,10 @@ public class HTTPDTestServer extends NanoHTTPD {
 
     public void removeHandler (NanoServerHandler handler) {
         this.handlers.remove(handler);
+    }
+    
+    public void setHandler404 (NanoServerHandler handler) {
+        this.handler404 = handler;
     }
 
 }
