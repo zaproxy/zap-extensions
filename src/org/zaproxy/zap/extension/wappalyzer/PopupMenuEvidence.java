@@ -40,15 +40,7 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
     
     private List<PopupMenuEvidenceSearch> subMenus = new ArrayList<PopupMenuEvidenceSearch>();
 
-    public PopupMenuEvidence() {
-        super();
-    }
-
-    public PopupMenuEvidence(String label) {
-        super(label);
-    }
-
-	public void setExtension(ExtensionWappalyzer extension) {
+    public PopupMenuEvidence(ExtensionWappalyzer extension) {
 		this.extension = extension;
 	}
 
@@ -95,9 +87,8 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
     }
     
     private void addSubMenu(String label, Pattern p, ExtensionSearch.Type type) {
-    	// TODO add prefix for pattern types?
-		PopupMenuEvidenceSearch menu = new PopupMenuEvidenceSearch(label, p, type);
-		menu.setExtension(extension);
+    	// TODO add label as prefix for pattern types?
+		PopupMenuEvidenceSearch menu = new PopupMenuEvidenceSearch(p.pattern(), extension, p, type);
 		menu.setMenuIndex(this.getMenuIndex());
 		View.getSingleton().getPopupList().add(menu);
 		this.subMenus.add(menu);
