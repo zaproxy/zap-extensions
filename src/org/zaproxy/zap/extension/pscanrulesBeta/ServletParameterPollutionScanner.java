@@ -17,15 +17,13 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.util.Iterator;
 import java.util.List;
 
-import net.htmlparser.jericho.Attribute;
-import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -75,20 +73,10 @@ public class ServletParameterPollutionScanner extends PluginPassiveScanner {
 			// check for 'target' param
 			
 			for (Element formElement : formElements) {
-				boolean actionFound = false;
-				Attributes atts = formElement.getAttributes();
-				Iterator<Attribute> iter = atts.iterator();
-				
-				while (iter.hasNext()) {
-					Attribute att = iter.next();
-					if (att.getName().equalsIgnoreCase("action") && att.getValue().length() > 0) {
-						// action tag present (and with a value), so should be ok
-						actionFound = true;
-					}
-				}
-				
-				if (!actionFound) {
-				    Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_LOW, 
+				boolean actionMissingOrEmpty = StringUtils.isEmpty(formElement.getAttributeValue("action"));
+
+				if (actionMissingOrEmpty) {
+				    Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_LOW,
 					    	getName());
 					    	alert.setDetail(
 					    		getDescription(), 
