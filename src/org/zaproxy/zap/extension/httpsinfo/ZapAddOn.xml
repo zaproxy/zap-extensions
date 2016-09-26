@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>HttpsInfo</name>
-	<version>7</version>
+	<version>8</version>
 	<status>alpha</status>
 	<description>Displays HTTPS status information.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Allow to update/uninstall the add-on without restarting ZAP.<br>
-	Issue 758 - General re-working of the extension.<br>
+	Warn the user if results may be inaccurate due to ZAP being configured to use an outbound proxy.<br>
 	]]>
 	</changes>
 	<extensions>
