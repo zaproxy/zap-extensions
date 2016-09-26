@@ -299,8 +299,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 
 	private PopupMenuEvidence getPopupMenuEvidence () {
 		if (popupMenuEvidence == null) {
-			popupMenuEvidence = new PopupMenuEvidence();
-			popupMenuEvidence.setExtension(this);
+			popupMenuEvidence = new PopupMenuEvidence(this);
 		}
 		return popupMenuEvidence;
 	}
