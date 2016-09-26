@@ -10,6 +10,7 @@
 	Issue 1211 - SQLi Scanner may raise seemingly duplicate alerts (fixed).<br>
 	Use correct HTTP message and attack for alerts of "Format String Error".<br>
 	Fixed test for wrong tag in Reflected XSS rule.<br>
+	Issue 1632 - False Negative XSS on injection outside of HTML tags.<br>
 	]]>
     </changes>
 	<extensions>
