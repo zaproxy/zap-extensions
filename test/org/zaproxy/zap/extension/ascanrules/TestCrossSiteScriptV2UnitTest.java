@@ -244,6 +244,72 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     }
     
     @Test
+    public void shouldReportXssOutsideOfTags() throws NullPointerException, IOException {
+        String test = "shouldReportXssOutsideOfTags";
+        
+        this.nano.addHandler(new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String name = session.getParms().get("name");
+                String response;
+                if (name != null) {
+                    response = getHtml("InputIsBody.html",
+                            new String[][] {{"name", name}});
+                } else {
+                    response = getHtml("NoInput.html");
+                }
+                return new Response(response);
+            }
+        });
+        
+        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        
+        this.rule.init(msg, this.parent);
+
+        ((AbstractAppParamPlugin)this.rule).scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(),  equalTo("<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+    
+    @Test
+    public void shouldReportXssOutsideOfHtmlTags() throws NullPointerException, IOException {
+        String test = "shouldReportXssOutsideOfHtmlTags";
+        
+        this.nano.addHandler(new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String name = session.getParms().get("name");
+                String response;
+                if (name != null) {
+                    response = getHtml("InputOutsideHtmlTag.html",
+                            new String[][] {{"name", name}});
+                } else {
+                    response = getHtml("NoInput.html");
+                }
+                return new Response(response);
+            }
+        });
+        
+        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        
+        this.rule.init(msg, this.parent);
+
+        ((AbstractAppParamPlugin)this.rule).scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(),  equalTo("<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+    
+    @Test
     public void shouldReportXssInBodyWithFilteredScript() throws NullPointerException, IOException {
         String test = "shouldReportXssInBodyWithFilteredScript";
         

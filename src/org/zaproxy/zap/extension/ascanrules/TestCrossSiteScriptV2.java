@@ -374,26 +374,29 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             	            }
         	            }
             		} else {
-            			// Last chance - is the payload actually the whole response?
-            			if (context.getTarget().equals(context.getMsg().getResponseBody().toString())) {
+            			// Last chance - is the payload reflected outside of any tags
+            			if (context.getMsg().getResponseBody().toString().contains(context.getTarget())) {
             	            List<HtmlContext> contexts2 = performAttack (msg, param, 
             	            		"<script>alert(1);</script>", null, 0);
                             if (contexts2 == null) {
                                 break;
                             }
-            	            if (contexts2.size() > 0) {
-           	            		// Yep, its vulnerable
-                    			if (contexts2.get(0).getMsg().getResponseHeader().isHtml()) {
-                    				bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(),
-           								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
-                    			} else {
-                    				bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, null, param, contexts2.get(0).getTarget(),
-                   						Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.nothtml"),
-           								contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
-                    				
-                    			}
-        						attackWorked = true;
-            	            }
+                            for (HtmlContext ctx : contexts2) {
+                                if (ctx.getParentTag() != null) {
+                                    // Yep, its vulnerable
+                                    if (ctx.getMsg().getResponseHeader().isHtml()) {
+                                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, ctx.getTarget(),
+                                            "", ctx.getTarget(), contexts2.get(0).getMsg());
+                                    } else {
+                                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, null, param, ctx.getTarget(),
+                                            Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.nothtml"),
+                                            ctx.getTarget(), contexts2.get(0).getMsg());
+                                        
+                                    }
+                                    attackWorked = true;
+                                    break;
+                                }
+                            }
             			}
             		}
             	}
