@@ -31,7 +31,6 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 
-import org.apache.commons.httpclient.HttpException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
