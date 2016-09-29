@@ -10,6 +10,7 @@
 	Support changing the length of time used in timing attacks via config options.<br>
 	Support ignoring specified forms when checking for CSRF vulnerabilities.<br>
 	Do not attempt to parse empty cross domain policy files.<br>
+	Correct creation of attack URL in Source Code Disclosure - CVE-2012-1823.<br>
     ]]>
 	</changes>
 	<extensions>
