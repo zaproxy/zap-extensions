@@ -77,6 +77,7 @@
 				<pathelement location="${build}"/>
 				<fileset dir="${dist.lib.dir}">
 					<include name="**/*.jar" />
+					<include name="**/*.zap" />
 				</fileset>
 				<fileset dir="${test.lib}">
 					<include name="**/*.jar" />

@@ -24,6 +24,7 @@ import net.htmlparser.jericho.Source;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -144,7 +145,10 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
 			
 			//construct a new URL based on the original URL, but without any of the original parameters
 			String attackParam = "?-s";
-			URI attackURI = new URI(originalURI.getScheme() + "://" + originalURI.getAuthority() + (originalURI.getPath() != null?originalURI.getPath():"/") + attackParam, true);
+			URI attackURI = createAttackUri(originalURI, attackParam);
+			if (attackURI == null) {
+				return;
+			}
 			//and send it as a GET, unauthorised.
 			HttpMessage attackmsg = new HttpMessage(attackURI);
 			sendAndReceive(attackmsg, false); //do not follow redirects
@@ -194,6 +198,19 @@ public class SourceCodeDisclosureCVE20121823 extends AbstractAppPlugin {
 		}
 	}
 	
+	private static URI createAttackUri(URI originalURI, String attackParam) {
+		StringBuilder strBuilder = new StringBuilder();
+		strBuilder.append(originalURI.getScheme()).append("://").append(originalURI.getEscapedAuthority());
+		strBuilder.append(originalURI.getRawPath() != null ? originalURI.getEscapedPath() : "/").append(attackParam);
+		String uri = strBuilder.toString();
+		try {
+			return new URI(uri, true);
+		} catch (URIException e) {
+			log.warn("Failed to create attack URI [" + uri + "], cause: " + e.getMessage());
+		}
+		return null;
+	}
+
 	@Override
 	public int getRisk() {
 		return Alert.RISK_HIGH; 
