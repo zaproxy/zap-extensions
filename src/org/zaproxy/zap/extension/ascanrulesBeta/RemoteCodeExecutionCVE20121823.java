@@ -19,6 +19,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -141,12 +142,15 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 				//byte [] originalResponseBody = getBaseMsg().getResponseBody().getBytes();
 				
 				//construct a new URL based on the original URL, but without any of the original parameters
-				//important: the URL is already escaped, and must not be escaped again
-				URI attackURI = new URI(originalURI.getScheme() + "://" + originalURI.getAuthority() + (originalURI.getPath() != null?originalURI.getPath():"/") + attackParam, true);
+				URI attackURI = createAttackUri(originalURI, attackParam);
+				if (attackURI == null) {
+					return;
+				}
 				//and send it as a POST request, unauthorised, with the payload as the POST body.
 				HttpRequestHeader requestHeader = new HttpRequestHeader(HttpRequestHeader.POST, attackURI, HttpRequestHeader.HTTP11);
 				HttpMessage attackmsg = new HttpMessage(requestHeader);
 				attackmsg.setRequestBody(payload);
+				requestHeader.setContentLength(attackmsg.getRequestBody().length());
 				
 				sendAndReceive(attackmsg, false); //do not follow redirects
 				byte [] attackResponseBody = attackmsg.getResponseBody().getBytes();
@@ -175,11 +179,25 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 						responseBody,		//evidence, highlighted in the message
 						attackmsg	//raise the alert on the attack message
 						);	
+					break;
 				}
 			}			
 		} catch (Exception e) {
 			log.error("Error scanning a URL for Remote Code Execution via CVE-2012-1823: " + e.getMessage(), e);
 		}
+	}
+
+	private static URI createAttackUri(URI originalURI, String attackParam) {
+		StringBuilder strBuilder = new StringBuilder();
+		strBuilder.append(originalURI.getScheme()).append("://").append(originalURI.getEscapedAuthority());
+		strBuilder.append(originalURI.getRawPath() != null ? originalURI.getEscapedPath() : "/").append(attackParam);
+		String uri = strBuilder.toString();
+		try {
+			return new URI(uri, true);
+		} catch (URIException e) {
+			log.warn("Failed to create attack URI [" + uri + "], cause: " + e.getMessage());
+		}
+		return null;
 	}
 	
 	@Override
