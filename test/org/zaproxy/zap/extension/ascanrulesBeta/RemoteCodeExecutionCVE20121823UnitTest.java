@@ -120,7 +120,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldAlertIfWindowsAttackWasSuccessful() throws Exception {
         // Given
-        final String body = RemoteCodeExecutionCVE20121823.randomString + "<html><body>X Y Z</body></html>";
+        final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
         String test = "shouldAlertIfWindowsAttackWasSuccessful";
         nano.addHandler(new NanoServerHandler(test) {
 
@@ -141,7 +141,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(body)));
         assertThat(alertsRaised.get(0).getParam(), is(equalTo("")));
         assertThat(alertsRaised.get(0).getAttack(), is(
-                equalTo("<?php exec('cmd.exe /C echo " + RemoteCodeExecutionCVE20121823.randomString
+                equalTo("<?php exec('cmd.exe /C echo " + RemoteCodeExecutionCVE20121823.RANDOM_STRING
                         + "',$colm);echo join(\"\n\",$colm);die();?>")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
@@ -151,7 +151,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldAlertIfNixAttackWasSuccessful() throws Exception {
         // Given
-        final String body = RemoteCodeExecutionCVE20121823.randomString + "<html><body>X Y Z</body></html>";
+        final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
         String test = "shouldAlertIfNixAttackWasSuccessful";
         nano.addHandler(new NanoServerHandler(test) {
 
@@ -172,7 +172,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(body)));
         assertThat(alertsRaised.get(0).getParam(), is(equalTo("")));
         assertThat(alertsRaised.get(0).getAttack(), is(
-                equalTo("<?php exec('echo " + RemoteCodeExecutionCVE20121823.randomString
+                equalTo("<?php exec('echo " + RemoteCodeExecutionCVE20121823.RANDOM_STRING
                         + "',$colm);echo join(\"\n\",$colm);die();?>")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
