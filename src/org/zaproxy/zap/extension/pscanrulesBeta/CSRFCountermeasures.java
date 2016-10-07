@@ -63,6 +63,10 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
      * the passive scan thread class used
      */
 	private PassiveScanThread parent = null;
+	private ExtensionAntiCSRF extensionAntiCSRF;
+	private String csrfIgnoreList;
+	private String csrfAttIgnoreList;
+	private String csrfValIgnoreList;
 	
 	/**
 	 * the logger
@@ -124,7 +128,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 			
 			StringBuilder sb = new StringBuilder();
 			String evidence = "";
-			int i = 1;
+			int numberOfFormsPassed = 1;
 			
 			List<String> ignoreList = new ArrayList<String>();
 			String ignoreConf = getCSRFIgnoreList();
@@ -169,7 +173,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				}
 				
 				List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
-				sbForm.append("[Form "+i+": ");
+				sbForm.append("[Form "+numberOfFormsPassed+": ");
 				
 				if (inputElements != null && inputElements.size() > 0) {
 					// Loop through all of the INPUT elements
@@ -211,7 +215,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 					// Give the first FORM tag as evidence
 					evidence = formElement.getFirstElement().getStartTag().toString();
 				}
-				i++;
+				numberOfFormsPassed++;
 			}
 			if (sb.length() > 0) {
 				sb.append(']');
@@ -251,8 +255,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 		if (logger.isDebugEnabled()) {
 			logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
 		}
-		
-	}
+			}
 
 	private boolean formOnIgnoreList(Element formElement, List<String> ignoreList) {
 		String id = formElement.getAttributeValue("id");
@@ -313,19 +316,47 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
     }
 
     protected ExtensionAntiCSRF getExtensionAntiCSRF() {
-        return (ExtensionAntiCSRF) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.NAME);
+    	if (extensionAntiCSRF == null) {
+    		return Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.class);
+    	}
+    	return extensionAntiCSRF;
     }
+    
+	protected void setExtensionAntiCSRF(ExtensionAntiCSRF extensionAntiCSRF) {
+		this.extensionAntiCSRF = extensionAntiCSRF;
+	}
 
     protected String getCSRFIgnoreList() {
-        return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignorelist");
+    	if (csrfIgnoreList == null) {
+    		return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignorelist");
+    	}
+    	return csrfIgnoreList;
     }
+    
+	protected void setCsrfIgnoreList(String csrfIgnoreList) {
+		this.csrfIgnoreList = csrfIgnoreList;
+	}
 
     protected String getCSRFIgnoreAttName() {
-        return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignore.attname", null);
+    	if (csrfAttIgnoreList == null) {
+    		return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignore.attname", null);	
+    	}
+        return csrfAttIgnoreList;
+    }
+    
+    protected void setCSRFIgnoreAttName(String csrfAttIgnoreList) {
+    	this.csrfAttIgnoreList = csrfAttIgnoreList;
     }
     
     protected String getCSRFIgnoreAttValue() {
-        return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignore.attvalue", null);
+    	if (csrfValIgnoreList == null) {
+    		return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignore.attvalue", null);
+    	}
+    	return csrfValIgnoreList;
+    }
+    
+    protected void setCSRFIgnoreAttValue(String csrfValIgnoreList) {
+    	this.csrfValIgnoreList = csrfValIgnoreList;
     }
 
 }
