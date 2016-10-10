@@ -80,8 +80,7 @@ public class CacheControlScanner extends PluginPassiveScanner {
 			if (cacheControlHeaders.isEmpty() || //No Cache-Control header at all 
 					cacheControlHeaders.indexOf("no-store") < 0 || 
 					cacheControlHeaders.indexOf("no-cache") < 0 || 
-					cacheControlHeaders.indexOf("must-revalidate") < 0 ||
-					cacheControlHeaders.indexOf("private") < 0) {
+					cacheControlHeaders.indexOf("must-revalidate") < 0) {
 				this.raiseAlert(msg, id, HttpHeader.CACHE_CONTROL, cacheControlHeaders);
 			}
 			

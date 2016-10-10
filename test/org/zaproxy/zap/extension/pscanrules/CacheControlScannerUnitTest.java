@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
@@ -62,12 +63,28 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest {
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n" +
                 "Server: Apache-Coyote/1.1\r\n" +
-                "Cache-Control: no-cache, no-store, must-revalidate, private\r\n" +
+                "Cache-Control: no-cache, no-store, must-revalidate\r\n" +
                 "Content-Type: text/html;charset=ISO-8859-1\r\n" +
                 "Content-Length: " + msg.getResponseBody().length() + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldIgnoreEmptyHttpsResponses() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n" +
+                "Server: Apache-Coyote/1.1\r\n" +
+                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
+                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
@@ -80,14 +97,14 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest {
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n" +
                 "Server: Apache-Coyote/1.1\r\n" +
-                "Cache-Control: no-store, must-revalidate, private\r\n" +
+                "Cache-Control: no-store, must-revalidate\r\n" +
                 "Content-Type: text/html;charset=ISO-8859-1\r\n" +
                 "Content-Length: " + msg.getResponseBody().length() + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-store, must-revalidate, private"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-store, must-revalidate"));
     }
 
     @Test
@@ -100,14 +117,14 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest {
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n" +
                 "Server: Apache-Coyote/1.1\r\n" +
-                "Cache-Control: no-cache, must-revalidate, private\r\n" +
+                "Cache-Control: no-cache, must-revalidate\r\n" +
                 "Content-Type: text/html;charset=ISO-8859-1\r\n" +
                 "Content-Length: " + msg.getResponseBody().length() + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-cache, must-revalidate, private"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-cache, must-revalidate"));
     }
 
     @Test
@@ -120,36 +137,16 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest {
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n" +
                 "Server: Apache-Coyote/1.1\r\n" +
-                "Cache-Control: no-store, no-cache, private\r\n" +
+                "Cache-Control: no-store, no-cache\r\n" +
                 "Content-Type: text/html;charset=ISO-8859-1\r\n" +
                 "Content-Length: " + msg.getResponseBody().length() + "\r\n");
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-store, no-cache, private"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-store, no-cache"));
     }
 
-    @Test
-    public void httpsMissingPrivateCacheRequest() throws HttpMalformedHeaderException {
-        
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        
-        msg.setResponseBody("<html></html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" +
-                "Server: Apache-Coyote/1.1\r\n" +
-                "Cache-Control: no-cache, no-store, must-revalidate\r\n" +
-                "Content-Type: text/html;charset=ISO-8859-1\r\n" +
-                "Content-Length: " + msg.getResponseBody().length() + "\r\n");
-        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
-
-        assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-cache, no-store, must-revalidate"));
-    }
-    
     @Test
     public void httpsGoodPragmaCacheRequest() throws HttpMalformedHeaderException {
         
@@ -160,7 +157,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest {
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n" +
                 "Server: Apache-Coyote/1.1\r\n" +
-                "Cache-Control: no-cache, no-store, must-revalidate, private\r\n" +
+                "Cache-Control: no-cache, no-store, must-revalidate\r\n" +
                 "Pragma: no-cache\r\n" +
                 "Content-Type: text/html;charset=ISO-8859-1\r\n" +
                 "Content-Length: " + msg.getResponseBody().length() + "\r\n");
@@ -179,7 +176,7 @@ public class CacheControlScannerUnitTest extends PassiveScannerTest {
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n" +
                 "Server: Apache-Coyote/1.1\r\n" +
-                "Cache-Control: no-cache, no-store, must-revalidate, private\r\n" +
+                "Cache-Control: no-cache, no-store, must-revalidate\r\n" +
                 "Pragma: cache\r\n" +
                 "Content-Type: text/html;charset=ISO-8859-1\r\n" +
                 "Content-Length: " + msg.getResponseBody().length() + "\r\n");

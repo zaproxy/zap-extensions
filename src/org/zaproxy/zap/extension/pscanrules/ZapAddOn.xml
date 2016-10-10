@@ -10,6 +10,7 @@
 	Only report issues on errors and redirects at LOW threshold.<br>
 	Only report X-Frame-Options issues at LOW threshold if CSP 'frame-ancestors' element present.<br> 
 	Issue 2732: False positives for security headers missing due to redirections.<br>
+	Do not require private directive in Cache-Control response header (Issue 2900).<br>
 	]]>
 	</changes>
 	<extensions>
