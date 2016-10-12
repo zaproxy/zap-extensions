@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Code Dx Extension</name>
-	<version>4</version>
+	<version>5</version>
 	<status>alpha</status>
-	<description>includes request and response data in xml reports</description>
+	<description>Includes request and response data in XML reports and provides the ability to upload reports directly to a Code Dx server</description>
 	<author>Code Dx, Inc.</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
+	Add an upload to Code Dx option.<br>
 	]]>
 	</changes>
 	<extensions>
