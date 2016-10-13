@@ -360,7 +360,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 
 							//if we get to here, is is very likely that we have source file inclusion attack. alert it.
 							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
-									Constant.messages.getString("ascanalpha.sourcecodedisclosure.name"),
+									Constant.messages.getString("ascanalpha.sourcecodedisclosure.lfibased.name"),
 									Constant.messages.getString("ascanalpha.sourcecodedisclosure.desc"), 
 									getBaseMsg().getRequestHeader().getURI().getURI(),
 									paramname, 
