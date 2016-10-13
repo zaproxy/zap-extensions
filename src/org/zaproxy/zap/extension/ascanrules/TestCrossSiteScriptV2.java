@@ -21,6 +21,7 @@ import java.util.List;
 import java.net.UnknownHostException;
 
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -108,8 +109,14 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 		setParameter(msg2, param, attack);
         try {
 			sendAndReceive(msg2);
+        } catch (URIException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to send HTTP message, cause: " + e.getMessage());
+            }
+            return null;
     	} catch (InvalidRedirectLocationException|UnknownHostException e) {
     		// Not an error, just means we probably attacked the redirect location
+    	    return null;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -136,6 +143,11 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 			setParameter(msg2, param, Constant.getEyeCatcher());
             try {
     			sendAndReceive(msg2);
+            } catch (URIException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to send HTTP message, cause: " + e.getMessage());
+                }
+                return;
         	} catch (InvalidRedirectLocationException|UnknownHostException e) {
         		// Not an error, just means we probably attacked the redirect location
         		// Try the second eye catcher
@@ -161,6 +173,11 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     			setParameter(msg2, param, value + Constant.getEyeCatcher());
                 try {
         			sendAndReceive(msg2);
+                } catch (URIException e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Failed to send HTTP message, cause: " + e.getMessage());
+                    }
+                    return;
             	} catch (InvalidRedirectLocationException|UnknownHostException e) {
             		//Second eyecatcher failed for some reason, no need to continue
             		return;
