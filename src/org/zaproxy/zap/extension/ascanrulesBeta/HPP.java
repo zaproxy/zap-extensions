@@ -182,6 +182,10 @@ public class HPP extends AbstractAppPlugin {
 			if(vulnLinks.isEmpty()) {
 				log.debug("Page not vulnerable to HPP attacks");
 			}
+		} catch (URIException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to send HTTP message, cause: " + e.getMessage());
+			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
