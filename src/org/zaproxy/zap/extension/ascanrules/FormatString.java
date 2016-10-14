@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -281,9 +282,10 @@ public class FormatString extends AbstractAppParamPlugin  {
 			}
 			return;	
 
-
-
-			
+		} catch (URIException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to send HTTP message, cause: " + e.getMessage());
+			}
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}	

@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>25</version>
+	<version>26</version>
 	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 1211 - SQLi Scanner may raise seemingly duplicate alerts (fixed).<br>
-	Use correct HTTP message and attack for alerts of "Format String Error".<br>
-	Fixed test for wrong tag in Reflected XSS rule.<br>
-	Issue 1632 - False Negative XSS on injection outside of HTML tags.<br>
+	Improve error handling in some scanners.<br>
 	]]>
     </changes>
 	<extensions>

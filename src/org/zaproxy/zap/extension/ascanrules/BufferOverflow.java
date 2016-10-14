@@ -32,6 +32,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -155,8 +156,10 @@ public class BufferOverflow extends AbstractAppParamPlugin  {
     		}
     			
 				return;	
-
-			
+		} catch (URIException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to send HTTP message, cause: " + e.getMessage());
+			}
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}	
