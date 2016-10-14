@@ -210,7 +210,9 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
                     if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR) {
                             // We Found IT!                    
                             // First do logging
-                            log.info("[Padding Oracle Found] on parameter [" + paramName + "] with payload [" + encodedValue + "]");
+                            if (log.isDebugEnabled()) {
+                                log.debug("[Padding Oracle Found] on parameter [" + paramName + "] with payload [" + encodedValue + "]");
+                            }
 
                             // Now create the alert message
                             this.bingo(
@@ -237,7 +239,9 @@ public class PaddingOraclePlugin extends AbstractAppParamPlugin {
 
                             // We Found IT!                    
                             // First do logging
-                            log.info("[Padding Oracle Found] on parameter [" + paramName + "] with payload [" + encodedValue + "]");
+                            if (log.isDebugEnabled()) {
+                                log.debug("[Padding Oracle Found] on parameter [" + paramName + "] with payload [" + encodedValue + "]");
+                            }
 
                             // Now create the alert message
                             this.bingo(

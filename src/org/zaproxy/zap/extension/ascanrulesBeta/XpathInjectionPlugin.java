@@ -273,8 +273,10 @@ public class XpathInjectionPlugin extends AbstractAppParamPlugin {
 
                         // We Found IT!                     
                         // First do logging
-                        log.info("[XPath Injection Found] on parameter [" + paramName
-                                + "] with payload [" + evilPayload + "]");
+                        if (log.isDebugEnabled()) {
+                            log.debug("[XPath Injection Found] on parameter [" + paramName
+                                    + "] with payload [" + evilPayload + "]");
+                        }
 
                         // Now create the alert message
                         this.bingo(

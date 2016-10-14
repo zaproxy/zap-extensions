@@ -289,7 +289,9 @@ public class SQLInjectionPostgresql extends AbstractAppParamPlugin {
 							paramName,  attack, 
 							extraInfo, getSolution(), msgAttack);
 
-					log.info("A likely Time Based SQL Injection Vulnerability has been found with ["+msgAttack.getRequestHeader().getMethod()+"] URL ["+msgAttack.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+					if (log.isDebugEnabled()) {
+						log.debug("A likely Time Based SQL Injection Vulnerability has been found with ["+msgAttack.getRequestHeader().getMethod()+"] URL ["+msgAttack.getRequestHeader().getURI().getURI()+"] on field: ["+paramName+"]");
+					}
 					return;
 
 				} //query took longer than the amount of time we attempted to retard it by						
