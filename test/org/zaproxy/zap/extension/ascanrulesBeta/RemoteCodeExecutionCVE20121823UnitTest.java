@@ -27,6 +27,8 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -70,6 +72,19 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
         rule.scan();
         // Then
         assertThat(httpMessagesSent, hasSize(2));
+    }
+
+    @Test
+    public void shouldNotScanUrlsIfWinAndNixTechIsNotIncluded() throws Exception {
+        // Given
+        String test = "shouldNotScanUrlsIfWinAndNixTechIsNotIncluded";
+        HttpMessage message = getHttpMessage("/" + test + "/");
+        rule.init(message, parent);
+        rule.setTechSet(techSetWithout(Tech.Linux, Tech.MacOS, Tech.Windows));
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(0));
     }
 
     @Test
@@ -122,16 +137,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
         // Given
         final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
         String test = "shouldAlertIfWindowsAttackWasSuccessful";
-        nano.addHandler(new NanoServerHandler(test) {
-
-            @Override
-            Response serve(IHTTPSession session) {
-                if (getBody(session).contains("cmd.exe")) {
-                    return new Response(body);
-                }
-                return new Response("Nothing echoed...");
-            }
-        });
+        nano.addHandler(new WinResponse(test, body));
         HttpMessage message = getHttpMessage("/" + test + "/");
         rule.init(message, parent);
         // When
@@ -149,20 +155,27 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     }
 
     @Test
+    public void shouldNotDoWinAttackIfWinTechIsNotIncluded() throws Exception {
+        // Given
+        final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
+        String test = "shouldNotDoWinAttackIfWinTechIsNotIncluded";
+        nano.addHandler(new WinResponse(test, body));
+        HttpMessage message = getHttpMessage("/" + test + "/");
+        rule.init(message, parent);
+        rule.setTechSet(techSetWithout(Tech.Windows));
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+        assertThat(httpMessagesSent, hasSize(1)); // Nix attack
+    }
+
+    @Test
     public void shouldAlertIfNixAttackWasSuccessful() throws Exception {
         // Given
         final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
         String test = "shouldAlertIfNixAttackWasSuccessful";
-        nano.addHandler(new NanoServerHandler(test) {
-
-            @Override
-            Response serve(IHTTPSession session) {
-                if (!getBody(session).contains("cmd.exe")) {
-                    return new Response(body);
-                }
-                return new Response("Nothing echoed...");
-            }
-        });
+        nano.addHandler(new NixResponse(test, body));
         HttpMessage message = getHttpMessage("/" + test + "/");
         rule.init(message, parent);
         // When
@@ -177,6 +190,78 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo(body)));
+    }
+
+    @Test
+    public void shouldNotDoNixAttackIfNixTechsAreNotIncluded() throws Exception {
+        // Given
+        String test = "shouldNotDoNixAttackIfNixTechsAreNotIncluded";
+        nano.addHandler(
+                new NixResponse(test, RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>"));
+        HttpMessage message = getHttpMessage("/" + test + "/");
+        rule.init(message, parent);
+        rule.setTechSet(techSetWithout(Tech.Linux, Tech.MacOS));
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+        assertThat(httpMessagesSent, hasSize(1)); // Win attack
+    }
+
+    private TechSet techSetWithout(Tech... techs) {
+        TechSet techSet = new TechSet(TechSet.AllTech);
+        if (techs == null || techs.length == 0) {
+            return techSet;
+        }
+
+        for (Tech tech : techs) {
+            techSet.exclude(tech);
+        }
+        return techSet;
+    }
+
+    private static abstract class RceResponse extends NanoServerHandler {
+
+        private final String body;
+
+        public RceResponse(String name, String body) {
+            super(name);
+            this.body = body;
+        }
+
+        @Override
+        public Response serve(IHTTPSession session) {
+            if (isAttackSuccessful(getBody(session))) {
+                return new Response(body);
+            }
+            return new Response("Nothing echoed...");
+        }
+
+        protected abstract boolean isAttackSuccessful(String requestBody);
+    }
+
+    private static class WinResponse extends RceResponse {
+
+        public WinResponse(String name, String body) {
+            super(name, body);
+        }
+
+        @Override
+        protected boolean isAttackSuccessful(String requestBody) {
+            return requestBody.startsWith("<?php exec('cmd.exe");
+        }
+    }
+
+    private static class NixResponse extends RceResponse {
+
+        public NixResponse(String name, String body) {
+            super(name, body);
+        }
+
+        @Override
+        protected boolean isAttackSuccessful(String requestBody) {
+            return requestBody.startsWith("<?php exec('echo");
+        }
     }
 
 }
