@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Added Apache Range Header DoS (CVE-2011-3192) scanner.<br>
+	Fix exception when raising a "Source Code Disclosure - File Inclusion" alert.<br>
   	]]>
 	</changes>
 	<extensions>
