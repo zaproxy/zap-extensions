@@ -477,8 +477,9 @@ public class RelativePathConfusionScanner extends AbstractAppPlugin {
 						hackedMessage
 						);
                 
-                //log it and GTFO
-                log.info("A Relative Path Confusion issue exists on "+ getBaseMsg().getRequestHeader().getURI().getURI());
+                if (log.isDebugEnabled()) {
+                    log.debug("A Relative Path Confusion issue exists on "+ getBaseMsg().getRequestHeader().getURI().getURI());
+                }
             	return;
             	
 			} else {
