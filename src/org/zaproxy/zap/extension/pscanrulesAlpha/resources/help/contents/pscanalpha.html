@@ -22,6 +22,9 @@ Base64 encoded data was disclosed by the application/web server
 This checks HTML response headers for the presence of a Content Security Policy header.<br>
 By default this rule checks for the presence of the "Content-Security-Policy" header, 
 and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
+<p>
+If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
+that is actively being refined or developed, or one which is only partially implemented.
 
 <H2>Cookie Poisoning</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
