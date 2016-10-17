@@ -283,7 +283,9 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 					} else {
 						//if we verified the response
 						if (dataMatchesExtension (sourceattackmsg.getResponseBody().getBytes(), fileExtension)) {
-							log.info("Source code disclosure!  The output for the source code filename ["+ prefixedUrlfilename + "] differs sufficiently from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
+							if (log.isDebugEnabled()) {
+								log.debug("Source code disclosure!  The output for the source code filename ["+ prefixedUrlfilename + "] differs sufficiently from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
+							}
 
 							//if we get to here, is is very likely that we have source file inclusion attack. alert it.
 							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
@@ -354,7 +356,9 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 						//compared to the original
 						int randomversussourcefilenamematchpercentage = calcLengthMatchPercentage(sourceattackmsg.getResponseBody().length(), randomfileattackmsg.getResponseBody().length());
 						if ( randomversussourcefilenamematchpercentage < this.thresholdPercentage ) {
-							log.info("Source code disclosure!  The output for the WAR/EAR filename ["+ prefixedUrlfilename + "] differs sufficiently (in length) from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
+							if (log.isDebugEnabled()) {
+								log.debug("Source code disclosure!  The output for the WAR/EAR filename ["+ prefixedUrlfilename + "] differs sufficiently (in length) from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
+							}
 
 							//Note: no verification of the file contents in this case.
 

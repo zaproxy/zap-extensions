@@ -332,7 +332,9 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
 				//check the contents of the output to some degree, if we have a file extension.
 				//if not, just try it (could be a false positive, but hey)    			
 				if (dataMatchesExtension (disclosedData, fileExtension)) {
-					log.info("Source code disclosure, using Git metadata leakage!");
+					if (log.isDebugEnabled()) {
+						log.debug("Source code disclosure, using Git metadata leakage!");
+					}
 
 					//source file inclusion attack. alert it.
 					//Note that, unlike with SVN, the Git data is extracted not from one file, but by parsing a series of files.
