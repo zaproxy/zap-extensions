@@ -18,6 +18,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -366,14 +367,15 @@ public class SessionFixation extends AbstractAppPlugin {
 	        					currentHtmlParameter.getName(),  attack, 
 	        					extraInfo, vulnsoln, getBaseMsg());
 	        					
-	        			//if ( log.isInfoEnabled())  {
-	        				String logMessage = Constant.messages.getString("ascanbeta.sessionidsentinsecurely.alert.logmessage", 
+	        			if ( log.isDebugEnabled())  {
+	        				String logMessage = MessageFormat.format("A session identifier in {2} field: [{3}] may be sent " +
+	        							"via an insecure mechanism at [{0}] URL [{1}]", 
 	        							getBaseMsg().getRequestHeader().getMethod(),  
 	        							getBaseMsg().getRequestHeader().getURI().getURI(), 
 	        							currentHtmlParameter.getType(), 
 	        							currentHtmlParameter.getName());
-	        				log.info(logMessage);
-	        			//}
+	        				log.debug(logMessage);
+	        			}
 	        			//Note: do NOT continue to the next field at this point.. 
 	        			//since we still need to check for Session Fixation.
 	        		}
@@ -408,14 +410,15 @@ public class SessionFixation extends AbstractAppPlugin {
 	        					currentHtmlParameter.getName(),  attack, 
 	        					extraInfo, vulnsoln, getBaseMsg());
 	        					
-	        			//if ( log.isInfoEnabled())  {
-	        				String logMessage = Constant.messages.getString("ascanbeta.sessionidaccessiblebyjavascript.alert.logmessage", 
+	        			if ( log.isDebugEnabled())  {
+	        				String logMessage = MessageFormat.format("A session identifier in [{0}] URL [{1}] {2} field: " +
+	        							"[{3}] may be accessible to JavaScript", 
 	        							getBaseMsg().getRequestHeader().getMethod(),  
 	        							getBaseMsg().getRequestHeader().getURI().getURI(), 
 	        							currentHtmlParameter.getType(), 
 	        							currentHtmlParameter.getName());
-	        				log.info(logMessage);
-	        			//}
+	        				log.debug(logMessage);
+	        			}
 	        			//Note: do NOT continue to the next field at this point.. 
 	        			//since we still need to check for Session Fixation.
 	        		}
@@ -535,15 +538,16 @@ public class SessionFixation extends AbstractAppPlugin {
 	        					currentHtmlParameter.getName(),  attack, 
 	        					extraInfo, vulnsoln, getBaseMsg());
 	        					
-	        			//if ( log.isInfoEnabled())  {
-	        				String logMessage = Constant.messages.getString("ascanbeta.sessionidexpiry.alert.logmessage", 
+	        			if ( log.isDebugEnabled())  {
+	        				String logMessage = MessageFormat.format("A session identifier in [{0}] URL [{1}] {2} field: " +
+	        							"[{3}] may be accessed until [{4}], unless the session is destroyed.", 
 	        							getBaseMsg().getRequestHeader().getMethod(),  
 	        							getBaseMsg().getRequestHeader().getURI().getURI(), 
 	        							currentHtmlParameter.getType(), 
 	        							currentHtmlParameter.getName(),
 	        							sessionExpiryDescription);
-	        				log.info(logMessage);
-	        			//}
+	        				log.debug(logMessage);
+	        			}
 	        			//Note: do NOT continue to the next field at this point.. 
 	        			//since we still need to check for Session Fixation.
 	        		}
@@ -670,10 +674,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			}
 	        			
 	        			bingo(risk, Alert.CONFIDENCE_MEDIUM, msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, msg2Initial);
-	        			//if ( log.isInfoEnabled())  {
-	        				String logMessage = Constant.messages.getString("ascanbeta.sessionfixation.alert.logmessage", msg2Initial.getRequestHeader().getMethod(),  msg2Initial.getRequestHeader().getURI().getURI(), currentHtmlParameter.getType(), currentHtmlParameter.getName());
-	        				log.info(logMessage);
-	        			//}	        			
+	        			logSessionFixation(msg2Initial, currentHtmlParameter.getType().toString(), currentHtmlParameter.getName());
 	        		}
 
         			continue;  //jump to the next iteration of the loop (ie, the next parameter)
@@ -775,14 +776,15 @@ public class SessionFixation extends AbstractAppPlugin {
 		        					currentHtmlParameter.getName(),  attack, 
 		        					extraInfo, vulnsoln, getBaseMsg());
 		        					
-		        			//if ( log.isInfoEnabled())  {
-		        				String logMessage = Constant.messages.getString("ascanbeta.sessionidexposedinurl.alert.logmessage", 
+		        			if ( log.isDebugEnabled())  {
+		        				String logMessage = MessageFormat.format("An exposed session identifier has been found at " +
+		        							"[{0}] URL [{1}] on {2} field: [{3}]",
 		        							getBaseMsg().getRequestHeader().getMethod(),  
 		        							getBaseMsg().getRequestHeader().getURI().getURI(), 
 		        							(isPseudoUrlParameter?"pseudo ":"") +currentHtmlParameter.getType(), 
 		        							currentHtmlParameter.getName());
-		        				log.info(logMessage);
-		        			//}
+		        				log.debug(logMessage);
+		        			}
 		        			//Note: do NOT continue to the next field at this point.. 
 		        			//since we still need to check for Session Fixation.
         					}
@@ -874,10 +876,7 @@ public class SessionFixation extends AbstractAppPlugin {
 	        			}
 	        			
 	        			bingo(risk, Alert.CONFIDENCE_MEDIUM, getBaseMsg().getRequestHeader().getURI().getURI(), currentHtmlParameter.getName(), attack, extraInfo, getBaseMsg());
-	        			//if ( log.isInfoEnabled())  {
-	        				String logMessage = Constant.messages.getString("ascanbeta.sessionfixation.alert.logmessage", getBaseMsg().getRequestHeader().getMethod(),  getBaseMsg().getRequestHeader().getURI().getURI(), (isPseudoUrlParameter?"pseudo ":"") +currentHtmlParameter.getType(), currentHtmlParameter.getName());
-	        				log.info(logMessage);
-	        			//}
+	        			logSessionFixation( getBaseMsg(), (isPseudoUrlParameter?"pseudo ":"") +currentHtmlParameter.getType(), currentHtmlParameter.getName());
 	        			
 	        			continue;  //jump to the next iteration of the loop (ie, the next parameter)
 	        			
@@ -900,6 +899,20 @@ public class SessionFixation extends AbstractAppPlugin {
             log.error("An error occurred checking a url for Session Fixation issues", e);
         }
 	}	
+
+	private static void logSessionFixation(HttpMessage msg, String parameterType, String parameterName) {
+		if (!log.isDebugEnabled()) {
+			return;
+		}
+
+		String logMessage = MessageFormat.format(
+				"A likely Session Fixation Vulnerability has been found with [{0}] URL [{1}] on {2} field: [{3}]",
+				msg.getRequestHeader().getMethod(),
+				msg.getRequestHeader().getURI(),
+				parameterType,
+				parameterName);
+		log.debug(logMessage);
+	}
 	
 	/**
 	 * finds and returns the cookie matching the specified cookie name from the message response.

@@ -523,7 +523,6 @@ public class UsernameEnumeration extends AbstractAppPlugin {
 								currentHtmlParameter.getName(),  attack, 
 								extraInfo, vulnsoln, getBaseMsg());
 
-						log.info(extraInfo);
 					} else {
 						if ( this.debugEnabled ) log.debug("["+currentHtmlParameter.getType()+ "] parameter ["+currentHtmlParameter.getName()+"] looks ok (Invalid Usernames cannot be distinguished from Valid usernames)");
 					}

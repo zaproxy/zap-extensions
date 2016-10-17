@@ -13,6 +13,7 @@
 	Correct creation of attack URL in Source Code Disclosure - CVE-2012-1823.<br>
 	Correct creation of attack URL in Remote Code Execution - CVE-2012-1823.<br>
 	Respect OS techs included when scanning with Remote Code Execution - CVE-2012-1823.<br>
+	Adjust log levels of some scanners, from INFO to DEBUG.<br>
     ]]>
 	</changes>
 	<extensions>
