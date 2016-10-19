@@ -508,7 +508,16 @@ public class TestDomXSS extends AbstractAppPlugin {
 		
 		ArrayList<WebDriverWrapper> drivers = new ArrayList<WebDriverWrapper>();
 		
-		WebDriverWrapper fxDriver = this.getFirefoxDriver();
+		WebDriverWrapper fxDriver;
+		try {
+			fxDriver = this.getFirefoxDriver();
+		} catch (WebDriverException e) {
+			getLog().warn("Skipping scanner, failed to start Firefox: " + e.getMessage());
+			// TODO add the reason why the scanner was skipped when targeting ZAP 2.6.0
+			getParent().pluginSkipped(this);
+			return;
+		}
+
 		drivers.add(fxDriver);
 
 		try	{

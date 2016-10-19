@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>DOM XSS Active scanner rule</name>
-	<version>2</version>
+	<version>3</version>
 	<status>alpha</status>
 	<description>DOM XSS Active scanner rule</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Change (duplicated) scanner ID, now it's 40026.<br>
+	Skip the scanner if not able to start Firefox.<br>
 	]]>
     </changes>
 	<dependencies>
