@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>18</version>
+	<version>19</version>
 	<status>release</status>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Only report issues on errors and redirects at LOW threshold.<br>
-	Only report X-Frame-Options issues at LOW threshold if CSP 'frame-ancestors' element present.<br> 
-	Issue 2732: False positives for security headers missing due to redirections.<br>
-	Do not require private directive in Cache-Control response header (Issue 2900).<br>
+	Correct evidence of alerts raised by scanner "Application Error Disclosure".<br>
 	]]>
 	</changes>
 	<extensions>
