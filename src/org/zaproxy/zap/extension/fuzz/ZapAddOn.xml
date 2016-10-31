@@ -1,6 +1,6 @@
 <zapaddon>
     <name>AdvFuzzer</name>
-    <version>7</version>
+    <version>8</version>
     <semver>2.0.1</semver>
     <status>beta</status>
     <description>Advanced fuzzer for manual testing</description>
@@ -8,8 +8,7 @@
     <url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts</url>
     <changes>
     <![CDATA[
-    Fix exception during the unload of the add-on, when in daemon mode.<br>
-    Update Content-Length for all request methods, not just POST (Issue 2766).<br>
+    Correct method name in HTTP processor JavaScript template.<br>
     ]]>
     </changes>
     <extensions>
