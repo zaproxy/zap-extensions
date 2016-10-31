@@ -34,6 +34,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.parosproxy.paros.Constant;
@@ -54,6 +56,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 	private JButton addFileButton = null;
 	private JCheckBox checkBoxBrowseFiles = null;
 	private ZapTextField txtFileExtensions = null;
+	private JLabel threadsLabel;
 
 	public OptionsBruteForcePanel(ExtensionBruteForce extension) {
         super();
@@ -81,7 +84,6 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 		if (panelPortScan == null) {
 
 			panelPortScan = new JPanel();
-			JLabel jLabel1 = new JLabel();
 			JLabel jLabel2 = new JLabel();
 			JLabel jLabel3 = new JLabel();
 			JLabel jLabelx = new JLabel();
@@ -103,7 +105,6 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 			panelPortScan.setLayout(new GridBagLayout());
 			panelPortScan.setSize(114, 132);
 			panelPortScan.setName(BruteForceParam.EMPTY_STRING);
-			jLabel1.setText(Constant.messages.getString("bruteforce.options.label.threads"));
 			jLabel2.setText(Constant.messages.getString("bruteforce.options.label.defaultfile"));
 			jLabel3.setText(Constant.messages.getString("bruteforce.options.label.addfile"));
 			jLabelExtensions.setText(Constant.messages.getString("bruteforce.options.label.fileextensions"));
@@ -218,7 +219,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 			gridBagConstraintsX.gridwidth = 2;
 			
 			jLabelx.setText(BruteForceParam.EMPTY_STRING);
-			panelPortScan.add(jLabel1, gridBagConstraints3);
+			panelPortScan.add(getThreadsLabel(), gridBagConstraints3);
 			panelPortScan.add(getSliderThreadsPerScan(), gridBagConstraints4);
 			panelPortScan.add(getCheckBoxRecursive(), checkBoxGridBagConstraints);
 			panelPortScan.add(jLabel2, gridBagConstraints5a);
@@ -231,6 +232,17 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 			panelPortScan.add(jLabelx, gridBagConstraintsX);
 		}
 		return panelPortScan;
+	}
+
+	private JLabel getThreadsLabel() {
+		if (threadsLabel == null) {
+			threadsLabel = new JLabel();
+		}
+		return threadsLabel;
+	}
+
+	private void setThreadsLabelValue(int value) {
+		getThreadsLabel().setText(Constant.messages.getString("bruteforce.options.label.threads", value));
 	}
 
 	private JComboBox<ForcedBrowseFile> getDefaultFileList() {
@@ -323,7 +335,18 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
 			sliderThreadsPerScan = new PositiveValuesSlider(
 					BruteForceParam.DEFAULT_THREAD_PER_SCAN,
 					BruteForceParam.MAXIMUM_THREADS_PER_SCAN);
-			sliderThreadsPerScan.setMajorTickSpacing(1);
+			sliderThreadsPerScan.setSnapToTicks(false);
+			sliderThreadsPerScan.setMinorTickSpacing(2);
+			sliderThreadsPerScan.setMajorTickSpacing(20);
+
+			sliderThreadsPerScan.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					setThreadsLabelValue(getSliderThreadsPerScan().getValue());
+				}
+			});
+			setThreadsLabelValue(sliderThreadsPerScan.getValue());
 		}
 		return sliderThreadsPerScan;
 	}
