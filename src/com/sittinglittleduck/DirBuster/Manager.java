@@ -99,8 +99,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
     //variable for httpclient
     private HttpClient httpclient;
     private HttpState initialState;
-    //singleton instance of the object
-    private static Manager manager = null;
     private Vector producedBasesCases = new Vector(10, 10);
     //used to store all the links that have parsed, will not contain a list a all items, processed
     //as this will consume to much memory.  There for there is a chance of some duplication.
@@ -215,19 +213,6 @@ public class Manager implements ProcessChecker.ProcessUpdate
          * create the httpclient
          */
         createHttpClient();
-
-        // ZAP: Set up manager
-        manager = this;
-    }
-
-    public static Manager getInstance()
-    {
-        if(manager == null)
-        {
-            manager = new Manager();
-        }
-
-        return manager;
     }
 
     //set up dictionay based attack with normal start
@@ -277,7 +262,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
 
         setpUpHttpClient();
         createTheThreads();
-        workGen = new WorkerGenerator();
+        workGen = new WorkerGenerator(this);
 
 
     }
@@ -340,7 +325,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
 
         setpUpHttpClient();
         createTheThreads();
-        workGenBrute = new BruteForceWorkGenerator();
+        workGenBrute = new BruteForceWorkGenerator(this);
 
     }
 
@@ -371,7 +356,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
 
         setpUpHttpClient();
         createTheThreads();
-        workGenFuzz = new WorkerGeneratorURLFuzz();
+        workGenFuzz = new WorkerGeneratorURLFuzz(this);
     }
 
     /*
@@ -417,7 +402,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
 
         setpUpHttpClient();
         createTheThreads();
-        workGenBruteFuzz = new BruteForceURLFuzz();
+        workGenBruteFuzz = new BruteForceURLFuzz(this);
     }
 
     private void createHttpClient()
@@ -498,7 +483,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
 
         for(int i = 0; i < workerCount; i++)
         {
-            workers.addElement(new Worker(i));
+            workers.addElement(new Worker(i, this));
         //workers[i] = new Worker(this, i);
         //tpes.execute(workers[i]);
         }
@@ -506,7 +491,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
         //create the htmlparse threads
         for(int i = 0; i < workerCount; i++)
         {
-            parseWorkers.addElement(new HTMLparse());
+            parseWorkers.addElement(new HTMLparse(this));
         }
         //work queue
         workQueue = new ArrayBlockingQueue<WorkUnit>(workerCount * 3);
@@ -545,10 +530,10 @@ public class Manager implements ProcessChecker.ProcessUpdate
             processedLinks.clear();
 
 
-            task = new ProcessChecker();
+            task = new ProcessChecker(this);
             timer.scheduleAtFixedRate(task, 1000L, 1000L);
 
-            task2 = new ProcessEnd();
+            task2 = new ProcessEnd(this);
             timer.scheduleAtFixedRate(task2, 30000L, 30000L);
 
             //start the pure brute force thread
@@ -968,7 +953,7 @@ public class Manager implements ProcessChecker.ProcessUpdate
         for(int i = 0; i < number; i++)
         {
             int threadid = currentNumber + i;
-            workers.addElement(new Worker(threadid));
+            workers.addElement(new Worker(threadid, this));
 
             new Thread((Worker) workers.elementAt(threadid)).start();
         }

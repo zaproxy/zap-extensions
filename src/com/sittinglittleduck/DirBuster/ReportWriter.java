@@ -30,13 +30,13 @@ import java.util.logging.Logger;
 public class ReportWriter
 {
 
-    private String fileToWriteTo;
-    private Manager manager;
+    private final String fileToWriteTo;
+    private final Manager manager;
 
-    public ReportWriter(String fileToWriteTo)
+    public ReportWriter(Manager manager, String fileToWriteTo)
     {
         this.fileToWriteTo = fileToWriteTo;
-        manager = Manager.getInstance();
+        this.manager = manager;
     }
 
     /*

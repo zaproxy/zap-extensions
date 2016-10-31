@@ -25,7 +25,7 @@ import java.util.Vector;
 public class ProcessChecker extends TimerTask
 {
 
-    Manager manager;
+    private final Manager manager;
     private long timeStarted;
     private long lastTotal = 0L;
     private Vector lastTen = new Vector(10, 1);
@@ -39,9 +39,9 @@ public class ProcessChecker extends TimerTask
         void isAlive();
     }
 
-    public ProcessChecker()
+    public ProcessChecker(Manager manager)
     {
-        this.manager = Manager.getInstance();
+        this.manager = manager;
         timeStarted = System.currentTimeMillis();
 
     }

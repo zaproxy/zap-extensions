@@ -49,7 +49,7 @@ public class BruteForceURLFuzz implements Runnable
     private int[] listindex;
     private int minLen;
     private int maxLen;
-    private Manager manager;
+    private final Manager manager;
     private BlockingQueue<WorkUnit> workQueue;
     private BlockingQueue<DirToCheck> dirQueue;
     private String firstPart;
@@ -64,9 +64,9 @@ public class BruteForceURLFuzz implements Runnable
     private String urlFuzzEnd;
 
     /** Creates a new instance of BruteForceWorkGenerator */
-    public BruteForceURLFuzz()
+    public BruteForceURLFuzz(Manager manager)
     {
-        manager = Manager.getInstance();
+        this.manager = manager;
 
         this.maxLen = manager.getMaxLen();
         this.minLen = manager.getMinLen();
@@ -155,7 +155,7 @@ public class BruteForceURLFuzz implements Runnable
         {
             //get fail responce code for a dir test
 
-            baseCaseObj = GenBaseCase.genURLFuzzBaseCase(firstPart + urlFuzzStart, urlFuzzEnd);
+            baseCaseObj = GenBaseCase.genURLFuzzBaseCase(manager, firstPart + urlFuzzStart, urlFuzzEnd);
 
         }
         catch (MalformedURLException e)

@@ -29,13 +29,17 @@ import com.sittinglittleduck.DirBuster.ReportWriter;
  */
 public class CatchExit implements Runnable
 {
+    private final Manager manager;
+    
+    public CatchExit(Manager manager) {
+        this.manager = manager;
+    }
 
     public void run()
     {
-        Manager manager = Manager.getInstance();
         //String reportLocation = System.getProperty("user.dir") + File.separatorChar + "DirBuster-Report-" + manager.getHost() + "-" + manager.getPort() +".txt";
         String reportLocation = manager.getReportLocation();
-        ReportWriter report = new ReportWriter(reportLocation);
+        ReportWriter report = new ReportWriter(manager, reportLocation);
         System.out.println("");
         System.out.println("Caught exit of DirBuster");
         System.out.println("Writing report");

@@ -40,18 +40,19 @@ public class GenBaseCase
 {
 
     /** Creates a new instance of GenBaseCase */
-    public GenBaseCase()
+    private GenBaseCase()
     {
     }
 
     /**
      * Generates the base case
+     * @param manager the manager class
      * @param url The directy or file we need a base case for
      * @param isDir true if it's dir, else false if it's a file
      * @param fileExtention File extention to be scanned, set to null if it's a dir that is to be tested
      * @return A BaseCase Object
      */
-    public static BaseCase genBaseCase(String url, boolean isDir, String fileExtention) throws MalformedURLException, IOException
+    public static BaseCase genBaseCase(Manager manager, String url, boolean isDir, String fileExtention) throws MalformedURLException, IOException
     {
         String type;
         if(isDir)
@@ -68,9 +69,6 @@ public class GenBaseCase
          */
         boolean useRegexInstead = false;
         String regex = null;
-
-        //get the manager instance
-        Manager manager = Manager.getInstance();
 
         BaseCase tempBaseCase = manager.getBaseCase(url, isDir, fileExtention);
 
@@ -178,8 +176,8 @@ public class GenBaseCase
              * get the base case twice more, for consisitency checking
              */
             String baseResponce1 = baseResponce;
-            String baseResponce2 = getBaseCaseAgain(failurl, failString);
-            String baseResponce3 = getBaseCaseAgain(failurl, failString);
+            String baseResponce2 = getBaseCaseAgain(manager, failurl, failString);
+            String baseResponce3 = getBaseCaseAgain(manager, failurl, failString);
 
 
             if(baseResponce1 != null && baseResponce2 != null && baseResponce3 != null)
@@ -252,9 +250,8 @@ public class GenBaseCase
     /*
      * Used to generate a basecase when we are URL fuzzing
      */
-    public static BaseCase genURLFuzzBaseCase(String fuzzStart, String FuzzEnd) throws MalformedURLException, IOException
+    public static BaseCase genURLFuzzBaseCase(Manager manager, String fuzzStart, String FuzzEnd) throws MalformedURLException, IOException
     {
-        Manager manager = Manager.getInstance();
         BaseCase baseCase = null;
         int failcode = 0;
         String failString = Config.failCaseString;
@@ -333,10 +330,9 @@ public class GenBaseCase
     /*
      * this function is used to get base case again, so we can check that the base case is consitent.
      */
-    private static String getBaseCaseAgain(URL failurl, String failString) throws IOException
+    private static String getBaseCaseAgain(Manager manager, URL failurl, String failString) throws IOException
     {
         int failcode;
-        Manager manager = Manager.getInstance();
         String baseResponce = "";
 
         GetMethod httpget = new GetMethod(failurl.toString());

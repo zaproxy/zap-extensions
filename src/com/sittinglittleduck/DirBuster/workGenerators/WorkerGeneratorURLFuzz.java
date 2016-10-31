@@ -52,7 +52,7 @@ import com.sittinglittleduck.DirBuster.WorkUnit;
 public class WorkerGeneratorURLFuzz implements Runnable
 {
 
-    private Manager manager;
+    private final Manager manager;
     private BlockingQueue<WorkUnit> workQueue;
     private BlockingQueue<DirToCheck> dirQueue;
     private String inputFile;
@@ -76,9 +76,9 @@ public class WorkerGeneratorURLFuzz implements Runnable
      * Creates a new instance of WorkerGenerator
      * @param manager Manager object
      */
-    public WorkerGeneratorURLFuzz()
+    public WorkerGeneratorURLFuzz(Manager manager)
     {
-        manager = Manager.getInstance();
+        this.manager = manager;
         workQueue = manager.workQueue;
         dirQueue = manager.dirQueue;
         if (manager.isBlankExt())
@@ -185,7 +185,7 @@ public class WorkerGeneratorURLFuzz implements Runnable
             System.out.println("Starting fuzz on " + firstPart + urlFuzzStart + "{dir}" + urlFuzzEnd);
             int filesProcessed = 0;
 
-            BaseCase baseCaseObj = GenBaseCase.genURLFuzzBaseCase(firstPart + urlFuzzStart, urlFuzzEnd);
+            BaseCase baseCaseObj = GenBaseCase.genURLFuzzBaseCase(manager, firstPart + urlFuzzStart, urlFuzzEnd);
 
             
             while ((line = d.readLine()) != null)
