@@ -1,7 +1,14 @@
 // Auxiliary variables/constants needed for processing.
 var count = 1;
 
-// Called after injecting the payloads and before forward the message to the server.
+/**
+ * Processes the fuzzed message (payloads already injected).
+ * 
+ * Called before forwarding the message to the server.
+ * 
+ * @param {HttpFuzzerTaskProcessorUtils} utils - A utility object that contains functions that ease common tasks.
+ * @param {HttpMessage} message - The fuzzed message, that will be forward to the server.
+ */
 function processMessage(utils, message) {
 	// To obtain the list of payloads:
 	//    utils.getPayloads()
@@ -26,7 +33,15 @@ function processMessage(utils, message) {
 	count++;
 }
 
-// Called after receiving the fuzzed message from the server
+/**
+ * Processes the fuzz result.
+ * 
+ * Called after receiving the fuzzed message from the server.
+ * 
+ * @param {HttpFuzzerTaskProcessorUtils} utils - A utility object that contains functions that ease common tasks.
+ * @param {HttpFuzzResult} fuzzResult - The result of sending the fuzzed message.
+ * @return {boolean} Whether the result should be accepted, or discarded and not shown.
+ */
 function processResult(utils, fuzzResult){
 	// All the above 'utils' functions are available plus:
 	// To raise an alert:
@@ -38,6 +53,5 @@ function processResult(utils, fuzzResult){
 	if (condition)
 		fuzzResult.addCustomState("Key Custom State", "Message Contains X")
 	
-	// Returns true to accept the result, false to discard and not show it
 	return true;
 }

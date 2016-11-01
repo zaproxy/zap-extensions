@@ -1,8 +1,14 @@
 // Auxiliary variables/constants for processing.
 var id = 0;
 
-// Called for each payload that needs to be processed.
-// The type of variable 'payload' is string.
+/**
+ * Processes the payload.
+ * 
+ * Called for each payload that needs to be processed.
+ * 
+ * @param {string} payload - The payload before being injected into the message.
+ * @return {string} The payload processed.
+ */
 function process(payload) {
 	// Do some processing to payload
 	payload = payload + '-' + id;
