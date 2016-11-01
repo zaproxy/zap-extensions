@@ -17,9 +17,12 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.InvalidRedirectLocationException;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -585,6 +588,10 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 			}	//end of doUnionBased
 			
 
+		} catch (InvalidRedirectLocationException | UnknownHostException | URIException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to send HTTP message, cause: " + e.getMessage());
+			}
 		} catch (Exception e) {
 			//Do not try to internationalise this.. we need an error message in any event.. 
 			//if it's in English, it's still better than not having it at all. 
