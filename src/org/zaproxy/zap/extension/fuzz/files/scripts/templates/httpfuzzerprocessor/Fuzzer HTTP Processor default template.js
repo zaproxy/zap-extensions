@@ -32,7 +32,7 @@ function processResult(utils, fuzzResult){
 	// To raise an alert:
 	//    utils.raiseAlert(risk, confidence, name, description)
 	// To obtain the fuzzed message, received from the server:
-	//    fuzzResult.getMessage()
+	//    fuzzResult.getHttpMessage()
 
 	var condition = true;
 	if (condition)
