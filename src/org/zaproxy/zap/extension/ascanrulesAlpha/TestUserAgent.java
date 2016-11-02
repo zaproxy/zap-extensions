@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -27,6 +28,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 /**
  *  @author kniepdennis@gmail.com
@@ -155,6 +157,10 @@ public class TestUserAgent extends AbstractAppPlugin {
             header.setHeader(HttpHeader.USER_AGENT, userAgent);
             sendAndReceive(newMsg);
             return newMsg;
+        } catch (UnknownHostException | URIException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to send HTTP message, cause: " + e.getMessage());
+            }
         } catch (IOException e) {
             log.warn(e.getMessage(), e);
         }
