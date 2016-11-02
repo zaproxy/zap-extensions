@@ -190,6 +190,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 	/**
 	 * scan everything except URL path parameters, if these were enabled
 	 */
+	@Override
 	public void scan(HttpMessage msg, NameValuePair originalParam) {
 		/*
 		 * Scan everything _except_ URL path parameters, if these were enabled.

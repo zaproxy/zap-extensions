@@ -191,6 +191,7 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
 	 * scans for Proxy Disclosure issues, using the TRACE and OPTIONS method with 'Max-Forwards', and the TRACK method.
 	 * The code attempts to enumerate and identify all proxies identified between the Zap instance and the origin web server.
 	 */
+	@Override
 	public void scan() {
 		try {
 			//where's what we're going to do (roughly):
