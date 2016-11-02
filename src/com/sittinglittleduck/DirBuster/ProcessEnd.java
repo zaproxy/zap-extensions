@@ -25,7 +25,7 @@ import java.util.Vector;
 public class ProcessEnd extends TimerTask
 {
 
-    Manager manager;
+    private final Manager manager;
 
     /** Creates a new instance of ProcessChecker */
     public interface ProcessUpdate
@@ -34,9 +34,9 @@ public class ProcessEnd extends TimerTask
         void isAlive();
     }
 
-    public ProcessEnd()
+    public ProcessEnd(Manager manager)
     {
-        this.manager = Manager.getInstance();
+        this.manager = manager;
 
     }
 

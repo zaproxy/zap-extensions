@@ -49,7 +49,7 @@ public class BruteForceWorkGenerator implements Runnable
     private int maxLen;
     
     
-    private Manager manager;
+    private final Manager manager;
     private BlockingQueue<WorkUnit> workQueue;
     private BlockingQueue<DirToCheck> dirQueue;
     
@@ -72,9 +72,9 @@ public class BruteForceWorkGenerator implements Runnable
     HttpClient httpclient;
     
     /** Creates a new instance of BruteForceWorkGenerator */
-    public BruteForceWorkGenerator()
+    public BruteForceWorkGenerator(Manager manager)
     {
-        manager = Manager.getInstance();
+        this.manager = manager;
         
         this.maxLen = manager.getMaxLen();
         this.minLen = manager.getMinLen();
@@ -164,7 +164,7 @@ public class BruteForceWorkGenerator implements Runnable
                 {
                     //get fail responce code for a dir test
                     
-                    baseCaseObj = GenBaseCase.genBaseCase(firstPart + currentDir, true, null);
+                    baseCaseObj = GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
                     
                 }
                 catch(MalformedURLException e)
@@ -217,7 +217,7 @@ public class BruteForceWorkGenerator implements Runnable
                         {
                             //deal with the files
                             
-                            baseCaseObj = GenBaseCase.genBaseCase(firstPart + currentDir, false, fileExtention);
+                            baseCaseObj = GenBaseCase.genBaseCase(manager, firstPart + currentDir, false, fileExtention);
                             
                         }
                         catch(MalformedURLException e)

@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Allow to set higher number of threads (Issue 2912).<br>
+	Fix issue with multiple concurrent scans.<br>
 	]]>
 	</changes>
 	<extensions>

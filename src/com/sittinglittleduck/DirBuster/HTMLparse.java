@@ -39,15 +39,15 @@ public class HTMLparse extends Thread
 
     private String sourceAsString = null;
     private WorkUnit work = null;
-    private Manager manager;
+    private final Manager manager;
     boolean working;
     private boolean continueWorking = true;
 
     /** Creates a new instance of HTMLparse */
-    public HTMLparse()
+    public HTMLparse(Manager manager)
     {
         super("DirBuster-HTMLparse");
-        manager = Manager.getInstance();
+        this.manager = manager;
     }
 
     public void stopWorking()
@@ -98,8 +98,6 @@ public class HTMLparse extends Thread
                     Vector links = new Vector(50, 10);
                     Vector imageLinks = new Vector(50, 10);
                     Vector foundItems = new Vector(20, 10);
-
-                    manager = Manager.getInstance();
 
                     //create the source
                     Source source = new Source(sourceAsString);
@@ -297,7 +295,7 @@ public class HTMLparse extends Thread
             if(item.length() == 1)
             {
                 //System.out.println("found a / in findBaseCasePoint");
-                return GenBaseCase.genBaseCase(manager.getFirstPartOfURL() + "/", true, null);
+                return GenBaseCase.genBaseCase(manager, manager.getFirstPartOfURL() + "/", true, null);
             }
             String[] array = item.split("/");
 
@@ -331,7 +329,7 @@ public class HTMLparse extends Thread
 
             Thread.sleep(100);
 
-            return GenBaseCase.genBaseCase(manager.getFirstPartOfURL() + baseItem, isDir, fileExtention);
+            return GenBaseCase.genBaseCase(manager, manager.getFirstPartOfURL() + baseItem, isDir, fileExtention);
         }
         catch(MalformedURLException ex)
         {

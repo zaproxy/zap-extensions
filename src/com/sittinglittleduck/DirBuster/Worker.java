@@ -49,7 +49,7 @@ public class Worker implements Runnable
     private BlockingQueue<WorkUnit> queue;
     private URL url;
     private WorkUnit work;
-    private Manager manager;
+    private final Manager manager;
     private HttpClient httpclient;
     private boolean pleaseWait = false;
     private int threadId;
@@ -61,10 +61,9 @@ public class Worker implements Runnable
      * @param threadId Unique thread id for the worker
      * @param manager The manager class the worker thread reports to
      */
-    public Worker(int threadId)
+    public Worker(int threadId, Manager manager)
     {
-        //get the manager instance
-        manager = Manager.getInstance();
+        this.manager = manager;
 
         //get the work queue from, the manager
         queue = manager.workQueue;

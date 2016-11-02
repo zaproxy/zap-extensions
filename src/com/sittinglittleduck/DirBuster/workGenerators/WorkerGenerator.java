@@ -49,7 +49,7 @@ import com.sittinglittleduck.DirBuster.WorkUnit;
 public class WorkerGenerator implements Runnable
 {
 
-    private Manager manager;
+    private final Manager manager;
     private BlockingQueue<WorkUnit> workQueue;
     private BlockingQueue<DirToCheck> dirQueue;
     private String inputFile;
@@ -65,9 +65,9 @@ public class WorkerGenerator implements Runnable
      * Creates a new instance of WorkerGenerator
      * @param manager Manager object
      */
-    public WorkerGenerator()
+    public WorkerGenerator(Manager manager)
     {
-        manager = Manager.getInstance();
+        this.manager = manager;
         workQueue = manager.workQueue;
         dirQueue = manager.dirQueue;
         if(manager.isBlankExt())
@@ -227,7 +227,7 @@ public class WorkerGenerator implements Runnable
                 {
                     baseResponce = null;
 
-                    baseCaseObj = GenBaseCase.genBaseCase(firstPart + currentDir, true, null);
+                    baseCaseObj = GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
                 }
                 catch(MalformedURLException e)
                 {
@@ -391,7 +391,7 @@ public class WorkerGenerator implements Runnable
                         try
                         {
                             //get the base for this extention
-                            baseCaseObj = GenBaseCase.genBaseCase(firstPart + currentDir, false, fileExtention);
+                            baseCaseObj = GenBaseCase.genBaseCase(manager, firstPart + currentDir, false, fileExtention);
                         }
                         catch(MalformedURLException e)
                         {
