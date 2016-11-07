@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Minor code changes.<br>
+	Added help file.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -17,6 +18,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.5.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
