@@ -191,7 +191,7 @@ public class ExportReport {
 
         File f_view = null; // Needs to be initialized for check below;
         boolean show = false;
-        String xmlGenerated = path + fileName + ".xml";
+        String xmlGenerated = path + fileName + ".xml" + ".temp";
 
         try {
             switch (fileExtension.toLowerCase(Locale.ROOT)) {
@@ -205,6 +205,7 @@ public class ExportReport {
                 CommandLine.error(Constant.messages.getString("exportreport.message.notice.bootstrap"));
                 return false;
             case Utils.XML:
+                xmlGenerated = path + fileName+ ".xml";
                 f_view = ReportExport.transformation(null, xmlGenerated, xmlPath, mergeXSL);
                 show = true;
                 break;
@@ -227,19 +228,20 @@ public class ExportReport {
             deleteFile(xmlPath);
         }
 
-        try {
-            if ((f_view != null) && show) {
-                DesktopUtils.openUrlInBrowser(f_view.toURI());
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            CommandLine.error(Constant.messages.getString("exportreport.message.error.file.open"));
-        }
+        /* add a command line variable called show to determine if browser will open or not. */
+        // try {
+        // if ((f_view != null) && show) {
+        // DesktopUtils.openUrlInBrowser(f_view.toURI());
+        // }
+        // } catch (Exception e) {
+        // logger.error(e.getMessage(), e);
+        // CommandLine.error(Constant.messages.getString("exportreport.message.error.file.open"));
+        // }
         return true;
     }
 
     public void generateReport(ViewDelegate view, ExtensionExportReport extension) {
-        FileList list = Utils.generateFileList();
+        FileList list = extension.getFileList();
         try {
             if (fc == null) {
                 fc = generateWriteableFileChooser(list);

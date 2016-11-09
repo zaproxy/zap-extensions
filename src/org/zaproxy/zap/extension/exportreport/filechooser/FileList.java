@@ -35,9 +35,9 @@ public class FileList extends AbstractList<FileType> {
         fileList = new ArrayList<FileType>();
     }
 
-    public void add(String search, String type, String extension, String description, String htmlicon) {
+    public void add(String search, String type, String extension, String description, String htmlicon, boolean enabled) {
 
-        FileType data = new FileType(fileList.size(), search, type, extension, description, htmlicon);
+        FileType data = new FileType(fileList.size(), search, type, extension, description, htmlicon, enabled);
         if (!fileList.contains(data)) {
             fileList.add(data);
         }

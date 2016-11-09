@@ -32,14 +32,16 @@ public class FileType {
     private final String extension;
     private final String description;
     private final ImageIcon icon;
+    private final boolean enabled;
 
-    public FileType(int index, String search, String type, String extension, String description, String icon) {
+    public FileType(int index, String search, String type, String extension, String description, String icon, boolean enabled) {
         this.index = index;
         this.search = search;
         this.type = type;
         this.extension = extension;
         this.description = description;
         this.icon = Utils.createImageIcon(icon);
+        this.enabled = enabled;
     }
 
     public int getIndex() {
@@ -64,5 +66,9 @@ public class FileType {
 
     public ImageIcon getIcon() {
         return icon;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }
