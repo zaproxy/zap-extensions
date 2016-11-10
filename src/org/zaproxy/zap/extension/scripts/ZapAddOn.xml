@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Remove unused resource messages (Issue 2386).<br>
+	Update help page to mention HTTP Sender scripts.<br>
 	]]>
 	</changes>
 	<extensions>
