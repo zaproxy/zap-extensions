@@ -10,7 +10,7 @@
 
   <view>
     <name>TOC</name>
-    <label>Contents</label>
+    <label>Zawartość</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>
@@ -33,7 +33,7 @@
 
   <view>
     <name>Favorites</name>
-    <label>Favorites</label>
+    <label>Ulubione</label>
     <type>javax.help.FavoritesView</type>
   </view>
 </helpset>

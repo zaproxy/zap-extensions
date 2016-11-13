@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="Community Scripts" target="communityScripts" />
+	<indexitem text="Skrypty społeczności" target="communityScripts" />
 </index>
