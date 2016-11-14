@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Export Report</name>
-	<version>1</version>
+	<version>2</version>
 	<status>alpha</status>
 	<description>Report Export module that allows users to customize content and export in a desired format.</description>
 	<author>Goran Sarenkapa - JordanGS</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>Added API call support and minor enhancements and bug fixes.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.exportreport.ExtensionExportReport</extension>
 	</extensions>

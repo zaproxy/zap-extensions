@@ -213,7 +213,8 @@ final class ReportExport {
                         }
 
                         // TODO v2.0: Create unique field for Method instead of combining with URI
-                        item.setURI(entityEncode(alert.getMethod() + ": " + alert.getUri()));
+                        //item.setURI(entityEncode(alert.getPluginId() + " : " + alert.getMethod() + ": " + alert.getUri()));
+                        item.setURI(entityEncode(alert.getMethod() + " : " + alert.getUri()));
                         if (alert.getParam() != null && alert.getParam().length() > 0)
                             item.setParam(entityEncode(alert.getParam()));
                         if (alert.getAttack() != null && alert.getAttack().length() > 0)

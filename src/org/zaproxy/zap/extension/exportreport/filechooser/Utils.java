@@ -70,17 +70,6 @@ public class Utils {
 
     public static final String ALL = "ALL";
 
-    public static FileList generateFileList() {
-        FileList list = new FileList();
-        list.add(Utils.HTML, Utils.HTML_TYPE, Utils.HTML, Utils.HTML_DESCRIPTION, Utils.HTML_ICON);
-        list.add(Utils.BOOTSTRAP, Utils.BOOTSTRAP_TYPE, Utils.BOOTSTRAP, Utils.BOOTSTRAP_DESCRIPTION, Utils.BOOTSTRAP_ICON);
-        list.add(Utils.XML, Utils.XML_TYPE, Utils.XML, Utils.XML_DESCRIPTION, Utils.XML_ICON);
-        list.add(Utils.JSON, Utils.JSON_TYPE, Utils.JSON, Utils.JSON_DESCRIPTION, Utils.JSON_ICON);
-        list.add(Utils.PDF, Utils.PDF_TYPE, Utils.PDF, Utils.PDF_DESCRIPTION, Utils.PDF_ICON);
-        list.add(Utils.DOC, Utils.DOC_TYPE, Utils.DOC, Utils.DOC_DESCRIPTION, Utils.DOC_ICON);
-        return list;
-    }
-
     /*
      * Get the extension of a file.
      */
