@@ -9,6 +9,7 @@
     <changes>
     <![CDATA[
     Correct method name in HTTP processor JavaScript template.<br>
+    Fix exception when adding file fuzzers with selected empty "Custom Fuzzers".<br>
     ]]>
     </changes>
     <extensions>
