@@ -526,7 +526,7 @@ public class FuzzerPayloadGeneratorUIHandler implements
             List<FuzzerPayloadSource> selectedFuzzers = new ArrayList<>(paths.length);
             for (TreePath selection : paths) {
                 DefaultMutableTreeNode node = ((DefaultMutableTreeNode) selection.getLastPathComponent());
-                if (node.isLeaf()) {
+                if (node.isLeaf() && (node.getUserObject() instanceof FuzzerPayloadSource)) {
                     selectedFuzzers.add((FuzzerPayloadSource) node.getUserObject());
                 }
             }
