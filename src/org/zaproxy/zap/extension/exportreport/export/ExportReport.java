@@ -76,7 +76,7 @@ public class ExportReport {
 
             String xmlPath = "";
             try {
-                xmlPath = ReportExport.generateDUMP(path, fileName, extension.extensionGetTitle(), extension.extensionGetBy(), extension.extensionGetFor(), extension.extensionGetScanDate(), extension.extensionGetScanVer(), extension.extensionGetReportDate(), extension.extensionGetReportVer(), extension.getDescription(), extension.getIncludedAlertSeverity(), extension.getIncludedAlertDetails());
+                xmlPath = ReportExport.generateDUMP(path, fileName, extension.extensionGetTitle(), extension.extensionGetBy(), extension.extensionGetFor(), extension.extensionGetScanDate(), extension.extensionGetScanVer(), extension.extensionGetReportDate(), extension.extensionGetReportVer(), extension.extensionGetDescription(), extension.getIncludedAlertSeverity(), extension.getIncludedAlertDetails());
             } catch (UnsupportedEncodingException e) {
                 logger.error(e.getMessage(), e);
                 view.showWarningDialog(Constant.messages.getString("exportreport.message.error.dump"));
