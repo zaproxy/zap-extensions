@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Export Report</name>
-	<version>2</version>
+	<version>3</version>
 	<status>alpha</status>
 	<description>Report Export module that allows users to customize content and export in a desired format.</description>
 	<author>Goran Sarenkapa - JordanGS</author>
 	<url></url>
-	<changes>Added API call support and minor enhancements and bug fixes.</changes>
+	<changes>Correct link to official ZAP Jenkins plugin in help page.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.exportreport.ExtensionExportReport</extension>
 	</extensions>
