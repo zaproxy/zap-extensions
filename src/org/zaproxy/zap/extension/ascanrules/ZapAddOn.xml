@@ -7,6 +7,7 @@
 	<url/>
 	<changes>
 	<![CDATA[
+	Issue 2973: Drop suffix on *Nix Blind Command Injection time based variants to maximize compatibility.
 	Improve error handling in some scanners.<br>
 	]]>
     </changes>
