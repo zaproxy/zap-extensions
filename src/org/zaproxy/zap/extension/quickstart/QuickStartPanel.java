@@ -324,6 +324,8 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		URL url;
 		try {
 			url = new URL(this.getUrlField().getText());
+			// Validate the actual request-uri of the HTTP message accessed.
+			new URI(this.getUrlField().getText(), true);
 		} catch (Exception e) {
 			extension.getView().showWarningDialog(Constant.messages.getString("quickstart.url.warning.invalid"));
 			this.getUrlField().requestFocusInWindow();

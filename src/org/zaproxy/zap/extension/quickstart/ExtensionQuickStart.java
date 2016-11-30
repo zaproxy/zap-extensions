@@ -32,6 +32,8 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -378,7 +380,9 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 			URL targetURL;
 			try {
 				targetURL = new URL(url);
-			} catch (MalformedURLException e) {
+				// Validate the actual request-uri of the HTTP message accessed.
+				new URI(url, true);
+			} catch (MalformedURLException | URIException e) {
 				reportError(Constant.messages.getString("quickstart.cmdline.quickurl.error.invalidUrl"));
 				e.printStackTrace();
 				return false;
