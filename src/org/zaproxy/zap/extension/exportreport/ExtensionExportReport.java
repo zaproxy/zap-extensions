@@ -426,10 +426,10 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
 
     private CommandLineArgument[] getCommandLineArguments() {
         // String name, int numOfArguments, String pattern, String errorMessage, String helpMessage
-        arguments[0] = new CommandLineArgument("-export_report", 1, null, "", Constant.messages.getString("report.cmdline.gen.help"));
-        arguments[1] = new CommandLineArgument("-source_info", 1, null, "", Constant.messages.getString("report.cmdline.gen.help"));
-        arguments[2] = new CommandLineArgument("-alert_severity", 1, null, "", Constant.messages.getString("report.cmdline.gen.help"));
-        arguments[3] = new CommandLineArgument("-alert_details", 1, null, "", Constant.messages.getString("report.cmdline.gen.help"));
+        arguments[0] = new CommandLineArgument("-export_report", 1, null, "", Constant.messages.getString("exportreport.cmdline.export.help"));
+        arguments[1] = new CommandLineArgument("-source_info", 1, null, "", Constant.messages.getString("exportreport.cmdline.source.help"));
+        arguments[2] = new CommandLineArgument("-alert_severity", 1, null, "", Constant.messages.getString("exportreport.cmdline.risk.help"));
+        arguments[3] = new CommandLineArgument("-alert_details", 1, null, "", Constant.messages.getString("exportreport.cmdline.details.help"));
         return arguments;
     }
 
