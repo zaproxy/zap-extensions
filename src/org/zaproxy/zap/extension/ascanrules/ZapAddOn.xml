@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Improve error handling in some scanners.<br>
+	Support changing the length of time used in timing attacks via config options.<br>
 	]]>
     </changes>
 	<extensions>
