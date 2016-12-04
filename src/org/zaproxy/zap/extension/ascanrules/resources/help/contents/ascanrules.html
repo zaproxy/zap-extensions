@@ -32,6 +32,8 @@ matches the payload, the scanner raises an alert and returns immediately. In the
 return output in the response, the scanner will attempt a blind injection attack by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
 and receiving the response against a heuristic time-delay lower limit. If the elapsed time is greater than this limit, an alert is raised with medium confidence
 and the scanner returns immediately.
+<br>
+Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
 <H2>Client Browser Cache</H2>
 

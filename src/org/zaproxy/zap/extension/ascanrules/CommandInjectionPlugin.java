@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.configuration.ConversionException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -48,6 +49,11 @@ import org.zaproxy.zap.model.Vulnerability;
  * @author kingthorin+owaspzap@gmail.com (2015)
  */
 public class CommandInjectionPlugin extends AbstractAppParamPlugin {
+
+	/**
+	 * The name of the rule to obtain the time, in seconds, for time-based attacks.
+	 */
+	private static final String RULE_SLEEP_TIME = "rules.common.sleep";
 
 	/**
 	 * Prefix for internationalised messages used by this rule
@@ -114,8 +120,10 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
 
     // Coefficient used for a time-based query delay checking (must be >= 7)
     private static final int TIME_STDEV_COEFF = 7;
-    // Time used in sleep command [sec]
-    private static final int TIME_SLEEP_SEC = 5;    
+    /**
+     * The default number of seconds used in time-based attacks (i.e. sleep commands).
+     */
+    private static final int DEFAULT_TIME_SLEEP_SEC = 5;
     // Standard deviation limit in milliseconds (long requests deviate from a correct model)
     public static final double WARN_TIME_STDEV = 0.5 * 1000;
     
@@ -171,6 +179,11 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     private static final Vulnerability vuln 
             = Vulnerabilities.getVulnerability("wasc_31");
 
+    /**
+     * The number of seconds used in time-based attacks (i.e. sleep commands).
+     */
+    private int timeSleepSeconds = DEFAULT_TIME_SLEEP_SEC;
+    
     /**
      * Get the unique identifier of this plugin
      * @return this plugin identifier
@@ -281,7 +294,14 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
      */
     @Override
     public void init() {
-        // do nothing
+        try {
+            timeSleepSeconds = this.getConfig().getInt(RULE_SLEEP_TIME, DEFAULT_TIME_SLEEP_SEC);
+        } catch (ConversionException e) {
+            log.debug("Invalid value for '" + RULE_SLEEP_TIME + "': " + this.getConfig().getString(RULE_SLEEP_TIME));
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Sleep set to " + timeSleepSeconds + " seconds");
+        }
     }
 
     /**
@@ -466,7 +486,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // Math reference: http://www.answers.com/topic/standard-deviation
         // -----------------------------------------------
         double deviation = getResponseTimeDeviation(responseTimes);
-        double lowerLimit = (deviation >= 0) ? getResponseTimeAverage(responseTimes) + TIME_STDEV_COEFF * deviation : TIME_SLEEP_SEC * 1000;
+        double lowerLimit = (deviation >= 0) ? getResponseTimeAverage(responseTimes) + TIME_STDEV_COEFF * deviation : timeSleepSeconds * 1000;
 
         it = blindOsPayloads.iterator();
         
@@ -474,7 +494,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
             HttpMessage msg = getNewMsg();
             payload = it.next();
             
-            paramValue = value + MessageFormat.format(payload, TIME_SLEEP_SEC);
+            paramValue = value + MessageFormat.format(payload, timeSleepSeconds);
             setParameter(msg, paramName, paramValue);
 
             if (log.isDebugEnabled()) {
@@ -494,7 +514,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
                 elapsedTime = msg.getTimeElapsedMillis();
 
                 // Check if enough time has passed                            
-                if (elapsedTime >= lowerLimit && elapsedTime > TIME_SLEEP_SEC * 1000) {
+                if (elapsedTime >= lowerLimit && elapsedTime > timeSleepSeconds * 1000) {
 
                     // Probably we've to confirm it launching again the query
                     // But we arise the alert directly with MEDIUM Confidence...

@@ -9,6 +9,7 @@
 	<![CDATA[
 	Issue 2973: Drop suffix on *Nix Blind Command Injection time based variants to maximize compatibility.
 	Improve error handling in some scanners.<br>
+	Support changing the length of time used in timing attacks via config options.<br>
 	]]>
     </changes>
 	<extensions>
