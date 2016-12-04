@@ -26,6 +26,7 @@ import java.text.MessageFormat;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -217,6 +218,10 @@ public class AttackThread extends Thread {
 		} catch (UnknownHostException e1) {
 			extension.notifyProgress(Progress.failed,
 					Constant.messages.getString("quickstart.progress.failed.badhost"));
+		} catch (URIException e) {
+			extension.notifyProgress(Progress.failed,
+					MessageFormat.format(
+							Constant.messages.getString("quickstart.progress.failed.reason"), e.getMessage()));
 		} catch (Exception e1) {
         	logger.error(e1.getMessage(), e1);
 			extension.notifyProgress(Progress.failed,

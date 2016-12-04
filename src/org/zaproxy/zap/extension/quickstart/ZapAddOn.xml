@@ -7,7 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
+	Validate the provided URL as a request-uri.<br>
 	]]>
 	</changes>
 	<extensions>
