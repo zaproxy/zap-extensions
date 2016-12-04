@@ -82,7 +82,6 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
@@ -611,6 +610,18 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			}
 		}
 		return Collections.unmodifiableList(list);
+	}
+
+	public List<ScriptNode> getZestScriptNodesWithCapability(String capability) {
+		List<ScriptNode> scriptNodes = new ArrayList<>();
+		for (ScriptType scriptType : getExtScript().getScriptTypes()) {
+			if (scriptType.hasCapability(capability)) {
+				for (ScriptNode node : getZestScriptNodes(scriptType.getName())) {
+					scriptNodes.add(node);
+				}
+			}
+		}
+		return Collections.unmodifiableList(scriptNodes);
 	}
 
 	public List<ScriptWrapper> getZestScripts(String type) {
@@ -1210,26 +1221,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				}
 			}
 		}
-		// Check to see if any standalone or authentication scripts are recording
-		for (final ScriptNode node : getZestScriptNodes(ExtensionScript.TYPE_STANDALONE)) {
-			ZestScriptWrapper zsw = (ZestScriptWrapper) node.getUserObject();
-			if (zsw.isRecording()) {
-				if (msg.getRequestHeader().getURI().toString().startsWith(zsw.getZestScript().getPrefix())) {
-					EventQueue.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								addToParent(node, msg, null);
-							} catch (Exception e) {
-								logger.error(e.getMessage(), e);
-							}
-						}
-					});
-					
-				}
-			}
-		}
-		for (final ScriptNode node : getZestScriptNodes(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH)) {
+		for (final ScriptNode node : getZestScriptNodesWithCapability("append")) {
 			ZestScriptWrapper zsw = (ZestScriptWrapper) node.getUserObject();
 			if (zsw.isRecording()) {
 				if (msg.getRequestHeader().getURI().toString().startsWith(zsw.getZestScript().getPrefix())) {
