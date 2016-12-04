@@ -120,7 +120,7 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     public static final double WARN_TIME_STDEV = 0.5 * 1000;
     
     // *NIX Blind OS Command constants
-    private static final String  NIX_BLIND_TEST_CMD = "sleep {0}s";
+    private static final String  NIX_BLIND_TEST_CMD = "sleep {0}";
     // Windows Blind OS Command constants
     private static final String  WIN_BLIND_TEST_CMD = "timeout /T {0}";
     // PowerSHell Blind Command constants
