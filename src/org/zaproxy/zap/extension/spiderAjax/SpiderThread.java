@@ -106,6 +106,7 @@ public class SpiderThread implements Runnable {
 		createOutOfScopeResponse(extension.getMessages().getString("spiderajax.outofscope.response"));
 
 		proxy = new ProxyServer();
+		proxy.setProxyParam(extension.getModel().getOptionsParam().getProxyParam());
 		proxy.setConnectionParam(extension.getModel().getOptionsParam().getConnectionParam());
 		proxy.addOverrideMessageProxyListener(new SpiderProxyListener());
 	}
