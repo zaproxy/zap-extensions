@@ -90,7 +90,7 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
 		}
 		
 		for (ScriptType st : extension.getExtScript().getScriptTypes()) {
-			if (st.hasCapability("append")) {
+			if (st.hasCapability(ScriptType.CAPABILITY_APPEND)) {
 				for (ScriptNode node : extension.getZestScriptNodes(st.getName())) {
 		        	ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
 		        	piicm.setMenuIndex(this.getMenuIndex());

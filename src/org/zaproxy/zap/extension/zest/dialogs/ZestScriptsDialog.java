@@ -143,7 +143,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         if (this.chooseType) {
         	List<String> types = new ArrayList<String>();
     		for (ScriptType st : extension.getExtScript().getScriptTypes()) {
-    			if (st.hasCapability("append")) {
+    			if (st.hasCapability(ScriptType.CAPABILITY_APPEND)) {
     				types.add(Constant.messages.getString(st.getI18nKey()));
     			}
     		}
