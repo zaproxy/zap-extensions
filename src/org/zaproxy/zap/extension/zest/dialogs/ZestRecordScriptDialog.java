@@ -130,7 +130,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         List<String> list = new ArrayList<String>();
         
         for (ScriptType st : extension.getExtScript().getScriptTypes()) {
-        	if (st.hasCapability("append")) {
+        	if (st.hasCapability(ScriptType.CAPABILITY_APPEND)) {
                 list.add(Constant.messages.getString(st.getI18nKey()));
         	}
         }

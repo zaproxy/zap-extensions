@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
@@ -86,7 +87,7 @@ public class ZestRecordOnOffPopupMenu extends ExtensionPopupMenuItem {
             		ScriptNode node = extension.getSelectedZestNode();
             		if (node != null && node.getUserObject() instanceof ZestScriptWrapper) {
             			ZestScriptWrapper script = (ZestScriptWrapper) node.getUserObject();
-	    			    if (script.getType().hasCapability("append") && record != script.isRecording()) {
+	    			    if (script.getType().hasCapability(ScriptType.CAPABILITY_APPEND) && record != script.isRecording()) {
 	    			    	this.setEnabled(true);
 	    			    	return true;
 	    			    } else {

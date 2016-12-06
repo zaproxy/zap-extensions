@@ -1221,7 +1221,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				}
 			}
 		}
-		for (final ScriptNode node : getZestScriptNodesWithCapability("append")) {
+		for (final ScriptNode node : getZestScriptNodesWithCapability(ScriptType.CAPABILITY_APPEND)) {
 			ZestScriptWrapper zsw = (ZestScriptWrapper) node.getUserObject();
 			if (zsw.isRecording()) {
 				if (msg.getRequestHeader().getURI().toString().startsWith(zsw.getZestScript().getPrefix())) {
