@@ -21,6 +21,9 @@ package org.zaproxy.zap.extension.jruby;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -41,6 +44,14 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 	public static final String NAME = "ExtensionJruby";
 	public static final ImageIcon RUBY_ICON = new ImageIcon(
 			ExtensionJruby.class.getResource("/org/zaproxy/zap/extension/jruby/resources/ruby.png"));
+
+	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
+
+	static {
+		List<Class<?>> dependencies = new ArrayList<>(1);
+		dependencies.add(ExtensionScript.class);
+		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
+	}
 
 	private ExtensionScript extScript = null;
 	private ScriptEngine rubyScriptEngine = null;
@@ -102,6 +113,11 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 		} catch (MalformedURLException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public List<Class<?>> getDependencies() {
+		return EXTENSION_DEPENDENCIES;
 	}
 	
 	@Override
