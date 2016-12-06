@@ -21,6 +21,9 @@ package org.zaproxy.zap.extension.jython;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -38,6 +41,14 @@ public class ExtensionJython extends ExtensionAdaptor {
 	public static final String NAME = "ExtensionJython";
 	public static final ImageIcon PYTHON_ICON = new ImageIcon(
 			ExtensionJython.class.getResource("/org/zaproxy/zap/extension/jython/resources/python.png"));
+
+	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
+
+	static {
+		List<Class<?>> dependencies = new ArrayList<>(1);
+		dependencies.add(ExtensionScript.class);
+		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
+	}
 
 	private ExtensionScript extScript = null;
 
@@ -92,5 +103,10 @@ public class ExtensionJython extends ExtensionAdaptor {
 		} catch (MalformedURLException e) {
 			return null;
 		}
+	}
+
+	@Override
+	public List<Class<?>> getDependencies() {
+		return EXTENSION_DEPENDENCIES;
 	}
 }
