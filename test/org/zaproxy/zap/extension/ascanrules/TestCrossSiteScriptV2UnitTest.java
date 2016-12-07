@@ -44,7 +44,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
 
     @Test
     public void shouldReportXssInParagraph() throws NullPointerException, IOException {
-        String test = "shouldReportXssInParagraph";
+        String test = "/shouldReportXssInParagraph/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -61,7 +61,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         
         this.rule.init(msg, this.parent);
 
@@ -77,7 +77,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     
     @Test
     public void shouldNotReportXssInFilteredParagraph() throws NullPointerException, IOException {
-        String test = "shouldNotReportXssInFilteredParagraph";
+        String test = "/shouldNotReportXssInFilteredParagraph/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -99,7 +99,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         
         this.rule.init(msg, this.parent);
 
@@ -110,7 +110,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     
     @Test
     public void shouldReportXssInComment() throws NullPointerException, IOException {
-        String test = "shouldReportXssInComment";
+        String test = "/shouldReportXssInComment/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -127,7 +127,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         
         this.rule.init(msg, this.parent);
 
@@ -143,7 +143,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     
     @Test
     public void shouldReportXssInCommentWithFilteredScripts() throws NullPointerException, IOException {
-        String test = "shouldReportXssInCommentWithFilteredScripts";
+        String test = "/shouldReportXssInCommentWithFilteredScripts/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -162,7 +162,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         
         this.rule.init(msg, this.parent);
 
@@ -179,7 +179,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     
     @Test
     public void shouldNotReportXssInFilteredComment() throws NullPointerException, IOException {
-        String test = "shouldNotReportXssInFilteredComment";
+        String test = "/shouldNotReportXssInFilteredComment/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -201,7 +201,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         
         this.rule.init(msg, this.parent);
 
@@ -212,7 +212,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     
     @Test
     public void shouldReportXssInBody() throws NullPointerException, IOException {
-        String test = "shouldReportXssInBody";
+        String test = "/shouldReportXssInBody/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -229,7 +229,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         
         this.rule.init(msg, this.parent);
 
@@ -245,7 +245,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     
     @Test
     public void shouldReportXssOutsideOfTags() throws NullPointerException, IOException {
-        String test = "shouldReportXssOutsideOfTags";
+        String test = "/shouldReportXssOutsideOfTags/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -262,7 +262,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         
         this.rule.init(msg, this.parent);
 
@@ -278,7 +278,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     
     @Test
     public void shouldReportXssOutsideOfHtmlTags() throws NullPointerException, IOException {
-        String test = "shouldReportXssOutsideOfHtmlTags";
+        String test = "/shouldReportXssOutsideOfHtmlTags/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -295,7 +295,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         
         this.rule.init(msg, this.parent);
 
@@ -311,7 +311,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     
     @Test
     public void shouldReportXssInBodyWithFilteredScript() throws NullPointerException, IOException {
-        String test = "shouldReportXssInBodyWithFilteredScript";
+        String test = "/shouldReportXssInBodyWithFilteredScript/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -330,7 +330,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         
         this.rule.init(msg, this.parent);
 
@@ -347,7 +347,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     
     @Test
     public void shouldNotReportXssInFilteredBody() throws NullPointerException, IOException {
-        String test = "shouldNotReportXssInFilteredBody";
+        String test = "/shouldNotReportXssInFilteredBody/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -369,7 +369,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=test");
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
         
         this.rule.init(msg, this.parent);
 
@@ -380,7 +380,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
 
     @Test
     public void shouldReportXssInAttribute() throws NullPointerException, IOException {
-        String test = "shouldReportXssInAttribute";
+        String test = "/shouldReportXssInAttribute/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -399,7 +399,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?color=red");
+        HttpMessage msg = this.getHttpMessage(test + "?color=red");
         
         this.rule.init(msg, this.parent);
 
@@ -416,7 +416,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
 
     @Test
     public void shouldNotReportXssInFilteredAttribute() throws NullPointerException, IOException {
-        String test = "shouldNotReportXssInFilteredAttribute";
+        String test = "/shouldNotReportXssInFilteredAttribute/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -439,7 +439,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?color=red");
+        HttpMessage msg = this.getHttpMessage(test + "?color=red");
         
         this.rule.init(msg, this.parent);
 
@@ -450,7 +450,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
 
     @Test
     public void shouldReportXssInAttributeScriptTag() throws NullPointerException, IOException {
-        String test = "shouldReportXssInAttributeScriptTag";
+        String test = "/shouldReportXssInAttributeScriptTag/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -469,7 +469,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?color=red");
+        HttpMessage msg = this.getHttpMessage(test + "?color=red");
         
         this.rule.init(msg, this.parent);
 
@@ -485,7 +485,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
 
     @Test
     public void shouldReportXssInFrameSrcTag() throws NullPointerException, IOException {
-        String test = "shouldReportXssInFrameSrcTag";
+        String test = "/shouldReportXssInFrameSrcTag/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -504,7 +504,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=file.html");
+        HttpMessage msg = this.getHttpMessage(test + "?name=file.html");
         
         this.rule.init(msg, this.parent);
 
@@ -520,7 +520,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
 
     @Test
     public void shouldReportXssInScriptIdTag() throws NullPointerException, IOException {
-        String test = "shouldReportXssInScriptIdTag";
+        String test = "/shouldReportXssInScriptIdTag/";
         
         this.nano.addHandler(new NanoServerHandler(test) {
             @Override
@@ -539,7 +539,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
             }
         });
         
-        HttpMessage msg = this.getHttpMessage("/" + test + "/?name=file.html");
+        HttpMessage msg = this.getHttpMessage(test + "?name=file.html");
         
         this.rule.init(msg, this.parent);
 
@@ -557,7 +557,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
     @Ignore
     @Test
     public void shouldReportXssInReflectedUrl() throws NullPointerException, IOException {
-        String test = "shouldReportXssInReflectedUrl";
+        String test = "/shouldReportXssInReflectedUrl";
 
         NanoServerHandler handler = new NanoServerHandler(test) {
             @Override
@@ -582,7 +582,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         this.nano.addHandler(handler);
         this.nano.setHandler404(handler);
 
-        HttpMessage msg = this.getHttpMessage("/" + test);
+        HttpMessage msg = this.getHttpMessage(test);
         
         this.rule.init(msg, this.parent);
 
