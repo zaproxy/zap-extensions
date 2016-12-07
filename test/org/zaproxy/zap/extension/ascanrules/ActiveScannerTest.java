@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -38,6 +44,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.core.scanner.Scanner;
 import org.parosproxy.paros.core.scanner.ScannerParam;
@@ -60,7 +67,22 @@ public abstract class ActiveScannerTest extends ScannerTestUtils {
 
     protected AbstractPlugin rule;
     protected HostProcess parent;
+
+    /**
+     * The alerts raised during the scan.
+     */
     protected List<Alert> alertsRaised;
+
+    /**
+     * The HTTP messages sent during the scan.
+     */
+    protected List<HttpMessage> httpMessagesSent;
+
+    /**
+     * The count of messages (HTTP and others) sent during the scan.
+     */
+    protected int countMessagesSent;
+
     protected HTTPDTestServer nano;
 
     @BeforeClass
@@ -71,9 +93,10 @@ public abstract class ActiveScannerTest extends ScannerTestUtils {
         super();
     }
 
-    @Before
-    public void setUp() throws Exception {
-/*
+    /**
+     * Sets up the log to ease debugging.
+     */
+    protected void setUpLog() {
         // Useful if you need to get some info when debugging
         BasicConfigurator.configure();
         ConsoleAppender ca = new ConsoleAppender();
@@ -81,7 +104,10 @@ public abstract class ActiveScannerTest extends ScannerTestUtils {
         ca.setLayout(new PatternLayout("%-5p [%t]: %m%n"));
         Logger.getRootLogger().addAppender(ca);
         Logger.getRootLogger().setLevel(Level.DEBUG);
-*/
+    }
+
+    @Before
+    public void setUp() throws Exception {
         Constant.setZapInstall(INSTALL_PATH);
         HOME_DIR.mkdirs();
         Constant.setZapHome(HOME_DIR.getAbsolutePath());
@@ -117,6 +143,7 @@ public abstract class ActiveScannerTest extends ScannerTestUtils {
         nano.start();
         
         alertsRaised = new ArrayList<>();
+        httpMessagesSent = new ArrayList<>();
         parent = new HostProcess(
                 "localhost:" + port,
                 parentScanner, 
@@ -127,6 +154,26 @@ public abstract class ActiveScannerTest extends ScannerTestUtils {
             @Override
             public void alertFound(Alert arg1) {
                 alertsRaised.add(arg1);
+            }
+
+            @Override
+            public void notifyNewMessage(HttpMessage msg) {
+                super.notifyNewMessage(msg);
+                httpMessagesSent.add(msg);
+                countMessagesSent++;
+            }
+
+            public void notifyNewMessage(Plugin plugin) {
+                // TODO for 2.5.0:
+                // super.notifyNewMessage(plugin);
+                countMessagesSent++;
+            }
+
+            public void notifyNewMessage(Plugin plugin, HttpMessage msg) {
+                // TODO for 2.5.0:
+                // super.notifyNewMessage(plugin, msg);
+                httpMessagesSent.add(msg);
+                countMessagesSent++;
             }
         };
         
