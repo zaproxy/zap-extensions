@@ -230,6 +230,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
 			spiderDialog.init(new Target(node));
 		} else if (node != null) {
 			spiderDialog.init(new Target(node));
+		} else {
+			spiderDialog.updateBrowsers();
 		}
 		
 		spiderDialog.setVisible(true);
