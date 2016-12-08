@@ -32,7 +32,6 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
-import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -42,6 +41,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.spiderAjax.internal.ProxyServer;
 import org.zaproxy.zap.network.HttpResponseBody;
 
 import com.crawljax.browser.EmbeddedBrowser;
@@ -105,7 +105,7 @@ public class SpiderThread implements Runnable {
 
 		createOutOfScopeResponse(extension.getMessages().getString("spiderajax.outofscope.response"));
 
-		proxy = new ProxyServer();
+		proxy = new AjaxProxyServer();
 		proxy.setConnectionParam(extension.getModel().getOptionsParam().getConnectionParam());
 		proxy.addOverrideMessageProxyListener(new SpiderProxyListener());
 	}
