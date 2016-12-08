@@ -199,6 +199,24 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     	return extSel;
     }
 
+    /**
+     * Updates the choices available in "Browser" combo box, based on the currently configured browsers.
+     *
+     * @see ExtensionSelenium#getConfiguredBrowsers()
+     */
+    public void updateBrowsers() {
+        List<Browser> browserList = getExtSelenium().getConfiguredBrowsers();
+        List<String> browserNames = new ArrayList<>();
+        String defaultBrowser = null;
+        for (Browser browser : browserList) {
+            browserNames.add(extSel.getName(browser));
+            if (browser.getId().equals(params.getBrowserId())) {
+                defaultBrowser = extSel.getName(browser);
+            }
+        }
+        setComboFields(FIELD_BROWSER, browserNames, defaultBrowser);
+    }
+
     /*
 	private OptionsAjaxSpiderTableModel getAjaxSpiderClickModel() {
 		if (ajaxSpiderClickModel == null) {
