@@ -119,7 +119,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldScanUrlsWithEncodedCharsInPath() throws Exception {
         // Given
-        String test = "shouldScanUrlsWithEncodedCharsInPath";
+        String test = "/shouldScanUrlsWithEncodedCharsInPath/";
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
@@ -127,7 +127,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
                 return new Response("No Source Code here!");
             }
         });
-        HttpMessage message = getHttpMessage("/" + test + "/%7B+%25%24");
+        HttpMessage message = getHttpMessage(test + "%7B+%25%24");
         rule.init(message, parent);
         // When
         rule.scan();
@@ -138,7 +138,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldNotAlertIfThereIsNoSourceCodeDisclosure() throws Exception {
         // Given
-        String test = "shouldNotAlertIfThereIsNoSourceCodeDisclosure";
+        String test = "/shouldNotAlertIfThereIsNoSourceCodeDisclosure/";
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
@@ -146,7 +146,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
                 return new Response("No Source Code here!");
             }
         });
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
         rule.scan();
@@ -157,7 +157,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldAlertIfPhpSourceTagsWereDisclosedInResponseBody() throws Exception {
         // Given
-        String test = "shouldAlertIfPhpSourceTagsWereDisclosedInResponseBody";
+        String test = "/shouldAlertIfPhpSourceTagsWereDisclosedInResponseBody/";
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
@@ -166,7 +166,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
                 return new Response("<html><body>" + encodedPhpCode + "</body></html>");
             }
         });
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
         rule.scan();
@@ -183,7 +183,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpSourceTagsWereDisclosedInResponseBody() throws Exception {
         // Given
-        String test = "shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpSourceTagsWereDisclosedInResponseBody";
+        String test = "/shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpSourceTagsWereDisclosedInResponseBody/";
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
@@ -195,7 +195,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
                         "<html><body>" + encodedPhpCode + "</body></html>");
             }
         });
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
         rule.scan();
@@ -207,7 +207,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldAlertIfPhpEchoTagsWereDisclosedInResponseBody() throws Exception {
         // Given
-        String test = "shouldAlertIfPhpEchoTagsWereDisclosedInResponseBody";
+        String test = "/shouldAlertIfPhpEchoTagsWereDisclosedInResponseBody/";
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
@@ -216,7 +216,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
                 return new Response("<html><body>" + encodedPhpCode + "</body></html>");
             }
         });
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
         rule.scan();
@@ -233,7 +233,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpEchoTagsWereDisclosedInResponseBody() throws Exception {
         // Given
-        String test = "shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpEchoTagsWereDisclosedInResponseBody";
+        String test = "/shouldNotAlertIfResponseIsNotSuccessfulEvenIfPhpEchoTagsWereDisclosedInResponseBody/";
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
@@ -245,7 +245,7 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
                         "<html><body>" + encodedPhpCode + "</body></html>");
             }
         });
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
         rule.scan();

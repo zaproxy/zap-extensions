@@ -212,6 +212,13 @@ public class SourceCodeDisclosureWEBINF extends AbstractHostPlugin {
 						Decompiler.decompile (classFile.getAbsolutePath(), decompiledText, decompilerSettings);
 						String javaSourceCode = decompiledText.toString();
 						
+						if (javaSourceCode.startsWith("!!! ERROR: Failed to load class")) {
+							// Not a Java class file...
+							javaClassesFound.remove(classname);
+							javaClassesHandled.add(classname);
+							continue;
+						}
+
 						if ( log.isDebugEnabled() ) {
 							log.debug("Source Code Disclosure alert for: "+ classname);
 						}

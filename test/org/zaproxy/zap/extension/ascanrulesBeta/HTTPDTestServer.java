@@ -44,7 +44,7 @@ public class HTTPDTestServer extends NanoHTTPD {
     public Response serve(IHTTPSession session) {
         String uri = session.getUri();
         for (NanoServerHandler handler : handlers) {
-            if (uri.startsWith("/" + handler.getName() + "/")) {
+            if (uri.startsWith(handler.getName())) {
                 return handler.serve(session);
             }
         }
