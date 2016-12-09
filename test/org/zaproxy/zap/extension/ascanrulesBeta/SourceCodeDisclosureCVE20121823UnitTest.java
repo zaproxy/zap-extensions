@@ -37,7 +37,7 @@ import fi.iki.elonen.NanoHTTPD.Response;
 /**
  * Unit test for {@link SourceCodeDisclosureCVE20121823}.
  */
-public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest {
+public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<SourceCodeDisclosureCVE20121823> {
 
     private static final String RESPONSE_HEADER_404_NOT_FOUND = "HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n";
     private static final String PHP_SOURCE_TAGS = "<?php $x=0; echo '<h1>Welcome!</h1>'; ?>";
