@@ -39,7 +39,7 @@ import fi.iki.elonen.NanoHTTPD.Response;
 /**
  * Unit test for {@link SourceCodeDisclosureWEBINF}.
  */
-public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest {
+public class SourceCodeDisclosureWEBINFUnitTest extends ActiveScannerTest<SourceCodeDisclosureWEBINF> {
 
     private static final String JAVA_LIKE_FILE_NAME_PATH = "/WEB-INF/classes/about/html.class";
 

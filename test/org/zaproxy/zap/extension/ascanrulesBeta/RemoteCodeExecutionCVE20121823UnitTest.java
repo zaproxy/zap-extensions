@@ -36,7 +36,7 @@ import fi.iki.elonen.NanoHTTPD.Response;
 /**
  * Unit test for {@link RemoteCodeExecutionCVE20121823}.
  */
-public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
+public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<RemoteCodeExecutionCVE20121823> {
 
     @Override
     protected RemoteCodeExecutionCVE20121823 createScanner() {

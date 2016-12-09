@@ -58,13 +58,13 @@ import org.zaproxy.zap.extension.ScannerTestUtils;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.utils.ClassLoaderUtil;
 
-public abstract class ActiveScannerTest extends ScannerTestUtils {
+public abstract class ActiveScannerTest<T extends AbstractPlugin> extends ScannerTestUtils {
 
     private static final String INSTALL_PATH = "test/resources/install";
     private static final File HOME_DIR = new File("test/resources/home");
     private static final String BASE_RESOURCE_DIR = "test/resources/org/zaproxy/zap/extension/ascanrulesBeta/";
 
-    protected AbstractPlugin rule;
+    protected T rule;
     protected HostProcess parent;
 
     /**
@@ -186,7 +186,7 @@ public abstract class ActiveScannerTest extends ScannerTestUtils {
         FileUtils.deleteDirectory(dir);
     }
 
-    protected abstract AbstractPlugin createScanner();
+    protected abstract T createScanner();
 
     protected HttpMessage getHttpMessage(String url) throws HttpMalformedHeaderException {
         return this.getHttpMessage("GET", url, "<html></html>");
