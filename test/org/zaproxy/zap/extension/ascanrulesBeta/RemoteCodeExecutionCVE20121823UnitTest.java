@@ -57,7 +57,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldScanUrlsWithEncodedCharsInPath() throws Exception {
         // Given
-        String test = "shouldScanUrlsWithEncodedCharsInPath";
+        String test = "/shouldScanUrlsWithEncodedCharsInPath/";
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
@@ -66,7 +66,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
                 return new Response("Nothing echoed...");
             }
         });
-        HttpMessage message = getHttpMessage("/" + test + "/%7B+%25%24");
+        HttpMessage message = getHttpMessage(test + "%7B+%25%24");
         rule.init(message, parent);
         // When
         rule.scan();
@@ -77,8 +77,8 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldNotScanUrlsIfWinAndNixTechIsNotIncluded() throws Exception {
         // Given
-        String test = "shouldNotScanUrlsIfWinAndNixTechIsNotIncluded";
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        String test = "/shouldNotScanUrlsIfWinAndNixTechIsNotIncluded/";
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         rule.setTechSet(techSetWithout(Tech.Linux, Tech.MacOS, Tech.Windows));
         // When
@@ -90,7 +90,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldNotAlertIfTheAttackIsNotEchoedInTheResponse() throws Exception {
         // Given
-        String test = "shouldNotAlertIfTheAttackIsNotEchoedInTheResponse";
+        String test = "/shouldNotAlertIfTheAttackIsNotEchoedInTheResponse/";
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
@@ -99,7 +99,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
                 return new Response("Nothing echoed...");
             }
         });
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
         rule.scan();
@@ -110,7 +110,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldNotAlertEvenIfAttackResponseBodyHasBiggerSize() throws Exception {
         // Given
-        String test = "shouldNotAlertEvenIfResponseBodyHasBiggerSize";
+        String test = "/shouldNotAlertEvenIfResponseBodyHasBiggerSize/";
         nano.addHandler(new NanoServerHandler(test) {
 
             @Override
@@ -124,7 +124,7 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
                 return new Response(strBuilder.toString());
             }
         });
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
         rule.scan();
@@ -136,9 +136,9 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     public void shouldAlertIfWindowsAttackWasSuccessful() throws Exception {
         // Given
         final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
-        String test = "shouldAlertIfWindowsAttackWasSuccessful";
+        String test = "/shouldAlertIfWindowsAttackWasSuccessful/";
         nano.addHandler(new WinResponse(test, body));
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
         rule.scan();
@@ -158,9 +158,9 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     public void shouldNotDoWinAttackIfWinTechIsNotIncluded() throws Exception {
         // Given
         final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
-        String test = "shouldNotDoWinAttackIfWinTechIsNotIncluded";
+        String test = "/shouldNotDoWinAttackIfWinTechIsNotIncluded/";
         nano.addHandler(new WinResponse(test, body));
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         rule.setTechSet(techSetWithout(Tech.Windows));
         // When
@@ -174,9 +174,9 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     public void shouldAlertIfNixAttackWasSuccessful() throws Exception {
         // Given
         final String body = RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>";
-        String test = "shouldAlertIfNixAttackWasSuccessful";
+        String test = "/shouldAlertIfNixAttackWasSuccessful/";
         nano.addHandler(new NixResponse(test, body));
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         // When
         rule.scan();
@@ -195,10 +195,10 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest {
     @Test
     public void shouldNotDoNixAttackIfNixTechsAreNotIncluded() throws Exception {
         // Given
-        String test = "shouldNotDoNixAttackIfNixTechsAreNotIncluded";
+        String test = "/shouldNotDoNixAttackIfNixTechsAreNotIncluded/";
         nano.addHandler(
                 new NixResponse(test, RemoteCodeExecutionCVE20121823.RANDOM_STRING + "<html><body>X Y Z</body></html>"));
-        HttpMessage message = getHttpMessage("/" + test + "/");
+        HttpMessage message = getHttpMessage(test);
         rule.init(message, parent);
         rule.setTechSet(techSetWithout(Tech.Linux, Tech.MacOS));
         // When

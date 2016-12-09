@@ -1,19 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>21</version>
+	<version>22</version>
 	<status>beta</status>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Support changing the length of time used in timing attacks via config options.<br>
-	Support ignoring specified forms when checking for CSRF vulnerabilities.<br>
-	Do not attempt to parse empty cross domain policy files.<br>
-	Correct creation of attack URL in Source Code Disclosure - CVE-2012-1823.<br>
-	Correct creation of attack URL in Remote Code Execution - CVE-2012-1823.<br>
-	Respect OS techs included when scanning with Remote Code Execution - CVE-2012-1823.<br>
-	Adjust log levels of some scanners, from INFO to DEBUG.<br>
+	Fix FP in "Source Code Disclosure - /WEB-INF folder" on successful responses (Issue 3048).<br>
     ]]>
 	</changes>
 	<extensions>

@@ -93,7 +93,7 @@ public abstract class ActiveScannerTest extends ScannerTestUtils {
     }
 
     /**
-     * Set ups the log to ease debugging.
+     * Sets up the log to ease debugging.
      */
     protected void setUpLog() {
         // Useful if you need to get some info when debugging
