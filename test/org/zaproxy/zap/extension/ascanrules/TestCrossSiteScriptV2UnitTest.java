@@ -28,14 +28,13 @@ import java.net.URLDecoder;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 
-public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
+public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSiteScriptV2> {
 
     @Override
     protected TestCrossSiteScriptV2 createScanner() {
@@ -65,7 +64,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("</p><script>alert(1);</script><p>"));
@@ -103,7 +102,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -131,7 +130,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("--><script>alert(1);</script><!--"));
@@ -166,7 +165,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), 
@@ -205,7 +204,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -233,7 +232,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(),  equalTo("<script>alert(1);</script>"));
@@ -266,7 +265,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(),  equalTo("<script>alert(1);</script>"));
@@ -299,7 +298,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(),  equalTo("<script>alert(1);</script>"));
@@ -334,7 +333,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), 
@@ -373,7 +372,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -403,7 +402,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), 
@@ -443,7 +442,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(0));
     }
@@ -473,7 +472,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(";alert(1)"));
@@ -508,7 +507,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("javascript:alert(1);"));
@@ -543,7 +542,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(" src=http://badsite.com"));
@@ -586,7 +585,7 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest {
         
         this.rule.init(msg, this.parent);
 
-        ((AbstractAppParamPlugin)this.rule).scan();
+        this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), 
