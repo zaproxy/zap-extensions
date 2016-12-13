@@ -29,6 +29,8 @@ import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -48,6 +50,26 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
         SourceCodeDisclosureCVE20121823 scanner = new SourceCodeDisclosureCVE20121823();
         scanner.setConfig(new ZapXmlConfiguration());
         return scanner;
+    }
+
+    @Test
+    public void shouldTargetPhpTech() throws Exception {
+        // Given
+        TechSet techSet = techSet(Tech.PHP);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldNotTargetNonPhpTechs() throws Exception {
+        // Given
+        TechSet techSet = techSetWithout(Tech.PHP);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(false)));
     }
 
     @Test
