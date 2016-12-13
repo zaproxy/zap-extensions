@@ -19,11 +19,14 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -55,6 +58,39 @@ public class IntegerOverflowUnitTest extends ActiveScannerTest<IntegerOverflow> 
         boolean targets = rule.targets(techSet);
         // Then
         assertThat(targets, is(equalTo(false)));
+    }
+
+    @Test
+    public void shouldSkipScanning500ErrorMessage() throws Exception {
+        // Given
+        HttpMessage message = getHttpMessage("?param=value");
+        message.setResponseHeader("HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n");
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, is(empty()));
+    }
+
+    @Test
+    public void shouldScanNon500ErrorMessage() throws Exception {
+        // Given
+        rule.init(getHttpMessage("?param=value"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, is(not(empty())));
+    }
+
+    @Test
+    public void shouldSkipScanIfStopped() throws Exception {
+        // Given
+        rule.init(getHttpMessage("?param=value"), parent);
+        parent.stop();
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, is(empty()));
     }
 
 }
