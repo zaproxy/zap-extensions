@@ -20,10 +20,13 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -84,6 +87,33 @@ public class TestInfoPrivateAddressDisclosureUnitTest extends PassiveScannerTest
 			assertThat(alertsRaised.get(i).getEvidence(), equalTo(evidence));
 			validateAlert(alertsRaised.get(i));
 		}
+	}
+
+	@Test
+	public void shouldIgnoreRequestedPrivateIpByDefault() throws HttpMalformedHeaderException {
+		// Given
+		String privateIp = "192.168.36.127";
+		String requestUri = "https://" + privateIp + ":8123/";
+		HttpMessage msg = createHttpMessage(requestUri, privateIp);
+		// When
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		// Then
+		assertThat(alertsRaised, is(empty()));
+	}
+
+	@Test
+	public void shouldAlertRequestedPrivateIpIfLowAlertThreshold() throws HttpMalformedHeaderException {
+		// Given
+		String privateIp = "192.168.36.127";
+		String requestUri = "https://" + privateIp + ":8123/";
+		HttpMessage msg = createHttpMessage(requestUri, privateIp);
+		rule.setLevel(AlertThreshold.LOW);
+		// When
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		// Then
+		assertThat(alertsRaised.size(), is(equalTo(1)));
+		assertThat(alertsRaised.get(0).getEvidence(), equalTo(privateIp));
+		validateAlert(requestUri, alertsRaised.get(0));
 	}
 
 	@Test
@@ -321,15 +351,23 @@ public class TestInfoPrivateAddressDisclosureUnitTest extends PassiveScannerTest
 
 
 	private static void validateAlert(Alert alert) {
+		validateAlert(URI, alert);
+	}
+
+	private static void validateAlert(String requestUri, Alert alert) {
 		assertThat(alert.getPluginId(), equalTo(00002));
 		assertThat(alert.getRisk(), equalTo(Alert.RISK_LOW));
 		assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-		assertThat(alert.getUri(), equalTo(URI));
+		assertThat(alert.getUri(), equalTo(requestUri));
 	}	
 
 	private HttpMessage createHttpMessage(String body) throws HttpMalformedHeaderException {
+		return createHttpMessage(URI, body);
+	}
+
+	private HttpMessage createHttpMessage(String requestUri, String body) throws HttpMalformedHeaderException {
 		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader("GET " + URI + " HTTP/1.1");
+		msg.setRequestHeader("GET " + requestUri + " HTTP/1.1");
 		msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
 		msg.setResponseBody(body);
 		return msg;
