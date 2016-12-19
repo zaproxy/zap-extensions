@@ -305,6 +305,17 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
     }
 
     /**
+     * Gets the number of seconds used in time-based attacks.
+     * <p>
+     * <strong>Note:</strong> Method provided only to ease the unit tests.
+     * 
+     * @return the number of seconds used in time-based attacks.
+     */
+    int getTimeSleep() {
+        return timeSleepSeconds;
+    }
+
+    /**
      * Scan for OS Command Injection Vulnerabilites
      * 
      * @param msg a request only copy of the original message (the response isn't copied)
