@@ -75,6 +75,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	private PopupDuplicateScript popupDuplicateScript = null;
 	private PopupNewScriptFromType popupNewScriptFromType = null;
 	private PopupContextMenuItemFactory popupFactoryUseScriptForAuthentication = null;
+	private PopupMenuItemSaveScript popupMenuItemSaveScript;
 	
 	private ExtensionScript extScript = null;
 	private ScriptsTreeCellRenderer renderer = null;
@@ -120,6 +121,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             if(PopupUseScriptAsAuthenticationScript.arePrerequisitesSatisfied())
             	extensionHook.getHookMenu().addPopupMenuItem(getPopupFactoryUseScriptForAuthentication());
             
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuItemSaveScript());
             ExtensionHelp.enableHelpKey(getConsolePanel(), "addon.scripts.console");
             ExtensionHelp.enableHelpKey(getScriptsPanel(), "addon.scripts.tree");
 
@@ -266,6 +268,13 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		}
 
 		return popupFactoryUseScriptForAuthentication;
+	}
+
+	private PopupMenuItemSaveScript getPopupMenuItemSaveScript() {
+		if (popupMenuItemSaveScript == null) {
+			popupMenuItemSaveScript = new PopupMenuItemSaveScript(getScriptsPanel());
+		}
+		return popupMenuItemSaveScript;
 	}
 
 	@Override
