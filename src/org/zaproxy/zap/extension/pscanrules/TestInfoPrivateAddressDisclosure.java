@@ -24,6 +24,7 @@
 // ZAP: 2012/04/25 Added @Override annotation to all appropriate methods.
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field, and made into a passive scan rule
 // ZAP: 2016/10/26 Issue 2834: Fixed the regex
+// ZAP: 2016/12/15 Issue 3031: Ignore requested private IP addresses on Private IP Disclosure scan
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.regex.Matcher;
@@ -33,6 +34,7 @@ import net.htmlparser.jericho.Source;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -97,6 +99,7 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        String host = msg.getRequestHeader().getHostName();
 
         String txtBody = msg.getResponseBody().toString();
         Matcher matcher = patternPrivateIP.matcher(txtBody);
@@ -104,10 +107,15 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
         String firstOne = null;
         
         while (matcher.find()) {
-            if (firstOne == null) {
-                firstOne = matcher.group();
+            String privateIp = matcher.group();
+            if (getLevel() != AlertThreshold.LOW && privateIp.equalsIgnoreCase(host)) {
+                continue;
             }
-            sbTxtFound.append(matcher.group()).append("\n");
+
+            if (firstOne == null) {
+                firstOne = privateIp;
+            }
+            sbTxtFound.append(privateIp).append("\n");
         }
 
         if (sbTxtFound.length() != 0) {
