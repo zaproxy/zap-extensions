@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fix FP in "Source Code Disclosure - /WEB-INF folder" on successful responses (Issue 3048).<br>
+	Fix FP in "Integer Overflow Error" on 500 error responses (Issue 3064).<br>
     ]]>
 	</changes>
 	<extensions>
