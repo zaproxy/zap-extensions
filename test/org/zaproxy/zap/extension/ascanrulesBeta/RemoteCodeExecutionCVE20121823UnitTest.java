@@ -44,6 +44,26 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
     }
 
     @Test
+    public void shouldTargetPhpTech() throws Exception {
+        // Given
+        TechSet techSet = techSet(Tech.PHP);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldNotTargetNonPhpTechs() throws Exception {
+        // Given
+        TechSet techSet = techSetWithout(Tech.PHP);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(false)));
+    }
+
+    @Test
     public void shouldScanUrlsWithoutPath() throws Exception {
         // Given
         HttpMessage message = getHttpMessage("");
@@ -206,18 +226,6 @@ public class RemoteCodeExecutionCVE20121823UnitTest extends ActiveScannerTest<Re
         // Then
         assertThat(alertsRaised, hasSize(0));
         assertThat(httpMessagesSent, hasSize(1)); // Win attack
-    }
-
-    private TechSet techSetWithout(Tech... techs) {
-        TechSet techSet = new TechSet(TechSet.AllTech);
-        if (techs == null || techs.length == 0) {
-            return techSet;
-        }
-
-        for (Tech tech : techs) {
-            techSet.exclude(tech);
-        }
-        return techSet;
     }
 
     private static abstract class RceResponse extends NanoServerHandler {
