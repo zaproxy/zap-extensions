@@ -132,7 +132,7 @@ public class FormatString extends AbstractAppParamPlugin  {
 			return; // Stop!
 		}
 		
-		if (msg.getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR)// Check to see if the page closed initially
+		if (getBaseMsg().getResponseHeader().getStatusCode() == HttpStatusCode.INTERNAL_SERVER_ERROR)// Check to see if the page closed initially
 		{
 			return;//Stop
 		}
