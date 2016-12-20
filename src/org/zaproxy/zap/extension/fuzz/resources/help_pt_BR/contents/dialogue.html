@@ -26,39 +26,23 @@ Você também pode pesquisar seqüências de caracteres nos resultados de difus�
 Essa guia permite que você configure as opções para serem usadas na difusão/fuzzing.
 
 <h3>Aba de Processadores de mensagem</h3>
-Processadores de mensagem podem acessar e alterar as solicitações e respostas de fuzzing, controlar o processo de fuzzing/difusão e interagir com a interface do usuário do ZAP.
-<br><br>
-Os seguintes tipos de processadores de mensagem são fornecidos por padrão:
-<ul>
-<li>Detector de reflexão de carga</li>
-<li>Atualizador de comprimento de conteúdo da request/solicitação</li>
-<li>Processador de mensagem do usuário</li>
-</ul>
-Você pode escrever scripts de processadores de mensagens HTTP, que lhe permitirão 
-<ul>
-<li>Obter a lista de cargas/payloads</li>
-<li>Parar o Fuzzing</li>
-<li>Aumentar a contagem de erro</li>
-<li>Enviar novas mensagens</li>
-<li>Adicionar mensagens para a aba de resultados</li>
-<li>Colocar mensagens personalizadas de 'status' na <a href="tab.html">Aba fuzzer</a></li>
-<li>Criar alertas</li>
-</ul>
+Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.<br>
+The message processors available depend on the type of message being fuzzed, this add-on includes the <a href="httpmessageprocessors.html">default HTTP Messages processors</a>.
 
-<br><br>
-Complementos também podem definir geradores de carga adicionais.
+<p>
+Add-ons can also define additional payload generators.
 
 
-<h2>Acessado via</h2>
+<h2>Accessed via</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Aba de Request</td><td>'Fuzz...' item de menu de clique direito</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Guia histórico e sites</td><td>Ataque > Fuzz... itens de menu</td></tr>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Menu ferramentas </td><td>Ataque > Fuzz... itens de menu</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Request tab</td><td>'Fuzz...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites and History tab</td><td>Attack > Fuzz... menu items</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Tools menu </td><td>Attack > Fuzz... menu item</td></tr>
 </table>
 
-<h2>Veja também</h2>
+<h2>See also</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Conceitos de difusor</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
 </table>
 
 </body>

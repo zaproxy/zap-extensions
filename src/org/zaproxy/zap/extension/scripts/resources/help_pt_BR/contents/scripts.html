@@ -27,9 +27,11 @@ Diferentes tipos de scripts são suportados:
 <li>Regras Ativas - estes são executados como parte da Varredura Ativa e podem ser habilitados individualmente</li>
 <li>Regras passivas - estas são executadas como parte da Varredura passiva e podem ser habilitadas individualmente</li> 
 <li>Regras de Proxy - estas rodam 'inline', podem alterar a cada solicitação e resposta, e podem ser habilitadas individualmente. Também podem criar pontos de interrupção</li> 
-<li>Regras com Alvos - scripts que quando invocados com um URL de destino e rodam apenas quando são iniciados manualmente</li>
-<li>Autenticação - scripts chamados quando a autenticação é executada para um contexto. Para serem usados, eles precisam ser selecionados ao configurar o Método de autenticação baseado em Script para um contexto. </li> 
-<li>Vetores de entrada de script - scripts para definir exatamente o que o ZAP deve atacar</li> 
+<li>HTTP Sender - scripts that run against every request/response sent/received by ZAP. This includes the proxied messages, messages sent during active scanner, fuzzer, ...</li>
+<li>Targeted Rules - scripts that invoked with a target URL and are only run when your start them manually</li>
+<li>Authentication - scripts that invoked when authentication is performed for a Context. To be used, they need to
+be selected when configuring the Script-Based Authentication Method for a Context. </li> 
+<li>Script Input Vectors  - scripts for defining exactly what ZAP should attack</li> 
 </ul>
 Todos os scripts que são executados automaticamente são inicialmente 'desabilitados' - você deve habilitá-los através da <a href="tree.html">Aba da Árvore de Scripts</a>
 antes que eles possam rodar.<br/>
