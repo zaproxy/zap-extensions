@@ -294,7 +294,7 @@ public class ScriptsListPanel extends AbstractPanel {
 		return dir;
 	}
 
-	private void saveScript (ScriptWrapper script) {
+	protected void saveScript (ScriptWrapper script) {
 		if (script.getFile() != null) {
 			try {
 				extension.getExtScript().saveScript(script);
