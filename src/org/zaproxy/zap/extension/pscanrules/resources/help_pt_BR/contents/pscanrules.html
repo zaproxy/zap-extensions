@@ -14,43 +14,74 @@ As seguintes regras de verificação passiva de qualidade alfa estão incluídas
  Checar respostas do servidor para HTTP 500 - respostas do tipo Internal Server Error ou aquelas que contêm uma string de erro conhecida.
  
 <h2>Controle de cache</h2>
-Verifica os cabeçalhos das respostas "Cache-Control" e "Pragma" conferindo se usam as configurações de melhores práticas do setor para proteção de conteúdo. 
+Verifica os cabeçalhos das respostas "Cache-Control" e "Pragma" conferindo se usam as configurações de melhores práticas do setor para proteção de conteúdo.<br>
+At MEDIUM and HIGH thresholds only non-error or non-redirect text responses (excluding JavaScript) are considered.<br>
+At LOW threshold all responses apart from images and CSS are considered including errors and redirects.
 
 <h2>Falta de Tipo de Conteúdo</h2>
-Gera um alerta se na resposta está faltando um cabeçalho de Content-Type, ou se o cabeçalho existe, mas seu valor é vazio.
+Raises an alert if the response is lacking a Content-Type header or if the header exists but the value is empty.
 
 <h2>Cookie HttpOnly</h2>
-Confirma se ao serem definidos são sinalizados como HttpOnly. O flag HttpOnly indica para navegadores que o cookie criado deve ser utilizado por um script do lado do cliente (como JavaScript).
+Ensures that as cookies are set they are flagged HttpOnly. The HttpOnly flag indicates to browsers that the cookie 
+being set should be acted upon by client side script (such as JavaScript).
 
 <h2>Flag de segurança de Cookie</h2>
-Busca cookies definidos durante sessões HTTPS, e gera um alerta para aqueles que estão definidos, mas não incluem o flag de seguro. Um cookie definido com o flag de segurança não será enviado durante uma sessão HTTP aberta.
+Looks for cookies set during HTTPS sessions, raises an alert for those that are set but do not include the secure flag.
+A cookie set with the secure flag will not be sent during a plain HTTP session.
 
 <h2>Inclusão de Script de Domínio Cruzado</h2>
-Valida se scripts estão sendo incluídos ou não de domínios diferentes do que está hospedando o conteúdo.  Isso é feito checando os atributos "src" das tags de "script" na resposta. 
-<ul><li>Cross-Domain Hosts permitidos: em limiar ELEVADO, se um URL de script cabe num contexto que inclui também a URL da mensagem base, nenhum alerta será gerado.</li></ul> 
+Validates whether or not scripts are included from domains other than the domain hosting the content. 
+By looking at the "src" attributes of "script" tags in the response.<br>
+Allowed Cross-Domain scripts:  
+<ul>
+<li>Any script with a non-empty "integrity" attribute is ignored - the integrity value is not checked as this will be checked by the browser</li>
+<li>At MEDIUM and HIGH thresholds if a script URL falls within a context that also includes the URL of the base message no alerts will be raised.</li>
+</ul> 
 
 <h2>Proteção de header XSS</h2>
-Verifica a existência de valor/configuração do cabeçalho X-XSS-Protection. Este cabeçalho de resposta pode ser usado para configurar uma proteção refletiva XSS embutida, com agente de usuário.
+Checks for the existence of and value/setting of the X-XSS-Protection header. 
+This response header can be used to configure a user-agent's built-in reflective XSS protection.<br>
+At MEDIUM and HIGH thresholds only non-error or non-redirect HTML responses are considered.<br>
+At LOW threshold all text responses are considered including errors and redirects.
 
 <h2>Conteúdo misto</h2>
-Para conteúdo servido através de HTTPS. Analisa todos os atributos src na resposta à procura dos originados através de HTTP aberto.
+For content served via HTTPS analyse all the src attributes in the response looking for those sourced
+via plain HTTP.
 
 <h2>Preenchimento automático de senha</h2>
-Procura por campos de entrada do tipo "senha" e verifica se há configuração "autocomplete = off".
+Looks for "password" type input fields and checks for the setting "autocomplete=off".
 
 <h2>Exposição de endereço privado</h2>
-Verifica no conteúdo da resposta a inclusão de endereços IPv4 RFC 1918. Um usuário mal-intencionado pode aproveitar o conhecimento de endereçamento interno para executar ataques de engenharia social ou outros ataques.
+Checks the response content for inclusion of RFC 1918 IPv4 addresses as well as 
+Amazon EC2 private hostnames (for example, ip-10-0-56-78). This information can give an attacker 
+useful information about the IP address scheme of the internal network, and might be helpful for 
+further attacks targeting internal systems.
 
 <h2>Id de sessão na URL Rewrite</h2>
-Este scanner verifica a existência de parâmetros de tipo de token de sessão sendo reescritos na URL. 
-Para ajudar a reduzir falsos positivos, o scanner verifica o comprimento do valor do token; se o valor desse parâmetro não for maior que 8 caracteres de comprimento, o parâmetro é ignorado (ou seja: survey?sId=5 não seria sinalizado como vulnerável).
+This scanner checks for the existence of session token type parameters being rewritten to the URL. 
+To help reduce false positives the scanner checks the length of the token value,  if the value of the parameter 
+is not greater than 8 characters in length then the parameter is ignored 
+(i.e.: survey?sId=5 would not be flagged as vulnerable).
 
 <h2>X-Content-Type-Options</h2>
-Este scanner verifica X-Content-Type-Options em cabeçalho MIME Anti-Sniffing e garante que seja definido como 'nosniff'.
-No limiar 'alto' este scanner não alerta sobre respostas de erro de cliente ou servidor; para todos os outros limiares habilitados alerta em todos os tipos de resposta se o cabeçalho está ausente ou definido como algo diferente de 'nosniff'.
+This scanner check for the Anti-MIME-Sniffing header X-Content-Type-Options and ensures it is set to 'nosniff'.<br>
+At MEDIUM and HIGH thresholds this scanner does not alert on client or server error responses or redirects.<br> 
+At LOW threshold it will alert on all responses including errors and redirects.<br>
+thresholds it alerts on all response types if the header is missing or set to something other than 'nosniff'.
  
-<h2>X-Frame-Option</h2>
-Este scanner verifica a existência e a validade do cabeçalho X-FRAME-OPTIONS. No limiar 'alto' este scanner não alerta sobre respostas de erro de cliente ou servidor; para todos os outros limiares habilitados alerta em todos os tipos de resposta se o cabeçalho está ausente ou inválido. Inválido significa que o cabeçalho está presente sem valor, ou que o valor não é como esperado (ou seja: diferente de "DENY", "SAMEORIGIN" ou "ALLOW-FROM"). 
+<h2>X-Frame-Options Header Scanner</h2>
+This scanner checks for the existence and validity of the X-Frame-Options header.<br> 
+At MEDIUM and HIGH thresholds this only looks at non-error or non-redirect HTML responses.<br>
+At LOW threshold it looks at all text responses including errors and redirects.<br>
+The following conditions may result in an alert:
+<ul> 
+ <li><b>X-Frame-Options Header Not Set: </b> If the X-Frame-Options header is missing from the response completely.</li>
+ <li><b>Multiple X-Frame-Options Header Entries: </b> When more than one X-Frame-Options header is detected on the response.</li>
+ <li><b>X-Frame-Options Defined via META (Non-compliant with Spec): </b> A "http-equiv" entry was found in the response that attempts to define X-Frame-Options, which is not supported by the specification.</li>
+ <li><b>X-Frame-Options Setting Malformed: </b> The header is present with no value, or the value is not as expected (i.e.: other than "DENY", "SAMEORIGIN", or "ALLOW-FROM").</li>
+</ul>
+By default no alerts will be raised in the response includes a Content-Security-Policy 'frame-ancestors' element as this take precedence over the X-Frame-Options header.
+However at LOW threshold the above issues will still be reported but at a LOW risk. 
 
 </body>
 </html>
