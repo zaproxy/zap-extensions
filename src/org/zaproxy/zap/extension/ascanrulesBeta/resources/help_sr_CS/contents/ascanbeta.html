@@ -19,8 +19,12 @@ third party service, for instance. Currently checks for wildcards in Adobe's cro
 SilverLight's clientaccesspolicy.xml. 
 
 <h2>CSRF Token</h2>
-Scans for the existence of anti-CSRF tokens. 
-Alerts on requests which do not appear to contain anti-CSRF tokens.
+Scans for the existence of Anti-CSRF tokens. <br>
+Alerts on requests which do not appear to contain Anti-CSRF tokens.<br>
+Post 2.5.0 you can specify a comma separated list of identifiers in the 
+<code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
+Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
+Only use this feature to ignore FORMs that you know are safe, for example search forms.
 
 <h2>Expression Language Injection</h2>
 Checks if the web application is subject to Expression Language (EL) injection attacks, which occur
@@ -59,7 +63,9 @@ Session Fixation may be possible. If this issue occurs with a login URL (where t
 <h2>ShellShock - CVE-2014-6271</h2>
 
 This scanner perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
-The first is a simple reflected attack and the second is a time based attack.
+The first is a simple reflected attack and the second is a time based attack.<br>
+<br>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
 <h2>Source Code Disclosure - CVE-2012-1823</h2>
 Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.
@@ -80,7 +86,9 @@ injection vulnerabilities in a suspected Hypersonic database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
 to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
 load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
+The scanner tests only for time-based SQL injection vulnerabilities.<br>
+<br>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
 <h2>SQL Injection - MySQL (Time Based)</h2>
 
@@ -92,7 +100,9 @@ injection vulnerabilities in a suspected MySQL database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
 to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
 load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
+The scanner tests only for time-based SQL injection vulnerabilities.<br>
+<br>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
 <h2>SQL Injection - Oracle (Time Based)</h2>
 
@@ -104,7 +114,9 @@ injection vulnerabilities in a suspected Oracle database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
 to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
 load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
+The scanner tests only for time-based SQL injection vulnerabilities.<br>
+<br>
+Note that this rule does not currently allow you to change the length of time used for the timing attacks due to the way the delay is caused. 
 
 <h2>SQL Injection - PostgreSQL (Time Based)</h2>
 
@@ -116,7 +128,9 @@ injection vulnerabilities in a suspected PostgreSQL database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
 to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
 load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities. 
+The scanner tests only for time-based SQL injection vulnerabilities.<br>
+<br>
+Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
 <h2>Username Enumeration</h2>
 It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
