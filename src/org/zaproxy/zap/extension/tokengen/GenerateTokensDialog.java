@@ -73,6 +73,7 @@ public class GenerateTokensDialog extends AbstractDialog {
         super();
         this.messages = messages;
  		initialize();
+ 		this.pack();
     }
 
 	/**
@@ -82,7 +83,6 @@ public class GenerateTokensDialog extends AbstractDialog {
 	private void initialize() {
         this.setContentPane(getJTabbed());
         this.setTitle(messages.getString("tokengen.generate.title"));
-		this.setSize(500, 150);
 	}
 	
 	/**

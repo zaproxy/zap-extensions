@@ -343,7 +343,9 @@ public class TokenPanel extends AbstractPanel {
 		
 		if (EventQueue.isDispatchThread()) {
 			resultsModel.addMessage(msg);
-			getProgressBar().setValue(getProgressBar().getValue() + 1);
+			if (msg.isGoodResponse()) {
+				getProgressBar().setValue(getProgressBar().getValue() + 1);
+			}
 		    return;
 		}
 		try {

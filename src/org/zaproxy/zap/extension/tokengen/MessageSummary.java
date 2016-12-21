@@ -31,6 +31,7 @@ public class MessageSummary {
     private final Long timeElapsedMillis;
     private final Long responseBodyLength;
     private final String token;
+    private boolean goodResponse=true;
 
 	public MessageSummary(HttpMessage msg) {
 	    this.requestTimestamp = new Date(msg.getTimeSentMillis());
@@ -40,7 +41,10 @@ public class MessageSummary {
         this.reasonPhrase = msg.getResponseHeader().getReasonPhrase();
         this.timeElapsedMillis = Long.valueOf(msg.getTimeElapsedMillis());
         this.responseBodyLength = Long.valueOf(msg.getResponseBody().toString().length());
-        this.token = msg.getNote();        // The note is used to store the token 
+        this.token = msg.getNote();        // The note is used to store the token
+        if (msg.getResponseHeader().isEmpty()){
+        	this.goodResponse=false;
+        }
 	}
 
 	public String getMethod() {
@@ -73,6 +77,10 @@ public class MessageSummary {
 
     public Date getRequestTimestamp() {
         return requestTimestamp;
+    }
+    
+    public boolean isGoodResponse() {
+    	return goodResponse;
     }
 
     
