@@ -47,10 +47,6 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 	
 	@Override
 	public int getId() {
-		/*
-		 * This should be unique across all active and passive rules.
-		 * The master list is https://github.com/zaproxy/zaproxy/blob/develop/src/doc/alerts.xml
-		 */
 		return 90029;
 	}
 

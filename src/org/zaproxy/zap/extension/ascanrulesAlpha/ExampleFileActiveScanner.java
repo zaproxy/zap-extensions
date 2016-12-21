@@ -55,7 +55,7 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
 	public int getId() {
 		/*
 		 * This should be unique across all active and passive rules.
-		 * The master list is https://github.com/zaproxy/zaproxy/blob/develop/src/doc/alerts.xml
+		 * The master list is https://github.com/zaproxy/zaproxy/blob/develop/src/doc/scanners.md
 		 */
 		return 60101;
 	}
