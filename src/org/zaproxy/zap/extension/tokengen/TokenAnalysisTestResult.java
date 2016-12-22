@@ -18,13 +18,17 @@
 package org.zaproxy.zap.extension.tokengen;
 
 import java.util.List;
-
-import org.parosproxy.paros.Constant;
+import java.util.ResourceBundle;
 
 public class TokenAnalysisTestResult {
 	
 	public enum Type {MAX_ENTROPY, CHR_UNIFORMITY, CHR_TRANSITIONS, COUNT_1_BIT, COUNT_2_BITS, COUNT_3_BITS, COUNT_4_BITS, COUNT_8_BITS, COUNT_16_BITS};
 	public enum Result {FAIL, LOW, MEDIUM, HIGH, PASS};
+
+	private static ResourceBundle resourceBundle;
+
+	private static final String BASE_RSRC_KEY = "tokengen.analyse.test.";
+
 	private Type type;
 	private String name;
 	private String summary;
@@ -34,7 +38,7 @@ public class TokenAnalysisTestResult {
 	
 	public TokenAnalysisTestResult (Type type) {
 		this.type = type;
-		this.name = Constant.messages.getString("tokengen.analyse.test." + type.name().toLowerCase());
+		this.name = resourceBundle != null ? resourceBundle.getString(BASE_RSRC_KEY + type.name().toLowerCase()) : type.name();
 	}
 	
 	public Type getType() {
@@ -68,5 +72,17 @@ public class TokenAnalysisTestResult {
 	}
 	public void setFailures(List<String> failures) {
 		this.failures = failures;
+	}
+
+	/**
+	 * Sets the {@code ResourceBundle} used to obtain the internationalised name of the result.
+	 * <p>
+	 * It's used the {@link TokenAnalysisTestResult.Type Type}'s name if no {@code ResourceBundle} is set.
+	 *
+	 * @param resourceBundle the {@code ResourceBundle} to obtain the name of the result
+	 * @see #getName()
+	 */
+	static void setResourceBundle(ResourceBundle resourceBundle) {
+		TokenAnalysisTestResult.resourceBundle = resourceBundle;
 	}
 }
