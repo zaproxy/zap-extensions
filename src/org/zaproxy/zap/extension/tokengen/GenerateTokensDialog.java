@@ -203,7 +203,10 @@ public class GenerateTokensDialog extends AbstractDialog {
 		TreeSet<HtmlParameter> params = httpMessage.getCookieParams();
 		Iterator<HtmlParameter> cIter = params.iterator();
 		while (cIter.hasNext()) {
-			cookieParams.add(cIter.next().getName());
+			String cookieName = cIter.next().getName();
+			if (!cookieParams.contains(cookieName)) {
+				cookieParams.add(cookieName);
+			}
 		}
 		
 		urlParams = new Vector<>();

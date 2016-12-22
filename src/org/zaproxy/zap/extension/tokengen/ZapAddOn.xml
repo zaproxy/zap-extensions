@@ -7,7 +7,7 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
+	Show same cookies once in Generate Tokens dialogue (Issue 2116).<br>
 	Added help file.<br>
 	]]>
 	</changes>
