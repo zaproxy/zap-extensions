@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.tokengen;
 
 import java.awt.Component;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
 import java.util.Date;
 
 import javax.swing.JPopupMenu;
@@ -34,11 +32,12 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.table.ColumnFactory;
 import org.jdesktop.swingx.table.TableColumnExt;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.view.ZapTable;
 import org.zaproxy.zap.view.renderer.DateFormatStringValue;
 import org.zaproxy.zap.view.renderer.SizeBytesStringValue;
 import org.zaproxy.zap.view.renderer.TimeDurationStringValue;
 
-public class TokenGenMessagesTable extends JXTable {
+public class TokenGenMessagesTable extends ZapTable {
 
     private static final long serialVersionUID = -5288994159508971262L;
 
@@ -66,9 +65,6 @@ public class TokenGenMessagesTable extends JXTable {
         setColumnSelectionAllowed(false);
         setCellSelectionEnabled(false);
         setRowSelectionAllowed(true);
-        setColumnControlVisible(true);
-
-        setDoubleBuffered(true);
 
         setAutoCreateRowSorter(true);
 
@@ -94,20 +90,6 @@ public class TokenGenMessagesTable extends JXTable {
     @Override
     public TokenGenMessagesTableModel getModel() {
         return (TokenGenMessagesTableModel) super.getModel();
-    }
-
-    @Override
-    public Point getPopupLocation(final MouseEvent event) {
-        // Hack to select the row before showing the pop up menu when invoked using the mouse.
-        if (event != null) {
-            final int row = rowAtPoint(event.getPoint());
-            if (row < 0) {
-                getSelectionModel().clearSelection();
-            } else if (!getSelectionModel().isSelectedIndex(row)) {
-                getSelectionModel().setSelectionInterval(row, row);
-            }
-        }
-        return super.getPopupLocation(event);
     }
 
     protected static class TokenGetMessagesTableColumnFactory extends ColumnFactory {

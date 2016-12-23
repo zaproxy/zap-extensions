@@ -17,6 +17,8 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
+import javax.swing.ImageIcon;
+
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
@@ -30,6 +32,7 @@ public class TokenGenPopupMenu extends PopupMenuItemHttpMessageContainer {
      */
     public TokenGenPopupMenu(String label) {
         super(label);
+        setIcon(new ImageIcon(getClass().getResource("/resource/icon/fugue/barcode.png")));
     }
 	
 	@Override
