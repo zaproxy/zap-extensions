@@ -9,6 +9,7 @@
 	<![CDATA[
 	Always show the expected URL in request statements (Issue 2854).<br>
 	Add HTTP requests to Sequence scripts when recording (Issue 3044).<br>
+	Execute nodes' mouse click action just once (Issue 3099).<br>
 	]]>
 	</changes>
 	<dependencies>
