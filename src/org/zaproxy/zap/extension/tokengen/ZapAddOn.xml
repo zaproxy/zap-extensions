@@ -7,7 +7,7 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
+	Show same cookies once in Generate Tokens dialogue (Issue 2116).<br>
 	Added help file.<br>
 	Issue 2338: Allow dynamic timeout adjustment to combat read timeout issues.<br>
 	Ensure initial dialog is properly sized.<br>
