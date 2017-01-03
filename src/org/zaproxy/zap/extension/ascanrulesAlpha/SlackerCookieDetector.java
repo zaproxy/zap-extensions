@@ -252,11 +252,6 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 		return Constant.messages.getString("ascanalpha.cookieslack.session.warning", cookie);
 	}
 
-	/**
-	 * This should be unique across all active and passive rules. The master
-	 * list:
-	 * https://github.com/zaproxy/zaproxy/blob/develop/src/doc/alerts.xml
-	 */
 	@Override
 	public int getId() {
 		return 90027;
