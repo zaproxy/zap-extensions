@@ -121,14 +121,6 @@ public class ZestDialogManager extends AbstractPanel {
 		this.setIcon(ExtensionZest.ZEST_ICON);
 
 		mouseListener = new java.awt.event.MouseAdapter() {
-			@Override
-			public void mousePressed(java.awt.event.MouseEvent e) {
-			}
-
-			@Override
-			public void mouseReleased(java.awt.event.MouseEvent e) {
-				mouseClicked(e);
-			}
 
 			@Override
 			public void mouseClicked(java.awt.event.MouseEvent e) {
