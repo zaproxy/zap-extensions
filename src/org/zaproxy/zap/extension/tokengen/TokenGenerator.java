@@ -17,6 +17,8 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
+import java.net.SocketTimeoutException;
+
 import javax.swing.SwingWorker;
 
 import org.apache.log4j.Logger;
@@ -64,6 +66,9 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 			try {
 				msg.getRequestHeader().setHeader(HttpHeader.COOKIE, null);
 				this.getHttpSender().sendAndReceive(msg, true);
+			} catch (SocketTimeoutException ste) {
+				log.debug("A timout occurred while sending a request to generate a token. Reducing sent count, initiating supplemental request.");
+				i--;
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 			}
