@@ -128,10 +128,9 @@ public class CharacterFrequencyMap {
 	
 	public TokenAnalysisTestResult checkCharacterUniformity() {
 		TokenAnalysisTestResult result = new TokenAnalysisTestResult(TokenAnalysisTestResult.Type.CHR_UNIFORMITY);
-		Result res = Result.PASS;
 		List<String> details = new ArrayList<>();
 		List<String> issues = new ArrayList<>();
-		int mid = (size() / numberOfChars());
+		int mid = numberOfChars() != 0 ? (size() / numberOfChars()) : 0;
 		int mdev = mdev(numberOfChars());
 		int min = mid - mdev;
 		int max = mid + mdev;
@@ -155,15 +154,18 @@ public class CharacterFrequencyMap {
 				sb.append(instantsOfChr);
 				if (instantsOfChr > max) {
 					issues.add("Column " + i + " Character " + c + " appears " + instantsOfChr + " times: more than expected (" + max + ")");
-					res = Result.FAIL;
 				} else if (instantsOfChr < min) {
 					issues.add("Column " + i + " Character " + c + " appears " + instantsOfChr + " times: less than expected (" + min + ")");
-					res = Result.FAIL;
 				}
 			}
 			details.add(sb.toString());
 		}
-		result.setResult(res);
+
+		if (maxLength == 0) {
+			issues.add("Tokens have zero characters.");
+		}
+
+		result.setResult(issues.isEmpty() ? Result.PASS : Result.FAIL);
 		result.setFailures(issues);
 		result.setDetails(details);
 		return result;

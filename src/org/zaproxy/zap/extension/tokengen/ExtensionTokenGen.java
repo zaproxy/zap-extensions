@@ -68,6 +68,13 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
         super(NAME);
         this.setI18nPrefix("tokengen");
 	}
+
+    @Override
+    public void init() {
+        super.init();
+
+        TokenAnalysisTestResult.setResourceBundle(getMessages());
+    }
 	
 	@Override
 	public void hook(ExtensionHook extensionHook) {
