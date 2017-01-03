@@ -7,7 +7,8 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
+	Consume all output of the applications in all cases (Issue 3074).<br>
+	Show error/std output in the order it is received (Issue 3078).<br>
 	]]>
 	</changes>
 	<extensions>

@@ -111,11 +111,11 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
 		if (workingDir != null) {
 			pb.directory(workingDir);
 		}
+		pb.redirectErrorStream(true);
 		Process proc = pb.start();
 
 		if (captureOutput) {
-			try (BufferedReader brErr = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-				BufferedReader brOut = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
+			try (BufferedReader brOut = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
 				String line;
 				boolean isOutput = false;
 				StringBuilder sb = new StringBuilder();
@@ -124,14 +124,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
 					sb.append('\n');	
 				}
 	
-				// Show any error messages
-				while ((line = brErr.readLine()) != null) {
-					View.getSingleton().getOutputPanel().append(line + "\n");
-					sb.append(line);	
-					sb.append('\n');	
-					isOutput = true;
-				}
-				// Show any stdout messages
+				// Show any stdout/error messages
 				while ((line = brOut.readLine()) != null) {
 					View.getSingleton().getOutputPanel().append(line + "\n");
 					sb.append(line);	
