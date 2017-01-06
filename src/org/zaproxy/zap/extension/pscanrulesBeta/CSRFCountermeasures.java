@@ -20,10 +20,12 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -104,8 +106,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 		
 		long start = System.currentTimeMillis();
 		
-		ExtensionAntiCSRF extAntiCSRF = 
-			(ExtensionAntiCSRF) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.NAME);
+		ExtensionAntiCSRF extAntiCSRF = getExtensionAntiCSRF();
 		
 		if (extAntiCSRF == null) {
 			return;
@@ -116,6 +117,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 		boolean foundCsrfToken = false;
 		
 		if (formElements != null && formElements.size() > 0) {
+			boolean hasSecurityAnnotation = false;
 			
 			// Loop through all of the FORM tags
 			logger.debug("Found " + formElements.size() + " forms");
@@ -125,8 +127,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 			int i = 1;
 			
 			List<String> ignoreList = new ArrayList<String>();
-			String ignoreConf = Model.getSingleton().getOptionsParam().getConfig().
-					getString("rules.csrf.ignorelist");
+			String ignoreConf = getCSRFIgnoreList();
 			if (ignoreConf != null && ignoreConf.length() > 0) {
 				logger.debug("Using ignore list: " + ignoreConf);
 				for (String str : ignoreConf.split(",")) {
@@ -136,6 +137,9 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 					}
 				}
 			}
+			String ignoreAttName = getCSRFIgnoreAttName();
+			String ignoreAttValue = getCSRFIgnoreAttValue();
+			
 			int ignoredForms = 0;
 			
 			for (Element formElement : formElements) {
@@ -152,6 +156,16 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				if (formOnIgnoreList(formElement, ignoreList)) {
 					ignoredForms++;
 					continue;
+				}
+				if (! StringUtils.isEmpty(ignoreAttName)) {
+					// Check to see if the specific security annotation is present
+					Attribute att = formElement.getAttributes().get(ignoreAttName);
+					if (att != null) {
+						if (StringUtils.isEmpty(ignoreAttValue) || ignoreAttValue.equals(att.getValue())) {
+							hasSecurityAnnotation = true;
+						}
+					}
+					
 				}
 				
 				List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
@@ -209,10 +223,15 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				String formDetails = sb.toString();
 				String tokenNamesFlattened = tokenNames.toString();
 				
+				int risk = Alert.RISK_LOW;
 				String desc = Constant.messages.getString("pscanbeta.noanticsrftokens.desc");
 				String extraInfo = Constant.messages.getString("pscanbeta.noanticsrftokens.alert.extrainfo", tokenNamesFlattened, formDetails);
+				if (hasSecurityAnnotation) {
+					risk = Alert.RISK_INFO;
+					extraInfo = Constant.messages.getString("pscanbeta.noanticsrftokens.extrainfo.annotation");
+				}
 				
-			    Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM,  getName());
+			    Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM,  getName());
 			    alert.setDetail(
 			    			desc + "\n"+getDescription(), 
 				    		msg.getRequestHeader().getURI().toString(),
@@ -291,6 +310,22 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
     		return sb.toString();
     	}
     	return "Failed to load vulnerability reference from file";
+    }
+
+    protected ExtensionAntiCSRF getExtensionAntiCSRF() {
+        return (ExtensionAntiCSRF) Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.NAME);
+    }
+
+    protected String getCSRFIgnoreList() {
+        return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignorelist");
+    }
+
+    protected String getCSRFIgnoreAttName() {
+        return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignore.attname", null);
+    }
+    
+    protected String getCSRFIgnoreAttValue() {
+        return Model.getSingleton().getOptionsParam().getConfig().getString("rules.csrf.ignore.attvalue", null);
     }
 
 }

@@ -25,10 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -49,6 +51,8 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	private static final int PLUGIN_ID = 20012;
 
 	private List<String> ignoreList = new ArrayList<String>();
+	private String ignoreAttName;
+	private String ignoreAttValue;
 	
 	// WASC Threat Classification (WASC-9)
 	private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
@@ -148,6 +152,8 @@ public class Csrftokenscan extends AbstractAppPlugin {
 				}
 			}
 		}
+		ignoreAttName = getConfig().getString("rules.csrf.ignore.attname");
+		ignoreAttValue = getConfig().getString("rules.csrf.ignore.attvalue");
 	}
 
 	/**
@@ -212,12 +218,19 @@ public class Csrftokenscan extends AbstractAppPlugin {
 					}
 					// If vulnerable, generates the alert
 					if (vuln) {
+						int risk = Alert.RISK_HIGH; 
 						String evidence = formElement.getFirstElement().getStartTag().toString();
-						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, 
+						String otherInfo = "";
+
+						if (formHasSecurityAnnotation(formElement)) {
+							risk = Alert.RISK_INFO;
+							otherInfo = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.annotation");
+						}
+						bingo(risk, Alert.CONFIDENCE_MEDIUM, 
 								getBaseMsg().getRequestHeader().getURI().toString(),
-								"",	// No param 
+								"", // No param 
 								"", // No attack
-								"", // No otherinfo
+								otherInfo,
 								evidence,
 								getBaseMsg());
 					}
@@ -244,6 +257,18 @@ public class Csrftokenscan extends AbstractAppPlugin {
 					log.debug("Ignoring form with name = " + name);
 				}
 				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean formHasSecurityAnnotation(Element formElement) {
+		if (! StringUtils.isEmpty(this.ignoreAttName)) {
+			Attribute att = formElement.getAttributes().get(this.ignoreAttName);
+			if (att != null) {
+				if (StringUtils.isEmpty(this.ignoreAttValue) || this.ignoreAttValue.equals(att.getValue())) {
+					return true;
+				}
 			}
 		}
 		return false;
