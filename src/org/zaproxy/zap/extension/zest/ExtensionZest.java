@@ -74,11 +74,14 @@ import org.mozilla.zest.core.v1.ZestVariables;
 import org.mozilla.zest.impl.ZestScriptEngineFactory;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
@@ -168,6 +171,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 		if (getView() != null) {
 			extensionHook.addProxyListener(this);
+			extensionHook.addSessionListener(new ViewSessionChangedListener());
 
 			extensionHook.getHookView().addStatusPanel(
 					this.getZestResultsPanel());
@@ -1805,5 +1809,29 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		return requests;
 	}
 
+	/**
+	 * A {@code SessionChangedListener} for view/UI related functionalities.
+	*/
+	private class ViewSessionChangedListener implements SessionChangedListener {
 
+		@Override
+		public void sessionAboutToChange(Session session) {
+			clearResults();
+		}
+
+		@Override
+		public void sessionChanged(Session session) {
+			// Nothing to do.
+		}
+
+		@Override
+		public void sessionModeChanged(Mode mode) {
+			// Nothing to do.
+		}
+
+		@Override
+		public void sessionScopeChanged(Session session) {
+			// Nothing to do.
+		}
+	}
 }
