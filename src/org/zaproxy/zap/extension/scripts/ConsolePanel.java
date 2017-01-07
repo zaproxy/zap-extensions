@@ -252,9 +252,14 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	protected OutputPanel getOutputPanel() {
 		if (outputPanel == null) {
 			outputPanel = new OutputPanel(extension);
-			outputPanel.append(Constant.messages.getString("scripts.welcome.results"));
+			resetOutputPanel();
 		}
 		return outputPanel;
+	}
+
+	protected void resetOutputPanel() {
+		outputPanel.clear();
+		outputPanel.append(Constant.messages.getString("scripts.welcome.results"));
 	}
 
 	public String getCommandScript() {

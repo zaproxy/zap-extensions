@@ -35,9 +35,12 @@ import javax.swing.tree.TreeCellRenderer;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
@@ -110,6 +113,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
 	    if (getView() != null) {
 	    	extensionHook.getHookView().addSelectPanel(getScriptsPanel());
+	    	extensionHook.addSessionListener(new ViewSessionChangedListener());
 	        extensionHook.getHookView().addWorkPanel(getConsolePanel());
 			extensionHook.getHookMenu().addPopupMenuItem(getPopupInvokeScriptWithNodeMenu());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupEnableDisableScript());
@@ -681,6 +685,32 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 			if (ExtensionScript.hasSameScriptEngine(scriptWrapper, scriptEngineWrapper)) {
 				displayType(scriptWrapper.getType());
 			}
+		}
+	}
+
+	/**
+	 * A {@code SessionChangedListener} for view/UI related functionalities.
+	 */
+	private class ViewSessionChangedListener implements SessionChangedListener {
+
+		@Override
+		public void sessionAboutToChange(Session session) {
+			getConsolePanel().resetOutputPanel();
+		}
+
+		@Override
+		public void sessionChanged(Session session) {
+			// Nothing to do.
+		}
+
+		@Override
+		public void sessionModeChanged(Mode mode) {
+			// Nothing to do.
+		}
+
+		@Override
+		public void sessionScopeChanged(Session session) {
+			// Nothing to do.
 		}
 	}
 }
