@@ -26,9 +26,9 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 /**
- * Unit test for {@link SetCookieUtils}.
+ * Unit test for {@link CookieUtils}.
  */
-public class SetCookieUtilsUnitTest {
+public class CookieUtilsUnitTest {
 
     private static final String EMPTY_HEADER_VALUE = "";
     private static final String EMPTY_ATTRIBUTE_NAME = "";
@@ -38,7 +38,7 @@ public class SetCookieUtilsUnitTest {
         // Given
         String headerValue = null;
         // When
-        SetCookieUtils.hasAttribute(headerValue, EMPTY_ATTRIBUTE_NAME);
+        CookieUtils.hasAttribute(headerValue, EMPTY_ATTRIBUTE_NAME);
         // Then = IllegalArgumentException
     }
 
@@ -47,7 +47,7 @@ public class SetCookieUtilsUnitTest {
         // Given
         String attributeName = null;
         // When
-        SetCookieUtils.hasAttribute(EMPTY_HEADER_VALUE, attributeName);
+        CookieUtils.hasAttribute(EMPTY_HEADER_VALUE, attributeName);
         // Then = IllegalArgumentException
     }
 
@@ -56,7 +56,7 @@ public class SetCookieUtilsUnitTest {
         // Given
         String headerValue = "Name=Value; Attribute1; Attribute2=AV2; ;;";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, EMPTY_ATTRIBUTE_NAME);
+        boolean found = CookieUtils.hasAttribute(headerValue, EMPTY_ATTRIBUTE_NAME);
         // Then
         assertThat(found, is(equalTo(false)));
     }
@@ -66,7 +66,7 @@ public class SetCookieUtilsUnitTest {
         // Given
         String attribute = "Attribute1";
         // When
-        boolean found = SetCookieUtils.hasAttribute(EMPTY_HEADER_VALUE, attribute);
+        boolean found = CookieUtils.hasAttribute(EMPTY_HEADER_VALUE, attribute);
         // Then
         assertThat(found, is(equalTo(false)));
     }
@@ -77,7 +77,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "Name=Value";
         String attribute = "Attribute1";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(false)));
     }
@@ -88,7 +88,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "=Value; Attribute1; Attribute2=AV2; ;;";
         String attribute = "Attribute1";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(false)));
     }
@@ -99,7 +99,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "Name; Attribute1; Attribute2=AV2; ;;";
         String attribute = "Attribute1";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(false)));
     }
@@ -110,7 +110,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "Attribute1=Value; Attribute2=AV2";
         String attribute = "Attribute1";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(false)));
     }
@@ -121,7 +121,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "Name=Attribute1; Attribute2=AV2";
         String attribute = "Attribute1";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(false)));
     }
@@ -132,7 +132,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "Name=Value; Attribute2=Attribute1";
         String attribute = "Attribute1";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(false)));
     }
@@ -143,7 +143,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "Cookie=Value; Attribute1; Attribute2=AV2";
         String attribute = "Attribute1";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(true)));
     }
@@ -154,7 +154,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "Cookie=; Attribute1; Attribute2=AV2";
         String attribute = "Attribute1";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(true)));
     }
@@ -165,7 +165,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "Cookie=Value; Attribute1; Attribute2=AV2";
         String attribute = "Attribute2";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(true)));
     }
@@ -176,7 +176,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "Cookie=Value; Attribute1;  Attribute2  =AV2";
         String attribute = "Attribute2";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(true)));
     }
@@ -187,7 +187,7 @@ public class SetCookieUtilsUnitTest {
         String headerValue = "Cookie=Value; Attribute1; Attribute2=AV2";
         String attribute = "aTtRiBuTe2";
         // When
-        boolean found = SetCookieUtils.hasAttribute(headerValue, attribute);
+        boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
         assertThat(found, is(equalTo(true)));
     }

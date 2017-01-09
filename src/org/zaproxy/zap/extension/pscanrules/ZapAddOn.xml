@@ -9,6 +9,7 @@
 	<![CDATA[
 	Correct evidence of alerts raised by scanner "Application Error Disclosure".<br>
 	Fixed some false positives caused by scanner "Private Address Disclosure".<br>
+	Add support for cookie ignore rule.<br>
 	]]>
 	</changes>
 	<extensions>

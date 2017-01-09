@@ -19,17 +19,21 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.parosproxy.paros.model.Model;
 
 /**
  * Utility class to extract/parse/check Set-Cookie header values.
  */
-class SetCookieUtils {
+class CookieUtils {
 
     private static final int NOT_FOUND = -1;
 
-    private SetCookieUtils() {
+    private CookieUtils() {
         // Utility class.
     }
 
@@ -162,5 +166,20 @@ class SetCookieUtils {
         if (parameter == null) {
             throw new IllegalArgumentException("The parameter " + name + " must not be null.");
         }
+    }
+    
+    public static Set<String> getCookieIgnoreList(Model model) {
+        Set<String> ignoreList = new HashSet<String>();
+        String ignoreConf = model.getOptionsParam().getConfig().
+                getString("rules.cookie.ignorelist");
+        if (ignoreConf != null && ignoreConf.length() > 0) {
+            for (String str : ignoreConf.split(",")) {
+                String strTrim = str.trim();
+                if (strTrim.length() > 0) {
+                    ignoreList.add(strTrim);
+                }
+            }
+        }
+        return ignoreList;
     }
 }

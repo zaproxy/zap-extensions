@@ -17,6 +17,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import net.htmlparser.jericho.Source;
@@ -24,6 +26,7 @@ import net.htmlparser.jericho.Source;
 import org.apache.commons.collections.iterators.IteratorChain;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -41,6 +44,7 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 	private static final String HTTP_ONLY_COOKIE_ATTRIBUTE = "HttpOnly";
 	
 	private PassiveScanThread parent = null;
+	private Model model = null;
 
 	@Override
 	public void setParent (PassiveScanThread parent) {
@@ -66,11 +70,15 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 		if (cookies2 != null) {
 			iterator.addIterator(cookies2.iterator());
 		}
+		
+		Set<String> ignoreList = CookieUtils.getCookieIgnoreList(getModel());
 
 		while (iterator.hasNext()) {
 			String headerValue = (String) iterator.next();
-			if (!SetCookieUtils.hasAttribute(headerValue, HTTP_ONLY_COOKIE_ATTRIBUTE)) {
-				this.raiseAlert(msg, id, headerValue);
+			if (!CookieUtils.hasAttribute(headerValue, HTTP_ONLY_COOKIE_ATTRIBUTE)) {
+				if (! ignoreList.contains(CookieUtils.getCookieName(headerValue))) {
+					this.raiseAlert(msg, id, headerValue);
+				}
 			}
 		}
 	}
@@ -81,11 +89,11 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 		    	alert.setDetail(
 		    		getDescription(), 
 		    		msg.getRequestHeader().getURI().toString(),
-		    		SetCookieUtils.getCookieName(headerValue), 
+		    		CookieUtils.getCookieName(headerValue), 
 		    		"", "",
 		    		getSolution(), 
 		            getReference(), 
-		            SetCookieUtils.getSetCookiePlusName(
+		            CookieUtils.getSetCookiePlusName(
 		            		msg.getResponseHeader().toString(), headerValue),
 		            16,	// CWE Id 16 - Configuration
 		            13,	// WASC Id - Info leakage
@@ -116,4 +124,19 @@ public class CookieHttpOnlyScanner extends PluginPassiveScanner {
 	private String getReference() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
+
+	private Model getModel() {
+		if (this.model == null) {
+			this.model = Model.getSingleton();
+		}
+		return this.model;
+	}
+
+	/*
+	 * Just for use in the unit tests
+	 */
+	protected void setModel(Model model) {
+		this.model = model;
+	}
+
 }
