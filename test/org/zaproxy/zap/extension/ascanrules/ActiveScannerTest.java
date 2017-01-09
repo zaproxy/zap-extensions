@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.testng.reporters.Files;
 import org.zaproxy.zap.extension.ScannerTestUtils;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 //import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ClassLoaderUtil;
 
@@ -248,4 +251,64 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Returns a {@code TechSet} with the given technologies.
+     *
+     * @param techs the technologies to be included in the {@code TechSet}.
+     * @return a {@code TechSet} with the given technologies.
+     */
+    protected TechSet techSet(Tech... techs) {
+        TechSet techSet = new TechSet();
+        if (techs == null || techs.length == 0) {
+            return techSet;
+        }
+
+        for (Tech tech : techs) {
+            techSet.include(tech);
+        }
+        return techSet;
+    }
+
+    /**
+     * Returns a {@code TechSet} with all technologies except the given ones.
+     *
+     * @param techs the technologies to be excluded from the {@code TechSet}.
+     * @return a {@code TechSet} without the given technologies.
+     */
+    protected TechSet techSetWithout(Tech... techs) {
+        TechSet techSet = new TechSet(TechSet.AllTech);
+        if (techs == null || techs.length == 0) {
+            return techSet;
+        }
+
+        for (Tech tech : techs) {
+            techSet.exclude(tech);
+        }
+        return techSet;
+    }
+
+    /**
+     * Returns the technologies of the given base type(s) (for example, {@link Tech#Db}).
+     *
+     * @param techs the base technology types to be included.
+     * @return the technologies of the given base type(s).
+     */
+    protected Tech[] techsOf(Tech... techs) {
+        if (techs == null || techs.length == 0) {
+            return new Tech[0];
+        }
+
+        List<Tech> techsWithParent = new ArrayList<>();
+        List<Tech> techList = Arrays.asList(techs);
+        for (Tech tech : Tech.builtInTech) {
+            Tech parentTech = tech.getParent();
+            if (parentTech != null && techList.contains(parentTech)) {
+                techsWithParent.add(tech);
+            }
+        }
+        techsWithParent.addAll(techList);
+        return techsWithParent.toArray(new Tech[techList.size()]);
+    }
+
 }

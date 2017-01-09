@@ -25,6 +25,8 @@ import static org.junit.Assert.assertThat;
 
 import org.apache.commons.configuration.Configuration;
 import org.junit.Test;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /**
@@ -37,6 +39,46 @@ public class CommandInjectionPluginUnitTest extends ActiveScannerTest<CommandInj
         CommandInjectionPlugin scanner = new CommandInjectionPlugin();
         scanner.setConfig(new ZapXmlConfiguration());
         return scanner;
+    }
+
+    @Test
+    public void shouldTargetLinuxTech() {
+        // Given
+        TechSet techSet = techSet(Tech.Linux);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldTargetMacOsTech() {
+        // Given
+        TechSet techSet = techSet(Tech.MacOS);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldTargetWindowsTech() {
+        // Given
+        TechSet techSet = techSet(Tech.Windows);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(true)));
+    }
+
+    @Test
+    public void shouldNotTargetNonLinuxMacOsWindowsTechs() {
+        // Given
+        TechSet techSet = techSetWithout(Tech.Linux, Tech.MacOS, Tech.Windows);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(false)));
     }
 
     @Test(expected = NullPointerException.class)
