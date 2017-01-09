@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -57,8 +58,6 @@ import difflib.Patch;
  * TODO: if the argument is reflected back in the HTML output, the
  * boolean based logic will not detect an alert (because the HTML results of
  * argument values "id=1" will not be the same as for "id=1 and 1=1") 
- * TODO: add"<param>*2/2" check to the Logic based ones (for integer parameter 
- * values).. if the result is the same, it might be a SQL Injection 
  * TODO: implement mode checks (Mode.standard, Mode.safe, Mode.protected) for 
  * 2.* using "implements SessionChangedListener"
  *
@@ -75,7 +74,15 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "ascanrules.testsqlinjection.";
-	
+
+	/**
+	* Did SQLInjection get found yet?
+	*/
+	private boolean sqlInjectionFoundForUrl = false;
+	private String sqlInjectionAttack = null;
+	private HttpMessage refreshedmessage = null;
+	private String mResBodyNormalUnstripped = null;
+	private String mResBodyNormalStripped = null;
 	//what do we do at each attack strength?
 	//(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
 	private boolean doSpecificErrorBased = false;
@@ -92,6 +99,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	private int doExpressionMaxRequests = 0;
 	private int doOrderByMaxRequests = 0;
 	//private int doStackedMaxRequests = 0;	//TODO: use in the stacked based implementation
+	//how many requests have we fired up?
+	private int countErrorBasedRequests = 0;
+	private int countExpressionBasedRequests = 0;
+	private int countBooleanBasedRequests = 0;
+	private	int countUnionBasedRequests = 0;
+	private	int countOrderByBasedRequests = 0;
+	//private int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
 	/**
 	 * generic one-line comment. Various RDBMS Documentation suggests that this
 	 * syntax works with almost every single RDBMS considered here
@@ -552,20 +566,20 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		//Note: the "value" we are passed here is escaped. we need to unescape it before handling it.
 		//as soon as we find a single SQL injection on the url, skip out. Do not look for SQL injection on a subsequent parameter on the same URL
 		//for performance reasons.
-		boolean sqlInjectionFoundForUrl = false;
-		String sqlInjectionAttack = null;
-		HttpMessage refreshedmessage = null;
-		String mResBodyNormalUnstripped = null;
-		String mResBodyNormalStripped = null;
+		//reinitialise each parameter.
+		sqlInjectionFoundForUrl = false;
+		sqlInjectionAttack = null;
+		refreshedmessage = null;
+		mResBodyNormalUnstripped = null;
+		mResBodyNormalStripped = null;
 
 		try {
 			//reinitialise the count for each type of request, for each parameter.  We will be sticking to limits defined in the attach strength logic
-			int countErrorBasedRequests = 0;
-			int countExpressionBasedRequests = 0;
-			int countBooleanBasedRequests = 0;
-			int countUnionBasedRequests = 0;
-			int countOrderByBasedRequests = 0;
-			//int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
+			countErrorBasedRequests = 0;
+			countExpressionBasedRequests = 0;
+			countBooleanBasedRequests = 0;
+			countUnionBasedRequests = 0;
+			countOrderByBasedRequests = 0;
 
 			//Check 1: Check for Error Based SQL Injection (actual error messages).
 			//for each SQL metacharacter combination to try
@@ -679,7 +693,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
 			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
 			mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
-
+			
 			if (!sqlInjectionFoundForUrl && doExpressionBased && countExpressionBasedRequests < doExpressionMaxRequests) {
 
 				//first figure out the type of the parameter.. 				
@@ -692,95 +706,44 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					if (this.debugEnabled) {
 						log.debug("The parameter value [" + origParamValue + "] is of type Integer");
 					}
-
-					//get a value 2 sizes bigger
-					int paramPlusTwo = paramAsInt + 2;
-					String modifiedParamValue = String.valueOf(paramPlusTwo) + "-2";
-
-					//and prepare a request to set the parameter value to a string value like "3-2", if the original parameter value was "1"
-					//those of you still paying attention will note that if handled as expressions (such as by a database), these represent the same value.
-					HttpMessage msg4 = getNewMsg();
-					setParameter(msg4, param, modifiedParamValue);
-
-					try {
-						sendAndReceive(msg4, false); //do not follow redirects
-					} catch (SocketException ex) {
-						if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-								" when accessing: " + msg4.getRequestHeader().getURI().toString());
-						return; //Something went wrong, no point continuing
-					}
-					countExpressionBasedRequests++;
-
-					String modifiedExpressionOutputUnstripped = msg4.getResponseBody().toString();
-					String modifiedExpressionOutputStripped = this.stripOff(modifiedExpressionOutputUnstripped, modifiedParamValue);
-
-					//set up two little arrays to ease the work of checking the unstripped output, and then the stripped output
-					String normalBodyOutput[] = {mResBodyNormalUnstripped, mResBodyNormalStripped};
-					String expressionBodyOutput[] = {modifiedExpressionOutputUnstripped, modifiedExpressionOutputStripped};
-					boolean strippedOutput[] = {false, true};
-
-					 for (int booleanStrippedUnstrippedIndex = 0; booleanStrippedUnstrippedIndex < 2 && !sqlInjectionFoundForUrl; booleanStrippedUnstrippedIndex++) {
-						//if the results of the modified request match the original query, we may be onto something. 
-						if (expressionBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) == 0) {
-							if (this.debugEnabled) {
-								log.debug("Check 4, " + (strippedOutput[booleanStrippedUnstrippedIndex] ? "STRIPPED" : "UNSTRIPPED") + " html output for modified expression parameter [" + modifiedParamValue + "] matched (refreshed) original results for " + refreshedmessage.getRequestHeader().getURI());
-							}
-							//confirm that a different parameter value generates different output, to minimise false positives
-
-							//get a value 3 sizes bigger this time
-							int paramPlusFour = paramAsInt + 3;
-							String modifiedParamValueConfirm = String.valueOf(paramPlusFour) + "-2";
-
-							//and prepare a request to set the parameter value to a string value like "4-2", if the original parameter value was "1"
-							//Note that the two values are NOT equivalent, and the param value is different to the original
-							HttpMessage msg4Confirm = getNewMsg();
-							setParameter(msg4Confirm, param, modifiedParamValueConfirm);
-
-							try {
-								sendAndReceive(msg4Confirm, false); //do not follow redirects
-							} catch (SocketException ex) {
-								if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-										" when accessing: " + msg4Confirm.getRequestHeader().getURI().toString());
-								continue; //Something went wrong, continue to the next item in the loop
-							}
-							countExpressionBasedRequests++;
-
-							String confirmExpressionOutputUnstripped = msg4Confirm.getResponseBody().toString();
-							String confirmExpressionOutputStripped = this.stripOff(confirmExpressionOutputUnstripped, modifiedParamValueConfirm);
-
-							//set up two little arrays to ease the work of checking the unstripped output or the stripped output
-							String confirmExpressionBodyOutput[] = {confirmExpressionOutputUnstripped, confirmExpressionOutputStripped};
-
-							if (confirmExpressionBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) != 0) {
-								//the confirm query did not return the same results.  This means that arbitrary queries are not all producing the same page output.
-								//this means the fact we earier reproduced the original page output with a modified parameter was not a coincidence
-
-								//Likely a SQL Injection. Raise it
-								String extraInfo = null;
-								if (strippedOutput[booleanStrippedUnstrippedIndex]) {
-									extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "");
-								} else {
-									extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "NOT ");
-								}
-
-								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
-								sqlInjectionAttack = modifiedParamValue;
-								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(),
-										null, //url
-										param, sqlInjectionAttack,
-										extraInfo, getSolution(), "", msg4);
-
-								sqlInjectionFoundForUrl = true;
-							}
-						}
+					// This check is implemented using two variant PLUS(+) and MULT(*)
+					try{
+						// PLUS variant check the param value "3-2" gives same result as original request and param value "4-2" gives different result if original param value is 1
+						//set the parameter value to a string value like "3-2", if the original parameter value was "1"
+						int paramPlusTwo = addWithOverflowCheck(paramAsInt, 2);
+						String modifiedParamValueForAdd = String.valueOf(paramPlusTwo) + "-2";
+						//set the parameter value to a string value like "4-2", if the original parameter value was "1"
+						int paramPlusThree = addWithOverflowCheck(paramAsInt, 3);
+						String modifiedParamValueConfirmForAdd = String.valueOf(paramPlusThree) + "-2";
+						//Do the attack for ADD variant
+						expressionBasedAttack(param, modifiedParamValueForAdd, modifiedParamValueConfirmForAdd);
 						//bale out if we were asked nicely
-						if (isStop()) { 
+						if (isStop()) {
 							log.debug("Stopping the scan due to a user request");
 							return;
 						}
+						// MULT variant check the param value "2/2" gives same result as original request and param value "4/2" gives different result if original param value is 1
+						if (!sqlInjectionFoundForUrl && countExpressionBasedRequests < doExpressionMaxRequests){
+							//set the parameter value to a string value like "2/2", if the original parameter value was "1"
+							int paramMultTwo = multiplyWithOverflowCheck(paramAsInt, 2);
+							String modifiedParamValueForMult = String.valueOf(paramMultTwo) + "/2";
+							//set the parameter value to a string value like "4/2", if the original parameter value was "1"
+							int paramMultFour = multiplyWithOverflowCheck(paramAsInt, 4);
+							String modifiedParamValueConfirmForMult = String.valueOf(paramMultFour) + "/2";
+							//Do the attack for MULT variant
+							expressionBasedAttack(param, modifiedParamValueForMult, modifiedParamValueConfirmForMult);
+							//bale out if we were asked nicely
+							if (isStop()) {
+								log.debug("Stopping the scan due to a user request");
+								return;
+							}
+						}
+					} catch (ArithmeticException ex){
+						if (this.debugEnabled) {
+							log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + "When performing integer math with the parameter value [" + origParamValue + "]");
+						}
 					}
 				} catch (Exception e) {
-
 					if (this.debugEnabled) {
 						log.debug("The parameter value [" + origParamValue + "] is NOT of type Integer");
 					}
@@ -1401,6 +1364,85 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		return false;
 	}
 
+	private void expressionBasedAttack(String param, String modifiedParamValue, String modifiedParamValueConfirm) throws IOException {
+		//those of you still paying attention will note that if handled as expressions (such as by a database), these represent the same value.
+		HttpMessage msg = getNewMsg();
+		setParameter(msg, param, modifiedParamValue);
+
+		try {
+			sendAndReceive(msg, false); //do not follow redirects
+		} catch (SocketException ex) {
+			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
+					" when accessing: " + msg.getRequestHeader().getURI().toString());
+			return; //Something went wrong, no point continuing
+		}
+		countExpressionBasedRequests++;
+
+		String modifiedExpressionOutputUnstripped = msg.getResponseBody().toString();
+		String modifiedExpressionOutputStripped = this.stripOff(modifiedExpressionOutputUnstripped, modifiedParamValue);
+
+		//set up little arrays to ease the work of checking the unstripped output, and then the stripped output
+		String normalBodyOutput[] = {mResBodyNormalUnstripped, mResBodyNormalStripped};
+		String expressionBodyOutput[] = {modifiedExpressionOutputUnstripped, modifiedExpressionOutputStripped};
+		boolean strippedOutput[] = {false, true};
+
+		for (int booleanStrippedUnstrippedIndex = 0; booleanStrippedUnstrippedIndex < 2 && !sqlInjectionFoundForUrl && countExpressionBasedRequests < doExpressionMaxRequests; booleanStrippedUnstrippedIndex++) {
+			//if the results of the modified request match the original query, we may be onto something.
+			if (expressionBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) == 0) {
+				if (this.debugEnabled) {
+					log.debug("Check 4, " + (strippedOutput[booleanStrippedUnstrippedIndex] ? "STRIPPED" : "UNSTRIPPED") + " html output for modified expression parameter [" + modifiedParamValue + "] matched (refreshed) original results for " + refreshedmessage.getRequestHeader().getURI());
+				}
+				//confirm that a different parameter value generates different output, to minimise false positives
+				//this time param value will be different to original value and mismatch is expected in responses of original and this value
+				//Note that the two values are NOT equivalent, and the param value is different to the original
+				HttpMessage msgConfirm = getNewMsg();
+				setParameter(msgConfirm, param, modifiedParamValueConfirm);
+
+				try {
+					sendAndReceive(msgConfirm, false); //do not follow redirects
+				} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
+							" when accessing: " + msgConfirm.getRequestHeader().getURI().toString());
+					continue; //Something went wrong, continue to the next item in the loop
+				}
+				countExpressionBasedRequests++;
+
+				String confirmExpressionOutputUnstripped = msgConfirm.getResponseBody().toString();
+				String confirmExpressionOutputStripped = this.stripOff(confirmExpressionOutputUnstripped, modifiedParamValueConfirm);
+
+				//set up two little arrays to ease the work of checking the unstripped output or the stripped output
+				String confirmExpressionBodyOutput[] = {confirmExpressionOutputUnstripped, confirmExpressionOutputStripped};
+
+				if (confirmExpressionBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) != 0) {
+					//the confirm query did not return the same results.  This means that arbitrary queries are not all producing the same page output.
+					//this means the fact we earier reproduced the original page output with a modified parameter was not a coincidence
+
+					//Likely a SQL Injection. Raise it
+					String extraInfo = null;
+					if (strippedOutput[booleanStrippedUnstrippedIndex]) {
+						extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "");
+					} else {
+						extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "NOT ");
+					}
+
+					//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
+					sqlInjectionAttack = modifiedParamValue;
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(),
+							null, //url
+							param, sqlInjectionAttack,
+							extraInfo, getSolution(), "", msg);
+					// SQL Injection has been found
+					sqlInjectionFoundForUrl = true;
+					return;
+				}
+			}
+			//bale out if we were asked nicely
+			if (isStop()) {
+				return;
+			}
+		}
+	}
+
 	@Override
 	public int getRisk() {
 		return Alert.RISK_HIGH;
@@ -1449,6 +1491,40 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			return msg;
 		}
 		return result;
+	}
+
+	//TODO:replace addWithOverflowCheck method with Math.addExact when targeting JAVA 8
+	/**
+	* add two numbers with Arithmetic Overflow check
+	* @param firstNumber
+	* @param secondNumber
+	* @return
+	*/
+	private static int addWithOverflowCheck(int firstNumber, int secondNumber) {
+	    long result = ((long) firstNumber) + ((long) secondNumber);
+	    if (result > Integer.MAX_VALUE) {
+	         throw new ArithmeticException("Overflow occurred");
+	    } else if (result < Integer.MIN_VALUE) {
+	         throw new ArithmeticException("Underflow occurred");
+	    }
+	    return (int) result;
+	}
+
+	//TODO:replace multiplyWithOverflowCheck method with Math.multiplyExact when targeting JAVA 8
+	/**
+	* multiply two numbers with Arithmetic Overflow check
+	* @param firstNumber
+	* @param secondNumber
+	* @return
+	*/
+	private static int multiplyWithOverflowCheck(int firstNumber, int secondNumber) {
+	    long result = ((long) firstNumber) * ((long) secondNumber);
+	    if (result > Integer.MAX_VALUE) {
+	         throw new ArithmeticException("Overflow occurred");
+	    } else if (result < Integer.MIN_VALUE) {
+	         throw new ArithmeticException("Underflow occurred");
+	    }
+	    return (int) result;
 	}
 
 	@Override
