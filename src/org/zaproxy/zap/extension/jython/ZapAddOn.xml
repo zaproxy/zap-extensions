@@ -5,7 +5,7 @@
 	<description>Allows Python to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Add HTTP Sender template script.</changes>
+	<changes>add the python module path interface</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jython.ExtensionJython</extension>
 	</extensions>

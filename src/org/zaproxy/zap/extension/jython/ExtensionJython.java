@@ -29,14 +29,19 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.OptionsChangedListener;
+import org.parosproxy.paros.model.OptionsParam;
+import org.python.core.Py;
+import org.python.google.common.base.Strings;
 import org.python.jsr223.PyScriptEngineFactory;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 
-public class ExtensionJython extends ExtensionAdaptor {
+public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedListener {
 
 	public static final String NAME = "ExtensionJython";
 	public static final ImageIcon PYTHON_ICON = new ImageIcon(
@@ -51,6 +56,8 @@ public class ExtensionJython extends ExtensionAdaptor {
 	}
 
 	private ExtensionScript extScript = null;
+	private JythonOptionsParam jythonOptionsParam;
+	private String modulePath;
 
 	public ExtensionJython() {
 		super(NAME);
@@ -69,6 +76,43 @@ public class ExtensionJython extends ExtensionAdaptor {
 		if (se == null) {
 			PyScriptEngineFactory factory = new PyScriptEngineFactory();
 			this.getExtScript().registerScriptEngineWrapper(new JythonEngineWrapper(factory.getScriptEngine()));
+		}
+		
+		this.jythonOptionsParam = new JythonOptionsParam();
+		extensionHook.addOptionsParamSet(this.jythonOptionsParam);
+		if (null != super.getView()) {
+			extensionHook.getHookView().addOptionPanel(new JythonOptionsPanel());
+		}
+		
+		extensionHook.addOptionsChangedListener(this);
+	}
+	
+	@Override
+	public void optionsLoaded() {
+		super.optionsLoaded();
+
+		this.modulePath = this.jythonOptionsParam.getModulePath();
+		if (!Strings.isNullOrEmpty(this.modulePath)) {
+			Py.getSystemState().path.add(this.modulePath);
+		}
+	}
+	
+	@Override
+	public void optionsChanged(OptionsParam optionsParam) {
+		if (StringUtils.equals(this.modulePath, this.jythonOptionsParam.getModulePath())) {
+			// not changed. nothing to do.
+			return;
+		}
+		
+		// remove the old path
+		if (!Strings.isNullOrEmpty(this.modulePath)) {
+			Py.getSystemState().path.remove(this.modulePath);
+		}
+
+		// add the new path
+		this.modulePath = this.jythonOptionsParam.getModulePath();
+		if (!Strings.isNullOrEmpty(this.modulePath)) {
+			Py.getSystemState().path.add(this.modulePath);
 		}
 	}
 
