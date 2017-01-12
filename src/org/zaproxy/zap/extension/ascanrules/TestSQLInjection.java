@@ -55,9 +55,6 @@ import difflib.Patch;
  * result. Use the following variables: doStackedBased, doStackedMaxRequests,
  * countStackedBasedRequests 
  * TODO: change the Alert Titles. 
- * TODO: if the argument is reflected back in the HTML output, the
- * boolean based logic will not detect an alert (because the HTML results of
- * argument values "id=1" will not be the same as for "id=1 and 1=1") 
  * TODO: implement mode checks (Mode.standard, Mode.safe, Mode.protected) for 
  * 2.* using "implements SessionChangedListener"
  *
