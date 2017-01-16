@@ -31,6 +31,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketObserver;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
+import org.zaproxy.zap.extension.websocket.WebSocketProxy.Initiator;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
 
@@ -70,7 +71,7 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
     		throw new IllegalArgumentException(Constant.messages.getString("websocket.manual_send.fail.invalid_direction_client_mode") 
     				+ " " + Constant.messages.getString("websocket.manual_send.fail"));
     	}
-    	wsProxy.sendAndNotify(websocketMessage);
+    	wsProxy.sendAndNotify(websocketMessage, Initiator.MANUAL_REQUEST);
     }
     
     @Override

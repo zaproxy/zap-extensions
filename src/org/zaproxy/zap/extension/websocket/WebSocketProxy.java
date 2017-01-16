@@ -24,12 +24,13 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -62,14 +63,39 @@ public abstract class WebSocketProxy {
 	}
 	
 	/**
+	 * WebSocket frame initiator
+	 */
+	public enum Initiator {
+		PROXY(1), FUZZER(4), MANUAL_REQUEST(6);
+		
+		/**
+		 * compatible value to HttpSender.XXX_INITIATOR
+		 */
+		private int intValue;
+		
+		private Initiator(int intValue){
+			this.intValue = intValue;
+		}
+		
+		public int getIntValue() {
+			return this.intValue;
+		}
+	}
+	
+	/**
 	 * To ease identification of different WebSocket connections.
 	 */
 	private static AtomicInteger channelIdGenerator = new AtomicInteger(0);
 
 	/**
-	 * Used to determine when to call which {@link WebSocketObserver}.
+	 * Used to determine the order to call each {@link WebSocketObserver}.
 	 */
 	private static Comparator<WebSocketObserver> observersComparator;
+	
+	/**
+	 * Used to determine the order to call each {@link WebSocketSenderListener}.
+	 */
+	private static Comparator<WebSocketSenderListener> senderListenersComparator;
 	
 	/**
 	 * State of this channel, start in {@link State#CONNECTING} and evolve over
@@ -118,7 +144,12 @@ public abstract class WebSocketProxy {
 	/**
 	 * List of observers, that are informed of in- or outgoing messages.
 	 */
-	private Vector<WebSocketObserver> observerList;
+	private List<WebSocketObserver> observerList;
+	
+	/**
+	 * List of sender listeners, that are informed of in- or outgoing messages.
+	 */
+	private List<WebSocketSenderListener> senderListenerList;
 
 	/**
 	 * Contains link to handshake message.
@@ -266,7 +297,8 @@ public abstract class WebSocketProxy {
 		this.remoteSocket = remoteSocket;
 		
 		unfinishedMessages = new HashMap<>();
-		observerList = new Vector<>();
+		observerList = new ArrayList<>();
+		senderListenerList = new ArrayList<>();
 		
 		// create unique identifier for this WebSocket connection
 		channelId = channelIdGenerator.incrementAndGet();
@@ -303,6 +335,7 @@ public abstract class WebSocketProxy {
 		if (!isForwardOnly) {
 			notifyStateObservers(state);
 		}
+		notifyStateSenderListeners(state);
 	}
 
 	/**
@@ -527,6 +560,7 @@ public abstract class WebSocketProxy {
 		// as messages might have several MegaBytes!
 		if (isForwardOnly || notifyMessageObservers(message)) {
 			// skip forwarding only if observer told us to skip this message (frame)
+			notifyMessageSenderListeners(message, Initiator.PROXY);
 			message.forward(out);
 		}	
 	}
@@ -549,6 +583,7 @@ public abstract class WebSocketProxy {
 				logger.warn("Ignore observer's wish to skip forwarding as we have received an invalid frame!");
 			}
 		}
+		notifyMessageSenderListeners(message, Initiator.PROXY);
 		message.forward(out);
 	}
 
@@ -703,6 +738,67 @@ public abstract class WebSocketProxy {
 			};
 		}
 	}
+	
+	/**
+	 * Call each sender listener.
+	 * <p>
+	 * Call this helper always regardless of the value of {@link WebSocketProxy#isForwardOnly}.
+	 * 
+	 * @param message
+	 * @param initiator
+	 */
+	protected void notifyMessageSenderListeners(WebSocketMessage message, Initiator initiator) {
+		for (WebSocketSenderListener senderListener : senderListenerList) {
+			try {
+				senderListener.onMessageFrame(channelId, message, initiator);
+			} catch (Exception e) {
+				logger.warn(e.getMessage(), e);
+			}
+		}
+	}
+	
+	/**
+	 * Helper to inform about new {@link WebSocketProxy#state}. 
+	 * <p>
+	 * Call this helper always regardless of the value of {@link WebSocketProxy#isForwardOnly}.
+	 */
+	protected void notifyStateSenderListeners(State state) {
+		for (WebSocketSenderListener senderListener : senderListenerList) {
+			senderListener.onStateChange(state, this);
+		}
+	}
+	
+	/**
+	 * Add sender listener that gets informed about in- & outgoing messages.
+	 * 
+	 * @param senderListener
+	 */
+	public void addSenderListener(WebSocketSenderListener senderListener) {
+		senderListenerList.add(senderListener);
+		Collections.sort(senderListenerList, getSenderListenersComparator());
+	}
+	
+	/**
+	 * Stop getting informed about in- & outgoing messages.
+	 * 
+	 * @param senderListener
+	 */
+	public void removeSenderListener(WebSocketSenderListener senderListener) {
+		senderListenerList.remove(senderListener);
+	}
+	
+	private static synchronized Comparator<WebSocketSenderListener> getSenderListenersComparator(){
+		if (null == senderListenersComparator) {
+			senderListenersComparator = new Comparator<WebSocketSenderListener>() {
+				@Override
+				public int compare(WebSocketSenderListener o1, WebSocketSenderListener o2) {
+					return Integer.compare(o1.getListenerOrder(), o2.getListenerOrder());
+				}
+			};
+		}
+		
+		return senderListenersComparator;
+	}
 
 	public int getChannelId() {
 		return channelId;
@@ -752,6 +848,7 @@ public abstract class WebSocketProxy {
 	 * @param msg
 	 * @throws IOException
 	 */
+	@Deprecated
 	public void sendAndNotify(WebSocketMessageDTO msg) throws IOException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("sending custom message");
@@ -772,7 +869,38 @@ public abstract class WebSocketProxy {
 			notifyMessageObservers(message);
 		}
 	}
+	
+	/**
+	 * Sends a custom message and informs {@link WebSocketObserver} instances of
+	 * this new message.
+	 * 
+	 * @param msg
+	 * @param initiator
+	 * @throws IOException
+	 */
+	public void sendAndNotify(WebSocketMessageDTO msg, Initiator initiator) throws IOException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("sending custom message");
+		}
+		WebSocketMessage message = createWebSocketMessage(msg);
+		
+		OutputStream out;
+		if (msg.isOutgoing) {
+			// an outgoing message is caught by the local listener
+			// and forwarded to its output stream
+			out = localListener.getOutputStream();
+		} else {
+			// an incoming message is caught by the remote listener
+			out = remoteListener.getOutputStream();
+		}
+	
+		notifyMessageSenderListeners(message, initiator);
+		if (message.forward(out)) {
+			notifyMessageObservers(message);
+		}
+	}
 
+	@Deprecated
 	public boolean send(WebSocketMessageDTO msg) throws IOException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("sending custom message");
@@ -789,6 +917,26 @@ public abstract class WebSocketProxy {
 			out = remoteListener.getOutputStream();
 		}
 
+		return message.forward(out);
+	}
+	
+	public boolean send(WebSocketMessageDTO msg, Initiator initiator) throws IOException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("sending custom message");
+		}
+		WebSocketMessage message = createWebSocketMessage(msg);
+
+		OutputStream out;
+		if (msg.isOutgoing) {
+			// an outgoing message is caught by the local listener
+			// and forwarded to its output stream
+			out = localListener.getOutputStream();
+		} else {
+			// an incoming message is caught by the remote listener
+			out = remoteListener.getOutputStream();
+		}
+
+		notifyMessageSenderListeners(message, initiator);
 		return message.forward(out);
 	}
 

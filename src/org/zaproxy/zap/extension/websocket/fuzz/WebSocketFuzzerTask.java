@@ -27,6 +27,7 @@ import org.zaproxy.zap.extension.fuzz.AbstractFuzzerTask;
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
+import org.zaproxy.zap.extension.websocket.WebSocketProxy.Initiator;
 
 public class WebSocketFuzzerTask extends AbstractFuzzerTask<WebSocketMessageDTO> {
 
@@ -66,7 +67,7 @@ public class WebSocketFuzzerTask extends AbstractFuzzerTask<WebSocketMessageDTO>
             WebSocketProxy wsProxy = wsProxies.get(message.channel.id);
 
             message.fuzzId = getParent().getId();
-            if (wsProxy.send(message)) {
+            if (wsProxy.send(message, Initiator.FUZZER)) {
                 message.state = WebSocketFuzzMessageDTO.State.SUCCESSFUL;
             } else {
                 message.state = WebSocketFuzzMessageDTO.State.ERROR;
