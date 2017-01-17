@@ -32,6 +32,7 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -126,7 +127,8 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 					raiseAlert(VulnType.HSTS_MALFORMED_MAX_AGE, stsOption.get(0), msg, id);
 				}
 			}
-		} else if (stsOption != null && !stsOption.isEmpty()) { //isSecure is false at this point
+		} else if (this.getLevel().equals(AlertThreshold.LOW) && stsOption != null && !stsOption.isEmpty()) { 
+			//isSecure is false at this point
 			//HSTS Header found on non-HTTPS response (technically there could be more than one 
 			//but we only care that there is one or more)
 			raiseAlert(VulnType.HSTS_ON_PLAIN_RESP, stsOption.get(0), msg, id);

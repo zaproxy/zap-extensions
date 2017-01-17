@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>12</version>
+	<version>13</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-		Refactoring the x-powered-by scanner to raise one alert if it finds repetitive headers.<br>
-		Update the CSP scanner to handle the Content-Security-Policy-Report-Only header.<br>
+		Issue 3148: Only report HSTS on plain HTTP issue at Low threshold.
 	]]>
 	</changes>
 	<extensions>
