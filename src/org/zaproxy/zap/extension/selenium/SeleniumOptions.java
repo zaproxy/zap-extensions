@@ -34,7 +34,8 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
  * It allows to change, programmatically, the following options:
  * <ul>
  * <li>The path to ChromeDriver;</li>
- * <li>The path to Firefox binary.</li>
+ * <li>The path to Firefox binary;</li>
+ * <li>The path to Firefox driver (geckodriver);</li>
  * <li>The path to IEDriverServer;</li>
  * <li>The path to PhantomJS binary.</li>
  * </ul>
@@ -46,6 +47,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     public static final String CHROME_DRIVER_SYSTEM_PROPERTY = ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY;
     public static final String FIREFOX_BINARY_SYSTEM_PROPERTY = "zap.selenium.webdriver.firefox.bin";
+    public static final String FIREFOX_DRIVER_SYSTEM_PROPERTY = "webdriver.gecko.driver";
     public static final String IE_DRIVER_SYSTEM_PROPERTY = InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY;
     public static final String PHANTOM_JS_BINARY_SYSTEM_PROPERTY = PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
 
@@ -83,6 +85,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
     private static final String FIREFOX_BINARY_KEY = SELENIUM_BASE_KEY + ".firefoxBinary";
 
     /**
+     * The configuration key to read/write the path Firefox driver (geckodriver).
+     */
+    private static final String FIREFOX_DRIVER_KEY = SELENIUM_BASE_KEY + ".firefoxDriver";
+
+    /**
      * The configuration key to read/write the path to IEDriverServer.
      */
     private static final String IE_DRIVER_KEY = SELENIUM_BASE_KEY + ".ieDriver";
@@ -101,6 +108,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
      * The path to Firefox binary.
      */
     private String firefoxBinaryPath = "";
+
+    /**
+     * The path to Firefox driver (geckodriver).
+     */
+    private String firefoxDriverPath = "";
 
     /**
      * The path to IEDriverServer.
@@ -128,6 +140,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
     protected void parseImpl() {
         chromeDriverPath = readSystemPropertyWithOptionFallback(CHROME_DRIVER_SYSTEM_PROPERTY, CHROME_DRIVER_KEY);
         firefoxBinaryPath = readSystemPropertyWithOptionFallback(FIREFOX_BINARY_SYSTEM_PROPERTY, FIREFOX_BINARY_KEY);
+        firefoxDriverPath = readSystemPropertyWithOptionFallback(FIREFOX_DRIVER_SYSTEM_PROPERTY, FIREFOX_DRIVER_KEY);
         ieDriverPath = readSystemPropertyWithOptionFallback(IE_DRIVER_SYSTEM_PROPERTY, IE_DRIVER_KEY);
         phantomJsBinaryPath = readSystemPropertyWithOptionFallback(PHANTOM_JS_BINARY_SYSTEM_PROPERTY, PHANTOM_JS_BINARY_KEY);
     }
@@ -226,6 +239,31 @@ public class SeleniumOptions extends VersionedAbstractParam {
             this.firefoxBinaryPath = firefoxBinaryPath;
 
             saveAndSetSystemProperty(FIREFOX_BINARY_KEY, FIREFOX_BINARY_SYSTEM_PROPERTY, firefoxBinaryPath);
+        }
+    }
+
+    /**
+     * Gets the path to Firefox driver (geckodriver).
+     *
+     * @return the path to Firefox driver, or empty if not set.
+     */
+    public String getFirefoxDriverPath() {
+        return firefoxDriverPath;
+    }
+
+    /**
+     * Sets the path to Firefox driver (geckodriver).
+     *
+     * @param firefoxDriverPath the path to Firefox driver, or empty if not known.
+     * @throws IllegalArgumentException if {@code firefoxDriverPath} is {@code null}.
+     */
+    public void setFirefoxDriverPath(String firefoxDriverPath) {
+        Validate.notNull(firefoxDriverPath, "Parameter firefoxDriverPath must not be null.");
+
+        if (!this.firefoxDriverPath.equals(firefoxDriverPath)) {
+            this.firefoxDriverPath = firefoxDriverPath;
+
+            saveAndSetSystemProperty(FIREFOX_DRIVER_KEY, FIREFOX_DRIVER_SYSTEM_PROPERTY, firefoxDriverPath);
         }
     }
 
