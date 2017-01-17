@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Improve error handling in some scanners.<br>
+	Add MsSQL specific Injection scanner.<br>
   	]]>
 	</changes>
 	<extensions>
@@ -26,6 +27,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SlackerCookieDetector</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureFileInclusion</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SourceCodeDisclosureGit</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionMsSQL</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionSQLite</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestUserAgent</ascanrule>
 	</ascanrules>
