@@ -9,6 +9,7 @@
 	<![CDATA[
 	Fix FP in "Source Code Disclosure - /WEB-INF folder" on successful responses (Issue 3048).<br>
 	Fix FP in "Integer Overflow Error" on 500 error responses (Issue 3064).<br>
+	Support security annotations for forms that dont need anti-CSRF tokens.<br>
     ]]>
 	</changes>
 	<extensions>
