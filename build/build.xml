@@ -539,7 +539,7 @@
 				<!-- Add the extra classes required -->
 				<jar jarfile="${dist}/${file}" update="true" compress="true">
 					<zipfileset dir="${build}" prefix="">
-						<include name="org/openqa/selenium/phantomjs/**"/>
+						<include name="org/openqa/selenium/**"/>
 					</zipfileset>
 				</jar>
 			</build-addon>

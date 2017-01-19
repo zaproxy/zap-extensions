@@ -29,6 +29,7 @@ import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.MarionetteDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
@@ -41,6 +42,8 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.api.API;
+
+import com.google.gson.JsonObject;
 
 /**
  * An {@code Extension} that provides {@code WebDriver} implementations for several {@code Browser}s.
@@ -238,6 +241,47 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         case CHROME:
             return new ChromeDriver(capabilities);
         case FIREFOX:
+            String geckoDriver = System.getProperty(SeleniumOptions.FIREFOX_DRIVER_SYSTEM_PROPERTY);
+            if (geckoDriver != null && !geckoDriver.isEmpty()) {
+                capabilities.setCapability("marionette", Boolean.TRUE);
+
+                JsonObject prefs = new JsonObject();
+                prefs.addProperty("network.proxy.no_proxies_on", "");
+
+                // Since Firefox 53 (in desired capabilities), https://bugzilla.mozilla.org/show_bug.cgi?id=1282873
+                if (proxyAddress != null) {
+                    JsonObject json = new JsonObject();
+                    json.addProperty("proxyType", "manual");
+                    json.addProperty("httpProxy", proxyAddress);
+                    json.addProperty("httpProxyPort", proxyPort);
+                    json.addProperty("sslProxy", proxyAddress);
+                    json.addProperty("sslProxyPort", proxyPort);
+
+                    capabilities.setCapability("proxy", json);
+                }
+                // For now set (also) the preferences manually...
+                prefs.addProperty("network.proxy.type", 1);
+                prefs.addProperty("network.proxy.http", proxyAddress);
+                prefs.addProperty("network.proxy.http_port", proxyPort);
+                prefs.addProperty("network.proxy.ssl", proxyAddress);
+                prefs.addProperty("network.proxy.ssl_port", proxyPort);
+                prefs.addProperty("network.proxy.share_proxy_settings", Boolean.TRUE);
+
+                JsonObject options = new JsonObject();
+                options.add("prefs", prefs);
+
+                String binaryPath = System.getProperty(SeleniumOptions.FIREFOX_BINARY_SYSTEM_PROPERTY);
+                if (binaryPath != null && !binaryPath.isEmpty()) {
+                    options.addProperty("binary", binaryPath);
+                }
+                capabilities.setCapability("moz:firefoxOptions", options);
+
+                // Since Firefox 53, https://bugzilla.mozilla.org/show_bug.cgi?id=1103196
+                capabilities.setCapability("acceptInsecureCerts", true);
+
+                return new MarionetteDriver(capabilities);
+            }
+
             String binaryPath = System.getProperty(SeleniumOptions.FIREFOX_BINARY_SYSTEM_PROPERTY);
             if (binaryPath != null && !binaryPath.isEmpty()) {
                 capabilities.setCapability(FirefoxDriver.BINARY, binaryPath);
