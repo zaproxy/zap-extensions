@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +43,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.Version;
+import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.api.API;
 
 import com.google.gson.JsonObject;
@@ -69,6 +72,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     private SeleniumOptionsPanel optionsPanel;
 
     private SeleniumAPI seleniumApi;
+
+    private AddonFilesChangedListener addonFilesChangedListener;
 
     /**
      * A list containing all supported browsers by this extension.
@@ -103,6 +108,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         super.init();
 
         seleniumApi = new SeleniumAPI(getOptions());
+        addonFilesChangedListener = new AddonFilesChangedListenerImpl();
     }
 
     @Override
@@ -110,6 +116,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(getOptions());
+        extensionHook.addAddonFilesChangedListener(addonFilesChangedListener);
 
         if (getView() != null) {
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
@@ -351,19 +358,62 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         // No configurations, just install the browser or
         // browser plugins to work properly
         browsers.add(Browser.HTML_UNIT);
-        browsers.add(Browser.FIREFOX);
         browsers.add(Browser.OPERA);
         browsers.add(Browser.SAFARI);
+        // Requires drivers, but hopefully they are already provided.
+        browsers.add(Browser.CHROME);
+        browsers.add(Browser.INTERNET_EXPLORER);
+        browsers.add(Browser.FIREFOX);
 
-        if (!getOptions().getChromeDriverPath().isEmpty()) {
-            browsers.add(Browser.CHROME);
-        }
-        if (!getOptions().getIeDriverPath().isEmpty()) {
-            browsers.add(Browser.INTERNET_EXPLORER);
-        }
         if (!getOptions().getPhantomJsBinaryPath().isEmpty()) {
             browsers.add(Browser.PHANTOM_JS);
         }
         return browsers;
+    }
+
+    private class AddonFilesChangedListenerImpl implements AddonFilesChangedListener {
+
+        @Override
+        public void filesAdded() {
+            if (getOptions().getChromeDriverPath().isEmpty()) {
+                String path = Browser.getBundledWebDriverPath(Browser.CHROME);
+                if (path != null) {
+                    getOptions().setChromeDriverPath(path);
+                }
+            }
+
+            if (getOptions().getFirefoxDriverPath().isEmpty()) {
+                String path = Browser.getBundledWebDriverPath(Browser.FIREFOX);
+                if (path != null) {
+                    getOptions().setFirefoxDriverPath(path);
+                }
+            }
+
+            if (getOptions().getIeDriverPath().isEmpty()) {
+                String path = Browser.getBundledWebDriverPath(Browser.INTERNET_EXPLORER);
+                if (path != null) {
+                    getOptions().setIeDriverPath(path);
+                }
+            }
+        }
+
+        @Override
+        public void filesRemoved() {
+            if (Browser.isBundledWebDriverPath(getOptions().getChromeDriverPath())
+                    && Files.notExists(Paths.get(getOptions().getChromeDriverPath()))) {
+                getOptions().setChromeDriverPath("");
+            }
+
+            if (Browser.isBundledWebDriverPath(getOptions().getFirefoxDriverPath())
+                    && Files.notExists(Paths.get(getOptions().getFirefoxDriverPath()))) {
+                getOptions().setFirefoxDriverPath("");
+            }
+
+            if (Browser.isBundledWebDriverPath(getOptions().getIeDriverPath())
+                    && Files.notExists(Paths.get(getOptions().getIeDriverPath()))) {
+                getOptions().setIeDriverPath("");
+            }
+        }
+
     }
 }
