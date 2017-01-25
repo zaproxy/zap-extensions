@@ -596,6 +596,10 @@
         <build-deploy-addon name="requester" />
     </target>
 
+  	<target name="deploy-replacer" description="deploy the replacer extension">
+  		<build-deploy-addon name="replacer"/>
+	</target>
+
     <target name="deploy-revisit" description="deploy the revisit extension">
         <build-deploy-addon name="revisit" />
     </target>
