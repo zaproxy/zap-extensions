@@ -10,6 +10,7 @@
 	<![CDATA[
 	Allow to use Firefox 48+ (Issue 2743).<br>
 	Allow to specify the path to geckodriver.<br>
+	Use bundled WebDrivers by default.<br>
 	]]>
 	</changes>
 	<extensions>

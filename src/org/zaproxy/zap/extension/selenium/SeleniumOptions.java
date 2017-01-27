@@ -19,6 +19,10 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
@@ -138,11 +142,42 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        chromeDriverPath = readSystemPropertyWithOptionFallback(CHROME_DRIVER_SYSTEM_PROPERTY, CHROME_DRIVER_KEY);
+        chromeDriverPath = getWebDriverPath(Browser.CHROME, CHROME_DRIVER_SYSTEM_PROPERTY, CHROME_DRIVER_KEY);
         firefoxBinaryPath = readSystemPropertyWithOptionFallback(FIREFOX_BINARY_SYSTEM_PROPERTY, FIREFOX_BINARY_KEY);
-        firefoxDriverPath = readSystemPropertyWithOptionFallback(FIREFOX_DRIVER_SYSTEM_PROPERTY, FIREFOX_DRIVER_KEY);
-        ieDriverPath = readSystemPropertyWithOptionFallback(IE_DRIVER_SYSTEM_PROPERTY, IE_DRIVER_KEY);
+        firefoxDriverPath = getWebDriverPath(Browser.FIREFOX, FIREFOX_DRIVER_SYSTEM_PROPERTY, FIREFOX_DRIVER_KEY);
+        ieDriverPath = getWebDriverPath(Browser.INTERNET_EXPLORER, IE_DRIVER_SYSTEM_PROPERTY, IE_DRIVER_KEY);
+
         phantomJsBinaryPath = readSystemPropertyWithOptionFallback(PHANTOM_JS_BINARY_SYSTEM_PROPERTY, PHANTOM_JS_BINARY_KEY);
+    }
+
+    /**
+     * Gets the path to the WebDriver of the given browser.
+     * <p>
+     * Reads the given {@code systemProperty}, falling back to the option with the given {@code optionKey} if not set. If both
+     * properties are empty it returns the path to the bundled WebDriver, if available.
+     *
+     * @param browser the target browser
+     * @param systemProperty the name of the system property
+     * @param optionKey the key of the option used as fallback
+     * @return the path to the WebDriver, or empty if none set or available.
+     * @see #readSystemPropertyWithOptionFallback(String, String)
+     */
+    private String getWebDriverPath(Browser browser, String systemProperty, String optionKey) {
+        String path = readSystemPropertyWithOptionFallback(systemProperty, optionKey);
+        if (path.isEmpty()) {
+            String bundledPath = Browser.getBundledWebDriverPath(browser);
+            if (bundledPath != null) {
+                saveAndSetSystemProperty(optionKey, systemProperty, bundledPath);
+                return bundledPath;
+            }
+        } else if (Browser.isBundledWebDriverPath(path)) {
+            Path driver = Paths.get(path);
+            if (!Files.exists(driver) || !Browser.ensureExecutable(driver)) {
+                saveAndSetSystemProperty(optionKey, systemProperty, "");
+                return "";
+            }
+        }
+        return path;
     }
 
     /**
@@ -153,8 +188,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
      * 
      * @param systemProperty the name of the system property
      * @param optionKey the key of the option used as fallback
-     * @return the value of the system property, or if not set, the option read from the configuration file, might be
-     *         {@code null} if neither the system property nor the option are set.
+     * @return the value of the system property, or if not set, the option read from the configuration file. If neither the
+     *         system property nor the option are set it returns an empty {@code String}.
      */
     private String readSystemPropertyWithOptionFallback(String systemProperty, String optionKey) {
         String value = System.getProperty(systemProperty);

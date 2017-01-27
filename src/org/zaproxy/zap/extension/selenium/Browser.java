@@ -19,7 +19,19 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Set;
+
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.SystemUtils;
+import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 
 /**
  * Defines the browsers supported by the add-on.
@@ -38,6 +50,12 @@ public enum Browser {
     OPERA("opera"),
     PHANTOM_JS("phantomjs"),
     SAFARI("safari");
+
+    private static final String WEB_DRIVERS_DIR_NAME = "webdriver";
+
+    private static final Logger logger = Logger.getLogger(Browser.class);
+
+    private static Path zapHomeDir;
 
     private final String id;
 
@@ -101,4 +119,155 @@ public enum Browser {
         return HTML_UNIT;
     }
 
+    /**
+     * Tells whether or not the given path is a bundled WebDriver.
+     * <p>
+     * No actual check is done to test whether or not the WebDriver really exists, just that it's under the directory of the
+     * bundled WebDrivers.
+     *
+     * @param path the path to check
+     * @return {@code true} if the path is a bundled WebDriver, {@code false} otherwise.
+     */
+    public static boolean isBundledWebDriverPath(String path) {
+        if (path == null || path.isEmpty()) {
+            return false;
+        }
+
+        try {
+            return Paths.get(path).startsWith(getWebDriversDir());
+        } catch (InvalidPathException e) {
+            logger.warn("Failed to create path for " + path, e);
+            return false;
+        }
+    }
+
+    private static Path getWebDriversDir() {
+        return getZapHomeDir().resolve(WEB_DRIVERS_DIR_NAME);
+    }
+
+    /**
+     * Tells whether or not a bundled WebDriver exists for the given browser.
+     *
+     * @param browser the browser that will be checked
+     * @return {@code true} if the bundled WebDriver exists, {@code false} otherwise.
+     * @see #getBundledWebDriverPath(Browser)
+     */
+    public static boolean hasBundledWebDriver(Browser browser) {
+        return getBundledWebDriverPath(browser) != null;
+    }
+
+    /**
+     * Gets the path to the bundled WebDriver of the given browser.
+     *
+     * @param browser the target browser
+     * @return the path to the bundled WebDriver, or {@code null} if none available.
+     * @see #hasBundledWebDriver(Browser)
+     */
+    public static String getBundledWebDriverPath(Browser browser) {
+        String osDirName = getOsDirName();
+        if (osDirName == null) {
+            return null;
+        }
+
+        String driverName = getWebDriverName(browser);
+        if (driverName == null) {
+            return null;
+        }
+
+        if ("windows".equals(osDirName)) {
+            driverName += ".exe";
+        }
+
+        Path basePath = getWebDriversDir().resolve(osDirName);
+        Path driver;
+        if (isOs64Bits()) {
+            driver = basePath.resolve("64").resolve(driverName);
+            if (Files.exists(driver)) {
+                try {
+                    setExecutable(driver);
+                    return driver.toAbsolutePath().toString();
+                } catch (IOException e) {
+                    logger.warn("Failed to set the bundled WebDriver executable:", e);
+                }
+            }
+        }
+
+        driver = basePath.resolve("32").resolve(driverName);
+        if (Files.exists(driver)) {
+            try {
+                setExecutable(driver);
+                return driver.toAbsolutePath().toString();
+            } catch (IOException e) {
+                logger.warn("Failed to set the bundled WebDriver executable:", e);
+            }
+        }
+
+        return null;
+    }
+
+    private static String getWebDriverName(Browser browser) {
+        switch (browser) {
+        case CHROME:
+            return "chromedriver";
+        case INTERNET_EXPLORER:
+            return "IEDriverServer";
+        case FIREFOX:
+            return "geckodriver";
+        default:
+            return null;
+        }
+    }
+
+    private static String getOsDirName() {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            return "windows";
+        }
+        if (SystemUtils.IS_OS_MAC) {
+            return "macos";
+        }
+        if (SystemUtils.IS_OS_UNIX) {
+            return "linux";
+        }
+        return null;
+    }
+
+    private static boolean isOs64Bits() {
+        String arch = System.getProperty("os.arch");
+        return arch.contains("amd64") || arch.contains("x86_64");
+    }
+
+    private static void setExecutable(Path file) throws IOException {
+        if (!SystemUtils.IS_OS_MAC && !SystemUtils.IS_OS_UNIX) {
+            return;
+        }
+
+        Set<PosixFilePermission> perms = Files.readAttributes(file, PosixFileAttributes.class).permissions();
+        if (perms.contains(PosixFilePermission.OWNER_EXECUTE)) {
+            return;
+        }
+
+        perms.add(PosixFilePermission.OWNER_EXECUTE);
+        Files.setPosixFilePermissions(file, perms);
+    }
+
+    static boolean ensureExecutable(Path driver) {
+        try {
+            setExecutable(driver);
+            return true;
+        } catch (IOException e) {
+            logger.warn("Failed to set the bundled WebDriver executable:", e);
+        }
+        return false;
+    }
+
+    static void setZapHomeDir(Path path) {
+        zapHomeDir = path;
+    }
+
+    private static Path getZapHomeDir() {
+        if (zapHomeDir == null) {
+            zapHomeDir = Paths.get(Constant.getZapHome());
+        }
+        return zapHomeDir;
+    }
 }
