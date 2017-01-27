@@ -738,6 +738,7 @@
 				<include name="accessControl-${status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
+				<include name="webdriver*-${status}-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
