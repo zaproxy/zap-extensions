@@ -1,0 +1,26 @@
+<zapaddon>
+	<name>Windows WebDrivers</name>
+	<version>1</version>
+	<status>alpha</status>
+	<description>Windows WebDrivers for Firefox, Chrome and IE.</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>
+	<![CDATA[
+	First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0<br>
+	]]>
+	</changes>
+	<extensions/>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
+		<file>webdriver/windows/32/chromedriver.exe</file>
+		<file>webdriver/windows/32/geckodriver.exe</file>
+		<file>webdriver/windows/32/IEDriverServer.exe</file>
+		<file>webdriver/windows/64/geckodriver.exe</file>
+		<file>webdriver/windows/64/IEDriverServer.exe</file>
+	</files>
+	<not-before-version>2.4.0</not-before-version>
+	<not-from-version/>
+</zapaddon>
