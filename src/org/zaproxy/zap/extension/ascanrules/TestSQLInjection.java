@@ -713,7 +713,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						int paramPlusThree = addWithOverflowCheck(paramAsInt, 3);
 						String modifiedParamValueConfirmForAdd = String.valueOf(paramPlusThree) + "-2";
 						//Do the attack for ADD variant
-						expressionBasedAttack(param, modifiedParamValueForAdd, modifiedParamValueConfirmForAdd);
+						expressionBasedAttack(param, origParamValue, modifiedParamValueForAdd, modifiedParamValueConfirmForAdd);
 						//bale out if we were asked nicely
 						if (isStop()) {
 							log.debug("Stopping the scan due to a user request");
@@ -728,7 +728,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							int paramMultFour = multiplyWithOverflowCheck(paramAsInt, 4);
 							String modifiedParamValueConfirmForMult = String.valueOf(paramMultFour) + "/2";
 							//Do the attack for MULT variant
-							expressionBasedAttack(param, modifiedParamValueForMult, modifiedParamValueConfirmForMult);
+							expressionBasedAttack(param, origParamValue, modifiedParamValueForMult, modifiedParamValueConfirmForMult);
 							//bale out if we were asked nicely
 							if (isStop()) {
 								log.debug("Stopping the scan due to a user request");
@@ -825,7 +825,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 				//String resBodyAND = msg2.getResponseBody().toString();
 				String resBodyANDTrueUnstripped = msg2.getResponseBody().toString();
-				String resBodyANDTrueStripped = this.stripOff(resBodyANDTrueUnstripped, sqlBooleanAndTrueValue);
+				String resBodyANDTrueStripped = stripOffOriginalAndAttackParam(resBodyANDTrueUnstripped, origParamValue, sqlBooleanAndTrueValue);
 
 				//set up two little arrays to ease the work of checking the unstripped output, and then the stripped output
 				String normalBodyOutput[] = {mResBodyNormalUnstripped, mResBodyNormalStripped};
@@ -855,7 +855,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						//String resBodyANDFalse = stripOff(msg2_and_false.getResponseBody().toString(), SQL_LOGIC_AND_FALSE[i]);
 						//String resBodyANDFalse = msg2_and_false.getResponseBody().toString();
 						String resBodyANDFalseUnstripped = msg2_and_false.getResponseBody().toString();
-						String resBodyANDFalseStripped = this.stripOff(resBodyANDFalseUnstripped, sqlBooleanAndFalseValue);
+						String resBodyANDFalseStripped = stripOffOriginalAndAttackParam(resBodyANDFalseUnstripped, origParamValue, sqlBooleanAndFalseValue);
 
 						String andFalseBodyOutput[] = {resBodyANDFalseUnstripped, resBodyANDFalseStripped};
 
@@ -916,7 +916,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							//String resBodyORTrue = stripOff(msg2_or_true.getResponseBody().toString(), orValue);
 							//String resBodyORTrue = msg2_or_true.getResponseBody().toString();
 							String resBodyORTrueUnstripped = msg2_or_true.getResponseBody().toString();
-							String resBodyORTrueStripped = this.stripOff(resBodyORTrueUnstripped, orValue);
+							String resBodyORTrueStripped = stripOffOriginalAndAttackParam(resBodyORTrueUnstripped, origParamValue, orValue);
 
 							String orTrueBodyOutput[] = {resBodyORTrueUnstripped, resBodyORTrueStripped};
 
@@ -1036,7 +1036,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					countBooleanBasedRequests++;
 
 					String resBodyANDFalseUnstripped = msg2_and_false.getResponseBody().toString();
-					String resBodyANDFalseStripped = this.stripOff(resBodyANDFalseUnstripped, sqlBooleanAndFalseValue);
+					String resBodyANDFalseStripped = stripOffOriginalAndAttackParam(resBodyANDFalseUnstripped, origParamValue, sqlBooleanAndFalseValue);
 					
 					//does the "AND 1=2" version produce the same as the original (for stripped/unstripped versions)
 					boolean verificationUsingUnstripped = resBodyANDFalseUnstripped.compareTo(mResBodyNormalUnstripped) == 0;
@@ -1100,6 +1100,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							mResBodyNormalStripped,
 							refreshedmessage.getRequestHeader().getURI(),
 							param,
+							origParamValue,
 							sqlUnionValue)) {
 						sqlInjectionFoundForUrl = true;
 						// Save the attack string for the "Authentication Bypass" alert, if necessary
@@ -1165,7 +1166,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				countOrderByBasedRequests++;
 
 				String modifiedAscendingOutputUnstripped = msg5.getResponseBody().toString();
-				String modifiedAscendingOutputStripped = this.stripOff(modifiedAscendingOutputUnstripped, modifiedParamValue);
+				String modifiedAscendingOutputStripped = stripOffOriginalAndAttackParam(modifiedAscendingOutputUnstripped, origParamValue, modifiedParamValue);
 
 				//set up two little arrays to ease the work of checking the unstripped output, and then the stripped output
 				String normalBodyOutput[] = {mResBodyNormalUnstripped, mResBodyNormalStripped};
@@ -1197,7 +1198,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						countOrderByBasedRequests++;
 
 						String confirmOrderByOutputUnstripped = msg5Confirm.getResponseBody().toString();
-						String confirmOrderByOutputStripped = this.stripOff(confirmOrderByOutputUnstripped, modifiedParamValueConfirm);
+						String confirmOrderByOutputStripped = stripOffOriginalAndAttackParam(confirmOrderByOutputUnstripped, origParamValue, modifiedParamValueConfirm);
 
 						//set up two little arrays to ease the work of checking the unstripped output or the stripped output
 						String confirmOrderByBodyOutput[] = {confirmOrderByOutputUnstripped, confirmOrderByOutputStripped};
@@ -1327,7 +1328,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		return false;
 	}
 
-	private boolean checkUnionErrors(RDBMS rdbms, HttpMessage msg, String response, URI uri, String parameter, String attack) {
+	private boolean checkUnionErrors(RDBMS rdbms, HttpMessage msg, String response, URI uri, String parameter, String originalParam, String attack) {
 		for (Pattern errorPattern : rdbms.getUnionErrorPatterns()) {
 			if (isStop()) {
 				return false;
@@ -1336,7 +1337,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
 			//then we may may have a SQL Injection vulnerability
 			String sqlUnionBodyUnstripped = msg.getResponseBody().toString();
-			String sqlUnionBodyStripped = this.stripOff(sqlUnionBodyUnstripped, attack);
+			String sqlUnionBodyStripped = stripOffOriginalAndAttackParam(sqlUnionBodyUnstripped, originalParam, attack);
 
 			Matcher matcherOrig = errorPattern.matcher(response);
 			Matcher matcherSQLUnion = errorPattern.matcher(sqlUnionBodyStripped);
@@ -1361,7 +1362,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		return false;
 	}
 
-	private void expressionBasedAttack(String param, String modifiedParamValue, String modifiedParamValueConfirm) throws IOException {
+	private void expressionBasedAttack(String param, String originalParam, String modifiedParamValue, String modifiedParamValueConfirm) throws IOException {
 		//those of you still paying attention will note that if handled as expressions (such as by a database), these represent the same value.
 		HttpMessage msg = getNewMsg();
 		setParameter(msg, param, modifiedParamValue);
@@ -1376,18 +1377,14 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		countExpressionBasedRequests++;
 
 		String modifiedExpressionOutputUnstripped = msg.getResponseBody().toString();
-		String modifiedExpressionOutputStripped = this.stripOff(modifiedExpressionOutputUnstripped, modifiedParamValue);
+		String modifiedExpressionOutputStripped = stripOffOriginalAndAttackParam(modifiedExpressionOutputUnstripped, originalParam, modifiedParamValue);
+		String normalBodyOutput = mResBodyNormalStripped;
 
-		//set up little arrays to ease the work of checking the unstripped output, and then the stripped output
-		String normalBodyOutput[] = {mResBodyNormalUnstripped, mResBodyNormalStripped};
-		String expressionBodyOutput[] = {modifiedExpressionOutputUnstripped, modifiedExpressionOutputStripped};
-		boolean strippedOutput[] = {false, true};
-
-		for (int booleanStrippedUnstrippedIndex = 0; booleanStrippedUnstrippedIndex < 2 && !sqlInjectionFoundForUrl && countExpressionBasedRequests < doExpressionMaxRequests; booleanStrippedUnstrippedIndex++) {
+		if (!sqlInjectionFoundForUrl && countExpressionBasedRequests < doExpressionMaxRequests) {
 			//if the results of the modified request match the original query, we may be onto something.
-			if (expressionBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) == 0) {
+			if (modifiedExpressionOutputStripped.compareTo(normalBodyOutput) == 0) {
 				if (this.debugEnabled) {
-					log.debug("Check 4, " + (strippedOutput[booleanStrippedUnstrippedIndex] ? "STRIPPED" : "UNSTRIPPED") + " html output for modified expression parameter [" + modifiedParamValue + "] matched (refreshed) original results for " + refreshedmessage.getRequestHeader().getURI());
+					log.debug("Check 4, STRIPPED html output for modified expression parameter [" + modifiedParamValue + "] matched (refreshed) original results for " + refreshedmessage.getRequestHeader().getURI().toString());
 				}
 				//confirm that a different parameter value generates different output, to minimise false positives
 				//this time param value will be different to original value and mismatch is expected in responses of original and this value
@@ -1400,28 +1397,20 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				} catch (SocketException ex) {
 					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
 							" when accessing: " + msgConfirm.getRequestHeader().getURI().toString());
-					continue; //Something went wrong, continue to the next item in the loop
+					return; //Something went wrong
 				}
 				countExpressionBasedRequests++;
 
 				String confirmExpressionOutputUnstripped = msgConfirm.getResponseBody().toString();
-				String confirmExpressionOutputStripped = this.stripOff(confirmExpressionOutputUnstripped, modifiedParamValueConfirm);
+				String confirmExpressionOutputStripped = stripOffOriginalAndAttackParam(confirmExpressionOutputUnstripped, originalParam, modifiedParamValueConfirm);
 
-				//set up two little arrays to ease the work of checking the unstripped output or the stripped output
-				String confirmExpressionBodyOutput[] = {confirmExpressionOutputUnstripped, confirmExpressionOutputStripped};
-
-				if (confirmExpressionBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) != 0) {
+				if (confirmExpressionOutputStripped.compareTo(normalBodyOutput) != 0) {
 					//the confirm query did not return the same results.  This means that arbitrary queries are not all producing the same page output.
 					//this means the fact we earier reproduced the original page output with a modified parameter was not a coincidence
 
 					//Likely a SQL Injection. Raise it
-					String extraInfo = null;
-					if (strippedOutput[booleanStrippedUnstrippedIndex]) {
-						extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "");
-					} else {
-						extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "NOT ");
-					}
-
+					String extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "");
+					
 					//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
 					sqlInjectionAttack = modifiedParamValue;
 					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(),
@@ -1468,6 +1457,18 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		String htmlEncodePattern2 = getHTMLEncode(urlEncodePattern);
 		String result = body.replaceAll("\\Q" + pattern + "\\E", "").replaceAll("\\Q" + urlEncodePattern + "\\E", "");
 		result = result.replaceAll("\\Q" + htmlEncodePattern1 + "\\E", "").replaceAll("\\Q" + htmlEncodePattern2 + "\\E", "");
+		return result;
+	}
+
+	/**
+	 * Replace body by stripping off pattern strings.
+	 */
+	protected String stripOffOriginalAndAttackParam(String body, String originalPattern, String attackPattern) {
+		String result = this.stripOff(
+							this.stripOff(
+								body,
+								attackPattern),
+							originalPattern);
 		return result;
 	}
 
