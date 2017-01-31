@@ -2,6 +2,7 @@ package org.zaproxy.zap.extension.sequence;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.text.MessageFormat;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -41,8 +42,8 @@ public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
 						extension.setDirectScanScript(wrapper);
 						scr.scanSequence();
 					} else {
-						View.getSingleton().showMessageDialog(
-								extension.getMessages().getString("sequence.popupmenuitem.script.error.interface"));
+						String msg = extension.getMessages().getString("sequence.popupmenuitem.script.error.interface");
+						View.getSingleton().showMessageDialog(MessageFormat.format(msg, wrapper.getName()));
 					}
 				} catch(Exception ex) {
 					logger.warn("An exception occurred while starting an active scan for a sequence script:", ex);	
