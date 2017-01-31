@@ -11,6 +11,7 @@
 	Update help page to mention HTTP Sender scripts.<br>
 	Allow to save scripts through the context menu.<br>
 	Reset Console Output panel on session changes.<br>
+	If there is only one script engine available, make it the default when creating a new script.<br>
 	]]>
 	</changes>
 	<extensions>
