@@ -142,7 +142,10 @@ public class NewScriptDialog extends StandardFieldsDialog {
 	
 	private List<String> getEngines() {
 		ArrayList<String> list = new ArrayList<String>();
-		list.add("");
+		int engineCount = extension.getExtScript().getScriptingEngines().size();
+		if (engineCount > 1) {
+			list.add("");
+		}
 		list.addAll(extension.getExtScript().getScriptingEngines());
 		return list;
 	}
