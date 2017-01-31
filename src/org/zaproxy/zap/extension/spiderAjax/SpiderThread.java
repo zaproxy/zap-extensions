@@ -100,7 +100,9 @@ public class SpiderThread implements Runnable {
 		spiderListeners = new ArrayList<>(2);
 		spiderListeners.add(spiderListener);
 		this.session = extension.getModel().getSession();
-		this.exclusionList = session.getExcludeFromSpiderRegexs();
+		this.exclusionList = new ArrayList<>();
+		exclusionList.addAll(session.getExcludeFromSpiderRegexs());
+		exclusionList.addAll(session.getGlobalExcludeURLRegexs());
 		this.targetHost = target.getStartUri().getHost();
 
 		createOutOfScopeResponse(extension.getMessages().getString("spiderajax.outofscope.response"));
