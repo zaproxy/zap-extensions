@@ -41,7 +41,7 @@ public abstract class AbstractProcessorUIPanel<T extends Payload, T2 extends Pay
 
     @Override
     public String getHelpTarget() {
-        return null;
+        return "addon.fuzzer.processors";
     }
 
 }

@@ -196,12 +196,6 @@ public class FuzzerHttpMessageScriptProcessorAdapterUIHandler implements
             return true;
         }
 
-        @Override
-        public String getHelpTarget() {
-            // THC add help target...
-            return null;
-        }
-
         private static class ScriptUIEntry implements Comparable<ScriptUIEntry> {
 
             private final ScriptWrapper scriptWrapper;

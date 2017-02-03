@@ -39,7 +39,7 @@ public abstract class AbstractHttpFuzzerMessageProcessorUIPanel<T extends HttpFu
 
     @Override
     public String getHelpTarget() {
-        return null;
+        return "addon.fuzzer.httpmessageprocessors";
     }
 
 }

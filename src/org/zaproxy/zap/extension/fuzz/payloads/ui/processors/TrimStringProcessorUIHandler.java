@@ -167,12 +167,6 @@ public class TrimStringProcessorUIHandler implements
         public TrimStringProcessor getPayloadProcessor() {
             return new TrimStringProcessor(getLengthNumberSpinner().getValue().intValue());
         }
-
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
     }
 
 }

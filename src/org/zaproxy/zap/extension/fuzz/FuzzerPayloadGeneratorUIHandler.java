@@ -573,12 +573,6 @@ public class FuzzerPayloadGeneratorUIHandler implements
             return false;
         }
 
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
-
         private static class ModifyFileFuzzersPayloadsPanel
                 extends ModifyPayloadsPanel<DefaultPayload, FuzzerPayloadGenerator, FuzzerPayloadGeneratorUI> {
 

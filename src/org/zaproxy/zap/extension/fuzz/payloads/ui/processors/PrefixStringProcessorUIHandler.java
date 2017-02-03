@@ -175,12 +175,6 @@ public class PrefixStringProcessorUIHandler implements
             }
             return new PrefixStringProcessor(getValueTextField().getText());
         }
-
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
     }
 
 }

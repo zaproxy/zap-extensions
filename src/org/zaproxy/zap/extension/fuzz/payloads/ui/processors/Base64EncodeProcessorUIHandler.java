@@ -192,11 +192,5 @@ public class Base64EncodeProcessorUIHandler implements
                     (Charset) getCharsetComboBox().getSelectedItem(),
                     getBreakLinesCheckBox().isSelected());
         }
-
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
     }
 }

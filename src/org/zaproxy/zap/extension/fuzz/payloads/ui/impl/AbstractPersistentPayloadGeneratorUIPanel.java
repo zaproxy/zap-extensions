@@ -126,6 +126,11 @@ public abstract class AbstractPersistentPayloadGeneratorUIPanel<T extends Payloa
             extensionFuzz.addCustomFileFuzzer(file);
         }
     }
+    
+    @Override
+    public String getHelpTarget() {
+        return "addon.fuzzer.payloads";
+    }
 
     protected abstract T2 getPayloadGenerator();
 

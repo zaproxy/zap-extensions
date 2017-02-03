@@ -397,12 +397,6 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
             return true;
         }
 
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
-
         private static class ScriptUIEntry implements Comparable<ScriptUIEntry> {
 
             private final ScriptWrapper scriptWrapper;

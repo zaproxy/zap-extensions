@@ -122,11 +122,5 @@ public class SHA256HashProcessorUIHandler implements
                     (Charset) getCharsetComboBox().getSelectedItem(),
                     getUpperCaseCheckBox().isSelected());
         }
-
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
     }
 }

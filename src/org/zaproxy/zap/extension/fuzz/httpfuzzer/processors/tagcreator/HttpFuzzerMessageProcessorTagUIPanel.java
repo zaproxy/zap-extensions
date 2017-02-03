@@ -204,10 +204,4 @@ public class HttpFuzzerMessageProcessorTagUIPanel
         }
         return VALID;
     }
-
-    @Override
-    public String getHelpTarget() {
-        // THC add help target...
-        return null;
-    }
 }

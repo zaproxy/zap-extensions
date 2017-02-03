@@ -175,12 +175,6 @@ public class PostfixStringProcessorUIHandler implements
             }
             return new PostfixStringProcessor(getValueTextField().getText());
         }
-
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
     }
 
 }

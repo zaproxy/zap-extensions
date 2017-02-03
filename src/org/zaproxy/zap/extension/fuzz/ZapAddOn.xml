@@ -8,6 +8,7 @@
     <url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts</url>
     <changes>
     <![CDATA[
+    Show help button in fuzzer dialogues.<br>
     Correct method name in HTTP processor JavaScript template.<br>
     Fix exception when adding file fuzzers with selected empty "Custom Fuzzers".<br>
     Automatically add Anti-CSRF Token Refresher, if available.<br>
