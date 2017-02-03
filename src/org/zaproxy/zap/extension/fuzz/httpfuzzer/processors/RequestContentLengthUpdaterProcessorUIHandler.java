@@ -130,11 +130,5 @@ public class RequestContentLengthUpdaterProcessorUIHandler implements
             return RequestContentLengthUpdatedProcessorUI.INSTANCE;
         }
 
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
-
     }
 }

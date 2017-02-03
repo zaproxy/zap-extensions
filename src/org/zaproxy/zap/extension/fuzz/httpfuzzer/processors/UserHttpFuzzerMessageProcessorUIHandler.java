@@ -282,12 +282,6 @@ public class UserHttpFuzzerMessageProcessorUIHandler implements
                 }
             }
         }
-
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
     }
 
     private static class ContextUI extends AbstractListModel<UserUI> implements ComboBoxModel<UserUI> {

@@ -118,11 +118,5 @@ public class URLDecodeProcessorUIHandler implements
         public URLDecodeProcessor getPayloadProcessor() {
             return new URLDecodeProcessor((Charset) getCharsetComboBox().getSelectedItem());
         }
-
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
     }
 }

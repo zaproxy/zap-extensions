@@ -657,12 +657,6 @@ public class FileStringPayloadGeneratorUIHandler implements
             return true;
         }
 
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
-
         private static class ModifyFileStringPayloadsPanel
                 extends ModifyPayloadsPanel<DefaultPayload, FileStringPayloadGenerator, FileStringPayloadGeneratorUI> {
 

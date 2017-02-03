@@ -216,12 +216,6 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
                     ((ScriptUIEntry) scriptComboBox.getSelectedItem()).getScriptWrapper());
         }
 
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
-
         private static class ScriptUIEntry implements Comparable<ScriptUIEntry> {
 
             private final ScriptWrapper scriptWrapper;

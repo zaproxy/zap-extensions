@@ -298,8 +298,7 @@ public class ExpandStringProcessorUIHandler implements
 
         @Override
         public String getHelpTarget() {
-            // THC add help page...
-            return null;
+            return "addon.fuzzer.processors";
         }
     }
 }

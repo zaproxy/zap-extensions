@@ -415,12 +415,6 @@ public class RegexPayloadGeneratorUIHandler implements
                     getMaximumForPayloadCalculation(getMaxPayloadsNumberSpinner().getValue().intValue()));
         }
 
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
-
         private static int getMaximumForPayloadPersistence(int limit) {
             if (limit == 0) {
                 return MAX_NUMBER_PAYLOADS_PERSISTENCE;

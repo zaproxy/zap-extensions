@@ -128,11 +128,5 @@ public class HttpFuzzerReflectionDetectorUIHandler implements
             return HttpFuzzerReflectionDetectorUI.INSTANCE;
         }
 
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
-
     }
 }

@@ -118,11 +118,5 @@ public class MD5HashProcessorUIHandler implements
         public MD5HashProcessor getPayloadProcessor() {
             return new MD5HashProcessor((Charset) getCharsetComboBox().getSelectedItem(), getUpperCaseCheckBox().isSelected());
         }
-
-        @Override
-        public String getHelpTarget() {
-            // THC add help page...
-            return null;
-        }
     }
 }
