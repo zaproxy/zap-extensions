@@ -10,6 +10,7 @@
     <![CDATA[
     Correct method name in HTTP processor JavaScript template.<br>
     Fix exception when adding file fuzzers with selected empty "Custom Fuzzers".<br>
+    Fix typos in the help pages.<br>
     Automatically add Anti-CSRF Token Refresher, if available.<br>
     ]]>
     </changes>
