@@ -43,6 +43,7 @@ public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
     private static final String PROCESSOR_NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.acsrffuzz.name");
 
     private final ExtensionAntiCSRF extensionAntiCSRF;
+    private HttpMessage message;
 
     public AntiCsrfHttpFuzzerMessageProcessorUIHandler(ExtensionAntiCSRF extensionAntiCSRF) {
         this.extensionAntiCSRF = extensionAntiCSRF;
@@ -51,17 +52,30 @@ public class AntiCsrfHttpFuzzerMessageProcessorUIHandler implements
     @Override
     public boolean isEnabled(HttpMessage message) {
         List<AntiCsrfToken> tokens = extensionAntiCSRF.getTokens(message);
-        return (tokens != null && !tokens.isEmpty());
-    }
-
-    @Override
-    public boolean isDefault() {
+        if (tokens != null && !tokens.isEmpty()) {
+            this.message = message;
+            return true;
+        }
         return false;
     }
 
     @Override
+    public boolean isDefault() {
+        return true;
+    }
+
+    @Override
     public HttpFuzzerMessageProcessorUI<AntiCsrfHttpFuzzerMessageProcessor> createDefault() {
-        return null;
+        if (message == null) {
+            return null;
+        }
+
+        AntiCsrfHttpFuzzerMessageProcessorUI processor = new AntiCsrfHttpFuzzerMessageProcessorUI(
+                extensionAntiCSRF,
+                extensionAntiCSRF.getTokens(message).get(0),
+                false);
+        message = null;
+        return processor;
     }
 
     @Override
