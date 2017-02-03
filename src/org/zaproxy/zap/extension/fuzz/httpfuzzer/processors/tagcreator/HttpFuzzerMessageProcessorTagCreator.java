@@ -33,9 +33,9 @@ public class HttpFuzzerMessageProcessorTagCreator implements HttpFuzzerMessagePr
 
     public static final String NAME = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.name");
     public static final String DESCRIPTION = Constant.messages.getString("fuzz.httpfuzzer.processor.tagcreator.desc");
-    private static final String TAG_CREATOR_LIST_STATE_KEY = "fuzz.httpfuzzer.messageprocessor.tagcreator.tags.list";
+    static final String TAG_CREATOR_LIST_STATE_KEY = "fuzz.httpfuzzer.messageprocessor.tagcreator.tags.list";
     public static final String TAG_CREATOR_TEXT_STATE_KEY = "fuzz.httpfuzzer.messageprocessor.tagcreator.tags.text";
-    private static final String TAG_SEPARATOR = ";";
+    private static final String TAG_SEPARATOR = "; ";
 
     private TagRule tagRule;
 
@@ -99,8 +99,10 @@ public class HttpFuzzerMessageProcessorTagCreator implements HttpFuzzerMessagePr
     private String joinTagsWithSeparator(List<String> tags){
         StringBuilder stringBuilder = new StringBuilder();
         for (String tag : tags) {
+            if (stringBuilder.length() > 0) {
+                stringBuilder.append(TAG_SEPARATOR);
+            }
             stringBuilder.append(tag);
-            stringBuilder.append(TAG_SEPARATOR);
         }
         return stringBuilder.toString();
     }

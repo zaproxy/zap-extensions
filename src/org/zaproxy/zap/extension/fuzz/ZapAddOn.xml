@@ -13,6 +13,7 @@
     Fix exception when adding file fuzzers with selected empty "Custom Fuzzers".<br>
     Fix typos in the help pages.<br>
     Automatically add Anti-CSRF Token Refresher, if available.<br>
+    Render custom states, always (Issue 3166).<br>
     ]]>
     </changes>
     <extensions>

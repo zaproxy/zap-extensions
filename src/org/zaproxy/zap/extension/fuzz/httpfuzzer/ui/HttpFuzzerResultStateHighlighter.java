@@ -30,4 +30,6 @@ public interface HttpFuzzerResultStateHighlighter {
     Icon getIcon();
 
     String getLabel();
+
+    void removeState(Map<String, Object> data);
 }
