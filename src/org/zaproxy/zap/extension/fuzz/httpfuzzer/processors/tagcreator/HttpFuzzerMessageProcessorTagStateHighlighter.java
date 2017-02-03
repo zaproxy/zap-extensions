@@ -55,4 +55,10 @@ public class HttpFuzzerMessageProcessorTagStateHighlighter implements HttpFuzzer
     public String getLabel() {
         return tagsAsText;
     }
+
+    @Override
+    public void removeState(Map<String, Object> data) {
+        data.remove(TAG_CREATOR_TEXT_STATE_KEY);
+        data.remove(HttpFuzzerMessageProcessorTagCreator.TAG_CREATOR_LIST_STATE_KEY);
+    }
 }

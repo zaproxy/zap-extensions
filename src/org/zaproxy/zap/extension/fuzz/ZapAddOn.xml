@@ -11,6 +11,7 @@
     Correct method name in HTTP processor JavaScript template.<br>
     Fix exception when adding file fuzzers with selected empty "Custom Fuzzers".<br>
     Automatically add Anti-CSRF Token Refresher, if available.<br>
+    Render custom states, always (Issue 3166).<br>
     ]]>
     </changes>
     <extensions>

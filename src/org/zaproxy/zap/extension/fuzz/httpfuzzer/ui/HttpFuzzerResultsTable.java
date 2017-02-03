@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.ui;
 
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -154,38 +155,53 @@ public class HttpFuzzerResultsTable extends HistoryReferencesTable {
         @Override
         protected Component doHighlight(Component component, ComponentAdapter adapter) {
             @SuppressWarnings("unchecked")
-            Map<String, Object> data = (Map<String, Object>) adapter.getValue(columnIndex);
+            Map<String, Object> data = new HashMap<>((Map<String, Object>) adapter.getValue(columnIndex));
 
-            boolean highlighted = false;
+            StringBuilder labelBuilder = new StringBuilder();
+            boolean iconSet = false;
             for (HttpFuzzerResultStateHighlighter highlighter : highlighters) {
                 if (highlighter.isHighlighted(data)) {
-                    if (component instanceof IconAware) {
-                        ((IconAware) component).setIcon(highlighter.getIcon());
-                    } else if (component instanceof JLabel) {
-                        ((JLabel) component).setIcon(highlighter.getIcon());
+                    if (!iconSet) {
+                        if (component instanceof IconAware) {
+                            ((IconAware) component).setIcon(highlighter.getIcon());
+                            iconSet = true;
+                        } else if (component instanceof JLabel) {
+                            ((JLabel) component).setIcon(highlighter.getIcon());
+                            iconSet = true;
+                        }
                     }
 
                     if (component instanceof JLabel) {
-                        ((JLabel) component).setText(highlighter.getLabel());
+                        append(labelBuilder, highlighter.getLabel());
                     }
-                    highlighted = true;
-                    break;
+                    highlighter.removeState(data);
                 }
             }
 
-            if (!highlighted) {
+            for (Object value : data.values()) {
+                append(labelBuilder, value);
+            }
+
+            if (!iconSet) {
                 if (component instanceof IconAware) {
                     ((IconAware) component).setIcon(null);
                 } else if (component instanceof JLabel) {
                     ((JLabel) component).setIcon(null);
                 }
+            }
 
-                if (component instanceof JLabel) {
-                    ((JLabel) component).setText("");
-                }
+            if (component instanceof JLabel) {
+                ((JLabel) component).setText(labelBuilder.toString());
             }
 
             return component;
+        }
+
+        private static void append(StringBuilder strBuilder, Object value) {
+            if (strBuilder.length() > 0) {
+                strBuilder.append("; ");
+            }
+            strBuilder.append(value);
         }
 
         public void addStateHighlighter(HttpFuzzerResultStateHighlighter highlighter) {

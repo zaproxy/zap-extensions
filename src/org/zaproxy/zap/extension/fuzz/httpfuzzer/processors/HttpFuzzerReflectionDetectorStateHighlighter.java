@@ -56,4 +56,8 @@ public class HttpFuzzerReflectionDetectorStateHighlighter implements HttpFuzzerR
         return REFLECTED_CUSTOM_STATE_NAME;
     }
 
+    @Override
+    public void removeState(Map<String, Object> data) {
+        data.remove(REFLECTED_CUSTOM_STATE_KEY);
+    }
 }
