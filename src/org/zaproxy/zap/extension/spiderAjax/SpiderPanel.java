@@ -57,8 +57,6 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(SpiderPanel.class);
 	
-	private static final String RESULTS_TABLE_NAME = "AjaxSpiderResultsTable";
-
 	private javax.swing.JScrollPane scrollLog = null;
 	private javax.swing.JPanel AJAXSpiderPanel = null;
 	private javax.swing.JToolBar panelToolbar = null;
@@ -371,8 +369,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 
 	private HistoryReferencesTable getSpiderResultsTable() {
 	    if (spiderResultsTable == null) {
-	        spiderResultsTable = new HistoryReferencesTable(spiderResultsTableModel);
-	        spiderResultsTable.setName(RESULTS_TABLE_NAME);
+	        spiderResultsTable = new AjaxSpiderResultsTable(spiderResultsTableModel);
 	    }
 	    return spiderResultsTable;
 	}
@@ -470,6 +467,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 		visitedUrls.clear();
 	}
 	
+	void unload() {
+		spiderResultsTableModel.unload();
+	}
 	
 	public void sessionModeChanged(Mode mode) {
 		switch (mode) {

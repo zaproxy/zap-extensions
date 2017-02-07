@@ -132,6 +132,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
     public void unload() {
         if (getView() != null) {
             getSpiderPanel().stopScan();
+            getSpiderPanel().unload();
             
             getView().getMainFrame().getMainFooterPanel().removeFooterToolbarRightLabel(getSpiderPanel().getScanStatus().getCountLabel());
         }
