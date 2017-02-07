@@ -45,6 +45,9 @@ This active scanner attempts to access content that was originally accessed via 
 <h2>LDAP Injection</h2>
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
 
+<h2>SQL Injection - MsSQL</h2>
+This active scanner attempts to inject MsSQL specific sleep commands into parameter values and analyzes the server's response time to see if the sleep is effectively executed on the server (indicating a successful SQL injection attack).
+
 <h2>Source Code Disclosure - File Inclusion</h2>
 Uses local file inclusion techniques to scan for files containing source code on the web server.
 
