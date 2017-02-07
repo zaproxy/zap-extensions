@@ -106,10 +106,12 @@ public class WebdriverDownload {
 
 				if (!isFound) {
 					System.out.println("Failed to find " + destFile);
+					System.exit(1);
 				}
 
 			} catch (IOException ex) {
 				ex.printStackTrace();
+				System.exit(1);
 			}
 		} else if (urlStr.endsWith(".tar.gz")) {
 			try {
@@ -144,13 +146,15 @@ public class WebdriverDownload {
 					}
 				}
 				tar.close();
+				tarFile.delete();
 				if (!isFound) {
 					System.out.println("Failed to find " + destFile);
+					System.exit(1);
 				}
-				tarFile.delete();
 
 			} catch (IOException ex) {
 				ex.printStackTrace();
+				System.exit(1);
 			}
 		}
 	}
