@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
+	Show alerts/tags in the AJAX Spider tab.<br>
 	Use a custom initiator ID (10) for AJAX Spider requests.<br>
 	Show always the latest configured browsers in AJAX Spider dialogue (Issue 3057).<br>
 	Honour global excluded URLs (Issue 3172).<br>
@@ -27,7 +28,7 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.2</not-before-version>
+	<not-before-version>2.5.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
 
