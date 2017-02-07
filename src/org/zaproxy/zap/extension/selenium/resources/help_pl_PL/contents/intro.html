@@ -14,7 +14,8 @@
 	<ul>
 		<li>Chrome</li>
 		<li>Firefox - the following versions are known to work: 45 (ESR), 46 and 47.0.1
-			(older version might work too). Some versions do not work correctly: 47.0 and 48+.</li>
+			(older version might work too). Some versions are known to not work, for example, 47.0.
+			Newer versions (&ge; 48) require geckodriver.</li>
 		<li>HtmlUnit</li>
 		<li>Internet Explorer</li>
 		<li>Opera</li>
@@ -28,33 +29,43 @@
 			Selenium screen</a>, to access and control them:
 	<ul>
 		<li>Chrome - requires ChromeDriver, if not on the system's PATH, it can be set in
-			the options. For more information on ChromeDriver and how to obtain it refer to <a
+			the options. For more information on ChromeDriver and how to obtain it refer to the <a
 			href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
 		</li>
+		<li>Firefox - requires geckodriver for versions &ge; 48, it can be set in the
+			options. For more information on geckodriver and how to obtain it refer to the <a
+			href="https://github.com/mozilla/geckodriver">geckodriver website</a> (see footer note
+			for caveat when using geckodriver).
+		</li>
 		<li>PhantomJS - requires PhantomJS binary, if not on the system's PATH, it can be
-			set in the options. For more information on PhantomJS and how to obtain it refer to <a
-			href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
+			set in the options. For more information on PhantomJS and how to obtain it refer to the
+			<a href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
 			using PhantomJS).
 		</li>
 		<li>Internet Explorer - requires IEDriverServer, if not on the system's PATH, it
-			can be set in the options. For more information on IEDriverServer refer to <a
+			can be set in the options. For more information on IEDriverServer refer to the <a
 			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">IEDriverServer
 				website</a> (see footer note for caveat when using Internet Explorer).
 		</li>
 	</ul>
 
 	<p>
+		<strong>Firefox/geckodriver Note:</strong> There's an issue (<a
+			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) that
+		prevents HTTPS sites from being used in versions &ge; 48 and &lt; 52.
+	<p>
 		<strong>PhantomJS Note:</strong> There's an issue (<a
 			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
 		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Until a fix is
 		available is advised to not use it in those cases. Some add-ons might choose to show
-		warning message when that happens.
+		warning message when that happens. As workaround one could define, in the <code>hosts</code>
+		file, a domain name mapping to the local address and use that domain name instead.
 	<p>
 		<strong>Internet Explorer Note:</strong> Not all versions of Internet Explorer work out
-		of the box, refer to <a
+		of the box, refer to the <a
 			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer
 			website</a> for more details on how to configure them.
-	<h2>Zobacz również</h2>
+	<h2>See also</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
