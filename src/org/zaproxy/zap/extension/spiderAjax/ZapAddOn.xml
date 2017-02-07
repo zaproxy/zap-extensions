@@ -11,6 +11,7 @@
 	Use a custom initiator ID (10) for AJAX Spider requests.<br>
 	Show always the latest configured browsers in AJAX Spider dialogue (Issue 3057).<br>
 	Honour global excluded URLs (Issue 3172).<br>
+	Reset URL counter on session change.<br>
 	]]>
 	</changes>
 	<dependencies>
