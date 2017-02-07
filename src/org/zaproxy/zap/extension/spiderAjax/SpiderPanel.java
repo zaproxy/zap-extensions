@@ -468,6 +468,11 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 		stopScan();
 		spiderResultsTableModel.clear();
 		visitedUrls.clear();
+
+		if (View.isInitialised()) {
+			this.foundCount = 0;
+			this.foundLabel.setText(Integer.toString(this.foundCount));
+		}
 	}
 	
 	
