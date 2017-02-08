@@ -12,6 +12,7 @@
 	Show always the latest configured browsers in AJAX Spider dialogue (Issue 3057).<br>
 	Honour global excluded URLs (Issue 3172).<br>
 	Reset URL counter on session change.<br>
+	Show excluded URLs in the AJAX Spider tab and through the ZAP API.<br>
 	]]>
 	</changes>
 	<dependencies>

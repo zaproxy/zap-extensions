@@ -20,9 +20,14 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.event.TableModelEvent;
 
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -30,51 +35,192 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.AlertEventPublisher;
-import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableModel;
+import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableModel;
+import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
+import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
 
-public class AjaxSpiderResultsTableModel extends DefaultHistoryReferencesTableModel {
+public class AjaxSpiderResultsTableModel
+        extends AbstractCustomColumnHistoryReferencesTableModel<AjaxSpiderResultsTableModel.AjaxSpiderTableEntry> {
 
     private static final long serialVersionUID = 4949104995571034494L;
+
+    private static final Column[] COLUMNS = new Column[] {
+            Column.CUSTOM,
+            Column.HREF_ID,
+            Column.REQUEST_TIMESTAMP,
+            Column.RESPONSE_TIMESTAMP,
+            Column.METHOD,
+            Column.URL,
+            Column.STATUS_CODE,
+            Column.STATUS_REASON,
+            Column.RTT,
+            Column.SIZE_REQUEST_HEADER,
+            Column.SIZE_REQUEST_BODY,
+            Column.SIZE_RESPONSE_HEADER,
+            Column.SIZE_RESPONSE_BODY,
+            Column.HIGHEST_ALERT,
+            Column.NOTE,
+            Column.TAGS };
+
+    private static final String[] CUSTOM_COLUMN_NAMES = {
+            Constant.messages.getString("spiderajax.panel.table.header.processed") };
 
     private final ExtensionHistory extensionHistory;
     private AlertEventConsumer alertEventConsumer;
 
+    private List<AjaxSpiderTableEntry> resources;
+    private Map<Integer, Integer> idsToRows;
+
     public AjaxSpiderResultsTableModel() {
-        super(new Column[] {
-                Column.HREF_ID,
-                Column.REQUEST_TIMESTAMP,
-                Column.RESPONSE_TIMESTAMP,
-                Column.METHOD,
-                Column.URL,
-                Column.STATUS_CODE,
-                Column.STATUS_REASON,
-                Column.RTT,
-                Column.SIZE_REQUEST_HEADER,
-                Column.SIZE_REQUEST_BODY,
-                Column.SIZE_RESPONSE_HEADER,
-                Column.SIZE_RESPONSE_BODY,
-                Column.HIGHEST_ALERT,
-                Column.NOTE,
-                Column.TAGS});
+        super(COLUMNS);
+
+        resources = new ArrayList<>();
+        idsToRows = new HashMap<>();
 
         alertEventConsumer = new AlertEventConsumer();
         extensionHistory = Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
         ZAP.getEventBus().registerConsumer(alertEventConsumer, AlertEventPublisher.getPublisher().getPublisherName());
     }
 
-    @Override
-    public void addHistoryReference(HistoryReference historyReference) {
+    public void addHistoryReference(HistoryReference historyReference, boolean inScope) {
         HistoryReference latestHistoryReference = historyReference;
         if (extensionHistory != null) {
             latestHistoryReference = extensionHistory.getHistoryReference(historyReference.getHistoryId());
         }
-        super.addHistoryReference(latestHistoryReference);
+        final AjaxSpiderTableEntry entry = new AjaxSpiderTableEntry(latestHistoryReference, inScope);
+        EventQueue.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                final int row = resources.size();
+                idsToRows.put(Integer.valueOf(entry.getHistoryId()), Integer.valueOf(row));
+                resources.add(entry);
+                fireTableRowsInserted(row, row);
+            }
+        });
     }
 
     void unload() {
         if (alertEventConsumer != null) {
             ZAP.getEventBus().unregisterConsumer(alertEventConsumer, AlertEventPublisher.getPublisher().getPublisherName());
             alertEventConsumer = null;
+        }
+    }
+
+    @Override
+    public void addEntry(AjaxSpiderTableEntry entry) {
+    }
+
+    @Override
+    public void refreshEntryRow(int historyReferenceId) {
+        final DefaultHistoryReferencesTableEntry entry = getEntryWithHistoryId(historyReferenceId);
+
+        if (entry != null) {
+            int rowIndex = getEntryRowIndex(historyReferenceId);
+            getEntryWithHistoryId(historyReferenceId).refreshCachedValues();
+
+            fireTableRowsUpdated(rowIndex, rowIndex);
+        }
+    }
+
+    @Override
+    public void removeEntry(int historyReferenceId) {
+    }
+
+    @Override
+    public AjaxSpiderTableEntry getEntry(int rowIndex) {
+        return resources.get(rowIndex);
+    }
+
+    @Override
+    public AjaxSpiderTableEntry getEntryWithHistoryId(int historyReferenceId) {
+        final int row = getEntryRowIndex(historyReferenceId);
+        if (row != -1) {
+            return resources.get(row);
+        }
+        return null;
+    }
+
+    @Override
+    public int getEntryRowIndex(int historyReferenceId) {
+        final Integer row = idsToRows.get(Integer.valueOf(historyReferenceId));
+        if (row != null) {
+            return row.intValue();
+        }
+        return -1;
+    }
+
+    @Override
+    public void clear() {
+        resources = new ArrayList<>();
+        idsToRows = new HashMap<>();
+        fireTableDataChanged();
+    }
+
+    @Override
+    public int getRowCount() {
+        return resources.size();
+    }
+
+    @Override
+    protected Class<?> getColumnClass(Column column) {
+        return AbstractHistoryReferencesTableEntry.getColumnClass(column);
+    }
+
+    @Override
+    protected Object getPrototypeValue(Column column) {
+        return AbstractHistoryReferencesTableEntry.getPrototypeValue(column);
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        if (columnIndex == -1) {
+            return getEntry(rowIndex);
+        }
+        return super.getValueAt(rowIndex, columnIndex);
+    }
+
+    @Override
+    protected Object getCustomValueAt(AjaxSpiderTableEntry entry, int columnIndex) {
+        switch (getCustomColumnIndex(columnIndex)) {
+        case 0:
+            return Boolean.valueOf(entry.isInScope());
+        }
+        return null;
+    }
+
+    @Override
+    protected String getCustomColumnName(int columnIndex) {
+        return CUSTOM_COLUMN_NAMES[getCustomColumnIndex(columnIndex)];
+    }
+
+    @Override
+    protected Class<?> getCustomColumnClass(int columnIndex) {
+        if (getCustomColumnIndex(columnIndex) == 0) {
+            return Boolean.class;
+        }
+        return null;
+    }
+
+    @Override
+    protected Object getCustomPrototypeValue(int columnIndex) {
+        if (getCustomColumnIndex(columnIndex) == 0) {
+            return Boolean.TRUE;
+        }
+        return null;
+    }
+
+    static class AjaxSpiderTableEntry extends DefaultHistoryReferencesTableEntry {
+
+        private final boolean inScope;
+
+        public AjaxSpiderTableEntry(HistoryReference historyReference, boolean inScope) {
+            super(historyReference, COLUMNS);
+            this.inScope = inScope;
+        }
+
+        public boolean isInScope() {
+            return inScope;
         }
     }
 
