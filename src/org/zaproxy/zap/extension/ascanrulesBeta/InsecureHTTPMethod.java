@@ -64,8 +64,7 @@ public class InsecureHTTPMethod extends AbstractAppPlugin {
 			"TRACK",
 			"CONNECT",
 			"PUT",
-			"DELETE",
-			"TRACE"
+			"DELETE"
 			}
 			));
 	
