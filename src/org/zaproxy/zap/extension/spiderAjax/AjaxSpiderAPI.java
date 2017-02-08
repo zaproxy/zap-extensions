@@ -24,8 +24,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -35,6 +38,8 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -47,6 +52,7 @@ import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseConversionUtils;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
+import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
 
 public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
@@ -61,6 +67,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
 	private static final String VIEW_STATUS = "status";
 	private static final String VIEW_RESULTS = "results";
+	private static final String VIEW_FULL_RESULTS = "fullResults";
 	private static final String VIEW_NUMBER_OF_RESULTS = "numberOfResults";
 
 	private static final String PARAM_CONTEXT_NAME = "contextName";
@@ -84,6 +91,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	private final ExtensionAjax extension;
 
 	private List<HistoryReference> historyReferences;
+	private List<HistoryReference> historyReferencesOutOfScope;
 	private SpiderThread spiderThread;
 
 	public AjaxSpiderAPI(ExtensionAjax extension) {
@@ -105,6 +113,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 		this.addApiView(new ApiView(VIEW_STATUS));
 		this.addApiView(new ApiView(VIEW_RESULTS, null, new String[] { PARAM_START, PARAM_COUNT }));
 		this.addApiView(new ApiView(VIEW_NUMBER_OF_RESULTS));
+		this.addApiView(new ApiView(VIEW_FULL_RESULTS));
 
 	}
 
@@ -311,6 +320,9 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 		case VIEW_NUMBER_OF_RESULTS:
 			result = new ApiResponseElement(name, String.valueOf(historyReferences.size()));
 			break;
+		case VIEW_FULL_RESULTS:
+			result = new FullResultsApiResponse(name, historyReferences, historyReferencesOutOfScope);
+			break;
 		default:
 			throw new ApiException(ApiException.Type.BAD_VIEW);
 		}
@@ -330,12 +342,17 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
 	@Override
 	public void spiderStarted() {
-		historyReferences = new ArrayList<>();
+		historyReferences = Collections.synchronizedList(new ArrayList<HistoryReference>());
+		historyReferencesOutOfScope = Collections.synchronizedList(new ArrayList<HistoryReference>());
 	}
 
 	@Override
-	public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage) {
-		historyReferences.add(historyReference);
+	public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage, boolean inScope) {
+		if (inScope) {
+			historyReferences.add(historyReference);
+		} else {
+			historyReferencesOutOfScope.add(historyReference);
+		}
 	}
 
 	@Override
@@ -345,5 +362,92 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	void reset() {
 		stopSpider();
 		historyReferences = Collections.emptyList();
+		historyReferencesOutOfScope = Collections.emptyList();
 	}
+
+    private static class FullResultsApiResponse extends ApiResponse {
+
+        private final ApiResponseList inScope;
+        private final ApiResponseList outOfScope;
+
+        public FullResultsApiResponse(
+                String name,
+                List<HistoryReference> historyReferences,
+                List<HistoryReference> historyReferencesOutOfScope) {
+            super(name);
+
+            inScope = new ApiResponseList("inScope");
+            synchronized (historyReferences) {
+                for (HistoryReference hr : historyReferences) {
+                    inScope.addItem(resourceToSet(hr));
+                }
+            }
+
+            outOfScope = new ApiResponseList("outOfScope");
+            synchronized (historyReferencesOutOfScope) {
+                for (HistoryReference hr : historyReferencesOutOfScope) {
+                    outOfScope.addItem(resourceToSet(hr));
+                }
+            }
+        }
+
+        private static ApiResponse resourceToSet(HistoryReference hr) {
+            Map<String, String> map = new HashMap<>();
+            map.put("messageId", Integer.toString(hr.getHistoryId()));
+            map.put("method", hr.getMethod());
+            map.put("url", hr.getURI().toString());
+            map.put("statusCode", Integer.toString(hr.getStatusCode()));
+            map.put("statusReason", hr.getReason());
+            return new ApiResponseSet("resource", map);
+        }
+
+        @Override
+        public void toXML(Document doc, Element parent) {
+            parent.setAttribute("type", "set");
+
+            Element el = doc.createElement(inScope.getName());
+            inScope.toXML(doc, el);
+            parent.appendChild(el);
+
+            el = doc.createElement(outOfScope.getName());
+            outOfScope.toXML(doc, el);
+            parent.appendChild(el);
+        }
+
+        @Override
+        public JSON toJSON() {
+            JSONObject scopes = new JSONObject();
+            scopes.put(inScope.getName(), ((JSONObject) inScope.toJSON()).get(inScope.getName()));
+            scopes.put(outOfScope.getName(), ((JSONObject) outOfScope.toJSON()).get(outOfScope.getName()));
+
+            JSONObject jo = new JSONObject();
+            jo.put(getName(), scopes);
+            return jo;
+        }
+
+        @Override
+        public void toHTML(StringBuilder sb) {
+            sb.append("<h2>" + this.getName() + "</h2>\n");
+            inScope.toHTML(sb);
+            outOfScope.toHTML(sb);
+        }
+
+        @Override
+        public String toString(int indent) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < indent; i++) {
+                sb.append("\t");
+            }
+            sb.append("ApiResponseSet ");
+            sb.append(this.getName());
+            sb.append(" : [\n");
+            sb.append(inScope.toString(indent + 1));
+            sb.append(outOfScope.toString(indent + 1));
+            for (int i = 0; i < indent; i++) {
+                sb.append("\t");
+            }
+            sb.append("]\n");
+            return sb.toString();
+        }
+    }
 }

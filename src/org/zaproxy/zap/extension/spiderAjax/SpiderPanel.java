@@ -251,9 +251,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	 * @param msg the http message
 	 * @param url the targeted url
 	 */
-	private boolean addHistoryUrl(HistoryReference r, HttpMessage msg, String url){
+	private boolean addHistoryUrl(HistoryReference r, HttpMessage msg, String url, boolean inScope){
 			if(isNewUrl(r, msg)){
-				this.spiderResultsTableModel.addHistoryReference(r);
+				this.spiderResultsTableModel.addHistoryReference(r, inScope);
 				return true;
 			}
 			return false;
@@ -492,8 +492,8 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 	}
 
 	@Override
-	public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage) {
-		boolean added = addHistoryUrl(historyReference, httpMessage, targetSite);
+	public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage, boolean inScope) {
+		boolean added = addHistoryUrl(historyReference, httpMessage, targetSite, inScope);
 		if (View.isInitialised() && added) {
 			foundCount++;
 			this.foundLabel.setText(Integer.toString(this.foundCount));

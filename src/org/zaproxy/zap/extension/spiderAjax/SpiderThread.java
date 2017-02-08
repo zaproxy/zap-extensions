@@ -75,6 +75,7 @@ public class SpiderThread implements Runnable {
 	private final String targetHost;
 	private ProxyServer proxy;
 	private int proxyPort;
+	private final ExtensionAjax extension;
 
 	/**
 	 * Constructs a {@code SpiderThread} for the given target.
@@ -104,6 +105,7 @@ public class SpiderThread implements Runnable {
 		exclusionList.addAll(session.getExcludeFromSpiderRegexs());
 		exclusionList.addAll(session.getGlobalExcludeURLRegexs());
 		this.targetHost = target.getStartUri().getHost();
+		this.extension = extension;
 
 		createOutOfScopeResponse(extension.getMessages().getString("spiderajax.outofscope.response"));
 
@@ -251,9 +253,9 @@ public class SpiderThread implements Runnable {
 		}
 	}
 
-	private void notifySpiderListenersFoundMessage(HistoryReference historyReference, HttpMessage httpMessage) {
+	private void notifySpiderListenersFoundMessage(HistoryReference historyReference, HttpMessage httpMessage, boolean inScope) {
 		for (SpiderListener listener : spiderListeners) {
-			listener.foundMessage(historyReference, httpMessage);
+			listener.foundMessage(historyReference, httpMessage, inScope);
 		}
 	}
 
@@ -302,6 +304,8 @@ public class SpiderThread implements Runnable {
 
 			if (excluded) {
 				setOutOfScopeResponse(httpMessage);
+				// TODO Replace with HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY.
+				notifyMessage(httpMessage, 18, false);
 				return true;
 			}
 
@@ -311,6 +315,8 @@ public class SpiderThread implements Runnable {
 
 		private void setOutOfScopeResponse(HttpMessage httpMessage) {
 			try {
+				httpMessage.setTimeSentMillis(System.currentTimeMillis());
+				httpMessage.setTimeElapsedMillis(0);
 				httpMessage.setResponseHeader(outOfScopeResponseHeader.toString());
 			} catch (HttpMalformedHeaderException ignore) {
 				// Setting a valid response header.
@@ -320,22 +326,34 @@ public class SpiderThread implements Runnable {
 
 		@Override
 		public boolean onHttpResponseReceived(final HttpMessage httpMessage) {
-			try {
-				final HistoryReference historyRef = new HistoryReference(session, HistoryReference.TYPE_SPIDER_AJAX, httpMessage);
-				historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
-				EventQueue.invokeLater(new Runnable() {
+			notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX, true);
 
-					@Override
-					public void run() {
-						session.getSiteTree().addPath(historyRef, httpMessage);
-						notifySpiderListenersFoundMessage(historyRef, httpMessage);
-					}
-				});
+			return false;
+		}
+
+		private void notifyMessage(final HttpMessage httpMessage, final int historyType, final boolean inScope) {
+			try {
+				if (extension.getView() != null && !EventQueue.isDispatchThread()) {
+					EventQueue.invokeLater(new Runnable() {
+
+						@Override
+						public void run() {
+							notifyMessage(httpMessage, historyType, inScope);
+						}
+					});
+					return;
+				}
+
+				HistoryReference historyRef = new HistoryReference(session, historyType, httpMessage);
+				if (inScope) {
+					historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
+					session.getSiteTree().addPath(historyRef, httpMessage);
+				}
+
+				notifySpiderListenersFoundMessage(historyRef, httpMessage, inScope);
 			} catch (Exception e) {
 				logger.error(e);
 			}
-
-			return false;
 		}
 	}
 

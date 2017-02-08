@@ -19,14 +19,22 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.SortOrder;
 import javax.swing.table.TableModel;
 
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
+import org.jdesktop.swingx.renderer.IconValues;
+import org.jdesktop.swingx.renderer.MappedValue;
+import org.jdesktop.swingx.renderer.StringValues;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
+import org.zaproxy.zap.view.table.decorator.AbstractTableCellItemIconHighlighter;
 
 public class AjaxSpiderResultsTable extends HistoryReferencesTable {
 
@@ -42,6 +50,10 @@ public class AjaxSpiderResultsTable extends HistoryReferencesTable {
         setName(RESULTS_TABLE_NAME);
 
         setAutoCreateColumnsFromModel(false);
+
+        getColumnExt(0)
+                .setCellRenderer(new DefaultTableRenderer(new MappedValue(StringValues.EMPTY, IconValues.NONE), JLabel.CENTER));
+        getColumnExt(0).setHighlighters(new ProcessedCellItemIconHighlighter(0));
 
         getColumnExt(Constant.messages.getString("view.href.table.header.timestamp.response")).setVisible(false);
         getColumnExt(Constant.messages.getString("view.href.table.header.size.requestheader")).setVisible(false);
@@ -74,5 +86,40 @@ public class AjaxSpiderResultsTable extends HistoryReferencesTable {
         }
 
         return historyReference;
+    }
+
+    /**
+     * A {@link org.jdesktop.swingx.decorator.Highlighter Highlighter} for a column that indicates, using icons, whether or not
+     * an entry was processed, that is, is or not in scope.
+     * <p>
+     * The expected type/class of the cell values is {@code Boolean}.
+     */
+    private static class ProcessedCellItemIconHighlighter extends AbstractTableCellItemIconHighlighter {
+
+        /** The icon that indicates the entry was processed. */
+        private static final ImageIcon PROCESSED_ICON = new ImageIcon(
+                AjaxSpiderResultsTable.class.getResource("/resource/icon/16/152.png"));
+
+        /** The icon that indicates the entry was not processed. */
+        private static final ImageIcon NOT_PROCESSED_ICON = new ImageIcon(
+                AjaxSpiderResultsTable.class.getResource("/resource/icon/16/149.png"));
+
+        public ProcessedCellItemIconHighlighter(final int columnIndex) {
+            super(columnIndex);
+        }
+
+        @Override
+        protected Icon getIcon(final Object cellItem) {
+            return getProcessedIcon(((Boolean) cellItem).booleanValue());
+        }
+
+        private static Icon getProcessedIcon(final boolean processed) {
+            return processed ? PROCESSED_ICON : NOT_PROCESSED_ICON;
+        }
+
+        @Override
+        protected boolean isHighlighted(final Object cellItem) {
+            return true;
+        }
     }
 }

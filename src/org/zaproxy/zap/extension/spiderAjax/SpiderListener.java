@@ -26,7 +26,7 @@ interface SpiderListener {
 
 	void spiderStarted();
 
-	void foundMessage(HistoryReference historyReference, HttpMessage httpMessage);
+	void foundMessage(HistoryReference historyReference, HttpMessage httpMessage, boolean inScope);
 
 	void spiderStopped();
 }
