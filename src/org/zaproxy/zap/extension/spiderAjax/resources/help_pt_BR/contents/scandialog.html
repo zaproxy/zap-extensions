@@ -14,73 +14,72 @@ A primeira aba permite que você mude características importantes, como:
 
 <h3>Ponto de partida</h3>
 
-The URL which the AJAX spider will start crawling from, or a context (in which case it
-will be used one of the URLs that are in context as starting point).
+A URL de onde o spider AJAX irá iniciar o rastreamento, ou um contexto (caso em que será utilizado um dos URLs que estão no contexto como ponto de partida).
 
-<h3>Context</h3>
-Allows to select the Context to be spidered.
+<h3>Contexto</h3>
+Permite para selecionar o contexto a ser percorrido.
 
-<h3>User</h3>
-Allows to select one of the users available from the selected context, to perform the spider scan as a user (ZAP will (re)authenticate as that user whenever necessary).
+<h3>Usuário</h3>
+Permite selecionar um dos usuários disponíveis a partir do contexto selecionado, para executar a varredura como um usuário (ZAP irá (re) autenticar como esse usuário sempre que necessário).
 
-<h3>Just in scope</h3>
+<h3>Apenas no escopo</h3>
 
-If set then any URLs which are out of scope will be ignored.
+Se definido, em seguida, quaisquer URLs que estão fora do escopo serão ignoradas.
 <p>
-<strong>Note:</strong> The option <code>Just in scope</code> is mutually exclusive with <code>Context</code> option, if one is used the other is ignored.
+<strong>Nota:</strong> A opção <code>Apenas no escopo</code> é mutuamente exclusiva com a opção <code>Contexto</code> , se um é usado o outro é ignorado.
 
-<h3>Spider Subtree Only</h3>
-If set then the spider will only access resources that are under the starting point (URI).
-When evaluating if a resource is found within the specified subtree, the spider considers only the scheme, host, port, and path components of the URI.
+<h3>Só subárvore do spider</h3>
+Se definido, em seguida, o spider só irá acessar os recursos que estão sob o ponto de partida (URI).
+Ao avaliar se um recurso é encontrado dentro da subárvore especificada, o spider considera apenas os componentes esquema, host, porta e caminho do URI.
 
 <h3>Browser</h3>
 
-The type of browser to use.<br>
-Browsers will only be shown if ZAP has sufficient configuration to run them.<br>
-They may still fail to run if the browsers cannot be found or if the configuration information is incorrect.
+O tipo de navegador para usar.<br>
+Navegadores só serão mostrados se a ZAP tem configuração suficiente para executá-los.<br>
+Eles ainda podem falhar ao executar se os navegadores não podem ser encontrados ou se as informações de configuração estão incorretas.
 
-<h3>Show advanced options</h3>
+<h3>Mostrar opções avançadas</h3>
 
-If selected then the Options tab will be shown.
+Se selecionado, então a guia de opções será mostrada.
 
-<h2>Options</h2>
-This tab allows you to change options including:
+<h2>Opções</h2>
+Essa guia permite que você altere opções, incluindo:
 
-<h3>Number of browser windows to open</h3>
-You can configure the number of windows to be used by AJAX Spider.<br>
-The more windows, the faster the process will be.
+<h3>Número de janelas do navegador para abrir</h3>
+Você pode configurar o número de janelas para ser usado pelo spider AJAX.<br>
+Quanto mais janelas, mais rápido o processo será.
 
-<h3>Maximum crawl depth</h3>
-The maximum depth that the crawler can reach. Zero means unlimited depth.
+<h3>Profundidade máxima de rastreamento</h3>
+A profundidade máxima que o rastreador pode chegar. Zero significa profundidade ilimitada.
 
-<h3>Maximum crawl states</h3>
-The maximum number of states that the crawler should crawl. Zero means unlimited crawl states. 
+<h3>Máximo de estados de navegação</h3>
+O número máximo de Estados que o rastreador deve percorrer. Zero significa ilimitado. 
 
-<h3>Maximum duration</h3>
-The maximum time that the crawler is allowed to run. Zero means unlimited running time.
+<h3>Duração máxima</h3>
+O tempo máximo que o rastreador pode ser executado. Zero significa ilimitado tempo de execução.
 
-<h3>Event wait time</h3>
-The time to wait after a client side event is fired.
+<h3>Tempo de espera do evento</h3>
+O tempo de espera após um evento de lado do cliente é disparado.
 
-<h3>Reload wait time</h3>
-The time to wait after URL is loaded.
+<h3>Tempo de espera de recarga</h3>
+O tempo de espera depois que URL é carregada.
 	
-	<h2>See also</h2>
+	<h2>Veja também</h2>
 	<table>
 		<tr>
 			&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="concepts.html">AJAX Spider</a></td>
-			<td>for an overview of the AJAX Spider</td>
+			<td><a href="concepts.html">Spider AJAX</a></td>
+			<td>para uma visão geral do AJAX Spider</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="tab.html">AJAX Spider tab</a></td>
-			<td>for an overview of the AJAX Spider Tab</td>
+			<td><a href="tab.html">Aba do Spider Ajax</a></td>
+			<td>para uma visão geral da aba do Spider AJAX</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">Options AJAX Spider screen</a></td>
-			<td>for an overview of the AJAX Spider Options</td>
+			<td><a href="options.html">Tela de opções do spider AJAX</a></td>
+			<td>para uma visão geral das opções do Spider AJAX</td>
 		</tr>
 	</table>
 
