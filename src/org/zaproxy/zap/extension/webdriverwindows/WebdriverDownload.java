@@ -49,10 +49,10 @@ public class WebdriverDownload {
 		// Geckodriver releases: https://github.com/mozilla/geckodriver/releases
 
 		downloadDriver(
-				"https://github.com/mozilla/geckodriver/releases/download/v0.13.0/geckodriver-v0.13.0-win32.zip",
+				"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-win32.zip",
 				"files/webdriver/windows/32/", "geckodriver.exe");
 		downloadDriver(
-				"https://github.com/mozilla/geckodriver/releases/download/v0.13.0/geckodriver-v0.13.0-win64.zip",
+				"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-win64.zip",
 				"files/webdriver/windows/64/", "geckodriver.exe");
 
 		// Chromedriver releases:

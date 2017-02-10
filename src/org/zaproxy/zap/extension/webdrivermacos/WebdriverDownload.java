@@ -44,7 +44,7 @@ public class WebdriverDownload {
 		// Geckodriver releases: https://github.com/mozilla/geckodriver/releases
 
 		downloadDriver(
-				"https://github.com/mozilla/geckodriver/releases/download/v0.13.0/geckodriver-v0.13.0-macos.tar.gz",
+				"https://github.com/mozilla/geckodriver/releases/download/v0.14.0/geckodriver-v0.14.0-macos.tar.gz",
 				"files/webdriver/macos/64/", "geckodriver");
 
 		// Chromedriver releases:
