@@ -24,8 +24,11 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
@@ -45,6 +48,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.api.API;
+import org.zaproxy.zap.extension.selenium.internal.BuiltInSingleWebDriverProvider;
 
 import com.google.gson.JsonObject;
 
@@ -66,7 +70,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * The version of the extension. As consistency should be kept in sync with the version of the add-on (under ZapAddOn.xml
      * file).
      */
-    private static final Version CURRENT_VERSION = new Version("1.0.0");
+    private static final Version CURRENT_VERSION = new Version("1.1.0");
 
     private SeleniumOptions options;
     private SeleniumOptionsPanel optionsPanel;
@@ -83,6 +87,23 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * @see #initialiseBrowserUIList()
      */
     private List<BrowserUI> browserUIList;
+
+    /**
+     * A list containing all (installed) WebDriverProviders.
+     */
+    private Map<String, SingleWebDriverProvider> webDriverProviders;
+    
+    /**
+     * A map of {@code ProvidedBrowser}'s ID to the {@code ProvidedBrowser} instance.
+     */
+    private Map<String, ProvidedBrowser> providedBrowsers;
+
+    /**
+     * A list containing all (installed) UI wrappers of {@code ProvidedBrowser}s.
+     * 
+     * @see #buildProvidedBrowserUIList
+     */
+    private List<ProvidedBrowserUI> providedBrowserUIList;
 
     public ExtensionSelenium() {
         super(NAME, CURRENT_VERSION);
@@ -109,6 +130,31 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         seleniumApi = new SeleniumAPI(getOptions());
         addonFilesChangedListener = new AddonFilesChangedListenerImpl();
+        webDriverProviders = Collections.synchronizedMap(new HashMap<String, SingleWebDriverProvider>());
+        providedBrowsers = Collections.synchronizedMap(new HashMap<String, ProvidedBrowser>()); 
+
+        addBuiltInProvider(Browser.CHROME);
+        addBuiltInProvider(Browser.FIREFOX);
+        addBuiltInProvider(Browser.HTML_UNIT);
+        addBuiltInProvider(Browser.INTERNET_EXPLORER);
+        addBuiltInProvider(Browser.OPERA);
+        addBuiltInProvider(Browser.PHANTOM_JS);
+        addBuiltInProvider(Browser.SAFARI);
+
+        providedBrowserUIList = new ArrayList<>();
+        buildProvidedBrowserUIList();
+    }
+
+    private void addBuiltInProvider(Browser browser) {
+        webDriverProviders.put(browser.getId(), new BuiltInSingleWebDriverProvider(getName(browser), browser));
+    }
+
+    private void buildProvidedBrowserUIList() {
+        providedBrowserUIList.clear();
+        for (SingleWebDriverProvider provider : webDriverProviders.values()) {
+            providedBrowserUIList.add(new ProvidedBrowserUI(provider.getProvidedBrowser()));
+        }
+        Collections.sort(providedBrowserUIList);
     }
 
     @Override
@@ -135,6 +181,100 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         super.unload();
 
         API.getInstance().removeApiImplementor(seleniumApi);
+    }
+
+    /**
+     * Adds the given WebDriver provider.
+     *
+     * @param webDriverProvider the WebDriver provider to add
+     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its ID is {@code null} or empty.
+     *             Also, if the ID already exists.
+     * @since 1.1.0
+     */
+    public void addWebDriverProvider(SingleWebDriverProvider webDriverProvider) {
+        validateWebDriverProvider(webDriverProvider);
+
+        if (webDriverProviders.containsKey(webDriverProvider.getId())) {
+            throw new IllegalArgumentException("A provider with the ID [" + webDriverProvider.getId() + "] already exists.");
+        }
+
+        webDriverProviders.put(webDriverProvider.getId(), webDriverProvider);
+
+        ProvidedBrowser providedBrowser = webDriverProvider.getProvidedBrowser();
+        providedBrowsers.put(providedBrowser.getId(), providedBrowser);
+
+        providedBrowserUIList.add(new ProvidedBrowserUI(providedBrowser));
+        Collections.sort(providedBrowserUIList);
+    }
+
+    /**
+     * Validates that the given WebDriver provider is not {@code null} nor has a {@code null} or empty ID.
+     *
+     * @param webDriverProvider the WebDriver provider to validate.
+     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its ID is {@code null} or empty.
+     */
+    private static void validateWebDriverProvider(SingleWebDriverProvider webDriverProvider) {
+        if (webDriverProvider == null) {
+            throw new IllegalArgumentException("Parameter webDriverProvider must not be null.");
+        }
+
+        if (StringUtils.isEmpty(webDriverProvider.getId())) {
+            throw new IllegalArgumentException("The ID of the webDriverProvider must not be null nor empty.");
+        }
+    }
+
+    /**
+     * Removes the given WebDriver provider.
+     *
+     * @param webDriverProvider the WebDriver provider to remove
+     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its ID is {@code null} or empty.
+     * @since 1.1.0
+     */
+    public void removeWebDriverProvider(SingleWebDriverProvider webDriverProvider) {
+        validateWebDriverProvider(webDriverProvider);
+
+        webDriverProviders.remove(webDriverProvider.getId());
+        providedBrowsers.remove(webDriverProvider.getProvidedBrowser().getId());
+        buildProvidedBrowserUIList();
+    }
+
+    /**
+     * Returns a new {@code ProvidedBrowsersComboBoxModel} with the provided browsers.
+     *
+     * @return a new model with the provided browsers.
+     * @see #getBrowserUIList()
+     * @since 1.1.0
+     */
+    public ProvidedBrowsersComboBoxModel createProvidedBrowsersComboBoxModel() {
+        return new ProvidedBrowsersComboBoxModel(providedBrowserUIList);
+    }
+
+    /**
+     * Gets the (unmodifiable) list of {@code ProvidedBrowserUI} objects for all {@code ProvidedBrowser}s installed.
+     *
+     * @return an unmodifiable list with all browsers installed
+     * @since 1.1.0
+     * @see #createProvidedBrowsersComboBoxModel()
+     */
+    public List<ProvidedBrowserUI> getProvidedBrowserUIList() {
+        return Collections.unmodifiableList(providedBrowserUIList);
+    }
+
+    /**
+     * Gets the {@code ProvidedBrowser} with the given ID.
+     *
+     * @param providedBrowserId the ID of the provided browser.
+     * @return the {@code ProvidedBrowser}, or {@code null} if not found/installed.
+     */
+    private ProvidedBrowser getProvidedBrowser(String providedBrowserId) {
+        ProvidedBrowser providedBrowser = providedBrowsers.get(providedBrowserId);
+        if (providedBrowser == null) {
+            SingleWebDriverProvider webDriverProvider = webDriverProviders.get(providedBrowserId);
+            if (webDriverProvider != null) {
+                providedBrowser = webDriverProvider.getProvidedBrowser();
+            }
+        }
+        return providedBrowser;
     }
 
     /**
@@ -204,6 +344,56 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     /**
+     * Gets a {@code WebDriver} to the provided browser for the given requester.
+     *
+     * @param requester the ID of the (ZAP) component that's requesting the {@code WebDriver}.
+     * @param providedBrowserId the ID of the provided browser.
+     * @return the {@code WebDriver} to the provided browser.
+     * @throws IllegalArgumentException if the provided browser was not found.
+     * @since 1.1.0
+     */
+    public WebDriver getWebDriver(int requester, String providedBrowserId) {
+        return getWebDriverImpl(requester, providedBrowserId, null, -1);
+    }
+
+    /**
+     * Gets a {@code WebDriver} to the provided browser for the given requester, proxying through the given address and port.
+     *
+     * @param requester the ID of the (ZAP) component that's requesting the {@code WebDriver}.
+     * @param providedBrowserId the ID of the provided browser.
+     * @param proxyAddress the address of the proxy.
+     * @param proxyPort the port of the proxy.
+     * @return the {@code WebDriver} to the provided browser, proxying through the given address and port.
+     * @throws IllegalArgumentException if {@code proxyAddress} is {@code null} or empty, or if {@code proxyPort} is not a valid
+     *             port number (between 1 and 65535). Also, if the provided browser was not found.
+     * @since 1.1.0
+     */
+    public WebDriver getWebDriver(int requester, String providedBrowserId, String proxyAddress, int proxyPort) {
+        validateProxyAddressPort(proxyAddress, proxyPort);
+
+        return getWebDriverImpl(requester, providedBrowserId, proxyAddress, proxyPort);
+    }
+
+    private static void validateProxyAddressPort(String proxyAddress, int proxyPort) {
+        Validate.notEmpty(proxyAddress, "Parameter proxyAddress must not be null nor empty.");
+        if (proxyPort < MIN_PORT || proxyPort > MAX_PORT) {
+            throw new IllegalArgumentException("Parameter proxyPort must be under: " + MIN_PORT + " <= port <= " + MAX_PORT);
+        }
+    }
+
+    private WebDriver getWebDriverImpl(int requester, String providedBrowserId, String proxyAddress, int proxyPort) {
+        ProvidedBrowser providedBrowser = getProvidedBrowser(providedBrowserId);
+        if (providedBrowser == null) {
+            throw new IllegalArgumentException("Unknown browser: " + providedBrowserId);
+        }
+
+        if (proxyAddress == null) {
+            return webDriverProviders.get(providedBrowser.getProviderId()).getWebDriver(requester);
+        }
+        return webDriverProviders.get(providedBrowser.getProviderId()).getWebDriver(requester, proxyAddress, proxyPort);
+    }
+
+    /**
      * Gets a {@code WebDriver} for the given {@code browser}.
      *
      * @param browser the target browser
@@ -226,10 +416,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * @see #getWebDriver(Browser)
      */
     public static WebDriver getWebDriver(Browser browser, String proxyAddress, int proxyPort) {
-        Validate.notEmpty(proxyAddress, "Parameter proxyAddress must not be null nor empty.");
-        if (proxyPort < MIN_PORT || proxyPort > MAX_PORT) {
-            throw new IllegalArgumentException("Parameter proxyPort must be under: " + MIN_PORT + " <= port <= " + MAX_PORT);
-        }
+        validateProxyAddressPort(proxyAddress, proxyPort);
 
         return getWebDriverImpl(browser, proxyAddress, proxyPort);
     }
@@ -329,6 +516,29 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         default:
             throw new IllegalArgumentException("Unknown browser: " + browser);
         }
+    }
+
+    /**
+     * Returns an error message for the given provided browser that failed to start.
+     * <p>
+     * Some browsers require extra steps to start them with a WebDriver, for such cases there's a custom error message, for the
+     * remaining cases there's a generic error message.
+     *
+     * @param providedBrowserId the ID of provided browser that failed to start
+     * @return a {@code String} with the error message
+     */
+    public String getWarnMessageFailedToStart(String providedBrowserId) {
+        ProvidedBrowser providedBrowser = getProvidedBrowser(providedBrowserId);
+        if (providedBrowser == null) {
+            return getMessages().getString("selenium.warn.message.failed.start.browser.notfound");
+        }
+
+        Browser browser = Browser.getBrowserWithIdNoFailSafe(providedBrowser.getProviderId());
+        if (browser != null) {
+            return getWarnMessageFailedToStart(browser);
+        }
+        return MessageFormat
+                .format(getMessages().getString("selenium.warn.message.failed.start.browser"), providedBrowser.getName());
     }
 
     /**
