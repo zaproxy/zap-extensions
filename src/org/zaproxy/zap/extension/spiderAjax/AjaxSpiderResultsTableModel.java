@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.AlertEventPublisher;
+import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
 import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableModel;
 import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
 import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
@@ -65,11 +67,21 @@ public class AjaxSpiderResultsTableModel
     private static final String[] CUSTOM_COLUMN_NAMES = {
             Constant.messages.getString("spiderajax.panel.table.header.processed") };
 
+    private static final EnumMap<ResourceState, ProcessedCellItem> statesMap;
+
     private final ExtensionHistory extensionHistory;
     private AlertEventConsumer alertEventConsumer;
 
     private List<AjaxSpiderTableEntry> resources;
     private Map<Integer, Integer> idsToRows;
+
+    static {
+        statesMap = new EnumMap<>(ResourceState.class);
+        addState(statesMap, ResourceState.PROCESSED, "processed");
+        addState(statesMap, ResourceState.OUT_OF_CONTEXT, "outofcontext");
+        addState(statesMap, ResourceState.OUT_OF_SCOPE, "outofscope");
+        addState(statesMap, ResourceState.EXCLUDED, "excluded");
+    }
 
     public AjaxSpiderResultsTableModel() {
         super(COLUMNS);
@@ -82,12 +94,16 @@ public class AjaxSpiderResultsTableModel
         ZAP.getEventBus().registerConsumer(alertEventConsumer, AlertEventPublisher.getPublisher().getPublisherName());
     }
 
-    public void addHistoryReference(HistoryReference historyReference, boolean inScope) {
+    private static void addState(Map<ResourceState, ProcessedCellItem> map, ResourceState state, String i18nName) {
+        map.put(state, new ProcessedCellItem(state, Constant.messages.getString("spiderajax.panel.table.cell." + i18nName)));
+    }
+
+    public void addHistoryReference(HistoryReference historyReference, ResourceState state) {
         HistoryReference latestHistoryReference = historyReference;
         if (extensionHistory != null) {
             latestHistoryReference = extensionHistory.getHistoryReference(historyReference.getHistoryId());
         }
-        final AjaxSpiderTableEntry entry = new AjaxSpiderTableEntry(latestHistoryReference, inScope);
+        final AjaxSpiderTableEntry entry = new AjaxSpiderTableEntry(latestHistoryReference, state);
         EventQueue.invokeLater(new Runnable() {
 
             @Override
@@ -182,9 +198,8 @@ public class AjaxSpiderResultsTableModel
 
     @Override
     protected Object getCustomValueAt(AjaxSpiderTableEntry entry, int columnIndex) {
-        switch (getCustomColumnIndex(columnIndex)) {
-        case 0:
-            return Boolean.valueOf(entry.isInScope());
+        if (getCustomColumnIndex(columnIndex) == 0) {
+            return statesMap.get(entry.getResourceState());
         }
         return null;
     }
@@ -197,7 +212,7 @@ public class AjaxSpiderResultsTableModel
     @Override
     protected Class<?> getCustomColumnClass(int columnIndex) {
         if (getCustomColumnIndex(columnIndex) == 0) {
-            return Boolean.class;
+            return ProcessedCellItem.class;
         }
         return null;
     }
@@ -205,22 +220,22 @@ public class AjaxSpiderResultsTableModel
     @Override
     protected Object getCustomPrototypeValue(int columnIndex) {
         if (getCustomColumnIndex(columnIndex) == 0) {
-            return Boolean.TRUE;
+            return "Out Of Context";
         }
         return null;
     }
 
     static class AjaxSpiderTableEntry extends DefaultHistoryReferencesTableEntry {
 
-        private final boolean inScope;
+        private final ResourceState state;
 
-        public AjaxSpiderTableEntry(HistoryReference historyReference, boolean inScope) {
+        public AjaxSpiderTableEntry(HistoryReference historyReference, ResourceState state) {
             super(historyReference, COLUMNS);
-            this.inScope = inScope;
+            this.state = state;
         }
 
-        public boolean isInScope() {
-            return inScope;
+        public ResourceState getResourceState() {
+            return state;
         }
     }
 
@@ -290,6 +305,61 @@ public class AjaxSpiderResultsTableModel
                             getRowCount() - 1,
                             getColumnIndex(Column.HIGHEST_ALERT),
                             TableModelEvent.UPDATE));
+        }
+    }
+
+    static class ProcessedCellItem implements Comparable<ProcessedCellItem> {
+
+        private final ResourceState state;
+        private final String label;
+
+        public ProcessedCellItem(ResourceState state, String label) {
+            this.state = state;
+            this.label = label;
+        }
+
+        public ResourceState getState() {
+            return state;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 + state.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            ProcessedCellItem other = (ProcessedCellItem) obj;
+            if (state != other.state) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int compareTo(ProcessedCellItem other) {
+            if (other == null) {
+                return 1;
+            }
+            return state.compareTo(other.state);
         }
     }
 
