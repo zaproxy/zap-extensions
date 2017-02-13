@@ -195,7 +195,7 @@ public class SpiderThread implements Runnable {
 	 */
 	@Override
 	public void run() {
-		logger.info("Running Crawljax: " + displayName);
+		logger.info("Running Crawljax (with " + target.getOptions().getBrowserId()  + "): " + displayName);
 		this.running = true;
 		notifyListenersSpiderStarted();
 		logger.info("Starting proxy...");

@@ -266,7 +266,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 		spiderThread = extension.createSpiderThread(displayName, target, this);
 
 		try {
-			new Thread(spiderThread).start();
+			new Thread(spiderThread, "ZAP-AjaxSpiderApi").start();
 		} catch (Exception e) {
 			logger.error(e);
 		}
