@@ -91,7 +91,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	private final ExtensionAjax extension;
 
 	private List<HistoryReference> historyReferences;
-	private List<HistoryReference> historyReferencesOutOfScope;
+	private List<ResourceOutOfScope> resourcesOutOfScope;
 	private SpiderThread spiderThread;
 
 	public AjaxSpiderAPI(ExtensionAjax extension) {
@@ -321,7 +321,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 			result = new ApiResponseElement(name, String.valueOf(historyReferences.size()));
 			break;
 		case VIEW_FULL_RESULTS:
-			result = new FullResultsApiResponse(name, historyReferences, historyReferencesOutOfScope);
+			result = new FullResultsApiResponse(name, historyReferences, resourcesOutOfScope);
 			break;
 		default:
 			throw new ApiException(ApiException.Type.BAD_VIEW);
@@ -343,15 +343,15 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	@Override
 	public void spiderStarted() {
 		historyReferences = Collections.synchronizedList(new ArrayList<HistoryReference>());
-		historyReferencesOutOfScope = Collections.synchronizedList(new ArrayList<HistoryReference>());
+		resourcesOutOfScope = Collections.synchronizedList(new ArrayList<ResourceOutOfScope>());
 	}
 
 	@Override
-	public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage, boolean inScope) {
-		if (inScope) {
+	public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage, ResourceState state) {
+		if (state == ResourceState.PROCESSED) {
 			historyReferences.add(historyReference);
 		} else {
-			historyReferencesOutOfScope.add(historyReference);
+			resourcesOutOfScope.add(new ResourceOutOfScope(historyReference, state));
 		}
 	}
 
@@ -362,7 +362,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	void reset() {
 		stopSpider();
 		historyReferences = Collections.emptyList();
-		historyReferencesOutOfScope = Collections.emptyList();
+		resourcesOutOfScope = Collections.emptyList();
 	}
 
     private static class FullResultsApiResponse extends ApiResponse {
@@ -373,7 +373,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         public FullResultsApiResponse(
                 String name,
                 List<HistoryReference> historyReferences,
-                List<HistoryReference> historyReferencesOutOfScope) {
+                List<ResourceOutOfScope> historyReferencesOutOfScope) {
             super(name);
 
             inScope = new ApiResponseList("inScope");
@@ -385,19 +385,29 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
             outOfScope = new ApiResponseList("outOfScope");
             synchronized (historyReferencesOutOfScope) {
-                for (HistoryReference hr : historyReferencesOutOfScope) {
-                    outOfScope.addItem(resourceToSet(hr));
+                for (ResourceOutOfScope resOutOfScope : historyReferencesOutOfScope) {
+                    outOfScope.addItem(resourceOutOfScopeToSet(resOutOfScope));
                 }
             }
         }
 
         private static ApiResponse resourceToSet(HistoryReference hr) {
+            return new ApiResponseSet("resource", createDataMap(hr));
+        }
+
+        private static Map<String, String> createDataMap(HistoryReference hr) {
             Map<String, String> map = new HashMap<>();
             map.put("messageId", Integer.toString(hr.getHistoryId()));
             map.put("method", hr.getMethod());
             map.put("url", hr.getURI().toString());
             map.put("statusCode", Integer.toString(hr.getStatusCode()));
             map.put("statusReason", hr.getReason());
+            return map;
+        }
+
+        private ApiResponseSet resourceOutOfScopeToSet(ResourceOutOfScope resOutOfScope) {
+            Map<String, String> map = createDataMap(resOutOfScope.getHistoryReference());
+            map.put("state", resOutOfScope.getState().toString());
             return new ApiResponseSet("resource", map);
         }
 
@@ -448,6 +458,25 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
             }
             sb.append("]\n");
             return sb.toString();
+        }
+    }
+
+    private static class ResourceOutOfScope {
+
+        private final HistoryReference historyReference;
+        private final ResourceState state;
+
+        public ResourceOutOfScope(HistoryReference historyReference, ResourceState state) {
+            this.historyReference = historyReference;
+            this.state = state;
+        }
+
+        public HistoryReference getHistoryReference() {
+            return historyReference;
+        }
+
+        public ResourceState getState() {
+            return state;
         }
     }
 }

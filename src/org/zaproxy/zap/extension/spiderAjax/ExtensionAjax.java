@@ -450,7 +450,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		}
 
 		@Override
-		public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage, boolean inScope) {
+		public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage, ResourceState state) {
 			// Nothing to do.
 		}
 

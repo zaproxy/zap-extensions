@@ -41,6 +41,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
 import org.zaproxy.zap.extension.spiderAjax.internal.ProxyServer;
 import org.zaproxy.zap.network.HttpResponseBody;
 
@@ -253,9 +254,9 @@ public class SpiderThread implements Runnable {
 		}
 	}
 
-	private void notifySpiderListenersFoundMessage(HistoryReference historyReference, HttpMessage httpMessage, boolean inScope) {
+	private void notifySpiderListenersFoundMessage(HistoryReference historyReference, HttpMessage httpMessage, ResourceState state) {
 		for (SpiderListener listener : spiderListeners) {
-			listener.foundMessage(historyReference, httpMessage, inScope);
+			listener.foundMessage(historyReference, httpMessage, state);
 		}
 	}
 
@@ -274,38 +275,38 @@ public class SpiderThread implements Runnable {
 
 		@Override
 		public boolean onHttpRequestSend(HttpMessage httpMessage) {
-			boolean excluded = false;
+			ResourceState state = ResourceState.PROCESSED;
 			final String uri = httpMessage.getRequestHeader().getURI().toString();
 			if (httpPrefixUriValidator != null && !httpPrefixUriValidator.isValid(httpMessage.getRequestHeader().getURI())) {
 				logger.debug("Excluding request [" + uri + "] not under subtree.");
-				excluded = true;
+				state = ResourceState.OUT_OF_SCOPE;
 			} else if (target.getContext() != null) {
 				if (!target.getContext().isInContext(uri)) {
 					logger.debug("Excluding request [" + uri + "] not in specified context.");
-					excluded = true;
+					state = ResourceState.OUT_OF_CONTEXT;
 				}
 			} else if (target.isInScopeOnly()) {
 				if (!session.isInScope(uri)) {
 					logger.debug("Excluding request [" + uri + "] not in scope.");
-					excluded = true;
+					state = ResourceState.OUT_OF_SCOPE;
 				}
 			} else if (!targetHost.equalsIgnoreCase(httpMessage.getRequestHeader().getHostName())) {
 				logger.debug("Excluding request [" + uri + "] not on target site [" + targetHost + "].");
-				excluded = true;
+				state = ResourceState.OUT_OF_SCOPE;
 			}
-			if (!excluded) {
+			if (state == ResourceState.PROCESSED) {
 				for (String regex : exclusionList) {
 					if (Pattern.matches(regex, uri)) {
 						logger.debug("Excluding request [" + uri + "] matched regex [" + regex + "].");
-						excluded = true;
+						state = ResourceState.EXCLUDED;
 					}
 				}
 			}
 
-			if (excluded) {
+			if (state != ResourceState.PROCESSED) {
 				setOutOfScopeResponse(httpMessage);
 				// TODO Replace with HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY.
-				notifyMessage(httpMessage, 18, false);
+				notifyMessage(httpMessage, 18, state);
 				return true;
 			}
 
@@ -326,31 +327,31 @@ public class SpiderThread implements Runnable {
 
 		@Override
 		public boolean onHttpResponseReceived(final HttpMessage httpMessage) {
-			notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX, true);
+			notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX, ResourceState.PROCESSED);
 
 			return false;
 		}
 
-		private void notifyMessage(final HttpMessage httpMessage, final int historyType, final boolean inScope) {
+		private void notifyMessage(final HttpMessage httpMessage, final int historyType, final ResourceState state) {
 			try {
 				if (extension.getView() != null && !EventQueue.isDispatchThread()) {
 					EventQueue.invokeLater(new Runnable() {
 
 						@Override
 						public void run() {
-							notifyMessage(httpMessage, historyType, inScope);
+							notifyMessage(httpMessage, historyType, state);
 						}
 					});
 					return;
 				}
 
 				HistoryReference historyRef = new HistoryReference(session, historyType, httpMessage);
-				if (inScope) {
+				if (state == ResourceState.PROCESSED) {
 					historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
 					session.getSiteTree().addPath(historyRef, httpMessage);
 				}
 
-				notifySpiderListenersFoundMessage(historyRef, httpMessage, inScope);
+				notifySpiderListenersFoundMessage(historyRef, httpMessage, state);
 			} catch (Exception e) {
 				logger.error(e);
 			}
