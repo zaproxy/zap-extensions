@@ -405,7 +405,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 		visitedUrls.clear();
 		this.targetSite = displayName;
 		try {
-			new Thread(runnable).start();
+			new Thread(runnable, "ZAP-AjaxSpider").start();
 		} catch (Exception e) {
 			logger.error(e);
 		}
