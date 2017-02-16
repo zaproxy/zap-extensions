@@ -1,0 +1,25 @@
+<zapaddon>
+	<name>MacOS WebDrivers</name>
+	<version>2</version>
+	<status>beta</status>
+	<description>MacOS WebDrivers for Firefox and Chrome.</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>
+	<![CDATA[
+	Update geckodriver to v0.14.0<br>
+	Download files from zap-libs repo<br>
+	Promote to beta<br>
+	]]>
+	</changes>
+	<extensions/>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
+		<file>webdriver/macos/64/chromedriver</file>
+		<file>webdriver/macos/64/geckodriver</file>
+	</files>
+	<not-before-version>2.4.0</not-before-version>
+	<not-from-version/>
+</zapaddon>
