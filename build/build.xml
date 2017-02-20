@@ -48,13 +48,6 @@
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserwindows/lib"  includeEmptyDirs="true" />
 	</target>
 
-	<target name="clean-webdrivers">
-		<!-- Not included in 'clean' as thats called when each add-on is built -->
-		<delete dir="../src/org/zaproxy/zap/extension/webdriverlinux/files"  includeEmptyDirs="true" />
-		<delete dir="../src/org/zaproxy/zap/extension/webdrivermacos/files"  includeEmptyDirs="true" />
-		<delete dir="../src/org/zaproxy/zap/extension/webdriverwindows/files"  includeEmptyDirs="true" />
-	</target>
-
 	<target name="init">
 		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${dist}" />
@@ -378,7 +371,7 @@
 		</sequential>
 	</macrodef>
 
-	<target name="build-all" depends="clean,compile,download-jxbrowser,download-webdrivers" description="build all of the extensions">
+	<target name="build-all" depends="clean,compile,download-jxbrowser" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 		
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
@@ -426,9 +419,6 @@
 		<build-addon name="tlsdebug" />
 		<build-addon name="viewstate" />
 		<build-addon name="wappalyzer" />
-		<build-addon name="webdriverlinux" />
-		<build-addon name="webdrivermacos" />
-		<build-addon name="webdriverwindows" />
 
 	</target>
 
@@ -742,53 +732,6 @@
         <build-deploy-addon name="wavsepRpt" />
     </target>
 
-	<target name="download-webdrivers" depends="compile" description="download the webdriver files">
-		<!-- This must be called before the WebDriver add-ons are built -->
-		<!-- It is not included by default in the build as it always downloads the file -->
-		<java classname="org.zaproxy.zap.extension.webdriverlinux.WebdriverDownload">
-			<classpath>
-				<fileset dir="${dist.lib.dir}">
-					<include name="**/*.jar" />
-					<include name="**/*.zap" />
-				</fileset>
-				<path location="${build}" />
-			</classpath>
-		</java>
-		<java classname="org.zaproxy.zap.extension.webdrivermacos.WebdriverDownload">
-			<classpath>
-				<fileset dir="${dist.lib.dir}">
-					<include name="**/*.jar" />
-					<include name="**/*.zap" />
-				</fileset>
-				<path location="${build}" />
-			</classpath>
-		</java>
-		<java classname="org.zaproxy.zap.extension.webdriverwindows.WebdriverDownload">
-			<classpath>
-				<fileset dir="${dist.lib.dir}">
-					<include name="**/*.jar" />
-					<include name="**/*.zap" />
-				</fileset>
-				<path location="${build}" />
-			</classpath>
-		</java>
-	</target>
-
-	<target name="deploy-webdriverlinux" description="deploy the webdriverlinux extension">
-		<antcall target="download-webdrivers"/>
-		<build-deploy-addon name="webdriverlinux" />
-	</target>
-
-	<target name="deploy-webdrivermacos" description="deploy the webdrivermacos extension">
-		<antcall target="download-webdrivers"/>
-		<build-deploy-addon name="webdrivermacos" />
-	</target>
-
-	<target name="deploy-webdriverwindows" description="deploy the webdriverwindows extension">
-		<antcall target="download-webdrivers"/>
-		<build-deploy-addon name="webdriverwindows" />
-	</target>
-
 	<target name="deploy-weekly" description="deploy extensions to be included in weekly releases">
 		<!-- Set to compile with debug information -->
 		<property name="javac.debug" value="true" />
@@ -799,7 +742,6 @@
 				<include name="jxbrowser*-{status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
-				<include name="webdriver*-${status}-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
