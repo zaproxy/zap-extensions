@@ -40,6 +40,14 @@
 		<delete dir="${test.results.dir}" includeEmptyDirs="true" />
 	</target>
 
+	<target name="clean-libs">
+		<!-- Not included in 'clean' as thats called when each add-on is built -->
+		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserlinux32/lib"  includeEmptyDirs="true" />
+		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserlinux64/lib"  includeEmptyDirs="true" />
+		<delete dir="../src/org/zaproxy/zap/extension/jxbrowsermacos/lib"  includeEmptyDirs="true" />
+		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserwindows/lib"  includeEmptyDirs="true" />
+	</target>
+
 	<target name="clean-webdrivers">
 		<!-- Not included in 'clean' as thats called when each add-on is built -->
 		<delete dir="../src/org/zaproxy/zap/extension/webdriverlinux/files"  includeEmptyDirs="true" />
@@ -370,7 +378,7 @@
 		</sequential>
 	</macrodef>
 
-	<target name="build-all" depends="clean,compile,download-webdrivers" description="build all of the extensions">
+	<target name="build-all" depends="clean,compile,download-jxbrowser,download-webdrivers" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 		
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
@@ -394,6 +402,11 @@
 		<build-addon name="highlighter" />
 		<build-addon name="httpsinfo" addonid="httpsInfo" />
 		<build-addon name="importLogFiles" />
+		<build-addon name="jxbrowser" />
+		<build-addon name="jxbrowserlinux32" />
+		<build-addon name="jxbrowserlinux64" />
+		<build-addon name="jxbrowsermacos" />
+		<build-addon name="jxbrowserwindows" />
 		<build-addon name="pscanrulesAlpha" >
 				<!-- Add the extra classes required -->
 				<jar jarfile="${dist}/${file}" update="true" compress="true">
@@ -585,6 +598,52 @@
 		<build-deploy-addon name="importLogFiles" />
 	</target>
 
+	<target name="download-jxbrowser" depends="" description="download the jxbrowser files">
+		<!-- This must be called before the platform specific jxbrowser add-ons are built -->
+		<!-- It is not included by default in the build as it always downloads the file -->
+		<java classname="org.zaproxy.zap.extension.jxbrowser.JxBrowserDownload">
+			<classpath>
+				<fileset dir="${dist.lib.dir}">
+					<include name="**/*.jar" />
+					<include name="**/*.zap" />
+				</fileset>
+				<path location="${build}" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="deploy-jxbrowser-core" description="deploy the jxbrowser core extension">
+		<build-deploy-addon name="jxbrowser" />
+	</target>
+
+	<target name="deploy-jxbrowser-linux32" depends="download-jxbrowser" description="deploy the jxbrowser linux32 extension">
+		<build-deploy-addon name="jxbrowserlinux32" />
+	</target>
+
+	<target name="deploy-jxbrowser-linux64" depends="download-jxbrowser" description="deploy the jxbrowser linux64 extension">
+		<build-deploy-addon name="jxbrowserlinux64" />
+	</target>
+
+	<target name="deploy-jxbrowser-macos" depends="download-jxbrowser" description="deploy the jxbrowser macos extension">
+		<build-deploy-addon name="jxbrowsermacos" />
+	</target>
+
+	<target name="deploy-jxbrowser-windows" depends="download-jxbrowser" description="deploy the jxbrowser windows extension">
+		<build-deploy-addon name="jxbrowserwindows" />
+	</target>
+
+	<target name="deploy-jxbrowser-all" description="deploy all of the jxbrowser extensions">
+		<build-deploy-addon name="jxbrowser" />
+		<build-deploy-addon name="jxbrowserlinux32" />
+		<build-deploy-addon name="jxbrowserlinux64" />
+		<build-deploy-addon name="jxbrowsermacos" />
+		<build-deploy-addon name="jxbrowserwindows" />
+	</target>
+
+	<target name="generate-wiki-jxbrowser" description="Generates the wiki of jxbrowser Add-on">
+		<generate-wiki addon="jxbrowser" />
+	</target>
+	
 	<target name="deploy-onlineMenu" description="deploy the online menu">
 		<build-deploy-addon name="onlineMenu" />
 	</target>
@@ -737,6 +796,7 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="accessControl-${status}-*.zap"/>
+				<include name="jxbrowser*-{status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
 				<include name="webdriver*-${status}-*.zap"/>
