@@ -90,6 +90,16 @@ public enum Browser {
     public static Browser getBrowserWithId(String id) {
         Validate.notEmpty(id, "Parameter id must not be null or empty.");
 
+        Browser browser = getBrowserWithIdNoFailSafe(id);
+        if (browser != null) {
+            return browser;
+        }
+        return getFailSafeBrowser();
+    }
+
+    public static Browser getBrowserWithIdNoFailSafe(String id) {
+        Validate.notEmpty(id, "Parameter id must not be null or empty.");
+
         if (CHROME.id.equals(id)) {
             return CHROME;
         } else if (FIREFOX.id.equals(id)) {
@@ -106,7 +116,7 @@ public enum Browser {
             return SAFARI;
         }
 
-        return getFailSafeBrowser();
+        return null;
     }
 
     /**
