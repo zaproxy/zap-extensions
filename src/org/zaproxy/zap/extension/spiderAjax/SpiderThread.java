@@ -38,8 +38,8 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
 import org.zaproxy.zap.extension.spiderAjax.internal.ProxyServer;
@@ -211,8 +211,8 @@ public class SpiderThread implements Runnable {
                 ExtensionSelenium extSelenium = Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionSelenium.class);
-                Browser browser = Browser.getBrowserWithId(target.getOptions().getBrowserId());
-                View.getSingleton().showWarningDialog(extSelenium.getWarnMessageFailedToStart(browser));
+                String providedBrowserId = target.getOptions().getBrowserId();
+                View.getSingleton().showWarningDialog(extSelenium.getWarnMessageFailedToStart(providedBrowserId));
             }
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -369,11 +369,11 @@ public class SpiderThread implements Runnable {
 		@Inject
 		private Plugins plugins;
 
-		private final String browserId;
+		private final String providedBrowserId;
 
-		public AjaxSpiderBrowserBuilder(String browserId) {
+		public AjaxSpiderBrowserBuilder(String providedBrowserId) {
 			super();
-			this.browserId = browserId;
+			this.providedBrowserId = providedBrowserId;
 		}
 
 		/**
@@ -391,8 +391,10 @@ public class SpiderThread implements Runnable {
 			long crawlWaitReload = configuration.getCrawlRules().getWaitAfterReloadUrl();
 			long crawlWaitEvent = configuration.getCrawlRules().getWaitAfterEvent();
 
-			EmbeddedBrowser embeddedBrowser = WebDriverBackedEmbeddedBrowser.withDriver(ExtensionSelenium.getWebDriver(
-					Browser.getBrowserWithId(browserId),
+			ExtensionSelenium extSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+			EmbeddedBrowser embeddedBrowser = WebDriverBackedEmbeddedBrowser.withDriver(extSelenium.getWebDriver(
+					HttpSender.SPIDER_INITIATOR,
+					providedBrowserId,
 					configuration.getProxyConfiguration().getHostname(),
 					configuration.getProxyConfiguration().getPort()), filterAttributes, crawlWaitEvent, crawlWaitReload);
 			plugins.runOnBrowserCreatedPlugins(embeddedBrowser);

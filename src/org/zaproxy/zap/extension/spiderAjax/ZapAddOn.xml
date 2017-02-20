@@ -13,13 +13,14 @@
 	Honour global excluded URLs (Issue 3172).<br>
 	Reset URL counter on session change.<br>
 	Show excluded URLs in the AJAX Spider tab and through the ZAP API.<br>
+	Use provided browsers from Selenium add-on.<br>
 	]]>
 	</changes>
 	<dependencies>
 		<addons>
 			<addon>
 				<id>selenium</id>
-				<semver>1.*</semver>
+				<semver><![CDATA[ >=1.1.0 & <2.0.0 ]]></semver>
 			</addon>
 		</addons>
 	</dependencies>

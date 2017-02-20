@@ -34,7 +34,7 @@ import javax.swing.JScrollPane;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.zaproxy.zap.extension.selenium.BrowsersComboBoxModel;
+import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
 public class OptionsAjaxSpider extends AbstractParamPanel {
@@ -46,7 +46,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 	private OptionsAjaxSpiderTableModel ajaxSpiderClickModel = null;
 
 	private JPanel panelCrawljax = null;
-	private final BrowsersComboBoxModel browsersComboBoxModel;
+	private final ProvidedBrowsersComboBoxModel browsersComboBoxModel;
 	private ZapNumberSpinner txtNumBro = null;
 	private ZapNumberSpinner maximumDepthNumberSpinner = null;
 	private ZapNumberSpinner maximumStatesNumberSpinner = null;
@@ -67,7 +67,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
 
 	private ResourceBundle resourceBundle;
 
-    public OptionsAjaxSpider(ResourceBundle resourceBundle, BrowsersComboBoxModel browsersComboBoxModel) {
+    public OptionsAjaxSpider(ResourceBundle resourceBundle, ProvidedBrowsersComboBoxModel browsersComboBoxModel) {
         super();
         this.resourceBundle = resourceBundle;
         this.browsersComboBoxModel = browsersComboBoxModel;
