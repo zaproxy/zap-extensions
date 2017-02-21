@@ -61,4 +61,16 @@ public interface SingleWebDriverProvider {
      *             port number (between 1 and 65535).
      */
     WebDriver getWebDriver(int requesterId, String proxyAddress, int proxyPort);
+
+    /**
+     * Gets a warning message that indicates the possible cause of the failure that prevented the WebDriver/browser from
+     * starting.
+     * <p>
+     * The message will be shown in UI components.
+     *
+     * @param e the error/exception that was thrown while obtaining/starting the WebDriver/browser.
+     * @return the warning message that indicates the possible cause of the failure, might be {@code null} if there's no custom
+     *         warning message (Selenium extension will provide a generic warning message in those cases).
+     */
+    String getWarnMessageFailedToStart(Throwable e);
 }

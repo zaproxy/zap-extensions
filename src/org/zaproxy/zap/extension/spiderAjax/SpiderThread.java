@@ -212,7 +212,7 @@ public class SpiderThread implements Runnable {
                         .getExtensionLoader()
                         .getExtension(ExtensionSelenium.class);
                 String providedBrowserId = target.getOptions().getBrowserId();
-                View.getSingleton().showWarningDialog(extSelenium.getWarnMessageFailedToStart(providedBrowserId));
+                View.getSingleton().showWarningDialog(extSelenium.getWarnMessageFailedToStart(providedBrowserId, e));
             }
 		} catch (Exception e) {
 			logger.error(e, e);
