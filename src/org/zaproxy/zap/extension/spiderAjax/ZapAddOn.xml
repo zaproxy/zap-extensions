@@ -14,6 +14,7 @@
 	Reset URL counter on session change.<br>
 	Show excluded URLs in the AJAX Spider tab and through the ZAP API.<br>
 	Use provided browsers from Selenium add-on.<br>
+	Show messages that were not successful because of I/O errors.<br>
 	]]>
 	</changes>
 	<dependencies>
