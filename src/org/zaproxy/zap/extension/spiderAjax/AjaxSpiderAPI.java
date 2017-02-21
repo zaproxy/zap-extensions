@@ -91,7 +91,8 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	private final ExtensionAjax extension;
 
 	private List<HistoryReference> historyReferences;
-	private List<ResourceOutOfScope> resourcesOutOfScope;
+	private List<SpiderResource> resourcesOutOfScope;
+	private List<SpiderResource> resourcesError;
 	private SpiderThread spiderThread;
 
 	public AjaxSpiderAPI(ExtensionAjax extension) {
@@ -321,7 +322,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 			result = new ApiResponseElement(name, String.valueOf(historyReferences.size()));
 			break;
 		case VIEW_FULL_RESULTS:
-			result = new FullResultsApiResponse(name, historyReferences, resourcesOutOfScope);
+			result = new FullResultsApiResponse(name, historyReferences, resourcesOutOfScope, resourcesError);
 			break;
 		default:
 			throw new ApiException(ApiException.Type.BAD_VIEW);
@@ -343,15 +344,18 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	@Override
 	public void spiderStarted() {
 		historyReferences = Collections.synchronizedList(new ArrayList<HistoryReference>());
-		resourcesOutOfScope = Collections.synchronizedList(new ArrayList<ResourceOutOfScope>());
+		resourcesOutOfScope = Collections.synchronizedList(new ArrayList<SpiderResource>());
+		resourcesError = Collections.synchronizedList(new ArrayList<SpiderResource>());
 	}
 
 	@Override
 	public void foundMessage(HistoryReference historyReference, HttpMessage httpMessage, ResourceState state) {
 		if (state == ResourceState.PROCESSED) {
 			historyReferences.add(historyReference);
+		} else if (state == ResourceState.IO_ERROR){
+			resourcesError.add(new SpiderResource(historyReference, state));
 		} else {
-			resourcesOutOfScope.add(new ResourceOutOfScope(historyReference, state));
+			resourcesOutOfScope.add(new SpiderResource(historyReference, state));
 		}
 	}
 
@@ -363,17 +367,20 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 		stopSpider();
 		historyReferences = Collections.emptyList();
 		resourcesOutOfScope = Collections.emptyList();
+		resourcesError = Collections.emptyList();
 	}
 
     private static class FullResultsApiResponse extends ApiResponse {
 
         private final ApiResponseList inScope;
         private final ApiResponseList outOfScope;
+        private final ApiResponseList errors;
 
         public FullResultsApiResponse(
                 String name,
                 List<HistoryReference> historyReferences,
-                List<ResourceOutOfScope> historyReferencesOutOfScope) {
+                List<SpiderResource> historyReferencesOutOfScope,
+                List<SpiderResource> resourcesError) {
             super(name);
 
             inScope = new ApiResponseList("inScope");
@@ -385,8 +392,15 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
             outOfScope = new ApiResponseList("outOfScope");
             synchronized (historyReferencesOutOfScope) {
-                for (ResourceOutOfScope resOutOfScope : historyReferencesOutOfScope) {
-                    outOfScope.addItem(resourceOutOfScopeToSet(resOutOfScope));
+                for (SpiderResource spiderResource : historyReferencesOutOfScope) {
+                    outOfScope.addItem(spiderResourceToSet(spiderResource));
+                }
+            }
+
+            errors = new ApiResponseList("errors");
+            synchronized (resourcesError) {
+                for (SpiderResource spiderResource : resourcesError) {
+                    errors.addItem(spiderResourceToSet(spiderResource));
                 }
             }
         }
@@ -405,9 +419,9 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
             return map;
         }
 
-        private ApiResponseSet resourceOutOfScopeToSet(ResourceOutOfScope resOutOfScope) {
-            Map<String, String> map = createDataMap(resOutOfScope.getHistoryReference());
-            map.put("state", resOutOfScope.getState().toString());
+        private ApiResponseSet spiderResourceToSet(SpiderResource spiderResource) {
+            Map<String, String> map = createDataMap(spiderResource.getHistoryReference());
+            map.put("state", spiderResource.getState().toString());
             return new ApiResponseSet("resource", map);
         }
 
@@ -422,6 +436,10 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
             el = doc.createElement(outOfScope.getName());
             outOfScope.toXML(doc, el);
             parent.appendChild(el);
+
+            el = doc.createElement(errors.getName());
+            errors.toXML(doc, el);
+            parent.appendChild(el);
         }
 
         @Override
@@ -429,6 +447,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
             JSONObject scopes = new JSONObject();
             scopes.put(inScope.getName(), ((JSONObject) inScope.toJSON()).get(inScope.getName()));
             scopes.put(outOfScope.getName(), ((JSONObject) outOfScope.toJSON()).get(outOfScope.getName()));
+            scopes.put(errors.getName(), ((JSONObject) errors.toJSON()).get(errors.getName()));
 
             JSONObject jo = new JSONObject();
             jo.put(getName(), scopes);
@@ -440,6 +459,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
             sb.append("<h2>" + this.getName() + "</h2>\n");
             inScope.toHTML(sb);
             outOfScope.toHTML(sb);
+            errors.toHTML(sb);
         }
 
         @Override
@@ -453,6 +473,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
             sb.append(" : [\n");
             sb.append(inScope.toString(indent + 1));
             sb.append(outOfScope.toString(indent + 1));
+            sb.append(errors.toString(indent + 1));
             for (int i = 0; i < indent; i++) {
                 sb.append("\t");
             }
@@ -461,12 +482,12 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         }
     }
 
-    private static class ResourceOutOfScope {
+    private static class SpiderResource {
 
         private final HistoryReference historyReference;
         private final ResourceState state;
 
-        public ResourceOutOfScope(HistoryReference historyReference, ResourceState state) {
+        public SpiderResource(HistoryReference historyReference, ResourceState state) {
             this.historyReference = historyReference;
             this.state = state;
         }

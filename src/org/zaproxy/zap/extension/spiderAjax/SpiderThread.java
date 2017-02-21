@@ -32,6 +32,7 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
+import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -113,6 +114,7 @@ public class SpiderThread implements Runnable {
 		proxy = new AjaxProxyServer();
 		proxy.setConnectionParam(extension.getModel().getOptionsParam().getConnectionParam());
 		proxy.addOverrideMessageProxyListener(new SpiderProxyListener());
+		proxy.addProxyListener(new SpiderProxyResponseListener());
 	}
 
 	private void createOutOfScopeResponse(String response) {
@@ -327,36 +329,60 @@ public class SpiderThread implements Runnable {
 
 		@Override
 		public boolean onHttpResponseReceived(final HttpMessage httpMessage) {
-			notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX, ResourceState.PROCESSED);
-
 			return false;
 		}
-
-		private void notifyMessage(final HttpMessage httpMessage, final int historyType, final ResourceState state) {
-			try {
-				if (extension.getView() != null && !EventQueue.isDispatchThread()) {
-					EventQueue.invokeLater(new Runnable() {
-
-						@Override
-						public void run() {
-							notifyMessage(httpMessage, historyType, state);
-						}
-					});
-					return;
-				}
-
-				HistoryReference historyRef = new HistoryReference(session, historyType, httpMessage);
-				if (state == ResourceState.PROCESSED) {
-					historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
-					session.getSiteTree().addPath(historyRef, httpMessage);
-				}
-
-				notifySpiderListenersFoundMessage(historyRef, httpMessage, state);
-			} catch (Exception e) {
-				logger.error(e);
-			}
-		}
 	}
+
+    private void notifyMessage(final HttpMessage httpMessage, final int historyType, final ResourceState state) {
+        try {
+            if (extension.getView() != null && !EventQueue.isDispatchThread()) {
+                EventQueue.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        notifyMessage(httpMessage, historyType, state);
+                    }
+                });
+                return;
+            }
+
+            HistoryReference historyRef = new HistoryReference(session, historyType, httpMessage);
+            if (state == ResourceState.PROCESSED) {
+                historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
+                session.getSiteTree().addPath(historyRef, httpMessage);
+            }
+
+            notifySpiderListenersFoundMessage(historyRef, httpMessage, state);
+        } catch (Exception e) {
+            logger.error(e);
+        }
+    }
+
+    private class SpiderProxyResponseListener implements ProxyListener {
+
+        @Override
+        public int getArrangeableListenerOrder() {
+            return 0;
+        }
+
+        @Override
+        public boolean onHttpRequestSend(HttpMessage httpMessage) {
+            return true;
+        }
+
+        @Override
+        public boolean onHttpResponseReceive(HttpMessage httpMessage) {
+            notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX, getResourceState(httpMessage));
+            return true;
+        }
+
+        private ResourceState getResourceState(HttpMessage httpMessage) {
+            if (!httpMessage.isResponseFromTargetHost()) {
+                return ResourceState.IO_ERROR;
+            }
+            return ResourceState.PROCESSED;
+        }
+    }
 
 	// NOTE: The implementation of this class was copied from com.crawljax.browser.WebDriverBrowserBuilder since it's not
 	// possible to correctly extend it because of DI issues.

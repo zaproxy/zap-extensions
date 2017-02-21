@@ -28,7 +28,8 @@ interface SpiderListener {
 		PROCESSED,
 		OUT_OF_SCOPE,
 		OUT_OF_CONTEXT,
-		EXCLUDED
+		EXCLUDED,
+		IO_ERROR
 	}
 
 	void spiderStarted();
