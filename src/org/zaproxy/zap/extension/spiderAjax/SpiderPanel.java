@@ -231,7 +231,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 			startScanButton = new JButton();
 			startScanButton.setText(this.extension.getMessages().getString("spiderajax.toolbar.button.start"));
 			startScanButton.setIcon(new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/spiderAjax.png")));
-			startScanButton.setEnabled(false);
+			startScanButton.setEnabled(!Mode.safe.equals(Control.getSingleton().getMode()));
 			startScanButton.addActionListener(new ActionListener () {
 
 				@Override
@@ -481,6 +481,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 		case standard:
 		case protect:
 		case attack:
+			this.getStartScanButton().setEnabled(!extension.isSpiderRunning());
 			break;
 		case safe:
 			stopScan();
