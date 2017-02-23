@@ -525,12 +525,19 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * remaining cases there's a generic error message.
      *
      * @param providedBrowserId the ID of provided browser that failed to start
+     * @param e the error/exception that was thrown while obtaining/starting the WebDriver/browser.
      * @return a {@code String} with the error message
+     * @since 1.1.0
      */
-    public String getWarnMessageFailedToStart(String providedBrowserId) {
+    public String getWarnMessageFailedToStart(String providedBrowserId, Throwable e) {
         ProvidedBrowser providedBrowser = getProvidedBrowser(providedBrowserId);
         if (providedBrowser == null) {
             return getMessages().getString("selenium.warn.message.failed.start.browser.notfound");
+        }
+
+        String msg = getProviderWarnMessage(providedBrowser, e);
+        if (msg != null) {
+            return msg;
         }
 
         Browser browser = Browser.getBrowserWithIdNoFailSafe(providedBrowser.getProviderId());
@@ -539,6 +546,14 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
         return MessageFormat
                 .format(getMessages().getString("selenium.warn.message.failed.start.browser"), providedBrowser.getName());
+    }
+
+    private String getProviderWarnMessage(ProvidedBrowser providedBrowser, Throwable e) {
+        SingleWebDriverProvider provider = webDriverProviders.get(providedBrowser.getProviderId());
+        if (provider == null) {
+            return null;
+        }
+        return provider.getWarnMessageFailedToStart(e);
     }
 
     /**

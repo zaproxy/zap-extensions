@@ -62,6 +62,12 @@ public class BuiltInSingleWebDriverProvider implements SingleWebDriverProvider {
         return ExtensionSelenium.getWebDriver(browser, proxyAddress, proxyPort);
     }
 
+    @Override
+    public String getWarnMessageFailedToStart(Throwable e) {
+        // No custom warning message, use the ones provided by Selenium extension.
+        return null;
+    }
+
     private class ProvidedBrowserImpl implements ProvidedBrowser {
 
         @Override
