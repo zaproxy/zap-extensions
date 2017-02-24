@@ -29,6 +29,8 @@ import javax.swing.JTabbedPane;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.TabbedPanel2;
 
+import com.teamdev.jxbrowser.chromium.Browser;
+
 public class ZapBrowserFrame extends BrowserFrame {
 
     private static final long serialVersionUID = 1L;
@@ -43,8 +45,22 @@ public class ZapBrowserFrame extends BrowserFrame {
         super(incToolbar, supportTabs);
     }
 
+    public ZapBrowserFrame(final boolean incToolbar, final boolean supportTabs, boolean createBrowser) {
+        super(incToolbar, supportTabs, createBrowser);
+    }
+
+    public ZapBrowserFrame(final boolean incToolbar, final boolean supportTabs, boolean createBrowser, boolean showNewTab) {
+        super(incToolbar, supportTabs, createBrowser, showNewTab);
+    }
+
+    @Override
     protected BrowserPanel getNewBrowserPanel(boolean incToolbar) {
         return new ZapBrowserPanel(this, incToolbar);
+    }
+
+    @Override
+    protected BrowserPanel getNewBrowserPanel(boolean incToolbar, Browser browser) {
+        return new ZapBrowserPanel(this, incToolbar, browser);
     }
 
     @Override

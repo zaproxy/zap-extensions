@@ -69,6 +69,10 @@ public class ZapTabbedPanel extends JTabbedPane {
     @Override
     public void remove(Component component) {
         int pos = this.indexOfComponent(component);
+        if (pos == -1) {
+            return;
+        }
+
         if (pos == getTabCount() - 2) {
             setSelectedIndex(getTabCount() - 3);
         }
@@ -77,6 +81,10 @@ public class ZapTabbedPanel extends JTabbedPane {
     }
 
     private void setCloseButtonStates() {
+        if (this.getTabCount() == 0) {
+            return;
+        }
+
         // Hide all 'close' buttons except for the selected tab
         if (this.getTabCount() <= 2) {
             // just one tab and maybe the Plus one, so dont allow the first one to be closed

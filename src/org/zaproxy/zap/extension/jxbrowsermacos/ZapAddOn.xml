@@ -18,6 +18,17 @@
 	</dependencies>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jxbrowsermacos.ExtensionJxBrowserMacOS</extension>
+		<extension v="1">
+			<classname>org.zaproxy.zap.extension.jxbrowsermacos.selenium.ExtSelJxBrowserMacOs</classname>
+			<dependencies>
+				<addons>
+					<addon>
+						<id>selenium</id>
+						<semver><![CDATA[ >=1.1.0 & <2.0.0 ]]></semver>
+					</addon>
+				</addons>
+			</dependencies>
+		</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>

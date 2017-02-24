@@ -54,6 +54,10 @@ public class ZapBrowserPanel extends BrowserPanel {
         super(frame, incToolbar);
     }
 
+    public ZapBrowserPanel(BrowserFrame frame, boolean incToolbar, Browser browser) {
+        super(frame, incToolbar, browser);
+    }
+
     @Override
     public Browser getBrowser() {
         if (browser == null) {

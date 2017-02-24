@@ -32,6 +32,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.jxbrowser.ExtensionJxBrowser;
+import org.zaproxy.zap.extension.jxbrowser.Utils;
 import org.zaproxy.zap.extension.jxbrowser.ZapBrowserFrame;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -62,7 +63,7 @@ public class ExtensionJxBrowserLinux64 extends ExtensionAdaptor {
 
         if (getView() != null) {
 
-            if (Constant.isLinux() && isOs64Bits()) {
+            if (Constant.isLinux() && Utils.isOs64Bits()) {
                 // Only show if we're running on the right platform
                 View.getSingleton().addMainToolbarButton(this.getLaunchBrowserButton());
     
@@ -78,11 +79,6 @@ public class ExtensionJxBrowserLinux64 extends ExtensionAdaptor {
                 extensionHook.getHookMenu().addToolsMenuItem(menulaunch);
             }
         }
-    }
-    
-    private static boolean isOs64Bits() {
-        String arch = System.getProperty("os.arch");
-        return arch.contains("amd64") || arch.contains("x86_64");
     }
     
     private JButton getLaunchBrowserButton() {
