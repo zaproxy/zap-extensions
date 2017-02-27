@@ -18,6 +18,17 @@
 	</dependencies>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jxbrowserlinux32.ExtensionJxBrowserLinux32</extension>
+		<extension v="1">
+			<classname>org.zaproxy.zap.extension.jxbrowserlinux32.selenium.ExtSelJxBrowserLinux32</classname>
+			<dependencies>
+				<addons>
+					<addon>
+						<id>selenium</id>
+						<semver><![CDATA[ >=1.1.0 & <2.0.0 ]]></semver>
+					</addon>
+				</addons>
+			</dependencies>
+		</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>

@@ -39,7 +39,7 @@
 	<classpathentry kind="lib" path="testlib/objenesis-1.2.jar"/>
 	<classpathentry kind="lib" path="testlib/powermock-mockito-1.4.12-full.jar"/>
 	<classpathentry kind="lib" path="testlib/simple-5.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/selenium-release-3.zap"/>
+	<classpathentry kind="lib" path="lib/selenium-release-9.zap"/>
 	<classpathentry kind="lib" path="lib/zap-2.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/json-20160212.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.13.jar"/>

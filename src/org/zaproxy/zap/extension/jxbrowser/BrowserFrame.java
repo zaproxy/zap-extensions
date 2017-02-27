@@ -21,8 +21,8 @@ package org.zaproxy.zap.extension.jxbrowser;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +60,14 @@ public class BrowserFrame extends AbstractFrame {
     }
 
     public BrowserFrame(final boolean incToolbar, final boolean supportTabs) {
+        this(incToolbar, supportTabs, true);
+    }
+
+    public BrowserFrame(final boolean incToolbar, final boolean supportTabs, boolean createBrowser) {
+        this(incToolbar, supportTabs, createBrowser, true);
+    }
+
+    public BrowserFrame(final boolean incToolbar, final boolean supportTabs, boolean createBrowser, boolean showNewTab) {
         this.incToolbar = incToolbar;
         this.setWindowTitle(null);
         this.setLayout(new BorderLayout());
@@ -69,65 +77,62 @@ public class BrowserFrame extends AbstractFrame {
             getTabbedPane();
         }
 
-        final BrowserPanel zbp = addNewBrowserPanel();
+        BrowserPanel zbp = null;
+        if (createBrowser) {
+            zbp = addNewBrowserPanel();
+            zbp.getBrowser().loadHTML(getFirstPageHtml());
+        }
 
         if (supportTabs) {
             // Initialise
-            this.addPlusTab();
+            if (showNewTab) {
+                this.addPlusTab();
+            }
 
             this.add(tabbedPane, BorderLayout.CENTER);
 
-            // Handle the + tab being clicked
-            tabbedPane.addChangeListener(new ChangeListener() {
 
-                private boolean addingTab = false;
-
-                public void stateChanged(ChangeEvent e) {
-                    if (!addingTab && tabbedPane.getSelectedIndex() == tabbedPane.getTabCount() - 1) {
-                        if (!inTab) {
-                            // The mouse isnt in the tab, so assume the user is using the keyboard to switch tabs
-                            // in which case we dont want to create a new one
-                            if (prevTabIndex == 0) {
-                                // Select 2nd from right, ie not the + tab
-                                tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 2);
-                            } else {
-                                // Select first
-                                tabbedPane.setSelectedIndex(0);
+            if (showNewTab) {
+                // Handle the + tab being clicked
+                tabbedPane.addChangeListener(new ChangeListener() {
+    
+                    private boolean addingTab = false;
+    
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        if (!addingTab && tabbedPane.getSelectedIndex() == tabbedPane.getTabCount() - 1) {
+                            if (!inTab) {
+                                // The mouse isnt in the tab, so assume the user is using the keyboard to switch tabs
+                                // in which case we dont want to create a new one
+                                if (prevTabIndex == 0) {
+                                    // Select 2nd from right, ie not the + tab
+                                    tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 2);
+                                } else {
+                                    // Select first
+                                    tabbedPane.setSelectedIndex(0);
+                                }
+                                prevTabIndex = tabbedPane.getSelectedIndex();
+                                return;
                             }
-                            prevTabIndex = tabbedPane.getSelectedIndex();
-                            return;
+    
+                            addingTab = true;
+                            BrowserPanel zbp2 = addNewBrowserPanel();
+                            tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 2); // There will be another tab now ;)
+                            titleChanged(zbp2);
+                            zbp2.selectToolbarUrl();
+                            addingTab = false;
+                        } else {
+                            Component c = tabbedPane.getSelectedComponent();
+                            if (c instanceof BrowserPanel) {
+                                titleChanged((BrowserPanel) tabbedPane.getSelectedComponent());
+                            }
+    
                         }
-
-                        addingTab = true;
-                        BrowserPanel zbp2 = addNewBrowserPanel();
-                        tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 2); // There will be another tab now ;)
-                        titleChanged(zbp2);
-                        zbp2.selectToolbarUrl();
-                        addingTab = false;
-                    } else {
-                        Component c = tabbedPane.getSelectedComponent();
-                        if (c instanceof BrowserPanel) {
-                            titleChanged((BrowserPanel) tabbedPane.getSelectedComponent());
-                        }
-
+                        prevTabIndex = tabbedPane.getSelectedIndex();
                     }
-                    prevTabIndex = tabbedPane.getSelectedIndex();
-                }
-            });
-
-            tabbedPane.addMouseListener(new MouseListener() {
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                }
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                }
+                });
+            }
+            tabbedPane.addMouseListener(new MouseAdapter() {
 
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -140,9 +145,10 @@ public class BrowserFrame extends AbstractFrame {
                 }
             });
 
-        } else {
+        } else if (createBrowser) {
             this.add(zbp, BorderLayout.CENTER);
         }
+        
         this.addWindowListener(new WindowAdapter() {
 
             @Override
@@ -151,8 +157,6 @@ public class BrowserFrame extends AbstractFrame {
             }
 
         });
-        
-        zbp.getBrowser().loadHTML(getFirstPageHtml());
 
         this.setVisible(true);
 
@@ -178,8 +182,17 @@ public class BrowserFrame extends AbstractFrame {
 
     }
 
+    public void removeTab(Component component) {
+        zapPanels.remove(component);
+        getTabbedPane().remove(component);
+    }
+
     protected BrowserPanel getNewBrowserPanel(boolean incToolbar) {
         return new BrowserPanel(this, incToolbar);
+    }
+
+    protected BrowserPanel getNewBrowserPanel(boolean incToolbar, Browser browser) {
+        return new BrowserPanel(this, incToolbar, browser);
     }
 
     public BrowserPanel addNewBrowserPanel(String url) {
@@ -194,6 +207,22 @@ public class BrowserFrame extends AbstractFrame {
 
     public BrowserPanel addNewBrowserPanel() {
         final BrowserPanel zbp = getNewBrowserPanel(incToolbar);
+        zapPanels.add(zbp);
+        insertTab(zbp, tabbedPane.getTabCount() > 0 ? tabbedPane.getTabCount() - 1 : 0);
+        zbp.getBrowser().addTitleListener(new TitleListener() {
+
+            @Override
+            public void onTitleChange(TitleEvent arg0) {
+                titleChanged(zbp);
+            }
+
+        });
+
+        return zbp;
+    }
+
+    public BrowserPanel addNewBrowserPanel(boolean incToolbar, Browser browser) {
+        final BrowserPanel zbp = getNewBrowserPanel(incToolbar, browser);
         zapPanels.add(zbp);
         insertTab(zbp, tabbedPane.getTabCount() > 0 ? tabbedPane.getTabCount() - 1 : 0);
         zbp.getBrowser().addTitleListener(new TitleListener() {
@@ -248,6 +277,10 @@ public class BrowserFrame extends AbstractFrame {
             tabbedPane = new JTabbedPane();
         }
         return tabbedPane;
+    }
+
+    public boolean hasPanels() {
+        return !zapPanels.isEmpty();
     }
 
     public static void main(String[] args) {

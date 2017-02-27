@@ -64,9 +64,18 @@ public class BrowserPanel extends JPanel {
     }
 
     public BrowserPanel(BrowserFrame frame, boolean incToolbar) {
+        this(frame, incToolbar, null);
+    }
+
+    public BrowserPanel(BrowserFrame frame, boolean incToolbar, Browser browser) {
         this.frame = frame;
-        // Set up the browser
-        getBrowser();
+        
+        if (browser == null) {
+            // Set up the browser
+            getBrowser();
+        } else {
+            this.browser = browser;
+        }
         JToolBar toolbar = null;
 
         if (incToolbar) {
@@ -79,15 +88,15 @@ public class BrowserPanel extends JPanel {
             getBackButton().addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    browser.goBack();
-                    url.setText(browser.getURL());
+                    BrowserPanel.this.browser.goBack();
+                    url.setText(BrowserPanel.this.browser.getURL());
                 }
             });
             getForwardButton().addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    browser.goForward();
-                    url.setText(browser.getURL());
+                    BrowserPanel.this.browser.goForward();
+                    url.setText(BrowserPanel.this.browser.getURL());
                 }
             });
 
@@ -101,11 +110,11 @@ public class BrowserPanel extends JPanel {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    browser.loadURL(url.getText());
+                    BrowserPanel.this.browser.loadURL(url.getText());
                 }
             });
 
-            browser.addLoadListener(new LoadListener() {
+            this.browser.addLoadListener(new LoadListener() {
 
                 @Override
                 public void onDocumentLoadedInFrame(FrameLoadEvent arg0) {
@@ -113,7 +122,7 @@ public class BrowserPanel extends JPanel {
 
                 @Override
                 public void onDocumentLoadedInMainFrame(LoadEvent arg0) {
-                    url.setText(browser.getURL());
+                    url.setText(BrowserPanel.this.browser.getURL());
                 }
 
                 @Override
@@ -139,7 +148,7 @@ public class BrowserPanel extends JPanel {
         if (incToolbar) {
             this.add(toolbar, BorderLayout.NORTH);
         }
-        BrowserView browserView = new BrowserView(browser);
+        BrowserView browserView = new BrowserView(this.browser);
         // Disabled for now - too many issues with it
         //getBrowser().setContextMenuHandler(getContextMenuHandler(browserView));
         this.add(browserView, BorderLayout.CENTER);
