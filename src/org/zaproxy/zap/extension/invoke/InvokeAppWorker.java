@@ -93,15 +93,15 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
 		List<String> cmd = new ArrayList<>();
 		cmd.add(command);
 		if (parameters != null) {
-			// Replace all of the tags 
-			String params = parameters.replace("%url%", url)
-									.replace("%host%", host)
-									.replace("%port%", port)
-									.replace("%site%", site)
-									.replace("%cookie%", cookie)
-									.replace("%postdata%", postdata);
-			for (String p : params.split(" ")) {
-				cmd.add(p);
+			for (String parameter : parameters.split(" ")) {
+				// Replace all of the tags
+				String finalParameter = parameter.replace("%url%", url)
+						.replace("%host%", host)
+						.replace("%port%", port)
+						.replace("%site%", site)
+						.replace("%cookie%", cookie)
+						.replace("%postdata%", postdata);
+				cmd.add(finalParameter);
 			}
 		}
 
