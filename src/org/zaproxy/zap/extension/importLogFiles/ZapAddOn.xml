@@ -6,7 +6,7 @@
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/MozillaMentorship_ImportingModSecurityLogs
 	</url>
-	<changes>Minor code changes.</changes>
+	<changes>Use API actions when importing files.</changes>
 	<dependson></dependson>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.importLogFiles.ExtensionImportLogFiles</extension>
