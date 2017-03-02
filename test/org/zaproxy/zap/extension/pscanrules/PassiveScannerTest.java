@@ -52,7 +52,7 @@ public abstract class PassiveScannerTest extends ScannerTestUtils {
     @Before
     public void setUp() throws Exception {
         alertsRaised = new ArrayList<>();
-        parent = new PassiveScanThread(null, null, new ExtensionAlert()) {
+        parent = new PassiveScanThread(null, null, new ExtensionAlert(), null) {
             @Override
             public void raiseAlert(int arg0, Alert arg1) {
                 alertsRaised.add(arg1);

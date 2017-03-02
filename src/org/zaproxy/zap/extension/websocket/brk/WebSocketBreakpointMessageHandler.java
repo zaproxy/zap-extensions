@@ -17,8 +17,8 @@
  */
 package org.zaproxy.zap.extension.websocket.brk;
 
-import org.zaproxy.zap.extension.brk.BreakPanel;
-import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
+import org.zaproxy.zap.extension.brk.BreakpointManagementInterface;
+import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
@@ -28,12 +28,12 @@ import org.zaproxy.zap.extension.websocket.ui.OptionsParamWebSocket;
  * Wraps WebSocket specific options to determine if breakpoint should be applied
  * on given {@link WebSocketMessageDTO}.
  */
-public class WebSocketBreakpointMessageHandler extends BreakpointMessageHandler {
+public class WebSocketBreakpointMessageHandler extends BreakpointMessageHandler2 {
 
 	private OptionsParamWebSocket config;
 
-	public WebSocketBreakpointMessageHandler(BreakPanel aBreakPanel, OptionsParamWebSocket config) {
-		super(aBreakPanel);
+	public WebSocketBreakpointMessageHandler(BreakpointManagementInterface breakpointManagementInterface, OptionsParamWebSocket config) {
+		super(breakpointManagementInterface);
 		this.config = config;
 	}
 
