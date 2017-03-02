@@ -129,19 +129,17 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             }
         });
         
-        if (getExtSelenium() != null) {
-        	List<ProvidedBrowserUI> browserList = getExtSelenium().getProvidedBrowserUIList();
-        	List <String> browserNames = new ArrayList<String>(); 
-        	String defaultBrowser = null;
-        	for (ProvidedBrowserUI browser : browserList) {
-        		browserNames.add(browser.getName());
-        		if (browser.getBrowser().getId().equals(params.getBrowserId())) {
-        			defaultBrowser = browser.getName();
-        		}
-        	}
-        	
-    		this.addComboField(0, FIELD_BROWSER, browserNames, defaultBrowser);
-        }
+    	List<ProvidedBrowserUI> browserList = getExtSelenium().getProvidedBrowserUIList();
+    	List <String> browserNames = new ArrayList<String>(); 
+    	String defaultBrowser = null;
+    	for (ProvidedBrowserUI browser : browserList) {
+    		browserNames.add(browser.getName());
+    		if (browser.getBrowser().getId().equals(params.getBrowserId())) {
+    			defaultBrowser = browser.getName();
+    		}
+    	}
+    	
+		this.addComboField(0, FIELD_BROWSER, browserNames, defaultBrowser);
 
         // This option is always read from the 'global' options
         this.addCheckBoxField(0, FIELD_ADVANCED, params.isShowAdvancedDialog());
@@ -194,7 +192,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     
     private ExtensionSelenium getExtSelenium() {
     	if (extSel == null) {
-    		extSel = (ExtensionSelenium) Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.NAME);
+    		extSel = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
     	}
     	return extSel;
     }
