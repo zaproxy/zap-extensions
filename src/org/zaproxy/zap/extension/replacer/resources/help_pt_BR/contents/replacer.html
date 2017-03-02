@@ -15,22 +15,19 @@ O substituto (replacer) é uma maneira fácil de substituir strings em solicita�
 O painel de opções Substituição permite que você defina quantas regras de substituição precisar. <br>Cada regra é definida pelos seguintes campos: <h3>Descrição</h3> Uma descrição que permite identificar a regra.
 
 <h3>Tipo de correspondência</h3> Pode ser: <h4>Header de solicitação (irá adicionar um caso não exista)</h4> Neste caso a 'String' será tratada como um nome de header. 
-If the header is present then its value will be replaced by the replacement text. 
-If the replacement text is empty then the header will be removed (if present).
-If the header is not present and the replacement text is not empty then the header will be added.
+Se o cabeçalho está presente então seu valor será substituído pelo texto de substituição. 
+Se o texto de substituição está vazio então o cabeçalho será removido (se houver).
+Se o cabeçalho não estiver presente e o texto de substituição não está vazio então o cabeçalho será adicionado.
 
-<h4>Request Header String</h4>
-In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the request header then it will be replaced by the replacement text.
+<h4>String do cabeçalho de solicitação</h4> Neste caso a String' Match' será tratado como uma expressão string ou regex.
+Se ele estiver presente no cabeçalho da solicitação, então será substituído pelo texto de substituição.
 
-<h4>Request Body String</h4>
-In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the request body then it will be replaced by the replacement text.
+<h4>String do corpo da solicitação</h4> Neste caso, a 'String Match' será tratada como uma expressão string ou regex.
+Se ela estiver presente no cabeçalho da solicitação, então será substituída pelo texto de substituição.
 
-<h4>Response Header (will add if not present)</h4>
-In this case the 'Match String' will be treated as a header name. 
-If the header is present then its value will be replaced by the replacement text. 
-If the replacement text is empty then the header will be removed (if present).
+<h4>Cabeçalho de resposta (irá adicionar se não existir)</h4> Neste caso a 'String Match' será tratada como um nome de cabeçalho. 
+Se o cabeçalho estiver presente, então seu valor será substituído pelo texto de substituição. 
+Se o texto de substituição estiver vazio então o cabeçalho será removido (se existir).
 If the header is not present and the replacement text is not empty then the header will be added.
 
 <h4>Response Header String</h4>
