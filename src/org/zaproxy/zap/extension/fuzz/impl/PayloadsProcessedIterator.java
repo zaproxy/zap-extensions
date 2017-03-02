@@ -72,7 +72,7 @@ class PayloadsProcessedIterator<E extends Payload> implements ResettableAutoClos
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         payloadIterator.close();
     }
 

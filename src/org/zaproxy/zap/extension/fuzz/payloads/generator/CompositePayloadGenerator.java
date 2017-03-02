@@ -111,7 +111,7 @@ public class CompositePayloadGenerator<E extends Payload> implements PayloadGene
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
             for (ResettableAutoCloseableIterator<E> iterator : allIterators) {
                 iterator.close();
             }

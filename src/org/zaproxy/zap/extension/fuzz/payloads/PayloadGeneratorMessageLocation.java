@@ -109,7 +109,7 @@ public class PayloadGeneratorMessageLocation<E extends Payload> implements
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         payloadIterator.close();
     }
 }

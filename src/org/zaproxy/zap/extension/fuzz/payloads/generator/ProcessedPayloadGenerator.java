@@ -104,7 +104,7 @@ public class ProcessedPayloadGenerator<T extends Payload> implements PayloadGene
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
             payloadIterator.close();
         }
 

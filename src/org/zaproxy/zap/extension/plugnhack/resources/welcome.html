@@ -74,7 +74,7 @@ function install (aEvent)
 <script>
   var detected = false;
   var elements = ['setup','in_progress','success','failure','activated','actions'];
-  var manifest = {"detail":{"url":"{{ROOT}}/manifest/?apikey={{APIKEY}}"}};
+  var manifest = {"detail":{"url":"{{ROOT}}{{MANIFESTURL}}"}};
   // only show UI for the named elements
   var showUI = function(visible,data){
     function replaceTextContent(node, message) {

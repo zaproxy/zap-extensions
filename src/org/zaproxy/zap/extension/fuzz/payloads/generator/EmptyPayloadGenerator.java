@@ -86,7 +86,7 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
         }
     }
 }
