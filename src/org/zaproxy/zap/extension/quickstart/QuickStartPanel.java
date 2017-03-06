@@ -42,6 +42,7 @@ import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
@@ -251,13 +252,13 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	}
 	
 	private String getPlugNHackUrl() {
-		String apiKey = API.getInstance().getApiKey();
-		String keyStr = "";
-		if (apiKey != null && apiKey.length() > 0) {
-			keyStr = "?" + API.API_KEY_PARAM + "=" + apiKey;
-		}
-		return "http://" + Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp() + ":" + 
-				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort() + "/pnh/" + keyStr;
+	    ProxyParam proxyParam = Model.getSingleton().getOptionsParam().getProxyParam();
+	    String protocol = "http://";
+	    if (Model.getSingleton().getOptionsParam().getApiParam().isSecureOnly()) {
+	        protocol = "https://";
+	    }
+		return protocol + proxyParam.getProxyIp() + ":" + proxyParam.getProxyPort() + "/pnh/?" + 
+				API.API_NONCE_PARAM + "=" + API.getInstance().getLongLivedNonce("/pnh/");
 	}
 
 	private ZapTextField getConfField () {

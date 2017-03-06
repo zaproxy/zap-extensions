@@ -405,8 +405,8 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
             }
         }
 
-        private static ApiResponse resourceToSet(HistoryReference hr) {
-            return new ApiResponseSet("resource", createDataMap(hr));
+		private static ApiResponse resourceToSet(HistoryReference hr) {
+            return new ApiResponseSet<String>("resource", createDataMap(hr));
         }
 
         private static Map<String, String> createDataMap(HistoryReference hr) {
@@ -419,10 +419,10 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
             return map;
         }
 
-        private ApiResponseSet spiderResourceToSet(SpiderResource spiderResource) {
+        private ApiResponseSet<String> spiderResourceToSet(SpiderResource spiderResource) {
             Map<String, String> map = createDataMap(spiderResource.getHistoryReference());
             map.put("state", spiderResource.getState().toString());
-            return new ApiResponseSet("resource", map);
+            return new ApiResponseSet<String>("resource", map);
         }
 
         @Override

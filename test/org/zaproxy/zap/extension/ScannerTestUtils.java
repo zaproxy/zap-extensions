@@ -125,7 +125,7 @@ public abstract class ScannerTestUtils {
 
             @Override
             public boolean matches(Object actualValue) {
-                return ((Alert) actualValue).getAlert().equals(Constant.messages.getString(key));
+                return ((Alert) actualValue).getName().equals(Constant.messages.getString(key));
             }
 
             @Override
@@ -135,7 +135,7 @@ public abstract class ScannerTestUtils {
 
             @Override
             public void describeMismatch(Object item, Description description) {
-                description.appendText("was ").appendValue(((Alert) item).getAlert());
+                description.appendText("was ").appendValue(((Alert) item).getName());
             }
         };
     }

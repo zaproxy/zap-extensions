@@ -62,7 +62,7 @@ import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
-import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
+import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -290,7 +290,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
 			if (extBreak != null) {
 				// setup custom breakpoint handler
-				BreakpointMessageHandler wsBrkMessageHandler = new WebSocketBreakpointMessageHandler(extBreak.getBreakPanel(), config);
+				BreakpointMessageHandler2 wsBrkMessageHandler = new WebSocketBreakpointMessageHandler(extBreak.getBreakpointManagementInterface(), config);
 				wsBrkMessageHandler.setEnabledBreakpoints(extBreak.getBreakpointsEnabledList());
 				
 				// listen on new messages such that breakpoints can apply
