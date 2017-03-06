@@ -32,6 +32,7 @@ import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.jxbrowser.BrowserFrame;
 import org.zaproxy.zap.extension.jxbrowser.BrowserPanel;
@@ -72,8 +73,7 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
 
     @Override
     public String getWarnMessageFailedToStart(Throwable arg0) {
-        // Do not return a custom message, for now.
-        return null;
+        return Constant.messages.getString("jxbrowser.warn.message.failed.start.browser");
     }
 
     @Override
