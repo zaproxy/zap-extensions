@@ -54,7 +54,7 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
 
     private final ProvidedBrowser providedBrowser;
     private BrowserFrame zbf;
-    private int chromePort;
+    private Integer chromePort;
 
     public JxBrowserProvider() {
         this.providedBrowser = new ProvidedBrowserImpl();
@@ -101,7 +101,10 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
         try {
             if (zbf == null) {
                 zbf = new ZapBrowserFrame(false, true, false, false);
-                chromePort = getFreePort();
+                // Reuse the same port, as the JxBrowser/Chrome process tends to live longer on macOS.
+                if (chromePort == null) {
+                    chromePort = getFreePort();
+                }
             } else if (!zbf.isVisible()) {
                 zbf.setVisible(true);
             }
