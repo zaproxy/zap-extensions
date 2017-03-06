@@ -142,7 +142,7 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
             }
 
             @Override
-            public void close() throws Exception {
+            public void close() {
             }
 
         }

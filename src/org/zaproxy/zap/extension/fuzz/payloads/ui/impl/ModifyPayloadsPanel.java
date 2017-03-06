@@ -329,7 +329,7 @@ public abstract class ModifyPayloadsPanel<T extends Payload, T2 extends PayloadG
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
         }
 
         @Override

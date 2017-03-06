@@ -148,7 +148,8 @@ public class PlugNHackAPI extends ApiImplementor {
             try {
                 String welcomePage = ExtensionPlugNHack.getStringReource("resources/welcome.html");
                 // Replace the dynamic parts
-                welcomePage = welcomePage.replace("{{ROOT}}", root).replace("{{APIKEY}}", API.getInstance().getApiKey());
+                welcomePage = welcomePage.replace("{{ROOT}}", root).replace("{{MANIFESTURL}}",
+                        "/manifest/?apinonce=" + API.getInstance().getLongLivedNonce("/manifest/"));
                 welcomePage = welcomePage.replace("{{HASH}}", getHash(OTHER_FIREFOX_ADDON));
                 
                 // Replace the i18n strings
@@ -192,9 +193,7 @@ public class PlugNHackAPI extends ApiImplementor {
 
         } else if (OTHER_MANIFEST.equals(name)) {
             try {
-                String manifest = ExtensionPlugNHack.getStringReource("resources/manifest.json");
-                // Replace the dynamic parts
-                manifest = manifest.replace("{{ROOT}}", root).replace("{{APIKEY}}", API.getInstance().getApiKey());
+                String manifest = this.replaceApiTokens(ExtensionPlugNHack.getStringReource("resources/manifest.json"));
 
                 msg.setResponseHeader(
                         "HTTP/1.1 200 OK\r\n"
@@ -215,9 +214,7 @@ public class PlugNHackAPI extends ApiImplementor {
 
         } else if (OTHER_SERVICE.equals(name)) {
             try {
-                String service = ExtensionPlugNHack.getStringReource("resources/service.json");
-                // Replace the dynamic parts
-                service = service.replace("{{ROOT}}", root).replace("{{APIKEY}}", API.getInstance().getApiKey());
+                String service = this.replaceApiTokens(ExtensionPlugNHack.getStringReource("resources/service.json"));
 
                 msg.setResponseHeader(
                         "HTTP/1.1 200 OK\r\n"
@@ -279,6 +276,26 @@ public class PlugNHackAPI extends ApiImplementor {
             throw new ApiException(ApiException.Type.BAD_OTHER);
         }
     }
+    
+    private String replaceApiTokens(String str) {
+        str = str.replace("{{ROOT}}", this.extension.getApiRoot());
+        StringBuilder sb = new StringBuilder();
+        int last = 0;
+        int offset = 0;
+        String API_NONCE_TOKEN_START = "{{APINONCE_";
+        String API_NONCE_TOKEN_END = "}}";
+        while ((offset = str.indexOf(API_NONCE_TOKEN_START, last)) > 0) {
+            // Copy the part that hasnt changed
+            sb.append(str.substring(last, offset));
+            int tokenEnd = str.indexOf(API_NONCE_TOKEN_END, offset);
+            sb.append(API.getInstance().getLongLivedNonce(
+                    str.substring(offset + API_NONCE_TOKEN_START.length(), tokenEnd)));
+            last = tokenEnd + API_NONCE_TOKEN_END.length();
+        }
+        // Append the rest
+        sb.append(str.substring(last, str.length()-1));
+        return sb.toString();
+    }
 
 	public void addCustomHeaders(String name, RequestType type, HttpMessage msg) {
 		/*
@@ -302,14 +319,10 @@ public class PlugNHackAPI extends ApiImplementor {
     @Override
     public HttpMessage handleShortcut(HttpMessage msg) throws ApiException {
         try {
-			// Ensure the API key has been supplied
-			JSONObject params = API.getParams(msg.getRequestHeader().getURI().getEscapedQuery());
-			String key = API.getInstance().getApiKey();
-			if (key != null && key.length() > 0) {
-				if ( ! params.has(API.API_KEY_PARAM) || ! key.equals(params.getString(API.API_KEY_PARAM))) {
-					throw new ApiException(ApiException.Type.BAD_API_KEY);
-				}
-			}
+            if (! API.getInstance().hasValidKey(msg)) {
+                // Always require a valid key
+                throw new ApiException(ApiException.Type.BAD_API_KEY);
+            }
 
             if (msg.getRequestHeader().getURI().getPath().startsWith("/" + OTHER_PNH)) {
                 return this.handleApiOther(msg, OTHER_PNH, null);

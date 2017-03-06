@@ -59,6 +59,6 @@ public class PayloadCollectionIterator<E extends Payload> implements ResettableA
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
     }
 }

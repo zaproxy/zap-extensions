@@ -179,7 +179,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
         }
 
         @Override
-        public void close() throws Exception {
+        public void close() {
             try {
                 scriptPayloadGenerator.close();
             } catch (Exception e) {

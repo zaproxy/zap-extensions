@@ -86,14 +86,15 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     
     private static final String REPLACE_ROOT_TOKEN = "__REPLACE_ROOT__";
     private static final String REPLACE_ID_TOKEN = "__REPLACE_ID__";
-    private static final String REPLACE_KEY = "__REPLACE_KEY__";
+    private static final String REPLACE_NONCE = "__REPLACE_NONCE__";
     private static final String SCRIPT_START =
             "<!-- OWASP ZAP Start of injected code -->\n"
             + "<script>\n";
     
+    private static final String SCRIPT_API = "/OTHER/pnh/other/manifest/";
     private static final String SCRIPT_END =
-            "\nvar probe = new Probe('" + REPLACE_ROOT_TOKEN + "/OTHER/pnh/other/manifest/?" 
-            + API.API_KEY_PARAM + "=" + REPLACE_KEY + "','"
+            "\nvar probe = new Probe('" + REPLACE_ROOT_TOKEN + SCRIPT_API + "?" 
+            + API.API_NONCE_PARAM + "=" + REPLACE_NONCE + "','"
             + REPLACE_ID_TOKEN + "');\n"
             + "<!-- OWASP ZAP End of injected code -->\n"
             + "</script>\n";
@@ -465,7 +466,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
 						body = body.substring(0, endHeadTag) + SCRIPT_START + this.getPnhScript() +
 								SCRIPT_END.replace(REPLACE_ROOT_TOKEN, this.getApiRoot())
 									.replace(REPLACE_ID_TOKEN, page.getId())
-									.replace(REPLACE_KEY, API.getInstance().getApiKey()) + 
+									.replace(REPLACE_NONCE, API.getInstance().getLongLivedNonce(SCRIPT_API)) + 
 								body.substring(endHeadTag); 
 						msg.setResponseBody(body);
 						msg.getResponseHeader().setContentLength(body.length());
