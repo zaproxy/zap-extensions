@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>13</version>
+	<version>14</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-		Issue 3148: Only report HSTS on plain HTTP issue at Low threshold.
+		Report missing CSP header as LOW even if CSP Report header present.
 	]]>
 	</changes>
 	<extensions>
