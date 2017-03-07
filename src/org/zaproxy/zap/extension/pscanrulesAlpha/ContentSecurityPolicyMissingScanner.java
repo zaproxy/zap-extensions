@@ -113,7 +113,7 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 			// Always report if the latest header isnt found,
 			// but only report if the older ones arent present at Low threshold 
 			Alert alert = new Alert(getPluginId(), // PluginID
-					cspROHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW, // Risk
+					Alert.RISK_LOW, // Risk
 					Alert.CONFIDENCE_MEDIUM, // Reliability
 					getName());
 			alert.setDetail(getAlertAtrribute("desc"), // Description
