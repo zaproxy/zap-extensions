@@ -3,7 +3,7 @@
   "protocolVersion":"0.2",
   "features":{
     "proxy":{
-      "PAC":"{{ROOT}}/proxy.pac",
+      "PAC":"{{ROOT}}/proxy.pac/?apinonce={{APINONCE_proxy.pac/}}",
       "CACert":"{{ROOT}}/OTHER/core/other/rootcert/?apinonce={{APINONCE_OTHER/core/other/rootcert/}}"
     },
     "commands":{
