@@ -36,7 +36,7 @@
     "returnType":"string",
     "params":[],
     "execAction":{
-      "url":"{{ROOT}}/JSON/core/view/version/",
+      "url":"{{ROOT}}/JSON/core/view/version/?apinonce={{APINONCE_/JSON/core/view/version/}}",
       "expression":"$.version",
       "callbackData":{"result":{"type":"expression","expression":"$.response.version","extract":true}}
     }
@@ -127,7 +127,7 @@
       "type": {
         "name":"selection",
         "dataAction":{
-          "url":"{{ROOT}}/JSON/core/view/sites/",
+          "url":"{{ROOT}}/JSON/core/view/sites/?apinonce={{APINONCE_/JSON/core/view/sites/}}",
           "expression":"$.sites[*]"
           }
         },
@@ -146,7 +146,7 @@
     "returnType":"string",
     "params":[],
     "execAction":{
-      "url":"{{ROOT}}/JSON/ascan/view/status/",
+      "url":"{{ROOT}}/JSON/ascan/view/status/?apinonce={{APINONCE_/JSON/ascan/view/status/}}",
       "expression":"$.Result",
       "callbackData":{},
       "expression":"$.status",
@@ -167,7 +167,7 @@
       "type": {
         "name":"selection",
         "dataAction":{
-          "url":"{{ROOT}}/JSON/core/view/sites/",
+          "url":"{{ROOT}}/JSON/core/view/sites/?apinonce={{APINONCE_/JSON/core/view/sites/}}",
           "expression":"$.sites[*]"
           }
         },
@@ -197,7 +197,7 @@
     "returnType":"string",
     "params":[],
     "execAction":{
-      "url":"{{ROOT}}/JSON/spider/view/status/",
+      "url":"{{ROOT}}/JSON/spider/view/status/?apinonce={{APINONCE_/JSON/spider/view/status/}}",
       "expression":"$.Result",
       "callbackData":{},
       "expression":"$.status",
@@ -218,7 +218,7 @@
       "type": {
         "name":"selection",
         "dataAction":{
-          "url":"{{ROOT}}/JSON/core/view/sites/",
+          "url":"{{ROOT}}/JSON/core/view/sites/?apinonce={{APINONCE_/JSON/core/view/sites/}}",
           "expression":"$.sites[*]"
           }
         },
@@ -246,7 +246,7 @@
       "type": {
         "name":"selection",
         "dataAction":{
-          "url":"{{ROOT}}/JSON/core/view/sites/",
+          "url":"{{ROOT}}/JSON/core/view/sites/?apinonce={{APINONCE_/JSON/core/view/sites/}}",
           "expression":"$.sites[*]"
           }
         },
@@ -257,7 +257,7 @@
       "type": {
         "name":"selection",
         "dataAction":{
-          "url":"{{ROOT}}/JSON/httpSessions/view/sessions/?site=${$.args.site}&session=",
+          "url":"{{ROOT}}/JSON/httpSessions/view/sessions/?site=${$.args.site}&apinonce={{APINONCE_/JSON/httpSessions/view/sessions/}}&session=",
           "expression":"$.sessions.*.session.0"
           }
         },
@@ -285,7 +285,7 @@
       "type": {
         "name":"selection",
         "dataAction":{
-          "url":"{{ROOT}}/JSON/core/view/sites/",
+          "url":"{{ROOT}}/JSON/core/view/sites/?apinonce={{APINONCE_/JSON/core/view/sites/}}",
           "expression":"$.sites[*]"
           }
         },
@@ -296,7 +296,7 @@
       "type": {
         "name":"selection",
         "dataAction":{
-          "url":"{{ROOT}}/JSON/httpSessions/view/sessions/?site=${$.args.site}&session=",
+          "url":"{{ROOT}}/JSON/httpSessions/view/sessions/?site=${$.args.site}&apinonce={{APINONCE_/JSON/httpSessions/view/sessions/}}&session=",
           "expression":"$.sessions.*.session.0"
           }
         },

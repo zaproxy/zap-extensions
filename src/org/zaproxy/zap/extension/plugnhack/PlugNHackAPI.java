@@ -146,10 +146,16 @@ public class PlugNHackAPI extends ApiImplementor {
 
         if (OTHER_PNH.equals(name)) {
             try {
+            	String manifestUrl = "/manifest/";
+            	String xpiUrl = "/OTHER/pnh/other/fx_pnh.xpi/";
                 String welcomePage = ExtensionPlugNHack.getStringReource("resources/welcome.html");
                 // Replace the dynamic parts
                 welcomePage = welcomePage.replace("{{ROOT}}", root).replace("{{MANIFESTURL}}",
-                        "/manifest/?apinonce=" + API.getInstance().getLongLivedNonce("/manifest/"));
+                        manifestUrl + "?" + API.API_NONCE_PARAM + "=" + 
+                        API.getInstance().getLongLivedNonce(manifestUrl));
+                welcomePage = welcomePage.replace("{{XPIURL}}",
+                        xpiUrl + "?" + API.API_NONCE_PARAM + "=" + 
+                        API.getInstance().getLongLivedNonce(xpiUrl));
                 welcomePage = welcomePage.replace("{{HASH}}", getHash(OTHER_FIREFOX_ADDON));
                 
                 // Replace the i18n strings
@@ -293,7 +299,7 @@ public class PlugNHackAPI extends ApiImplementor {
             last = tokenEnd + API_NONCE_TOKEN_END.length();
         }
         // Append the rest
-        sb.append(str.substring(last, str.length()-1));
+        sb.append(str.substring(last));
         return sb.toString();
     }
 
@@ -319,11 +325,6 @@ public class PlugNHackAPI extends ApiImplementor {
     @Override
     public HttpMessage handleShortcut(HttpMessage msg) throws ApiException {
         try {
-            if (! API.getInstance().hasValidKey(msg)) {
-                // Always require a valid key
-                throw new ApiException(ApiException.Type.BAD_API_KEY);
-            }
-
             if (msg.getRequestHeader().getURI().getPath().startsWith("/" + OTHER_PNH)) {
                 return this.handleApiOther(msg, OTHER_PNH, null);
         
