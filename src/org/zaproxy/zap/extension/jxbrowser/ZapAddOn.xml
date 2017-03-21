@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>JxBrowser (core)</name>
-	<version>1</version>
+	<version>2</version>
 	<status>alpha</status>
 	<description>An embedded browser based on Chromium, you must also install the relevant platform specific add-on</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>Update help page to mention the ID of the browser.</changes>
 	<dependencies/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jxbrowser.ExtensionJxBrowser</extension>
