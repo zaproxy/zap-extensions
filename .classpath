@@ -11,6 +11,7 @@
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/diffutils-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/dvAPI_5.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/flex-messaging-common.jar"/>
 	<classpathentry kind="lib" path="lib/flex-messaging-core.jar"/>
 	<classpathentry kind="lib" path="lib/groovy-2.0.4.jar"/>
