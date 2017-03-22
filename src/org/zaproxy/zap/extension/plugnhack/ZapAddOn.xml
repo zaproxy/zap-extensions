@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Make breakpoint dialogues modal.<br>
+	Changed to use api nonces and include new fx_pnh.xpi (still unsigned).<br>
 	]]>
 	</changes>
 	<extensions>
