@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Selenium</name>
-	<version>9</version>
+	<version>10</version>
 	<semver>1.1.0</semver><!-- This version should be kept in sync with the one of the extension. -->
 	<status>release</status>
 	<description>WebDriver provider and includes HtmlUnit browser</description>
@@ -8,7 +8,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Allow add-ons to add new browsers.<br>
+	Update help page to mention the IDs of the browsers.<br>
 	]]>
 	</changes>
 	<extensions>
