@@ -687,6 +687,10 @@
         <build-deploy-addon name="simpleExample" />
     </target>
 
+	<target name="deploy-formhandler" description="deploy the form handling extension">
+		<build-deploy-addon name="formhandler" />
+	</target>
+
     <target name="generate-wiki-simpleExample" description="Generates the wiki of simple example extension">
         <generate-wiki addon="simpleExample" />
     </target>
