@@ -18,7 +18,7 @@
 	<property name="wiki.zapcorehelp.dir" location="../../zap-core-help-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
-	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.5" />
+	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.6" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
@@ -727,6 +727,7 @@
 				<include name="replacer-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="tips-${status}-*.zap"/>
+				<include name="webdriver*-${status}-*.zap"/>
 				<include name="zest-${status}-*.zap"/>
 			</fileset>
 		</copy>
