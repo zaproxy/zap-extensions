@@ -5,7 +5,7 @@
 	<description>A short Getting Started with ZAP Guide</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Minor code changes.</changes>
+	<changes>Updated for 2.6.0.</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.gettingStarted.ExtensionGettingStarted</extension>
 	</extensions>
@@ -13,8 +13,8 @@
 	<pscanrules/>
 	<filters/>
 	<files>
-		<file>lang/ZAPGettingStartedGuide-2.5.pdf</file>
+		<file>lang/ZAPGettingStartedGuide-2.6.pdf</file>
 	</files>
-	<not-before-version>2.5.0</not-before-version>
+	<not-before-version>2.6.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
