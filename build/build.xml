@@ -419,6 +419,7 @@
 		<build-addon name="plugnhack" />
 		<build-addon name="portscan" />
 		<build-addon name="pscanrulesBeta" />
+		<build-addon name="replacer" />
 		<build-addon name="scripts" />
 		<build-addon name="sqliplugin" />
 		<build-addon name="svndigger" />
@@ -596,6 +597,14 @@
 		<generate-wiki addon="pscanrulesBeta" />
 	</target>
 	
+  	<target name="deploy-replacer" description="deploy the replacer extension">
+  		<build-deploy-addon name="replacer"/>
+	</target>
+
+	<target name="generate-wiki-replacer" description="Generates the wiki of replacer">
+		<generate-wiki addon="replacer" />
+	</target>
+	
 	<target name="deploy-scripts" description="deploy the scripts extension">
 		<build-deploy-addon name="scripts" />
 	</target>
@@ -695,6 +704,7 @@
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="portscan-${status}-*.zap"/>
 				<include name="pscanrulesBeta-${status}-*.zap"/>
+				<include name="replacer-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="tips-${status}-*.zap"/>
 				<include name="webdriver*-${status}-*.zap"/>
@@ -714,6 +724,7 @@
 				<include name="diff-${status}-*.zap"/>
 				<include name="fuzz-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
+				<include name="replacer-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
 				<include name="tips-${status}-*.zap"/>
 				<include name="zest-${status}-*.zap"/>
