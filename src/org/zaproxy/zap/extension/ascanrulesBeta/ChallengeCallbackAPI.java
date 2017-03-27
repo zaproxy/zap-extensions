@@ -17,32 +17,32 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.api.ApiException;
-import org.zaproxy.zap.extension.api.ApiImplementor;
+import org.zaproxy.zap.extension.callback.CallbackImplementor;
+import org.zaproxy.zap.extension.callback.ExtensionCallback;
 
 /**
  * General Abstract class for Challenge/Response Active Plugin management
  * 
  * @author yhawke (2014)
  */
-public abstract class ChallengeCallbackAPI extends ApiImplementor {
+public abstract class ChallengeCallbackAPI implements CallbackImplementor {
 
-    // This are the result contents that should be returned by the API
-    private static final String API_RESPONSE_KO = "ko";
-    private static final String API_RESPONSE_OK = "ok";
-    
     // The default expiration time for each callback (in millisecs)
     private static final long CALLBACK_EXPIRE_TIME = 2 * 60 * 1000;
     
@@ -54,19 +54,29 @@ public abstract class ChallengeCallbackAPI extends ApiImplementor {
     private final Map<String, RegisteredCallback> regCallbacks 
             = Collections.synchronizedMap(new TreeMap<String, RegisteredCallback>());
 
+    private static ExtensionCallback extCallback;
+    
     /**
      * Default contructor
      */
     public ChallengeCallbackAPI() {
-         addApiShortcut(getPrefix());
+        if (getExtensionCallback() != null) {
+            getExtensionCallback().registerCallbackImplementor(this);
+        }
    }
 
     /**
      * Implements this to give back the specific shortcut
      * @return the shortcut path to call the API
      */
-    @Override
     public abstract String getPrefix();
+
+    @Override
+    public List<String> getCallbackPrefixes() {
+        List <String> list = new ArrayList<String>();
+        list.add(getPrefix());
+        return list;
+    }    
 
     /**
      * Expire callbacks cleaning method. When called it remove from
@@ -100,19 +110,7 @@ public abstract class ChallengeCallbackAPI extends ApiImplementor {
      * @return
      */
     public String getCallbackUrl(String challenge) {
-        String callbackUrl = "http://" 
-                + Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp() + ":" 
-                + Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort() + "/" 
-                + getPrefix() + "/" 
-                + challenge;
-        
-        /* Key is not currently used for shorcuts... very interesting
-        String key = Model.getSingleton().getOptionsParam().getApiParam().getKey();
-        if (key != null && key.length() > 0) {
-        callbackUrl += "?" + API.API_KEY_PARAM + "=" + key;
-        }
-         */
-        return callbackUrl;
+        return getExtensionCallback().getCallbackAddress() + getPrefix() + "/" + challenge;
     }
 
     /**
@@ -122,12 +120,9 @@ public abstract class ChallengeCallbackAPI extends ApiImplementor {
      * @throws ApiException 
      */
     @Override
-    public HttpMessage handleShortcut(HttpMessage msg) throws ApiException {
+    public void handleCallBack(HttpMessage msg) {
         // We've to look at the name and verify if the challenge has
         // been registered by one of the executed plugins 
-        // ----------------
-        // http://<zap_IP>/json/xxe/other/NGFrteu568sgToo100
-        // ----------------
         try {
             String path = msg.getRequestHeader().getURI().getPath();            
             String challenge = path.substring(path.indexOf(getPrefix()) + getPrefix().length() + 1);
@@ -136,39 +131,21 @@ public abstract class ChallengeCallbackAPI extends ApiImplementor {
             }
             
             RegisteredCallback rcback = regCallbacks.get(challenge);
-            String response;
             
             if (rcback != null) {
                 rcback.getPlugin().notifyCallback(challenge, rcback.getAttackMessage());
-                response = API_RESPONSE_OK;
                 
                 // OK we consumed it so it's time to clean
                 regCallbacks.remove(challenge);
                 
             } else {
-                response = API_RESPONSE_KO;
-                
                 // Maybe we've a lot of dirty entries
                 cleanExpiredCallbacks();
             }
             
-            // Build the response
-            msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + 
-                    "Pragma: no-cache\r\n" + 
-                    "Cache-Control: no-cache\r\n" + 
-                    "Access-Control-Allow-Origin: *\r\n" + 
-                    "Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n" + 
-                    "Access-Control-Allow-Headers: ZAP-Header\r\n" + 
-                    "Content-Length: " + response.length() + 
-                    "\r\nContent-Type: text/html;");
-            
-            msg.setResponseBody(response);
-            
-        } catch (URIException | HttpMalformedHeaderException e) {
+        } catch (URIException e) {
             logger.warn(e.getMessage(), e);
         }
-        
-        return msg;
     }
 
     /**
@@ -185,6 +162,21 @@ public abstract class ChallengeCallbackAPI extends ApiImplementor {
         regCallbacks.put(challenge, new RegisteredCallback(plugin, attack));
     }
     
+    protected static ExtensionCallback getExtensionCallback() {
+        if (extCallback == null) {
+            extCallback = Control.getSingleton().getExtensionLoader().getExtension(ExtensionCallback.class);
+        }
+        return extCallback;
+    }
+
+    /**
+     * Only for use in unit tests
+     * @param extCallback
+     */
+    protected static void setExtensionCallback(ExtensionCallback ext) {
+        extCallback = ext;
+    }
+
     /**
      * 
      */

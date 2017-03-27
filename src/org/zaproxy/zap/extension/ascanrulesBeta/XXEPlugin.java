@@ -25,13 +25,13 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.zap.extension.callback.ExtensionCallback;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -91,7 +91,7 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
 
     // API for the specific challenge/response model
     // Should be a common object for all this plugin instances
-    private static XXEPluginAPI pluginApi;
+    private static XXEPluginAPI pluginApi = new XXEPluginAPI();
     
     // Logger instance
     private static final Logger log = Logger.getLogger(XXEPlugin.class);
@@ -206,14 +206,12 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
     public int getRisk() {
         return Alert.RISK_HIGH;
     }
-
+    
     @Override
     public void init() {
-        if (pluginApi == null) {
-            ExtensionAscanRulesBeta ext = Control.getSingleton()
-                    .getExtensionLoader()
-                    .getExtension(ExtensionAscanRulesBeta.class);
-            pluginApi = ext.getXXEPluginAPI();
+        if (ChallengeCallbackAPI.getExtensionCallback() == null) {
+            // The callback extension is not available, cant do anything :(
+            getParent().pluginSkipped(this, Constant.messages.getString("ascanbeta.xxeplugin.nocallback"));
         }
     }
 
@@ -454,5 +452,20 @@ public class XXEPlugin extends AbstractAppPlugin implements ChallengeCallbackPlu
         }
         
         return result.toString();
+    }
+    
+    /**
+     * Only for use in unit tests
+     * @param extCallback
+     */
+    protected void setExtensionCallback(ExtensionCallback extCallback) {
+        ChallengeCallbackAPI.setExtensionCallback(extCallback);
+    }
+
+    protected static void unload() {
+        if (ChallengeCallbackAPI.getExtensionCallback() != null) {
+            ChallengeCallbackAPI.getExtensionCallback().removeCallbackImplementor(pluginApi);
+        }
+
     }
 }

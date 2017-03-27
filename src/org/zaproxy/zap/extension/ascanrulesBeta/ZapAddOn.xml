@@ -10,6 +10,7 @@
 	Fix FP in "Source Code Disclosure - /WEB-INF folder" on successful responses (Issue 3048).<br>
 	Fix FP in "Integer Overflow Error" on 500 error responses (Issue 3064).<br>
 	Support security annotations for forms that dont need anti-CSRF tokens.<br>
+	Changed XXE rule to use new callback extension.<br>
     ]]>
 	</changes>
 	<extensions>
@@ -42,7 +43,7 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.1</not-before-version>
+	<not-before-version>2.6.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
 
