@@ -691,6 +691,10 @@
 		<build-deploy-addon name="formhandler" />
 	</target>
 
+    <target name="generate-wiki-formhandler" description="Generates the wiki of form handling extension">
+        <generate-wiki addon="formhandler" />
+    </target>
+
     <target name="generate-wiki-simpleExample" description="Generates the wiki of simple example extension">
         <generate-wiki addon="simpleExample" />
     </target>
