@@ -17,7 +17,7 @@
 	<property name="wiki.dir" location="../../zap-extensions-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
-	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.5" />
+	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.6" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
@@ -655,10 +655,6 @@
         <build-deploy-addon name="requester" />
     </target>
 
-  	<target name="deploy-replacer" description="deploy the replacer extension">
-  		<build-deploy-addon name="replacer"/>
-	</target>
-
     <target name="deploy-revisit" description="deploy the revisit extension">
         <build-deploy-addon name="revisit" />
     </target>
@@ -750,6 +746,17 @@
 				<include name="jxbrowser*-{status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy-release" description="deploy extensions to be included in full releases">
+		<!-- Set to compile with debug information -->
+		<property name="javac.debug" value="true" />
+		<antcall target="build-all" />
+		<copy todir="${zap.plugin.dir}">
+			<fileset dir="${dist}">
+				<include name="jxbrowser*-{status}-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
