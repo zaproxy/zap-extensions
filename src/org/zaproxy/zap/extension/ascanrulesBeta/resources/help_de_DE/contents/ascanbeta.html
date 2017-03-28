@@ -148,7 +148,11 @@ weaknesses.
 This component attempts to identify applications which are subject to XML eXternal Entity (XXE) attacks.
 Applications which parse XML input may be subject to XXE when weakly or poorly configured parsers 
 handle XML input containing reference to an external entity such as a local file, HTTP requests to 
-internal or tertiary systems, etc.
+internal or tertiary systems, etc.<br>
+<br>
+It requires the Callback extension, so will not work if this extension is disabled or removed. 
+It is also recommended that you test that the Callback extension is correctly configured for your target site.
+If the target system cannot connect to the Callback Address then some XXE vulnerabilities will not be detected.
 
 </body>
 </html>
