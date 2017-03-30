@@ -3,9 +3,9 @@
 	<version>3</version>
 	<status>alpha</status>
 	<description>Imports and scans WSDL files containing SOAP endpoints.</description>
-	<author>Alberto (albertov91)</author>
+	<author>Alberto (albertov91) + ZAP Core team</author>
 	<url></url>
-	<changes>Minor code changes.</changes>
+	<changes>Added API, help and other minor code changes.</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.soap.ExtensionImportWSDL</extension>
 	</extensions>
@@ -18,6 +18,6 @@
 	</pscanrules>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.5.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
