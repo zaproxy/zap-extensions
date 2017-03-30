@@ -647,6 +647,18 @@
 		<build-deploy-addon-without-help-indexes name="pscanrulesAlpha" />
 	</target>
 	
+	<target name="deploy-openapi" description="deploy the openapi add-on">
+		<build-deploy-addon name="openapi" />
+	</target>
+
+	<target name="deploy-openapi-without-help-indexes" description="deploy the openapi add-on">
+		<build-deploy-addon-without-help-indexes name="openapi" />
+	</target>
+
+	<target name="generate-wiki-openapi" description="Generates the openapi wiki">
+		<generate-wiki addon="openapi" />
+	</target>
+
 	<target name="generate-wiki-pscanrulesAlpha" description="Generates the wiki of passive scan rules">
 		<generate-wiki addon="pscanrulesAlpha" />
 	</target>

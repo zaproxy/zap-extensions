@@ -45,6 +45,18 @@
 	<classpathentry kind="lib" path="lib/licence.jar"/>
 	<classpathentry kind="lib" path="lib/jxbrowser-6.12.jar"/>
 	<classpathentry kind="lib" path="lib/zap-D-2017-03-06.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-dataformat-yaml-2.4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-datatype-joda-2.4.5.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.6.3.jar"/>
+	<classpathentry kind="lib" path="lib/snakeyaml-1.12.jar"/>
+	<classpathentry kind="lib" path="lib/swagger-annotations-1.5.8.jar"/>
+	<classpathentry kind="lib" path="lib/swagger-core-1.5.8.jar"/>
+	<classpathentry kind="lib" path="lib/swagger-models-1.5.8.jar"/>
+	<classpathentry kind="lib" path="lib/swagger-parser-1.0.19.jar"/>
+	<classpathentry kind="lib" path="testlib/nanohttpd-webserver-2.1.1-jar-with-dependencies.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/metadata-extractor-2.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/xmpcore-5.1.2.jar"/>

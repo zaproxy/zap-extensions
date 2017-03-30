@@ -29,6 +29,7 @@ import org.zaproxy.zap.extension.api.NodeJSAPIGenerator;
 import org.zaproxy.zap.extension.api.PhpAPIGenerator;
 import org.zaproxy.zap.extension.api.PythonAPIGenerator;
 import org.zaproxy.zap.extension.importLogFiles.ImportLogAPI;
+import org.zaproxy.zap.extension.openapi.OpenApiAPI;
 
 public class ApiGenerator {
 
@@ -49,6 +50,7 @@ public class ApiGenerator {
 		//	php/api/zapv2/src/Zap/Zapv2.php
 
 		list.add(new ImportLogAPI(null));
+        list.add(new OpenApiAPI(null));
 
 		return list;
 	}
@@ -59,16 +61,16 @@ public class ApiGenerator {
 	public static void main(String[] args) {
 		try {
 			JavaAPIGenerator japi = new JavaAPIGenerator(JAVA_OUTPUT_DIR, true);
-			japi.generateJavaFiles(getApiImplementors());
+			japi.generateAPIFiles(getApiImplementors());
 
 			NodeJSAPIGenerator napi = new NodeJSAPIGenerator("../zaproxy/nodejs/api/zapv2", true);
-			napi.generateNodeJSFiles(getApiImplementors());
+			napi.generateAPIFiles(getApiImplementors());
 		
 			PhpAPIGenerator phapi = new PhpAPIGenerator("../zaproxy/php/api/zapv2/src/Zap", true);
-			phapi.generatePhpFiles(getApiImplementors());
+			phapi.generateAPIFiles(getApiImplementors());
 
 			PythonAPIGenerator pyapi = new PythonAPIGenerator(PYTHON_OUTPUT_DIR, true);
-			pyapi.generatePythonFiles(getApiImplementors());
+			pyapi.generateAPIFiles(getApiImplementors());
 
 			//WikiAPIGenerator wapi = new WikiAPIGenerator("../zaproxy-wiki", true);
 			//wapi.generateWikiFiles(getApiImplementors());
