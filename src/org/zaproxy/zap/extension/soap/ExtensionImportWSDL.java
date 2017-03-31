@@ -35,7 +35,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.api.API;
@@ -87,13 +86,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 	@Override
 	public void unload() {
 		super.unload();
-		/* Disables menu options. */
-		Control control = Control.getSingleton();
-		ExtensionLoader extLoader = control.getExtensionLoader();
-	    if (getView() != null) {
-	    	extLoader.removeToolsMenuItem(getMenuImportLocalWSDL());
-	    	extLoader.removeToolsMenuItem(getMenuImportUrlWSDL());
-	    }
 	    /* Destroys current ImportWSDL singleton instance. */
 	    ImportWSDL.destroy();
 	    /* Disables custom spider. */
@@ -159,7 +151,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
 	@Override
 	public boolean canUnload() {
-		return true;
+		return false;
 	}
 
 	@Override
