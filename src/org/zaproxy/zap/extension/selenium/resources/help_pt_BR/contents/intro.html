@@ -12,41 +12,34 @@
 	<p>Há suporte para os seguintes navegadores web:
 	<table border="2">
 		<tr>
-			<th>Name</th>
+			<th>Nome</th>
 			<th>ID</th>
-			<th>Requirements/Notes</th>
+			<th>Requisitos/notas</th>
 		</tr>
 		<tr>
 			<td>Chrome</td>
 			<td>chrome</td>
-			<td>Requires ChromeDriver, if not on the system's PATH, it can be set in the
-				options. For more information on ChromeDriver and how to obtain it refer to the <a
-				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
+			<td>Chrome - requer ChromeDriver, se não no caminho do sistema, pode ser definido nas opções. Para obter mais informações sobre ChromeDriver e como obtê-lo vá ao <a
+			href="https://sites.google.com/a/chromium.org/chromedriver/">site ChromeDriver</a>.
 			</td>
 		</tr>
 		<tr>
 			<td>Firefox</td>
 			<td>firefox</td>
-			<td>The following versions are known to work: 45 (ESR), 46 and 47.0.1 (older
-				version might work too). Some versions are known to not work, for example, 47.0. Newer
-				versions (&ge; 48) require geckodriver, it can be set in the options. For more
-				information on geckodriver and how to obtain it refer to the <a
-				href="https://github.com/mozilla/geckodriver">geckodriver website</a> (see footer note
-				for caveat when using geckodriver).
+			<td>Firefox - as versões seguintes foram testadas: 45 (ESR), 46 e 47.0.1 (versão mais antiga pode funcionar também). Sabe-se que algumas versões não funcionam, por exemplo a 47,0.    As versões mais recentes (&ge; 48) requerem geckodriver. Para obter mais informações sobre geckodriver e como obtê-lo consulte o <a
+			href="https://github.com/mozilla/geckodriver">site geckodriver</a> (ver nota de rodapé para ressalva quando usando geckodriver).
 			</td>
 		</tr>
 		<tr>
 			<td>HtmlUnit</td>
 			<td>htmlunit</td>
-			<td>Bundled browser, does not have any requirement.</td>
+			<td>Pacote de navegador, não tem qualquer exigência.</td>
 		</tr>
 		<tr>
 			<td>Internet Explorer</td>
 			<td>ie</td>
-			<td>Requires IEDriverServer, if not on the system's PATH, it can be set in the
-				options. For more information on IEDriverServer refer to the <a
-				href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">IEDriverServer
-					website</a> (see footer note for caveat when using Internet Explorer).
+			<td>Chrome - requer ChromeDriver, se não no caminho do sistema, pode ser definido nas opções. Para obter mais informações sobre IEDriverServer veja o <a
+			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">site de IEDriverServer</a> (ver nota de rodapé para ressalva ao usar o Internet Explorer).
 			</td>
 		</tr>
 		<tr>
@@ -57,10 +50,8 @@
 		<tr>
 			<td>PhantomJS</td>
 			<td>phantomjs</td>
-			<td>requires PhantomJS binary, if not on the system's PATH, it can be set in the
-				options. For more information on PhantomJS and how to obtain it refer to the <a
-				href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
-				using PhantomJS).
+			<td>PhantomJS - requer PhantomJS binário, se não no caminho do sistema, ele pode ser definido nas opções. Para obter mais informações sobre PhantomJS e como obtê-lo vá ao <a
+			href="http://phantomjs.org/">site de PhantomJS</a> (ver nota de rodapé para ressalva quando usando PhantomJS).
 			</td>
 		</tr>
 		<tr>
@@ -69,43 +60,33 @@
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>To use Firefox, Chrome, Internet Explorer, Opera, PhantomJS and Safari, you must
-		have them installed in your system. The ID of the browser can be used to choose the
-		browser when configuring ZAP through the command line or using the ZAP API (for example,
-		to set the AJAX Spider to use one or other browser).
+	<p>Para usar o Firefox, Chrome, Internet Explorer, Opera e Safari PhantomJS, você deve tê-los instalados em seu sistema. A ID do navegador pode ser usada para escolher o navegador ao configurar ZAP através de linha de comando ou usando a API ZAP (por exemplo, para definir a aranha de AJAX para usar um ou outro navegador).
 	<p>
-		Some of the requirements (e.g. WebDrivers) of the browsers can be configured in the <a
-			href="options.html">Options Selenium screen</a>.
+		Alguns dos requisitos (por exemplo, WebDrivers) dos navegadores podem ser configurados na <a
+			href="options.html">tela de opções do selênio</a>.
 	<p>
-		<strong>Note:</strong> ZAP add-ons can add additional browsers.
+		<strong>Nota:</strong> Complementos do ZAP podem adicionar navegadores.
 
 	<p>
-		<strong>Firefox/geckodriver Note:</strong> There's an issue (<a
-			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) that
-		prevents HTTPS sites from being used in versions &ge; 48 and &lt; 52.
+		<strong>Firefox/geckodriver Nota:</strong> Há um problema (<a
+			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) que impede que sites HTTPS sejam usados nas versões &ge; 48 e 52 &lt;.
 	<p>
-		<strong>PhantomJS Note:</strong> There's an issue (<a
-			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
-		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Until a fix is
-		available is advised to not use it in those cases. Some add-ons might choose to show
-		warning message when that happens. As workaround one could define, in the <code>hosts</code>
-		file, a domain name mapping to the local address and use that domain name instead.
+		<strong>PhantomJS Nota:</strong> Há um problema (<a
+			href="https://github.com/ariya/phantomjs/issues/11342">edição #11342</a>) que impede que sites no localhost, 127.0.0.1 e:: 1 de serem intermediados via proxy através do ZAP. Até que uma solução apareça é aconselhável não usá-lo nesses casos. Algumas extensões podem mostrar mensagens de alerta quando isso acontecer. Como uma solução alternativa se poderia definir, no arquivo <code> hosts </> um mapeamento de nome de domínio para o endereço local e usar esse nome de domínio em vez disso.
 	<p>
-		<strong>Internet Explorer Note:</strong> Not all versions of Internet Explorer work out
-		of the box, refer to the <a
-			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer
-			website</a> for more details on how to configure them.
-	<h2>See also</h2>
+		<strong>Nota sobre o Internet Explorer:</strong> Nem todas as versões de Internet Explorer funcionam de cara; consulte <a
+			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">o Site IEDriverServer</a> para mais detalhes sobre como configurá-lo.
+	<h2>Veja também</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">Options Selenium screen</a></td>
-			<td>for an overview of the Selenium Options</td>
+			<td><a href="options.html">Tela de opções Selenium</a></td>
+			<td>para uma visão geral das opções Selenium</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="api.html">API</a></td>
-			<td>for an overview of the Selenium API</td>
+			<td>para uma visão geral da API do Selenium</td>
 		</tr>
 	</table>
 
