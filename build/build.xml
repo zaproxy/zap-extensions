@@ -423,9 +423,6 @@
 		<build-addon name="viewstate" />
 		<build-addon name="vulncheck" />
 		<build-addon name="wappalyzer" />
-		<build-addon name="webdriverlinux" />
-		<build-addon name="webdrivermacos" />
-		<build-addon name="webdriverwindows" />
 
 	</target>
 
