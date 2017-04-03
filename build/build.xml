@@ -378,6 +378,7 @@
 		<build-addon name="accessControl" />
 		<build-addon name="amf" />
 		<build-addon name="ascanrulesAlpha" />
+		<build-addon name="authstats" />
 		<build-addon name="birtreports" />
 		<build-addon name="browserView" />
 		<build-addon name="bugtracker" />
@@ -388,6 +389,7 @@
 		<build-addon name="customreport"/>
 		<build-addon name="domxss"/>
 		<build-addon name="exportreport" />
+		<build-addon name="formhandler" />
 		<build-addon name="help_bs_BA" />
 		<build-addon name="help_es_ES" />
 		<build-addon name="help_fr_FR" />
@@ -400,6 +402,7 @@
 		<build-addon name="jxbrowserlinux64" />
 		<build-addon name="jxbrowsermacos" />
 		<build-addon name="jxbrowserwindows" />
+		<build-addon name="openapi" />
 		<build-addon name="pscanrulesAlpha" >
 				<!-- Add the extra classes required -->
 				<jar jarfile="${dist}/${file}" update="true" compress="true">
@@ -418,7 +421,11 @@
 		<build-addon name="sse" />
 		<build-addon name="tlsdebug" />
 		<build-addon name="viewstate" />
+		<build-addon name="vulncheck" />
 		<build-addon name="wappalyzer" />
+		<build-addon name="webdriverlinux" />
+		<build-addon name="webdrivermacos" />
+		<build-addon name="webdriverwindows" />
 
 	</target>
 
@@ -718,7 +725,11 @@
     <target name="deploy-soap" description="deploy the SOAP scanning extension">
 		<build-deploy-addon name="soap" />
 	</target>
-	  
+
+	<target name="generate-wiki-soap" description="Generates the soap wiki">
+		<generate-wiki addon="soap" />
+	</target>
+
 	<target name="deploy-tlsDebug" description="deploy the tlsDebug extension">
 		<build-deploy-addon name="tlsdebug" />
 	</target>
@@ -755,7 +766,9 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="accessControl-${status}-*.zap"/>
+				<include name="formhandler-${status}-*.zap"/>
 				<include name="jxbrowser*-{status}-*.zap"/>
+				<include name="openapi-${status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
 			</fileset>
