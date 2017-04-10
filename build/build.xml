@@ -527,6 +527,11 @@
 	<target name="deploy-diff" description="deploy the diff extension">
 		<build-deploy-addon name="diff" />
 	</target>
+	
+	<target name="deploy-diff-without-help-indexes" description="deploy diff, without building help indexes">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="diff" />
+	</target>
 
 	<target name="generate-wiki-diff" description="Generates the wiki of diff">
 		<generate-wiki-core addon="diff" />
@@ -534,6 +539,11 @@
 
 	<target name="deploy-fuzz" description="deploy the fuzz extension">
 		<build-deploy-addon name="fuzz" />
+	</target>
+	
+	<target name="deploy-fuzz-without-help-indexes" description="deploy fuzz, without building help indexes">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="fuzz" />
 	</target>
 
 	<target name="generate-wiki-fuzz" description="Generates the wiki of fuzz">
@@ -607,6 +617,11 @@
 	
 	<target name="deploy-scripts" description="deploy the scripts extension">
 		<build-deploy-addon name="scripts" />
+	</target>
+	
+	<target name="deploy-scripts-without-help-indexes" description="deploy scripts, without building help indexes">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="scripts" />
 	</target>
 
 	<target name="generate-wiki-scripts" description="Generates the wiki of scripts">
