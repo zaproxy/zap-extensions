@@ -31,6 +31,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.MalformedInputException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -354,6 +355,13 @@ public class ScriptsListPanel extends AbstractPanel {
        			// TODO Not ideal, but will require some core changes to do properly
        			showLoadScriptDialog(script);
 
+            } catch (MalformedInputException e) {
+                // XXX For now show an error message saying that the scripts need to be in UTF-8.
+                // Once core is released with loadScript(script, charset) we can prompt the user
+                // for the correct charset (noting that core already tries with UTF-8 and (JVM)
+                // default charset).
+                View.getSingleton().showWarningDialog(Constant.messages.getString("scripts.script.load.error.charset"));
+                logger.warn(e.getMessage(), e);
             } catch (Exception e) {
             	logger.error(e.getMessage(), e);
 	            View.getSingleton().showWarningDialog(

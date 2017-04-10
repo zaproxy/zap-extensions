@@ -1,17 +1,13 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>18</version>
+	<version>19</version>
 	<status>beta</status>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Remove unused resource messages (Issue 2386).<br>
-	Update help page to mention HTTP Sender scripts.<br>
-	Allow to save scripts through the context menu.<br>
-	Reset Console Output panel on session changes.<br>
-	If there is only one script engine available, make it the default when creating a new script.<br>
+	Inform when the script contains invalid char sequences (related to Issue 3377).<br>
 	]]>
 	</changes>
 	<extensions>
@@ -21,6 +17,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.5.0</not-before-version>
+	<not-before-version>2.6.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
