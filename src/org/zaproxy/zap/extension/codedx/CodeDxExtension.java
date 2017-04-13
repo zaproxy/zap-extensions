@@ -17,14 +17,23 @@
  */
 package org.zaproxy.zap.extension.codedx;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
+import java.security.GeneralSecurityException;
 
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.report.ReportLastScan.ReportType;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.codedx.security.SSLConnectionSocketFactoryFactory;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 /*
@@ -33,12 +42,15 @@ import org.zaproxy.zap.view.ZapMenuItem;
  */
 public class CodeDxExtension extends ExtensionAdaptor {
 
+    private static final Logger LOGGER = Logger.getLogger(CodeDxExtension.class);
+
+    private static final int TIMEOUT = 5000;
+    
     // The name is public so that other extensions can access it
     public static final String NAME = "CodeDxExtension";
 
-    private ZapMenuItem menu = null;
-
-    public List<Alert> alerts;
+    private ZapMenuItem menuUpload = null;
+    private ZapMenuItem menuExport = null;
 
     public CodeDxExtension() {
         super(NAME);
@@ -54,25 +66,54 @@ public class CodeDxExtension extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         if (getView() != null) {
-            extensionHook.getHookMenu().addReportMenuItem(getMenu());
+            extensionHook.getHookMenu().addReportMenuItem(getUploadMenu());
+            extensionHook.getHookMenu().addReportMenuItem(getExportMenu());
         }
 
     }
 
-    public ZapMenuItem getMenu() {
-        if (menu == null) {
-            menu = new ZapMenuItem("codedx.topmenu.report.title");
+    public ZapMenuItem getUploadMenu() {
+        if (menuUpload == null) {
+            menuUpload = new ZapMenuItem("codedx.topmenu.upload.title");
+            menuUpload.addActionListener(new UploadActionListener(this));
+        }
+        return menuUpload;
+    }
+    
+    public ZapMenuItem getExportMenu() {
+        if (menuExport == null) {
+            menuExport = new ZapMenuItem("codedx.topmenu.report.title");
 
-            menu.addActionListener(new java.awt.event.ActionListener() {
-
+            menuExport.addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(java.awt.event.ActionEvent ae) {
+                public void actionPerformed(ActionEvent ae) {
                     ReportLastScanHttp saver = new ReportLastScanHttp();
                     saver.generateReport(getView(), getModel(), ReportType.XML);
                 }
             });
         }
-        return menu;
+        return menuExport;
+    }
+    
+    public CloseableHttpClient getHttpClient(){
+        try {
+            return getHttpClient(CodeDxProperties.getInstance().getServerUrl());    
+        } catch (MalformedURLException e){
+            View.getSingleton().showWarningDialog(Constant.messages.getString("codedx.error.client.invalid"));
+        }
+        catch (IOException | GeneralSecurityException e) {
+            View.getSingleton().showWarningDialog(Constant.messages.getString("codedx.error.client.failed"));
+            LOGGER.error("Error creating HTTP client: ", e);
+        }
+        return null;
+    }
+    
+    public CloseableHttpClient getHttpClient(String url) throws IOException, GeneralSecurityException{  
+        RequestConfig config = RequestConfig.custom().setConnectTimeout(TIMEOUT).setSocketTimeout(TIMEOUT)
+                .setConnectionRequestTimeout(TIMEOUT).build();
+        return HttpClientBuilder.create()
+                .setSSLSocketFactory(SSLConnectionSocketFactoryFactory.getFactory(new URL(url).getHost(), this))
+                .setDefaultRequestConfig(config).build();
     }
 
     @Override
