@@ -34,23 +34,18 @@ Esta verificação confere a entrada fornecida pelo usuário nos parâmetros da 
 <h2>Listagem de Diretório</h2>
 Busca passivamente assinaturas de respostas indicando de que a navegação em diretório é possível.
 
-<h2>Example File Passive Scanner</h2>
-This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Exemplo, arquivo de Scanner passivo</h2>
+Isto implementa um exemplo de regra de verificação passiva que carrega strings de um arquivo que o usuário pode editar. <br>Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
-<h2>Example Simple Passive Scanner</h2>
-This implements a very simple example passive scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Exemplo simples, Scanner passivo</h2>
+isso implementa um exemplo muito simples de regra de verificação passiva. <br>Para mais detalhes veja: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
-<h2>Hash Disclosure</h2>
-Passively scan for password hashes disclosed by the web server. <br>
-Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
+<h2>Exposição de Hash</h2>
+Faz varredura passiva para exposição de hashes de senhas feitas pelo servidor web. Estão incluídos vários formatos, inclusive alguns como MD4, MD5 e SHA *, às vezes usados para outros fins além de conter hashes de senhas. 
 
-<h2>HeartBleed</h2>
-Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
+<h2>HeartBleed</h2>Busca passivamente respostas de cabeçalho HTTP que podem indicar que o servidor está sujeito à vulnerabilidade crítica HeartBleed OpenSSL. 
 
-<h2>HTTP to HTTPS Insecure Transition in Form Post</h2>
-This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
+<h2>Transição insegura de HTTP para HTTPS no formulário Post</h2> Esta verificação procura páginas inseguras HTTP que contêm formulários HTTPS. O problema é que uma página HTTP insegura pode facilmente ser sequestrada por MITM e o formulário seguro HTTPS pode ser substituído ou falsificado.
 
 <h2>HTTPS to HTTP Insecure Transition in Form Post</h2>
 This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
