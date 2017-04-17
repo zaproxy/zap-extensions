@@ -50,7 +50,7 @@
 	<classpathentry kind="lib" path="lib/jackson-databind-2.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-dataformat-yaml-2.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-datatype-joda-2.4.5.jar"/>
-	<classpathentry kind="lib" path="lib/salvation-2.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/salvation-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.3.jar"/>
 	<classpathentry kind="lib" path="lib/snakeyaml-1.12.jar"/>
 	<classpathentry kind="lib" path="lib/swagger-annotations-1.5.8.jar"/>
