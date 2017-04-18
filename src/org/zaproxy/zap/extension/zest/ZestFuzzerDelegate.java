@@ -10,6 +10,9 @@ package org.zaproxy.zap.extension.zest;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -170,7 +173,11 @@ public class ZestFuzzerDelegate {
 
     private Database getDB() {
     	if (jbroFuzzDB == null) {
-    		jbroFuzzDB = new Database(Constant.getZapHome() + "jbrofuzz/fuzzers.jbrf");
+    		Path fuzzersFile = Paths.get(Constant.getZapHome(), "jbrofuzz", "fuzzers.jbrf");
+    		if (!Files.exists(fuzzersFile)) {
+    			return null;
+    		}
+    		jbroFuzzDB = new Database(fuzzersFile.toAbsolutePath().toString());
     	}
     	return jbroFuzzDB;
     }
@@ -234,6 +241,10 @@ public class ZestFuzzerDelegate {
 	}
 
 	public List<String> getJBroFuzzCategories() {
+		if (getDB() == null) {
+			return Collections.emptyList();
+		}
+
 		String[] allCats = getDB().getAllCategories();
 		Arrays.sort(allCats);
 		List <String> categories = new ArrayList<>(allCats.length);
@@ -244,6 +255,10 @@ public class ZestFuzzerDelegate {
 	}
 
 	public List <String> getJBroFuzzFuzzerNames(String category) {
+		if (getDB() == null) {
+			return Collections.emptyList();
+		}
+
 		String jbfCategory = category.substring(JBROFUZZ_CATEGORY_PREFIX.length());
 		String [] fuzzers = getDB().getPrototypeNamesInCategory(jbfCategory);
 		Arrays.sort(fuzzers);
@@ -255,7 +270,17 @@ public class ZestFuzzerDelegate {
 	}
 
 	public Fuzzer getJBroFuzzer(String name) throws NoSuchFuzzerException {
+		if (getDB() == null) {
+			return new EmptyFuzzer();
+		}
+
 		return getDB().createFuzzer(getDB().getIdFromName(name), 1);
 	}
 
+	private static class EmptyFuzzer extends Fuzzer {
+
+		protected EmptyFuzzer() throws NoSuchFuzzerException {
+			super(null, 0);
+		}
+	}
 }
