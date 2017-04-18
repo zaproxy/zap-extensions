@@ -173,6 +173,10 @@ public class ZestScriptWrapper extends ScriptWrapper {
 		// Do nothing - its all handled elsewhere
 	}
 
+	@Override
+	public int hashCode() {
+		return original.hashCode();
+	}
 
 	@Override
 	public boolean equals (Object script) {
