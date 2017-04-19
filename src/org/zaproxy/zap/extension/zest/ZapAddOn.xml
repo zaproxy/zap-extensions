@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>23</version>
+	<version>24</version>
 	<status>beta</status>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Always show the expected URL in request statements (Issue 2854).<br>
-	Add HTTP requests to Sequence scripts when recording (Issue 3044).<br>
-	Execute nodes' mouse click action just once (Issue 3099).<br>
-	Clear Zest Results panel on session changes.<br>
+	Allow to loop files even if fuzzers.jbrf does not exist (Issue 3400).<br>
 	]]>
 	</changes>
 	<dependencies>
