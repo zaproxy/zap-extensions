@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Allow to loop files even if fuzzers.jbrf does not exist (Issue 3400).<br>
+	Properly remove Zest scripts (Issue 3401).<br>
 	]]>
 	</changes>
 	<dependencies>
