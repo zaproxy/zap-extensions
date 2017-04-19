@@ -31,8 +31,11 @@ import javax.swing.SwingUtilities;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.CommandLineArgument;
+import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
@@ -45,7 +48,7 @@ import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionOpenApi extends ExtensionAdaptor {
+public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineListener {
 
     public static final String NAME = "ExtensionOpenApi";
 
@@ -54,6 +57,10 @@ public class ExtensionOpenApi extends ExtensionAdaptor {
     private ZapMenuItem menuImportLocalOpenApi = null;
     private ZapMenuItem menuImportUrlOpenApi = null;
     private int threadId = 1;
+
+    private CommandLineArgument[] arguments = new CommandLineArgument[2];
+    private static final int ARG_IMPORT_FILE_IDX = 0;
+    private static final int ARG_IMPORT_URL_IDX = 1;
 
     private static final Logger LOG = Logger.getLogger(ExtensionOpenApi.class);
 
@@ -84,6 +91,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuImportLocalOpenApi());
             extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrlOpenApi());
         }
+
+        extensionHook.addCommandLine(getCommandLineArguments());
     }
 
     @Override
@@ -239,6 +248,49 @@ public class ExtensionOpenApi extends ExtensionAdaptor {
         } catch (MalformedURLException e) {
             return null;
         }
+    }
+    
+    private CommandLineArgument[] getCommandLineArguments() {
+        arguments[ARG_IMPORT_FILE_IDX] = new CommandLineArgument("-openapifile", 1, null, "", 
+                "-openapifile <path>      " + Constant.messages.getString("openapi.cmdline.file.help"));
+        arguments[ARG_IMPORT_URL_IDX] = new CommandLineArgument("-openapiurl", 1, null, "", 
+                "-openapiurl <url>        " + Constant.messages.getString("openapi.cmdline.url.help"));
+        return arguments;
+    }
+
+    @Override
+    public void execute(CommandLineArgument[] args) {
+        if (arguments[ARG_IMPORT_FILE_IDX].isEnabled()) {
+            for (String file : args[ARG_IMPORT_FILE_IDX].getArguments()) {
+                File f = new File(file);
+                if (f.canRead()) {
+                    this.importOpenApiDefinition(f);
+                } else {
+                    CommandLine.error("Cannot read Open API file: " + f.getAbsolutePath());
+                }
+            }
+        }
+        if (arguments[ARG_IMPORT_URL_IDX].isEnabled()) {
+            for (String urlstr : args[ARG_IMPORT_URL_IDX].getArguments()) {
+                try {
+                    URI url = new URI(urlstr, false);
+                    this.importOpenApiDefinition(url);
+                } catch (Exception e) {
+                    CommandLine.error(e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<String> getHandledExtensions() {
+        return null;
+    }
+
+    @Override
+    public boolean handleFile(File file) {
+        // Not supported
+        return false;
     }
 
 }
