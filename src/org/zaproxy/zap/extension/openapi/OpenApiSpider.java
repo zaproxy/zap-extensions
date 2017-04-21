@@ -30,6 +30,8 @@ import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 
+import io.swagger.models.Scheme;
+
 public class OpenApiSpider extends SpiderParser {
 
     private static final Logger log = Logger.getLogger(OpenApiSpider.class);
@@ -46,7 +48,8 @@ public class OpenApiSpider extends SpiderParser {
         if (!isEnabled) return false;
 
         try {
-            Converter converter = new SwaggerConverter(message.getResponseBody().toString());
+            Scheme defaultScheme = Scheme.forValue(message.getRequestHeader().getURI().getScheme().toLowerCase());
+            Converter converter = new SwaggerConverter(defaultScheme, message.getResponseBody().toString());
             requestor.run(converter.getRequestModels());
         } catch (Exception e) {
             log.debug(e.getMessage(), e);

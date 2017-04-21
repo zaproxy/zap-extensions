@@ -48,6 +48,8 @@ import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
+import io.swagger.models.Scheme;
+
 public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineListener {
 
     public static final String NAME = "ExtensionOpenApi";
@@ -154,7 +156,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         requestor.addListener(new HistoryPersister());
         try {
-            importOpenApiDefinition(requestor.getResponseBody(uri));
+            importOpenApiDefinition(Scheme.forValue(uri.getScheme().toLowerCase()), requestor.getResponseBody(uri));
         } catch (IOException e) {
             if (View.isInitialised()) {
                 View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.io.error"));
@@ -167,7 +169,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public void importOpenApiDefinition(final File file) {
         try {
-            importOpenApiDefinition(FileUtils.readFileToString(file));
+            importOpenApiDefinition(null, FileUtils.readFileToString(file));
         } catch (IOException e) {
             if (View.isInitialised()) {
                 View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.io.error"));
@@ -178,7 +180,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         }
     }
 
-    private void importOpenApiDefinition(final String defn) {
+    private void importOpenApiDefinition(final Scheme defaultScheme, final String defn) {
         Thread t = new Thread(THREAD_PREFIX + threadId++) {
 
             @Override
@@ -187,7 +189,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 try {
                     Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
                     requestor.addListener(new HistoryPersister());
-                    SwaggerConverter converter = new SwaggerConverter(defn);
+                    SwaggerConverter converter = new SwaggerConverter(defaultScheme, defn);
                     errors = converter.getErrorMessages();
                     errors.addAll(requestor.run(converter.getRequestModels()));
                     if (errors.size() > 0) {
