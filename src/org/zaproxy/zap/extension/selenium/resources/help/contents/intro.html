@@ -78,6 +78,16 @@
 	<p>
 		Some of the requirements (e.g. WebDrivers) of the browsers can be configured in the <a
 			href="options.html">Options Selenium screen</a>.
+
+	<h2>Bundled WebDrivers</h2>
+	ZAP provides add-ons with the WebDrivers, when those add-ons are installed ZAP will
+	attempt to use those bundled WebDrivers by default. Some OSs might not have a WebDriver
+	for some of the browsers, in those cases ZAP will inform, in the options panel, that
+	there's no bundled WebDriver available. The bundled WebDrivers can also be (re)set with
+	the 'Bundled' button (for example, if another WebDriver was manually set). Not all
+	browser versions are supported with the bundled WebDrivers, it's recommended that
+	newer/latest versions of the browsers be used whenever possible.
+
 	<p>
 		<strong>Note:</strong> ZAP add-ons can add additional browsers.
 
