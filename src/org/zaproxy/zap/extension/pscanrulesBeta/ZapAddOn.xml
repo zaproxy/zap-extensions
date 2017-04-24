@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>15</version>
+	<version>16</version>
 	<status>beta</status>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Support security annotations for forms that dont need anti-CSRF tokens.<br>
+	Added some keywords to the list of suspicious comments. <br/>
 	]]>
 	</changes>
 	<extensions>
