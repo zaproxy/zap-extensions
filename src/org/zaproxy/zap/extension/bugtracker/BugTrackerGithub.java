@@ -199,10 +199,10 @@ public class BugTrackerGithub extends BugTracker {
         for(Alert alert: alerts) {
 
             if(alert.getRisk() >= 0 ) {
-                labels.append(Constant.messages.getString("bugtracker.msg.risk") + alert.MSG_RISK[alert.getRisk()] + ", ");
+                labels.append(Constant.messages.getString("bugtracker.msg.risk") + Alert.MSG_RISK[alert.getRisk()] + ", ");
             }
             if(alert.getConfidence() >= 0 ) {
-                labels.append(Constant.messages.getString("bugtracker.msg.conf") + alert.MSG_CONFIDENCE[alert.getConfidence()] + ", ");
+                labels.append(Constant.messages.getString("bugtracker.msg.conf") + Alert.MSG_CONFIDENCE[alert.getConfidence()] + ", ");
             }
             if(alert.getCweId() >= 0 ) {
                 labels.append(Constant.messages.getString("bugtracker.msg.cwe") + alert.getCweId() + ", ");

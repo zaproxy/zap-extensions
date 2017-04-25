@@ -134,7 +134,7 @@ class DialogAddBugzillaConfig extends AbstractFormDialog {
     
     @Override
     protected void performAction() {
-        config = new BugTrackerBugzillaConfigParams(getNameTextField().getText(), getPasswordTextField().getText(), getBugzillaUrlTextField().getText());
+        config = new BugTrackerBugzillaConfigParams(getNameTextField().getText(), new String(getPasswordTextField().getPassword()), getBugzillaUrlTextField().getText());
     }
     
     @Override

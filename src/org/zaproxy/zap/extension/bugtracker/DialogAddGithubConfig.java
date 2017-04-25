@@ -134,7 +134,7 @@ class DialogAddGithubConfig extends AbstractFormDialog {
     
     @Override
     protected void performAction() {
-        config = new BugTrackerGithubConfigParams(getNameTextField().getText(), getPasswordTextField().getText(), getRepoUrlTextField().getText());
+        config = new BugTrackerGithubConfigParams(getNameTextField().getText(), new String(getPasswordTextField().getPassword()), getRepoUrlTextField().getText());
     }
     
     @Override
