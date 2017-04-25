@@ -36,7 +36,7 @@ public class JxBrowserDownload {
      */
     public static void main(String[] args) {
 
-        final String VERSION = "6.12";
+        final String VERSION = "6.14";
 
         downloadLibrary(
                 "https://github.com/zaproxy/zap-libs/raw/master/files/jxbrowser/jxbrowser-linux32-" + VERSION + ".jar",
@@ -51,7 +51,7 @@ public class JxBrowserDownload {
                 "../jxbrowsermacos/lib/jxbrowser-mac-" + VERSION + ".jar");
 
         downloadLibrary(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/jxbrowser/jxbrowser-win-" + VERSION + ".jar",
+                "https://github.com/zaproxy/zap-libs/raw/master/files/jxbrowser/jxbrowser-win32-" + VERSION + ".jar",
                 "../jxbrowserwindows/lib/jxbrowser-win-" + VERSION + ".jar");
     }
 
