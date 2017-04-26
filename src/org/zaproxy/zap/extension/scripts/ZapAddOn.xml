@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Inform when the script contains invalid char sequences (related to Issue 3377).<br>
+	Invoke Scripts tree context menu once.<br>
 	]]>
 	</changes>
 	<extensions>
