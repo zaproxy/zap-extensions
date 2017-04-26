@@ -121,7 +121,7 @@ public class ReportLastScan {
                
                	report.append("<alertitem>\r\n");
         		report.append("<pluginid>").append(alert.getPluginId()).append("</pluginid>\r\n");
-        		report.append("<alert>").append(replaceEntity(alert.getAlert())).append("</alert>\r\n");
+        		report.append("<alert>").append(replaceEntity(alert.getName())).append("</alert>\r\n");
         		report.append("<riskcode>").append(alert.getRisk()).append("</riskcode>\r\n");
         		report.append("<confidence>").append(alert.getConfidence()).append("</confidence>\r\n");
         		report.append("<riskdesc>").append(replaceEntity(MSG_RISK[alert.getRisk()] + " (" + MSG_CONFIDENCE[alert.getConfidence()] + ")")).append("</riskdesc>\r\n");
