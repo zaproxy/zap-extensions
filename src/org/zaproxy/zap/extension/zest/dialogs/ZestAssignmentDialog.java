@@ -58,6 +58,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 	private static final String FIELD_OPERAND_B = "zest.dialog.assign.label.operandb";
 	private static final String FIELD_OPERATION = "zest.dialog.assign.label.operation";
 	private static final String FIELD_REGEX = "zest.dialog.assign.label.regex";
+	private static final String FIELD_EXACT = "zest.dialog.assign.label.exact";
 	private static final String FIELD_REGEX_PREFIX = "zest.dialog.assign.label.rgxprefix";
 	private static final String FIELD_REGEX_POSTFIX = "zest.dialog.assign.label.rgxpostfix";
 	private static final String FIELD_REPLACE = "zest.dialog.assign.label.replace";
@@ -153,6 +154,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 			this.addTextField(FIELD_REPLACE, za.getReplace());
 			this.addTextField(FIELD_REPLACEMENT, za.getReplacement());
 			this.addCheckBoxField(FIELD_REGEX, za.isRegex());
+			this.addCheckBoxField(FIELD_EXACT, za.isCaseExact());
 
 			// Enable right click menus
 			this.addFieldListener(FIELD_REPLACE, ZestZapUtils.stdMenuAdapter()); 
@@ -265,7 +267,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 			za.setReplace(this.getStringValue(FIELD_REPLACE));
 			za.setReplacement(this.getStringValue(FIELD_REPLACEMENT));
 			za.setRegex(this.getBoolValue(FIELD_REGEX));
-			// TODO support caseexact
+			za.setCaseExact(this.getBoolValue(FIELD_EXACT));
 		} else if (assign instanceof ZestAssignCalc) {
 			ZestAssignCalc za = (ZestAssignCalc) assign;
 			za.setOperandA(this.getStringValue(FIELD_OPERAND_A));
