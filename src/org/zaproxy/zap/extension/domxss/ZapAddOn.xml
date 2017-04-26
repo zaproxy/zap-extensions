@@ -1,20 +1,20 @@
 <zapaddon>
 	<name>DOM XSS Active scanner rule</name>
-	<version>3</version>
+	<version>4</version>
 	<status>alpha</status>
 	<description>DOM XSS Active scanner rule</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Skip the scanner if not able to start Firefox.<br>
+	 <br>
 	]]>
     </changes>
 	<dependencies>
 		<addons>
 			<addon>
 				<id>selenium</id>
-				<semver>1.*</semver>
+				<not-before-version>7</not-before-version>
 			</addon>
 		</addons>
 	</dependencies>
