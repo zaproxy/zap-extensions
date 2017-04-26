@@ -1,6 +1,6 @@
 <zapaddon>
     <name>AdvFuzzer</name>
-    <version>8</version>
+    <version>9</version>
     <semver>2.0.1</semver>
     <status>beta</status>
     <description>Advanced fuzzer for manual testing</description>
@@ -8,12 +8,7 @@
     <url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts</url>
     <changes>
     <![CDATA[
-    Show help button in fuzzer dialogues.<br>
-    Correct method name in HTTP processor JavaScript template.<br>
-    Fix exception when adding file fuzzers with selected empty "Custom Fuzzers".<br>
-    Fix typos in the help pages.<br>
-    Automatically add Anti-CSRF Token Refresher, if available.<br>
-    Render custom states, always (Issue 3166).<br>
+    Contains new number generator payload.<br>
     ]]>
     </changes>
     <extensions>
