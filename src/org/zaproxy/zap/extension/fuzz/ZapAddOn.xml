@@ -8,6 +8,7 @@
     <url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts</url>
     <changes>
     <![CDATA[
+    Ignore empty payloads when highlighting or detecting reflections.<br>
     Contains new number generator payload.<br>
     ]]>
     </changes>

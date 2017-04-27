@@ -120,6 +120,10 @@ public class HttpFuzzerResultsTable extends HistoryReferencesTable {
 
                     for (Object payload : ((HttpFuzzerResultsTableModel) getModel()).getPayloads(hRef.getHistoryId())) {
                         String strPayload = payload.toString();
+                        if (strPayload.isEmpty()) {
+                            continue;
+                        }
+
                         int startIndex = httpMessage.getResponseBody().toString().indexOf(strPayload);
                         if (startIndex >= 0) {
                             // Found the exact pattern - highlight it
