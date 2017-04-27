@@ -51,7 +51,7 @@ public class EmptyPayloadGenerator<T extends Payload> implements PayloadGenerato
 
     @Override
     public PayloadGenerator<T> copy() {
-        return new EmptyPayloadGenerator<>(value, numberOfPayloads);
+        return this;
     }
 
     private static class ValueRepeaterIterator<E extends Payload> implements ResettableAutoCloseableIterator<E> {
