@@ -82,6 +82,8 @@ import org.zaproxy.zap.extension.fuzz.payloads.processor.TrimStringProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.URLDecodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.URLEncodeProcessor;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUIHandlersRegistry;
+import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultEmptyPayloadGeneratorUIHandler;
+import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultEmptyPayloadGeneratorUIHandler.DefaultEmptyPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.DefaultStringPayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.FileStringPayloadGeneratorUIHandler;
 import org.zaproxy.zap.extension.fuzz.payloads.ui.impl.NumberPayloadGeneratorAdapterUIHandler;
@@ -225,6 +227,8 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         // payloadGeneratorsUIRegistry.registerPayloadUI(ProcessPayloadGenerator.class, new ProcessPayloadGeneratorUIHandler());
         payloadGeneratorsUIRegistry.registerPayloadUI(RegexPayloadGenerator.class, new RegexPayloadGeneratorUIHandler());
 
+        payloadGeneratorsUIRegistry
+                .registerPayloadUI(DefaultEmptyPayloadGenerator.class, new DefaultEmptyPayloadGeneratorUIHandler());
         payloadGeneratorsUIRegistry.registerPayloadUI(NumberPayloadGenerator.class, new NumberPayloadGeneratorAdapterUIHandler());
 
         PayloadProcessorUIHandlersRegistry payloadProcessorsUIRegistry = PayloadProcessorUIHandlersRegistry.getInstance();
