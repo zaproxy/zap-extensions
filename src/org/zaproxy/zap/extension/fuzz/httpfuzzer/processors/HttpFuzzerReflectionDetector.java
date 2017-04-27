@@ -62,10 +62,12 @@ public class HttpFuzzerReflectionDetector implements HttpFuzzerMessageProcessor 
         String fuzzedResponseBody = httpMessage.getResponseBody().toString();
         for (Object payload : payloads) {
             String strPayload = payload.toString();
-            int pos = originalResponseBody.indexOf(strPayload);
-            if (fuzzedResponseBody.indexOf(strPayload, pos) != -1) {
-                reflected.add(strPayload);
-                break;
+            if (!strPayload.isEmpty()) {
+                int pos = originalResponseBody.indexOf(strPayload);
+                if (fuzzedResponseBody.indexOf(strPayload, pos) != -1) {
+                    reflected.add(strPayload);
+                    break;
+                }
             }
         }
         return reflected;
