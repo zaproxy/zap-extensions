@@ -100,10 +100,14 @@ public class BrowserPanel extends JPanel {
                 }
             });
 
-            toolbar.add(getBackButton(), LayoutHelper.getGBC(0, 0, 1, 0.0));
-            toolbar.add(getForwardButton(), LayoutHelper.getGBC(1, 0, 1, 0.0));
-            toolbar.add(url, LayoutHelper.getGBC(2, 0, 1, 1.0));
-            toolbar.add(getHelpButton(), LayoutHelper.getGBC(3, 0, 1, 0.0));
+            int x = 0;
+            toolbar.add(getBackButton(), LayoutHelper.getGBC(x++, 0, 1, 0.0));
+            toolbar.add(getForwardButton(), LayoutHelper.getGBC(x++, 0, 1, 0.0));
+            for (JButton button : this.getExtraButtons()) {
+                toolbar.add(button, LayoutHelper.getGBC(x++, 0, 1, 0.0));
+            }
+            toolbar.add(url, LayoutHelper.getGBC(x++, 0, 1, 1.0));
+            toolbar.add(getHelpButton(), LayoutHelper.getGBC(x++, 0, 1, 0.0));
 
             // Set up the listeners
             url.addActionListener(new ActionListener() {
@@ -203,6 +207,10 @@ public class BrowserPanel extends JPanel {
             forwardButton.setToolTipText("Go forwards one page");
         }
         return forwardButton;
+    }
+
+    protected JButton[] getExtraButtons() {
+        return new JButton[]{};
     }
 
     protected JButton getHelpButton() {

@@ -31,8 +31,11 @@ import javax.swing.JButton;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.view.NodeSelectDialog;
 
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
@@ -47,15 +50,23 @@ public class ZapBrowserPanel extends BrowserPanel {
     private static final ImageIcon FORWARD_ICON = DisplayUtils.getScaledIcon(new ImageIcon(
             ZapBrowserPanel.class.getResource(ExtensionJxBrowser.RESOURCES + "/arrow-000-medium.png")));
 
+    private static final ImageIcon SITES_ICON = DisplayUtils.getScaledIcon(new ImageIcon(
+            View.class.getResource("/resource/icon/16/094.png"))); // Globe icon
+
     private static final Logger LOGGER = Logger.getLogger(ZapBrowserPanel.class);
     private static final long serialVersionUID = 1L;
 
+    private BrowserFrame frame;
+    private JButton[] extraButtons;
+
     public ZapBrowserPanel(BrowserFrame frame, boolean incToolbar) {
         super(frame, incToolbar);
+        this.frame = frame;
     }
 
     public ZapBrowserPanel(BrowserFrame frame, boolean incToolbar, Browser browser) {
         super(frame, incToolbar, browser);
+        this.frame = frame;
     }
 
     @Override
@@ -99,6 +110,30 @@ public class ZapBrowserPanel extends BrowserPanel {
         return forwardButton;
     }
 
+    @Override
+    protected JButton[] getExtraButtons() {
+    	if (extraButtons == null) {
+    		JButton sitesButton = new JButton();
+    		sitesButton.setIcon(SITES_ICON);
+    		sitesButton.setToolTipText(Constant.messages.getString("jxbrowser.browser.button.sites"));
+            sitesButton.addActionListener(new java.awt.event.ActionListener() { 
+    			@Override
+    			public void actionPerformed(java.awt.event.ActionEvent e) {
+    				NodeSelectDialog nsd = new NodeSelectDialog(frame);
+    				nsd.setAllowRoot(false);
+    				SiteNode node = nsd.showDialog((SiteNode)null);
+    				if (node != null && node.getHistoryReference() != null) {
+    					getBrowser().loadURL(node.getHistoryReference().getURI().toString());
+    				}
+    			}
+    		});
+
+    		extraButtons = new JButton[]{sitesButton};
+    	}
+        return extraButtons;
+    }
+
+    
     @Override
     protected JButton getHelpButton() {
         if (helpButton == null) {
