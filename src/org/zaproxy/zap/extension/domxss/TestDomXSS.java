@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.UnhandledAlertException;
@@ -37,7 +38,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.SessionNotFoundException;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
@@ -307,7 +307,7 @@ public class TestDomXSS extends AbstractAppPlugin {
 			
 		} catch(UnhandledAlertException uae) {
 			throw uae;
-		} catch(SessionNotFoundException enve) {
+		} catch(NoSuchSessionException enve) {
 			// Pause, retry
 			try {
 				Thread.sleep(1000);
@@ -347,7 +347,7 @@ public class TestDomXSS extends AbstractAppPlugin {
 
 		} catch(UnhandledAlertException uae) {
 			throw uae;
-		} catch(SessionNotFoundException enve) {
+		} catch(NoSuchSessionException enve) {
 			// Pause, retry
 			try {
 				Thread.sleep(1000);
@@ -467,7 +467,7 @@ public class TestDomXSS extends AbstractAppPlugin {
     			Stats.incCounter("domxss.vulns.div2");
 				throw new DomAlertException(url, attackVector, 
 						tagName, attributeId, attributeName);
-			} catch(SessionNotFoundException enve) {
+			} catch(NoSuchSessionException enve) {
 				log.debug(enve);
 				// replaceDriver(driver);
 			} catch(ElementNotVisibleException enve) {
