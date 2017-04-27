@@ -114,7 +114,7 @@ public class ExtensionCustomReport extends ExtensionAdaptor {
             List<Alert> alerts = extAlert.getAllAlerts();
             List<String> alertTypes = new ArrayList<String>();
             for( Alert alert : alerts ){
-            	String alertType = alert.getAlert();
+            	String alertType = alert.getName();
             	if( alertTypes.contains( alertType) )continue;
             	alertTypes.add( alertType );
             	alertTypeRisk.put(alertType, Alert.MSG_RISK[alert.getRisk()]);
