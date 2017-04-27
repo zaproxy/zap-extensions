@@ -9,6 +9,7 @@
 	<![CDATA[
 	Improve error handling in some scanners.<br>
 	Add MsSQL specific Injection scanner.<br>
+	Issue 3441: Add proper reference links to Proxy Discovery scanner.<br>
   	]]>
 	</changes>
 	<extensions>
