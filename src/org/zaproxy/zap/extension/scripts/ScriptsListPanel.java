@@ -20,15 +20,16 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Rectangle;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.MalformedInputException;
@@ -41,10 +42,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.TransferHandler;
 import javax.swing.filechooser.FileFilter;
@@ -464,7 +465,45 @@ public class ScriptsListPanel extends AbstractPanel {
 
 	JTree getTree() {
 		if (tree == null) {
-			tree = new JTree();
+			tree = new JTree() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Point getPopupLocation(final MouseEvent event) {
+					// Select the node before showing the pop up menu when invoked using the mouse.
+					if (event != null) {
+						TreePath tp = tree.getPathForLocation(event.getX(), event.getY());
+						if (tp != null) {
+							boolean select = true;
+							// Only select a new node if the current node is not
+							// already selected - this is to allow multiple nodes
+							// to be selected
+							if (tree.getSelectionPaths() != null) {
+								for (TreePath t : tree.getSelectionPaths()) {
+									if (t.equals(tp)) {
+										select = false;
+										break;
+									}
+								}
+							}
+							if (select) {
+								tree.getSelectionModel().setSelectionPath(tp);
+							}
+						}
+					}
+					return super.getPopupLocation(event);
+				}
+			};
+			tree.setComponentPopupMenu(new JPopupMenu() {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void show(Component invoker, int x, int y) {
+					View.getSingleton().getPopupMenu().show(tree, x, y);
+				}
+			});
 			tree.setModel(extension.getExtScript().getTreeModel());
 			tree.setName(TREE);
 			tree.setShowsRootHandles(true);
@@ -491,9 +530,6 @@ public class ScriptsListPanel extends AbstractPanel {
 			}
 			
 			tree.addMouseListener(new java.awt.event.MouseAdapter() { 
-				@Override
-				public void mousePressed(java.awt.event.MouseEvent e) {
-				}
 					
 				@Override
 				public void mouseReleased(java.awt.event.MouseEvent e) {
@@ -502,11 +538,6 @@ public class ScriptsListPanel extends AbstractPanel {
 				
 				@Override
 				public void mouseClicked(java.awt.event.MouseEvent e) {
-					// right mouse button action
-				    if (SwingUtilities.isRightMouseButton(e)) {
-				    	showPopupMenu(e.getPoint().x, e.getPoint().y );
-				    }
-				    
 				    if (e.getClickCount() > 1) {
 				    	// Its a double click - edit a script if selected (but not a template)
 				    	ScriptNode node = getSelectedNode();
@@ -536,47 +567,8 @@ public class ScriptsListPanel extends AbstractPanel {
 					selectionChanged();
 				}
 			});
-			tree.addKeyListener(new KeyListener(){
-				@Override
-				public void keyTyped(KeyEvent e) {
-				}
-
-				@Override
-				public void keyPressed(KeyEvent e) {
-					if (e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU) {
-						Rectangle rec = tree.getUI().getPathBounds(tree, tree.getSelectionPath());
-						showPopupMenu(rec.x, rec.y);
-					}
-				}
-
-				@Override
-				public void keyReleased(KeyEvent e) {
-				}});
 		}
 		return tree;
-	}
-	
-	private void showPopupMenu (int x, int y) {
-		// Select site list item on right click
-    	TreePath tp = tree.getPathForLocation(x, y);
-    	if ( tp != null ) {
-    		boolean select = true;
-    		// Only select a new item if the current item is not
-    		// already selected - this is to allow multiple items
-    		// to be selected
-	    	if (tree.getSelectionPaths() != null) {
-	    		for (TreePath t : tree.getSelectionPaths()) {
-	    			if (t.equals(tp)) {
-	    				select = false;
-	    				break;
-	    			}
-	    		}
-	    	}
-	    	if (select) {
-	    		tree.getSelectionModel().setSelectionPath(tp);
-	    	}
-    	}
-        View.getSingleton().getPopupMenu().show(tree, x, y);
 	}
 	
 	private void selectionChanged() {
