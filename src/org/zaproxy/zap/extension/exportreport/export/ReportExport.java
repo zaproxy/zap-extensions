@@ -166,7 +166,7 @@ final class ReportExport {
 
                         AlertItem item = new AlertItem();
                         item.setPluginID(entityEncode(Integer.toString(alert.getPluginId())));
-                        item.setAlert(entityEncode(alert.getAlert()));
+                        item.setAlert(entityEncode(alert.getName()));
                         item.setRiskCode(entityEncode(Integer.toString(alert.getRisk())));
                         item.setRiskDesc(entityEncode(Alert.MSG_RISK[alert.getRisk()]));
                         item.setConfidence(entityEncode(Alert.MSG_CONFIDENCE[alert.getConfidence()]));

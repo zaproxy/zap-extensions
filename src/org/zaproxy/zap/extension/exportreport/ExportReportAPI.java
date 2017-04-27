@@ -113,8 +113,8 @@ public class ExportReportAPI extends ApiImplementor {
             ArrayList<String> alertSeverityFlags = new ArrayList<String>(Arrays.asList((params.getString(ACTION_PARAM_ALERT_SEVERITY)).split(";")));
             ArrayList<String> alertDetailsFlags = new ArrayList<String>(Arrays.asList((params.getString(ACTION_PARAM_ALERT_DETAILS)).split(";")));
 
-            if (sourceDetails.size() != extension.SOURCE_COUNT) {
-                logger.error(Constant.messages.getString("exportreport.message.console.error.source", Constant.messages.getString("exportreport.menu.source.label"), sourceDetails.size(), extension.SOURCE_COUNT, Constant.messages.getString("exportreport.source.title.label"), Constant.messages.getString("exportreport.source.by.label"), Constant.messages.getString("exportreport.source.for.label"), Constant.messages.getString("exportreport.source.scandate.label"), Constant.messages.getString("exportreport.source.reportdate.label"), Constant.messages.getString("exportreport.source.scanver.label"), Constant.messages.getString("exportreport.source.reportver.label"), Constant.messages.getString("exportreport.source.description.label")));
+            if (sourceDetails.size() != ExtensionExportReport.SOURCE_COUNT) {
+                logger.error(Constant.messages.getString("exportreport.message.console.error.source", Constant.messages.getString("exportreport.menu.source.label"), sourceDetails.size(), ExtensionExportReport.SOURCE_COUNT, Constant.messages.getString("exportreport.source.title.label"), Constant.messages.getString("exportreport.source.by.label"), Constant.messages.getString("exportreport.source.for.label"), Constant.messages.getString("exportreport.source.scandate.label"), Constant.messages.getString("exportreport.source.reportdate.label"), Constant.messages.getString("exportreport.source.scanver.label"), Constant.messages.getString("exportreport.source.reportver.label"), Constant.messages.getString("exportreport.source.description.label")));
                 return ApiResponseElement.FAIL;
             }
 
