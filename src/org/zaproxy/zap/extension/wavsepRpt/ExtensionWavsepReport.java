@@ -302,14 +302,14 @@ public class ExtensionWavsepReport extends ExtensionAdaptor {
 			for (Alert alert : node.getAlerts()) {
 				String shortForm = null;
 				for (String[] sf : SHORT_FORMS) {
-					if (alert.getAlert().equalsIgnoreCase(sf[0])) {
+					if (alert.getName().equalsIgnoreCase(sf[0])) {
 						shortForm = sf[1];
 						break;
 					}
 				}
 				if (shortForm == null) {
 					// Wont be a rule for it
-					missingShortForms.add(alert.getAlert());
+					missingShortForms.add(alert.getName());
 					continue;
 				}
 				boolean foundRule = false;
