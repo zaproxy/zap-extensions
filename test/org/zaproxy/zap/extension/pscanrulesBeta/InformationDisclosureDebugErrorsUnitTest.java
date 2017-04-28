@@ -35,12 +35,13 @@ import org.junit.rules.TemporaryFolder;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 
 public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest {
 	private static final String URI = "https://www.example.com/";
-	private static final String defaultErrorMessage = "Internal Server Error";
-	private static final List<String> debugErrors = Arrays.asList(
-			defaultErrorMessage,
+	private static final String DEFAULT_ERROR_MESSAGE = "Internal Server Error";
+	private static final List<String> DEBUG_ERRORS = Arrays.asList(
+			DEFAULT_ERROR_MESSAGE,
 			"There seems to have been a problem with the",
 			"This error page might contain sensitive information because ASP.NET",
 			"PHP Error"
@@ -55,29 +56,35 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 		
 		try {
 			Path errorFile = testFolder.newFile("debug-error-messages.txt").toPath();
-			Files.write(errorFile, debugErrors, Charset.forName("UTF-8"));
+			Files.write(errorFile, DEBUG_ERRORS, Charset.forName("UTF-8"));
 			scanner.setDebugErrorFile(errorFile);
 		} catch (IOException e) {
-			
+			throw new RuntimeException("Could not write debug error messages file.", e);
 		}
 		
 		return scanner;
 	}
 	
+	protected HttpMessage createHttpMessageWithRespBody(String responseBody) throws HttpMalformedHeaderException {
+		HttpMessage msg = new HttpMessage();
+		msg.setRequestHeader("GET " + URI + " HTTP/1.1");
+		msg.setResponseBody(responseBody);
+		msg.setResponseHeader(
+				"HTTP/1.1 200 OK\r\n" +
+				"Server: Apache-Coyote/1.1\r\n" +
+				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
+				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		return msg;
+	}
+	
 	@Test
 	public void alertsIfDebugErrorsDisclosed() throws HttpMalformedHeaderException {
-		for (int i = 0; i < debugErrors.size(); i++) {
-			String debugError = debugErrors.get(i);
-			String responseBody = "<html>" + debugError + "</html>"; 
+		for (int i = 0; i < DEBUG_ERRORS.size(); i++) {
+			String debugError = DEBUG_ERRORS.get(i);
+			String responseBody = "<html>" + debugError + "</html>";
 			
-			HttpMessage msg = new HttpMessage();
-			msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-			msg.setResponseBody(responseBody);
-			msg.setResponseHeader(
-					"HTTP/1.1 200 OK\r\n" +
-					"Server: Apache-Coyote/1.1\r\n" +
-					"Content-Type: text/html;charset=ISO-8859-1\r\n" +
-					"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+			HttpMessage msg = createHttpMessageWithRespBody(responseBody);	
+
 			rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 			
 			assertThat(alertsRaised.size(), equalTo(i + 1));
@@ -98,14 +105,8 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 		int expectedAlerts = 0;
 		
 		// Test the normal error message
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-		msg.setResponseBody("<html>" + defaultErrorMessage + "</html>");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-				"Server: Apache-Coyote/1.1\r\n" +
-				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
-				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		HttpMessage msg = createHttpMessageWithRespBody("<html>" + DEFAULT_ERROR_MESSAGE + "</html>");
+
 		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 		
 		expectedAlerts++;
@@ -113,17 +114,11 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 		Alert alert = alertsRaised.get(expectedAlerts - 1);
 		assertThat(alert.getCweId(), equalTo(200));
 		assertThat(alert.getWascId(), equalTo(13));
-		assertThat(alert.getEvidence(), equalTo(defaultErrorMessage));
+		assertThat(alert.getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE));
 		
 		// Test the lower-case error message
-		msg = new HttpMessage();
-		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-		msg.setResponseBody("<html>" + defaultErrorMessage.toLowerCase() + "</html>");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-				"Server: Apache-Coyote/1.1\r\n" +
-				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
-				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		msg = createHttpMessageWithRespBody("<html>" + DEFAULT_ERROR_MESSAGE.toLowerCase() + "</html>");
+		
 		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 		
 		expectedAlerts++;
@@ -131,17 +126,11 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 		alert = alertsRaised.get(expectedAlerts - 1);
 		assertThat(alert.getCweId(), equalTo(200));
 		assertThat(alert.getWascId(), equalTo(13));
-		assertThat(alert.getEvidence(), equalTo(defaultErrorMessage.toLowerCase()));
+		assertThat(alert.getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE.toLowerCase()));
 		
 		// Test the upper-case error message
-		msg = new HttpMessage();
-		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-		msg.setResponseBody("<html>" + defaultErrorMessage.toUpperCase() + "</html>");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-				"Server: Apache-Coyote/1.1\r\n" +
-				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
-				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		msg = createHttpMessageWithRespBody("<html>" + DEFAULT_ERROR_MESSAGE.toUpperCase() + "</html>");
+		
 		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 		
 		expectedAlerts++;
@@ -149,7 +138,7 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 		alert = alertsRaised.get(expectedAlerts - 1);
 		assertThat(alert.getCweId(), equalTo(200));
 		assertThat(alert.getWascId(), equalTo(13));
-		assertThat(alert.getEvidence(), equalTo(defaultErrorMessage.toUpperCase()));
+		assertThat(alert.getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE.toUpperCase()));
 	}
 
 	@Test
@@ -164,14 +153,8 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 		for (int i = 0; i < data.length; i++) {
 			String debugError = data[i];
 			
-			HttpMessage msg = new HttpMessage();
-			msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-			msg.setResponseBody("<html>" + debugError + "</html>");
-			msg.setResponseHeader(
-					"HTTP/1.1 200 OK\r\n" +
-					"Server: Apache-Coyote/1.1\r\n" +
-					"Content-Type: text/html;charset=ISO-8859-1\r\n" +
-					"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+			HttpMessage msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");		
+			
 			rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 			
 			assertThat(alertsRaised.size(), equalTo(0));
@@ -180,14 +163,8 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 	
 	@Test
 	public void passesIfResponseIsEmpty() throws HttpMalformedHeaderException {
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-		msg.setResponseBody("");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-				"Server: Apache-Coyote/1.1\r\n" +
-				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
-				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		HttpMessage msg = createHttpMessageWithRespBody("");
+		
 		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 		
 		assertThat(alertsRaised.size(), equalTo(0));
@@ -195,14 +172,9 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 	
 	@Test
 	public void passesIfResponseIsNotText() throws HttpMalformedHeaderException {
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-		msg.setResponseBody(defaultErrorMessage);
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-				"Server: Apache-Coyote/1.1\r\n" +
-				"Content-Type: application/octet-stream;charset=ISO-8859-1\r\n" +
-				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		HttpMessage msg = createHttpMessageWithRespBody(DEFAULT_ERROR_MESSAGE);
+		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "application/octet-stream;charset=ISO-8859-1");
+		
 		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 		
 		assertThat(alertsRaised.size(), equalTo(0));
@@ -217,14 +189,8 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 				);
 		
 		// Should raise alert with default error messages loaded
-		HttpMessage msg = new HttpMessage();
-		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-		msg.setResponseBody("<html>" + defaultErrorMessage + "</html>");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-				"Server: Apache-Coyote/1.1\r\n" +
-				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
-				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		HttpMessage msg = createHttpMessageWithRespBody("<html>" + DEFAULT_ERROR_MESSAGE + "</html>");
+
 		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 		
 		expectedAlerts++;
@@ -232,19 +198,13 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 		Alert alert = alertsRaised.get(expectedAlerts - 1);
 		assertThat(alert.getCweId(), equalTo(200));
 		assertThat(alert.getWascId(), equalTo(13));
-		assertThat(alert.getEvidence(), equalTo(defaultErrorMessage));
+		assertThat(alert.getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE));
 		
 		// Should not raise alerts on alternative error definition yet
 		for (int i = 0; i < alternativeDebugErrors.size(); i++) {
-			String debugError = alternativeDebugErrors.get(i);			
-			msg = new HttpMessage();
-			msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-			msg.setResponseBody("<html>" + debugError + "</html>");
-			msg.setResponseHeader(
-					"HTTP/1.1 200 OK\r\n" +
-					"Server: Apache-Coyote/1.1\r\n" +
-					"Content-Type: text/html;charset=ISO-8859-1\r\n" +
-					"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+			String debugError = alternativeDebugErrors.get(i);
+			msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");
+
 			rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 			
 			assertThat(alertsRaised.size(), equalTo(expectedAlerts));
@@ -256,33 +216,21 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 			Files.write(errorFile, alternativeDebugErrors, Charset.forName("UTF-8"));
 			((InformationDisclosureDebugErrors)rule).setDebugErrorFile(errorFile);
 		} catch (IOException e) {
-			
+			throw new RuntimeException("Could not write alternative debug error messages file.", e);
 		}
 		
 		// Should NOT raise alert with default error messages loaded after changed definitions
-		msg = new HttpMessage();
-		msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-		msg.setResponseBody("<html>" + defaultErrorMessage + "</html>");
-		msg.setResponseHeader(
-				"HTTP/1.1 200 OK\r\n" +
-				"Server: Apache-Coyote/1.1\r\n" +
-				"Content-Type: text/html;charset=ISO-8859-1\r\n" +
-				"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+		msg = createHttpMessageWithRespBody("<html>" + DEFAULT_ERROR_MESSAGE + "</html>");
+		
 		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 		
 		assertThat(alertsRaised.size(), equalTo(expectedAlerts));
 		
 		// Should raise alerts on alternative error definition now
 		for (int i = 0; i < alternativeDebugErrors.size(); i++) {
-			String debugError = alternativeDebugErrors.get(i);			
-			msg = new HttpMessage();
-			msg.setRequestHeader("GET " + URI + " HTTP/1.1");		
-			msg.setResponseBody("<html>" + debugError + "</html>");
-			msg.setResponseHeader(
-					"HTTP/1.1 200 OK\r\n" +
-					"Server: Apache-Coyote/1.1\r\n" +
-					"Content-Type: text/html;charset=ISO-8859-1\r\n" +
-					"Content-Length: " + msg.getResponseBody().length() + "\r\n");
+			String debugError = alternativeDebugErrors.get(i);
+			msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");		
+
 			rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 			
 			expectedAlerts++;
