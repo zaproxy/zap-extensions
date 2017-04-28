@@ -5,3 +5,5 @@ build/temp/
 build/zap-exts/
 bin/*
 /bin/
+.idea/
+*.iml
