@@ -21,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +82,7 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 	
 	private String doesResponseContainsDebugErrorMessage (HttpBody body) {
 		if (this.errors == null) {
-			this.errors = loadFile(debugErrorFile);
+			this.errors = loadFile(Paths.get(Constant.getZapHome(), debugErrorFile));
 		}
 		String sBody = body.toString().toLowerCase();
 		for (String error : this.errors) {
@@ -93,10 +95,10 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 		return null;
 	}
 	
-	private List<String> loadFile(String file) {
+	private List<String> loadFile(Path path) {
 		List<String> strings = new ArrayList<String>();
 		BufferedReader reader = null;
-		File f = new File(Constant.getZapHome() + File.separator + file);
+		File f = path.toFile();
 		if (! f.exists()) {
 			logger.error("No such file: " + f.getAbsolutePath());
 			return strings;
@@ -127,6 +129,10 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 	@Override
 	public void setParent(PassiveScanThread parent) {
 		this.parent = parent;
+	}
+	
+	public void setDebugErrorFile(Path path) {
+		this.errors = loadFile(path);
 	}
 
 	@Override
