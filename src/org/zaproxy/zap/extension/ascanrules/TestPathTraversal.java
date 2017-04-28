@@ -56,7 +56,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     /*
      * Windows local file targets and detection pattern
      */
-    private static final Pattern  WIN_PATTERN = Pattern.compile("\\[drivers\\]");
+    private static final Pattern WIN_PATTERN = Pattern.compile("\\[drivers\\]");
     private static final String[] WIN_LOCAL_FILE_TARGETS = {
         // Absolute Windows file retrieval (we suppose C:\\)
         "c:/Windows/system.ini",
@@ -106,7 +106,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
      * Unix/Linux/etc. local file targets and detection pattern
      */
     // Dot used to match 'x' or '!' (used in AIX)
-    private static final Pattern  NIX_PATTERN = Pattern.compile("root:.:0:0");
+    private static final Pattern NIX_PATTERN = Pattern.compile("root:.:0:0");
     private static final String[] NIX_LOCAL_FILE_TARGETS = {
         // Absolute file retrieval
         "/etc/passwd",
@@ -133,8 +133,33 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         //..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252Fetc%252Fpasswd%2500.jpg
     };
 
+    /*
+     * Windows/Unix/Linux/etc. local directory targets and detection pattern
+     */
+    private static final Pattern DIR_PATTERN = Pattern.compile("(?s)(?:(?=.*Windows)(?=.*Program\\sFiles).*)|(?:(?=.*etc)(?=.*bin)(?=.*boot).*)");
+    private static final String[] LOCAL_DIR_TARGETS = {
+        "c:/",
+        "c:\\",
+        "/",
+        "../../../../../../../../../../../../../../../../",
+        "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
+        "/../../../../../../../../../../../../../../../../",
+        "\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
+        "file:///c:/",
+        "file:///c:\\",
+        "file:\\\\\\c:\\",
+        "file:\\\\\\c:/",
+        "file:///",
+        "file:\\\\\\",
+        "d:\\",
+        "d:/",
+        "file:///d:/",
+        "file:///d:\\",
+        "file:\\\\\\d:\\",
+        "file:\\\\\\d:/"
+    };
+    
     private static final Pattern WAR_PATTERN = Pattern.compile("</web-app>");
-    //private static final Pattern DIR_PATTERN = Pattern.compile("(?s)((?=.*Windows)(?=.*Program\\sFiles).*)|((?=.*etc)(?=.*bin)(?=.*boot).*)");
     
     /*
      * Standard local file prefixes
@@ -144,7 +169,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         "/",
         "\\"
     };
-    
+
     /*
      * details of the vulnerability which we are attempting to find
      */
@@ -235,6 +260,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             // figure out how aggressively we should test
             int nixCount = 0;
             int winCount = 0;
+            int dirCount = 0;
             int localTraversalLength = 0;
 
             //DEBUG only
@@ -247,6 +273,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     // This works out as a total of 2+4+4*1+4 = 14 reqs / param
                     nixCount = 2;
                     winCount = 4;
+                    dirCount = 4;
                     localTraversalLength = 1;
                     break;
 
@@ -254,6 +281,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     // This works out as a total of 4+8+4*3+4 = 28 reqs / param
                     nixCount = 4;
                     winCount = 8;
+                    dirCount = 7;
                     localTraversalLength = 3;
                     break;
 
@@ -261,13 +289,15 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     // This works out as a total of 6+12+4*5+4 = 42 reqs / param
                     nixCount = 6;
                     winCount = 12;
+                    dirCount = 13;
                     localTraversalLength = 5;
                     break;
 
                 case INSANE:
                     // This works out as a total of 6+18+4*7+4 = 56 reqs / param
-                    nixCount = 6;
-                    winCount = 18;
+                    nixCount = NIX_LOCAL_FILE_TARGETS.length;
+                    winCount = WIN_LOCAL_FILE_TARGETS.length;
+                    dirCount = LOCAL_DIR_TARGETS.length;
                     localTraversalLength = 7;
                     break;
 
@@ -312,7 +342,21 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                 }
             }
 
-            // Check 3: Start detection for internal well known files           
+            // Check 3: Detect if this page is a directory browsing component
+            // example: https://www.buggedsite.org/log/index.php?dir=C:\
+            // note that depending on the AttackLevel, the number of prefixes that we will try changes.
+            for (int h = 0; h < dirCount; h++) {
+
+                // Check if a there was a finding or the scan has been stopped
+                // if yes dispose resources and exit
+                if (sendAndCheckPayload(param, LOCAL_DIR_TARGETS[h], DIR_PATTERN) || isStop()) {
+                    // Dispose all resources
+                    // Exit the plugin
+                    return;
+                }
+            }
+                        
+            // Check 4: Start detection for internal well known files           
             // try variants based on increasing ../ ..\ prefixes and the presence of the / and \ trailer
             // e.g. WEB-INF/web.xml, /WEB-INF/web.xml, ../WEB-INF/web.xml, /../WEB-INF/web.xml, ecc.
             // Both slashed and backslashed variants are checked
@@ -348,7 +392,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                 }
             }
 
-            // Check 4: try a local file Path Traversal on the file name of the URL (which obviously will not be in the target list above).
+            // Check 5: try a local file Path Traversal on the file name of the URL (which obviously will not be in the target list above).
             // first send a query for a random parameter value, and see if we get a 200 back
             // if 200 is returned, abort this check (on the url filename itself), because it would be unreliable.
             // if we know that a random query returns <> 200, then a 200 response likely means something!
@@ -357,13 +401,17 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             setParameter(msg, param, NON_EXISTANT_FILENAME);
 
             //send the modified message (with a hopefully non-existent filename), and see what we get back
-			try {
-	            sendAndReceive(msg);
-			} catch (SocketException|IllegalStateException|UnknownHostException|IllegalArgumentException|InvalidRedirectLocationException|URIException ex) {
-				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-						" when accessing: " + msg.getRequestHeader().getURI().toString());
-				return; //Something went wrong, no point continuing
-			}
+            try {
+                sendAndReceive(msg);
+                
+            } catch (SocketException | IllegalStateException | UnknownHostException | IllegalArgumentException | InvalidRedirectLocationException | URIException ex) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage()
+                            + " when accessing: " + msg.getRequestHeader().getURI().toString());
+                }
+                
+                return; //Something went wrong, no point continuing
+            }
 
             //do some pattern matching on the results.
             Pattern errorPattern = Pattern.compile("Exception|Error");
@@ -373,7 +421,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     || errorMatcher.find()) {
 
                 if (log.isDebugEnabled()) {
-                    log.debug("It IS possible to check for local file Path Traversal on the url filename on ["
+                    log.debug("It is possible to check for local file Path Traversal on the url filename on ["
                             + msg.getRequestHeader().getMethod() + "] [" + msg.getRequestHeader().getURI() + "], [" + param + "]");
                 }
 
@@ -388,13 +436,17 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     setParameter(msg, param, prefixedUrlfilename);
 
                     //send the modified message (with the url filename), and see what we get back
-        			try {
-        	            sendAndReceive(msg);
-        			} catch (SocketException|IllegalStateException|UnknownHostException|IllegalArgumentException|InvalidRedirectLocationException|URIException ex) {
-        				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-        						" when accessing: " + msg.getRequestHeader().getURI().toString());
-        				continue; //Something went wrong, move to the next prefix in the loop
-        			}
+                    try {
+                        sendAndReceive(msg);
+                        
+                    } catch (SocketException | IllegalStateException | UnknownHostException | IllegalArgumentException | InvalidRedirectLocationException | URIException ex) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage()
+                                    + " when accessing: " + msg.getRequestHeader().getURI().toString());
+                        }
+                        
+                        continue; //Something went wrong, move to the next prefix in the loop
+                    }
 
                     //did we get an Exception or an Error?
                     errorMatcher = errorPattern.matcher(msg.getResponseBody().toString());
@@ -416,6 +468,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                         // on the same request (to reduce performance impact)
                         return;
                     }
+                    
                     // Check if the scan has been stopped
                     // if yes dispose resources and exit
                     if (isStop()) {
@@ -426,7 +479,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                 }
             }
 
-            // Check 5 for local file names
+            // Check 6 for local file names
             // TODO: consider making this check 1, for performance reasons
             // TODO: if the original query was http://www.example.com/a/b/c/d.jsp?param=paramvalue
             // then check if the following gives comparable results to the original query
@@ -435,19 +488,22 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             // this is nice because it means we do not have to guess any file names, and would only require one
             // request to find the vulnerability 
             // but it would be foiled by simple input validation on "..", for instance.
-		} catch (SocketTimeoutException ste) {
-			log.warn("A timeout occurred while checking [" + msg.getRequestHeader().getMethod() + "] ["
-					+ msg.getRequestHeader().getURI() + "], parameter [" + param + "] for Path Traversal. "
-					+ "The currently configured timeout is: "
-					+ Integer.toString(Model.getSingleton().getOptionsParam().getConnectionParam().getTimeoutInSecs()));
-			if (log.isDebugEnabled()) {
-				log.debug("Caught " + ste.getClass().getName() + " " + ste.getMessage());
-			}
-		} catch (IOException e) {
-			log.warn("An error occurred while checking [" + msg.getRequestHeader().getMethod() + "] ["
-					+ msg.getRequestHeader().getURI() + "], parameter [" + param + "] for Path Traversal."
-					+ "Caught " + e.getClass().getName() + " " + e.getMessage());
-		}
+            
+        } catch (SocketTimeoutException ste) {
+            log.warn("A timeout occurred while checking [" + msg.getRequestHeader().getMethod() + "] ["
+                    + msg.getRequestHeader().getURI() + "], parameter [" + param + "] for Path Traversal. "
+                    + "The currently configured timeout is: "
+                    + Integer.toString(Model.getSingleton().getOptionsParam().getConnectionParam().getTimeoutInSecs()));
+
+            if (log.isDebugEnabled()) {
+                log.debug("Caught " + ste.getClass().getName() + " " + ste.getMessage());
+            }
+            
+        } catch (IOException e) {
+            log.warn("An error occurred while checking [" + msg.getRequestHeader().getMethod() + "] ["
+                    + msg.getRequestHeader().getURI() + "], parameter [" + param + "] for Path Traversal."
+                    + "Caught " + e.getClass().getName() + " " + e.getMessage());
+        }
     }
 
     /**
@@ -469,13 +525,17 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         }
 
         // send the modified request, and see what we get back
-		try {
+        try {
             sendAndReceive(msg);
-		} catch (SocketException|IllegalStateException|UnknownHostException|IllegalArgumentException|InvalidRedirectLocationException|URIException ex) {
-			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-					" when accessing: " + msg.getRequestHeader().getURI().toString());
-			return false; //Something went wrong, no point continuing
-		}
+            
+        } catch (SocketException | IllegalStateException | UnknownHostException | IllegalArgumentException | InvalidRedirectLocationException | URIException ex) {
+            if (log.isDebugEnabled()) {
+                log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage()
+                        + " when accessing: " + msg.getRequestHeader().getURI().toString());
+            }
+            
+            return false; //Something went wrong, no point continuing
+        }
 
         // does it match the pattern specified for that file name?
         String match = getResponseMatch(msg, pattern);
@@ -500,20 +560,16 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         return false;
     }
 
-    private static String getResponseMatch(HttpMessage message, Pattern pattern) {
-        if (message.getResponseHeader().isHtml()) {
-            Matcher matcher = pattern.matcher(StringEscapeUtils.unescapeHtml(message.getResponseBody().toString()));
-            if (matcher.find()) {
-                return matcher.group();
-            }
-        }
-
-        String response = message.getResponseHeader().toString() + message.getResponseBody().toString();
+    private String getResponseMatch(HttpMessage message, Pattern pattern) {
+        String response = message.getResponseHeader().isHtml() ?
+                StringEscapeUtils.unescapeHtml(message.getResponseBody().toString()) :
+                message.getResponseHeader().toString() + message.getResponseBody().toString();
+                
         Matcher matcher = pattern.matcher(response);
         if (matcher.find()) {
             return matcher.group();
         }
-
+        
         return null;
     }
 
