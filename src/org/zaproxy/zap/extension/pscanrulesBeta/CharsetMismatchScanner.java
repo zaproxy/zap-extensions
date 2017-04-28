@@ -18,12 +18,14 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.List;
+
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 import net.htmlparser.jericho.StartTagType;
 
+import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -113,7 +115,9 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 					String httpEquiv = metaElement.getAttributeValue("http-equiv");
 					String bodyContentType = metaElement.getAttributeValue("content");
 					// Ref: http://www.w3.org/TR/html5/document-metadata.html#charset
-					metaCharset = metaElement.getAttributeValue("charset");				
+					if (StringUtils.isBlank(metaCharset)) {
+						metaCharset = metaElement.getAttributeValue("charset");
+					}
 						
 					// If META element defines HTTP-EQUIV and CONTENT attributes, 
 					// or META element defines charset
