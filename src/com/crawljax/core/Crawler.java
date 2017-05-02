@@ -188,8 +188,7 @@ public class Crawler {
 			plugins.runOnRevisitStatePlugins(context, curState);
 
 		} else {
-			throw new StateUnreachableException(targetState, "couldn't fire eventable "
-			        + clickable);
+			throw new StateUnreachableException(targetState, "couldn't fire eventable " + clickable.toString());
 		}
 	}
 
