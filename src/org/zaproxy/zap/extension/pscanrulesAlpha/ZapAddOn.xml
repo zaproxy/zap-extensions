@@ -7,7 +7,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-		Report missing CSP header as LOW even if CSP Report header present.
+		Report missing CSP header as LOW even if CSP Report header present.<br>
+		Added X-Debug-Token Scanner (Issue 2452).<br>
 	]]>
 	</changes>
 	<extensions>
@@ -42,6 +43,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XBackendServerInformationLeak</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XChromeLoggerDataInfoLeakScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XDebugTokenScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XPoweredByHeaderInfoLeakScanner</pscanrule>
 	</pscanrules>
 	<filters/>
