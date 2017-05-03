@@ -17,11 +17,8 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -104,7 +101,7 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 					String src = sourceElement.getAttributeValue("id");
 					if (src != null
 							&& src.toLowerCase()
-									.equals("javax.faces.viewstate")) {
+									.contains("javax.faces.viewstate")) {
 						// Get the ViewState value
 						String val = sourceElement.getAttributeValue("value");
 						// Server-side ViewState usually comes down as an ID
@@ -116,11 +113,15 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 						if (val != null && val.startsWith("_")) {
 							return;
 						}
+						
+						if (isViewStateStoredOnServer(val)) {
+						    return;
+						}
 
 						// If the ViewState is not secured cryptographic
 						// protections then raise an alert.
+						if (!isViewStateSecure(val, msg.getRequestBody().getCharset())) {
 							raiseAlert(msg, id, src);
-							if (!isViewStateSecure(src, msg.getRequestBody().getCharset())) {
 						}
 					}
 				}
@@ -172,28 +173,6 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 			return false;
 		}
 
-		// If the above didn't return, then continue on trying to GZIP deflate
-		// the byte array.
-		try {
-			GZIPInputStream decompress = new GZIPInputStream(
-					new ByteArrayInputStream(viewStateDecoded.getBytes()));
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			byte[] buf = new byte[4096];
-			int len;
-			while ((len = decompress.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-
-			// /////////////////////////////
-			// Step 3
-			// Try to determine if ViewState is encrypted or contains clear text
-			// strings.
-
-
-			return isRawViewStateSecure(out.toString());
-		} catch (IOException ex) {
-		}
-
 		return true;
 	}
 
@@ -233,6 +212,12 @@ public class InsecureJSFViewStatePassiveScanner extends PluginPassiveScanner {
 		parent.raiseAlert(id, alert);
 	}
 
+	// jsf server side implementation in com.sun.faces.renderkit.ServerSideStateHelper
+	// two id's separated by :
+	private boolean isViewStateStoredOnServer(String val) {
+	    return val != null && val.contains(":");   
+	}
+	
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");

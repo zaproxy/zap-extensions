@@ -7,6 +7,7 @@
 	<url/>
 	<changes>
 	<![CDATA[
+	Minor changes to InsecureJFSViewStatePassiveScanner (check response contains JSF viewstate or if it's server stored).<br/>
 	Improve the domain matching in CookieLooselyScopedScanner.<br/>
 	]]>
 	</changes>
