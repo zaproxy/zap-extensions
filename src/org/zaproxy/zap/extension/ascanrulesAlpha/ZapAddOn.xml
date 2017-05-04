@@ -10,6 +10,7 @@
 	Improve error handling in some scanners.<br>
 	Add MsSQL specific Injection scanner.<br>
 	Issue 3441: Add proper reference links to Proxy Discovery scanner.<br>
+	Issue 3279: Add ELMAH scanner.
   	]]>
 	</changes>
 	<extensions>
@@ -19,6 +20,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ApacheRangeHeaderDos</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ElmahScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpOnlySite</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpoxyScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
