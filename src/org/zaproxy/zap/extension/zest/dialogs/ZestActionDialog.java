@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,12 +149,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 		} else if (action instanceof ZestActionInvoke) {
 			ZestActionInvoke za = (ZestActionInvoke) action;
 			
-			String fileName = "";
-			if (za.getScript() != null) {
-				fileName = new File(za.getScript()).getName();
-			}
-
-			this.addComboField(FIELD_SCRIPT, this.getScriptNames(), fileName);
+			this.addComboField(FIELD_SCRIPT, this.getScriptNames(), getScriptName(za.getScript()));
 			this.addTextField(FIELD_VARIABLE, za.getVariableName());
 
 	        this.getParamsModel().setValues(za.getParameters());
@@ -168,6 +162,19 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 	        this.addTableField(FIELD_PARAMS, this.getParamsTable(), buttons);
 		}
 		this.addPadding();
+	}
+
+	private String getScriptName(String filePath) {
+		if (filePath == null) {
+			return "";
+		}
+
+		for (ScriptWrapper script : this.extension.getExtScript().getScripts(ExtensionScript.TYPE_STANDALONE)) {
+			if (filePath.equals(script.getFile().getAbsolutePath())) {
+				return script.getName();
+			}
+		}
+		return "";
 	}
 	
     private JButton getAddButton () {
