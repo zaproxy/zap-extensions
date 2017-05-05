@@ -111,7 +111,7 @@ public class ImportFromUrlDialog extends AbstractDialog implements ActionListene
             String url = fieldURL.getText();
             /* Calls a parsing task in a new thread. */
             try {
-                caller.importOpenApiDefinition(new URI(url, false));
+                caller.importOpenApiDefinition(new URI(url, false), true);
             } catch (URIException ex) {
                 View.getSingleton().showWarningDialog(thisDialog, Constant.messages.getString(MESSAGE_PREFIX + "badurl"));
             }
