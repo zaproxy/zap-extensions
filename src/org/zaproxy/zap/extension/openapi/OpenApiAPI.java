@@ -20,8 +20,7 @@
 package org.zaproxy.zap.extension.openapi;
 
 import java.io.File;
-
-import net.sf.json.JSONObject;
+import java.util.List;
 
 import org.apache.commons.httpclient.URI;
 import org.zaproxy.zap.extension.api.ApiAction;
@@ -29,6 +28,9 @@ import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.api.ApiResponseList;
+
+import net.sf.json.JSONObject;
 
 public class OpenApiAPI extends ApiImplementor {
 
@@ -41,10 +43,8 @@ public class OpenApiAPI extends ApiImplementor {
 
     public OpenApiAPI(ExtensionOpenApi ext) {
         extension = ext;
-        this.addApiAction(new ApiAction(ACTION_IMPORT_FILE,
-                new String[] { PARAM_FILE }));
-        this.addApiAction(new ApiAction(ACTION_IMPORT_URL,
-                new String[] { PARAM_URL }));
+        this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, new String[] { PARAM_FILE }));
+        this.addApiAction(new ApiAction(ACTION_IMPORT_URL, new String[] { PARAM_URL }));
     }
 
     @Override
@@ -53,13 +53,11 @@ public class OpenApiAPI extends ApiImplementor {
     }
 
     @Override
-    public ApiResponse handleApiAction(String name, JSONObject params)
-            throws ApiException {
+    public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         if (ACTION_IMPORT_FILE.equals(name)) {
             File file = new File(params.getString(PARAM_FILE));
             if (!file.exists() || !file.canRead()) {
-                throw new ApiException(ApiException.Type.DOES_NOT_EXIST,
-                        file.getAbsolutePath());
+                throw new ApiException(ApiException.Type.DOES_NOT_EXIST, file.getAbsolutePath());
             }
 
             extension.importOpenApiDefinition(file);
@@ -69,13 +67,16 @@ public class OpenApiAPI extends ApiImplementor {
         } else if (ACTION_IMPORT_URL.equals(name)) {
 
             try {
-                extension.importOpenApiDefinition(new URI(params
-                        .getString(PARAM_URL), false));
+                List<String> errors = extension.importOpenApiDefinition(new URI(params.getString(PARAM_URL), false), false);
+                
+                ApiResponseList result = new ApiResponseList(name);
+                for (String error : errors) {
+                    result.addItem(new ApiResponseElement("warning", error));
+                }
 
-                return ApiResponseElement.OK;
+                return result;
             } catch (Exception e) {
-                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER,
-                        PARAM_URL);
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
             }
 
         } else {

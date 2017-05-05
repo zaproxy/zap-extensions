@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -118,7 +119,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     final JFileChooser chooser = new JFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory());
                     int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
                     if (rc == JFileChooser.APPROVE_OPTION) {
-                        importOpenApiDefinition(chooser.getSelectedFile());
+                        importOpenApiDefinition(chooser.getSelectedFile(), true);
                     }
 
                 }
@@ -153,73 +154,93 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     }
 
     public void importOpenApiDefinition(final URI uri) {
+        this.importOpenApiDefinition(uri, false);
+    }
+
+    public List<String> importOpenApiDefinition(final URI uri, boolean initViaUi) {
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         requestor.addListener(new HistoryPersister());
         try {
-            importOpenApiDefinition(Scheme.forValue(uri.getScheme().toLowerCase()), requestor.getResponseBody(uri));
+            return importOpenApiDefinition(
+                    Scheme.forValue(uri.getScheme().toLowerCase()), requestor.getResponseBody(uri), initViaUi);
         } catch (IOException e) {
-            if (View.isInitialised()) {
+            if (initViaUi) {
                 View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.io.error"));
             }
             LOG.warn(e.getMessage(), e);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
+        return null;
     }
 
     public void importOpenApiDefinition(final File file) {
+        this.importOpenApiDefinition(file, false);
+    }
+
+    public List<String> importOpenApiDefinition(final File file, boolean initViaUi) {
         try {
-            importOpenApiDefinition(null, FileUtils.readFileToString(file));
+            return importOpenApiDefinition(null, FileUtils.readFileToString(file), initViaUi);
         } catch (IOException e) {
-            if (View.isInitialised()) {
+            if (initViaUi) {
                 View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.io.error"));
             }
             LOG.warn(e.getMessage(), e);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
+        return null;
     }
 
-    private void importOpenApiDefinition(final Scheme defaultScheme, final String defn) {
+    private List<String> importOpenApiDefinition(final Scheme defaultScheme, final String defn, final boolean initViaUi) {
+        final List<String> errors = new ArrayList<String>();
         Thread t = new Thread(THREAD_PREFIX + threadId++) {
 
             @Override
             public void run() {
-                List<String> errors = null;
                 try {
                     Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
                     requestor.addListener(new HistoryPersister());
                     SwaggerConverter converter = new SwaggerConverter(defaultScheme, defn);
-                    errors = converter.getErrorMessages();
+                    errors.addAll(converter.getErrorMessages());
                     errors.addAll(requestor.run(converter.getRequestModels()));
                     if (errors.size() > 0) {
-                        logErrors(errors);
-                        if (View.isInitialised()) {
+                        logErrors(errors, initViaUi);
+                        if (initViaUi) {
                             View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.parse.warn"));
                         }
                     } else {
-                        if (View.isInitialised()) {
+                        if (initViaUi) {
                             View.getSingleton().showMessageDialog(Constant.messages.getString("openapi.parse.ok"));
                         }
                     }
                 } catch (Exception e) {
-                    if (View.isInitialised()) {
+                    if (initViaUi) {
                         View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.parse.error"));
                     }
-                    logErrors(errors);
+                    logErrors(errors, initViaUi);
                     LOG.warn(e.getMessage(), e);
                 }
             }
-
+            
         };
         t.start();
-
+        
+        if (! initViaUi) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                LOG.debug(e.getMessage(), e);
+            }
+            return errors;
+        }
+        return null;
     }
     
-    private void logErrors(List<String> errors) {
+    private void logErrors(List<String> errors, boolean initViaUi) {
         if (errors != null) {
             for (String error : errors) {
-                if (View.isInitialised()) {
+                if (initViaUi) {
                     View.getSingleton().getOutputPanel().append(error + "\n");
                 } else {
                     LOG.warn(error);
@@ -266,7 +287,12 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             for (String file : args[ARG_IMPORT_FILE_IDX].getArguments()) {
                 File f = new File(file);
                 if (f.canRead()) {
-                    this.importOpenApiDefinition(f);
+                    List<String> errors = this.importOpenApiDefinition(f, false);
+                    if (errors.size() > 0) {
+                        for (String error : errors) {
+                            CommandLine.error("Error importing definition: " + error);
+                        }
+                    }
                 } else {
                     CommandLine.error("Cannot read Open API file: " + f.getAbsolutePath());
                 }
@@ -276,7 +302,12 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             for (String urlstr : args[ARG_IMPORT_URL_IDX].getArguments()) {
                 try {
                     URI url = new URI(urlstr, false);
-                    this.importOpenApiDefinition(url);
+                    List<String> errors = this.importOpenApiDefinition(url, false);
+                    if (errors.size() > 0) {
+                        for (String error : errors) {
+                            CommandLine.error("Error importing definition: " + error);
+                        }
+                    }
                 } catch (Exception e) {
                     CommandLine.error(e.getMessage(), e);
                 }
