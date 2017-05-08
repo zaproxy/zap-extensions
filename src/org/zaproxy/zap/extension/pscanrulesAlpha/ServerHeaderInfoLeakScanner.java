@@ -23,14 +23,15 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import net.htmlparser.jericho.Source;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+
+import net.htmlparser.jericho.Source;
 
 /**
  * Server Header Version Information Leak passive scan rule 
@@ -63,27 +64,47 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 	
 		Vector<String> serverOption = msg.getResponseHeader().getHeaders("Server");
 		if (serverOption != null) { //Header Found
-			//It is set so lets check it. Should only be one but it's a vector so iterate to be sure.
-			for (String serverDirective : serverOption) {
-				boolean matched = VERSION_PATTERN.matcher(serverDirective).matches();
-				if (matched) { //See if there's any version info.
-					//While an alpha string might be the server type (Apache, Netscape, IIS, etc) 
-					//that's much less of a head-start than actual version details.
-					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
-						getName()); 
-		    			alert.setDetail(
-		    					getDescription(), //Description
-		    					msg.getRequestHeader().getURI().toString(), //URI
-		    					"",	// Param
-		    					"", // Attack
-		    					"", // Other info
-		    					getSolution(), //Solution
-		    					getReference(), //References
-		    					serverDirective,	// Evidence - Return the Server Header info
-		    					200, // CWE Id 
-		    					13,	// WASC Id 
-		    					msg); //HttpMessage
-		    		parent.raiseAlert(id, alert);
+			if (Plugin.AlertThreshold.LOW.equals(this.getLevel())) {
+				// If we are operating with an LOW treshhold, detecting a
+				// "server" header is enough to raise an alert.
+				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM,																								
+						getName());
+				alert.setDetail(getDescription(), // Description
+						msg.getRequestHeader().getURI().toString(), // URI
+						"", // Param
+						"", // Attack
+						"", // Other info
+						getSolution(), // Solution
+						getReference(), // References
+						String.join(", ",serverOption), // Evidence - Return the Server Header info
+						200, // CWE Id
+						13, // WASC Id
+						msg); // HttpMessage
+				parent.raiseAlert(id, alert);
+			}
+			if (Plugin.AlertThreshold.DEFAULT.equals(this.getLevel()) || Plugin.AlertThreshold.MEDIUM.equals(this.getLevel())) {
+				//It is set so lets check it. Should only be one but it's a vector so iterate to be sure.
+				for (String serverDirective : serverOption) {
+					boolean matched = VERSION_PATTERN.matcher(serverDirective).matches();								
+					if (matched) { //See if there's any version info.
+						//While an alpha string might be the server type (Apache, Netscape, IIS, etc) 
+						//that's much less of a head-start than actual version details.
+						Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
+							getName()); 
+			    			alert.setDetail(
+			    					getDescription(), //Description
+			    					msg.getRequestHeader().getURI().toString(), //URI
+			    					"",	// Param
+			    					"", // Attack
+			    					"", // Other info
+			    					getSolution(), //Solution
+			    					getReference(), //References
+			    					serverDirective,	// Evidence - Return the Server Header info
+			    					200, // CWE Id 
+			    					13,	// WASC Id 
+			    					msg); //HttpMessage
+			    		parent.raiseAlert(id, alert);
+					}
 				}
 			}
 		}
