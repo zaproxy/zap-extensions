@@ -41,12 +41,17 @@ import net.htmlparser.jericho.Source;
 public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 
 	private static final String MESSAGE_PREFIX = "pscanalpha.serverheaderversioninfoleak.";
+	private static final String MESSAGE_NO_VERSION_PREFIX = "pscanalpha.serverheaderinfoleak.";
 	private static final int PLUGIN_ID = 10036;
 	
 	private PassiveScanThread parent = null;
 	private static final Logger logger = Logger.getLogger(ServerHeaderInfoLeakScanner.class);
 	
 	private final static Pattern VERSION_PATTERN = Pattern.compile(".*\\d.*");
+	
+	private enum AlertType {
+		SERVER, SERVER_AND_VERSION
+	}
 	
 	@Override
 	public void setParent(PassiveScanThread parent) {
@@ -62,49 +67,28 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
 	
-		Vector<String> serverOption = msg.getResponseHeader().getHeaders("Server");
-		if (serverOption != null) { //Header Found
+		Vector<String> serverOption = msg.getResponseHeader().getHeaders("Server");	
+		if (serverOption != null) { //Header Found			
 			if (Plugin.AlertThreshold.LOW.equals(this.getLevel())) {
 				// If we are operating with an LOW treshhold, detecting a
 				// "server" header is enough to raise an alert.
-				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM,																								
-						getName());
-				alert.setDetail(getDescription(), // Description
-						msg.getRequestHeader().getURI().toString(), // URI
-						"", // Param
-						"", // Attack
-						"", // Other info
-						getSolution(), // Solution
-						getReference(), // References
-						String.join(", ",serverOption), // Evidence - Return the Server Header info
-						200, // CWE Id
-						13, // WASC Id
-						msg); // HttpMessage
-				parent.raiseAlert(id, alert);
+				final Alert alert = buildAlert(AlertType.SERVER, Alert.RISK_INFO, serverOption.toString(), msg);
+				if (alert != null) {
+					parent.raiseAlert(id, alert);
+				}
 			}
-			if (Plugin.AlertThreshold.DEFAULT.equals(this.getLevel()) || Plugin.AlertThreshold.MEDIUM.equals(this.getLevel())) {
+			else {
 				//It is set so lets check it. Should only be one but it's a vector so iterate to be sure.
 				for (String serverDirective : serverOption) {
-					boolean matched = VERSION_PATTERN.matcher(serverDirective).matches();								
+					boolean matched = VERSION_PATTERN.matcher(serverDirective).matches();
 					if (matched) { //See if there's any version info.
-						//While an alpha string might be the server type (Apache, Netscape, IIS, etc) 
-						//that's much less of a head-start than actual version details.
-						Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
-							getName()); 
-			    			alert.setDetail(
-			    					getDescription(), //Description
-			    					msg.getRequestHeader().getURI().toString(), //URI
-			    					"",	// Param
-			    					"", // Attack
-			    					"", // Other info
-			    					getSolution(), //Solution
-			    					getReference(), //References
-			    					serverDirective,	// Evidence - Return the Server Header info
-			    					200, // CWE Id 
-			    					13,	// WASC Id 
-			    					msg); //HttpMessage
-			    		parent.raiseAlert(id, alert);
-					}
+    					//While an alpha string might be the server type (Apache, Netscape, IIS, etc) 
+    					//that's much less of a head-start than actual version details.
+						final Alert alert = buildAlert(AlertType.SERVER_AND_VERSION, Alert.RISK_LOW, serverDirective, msg);
+						if (alert != null) {
+							parent.raiseAlert(id, alert);
+						}
+    				}
 				}
 			}
 		}
@@ -113,6 +97,39 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 	    }
 	}
 
+	private final Alert buildAlert(final AlertType alertType, final int risk, final String evidence, final HttpMessage msg) {
+		
+		// Default strings for the case Server + Version
+		String name = getName();
+		String description = getDescription();
+		String solution = getSolution();
+		String reference = getReference();
+		
+		if (alertType.equals(AlertType.SERVER)) {
+			// If only the Server was sent by the response header
+			name = Constant.messages.getString(MESSAGE_NO_VERSION_PREFIX + "name");
+			description=  Constant.messages.getString(MESSAGE_NO_VERSION_PREFIX + "desc");
+			solution = Constant.messages.getString(MESSAGE_NO_VERSION_PREFIX + "soln");
+			reference = Constant.messages.getString(MESSAGE_NO_VERSION_PREFIX + "refs");
+		}
+		
+		final Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Confidence
+				name); 
+    			alert.setDetail(
+    					description, //Description
+    					msg.getRequestHeader().getURI().toString(), //URI
+    					"",	// Param
+    					"", // Attack
+    					"", // Other info
+    					solution, //Solution
+    					reference, //References
+    					evidence,	// Evidence - Return the Server Header info
+    					200, // CWE Id 
+    					13,	// WASC Id 
+    					msg); //HttpMessage
+    	return alert;
+	}
+	
 	@Override
 	public int getPluginId() {
 		return PLUGIN_ID;
@@ -136,4 +153,3 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 	}
 
 }
-
