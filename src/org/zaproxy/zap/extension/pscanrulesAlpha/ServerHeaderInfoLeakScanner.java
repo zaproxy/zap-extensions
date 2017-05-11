@@ -67,27 +67,28 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
 	
-		Vector<String> serverOption = msg.getResponseHeader().getHeaders("Server");	
+		Vector<String> serverOption = msg.getResponseHeader().getHeaders("Server");
+		Alert alert = null;
 		if (serverOption != null) { //Header Found			
-			if (Plugin.AlertThreshold.LOW.equals(this.getLevel())) {
-				// If we are operating with an LOW treshhold, detecting a
-				// "server" header is enough to raise an alert.
-				final Alert alert = buildAlert(AlertType.SERVER, Alert.RISK_INFO, serverOption.toString(), msg);
-				if (alert != null) {
-					parent.raiseAlert(id, alert);
+			//It is set so lets check it. Should only be one but it's a vector so iterate to be sure.
+			for (String serverDirective : serverOption) {
+				boolean matched = VERSION_PATTERN.matcher(serverDirective).matches();
+				if (matched) { //See if there's any version info.
+					//While an alpha string might be the server type (Apache, Netscape, IIS, etc) 
+					//that's much less of a head-start than actual version details.
+					alert = buildAlert(AlertType.SERVER_AND_VERSION, Alert.RISK_LOW, serverDirective, msg);
+					if (alert != null) {
+						parent.raiseAlert(id, alert);
+					}
 				}
 			}
-			else {
-				//It is set so lets check it. Should only be one but it's a vector so iterate to be sure.
-				for (String serverDirective : serverOption) {
-					boolean matched = VERSION_PATTERN.matcher(serverDirective).matches();
-					if (matched) { //See if there's any version info.
-    					//While an alpha string might be the server type (Apache, Netscape, IIS, etc) 
-    					//that's much less of a head-start than actual version details.
-						final Alert alert = buildAlert(AlertType.SERVER_AND_VERSION, Alert.RISK_LOW, serverDirective, msg);
-						if (alert != null) {
-							parent.raiseAlert(id, alert);
-						}
+			if (alert == null) {
+    			if (Plugin.AlertThreshold.LOW.equals(this.getLevel())) {
+    				// If we are operating with an LOW treshhold, detecting a
+    				// "server" header is enough to raise an alert.
+    				alert = buildAlert(AlertType.SERVER, Alert.RISK_INFO, serverOption.toString(), msg);
+    				if (alert != null) {
+    					parent.raiseAlert(id, alert);
     				}
 				}
 			}
