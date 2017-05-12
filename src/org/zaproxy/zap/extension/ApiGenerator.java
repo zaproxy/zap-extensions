@@ -28,6 +28,7 @@ import org.zaproxy.zap.extension.api.JavaAPIGenerator;
 import org.zaproxy.zap.extension.api.NodeJSAPIGenerator;
 import org.zaproxy.zap.extension.api.PhpAPIGenerator;
 import org.zaproxy.zap.extension.api.PythonAPIGenerator;
+import org.zaproxy.zap.extension.importurls.ImportUrlsAPI;
 import org.zaproxy.zap.extension.plugnhack.PlugNHackAPI;
 
 public class ApiGenerator {
@@ -49,6 +50,7 @@ public class ApiGenerator {
 		//	php/api/zapv2/src/Zap/Zapv2.php
 		
 		list.add(new PlugNHackAPI(null));
+		list.add(new ImportUrlsAPI(null));
 		
 		return list;
 	}
