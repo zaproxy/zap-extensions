@@ -696,6 +696,10 @@
     	<build-deploy-addon name="sequence" />
 	</target>
 	
+	<target name="generate-wiki-sequence" description="Generates the wiki for the Sequence scanner addon">
+		<generate-wiki addon="sequence" />
+	</target>
+	
 	<target name="deploy-serverSentEvents" description="deploy the Server-Sent Events extension">
 		<build-deploy-addon name="sse" />
 	</target>

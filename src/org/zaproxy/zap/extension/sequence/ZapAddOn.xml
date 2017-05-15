@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Correct error message to include the script name.<br>
+	Add help content (Issue 2191).<br>
 	]]>
 	</changes>
 	<extensions>
