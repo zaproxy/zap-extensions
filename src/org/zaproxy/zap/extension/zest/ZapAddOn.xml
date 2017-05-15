@@ -11,6 +11,7 @@
 	Properly remove Zest scripts (Issue 3401).<br>
 	Allow to select the case on assign replacements.<br>
 	Show/select the correct script in the Edit Zest Action dialogue (Issue 3489).<br>
+	Ensure recorded Sequence scripts can be scanned through context menu (Issue 3536).<br>
 	]]>
 	</changes>
 	<dependencies>

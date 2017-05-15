@@ -1670,9 +1670,14 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 			logger.debug("Adding Zest script to tree");
 
-			ZestScriptWrapper zsw = new ZestScriptWrapper(script);
-			if (zsw.getName() == null) {
-				zsw.setName(script.getName());
+			ZestScriptWrapper zsw;
+			if (script instanceof ZestScriptWrapper) {
+				zsw = (ZestScriptWrapper) script;
+			} else {
+				zsw = new ZestScriptWrapper(script);
+				if (zsw.getName() == null) {
+					zsw.setName(script.getName());
+				}
 			}
 
 			ScriptNode parentNode = this.getExtScript().getTreeModel()

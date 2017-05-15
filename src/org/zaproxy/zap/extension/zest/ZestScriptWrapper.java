@@ -56,14 +56,13 @@ public class ZestScriptWrapper extends ScriptWrapper {
 			Type ztype;
 			switch (script.getType().getName()) {
 			case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE:
+			case "sequence": // ExtensionSequence.TYPE_SEQUENCE
 				ztype = Type.Active;
 				break;
 			case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
 				ztype = Type.Passive;
 				break;
 			case ExtensionScript.TYPE_TARGETED:
-				ztype = Type.Targeted;
-				break;
 			case ExtensionScript.TYPE_PROXY:
 				ztype = Type.Targeted;
 				break;
