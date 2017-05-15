@@ -554,6 +554,10 @@
 		<build-deploy-addon name="importurls" />
 	</target>
 
+	<target name="generate-wiki-importurls" description="Generates the wiki of importurls">
+		<generate-wiki addon="importurls" />
+	</target>
+
 	<target name="deploy-invoke" description="deploy the invoke extension">
 		<build-deploy-addon name="invoke" />
 	</target>
