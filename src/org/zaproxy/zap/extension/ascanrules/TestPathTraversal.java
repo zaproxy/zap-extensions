@@ -60,9 +60,9 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     private static final String[] WIN_LOCAL_FILE_TARGETS = {
         // Absolute Windows file retrieval (we suppose C:\\)
         "c:/Windows/system.ini",
-        "c:\\Windows\\system.ini",
-        // Path traversal intended to obtain the filesystem's root
         "../../../../../../../../../../../../../../../../Windows/system.ini",
+        // Path traversal intended to obtain the filesystem's root
+        "c:\\Windows\\system.ini",
         "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini",
         "/../../../../../../../../../../../../../../../../Windows/system.ini",
         "\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini",
@@ -139,8 +139,8 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     private static final Pattern DIR_PATTERN = Pattern.compile("(?s)(?:(?=.*Windows)(?=.*Program\\sFiles).*)|(?:(?=.*etc)(?=.*bin)(?=.*boot).*)");
     private static final String[] LOCAL_DIR_TARGETS = {
         "c:/",
-        "c:\\",
         "/",
+        "c:\\",
         "../../../../../../../../../../../../../../../../",
         "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
         "/../../../../../../../../../../../../../../../../",
@@ -270,35 +270,35 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
 
             switch (this.getAttackStrength()) {
                 case LOW:
-                    // This works out as a total of 2+4+4*1+4 = 14 reqs / param
+                    // This works out as a total of 2+2+2+0*4+1 = 7 reqs / param
+                    nixCount = 2;
+                    winCount = 2;
+                    dirCount = 2;
+                    localTraversalLength = 0;
+                    break;
+
+                case MEDIUM:
+                    // This works out as a total of 2+4+4+1*4+1 = 15 reqs / param
                     nixCount = 2;
                     winCount = 4;
                     dirCount = 4;
                     localTraversalLength = 1;
                     break;
 
-                case MEDIUM:
-                    // This works out as a total of 4+8+4*3+4 = 28 reqs / param
+                case HIGH:
+                    // This works out as a total of 4+8+7+2*4+1 = 28 reqs / param
                     nixCount = 4;
                     winCount = 8;
                     dirCount = 7;
-                    localTraversalLength = 3;
-                    break;
-
-                case HIGH:
-                    // This works out as a total of 6+12+4*5+4 = 42 reqs / param
-                    nixCount = 6;
-                    winCount = 12;
-                    dirCount = 13;
-                    localTraversalLength = 5;
+                    localTraversalLength = 2;
                     break;
 
                 case INSANE:
-                    // This works out as a total of 6+18+4*7+4 = 56 reqs / param
+                    // This works out as a total of 6+18+19+4*4+1 = 60 reqs / param
                     nixCount = NIX_LOCAL_FILE_TARGETS.length;
                     winCount = WIN_LOCAL_FILE_TARGETS.length;
                     dirCount = LOCAL_DIR_TARGETS.length;
-                    localTraversalLength = 7;
+                    localTraversalLength = 4;
                     break;
 
                 default:
