@@ -23,7 +23,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.configuration.XMLPropertiesConfiguration;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.parosproxy.paros.model.Model;
