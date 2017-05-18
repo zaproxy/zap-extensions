@@ -16,6 +16,12 @@ different byte ranges. Eleven ranges is one more than is accepted by patched/fix
 <H2>Cookie Slack Detector</H2>
 Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid"
 
+<H2>ELMAH Scanner</H2>
+Tests to see if the Error Logging Modules and Handlers (elmah.axd) HTTP Module is available. Although this module is handy for
+developers and other stakeholders it can also leak a significant amount of information which a security analyst or malicious individual
+may be interested in.<br><br>
+The ELMAH scanner targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
+
 <H2>Example File Active Scanner</H2>
 This implements an example active scan rule that loads strings from a file that the user can edit.<br>
 For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
