@@ -9,8 +9,16 @@
 	<![CDATA[
 	Correct error message to include the script name.<br>
 	Add help content (Issue 2191).<br>
+	Depend on Zest extension, since it is currently the only script option for Sequence scripts.<br>
 	]]>
 	</changes>
+	<dependencies>
+		<addons>
+			<addon>
+				<id>zest</id>
+			</addon>
+		</addons>
+	</dependencies>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.sequence.ExtensionSequence</extension>
 	</extensions>
