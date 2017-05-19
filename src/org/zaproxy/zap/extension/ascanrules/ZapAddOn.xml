@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Issue 1365: Additional Path Traversal detection.<br>
+	Correct alert's evidence/attack of Parameter Tampering (Issue 3524).<br>
 	]]>
     </changes>
 	<extensions>

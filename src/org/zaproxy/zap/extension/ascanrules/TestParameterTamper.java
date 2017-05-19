@@ -26,6 +26,7 @@
 // ZAP: 2013/01/25 Removed the "(non-Javadoc)" comments.
 // ZAP: 2013/03/03 Issue 546: Remove all template Javadoc comments
 // ZAP: 2016/02/02 Add isStop() checks
+// ZAP: 2017/05/19 Correct data set in the raised alerts
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.net.SocketException;
@@ -179,22 +180,25 @@ public class TestParameterTamper extends AbstractAppParamPlugin {
 
         StringBuilder sb = new StringBuilder();
 
+        boolean issueFound = false;
+        int confidence = Alert.CONFIDENCE_MEDIUM;
         if (matchBodyPattern(msg, patternErrorJava1, sb) && matchBodyPattern(msg, patternErrorJava2, null)) {
-
-            bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, null, param, attack, sb.toString(), msg);
-            return true;
+            issueFound = true;
         } else if (matchBodyPattern(msg, patternErrorVBScript, sb)
                 || matchBodyPattern(msg, patternErrorODBC1, sb)
                 || matchBodyPattern(msg, patternErrorODBC2, sb)
                 || matchBodyPattern(msg, patternErrorJet, sb)
                 || matchBodyPattern(msg, patternErrorTomcat, sb)
                 || matchBodyPattern(msg, patternErrorPHP, sb)) {
-            bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_LOW, "", param, sb.toString(), attack, msg);
-
-            return true;
+            issueFound = true;
+            confidence = Alert.CONFIDENCE_LOW;
         }
 
-        return false;
+        if (issueFound) {
+            bingo(Alert.RISK_MEDIUM, confidence, null, param, attack, "", sb.toString(), msg);
+        }
+
+        return issueFound;
 
     }
 
