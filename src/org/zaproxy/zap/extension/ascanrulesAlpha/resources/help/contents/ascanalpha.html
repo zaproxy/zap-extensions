@@ -60,6 +60,12 @@ Uses local file inclusion techniques to scan for files containing source code on
 <H2>Source Code Disclosure - Git</H2>
 Uses Git source code repository metadata to scan for files containing source code on the web server.
 
+<H2>Trace.axd Scanner</H2>
+Tests to see if Trace Viewer (trace.axd) is available. Although this component is convenient for developers and 
+other stakeholders it can leak a significant amount of information which a security analyst or malicious individual
+may be interested in.<br><br>
+The trace.axd scanner targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
+
 <H2>User Agent Fuzzer</H2>
 This active scanner checks for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). The scanner compares the response statuscode and the hashcode of the response body with the original response.
 
