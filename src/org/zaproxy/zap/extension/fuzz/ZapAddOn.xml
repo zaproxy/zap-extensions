@@ -11,6 +11,7 @@
     Ignore empty payloads when highlighting or detecting reflections.<br>
     Contains new number generator payload.<br>
     Add null/empty payload generator.<br>
+    Issue 3557: Backport export changes.<br>    
     ]]>
     </changes>
     <extensions>
