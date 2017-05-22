@@ -467,7 +467,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                                 null,
                                 msg);
 
-                        // All done. No need to look for vulnerabilities on subsequent parameters 
+                        // All done. No need to look for vulnerabilities on subsequent parameters
                         // on the same request (to reduce performance impact)
                         return;
                     }
