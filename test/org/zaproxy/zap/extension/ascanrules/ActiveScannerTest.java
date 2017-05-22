@@ -65,6 +65,25 @@ import org.zaproxy.zap.utils.ClassLoaderUtil;
 
 public abstract class ActiveScannerTest<T extends AbstractPlugin> extends ScannerTestUtils {
 
+    /**
+     * The recommended maximum number of messages that a scanner can send in
+     * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#LOW AttackStrength.LOW}, per parameter being scanned.
+     */
+    protected static final int NUMBER_MSGS_ATTACK_STRENGTH_LOW = 6;
+
+    /**
+     * The recommended maximum number of messages that a scanner can send in
+     * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#MEDIUM AttackStrength.MEDIUM}, per parameter being
+     * scanned.
+     */
+    protected static final int NUMBER_MSGS_ATTACK_STRENGTH_MEDIUM = 12;
+
+    /**
+     * The recommended maximum number of messages that a scanner can send in
+     * {@link org.parosproxy.paros.core.scanner.Plugin.AttackStrength#HIGH AttackStrength.HIGH}, per parameter being scanned.
+     */
+    protected static final int NUMBER_MSGS_ATTACK_STRENGTH_HIGH = 24;
+
     private static final String INSTALL_PATH = "test/resources/install";
     private static final File HOME_DIR = new File("test/resources/home");
     private static final String BASE_RESOURCE_DIR = "test/resources/org/zaproxy/zap/extension/ascanrules/";

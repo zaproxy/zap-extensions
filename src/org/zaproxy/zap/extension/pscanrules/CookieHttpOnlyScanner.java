@@ -17,7 +17,6 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 

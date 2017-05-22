@@ -10,44 +10,76 @@
 	<p>The Selenium add-on provides WebDrivers, for other add-ons, to invoke and remotely
 		control web browsers. It's also bundled the HtmlUnit web browser, an headless Java based
 		web browser.
+	
 	<p>The following web browsers are supported:
-	<ul>
-		<li>Chrome</li>
-		<li>Firefox - the following versions are known to work: 45 (ESR), 46 and 47.0.1
-			(older version might work too). Some versions are known to not work, for example, 47.0.
-			Newer versions (&ge; 48) require geckodriver.</li>
-		<li>HtmlUnit</li>
-		<li>Internet Explorer</li>
-		<li>Opera</li>
-		<li>PhantomJS</li>
-		<li>Safari</li>
-	</ul>
+	<table border="2">
+		<tr>
+			<th>Name</th>
+			<th>ID</th>
+			<th>Requirements/Notes</th>
+		</tr>
+		<tr>
+			<td>Chrome</td>
+			<td>chrome</td>
+			<td>Requires ChromeDriver, if not on the system's PATH, it can be set in the
+				options. For more information on ChromeDriver and how to obtain it refer to the <a
+				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
+			</td>
+		</tr>
+		<tr>
+			<td>Firefox</td>
+			<td>firefox</td>
+			<td>The following versions are known to work: 45 (ESR), 46 and 47.0.1 (older
+				version might work too). Some versions are known to not work, for example, 47.0. Newer
+				versions (&ge; 48) require geckodriver, it can be set in the options. For more
+				information on geckodriver and how to obtain it refer to the <a
+				href="https://github.com/mozilla/geckodriver">geckodriver website</a> (see footer note
+				for caveat when using geckodriver).
+			</td>
+		</tr>
+		<tr>
+			<td>HtmlUnit</td>
+			<td>htmlunit</td>
+			<td>Bundled browser, does not have any requirement.</td>
+		</tr>
+		<tr>
+			<td>Internet Explorer</td>
+			<td>ie</td>
+			<td>Requires IEDriverServer, if not on the system's PATH, it can be set in the
+				options. For more information on IEDriverServer refer to the <a
+				href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">IEDriverServer
+					website</a> (see footer note for caveat when using Internet Explorer).
+			</td>
+		</tr>
+		<tr>
+			<td>Opera</td>
+			<td>opera</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>PhantomJS</td>
+			<td>phantomjs</td>
+			<td>requires PhantomJS binary, if not on the system's PATH, it can be set in the
+				options. For more information on PhantomJS and how to obtain it refer to the <a
+				href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
+				using PhantomJS).
+			</td>
+		</tr>
+		<tr>
+			<td>Safari</td>
+			<td>safari</td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
 	<p>To use Firefox, Chrome, Internet Explorer, Opera, PhantomJS and Safari, you must
-		have them installed in your system.
+		have them installed in your system. The ID of the browser can be used to choose the
+		browser when configuring ZAP through the command line or using the ZAP API (for example,
+		to set the AJAX Spider to use one or other browser).
 	<p>
-		Some of the web browsers require extra configurations, done in <a href="options.html">Options
-			Selenium screen</a>, to access and control them:
-	<ul>
-		<li>Chrome - requires ChromeDriver, if not on the system's PATH, it can be set in
-			the options. For more information on ChromeDriver and how to obtain it refer to the <a
-			href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
-		</li>
-		<li>Firefox - requires geckodriver for versions &ge; 48, it can be set in the
-			options. For more information on geckodriver and how to obtain it refer to the <a
-			href="https://github.com/mozilla/geckodriver">geckodriver website</a> (see footer note
-			for caveat when using geckodriver).
-		</li>
-		<li>PhantomJS - requires PhantomJS binary, if not on the system's PATH, it can be
-			set in the options. For more information on PhantomJS and how to obtain it refer to the
-			<a href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
-			using PhantomJS).
-		</li>
-		<li>Internet Explorer - requires IEDriverServer, if not on the system's PATH, it
-			can be set in the options. For more information on IEDriverServer refer to the <a
-			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">IEDriverServer
-				website</a> (see footer note for caveat when using Internet Explorer).
-		</li>
-	</ul>
+		Some of the requirements (e.g. WebDrivers) of the browsers can be configured in the <a
+			href="options.html">Options Selenium screen</a>.
+	<p>
+		<strong>Note:</strong> ZAP add-ons can add additional browsers.
 
 	<p>
 		<strong>Firefox/geckodriver Note:</strong> There's an issue (<a

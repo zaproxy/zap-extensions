@@ -1,16 +1,14 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>26</version>
+	<version>27</version>
 	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 2973: Drop suffix on *Nix Blind Command Injection time based variants to maximize compatibility.<br>
-	Improve error handling in some scanners.<br>
-	Support changing the length of time used in timing attacks via config options.<br>
-	Issue 3065: Ensure active scanners perform initial status checks against the proper original message(s) to prevent False Negative and False Positive conditions.
+	Issue 1365: Additional Path Traversal detection.<br>
+	Correct alert's evidence/attack of Parameter Tampering (Issue 3524).<br>
 	]]>
     </changes>
 	<extensions>
