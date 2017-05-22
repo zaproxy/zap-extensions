@@ -138,6 +138,6 @@ public class SessionExcludeFromWebSocket extends AbstractParamPanel {
 
 	@Override
 	public String getHelpIndex() {
-		return "ui.dialogs.sessprop";
+		return "websocket.sessionProperties";
 	}
 }
