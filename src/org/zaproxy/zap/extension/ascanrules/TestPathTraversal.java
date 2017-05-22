@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -369,63 +370,62 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             Pattern errorPattern = Pattern.compile("Exception|Error");
             Matcher errorMatcher = errorPattern.matcher(msg.getResponseBody().toString());
 
-            if ((msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK)
-                    || errorMatcher.find()) {
+            String urlfilename = msg.getRequestHeader().getURI().getName();
+
+            //url file name may be empty, i.e. there is no file name for next check
+            if (!StringUtils.isEmpty(urlfilename) &&
+                    ((msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) || errorMatcher.find())) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("It IS possible to check for local file Path Traversal on the url filename on ["
                             + msg.getRequestHeader().getMethod() + "] [" + msg.getRequestHeader().getURI() + "], [" + param + "]");
                 }
 
-                String urlfilename = msg.getRequestHeader().getURI().getName();
                 String prefixedUrlfilename;
 
-                //url file name may be empty, i.e. there is no file name for next check
-                if (!urlfilename.isEmpty()) {
                     //for the url filename, try each of the prefixes in turn
-                    for (String prefix : LOCAL_FILE_RELATIVE_PREFIXES) {
+                for (String prefix : LOCAL_FILE_RELATIVE_PREFIXES) {
 
-                        prefixedUrlfilename = prefix + urlfilename;
-                        msg = getNewMsg();
-                        setParameter(msg, param, prefixedUrlfilename);
+                    prefixedUrlfilename = prefix + urlfilename;
+                    msg = getNewMsg();
+                    setParameter(msg, param, prefixedUrlfilename);
 
-                        //send the modified message (with the url filename), and see what we get back
-                        try {
-                            sendAndReceive(msg);
-                        } catch (SocketException | IllegalStateException | UnknownHostException | IllegalArgumentException | InvalidRedirectLocationException | URIException ex) {
-                            if (log.isDebugEnabled())
-                                log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
-                                        " when accessing: " + msg.getRequestHeader().getURI().toString());
-                            continue; //Something went wrong, move to the next prefix in the loop
-                        }
+                    //send the modified message (with the url filename), and see what we get back
+                    try {
+                        sendAndReceive(msg);
+                    } catch (SocketException | IllegalStateException | UnknownHostException | IllegalArgumentException | InvalidRedirectLocationException | URIException ex) {
+                        if (log.isDebugEnabled())
+                            log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
+                                    " when accessing: " + msg.getRequestHeader().getURI().toString());
+                        continue; //Something went wrong, move to the next prefix in the loop
+                    }
 
-                        //did we get an Exception or an Error?
-                        errorMatcher = errorPattern.matcher(msg.getResponseBody().toString());
-                        if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK)
-                                && (!errorMatcher.find())) {
+                    //did we get an Exception or an Error?
+                    errorMatcher = errorPattern.matcher(msg.getResponseBody().toString());
+                    if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK)
+                            && (!errorMatcher.find())) {
 
-                            //if it returns OK, and the random string above did NOT return ok, then raise an alert
-                            //since the filename has likely been picked up and used as a file name from the parameter
-                            bingo(
-                                    Alert.RISK_HIGH,
-                                    Alert.CONFIDENCE_MEDIUM,
-                                    null,
-                                    param,
-                                    prefixedUrlfilename,
-                                    null,
-                                    msg);
+                        //if it returns OK, and the random string above did NOT return ok, then raise an alert
+                        //since the filename has likely been picked up and used as a file name from the parameter
+                        bingo(
+                                Alert.RISK_HIGH,
+                                Alert.CONFIDENCE_MEDIUM,
+                                null,
+                                param,
+                                prefixedUrlfilename,
+                                null,
+                                msg);
 
-                            // All done. No need to look for vulnerabilities on subsequent parameters
-                            // on the same request (to reduce performance impact)
-                            return;
-                        }
-                        // Check if the scan has been stopped
-                        // if yes dispose resources and exit
-                        if (isStop()) {
-                            // Dispose all resources
-                            // Exit the plugin
-                            return;
-                        }
+                        // All done. No need to look for vulnerabilities on subsequent parameters
+                        // on the same request (to reduce performance impact)
+                        return;
+                    }
+                    // Check if the scan has been stopped
+                    // if yes dispose resources and exit
+                    if (isStop()) {
+                        // Dispose all resources
+                        // Exit the plugin
+                        return;
                     }
                 }
             }
