@@ -56,7 +56,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     /*
      * Windows local file targets and detection pattern
      */
-    private static final Pattern WIN_PATTERN = Pattern.compile("\\[drivers\\]");
+    private static final ContentsMatcher WIN_PATTERN = new PatternContentsMatcher(Pattern.compile("\\[drivers\\]"));
     private static final String[] WIN_LOCAL_FILE_TARGETS = {
         // Absolute Windows file retrieval (we suppose C:\\)
         "c:/Windows/system.ini",
@@ -106,7 +106,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
      * Unix/Linux/etc. local file targets and detection pattern
      */
     // Dot used to match 'x' or '!' (used in AIX)
-    private static final Pattern NIX_PATTERN = Pattern.compile("root:.:0:0");
+    private static final ContentsMatcher NIX_PATTERN = new PatternContentsMatcher(Pattern.compile("root:.:0:0"));
     private static final String[] NIX_LOCAL_FILE_TARGETS = {
         // Absolute file retrieval
         "/etc/passwd",
@@ -136,7 +136,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     /*
      * Windows/Unix/Linux/etc. local directory targets and detection pattern
      */
-    private static final Pattern DIR_PATTERN = Pattern.compile("(?s)(?:(?=.*Windows)(?=.*Program\\sFiles).*)|(?:(?=.*etc)(?=.*bin)(?=.*boot).*)");
+    private static final ContentsMatcher DIR_PATTERN = new DirNamesContentsMatcher();
     private static final String[] LOCAL_DIR_TARGETS = {
         "c:/",
         "/",
@@ -159,7 +159,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         "file:\\\\\\d:/"
     };
     
-    private static final Pattern WAR_PATTERN = Pattern.compile("</web-app>");
+    private static final ContentsMatcher WAR_PATTERN = new PatternContentsMatcher(Pattern.compile("</web-app>"));
     
     /*
      * Standard local file prefixes
@@ -513,7 +513,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
      * @return
      * @throws IOException
      */
-    private boolean sendAndCheckPayload(String param, String newValue, Pattern pattern) throws IOException {
+    private boolean sendAndCheckPayload(String param, String newValue, ContentsMatcher contentsMatcher) throws IOException {
 
         // get a new copy of the original message (request only)
         // and set the specific pattern
@@ -538,7 +538,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         }
 
         // does it match the pattern specified for that file name?
-        String match = getResponseMatch(msg, pattern);
+        String match = contentsMatcher.match(getContentsToMatch(msg));
 
         //if the output matches, and we get a 200
         if ((msg.getResponseHeader().getStatusCode() == HttpStatusCode.OK) && match != null) {
@@ -560,17 +560,10 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         return false;
     }
 
-    private String getResponseMatch(HttpMessage message, Pattern pattern) {
-        String response = message.getResponseHeader().isHtml() ?
+    private String getContentsToMatch(HttpMessage message) {
+        return message.getResponseHeader().isHtml() ?
                 StringEscapeUtils.unescapeHtml(message.getResponseBody().toString()) :
                 message.getResponseHeader().toString() + message.getResponseBody().toString();
-                
-        Matcher matcher = pattern.matcher(response);
-        if (matcher.find()) {
-            return matcher.group();
-        }
-        
-        return null;
     }
 
     @Override
@@ -586,5 +579,44 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 33;
+    }
+
+    private static interface ContentsMatcher {
+
+        String match(String contents);
+    }
+
+    private static class PatternContentsMatcher implements ContentsMatcher {
+
+        private final Pattern pattern;
+
+        public PatternContentsMatcher(Pattern pattern) {
+            this.pattern = pattern;
+        }
+
+        @Override
+        public String match(String contents) {
+            Matcher matcher = pattern.matcher(contents);
+            if (matcher.find()) {
+                return matcher.group();
+            }
+            return null;
+        }
+    }
+
+    private static class DirNamesContentsMatcher implements ContentsMatcher {
+
+        @Override
+        public String match(String contents) {
+            if (contents.contains("etc") && contents.contains("bin") && contents.contains("boot")) {
+                return "etc";
+            }
+
+            if (contents.contains("Windows") && Pattern.compile("Program\\sFiles").matcher(contents).find()) {
+                return "Windows";
+            }
+
+            return null;
+        }
     }
 }
