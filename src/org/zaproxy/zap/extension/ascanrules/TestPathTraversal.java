@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -158,7 +159,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         "file:\\\\\\d:\\",
         "file:\\\\\\d:/"
     };
-    
+
     private static final ContentsMatcher WAR_PATTERN = new PatternContentsMatcher(Pattern.compile("</web-app>"));
     
     /*
@@ -355,8 +356,8 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     return;
                 }
             }
-                        
-            // Check 4: Start detection for internal well known files           
+
+            // Check 4: Start detection for internal well known files
             // try variants based on increasing ../ ..\ prefixes and the presence of the / and \ trailer
             // e.g. WEB-INF/web.xml, /WEB-INF/web.xml, ../WEB-INF/web.xml, /../WEB-INF/web.xml, ecc.
             // Both slashed and backslashed variants are checked
@@ -403,13 +404,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             //send the modified message (with a hopefully non-existent filename), and see what we get back
             try {
                 sendAndReceive(msg);
-                
+
             } catch (SocketException | IllegalStateException | UnknownHostException | IllegalArgumentException | InvalidRedirectLocationException | URIException ex) {
                 if (log.isDebugEnabled()) {
                     log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage()
                             + " when accessing: " + msg.getRequestHeader().getURI().toString());
                 }
-                
+
                 return; //Something went wrong, no point continuing
             }
 
@@ -417,15 +418,17 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             Pattern errorPattern = Pattern.compile("Exception|Error");
             Matcher errorMatcher = errorPattern.matcher(msg.getResponseBody().toString());
 
-            if ((msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK)
-                    || errorMatcher.find()) {
+            String urlfilename = msg.getRequestHeader().getURI().getName();
+
+            //url file name may be empty, i.e. there is no file name for next check
+            if (!StringUtils.isEmpty(urlfilename) &&
+                    ((msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) || errorMatcher.find())) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("It is possible to check for local file Path Traversal on the url filename on ["
                             + msg.getRequestHeader().getMethod() + "] [" + msg.getRequestHeader().getURI() + "], [" + param + "]");
                 }
 
-                String urlfilename = msg.getRequestHeader().getURI().getName();
                 String prefixedUrlfilename;
 
                 //for the url filename, try each of the prefixes in turn
@@ -438,13 +441,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                     //send the modified message (with the url filename), and see what we get back
                     try {
                         sendAndReceive(msg);
-                        
+
                     } catch (SocketException | IllegalStateException | UnknownHostException | IllegalArgumentException | InvalidRedirectLocationException | URIException ex) {
                         if (log.isDebugEnabled()) {
                             log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage()
                                     + " when accessing: " + msg.getRequestHeader().getURI().toString());
                         }
-                        
+
                         continue; //Something went wrong, move to the next prefix in the loop
                     }
 
@@ -464,11 +467,11 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
                                 null,
                                 msg);
 
-                        // All done. No need to look for vulnerabilities on subsequent parameters 
+                        // All done. No need to look for vulnerabilities on subsequent parameters
                         // on the same request (to reduce performance impact)
                         return;
                     }
-                    
+
                     // Check if the scan has been stopped
                     // if yes dispose resources and exit
                     if (isStop()) {
@@ -488,7 +491,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             // this is nice because it means we do not have to guess any file names, and would only require one
             // request to find the vulnerability 
             // but it would be foiled by simple input validation on "..", for instance.
-            
+
         } catch (SocketTimeoutException ste) {
             log.warn("A timeout occurred while checking [" + msg.getRequestHeader().getMethod() + "] ["
                     + msg.getRequestHeader().getURI() + "], parameter [" + param + "] for Path Traversal. "
@@ -498,7 +501,7 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             if (log.isDebugEnabled()) {
                 log.debug("Caught " + ste.getClass().getName() + " " + ste.getMessage());
             }
-            
+
         } catch (IOException e) {
             log.warn("An error occurred while checking [" + msg.getRequestHeader().getMethod() + "] ["
                     + msg.getRequestHeader().getURI() + "], parameter [" + param + "] for Path Traversal."
@@ -527,13 +530,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         // send the modified request, and see what we get back
         try {
             sendAndReceive(msg);
-            
+
         } catch (SocketException | IllegalStateException | UnknownHostException | IllegalArgumentException | InvalidRedirectLocationException | URIException ex) {
             if (log.isDebugEnabled()) {
                 log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage()
                         + " when accessing: " + msg.getRequestHeader().getURI().toString());
             }
-            
+
             return false; //Something went wrong, no point continuing
         }
 
