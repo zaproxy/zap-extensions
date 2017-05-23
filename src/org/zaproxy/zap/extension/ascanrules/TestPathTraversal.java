@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -417,15 +418,17 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
             Pattern errorPattern = Pattern.compile("Exception|Error");
             Matcher errorMatcher = errorPattern.matcher(msg.getResponseBody().toString());
 
-            if ((msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK)
-                    || errorMatcher.find()) {
+            String urlfilename = msg.getRequestHeader().getURI().getName();
+
+            //url file name may be empty, i.e. there is no file name for next check
+            if (!StringUtils.isEmpty(urlfilename) &&
+                    (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK || errorMatcher.find())) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("It is possible to check for local file Path Traversal on the url filename on ["
                             + msg.getRequestHeader().getMethod() + "] [" + msg.getRequestHeader().getURI() + "], [" + param + "]");
                 }
 
-                String urlfilename = msg.getRequestHeader().getURI().getName();
                 String prefixedUrlfilename;
 
                 //for the url filename, try each of the prefixes in turn
