@@ -1,11 +1,17 @@
 <zapaddon>
 	<name>OpenAPI Support</name>
-	<version>5</version>
+	<version>6</version>
 	<status>alpha</status>
 	<description>Imports and spiders Open API definitions.</description>
 	<author>ZAP Core Team plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak</author>
 	<url></url>
-	<changes>Run synchronously and return any warnings when importing via API or cmdline.</changes>
+	<changes>
+	<![CDATA[
+		Support optional host override.<br>
+		Detect and warn on potential loops.<br>
+		Allow add-on to be unloaded dynamically.<br>
+	]]>
+	</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.openapi.ExtensionOpenApi</extension>
 	</extensions>
@@ -15,6 +21,6 @@
 	</pscanrules>
 	<filters/>
 	<files/>
-	<not-before-version>2.5.0</not-before-version>
+	<not-before-version>2.6.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

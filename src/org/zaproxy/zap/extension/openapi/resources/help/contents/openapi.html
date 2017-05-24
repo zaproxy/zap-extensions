@@ -18,12 +18,15 @@ The add-on will automatically detect any Open API definitions and spider them as
 <li>Import an Open API definition from the local file system</li>
 <li>Import an Open API definition from a URL</li>
 </ul>
+The URL Import dialog supports an optional additional field that allows you to override the Host (and port) in the
+definition with an alternative one that you supply.<br>
+This option is not provided for the file import as it's easy to change a local file to use a different host.
 
 <H2>API</H2>
 The following operations are added to the API:
 <ul>
 <li>ACTION importFile (file)</li>
-<li>ACTION importUrl (url)</li>
+<li>ACTION importUrl (url, hostOverride)</li>
 </ul>
 
 The definitions will be imported synchronously and any warnings will be returned. 

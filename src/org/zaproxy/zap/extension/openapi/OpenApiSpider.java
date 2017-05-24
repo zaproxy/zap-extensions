@@ -36,7 +36,6 @@ public class OpenApiSpider extends SpiderParser {
 
     private static final Logger log = Logger.getLogger(OpenApiSpider.class);
     private Requestor requestor;
-    private static boolean isEnabled = false;
 
     public OpenApiSpider() {
         requestor = new Requestor(HttpSender.SPIDER_INITIATOR);
@@ -45,8 +44,6 @@ public class OpenApiSpider extends SpiderParser {
 
     @Override
     public boolean parseResource(HttpMessage message, Source source, int depth) {
-        if (!isEnabled) return false;
-
         try {
             Scheme defaultScheme = Scheme.forValue(message.getRequestHeader().getURI().getScheme().toLowerCase());
             Converter converter = new SwaggerConverter(defaultScheme, message.getResponseBody().toString());
@@ -73,13 +70,5 @@ public class OpenApiSpider extends SpiderParser {
         }
         log.debug("Cant parse " + message.getRequestHeader().getURI());
         return false;
-    }
-
-    public static void enable() {
-        isEnabled = true;
-    }
-
-    public static void disable() {
-        isEnabled = false;
     }
 }

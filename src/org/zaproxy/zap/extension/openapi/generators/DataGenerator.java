@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.DateProperty;
@@ -35,7 +37,8 @@ import io.swagger.models.properties.StringProperty;
 public class DataGenerator {
 
     private Generators generators;
-    
+    private static final Logger LOG = Logger.getLogger(DataGenerator.class);
+
     public DataGenerator (Generators generators) {
         this.generators = generators;
     }
@@ -57,9 +60,9 @@ public class DataGenerator {
         return TYPES.get(type) != null;
     }
 
-    public String generate(AbstractSerializableParameter<?> parameter) {
+    public String generate(AbstractSerializableParameter<?> parameter, List<String> refs) {
         String defaultValue = generateDefaultValue(parameter.getEnum(), parameter.getDefaultValue());
-        return generateParam(defaultValue, parameter);
+        return generateParam(defaultValue, parameter, refs);
     }
 
     private static String generateDefaultValue(List<String> anEnum, String defaultValue) {
@@ -72,38 +75,38 @@ public class DataGenerator {
         return "";
     }
 
-    private String generateParam(String example, AbstractSerializableParameter<?> parameter) {
+    private String generateParam(String example, AbstractSerializableParameter<?> parameter, List<String> refs) {
 
         if (example != null && !example.isEmpty()) {
             return example;
         }
         if (isArray(parameter.getType())) {
-            return generateArrayValue(parameter);
+            return generateArrayValue(parameter, refs);
         }
 
         if (parameter.getItems() != null) {
-            return generateValue(parameter.getItems(), isPath(parameter.getIn()));
+            return generateValue(parameter.getItems(), isPath(parameter.getIn()), refs);
         }
 
         return getExampleValue(isPath(parameter.getIn()), parameter.getType(), parameter.getName());
     }
 
-    private String generateArrayValue(AbstractSerializableParameter<?> parameter) {
+    private String generateArrayValue(AbstractSerializableParameter<?> parameter, List<String> refs) {
         boolean isPath = isPath(parameter.getIn());
         if (!(parameter.getItems() instanceof ArrayProperty)) {
-            return generateValue(parameter.getItems(), isPath);
+            return generateValue(parameter.getItems(), isPath, refs);
         }
-        return generators.getArrayGenerator().generate((ArrayProperty) parameter.getItems(), parameter.getCollectionFormat(), isPath);
+        return generators.getArrayGenerator().generate((ArrayProperty) parameter.getItems(), parameter.getCollectionFormat(), isPath, refs);
     }
 
-    public String generateBodyValue(Property property) {
+    public String generateBodyValue(Property property, List<String> refs) {
         if (isArray(property.getType())) {
-            return generators.getArrayGenerator().generate((ArrayProperty) property, "csv", false);
+            return generators.getArrayGenerator().generate((ArrayProperty) property, "csv", false, refs);
         }
-        return generateValue(property, false);
+        return generateValue(property, false, refs);
     }
 
-    public String generateValue(Property items, boolean isPath) {
+    public String generateValue(Property items, boolean isPath, List<String> refs) {
 
         String value = "";
         if (isEnumValue(items)) {
@@ -123,7 +126,23 @@ public class DataGenerator {
                     // You'd hope there was a cleaner way to do this, but I havnt found it yet :/
                     if (rp.get$ref().startsWith("#/definitions/")) {
                         String defn = rp.get$ref().substring(14);
-                        return this.generators.getBodyGenerator().generate(defn, false);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Dereferencing definition: " + defn);
+                        }
+                        if(refs.contains(defn)) {
+                            // Likely to be a loop
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("Apparent loop in the OpenAPI definition: ");
+                            for (String ref : refs) {
+                                sb.append(" / ");
+                                sb.append(ref);
+                            }
+                            this.generators.addErrorMessage(sb.toString());
+                            return "";
+                        } else {
+                            refs.add(defn);
+                            return this.generators.getBodyGenerator().generate(defn, false, refs);
+                        }
                     }
                 }
             }
