@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -152,6 +153,18 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
+    @Test
+    public void shouldNotAlertIfLocalFilePathTraversalDoesNotExist() throws Exception {
+        // Given
+        nano.addHandler(new LocalFileHandler("/", "p", ""));
+        rule.init(getHttpMessage("/?p"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     private static abstract class ListDirsOnAttack extends NanoServerHandler {
 
         private final String param;
@@ -203,6 +216,28 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
         @Override
         protected String getDirs() {
             return DIRS_LISTING;
+        }
+    }
+
+    private static class LocalFileHandler extends NanoServerHandler {
+
+        private final String param;
+        private final String[] existingFiles;
+
+        public LocalFileHandler(String path, String param, String... existingFiles) {
+            super(path);
+
+            this.param = param;
+            this.existingFiles = existingFiles;
+        }
+
+        @Override
+        Response serve(IHTTPSession session) {
+            String value = session.getParms().get(param);
+            if (ArrayUtils.contains(existingFiles, value)) {
+                return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, "File Found");
+            }
+            return new Response(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
         }
     }
 }
