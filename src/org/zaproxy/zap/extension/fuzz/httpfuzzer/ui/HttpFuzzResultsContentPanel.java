@@ -26,6 +26,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -40,6 +41,7 @@ import javax.swing.JToolBar;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.fuzz.FuzzResultsContentPanel;
@@ -58,6 +60,7 @@ public class HttpFuzzResultsContentPanel extends JPanel implements FuzzResultsCo
     public static final String ERRORS_PANEL_NAME = "fuzz.httpfuzzerErrorsContentPanel";
 
     private static final Logger logger = Logger.getLogger(HttpFuzzResultsContentPanel.class);
+    private static final String CSV_EXTENSION = ".csv";
 
     private static final HttpFuzzerResultsTableModel EMPTY_RESULTS_MODEL = new HttpFuzzerResultsTableModel();
     private static final HttpFuzzerErrorsTableModel EMPTY_ERRORS_MODEL = new HttpFuzzerErrorsTableModel();
@@ -136,13 +139,27 @@ public class HttpFuzzResultsContentPanel extends JPanel implements FuzzResultsCo
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            WritableFileChooser chooser = new WritableFileChooser();
+            WritableFileChooser chooser = new WritableFileChooser(Model.getSingleton().getOptionsParam().getUserDirectory()) {
+
+                private static final long serialVersionUID = -1660943014924270012L;
+
+                @Override
+                public void approveSelection() {
+                    File file = getSelectedFile();
+                    if (file != null) {
+                        String filePath = file.getAbsolutePath();
+                        if (!filePath.toLowerCase(Locale.ROOT).endsWith(CSV_EXTENSION)) {
+                            setSelectedFile(new File(filePath + CSV_EXTENSION));
+                        }
+                    }
+
+                    super.approveSelection();
+                }
+            };
             chooser.setSelectedFile(new File(Constant.messages.getString("fuzz.httpfuzzer.results.toolbar.button.export.defaultName")));
             if (chooser.showSaveDialog(View.getSingleton().getMainFrame()) == WritableFileChooser.APPROVE_OPTION) {
-                String file = chooser.getSelectedFile().toString();
-                if (!file.endsWith(".csv")) {
-                    file += ".csv";
-                }
+
+                boolean success = true;
                 try(CSVPrinter pw = new CSVPrinter(Files.newBufferedWriter(chooser.getSelectedFile().toPath(), StandardCharsets.UTF_8), CSVFormat.DEFAULT)) {
                     pw.printRecord(currentFuzzer.getMessagesModel().getHeaders());
                     int count = currentFuzzer.getMessagesModel().getRowCount();
@@ -152,10 +169,15 @@ public class HttpFuzzResultsContentPanel extends JPanel implements FuzzResultsCo
                         valueOfRow.add(13, customStateValue);
                         pw.printRecord(valueOfRow);
                     }
-                    JOptionPane.showMessageDialog(View.getSingleton().getMainFrame(), Constant.messages.getString("fuzz.httpfuzzer.results.toolbar.button.export.showMessageSuccessful"));
                 } catch(Exception ex) {
+                    success = false;
                     JOptionPane.showMessageDialog(View.getSingleton().getMainFrame(), Constant.messages.getString("fuzz.httpfuzzer.results.toolbar.button.export.showMessageError") + "\n" + ex.getLocalizedMessage());
                     logger.error("Export Failed: " + ex);
+                }
+                // Delay the presentation of success message, to ensure all the data was already flushed.
+                if (success) {
+                    JOptionPane.showMessageDialog(View.getSingleton().getMainFrame(),
+                            Constant.messages.getString("fuzz.httpfuzzer.results.toolbar.button.export.showMessageSuccessful"));
                 }
             }
          }
