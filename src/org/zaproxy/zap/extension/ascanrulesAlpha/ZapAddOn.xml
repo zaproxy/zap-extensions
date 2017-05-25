@@ -11,6 +11,7 @@
 	Add MsSQL specific Injection scanner.<br>
 	Issue 3441: Add proper reference links to Proxy Discovery scanner.<br>
 	Issue 3279: Add ELMAH scanner.
+	Issue 3208: Add trace.axd scanner.
   	]]>
 	</changes>
 	<extensions>
@@ -33,6 +34,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionMsSQL</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionSQLite</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestUserAgent</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TraceAxdScanner</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>
