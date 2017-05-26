@@ -21,7 +21,10 @@ package org.zaproxy.zap.extension.openapi.generators;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
@@ -30,6 +33,7 @@ public class BodyGenerator {
 
     private ModelGenerator modelGenerator;
     private DataGenerator dataGenerator;
+    private static final Logger LOG = Logger.getLogger(BodyGenerator.class);
 
     public BodyGenerator(ModelGenerator modelGenerator, DataGenerator dataGenerator) {
         this.modelGenerator = modelGenerator;
@@ -60,7 +64,10 @@ public class BodyGenerator {
         }
     });
 
-    public String generate(String name, boolean isArray) {
+    public String generate(String name, boolean isArray, List<String> refs) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Generate " + name);
+        }
         StringBuilder json = new StringBuilder();
         json.append(SYNTAX.get(Element.OBJECT_BEGIN));
         boolean isFirst = true;
@@ -75,13 +82,13 @@ public class BodyGenerator {
             json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
             json.append(SYNTAX.get(Element.INNER_SEPARATOR));
             if (dataGenerator.isSupported(property.getValue().getType())) {
-                json.append(dataGenerator.generateBodyValue(property.getValue()));
+                json.append(dataGenerator.generateBodyValue(property.getValue(), refs));
             } else {
                 if (property.getValue() instanceof RefProperty) {
-                    json.append(generate(((RefProperty) property.getValue()).getSimpleRef(), false));
+                    json.append(generate(((RefProperty) property.getValue()).getSimpleRef(), false, refs));
                 } else {
                     // Best we can do
-                    json.append(generate(property.getValue().getName(), false));
+                    json.append(generate(property.getValue().getName(), false, refs));
                 }
             }
         }

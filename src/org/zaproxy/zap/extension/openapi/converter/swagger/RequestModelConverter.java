@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.parosproxy.paros.network.HttpHeaderField;
@@ -69,10 +70,11 @@ public class RequestModelConverter {
                 Model schema = ((BodyParameter) parameter).getSchema();
                 switch (schema.getClass().getSimpleName()) {
                 case "RefModel":
-                    body = generators.getBodyGenerator().generate(((RefModel) schema).getSimpleRef(), false);
+                    body = generators.getBodyGenerator().generate(((RefModel) schema).getSimpleRef(), false, new ArrayList<String>());
                     break;
                 case "ArrayModel":
-                    body = generators.getBodyGenerator().generate(((RefProperty) ((ArrayModel) schema).getItems()).getSimpleRef(), true);
+                    body = generators.getBodyGenerator().generate(((RefProperty) ((ArrayModel) schema).getItems()).getSimpleRef(), 
+                            true, new ArrayList<String>());
                     break;
                 }
             }

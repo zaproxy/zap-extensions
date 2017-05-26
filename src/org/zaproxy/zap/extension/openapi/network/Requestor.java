@@ -37,6 +37,7 @@ public class Requestor {
     private List<RequesterListener> listeners = new ArrayList<RequesterListener>();
     private HttpSender sender;
     private static final Logger LOG = Logger.getLogger(Requestor.class);
+    private String siteOverride;
     
     public Requestor(int initiator) {
         this.initiator = initiator;
@@ -48,14 +49,24 @@ public class Requestor {
         try {
             for (RequestModel requestModel : requestsModel) {
                 String url = requestModel.getUrl();
-                HttpMessage httpRequest = new HttpMessage(new URI(url, false));
+                URI uri;
+                if (siteOverride != null && siteOverride.length() > 0) {
+                    int s1 = url.indexOf("://");
+                    int s2 = url.indexOf("/", s1 + 4);
+                    url = url.substring(0, s1) + "://" + siteOverride + url.substring(s2);
+                    uri = new URI(url, false);
+                } else {
+                    uri = new URI(url, false);
+                }
+
+                HttpMessage httpRequest = new HttpMessage(uri);
                 httpRequest.getRequestHeader().setMethod(requestModel.getMethod().name());
                 for (HttpHeaderField hhf : requestModel.getHeaders()) {
                     httpRequest.getRequestHeader().setHeader(hhf.getName(), hhf.getValue());
                 }
                 httpRequest.getRequestBody().setBody(requestModel.getBody());
                 httpRequest.getRequestHeader().setContentLength(httpRequest.getRequestBody().length());
-
+                
                 try {
                     sender.sendAndReceive(httpRequest, true);
 
@@ -98,6 +109,16 @@ public class Requestor {
 
     public void removeListener(RequesterListener listener) {
         this.listeners.remove(listener);
+    }
+
+    
+    public String getSiteOverride() {
+        return siteOverride;
+    }
+
+    
+    public void setSiteOverride(String siteOverride) {
+        this.siteOverride = siteOverride;
     }
 
 }

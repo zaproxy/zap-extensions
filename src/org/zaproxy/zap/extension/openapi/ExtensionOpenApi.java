@@ -42,7 +42,6 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
@@ -60,6 +59,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private ZapMenuItem menuImportLocalOpenApi = null;
     private ZapMenuItem menuImportUrlOpenApi = null;
     private int threadId = 1;
+    private SpiderParser customSpider;
 
     private CommandLineArgument[] arguments = new CommandLineArgument[2];
     private static final int ARG_IMPORT_FILE_IDX = 0;
@@ -75,14 +75,11 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         
-        API.getInstance().registerApiImplementor(new OpenApiAPI(this));
-
         /* Custom spider is added in order to explore Open API definitions. */
-        OpenApiSpider.enable();
         ExtensionSpider spider = (ExtensionSpider) Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionSpider.NAME);
-        SpiderParser customSpider = new OpenApiSpider();
+        customSpider = new OpenApiSpider();
         if (spider != null) {
             spider.addCustomParser(customSpider);
             LOG.debug("Added custom Open API spider.");
@@ -95,14 +92,20 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             extensionHook.getHookMenu().addToolsMenuItem(getMenuImportUrlOpenApi());
         }
 
+        extensionHook.addApiImplementor(new OpenApiAPI(this));
         extensionHook.addCommandLine(getCommandLineArguments());
     }
 
     @Override
     public void unload() {
         super.unload();
-        /* Disables custom spider. */
-        OpenApiSpider.disable();
+        ExtensionSpider spider = (ExtensionSpider) Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionSpider.NAME);
+        if (spider != null) {
+            spider.removeCustomParser(customSpider);
+            LOG.debug("Removed custom Open API spider.");
+        }
     }
 
     /* Menu option to import a local OpenApi file. */
@@ -154,15 +157,16 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     }
 
     public void importOpenApiDefinition(final URI uri) {
-        this.importOpenApiDefinition(uri, false);
+        this.importOpenApiDefinition(uri, null, false);
     }
 
-    public List<String> importOpenApiDefinition(final URI uri, boolean initViaUi) {
+    public List<String> importOpenApiDefinition(final URI uri, final String siteOverride, boolean initViaUi) {
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         requestor.addListener(new HistoryPersister());
         try {
             return importOpenApiDefinition(
-                    Scheme.forValue(uri.getScheme().toLowerCase()), requestor.getResponseBody(uri), initViaUi);
+                    Scheme.forValue(uri.getScheme().toLowerCase()), requestor.getResponseBody(uri), 
+                    siteOverride, initViaUi);
         } catch (IOException e) {
             if (initViaUi) {
                 View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.io.error"));
@@ -180,7 +184,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public List<String> importOpenApiDefinition(final File file, boolean initViaUi) {
         try {
-            return importOpenApiDefinition(null, FileUtils.readFileToString(file), initViaUi);
+            return importOpenApiDefinition((Scheme)null, FileUtils.readFileToString(file), null, initViaUi);
         } catch (IOException e) {
             if (initViaUi) {
                 View.getSingleton().showWarningDialog(Constant.messages.getString("openapi.io.error"));
@@ -192,7 +196,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         return null;
     }
 
-    private List<String> importOpenApiDefinition(final Scheme defaultScheme, final String defn, final boolean initViaUi) {
+    private List<String> importOpenApiDefinition(final Scheme defaultScheme, final String defn, 
+            final String hostOverride, final boolean initViaUi) {
         final List<String> errors = new ArrayList<String>();
         Thread t = new Thread(THREAD_PREFIX + threadId++) {
 
@@ -200,10 +205,12 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             public void run() {
                 try {
                     Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+                    requestor.setSiteOverride(hostOverride);
                     requestor.addListener(new HistoryPersister());
                     SwaggerConverter converter = new SwaggerConverter(defaultScheme, defn);
-                    errors.addAll(converter.getErrorMessages());
                     errors.addAll(requestor.run(converter.getRequestModels()));
+                    // Needs to be called after converter.getRequestModels() to get loop errors
+                    errors.addAll(converter.getErrorMessages());
                     if (errors.size() > 0) {
                         logErrors(errors, initViaUi);
                         if (initViaUi) {
@@ -251,7 +258,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public boolean canUnload() {
-        return false;
+        return true;
     }
 
     @Override
@@ -302,7 +309,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             for (String urlstr : args[ARG_IMPORT_URL_IDX].getArguments()) {
                 try {
                     URI url = new URI(urlstr, false);
-                    List<String> errors = this.importOpenApiDefinition(url, false);
+                    List<String> errors = this.importOpenApiDefinition(url, null, false);
                     if (errors.size() > 0) {
                         for (String error : errors) {
                             CommandLine.error("Error importing definition: " + error);

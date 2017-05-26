@@ -49,8 +49,8 @@ public class ImportFromUrlDialog extends AbstractDialog implements ActionListene
 
     private ExtensionOpenApi caller;
 
-    private JLabel labelURL = new JLabel(Constant.messages.getString(MESSAGE_PREFIX + "labelurl"));
     private JTextField fieldURL = new JTextField(30);
+    private JTextField siteOverride = new JTextField(30);
 
     private JButton buttonCancel = new JButton(Constant.messages.getString("all.button.cancel"));
     private JButton buttonImport = new JButton(Constant.messages.getString(MESSAGE_PREFIX + "importbutton"));
@@ -81,7 +81,7 @@ public class ImportFromUrlDialog extends AbstractDialog implements ActionListene
         // add components to the frame
         constraints.gridx = 0;
         constraints.gridy = 0;
-        add(labelURL, constraints);
+        add(new JLabel(Constant.messages.getString(MESSAGE_PREFIX + "labelurl")), constraints);
 
         constraints.gridx = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -90,6 +90,16 @@ public class ImportFromUrlDialog extends AbstractDialog implements ActionListene
         fieldURL = addContextMenu(fieldURL);
         add(fieldURL, constraints);
 
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        add(new JLabel(Constant.messages.getString(MESSAGE_PREFIX + "labeloverride")), constraints);
+
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        constraints.gridwidth = 2;
+        add(siteOverride, constraints);
+        
         constraints.gridwidth = 1;
         constraints.gridy = 2;
         constraints.anchor = GridBagConstraints.CENTER;
@@ -109,9 +119,22 @@ public class ImportFromUrlDialog extends AbstractDialog implements ActionListene
     public void actionPerformed(ActionEvent e) {
         if (caller != null) {
             String url = fieldURL.getText();
+            String override = siteOverride.getText();
+            
+            if (override.length() > 0) {
+                // Check the siteOverride looks ok
+                try {
+                    new URI("http://" + siteOverride, true);
+                } catch (Exception e1) {
+                    View.getSingleton().showWarningDialog(thisDialog, 
+                            Constant.messages.getString(MESSAGE_PREFIX + "badoverride", e1.getMessage()));
+                    return;
+                }
+            }
+            
             /* Calls a parsing task in a new thread. */
             try {
-                caller.importOpenApiDefinition(new URI(url, false), true);
+                caller.importOpenApiDefinition(new URI(url, false), override, true);
             } catch (URIException ex) {
                 View.getSingleton().showWarningDialog(thisDialog, Constant.messages.getString(MESSAGE_PREFIX + "badurl"));
             }

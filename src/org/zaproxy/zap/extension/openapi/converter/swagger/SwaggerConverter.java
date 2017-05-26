@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -92,11 +93,13 @@ public class SwaggerConverter implements Converter {
     }
     
     public List<String> getErrorMessages() {
+        List<String> errors = new ArrayList<String> ();
         SwaggerDeserializationResult res = new SwaggerParser().readWithInfo(this.defn);
         if (res != null) {
-            return res.getMessages();
+            errors.addAll(res.getMessages());
         }
-        return null;
+        errors.addAll(this.generators.getErrorMessages());
+        return errors;
     }
 
     private void addOperations(Swagger swagger, Scheme scheme, List<OperationModel> operations) {

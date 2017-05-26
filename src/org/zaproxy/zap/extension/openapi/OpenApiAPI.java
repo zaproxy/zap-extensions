@@ -39,12 +39,13 @@ public class OpenApiAPI extends ApiImplementor {
     private static final String ACTION_IMPORT_URL = "importUrl";
     private static final String PARAM_URL = "url";
     private static final String PARAM_FILE = "file";
+    private static final String PARAM_HOST_OVERRIDE = "hostOverride";
     private ExtensionOpenApi extension = null;
 
     public OpenApiAPI(ExtensionOpenApi ext) {
         extension = ext;
         this.addApiAction(new ApiAction(ACTION_IMPORT_FILE, new String[] { PARAM_FILE }));
-        this.addApiAction(new ApiAction(ACTION_IMPORT_URL, new String[] { PARAM_URL }));
+        this.addApiAction(new ApiAction(ACTION_IMPORT_URL, new String[] { PARAM_URL }, new String[] { PARAM_HOST_OVERRIDE }));
     }
 
     @Override
@@ -60,14 +61,30 @@ public class OpenApiAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.DOES_NOT_EXIST, file.getAbsolutePath());
             }
 
-            extension.importOpenApiDefinition(file);
+            List<String> errors = extension.importOpenApiDefinition(file, false);
 
-            return ApiResponseElement.OK;
+            ApiResponseList result = new ApiResponseList(name);
+            for (String error : errors) {
+                result.addItem(new ApiResponseElement("warning", error));
+            }
+
+            return result;
 
         } else if (ACTION_IMPORT_URL.equals(name)) {
 
             try {
-                List<String> errors = extension.importOpenApiDefinition(new URI(params.getString(PARAM_URL), false), false);
+                String override = params.optString(PARAM_HOST_OVERRIDE, "");
+                if (override.length() > 0) {
+                    // Check the siteOverride looks ok
+                    try {
+                        new URI("http://" + override, true);
+                    } catch (Exception e1) {
+                        throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_HOST_OVERRIDE);
+                    }
+                }
+                
+                List<String> errors = extension.importOpenApiDefinition(new URI(params.getString(PARAM_URL), false),
+                        override, false);
                 
                 ApiResponseList result = new ApiResponseList(name);
                 for (String error : errors) {

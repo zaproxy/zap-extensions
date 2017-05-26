@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.openapi.generators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Generators {
 
     private ArrayGenerator arrayGenerator;
@@ -27,6 +30,8 @@ public class Generators {
     private DataGenerator dataGenerator;
     private FormGenerator formGenerator;
     private PathGenerator pathGenerator;
+    private List<String> errorMessages = new ArrayList<String>();
+
 
     public Generators() {
         this.modelGenerator = new ModelGenerator();
@@ -59,5 +64,13 @@ public class Generators {
 
     public PathGenerator getPathGenerator() {
         return pathGenerator;
+    }
+    
+    public void addErrorMessage (String error) {
+        this.errorMessages.add(error);
+    }
+    
+    public List<String> getErrorMessages() {
+        return this.errorMessages;
     }
 }

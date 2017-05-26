@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -72,7 +73,7 @@ public class OpenApiUnitTest extends ServerBasedTest {
         requestor.addListener(listener);
         requestor.run(converter.getRequestModels());
         
-        checkPetStoreRequests(accessedUrls);
+        checkPetStoreRequests(accessedUrls, "localhost:9090");
     }
     
     @Test
@@ -108,58 +109,132 @@ public class OpenApiUnitTest extends ServerBasedTest {
         requestor.addListener(listener);
         requestor.run(converter.getRequestModels());
         
-        checkPetStoreRequests(accessedUrls);
+        checkPetStoreRequests(accessedUrls, "localhost:9090");
     }
     
-    private void checkPetStoreRequests(Map<String, String> accessedUrls) {
+    @Test
+    public void shouldExplorePetStoreJsonOverrideHost() throws NullPointerException, IOException, SwaggerException {
+        String test = "/PetStoreJson/";
+        String altHost = "localhost:8888";
+        
+        // Change port to check we use the new one
+        this.nano.stop();
+        nano = new HTTPDTestServer(8888);
+        nano.start();
+
+        
+        this.nano.addHandler(new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String response;
+                String uri = session.getUri();
+                if (uri.endsWith("defn.json")) {
+                    response = getHtml("PetStore_defn.json");
+                } else {
+                    // We dont actually care about the response in this test ;)
+                    response = getHtml("Blank.html");
+                }
+                return new Response(response);
+            }
+        });
+        
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        requestor.setSiteOverride(altHost);
+        HttpMessage defnMsg = this.getHttpMessage(test + "defn.json");
+        Converter converter = new SwaggerConverter(requestor.getResponseBody(defnMsg.getRequestHeader().getURI()));
+        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        RequesterListener listener = new RequesterListener(){
+            @Override
+            public void handleMessage(HttpMessage message, int initiator) {
+                accessedUrls.put(message.getRequestHeader().getMethod() + " " + 
+                        message.getRequestHeader().getURI().toString(), message.getRequestBody().toString());
+                
+            }};
+        requestor.addListener(listener);
+        requestor.run(converter.getRequestModels());
+        
+        checkPetStoreRequests(accessedUrls, altHost);
+    }
+
+    @Test
+    public void shouldExplorePetStoreYamlLoop() throws NullPointerException, IOException, SwaggerException {
+        String test = "/PetStoreYamlLoop/";
+        
+        this.nano.addHandler(new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String response;
+                String uri = session.getUri();
+                if (uri.endsWith("defn.yaml")) {
+                    response = getHtml("PetStore_defn_loop.yaml");
+                } else {
+                    // We dont actually care about the response in this test ;)
+                    response = getHtml("Blank.html");
+                }
+                return new Response(response);
+            }
+        });
+        
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + "defn.yaml");
+        SwaggerConverter converter = new SwaggerConverter(requestor.getResponseBody(defnMsg.getRequestHeader().getURI()));
+        requestor.run(converter.getRequestModels());
+        
+        List<String> errors = converter.getErrorMessages();
+
+        assertTrue(errors.contains("Apparent loop in the OpenAPI definition:  / Category / Tag / Pet"));
+    }
+    
+
+    private void checkPetStoreRequests(Map<String, String> accessedUrls, String host) {
         // Check all of the expected URLs have been accessed and with the right data
-        assertTrue(accessedUrls.containsKey("POST http://localhost:9090/PetStore/pet"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/pet"));
         assertEquals("{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\"}],\"status\":\"available\"}",
-                accessedUrls.get("POST http://localhost:9090/PetStore/pet"));
-        assertTrue(accessedUrls.containsKey("PUT http://localhost:9090/PetStore/pet"));
+                accessedUrls.get("POST http://" + host + "/PetStore/pet"));
+        assertTrue(accessedUrls.containsKey("PUT http://" + host + "/PetStore/pet"));
         assertEquals("{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\"}],\"status\":\"available\"}",
-                accessedUrls.get("PUT http://localhost:9090/PetStore/pet"));
-        assertTrue(accessedUrls.containsKey("GET http://localhost:9090/PetStore/pet/findByStatus?status=available"));
-        assertEquals("", accessedUrls.get("GET http://localhost:9090/PetStore/pet/findByStatus?status=available"));
-        assertTrue(accessedUrls.containsKey("GET http://localhost:9090/PetStore/pet/findByTags?tags=Test"));
-        assertEquals("", accessedUrls.get("GET http://localhost:9090/PetStore/pet/findByTags?tags=Test"));
-        assertTrue(accessedUrls.containsKey("GET http://localhost:9090/PetStore/pet/10"));
-        assertEquals("", accessedUrls.get("GET http://localhost:9090/PetStore/pet/10"));
-        assertTrue(accessedUrls.containsKey("POST http://localhost:9090/PetStore/pet/10"));
-        assertEquals("", accessedUrls.get("POST http://localhost:9090/PetStore/pet/10"));
-        assertTrue(accessedUrls.containsKey("DELETE http://localhost:9090/PetStore/pet/10"));
-        assertEquals("", accessedUrls.get("DELETE http://localhost:9090/PetStore/pet/10"));
-        assertTrue(accessedUrls.containsKey("POST http://localhost:9090/PetStore/pet/10/uploadImage"));
-        assertEquals("", accessedUrls.get("POST http://localhost:9090/PetStore/pet/10/uploadImage"));
-        assertTrue(accessedUrls.containsKey("GET http://localhost:9090/PetStore/store/inventory"));
-        assertEquals("", accessedUrls.get("GET http://localhost:9090/PetStore/store/inventory"));
-        assertTrue(accessedUrls.containsKey("POST http://localhost:9090/PetStore/store/order"));
+                accessedUrls.get("PUT http://" + host + "/PetStore/pet"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/pet/findByStatus?status=available"));
+        assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/pet/findByStatus?status=available"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/pet/findByTags?tags=Test"));
+        assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/pet/findByTags?tags=Test"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/pet/10"));
+        assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/pet/10"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/10"));
+        assertEquals("", accessedUrls.get("POST http://" + host + "/PetStore/pet/10"));
+        assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/pet/10"));
+        assertEquals("", accessedUrls.get("DELETE http://" + host + "/PetStore/pet/10"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/10/uploadImage"));
+        assertEquals("", accessedUrls.get("POST http://" + host + "/PetStore/pet/10/uploadImage"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/inventory"));
+        assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/store/inventory"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/store/order"));
         assertEquals("{\"id\":10,\"petId\":10,\"quantity\":10,\"shipDate\":\"1970-01-01T00:00:00.001Z\",\"status\":\"placed\",\"complete\":true}",
-                accessedUrls.get("POST http://localhost:9090/PetStore/store/order"));
-        assertTrue(accessedUrls.containsKey("GET http://localhost:9090/PetStore/store/order/10"));
-        assertEquals("", accessedUrls.get("GET http://localhost:9090/PetStore/store/order/10"));
-        assertTrue(accessedUrls.containsKey("DELETE http://localhost:9090/PetStore/store/order/10"));
-        assertEquals("", accessedUrls.get("DELETE http://localhost:9090/PetStore/store/order/10"));
-        assertTrue(accessedUrls.containsKey("POST http://localhost:9090/PetStore/user"));
+                accessedUrls.get("POST http://" + host + "/PetStore/store/order"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/order/10"));
+        assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/store/order/10"));
+        assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/store/order/10"));
+        assertEquals("", accessedUrls.get("DELETE http://" + host + "/PetStore/store/order/10"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/user"));
         assertEquals("{\"id\":10,\"username\":\"John Doe\",\"firstName\":\"John Doe\",\"lastName\":\"John Doe\",\"email\":\"John Doe\",\"password\":\"John Doe\",\"phone\":\"John Doe\",\"userStatus\":10}",
-                accessedUrls.get("POST http://localhost:9090/PetStore/user"));
-        assertTrue(accessedUrls.containsKey("POST http://localhost:9090/PetStore/user/createWithArray"));
+                accessedUrls.get("POST http://" + host + "/PetStore/user"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/user/createWithArray"));
         assertEquals("[{\"id\":10,\"username\":\"John Doe\",\"firstName\":\"John Doe\",\"lastName\":\"John Doe\",\"email\":\"John Doe\",\"password\":\"John Doe\",\"phone\":\"John Doe\",\"userStatus\":10},{\"id\":10,\"username\":\"John Doe\",\"firstName\":\"John Doe\",\"lastName\":\"John Doe\",\"email\":\"John Doe\",\"password\":\"John Doe\",\"phone\":\"John Doe\",\"userStatus\":10}]",
-                accessedUrls.get("POST http://localhost:9090/PetStore/user/createWithArray"));
-        assertTrue(accessedUrls.containsKey("POST http://localhost:9090/PetStore/user/createWithList"));
+                accessedUrls.get("POST http://" + host + "/PetStore/user/createWithArray"));
+        assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/user/createWithList"));
         assertEquals("[{\"id\":10,\"username\":\"John Doe\",\"firstName\":\"John Doe\",\"lastName\":\"John Doe\",\"email\":\"John Doe\",\"password\":\"John Doe\",\"phone\":\"John Doe\",\"userStatus\":10},{\"id\":10,\"username\":\"John Doe\",\"firstName\":\"John Doe\",\"lastName\":\"John Doe\",\"email\":\"John Doe\",\"password\":\"John Doe\",\"phone\":\"John Doe\",\"userStatus\":10}]",
-                accessedUrls.get("POST http://localhost:9090/PetStore/user/createWithList"));
-        assertTrue(accessedUrls.containsKey("GET http://localhost:9090/PetStore/user/login?username=username&password=password"));
-        assertEquals("", accessedUrls.get("GET http://localhost:9090/PetStore/user/login?username=username&password=password"));
-        assertTrue(accessedUrls.containsKey("GET http://localhost:9090/PetStore/user/logout"));
-        assertEquals("", accessedUrls.get("GET http://localhost:9090/PetStore/user/logout"));
-        assertTrue(accessedUrls.containsKey("GET http://localhost:9090/PetStore/user/username"));
-        assertEquals("", accessedUrls.get("GET http://localhost:9090/PetStore/user/username"));
-        assertTrue(accessedUrls.containsKey("PUT http://localhost:9090/PetStore/user/username"));
+                accessedUrls.get("POST http://" + host + "/PetStore/user/createWithList"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/user/login?username=username&password=password"));
+        assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/user/login?username=username&password=password"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/user/logout"));
+        assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/user/logout"));
+        assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/user/username"));
+        assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/user/username"));
+        assertTrue(accessedUrls.containsKey("PUT http://" + host + "/PetStore/user/username"));
         assertEquals("{\"id\":10,\"username\":\"John Doe\",\"firstName\":\"John Doe\",\"lastName\":\"John Doe\",\"email\":\"John Doe\",\"password\":\"John Doe\",\"phone\":\"John Doe\",\"userStatus\":10}",
-                accessedUrls.get("PUT http://localhost:9090/PetStore/user/username"));
-        assertTrue(accessedUrls.containsKey("DELETE http://localhost:9090/PetStore/user/username"));
-        assertEquals("", accessedUrls.get("DELETE http://localhost:9090/PetStore/user/username"));
+                accessedUrls.get("PUT http://" + host + "/PetStore/user/username"));
+        assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/user/username"));
+        assertEquals("", accessedUrls.get("DELETE http://" + host + "/PetStore/user/username"));
         // And that there arent any spurious ones
         assertEquals(20, accessedUrls.size());
         
