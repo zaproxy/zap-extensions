@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>12</version>
+	<version>13</version>
 	<status>release</status>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Make breakpoint dialogues modal.<br>
-	Fix exception during the unload of the add-on, when in daemon mode.<br>
-	Correct fuzz location overlap detection with same start index.<br>
+	Fix/correct help buttons.<br>
 	]]>
 	</changes>
 	<classnames>

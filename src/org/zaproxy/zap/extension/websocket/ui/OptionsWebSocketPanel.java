@@ -145,6 +145,6 @@ public class OptionsWebSocketPanel extends AbstractParamPanel {
     
     @Override
     public String getHelpIndex() {
-        return "ui.dialogs.options.websocket"; 
+        return "websocket.options"; 
     }
 }
