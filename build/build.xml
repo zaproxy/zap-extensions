@@ -516,6 +516,10 @@
         <build-deploy-addon name="bugtracker" />
     </target>
     
+    <target name="generate-wiki-bugtracker" description="Generates the wiki of Bug Tracker add-on">
+        <generate-wiki addon="bugtracker" />
+    </target>
+
 	<target name="generate-wiki-browserView" description="Generates the wiki of browser extension">
 		<generate-wiki addon="browserView" />
 	</target>
