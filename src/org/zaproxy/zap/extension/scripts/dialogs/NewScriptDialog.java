@@ -41,6 +41,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
 	private static final String FIELD_TEMPLATE = "scripts.dialog.script.label.template";
 	private static final String FIELD_TYPE = "scripts.dialog.script.label.type";
 	private static final String FIELD_LOAD = "scripts.dialog.script.label.load";
+	private static final String FIELD_ENABLED = "scripts.dialog.script.label.enabled";
 
 	private static final long serialVersionUID = 1L;
 
@@ -96,17 +97,31 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		this.addComboField(FIELD_TEMPLATE, this.getTemplates(), templateName);
 		this.addMultilineField(FIELD_DESC, desc);
 		this.addCheckBoxField(FIELD_LOAD, true);
+		this.addCheckBoxField(FIELD_ENABLED, false);
+		this.getField(FIELD_ENABLED).setEnabled(false);
 
 		this.addFieldListener(FIELD_TYPE, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				boolean scriptEnableable = false;
+				boolean scriptEnabledByDefault = false;
+
 				if (isEmptyField(FIELD_TYPE)) {
 					// Unset the template, otherwise it just resets the type again ;)
 					if (!isEmptyField(FIELD_ENGINE)) {
 						setFieldValue(FIELD_ENGINE, "");
 					}
 					setFieldValue(FIELD_TEMPLATE, "");
+				} else {
+					ScriptType scriptType = nameToType(getStringValue(FIELD_TYPE));
+					if (scriptType != null) {
+						scriptEnableable = scriptType.isEnableable();
+						scriptEnabledByDefault = scriptType.isEnabledByDefault();
+					}
 				}
+				getField(FIELD_ENABLED).setEnabled(scriptEnableable);
+				setFieldValue(FIELD_ENABLED, scriptEnabledByDefault);
+
 				resetTemplates();
 			}});
 
@@ -213,6 +228,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		script.setName(this.getStringValue(FIELD_NAME));
 		script.setDescription(this.getStringValue(FIELD_DESC));
 		script.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
+		script.setEnabled(getBoolValue(FIELD_ENABLED));
 		
 		extension.getExtScript().addScript(script);
 	}
