@@ -42,6 +42,7 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 	private static final String FIELD_DESC = "scripts.dialog.script.label.desc";
 	private static final String FIELD_TYPE = "scripts.dialog.script.label.type";
 	private static final String FIELD_LOAD = "scripts.dialog.script.label.load";
+	private static final String FIELD_ENABLED = "scripts.dialog.script.label.enabled";
 
 	private static final long serialVersionUID = 1L;
 
@@ -64,6 +65,8 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 		this.addComboField(FIELD_TYPE, this.getTypes(), "");
 		this.addMultilineField(FIELD_DESC, "");
 		this.addCheckBoxField(FIELD_LOAD, true);
+		this.addCheckBoxField(FIELD_ENABLED, false);
+		this.getField(FIELD_ENABLED).setEnabled(false);
 		this.addFieldListener(FIELD_ENGINE, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -80,6 +83,24 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 				}
 			}});
 
+		this.addFieldListener(FIELD_TYPE, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boolean scriptEnableable = false;
+				boolean scriptEnabledByDefault = false;
+
+				if (!isEmptyField(FIELD_TYPE)) {
+					ScriptType scriptType = nameToType(getStringValue(FIELD_TYPE));
+					if (scriptType != null) {
+						scriptEnableable = scriptType.isEnableable();
+						scriptEnabledByDefault = scriptType.isEnabledByDefault();
+					}
+				}
+				getField(FIELD_ENABLED).setEnabled(scriptEnableable);
+				setFieldValue(FIELD_ENABLED, scriptEnabledByDefault);
+			}
+		});
 		this.addPadding();
 	}
 	
@@ -105,6 +126,7 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 		script.setDescription(this.getStringValue(FIELD_DESC));
 		script.setType(this.nameToType(this.getStringValue(FIELD_TYPE)));
 		script.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
+		script.setEnabled(getBoolValue(FIELD_ENABLED));
 		script.setEngine(extension.getExtScript().getEngineWrapper(this.getStringValue(FIELD_ENGINE)));
 
 		extension.getExtScript().addScript(script);
