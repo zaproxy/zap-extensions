@@ -107,6 +107,7 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
                     WebSocketFuzzerProcessorScript.TYPE_NAME,
                     "websocket.fuzzer.script.type.fuzzerprocessor",
                     WEBSOCKET_FUZZER_PROCESSOR_SCRIPT_ICON,
+                    true,
                     true);
             extensionScript.registerScriptType(scriptType);
 
