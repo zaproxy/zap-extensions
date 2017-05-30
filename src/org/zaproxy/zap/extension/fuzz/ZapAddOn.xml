@@ -12,6 +12,7 @@
     Contains new number generator payload.<br>
     Add null/empty payload generator.<br>
     Issue 3557: Backport export changes.<br>    
+    Set fuzzer script types enabled by default (Issue 2997).<br>
     ]]>
     </changes>
     <extensions>
@@ -26,6 +27,6 @@
         <file>scripts/templates/payloadprocessor/Payload Processor default template.js</file>
         <file>jbrofuzz/fuzzers.jbrf</file>
     </files>
-    <not-before-version>2.4.0</not-before-version>
+    <not-before-version>2.6.0</not-before-version>
     <not-from-version/>
 </zapaddon>
