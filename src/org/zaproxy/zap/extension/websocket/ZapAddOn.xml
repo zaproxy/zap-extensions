@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fix/correct help buttons.<br>
+	Set fuzzer script type enabled by default (Issue 2997).<br>
 	]]>
 	</changes>
 	<classnames>
@@ -36,6 +37,6 @@
 	<files>
 		<file>scripts/templates/websocketfuzzerprocessor/Fuzzer WebSocket Processor default template.js</file>
 	</files>
-	<not-before-version>2.4.3</not-before-version>
+	<not-before-version>2.6.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
