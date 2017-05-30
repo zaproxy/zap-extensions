@@ -110,6 +110,7 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
                     HttpFuzzerProcessorScript.TYPE_NAME,
                     "fuzz.httpfuzzer.script.type.fuzzerprocessor",
                     HTTP_FUZZER_PROCESSOR_SCRIPT_ICON,
+                    true,
                     true);
             extensionScript.registerScriptType(scriptType);
 

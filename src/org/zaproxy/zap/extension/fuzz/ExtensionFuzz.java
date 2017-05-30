@@ -271,6 +271,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     ScriptStringPayloadGenerator.TYPE_NAME,
                     "fuzz.payloads.script.type.payloadgenerator",
                     SCRIPT_PAYLOAD_GENERATOR_ICON,
+                    true,
                     true);
             extensionScript.registerScriptType(scriptTypeGenerator);
             payloadGeneratorsUIRegistry.registerPayloadUI(
@@ -281,6 +282,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     ScriptStringPayloadProcessor.TYPE_NAME,
                     "fuzz.payloads.script.type.payloadprocessor",
                     SCRIPT_PAYLOAD_PROCESSOR_ICON,
+                    true,
                     true);
             extensionScript.registerScriptType(scriptTypeProcessor);
             payloadProcessorsUIRegistry.registerProcessorUIHandler(
