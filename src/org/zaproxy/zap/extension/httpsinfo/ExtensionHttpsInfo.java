@@ -17,10 +17,8 @@
  */
 package org.zaproxy.zap.extension.httpsinfo;
 
-import java.awt.EventQueue;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,7 +27,6 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
-import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -40,7 +37,6 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor {
 
 	public static final String NAME = "ExtensionHttpsInfo";
 	public static final String ICON_PATH = "/org/zaproxy/zap/extension/httpsinfo/resources/icon.png";
-	private static final Logger LOGGER = Logger.getLogger(ExtensionHttpsInfo.class);
 	private static final List<Class<?>> DEPENDENCIES;
 	static {
 		List<Class<?>> dep = new ArrayList<>(1);
@@ -50,11 +46,16 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor {
 	}
 
 	private MenuEntry httpsEntry;
-	private List<MDialog> dialogues;
+	private List<HttpsInfoDialog> dialogues;
 	private boolean unloaded;
 
 	public ExtensionHttpsInfo() {
 		super();
+	}
+
+	@Override
+	public String getUIName() {
+		return Constant.messages.getString("httpsinfo.ext.name");
 	}
 
 	@Override
@@ -127,50 +128,20 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor {
 	}
 
 	void showSslTlsInfo(String hostname, HttpMessage msg) {
-		new Thread(new BackgroundThread(hostname, msg)).start();
-	}
+		HttpMessage baseMessage = msg;
 
-	private class BackgroundThread implements Runnable {
-
-		private String servername;
-		private HttpMessage baseMessage;
-
-		public BackgroundThread(String servername, HttpMessage msg) {
-			this.baseMessage = msg;
-			this.servername = servername;
+		if(unloaded)
+		{
+			return;
 		}
 
-		@Override
-		public void run() {
-			final SSLServer mServer;
-			try {
-				mServer = new SSLServer(servername);
-			} catch (IOException ioe) {
-				getView().showWarningDialog(Constant.messages.getString("httpsinfo.failure.dialog.message"));
-				LOGGER.info("Could not establish a SSL/TLS connection with the server. " + ioe.getMessage());
-				return;
+		HttpsInfoDialog d = new HttpsInfoDialog(baseMessage);
+		dialogues.add(d);
+		d.addWindowListener(new WindowAdapter(){
+			@Override
+			public void windowClosed(WindowEvent e) {
+				dialogues.remove(e.getSource());
 			}
-			if (unloaded) {
-				return;
-			}
-			EventQueue.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					if (unloaded) {
-						return;
-					}
-					MDialog d = new MDialog(mServer, baseMessage);
-					dialogues.add(d);
-					d.addWindowListener(new WindowAdapter() {
-
-						@Override
-						public void windowClosed(WindowEvent e) {
-							dialogues.remove(e.getSource());
-						}
-					});
-				}
-			});
-		}
+	});
 	}
 }
