@@ -24,6 +24,7 @@ import java.util.List;
 
 public class Generators {
 
+    private ValueGenerator valueGenerator;
     private ArrayGenerator arrayGenerator;
     private ModelGenerator modelGenerator;
     private BodyGenerator bodyGenerator;
@@ -33,10 +34,11 @@ public class Generators {
     private List<String> errorMessages = new ArrayList<String>();
 
 
-    public Generators() {
+    public Generators(org.zaproxy.zap.model.ValueGenerator valueGenerator) {
+        this.valueGenerator = new ValueGenerator(valueGenerator);
         this.modelGenerator = new ModelGenerator();
         this.dataGenerator = new DataGenerator(this);
-        this.bodyGenerator = new BodyGenerator(modelGenerator, this.dataGenerator);
+        this.bodyGenerator = new BodyGenerator(this);
         this.arrayGenerator = new ArrayGenerator(this.dataGenerator);
         this.formGenerator = new FormGenerator(this.dataGenerator);
         this.pathGenerator = new PathGenerator(this.dataGenerator);
@@ -72,5 +74,9 @@ public class Generators {
     
     public List<String> getErrorMessages() {
         return this.errorMessages;
+    }
+    
+    public ValueGenerator getValueGenerator() {
+        return this.valueGenerator;
     }
 }

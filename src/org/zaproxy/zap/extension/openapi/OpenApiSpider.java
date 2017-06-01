@@ -19,23 +19,26 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import net.htmlparser.jericho.Source;
-
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
+import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 
 import io.swagger.models.Scheme;
+import net.htmlparser.jericho.Source;
 
 public class OpenApiSpider extends SpiderParser {
 
     private static final Logger log = Logger.getLogger(OpenApiSpider.class);
     private Requestor requestor;
+    private ValueGenerator valGen = null;
 
     public OpenApiSpider() {
         requestor = new Requestor(HttpSender.SPIDER_INITIATOR);
@@ -46,7 +49,8 @@ public class OpenApiSpider extends SpiderParser {
     public boolean parseResource(HttpMessage message, Source source, int depth) {
         try {
             Scheme defaultScheme = Scheme.forValue(message.getRequestHeader().getURI().getScheme().toLowerCase());
-            Converter converter = new SwaggerConverter(defaultScheme, message.getResponseBody().toString());
+            Converter converter = new SwaggerConverter(defaultScheme, message.getResponseBody().toString(),
+                    this.getValueGenerator());
             requestor.run(converter.getRequestModels());
         } catch (Exception e) {
             log.debug(e.getMessage(), e);
@@ -70,5 +74,15 @@ public class OpenApiSpider extends SpiderParser {
         }
         log.debug("Cant parse " + message.getRequestHeader().getURI());
         return false;
+    }
+    
+    private ValueGenerator getValueGenerator() {
+        if (this.valGen == null) {
+            ExtensionSpider spider = Control.getSingleton()
+                    .getExtensionLoader()
+                    .getExtension(ExtensionSpider.class);
+            valGen = spider.getValueGenerator();
+        }
+        return valGen;
     }
 }
