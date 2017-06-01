@@ -19,6 +19,10 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +37,7 @@ import org.zaproxy.zap.model.ValueGenerator;
 import io.swagger.models.Path;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import io.swagger.parser.SwaggerCompatConverter;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.parser.util.SwaggerDeserializationResult;
 
@@ -44,6 +49,7 @@ public class SwaggerConverter implements Converter {
     private RequestModelConverter requestConverter;
     private Generators generators;
     private final Scheme defaultScheme;
+    private List<String> errors = new ArrayList<String> ();
 
     public SwaggerConverter(String defn, ValueGenerator valGen) {
         this(null, defn, valGen);
@@ -74,6 +80,27 @@ public class SwaggerConverter implements Converter {
     private List<OperationModel> readOpenAPISpec() throws SwaggerException {
         List<OperationModel> operations = new LinkedList<>();
         Swagger swagger = new SwaggerParser().parse(this.defn);
+        
+        if (swagger == null) {
+            try {
+                // Try the older spec
+                // Annoyingly the converter only reads files
+                File temp = File.createTempFile("openapi", ".defn");
+                BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
+                bw.write(this.defn);
+                bw.close();
+                
+                swagger = new SwaggerCompatConverter().read(temp.getAbsolutePath());
+                if (!temp.delete()) {
+                    String msg = "Failed to delete " + temp.getAbsolutePath();
+                    LOG.warn(msg);
+                    this.errors.add(msg);
+                }
+            } catch (IOException e) {
+                throw new SwaggerException("Failed to parse swagger defn " + defn, e);
+            }
+        }
+        
         if (swagger != null) {
             generators.getModelGenerator().setDefinitions(swagger.getDefinitions());
             List<Scheme> schemes = swagger.getSchemes();
@@ -94,7 +121,6 @@ public class SwaggerConverter implements Converter {
     }
     
     public List<String> getErrorMessages() {
-        List<String> errors = new ArrayList<String> ();
         SwaggerDeserializationResult res = new SwaggerParser().readWithInfo(this.defn);
         if (res != null) {
             errors.addAll(res.getMessages());

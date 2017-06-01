@@ -11,6 +11,7 @@
 		Detect and warn on potential loops.<br>
 		Allow add-on to be unloaded dynamically.<br>
 		Support user specified values when importing (Issue 3344).<br>
+		Support older swagger formats (Issue 3598).<br>
 	]]>
 	</changes>
 	<extensions>
