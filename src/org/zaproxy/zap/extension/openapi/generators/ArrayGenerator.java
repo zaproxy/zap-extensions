@@ -42,7 +42,7 @@ public class ArrayGenerator {
         this.dataGenerator = dataGenerator;
     }
 
-    public String generate(ArrayProperty property, String collectionType, boolean isPath, List<String> refs) {
+    public String generate(String name, ArrayProperty property, String collectionType, boolean isPath, List<String> refs) {
 
         if (property == null) {
             return "";
@@ -53,12 +53,12 @@ public class ArrayGenerator {
         String valueType = property.getItems().getType();
         if (dataGenerator.isArray(valueType)) {
             if (property.getItems() instanceof ArrayProperty) {
-                return generate((ArrayProperty) property.getItems(), collectionType, isPath, refs);
+                return generate(name, (ArrayProperty) property.getItems(), collectionType, isPath, refs);
             } else {
                 return "";
             }
         }
-        String value = dataGenerator.generateValue(property.getItems(), isPath, refs);
+        String value = dataGenerator.generateValue(name, property.getItems(), isPath, refs);
         return ARRAY_BEGIN + value + ARRAY_END;
     }
 }

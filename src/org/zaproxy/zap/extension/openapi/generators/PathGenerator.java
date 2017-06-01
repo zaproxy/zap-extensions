@@ -50,10 +50,10 @@ public class PathGenerator {
         for (Parameter parameter : operationModel.getOperation().getParameters()) {
             String parameterType = parameter.getIn();
             if (parameterType.equals("query")) {
-                String value = dataGenerator.generate(((AbstractSerializableParameter<?>) parameter), new ArrayList<String>());
+                String value = dataGenerator.generate(parameter.getName(), ((AbstractSerializableParameter<?>) parameter), new ArrayList<String>());
                 queryString += parameter.getName() + "=" + value + "&";
             } else if (parameterType.equals("path")) {
-                String value = dataGenerator.generate(((AbstractSerializableParameter<?>) parameter), new ArrayList<String>());
+                String value = dataGenerator.generate(parameter.getName(), ((AbstractSerializableParameter<?>) parameter), new ArrayList<String>());
                 String newPath = operationModel.getPath().replace("{" + parameter.getName() + "}", value);
                 operationModel.setPath(newPath);
             }

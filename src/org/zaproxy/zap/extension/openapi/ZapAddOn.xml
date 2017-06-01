@@ -10,6 +10,7 @@
 		Support optional host override.<br>
 		Detect and warn on potential loops.<br>
 		Allow add-on to be unloaded dynamically.<br>
+		Support user specified values when importing (Issue 3344).<br>
 	]]>
 	</changes>
 	<extensions>

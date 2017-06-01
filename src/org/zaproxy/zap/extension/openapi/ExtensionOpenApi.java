@@ -45,6 +45,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -207,7 +208,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
                     requestor.setSiteOverride(hostOverride);
                     requestor.addListener(new HistoryPersister());
-                    SwaggerConverter converter = new SwaggerConverter(defaultScheme, defn);
+                    SwaggerConverter converter = new SwaggerConverter(defaultScheme, defn, getValueGenerator());
                     errors.addAll(requestor.run(converter.getRequestModels()));
                     // Needs to be called after converter.getRequestModels() to get loop errors
                     errors.addAll(converter.getErrorMessages());
@@ -240,6 +241,17 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 LOG.debug(e.getMessage(), e);
             }
             return errors;
+        }
+        return null;
+    }
+    
+    private ValueGenerator getValueGenerator() {
+        // Always get the latest ValueGenerator as it could have changed
+        ExtensionSpider spider = Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionSpider.class);
+        if (spider != null) {
+            return spider.getValueGenerator();
         }
         return null;
     }

@@ -60,9 +60,9 @@ public class DataGenerator {
         return TYPES.get(type) != null;
     }
 
-    public String generate(AbstractSerializableParameter<?> parameter, List<String> refs) {
+    public String generate(String name, AbstractSerializableParameter<?> parameter, List<String> refs) {
         String defaultValue = generateDefaultValue(parameter.getEnum(), parameter.getDefaultValue());
-        return generateParam(defaultValue, parameter, refs);
+        return generateParam(name, defaultValue, parameter, refs);
     }
 
     private static String generateDefaultValue(List<String> anEnum, String defaultValue) {
@@ -75,39 +75,38 @@ public class DataGenerator {
         return "";
     }
 
-    private String generateParam(String example, AbstractSerializableParameter<?> parameter, List<String> refs) {
+    private String generateParam(String name, String example, AbstractSerializableParameter<?> parameter, List<String> refs) {
 
         if (example != null && !example.isEmpty()) {
             return example;
         }
         if (isArray(parameter.getType())) {
-            return generateArrayValue(parameter, refs);
+            return generateArrayValue(name, parameter, refs);
         }
 
         if (parameter.getItems() != null) {
-            return generateValue(parameter.getItems(), isPath(parameter.getIn()), refs);
+            return generateValue(name, parameter.getItems(), isPath(parameter.getIn()), refs);
         }
 
         return getExampleValue(isPath(parameter.getIn()), parameter.getType(), parameter.getName());
     }
 
-    private String generateArrayValue(AbstractSerializableParameter<?> parameter, List<String> refs) {
+    private String generateArrayValue(String name, AbstractSerializableParameter<?> parameter, List<String> refs) {
         boolean isPath = isPath(parameter.getIn());
         if (!(parameter.getItems() instanceof ArrayProperty)) {
-            return generateValue(parameter.getItems(), isPath, refs);
+            return generateValue(name, parameter.getItems(), isPath, refs);
         }
-        return generators.getArrayGenerator().generate((ArrayProperty) parameter.getItems(), parameter.getCollectionFormat(), isPath, refs);
+        return generators.getArrayGenerator().generate(name, (ArrayProperty) parameter.getItems(), parameter.getCollectionFormat(), isPath, refs);
     }
 
-    public String generateBodyValue(Property property, List<String> refs) {
+    public String generateBodyValue(String name, Property property, List<String> refs) {
         if (isArray(property.getType())) {
-            return generators.getArrayGenerator().generate((ArrayProperty) property, "csv", false, refs);
+            return generators.getArrayGenerator().generate(name, (ArrayProperty) property, "csv", false, refs);
         }
-        return generateValue(property, false, refs);
+        return generateValue(name, property, false, refs);
     }
 
-    public String generateValue(Property items, boolean isPath, List<String> refs) {
-
+    public String generateValue(String name, Property items, boolean isPath, List<String> refs) {
         String value = "";
         if (isEnumValue(items)) {
             value = getEnumValue(items);
@@ -118,6 +117,8 @@ public class DataGenerator {
         if (isDate(items)) {
             value = "1970-01-01";
         }
+        
+        value = generators.getValueGenerator().getValue(name, items.getType(), value);
 
         if (value.isEmpty()) {
             if ("ref".equals(items.getType())) {
@@ -146,10 +147,10 @@ public class DataGenerator {
                     }
                 }
             }
-            value = getExampleValue(isPath, items.getType(), items.getName());
+            value = getExampleValue(isPath, items.getType(), name);
 
         } else {
-            if (!isPath) {
+            if (!isPath && "string".equalsIgnoreCase(items.getType())) {
                 value = "\"" + value + "\"";
             }
         }
@@ -164,16 +165,20 @@ public class DataGenerator {
     }
 
     public String generateExampleValueForPath(String type, String name) {
+        String value;
         if ("string".equals(type)) {
             if (name != null) {
-                return name;
+                value = name;
+            } else {
+                value = "Test";
             }
-            return "Test";
+        } else {
+            value = generateSimpleExampleValue(type);
         }
-        return generateSimpleExampleValue(type);
+        return generators.getValueGenerator().getValue(name, type, value);
     }
 
-    public String generateSimpleExampleValue(String type) {
+    private String generateSimpleExampleValue(String type) {
         return TYPES.get(type);
     }
 

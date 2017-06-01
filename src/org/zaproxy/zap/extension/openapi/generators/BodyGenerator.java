@@ -31,13 +31,15 @@ import io.swagger.models.properties.RefProperty;
 
 public class BodyGenerator {
 
+    private Generators generators;
     private ModelGenerator modelGenerator;
     private DataGenerator dataGenerator;
     private static final Logger LOG = Logger.getLogger(BodyGenerator.class);
 
-    public BodyGenerator(ModelGenerator modelGenerator, DataGenerator dataGenerator) {
-        this.modelGenerator = modelGenerator;
-        this.dataGenerator = dataGenerator;
+    public BodyGenerator(Generators generators) {
+        this.generators = generators;
+        this.modelGenerator = generators.getModelGenerator();
+        this.dataGenerator = generators.getDataGenerator();
     }
 
     private enum Element {
@@ -81,16 +83,19 @@ public class BodyGenerator {
             json.append(property.getKey());
             json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
             json.append(SYNTAX.get(Element.INNER_SEPARATOR));
+            String value;
             if (dataGenerator.isSupported(property.getValue().getType())) {
-                json.append(dataGenerator.generateBodyValue(property.getValue(), refs));
+                value = dataGenerator.generateBodyValue(property.getKey(), property.getValue(), refs);
             } else {
                 if (property.getValue() instanceof RefProperty) {
-                    json.append(generate(((RefProperty) property.getValue()).getSimpleRef(), false, refs));
+                    value = generate(((RefProperty) property.getValue()).getSimpleRef(), false, refs);
                 } else {
-                    // Best we can do
-                    json.append(generate(property.getValue().getName(), false, refs));
+                    value = generators.getValueGenerator().getValue(property.getKey(), property.getValue().getType(), 
+                            generate(property.getValue().getName(), false, refs));
                 }
             }
+
+            json.append(value);
         }
         json.append(SYNTAX.get(Element.OBJECT_END));
         String jsonStr = json.toString();

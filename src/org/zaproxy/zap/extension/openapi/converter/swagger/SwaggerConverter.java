@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
+import org.zaproxy.zap.model.ValueGenerator;
 
 import io.swagger.models.Path;
 import io.swagger.models.Scheme;
@@ -44,14 +45,14 @@ public class SwaggerConverter implements Converter {
     private Generators generators;
     private final Scheme defaultScheme;
 
-    public SwaggerConverter(String defn) {
-        this(null, defn);
+    public SwaggerConverter(String defn, ValueGenerator valGen) {
+        this(null, defn, valGen);
     }
 
-    public SwaggerConverter(Scheme defaultScheme, String defn) {
+    public SwaggerConverter(Scheme defaultScheme, String defn, ValueGenerator valueGenerator) {
         LOG.debug("Examining defn ");
         this.defaultScheme = defaultScheme;
-        generators = new Generators();
+        generators = new Generators(valueGenerator);
         operationHelper = new OperationHelper();
         requestConverter = new RequestModelConverter();
         this.defn = defn;

@@ -45,7 +45,7 @@ public class FormGenerator {
                 String type = ((AbstractSerializableParameter<?>) parameter).getType();
                 FormDataItem item = new FormDataItem();
                 item.setIsFile(type != null && type.equals("file"));
-                item.setValue(dataGenerator.generate((FormParameter) parameter, new ArrayList<String>()));
+                item.setValue(dataGenerator.generate(parameter.getName(), (FormParameter) parameter, new ArrayList<String>()));
                 formData.addFormItem(parameter.getName(), item);
             }
         }
