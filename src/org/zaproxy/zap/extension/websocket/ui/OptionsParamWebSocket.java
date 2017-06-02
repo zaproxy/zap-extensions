@@ -26,10 +26,12 @@ public class OptionsParamWebSocket extends AbstractParam {
 	public static final String FORWARD_ALL = "websocket.forwardAll";
 	public static final String BREAK_ON_PING_PONG = "websocket.breakOnPingPong";
 	public static final String BREAK_ON_ALL = "websocket.breakOnAll";
+	private static final String CONFIRM_REMOVE_PROXY_EXCLUDE_REGEX_KEY = "websocket.confirmRemoveProxyExcludeRegex";
 
 	private boolean isForwardAll;
 	private boolean isBreakOnPingPong;
 	private boolean isBreakOnAll;
+	private boolean confirmRemoveProxyExcludeRegex;
 
     @Override
     protected void parse() {
@@ -37,6 +39,7 @@ public class OptionsParamWebSocket extends AbstractParam {
     	isForwardAll = cfg.getBoolean(FORWARD_ALL, false);
     	isBreakOnPingPong = cfg.getBoolean(BREAK_ON_PING_PONG, false);
     	isBreakOnAll = cfg.getBoolean(BREAK_ON_ALL, false);
+    	confirmRemoveProxyExcludeRegex = cfg.getBoolean(CONFIRM_REMOVE_PROXY_EXCLUDE_REGEX_KEY, false);
     }
 
     /**
@@ -101,5 +104,14 @@ public class OptionsParamWebSocket extends AbstractParam {
 	public void setBreakOnAll(boolean isBreakOnAll) {
 		this.isBreakOnAll = isBreakOnAll;
 		getConfig().setProperty(BREAK_ON_ALL, isBreakOnAll);
+	}
+
+	public boolean isConfirmRemoveProxyExcludeRegex() {
+		return this.confirmRemoveProxyExcludeRegex;
+	}
+
+	public void setConfirmRemoveProxyExcludeRegex(boolean confirmRemove) {
+		this.confirmRemoveProxyExcludeRegex = confirmRemove;
+		getConfig().setProperty(CONFIRM_REMOVE_PROXY_EXCLUDE_REGEX_KEY, Boolean.valueOf(confirmRemove));
 	}
 }
