@@ -20,28 +20,25 @@ package org.zaproxy.zap.extension.websocket.ui;
 import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
-import org.zaproxy.zap.view.SingleColumnTableModel;
+import org.zaproxy.zap.view.MultipleRegexesOptionsPanel;
 
 public class SessionExcludeFromWebSocket extends AbstractParamPanel {
 	public static final String PANEL_NAME = Constant.messages.getString("websocket.session.exclude.title");
 	private static final long serialVersionUID = -1000465438379563850L;
 
 	private JPanel panelSession = null;
-	private JTable tableIgnore = null;
-	private JScrollPane jScrollPane = null;
-	private SingleColumnTableModel model = null;
+	private MultipleRegexesOptionsPanel regexesPanel;
 	
 	private ExtensionWebSocket extWs;
 
@@ -54,6 +51,7 @@ public class SessionExcludeFromWebSocket extends AbstractParamPanel {
 	private void initialize() {
 		setLayout(new CardLayout());
 		setName(PANEL_NAME);
+		regexesPanel = new MultipleRegexesOptionsPanel(View.getSingleton().getSessionDialog());
 		add(getPanelSession(), getPanelSession().getName());
 	}
 
@@ -86,54 +84,30 @@ public class SessionExcludeFromWebSocket extends AbstractParamPanel {
 			gridBagConstraints2.insets = new java.awt.Insets(0, 0, 0, 0);
 			gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
 			panelSession.add(jLabel, gridBagConstraints1);
-			panelSession.add(getJScrollPane(), gridBagConstraints2);
+			panelSession.add(regexesPanel, gridBagConstraints2);
 		}
 		return panelSession;
 	}
 
 	@Override
 	public void initParam(Object obj) {
-		getModel().setLines(extWs.getChannelIgnoreList());
+		regexesPanel.setRegexes(extWs.getChannelIgnoreList());
+		regexesPanel.setRemoveWithoutConfirmation(!getOptions().isConfirmRemoveProxyExcludeRegex());
+	}
+
+	private static OptionsParamWebSocket getOptions() {
+		return Model.getSingleton().getOptionsParam().getParamSet(OptionsParamWebSocket.class);
 	}
 
 	@Override
 	public void validateParam(Object obj) throws PatternSyntaxException {
-		// Check for valid regexs
-		for (String regex : getModel().getLines()) {
-			if (regex.trim().length() > 0) {
-				Pattern.compile(regex.trim(), Pattern.CASE_INSENSITIVE);
-			}
-		}
+		// Nothing to validate.
 	}
 
 	@Override
 	public void saveParam(Object obj) throws WebSocketException {
-		extWs.setChannelIgnoreList(getModel().getLines());
-	}
-
-	private JTable getTableIgnore() {
-		if (tableIgnore == null) {
-			tableIgnore = new JTable();
-			tableIgnore.setModel(getModel());
-			tableIgnore.setRowHeight(18);
-		}
-		return tableIgnore;
-	}
-
-	private JScrollPane getJScrollPane() {
-		if (jScrollPane == null) {
-			jScrollPane = new JScrollPane();
-			jScrollPane.setViewportView(getTableIgnore());
-			jScrollPane.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-		}
-		return jScrollPane;
-	}
-
-	private SingleColumnTableModel getModel() {
-		if (model == null) {
-			model = new SingleColumnTableModel(Constant.messages.getString("websocket.session.table.header.ignore"));
-		}
-		return model;
+		getOptions().setConfirmRemoveProxyExcludeRegex(!regexesPanel.isRemoveWithoutConfirmation());
+		extWs.setChannelIgnoreList(regexesPanel.getRegexes());
 	}
 
 	@Override
