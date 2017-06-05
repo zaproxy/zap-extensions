@@ -57,53 +57,55 @@ public class MixedContentScanner extends PluginPassiveScanner {
 			// If SSL/TLS isn't used then this check isn't relevant
 			return;
 		}
-		List<MixedContent> list = new ArrayList<MixedContent>();
-		boolean incScript = false;
 		
-		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()){
-			List<Element> sourceElements = source.getAllElements();
-			if (sourceElements != null) {
-				for (Element sourceElement : sourceElements) {
-					if (addAttsContainingHttpContent(sourceElement, "src", list)) {
-						if (HTMLElementName.SCRIPT.equals(sourceElement.getName())) {
-							// Considered to be more serious
-							incScript = true;
-						}
-					}	
-					addAttsContainingHttpContent(sourceElement, "background", list);
-					addAttsContainingHttpContent(sourceElement, "classid", list);
-					addAttsContainingHttpContent(sourceElement, "codebase", list);
-					addAttsContainingHttpContent(sourceElement, "data", list);
-					addAttsContainingHttpContent(sourceElement, "icon", list);
-					addAttsContainingHttpContent(sourceElement, "usemap", list);
-					
-					switch (this.getLevel()) {
-					case LOW:
-					case MEDIUM:
-						// These are a bit more debatable, so dont do them on the HIGH setting
-						addAttsContainingHttpContent(sourceElement, "action", list);
-						addAttsContainingHttpContent(sourceElement, "formaction", list);
-						break;
-					default:
-						// No other checks
-					}
-				}	
-			}
-			final int numberOfMixedElements = list.size();
-			if (numberOfMixedElements > 0) {
-				StringBuilder sb = new StringBuilder(numberOfMixedElements * 40);
-				for (MixedContent mc : list) {
-					sb.append("tag=");
-					sb.append(mc.getTag());
-					sb.append(' ');
-					sb.append(mc.getAtt());
-					sb.append('=');
-					sb.append(mc.getValue());
-					sb.append('\n');
-				}
+		if (msg.getResponseBody().length() == 0 || !msg.getResponseHeader().isHtml()) {
+			// No point attempting to parse non-HTML content, it will not be correctly interpreted.
+			return;
+		}
 
-				this.raiseAlert(msg, id, list.get(0).getValue(), sb.toString(), incScript);
+		List<MixedContent> list = new ArrayList<>();
+		boolean incScript = false;
+		List<Element> sourceElements = source.getAllElements();
+		for (Element sourceElement : sourceElements) {
+			if (addAttsContainingHttpContent(sourceElement, "src", list)) {
+				if (HTMLElementName.SCRIPT.equals(sourceElement.getName())) {
+					// Considered to be more serious
+					incScript = true;
+				}
+			}	
+			addAttsContainingHttpContent(sourceElement, "background", list);
+			addAttsContainingHttpContent(sourceElement, "classid", list);
+			addAttsContainingHttpContent(sourceElement, "codebase", list);
+			addAttsContainingHttpContent(sourceElement, "data", list);
+			addAttsContainingHttpContent(sourceElement, "icon", list);
+			addAttsContainingHttpContent(sourceElement, "usemap", list);
+			
+			switch (this.getLevel()) {
+			case LOW:
+			case MEDIUM:
+				// These are a bit more debatable, so dont do them on the HIGH setting
+				addAttsContainingHttpContent(sourceElement, "action", list);
+				addAttsContainingHttpContent(sourceElement, "formaction", list);
+				break;
+			default:
+				// No other checks
 			}
+		}
+
+		final int numberOfMixedElements = list.size();
+		if (numberOfMixedElements > 0) {
+			StringBuilder sb = new StringBuilder(numberOfMixedElements * 40);
+			for (MixedContent mc : list) {
+				sb.append("tag=");
+				sb.append(mc.getTag());
+				sb.append(' ');
+				sb.append(mc.getAtt());
+				sb.append('=');
+				sb.append(mc.getValue());
+				sb.append('\n');
+			}
+
+			this.raiseAlert(msg, id, list.get(0).getValue(), sb.toString(), incScript);
 		}
 	}
 	
