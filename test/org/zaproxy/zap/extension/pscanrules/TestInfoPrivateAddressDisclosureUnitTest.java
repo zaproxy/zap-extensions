@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
@@ -90,15 +89,27 @@ public class TestInfoPrivateAddressDisclosureUnitTest extends PassiveScannerTest
 	}
 
 	@Test
-	public void shouldIgnoreRequestedPrivateIpByDefault() throws HttpMalformedHeaderException {
+	public void shouldIgnoreRequestedPrivateIpByDefault() throws Exception {
 		// Given
-		String privateIp = "192.168.36.127";
-		String requestUri = "https://" + privateIp + ":8123/";
-		HttpMessage msg = createHttpMessage(requestUri, privateIp);
-		// When
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		// Then
-		assertThat(alertsRaised, is(empty()));
+		// ip and aws-hostname which get concatenated with the ports as candidates
+		String[] ipHost = new String[] {"10.0.2.2", "ip-10-0-2-2"};
+		String[] ports = new String[] {
+				":45876",
+				":8081",
+				":98", 
+				""
+		};
+		for (int pi = 0; pi < ports.length; pi++) {
+			for (int ii = 0; ii < ipHost.length; ii++) {
+				alertsRaised.clear();
+				String candidate = ipHost[ii] + ports[pi];
+				HttpMessage msg = createHttpMessage(candidate, candidate);
+				// When
+				rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+				// Then
+				assertThat(candidate, alertsRaised.size(), equalTo(0));
+			}
+		}
 	}
 
 	@Test
@@ -367,6 +378,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest extends PassiveScannerTest
 
 	private HttpMessage createHttpMessage(String requestUri, String body) throws HttpMalformedHeaderException {
 		HttpMessage msg = new HttpMessage();
+		requestUri = requestUri.startsWith("http") ? requestUri : "http://" + requestUri;
 		msg.setRequestHeader("GET " + requestUri + " HTTP/1.1");
 		msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
 		msg.setResponseBody(body);

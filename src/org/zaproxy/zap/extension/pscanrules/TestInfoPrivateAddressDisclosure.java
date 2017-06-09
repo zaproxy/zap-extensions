@@ -25,6 +25,7 @@
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field, and made into a passive scan rule
 // ZAP: 2016/10/26 Issue 2834: Fixed the regex
 // ZAP: 2016/12/15 Issue 3031: Ignore requested private IP addresses on Private IP Disclosure scan
+// ZAP: 2017/06/06 Issue 3549: Exclude port when comparing hosts
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.regex.Matcher;
@@ -107,15 +108,14 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
         String firstOne = null;
         
         while (matcher.find()) {
-            String privateIp = matcher.group();
-            if (getLevel() != AlertThreshold.LOW && privateIp.equalsIgnoreCase(host)) {
+            if (getLevel() != AlertThreshold.LOW && matcher.group(1).equalsIgnoreCase(host)) {
                 continue;
             }
 
             if (firstOne == null) {
-                firstOne = privateIp;
+                firstOne = matcher.group();
             }
-            sbTxtFound.append(privateIp).append("\n");
+            sbTxtFound.append(matcher.group()).append("\n");
         }
 
         if (sbTxtFound.length() != 0) {
