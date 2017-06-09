@@ -594,6 +594,11 @@
 		<build-deploy-addon name="portscan" />
 	</target>
 
+	<target name="deploy-portscan-without-help-indexes" description="deploy the port scan extension, without building help indexes">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="portscan" />
+	</target>
+	
 	<target name="generate-wiki-portscan" description="Generates the wiki of portscan">
 		<generate-wiki addon="portscan" />
 	</target>
