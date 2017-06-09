@@ -26,26 +26,35 @@ import java.util.regex.Pattern;
 import javax.swing.JTable;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.view.popup.PopupMenuItemIncludeInContext;
+import org.zaproxy.zap.view.ContextIncludePanel;
 
-public class PopupIncludeWebSocketInContextMenu extends PopupMenuItemIncludeInContext {
+public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = -2345060529128495874L;
 	
     private static final Logger logger = Logger.getLogger(PopupIncludeWebSocketInContextMenu.class);
 
 	private WebSocketPopupHelper wsPopupHelper;
+	private Context context;
 
 	public PopupIncludeWebSocketInContextMenu(Context context) {
-		super(context);
+		super(context.getName());
+		this.context = context;
 
 		initialize();
 	}
 
 	public PopupIncludeWebSocketInContextMenu() {
-		super();
+		super(Constant.messages.getString("context.new.title"));
+		this.context = null;
+		this.setPrecedeWithSeparator(true);
 
 		initialize();
 	}
@@ -53,6 +62,16 @@ public class PopupIncludeWebSocketInContextMenu extends PopupMenuItemIncludeInCo
     @Override
     public String getParentMenuName() {
     	return PopupIncludeWebSocketContextMenu.MENU_NAME;
+    }
+
+    @Override
+    public boolean isSubMenu() {
+        return true;
+    }
+
+    @Override
+    public boolean isSafe() {
+        return true;
     }
     
     private void initialize() {
@@ -72,8 +91,17 @@ public class PopupIncludeWebSocketInContextMenu extends PopupMenuItemIncludeInCo
 		WebSocketMessageDTO message = wsPopupHelper.getSelectedMessage();
 		if (message != null) {
 			String url = Pattern.quote(message.channel.getContextUrl());
-        	
-        	performAction("", url);
+
+            Session session = Model.getSingleton().getSession();
+            if (context == null) {
+                context = session.getNewContext(message.channel.host);
+            }
+            View.getSingleton().getSessionDialog().recreateUISharedContexts(session);
+
+            Context uiSharedContext = View.getSingleton().getSessionDialog().getUISharedContext(context.getIndex());
+            uiSharedContext.addIncludeInContextRegex(url);
+
+            View.getSingleton().showSessionDialog(session, ContextIncludePanel.getPanelName(context.getIndex()), false);
 		}
 	}
 

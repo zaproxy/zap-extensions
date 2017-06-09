@@ -7,6 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
+	Fix context include/exclude pop up menu items.<br>
 	Fix/correct help buttons.<br>
 	Set fuzzer script type enabled by default (Issue 2997).<br>
 	Normalise the Session Properties panel Exclude from WebSockets.<br>
