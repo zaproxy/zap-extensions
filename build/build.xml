@@ -457,6 +457,10 @@
 		<build-deploy-addon name="coreLang" />
 	</target>
 
+	<target name="deploy-todo" description="Provides a tab which allows you to view the list of test cases">
+		<build-deploy-addon name="todo" />
+	</target>
+
 	<target name="deploy-directorylistv1" description="deploys Directory List v1.0 add-on">
 		<build-deploy-addon name="directorylistv1" />
 	</target>
