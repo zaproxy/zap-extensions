@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
+import org.zaproxy.zap.extension.websocket.WebSocketProxy.Initiator;
 
 public class WebSocketFuzzerTaskProcessorUtils {
 
@@ -88,7 +89,7 @@ public class WebSocketFuzzerTaskProcessorUtils {
             newMessage.payloadLength = Integer.valueOf(message.length());
             newMessage.fuzz = "";
 
-            if (wsProxy.send(newMessage)) {
+            if (wsProxy.send(newMessage, Initiator.FUZZER)) {
                 websocketFuzzer.messageSent(taskId, newMessage);
                 newMessage.state = WebSocketFuzzMessageDTO.State.SUCCESSFUL;
             } else {
