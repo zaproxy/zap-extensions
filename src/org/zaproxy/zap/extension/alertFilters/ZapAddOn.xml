@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Context Alert Filters</name>
-	<version>4</version>
+	<version>5</version>
 	<status>beta</status>
 	<description>Allows you to automate the changing of alert risk levels.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor functional improvement.<br>
+	Dynamically unload the add-on.<br>
 	]]>
     </changes>
 	<extensions>
@@ -17,6 +17,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.2</not-before-version>
+	<not-before-version>2.6.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
