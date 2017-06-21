@@ -61,7 +61,16 @@ public class OpenApiAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.DOES_NOT_EXIST, file.getAbsolutePath());
             }
 
+            if (!file.isFile()) {
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_FILE);
+            }
+
             List<String> errors = extension.importOpenApiDefinition(file, false);
+
+            if (errors == null) {
+                // A null list indicates that an exception occurred while parsing the file...
+                throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA, PARAM_FILE);
+            }
 
             ApiResponseList result = new ApiResponseList(name);
             for (String error : errors) {
