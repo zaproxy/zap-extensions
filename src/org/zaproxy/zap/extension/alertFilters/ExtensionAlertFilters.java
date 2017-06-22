@@ -52,7 +52,6 @@ import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.AlertEventPublisher;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.PolicyManager;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
@@ -170,16 +169,28 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	    extensionHook.addSessionListener(this);
 	    
 		// Register this as a context data factory
-		Model.getSingleton().addContextDataFactory(this);
+		extensionHook.addContextDataFactory(this);
 
 		if (getView() != null) {
 			// Factory for generating Session Context alertFilters panels
-			getView().addContextPanelFactory(this);
+			extensionHook.getHookView().addContextPanelFactory(this);
 		}
 
 		this.api = new AlertFilterAPI(this);
-		API.getInstance().registerApiImplementor(api);
+		extensionHook.addApiImplementor(api);
 
+	}
+
+	@Override
+	public boolean canUnload() {
+		return true;
+	}
+
+	@Override
+	public void unload() {
+		super.unload();
+
+		ZAP.getEventBus().unregisterConsumer(this, AlertEventPublisher.getPublisher().getPublisherName());
 	}
 
 	@Override
