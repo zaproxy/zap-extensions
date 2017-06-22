@@ -1,17 +1,13 @@
 <zapaddon>
 	<name>OpenAPI Support</name>
-	<version>6</version>
+	<version>7</version>
 	<status>alpha</status>
 	<description>Imports and spiders Open API definitions.</description>
 	<author>ZAP Core Team plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-		Support optional host override.<br>
-		Detect and warn on potential loops.<br>
-		Allow add-on to be unloaded dynamically.<br>
-		Support user specified values when importing (Issue 3344).<br>
-		Support older swagger formats (Issue 3598).<br>
+		Correct validations when importing a file through the API.<br>
 	]]>
 	</changes>
 	<extensions>
