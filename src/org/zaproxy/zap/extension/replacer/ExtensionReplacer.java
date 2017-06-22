@@ -43,7 +43,6 @@ import org.zaproxy.zap.view.ZapMenuItem;
 /**
  * An add-on which provides an easy way to replace strings in requests and responses.
  * TODO
- *      Add API endpoints
  *      Implement for contexts as well
  * @author psiinon
  *
@@ -68,6 +67,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
+        extensionHook.addApiImplementor(new ReplacerAPI(this));
         extensionHook.addOptionsParamSet(getParams());
         HttpSender.addListener(this);
 

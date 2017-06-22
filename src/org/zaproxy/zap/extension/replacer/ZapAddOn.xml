@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Replacer</name>
-	<version>2</version>
+	<version>3</version>
 	<status>beta</status>
 	<description>Easy way to replace strings in requests and responses.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Promoted to beta</changes>
+	<changes>Added API support</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.replacer.ExtensionReplacer</extension>
 	</extensions>
