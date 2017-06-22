@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Dynamically unload the add-on.<br>
+	Clear filters on session changes (Issue 3683).<br>
 	]]>
     </changes>
 	<extensions>

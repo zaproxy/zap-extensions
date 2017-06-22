@@ -302,6 +302,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 
 	@Override
 	public void discardContexts() {
+		clearAlertFiltersState();
+	}
+
+	private void clearAlertFiltersState() {
 		this.contextManagers.clear();
 		this.alertFilterPanelsMap.clear();
 	}
@@ -479,7 +483,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 
 	@Override
 	public void sessionAboutToChange(Session session) {
-		// Ignore
+		clearAlertFiltersState();
 	}
 
 	@Override
