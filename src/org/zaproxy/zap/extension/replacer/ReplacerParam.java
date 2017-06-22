@@ -153,6 +153,10 @@ public class ReplacerParam extends AbstractParam {
 
     public void setRules(List<ReplacerParamRule> rules) {
         this.rules = new ArrayList<>(rules);
+        saveRules();
+    }
+    
+    private void saveRules() {
 
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_RULES_KEY);
 
@@ -182,6 +186,40 @@ public class ReplacerParam extends AbstractParam {
         enabledTokens.trimToSize();
     }
 
+    public ReplacerParamRule getRule(String desc) {
+    	for (ReplacerParamRule rule : rules) {
+    		if (rule.getDescription().equals(desc)) {
+    			return rule;
+    		}
+    	}
+        return null;
+    }
+    
+    public boolean setEnabled(String desc, boolean enabled) {
+    	ReplacerParamRule rule = this.getRule(desc);
+        if (rule != null) {
+        	rule.setEnabled(enabled);
+            this.saveRules();
+        	return true;
+        }
+    	return false;
+    }
+    
+    public void addRule(ReplacerParamRule rule) {
+    	this.rules.add(rule);
+    	this.saveRules();
+    }
+
+    public boolean removeRule(String desc) {
+    	ReplacerParamRule rule = this.getRule(desc);
+        if (rule != null) {
+        	this.rules.remove(rule);
+            this.saveRules();
+        	return true;
+        }
+    	return false;
+    }
+    
     @ZapApiIgnore
     public boolean isConfirmRemoveToken() {
         return this.confirmRemoveToken;

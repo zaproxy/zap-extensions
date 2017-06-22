@@ -128,4 +128,46 @@ class ReplacerParamRule extends Enableable {
     public boolean appliesToAllInitiators() {
         return initiators == null || initiators.isEmpty();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((initiators == null) ? 0 : initiators.hashCode());
+        result = prime * result + (matchRegex ? 1231 : 1237);
+        result = prime * result + ((matchString == null) ? 0 : matchString.hashCode());
+        result = prime * result + ((matchType == null) ? 0 : matchType.hashCode());
+        result = prime * result + ((replacement == null) ? 0 : replacement.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ReplacerParamRule other = (ReplacerParamRule) obj;
+        if (description == null) {
+            if (other.description != null) return false;
+        } else if (!description.equals(other.description)) return false;
+        if (initiators == null) {
+            if (other.initiators != null) return false;
+        } else if (!initiators.equals(other.initiators)) return false;
+        if (matchRegex != other.matchRegex) return false;
+        if (matchString == null) {
+            if (other.matchString != null) return false;
+        } else if (!matchString.equals(other.matchString)) return false;
+        if (matchType != other.matchType) return false;
+        if (replacement == null) {
+            if (other.replacement != null) return false;
+        } else if (!replacement.equals(other.replacement)) return false;
+        return true;
+    }
 }
