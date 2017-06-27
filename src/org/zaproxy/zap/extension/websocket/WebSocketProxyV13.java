@@ -705,6 +705,9 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 				isValidUtf8Payload = true;
 				return Utf8Util.encodePayloadToUtf8(payload.array(), 0, payload.limit());
 			} catch (InvalidUtf8Exception e) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Unable to decode as UTF-8: " + payload.toString() + " " + Arrays.toString(payload.array()), e);
+				}
 				isValidUtf8Payload  = false;
 				return "<invalid UTF-8>";
 			}

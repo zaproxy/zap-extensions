@@ -17,12 +17,17 @@
  */
 package org.zaproxy.zap.extension.websocket.ui.httppanel.models;
 
+import java.util.Arrays;
+
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
 
 public class StringWebSocketPanelViewModel extends AbstractWebSocketStringPanelViewModel {
 	
+	private static final Logger LOGGER = Logger.getLogger(StringWebSocketPanelViewModel.class);
+
     @Override
     public String getData() {
     	String data;
@@ -36,6 +41,9 @@ public class StringWebSocketPanelViewModel extends AbstractWebSocketStringPanelV
 					data = Constant.messages.getString("websocket.payload.unreadable_binary");
 				} else {
 					data = Constant.messages.getString("websocket.payload.invalid_utf8");
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("Unable to decode " + Arrays.toString((byte[]) webSocketMessage.payload) + " as UTF-8.", e);
+					}
 				}
 			}
         }
