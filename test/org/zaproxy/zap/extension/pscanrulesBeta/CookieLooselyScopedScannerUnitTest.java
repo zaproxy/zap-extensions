@@ -169,4 +169,30 @@ public class CookieLooselyScopedScannerUnitTest extends PassiveScannerTest {
 		// Then
 		assertThat(alertsRaised.size(), is(1));
 	}
+
+	@Test
+	public void shouldScanCookieDomainWithJustTld() throws Exception {
+		// Given
+		HttpMessage msg = createBasicMessage();
+		msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
+		msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=com");
+
+		// When
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+
+		// Then = No exception.
+	}
+
+	@Test
+	public void shouldScanHostWithoutTld() throws Exception {
+		// Given
+		HttpMessage msg = createBasicMessage();
+		msg.setRequestHeader("GET http://intranet/ HTTP/1.1");
+		msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=subdomain.intranet");
+
+		// When
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+
+		// Then = No exception.
+	}
 }
