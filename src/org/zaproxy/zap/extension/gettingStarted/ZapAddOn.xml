@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Getting Started with ZAP Guide</name>
-	<version>6</version>
+	<version>7</version>
 	<status>release</status>
 	<description>A short Getting Started with ZAP Guide</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for 2.6.0.</changes>
+	<changes>Correct step when importing Root CA cert in Firefox (Issue 3724)</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.gettingStarted.ExtensionGettingStarted</extension>
 	</extensions>
