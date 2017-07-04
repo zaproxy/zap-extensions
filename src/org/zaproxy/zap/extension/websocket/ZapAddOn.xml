@@ -12,6 +12,7 @@
 	Set fuzzer script type enabled by default (Issue 2997).<br>
 	Normalise the Session Properties panel Exclude from WebSockets.<br>
 	Implements WebSocketSenderListener.<br>
+	Use JRE decoder for UTF-8 conversions and log (debug) invalid payloads (related to Issue 3324).<br>
 	]]>
 	</changes>
 	<classnames>

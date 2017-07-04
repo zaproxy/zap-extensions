@@ -23,4 +23,8 @@ public class InvalidUtf8Exception extends Exception {
 	public InvalidUtf8Exception(String message) {
 		super(message);
 	}
+
+	public InvalidUtf8Exception(String message, Throwable cause) {
+		super(message, cause);
+	}
 }
