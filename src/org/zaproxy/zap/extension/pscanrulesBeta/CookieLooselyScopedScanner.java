@@ -139,7 +139,8 @@ public class CookieLooselyScopedScanner extends PluginPassiveScanner {
 		if (!cookieDomains[cookieDomains.length - 1].equalsIgnoreCase(hostDomains[hostDomains.length - 1])) {
 			return false;
 		}
-		if (!cookieDomains[cookieDomains.length - 2].equalsIgnoreCase(hostDomains[hostDomains.length - 2])) {
+		if (cookieDomains.length < 2 || hostDomains.length < 2
+				|| !cookieDomains[cookieDomains.length - 2].equalsIgnoreCase(hostDomains[hostDomains.length - 2])) {
 			return false;
 		}
 		return true;
