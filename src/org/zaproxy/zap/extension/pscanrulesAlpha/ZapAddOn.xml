@@ -1,13 +1,12 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>15</version>
+	<version>16</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-		Added scanner that looks for simple hashes of usernames based on context user configuration details.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -53,6 +52,6 @@
 		<file>licenses/metadata-extractor-license.txt</file>
 		<file>licenses/xmpcore-license.txt</file>
 	</files>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.6.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>
