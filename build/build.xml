@@ -403,14 +403,7 @@
 		<build-addon name="jxbrowsermacos" />
 		<build-addon name="jxbrowserwindows" />
 		<build-addon name="openapi" />
-		<build-addon name="pscanrulesAlpha" >
-				<!-- Add the extra classes required -->
-				<jar jarfile="${dist}/${file}" update="true" compress="true">
-					<zipfileset dir="${build}" prefix="">
-						<include name="com/veggiespam/imagelocationscanner/**"/>
-					</zipfileset>
-				</jar>
-			</build-addon>
+		<build-pscanrulesalpha-addon />
 		<build-addon name="requester" />
 		<build-addon name="revisit" />
 		<build-addon name="saml" />
@@ -655,13 +648,41 @@
 		<build-deploy-addon name="onlineMenu" />
 	</target>
 
-	<target name="deploy-pscanrulesAlpha" description="deploy the passive scan rules">
-		<build-deploy-addon name="pscanrulesAlpha" />
+	<macrodef name="build-pscanrulesalpha-addon" description="Builds passive scan rules add-on">
+		<sequential>
+			<build-addon name="pscanrulesAlpha">
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="com/veggiespam/imagelocationscanner/**" />
+					</zipfileset>
+				</jar>
+			</build-addon>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="build-pscanrulesalpha-addon-without-help-indexes" description="Builds passive scan rules add-on">
+		<sequential>
+			<build-addon-without-help-indexes name="pscanrulesAlpha">
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="com/veggiespam/imagelocationscanner/**" />
+					</zipfileset>
+				</jar>
+			</build-addon-without-help-indexes>
+		</sequential>
+	</macrodef>
+
+	<target name="deploy-pscanrulesAlpha" depends="clean, compile" description="deploy the passive scan rules">
+		<build-pscanrulesalpha-addon />
+		<deploy-addon name="pscanrulesAlpha" />
 	</target>
 
-	<target name="deploy-pscanrulesAlpha-without-help-indexes" description="deploy the passive scan rules">
+	<target name="deploy-pscanrulesAlpha-without-help-indexes" depends="clean, compile" description="deploy the passive scan rules">
 		<!-- To facilitate quick Dev builds -->
-		<build-deploy-addon-without-help-indexes name="pscanrulesAlpha" />
+		<build-pscanrulesalpha-addon-without-help-indexes />
+		<deploy-addon name="pscanrulesAlpha" />
 	</target>
 	
 	<target name="deploy-openapi" description="deploy the openapi add-on">
