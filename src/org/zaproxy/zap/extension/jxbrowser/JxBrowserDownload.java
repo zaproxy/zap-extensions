@@ -36,7 +36,7 @@ public class JxBrowserDownload {
      */
     public static void main(String[] args) {
 
-        final String VERSION = "6.14";
+        final String VERSION = "6.14.2";
 
         downloadLibrary(
                 "https://github.com/zaproxy/zap-libs/raw/master/files/jxbrowser/jxbrowser-linux32-" + VERSION + ".jar",
