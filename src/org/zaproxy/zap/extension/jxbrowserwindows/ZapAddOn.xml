@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>JxBrowser (Windows)</name>
-	<version>2</version>
+	<version>3</version>
 	<status>alpha</status>
 	<description>An embedded browser based on Chromium, Windows specific </description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for JxBrowser 6.14 which now accepts 'invalid' certificates.</changes>
+	<changes>Updated for JxBrowser 6.14.2.</changes>
 	<dependencies>
 		<addons>
 			<addon>
