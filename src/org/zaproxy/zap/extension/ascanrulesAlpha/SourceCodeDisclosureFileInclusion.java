@@ -207,6 +207,13 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 	@Override
 	public void scan(HttpMessage originalmsg, String paramname, String paramvalue) {		
 		try {
+			URI uri = originalmsg.getRequestHeader().getURI();
+			String path = uri.getPath();
+			if (path == null || "/".equals(path)) {
+				// No path or empty path, no point continuing.
+				return;
+			}
+
 			if (log.isDebugEnabled()) {
 				log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
 				log.debug("Checking [" + getBaseMsg().getRequestHeader().getMethod() + "] ["
@@ -237,7 +244,6 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 
 			//at this point, there was a sufficient difference between the random filename and the original parameter
 			//so lets try the various path names that might point at the source code for this URL
-			URI uri = originalmsg.getRequestHeader().getURI();
 			String pathMinusLeadingSlash = uri.getPath().substring(1);
 			String pathMinusApplicationContext = uri.getPath().substring( uri.getPath().indexOf("/", 1) + 1);
 

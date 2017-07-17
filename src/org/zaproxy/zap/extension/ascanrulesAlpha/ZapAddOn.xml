@@ -1,17 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>19</version>
+	<version>20</version>
 	<status>alpha</status>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAscanrulesAlphaAscanalpha</url>
 	<changes>
 	<![CDATA[
-	Improve error handling in some scanners.<br>
-	Add MsSQL specific Injection scanner.<br>
-	Issue 3441: Add proper reference links to Proxy Discovery scanner.<br>
-	Issue 3279: Add ELMAH scanner.<br>
-	Issue 3280: Add trace.axd scanner.
+	Correct handling of messages with emtpy path.<br>
   	]]>
 	</changes>
 	<extensions>
