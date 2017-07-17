@@ -12,13 +12,14 @@
 	Allow to select the case on assign replacements.<br>
 	Show/select the correct script in the Edit Zest Action dialogue (Issue 3489).<br>
 	Ensure recorded Sequence scripts can be scanned through context menu (Issue 3536).<br>
+	Updated to support latest selenium addon.<br>
 	]]>
 	</changes>
 	<dependencies>
 		<addons>
 			<addon>
 				<id>selenium</id>
-				<semver>1.*</semver>
+				<semver><![CDATA[ >=2.0.0 & <3.0.0 ]]></semver>
 			</addon>
 		</addons>
 	</dependencies>
