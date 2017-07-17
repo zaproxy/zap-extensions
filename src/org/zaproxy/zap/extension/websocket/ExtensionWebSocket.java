@@ -48,6 +48,7 @@ import org.parosproxy.paros.extension.ExtensionHookMenu;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.extension.filter.ExtensionFilter;
 import org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor;
 import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
@@ -183,6 +184,16 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * This filter allows to change the bytes when passed through ZAP.
 	 */
 	private WebSocketFilter payloadFilter;
+
+	/**
+	 * Flag that controls if the WebSockets tab should be focused when a handshake message is received.
+	 * <p>
+	 * Current behaviour is to focus just once.
+	 * 
+	 * @see #initView(ViewDelegate)
+	 * @see #onHandshakeResponse(HttpMessage, Socket, ZapGetMethod)
+	 */
+	private boolean focusWebSocketsTabOnHandshake;
 	
 	public ExtensionWebSocket() {
 		super(NAME);
@@ -207,6 +218,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		mode = Control.getSingleton().getMode();
 	}
 	
+	@Override
+	public void initView(ViewDelegate view) {
+		super.initView(view);
+
+		focusWebSocketsTabOnHandshake = true;
+	}
+
     @Override
     public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
 		table = new TableWebSocket();
@@ -508,9 +526,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		if (httpMessage.isWebSocketUpgrade()) {
 			logger.debug("Got WebSockets upgrade request. Handle socket connection over to WebSockets extension.");
-			if (View.isInitialised()) {
+			if (focusWebSocketsTabOnHandshake) {
 				// Show the tab in case its been closed
 				this.getWebSocketPanel().setTabFocus();
+				// Don't constantly request focus on the tab, once is enough.
+				focusWebSocketsTabOnHandshake = false;
 			}
 			
 			if (method != null) {
