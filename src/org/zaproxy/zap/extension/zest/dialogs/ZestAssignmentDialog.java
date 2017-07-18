@@ -172,7 +172,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 					Constant.messages.getString("zest.dialog.assign.oper.multiply"),
 					Constant.messages.getString("zest.dialog.assign.oper.divide")
 					}, 
-					za.getOperation());
+					ZestZapUtils.calcOperationToLabel(za.getOperation()));
 			
 			// Enable right click menus
 			this.addFieldListener(FIELD_STRING, ZestZapUtils.stdMenuAdapter()); 
@@ -272,7 +272,7 @@ public class ZestAssignmentDialog extends StandardFieldsDialog implements ZestDi
 			ZestAssignCalc za = (ZestAssignCalc) assign;
 			za.setOperandA(this.getStringValue(FIELD_OPERAND_A));
 			za.setOperandB(this.getStringValue(FIELD_OPERAND_B));
-			za.setOperation(this.getStringValue(FIELD_OPERATION));
+			za.setOperation(ZestZapUtils.labelToCalcOperation(this.getStringValue(FIELD_OPERATION)));
 		}
 
 		if (add) {

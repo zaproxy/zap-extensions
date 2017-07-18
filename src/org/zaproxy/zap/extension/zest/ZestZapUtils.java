@@ -26,7 +26,9 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -96,6 +98,13 @@ public class ZestZapUtils {
 	private static final String ZEST_VAR_VALID_CHRS = "-:.";
 	
 	private static final Logger log = Logger.getLogger(ZestZapUtils.class);
+
+	/**
+	 * A map to convert labels to calc operations.
+	 * 
+	 * @see #labelToCalcOperation(String)
+	 */
+	private static Map<String, String> labelsToCalcOperation;
 	
 	// Only use for debugging for now, as the tree wont be fully updated if indexes change
 	private static boolean showIndexes = false;
@@ -442,7 +451,7 @@ public class ZestZapUtils {
 						Constant.messages.getString("zest.element.assign.calc"), 
 						zsa.getVariableName(), 
 						zsa.getOperandA(),
-						zsa.getOperation(),
+						calcOperationToLabel(zsa.getOperation()),
 						zsa.getOperandB());
 			} else {
 				return indexStr + Constant.messages
@@ -958,5 +967,48 @@ public class ZestZapUtils {
 	public static void setShowIndexes(boolean showIndexes) {
 		ZestZapUtils.showIndexes = showIndexes;
 	}
-	
+
+	/**
+	 * Gets the label for the given calc operation.
+	 *
+	 * @param operation the calc operation.
+	 * @return the label of the operation.
+	 * @see ZestAssignCalc
+	 * @see #labelToCalcOperation(String)
+	 */
+	public static String calcOperationToLabel(String operation) {
+		switch (operation) {
+		case ZestAssignCalc.OPERAND_ADD:
+		default:
+			return Constant.messages.getString("zest.dialog.assign.oper.add");
+		case ZestAssignCalc.OPERAND_SUBTRACT:
+			return Constant.messages.getString("zest.dialog.assign.oper.subtract");
+		case ZestAssignCalc.OPERAND_MULTIPLY:
+			return Constant.messages.getString("zest.dialog.assign.oper.multiply");
+		case ZestAssignCalc.OPERAND_DIVIDE:
+			return Constant.messages.getString("zest.dialog.assign.oper.divide");
+		}
+	}
+
+	/**
+	 * Gets the calc operation for the given label.
+	 *
+	 * @param label the label of the operation.
+	 * @return the calc operation.
+	 * @see ZestAssignCalc
+	 * @see #calcOperationToLabel(String)
+	 */
+	public static String labelToCalcOperation(String label) {
+		if (labelsToCalcOperation == null) {
+			labelsToCalcOperation = new HashMap<>();
+			labelsToCalcOperation.put(Constant.messages.getString("zest.dialog.assign.oper.add"), ZestAssignCalc.OPERAND_ADD);
+			labelsToCalcOperation
+					.put(Constant.messages.getString("zest.dialog.assign.oper.subtract"), ZestAssignCalc.OPERAND_SUBTRACT);
+			labelsToCalcOperation
+					.put(Constant.messages.getString("zest.dialog.assign.oper.multiply"), ZestAssignCalc.OPERAND_MULTIPLY);
+			labelsToCalcOperation
+					.put(Constant.messages.getString("zest.dialog.assign.oper.divide"), ZestAssignCalc.OPERAND_DIVIDE);
+		}
+		return labelsToCalcOperation.get(label);
+	}
 }
