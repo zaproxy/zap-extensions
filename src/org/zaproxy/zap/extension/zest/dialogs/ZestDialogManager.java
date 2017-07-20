@@ -115,6 +115,18 @@ public class ZestDialogManager extends AbstractPanel {
 		initialize();
 	}
 
+	private static ZestRequest getPreviousZestRequest(ScriptNode currentNode){
+		ScriptNode previous = (ScriptNode)currentNode.getPreviousSibling();
+		while(previous != null){
+			Object element = ZestZapUtils.getElement(previous);
+			if(element instanceof ZestRequest){
+				return (ZestRequest)element;
+			}
+			previous = (ScriptNode)previous.getPreviousSibling();
+		}
+		return null;
+	}
+
 	private void initialize() {
 		this.setLayout(new CardLayout());
 		this.setName(Constant.messages.getString("zest.scripts.panel.title"));
@@ -150,16 +162,8 @@ public class ZestDialogManager extends AbstractPanel {
 								showZestAssertionDialog(parent, sn,
 										(ZestAssertion) obj, false);
 							} else if (obj instanceof ZestAssignment) {
-								ScriptNode prev = (ScriptNode) sn
-										.getPreviousSibling();
-								ZestRequest req = null;
-								if (prev != null
-										&& ZestZapUtils.getElement(prev) instanceof ZestRequest) {
-									req = (ZestRequest) ZestZapUtils
-											.getElement(prev);
-								}
-								showZestAssignDialog(parent, sn, req,
-										(ZestAssignment) obj, false);
+								ZestRequest req = getPreviousZestRequest(sn);
+								showZestAssignDialog(parent, sn, req, (ZestAssignment) obj, false);
 							} else if (obj instanceof ZestAction) {
 								showZestActionDialog(parent, sn, null,
 										(ZestAction) obj, false);

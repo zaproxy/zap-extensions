@@ -654,6 +654,11 @@
 		<build-deploy-addon name="zest" />
 	</target>
 
+	<target name="deploy-zest-without-help-indexes" description="deploy the zest extension, without building help indexes">
+		<!-- To facilitate quick Dev builds -->
+		<build-deploy-addon-without-help-indexes name="zest" />
+	</target>
+
 	 <target name="generate-wiki-zest" description="Generates the wiki of zest">
 		<generate-wiki-core addon="zest" />
 	</target>
