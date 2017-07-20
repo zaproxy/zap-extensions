@@ -18,10 +18,16 @@
 package org.zaproxy.zap.extension.browserView;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 
 import org.apache.commons.configuration.FileConfiguration;
 import org.parosproxy.paros.Constant;
@@ -35,8 +41,10 @@ import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelListener;
 public class ResponseBrowserView implements HttpPanelView, HttpPanelViewModelListener {
 
 	public static final String NAME = "ResponseWebView";
-	
+	private static final String RESOURCE = "/org/zaproxy/zap/extension/browserView/resources";
+	private static final ImageIcon ADJUST_HEIGHT_ICON = new ImageIcon(BrowserPanel.class.getResource(RESOURCE + "/adjustHeightIcon.png"));
 	public static final String CAPTION_NAME = Constant.messages.getString("browserView.view.name");
+	public static final String ADJUST_HEIGHT_BUTTON_TOOLTIP = Constant.messages.getString("browserView.panel.adjustheight");
 	
 	private JPanel mainPanel;
 	private BrowserPanel ssb;
@@ -47,8 +55,38 @@ public class ResponseBrowserView implements HttpPanelView, HttpPanelViewModelLis
 		this.model = model;
 		ssb = new BrowserPanel(false);
 		mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(new JScrollPane(ssb));
+		
+		JToolBar toolBar = createToolbar();
+		mainPanel.add(toolBar, BorderLayout.PAGE_START);
+		
+		mainPanel.add(new JScrollPane(ssb), BorderLayout.CENTER);
 		this.model.addHttpPanelViewModelListener(this);
+	}
+	
+
+	private JToolBar createToolbar() {
+		JToolBar toolBar = new JToolBar();
+		toolBar.setFloatable(false);
+		toolBar.setMinimumSize(new Dimension(50,50));
+		JButton button = createAdjustHeightButton(); 
+		toolBar.add(button);
+		return toolBar;
+	}
+	
+	private JButton createAdjustHeightButton() {
+		JButton button = new JButton();
+		button.setToolTipText(ADJUST_HEIGHT_BUTTON_TOOLTIP);
+		button.setIcon(ADJUST_HEIGHT_ICON);
+
+		ActionListener actionListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ssb.adjustPanelHeightToWebsite();
+			}
+		};
+		
+		button.addActionListener(actionListener);
+		return button;
 	}
 	
 	@Override

@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Browser View</name>
-	<version>4</version>
+	<version>5</version>
 	<status>alpha</status>
 	<description>Adds an option to render HTML responses like a browser</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for ZAP 2.4</changes>
+	<changes>Allow to properly scroll the rendered page.</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.browserView.ExtensionHttpPanelBrowserView</extension>
 	</extensions>
