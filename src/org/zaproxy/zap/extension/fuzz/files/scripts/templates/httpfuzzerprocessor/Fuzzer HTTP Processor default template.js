@@ -27,6 +27,12 @@ function processMessage(utils, message) {
 	// To add a message previously sent to results, with custom state:
 	//    utils.addMessageToResults("Type Of Message", myMessage, "Key Custom State", "Value Custom State")
 	// The states' value is shown in the column 'State' of fuzzer results tab
+	// To get the values of the parameters configured in the Add Message Processor Dialog.
+	//    utils.getParameters() 
+	// A map is returned, having as keys the parameters names (as returned by the getRequiredParamsNames()
+	// and getOptionalParamsNames() functions below)
+	// To get the value of a specific configured script parameter
+	//    utils.getParameters().get("exampleParam1")
 
 	// Process fuzzed message...
 	message.getRequestHeader().setHeader("X-Unique-Id", count);
@@ -48,6 +54,12 @@ function processResult(utils, fuzzResult){
 	//    utils.raiseAlert(risk, confidence, name, description)
 	// To obtain the fuzzed message, received from the server:
 	//    fuzzResult.getHttpMessage()
+	// To get the values of the parameters configured in the Add Message Processor Dialog.
+	//    utils.getParameters() 
+	// A map is returned, having as keys the parameters names (as returned by the getRequiredParamsNames()
+	// and getOptionalParamsNames() functions below)
+	// To get the value of a specific configured script parameter
+	//    utils.getParameters().get("exampleParam1")
 
 	var condition = true;
 	if (condition)
@@ -55,3 +67,23 @@ function processResult(utils, fuzzResult){
 	
 	return true;
 }
+
+
+/**
+ * This function is called during the script loading to obtain a list of the names of the required configuration parameters,
+ * that will be shown in the Add Message Processor Dialog for configuration. They can be used
+ * to input dynamic data into the script, from the user interface
+*/
+function getRequiredParamsNames(){
+	return ["exampleParam1", "exampleParam2"];
+}
+
+/**
+ * This function is called during the script loading to obtain a list of the names of the optional configuration parameters,
+ * that will be shown in the Add Message Processor Dialog for configuration. They can be used
+ * to input dynamic data into the script, from the user interface
+*/
+function getOptionalParamsNames(){
+	return ["exampleParam3"];
+}
+

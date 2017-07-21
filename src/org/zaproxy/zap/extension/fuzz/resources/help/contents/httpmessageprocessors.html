@@ -30,6 +30,10 @@ Allows to select the enabled Fuzzer HTTP Processor scripts. The scripts allow yo
 <li>Raise alerts</li>
 </ul>
 
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
 <h3>Payload Reflection Detector</h3>
 Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
 <strong>Note:</strong> This processor is automatically added to the list of processors.

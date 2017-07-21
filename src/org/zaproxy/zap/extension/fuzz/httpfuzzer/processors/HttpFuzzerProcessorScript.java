@@ -39,6 +39,8 @@ public interface HttpFuzzerProcessorScript {
      */
     final static String TYPE_NAME = "httpfuzzerprocessor";
 
+    static final String[] EMPTY_PARAMS = new String[0];
+
     /**
      * Processes the fuzzed message before being forward to the server.
      *
@@ -57,4 +59,12 @@ public interface HttpFuzzerProcessorScript {
      * @throws ScriptException if an error occurs while executing the script
      */
     boolean processResult(HttpFuzzerTaskProcessorUtils utils, HttpFuzzResult result) throws ScriptException;
+
+    default String[] getRequiredParamsNames() {
+        return EMPTY_PARAMS;
+    }
+
+    default String[] getOptionalParamsNames() {
+        return EMPTY_PARAMS;
+    }
 }
