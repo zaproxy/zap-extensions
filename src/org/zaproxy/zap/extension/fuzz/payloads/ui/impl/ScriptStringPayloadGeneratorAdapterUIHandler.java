@@ -50,6 +50,7 @@ import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
+import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
 
 public class ScriptStringPayloadGeneratorAdapterUIHandler
         implements
@@ -162,7 +163,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
             scriptComboBox = new JComboBox<>(new SortedComboBoxModel<ScriptUIEntry>());
             for (ScriptWrapper scriptWrapper : scriptWrappers) {
                 if (scriptWrapper.isEnabled()) {
-                    scriptComboBox.addItem(new ScriptUIEntry(scriptWrapper));
+                    scriptComboBox.addItem(new PayloadGeneratorScriptUIEntry(scriptWrapper));
                 }
             }
             scriptComboBox.addItemListener(new ItemListener() {
@@ -170,7 +171,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                 @Override
                 public void itemStateChanged(ItemEvent e) {
                     if (e.getStateChange() == ItemEvent.SELECTED) {
-                        updatePreviewFor((ScriptUIEntry) e.getItem());
+                        updatePreviewFor((PayloadGeneratorScriptUIEntry) e.getItem());
                     }
                 }
             });
@@ -295,8 +296,8 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
 
         @Override
         public void setPayloadGeneratorUI(ScriptStringPayloadGeneratorAdapterUI payloadGeneratorUI) {
-            scriptComboBox.setSelectedItem(new ScriptUIEntry(payloadGeneratorUI.getScriptWrapper()));
-            ScriptUIEntry scriptUIEntry = (ScriptUIEntry) scriptComboBox.getSelectedItem();
+            scriptComboBox.setSelectedItem(new PayloadGeneratorScriptUIEntry(payloadGeneratorUI.getScriptWrapper()));
+            PayloadGeneratorScriptUIEntry scriptUIEntry = (PayloadGeneratorScriptUIEntry) scriptComboBox.getSelectedItem();
             if (scriptUIEntry != null) {
                 scriptUIEntry.setScriptPayloadGenerator(payloadGeneratorUI.getScriptStringPayloadGenerator());
             }
@@ -305,7 +306,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
 
         @Override
         public ScriptStringPayloadGeneratorAdapterUI getPayloadGeneratorUI() {
-            ScriptUIEntry scriptUIEntry = ((ScriptUIEntry) scriptComboBox.getSelectedItem());
+        	PayloadGeneratorScriptUIEntry scriptUIEntry = ((PayloadGeneratorScriptUIEntry) scriptComboBox.getSelectedItem());
             ScriptWrapper scriptWrapper =  scriptUIEntry.getScriptWrapper();
             return new ScriptStringPayloadGeneratorAdapterUI(scriptWrapper, scriptUIEntry.getScriptPayloadGenerator());
         }
@@ -315,7 +316,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
             if (!validateScriptImpl()) {
                 return null;
             }
-            ScriptUIEntry scriptUIEntry = ((ScriptUIEntry) scriptComboBox.getSelectedItem());
+            PayloadGeneratorScriptUIEntry scriptUIEntry = ((PayloadGeneratorScriptUIEntry) scriptComboBox.getSelectedItem());
             ScriptWrapper scriptWrapper = scriptUIEntry.getScriptWrapper();
             return new ScriptStringPayloadGeneratorAdapter(scriptWrapper, scriptUIEntry.getScriptPayloadGenerator());
         }
@@ -323,7 +324,8 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
         @Override
         public void clear() {
             for (int i = 0; i < scriptComboBox.getItemCount(); i++) {
-                scriptComboBox.getItemAt(i).setScriptPayloadGenerator(null);
+                PayloadGeneratorScriptUIEntry scriptUIEntry = ((PayloadGeneratorScriptUIEntry)scriptComboBox.getItemAt(i));
+                scriptUIEntry.setScriptPayloadGenerator(null);
             }
             getPayloadsPreviewTextArea().setText("");
             setPreviewAndSaveButtonsEnabled(false);
@@ -346,7 +348,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                 return false;
             }
 
-            ScriptUIEntry scriptUIEntry = ((ScriptUIEntry) scriptComboBox.getSelectedItem());
+            PayloadGeneratorScriptUIEntry scriptUIEntry = ((PayloadGeneratorScriptUIEntry) scriptComboBox.getSelectedItem());
             ScriptWrapper scriptWrapper =  scriptUIEntry.getScriptWrapper();
             ScriptStringPayloadGenerator scriptPayloadGenerator = scriptUIEntry.getScriptPayloadGenerator();
             try {
@@ -365,7 +367,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
         }
 
         private boolean validateScriptImpl() {
-            ScriptUIEntry scriptUIEntry = ((ScriptUIEntry) scriptComboBox.getSelectedItem());
+        	PayloadGeneratorScriptUIEntry scriptUIEntry = ((PayloadGeneratorScriptUIEntry) scriptComboBox.getSelectedItem());
             ScriptWrapper scriptWrapper = scriptUIEntry.getScriptWrapper();
             ScriptStringPayloadGenerator scriptPayloadGenerator = scriptUIEntry.getScriptPayloadGenerator();
             if (scriptPayloadGenerator == null) {
@@ -398,19 +400,13 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
             }
             return true;
         }
+        
+        private static class PayloadGeneratorScriptUIEntry extends ScriptUIEntry {
 
-        private static class ScriptUIEntry implements Comparable<ScriptUIEntry> {
-
-            private final ScriptWrapper scriptWrapper;
-            private final String scriptName;
             private ScriptStringPayloadGenerator scriptPayloadGenerator;
-
-            public ScriptUIEntry(ScriptWrapper scriptWrapper) {
-                this.scriptWrapper = scriptWrapper;
-                this.scriptName = scriptWrapper.getName();
-                if (scriptName == null) {
-                    throw new IllegalArgumentException("Script must have a name.");
-                }
+            
+            public PayloadGeneratorScriptUIEntry(ScriptWrapper scriptWrapper){
+                super(scriptWrapper);
             }
 
             public ScriptStringPayloadGenerator getScriptPayloadGenerator() {
@@ -420,54 +416,6 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
             public void setScriptPayloadGenerator(ScriptStringPayloadGenerator scriptPayloadGenerator) {
                 this.scriptPayloadGenerator = scriptPayloadGenerator;
             }
-
-            public ScriptWrapper getScriptWrapper() {
-                return scriptWrapper;
-            }
-
-            @Override
-            public String toString() {
-                return scriptName;
-            }
-
-            @Override
-            public int hashCode() {
-                final int prime = 31;
-                int result = 1;
-                result = prime * result + ((scriptName == null) ? 0 : scriptName.hashCode());
-                return result;
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (this == obj) {
-                    return true;
-                }
-                if (obj == null) {
-                    return false;
-                }
-                if (getClass() != obj.getClass()) {
-                    return false;
-                }
-                ScriptUIEntry other = (ScriptUIEntry) obj;
-                if (scriptName == null) {
-                    if (other.scriptName != null) {
-                        return false;
-                    }
-                } else if (!scriptName.equals(other.scriptName)) {
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public int compareTo(ScriptUIEntry other) {
-                if (other == null) {
-                    return 1;
-                }
-                return scriptName.compareTo(other.scriptName);
-            }
-
         }
     }
 

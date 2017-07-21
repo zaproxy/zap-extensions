@@ -37,6 +37,7 @@ import org.zaproxy.zap.extension.fuzz.payloads.ui.processors.ScriptStringPayload
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
+import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
 
 public class ScriptStringPayloadProcessorAdapterUIHandler
         implements
@@ -214,68 +215,6 @@ public class ScriptStringPayloadProcessorAdapterUIHandler
             }
             return new ScriptStringPayloadProcessorAdapter(
                     ((ScriptUIEntry) scriptComboBox.getSelectedItem()).getScriptWrapper());
-        }
-
-        private static class ScriptUIEntry implements Comparable<ScriptUIEntry> {
-
-            private final ScriptWrapper scriptWrapper;
-            private final String scriptName;
-
-            public ScriptUIEntry(ScriptWrapper scriptWrapper) {
-                this.scriptWrapper = scriptWrapper;
-                this.scriptName = scriptWrapper.getName();
-                if (scriptName == null) {
-                    throw new IllegalArgumentException("Script must have a name.");
-                }
-            }
-
-            public ScriptWrapper getScriptWrapper() {
-                return scriptWrapper;
-            }
-
-            @Override
-            public String toString() {
-                return scriptName;
-            }
-
-            @Override
-            public int hashCode() {
-                final int prime = 31;
-                int result = 1;
-                result = prime * result + ((scriptName == null) ? 0 : scriptName.hashCode());
-                return result;
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (this == obj) {
-                    return true;
-                }
-                if (obj == null) {
-                    return false;
-                }
-                if (getClass() != obj.getClass()) {
-                    return false;
-                }
-                ScriptUIEntry other = (ScriptUIEntry) obj;
-                if (scriptName == null) {
-                    if (other.scriptName != null) {
-                        return false;
-                    }
-                } else if (!scriptName.equals(other.scriptName)) {
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public int compareTo(ScriptUIEntry other) {
-                if (other == null) {
-                    return 1;
-                }
-                return scriptName.compareTo(other.scriptName);
-            }
-
         }
     }
 
