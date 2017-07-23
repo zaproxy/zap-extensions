@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Correct handling of messages with emtpy path.<br>
+	Add Get for Post Scanner.<br>
   	]]>
 	</changes>
 	<extensions>
@@ -18,6 +19,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleSimpleActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ExampleFileActiveScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.ElmahScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.GetForPostScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpOnlySite</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpoxyScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HttpsAsHttpScanner</ascanrule>
