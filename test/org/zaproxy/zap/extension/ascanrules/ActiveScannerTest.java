@@ -20,9 +20,9 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,7 +54,6 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.testng.reporters.Files;
 import org.zaproxy.zap.extension.ScannerTestUtils;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
@@ -252,9 +251,9 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
     }
 
     public String getHtml(String name, Map<String, String> params) {
-        String fileName = BASE_RESOURCE_DIR + this.getClass().getSimpleName() + "/" + name;
-        try (FileInputStream fis = new FileInputStream(fileName)) {
-            String html = Files.readFile(fis);
+        File file = new File(BASE_RESOURCE_DIR + this.getClass().getSimpleName() + "/" + name);
+        try {
+            String html = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             if (params != null) {
                 // Replace all of the supplied parameters
                 for (Entry<String, String> entry : params.entrySet()) {
@@ -263,7 +262,7 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
             }
             return html;
         } catch (IOException e) {
-            System.err.println("Failed to read file " + new File(fileName).getAbsolutePath());
+            System.err.println("Failed to read file " + file.getAbsolutePath());
             throw new RuntimeException(e);
         }
     }
