@@ -10,6 +10,7 @@
 	Remove usage of core filter functionality.<br>
 	Do not set messages when switching views if text view shows an error message (Issue 4108)<br>
 	Add rewind to fix issue #4149 <br>
+	Added Websocket Sender script interface <br>
 	]]>
 	</changes>
 	<classnames>
@@ -37,6 +38,7 @@
 	<filters/>
 	<files>
 		<file>scripts/templates/websocketfuzzerprocessor/Fuzzer WebSocket Processor default template.js</file>
+		<file>scripts/templates/websocketsender/WebsocketSender Default Template.js</file>
 	</files>
 	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>

@@ -34,6 +34,8 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ImageIcon;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -62,6 +64,7 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
@@ -71,6 +74,8 @@ import org.zaproxy.zap.extension.httppanel.component.HttpPanelComponentInterface
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelDefaultViewSelector;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
 import org.zaproxy.zap.extension.httppanel.view.hex.HttpPanelHexView;
+import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.websocket.brk.PopupMenuAddBreakWebSocket;
 import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointMessageHandler;
 import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInterface;
@@ -119,6 +124,17 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Name of this extension.
 	 */
 	public static final String NAME = "ExtensionWebSocket";
+
+	/**
+	 * Used to identify the type of Websocket sender scripts
+	 */
+	public static final String SCRIPT_TYPE_WEBSOCKET_SENDER = "websocketsender";
+
+	/**
+	 * Icon to be shown in script tab for sender scripts
+	 */
+	private static final ImageIcon WEBSOCKET_SENDER_SCRIPT_ICON = new ImageIcon(
+			ZAP.class.getResource("/resource/icon/16/script-httpsender.png"));
 
 	/**
 	 * Used to shorten the time, a listener is started on a WebSocket channel.
@@ -182,8 +198,21 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * @see #onHandshakeResponse(HttpMessage, Socket, ZapGetMethod)
 	 */
 	private boolean focusWebSocketsTabOnHandshake;
-	
+
+	/**
+	 * A {@link HttpSenderListener} implementation for removing Websocket extensions, such as compression.
+	 */
 	private HttpSenderListenerImpl httpSenderListener;
+
+	/**
+	 * A {@link WebSocketSenderScriptListener} that runs user-provided Websocket sender scripts.
+	 */
+	private WebSocketSenderScriptListener webSocketSenderScriptListener;
+
+	/**
+	 * Script type used to register Websocket sender scripts.
+	 */
+	private ScriptType websocketSenderSciptType;
 
 	public ExtensionWebSocket() {
 		super(NAME);
@@ -350,6 +379,19 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 					httpSendEditor.addPersistentConnectionListener(this);
 				}
 			}
+			// setup sender script interface
+			ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+			if (extensionScript != null) {
+				websocketSenderSciptType = new ScriptType(
+						SCRIPT_TYPE_WEBSOCKET_SENDER,
+						"websocket.script.type.websocketsender",
+						WEBSOCKET_SENDER_SCRIPT_ICON,
+						true,
+						true);
+				extensionScript.registerScriptType(websocketSenderSciptType);
+				webSocketSenderScriptListener = new WebSocketSenderScriptListener();
+				addAllChannelSenderListener(webSocketSenderScriptListener);
+			}
 		}
 	}
 	
@@ -412,6 +454,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				resenderDialog.unload();
 			}
 		}
+
+		// unregister the WebSocket Sender script type and remove the listener
+		ExtensionScript extensionScript = Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+		if (extensionScript != null) {
+    		removeAllChannelSenderListener(webSocketSenderScriptListener);
+            extensionScript.removeScripType(websocketSenderSciptType);
+        }
 	}
 
 	@Override
