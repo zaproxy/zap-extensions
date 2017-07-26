@@ -801,6 +801,7 @@
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
 				<include name="accessControl-${status}-*.zap"/>
+				<include name="cspscanner-${status}-*.zap"/>
 				<include name="formhandler-${status}-*.zap"/>
 				<include name="jxbrowser*-{status}-*.zap"/>
 				<include name="openapi-${status}-*.zap"/>
