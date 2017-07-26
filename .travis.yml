@@ -1,3 +1,7 @@
 language: java
 script: ant -buildfile build/build.xml test
 sudo: false
+
+jdk:
+  - oraclejdk8
+
