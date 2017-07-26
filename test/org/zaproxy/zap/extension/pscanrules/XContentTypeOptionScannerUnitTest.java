@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.pscanrules;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Locale;
+
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
@@ -51,6 +53,29 @@ public class XContentTypeOptionScannerUnitTest extends PassiveScannerTest {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldNotRaiseAlertIfHeaderValueHasDifferentCase() throws HttpMalformedHeaderException {
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            // Given
+            Locale.setDefault(new Locale("tr", "tr"));
+            HttpMessage msg = new HttpMessage();
+            msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+            msg.setResponseBody("<html></html>");
+            msg.setResponseHeader(
+                    "HTTP/1.1 200 OK\r\n" +
+                    "X-Content-Type-Options: NOSNIFF\r\n" +
+                    "Content-Type: text/html;charset=ISO-8859-1\r\n" +
+                    "Content-Length: " + msg.getResponseBody().length() + "\r\n");
+            // When
+            rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+            // Then
+            assertThat(alertsRaised.size(), equalTo(0));
+        } finally {
+            Locale.setDefault(defaultLocale);
+        }
     }
 
     @Test

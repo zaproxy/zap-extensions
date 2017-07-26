@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Locale;
 import java.util.Vector;
 
 import net.htmlparser.jericho.Source;
@@ -70,7 +71,7 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 			} else {
 				for (String xContentTypeOptionsDirective : xContentTypeOptions) {
 					//'nosniff' is currently the only defined value for this header, so this logic is ok
-					if (xContentTypeOptionsDirective.toLowerCase().indexOf("nosniff") < 0) {
+					if (xContentTypeOptionsDirective.toLowerCase(Locale.ROOT).indexOf("nosniff") < 0) {
 						this.raiseAlert(msg, id, xContentTypeOptionsDirective);
 					}
 				}
