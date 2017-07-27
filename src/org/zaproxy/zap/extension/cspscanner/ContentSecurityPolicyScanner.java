@@ -111,7 +111,8 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 		if (xcspOptions != null && !xcspOptions.isEmpty()) {
 			raiseAlert(msg, Constant.messages.getString(MESSAGE_PREFIX + "xcsp.name"), id,
 					Constant.messages.getString(MESSAGE_PREFIX + "xcsp.desc"),
-					getHeaderField(msg, HTTP_HEADER_XCSP).get(0), cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW);
+					getHeaderField(msg, HTTP_HEADER_XCSP).get(0), cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
+					xcspOptions.get(0));
 		}
 
 		// X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
@@ -120,7 +121,8 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 			raiseAlert(msg, Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.name"), id,
 					Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.desc"),
 					getHeaderField(msg, HTTP_HEADER_WEBKIT_CSP).get(0),
-					cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW);
+					cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
+					xwkcspOptions.get(0));
 		}
 
 		if (cspHeaderFound) {
@@ -139,7 +141,8 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 					noticesRisk = Alert.RISK_INFO;
 				}
 				raiseAlert(msg, Constant.messages.getString(MESSAGE_PREFIX + "notices.name"), id,
-						cspNoticesString, getHeaderField(msg, HTTP_HEADER_CSP).get(0), noticesRisk);
+						cspNoticesString, getHeaderField(msg, HTTP_HEADER_CSP).get(0), noticesRisk,
+						cspOptions.get(0));
 			}
 			
 			List<String> allowedWildcardSources = getAllowedWildcardSources(policyText, origin);
@@ -148,19 +151,22 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 				String wildcardSrcDesc = MessageFormat
 						.format(Constant.messages.getString(MESSAGE_PREFIX + "wildcard.desc"), allowedWildcardSrcs);
 				raiseAlert(msg, Constant.messages.getString(MESSAGE_PREFIX + "wildcard.name"), id, wildcardSrcDesc,
-						getHeaderField(msg, HTTP_HEADER_CSP).get(0), Alert.RISK_MEDIUM);
+						getHeaderField(msg, HTTP_HEADER_CSP).get(0), Alert.RISK_MEDIUM,
+						cspOptions.get(0));
 			}
 			
 			if (pol.allowsUnsafeInlineScript()) {
 				raiseAlert(msg, Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.name"), id,
 						Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.desc"),
-						getHeaderField(msg, HTTP_HEADER_CSP).get(0), Alert.RISK_MEDIUM);
+						getHeaderField(msg, HTTP_HEADER_CSP).get(0), Alert.RISK_MEDIUM,
+						cspOptions.get(0));
 			}
 			
 			if (pol.allowsUnsafeInlineStyle()) {
 				raiseAlert(msg, Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.name"), id,
 						Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.desc"),
-						getHeaderField(msg, HTTP_HEADER_CSP).get(0), Alert.RISK_MEDIUM);
+						getHeaderField(msg, HTTP_HEADER_CSP).get(0), Alert.RISK_MEDIUM,
+						cspOptions.get(0));
 			}
 		}
 
@@ -177,8 +183,8 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 		ArrayList<Notice> errorsList = Notice.getAllErrors(notices);
 		if (!errorsList.isEmpty()) {
 			returnSb.append(Constant.messages.getString(MESSAGE_PREFIX + "notices.errors")).append(NEWLINE);
-			for (int idx = 0; idx == errorsList.size() - 1; idx++) {
-				returnSb.append(errorsList.get(idx).show()).append(NEWLINE);
+			for (Notice notice : errorsList) {
+				returnSb.append(notice.show()).append(NEWLINE);
 				// Ex: 1:1: Unrecognised directive-name: "image-src".
 			}
 		}
@@ -186,8 +192,8 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 		ArrayList<Notice> warnList = Notice.getAllWarnings(notices);
 		if (!warnList.isEmpty()) {
 			returnSb.append(Constant.messages.getString(MESSAGE_PREFIX + "notices.warnings")).append(NEWLINE);
-			for (int idx = 0; idx == warnList.size() - 1; idx++) {
-				returnSb.append(warnList.get(idx).show()).append(NEWLINE);
+			for (Notice notice : warnList) {
+				returnSb.append(notice.show()).append(NEWLINE);
 				// Ex: 1:25: This host name is unusual, and likely meant to be a
 				// keyword that is missing the required quotes: 'none'.
 			}
@@ -196,8 +202,8 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 		ArrayList<Notice> infoList = Notice.getAllInfos(notices);
 		if (!infoList.isEmpty()) {
 			returnSb.append(Constant.messages.getString(MESSAGE_PREFIX + "notices.infoitems")).append(NEWLINE);
-			for (int idx = 0; idx == infoList.size() - 1; idx++) {
-				returnSb.append(infoList.get(idx).show()).append(NEWLINE);
+			for (Notice notice : infoList) {
+				returnSb.append(notice.show()).append(NEWLINE);
 				// Ex: 1:31: A draft of the next version of CSP deprecates
 				// report-uri in favour of a new report-to directive.
 			}
@@ -286,7 +292,7 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
 
-	private void raiseAlert(HttpMessage msg, String name, int id, String description, String param, int risk) {
+	private void raiseAlert(HttpMessage msg, String name, int id, String description, String param, int risk, String evidence) {
 		String alertName = StringUtils.isEmpty(name) ? getName() : getName() + ": " + name;
 		
 		Alert alert = new Alert(getPluginId(), risk, Alert.CONFIDENCE_MEDIUM, // PluginID, Risk, Reliability
@@ -298,7 +304,7 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 				"", // Other info
 				getSolution(), // Solution
 				getReference(), // References
-				"", // Evidence
+				evidence, // Evidence
 				16, // CWE-16: Configuration
 				15, // WASC-15: Application Misconfiguration
 				msg); // HttpMessage

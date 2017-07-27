@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Content Security Policy Scanner</name>
-	<version>3</version>
+	<version>4</version>
 	<status>alpha</status>
 	<description>Content Security Policy (CSP) Scanner</description>
 	<author>ZAP Dev Team</author>
@@ -10,8 +10,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-		Upgraded to Salvation library version 2.3.0.</br>
-		Add support for checking if worker-src allows wildcard sources.<br>
+		Fixed missing error and warning messages.<br>
+		Added evidence.<br>
 	]]>
 	</changes>
 	<extensions>
