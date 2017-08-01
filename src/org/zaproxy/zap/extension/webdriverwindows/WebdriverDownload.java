@@ -35,35 +35,56 @@ public class WebdriverDownload {
      * 
      * @param args
      */
-	public static void main(String[] args) {
+	public static int main(String[] args) {
+        String baseDir;
+        if (args.length == 1) {
+            File dir = new File(args[0]);
+            if (dir.isDirectory()) {
+                baseDir = dir.getAbsolutePath();
+            } else {
+                System.out.println(dir.getAbsolutePath() + 
+                        " is not a directory - specify the root directory of the repo");
+                return -1;
+            }
+        } else {
+            baseDir = Paths.get("").toAbsolutePath().toString();
+            if (baseDir.endsWith("build")) {
+                // Likely to be being invoked from the build script
+                baseDir += "/..";
+            }
+        }
+        // sanity check
+        File srcdir = new File(baseDir, "src");
+        if (!srcdir.isDirectory()) {
+            System.out.println(srcdir.getAbsolutePath() + 
+                    " is not a directory - specify the root directory of the repo");
+            return -1;
+            
+        }
 		
         downloadDriver(
                 "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/windows/32/geckodriver.exe",
-                "files/webdriver/windows/32/geckodriver.exe");
+                srcdir, "files/webdriver/windows/32/geckodriver.exe");
         downloadDriver(
                 "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/windows/64/geckodriver.exe",
-                "files/webdriver/windows/64/geckodriver.exe");
+                srcdir, "files/webdriver/windows/64/geckodriver.exe");
 
         downloadDriver(
                 "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/windows/32/chromedriver.exe",
-                "files/webdriver/windows/32/chromedriver.exe");
+                srcdir, "files/webdriver/windows/32/chromedriver.exe");
 
         downloadDriver(
                 "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/windows/32/IEDriverServer.exe",
-                "files/webdriver/windows/32/IEDriverServer.exe");
+                srcdir, "files/webdriver/windows/32/IEDriverServer.exe");
         downloadDriver(
                 "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/windows/64/IEDriverServer.exe",
-                "files/webdriver/windows/64/IEDriverServer.exe");
+                srcdir, "files/webdriver/windows/64/IEDriverServer.exe");
+        return 0;
     }
     
-    private static void downloadDriver(String urlStr, String destFile) {
-        String baseDir = "src/";
-        if (Paths.get("").toAbsolutePath().toString().endsWith("build")) {
-            // Likely to be being invoked from the build script
-            baseDir = "../src/";
-        }
+    private static void downloadDriver(String urlStr, File baseDir, String destFile) {
         File dest = new File(
-                baseDir + WebdriverDownload.class.getPackage().getName().replace(".", "/") + "/" + destFile);
+                baseDir, WebdriverDownload.class.getPackage().getName().replace(".", "/") + "/" + destFile);
         if (dest.exists()) {
             System.out.println("Already exists: " + dest.getAbsolutePath());
             return;
