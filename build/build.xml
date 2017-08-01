@@ -49,6 +49,14 @@
 		<delete dir="../src/org/zaproxy/zap/extension/webdriverwindows/files"  includeEmptyDirs="true" />
 	</target>
 
+	<target name="clean-files"  description="delete files downloaded by download-files">
+		<antcall target="clean-webdrivers"/>
+	</target>
+
+	<target name="download-files" description="download the files required by any of the add-ons">
+		<antcall target="download-webdrivers"/>
+	</target>
+
 	<target name="init">
 		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${dist}" />
@@ -401,7 +409,7 @@
 		</sequential>
 	</macrodef>
 
-	<target name="build-all" depends="clean,compile,download-webdrivers" description="build all of the extensions">
+	<target name="build-all" depends="clean,compile,download-files" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 		
 		<!-- Keep in alphabetical order ;) -->
@@ -669,6 +677,7 @@
 	<target name="download-webdrivers" depends="compile" description="download the webdriver files">
 		<!-- This must be called before the WebDriver add-ons are built -->
 		<!-- It is not included by default in the build as it always downloads the file -->
+		<property name="rootdir" location="${ant.file}/../.."/>
 		<java classname="org.zaproxy.zap.extension.webdriverlinux.WebdriverDownload">
 			<classpath>
 				<fileset dir="${dist.lib.dir}">
@@ -677,6 +686,7 @@
 				</fileset>
 				<path location="${build}" />
 			</classpath>
+			<arg value="${rootdir}"/>
 		</java>
 		<java classname="org.zaproxy.zap.extension.webdrivermacos.WebdriverDownload">
 			<classpath>
@@ -686,6 +696,7 @@
 				</fileset>
 				<path location="${build}" />
 			</classpath>
+			<arg value="${rootdir}"/>
 		</java>
 		<java classname="org.zaproxy.zap.extension.webdriverwindows.WebdriverDownload">
 			<classpath>
@@ -695,6 +706,7 @@
 				</fileset>
 				<path location="${build}" />
 			</classpath>
+			<arg value="${rootdir}"/>
 		</java>
 	</target>
 
