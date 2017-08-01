@@ -40,12 +40,20 @@
 		<delete dir="${test.results.dir}" includeEmptyDirs="true" />
 	</target>
 
-	<target name="clean-libs">
+	<target name="clean-jxbrowser">
 		<!-- Not included in 'clean' as thats called when each add-on is built -->
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserlinux32/lib"  includeEmptyDirs="true" />
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserlinux64/lib"  includeEmptyDirs="true" />
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowsermacos/lib"  includeEmptyDirs="true" />
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserwindows/lib"  includeEmptyDirs="true" />
+	</target>
+
+	<target name="clean-files"  description="delete files downloaded by download-files">
+		<antcall target="clean-jxbrowser"/>
+	</target>
+
+	<target name="download-files" description="download the files required by any of the add-ons">
+		<antcall target="download-jxbrowser"/>
 	</target>
 
 	<target name="init">
@@ -371,7 +379,7 @@
 		</sequential>
 	</macrodef>
 
-	<target name="build-all" depends="clean,compile,download-jxbrowser" description="build all of the extensions">
+	<target name="build-all" depends="clean,compile,download-files" description="build all of the extensions">
 		<delete file="${versions.file}"/>
 		
 		<!-- 'Standard' addons (keep in alphabetical order ;) -->
@@ -386,6 +394,7 @@
 		<build-addon name="cmss" />
 		<build-addon name="codedx"/>
 		<build-addon name="communityScripts"/>
+		<build-addon name="cspscanner"/>
 		<build-addon name="customreport"/>
 		<build-addon name="domxss"/>
 		<build-addon name="exportreport" />
@@ -598,9 +607,10 @@
 		<build-deploy-addon name="importLogFiles" />
 	</target>
 
-	<target name="download-jxbrowser" depends="" description="download the jxbrowser files">
+	<target name="download-jxbrowser" depends="compile" description="download the jxbrowser files">
 		<!-- This must be called before the platform specific jxbrowser add-ons are built -->
 		<!-- It is not included by default in the build as it always downloads the file -->
+		<property name="rootdir" location="${ant.file}/../.."/>
 		<java classname="org.zaproxy.zap.extension.jxbrowser.JxBrowserDownload">
 			<classpath>
 				<fileset dir="${dist.lib.dir}">
@@ -609,6 +619,7 @@
 				</fileset>
 				<path location="${build}" />
 			</classpath>
+			<arg value="${rootdir}"/>
 		</java>
 	</target>
 
