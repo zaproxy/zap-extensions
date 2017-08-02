@@ -814,7 +814,7 @@
 				<include name="accessControl-${status}-*.zap"/>
 				<include name="cspscanner-${status}-*.zap"/>
 				<include name="formhandler-${status}-*.zap"/>
-				<include name="jxbrowser*-{status}-*.zap"/>
+				<include name="jxbrowser*-${status}-*.zap"/>
 				<include name="openapi-${status}-*.zap"/>
 				<include name="sequence-${status}-*.zap"/>
 				<include name="soap-${status}-*.zap"/>
@@ -828,7 +828,7 @@
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="jxbrowser*-{status}-*.zap"/>
+				<include name="jxbrowser*-${status}-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
