@@ -1,15 +1,14 @@
 <zapaddon>
 	<name>Linux WebDrivers</name>
-	<version>2</version>
+	<version>3</version>
 	<status>beta</status>
 	<description>Linux WebDrivers for Firefox and Chrome.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Update geckodriver to v0.14.0<br>
-	Download files from zap-libs repo<br>
-	Promote to beta<br>
+	Update geckodriver to v0.18.0<br>
+	Update chromedriver to 2.31<br>
 	]]>
 	</changes>
 	<extensions/>
