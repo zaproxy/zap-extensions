@@ -1,28 +1,22 @@
 <zapaddon>
 	<name>Ajax Spider</name>
-	<version>17</version>
+	<version>18</version>
 	<status>release</status>
 	<description>Allows you to spider sites that make heavy use of JavaScript using Crawljax</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
-	Show alerts/tags in the AJAX Spider tab.<br>
-	Use a custom initiator ID (10) for AJAX Spider requests.<br>
-	Show always the latest configured browsers in AJAX Spider dialogue (Issue 3057).<br>
-	Honour global excluded URLs (Issue 3172).<br>
-	Reset URL counter on session change.<br>
-	Show excluded URLs in the AJAX Spider tab and through the ZAP API.<br>
-	Use provided browsers from Selenium add-on.<br>
-	Show messages that were not successful because of I/O errors.<br>
-	Ensure New Scan button is enabled, when the mode allows it.<br>
+	Update to support Selenium version 3.4.0 (Issue 3509).<br>
+	Fix WebDriver process leak (Issue 3155).<br>
 	]]>
 	</changes>
 	<dependencies>
+		<javaversion>1.8</javaversion>
 		<addons>
 			<addon>
 				<id>selenium</id>
-				<semver><![CDATA[ >=1.1.0 & <2.0.0 ]]></semver>
+				<semver>2.*</semver>
 			</addon>
 		</addons>
 	</dependencies>

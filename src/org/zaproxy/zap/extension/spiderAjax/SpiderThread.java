@@ -50,6 +50,7 @@ import com.crawljax.browser.EmbeddedBrowser;
 import com.crawljax.browser.WebDriverBackedEmbeddedBrowser;
 import com.crawljax.core.CrawljaxRunner;
 import com.crawljax.core.configuration.BrowserConfiguration;
+import com.crawljax.core.configuration.CrawlScope;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurationBuilder;
 import com.crawljax.core.configuration.ProxyConfiguration;
@@ -157,6 +158,15 @@ public class SpiderThread implements Runnable {
 	
 	public CrawljaxConfiguration createCrawljaxConfiguration() {
 		CrawljaxConfigurationBuilder configurationBuilder = CrawljaxConfiguration.builderFor(target.getStartUri().toString());
+
+		// For Crawljax assume everything in scope, SpiderProxyListener does the actual scope checks.
+		configurationBuilder.setCrawlScope(new CrawlScope() {
+
+			@Override
+			public boolean isInScope(String url) {
+				return true;
+			}
+		});
 
 		configurationBuilder.setProxyConfig(ProxyConfiguration.manualProxyOn(LOCAL_PROXY_IP, proxyPort));
 

@@ -6,7 +6,7 @@
 	<classpathentry kind="lib" path="lib/commons-configuration-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
-	<classpathentry kind="lib" path="lib/crawljax-core-3.6.jar"/>
+	<classpathentry kind="lib" path="lib/crawljax-core-3.7.jar"/>
 	<classpathentry kind="lib" path="lib/diffutils-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/fuzz-beta-4.zap"/>
 	<classpathentry kind="lib" path="lib/guice-3.0.jar"/>
@@ -39,7 +39,5 @@
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/selenium-server-standalone-2.53.1.jar"/>
 	<classpathentry kind="lib" path="lib/htmlunit-driver-standalone-2.21.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.7.5.jar"/>
-	<classpathentry kind="lib" path="lib/jgrapht-0.8.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
