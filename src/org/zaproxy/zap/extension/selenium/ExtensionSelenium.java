@@ -45,6 +45,8 @@ import org.openqa.selenium.safari.SafariDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.api.API;
@@ -70,7 +72,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * The version of the extension. As consistency should be kept in sync with the version of the add-on (under ZapAddOn.xml
      * file).
      */
-    private static final Version CURRENT_VERSION = new Version("1.1.0");
+    private static final Version CURRENT_VERSION = new Version("2.0.0");
 
     private SeleniumOptions options;
     private SeleniumOptionsPanel optionsPanel;
@@ -105,6 +107,12 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      */
     private List<ProvidedBrowserUI> providedBrowserUIList;
 
+    /**
+     * A list containing all of the proxied WebDrivers opened, so that they can
+     * be closed when ZAP is closed.
+     */
+    private List<WebDriver> proxiedWebDrivers = new ArrayList<WebDriver>();
+
     public ExtensionSelenium() {
         super(NAME, CURRENT_VERSION);
     }
@@ -123,6 +131,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public String getAuthor() {
         return Constant.ZAP_TEAM;
     }
+    
+    @Override
+    public int getOrder() {
+        return 300;
+    }
 
     @Override
     public void init() {
@@ -137,7 +150,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         addBuiltInProvider(Browser.FIREFOX);
         addBuiltInProvider(Browser.HTML_UNIT);
         addBuiltInProvider(Browser.INTERNET_EXPLORER);
-        addBuiltInProvider(Browser.OPERA);
         addBuiltInProvider(Browser.PHANTOM_JS);
         addBuiltInProvider(Browser.SAFARI);
 
@@ -166,6 +178,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         if (getView() != null) {
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
+            extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuOpenInBrowser(this));
         }
 
         API.getInstance().registerApiImplementor(seleniumApi);
@@ -181,6 +194,20 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         super.unload();
 
         API.getInstance().removeApiImplementor(seleniumApi);
+    }
+    
+    @Override
+    public void stop() {
+        super.stop();
+        for (WebDriver wd : this.proxiedWebDrivers) {
+            // Just to make sure
+            try {
+                wd.close();
+                wd.quit();
+            } catch (Exception ex) {
+                // Ignore - the user might well have already closed the browser
+            }
+        }
     }
 
     /**
@@ -258,6 +285,36 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      */
     public List<ProvidedBrowserUI> getProvidedBrowserUIList() {
         return Collections.unmodifiableList(providedBrowserUIList);
+    }
+
+    public List<ProvidedBrowserUI> getUsableProvidedBrowserUIList() {
+        return this.getUsableProvidedBrowserUIList(false);
+    }
+
+    public List<ProvidedBrowserUI> getUsableProvidedBrowserUIList(boolean incHeadless) {
+        List<ProvidedBrowserUI> list = new ArrayList<ProvidedBrowserUI>();
+        for (ProvidedBrowserUI provided : providedBrowserUIList) {
+            if (provided.getBrowser().isConfigured() && 
+                    (incHeadless || !provided.getBrowser().isHeadless())) {
+                list.add(provided);
+            }
+        }
+        return list;
+    }
+
+    public List<String> getUsableProvidedBrowserUINameList() {
+        return this.getUsableProvidedBrowserUINameList(false);
+    }
+
+    public List<String> getUsableProvidedBrowserUINameList(boolean incHeadless) {
+        List<String> list = new ArrayList<String>();
+        for (ProvidedBrowserUI provided : providedBrowserUIList) {
+            if (provided.getBrowser().isConfigured() && 
+                    (incHeadless || !provided.getBrowser().isHeadless())) {
+                list.add(provided.getName());
+            }
+        }
+        return list;
     }
 
     /**
@@ -372,6 +429,96 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
         return getWebDriverImpl(requester, providedBrowserId, proxyAddress, proxyPort);
+    }
+    
+    /**
+     * Returns a WebDriver configured to proxy via ZAP
+     * @param requester the ZAP component that will use the browser
+     * @param providedBrowserId the browser id
+     * @return
+     */
+    public WebDriver getWebDriverProxyingViaZAP(int requester, String providedBrowserId) {
+        return this.getWebDriver(requester, providedBrowserId, 
+                Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(), 
+                Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
+    }
+
+    /**
+     * Opens the identified browser for manual proxying through ZAP
+     * @param providedBrowserId the browser id
+     */
+    public WebDriver getProxiedBrowser(String providedBrowserId) {
+        return this.getProxiedBrowser(providedBrowserId, null);
+    }
+
+    /**
+     * Opens the identified browser for manual proxying through ZAP
+     * @param browserName the browser name
+     */
+    public WebDriver getProxiedBrowserByName(final String browserName) {
+        return this.getProxiedBrowserByName(browserName, null);
+    }
+
+    /**
+     * Opens the identified browser for manual proxying through ZAP
+     * @param browserName the browser name
+     * @param url the url to open
+     */
+    public WebDriver getProxiedBrowserByName(final String browserName, final String url) {
+        return this.getProxiedBrowserByName(HttpSender.PROXY_INITIATOR, browserName, url);
+    }
+
+    /**
+     * Opens the identified browser for proxying through ZAP
+     * @param requester the ZAP component that will use the browser
+     * @param browserName the browser name
+     * @param url the url to open
+     */
+    public WebDriver getProxiedBrowserByName(final int requester, final String browserName, final String url) {
+        for (ProvidedBrowserUI provided : providedBrowserUIList) {
+            if (provided.getName().equals(browserName)) {
+                return getProxiedBrowser(requester, provided.getBrowser().getId(), url);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Opens the browser for manual proxying through ZAP
+     * @param provided the browser
+     * @param url the URL to open
+     */
+    public WebDriver getProxiedBrowser(final ProvidedBrowserUI provided, final String url) {
+        return getProxiedBrowser(provided.getBrowser().getId(), url);
+    }
+
+    /**
+     * Opens the browser for manual proxying through ZAP
+     * @param providedBrowserId the browser id
+     * @param url the URL to open
+     */
+    public WebDriver getProxiedBrowser(final String providedBrowserId, final String url) {
+        return this.getProxiedBrowser(HttpSender.PROXY_INITIATOR, providedBrowserId, url);
+    }
+
+    /**
+     * Opens the browser for manual proxying through ZAP
+     * @param requester the ZAP componenet that will use this browser
+     * @param providedBrowserId the browser id
+     * @param url the URL to open
+     */
+    public WebDriver getProxiedBrowser(final int requester, final String providedBrowserId, final String url) {
+        WebDriver webDriver = getWebDriver(requester, providedBrowserId, 
+            Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp(), 
+            Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort());
+
+        if (webDriver != null) {
+            proxiedWebDrivers.add(webDriver);
+            if (url != null) {
+                webDriver.get(url);
+            }
+        }
+        return webDriver;
     }
 
     private static void validateProxyAddressPort(String proxyAddress, int proxyPort) {
@@ -595,6 +742,19 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         }
         return browsers;
     }
+    
+    /**
+     * Returns true if the specified browser is configured for the platform
+     * @param webdriverId the webdriver id
+     * @return true if the specified browser is configured for the platform
+     */
+    public boolean isConfigured(String webdriverId) {
+        SingleWebDriverProvider provider = this.webDriverProviders.get(webdriverId);
+        if (provider != null) {
+            return provider.isConfigured();
+        }
+        return false;
+    }
 
     private class AddonFilesChangedListenerImpl implements AddonFilesChangedListener {
 
@@ -640,5 +800,22 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             }
         }
 
+    }
+
+    /**
+     * Returns true if the specified built in browser is configured for the platform
+     * @param browser
+     * @return true if the specified built in browser is configured for the platform
+     */
+    public static boolean isConfigured(Browser browser) {
+        switch (browser) {
+        case INTERNET_EXPLORER:
+            return Constant.isWindows();
+        case SAFARI:
+            return Constant.isMacOsX();
+        default:
+            // All the rest should work on all platforms
+            return true;
+        }
     }
 }

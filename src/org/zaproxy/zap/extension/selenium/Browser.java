@@ -38,18 +38,18 @@ import org.parosproxy.paros.Constant;
  */
 public enum Browser {
 
-    CHROME("chrome"),
-    FIREFOX("firefox"),
+    CHROME("chrome", false),
+    FIREFOX("firefox", false),
     /**
      * Headless browser, guaranteed to be always available.
      * 
      * @see #getFailSafeBrowser()
      */
-    HTML_UNIT("htmlunit"),
-    INTERNET_EXPLORER("ie"),
-    OPERA("opera"),
-    PHANTOM_JS("phantomjs"),
-    SAFARI("safari");
+    HTML_UNIT("htmlunit", true),
+    INTERNET_EXPLORER("ie", false),
+    OPERA("opera", false),
+    PHANTOM_JS("phantomjs", true),
+    SAFARI("safari", false);
 
     private static final String WEB_DRIVERS_DIR_NAME = "webdriver";
 
@@ -58,9 +58,12 @@ public enum Browser {
     private static Path zapHomeDir;
 
     private final String id;
+    
+    private boolean isHeadless = false;
 
-    private Browser(String id) {
+    private Browser(String id, boolean isHeadless) {
         this.id = id;
+        this.isHeadless = isHeadless;
     }
 
     /**
@@ -280,4 +283,13 @@ public enum Browser {
         }
         return zapHomeDir;
     }
+
+    public boolean isHeadless() {
+        return isHeadless;
+    }
+
+    public void setHeadless(boolean isHeadless) {
+        this.isHeadless = isHeadless;
+    }
+
 }

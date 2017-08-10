@@ -73,4 +73,10 @@ public interface SingleWebDriverProvider {
      *         warning message (Selenium extension will provide a generic warning message in those cases).
      */
     String getWarnMessageFailedToStart(Throwable e);
+    
+    /**
+     * Returns true if the provided browser is configured to run on the current platform
+     * @return
+     */
+    boolean isConfigured();
 }

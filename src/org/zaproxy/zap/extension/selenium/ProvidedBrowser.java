@@ -48,4 +48,16 @@ public interface ProvidedBrowser {
      * @return the name of the browser.
      */
     String getName();
+
+    /**
+     * Returns true if the browser is headless
+     * @return true if the browser is headless
+     */
+    boolean isHeadless();
+
+    /**
+     * Returns true if the browser is suitably configured for the current system
+     * @return true if the browser is suitably configured for the current system
+     */
+    boolean isConfigured();
 }

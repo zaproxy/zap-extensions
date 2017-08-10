@@ -68,6 +68,11 @@ public class BuiltInSingleWebDriverProvider implements SingleWebDriverProvider {
         return null;
     }
 
+    @Override
+    public boolean isConfigured() {
+        return ExtensionSelenium.isConfigured(browser);
+    }
+
     private class ProvidedBrowserImpl implements ProvidedBrowser {
 
         @Override
@@ -84,5 +89,17 @@ public class BuiltInSingleWebDriverProvider implements SingleWebDriverProvider {
         public String getName() {
             return name;
         }
+
+        @Override
+        public boolean isHeadless() {
+            return browser.isHeadless();
+        }
+
+        @Override
+        public boolean isConfigured() {
+            Browser b = Browser.getBrowserWithIdNoFailSafe(browser.getId());
+            return b != null && ExtensionSelenium.isConfigured(b);
+        }
     }
+
 }

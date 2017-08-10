@@ -1,7 +1,7 @@
 <zapaddon>
 	<name>Selenium</name>
 	<version>11</version>
-	<semver>1.1.0</semver><!-- This version should be kept in sync with the one of the extension. -->
+	<semver>2.0.0</semver><!-- This version should be kept in sync with the one of the extension. -->
 	<status>release</status>
 	<description>WebDriver provider and includes HtmlUnit browser</description>
 	<author>ZAP Dev Team</author>
@@ -9,6 +9,7 @@
 	<changes>
 	<![CDATA[
 	Move Bundled WebDrivers section to main help page and recommend using newer browser versions.<br>
+	Add menus and methods for launching browsers proxying through ZAP.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -18,6 +19,6 @@
 	<pscanrules />
 	<filters />
 	<files />
-	<not-before-version>2.4.3</not-before-version>
+	<not-before-version>2.6.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

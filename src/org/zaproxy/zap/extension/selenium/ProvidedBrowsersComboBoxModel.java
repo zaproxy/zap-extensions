@@ -45,6 +45,9 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
      * The currently selected browser, {@code null} if no browser is selected.
      */
     private ProvidedBrowserUI selectedBrowser;
+    
+    private boolean includeHeadless = true;
+    private boolean includeUnconfigured = true;
 
     /**
      * Constructs a {@code BrowsersComboBoxModel} with the given {@code browsers}.
@@ -59,6 +62,48 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
 
         this.browsers = browsers;
         this.selectedBrowser = this.browsers.get(0);
+    }
+
+    /**
+     * Returns whether headless browsers should be included in the model
+     * @return true if headless browsers should be included in the model
+     */
+    public boolean isIncludeHeadless() {
+        return includeHeadless;
+    }
+
+    /**
+     * Sets whether headless browsers should be included in the model
+     * @param includeHeadless true if headless browsers should be included in the model
+     */
+    public void setIncludeHeadless(boolean includeHeadless) {
+        this.includeHeadless = includeHeadless;
+        configsChanged();
+    }
+
+    /**
+     * Returns whether unconfigured browsers should be included in the model
+     * @return true if unconfigured browsers should be included in the model
+     */
+    public boolean isIncludeUnconfigured() {
+        return includeUnconfigured;
+    }
+
+    /**
+     * Sets whether unconfigured browsers should be included in the model
+     * @param includeHeadless true if unconfigured browsers should be included in the model
+     */
+    public void setIncludeUnconfigured(boolean includeUnconfigured) {
+        this.includeUnconfigured = includeUnconfigured;
+        configsChanged();
+    }
+    
+    private void configsChanged() {
+        fireContentsChanged(this, -1, -1);
+        if (! this.incBrowser(this.getSelectedItem())) {
+            // The selected item is no longer valid
+            this.setSelectedItem(this.getElementAt(0));
+        }
     }
 
     @Override
@@ -133,19 +178,45 @@ public class ProvidedBrowsersComboBoxModel extends AbstractListModel<ProvidedBro
 
     private void setSelectedBrowserImpl(ProvidedBrowserUI browser) {
         if ((selectedBrowser != null && !selectedBrowser.equals(browser)) || selectedBrowser == null && browser != null) {
-            selectedBrowser = browser;
-            fireContentsChanged(this, -1, -1);
+            if (this.incBrowser(browser)) {
+                selectedBrowser = browser;
+                fireContentsChanged(this, -1, -1);
+            }
         }
+    }
+
+    private boolean incBrowser(ProvidedBrowserUI browser) {
+        if (browser == null) {
+            // Special case - null is used to indicate no selected item
+            return true;
+        }
+        return (this.includeUnconfigured || browser.getBrowser().isConfigured()) &&
+                (this.isIncludeHeadless() || ! browser.getBrowser().isHeadless());
     }
 
     @Override
     public int getSize() {
-        return browsers.size();
+        int size = 0;
+        for (ProvidedBrowserUI browser : browsers) {
+            if (incBrowser(browser)) {
+                size ++;
+            }
+        }
+        return size;
     }
 
     @Override
     public ProvidedBrowserUI getElementAt(int index) {
-        return browsers.get(index);
+        int idx = -1;
+        for (ProvidedBrowserUI browser : browsers) {
+            if (incBrowser(browser)) {
+                idx ++;
+                if (idx == index) {
+                    return browser;
+                }
+            }
+        }
+        return null;
     }
 
 }

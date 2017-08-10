@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -42,16 +43,14 @@ import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.report.ReportLastScan;
-import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 
-public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChangedListener, CommandLineListener, OptionsChangedListener {
+public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChangedListener, CommandLineListener {
 	
 	public static final String NAME = "ExtensionQuickStart";
 	protected static final String SCRIPT_CONSOLE_HOME_PAGE = Constant.ZAP_HOMEPAGE;
@@ -69,7 +68,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
     private boolean runningFromCmdLine = false;
     private boolean showProgress = false;
     private int spinner = 0;
-
+    
+    private List<QuickStartPanelContentProvider> contentProviders = 
+            new ArrayList<QuickStartPanelContentProvider>();
+    
     public ExtensionQuickStart() {
         super(NAME);
 	}
@@ -83,7 +85,6 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	        
 	        ExtensionHelp.enableHelpKey(getQuickStartPanel(), "quickstart");
 	        
-	    	extensionHook.addOptionsChangedListener(this);
 	    }
         extensionHook.addSessionListener(this);
 
@@ -94,6 +95,25 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	public boolean canUnload() {
     	return true;
     }
+
+	
+	public void addContentProvider(QuickStartPanelContentProvider provider) {
+	    this.contentProviders.add(provider);
+        if (quickStartPanel != null) {
+            quickStartPanel.addContent(provider);
+        }
+	}
+
+	public void removeContentProvider(QuickStartPanelContentProvider provider) {
+        this.contentProviders.remove(provider);
+        if (quickStartPanel != null) {
+            quickStartPanel.removeContent(provider);
+        }
+	}
+	
+	protected List<QuickStartPanelContentProvider> getContentProviders() {
+	    return this.contentProviders;
+	}
 
 	private QuickStartPanel getQuickStartPanel() {
 		if (quickStartPanel == null) {
@@ -423,11 +443,5 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 				e.printStackTrace();
 			}
 		}
-	}
-
-	@Override
-	public void optionsChanged(OptionsParam optionsParam) {
-		//PnH button has the same enable state as the API
-		getQuickStartPanel().updatePnhPanelElements(optionsParam.getApiParam().isEnabled());		
 	}
 }

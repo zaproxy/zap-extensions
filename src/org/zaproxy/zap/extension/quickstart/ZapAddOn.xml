@@ -1,22 +1,49 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>19</version>
+	<version>20</version>
 	<status>release</status>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Validate the provided URL as a request-uri.<br>
+	Add option to launch a browser via selenium.<br>
 	]]>
 	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.quickstart.ExtensionQuickStart</extension>
+		<extension v="1">
+			<classname>org.zaproxy.zap.extension.quickstart.launch.ExtensionQuickStartLaunch</classname>
+			<classnames>
+				<allowed>org.zaproxy.zap.extension.quickstart.launch</allowed>
+			</classnames>
+			<dependencies>
+				<addons>
+					<addon>
+						<id>selenium</id>
+						<semver>2.*</semver>
+					</addon>
+				</addons>
+			</dependencies>
+		</extension>
+		<extension v="1">
+			<classname>org.zaproxy.zap.extension.quickstart.pnh.ExtensionQuickStartPnH</classname>
+			<classnames>
+				<allowed>org.zaproxy.zap.extension.quickstart.pnh</allowed>
+			</classnames>
+			<dependencies>
+				<addons>
+					<addon>
+						<id>plugnhack</id>
+					</addon>
+				</addons>
+			</dependencies>
+		</extension>
 	</extensions>
 	<ascanrules/>
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.2</not-before-version>
+	<not-before-version>2.6.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

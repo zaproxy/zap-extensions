@@ -35,6 +35,7 @@
 	<classpathentry kind="lib" path="testlib/simple-5.0.2.jar"/>
 	<classpathentry kind="lib" path="testlib/nanohttpd-webserver-2.1.1-jar-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="lib/zap-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/plugnhack-beta-10.zap"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/selenium-server-standalone-2.53.1.jar"/>
