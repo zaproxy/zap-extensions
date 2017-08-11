@@ -19,6 +19,10 @@
  */
 package org.zaproxy.zap.extension.jxbrowserwindows.selenium;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -31,6 +35,14 @@ import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 public class ExtSelJxBrowserWindows extends ExtensionAdaptor {
 
     public static final String NAME = "ExtSelJxBrowserWindows";
+
+    private static final List<Class<?>> DEPENDENCIES;
+
+    static {
+        List<Class<?>> dependencies = new ArrayList<>(1);
+        dependencies.add(ExtensionSelenium.class);
+        DEPENDENCIES = Collections.unmodifiableList(dependencies);
+    }
 
     private JxBrowserProvider webDriverProvider;
 
@@ -68,5 +80,10 @@ public class ExtSelJxBrowserWindows extends ExtensionAdaptor {
     @Override
     public String getAuthor() {
         return Constant.ZAP_TEAM;
+    }
+
+    @Override
+    public List<Class<?>> getDependencies() {
+        return DEPENDENCIES;
     }
 }
