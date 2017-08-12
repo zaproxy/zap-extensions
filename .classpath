@@ -21,7 +21,7 @@
 	<classpathentry kind="lib" path="lib/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/jython-standalone-2.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="lib/mozilla-zest-0.12.jar"/>
+	<classpathentry kind="lib" path="lib/mozilla-zest-0.13.jar"/>
 	<classpathentry kind="lib" path="lib/odfdom-java-0.8.8-incubating.jar"/>
 	<classpathentry kind="lib" path="lib/pdfbox-1.8.7.jar"/>
 	<classpathentry kind="lib" path="lib/procyon-decompiler-0.5.25.jar"/>
