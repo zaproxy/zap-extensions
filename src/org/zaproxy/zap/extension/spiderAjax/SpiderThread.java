@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyListener;
+import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
@@ -43,7 +44,6 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
-import org.zaproxy.zap.extension.spiderAjax.internal.ProxyServer;
 import org.zaproxy.zap.network.HttpResponseBody;
 
 import com.crawljax.browser.EmbeddedBrowser;
@@ -317,8 +317,7 @@ public class SpiderThread implements Runnable {
 
 			if (state != ResourceState.PROCESSED) {
 				setOutOfScopeResponse(httpMessage);
-				// TODO Replace with HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY.
-				notifyMessage(httpMessage, 18, state);
+				notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY, state);
 				return true;
 			}
 

@@ -21,8 +21,8 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.net.Socket;
 
-import org.zaproxy.zap.extension.spiderAjax.internal.ProxyServer;
-import org.zaproxy.zap.extension.spiderAjax.internal.ProxyThread;
+import org.parosproxy.paros.core.proxy.ProxyServer;
+import org.parosproxy.paros.core.proxy.ProxyThread;
 
 class AjaxProxyServer extends ProxyServer {
 
