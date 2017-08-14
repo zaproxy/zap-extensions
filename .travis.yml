@@ -2,5 +2,11 @@ language: java
 script: ant -buildfile build/build.xml test
 sudo: false
 
+# Issue travis-ci/travis-ci#7706
+addons:
+  apt:
+    packages:
+      - ant-optional 
+
 jdk:
   - oraclejdk8
