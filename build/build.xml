@@ -540,11 +540,13 @@
 		<sequential>
 			<build-addon name="selenium">
 				<!-- Add the extra classes required -->
+				<!-- No extra classes needed for now.
 				<jar jarfile="${dist}/${file}" update="true" compress="true">
 					<zipfileset dir="${build}" prefix="">
 						<include name="org/openqa/selenium/**"/>
 					</zipfileset>
 				</jar>
+				-->
 			</build-addon>
 		</sequential>
 	</macrodef>
