@@ -44,7 +44,7 @@ public class ExtSelJxBrowserMacOs extends ExtensionAdaptor {
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
     }
 
-    private JxBrowserProvider webDriverProvider;
+    private MacOsJxBrowserProvider webDriverProvider;
 
     public ExtSelJxBrowserMacOs() {
         super(NAME);
@@ -55,7 +55,7 @@ public class ExtSelJxBrowserMacOs extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         if (Constant.isMacOsX()) {
-            webDriverProvider = new JxBrowserProvider();
+            webDriverProvider = new MacOsJxBrowserProvider();
 
             ExtensionSelenium extSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
             extSelenium.addWebDriverProvider(webDriverProvider);

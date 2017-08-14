@@ -54,6 +54,7 @@ public class BrowserFrame extends AbstractFrame {
     private final boolean incToolbar; 
     private int prevTabIndex;
     private boolean inTab;
+    private boolean closed = false;
 
     public BrowserFrame() {
         this(true, true);
@@ -266,6 +267,13 @@ public class BrowserFrame extends AbstractFrame {
         for (BrowserPanel zp : zapPanels) {
             zp.close();
         }
+        this.getTabbedPane().removeAll();
+        zapPanels.clear();
+        this.closed = true;
+    }
+    
+    public boolean isClosed() {
+        return this.closed;
     }
 
     public Browser getBrowser() {
