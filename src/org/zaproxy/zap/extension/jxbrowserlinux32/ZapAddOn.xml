@@ -5,7 +5,12 @@
 	<description>An embedded browser based on Chromium, Linux 32 specific </description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for JxBrowser 6.14.2.</changes>
+	<changes>
+	<![CDATA[
+		Updated for JxBrowser 6.14.2.<br>
+		Updated to support latest selenium interfaces.<br>
+	]]>
+	</changes>
 	<dependencies>
 		<addons>
 			<addon>
@@ -24,7 +29,7 @@
 				<addons>
 					<addon>
 						<id>selenium</id>
-						<semver><![CDATA[ >=1.1.0 & <2.0.0 ]]></semver>
+						<semver><![CDATA[ >=2.0.0 & <3.0.0 ]]></semver>
 					</addon>
 				</addons>
 			</dependencies>

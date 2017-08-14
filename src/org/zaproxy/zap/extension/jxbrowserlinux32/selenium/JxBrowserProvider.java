@@ -25,6 +25,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -33,8 +35,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.jxbrowser.BrowserFrame;
 import org.zaproxy.zap.extension.jxbrowser.BrowserPanel;
 import org.zaproxy.zap.extension.jxbrowser.ZapBrowserFrame;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowser;
@@ -48,13 +50,28 @@ import com.teamdev.jxbrowser.chromium.CustomProxyConfig;
 
 /**
  * A {@link SingleWebDriverProvider} for JxBrowser.
+ * 
+ * Note that this class is duplicated in:
+ *  - org.zaproxy.zap.extension.jxbrowserlinux32.selenium
+ *  - org.zaproxy.zap.extension.jxbrowserlinux64.selenium
+ *  - org.zaproxy.zap.extension.jxbrowsermacos.selenium
+ *  - org.zaproxy.zap.extension.jxbrowserwindows.selenium
+ * 
+ * Ideally it should be defined just once in org.zaproxy.zap.extension.jxbrowser.selenium
+ * but that currently doesnt work due to class loading issues.
+ * If you need to change this file them make sure you update it in all 4 locations.
+ * If you need to make platform specific changes then make them in a class that
+ * extends this one.
  */
 public class JxBrowserProvider implements SingleWebDriverProvider {
 
     private static final String PROVIDER_ID = "jxbrowser";
 
     private final ProvidedBrowser providedBrowser;
-    private BrowserFrame zbf;
+    /* One ZapBrowserFrame per requesterId, so that tools like the Ajax Spider
+     * don't interfere with other tools.
+     */
+    private Map<Integer, ZapBrowserFrame> requesterToZbf = new HashMap<Integer, ZapBrowserFrame>();
     private int chromePort;
 
     public JxBrowserProvider() {
@@ -78,13 +95,13 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
 
     @Override
     public WebDriver getWebDriver(int requesterId) {
-        return getRemoteWebDriver(null, 0);
+        return getRemoteWebDriver(requesterId, null, 0);
     }
 
-    private RemoteWebDriver getRemoteWebDriver(final String proxyAddress, final int proxyPort) {
+    private RemoteWebDriver getRemoteWebDriver(final int requesterId, final String proxyAddress, final int proxyPort) {
         if (View.isInitialised()) {
             try {
-                GetWebDriverRunnable wb = new GetWebDriverRunnable(proxyAddress, proxyPort);
+                GetWebDriverRunnable wb = new GetWebDriverRunnable(requesterId, proxyAddress, proxyPort);
                 EventQueue.invokeAndWait(wb);
                 return wb.getWebDriver();
             } catch (InvocationTargetException | InterruptedException e) {
@@ -93,18 +110,39 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
         }
 
         synchronized (this) {
-            return getRemoteWebDriverImpl(proxyAddress, proxyPort);
+            return getRemoteWebDriverImpl(requesterId, proxyAddress, proxyPort);
         }
     }
+    
+    private boolean isNotAutomated(int requesterId) {
+        switch (requesterId) {
+        case HttpSender.MANUAL_REQUEST_INITIATOR:
+        case HttpSender.PROXY_INITIATOR:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    private ZapBrowserFrame getZapBrowserFrame(int requesterId) {
+        ZapBrowserFrame zbf = this.requesterToZbf.get(requesterId);
+        if (zbf == null || zbf.isClosed()) {
+            zbf = new ZapBrowserFrame(isNotAutomated(requesterId), true, 
+                    false, isNotAutomated(requesterId));
+            this.requesterToZbf.put(requesterId, zbf);
+            chromePort = getFreePort();
+        } else if (!zbf.isVisible()) {
+            zbf.setVisible(true);
+        }
+        if (isNotAutomated(requesterId)) {
+            zbf.requestFocus();
+        }
+        return zbf;
+    }
 
-    private RemoteWebDriver getRemoteWebDriverImpl(String proxyAddress, int proxyPort) {
+    private RemoteWebDriver getRemoteWebDriverImpl(final int requesterId, String proxyAddress, int proxyPort) {
         try {
-            if (zbf == null) {
-                zbf = new ZapBrowserFrame(false, true, false, false);
-                chromePort = getFreePort();
-            } else if (!zbf.isVisible()) {
-                zbf.setVisible(true);
-            }
+            ZapBrowserFrame zbf = this.getZapBrowserFrame(requesterId);
 
             File dataDir = Files.createTempDirectory("zap-jxbrowser").toFile();
             dataDir.deleteOnExit();
@@ -118,7 +156,7 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
 
             BrowserPreferences.setChromiumSwitches("--remote-debugging-port=" + chromePort);
             Browser browser = new Browser(new BrowserContext(contextParams));
-            final BrowserPanel browserPanel = zbf.addNewBrowserPanel(false, browser);
+            final BrowserPanel browserPanel = zbf.addNewBrowserPanel(isNotAutomated(requesterId), browser);
 
             final ChromeDriverService service = new ChromeDriverService.Builder().usingAnyFreePort().build();
             service.start();
@@ -135,7 +173,7 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
                 public void close() {
                     super.close();
 
-                    cleanUpBrowser(browserPanel);
+                    cleanUpBrowser(requesterId, browserPanel);
                     // XXX should stop here too?
                     // service.stop();
                 }
@@ -144,7 +182,7 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
                 public void quit() {
                     super.quit();
 
-                    cleanUpBrowser(browserPanel);
+                    cleanUpBrowser(requesterId, browserPanel);
 
                     boolean interrupted = Thread.interrupted();
                     service.stop();
@@ -158,45 +196,47 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
         }
     }
 
-    private void cleanUpBrowser(final BrowserPanel browserPanel) {
+    private void cleanUpBrowser(final int requesterId, final BrowserPanel browserPanel) {
         if (View.isInitialised()) {
             EventQueue.invokeLater(new Runnable() {
 
                 @Override
                 public void run() {
-                    if (zbf == null) {
+                    if (! requesterToZbf.containsKey(requesterId)) {
                         return;
                     }
 
-                    cleanUpBrowserImpl(browserPanel);
+                    cleanUpBrowserImpl(requesterId, browserPanel);
                 }
             });
         } else {
             synchronized (this) {
-                if (zbf == null) {
+                if (! requesterToZbf.containsKey(requesterId)) {
                     return;
                 }
-                cleanUpBrowserImpl(browserPanel);
+                cleanUpBrowserImpl(requesterId, browserPanel);
             }
         }
     }
 
-    private void cleanUpBrowserImpl(BrowserPanel browserPanel) {
+    private void cleanUpBrowserImpl(int requesterId, BrowserPanel browserPanel) {
         browserPanel.getBrowser().dispose();
+        ZapBrowserFrame zbf = this.getZapBrowserFrame(requesterId);
         zbf.removeTab(browserPanel);
 
         if (!zbf.hasPanels()) {
             zbf.dispose();
             zbf = null;
+            this.requesterToZbf.remove(requesterId);
         }
     }
 
     @Override
     public synchronized WebDriver getWebDriver(int requesterId, String proxyAddress, int proxyPort) {
-        return getRemoteWebDriver(proxyAddress, proxyPort);
+        return getRemoteWebDriver(requesterId, proxyAddress, proxyPort);
     }
 
-    private int getFreePort() {
+    protected int getFreePort() {
         try (ServerSocket socket = new ServerSocket(0, 400, InetAddress.getByName("localhost"))) {
             return socket.getLocalPort();
         } catch (Exception e) {
@@ -220,27 +260,45 @@ public class JxBrowserProvider implements SingleWebDriverProvider {
         public String getName() {
             return "JxBrowser";
         }
+
+        @Override
+        public boolean isHeadless() {
+            return false;
+        }
+
+        @Override
+        public boolean isConfigured() {
+            // It should always work;) 
+            return true;
+        }
     }
 
     private class GetWebDriverRunnable implements Runnable {
 
+        private final int requesterId;
         private final String proxyAddress;
         private final int proxyPort;
 
         private RemoteWebDriver webDriver;
 
-        public GetWebDriverRunnable(String proxyAddress, int proxyPort) {
+        public GetWebDriverRunnable(int requesterId, String proxyAddress, int proxyPort) {
+            this.requesterId = requesterId;
             this.proxyAddress = proxyAddress;
             this.proxyPort = proxyPort;
         }
 
         @Override
         public void run() {
-            webDriver = getRemoteWebDriverImpl(proxyAddress, proxyPort);
+            webDriver = getRemoteWebDriverImpl(requesterId, proxyAddress, proxyPort);
         }
 
         public RemoteWebDriver getWebDriver() {
             return webDriver;
         }
+    }
+
+    @Override
+    public boolean isConfigured() {
+        return true;
     }
 }

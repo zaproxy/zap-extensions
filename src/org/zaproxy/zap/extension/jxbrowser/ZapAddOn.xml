@@ -5,7 +5,12 @@
 	<description>An embedded browser based on Chromium, you must also install the relevant platform specific add-on</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Updated for JxBrowser 6.14.2.</changes>
+	<changes>
+	<![CDATA[
+		Updated for JxBrowser 6.14.2.<br>
+		Added method to allow caller to tell if the BrowserFrame has been closed.<br>
+	]]>
+	</changes>
 	<dependencies/>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jxbrowser.ExtensionJxBrowser</extension>
