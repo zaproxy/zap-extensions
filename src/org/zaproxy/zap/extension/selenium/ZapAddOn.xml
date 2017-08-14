@@ -13,6 +13,7 @@
 	<![CDATA[
 	Update Selenium to version 3.4.0.<br>
 	Move Bundled WebDrivers section to main help page and recommend using newer browser versions.<br>
+	Add menus and methods for launching browsers proxying through ZAP.<br>
 	]]>
 	</changes>
 	<extensions>
