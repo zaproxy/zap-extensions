@@ -18,15 +18,60 @@
 
 package org.zaproxy.zap.extension.domxss;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
+import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
 /**
- * A null extension just to cause the message bundle and help file to get loaded 
+ * The extension responsible to add the DOM XSS active scanner.
+ * 
  * @author psiinon
- *
  */
 public class ExtensionDomXSS extends ExtensionAdaptor {
+
+	private static final List<Class<?>> DEPENDENCIES;
+
+	static {
+		List<Class<?>> dependencies = new ArrayList<>(1);
+		dependencies.add(ExtensionSelenium.class);
+
+		DEPENDENCIES = Collections.unmodifiableList(dependencies);
+	}
+
+	private TestDomXSS scanner;
+
+	@Override
+	public void init() {
+		super.init();
+
+		scanner = new TestDomXSS();
+		scanner.setStatus(getAddOn().getStatus());
+	}
+
+	@Override
+	public List<Class<?>> getDependencies() {
+		return DEPENDENCIES;
+	}
+
+	@Override
+	public void hook(ExtensionHook extensionHook) {
+		super.hook(extensionHook);
+
+		PluginFactory.loadedPlugin(scanner);
+	}
+
+	@Override
+	public void unload() {
+		super.unload();
+
+		PluginFactory.unloadedPlugin(scanner);
+	}
 
 	@Override
 	public String getAuthor() {

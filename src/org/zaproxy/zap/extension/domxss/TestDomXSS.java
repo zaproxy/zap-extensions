@@ -29,19 +29,15 @@ import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchSessionException;
-import org.openqa.selenium.Proxy;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
-import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -49,6 +45,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.selenium.Browser;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 import org.zaproxy.zap.utils.Stats;
@@ -87,6 +85,8 @@ public class TestDomXSS extends AbstractAppPlugin {
 
     private static ProxyServer proxy = null;
     private static int proxyPort = -1;
+
+    private static ExtensionSelenium extensionSelenium;
     
     @Override
     public int getId() {
@@ -183,8 +183,6 @@ public class TestDomXSS extends AbstractAppPlugin {
     }
    
 	private WebDriver getNewFirefoxDriver() {
-		ProxyParam proxyParams = Model.getSingleton().getOptionsParam().getProxyParam();
-		
 		/*
 		 * TODO look at supporting other browsers
 		 * Notes:
@@ -192,17 +190,7 @@ public class TestDomXSS extends AbstractAppPlugin {
 		 * 	Chrome doesnt seem to find anything, possibly due to its XSS protection
 		 * 	Phantom JS doesnt find anything as 'alerts' arent yet supported
 		 */
-		
-		//WebDriver driver = ExtensionSelenium.getWebDriver(
-		//		Browser.FIREFOX, proxyParams.getProxyIp(), proxyPort);
-		
-		// Proxy through ZAP
-		String zapProxy = proxyParams.getProxyIp() + ":" + proxyPort;
-		Proxy proxy = new Proxy();
-		proxy.setHttpProxy(zapProxy).setSslProxy(zapProxy);
-		DesiredCapabilities cap = new DesiredCapabilities();
-		cap.setCapability(CapabilityType.PROXY, proxy);
-		WebDriver driver = new FirefoxDriver(cap);
+		WebDriver driver = getExtensionSelenium().getWebDriver(Browser.FIREFOX, "127.0.0.1", proxyPort);
 		
 		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 		driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
@@ -210,19 +198,25 @@ public class TestDomXSS extends AbstractAppPlugin {
 		return driver;
 
 	}
+
+	private static ExtensionSelenium getExtensionSelenium() {
+		if (extensionSelenium == null) {
+			initExtensionSelenium();
+		}
+		return extensionSelenium;
+	}
+
+	private static synchronized void initExtensionSelenium() {
+		if (extensionSelenium == null) {
+			extensionSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+		}
+	}
 	
 	private WebDriverWrapper getFirefoxDriver() {
 		WebDriverWrapper fxDriver;
 		try {
 			fxDriver = freeFirefoxDrivers.pop();
 		} catch (Exception e) {
-			// Proxy through ZAP
-			ProxyParam proxyParams = Model.getSingleton().getOptionsParam().getProxyParam();
-			String zapProxy = proxyParams.getProxyIp() + ":" + proxyParams.getProxyPort();
-			Proxy proxy = new Proxy();
-			proxy.setHttpProxy(zapProxy).setSslProxy(zapProxy);
-			DesiredCapabilities cap = new DesiredCapabilities();
-			cap.setCapability(CapabilityType.PROXY, proxy);
 			fxDriver = new WebDriverWrapper(getNewFirefoxDriver());
 		}
 		synchronized (takenFirefoxDrivers) {
@@ -511,10 +505,9 @@ public class TestDomXSS extends AbstractAppPlugin {
 		WebDriverWrapper fxDriver;
 		try {
 			fxDriver = this.getFirefoxDriver();
-		} catch (WebDriverException e) {
+		} catch (Exception e) {
 			getLog().warn("Skipping scanner, failed to start Firefox: " + e.getMessage());
-			// TODO add the reason why the scanner was skipped when targeting ZAP 2.6.0
-			getParent().pluginSkipped(this);
+			getParent().pluginSkipped(this, Constant.messages.getString("domxss.skipped.reason.browsererror"));
 			return;
 		}
 
