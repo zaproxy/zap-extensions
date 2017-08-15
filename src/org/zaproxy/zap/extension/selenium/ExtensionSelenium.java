@@ -568,6 +568,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     private static WebDriver getWebDriverImpl(Browser browser, String proxyAddress, int proxyPort) {
         DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+        // W3C capability
+        capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
+
         if (proxyAddress != null) {
             String httpProxy = proxyAddress + ":" + proxyPort;
             Proxy proxy = new Proxy();
@@ -602,12 +606,13 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 options.addPreference("network.proxy.ssl_port", proxyPort);
                 options.addPreference("network.proxy.share_proxy_settings", true);
                 options.addPreference("network.proxy.no_proxies_on", "");
+                // And remove the PROXY capability:
+                capabilities.setCapability(CapabilityType.PROXY, (Object) null);
             }
 
-            // Since Firefox 53, https://bugzilla.mozilla.org/show_bug.cgi?id=1103196
-            options.addPreference("acceptInsecureCerts", true);
+            options.addTo(capabilities);
 
-            return new FirefoxDriver(options.toCapabilities());
+            return new FirefoxDriver(capabilities);
         case HTML_UNIT:
             return new HtmlUnitDriver(DesiredCapabilities.htmlUnit().merge(capabilities));
         case INTERNET_EXPLORER:
