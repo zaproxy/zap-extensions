@@ -14,6 +14,7 @@
 	Implements WebSocketSenderListener.<br>
 	Use JRE decoder for UTF-8 conversions and log (debug) invalid payloads (related to Issue 3324).<br>
 	Focus WebSockets tab just once (Issue 3747).<br>
+	Minor code adjustment to align with core changes.<br>
 	]]>
 	</changes>
 	<classnames>

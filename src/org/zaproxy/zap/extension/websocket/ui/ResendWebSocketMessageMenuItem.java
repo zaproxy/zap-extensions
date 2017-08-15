@@ -50,7 +50,6 @@ public class ResendWebSocketMessageMenuItem extends WebSocketMessagesPopupMenuIt
 			return;
 		}
 		
-		dialog.setTitle(Constant.messages.getString("manReq.resend.popup"));
 		dialog.setMessage(message);
 		dialog.setVisible(true);
 	}
