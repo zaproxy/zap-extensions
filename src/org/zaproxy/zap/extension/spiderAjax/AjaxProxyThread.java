@@ -21,15 +21,14 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.net.Socket;
 
+import org.parosproxy.paros.core.proxy.ProxyServer;
+import org.parosproxy.paros.core.proxy.ProxyThread;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.zap.extension.spiderAjax.internal.ProxyServer;
-import org.zaproxy.zap.extension.spiderAjax.internal.ProxyThread;
 
 class AjaxProxyThread extends ProxyThread {
 
     AjaxProxyThread(ProxyServer server, Socket socket) {
-        // TODO Replace literal 10 with HttpSender.AJAX_SPIDER_INITIATOR once available.
-        super(server, socket, new HttpSender(server.getConnectionParam(), true, 10));
+        super(server, socket, new HttpSender(server.getConnectionParam(), true, HttpSender.AJAX_SPIDER_INITIATOR));
     }
 
 }
