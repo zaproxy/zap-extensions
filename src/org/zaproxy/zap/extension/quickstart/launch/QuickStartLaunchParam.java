@@ -41,8 +41,10 @@ public class QuickStartLaunchParam extends AbstractParam {
 
     private static final String BLANK_START_PAGE = "BLANK";
 
+    private static final String DEFAULT_BROWSER = "JxBrowser";   // The default default ;)
+
     private String startPage;
-    private String defaultBrowser = "JxBrowser"; // The default default ;)
+    private String defaultBrowser = DEFAULT_BROWSER;
 
     @Override
     protected void parse() {
@@ -52,7 +54,7 @@ public class QuickStartLaunchParam extends AbstractParam {
             LOGGER.error("Failed to load the \"Start Page\" configuration", e);
         }
         try {
-            defaultBrowser = getConfig().getString(PARAM_DEFAULT_BROWSER, "");
+            defaultBrowser = getConfig().getString(PARAM_DEFAULT_BROWSER, DEFAULT_BROWSER);
         } catch (Exception e) {
             LOGGER.error(
                     "Failed to load the \"Default Browser\" configuration", e);
