@@ -19,14 +19,20 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.lang.ref.WeakReference;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -110,6 +116,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * be closed when ZAP is closed.
      */
     private List<WebDriver> proxiedWebDrivers = new ArrayList<WebDriver>();
+    
+    private List<WeakReference<ProvidedBrowsersComboBoxModel>> providedBrowserComboBoxModels =
+            new ArrayList<WeakReference<ProvidedBrowsersComboBoxModel>>();
 
     public ExtensionSelenium() {
         super(NAME, CURRENT_VERSION);
@@ -228,8 +237,33 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         ProvidedBrowser providedBrowser = webDriverProvider.getProvidedBrowser();
         providedBrowsers.put(providedBrowser.getId(), providedBrowser);
 
-        providedBrowserUIList.add(new ProvidedBrowserUI(providedBrowser));
+        ProvidedBrowserUI pbui = new ProvidedBrowserUI(providedBrowser);
+        providedBrowserUIList.add(pbui);
         Collections.sort(providedBrowserUIList);
+        
+        final int idx = providedBrowserUIList.indexOf(pbui);
+        
+        if (getView() != null) {
+            SwingUtilities.invokeLater(new Runnable(){
+                @Override
+                public void run() {
+                    ListDataEvent ev = new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, idx, idx);
+                    Iterator<WeakReference<ProvidedBrowsersComboBoxModel>> iter = 
+                            providedBrowserComboBoxModels.iterator();
+                    while (iter.hasNext()) {
+                        WeakReference<ProvidedBrowsersComboBoxModel> wr = iter.next();
+                        ProvidedBrowsersComboBoxModel pb = wr.get();
+                        if (pb == null) {
+                            iter.remove();
+                        } else {
+                            for (ListDataListener listener : pb.getListDataListeners()) {
+                                listener.contentsChanged(ev);
+                            }
+                            
+                        }
+                    }
+                }});
+        }
     }
 
     /**
@@ -261,6 +295,28 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         webDriverProviders.remove(webDriverProvider.getId());
         providedBrowsers.remove(webDriverProvider.getProvidedBrowser().getId());
         buildProvidedBrowserUIList();
+
+        if (getView() != null) {
+            SwingUtilities.invokeLater(new Runnable(){
+                @Override
+                public void run() {
+                    ListDataEvent ev = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, providedBrowserUIList.size());
+                    Iterator<WeakReference<ProvidedBrowsersComboBoxModel>> iter = 
+                            providedBrowserComboBoxModels.iterator();
+                    while (iter.hasNext()) {
+                        WeakReference<ProvidedBrowsersComboBoxModel> wr = iter.next();
+                        ProvidedBrowsersComboBoxModel pb = wr.get();
+                        if (pb == null) {
+                            iter.remove();
+                        } else {
+                            for (ListDataListener listener : pb.getListDataListeners()) {
+                                listener.contentsChanged(ev);
+                            }
+                            
+                        }
+                    }
+                }});
+        }
     }
 
     /**
@@ -271,7 +327,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * @since 1.1.0
      */
     public ProvidedBrowsersComboBoxModel createProvidedBrowsersComboBoxModel() {
-        return new ProvidedBrowsersComboBoxModel(providedBrowserUIList);
+        ProvidedBrowsersComboBoxModel model = new ProvidedBrowsersComboBoxModel(providedBrowserUIList);
+        providedBrowserComboBoxModels.add(new WeakReference<ProvidedBrowsersComboBoxModel>(model));
+        return model;
     }
 
     /**

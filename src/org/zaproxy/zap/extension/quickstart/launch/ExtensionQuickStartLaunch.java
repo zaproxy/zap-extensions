@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -113,6 +114,27 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
     }
 
     @Override
+    public void postInit() {
+        if (getView() != null) {
+            // Plugable browsers (like JxBrowser) can be added after this add-ons 
+            // options have been loaded
+            String def = this.getQuickStartLaunchParam().getDefaultBrowser();
+            if (def == null || def.length() == 0) {
+                // no default
+                return;
+            }
+            ComboBoxModel<ProvidedBrowserUI> model = this.getBrowserComboBox().getModel();
+            for (int idx = 0; idx < model.getSize(); idx++) {
+                ProvidedBrowserUI el = model.getElementAt(idx);
+                if (el.getName().equals(def)) {
+                    model.setSelectedItem(el);
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
     public void optionsLoaded() {
         super.optionsLoaded();
         if (View.isInitialised()) {
@@ -120,9 +142,6 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
             // later
             defaultLaunchContent = Constant.messages
                     .getString("quickstart.launch.html");
-    
-            getBrowserComboBox().setSelectedItem(
-                    this.getQuickStartLaunchParam().getDefaultBrowser());
         }
 
         if (!getQuickStartLaunchParam().isZapStartPage()) {
@@ -283,6 +302,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
                                                     getBrowserComboBox()
                                                             .getSelectedItem()
                                                             .toString());
+                                    getQuickStartLaunchParam().getConfig().save();
                                 }
                             } catch (Exception e1) {
                                 LOGGER.error(e1.getMessage(), e1);
