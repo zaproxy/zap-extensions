@@ -652,6 +652,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 options.setBinary(binaryPath);
             }
 
+            // Disable the captive checks/requests, mainly to avoid flooding
+            // the AJAX Spider results (those requests are out of scope).
+            options.addPreference("network.captive-portal-service.enabled", false);
+
             if (proxyAddress != null) {
                 // Some issues prevent the PROXY capability from being properly applied:
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=1282873
