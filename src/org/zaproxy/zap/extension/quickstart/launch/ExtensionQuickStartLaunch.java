@@ -281,15 +281,14 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
                                 if (wd != null) {
                                     if (getQuickStartLaunchParam()
                                             .isZapStartPage()) {
-                                        wd.get(API
-                                                .getInstance()
-                                                .getBaseURL(
+                                        // Use api instead of API due to a bug in the 2.6.0 core
+                                        // TODO use API once we've release 2.7.0
+                                        wd.get(api.getBaseURL(
                                                         API.Format.OTHER,
                                                         QuickStartLaunchAPI.API_PREFIX,
                                                         API.RequestType.other,
                                                         QuickStartLaunchAPI.OTHER_START_PAGE,
                                                         true));
-
                                     } else if (!getQuickStartLaunchParam()
                                             .isBlankStartPage()) {
                                         wd.get(getQuickStartLaunchParam()
