@@ -14,6 +14,7 @@ var addOns = listOf(
     "ascanrulesAlpha",
     "ascanrulesBeta",
     "authstats",
+    "backslashpoweredscanner",
     "beanshell",
     "birtreports",
     "browserView",
