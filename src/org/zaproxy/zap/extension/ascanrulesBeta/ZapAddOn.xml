@@ -11,6 +11,7 @@
 	Fix FP in "Integer Overflow Error" on 500 error responses (Issue 3064).<br>
 	Support security annotations for forms that dont need anti-CSRF tokens.<br>
 	Changed XXE rule to use new callback extension.<br>
+	Notify of messages sent during Heartbleed scanning (Issue 2425).<br>
     ]]>
 	</changes>
 	<extensions>

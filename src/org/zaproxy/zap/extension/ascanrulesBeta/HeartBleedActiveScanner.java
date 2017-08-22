@@ -577,6 +577,8 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 					if (log.isDebugEnabled()) 
 						log.debug("Wrote the Client Hello");
 
+					getParent().notifyNewMessage(this);
+
 					//read through messages until we get a handshake message back from the server
 					try {
 						while (true) {
@@ -667,6 +669,8 @@ public class HeartBleedActiveScanner extends AbstractHostPlugin {
 		os.write(heartbeatRecordByte);
 		os.write(tlsVersionBuffer);
 		os.write(heartbeatBuffer);
+
+		getParent().notifyNewMessage(this);
 
 		if (log.isDebugEnabled()) log.debug("Wrote the dodgy heartbeat message");
 
