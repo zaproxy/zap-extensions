@@ -88,7 +88,8 @@ public class HttpFuzzerResultsTableModel extends
             final HistoryReference href = result.getHttpMessage().getHistoryRef() != null ? result.getHttpMessage()
                     .getHistoryRef() : new HistoryReference(
                     Model.getSingleton().getSession(),
-                    HistoryReference.TYPE_TEMPORARY,
+                    // TODO Replace 20 with HistoryReference.TYPE_FUZZER_TEMPORARY once available.
+                    20,
                     result.getHttpMessage());
 
             EventQueue.invokeLater(new Runnable() {
