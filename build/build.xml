@@ -68,17 +68,8 @@
 	<target name="compile" depends="init" description="compile the source">
 		<echo message="Compiling the source..." />
 		
-		<!-- Compile with debug information if the property "javac.debug" is set to true -->
-		<local name="debug" />
-		<condition property="debug" value="true" else="true">
-			<istrue value="${javac.debug}" />
-		</condition>
-
-		<property name="debug" value="true" />
-		<echo message="Debug = ${debug}" />
-
 		<!-- Compile the java code from ${src} into ${build} -->
-		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8"
+		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="true" encoding="UTF-8"
 			excludes="org/zaproxy/zap/extension/*/files/**,org/zaproxy/zap/extension/*/resources/**">
 			<compilerarg value="-Xlint:all"/>
 			<compilerarg value="-Xlint:-path"/>
@@ -94,7 +85,7 @@
 		</javac>
 
 		<echo message="Compiling tests..." />
-		<javac srcdir="${test.src}" destdir="${test.build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
+		<javac srcdir="${test.src}" destdir="${test.build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="true" encoding="UTF-8">
 			<compilerarg value="-Xlint:all"/>
 			<compilerarg value="-Xlint:-path"/>
 			<compilerarg value="-Xlint:-options"/> <!-- Otherwise fails with Java 8 -->
@@ -806,8 +797,6 @@
     </target>
 
 	<target name="deploy-weekly" description="deploy extensions to be included in weekly releases">
-		<!-- Set to compile with debug information -->
-		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
@@ -823,8 +812,6 @@
 	</target>
 
 	<target name="deploy-release" description="deploy extensions to be included in full releases">
-		<!-- Set to compile with debug information -->
-		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
