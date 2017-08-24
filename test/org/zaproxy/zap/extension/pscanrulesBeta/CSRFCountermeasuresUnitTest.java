@@ -140,7 +140,7 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 	}
 
 	@Test
-	public void shouldNotRaiseAlertWhenSecondFormHasAKnownCSRFToken() {
+	public void shouldRaiseOneAlertForOneFormWhenSecondFormHasAKnownCSRFToken() {
 		//Given
 		msg.setResponseBody("<html><head></head><body>"
 				+ "<form id=\"second_form\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
@@ -149,7 +149,38 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 		//When
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 		//Then
-		assertEquals(0, alertsRaised.size());
+		assertEquals(1, alertsRaised.size());
+		assertEquals(alertsRaised.get(0).getEvidence(), "<form id=\"second_form\">");
+	}
+	
+	@Test
+	public void shouldRaiseOneAlertForOneFormWhenFirstFormOfTwoHasAKnownCSRFToken() {
+		//Given
+		msg.setResponseBody("<html><head></head><body>"
+				+ "<form id=\"first_form\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form>"
+				+ "<form id=\"second_form\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+				+ "</body></html>");
+		//When
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		//Then
+		assertEquals(1, alertsRaised.size());
+		assertEquals(alertsRaised.get(0).getEvidence(), "<form id=\"second_form\">");
+	}
+	
+	@Test
+	public void shouldRaiseTwoAlertsForTwoFormsWhenOneOfThreeHasAKnownCSRFToken() {
+		//Given
+		msg.setResponseBody("<html><head></head><body>"
+				+ "<form id=\"zeroth_form\" action=\"someaction\"><input type=\"text\" name=\"zero\"/><input type=\"submit\"/></form>"
+				+ "<form id=\"first_form\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form>"
+				+ "<form id=\"second_form\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+				+ "</body></html>");
+		//When
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		//Then
+		assertEquals(2, alertsRaised.size());
+		assertEquals(alertsRaised.get(0).getEvidence(), "<form id=\"zeroth_form\" action=\"someaction\">");
+		assertEquals(alertsRaised.get(1).getEvidence(), "<form id=\"second_form\">");
 	}
 
 	@Test
