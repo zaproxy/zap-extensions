@@ -154,6 +154,18 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
     }
 
     @Test
+    public void shouldNotAlertIfAttackResponseListsBogusLinuxDirectories() throws Exception {
+        // Given
+        nano.addHandler(new ListBogusLinuxDirsOnAttack("/", "p", "/"));
+        rule.init(getHttpMessage("/?p=v"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+
+    }
+    
+    @Test
     public void shouldNotAlertIfLocalFilePathTraversalDoesNotExist() throws Exception {
         // Given
         nano.addHandler(new LocalFileHandler("/", "p", ""));
@@ -210,6 +222,22 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
                 + "<td><a href=\"/boot/\">boot</a></td>";
 
         public ListLinuxDirsOnAttack(String path, String param, String attack) {
+            super(path, param, attack);
+        }
+
+        @Override
+        protected String getDirs() {
+            return DIRS_LISTING;
+        }
+    }
+    
+    private static class ListBogusLinuxDirsOnAttack extends ListDirsOnAttack {
+
+        private static final String DIRS_LISTING = "<td><a href=\"/bin/\">bin</a></td>"
+                + "<td><a href=\"/getChoice/\">getChoice</a></td>" // Matches etc but isn't etc 
+                + "<td><a href=\"/boot/\">boot</a></td>";
+
+        public ListBogusLinuxDirsOnAttack(String path, String param, String attack) {
             super(path, param, attack);
         }
 

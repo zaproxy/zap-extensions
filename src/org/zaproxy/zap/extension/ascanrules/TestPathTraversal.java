@@ -612,7 +612,13 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
         @Override
         public String match(String contents) {
             if (contents.contains("etc") && contents.contains("bin") && contents.contains("boot")) {
-                return "etc";
+                Pattern nixDoubleCheckPattern = Pattern.compile("\\betc\\b");
+                Matcher nixDoubleCheckMatcher = nixDoubleCheckPattern.matcher(contents);
+
+                if (nixDoubleCheckMatcher.find())
+                {
+                    return "etc";
+                }
             }
 
             if (contents.contains("Windows") && Pattern.compile("Program\\sFiles").matcher(contents).find()) {

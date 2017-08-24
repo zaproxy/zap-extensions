@@ -9,6 +9,7 @@
 	<![CDATA[
 	Issue 1365: Additional Path Traversal detection.<br>
 	Correct alert's evidence/attack of Parameter Tampering (Issue 3524).<br>
+	Fix Path Traversal false positives when etc is a substring (Issue 3735).<br>
 	]]>
     </changes>
 	<extensions>
