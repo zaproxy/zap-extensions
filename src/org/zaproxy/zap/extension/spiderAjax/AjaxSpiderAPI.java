@@ -235,11 +235,11 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
 		switch (Control.getSingleton().getMode()) {
 		case safe:
-			throw new ApiException(getModeViolationType());
+			throw new ApiException(ApiException.Type.MODE_VIOLATION);
 		case protect:
 			if ((validateUrl && !Model.getSingleton().getSession().isInScope(url))
 					|| (context != null && !context.isInScope())) {
-				throw new ApiException(getModeViolationType());
+				throw new ApiException(ApiException.Type.MODE_VIOLATION);
 			}
 			// No problem
 			break;
@@ -270,15 +270,6 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 			new Thread(spiderThread, "ZAP-AjaxSpiderApi").start();
 		} catch (Exception e) {
 			logger.error(e);
-		}
-	}
-
-	// XXX replace calls with ApiException.Type.MODE_VIOLATION once targeting newer ZAP version (>= 2.5.0)
-	private static ApiException.Type getModeViolationType() {
-		try {
-			return ApiException.Type.valueOf("MODE_VIOLATION");
-		} catch (IllegalArgumentException e) {
-			return ApiException.Type.ILLEGAL_PARAMETER;
 		}
 	}
 

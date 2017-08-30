@@ -246,11 +246,9 @@ public class AjaxSpiderResultsTableModel
         public void eventReceived(Event event) {
             switch (event.getEventType()) {
             case AlertEventPublisher.ALERT_ADDED_EVENT:
-                // TODO Replace once available in the zap.jar AlertEventPublisher.ALERT_CHANGED_EVENT
-            case "alert.changed":
+            case AlertEventPublisher.ALERT_CHANGED_EVENT:
             case AlertEventPublisher.ALERT_REMOVED_EVENT:
-                // TODO Replace once available in the zap.jar AlertEventPublisher.HISTORY_REFERENCE_ID
-                refreshEntry(Integer.valueOf(event.getParameters().get("historyId")));
+                refreshEntry(Integer.valueOf(event.getParameters().get(AlertEventPublisher.HISTORY_REFERENCE_ID)));
                 break;
             case AlertEventPublisher.ALL_ALERTS_REMOVED_EVENT:
             default:
@@ -289,7 +287,6 @@ public class AjaxSpiderResultsTableModel
             });
         }
 
-        // TODO Remove once available in the zap.jar.
         public void refreshEntryRows() {
             if (getRowCount() == 0) {
                 return;
