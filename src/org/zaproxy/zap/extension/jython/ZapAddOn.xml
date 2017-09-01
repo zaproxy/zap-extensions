@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Python scripting</name>
-	<version>5</version>
+	<version>6</version>
 	<status>beta</status>
 	<description>Allows Python to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>add the python module path interface</changes>
+	<changes>Update Jython from 2.5.3 to 2.7.1</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jython.ExtensionJython</extension>
 	</extensions>
