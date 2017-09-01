@@ -26,7 +26,6 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -301,23 +300,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	        setTabFocus();
 		}
 		
-		/* We also need to ensure the script console appears if its been hidden.
-		 * Thats not easy for 2.3.* but it only becomes a significant issue in 2.4.*
-		 * so we're using reflection right now but should move to calling isTabVisible()
-		 * directly when the zap.jar is updated for 2.4.*
-		 * TODO replace with a call to isTabVisible() when zap.jar updated for 2.4.*
-		 */
-		try {
-			Method method = this.getClass().getMethod("isTabVisible");
-			Object res = method.invoke(this);
-			if (res instanceof Boolean) {
-				if (!(Boolean)res) {
-					// isTabVisible() returned false ;)
-			        setTabFocus();
-				}
-			}
-		} catch (Exception e) {
-			// Almost certainly pre 2.4.* so ignore
+		if (!isTabVisible()) {
+			setTabFocus();
 		}
 	}
 	
