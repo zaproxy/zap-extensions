@@ -34,17 +34,25 @@ public class HttpFuzzerHandlerOptionsPanel implements FuzzerHandlerOptionsPanel<
 
     private final JCheckBox followRedirectsCheckBox;
     private final JCheckBox showRedirectMessagesCheckBox;
+    private HttpFuzzerOptions defaultOptions;
 
-    public HttpFuzzerHandlerOptionsPanel() {
+    public HttpFuzzerHandlerOptionsPanel(FuzzerOptions defaultOptions) {
+        this(new HttpFuzzerOptions(defaultOptions, false, false, 100, false));
+    }
+
+    public HttpFuzzerHandlerOptionsPanel(HttpFuzzerOptions defaultOptions) {
+        this.defaultOptions = defaultOptions;
         optionsPanel = new JPanel();
 
         followRedirectsCheckBox = new JCheckBox();
         JLabel followRedirectsLabel = new JLabel(Constant.messages.getString("fuzz.httpfuzzer.options.label.followredirects"));
         followRedirectsLabel.setLabelFor(followRedirectsCheckBox);
+        followRedirectsCheckBox.setSelected(defaultOptions.isFollowRedirects());
 
         showRedirectMessagesCheckBox = new JCheckBox();
         JLabel showRedirectMessagesLabel = new JLabel(Constant.messages.getString("fuzz.httpfuzzer.options.label.showredirects"));
         showRedirectMessagesLabel.setLabelFor(showRedirectMessagesCheckBox);
+        showRedirectMessagesCheckBox.setSelected(defaultOptions.isShowRedirectMessages());
 
         GroupLayout layout = new GroupLayout(optionsPanel);
         optionsPanel.setLayout(layout);
@@ -72,11 +80,12 @@ public class HttpFuzzerHandlerOptionsPanel implements FuzzerHandlerOptionsPanel<
 
     @Override
     public HttpFuzzerOptions getOptions(FuzzerOptions baseOptions) {
-        return new HttpFuzzerOptions(baseOptions, followRedirectsCheckBox.isSelected(), false, 100, false);
+        return new HttpFuzzerOptions(baseOptions, followRedirectsCheckBox.isSelected(), showRedirectMessagesCheckBox.isSelected(), defaultOptions.getMaximumRedirects(), defaultOptions.isAllowCircularRedirects());
     }
 
     @Override
     public void reset() {
-        followRedirectsCheckBox.setSelected(false);
+        followRedirectsCheckBox.setSelected(defaultOptions.isFollowRedirects());
+        showRedirectMessagesCheckBox.setSelected(defaultOptions.isShowRedirectMessages());
     }
 }

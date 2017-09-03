@@ -35,7 +35,7 @@ zapAddOn {
 dependencies {
     compileOnly(parent!!.childProjects.get("selenium")!!)
     implementation("com.google.code.gson:gson:2.2.2")
-    implementation(files("lib/mozilla-zest-0.13.jar"))
+    api(files("lib/mozilla-zest-0.14.jar"))
     implementation("org.owasp.jbrofuzz:jbrofuzz-core:2.5.1") {
         // Only "jbrofuzz-core" is needed.
         setTransitive(false)

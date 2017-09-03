@@ -127,6 +127,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     public static final Version CURRENT_VERSION = new Version("2.0.1");
 
     private static final String JBROFUZZ_CATEGORY_PREFIX = "jbrofuzz";
+    public static final String SCRIPT_TYPE_SEQUENCE = "sequence";
 
     private FuzzersController fuzzersController;
 

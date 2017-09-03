@@ -742,8 +742,14 @@ public class ZestZapUtils {
 	public static ZestRequest toZestRequest(HttpMessage msg,
 			boolean replaceTokens, boolean incAllHeaders, ZestParam params) throws MalformedURLException,
 			HttpMalformedHeaderException, SQLException {
-		if (replaceTokens) {
 			ZestRequest req = new ZestRequest();
+			return updateZestRequest(req, msg, replaceTokens, incAllHeaders, params);
+	}
+
+	public static ZestRequest updateZestRequest(ZestRequest req, HttpMessage msg,
+			boolean replaceTokens, boolean incAllHeaders, ZestParam params) throws MalformedURLException,
+			HttpMalformedHeaderException, SQLException {
+		if (replaceTokens) {
 			req.setMethod(msg.getRequestHeader().getMethod());
 			if (msg.getRequestHeader().getURI() != null) {
 				req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
@@ -769,7 +775,6 @@ public class ZestZapUtils {
 			return req;
 
 		} else {
-			ZestRequest req = new ZestRequest();
 			req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
 			req.setMethod(msg.getRequestHeader().getMethod());
 			if (incAllHeaders) {

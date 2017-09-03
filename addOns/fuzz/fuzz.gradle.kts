@@ -16,10 +16,16 @@ zapAddOn {
         semVer.set("2.0.1")
         author.set("ZAP Dev Team")
         url.set("https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts")
+        dependencies {
+            addOns {
+                register("zest")
+            }
+        }
     }
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("zest")!!)
     implementation("com.natpryce:snodge:2.1.2.2")
     implementation("org.owasp.jbrofuzz:jbrofuzz-core:2.5.1") {
         // Only "jbrofuzz-core" is needed.
@@ -29,4 +35,5 @@ dependencies {
     implementation("dk.brics.automaton:automaton:1.11-8")
 
     testImplementation(project(":testutils"))
+    testImplementation(parent!!.childProjects.get("zest")!!)
 }

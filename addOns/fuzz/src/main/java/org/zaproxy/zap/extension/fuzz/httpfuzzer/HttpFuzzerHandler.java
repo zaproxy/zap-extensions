@@ -68,6 +68,10 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
         return Constant.messages.getString("fuzz.httpfuzzer.messagetype");
     }
 
+    public List<HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?>> getMessageProcessors(){
+        return messageProcessors;
+    }
+
     @Override
     public HttpMessageSelectorPanel createMessageSelectorPanel() {
         return new HttpMessageSelectorPanel();
@@ -80,7 +84,7 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
         }
         HttpMessage message = extractMessage((HttpMessageContainer) messageContainer);
         if (message != null) {
-            return showFuzzerDialogImpl(message, null, defaultOptions);
+            return showFuzzerDialogImpl(message, null, defaultOptions, messageProcessors);
         }
         return null;
     }
@@ -95,27 +99,30 @@ public class HttpFuzzerHandler implements FuzzerHandler<HttpMessage, HttpFuzzer>
 
         HttpMessage message = extractMessage((HttpMessageContainer) messageContainer);
         if (message != null) {
-            return showFuzzerDialogImpl(message, messageContainer, defaultOptions);
+            return showFuzzerDialogImpl(message, messageContainer, defaultOptions, messageProcessors);
         }
         return null;
     }
 
     @Override
     public HttpFuzzer showFuzzerDialog(HttpMessage message, FuzzerOptions defaultOptions) {
-        return showFuzzerDialogImpl(message, null, defaultOptions);
+        return showFuzzerDialogImpl(message, null, defaultOptions, messageProcessors);
     }
 
-    private HttpFuzzer showFuzzerDialogImpl(
+    public HttpFuzzer showFuzzerDialogImpl(
             HttpMessage message,
             SelectableContentMessageContainer<HttpMessage> container,
-            FuzzerOptions defaultOptions) {
+            FuzzerOptions defaultOptions,
+            List<HttpFuzzerMessageProcessorUIHandler<HttpFuzzerMessageProcessor, ?>> messageProcessorsForDialog
+            ) {
+
         FuzzerDialog<HttpMessage, HttpFuzzerOptions, HttpFuzzerMessageProcessor> fuzzDialogue = new FuzzerDialog<>(
                 View.getSingleton().getMainFrame(),
                 defaultOptions,
                 message,
                 true,
-                new HttpFuzzerHandlerOptionsPanel(),
-                new HttpFuzzerMessageProcessorCollection(message, messageProcessors));
+                defaultOptions instanceof HttpFuzzerOptions ? new HttpFuzzerHandlerOptionsPanel((HttpFuzzerOptions)defaultOptions) : new HttpFuzzerHandlerOptionsPanel(defaultOptions),
+                new HttpFuzzerMessageProcessorCollection(message, messageProcessorsForDialog));
 
         if (container != null) {
             if (fuzzDialogue.setSelectedContainer(container.getName())) {

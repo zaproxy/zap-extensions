@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Rely on script context writer for script output.
 - Correct message handling in HTTP Sender scripts.
 - Remove Scripts tree selection listener when add-on is uninstalled.
+- Sequence Scripts are now fuzzable.
+- Update Zest library to version 0.14.
 
 ## 28 - 2018-11-07
 
