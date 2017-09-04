@@ -9,6 +9,7 @@
 	<![CDATA[
 	Minor changes to InsecureJFSViewStatePassiveScanner (check response contains JSF viewstate or if it's server stored).<br/>
 	Improve the domain matching in CookieLooselyScopedScanner.<br/>
+	Issue 3449: CSRFcountermeasures passive scanner now raises alerts on a per-form basis on pages with multiple forms.</br> 
 	]]>
 	</changes>
 	<extensions>

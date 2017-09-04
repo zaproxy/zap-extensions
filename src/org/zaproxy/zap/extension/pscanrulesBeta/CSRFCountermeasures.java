@@ -118,7 +118,6 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 		
 		List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
 		List<String> tokenNames = extAntiCSRF.getAntiCsrfTokenNames();
-		boolean foundCsrfToken = false;
 		
 		if (formElements != null && formElements.size() > 0) {
 			boolean hasSecurityAnnotation = false;
@@ -126,9 +125,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 			// Loop through all of the FORM tags
 			logger.debug("Found " + formElements.size() + " forms");
 			
-			StringBuilder sb = new StringBuilder();
-			String evidence = "";
-			int numberOfFormsPassed = 1;
+			int numberOfFormsPassed = 0;
 			
 			List<String> ignoreList = new ArrayList<String>();
 			String ignoreConf = getCSRFIgnoreList();
@@ -144,21 +141,18 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 			String ignoreAttName = getCSRFIgnoreAttName();
 			String ignoreAttValue = getCSRFIgnoreAttValue();
 			
-			int ignoredForms = 0;
-			
 			for (Element formElement : formElements) {
 				logger.debug("FORM ["+ formElement + "] has parent ["+ formElement.getParentElement()+"]");
 				StringBuilder sbForm = new StringBuilder();
+				++numberOfFormsPassed;
 				//if the form has no parent, it is pretty likely invalid HTML (or Javascript!!!), so we will not report
 				//any alerts on it.  
 				//ie. This logic is necessary to eliminate false positives on non-HTML files.
 				if (formElement.getParentElement() == null ) {
 					logger.debug ("Skipping HTML form because it has no parent. Likely not actually HTML.");
-					foundCsrfToken=true;  //do not report a missing anti-CSRF field on this form
-					continue;
+					continue;  //do not report a missing anti-CSRF field on this form
 				}
 				if (formOnIgnoreList(formElement, ignoreList)) {
-					ignoredForms++;
 					continue;
 				}
 				if (! StringUtils.isEmpty(ignoreAttName)) {
@@ -174,6 +168,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 				
 				List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
 				sbForm.append("[Form "+numberOfFormsPassed+": ");
+				boolean foundCsrfToken = false;
 				
 				if (inputElements != null && inputElements.size() > 0) {
 					// Loop through all of the INPUT elements
@@ -205,26 +200,15 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 					}
 				}
 				if (foundCsrfToken) {
-					break;
+					continue;
 				}
-				if (sb.length() > 0) {
-					sb.append("], ");
-				} 
-				sb.append(sbForm.toString());
-				if (evidence.length() == 0) {
-					// Give the first FORM tag as evidence
-					evidence = formElement.getFirstElement().getStartTag().toString();
-				}
-				numberOfFormsPassed++;
-			}
-			if (sb.length() > 0) {
-				sb.append(']');
-			}
-			
-			if (!foundCsrfToken && formElements.size() > ignoredForms) {
-				//No known Anti-CSRF tokens found in a form. Not a vulnerability per-se.
-				//but alert it, as a low priority
-				String formDetails = sb.toString();
+
+				String evidence = "";
+				evidence = formElement.getFirstElement().getStartTag().toString();
+
+				sbForm.append(']');
+				
+				String formDetails = sbForm.toString();
 				String tokenNamesFlattened = tokenNames.toString();
 				
 				int risk = Alert.RISK_LOW;
@@ -255,7 +239,7 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 		if (logger.isDebugEnabled()) {
 			logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
 		}
-			}
+	}
 
 	private boolean formOnIgnoreList(Element formElement, List<String> ignoreList) {
 		String id = formElement.getAttributeValue("id");
