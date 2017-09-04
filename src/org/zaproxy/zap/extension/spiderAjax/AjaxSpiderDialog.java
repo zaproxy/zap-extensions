@@ -342,7 +342,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
      */
     @Override
     public void save() {
-    	AjaxSpiderParam params = this.extension.getAjaxSpiderParam().clone();
+    	AjaxSpiderParam params = (AjaxSpiderParam) this.extension.getAjaxSpiderParam().clone();
     	
         String selectedBrowser = getSelectedBrowser();
         if (selectedBrowser != null) {
