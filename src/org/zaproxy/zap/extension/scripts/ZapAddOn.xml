@@ -11,6 +11,7 @@
 	Invoke Scripts tree context menu once.<br>
 	Title caps adjustments (related to Issue 2000).<br>
 	Allow to configure the enabled state of new/loaded scripts (Issue 2996).<br>
+	Use selected font in script text area.<br>
 	]]>
 	</changes>
 	<extensions>
