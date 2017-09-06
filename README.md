@@ -4,6 +4,6 @@ If you are using the latest version of ZAP  then you can browse and download add
 
 ![Image](https://github.com/zaproxy/zap-extensions/wiki/images/zap-screenshot-browse-addons.png)
 
-You can also import add-ons you have downloaded manually via the "File / Load Add-on file..." menu option.
+You can also import add-ons you have downloaded manually from https://github.com/zaproxy/zap-extensions/releases via the "File / Load Add-on file..." menu option.
 
 Please see the [wiki](https://github.com/zaproxy/zap-extensions/wiki) for more details.
