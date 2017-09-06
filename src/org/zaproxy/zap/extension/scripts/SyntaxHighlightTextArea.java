@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.util.List;
 import java.util.Vector;
 
@@ -115,8 +116,12 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 		setCloseMarkupTags(false);
 		setClearWhitespaceLinesEnabled(false);
 		
-		// Correct the font size
-		this.setFont(FontUtils.getFont(this.getFont().getFontName()));
+		Font font = FontUtils.getFont(Font.PLAIN);
+		if (font.getName().isEmpty()) {
+			// Use default RSyntaxTextArea font instead but with correct font size.
+			font = FontUtils.getFont(this.getFont().getFontName());
+		}
+		this.setFont(font);
 
 	}
 	
