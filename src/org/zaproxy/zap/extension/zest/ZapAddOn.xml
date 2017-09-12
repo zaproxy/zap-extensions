@@ -1,25 +1,12 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>24</version>
+	<version>25</version>
 	<status>beta</status>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Update Zest library to version 0.13.<br>
-	Update to support Selenium version 3.4.0 (Issue 3509).<br>
-	Replace variables when running Action Invoke (Issue 3511).<br>
-	Execute scripts before programs when running Action Invoke (Issue 3488).<br>
-	Fix exceptions when running scripts (Issue 2859 and 2871).<br>
-	Bugfix in ZestScript Ui: When more than one 'Assign variable to a form field' node is below a RequestNode then the RequestNode is now correctly determined.<br>
-	Correct operation set in calc assigns.<br>
-	Allow to loop files even if fuzzers.jbrf does not exist (Issue 3400).<br>
-	Properly remove Zest scripts (Issue 3401).<br>
-	Allow to select the case on assign replacements.<br>
-	Show/select the correct script in the Edit Zest Action dialogue (Issue 3489).<br>
-	Ensure recorded Sequence scripts can be scanned through context menu (Issue 3536).<br>
-	Updated to support latest selenium addon.<br>
 	]]>
 	</changes>
 	<dependencies>

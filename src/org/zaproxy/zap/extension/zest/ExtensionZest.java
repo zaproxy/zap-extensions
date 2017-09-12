@@ -283,7 +283,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			// Convert scripts loaded on start into real Zest scripts
 			for (ScriptType type : this.getExtScript().getScriptTypes()) {
 				for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
-					if (script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+					if (ZestScriptEngineFactory.NAME.equals(script.getEngineName())) {
 						this.scriptAdded(script, false);
 					}
 				}
