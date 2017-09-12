@@ -24,12 +24,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -47,6 +49,8 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 	public static final ImageIcon PYTHON_ICON = new ImageIcon(
 			ExtensionJython.class.getResource("/org/zaproxy/zap/extension/jython/resources/python.png"));
 
+	private static final Logger LOGGER = Logger.getLogger(ExtensionJython.class);
+
 	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
 
 	static {
@@ -58,6 +62,7 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 	private ExtensionScript extScript = null;
 	private JythonOptionsParam jythonOptionsParam;
 	private String modulePath;
+	private CountDownLatch engineLoaderCDL;
 
 	public ExtensionJython() {
 		super(NAME);
@@ -74,8 +79,28 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 		ScriptEngine se = mgr.getEngineByExtension("py");
 
 		if (se == null) {
-			PyScriptEngineFactory factory = new PyScriptEngineFactory();
-			this.getExtScript().registerScriptEngineWrapper(new JythonEngineWrapper(factory.getScriptEngine()));
+			if (getView() == null) {
+				engineLoaderCDL = new CountDownLatch(1);
+			}
+
+			Thread engineLoaderThread = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						LOGGER.info("Loading Jython engine...");
+						getExtScript().registerScriptEngineWrapper(
+								new JythonEngineWrapper(new PyScriptEngineFactory().getScriptEngine()));
+						LOGGER.info("Jython engine loaded.");
+					} finally {
+						if (engineLoaderCDL != null) {
+							engineLoaderCDL.countDown();
+						}
+					}
+				}
+			});
+			engineLoaderThread.setName("ZAP-Jython-EngineLoader");
+			engineLoaderThread.start();
 		}
 		
 		this.jythonOptionsParam = new JythonOptionsParam();
@@ -87,6 +112,23 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 		extensionHook.addOptionsChangedListener(this);
 	}
 	
+	@Override
+	public void postInit() {
+		super.postInit();
+
+		if (engineLoaderCDL != null) {
+			try {
+				LOGGER.info("Waiting for Jython engine to load...");
+				engineLoaderCDL.await();
+			} catch (InterruptedException e) {
+				LOGGER.warn("Interrupted while waiting for the Jython engine to load.");
+				Thread.currentThread().interrupt();
+			} finally {
+				engineLoaderCDL = null;
+			}
+		}
+	}
+
 	@Override
 	public void optionsLoaded() {
 		super.optionsLoaded();
