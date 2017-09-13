@@ -87,7 +87,9 @@ public class ZestCookieDialog extends StandardFieldsDialog implements ZestDialog
 
 	@Override
 	public String validateFields() {
-		// Currently no validation - ok to let users mess up with these?
+		if (getStringValue(FIELD_PARAM_NAME).isEmpty()) {
+			return Constant.messages.getString("zest.dialog.cookies.error.cookie.name.empty");
+		}
 		return null;
 	}
 
