@@ -21,9 +21,13 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import net.htmlparser.jericho.Source;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -81,19 +85,13 @@ public class CrossDomainMisconfiguration extends PluginPassiveScanner {
 		try {
 			if (log.isDebugEnabled()) log.debug("Checking message "+ msg.getRequestHeader().getURI().getURI() + " for Cross-Domain misconfigurations");
 
-			//TODO: replace with equivalent names in HttpHeader, once these headers are available there 
-			String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";			
-			//String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
-			//String ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods";
-			//String ACCESS_CONTROL_EXPOSE_HEADERS = "Access-Control-Expose-Headers";
-
-			String corsAllowOriginValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_ALLOW_ORIGIN);
-			//String corsAllowHeadersValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_ALLOW_HEADERS);
-			//String corsAllowMethodsValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_ALLOW_METHODS);
-			//String corsExposeHeadersValue = msg.getResponseHeader().getHeader(ACCESS_CONTROL_EXPOSE_HEADERS);
+			String corsAllowOriginValue = msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN);
+			//String corsAllowHeadersValue = msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_HEADERS);
+			//String corsAllowMethodsValue = msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_METHODS);
+			//String corsExposeHeadersValue = msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_EXPOSE_HEADERS);
 
 			if ( corsAllowOriginValue!= null && corsAllowOriginValue.equals("*")) {
-				if (log.isDebugEnabled()) log.debug("Raising a Medium risk Cross Domain alert on "+ ACCESS_CONTROL_ALLOW_ORIGIN + ": "+corsAllowOriginValue);
+				if (log.isDebugEnabled()) log.debug("Raising a Medium risk Cross Domain alert on "+ HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN + ": "+corsAllowOriginValue);
 				//Its a Medium, rather than a High (as originally thought), for the following reasons:
 				//Assumption: if an API is accessible in an unauthenticated manner, it doesn't need to be protected 
 				//  (if it should be protected, its a Missing Function Level Access Control issue, not a Cross Domain Misconfiguration)
@@ -118,7 +116,7 @@ public class CrossDomainMisconfiguration extends PluginPassiveScanner {
 						Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"),  //other info
 						Constant.messages.getString(MESSAGE_PREFIX + "soln"), 
 						Constant.messages.getString(MESSAGE_PREFIX + "refs"), 
-						ACCESS_CONTROL_ALLOW_ORIGIN + ": "+ corsAllowOriginValue,
+						extractEvidence(msg.getResponseHeader().toString(), HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN, corsAllowOriginValue),
 						264, //CWE 264: Permissions, Privileges, and Access Controls 
 						14,  //WASC-14: Server Misconfiguration
 						msg);  
@@ -132,7 +130,15 @@ public class CrossDomainMisconfiguration extends PluginPassiveScanner {
 
 	}
 
-
+	private static String extractEvidence(String header, String headerName, String headerContents) {
+		Pattern pattern = Pattern
+				.compile(Pattern.quote(headerName) + ".*" + Pattern.quote(headerContents) + ".*", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(header);
+		if (matcher.find()) {
+			return matcher.group();
+		}
+		return "";
+	}
 
 	/**
 	 * sets the parent
