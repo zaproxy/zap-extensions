@@ -40,6 +40,8 @@ import org.zaproxy.zap.view.NodeSelectDialog;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.BrowserContext;
 import com.teamdev.jxbrowser.chromium.BrowserContextParams;
+import com.teamdev.jxbrowser.chromium.events.ConsoleEvent;
+import com.teamdev.jxbrowser.chromium.events.ConsoleListener;
 import com.teamdev.jxbrowser.chromium.CustomProxyConfig;
 
 public class ZapBrowserPanel extends BrowserPanel {
@@ -86,6 +88,15 @@ public class ZapBrowserPanel extends BrowserPanel {
                 LOGGER.error(e.getMessage(), e);
                 browser = new Browser();
             }
+
+            browser.addConsoleListener(new ConsoleListener() {
+                @Override
+                public void onMessage(ConsoleEvent event) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("jxBrowser Console Event - Level: " + event.getLevel() + " - Message: " + event.getMessage());
+                    }
+                }
+            });
         }
         return browser;
     }
