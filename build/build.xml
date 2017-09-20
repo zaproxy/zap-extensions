@@ -421,6 +421,7 @@
 		<build-addon name="highlighter" />
 		<build-addon name="httpsinfo" addonid="httpsInfo" />
 		<build-addon name="importLogFiles" />
+		<build-addon name="jsonview"/>
 		<build-addon name="jxbrowser" />
 		<build-addon name="jxbrowserlinux64" />
 		<build-addon name="jxbrowsermacos" />
@@ -623,6 +624,10 @@
 	
 	<target name="deploy-importLogFiles" description="deploy the importLogFiles extension">
 		<build-deploy-addon name="importLogFiles" />
+	</target>
+	
+	<target name="deploy-jsonview" description="deploy the jsonview extension">
+		<build-deploy-addon name="jsonview" />
 	</target>
 
 	<target name="download-jxbrowser" depends="compile" description="download the jxbrowser files">

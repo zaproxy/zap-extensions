@@ -1,0 +1,19 @@
+<zapaddon>
+	<name>Json view</name>
+	<version>1</version>
+	<status>alpha</status>
+	<description>Adds a view that shows JSON messages nicely formatted</description>
+	<author>Juha Kivekäs</author>
+	<url></url>
+	<changes>Initial release</changes>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.jsonview.ExtensionHttpPanelJsonView</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.6.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>
+
