@@ -1,11 +1,16 @@
 <zapaddon>
 	<name>Python scripting</name>
-	<version>6</version>
+	<version>7</version>
 	<status>beta</status>
 	<description>Allows Python to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Update Jython from 2.5.3 to 2.7.1</changes>
+	<changes>
+	<![CDATA[
+	Do not initialise java.awt.Toolkit when in daemon.<br>
+	Update HTTP Sender template with initiator ID of AJAX Spider.<br>
+	]]>
+	</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jython.ExtensionJython</extension>
 	</extensions>

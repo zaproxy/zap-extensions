@@ -38,6 +38,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
+import org.parosproxy.paros.view.View;
 import org.python.core.Py;
 import org.python.google.common.base.Strings;
 import org.python.jsr223.PyScriptEngineFactory;
@@ -46,8 +47,7 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedListener {
 
 	public static final String NAME = "ExtensionJython";
-	public static final ImageIcon PYTHON_ICON = new ImageIcon(
-			ExtensionJython.class.getResource("/org/zaproxy/zap/extension/jython/resources/python.png"));
+	public static final ImageIcon PYTHON_ICON;
 
 	private static final Logger LOGGER = Logger.getLogger(ExtensionJython.class);
 
@@ -57,6 +57,10 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 		List<Class<?>> dependencies = new ArrayList<>(1);
 		dependencies.add(ExtensionScript.class);
 		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
+
+		PYTHON_ICON = View.isInitialised()
+				? new ImageIcon(ExtensionJython.class.getResource("/org/zaproxy/zap/extension/jython/resources/python.png"))
+				: null;
 	}
 
 	private ExtensionScript extScript = null;
