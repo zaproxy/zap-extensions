@@ -5,7 +5,12 @@
 	<description>Allows Ruby to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Add template for HTTP Sender script.</changes>
+	<changes>
+	<![CDATA[
+	Add template for HTTP Sender script.<br>
+	Dynamically unload the add-on.<br>
+	]]>
+	</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.jruby.ExtensionJruby</extension>
 	</extensions>

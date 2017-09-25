@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.jruby;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,9 +37,11 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListener {
@@ -59,6 +63,7 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 
 	private ExtensionScript extScript = null;
 	private ScriptEngine rubyScriptEngine = null;
+	private JrubyEngineWrapper engineWrapper;
 
 	public ExtensionJruby() {
 		super(NAME);
@@ -72,15 +77,62 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 		if (this.getRubyScriptEngine() == null) {
 			JRubyEngineFactory factory = new JRubyEngineFactory();
 			this.rubyScriptEngine = factory.getScriptEngine();
-			this.getExtScript().registerScriptEngineWrapper(new JrubyEngineWrapper(this.rubyScriptEngine));
+			engineWrapper = new JrubyEngineWrapper(this.rubyScriptEngine, getDefaultTemplates());
+			this.getExtScript().registerScriptEngineWrapper(engineWrapper);
 		}
 
 		this.getExtScript().addListener(this);
 	}
 
+	private List<Path> getDefaultTemplates() {
+		AddOn addOn = getAddOn();
+		if (addOn == null) {
+			// Probably running from source...
+			return Collections.emptyList();
+		}
+
+		List<String> files = addOn.getFiles();
+		if (files == null || files.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		ArrayList<Path> defaultTemplates = new ArrayList<>(files.size());
+		Path zapHome = Paths.get(Constant.getZapHome());
+		for (String file : files) {
+			if (file.startsWith(ExtensionScript.TEMPLATES_DIR)) {
+				defaultTemplates.add(zapHome.resolve(file));
+			}
+		}
+		defaultTemplates.trimToSize();
+		return defaultTemplates;
+	}
+
 	@Override
 	public boolean canUnload() {
-		return false;
+		return true;
+	}
+	
+	@Override
+	public void unload() {
+		super.unload();
+
+		String engineName = getRubyScriptEngine().getFactory().getEngineName();
+		for (ScriptType type : this.getExtScript().getScriptTypes()) {
+			for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
+				if (script.getEngineName().equals(engineName)) {
+					if (script instanceof JrubyScriptWrapper) {
+						ScriptNode node = this.getExtScript().getTreeModel().getNodeForScript(script);
+						node.setUserObject(((JrubyScriptWrapper) script).getOriginal());
+					}
+				}
+			}
+		}
+
+		getExtScript().removeListener(this);
+
+		if (engineWrapper != null) {
+			getExtScript().removeScriptEngineWrapper(engineWrapper);
+		}
 	}
 	
 	private ScriptEngine getRubyScriptEngine() {
@@ -144,17 +196,7 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 			// JRuby seems to handle interfaces differently from other JSR223 languages
 			ScriptNode parentNode = this.getExtScript().getTreeModel().getNodeForScript(script);
 			
-			JrubyScriptWrapper jsw = new JrubyScriptWrapper();
-			jsw.setName(script.getName());
-			jsw.setType(script.getType());
-			jsw.setContents(script.getContents());
-			jsw.setDescription(script.getDescription());
-			jsw.setEnabled(script.isEnabled());
-			jsw.setEngine(script.getEngine());
-			jsw.setFile(script.getFile());
-			jsw.setLoadOnStart(script.isLoadOnStart());
-			
-			parentNode.setUserObject(jsw);
+			parentNode.setUserObject(new JrubyScriptWrapper(script));
 		}
 
 	}
