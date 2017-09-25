@@ -86,7 +86,6 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.control.AddOn;
-import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -219,7 +218,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	private List<Path> getDefaultTemplates() {
-		AddOn addOn = ExtensionFactory.getAddOnLoader().getAddOnCollection().getAddOn("zest");
+		AddOn addOn = getAddOn();
 		if (addOn == null) {
 			// Probably running from source...
 			return Collections.emptyList();
@@ -233,7 +232,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		ArrayList<Path> defaultTemplates = new ArrayList<>(files.size());
 		Path zapHome = Paths.get(Constant.getZapHome());
 		for (String file : files) {
-			if (file.startsWith("scripts/templates")) {
+			if (file.startsWith(ExtensionScript.TEMPLATES_DIR)) {
 				defaultTemplates.add(zapHome.resolve(file));
 			}
 		}
