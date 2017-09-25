@@ -4,11 +4,3 @@ sudo: false
 
 jdk:
   - oraclejdk8
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - ant
-      - ant-optional
