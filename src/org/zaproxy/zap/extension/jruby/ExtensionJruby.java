@@ -34,6 +34,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -42,8 +43,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListener {
 
 	public static final String NAME = "ExtensionJruby";
-	public static final ImageIcon RUBY_ICON = new ImageIcon(
-			ExtensionJruby.class.getResource("/org/zaproxy/zap/extension/jruby/resources/ruby.png"));
+	public static final ImageIcon RUBY_ICON;
 
 	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
 
@@ -51,6 +51,10 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
 		List<Class<?>> dependencies = new ArrayList<>(1);
 		dependencies.add(ExtensionScript.class);
 		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
+
+		RUBY_ICON = View.isInitialised()
+				? new ImageIcon(ExtensionJruby.class.getResource("/org/zaproxy/zap/extension/jruby/resources/ruby.png"))
+				: null;
 	}
 
 	private ExtensionScript extScript = null;
