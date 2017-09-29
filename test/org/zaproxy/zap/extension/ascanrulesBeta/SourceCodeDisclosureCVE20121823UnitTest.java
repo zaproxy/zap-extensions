@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -41,7 +42,7 @@ import fi.iki.elonen.NanoHTTPD.Response;
  */
 public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<SourceCodeDisclosureCVE20121823> {
 
-    private static final String RESPONSE_HEADER_404_NOT_FOUND = "HTTP/1.1 404 Not Found\r\nConnection: close\r\n\r\n";
+    private static final String RESPONSE_HEADER_404_NOT_FOUND = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n";
     private static final String PHP_SOURCE_TAGS = "<?php $x=0; echo '<h1>Welcome!</h1>'; ?>";
     private static final String PHP_SOURCE_ECHO_TAG = "<?= '<h1>Welcome!</h1>' ?>";
 
@@ -70,6 +71,18 @@ public class SourceCodeDisclosureCVE20121823UnitTest extends ActiveScannerTest<S
         boolean targets = rule.targets(techSet);
         // Then
         assertThat(targets, is(equalTo(false)));
+    }
+
+    @Test
+    public void shouldIgnoreNonTextResponses() throws Exception {
+        // Given
+        HttpMessage message = getHttpMessage("/");
+        message.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/jpeg");
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(0));
     }
 
     @Test
