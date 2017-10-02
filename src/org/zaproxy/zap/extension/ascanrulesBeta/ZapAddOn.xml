@@ -12,6 +12,7 @@
 	Support security annotations for forms that dont need anti-CSRF tokens.<br>
 	Changed XXE rule to use new callback extension.<br>
 	Notify of messages sent during Heartbleed scanning (Issue 2425).<br>
+	Fix false positive in Code Disclosure - CVE-2012-1823 on image content (Issue 3846).<br>
     ]]>
 	</changes>
 	<extensions>
