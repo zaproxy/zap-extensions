@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	HTTP "Server" response header, report any "Server" header if Threshold is LOW.<br> 
+	Update Image Location Scanner (passive rule) to leverage 0.4 of the code and 2.10.1 of the library it depends on.<br>
 	]]>
 	</changes>
 	<extensions>

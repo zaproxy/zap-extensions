@@ -40,7 +40,7 @@ import com.veggiespam.imagelocationscanner.ILS;
  * 
  * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / www.veggiespam.com
  * @license Apache License 2.0
- * @version 0.2
+ * @version 0.4
  * @see http://www.veggiespam.com/ils/
  */
 public class ImageLocationScanner extends PluginPassiveScanner {
@@ -110,7 +110,7 @@ public class ImageLocationScanner extends PluginPassiveScanner {
                 || CT.startsWith("image/tiff")  || extension.equals("tiff") || extension.equals("tif")
                 ) {
 		
-			String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes());
+			String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes(), false);
 			
 			if (! hasGPS.isEmpty()) {
 				Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getAlertTitle());
@@ -118,7 +118,7 @@ public class ImageLocationScanner extends PluginPassiveScanner {
 			    		getDescription(), 
 			    		url,
 			    		"",	// Param
-			    		"None, information disclosure warning.", // Attack
+			    		"", // Attack
 			    		"", // Other info
 			    		getSolution(), 
 			            getReference(), 
