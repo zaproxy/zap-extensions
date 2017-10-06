@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Access Control Testing</name>
-	<version>2</version>
+	<version>3</version>
 	<status>alpha</status>
 	<description>Adds a set of tools for testing access control in web applications.</description>
 	<author>ZAP Dev Team</author>
 	<url />
 	<changes>
 	<![CDATA[
-	Fix an exception when cancelling the "Save" access control report dialogue.<br>
-	Do not allow to dynamically uninstall, not yet supported.<br>
+	Fix exception that occurred with Java 9 (Issue 3934).<br>
 	]]> 
 	</changes>
 	<dependson />
