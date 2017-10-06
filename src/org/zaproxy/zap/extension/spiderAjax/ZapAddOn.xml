@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
+	Code changes for Java 9 (Issue 2602).<br>
 	]]>
 	</changes>
 	<dependencies>
