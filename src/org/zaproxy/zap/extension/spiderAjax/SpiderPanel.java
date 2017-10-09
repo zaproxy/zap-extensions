@@ -18,7 +18,6 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.BorderLayout;
-import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -106,7 +105,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         					this.extension.getMessages().getString("spiderajax.panel.title"));
         
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_J, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
+				KeyEvent.VK_J, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("spiderajax.panel.mnemonic"));
         
         if (View.isInitialised()) {

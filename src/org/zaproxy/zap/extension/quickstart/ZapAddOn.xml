@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>21</version>
+	<version>22</version>
 	<status>release</status>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Add option to launch a browser via selenium (v20).<br>
-	Fix to the default launch page url for 2.6.0.<br>
+	Code changes for Java 9 (Issue 2602).<br>
 	]]>
 	</changes>
 	<extensions>

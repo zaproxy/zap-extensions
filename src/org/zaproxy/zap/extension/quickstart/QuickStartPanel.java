@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -76,7 +75,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 
 	private void initialize() {
 		this.setIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/147.png")));	// 'lightning' icon
-		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
+		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
 		this.setLayout(new BorderLayout());
 

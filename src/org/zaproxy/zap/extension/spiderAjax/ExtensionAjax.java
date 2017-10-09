@@ -17,7 +17,6 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
-import java.awt.Event;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
@@ -195,7 +194,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 					"spiderajax.menu.tools.label",
 					KeyStroke.getKeyStroke(
 							KeyEvent.VK_X,
-							Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK,
+							Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK,
 							false));
 			menuItemCustomScan.setEnabled(Control.getSingleton().getMode() != Mode.safe);
 
