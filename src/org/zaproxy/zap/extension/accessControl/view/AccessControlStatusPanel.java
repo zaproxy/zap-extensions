@@ -26,9 +26,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
@@ -38,6 +40,14 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.AbstractHighlighter;
+import org.jdesktop.swingx.decorator.ComponentAdapter;
+import org.jdesktop.swingx.renderer.DefaultTableRenderer;
+import org.jdesktop.swingx.renderer.IconAware;
+import org.jdesktop.swingx.renderer.IconValues;
+import org.jdesktop.swingx.renderer.MappedValue;
+import org.jdesktop.swingx.renderer.StringValues;
+import org.jdesktop.swingx.table.TableColumnExt;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
@@ -46,6 +56,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread;
+import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlNodeResult;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlResultEntry;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanListener;
 import org.zaproxy.zap.extension.accessControl.ExtensionAccessControl;
@@ -121,15 +132,21 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 			resultsTable.setRowSelectionAllowed(true);
 			resultsTable.setAutoCreateRowSorter(true);
 			resultsTable.setColumnControlVisible(true);
+			resultsTable.setAutoCreateColumnsFromModel(false);
 
 			this.setScanResultsTableColumnSizes();
 
 			resultsTable.setName(PANEL_NAME);
 			resultsTable.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
 			resultsTable.setDoubleBuffered(true);
-			resultsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+			resultsTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			resultsTable.getSelectionModel().addListSelectionListener(
 					new DisplayMessageOnSelectionValueChange());
+
+			int columnIdx = AccessControlResultsTableModel.COLUMN_INDEX_RESULT;
+			TableColumnExt column = resultsTable.getColumnExt(columnIdx);
+			column.setCellRenderer(new DefaultTableRenderer(new MappedValue(StringValues.EMPTY, IconValues.NONE), JLabel.CENTER));
+			column.setHighlighters(new AccessControlNodeResultIconHighlighter(columnIdx));
 		}
 		return resultsTable;
 	}
@@ -347,4 +364,72 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 		}
 	}
 
+	/**
+	 * A {@link org.jdesktop.swingx.decorator.Highlighter Highlighter} for a column that indicates, using icons and tool tip,
+	 * the result of the access control of a node.
+	 * <p>
+	 * The expected type/class of the cell values is {@link AccessControlNodeResult}.
+	 */
+	private static class AccessControlNodeResultIconHighlighter extends AbstractHighlighter {
+
+		private static final ImageIcon RESULT_UNKNOWN_ICON;
+		private static final ImageIcon RESULT_VALID_ICON;
+		private static final ImageIcon RESULT_ILLEGAL_ICON;
+
+		static {
+			RESULT_UNKNOWN_ICON = new ImageIcon(AccessControlStatusPanel.class.getResource("/resource/icon/20/info.png"));
+			RESULT_VALID_ICON = new ImageIcon(AccessControlStatusPanel.class.getResource("/resource/icon/20/valid.png"));
+			RESULT_ILLEGAL_ICON = new ImageIcon(AccessControlStatusPanel.class.getResource("/resource/icon/20/error.png"));
+		}
+
+		private final int columnIndex;
+
+		public AccessControlNodeResultIconHighlighter(final int columnIndex) {
+			this.columnIndex = columnIndex;
+		}
+
+		@Override
+		protected Component doHighlight(Component component, ComponentAdapter adapter) {
+			AccessControlNodeResult cell = (AccessControlNodeResult) adapter.getValue(columnIndex);
+
+			Icon icon = getIcon(cell);
+			if (component instanceof IconAware) {
+				((IconAware) component).setIcon(icon);
+			} else if (component instanceof JLabel) {
+				((JLabel) component).setIcon(icon);
+			}
+
+			if (component instanceof JLabel) {
+				((JLabel) component).setToolTipText(cell.toString());
+			}
+
+			return component;
+		}
+
+		private static Icon getIcon(AccessControlNodeResult result) {
+			switch (result) {
+			case ILLEGAL:
+				return RESULT_ILLEGAL_ICON;
+			case VALID:
+				return RESULT_VALID_ICON;
+			case UNKNOWN:
+				return RESULT_UNKNOWN_ICON;
+			}
+			return null;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 * <p>
+		 * Overridden to return true if the component is of type IconAware or of type JLabel, false otherwise.
+		 * <p>
+		 * Note: special casing JLabel is for backward compatibility - application highlighting code which doesn't use the
+		 * Swingx renderers would stop working otherwise.
+		 */
+		// Method/JavaDoc copied from org.jdesktop.swingx.decorator.IconHighlighter#canHighlight(Component, ComponentAdapter)
+		@Override
+		protected boolean canHighlight(final Component component, final ComponentAdapter adapter) {
+			return component instanceof IconAware || component instanceof JLabel;
+		}
+	}
 }
