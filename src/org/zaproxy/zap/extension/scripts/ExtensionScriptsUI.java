@@ -19,8 +19,10 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
+import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -64,6 +66,8 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	public static final String NAME = "ExtensionScripts";
 	public static final ImageIcon ICON = new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")); // Script icon
 	
+	private static final Logger LOGGER = Logger.getLogger(ExtensionScriptsUI.class);
+
 	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
 
 	private ScriptsListPanel scriptsPanel = null;
@@ -659,8 +663,23 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	}
 	
 	@Override
-	public void engineAdded(ScriptEngineWrapper scriptEngineWrapper) {
+	public void engineAdded(final ScriptEngineWrapper scriptEngineWrapper) {
 		if (getView() == null) {
+			return;
+		}
+
+		if (!EventQueue.isDispatchThread()) {
+			try {
+				EventQueue.invokeAndWait(new Runnable() {
+
+					@Override
+					public void run() {
+						engineAdded(scriptEngineWrapper);
+					}
+				});
+			} catch (InvocationTargetException | InterruptedException e) {
+				LOGGER.error("Failed to update the UI:", e);
+			}
 			return;
 		}
 
@@ -674,8 +693,23 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	}
 
 	@Override
-	public void engineRemoved(ScriptEngineWrapper scriptEngineWrapper) {
+	public void engineRemoved(final ScriptEngineWrapper scriptEngineWrapper) {
 		if (getView() == null) {
+			return;
+		}
+
+		if (!EventQueue.isDispatchThread()) {
+			try {
+				EventQueue.invokeAndWait(new Runnable() {
+
+					@Override
+					public void run() {
+						engineRemoved(scriptEngineWrapper);
+					}
+				});
+			} catch (InvocationTargetException | InterruptedException e) {
+				LOGGER.error("Failed to update the UI:", e);
+			}
 			return;
 		}
 
