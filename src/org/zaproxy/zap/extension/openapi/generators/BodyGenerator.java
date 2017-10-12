@@ -73,29 +73,32 @@ public class BodyGenerator {
         StringBuilder json = new StringBuilder();
         json.append(SYNTAX.get(Element.OBJECT_BEGIN));
         boolean isFirst = true;
-        for (Map.Entry<String, Property> property : modelGenerator.getProperty(name).entrySet()) {
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                json.append(SYNTAX.get(Element.OUTER_SEPARATOR));
-            }
-            json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
-            json.append(property.getKey());
-            json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
-            json.append(SYNTAX.get(Element.INNER_SEPARATOR));
-            String value;
-            if (dataGenerator.isSupported(property.getValue().getType())) {
-                value = dataGenerator.generateBodyValue(property.getKey(), property.getValue(), refs);
-            } else {
-                if (property.getValue() instanceof RefProperty) {
-                    value = generate(((RefProperty) property.getValue()).getSimpleRef(), false, refs);
+        Map<String, Property> map = modelGenerator.getProperty(name);
+        if (map != null) {
+            for (Map.Entry<String, Property> property : map.entrySet()) {
+                if (isFirst) {
+                    isFirst = false;
                 } else {
-                    value = generators.getValueGenerator().getValue(property.getKey(), property.getValue().getType(), 
-                            generate(property.getValue().getName(), false, refs));
+                    json.append(SYNTAX.get(Element.OUTER_SEPARATOR));
                 }
+                json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
+                json.append(property.getKey());
+                json.append(SYNTAX.get(Element.PROPERTY_CONTAINER));
+                json.append(SYNTAX.get(Element.INNER_SEPARATOR));
+                String value;
+                if (dataGenerator.isSupported(property.getValue().getType())) {
+                    value = dataGenerator.generateBodyValue(property.getKey(), property.getValue(), refs);
+                } else {
+                    if (property.getValue() instanceof RefProperty) {
+                        value = generate(((RefProperty) property.getValue()).getSimpleRef(), false, refs);
+                    } else {
+                        value = generators.getValueGenerator().getValue(property.getKey(), property.getValue().getType(), 
+                                generate(property.getValue().getName(), false, refs));
+                    }
+                }
+    
+                json.append(value);
             }
-
-            json.append(value);
         }
         json.append(SYNTAX.get(Element.OBJECT_END));
         String jsonStr = json.toString();
