@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.swing.tree.TreeNode;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
@@ -147,9 +149,9 @@ public class ExtensionPortScan extends ExtensionAdaptor
         // Add new hosts
         SiteNode root = (SiteNode) session.getSiteTree().getRoot();
         @SuppressWarnings("unchecked")
-        Enumeration<SiteNode> en = root.children();
+        Enumeration<TreeNode> en = root.children();
         while (en.hasMoreElements()) {
-            this.getPortScanPanel().addSite(en.nextElement().getNodeName(), false);
+            this.getPortScanPanel().addSite(((SiteNode) en.nextElement()).getNodeName(), false);
         }
     }
 

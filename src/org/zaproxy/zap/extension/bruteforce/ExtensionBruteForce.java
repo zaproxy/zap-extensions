@@ -25,6 +25,8 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.swing.tree.TreeNode;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
@@ -173,9 +175,9 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 		// Add new hosts
 		SiteNode root = (SiteNode)session.getSiteTree().getRoot();
 		@SuppressWarnings("unchecked")
-		Enumeration<SiteNode> en = root.children();
+		Enumeration<TreeNode> en = root.children();
 		while (en.hasMoreElements()) {
-			HistoryReference hRef = en.nextElement().getHistoryReference();
+			HistoryReference hRef = ((SiteNode) en.nextElement()).getHistoryReference();
 			if (hRef != null) {
 				this.getBruteForcePanel().addSite(hRef.getURI());
 			}

@@ -5,7 +5,7 @@
 	<description>Tools to add functionality to the tree view.</description>
 	<author>Carl Sampson</author>
 	<url/>
-	<changes>Minor code changes.</changes>
+	<changes>Code changes for Java 9 (Issue 2602)</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.treetools.ExtensionTreeTools</extension>
 	</extensions>
