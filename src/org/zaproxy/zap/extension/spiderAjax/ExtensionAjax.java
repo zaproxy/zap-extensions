@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
+import javax.swing.tree.TreeNode;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -320,9 +321,9 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
 	private static URI findFirstUriInContext(Context context, SiteNode node) {
 		@SuppressWarnings("unchecked")
-		Enumeration<SiteNode> en = node.children();
+		Enumeration<TreeNode> en = node.children();
 		while (en.hasMoreElements()) {
-			SiteNode childNode = en.nextElement();
+			SiteNode childNode = (SiteNode) en.nextElement();
 			if (context.isInContext(childNode)) {
 				return URI.create(childNode.getHistoryReference().getURI().toString());
 			}
