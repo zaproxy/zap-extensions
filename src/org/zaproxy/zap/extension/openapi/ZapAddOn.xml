@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>OpenAPI Support</name>
-	<version>7</version>
+	<version>8</version>
 	<status>alpha</status>
 	<description>Imports and spiders Open API definitions.</description>
 	<author>ZAP Core Team plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-		Correct validations when importing a file through the API.<br>
+		Fix NPE in BodyGenerator.<br>
 	]]>
 	</changes>
 	<extensions>
