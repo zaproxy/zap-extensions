@@ -47,18 +47,22 @@ import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ConsolePanel extends AbstractPanel implements Tab {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final String BASE_NAME_SCRIPT_EXECUTOR_THREAD = "ZAP-ScriptExecutor-";
+	private static final ImageIcon AUTO_COMPLETE_ICON = new ImageIcon(OutputPanel.class.getResource(
+			"/org/zaproxy/zap/extension/scripts/resources/icons/ui-text-field-suggestion.png"));
 
 	private ExtensionScriptsUI extension;
 	private JPanel panelContent = null;
 	private JToolBar panelToolbar = null;
 	private JButton runButton = null;
 	private JButton stopButton = null;
+	private ZapToggleButton autoCompleteButton = null;
 	private JLabel scriptTitle = null;
 	private CommandPanel commandPanel = null;
 	private OutputPanel outputPanel = null;
@@ -114,7 +118,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 			
 			panelToolbar.add(this.getRunButton(), LayoutHelper.getGBC(0, 0, 1, 0.0D));
 			panelToolbar.add(this.getStopButton(), LayoutHelper.getGBC(1, 0, 1, 0.0D));
-			panelToolbar.add(this.getScriptTitle(), LayoutHelper.getGBC(2, 0, 1, 0.0D));
+			panelToolbar.add(this.getAutoCompleteButton(), LayoutHelper.getGBC(2, 0, 1, 0.0D));
+			panelToolbar.add(this.getScriptTitle(), LayoutHelper.getGBC(3, 0, 1, 0.0D));
 			panelToolbar.add(new JLabel(), LayoutHelper.getGBC(20, 0, 1, 1.0D));	// Filler
 		}
 		return panelToolbar;
@@ -183,6 +188,25 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 			});
 		}
 		return stopButton;
+	}
+
+	private ZapToggleButton getAutoCompleteButton() {
+		if (autoCompleteButton == null) {
+			autoCompleteButton = new ZapToggleButton();
+			autoCompleteButton.setIcon(DisplayUtils.getScaledIcon(AUTO_COMPLETE_ICON));
+			autoCompleteButton.setSelectedIcon(DisplayUtils.getScaledIcon(AUTO_COMPLETE_ICON));
+			autoCompleteButton.setToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.autocomplete.disabled"));
+			autoCompleteButton.setSelectedToolTipText(Constant.messages.getString("scripts.toolbar.tooltip.autocomplete.enabled"));
+			autoCompleteButton.setSelected(true);
+
+			autoCompleteButton.addActionListener(new java.awt.event.ActionListener() { 
+				@Override
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					getCommandPanel().setAutoCompleteEnabled(autoCompleteButton.isSelected());
+				}
+			});
+		}
+		return autoCompleteButton;
 	}
 
 	private void runScript () {
@@ -319,6 +343,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private void updateCommandPanelState(ScriptWrapper script) {
         getCommandPanel().clear();
         getCommandPanel().appendToCommandScript(script.getContents());
+        getCommandPanel().setScriptType(script.getTypeName());
         getCommandPanel().setCommandCursorPosition(0);
         if (script.getEngine().getSyntaxStyle() != null) {
             getCommandPanel().setSyntax(script.getEngine().getSyntaxStyle());
