@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.scripts;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -115,7 +114,7 @@ public class ScriptsListPanel extends AbstractPanel {
         this.setName(Constant.messages.getString("scripts.list.panel.title"));
 		this.setIcon(ExtensionScriptsUI.ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK | Event.SHIFT_MASK, false));
+				KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("scripts.list.panel.mnemonic"));
 
         this.add(getListPanel(), getListPanel().getName());

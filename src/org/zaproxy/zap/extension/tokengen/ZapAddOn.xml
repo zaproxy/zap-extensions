@@ -13,6 +13,7 @@
 	Issue 2338: Allow dynamic timeout adjustment to combat read timeout issues.<br>
 	Ensure initial dialog is properly sized.<br>
 	Issue 2000: Title caps adjustments.<br>
+	Code changes for Java 9 (Issue 2602).<br>
 	]]>
 	</changes>
 	<extensions>

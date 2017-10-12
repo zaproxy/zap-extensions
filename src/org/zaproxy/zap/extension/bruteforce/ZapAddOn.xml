@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Forced Browse</name>
-	<version>6</version>
+	<version>7</version>
 	<status>beta</status>
 	<description>Forced browsing of files and directories using code from the OWASP DirBuster tool</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Allow to set higher number of threads (Issue 2912).<br>
-	Fix issue with multiple concurrent scans.<br>
+	Code changes for Java 9 (Issue 2602).<br>
 	]]>
 	</changes>
 	<extensions>

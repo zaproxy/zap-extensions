@@ -8,6 +8,7 @@
     <url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts</url>
     <changes>
     <![CDATA[
+    Code changes for Java 9 (Issue 2602).<br>
     Ignore empty payloads when highlighting or detecting reflections.<br>
     Contains new number generator payload.<br>
     Add null/empty payload generator.<br>

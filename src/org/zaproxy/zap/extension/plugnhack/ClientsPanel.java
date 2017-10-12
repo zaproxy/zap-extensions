@@ -19,7 +19,6 @@ package org.zaproxy.zap.extension.plugnhack;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
@@ -103,7 +102,7 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
         this.setSize(274, 251);
         this.setName(Constant.messages.getString("plugnhack.client.panel.title"));
 		this.setIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON);
-		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
+		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("plugnhack.client.panel.mnemonic"));
 
         this.add(getClientsPanel(), getClientsPanel().getName());

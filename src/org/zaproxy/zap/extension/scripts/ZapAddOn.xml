@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
+	Code changes for Java 9 (Issue 2602).<br>
 	Inform when the script contains invalid char sequences (related to Issue 3377).<br>
 	Invoke Scripts tree context menu once.<br>
 	Title caps adjustments (related to Issue 2000).<br>

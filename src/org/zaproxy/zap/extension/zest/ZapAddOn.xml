@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Validate cookie name not empty.
+	Code changes for Java 9 (Issue 2602).<br>
 	]]>
 	</changes>
 	<dependencies>
