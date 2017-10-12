@@ -123,8 +123,8 @@ public class SQLiTest {
      * 
      */
     public SQLiTest() {
-        clauses = new ArrayList();
-        where = new ArrayList();
+        clauses = new ArrayList<>();
+        where = new ArrayList<>();
         level = 0;
         stype = 0;
         risk = 0;

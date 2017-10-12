@@ -53,7 +53,7 @@ public class ResponseMatcher {
     private boolean negativeLogic;
 
     public ResponseMatcher() {
-        fullBCount = new HashMap();
+        fullBCount = new HashMap<>();
         matchRatio = -1;
         negativeLogic = false;
     }
@@ -116,7 +116,7 @@ public class ResponseMatcher {
 
         // avail[x] is the number of times x appears in 'strB' less the
         // number of times we've seen it in 'strA' so far ... kinda
-        Map<Integer, Integer> avail = new HashMap();
+        Map<Integer, Integer> avail = new HashMap<>();
 
         for (int i = start; i < strA.length(); i++) {
             chr = strA.charAt(i);

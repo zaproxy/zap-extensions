@@ -813,8 +813,8 @@ public class SQLiUnionEngine {
 
         // Search for our char sequence token
         Pattern tokenPattern = Pattern.compile("(" + uChars + "|\\>\\s*" + uChars + "\\s*\\<)");
-        List<Integer> matchingCols = new ArrayList();
-        List<Double> ratios = new ArrayList();
+        List<Integer> matchingCols = new ArrayList<>();
+        List<Double> ratios = new ArrayList<>();
 
         if (lowerCount == 1) {
             int found = orderByTechnique();

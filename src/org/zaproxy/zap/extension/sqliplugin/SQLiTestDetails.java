@@ -52,7 +52,7 @@ public class SQLiTestDetails {
      * 
      */
     public SQLiTestDetails() {
-        dbms = new ArrayList();
+        dbms = new ArrayList<>();
         dbmsVersion = null;
         os = null;
     }

@@ -1,12 +1,12 @@
 <zapaddon>
 	<name>Advanced SQLInjection Scanner</name>
-	<version>11</version>
+	<version>12</version>
 	<status>beta</status>
 	<description>An advanced active injection bundle for SQLi (derived by SQLMap)</description>
 	<author>Andrea Pompili (Yhawke)</author>
 	<url/>
 	<changes><![CDATA[
-	Check all DB techs when evaluating if the scanner should be run.<br>
+	Minor code changes.<br>
 	]]></changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.sqliplugin.ExtensionSQLiPlugin</extension>

@@ -52,7 +52,7 @@ public class SQLiPayloadManager {
     public static final int TECHNIQUE_UNION = 6;
 
     // Map for technique retrieval
-    public static final Map<Integer, String> SQLI_TECHNIQUES = new HashMap();    
+    public static final Map<Integer, String> SQLI_TECHNIQUES = new HashMap<>();    
     static {
         SQLI_TECHNIQUES.put(TECHNIQUE_BOOLEAN, "boolean-based blind");
         SQLI_TECHNIQUES.put(TECHNIQUE_ERROR, "error-based");
@@ -121,8 +121,8 @@ public class SQLiPayloadManager {
      * Inner contructor used to create the Singleton
      */
     private SQLiPayloadManager() throws IOException, JDOMException {
-        boundaries = new ArrayList();
-        tests = new ArrayList();
+        boundaries = new ArrayList<>();
+        tests = new ArrayList<>();
 
         // Load all boundaries from resources
         SAXBuilder builder = new SAXBuilder();
@@ -291,7 +291,7 @@ public class SQLiPayloadManager {
             String regex = buildReflectiveRegex(decodedPayload);
 
             if (!regex.equals(decodedPayload)) {
-                List<String> parts = new ArrayList();
+                List<String> parts = new ArrayList<>();
                 int sidx = 0;
                 int eidx;
                 
