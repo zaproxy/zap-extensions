@@ -697,8 +697,8 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				try {
 					//is it an integer type?
 					//ZAP: removed URLDecoding because on Variants
-					//int paramAsInt = new Integer (TestSQLInjection.getURLDecode(origParamValue));
-					int paramAsInt = new Integer(origParamValue);
+					//int paramAsInt = Integer.parseInt(TestSQLInjection.getURLDecode(origParamValue));
+					int paramAsInt = Integer.parseInt(origParamValue);
 
 					if (this.debugEnabled) {
 						log.debug("The parameter value [" + origParamValue + "] is of type Integer");
