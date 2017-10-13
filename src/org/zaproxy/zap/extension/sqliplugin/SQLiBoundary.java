@@ -43,8 +43,8 @@ public class SQLiBoundary {
      * 
      */
     public SQLiBoundary() {
-        clause = new ArrayList();
-        where = new ArrayList();
+        clause = new ArrayList<>();
+        where = new ArrayList<>();
         level = 0;
         ptype = 0;
         prefix = "";

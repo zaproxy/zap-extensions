@@ -128,7 +128,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
      * Should be called by each constructor for initial parameter setting.
      */
     public SQLInjectionPlugin() {
-        responseTimes = new ArrayList();
+        responseTimes = new ArrayList<>();
         responseMatcher = new ResponseMatcher();
         lastRequestUID = 0;
         lastErrorPageUID = -1;
@@ -1272,7 +1272,7 @@ public class SQLInjectionPlugin extends AbstractAppParamPlugin {
         // Set random integers
         // ------------------------
         Matcher matcher = randnumPattern.matcher(result);
-        Set<String> elements = new HashSet();
+        Set<String> elements = new HashSet<>();
         while (matcher.find()) {
             elements.add(matcher.group());
         }
