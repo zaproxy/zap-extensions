@@ -21,14 +21,12 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JScrollPane;
 
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.extension.AbstractPanel;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.scripts.autocomplete.ScriptAutoCompleteKeyListener;
 import org.zaproxy.zap.utils.FontUtils;
 
@@ -81,26 +79,8 @@ public class CommandPanel extends AbstractPanel {
 		if (this.syntaxTxtArea == null) {
 			this.syntaxTxtArea = new SyntaxHighlightTextArea();
 			
-			this.syntaxTxtArea.addMouseListener(new java.awt.event.MouseAdapter() { 
+			this.syntaxTxtArea.setComponentPopupMenu(ZapPopupMenu.INSTANCE);
 
-				@Override
-				public void mousePressed(java.awt.event.MouseEvent e) {
-					mouseAction(e);
-				}
-					
-				@Override
-				public void mouseReleased(java.awt.event.MouseEvent e) {
-					mouseAction(e);
-				}
-				
-				public void mouseAction(java.awt.event.MouseEvent e) {
-					// right mouse button action
-					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0 || e.isPopupTrigger()) {
-						View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
-					}
-				}
-				
-			});
 			this.autocompleteListener = new ScriptAutoCompleteKeyListener(this.syntaxTxtArea);
 			this.syntaxTxtArea.addKeyListener(this.autocompleteListener);
 			if (listener != null) {

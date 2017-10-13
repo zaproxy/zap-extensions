@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.scripts;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.event.InputEvent;
 
 import javax.script.ScriptException;
 import javax.swing.ImageIcon;
@@ -35,7 +34,6 @@ import javax.swing.text.DefaultCaret;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
@@ -193,26 +191,7 @@ public class OutputPanel extends AbstractPanel {
 			txtOutput.setLineWrap(true);
 			txtOutput.setFont(FontUtils.getFont("Dialog"));
 			txtOutput.setName("");
-			txtOutput.addMouseListener(new java.awt.event.MouseAdapter() { 
-
-				@Override
-				public void mousePressed(java.awt.event.MouseEvent e) {
-					mouseAction(e);
-				}
-					
-				@Override
-				public void mouseReleased(java.awt.event.MouseEvent e) {
-					mouseAction(e);
-				}
-				
-				public void mouseAction(java.awt.event.MouseEvent e) {
-					// right mouse button action
-					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0 || e.isPopupTrigger()) {
-						View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
-					}
-				}
-				
-			});
+			txtOutput.setComponentPopupMenu(ZapPopupMenu.INSTANCE);
 		}
 		return txtOutput;
 	}
