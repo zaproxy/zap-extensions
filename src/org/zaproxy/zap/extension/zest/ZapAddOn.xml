@@ -7,8 +7,9 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Validate cookie name not empty.
+	Validate cookie name not empty.<br>
 	Code changes for Java 9 (Issue 2602).<br>
+	Re-enabled parameterize option.<br>
 	]]>
 	</changes>
 	<dependencies>
