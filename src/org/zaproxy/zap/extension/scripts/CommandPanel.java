@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.scripts.autocomplete.ScriptAutoCompleteKeyListener;
 import org.zaproxy.zap.utils.FontUtils;
 
 public class CommandPanel extends AbstractPanel {
@@ -38,6 +39,7 @@ public class CommandPanel extends AbstractPanel {
 	private JScrollPane jScrollPane = null;
 	private SyntaxHighlightTextArea syntaxTxtArea = null;
 	private KeyListener listener = null;
+	private ScriptAutoCompleteKeyListener autocompleteListener;
 
 	/**
      * 
@@ -99,6 +101,8 @@ public class CommandPanel extends AbstractPanel {
 				}
 				
 			});
+			this.autocompleteListener = new ScriptAutoCompleteKeyListener(this.syntaxTxtArea);
+			this.syntaxTxtArea.addKeyListener(this.autocompleteListener);
 			if (listener != null) {
 				this.syntaxTxtArea.addKeyListener(listener);
 			}
@@ -141,5 +145,17 @@ public class CommandPanel extends AbstractPanel {
 	public void setEditable(boolean editable) {
 		getTxtOutput().setEditable(editable);
 	}
+
+    public void setScriptType(String typeName) {
+        if (this.autocompleteListener != null) {
+            this.autocompleteListener.setScriptType(typeName);
+        }
+    }
+    
+    public void setAutoCompleteEnabled(boolean enable) {
+        if (this.autocompleteListener != null) {
+            this.autocompleteListener.setEnabled(enable);
+        }
+    }
 	
 }
