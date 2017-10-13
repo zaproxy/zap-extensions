@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.CardLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -41,7 +40,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -494,15 +492,7 @@ public class ScriptsListPanel extends AbstractPanel {
 					return super.getPopupLocation(event);
 				}
 			};
-			tree.setComponentPopupMenu(new JPopupMenu() {
-
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void show(Component invoker, int x, int y) {
-					View.getSingleton().getPopupMenu().show(tree, x, y);
-				}
-			});
+			tree.setComponentPopupMenu(ZapPopupMenu.INSTANCE);
 			tree.setModel(extension.getExtScript().getTreeModel());
 			tree.setName(TREE);
 			tree.setShowsRootHandles(true);
