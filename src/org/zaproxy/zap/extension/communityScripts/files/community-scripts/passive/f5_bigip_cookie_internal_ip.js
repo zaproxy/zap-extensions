@@ -9,13 +9,16 @@
 // Ref: https://support.f5.com/kb/en-us/solutions/public/6000/900/sol6917.html
 // Author: kingthorin+owaspzap@gmail.com
 // 20150828 - Initial submission
+// 20160117 - Updated to include ipv6 variants - jkbowser[at]gmail[dot]com
 
 function scan(ps, msg, src) {
 	//Setup some details we will need for alerts later if we find something
-	alertRisk = 1
+	alertRisk = [1, 0]
 	alertConfidence = 3
-	alertTitle = 'Internal IP Exposed via F5 BigIP Persistence Cookie'
-	alertDesc = 'The F5 Big-IP Persistence cookie set for this website can be decoded to a specific internal IP and port. An attacker may leverage this information to conduct Social Engineering attacks or other exploits.'
+	alertTitle = ['Internal IP Exposed via F5 BigIP Persistence Cookie'
+				, 'IP Exposed via F5 BigIP Presistence Cookie']
+	alertDesc = ['The F5 Big-IP Persistence cookie set for this website can be decoded to a specific internal IP and port. An attacker may leverage this information to conduct Social Engineering attacks or other exploits.'
+				,'The F5 Big-IP Persistence cookie set for this website can be decoded to a specific IP and port. An attacker may leverage this information to conduct Social Engineering attacks or other exploits.']
 	alertSolution = 'Configure BIG-IP cookie encryption.'
 	alertRefs = 'https://support.f5.com/kb/en-us/solutions/public/6000/900/sol6917.html'
 	cweId = 311
@@ -33,7 +36,7 @@ function scan(ps, msg, src) {
 			cookieValue=cookiesArr[idx].getValue();
 			if(cookieName.toLowerCase().contains("bigip") &&
 			  !cookieValue.toLowerCase().contains("deleted")) {
-				cookieChunks = cookieValue.split("\\."); //i.e.: 3860990474.36895.0000
+				cookieChunks = cookieValue.split(getDelim()); //i.e.: 3860990474.36895.0000
 				//Decode IP
 				try {
 					theIP=decodeIP(cookieChunks[0]);
@@ -43,14 +46,36 @@ function scan(ps, msg, src) {
 				//Decode Port
 				thePort=decodePort(cookieChunks[1]);
 
-				if(isIPv4Local(theIP)) { //RFC1918
-					decodedValue=theIP+':'+thePort;
+				if(isLocal(theIP)) { //RFC1918 and RFC4193
+
+					if(theIP.match(/:/g))//matching again just so I can format it correctly with []
+					{
+						decodedValue='[' + theIP +']:' + thePort;	
+					} else {
+						decodedValue=theIP+':'+thePort;
+					}
 					alertOtherInfo=cookieValue+" decoded to "+decodedValue;
 					//ps.raiseAlert(risk, confidence, title, description, url, param, attack, otherinfo, solution, evidence, cweId, wascId, msg);
-					ps.raiseAlert(alertRisk, alertConfidence, alertTitle, alertDesc, url, 
+					ps.raiseAlert(alertRisk[0], alertConfidence, alertTitle[0], alertDesc[0], url, 
 						cookieName, '', alertOtherInfo, alertSolution+'\n'+alertRefs, 
 						cookieValue, cweId, wascId, msg);
-				} else { //Not what we're looking for
+
+				} else if(isExternal(theIP)){
+
+					if(theIP.match(/:/g))//matching again just so I can format it correctly with []
+					{
+						decodedValue='[' + theIP +']:' + thePort;	
+					} else {
+						decodedValue=theIP+':'+thePort;
+					}
+					alertOtherInfo=cookieValue+" decoded to "+decodedValue;
+					//ps.raiseAlert(risk, confidence, title, description, url, param, attack, otherinfo, solution, evidence, cweId, wascId, msg);
+					ps.raiseAlert(alertRisk[1], alertConfidence, alertTitle[1], alertDesc[1], url, 
+						cookieName, '', alertOtherInfo, alertSolution+'\n'+alertRefs, 
+						cookieValue, cweId, wascId, msg);
+				}
+
+				else { //Not what we're looking for
 					return 
 				}
 			}
@@ -59,31 +84,95 @@ function scan(ps, msg, src) {
 }
 
 function decodeIP(ipChunk) {
-	backwardIpHex = java.net.InetAddress.getByName(ipChunk);
-	backwardAddress = backwardIpHex.getHostAddress();
-	ipPieces = backwardAddress.split("\\.");
-	theIP = ipPieces[3]+'.'+ipPieces[2]+'.'+ipPieces[1]+'.'+ipPieces[0]
-	return(theIP)
+
+	//this is our check for IPv6 cookie.  BigIP F5 documentation says all are prefixed with "vi"
+	if(ipChunk.substring(0,2)=="vi")
+	{
+    	//get rid of the prefixed vi
+    	ipChunk = ipChunk.substring(2)
+
+    	//create array in groups of 4.
+    	//makes vi20010112000000900000000000000030 into 2001,0112,0000,0090,0000,0000,0000,0030
+    	var encodedIP = ipChunk.match(/[0-9a-f]{4}/ig);
+    
+    	//first, cast array to string
+    	//replace , with :
+    	//replace any 0000 with a empty string
+    	//then finally replace any ::: (or more) with just two :: to align with accepted IPv6 shorthand
+    	ipv6 = encodedIP.toString().replace(/,/g,":").replace(/([0]{4})/g,"").replace(/(:{3,})/g,"::")
+    	return(ipv6)
+
+    } else { //not ipv6, so process it as ipv4
+
+		backwardIpHex = java.net.InetAddress.getByName(ipChunk);
+		backwardAddress = backwardIpHex.getHostAddress();
+		ipPieces = backwardAddress.split(getDelim());
+		theIP = ipPieces[3]+'.'+ipPieces[2]+'.'+ipPieces[1]+'.'+ipPieces[0]
+		return(theIP)
+	}
 }
 
-function isIPv4Local(ip) {
-	try {
-		if(java.net.Inet4Address.getByName(ip).isSiteLocalAddress())
-			return true //RFC1918 and IPv4
-	} catch (e) {
-		return false //Not IPv4
+function isLocal(ip) {
+	
+	if(ip.match(/:/g)){ //match on ipv6 notation
+		try {
+			//isSiteLocalAddress only returns true for FEC0, using RFC4193 definition of fc00, matching on beginning string regexp
+			if(java.net.Inet6Address.getByName(ip) && ip.match(/(^fc00)/im)) { 
+				return true //it is local per RFC4193
+			} 
+		} catch (e) {
+			return false //not confirmed local ipv6
+		}
+
+	} else {
+		try {
+			if(java.net.Inet4Address.getByName(ip).isSiteLocalAddress()) {
+				return true //RFC1918 and IPv4
+			} 
+		} catch (e) {
+			return false //Not confirmed local IPv4
+		}
 	}
-	return false //Not RFC1918
+}
+
+function isExternal(ip) {
+	
+	if(ip.match(/:/g)){ //match on ipv6 notation
+		try {
+			if(java.net.Inet6Address.getByName(ip)) { //just testing for valid format to verify it's not encrypted
+				return true //it is a valid IP, likely external
+			} 
+		} catch (e) {
+			return false //Not ipv6, so it's likely an encrypted cookie
+		}
+
+	} else {
+		try {
+			if(java.net.Inet4Address.getByName(ip)) { //just testing for valid format to verify it's not encrypted
+				return true //it is a valid IP, likely external
+			} 
+		} catch (e) {
+			return false //Not ipv4, so it's likely an encrypted cookie
+		}
+	}
 }
 	
 
-function decodePort(portChunk) {
+function decodePort(portChunk) { //port processing is same for ipv4 and ipv6
 	backwardPortHex = java.lang.Integer.toHexString(java.lang.Integer.parseInt(portChunk));
 	assembledPortHex = backwardPortHex.substring(2,4)+backwardPortHex.substring(0,2)
 	thePort = java.lang.Integer.parseInt(assembledPortHex, 16);
 	return(thePort)
 }
 
+function getDelim() {
+    //It seems Rhino and Nashhorn behave differently for splitting on period
+    if (java.lang.System.getProperty("java.version").startsWith("1.8")) {
+        return "\.";
+    }
+    return "\\.";
+}
+
 // TODO List
 //Handle IPv4 pool members in non-default route domains
-//Handle IPv6 variants
+//Handle IPv6 pool members in non-default route domains

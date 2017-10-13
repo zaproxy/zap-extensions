@@ -4,7 +4,7 @@
   "title": "Open Fortune 500 websites in a browser",
   "description": "A script which opens the Fortune 500 websites in a browser",
   "prefix": "",
-  "type": "Standalone",
+  "type": "StandAlone",
   "parameters": {
     "tokenStart": "{{",
     "tokenEnd": "}}",

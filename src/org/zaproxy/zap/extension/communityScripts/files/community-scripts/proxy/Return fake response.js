@@ -2,6 +2,10 @@
 // Note that it requires the change https://code.google.com/p/zaproxy/source/detail?r=5872
 // which is in the trunk, the 2.4 branch and the latest weekly release
 
+// The following handles differences in printing between Java 7's Rhino JS engine
+// and Java 8's Nashorn JS engine
+if (typeof println == 'undefined') this.println = print;
+
 function proxyRequest(msg) {
 	// Change this test to match whatever requests you want to fake
 	if (msg.getRequestHeader().getURI().toString().equals("http://localhost:8080/bodgeit/about.jsp")) {

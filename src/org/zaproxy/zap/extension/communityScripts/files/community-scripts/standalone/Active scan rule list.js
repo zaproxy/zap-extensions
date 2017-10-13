@@ -1,5 +1,9 @@
 // This script gives details about all of the active scan rules installed
 
+// The following handles differences in printing between Java 7's Rhino JS engine
+// and Java 8's Nashorn JS engine
+if (typeof println == 'undefined') this.println = print;
+
 extAscan = org.parosproxy.paros.control.Control.getSingleton().
     getExtensionLoader().getExtension(
         org.zaproxy.zap.extension.ascan.ExtensionActiveScan.NAME);

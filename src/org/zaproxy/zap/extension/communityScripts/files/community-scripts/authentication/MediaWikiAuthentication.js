@@ -21,6 +21,10 @@
  * @author grunny
  */
 
+// The following handles differences in printing between Java 7's Rhino JS engine
+// and Java 8's Nashorn JS engine
+if (typeof println == 'undefined') this.println = print;
+
 function authenticate(helper, paramsValues, credentials) {
 	println("Authenticating via JavaScript script...");
 	importClass(org.parosproxy.paros.network.HttpRequestHeader);

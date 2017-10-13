@@ -2,6 +2,10 @@
 // Also reports the total number of sub nodes.
 // Targeted scripts can only be invoked by you, the user, eg via a right-click option on the Sites or History tabs
 
+// The following handles differences in printing between Java 7's Rhino JS engine
+// and Java 8's Nashorn JS engine
+if (typeof println == 'undefined') this.println = print;
+
 tot = 0
 maxparent = ""
 maxsub = 0
