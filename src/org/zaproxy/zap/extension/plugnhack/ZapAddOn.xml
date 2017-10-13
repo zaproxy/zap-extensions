@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Plug-n-Hack Configuration</name>
-	<version>10</version>
+	<version>11</version>
 	<status>beta</status>
 	<description>Supports the Mozilla Plug-n-Hack standard: https://developer.mozilla.org/en-US/docs/Plug-n-Hack.</description>
 	<author>ZAP Dev Team</author>
 	<url>https://developer.mozilla.org/en-US/docs/Plug-n-Hack</url>
 	<changes>
 	<![CDATA[
-	Make breakpoint dialogues modal.<br>
-	Changed to use api nonces and include new fx_pnh.xpi (still unsigned).<br>
+	Code changes for Java 9 (Issue 2602).<br>
 	]]>
 	</changes>
 	<extensions>

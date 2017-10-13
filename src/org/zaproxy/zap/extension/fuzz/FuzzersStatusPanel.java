@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.fuzz;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Event;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 
@@ -61,7 +60,7 @@ public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController>
 
         this.fuzzerOptions = fuzzerOptions;
 
-        setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Event.CTRL_MASK | Event.SHIFT_MASK, false));
+        setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
         setMnemonic(Constant.messages.getString("fuzz.panel.mnemonic").charAt(0));
     }
 

@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.zest;
 
 import java.awt.CardLayout;
-import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -63,7 +62,7 @@ public class ZestResultsPanel extends AbstractPanel {
         this.setName(Constant.messages.getString("zest.results.panel.title"));
 		this.setIcon(ExtensionZest.ZEST_ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
+				KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("zest.results.panel.mnemonic"));
 
         this.add(getZestPanel(), getZestPanel().getName());

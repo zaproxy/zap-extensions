@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz;
 
-import java.awt.Event;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -385,7 +384,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     private ZapMenuItem getMenuItemCustomScan() {
         if (menuItemCustomScan == null) {
             menuItemCustomScan = new ZapMenuItem("fuzz.menu.tools.fuzz",
-                    KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK, false));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK, false));
 
             menuItemCustomScan.addActionListener(new java.awt.event.ActionListener() {
                 @Override
