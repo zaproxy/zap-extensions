@@ -47,6 +47,7 @@ import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultTreeSelectionModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.jdesktop.swingx.JXFindBar;
@@ -379,9 +380,9 @@ public class FuzzerPayloadGeneratorUIHandler implements
                 String defaultCategory = extensionFuzz.getFuzzOptions().getDefaultCategoryName();
                 root = (DefaultMutableTreeNode) fileFuzzersCheckBoxTree.getModel().getRoot();
                 @SuppressWarnings("unchecked")
-                Enumeration<DefaultMutableTreeNode> nodes = root.breadthFirstEnumeration();
+                Enumeration<TreeNode> nodes = root.breadthFirstEnumeration();
                 while (nodes.hasMoreElements()) {
-                    DefaultMutableTreeNode node = nodes.nextElement();
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) nodes.nextElement();
                     Object object = node.getUserObject();
                     if (object instanceof FuzzerPayloadCategory) {
                         if (defaultCategory.equals(((FuzzerPayloadCategory) object).getFullName())) {
@@ -492,9 +493,9 @@ public class FuzzerPayloadGeneratorUIHandler implements
             List<FuzzerPayloadSource> selections = new ArrayList<>(fileFuzzers);
             DefaultMutableTreeNode root = (DefaultMutableTreeNode) getFileFuzzersCheckBoxTree().getModel().getRoot();
             @SuppressWarnings("unchecked")
-            Enumeration<DefaultMutableTreeNode> nodes = root.depthFirstEnumeration();
+            Enumeration<TreeNode> nodes = root.depthFirstEnumeration();
             while (!selections.isEmpty() && nodes.hasMoreElements()) {
-                DefaultMutableTreeNode node = nodes.nextElement();
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) nodes.nextElement();
                 if (selections.remove(node.getUserObject())) {
                     TreePath path = new TreePath(node.getPath());
                     getFileFuzzersCheckBoxTree().check(path, true);
@@ -615,9 +616,9 @@ public class FuzzerPayloadGeneratorUIHandler implements
 
                 DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) tree.getModel().getRoot();
                 @SuppressWarnings("unchecked")
-                Enumeration<DefaultMutableTreeNode> nodes = rootNode.preorderEnumeration();
+                Enumeration<TreeNode> nodes = rootNode.preorderEnumeration();
                 for (int i = 0; nodes.hasMoreElements(); i++) {
-                    rows.put(i, new TreePath(nodes.nextElement().getPath()));
+                    rows.put(i, new TreePath(((DefaultMutableTreeNode) nodes.nextElement()).getPath()));
                 }
             }
 

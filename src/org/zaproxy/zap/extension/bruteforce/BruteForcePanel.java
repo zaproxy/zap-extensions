@@ -49,6 +49,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.tree.TreeNode;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
@@ -678,9 +679,9 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 		SiteNode rootNode = (SiteNode) siteTree.getRoot();
 		
 		@SuppressWarnings("unchecked")
-		Enumeration<SiteNode> en = rootNode.children();
+		Enumeration<TreeNode> en = rootNode.children();
 		while (en.hasMoreElements()) {
-			SiteNode sn = en.nextElement();
+			SiteNode sn = (SiteNode) en.nextElement();
 			ScanTarget snScanTarget = createScanTarget(sn);
 			if (snScanTarget != null && snScanTarget.equals(scanTarget)) {
 				return sn;

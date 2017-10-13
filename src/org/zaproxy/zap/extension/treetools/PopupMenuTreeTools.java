@@ -59,7 +59,7 @@ public class PopupMenuTreeTools extends ExtensionPopupMenuItem {
 		TreeNode tn = (TreeNode) parent.getLastPathComponent();
 		
 		if (tn.getChildCount() > 0) {
-			for (Enumeration<TreeNode> e = tn.children(); e.hasMoreElements();) {
+			for (Enumeration<? extends TreeNode> e = tn.children(); e.hasMoreElements();) {
 				  TreePath path = parent.pathByAddingChild(e.nextElement());
 				  expandOrCollapseFromNode(path, expand);
 			}
