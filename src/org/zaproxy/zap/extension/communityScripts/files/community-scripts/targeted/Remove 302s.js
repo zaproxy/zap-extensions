@@ -3,6 +3,10 @@
 // The default criteria is leaf nodes with a response code of 302 but you can change that to anything you need
 // Targeted scripts can only be invoked by you, the user, eg via a right-click option on the Sites or History tabs
 
+// The following handles differences in printing between Java 7's Rhino JS engine
+// and Java 8's Nashorn JS engine
+if (typeof println == 'undefined') this.println = print;
+
 function recurseDown(sitestree, node) {
 	//println('recurseDown node: ' + node.getHierarchicNodeName() + " " + node.getChildCount())
 	// Loop down through the children first

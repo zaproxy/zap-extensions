@@ -9,6 +9,10 @@
 
 // REPLACE the values for the variables as applicable to your application.
 
+// The following handles differences in printing between Java 7's Rhino JS engine
+// and Java 8's Nashorn JS engine
+if (typeof println == 'undefined') this.println = print;
+
 // Regular expression for the request URI that returns CSRF token in response.
 // If the application under test returns csrf token in every response or in response to more than request, set a generic regex that matches with host name or domain name of the application.
 // REPLACE the value with RegEx for your application.

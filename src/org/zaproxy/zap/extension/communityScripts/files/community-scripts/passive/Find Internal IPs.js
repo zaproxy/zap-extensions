@@ -1,5 +1,9 @@
 // RFC1918 internal IP Finder by freakyclown@gmail.com
 
+// The following handles differences in printing between Java 7's Rhino JS engine
+// and Java 8's Nashorn JS engine
+if (typeof println == 'undefined') this.println = print;
+
 function scan(ps, msg, src) {
     url = msg.getRequestHeader().getURI().toString();
     alertRisk = 2

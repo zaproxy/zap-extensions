@@ -1,14 +1,6 @@
-Proxy scripts
-=============
-
-Scripts which these run 'inline', can change every request and response that is proxied through ZAP and can be individually enabled. 
-They can also trigger break points. 
-They are not invoked for requests that originate from ZAP, for example from the active scanner or spiders.
-To access requests that originate from ZAP use httpsender scripts.
-
-## Javascript template
-
-```javascript
+// Replace strings in the request and/or response body
+// Change the script for the strings you want to replace.
+//
 // The proxyRequest and proxyResponse functions will be called for all requests  and responses made via ZAP, 
 // excluding some of the automated tools
 // If they return 'false' then the corresponding request / response will be dropped. 
@@ -17,15 +9,24 @@ To access requests that originate from ZAP use httpsender scripts.
 // Note that new proxy scripts will initially be disabled
 // Right click the script in the Scripts tree and select "enable"  
 
+// The following handles differences in printing between Java 7's Rhino JS engine
+// and Java 8's Nashorn JS engine
+if (typeof println == 'undefined') this.println = print;
+
 /**
  * This function allows interaction with proxy requests (i.e.: outbound from the browser/client to the server).
  * 
  * @param msg - the HTTP request being proxied. This is an HttpMessage object.
  */
 function proxyRequest(msg) {
-	// Debugging can be done using println like this
 	println('proxyRequest called for url=' + msg.getRequestHeader().getURI().toString())
-	
+	// Remove the '(?i)' for a case exact match
+	var req_str_to_change = "(?i)change from this"
+	var req_str_to_replace = "changed to this"
+	msg.setRequestBody(msg.getRequestBody().toString().replaceAll(req_str_to_change, req_str_to_replace))
+	// Update the content length in the header as this may have been changed
+	msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
+
 	return true
 }
 
@@ -35,16 +36,13 @@ function proxyRequest(msg) {
  * @param msg - the HTTP response being proxied. This is an HttpMessage object.
  */
 function proxyResponse(msg) {
-	// Debugging can be done using println like this
 	println('proxyResponse called for url=' + msg.getRequestHeader().getURI().toString())
+	// Remove the '(?i)' for a case exact match
+	var req_str_to_change = "(?i)change from this"
+	var req_str_to_replace = "changed to this"
+	msg.setResponseBody(msg.getResponseBody().toString().replaceAll(req_str_to_change, req_str_to_replace))
+	// Update the content length in the header as this may have been changed
+	msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+
 	return true
 }
-```
-## Variables
-| Name | Javadocs |
-| --- | --- |
-| msg | [HttpMessage](http://www.zaproxy.org/2.5/javadocs/org/parosproxy/paros/network/HttpMessage.html) |
-
-## Code Links
-* [ProxyScript.java](https://github.com/zaproxy/zaproxy/blob/master/src/org/zaproxy/zap/extension/script/ProxyScript.java)
-
