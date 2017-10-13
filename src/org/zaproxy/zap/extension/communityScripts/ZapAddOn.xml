@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Updated with the latest scripts for 2.6.0<br>
+	Stop the scripts from being registered twice<br>
 	]]>
 	</changes>
 	<extensions>
