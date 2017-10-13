@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>16</version>
+	<version>17</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	HTTP "Server" response header, report any "Server" header if Threshold is LOW.<br> 
-	Update Image Location Scanner (passive rule) to leverage 0.4 of the code and 2.10.1 of the library it depends on.<br>
+	Code changes for Java 9 (Issue 2602).<br>
 	]]>
 	</changes>
 	<extensions>

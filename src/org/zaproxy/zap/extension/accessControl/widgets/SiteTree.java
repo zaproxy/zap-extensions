@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.swing.tree.TreeNode;
+
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
@@ -123,10 +125,10 @@ public class SiteTree {
 
 	private SiteTreeNode findChild(SiteTreeNode parent, String nodeName) {
 		@SuppressWarnings("unchecked")
-		Enumeration<SiteTreeNode> children = parent.children();
+		Enumeration<TreeNode> children = parent.children();
 
 		while (children.hasMoreElements()) {
-			SiteTreeNode child = children.nextElement();
+			SiteTreeNode child = (SiteTreeNode) children.nextElement();
 			if (child.getNodeName().equals(nodeName)) {
 				return child;
 			}

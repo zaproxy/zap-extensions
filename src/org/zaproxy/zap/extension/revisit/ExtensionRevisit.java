@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.swing.tree.TreeNode;
+
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -161,9 +163,9 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 		SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
 		SiteNode root = (SiteNode) siteMap.getRoot();
 		@SuppressWarnings("unchecked")
-		Enumeration<SiteNode> en = root.breadthFirstEnumeration();
+		Enumeration<TreeNode> en = root.breadthFirstEnumeration();
 		while (en.hasMoreElements()) {
-			en.nextElement().removeCustomIcon(ICON_RESOURCE);
+			((SiteNode) en.nextElement()).removeCustomIcon(ICON_RESOURCE);
 		}
 	}
 

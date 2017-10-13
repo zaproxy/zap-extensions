@@ -363,7 +363,7 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 					
 					HttpMessage msgDelay = getNewMsg();
 					String newTimeBasedInjectionValue = SQL_SQLITE_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", originalParamValue);
-					newTimeBasedInjectionValue = newTimeBasedInjectionValue.replace ("<<<<NUMBLOBBYTES>>>>", new Long(numBlobsToCreate).toString());
+					newTimeBasedInjectionValue = newTimeBasedInjectionValue.replace ("<<<<NUMBLOBBYTES>>>>", Long.toString(numBlobsToCreate));
 					setParameter(msgDelay, paramName, newTimeBasedInjectionValue);
 					
 					if ( this.debugEnabled ) log.debug("\nTrying '"+newTimeBasedInjectionValue + "'. The number of Sequential Increases already is "+ numberOfSequentialIncreases); 

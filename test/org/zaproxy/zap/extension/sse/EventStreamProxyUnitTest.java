@@ -226,6 +226,6 @@ public class EventStreamProxyUnitTest extends BaseEventStreamTest {
         ServerSentEvent event = proxy.processEvent(eventStream);
         
         // Then
-        assertThat(event.getReconnectionTime(), is(new Integer(10000)));
+        assertThat(event.getReconnectionTime(), is(Integer.valueOf(10000)));
     }
 }

@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.swing.ImageIcon;
+import javax.swing.tree.TreeNode;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -484,9 +485,9 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		// TODO Repopulate
 		SiteNode root = (SiteNode)session.getSiteTree().getRoot();
 		@SuppressWarnings("unchecked")
-		Enumeration<SiteNode> en = root.children();
+		Enumeration<TreeNode> en = root.children();
 		while (en.hasMoreElements()) {
-			String site = en.nextElement().getNodeName();
+			String site = ((SiteNode) en.nextElement()).getNodeName();
 			if (site.indexOf("//") >= 0) {
 				site = site.substring(site.indexOf("//") + 2);
 			}
