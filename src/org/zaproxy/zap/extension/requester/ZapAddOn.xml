@@ -4,7 +4,7 @@
 	<description>Request numbered panel.</description>
 	<author>Surikato</author>
 	<url></url>
-	<changes>Minor code changes.</changes>
+	<changes>Code changes for Java 9 (Issue 2602).</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.requester.ExtensionRequester</extension>
 	</extensions>
