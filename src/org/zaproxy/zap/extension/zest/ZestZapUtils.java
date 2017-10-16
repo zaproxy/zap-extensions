@@ -970,6 +970,8 @@ public class ZestZapUtils {
 
 	/**
 	 * Gets the label for the given calc operation.
+	 * <p>
+	 * If the given operation is {@code null} it returns the label of the default operation (addition).
 	 *
 	 * @param operation the calc operation.
 	 * @return the label of the operation.
@@ -977,6 +979,10 @@ public class ZestZapUtils {
 	 * @see #labelToCalcOperation(String)
 	 */
 	public static String calcOperationToLabel(String operation) {
+		if (operation == null) {
+			return Constant.messages.getString("zest.dialog.assign.oper.add");
+		}
+
 		switch (operation) {
 		case ZestAssignCalc.OPERAND_ADD:
 		default:
