@@ -10,6 +10,7 @@
 	Address exception when adding calc assign statement.<br>
 	Validate cookie name not empty.<br>
 	Code changes for Java 9 (Issue 2602).<br>
+	Default 'load on start' to true in all cases.<br>
 	Re-enabled parameterize option.<br>
 	Cope with parameterizing strings in the URL.<br>
 	]]>
