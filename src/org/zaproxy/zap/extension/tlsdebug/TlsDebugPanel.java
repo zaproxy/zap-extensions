@@ -18,7 +18,6 @@ package org.zaproxy.zap.extension.tlsdebug;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Event;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -79,7 +78,7 @@ public class TlsDebugPanel extends AbstractPanel implements Tab {
 
 		this.setIcon(TLSDEBUG_ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setLayout(new BorderLayout());
 
 		JPanel panelContent = new JPanel(new GridBagLayout());
