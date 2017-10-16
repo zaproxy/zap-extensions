@@ -936,7 +936,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			return child;
 		} else if (ZestZapUtils.getElement(parent) instanceof ZestLoop<?>) {
 			ZestLoop<?> zl = (ZestLoop<?>) ZestZapUtils.getElement(parent);
-			zl.add(zl.getIndex(existingChild) + 1, newChild);
+			zl.add(zl.getIndex(existingChild), newChild);
 			ScriptNode child = this.getZestTreeModel().addBeforeNode(parent, childNode, newChild);
 			this.updated(child);
 			this.display(child, false);
