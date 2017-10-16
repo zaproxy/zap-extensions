@@ -507,12 +507,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			String replaceWith) {
 		ZestResponse resp = request.getResponse();
 		if (resp != null) {
-			try {
-				request.setUrl(new URL(request.getUrl().toString()
-						.replace(replace, replaceWith)));
-			} catch (MalformedURLException e) {
-				logger.error(e.getMessage(), e);
-			}
+			request.setUrlToken(request.getUrl().toString().replace(replace, replaceWith));
 			request.setHeaders(request.getHeaders().replace(replace,
 					replaceWith));
 			request.setData(request.getData().replace(replace, replaceWith));
@@ -960,7 +955,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 			if (row >= 0) {
 				ZestResultsTableEntry entry = this.getZestResultsPanel().getModel().getEntry(row);
 				if (entry != null) {
-					entry.setMessage(alert.getAlert());
+					entry.setMessage(alert.getName());
 					entry.setPassed(false);
 					this.getZestResultsPanel().getModel().fireTableRowsUpdated(row, row);
 				}
