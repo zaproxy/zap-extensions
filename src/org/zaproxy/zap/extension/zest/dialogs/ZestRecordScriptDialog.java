@@ -203,7 +203,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         if (this.isServerSide()) {
     		scriptWrapper.setRecording(true);
 
-    		if (ZestScript.Type.StandAlone.equals(getSelectedType())) {
+    		if (ZestScript.Type.StandAlone.name().equalsIgnoreCase(script.getType())) {
                 scriptWrapper.setIncStatusCodeAssertion(this.getBoolValue(FIELD_STATUS));
                 scriptWrapper.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
                 scriptWrapper.setLengthApprox(this.getIntValue(FIELD_APPROX));

@@ -207,7 +207,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		
 		if (View.isInitialised()) {
 			if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
-				if (! ZestScript.Type.Passive.name().equals(wrapper.getZestScript().getType())) {
+				if (! hasSameScriptType(wrapper.getZestScript(), ZestScript.Type.Passive)) {
 					// Dont try to update passive scripts - they cant make requests so the 
 					// last request wont be in the results list
 					extension.failLastResult(e);
@@ -219,6 +219,10 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			System.out.println("Action: failed: " + e.getMessage());
 		}
 	}
+
+	private static boolean hasSameScriptType(ZestScript script, ZestScript.Type type) {
+		return type.name().equalsIgnoreCase(script.getType());
+	}
 	
 	private int getID() {
 		// TODO Auto-generated method stub
@@ -229,7 +233,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     	log.debug("notifyAssignFailed", e);
 		if (View.isInitialised()) {
 			if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
-				if (! ZestScript.Type.Passive.equals(wrapper.getZestScript().getType())) {
+				if (! hasSameScriptType(wrapper.getZestScript(), ZestScript.Type.Passive)) {
 					// Dont try to update passive scripts - they cant make requests so the 
 					// last request wont be in the results list
 					extension.failLastResult(e);
