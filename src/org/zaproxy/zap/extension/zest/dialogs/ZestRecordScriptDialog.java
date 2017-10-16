@@ -83,7 +83,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
        	this.addNodeSelectField(0, FIELD_CLIENT_NODE, node, true, false);
         
         this.addComboField(0, FIELD_PREFIX, this.getSites(), "", true);
-        this.addCheckBoxField(0, FIELD_LOAD, false);
+        this.addCheckBoxField(0, FIELD_LOAD, true);
         this.addMultilineField(0, FIELD_DESC, "");
         
         this.addCheckBoxField(1, FIELD_STATUS, true);

@@ -271,6 +271,7 @@ public class ZestDialogManager extends AbstractPanel {
 			sw.setEngineName(ZestScriptEngineFactory.NAME);
 			sw.setType(extension.getExtScript().getScriptType(
 					ExtensionScript.TYPE_STANDALONE));
+			sw.setLoadOnStart(true);
 			chooseType = true;
 			script = new ZestScriptWrapper(sw);
 			try {
