@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Updated Wappalyzer github link in help content.<br>
+	Code changes for Java 9 (Issue 2602).<br>
 	]]>
 	</changes>
 	<extensions>

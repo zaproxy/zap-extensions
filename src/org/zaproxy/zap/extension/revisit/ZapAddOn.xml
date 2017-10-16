@@ -7,7 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
+	Code changes for Java 9 (Issue 2602).<br>
 	]]>
 	</changes>
 	<extensions>
