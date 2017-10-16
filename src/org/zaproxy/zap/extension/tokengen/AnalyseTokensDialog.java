@@ -17,12 +17,12 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -313,26 +314,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 			detailsArea.setLineWrap(false);
 			detailsArea.setFont(FontUtils.getFont("Dialog"));
 			detailsArea.setName("DetailsArea");
-			detailsArea.addMouseListener(new java.awt.event.MouseAdapter() { 
-
-				@Override
-				public void mousePressed(java.awt.event.MouseEvent e) {
-					mouseAction(e);
-				}
-					
-				@Override
-				public void mouseReleased(java.awt.event.MouseEvent e) {
-					mouseAction(e);
-				}
-				
-				public void mouseAction(java.awt.event.MouseEvent e) {
-					// right mouse button action
-					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0 || e.isPopupTrigger()) {
-						View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
-					}
-				}
-				
-			});
+			detailsArea.setComponentPopupMenu(ZapPopupMenu.INSTANCE);
 		}
 		return detailsArea;
 	}
@@ -344,26 +326,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 			errorsArea.setLineWrap(false);
 			errorsArea.setFont(FontUtils.getFont("Dialog"));
 			errorsArea.setName("ErrorsArea");
-			errorsArea.addMouseListener(new java.awt.event.MouseAdapter() { 
-
-				@Override
-				public void mousePressed(java.awt.event.MouseEvent e) {
-					mouseAction(e);
-				}
-					
-				@Override
-				public void mouseReleased(java.awt.event.MouseEvent e) {
-					mouseAction(e);
-				}
-				
-				public void mouseAction(java.awt.event.MouseEvent e) {
-					// right mouse button action
-					if ((e.getModifiers() & InputEvent.BUTTON3_MASK) != 0 || e.isPopupTrigger()) {
-						View.getSingleton().getPopupMenu().show(e.getComponent(), e.getX(), e.getY());
-					}
-				}
-				
-			});
+			errorsArea.setComponentPopupMenu(ZapPopupMenu.INSTANCE);
 		}
 		return errorsArea;
 	}
@@ -411,6 +374,18 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 		for (String error : errors) {
 			this.getErrorsArea().append(error);
 			this.getErrorsArea().append("\n");
+		}
+	}
+
+	private static class ZapPopupMenu extends JPopupMenu {
+
+		public static final ZapPopupMenu INSTANCE = new ZapPopupMenu();
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void show(Component invoker, int x, int y) {
+			View.getSingleton().getPopupMenu().show(invoker, x, y);
 		}
 	}
 }
