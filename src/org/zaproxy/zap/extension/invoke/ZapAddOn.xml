@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Invoke Applications</name>
-	<version>6</version>
+	<version>7</version>
 	<status>beta</status>
 	<description>Invoke external applications passing context related information such as URLs and parameters</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Properly split application arguments.
+	Report/log when the application fails to start (related to Issue 3960).<br>
 	]]>
 	</changes>
 	<extensions>
