@@ -114,7 +114,7 @@ public class ZestTreeTransferHandler extends TransferHandler {
 		}
 
         // Configure for drop mode.
-        if(childIndex >= 0) {
+        if(childIndex >= 0 && childIndex < parent.getChildCount()) {
         	// prevent drop between shadow nodes
         	ScriptNode nextSibling = (ScriptNode) parent.getChildAt(childIndex);
         	if (nextSibling != null) {
@@ -182,15 +182,20 @@ public class ZestTreeTransferHandler extends TransferHandler {
         }
 
     	ScriptNode beforeChild = null;
+    	ScriptNode afterChild = null;
     	
         if (childIndex >= 0) {
-        	beforeChild = (ScriptNode) parent.getChildAt(childIndex);
+            if (childIndex == parent.getChildCount()) {
+                afterChild = (ScriptNode) parent.getChildAt(childIndex - 1);
+            } else {
+                beforeChild = (ScriptNode) parent.getChildAt(childIndex);
+            }
         }
     	
     	List<ScriptNode> nodes = new ArrayList<ScriptNode>();
     	nodes.add(dragNode);
     	
-		extension.pasteToNode((ScriptNode) parent, nodes, cut, beforeChild, null);
+		extension.pasteToNode((ScriptNode) parent, nodes, cut, beforeChild, afterChild);
     	return true;
     }
     	
