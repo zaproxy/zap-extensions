@@ -98,6 +98,8 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 	public AjaxSpiderAPI(ExtensionAjax extension) {
 		this.extension = extension;
 		this.historyReferences = Collections.emptyList();
+		this.resourcesOutOfScope = Collections.emptyList();
+		this.resourcesError = Collections.emptyList();
 
 		ApiAction scan = new ApiAction(ACTION_START_SCAN, null, new String[] { PARAM_URL, PARAM_IN_SCOPE, PARAM_CONTEXT_NAME, PARAM_SUBTREE_ONLY });
 		scan.setDescriptionTag("spiderajax.api.action.scan");
