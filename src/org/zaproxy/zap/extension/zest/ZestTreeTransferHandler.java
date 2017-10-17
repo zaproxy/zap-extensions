@@ -157,6 +157,10 @@ public class ZestTreeTransferHandler extends TransferHandler {
     @Override
     public boolean importData(TransferHandler.TransferSupport support) {
     	logger.debug("importData " + support.getComponent().getClass().getCanonicalName());
+
+        if (!support.isDrop()) {
+            return false;
+        }
     	
     	JTree tree = (JTree) support.getComponent();
     	
