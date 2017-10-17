@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Code changes for Java 9 (Issue 2602).<br>
+	Fix "Internal Error" when accessing the full results API view.<br>
 	]]>
 	</changes>
 	<dependencies>
