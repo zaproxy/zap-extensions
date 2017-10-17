@@ -21,6 +21,7 @@
 		<file>community-scripts/README.md</file>
 		<file>community-scripts/active/README.md</file>
 		<file>community-scripts/active/TestInsecureHTTPVerbs.py</file>
+		<file>community-scripts/active/User defined attacks.js</file>
 		<file>community-scripts/active/gof_lite.js</file>
 		<file>community-scripts/authentication/CasAuthentication.js</file>
 		<file>community-scripts/authentication/MagentoAuthentication.js</file>
