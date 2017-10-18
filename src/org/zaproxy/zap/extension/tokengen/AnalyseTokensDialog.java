@@ -75,7 +75,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
      * @throws HeadlessException
      */
     public AnalyseTokensDialog(ResourceBundle messages) throws HeadlessException {
-        super();
+        super(View.getSingleton().getMainFrame(), false);
         this.messages = messages;
         initialize();
     }

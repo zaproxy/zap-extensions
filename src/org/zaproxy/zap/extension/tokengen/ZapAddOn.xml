@@ -14,6 +14,7 @@
 	Ensure initial dialog is properly sized.<br>
 	Issue 2000: Title caps adjustments.<br>
 	Code changes for Java 9 (Issue 2602).<br>
+	Ensure Analyse Token dialogue is shown in front of main window.<br>
 	]]>
 	</changes>
 	<extensions>
