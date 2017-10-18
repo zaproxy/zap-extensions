@@ -65,8 +65,8 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     private static final Logger log = Logger.getLogger(ZestZapRunner.class);
 
-	// TODO Replace the value (12) with HistoryReference.TYPE_ZEST_SCRIPT once released with core
-	private static final int ZEST_HISTORY_REFERENCE_TYPE = 12;
+	private static final int ZEST_HISTORY_REFERENCE_TYPE = HistoryReference.TYPE_ZEST_SCRIPT;
+	private static final int FAIL_ACTION_PLUGIN_ID = 50004;
 	
 	private ExtensionZest extension;
 	private ZestScriptWrapper wrapper = null;
@@ -191,7 +191,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 			} else if (ZestActionFail.Priority.HIGH.name().equals(zaf.getPriority())) {
 				risk = Alert.RISK_HIGH;
 			}
-			Alert alert = new Alert(getID(), risk, Alert.CONFIDENCE_MEDIUM, e.getMessage());
+			Alert alert = new Alert(FAIL_ACTION_PLUGIN_ID, risk, Alert.CONFIDENCE_MEDIUM, e.getMessage());
 			
 			if (lastHref != null) {
 				alert.setHistoryRef(lastHref);
@@ -222,11 +222,6 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
 	private static boolean hasSameScriptType(ZestScript script, ZestScript.Type type) {
 		return type.name().equalsIgnoreCase(script.getType());
-	}
-	
-	private int getID() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	private void notifyAssignFailed(ZestAssignFailException e) {

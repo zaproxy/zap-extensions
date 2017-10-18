@@ -1,19 +1,13 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>25</version>
+	<version>26</version>
 	<status>beta</status>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Address exception when adding calc assign statement.<br>
-	Validate cookie name not empty.<br>
-	Code changes for Java 9 (Issue 2602).<br>
-	Default 'load on start' to true in all cases.<br>
-	Re-enabled parameterize option.<br>
-	Cope with parameterizing strings in the URL.<br>
-	Correct drag-and-drop in loop statements.<br>
+	Use custom plugin ID for fail actions.<br>
 	]]>
 	</changes>
 	<dependencies>
