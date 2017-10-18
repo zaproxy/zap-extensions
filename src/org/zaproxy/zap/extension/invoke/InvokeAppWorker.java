@@ -30,6 +30,7 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -112,7 +113,15 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
 			pb.directory(workingDir);
 		}
 		pb.redirectErrorStream(true);
-		Process proc = pb.start();
+		Process proc;
+		try {
+			proc = pb.start();
+		} catch (final Exception e) {
+			View.getSingleton().getOutputPanel().append(
+					Constant.messages.getString("invoke.error") + e.getLocalizedMessage() + "\n");
+			logger.warn("Failed to start the process: " + e.getMessage(), e);
+			return null;
+		}
 
 		if (captureOutput) {
 			try (BufferedReader brOut = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
