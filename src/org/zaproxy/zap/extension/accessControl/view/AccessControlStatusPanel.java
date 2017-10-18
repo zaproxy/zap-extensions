@@ -338,7 +338,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	public HistoryReference getSelectedHistoryReference() {
 		final int selectedRow = resultsTable.getSelectedRow();
 		if (selectedRow != -1 && currentResultsModel != null) {
-			return currentResultsModel.getEntry(selectedRow).getHistoryReference();
+			return currentResultsModel.getEntry(resultsTable.convertRowIndexToModel(selectedRow)).getHistoryReference();
 		}
 		return null;
 	}
