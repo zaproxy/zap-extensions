@@ -9,6 +9,7 @@
 	<![CDATA[
 	Fix exception that occurred with Java 9 (Issue 3934).<br>
 	Allow to copy multiple results and copy correct value from the result column.<br>
+	Display correct message when the table is sorted.<br>
 	]]> 
 	</changes>
 	<dependson />
