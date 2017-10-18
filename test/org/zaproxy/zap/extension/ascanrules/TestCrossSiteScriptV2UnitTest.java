@@ -243,6 +243,40 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
     }
     
     @Test
+    public void shouldReportXssInSpanContent() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInSpanContent/";
+        
+        this.nano.addHandler(new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String name = session.getParms().get("name");
+                String response;
+                if (name != null) {
+                    response = getHtml("InputInSpan.html",
+                            new String[][] {{"name", name}});
+                } else {
+                    response = getHtml("NoInput.html");
+                }
+                System.out.println(response);
+                return new Response(response);
+            }
+        });
+        
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(),  equalTo("</span><script>alert(1);</script><span>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("</span><script>alert(1);</script><span>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+    
+    @Test
     public void shouldReportXssOutsideOfTags() throws NullPointerException, IOException {
         String test = "/shouldReportXssOutsideOfTags/";
         
@@ -552,8 +586,6 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
     
-    // This test requires the core post 2.5.0
-    @Ignore
     @Test
     public void shouldReportXssInReflectedUrl() throws NullPointerException, IOException {
         String test = "/shouldReportXssInReflectedUrl";
