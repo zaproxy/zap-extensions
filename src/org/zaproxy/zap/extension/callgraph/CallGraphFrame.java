@@ -45,6 +45,7 @@ import javax.swing.SwingConstants;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.paros.ParosDatabase;
 import org.parosproxy.paros.db.paros.ParosDatabaseServer;
@@ -286,7 +287,7 @@ public class CallGraphFrame extends AbstractFrame {
 		buttonBar.setLayout(new FlowLayout());
 
 		// zoom to fit button
-		JButton btZoomToFit = new JButton("Zoom To Fit");
+		JButton btZoomToFit = new JButton(Constant.messages.getString("callgraph.button.zoomfit"));
 		btZoomToFit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -308,7 +309,7 @@ public class CallGraphFrame extends AbstractFrame {
 
 
 		// center graph
-		JButton btCenter = new JButton("Center The Graph");
+		JButton btCenter = new JButton(Constant.messages.getString("callgraph.button.centregraph"));
 		btCenter.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {

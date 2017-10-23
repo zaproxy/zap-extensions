@@ -134,7 +134,7 @@ class PopupMenuCallGraph extends PopupMenuHttpMessageContainer {
 					title = sitePattern;
 				} catch (URIException e) {
 					sitePattern = "";
-					title = "Unknown site";
+					title = Constant.messages.getString("callgraph.title.unknownsite");
 					log.error("The URL is invalid");
 				} 
 				break;
