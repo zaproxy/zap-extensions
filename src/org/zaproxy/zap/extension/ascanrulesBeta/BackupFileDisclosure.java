@@ -346,6 +346,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 			//now request a different (and non-existent) parent directory, 
 			//to see whether a non-existent parent folder causes a 404 
 			String [] pathbreak = temppath.split("/");
+			HttpMessage nonexistparentmsg = null;
 			if (pathbreak.length > 2) {  //the file has a parent folder that is not the root folder (ie, there is a parent folder to mess with)
 				String [] temppathbreak =  pathbreak;
 				String parentfoldername = pathbreak[pathbreak.length - 2];
@@ -356,7 +357,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 				String randomparentpath= StringUtils.join(temppathbreak, "/");
 				
 				if (log.isDebugEnabled()) log.debug("Trying non-existent parent path: "+ randomparentpath);						
-				HttpMessage nonexistparentmsg= new HttpMessage (new URI(originalURI.getScheme(), originalURI.getAuthority(), randomparentpath, null, null));
+				nonexistparentmsg= new HttpMessage (new URI(originalURI.getScheme(), originalURI.getAuthority(), randomparentpath, null, null));
 				try {
 					nonexistparentmsg.setCookieParams(originalMessage.getCookieParams());
 					}
@@ -502,7 +503,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 				//but for a "Copy of" file, actually gives a 404 (for some unknown reason). We need to handle this case.
 				if ( 	( gives404s && requestStatusCode != HttpStatus.SC_NOT_FOUND) || 
 						(	(!gives404s) &&
-							requestStatusCode != HttpStatus.SC_NOT_FOUND &&
+								nonexistfilemsg .getResponseHeader().getStatusCode() != requestStatusCode &&
 							(! Arrays.equals(disclosedData, nonexistfilemsgdata)) 
 						)
 					) {
@@ -545,7 +546,7 @@ public class BackupFileDisclosure extends AbstractAppPlugin {
 
 				if ( 	( parentgives404s && requestStatusCode != HttpStatus.SC_NOT_FOUND) || 
 						(	(!parentgives404s) && 
-							requestStatusCode != HttpStatus.SC_NOT_FOUND && 
+								nonexistparentmsg.getResponseHeader().getStatusCode() != requestStatusCode && 
 							(! Arrays.equals(disclosedData, nonexistparentmsgdata)))
 					) {
 					bingo(	Alert.RISK_MEDIUM, 
