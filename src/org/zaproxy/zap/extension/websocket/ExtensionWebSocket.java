@@ -59,6 +59,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
@@ -97,6 +98,7 @@ import org.zaproxy.zap.extension.websocket.ui.httppanel.views.WebSocketSyntaxHig
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargePayloadUtil;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargePayloadView;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargetPayloadViewModel;
+import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelComponentFactory;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelDefaultViewSelectorFactory;
@@ -195,6 +197,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 */
 	private boolean focusWebSocketsTabOnHandshake;
 	
+	private HttpSenderListenerImpl httpSenderListener;
+
 	public ExtensionWebSocket() {
 		super(NAME);
 		
@@ -210,6 +214,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		allChannelObservers = new ArrayList<>();
 		allChannelSenderListeners = new ArrayList<>();
 		wsProxies = new HashMap<>();
+		httpSenderListener = new HttpSenderListenerImpl();
 		config = new OptionsParamWebSocket();
 		
 		preparedIgnoredChannels = new ArrayList<>();
@@ -278,6 +283,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 
 		// setup configuration
 		extensionHook.addOptionsParamSet(config);
+
+		HttpSender.addListener(httpSenderListener);
 		
 		try {
 			setChannelIgnoreList(Model.getSingleton().getSession().getExcludeFromProxyRegexs());
@@ -375,6 +382,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	public void unload() {
 		super.unload();
 		
+		HttpSender.removeListener(httpSenderListener);
+
 		// close all existing connections
 		for (Entry<Integer, WebSocketProxy> wsEntry : wsProxies.entrySet()) {
 			WebSocketProxy wsProxy = wsEntry.getValue();
@@ -993,6 +1002,31 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	
 	public WebSocketStorage getStorage() {
 		return storage;
+	}
+
+	/**
+	 * The {@link HttpSenderListener} responsible to apply the option {@link OptionsParamWebSocket#isRemoveExtensionsHeader()}.
+	 */
+	private class HttpSenderListenerImpl implements HttpSenderListener {
+
+		private static final String SEC_WEBSOCKET_EXTENSIONS = "Sec-WebSocket-Extensions";
+
+		@Override
+		public int getListenerOrder() {
+			return Integer.MAX_VALUE;
+		}
+
+		@Override
+		public void onHttpRequestSend(HttpMessage msg, int initiator, HttpSender sender) {
+			if (config.isRemoveExtensionsHeader()) {
+				msg.getRequestHeader().setHeader(SEC_WEBSOCKET_EXTENSIONS, null);
+			}
+		}
+
+		@Override
+		public void onHttpResponseReceive(HttpMessage msg, int initiator, HttpSender sender) {
+			// Nothing to do.
+		}
 	}
 
 	/*
