@@ -40,6 +40,8 @@ import org.parosproxy.paros.view.AbstractParamPanel;
  * <li>Break on All - react on breakpoints set for all requests/responses.</li>
  * <li>Break on Ping/Pong - react on Ping & Pong messages that arrive while
  * stepping or waiting for all requests/responses.</li>
+ * <li>Remove header {@code Sec-WebSocket-Extensions} - when enabled it allows to properly process the WebSocket messages, as no
+ * further (and unsupported) transformation is done to them (for example, compression).</li>
  * </ul>
  * </p>
  */
@@ -55,6 +57,8 @@ public class OptionsWebSocketPanel extends AbstractParamPanel {
     private static final String LABEL_FORWARD_ALL = Constant.messages.getString("websocket.options.forward_all");
     private static final String LABEL_BREAK_ON_PING_PONG = Constant.messages.getString("websocket.options.break_on_ping_pong");
     private static final String LABEL_BREAK_ON_ALL = Constant.messages.getString("websocket.options.break_on_all");
+    private static final String LABEL_REMOVE_EXTENSIONS_HEADER = Constant.messages.getString("websocket.options.remove_extensions");
+    private static final String TOOLTIP_REMOVE_EXTENSIONS_HEADER = Constant.messages.getString("websocket.options.remove_extensions.tooltip");
 
     /**
 	 * Represents the model containing current values. Is able to save back to
@@ -65,6 +69,7 @@ public class OptionsWebSocketPanel extends AbstractParamPanel {
 	private JCheckBox checkBoxForwardAll;
 	private JCheckBox checkBoxBreakOnPingPong;
 	private JCheckBox checkBoxBreakOnAll;
+	private JCheckBox checkBoxRemoveExtensionsHeader;
 	
     public OptionsWebSocketPanel(OptionsParamWebSocket wsParams) {
         super();
@@ -100,6 +105,12 @@ public class OptionsWebSocketPanel extends AbstractParamPanel {
         gbc.insets = new Insets(2,2,2,2);
         panel.add(getCheckBoxBreakOnPingPong(), gbc);
         
+        gbc = new GridBagConstraints();
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(2,2,2,2);
+        panel.add(getCheckcheckBoxRemoveExtensionsHeader(), gbc);
+
         return panel;
 	}
 
@@ -123,12 +134,21 @@ public class OptionsWebSocketPanel extends AbstractParamPanel {
         }
         return checkBoxBreakOnPingPong;
     }
+
+    private JCheckBox getCheckcheckBoxRemoveExtensionsHeader() {
+        if (checkBoxRemoveExtensionsHeader == null) {
+            checkBoxRemoveExtensionsHeader = new JCheckBox(LABEL_REMOVE_EXTENSIONS_HEADER);
+            checkBoxRemoveExtensionsHeader.setToolTipText(TOOLTIP_REMOVE_EXTENSIONS_HEADER);
+        }
+        return checkBoxRemoveExtensionsHeader;
+    }
     
     @Override
     public void initParam(Object obj) {
         checkBoxForwardAll.setSelected(wsParams.isForwardAll());
         checkBoxBreakOnAll.setSelected(wsParams.isBreakOnAll());
         checkBoxBreakOnPingPong.setSelected(wsParams.isBreakOnPingPong());
+        checkBoxRemoveExtensionsHeader.setSelected(wsParams.isRemoveExtensionsHeader());
     }
 
     @Override
@@ -141,6 +161,7 @@ public class OptionsWebSocketPanel extends AbstractParamPanel {
     	wsParams.setForwardAll(checkBoxForwardAll.isSelected());
     	wsParams.setBreakOnAll(checkBoxBreakOnAll.isSelected());
     	wsParams.setBreakOnPingPong(checkBoxBreakOnPingPong.isSelected());
+    	wsParams.setRemoveExtensionsHeader(checkBoxRemoveExtensionsHeader.isSelected());
     }
     
     @Override

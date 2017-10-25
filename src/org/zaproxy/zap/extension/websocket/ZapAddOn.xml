@@ -16,6 +16,7 @@
 	Focus WebSockets tab just once (Issue 3747).<br>
 	Minor code adjustment to align with core changes.<br>
 	Code changes for Java 9 (Issue 2602).<br>
+	Remove header Sec-WebSocket-Extensions (Issue 3324).<br>
 	]]>
 	</changes>
 	<classnames>
