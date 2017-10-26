@@ -28,7 +28,9 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.TransferHandler;
@@ -46,6 +48,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -65,8 +68,28 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	
 	public static final String NAME = "ExtensionScripts";
 	public static final ImageIcon ICON = new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")); // Script icon
+	public static final ImageIcon SCRIPT_EXT_ICON = 
+			new ImageIcon(ExtensionScriptsUI.class.getResource("/org/zaproxy/zap/extension/scripts/resources/icons/script-extender.png")); // Script icon
+	public static final String SCRIPT_EXT_TYPE = "extender";
+	
+	/**
+	 * The templates that work with java 7 + that should be installed and enabled by default when the add-on is installed
+	 */
+	private static final String[] BUILT_IN_SCRIPTS_JAVA_7 = {
+	};
+	
+	/**
+	 * The templates that work with java 8 + that should be installed and enabled by default when the add-on is installed
+	 */
+	private static final String[] BUILT_IN_SCRIPTS_JAVA_8 = {
+			"Copy as curl command menu.js"
+	};
 	
 	private static final Logger LOGGER = Logger.getLogger(ExtensionScriptsUI.class);
+	
+	private ScriptType extScriptType = new ScriptType(SCRIPT_EXT_TYPE, "scripts.type.extender", SCRIPT_EXT_ICON, true, true);
+	private ExtenderScriptHelper helper;
+	private Map<String, ExtenderScript> installedExtenderScripts = new HashMap<String, ExtenderScript>();
 
 	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
 
@@ -114,6 +137,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	public void hook(ExtensionHook extensionHook) {
 	    super.hook(extensionHook);
 	    this.getExtScript().addListener(this);
+	    this.getExtScript().registerScriptType(extScriptType);
 
 	    if (getView() != null) {
 	    	extensionHook.getHookView().addSelectPanel(getScriptsPanel());
@@ -171,7 +195,47 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	public boolean canUnload() {
     	return true;
     }
-	
+
+    @Override
+    public void postInstall() {
+        // Install and enable the 'built in' scripts
+        // ZAP 2.6.0 will run on Java 7+ while ZAP 2.7.0+ will require Java 8+
+        String javaVersion = Runtime.class.getPackage().getImplementationVersion();
+        LOGGER.debug("Java version: " + javaVersion);
+        boolean isJava7 = javaVersion.startsWith("1.7");
+        
+        for (ScriptWrapper template : this.getExtScript().getTemplates(extScriptType)) {
+            for (String name : BUILT_IN_SCRIPTS_JAVA_7) {
+                if (template.getName().equals(name)) {
+                    installBuiltInExtenderScript(template);
+                }
+            }
+            if (! isJava7) {
+                for (String name : BUILT_IN_SCRIPTS_JAVA_8) {
+                    if (template.getName().equals(name)) {
+                        installBuiltInExtenderScript(template);
+                    }
+                }
+            }
+        }
+    }
+
+    private void installBuiltInExtenderScript(ScriptWrapper template) {
+        ScriptWrapper script = this.getExtScript().getScript(template.getName());
+        if (script == null) {
+            // Only install once
+            template.setLoadOnStart(true);
+            template.setEnabled(true);
+            this.getExtScript().addScript(template, false);
+            script = this.getExtScript().getScript(template.getName());
+            if (script != null) {
+                this.getExtScript().setEnabled(script, true);
+            } else {
+                LOGGER.error("Failed to install built in script " + template.getName());
+            }
+        }
+    }
+
     @Override
     public void unload() {
         if (getView() != null) {
@@ -189,6 +253,14 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                 extScript.removeScriptUI();
             }
             extScript.removeListener(this);
+            
+            // Uninstall any enabled scripts
+            for (ScriptWrapper script : extScript.getScripts(extScriptType)) {
+                if (script.isEnabled()) {
+                    this.uninstallExtenderScript(script);
+                }
+            }
+            extScript.removeScripType(extScriptType);
         }
         
         super.unload();
@@ -211,6 +283,17 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		    consolePanel.setName(Constant.messages.getString("scripts.panel.title"));
 		}
 		return consolePanel;
+	}
+	
+	private ExtenderScriptHelper getExtensionScriptHelper() {
+		if (helper == null) {
+			if (View.isInitialised()) {
+				helper = new ExtenderScriptHelper(View.getSingleton(), API.getInstance());
+			} else {
+				helper = new ExtenderScriptHelper(null, API.getInstance());
+			}
+		}
+		return helper;
 	}
 	
 
@@ -486,6 +569,12 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		if (View.isInitialised() && display) {
 			this.displayScript(script);
 		}
+        if (script.getType().getName().equals(SCRIPT_EXT_TYPE) && script.isEnabled()) {
+            if (! this.installedExtenderScripts.containsKey(script.getName())) {
+                // It has been flagged as to be enabled 
+                installExtenderScript(script);
+            }
+        }
 		
 	}
 
@@ -493,6 +582,12 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	public void scriptRemoved(ScriptWrapper script) {
 		if (this.isScriptDisplayed(script)) {
 			this.getConsolePanel().clearScript();
+		}
+		if (script.getType().getName().equals(SCRIPT_EXT_TYPE)) {
+			if (this.installedExtenderScripts.containsKey(script.getName())) {
+				// It has been installed so uninstall it 
+				uninstallExtenderScript(script);
+			}
 		}
 	}
 
@@ -510,6 +605,16 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	public void scriptChanged(ScriptWrapper script) {
 		if (View.isInitialised()) {
 			this.getScriptsPanel().setButtonStates();
+		}
+		if (script.getType().getName().equals(SCRIPT_EXT_TYPE)) {
+			// Extender scripts are installed and uninstalled when they are enabled/disabled
+			if (script.isEnabled() && ! this.installedExtenderScripts.containsKey(script.getName())) {
+				// Its not been installed but is now enabled, so install it 
+				installExtenderScript(script);
+			} else if (! script.isEnabled() && this.installedExtenderScripts.containsKey(script.getName())) {
+				// It has been installed but is now disabled, so uninstall it 
+				uninstallExtenderScript(script);
+			}
 		}
 	}
 
@@ -719,6 +824,33 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 			if (ExtensionScript.hasSameScriptEngine(scriptWrapper, scriptEngineWrapper)) {
 				displayType(scriptWrapper.getType());
 			}
+		}
+	}
+	
+	private void installExtenderScript(ScriptWrapper script) {
+		ExtenderScript ec;
+		try {
+			ec = extScript.getInterface(script, ExtenderScript.class);
+			ec.install(getExtensionScriptHelper());
+			this.installedExtenderScripts.put(script.getName(), ec);
+			script.setError(false);
+		} catch (Exception e) {
+			LOGGER.warn("Failed to install extender script " + script.getName(), e);
+			extScript.setError(script, e);
+			if (script.isEnabled()) {
+				extScript.setEnabled(script, false);
+			}
+		}
+	}
+
+	private void uninstallExtenderScript(ScriptWrapper script) {
+		ExtenderScript ec;
+		try {
+			ec = this.installedExtenderScripts.remove(script.getName());
+			ec.uninstall(getExtensionScriptHelper());
+		} catch (Exception e) {
+			LOGGER.warn("Failed to uninstall extender script " + script.getName(), e);
+			extScript.setError(script, e);
 		}
 	}
 

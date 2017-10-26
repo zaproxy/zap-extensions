@@ -37,6 +37,7 @@ import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 
 public class ScriptAutoCompleteKeyListener extends KeyAdapter {
 
@@ -67,6 +68,11 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
         authMap.put("paramsValues", "java.util.Map");
         authMap.put("credentials", "org.zaproxy.zap.authentication.GenericAuthenticationCredentials");
         typeToClassMaps.put(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH, authMap);
+
+        // Extender
+        HashMap<String, String> extendMap = new HashMap<String, String>();
+        extendMap.put("helper", "org.zaproxy.zap.extension.scripts.ExtenderScriptHelper");
+        typeToClassMaps.put(ExtensionScriptsUI.SCRIPT_EXT_TYPE, extendMap);
 
         // Fuzzer HTTP Processor
         HashMap<String, String> fuzzHttpMap = new HashMap<String, String>();
