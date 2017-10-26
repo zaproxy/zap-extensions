@@ -1,16 +1,15 @@
 <zapaddon>
 	<name>Active scanner rules (alpha)</name>
-	<version>20</version>
+	<version>21</version>
 	<status>alpha</status>
 	<description>The alpha quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAscanrulesAlphaAscanalpha</url>
 	<changes>
 	<![CDATA[
-	Code changes for Java 9 (Issue 2602).<br>
-	Correct handling of messages with emtpy path.<br>
-	Add Get for Post Scanner.<br>
-  	]]>
+	Add .htaccess scanner (Issue 3972).<br>
+	Modified trace.axd scanner to leverage new AbstractAppFilePlugin component.<br>
+	]]>
 	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.ascanrulesAlpha.ExtensionAscanRulesAlpha</extension>
@@ -34,6 +33,7 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.SQLInjectionSQLite</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestUserAgent</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TraceAxdScanner</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HtAccessScanner</ascanrule>
 	</ascanrules>
 	<pscanrules/>
 	<filters/>

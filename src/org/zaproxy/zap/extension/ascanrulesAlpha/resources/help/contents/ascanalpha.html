@@ -42,6 +42,10 @@ represent a security weakness unto itself it may indicate that other attacks or 
 <H2>HTTP Only Site</H2>
 This active scanner checks whether an HTTP site is served under HTTPS.
 
+<H2>.htaccess Information Leak</H2>
+Checks for web accessible .htaccess files which may leak sensitive information 
+(such as usernames, error handling, redirects, directory listing settings, etc).
+
 <H2>Httpoxy</H2>
 This active scanner checks whether a site is using the HTTP Proxy header specified in the request.<br>
 It sets up an HTTP proxy which listens to all interfaces on a randomly assigned free port.
