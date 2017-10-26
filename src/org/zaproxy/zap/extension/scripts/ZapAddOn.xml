@@ -1,20 +1,13 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>19</version>
+	<version>20</version>
 	<status>beta</status>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Code changes for Java 9 (Issue 2602).<br>
-	Inform when the script contains invalid char sequences (related to Issue 3377).<br>
-	Invoke Scripts tree context menu once.<br>
-	Title caps adjustments (related to Issue 2000).<br>
-	Allow to configure the enabled state of new/loaded scripts (Issue 2996).<br>
-	Use selected font in script text area.<br>
-	Fix UI hang when installing/uninstalling script engines (Issue 3945).<br>
-	Support basic auto-completion<br>
+	Added extender script type and examples.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -23,7 +16,15 @@
 	<ascanrules/>
 	<pscanrules/>
 	<filters/>
-	<files/>
+	<files>
+		<file>scripts/templates/extender/Add api call.js</file>
+		<file>scripts/templates/extender/Add history record menu.js</file>
+		<file>scripts/templates/extender/Add toolbar button.js</file>
+		<file>scripts/templates/extender/Add panels.js</file>
+		<file>scripts/templates/extender/Add tools menu.js</file>
+		<file>scripts/templates/extender/Copy as curl command menu.js</file>
+		<file>scripts/templates/extender/Extender default template.js</file>
+	</files>
 	<not-before-version>2.6.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
