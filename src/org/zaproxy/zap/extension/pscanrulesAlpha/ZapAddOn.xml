@@ -9,6 +9,7 @@
 	<![CDATA[
 	Code changes for Java 9 (Issue 2602).<br>
 	Bug fix - Added Strict-Transport-Security to the ignored header on Timestamp Disclosure scanner. <br>
+	Add X-AspNet-Version Header scanner - detecting information disclosure via HTTP headers. <br>
 	]]>
 	</changes>
 	<extensions>
@@ -46,6 +47,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XChromeLoggerDataInfoLeakScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XDebugTokenScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XPoweredByHeaderInfoLeakScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XAspNetVersionScanner</pscanrule>
 	</pscanrules>
 	<filters/>
 	<files>
