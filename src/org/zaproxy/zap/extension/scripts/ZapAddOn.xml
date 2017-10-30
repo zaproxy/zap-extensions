@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>20</version>
+	<version>21</version>
 	<status>beta</status>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Added extender script type and examples.<br>
+	Fix an exception when installing extender scripts with errors.<br>
 	]]>
 	</changes>
 	<extensions>
