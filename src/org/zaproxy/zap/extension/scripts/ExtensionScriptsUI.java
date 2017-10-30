@@ -831,6 +831,9 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		ExtenderScript ec;
 		try {
 			ec = extScript.getInterface(script, ExtenderScript.class);
+			if (ec == null) {
+				return;
+			}
 			ec.install(getExtensionScriptHelper());
 			this.installedExtenderScripts.put(script.getName(), ec);
 			script.setError(false);
