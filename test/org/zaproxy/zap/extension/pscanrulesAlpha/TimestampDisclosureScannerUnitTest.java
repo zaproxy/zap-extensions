@@ -1,3 +1,23 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2017 The ZAP development team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import org.apache.commons.httpclient.URI;
@@ -12,10 +32,6 @@ import static org.junit.Assert.assertEquals;
 
 public class TimestampDisclosureScannerUnitTest extends PassiveScannerTest  {
     private HttpMessage msg;
-
-    // Hashes in lower case for "guest" without quotes
-    private static final String GUEST_MD5 = "084e0343a0486ff05530df6c705c8bb4";
-    private static final String GUEST_SHA1 = "84983c60f7daadc1cb8698621f802c0d9f9a3c3c295c810748fb048115c186ec";
 
     @Before
     public void before() throws URIException {
