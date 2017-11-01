@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Code changes for Java 9 (Issue 2602).<br>
+	Bug fix - Added Strict-Transport-Security to the ignored header on Timestamp Disclosure scanner. <br>
 	]]>
 	</changes>
 	<extensions>
