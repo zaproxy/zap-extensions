@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2012 The ZAP development team
+ * Copyright 2017 The ZAP development team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 	/**
 	 * ignore the following response headers for the purposes of the comparison, since they cause false positives
 	 */
-	private static final String [] RESPONSE_HEADERS_TO_IGNORE = {HttpHeader._KEEP_ALIVE, HttpHeader.CACHE_CONTROL, "ETag", "Age"};  
+	private static final String [] RESPONSE_HEADERS_TO_IGNORE = {HttpHeader._KEEP_ALIVE, HttpHeader.CACHE_CONTROL, "ETag", "Age", "Strict-Transport-Security"};
 
 	/**
 	 * gets the name of the scanner
