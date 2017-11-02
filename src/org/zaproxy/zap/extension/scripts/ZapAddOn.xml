@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fix an exception when installing extender scripts with errors.<br>
+	Allow to enable code folding in script text area.<br>
 	]]>
 	</changes>
 	<extensions>

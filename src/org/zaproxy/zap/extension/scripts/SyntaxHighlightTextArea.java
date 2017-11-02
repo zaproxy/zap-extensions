@@ -56,6 +56,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 
 	private static final String ANTI_ALIASING = "aa";
 	private static final String SHOW_LINE_NUMBERS = "linenumbers";
+	private static final String CODE_FOLDING = "codefolding";
 	private static final String WORD_WRAP = "wordwrap";
 	private static final String HIGHLIGHT_CURRENT_LINE = "highlightline";
 	private static final String FADE_CURRENT_HIGHLIGHT_LINE = "fadehighlightline";
@@ -151,6 +152,9 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 			if (c instanceof RTextScrollPane) {
 				final RTextScrollPane scrollPane = (RTextScrollPane)c;
 				scrollPane.setLineNumbersEnabled(fileConfiguration.getBoolean(key + SHOW_LINE_NUMBERS, scrollPane.getLineNumbersEnabled()));
+
+				setCodeFoldingEnabled(fileConfiguration.getBoolean(key + CODE_FOLDING, this.isCodeFoldingEnabled()));
+				scrollPane.setFoldIndicatorEnabled(this.isCodeFoldingEnabled());
 			}
 		}
 		
@@ -180,6 +184,7 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 			if (c instanceof RTextScrollPane) {
 				final RTextScrollPane scrollPane = (RTextScrollPane)c;
 				fileConfiguration.setProperty(key + SHOW_LINE_NUMBERS, Boolean.valueOf(scrollPane.getLineNumbersEnabled()));
+				fileConfiguration.setProperty(key + CODE_FOLDING, Boolean.valueOf(this.isCodeFoldingEnabled()));
 			}
 		}
 		
