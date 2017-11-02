@@ -14,6 +14,7 @@
     Add null/empty payload generator.<br>
     Issue 3557: Backport export changes.<br>    
     Set fuzzer script types enabled by default (Issue 2997).<br>
+    Add description to script types.<br>
     ]]>
     </changes>
     <extensions>
