@@ -18,6 +18,7 @@
 	Code changes for Java 9 (Issue 2602).<br>
 	Remove header Sec-WebSocket-Extensions (Issue 3324).<br>
 	Add description to Fuzzer WebSocket Processor script type.<br>
+	Update fuzzer template (use JSDoc and fix typos).<br>
 	]]>
 	</changes>
 	<classnames>
