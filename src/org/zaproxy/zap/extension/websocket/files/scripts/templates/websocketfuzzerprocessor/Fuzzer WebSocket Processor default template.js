@@ -1,7 +1,14 @@
 // Auxiliary variables/constants needed for processing.
 var count = 1;
 
-// Called after injecting the payloads and before forward the message to the client or server.
+/**
+ * Processes the fuzzed message (payloads already injected).
+ * 
+ * Called before forwarding the message to the client/server.
+ * 
+ * @param {WebSocketFuzzerTaskProcessorUtils} utils - A utility object that contains functions that ease common tasks.
+ * @param {WebSocketMessageDTO} message - The fuzzed message, that will be forward to the client/server.
+ */
 function processMessage(utils, message) {
 	// To obtain the list of payloads:
 	//    utils.getPayloads()
@@ -11,9 +18,9 @@ function processMessage(utils, message) {
 	//    utils.stopFuzzer()
 	// To increase the error count with a reason:
 	//    utils.increaseErrorCount("Reason Error Message...")
-	// To send a message, following redirects:
+	// To send a WebSocket message:
 	//    utils.sendMessage("myMessageXyZ")
-	// To send a message but do not show in results:
+	// To send a WebSocket message but do not show in results:
 	//    utils.sendMessage(myMessage, false)
 
 	// Process fuzzed message...
