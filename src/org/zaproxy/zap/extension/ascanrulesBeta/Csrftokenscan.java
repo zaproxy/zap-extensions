@@ -19,11 +19,12 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
@@ -36,8 +37,11 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -191,10 +195,39 @@ public class Csrftokenscan extends AbstractAppPlugin {
 					}
 					
 				}
-				// We clean up the cookies and perform again the request
-				// TODO wont this loose our session if we are authenticated?
+
+				// We keep only the "flagged as session" cookies, and perform again the request
+				// Get HTTP session names from config
+				OptionsParam options = Model.getSingleton().getOptionsParam();
+				HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
+
+				List<String> sessionIds;
+				if (sessionOptions != null) {
+					//extension is enabled
+					sessionIds = sessionOptions.getDefaultTokensEnabled();
+				} else {
+					//extension is disabled
+					sessionIds = Collections.emptyList();
+				}
+
 				HttpMessage newMsg = getNewMsg();
-				newMsg.setCookieParams(new TreeSet<HtmlParameter>());
+				TreeSet<HtmlParameter> newCookies = new TreeSet<>();
+
+				// Loop the original cookies to keep only the session ones
+				for (HtmlParameter cookie : newMsg.getCookieParams()) {
+					// if sessionIds contains cookie ignoring the case
+					// lambda would have been ==> if (sessionIds.stream().anyMatch(s -> s.equalsIgnoreCase(cookie.getName())))
+					for (String id : sessionIds) {
+						if (id.equalsIgnoreCase(cookie.getName())) {
+							if (log.isDebugEnabled()) {
+								log.debug("Keeping " + cookie.getName() + " to be authenticated");
+							}
+							newCookies.add(cookie);
+							break; // avoids looping over sessionIds if already found
+						}
+					}
+				}
+				newMsg.setCookieParams(newCookies);
 				sendAndReceive(newMsg);
 	
 				// We parse the HTML of the response

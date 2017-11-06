@@ -14,6 +14,7 @@
 	Notify of messages sent during Heartbleed scanning (Issue 2425).<br>
 	Fix false positive in Code Disclosure - CVE-2012-1823 on image content (Issue 3846).<br>
 	Fix false positive in Backup File Disclosure scanner on 403 responses (Issue 3911).<br>
+	CsrfTokenScan : Keep session cookies instead of deleting all of them<br>
     ]]>
 	</changes>
 	<extensions>
