@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
+	Show script types in alphabetical order in dialogues New and Load Script.<br>
 	Fix an exception when installing extender scripts with errors.<br>
 	Correct state of Enabled checkbox when creating a script from templates.<br>
 	Allow to enable code folding in script text area.<br>
