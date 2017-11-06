@@ -24,6 +24,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.parosproxy.paros.Constant;
@@ -171,6 +172,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		for (ScriptType type : extension.getExtScript().getScriptTypes()) {
 			list.add(Constant.messages.getString(type.getI18nKey()));
 		}
+		Collections.sort(list);
 		return list;
 	}
 	
