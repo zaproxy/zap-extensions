@@ -199,7 +199,15 @@ public class Csrftokenscan extends AbstractAppPlugin {
 				// Get HTTP session names from config
 				OptionsParam options = Model.getSingleton().getOptionsParam();
 				HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
-				List<String> sessionIds = sessionOptions.getDefaultTokensEnabled();
+
+				List<String> sessionIds;
+				if (sessionOptions != null) {
+					//extension is enabled
+					sessionIds = sessionOptions.getDefaultTokensEnabled();
+				} else {
+					//extension is disabled
+					sessionIds = new ArrayList<>();
+				}
 
 				HttpMessage newMsg = getNewMsg();
 				TreeSet<HtmlParameter> newCookies = new TreeSet<>();
@@ -210,7 +218,9 @@ public class Csrftokenscan extends AbstractAppPlugin {
 					// lambda would have been ==> if (sessionIds.stream().anyMatch(s -> s.equalsIgnoreCase(cookie.getName())))
 					for (String id : sessionIds) {
 						if (id.equalsIgnoreCase(cookie.getName())) {
-							log.debug("Keeping " + cookie.getName() + " to be authenticated");
+							if (log.isDebugEnabled()) {
+								log.debug("Keeping " + cookie.getName() + " to be authenticated");
+							}
 							newCookies.add(cookie);
 							break; // avoids looping over sessionIds if already found
 						}

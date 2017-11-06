@@ -1,3 +1,22 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2017 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import org.junit.Test;
@@ -6,24 +25,25 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.httpsessions.HttpSessionToken;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-public class CsrftokenscanTest extends ActiveScannerTest<Csrftokenscan> {
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.empty;
+import static org.junit.Assert.assertThat;
+
+public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
 
     @Override
     protected Csrftokenscan createScanner() {
         Csrftokenscan scanner = new Csrftokenscan();
-        scanner.setConfig(getConfigWithHTTPSession("asp.net_sessionid", "aspsessionid", "siteserver", "cfid",
-                "cftoken", "jsessionid", "phpsessid", "sessid", "sid", "viewstate", "zenid"));
+        scanner.setConfig(getConfigWithHTTPSession());
         return scanner;
     }
 
@@ -37,13 +57,13 @@ public class CsrftokenscanTest extends ActiveScannerTest<Csrftokenscan> {
         // Then = No exception.
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = Exception.class)
     public void shouldFailToInitWithoutConfig() throws Exception {
         // Given
         Csrftokenscan scanner = new Csrftokenscan();
         // When
         scanner.init(getHttpMessage(""), parent);
-        // Then = NullPointerException
+        // Then = Exception
     }
 
     @Test
@@ -140,25 +160,14 @@ public class CsrftokenscanTest extends ActiveScannerTest<Csrftokenscan> {
         rule.scan();
         // Then the message is processed
         assertThat(httpMessagesSent, hasSize(greaterThanOrEqualTo(1)));
-        System.out.println(httpMessagesSent.get(0).getCookieParams().size());
         assertThat(httpMessagesSent.get(0).getCookieParams(), hasSize(2)); // 2 session cookies
     }
 
-    private ZapXmlConfiguration getConfigWithHTTPSession(String... values) {
+    private ZapXmlConfiguration getConfigWithHTTPSession() {
 
         ZapXmlConfiguration config = new ZapXmlConfiguration();
-
         HttpSessionsParam sessionOptions = new HttpSessionsParam();
         sessionOptions.load(config);
-
-        ArrayList<HttpSessionToken> tokenList = new ArrayList<>();
-        for (String value : values) {
-            HttpSessionToken token = new HttpSessionToken();
-            token.setName(value);
-            token.setEnabled(true);
-            tokenList.add(token);
-        }
-        sessionOptions.setDefaultTokens(tokenList);
         Model.getSingleton().getOptionsParam().addParamSet(sessionOptions);
 
         return config;
