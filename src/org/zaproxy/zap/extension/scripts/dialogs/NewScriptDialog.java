@@ -98,7 +98,12 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		this.addMultilineField(FIELD_DESC, desc);
 		this.addCheckBoxField(FIELD_LOAD, true);
 		this.addCheckBoxField(FIELD_ENABLED, false);
-		this.getField(FIELD_ENABLED).setEnabled(false);
+		if (template == null) {
+			this.getField(FIELD_ENABLED).setEnabled(false);
+		} else {
+			this.getField(FIELD_ENABLED).setEnabled(template.getType().isEnableable());
+			this.setFieldValue(FIELD_ENABLED, template.getType().isEnabledByDefault());
+		}
 
 		this.addFieldListener(FIELD_TYPE, new ActionListener() {
 			@Override
