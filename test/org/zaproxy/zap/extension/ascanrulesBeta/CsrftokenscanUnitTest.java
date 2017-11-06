@@ -43,7 +43,8 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
     @Override
     protected Csrftokenscan createScanner() {
         Csrftokenscan scanner = new Csrftokenscan();
-        scanner.setConfig(getConfigWithHTTPSession());
+        scanner.setConfig(new ZapXmlConfiguration());
+        setUpHttpSessionsParam();
         return scanner;
     }
 
@@ -57,7 +58,7 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
         // Then = No exception.
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = NullPointerException.class)
     public void shouldFailToInitWithoutConfig() throws Exception {
         // Given
         Csrftokenscan scanner = new Csrftokenscan();
@@ -163,14 +164,10 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
         assertThat(httpMessagesSent.get(0).getCookieParams(), hasSize(2)); // 2 session cookies
     }
 
-    private ZapXmlConfiguration getConfigWithHTTPSession() {
-
-        ZapXmlConfiguration config = new ZapXmlConfiguration();
+    private void setUpHttpSessionsParam() {
         HttpSessionsParam sessionOptions = new HttpSessionsParam();
-        sessionOptions.load(config);
+        sessionOptions.load(new ZapXmlConfiguration());
         Model.getSingleton().getOptionsParam().addParamSet(sessionOptions);
-
-        return config;
     }
 
     private HttpMessage getAntiCSRFCompatibleMessage() throws HttpMalformedHeaderException {

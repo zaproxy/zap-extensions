@@ -19,11 +19,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
@@ -206,7 +202,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 					sessionIds = sessionOptions.getDefaultTokensEnabled();
 				} else {
 					//extension is disabled
-					sessionIds = new ArrayList<>();
+					sessionIds = Collections.emptyList();
 				}
 
 				HttpMessage newMsg = getNewMsg();
