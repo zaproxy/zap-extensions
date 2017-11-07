@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>HttpsInfo</name>
-	<version>9</version>
+	<version>10</version>
 	<status>alpha</status>
 	<description>Displays HTTPS configuration information.</description>
 	<author>ZAP Dev Team</author>
@@ -10,7 +10,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Switch from SSLServer to OWASP DeepViolet.<br>
+	Upgrade to use DeepViolet 5.0.3, which provides some minor logging changes.<br>
 	]]>
 	</changes>
 	<extensions>
