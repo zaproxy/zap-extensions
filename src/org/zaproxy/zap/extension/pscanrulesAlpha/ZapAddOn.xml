@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>17</version>
+	<version>18</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Code changes for Java 9 (Issue 2602).<br>
-	Bug fix - Added Strict-Transport-Security to the ignored header on Timestamp Disclosure scanner. <br>
-	Add X-AspNet-Version Header scanner - detecting information disclosure via HTTP headers. <br>
+	Correct typo in XCOLD alert description (Issue 3997).<br>
 	]]>
 	</changes>
 	<extensions>
