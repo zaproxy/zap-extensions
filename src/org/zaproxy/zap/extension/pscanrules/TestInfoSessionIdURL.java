@@ -27,6 +27,7 @@
 // ZAP: 2013/10/12 Issue 809: Converted to a passive scan rule and added some new features
 // ZAP: 2014/11/09 Issue 1396: Add min length check to reduce false positives
 // ZAP: 2015/09/23 Issue 1594: Change matching mechanism
+// ZAP: 2017/11/10 Remove N/A from alert parameter.
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
@@ -271,7 +272,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
                     alert.setDetail(
                             getRefererDescription(),
                             msg.getRequestHeader().getURI().getURI(),
-                            "N/A",
+                            "",
                             linkHostName,
                             "",
                             getRefererSolution(),

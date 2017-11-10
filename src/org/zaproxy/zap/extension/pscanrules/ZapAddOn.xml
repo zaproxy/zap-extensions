@@ -11,6 +11,7 @@
 	Fix false positive with Private IP Disclosure when target is a private IP on a non-standard port (Issue 3549).<br>
 	Fix false positive with X-Content-Type-Options Header Missing with certain system locales.<br>
 	Fix X-Content-Type-Options help content (Issue 3986).<br>
+	Remove N/A value from parameter of alert Session ID in URL Rewrite.<br>
 	]]>
 	</changes>
 	<extensions>
