@@ -156,7 +156,7 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 									getDescription() + " - "+ timestampType, 
 									msg.getRequestHeader().getURI().toString(), 
 									"", //param
-									evidence, //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+									"", // attack
 									getExtraInfo(msg, evidence, timestamp),  //other info
 									getSolution(), 
 									getReference(), 

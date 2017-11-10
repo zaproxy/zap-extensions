@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Correct typo in XCOLD alert description (Issue 3997).<br>
+	Do not set a value in the attack fields.<br>
 	]]>
 	</changes>
 	<extensions>

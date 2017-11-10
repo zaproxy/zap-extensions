@@ -236,7 +236,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.desc"), 
 								msg.getRequestHeader().getURI().toString(), 
 								"", //param
-								viewstatexml.substring(0, Math.min(32000, viewstatexml.length())), //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+								"", // attack 
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.extrainfo", viewstatexml), //other info
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.soln"), 
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.refs"), 
@@ -254,7 +254,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.desc"), 
 									msg.getRequestHeader().getURI().toString(), 
 									"", //param
-									viewstatexml.substring(0, Math.min(32000, viewstatexml.length())), //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+									"", // attack 
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.extrainfo", viewstatexml), //other info
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.soln"), 
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.refs"), 
