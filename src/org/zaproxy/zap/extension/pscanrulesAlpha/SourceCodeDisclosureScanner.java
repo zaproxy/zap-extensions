@@ -318,7 +318,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		//get the body contents as a String, so we can match against it
-		String responsebody = new String (msg.getResponseBody().getBytes());
+		String responsebody = msg.getResponseBody().toString();
 		
 		//try each of the patterns in turn against the response.
 		//we deliberately do not assume that only status 200 responses will contain source code.

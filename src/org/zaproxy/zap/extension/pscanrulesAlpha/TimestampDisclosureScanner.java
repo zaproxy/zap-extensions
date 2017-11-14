@@ -123,7 +123,7 @@ public class TimestampDisclosureScanner extends PluginPassiveScanner {
 				} 
 			}
 
-			String responsebody = new String (msg.getResponseBody().getBytes());
+			String responsebody = msg.getResponseBody().toString();
 			String [] responseparts = {filteredResponseheaders.toString(), responsebody};
 
 			//try each of the patterns in turn against the response.				
