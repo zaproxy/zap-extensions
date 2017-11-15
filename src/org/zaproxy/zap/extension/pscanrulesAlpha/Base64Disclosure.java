@@ -119,7 +119,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
 		//get the body contents as a String, so we can match against it
 		String responseheader = msg.getResponseHeader().getHeadersAsString();
-		String responsebody = new String (msg.getResponseBody().getBytes());
+		String responsebody = msg.getResponseBody().toString();
 		String [] responseparts = {responseheader, responsebody};
 
 		//for each pattern..

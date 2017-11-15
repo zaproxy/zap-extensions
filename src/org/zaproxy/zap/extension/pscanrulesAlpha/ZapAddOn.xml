@@ -9,6 +9,7 @@
 	<![CDATA[
 	Correct typo in XCOLD alert description (Issue 3997).<br>
 	Do not set a value in the attack fields.<br>
+	Do not rely on system's charset to create request/response bodies.<br>
 	]]>
 	</changes>
 	<extensions>
