@@ -36,6 +36,7 @@ public class WebdriverDownload {
      * @param args
      */
 	public static int main(String[] args) {
+        final String repo = "zaproxy/zap-libs"; // Makes it easier for testing 
         String baseDir;
         if (args.length == 1) {
             File dir = new File(args[0]);
@@ -63,21 +64,21 @@ public class WebdriverDownload {
         }
 		
         downloadDriver(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/windows/32/geckodriver.exe",
+                "https://github.com/" + repo + "/raw/master/files/webdriver/windows/32/geckodriver.exe",
                 srcdir, "files/webdriver/windows/32/geckodriver.exe");
         downloadDriver(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/windows/64/geckodriver.exe",
+                "https://github.com/" + repo + "/raw/master/files/webdriver/windows/64/geckodriver.exe",
                 srcdir, "files/webdriver/windows/64/geckodriver.exe");
 
         downloadDriver(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/windows/32/chromedriver.exe",
+                "https://github.com/" + repo + "/raw/master/files/webdriver/windows/32/chromedriver.exe",
                 srcdir, "files/webdriver/windows/32/chromedriver.exe");
 
         downloadDriver(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/windows/32/IEDriverServer.exe",
+                "https://github.com/" + repo + "/raw/master/files/webdriver/windows/32/IEDriverServer.exe",
                 srcdir, "files/webdriver/windows/32/IEDriverServer.exe");
         downloadDriver(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/windows/64/IEDriverServer.exe",
+                "https://github.com/" + repo + "/raw/master/files/webdriver/windows/64/IEDriverServer.exe",
                 srcdir, "files/webdriver/windows/64/IEDriverServer.exe");
         return 0;
     }
