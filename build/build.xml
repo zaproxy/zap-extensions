@@ -42,7 +42,6 @@
 
 	<target name="clean-jxbrowser">
 		<!-- Not included in 'clean' as thats called when each add-on is built -->
-		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserlinux32/lib"  includeEmptyDirs="true" />
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserlinux64/lib"  includeEmptyDirs="true" />
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowsermacos/lib"  includeEmptyDirs="true" />
 		<delete dir="../src/org/zaproxy/zap/extension/jxbrowserwindows/lib"  includeEmptyDirs="true" />
@@ -398,7 +397,6 @@
 		<build-addon name="httpsinfo" addonid="httpsInfo" />
 		<build-addon name="importLogFiles" />
 		<build-addon name="jxbrowser" />
-		<build-addon name="jxbrowserlinux32" />
 		<build-addon name="jxbrowserlinux64" />
 		<build-addon name="jxbrowsermacos" />
 		<build-addon name="jxbrowserwindows" />
@@ -618,10 +616,6 @@
 		<build-deploy-addon name="jxbrowser" />
 	</target>
 
-	<target name="deploy-jxbrowser-linux32" depends="download-jxbrowser" description="deploy the jxbrowser linux32 extension">
-		<build-deploy-addon name="jxbrowserlinux32" />
-	</target>
-
 	<target name="deploy-jxbrowser-linux64" depends="download-jxbrowser" description="deploy the jxbrowser linux64 extension">
 		<build-deploy-addon name="jxbrowserlinux64" />
 	</target>
@@ -636,7 +630,6 @@
 
 	<target name="deploy-jxbrowser-all" description="deploy all of the jxbrowser extensions">
 		<build-deploy-addon name="jxbrowser" />
-		<build-deploy-addon name="jxbrowserlinux32" />
 		<build-deploy-addon name="jxbrowserlinux64" />
 		<build-deploy-addon name="jxbrowsermacos" />
 		<build-deploy-addon name="jxbrowserwindows" />
