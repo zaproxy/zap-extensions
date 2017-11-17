@@ -1,15 +1,15 @@
 <zapaddon>
 	<name>Windows WebDrivers</name>
-	<version>3</version>
+	<version>4</version>
 	<status>beta</status>
 	<description>Windows WebDrivers for Firefox, Chrome and IE.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Update geckodriver to v0.18.0<br>
-	Update chromedriver to 2.31<br>
-	Update IEDriverServer to 3.4.0<br>
+	Update geckodriver to v0.19.1<br>
+	Update chromedriver to 2.33<br>
+	Update IEDriverServer to 3.7.0<br>
 	]]>
 	</changes>
 	<extensions/>

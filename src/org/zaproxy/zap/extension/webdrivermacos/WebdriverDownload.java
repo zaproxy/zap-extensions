@@ -36,6 +36,7 @@ public class WebdriverDownload {
      * @param args
      */
 	public static int main(String[] args) {
+        final String repo = "zaproxy/zap-libs"; // Makes it easier for testing
         String baseDir;
         if (args.length == 1) {
             File dir = new File(args[0]);
@@ -63,10 +64,10 @@ public class WebdriverDownload {
         }
 
         downloadDriver(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/macos/64/geckodriver",
+                "https://github.com/" + repo + "/raw/master/files/webdriver/macos/64/geckodriver",
                 srcdir, "files/webdriver/macos/64/geckodriver");
         downloadDriver(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/webdriver/macos/64/chromedriver",
+                "https://github.com/" + repo + "/raw/master/files/webdriver/macos/64/chromedriver",
                 srcdir, "files/webdriver/macos/64/chromedriver");
         return 0;
     }
