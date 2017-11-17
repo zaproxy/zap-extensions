@@ -34,11 +34,12 @@ public class JxBrowserDownload {
      * 
      * @param args
      */
-    public static int main(String[] args) {
+    public static void main(String[] args) {
 
-        final String VERSION = "6.14.2";
+        final String VERSION = "6.17";
+        final String repo = "zaproxy/zap-libs"; // Makes it easier for testing
 
-        String baseDir;
+        String baseDir = "";
         if (args.length == 1) {
             File dir = new File(args[0]);
             if (dir.isDirectory()) {
@@ -46,7 +47,7 @@ public class JxBrowserDownload {
             } else {
                 System.out.println(dir.getAbsolutePath() + 
                         " is not a directory - specify the root directory of the repo");
-                return -1;
+                System.exit(-1);
             }
         } else {
             baseDir = Paths.get("").toAbsolutePath().toString();
@@ -60,26 +61,30 @@ public class JxBrowserDownload {
         if (!srcdir.isDirectory()) {
             System.out.println(srcdir.getAbsolutePath() + 
                     " is not a directory - specify the root directory of the repo");
-            return -1;
+            System.exit(-1);
             
         }
 
         downloadLibrary(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/jxbrowser/jxbrowser-linux32-" + VERSION + ".jar",
-                srcdir, "../jxbrowserlinux32/lib/jxbrowser-linux32-" + VERSION + ".jar");
+                "https://github.com/" + repo + "/raw/master/files/jxbrowser/jxbrowser-" + VERSION + ".jar",
+                srcdir, "../../../../../../lib/jxbrowser-" + VERSION + ".jar");
 
         downloadLibrary(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/jxbrowser/jxbrowser-linux64-" + VERSION + ".jar",
+                "https://github.com/" + repo + "/raw/master/files/jxbrowser/jxbrowser-" + VERSION + ".jar",
+                srcdir, "lib/jxbrowser-" + VERSION + ".jar");
+
+        downloadLibrary(
+                "https://github.com/" + repo + "/raw/master/files/jxbrowser/jxbrowser-linux64-" + VERSION + ".jar",
                 srcdir, "../jxbrowserlinux64/lib/jxbrowser-linux64-" + VERSION + ".jar");
 
         downloadLibrary(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/jxbrowser/jxbrowser-mac-" + VERSION + ".jar",
+                "https://github.com/" + repo + "/raw/master/files/jxbrowser/jxbrowser-mac-" + VERSION + ".jar",
                 srcdir, "../jxbrowsermacos/lib/jxbrowser-mac-" + VERSION + ".jar");
 
         downloadLibrary(
-                "https://github.com/zaproxy/zap-libs/raw/master/files/jxbrowser/jxbrowser-win32-" + VERSION + ".jar",
+                "https://github.com/" + repo + "/raw/master/files/jxbrowser/jxbrowser-win32-" + VERSION + ".jar",
                 srcdir, "../jxbrowserwindows/lib/jxbrowser-win-" + VERSION + ".jar");
-        return 0;
+        return;
     }
 
     private static void downloadLibrary(String urlStr, File baseDir, String destFile) {
