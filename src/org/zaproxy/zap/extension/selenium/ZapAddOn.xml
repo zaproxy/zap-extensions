@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>Selenium</name>
-	<version>11</version>
+	<version>12</version>
 	<semver>2.0.0</semver><!-- This version should be kept in sync with the one of the extension. -->
 	<status>release</status>
 	<description>WebDriver provider and includes HtmlUnit browser</description>
@@ -11,9 +11,7 @@
 	</dependencies>
 	<changes>
 	<![CDATA[
-	Update Selenium to version 3.4.0.<br>
-	Move Bundled WebDrivers section to main help page and recommend using newer browser versions.<br>
-	Add menus and methods for launching browsers proxying through ZAP.<br>
+	Update Selenium to version 3.7.1.<br>
 	]]>
 	</changes>
 	<extensions>

@@ -36,18 +36,22 @@ import javax.swing.event.ListDataListener;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.safari.SafariOptions;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -623,9 +627,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         return getWebDriverImpl(browser, proxyAddress, proxyPort);
     }
-
-    private static WebDriver getWebDriverImpl(Browser browser, String proxyAddress, int proxyPort) {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
+    
+    private static void setCommonOptions(MutableCapabilities capabilities, String proxyAddress, int proxyPort) {
         capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         // W3C capability
         capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
@@ -637,50 +640,57 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             proxy.setSslProxy(httpProxy);
             capabilities.setCapability(CapabilityType.PROXY, proxy);
         }
+    }
 
+    private static WebDriver getWebDriverImpl(Browser browser, String proxyAddress, int proxyPort) {
         switch (browser) {
         case CHROME:
-            return new ChromeDriver(capabilities);
+            ChromeOptions chromeOptions = new ChromeOptions();
+            setCommonOptions(chromeOptions, proxyAddress, proxyPort);
+            return new ChromeDriver(chromeOptions);
         case FIREFOX:
-            FirefoxOptions options = new FirefoxOptions();
+            FirefoxOptions firefoxOptions = new FirefoxOptions();
+            setCommonOptions(firefoxOptions, proxyAddress, proxyPort);
 
             String geckoDriver = System.getProperty(SeleniumOptions.FIREFOX_DRIVER_SYSTEM_PROPERTY);
-            options.setLegacy(geckoDriver == null || geckoDriver.isEmpty());
+            firefoxOptions.setLegacy(geckoDriver == null || geckoDriver.isEmpty());
 
             String binaryPath = System.getProperty(SeleniumOptions.FIREFOX_BINARY_SYSTEM_PROPERTY);
             if (binaryPath != null && !binaryPath.isEmpty()) {
-                options.setBinary(binaryPath);
+                firefoxOptions.setBinary(binaryPath);
             }
 
             // Disable the captive checks/requests, mainly to avoid flooding
             // the AJAX Spider results (those requests are out of scope).
-            options.addPreference("network.captive-portal-service.enabled", false);
+            firefoxOptions.addPreference("network.captive-portal-service.enabled", false);
 
             if (proxyAddress != null) {
                 // Some issues prevent the PROXY capability from being properly applied:
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=1282873
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=1369827
                 // For now set the preferences manually:
-                options.addPreference("network.proxy.type", 1);
-                options.addPreference("network.proxy.http", proxyAddress);
-                options.addPreference("network.proxy.http_port", proxyPort);
-                options.addPreference("network.proxy.ssl", proxyAddress);
-                options.addPreference("network.proxy.ssl_port", proxyPort);
-                options.addPreference("network.proxy.share_proxy_settings", true);
-                options.addPreference("network.proxy.no_proxies_on", "");
+                firefoxOptions.addPreference("network.proxy.type", 1);
+                firefoxOptions.addPreference("network.proxy.http", proxyAddress);
+                firefoxOptions.addPreference("network.proxy.http_port", proxyPort);
+                firefoxOptions.addPreference("network.proxy.ssl", proxyAddress);
+                firefoxOptions.addPreference("network.proxy.ssl_port", proxyPort);
+                firefoxOptions.addPreference("network.proxy.share_proxy_settings", true);
+                firefoxOptions.addPreference("network.proxy.no_proxies_on", "");
                 // And remove the PROXY capability:
-                capabilities.setCapability(CapabilityType.PROXY, (Object) null);
+                firefoxOptions.setCapability(CapabilityType.PROXY, (Object) null);
             }
 
-            options.addTo(capabilities);
-
-            return new FirefoxDriver(capabilities);
+            return new FirefoxDriver(firefoxOptions);
         case HTML_UNIT:
-            return new HtmlUnitDriver(DesiredCapabilities.htmlUnit().merge(capabilities));
+            DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
+            setCommonOptions(htmlunitCapabilities, proxyAddress, proxyPort);
+            return new HtmlUnitDriver(DesiredCapabilities.htmlUnit().merge(htmlunitCapabilities));
         case INTERNET_EXPLORER:
-            capabilities.setCapability(InternetExplorerDriver.IE_USE_PER_PROCESS_PROXY, true);
+            InternetExplorerOptions ieOptions = new InternetExplorerOptions();
+            setCommonOptions(ieOptions, proxyAddress, proxyPort);
+            ieOptions.setCapability(InternetExplorerDriver.IE_USE_PER_PROCESS_PROXY, true);
 
-            return new InternetExplorerDriver(capabilities);
+            return new InternetExplorerDriver(ieOptions);
             /* No longer supported in the Selenium standalone jar
              * need to decide if we support older Opera versions 
         case OPERA:
@@ -695,6 +705,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             return driver;
             */
         case PHANTOM_JS:
+            DesiredCapabilities phantomCapabilities = new DesiredCapabilities();
+            setCommonOptions(phantomCapabilities, proxyAddress, proxyPort);
             final ArrayList<String> cliArgs = new ArrayList<>(4);
             cliArgs.add("--ssl-protocol=any");
             cliArgs.add("--ignore-ssl-errors=yes");
@@ -702,11 +714,13 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             cliArgs.add("--webdriver-logfile=" + Constant.getZapHome() + "phantomjsdriver.log");
             cliArgs.add("--webdriver-loglevel=WARN");
 
-            capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cliArgs);
+            phantomCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cliArgs);
 
-            return new PhantomJSDriver(capabilities);
+            return new PhantomJSDriver(phantomCapabilities);
         case SAFARI:
-            return new SafariDriver(capabilities);
+            SafariOptions safariOptions = new SafariOptions();
+            setCommonOptions(safariOptions, proxyAddress, proxyPort);
+            return new SafariDriver(safariOptions);
         default:
             throw new IllegalArgumentException("Unknown browser: " + browser);
         }
