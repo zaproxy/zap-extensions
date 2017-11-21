@@ -7,6 +7,7 @@
 	<url/>
 	<changes>
 	<![CDATA[
+	Use custom HTTP Sender initiator ID.<br>
 	Show same cookies once in Generate Tokens dialogue (Issue 2116).<br>
 	Fix exception when no tokens are found (Issue 2116).<br>
 	Added help file.<br>
