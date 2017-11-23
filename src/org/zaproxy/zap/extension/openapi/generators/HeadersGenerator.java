@@ -53,6 +53,9 @@ public class HeadersGenerator {
     private void generateCustomHeader(Operation operation, List<HttpHeaderField> headers) {
         if (operation.getParameters() != null) {
             for (Parameter parameter : operation.getParameters()) {
+                if (parameter == null) {
+                    continue;
+                }
                 if (HEADER.equals(parameter.getIn())) {
                     String name = parameter.getName();
                     String value = dataGenerator.generate(name, (HeaderParameter) parameter, new ArrayList<String>());

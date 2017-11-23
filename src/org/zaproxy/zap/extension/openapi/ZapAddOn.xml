@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 		Fix NPE in BodyGenerator.<br>
+		Fix NPEs when a parameter is null.<br>
 	]]>
 	</changes>
 	<extensions>

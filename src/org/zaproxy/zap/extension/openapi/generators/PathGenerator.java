@@ -48,11 +48,14 @@ public class PathGenerator {
     public String generateFullPath(OperationModel operationModel) {
         String queryString = "?";
         for (Parameter parameter : operationModel.getOperation().getParameters()) {
+            if (parameter == null) {
+                continue;
+            }
             String parameterType = parameter.getIn();
-            if (parameterType.equals("query")) {
+            if ("query".equals(parameterType)) {
                 String value = dataGenerator.generate(parameter.getName(), ((AbstractSerializableParameter<?>) parameter), new ArrayList<String>());
                 queryString += parameter.getName() + "=" + value + "&";
-            } else if (parameterType.equals("path")) {
+            } else if ("path".equals(parameterType)) {
                 String value = dataGenerator.generate(parameter.getName(), ((AbstractSerializableParameter<?>) parameter), new ArrayList<String>());
                 String newPath = operationModel.getPath().replace("{" + parameter.getName() + "}", value);
                 operationModel.setPath(newPath);
