@@ -2,7 +2,7 @@
 	<description>Build ZAP extensions</description>
 
 	<property name="src" location="../src" />
-	<property name="src.version" value="1.7" />
+	<property name="src.version" value="1.8" />
 	<property name="test.src" location="../test" />
 	<property name="test.lib" location="../testlib" />
 	<property name="test.build" location="buildtest" />
