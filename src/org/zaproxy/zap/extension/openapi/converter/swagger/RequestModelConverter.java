@@ -66,7 +66,10 @@ public class RequestModelConverter {
     private String generateBody() {
         String body = null;
         for (Parameter parameter : operationModel.getOperation().getParameters()) {
-            if (parameter.getIn().equals("body")) {
+            if (parameter == null) {
+                continue;
+            }
+            if ("body".equals(parameter.getIn())) {
                 Model schema = ((BodyParameter) parameter).getSchema();
                 switch (schema.getClass().getSimpleName()) {
                 case "RefModel":

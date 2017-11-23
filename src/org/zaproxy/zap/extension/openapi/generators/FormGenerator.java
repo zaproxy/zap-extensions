@@ -40,6 +40,9 @@ public class FormGenerator {
     public FormData generate(OperationModel operationModel) {
         FormData formData = new FormData(operationModel.getOperation().getConsumes());
         for (Parameter parameter : operationModel.getOperation().getParameters()) {
+            if (parameter == null) {
+                continue;
+            }
             String parameterType = parameter.getIn();
             if (parameterType.equals("formData")) {
                 String type = ((AbstractSerializableParameter<?>) parameter).getType();
