@@ -26,7 +26,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
@@ -41,10 +40,12 @@ public class SessionExcludeFromWebSocket extends AbstractParamPanel {
 	private MultipleRegexesOptionsPanel regexesPanel;
 	
 	private ExtensionWebSocket extWs;
+	private OptionsParamWebSocket config;
 
-	public SessionExcludeFromWebSocket(ExtensionWebSocket extWs) {
+	public SessionExcludeFromWebSocket(ExtensionWebSocket extWs, OptionsParamWebSocket config) {
 		super();
 		this.extWs = extWs;
+		this.config = config;
 		initialize();
 	}
 	
@@ -92,11 +93,7 @@ public class SessionExcludeFromWebSocket extends AbstractParamPanel {
 	@Override
 	public void initParam(Object obj) {
 		regexesPanel.setRegexes(extWs.getChannelIgnoreList());
-		regexesPanel.setRemoveWithoutConfirmation(!getOptions().isConfirmRemoveProxyExcludeRegex());
-	}
-
-	private static OptionsParamWebSocket getOptions() {
-		return Model.getSingleton().getOptionsParam().getParamSet(OptionsParamWebSocket.class);
+		regexesPanel.setRemoveWithoutConfirmation(!config.isConfirmRemoveProxyExcludeRegex());
 	}
 
 	@Override
@@ -106,7 +103,7 @@ public class SessionExcludeFromWebSocket extends AbstractParamPanel {
 
 	@Override
 	public void saveParam(Object obj) throws WebSocketException {
-		getOptions().setConfirmRemoveProxyExcludeRegex(!regexesPanel.isRemoveWithoutConfirmation());
+		config.setConfirmRemoveProxyExcludeRegex(!regexesPanel.isRemoveWithoutConfirmation());
 		extWs.setChannelIgnoreList(regexesPanel.getRegexes());
 	}
 
