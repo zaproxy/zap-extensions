@@ -315,7 +315,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			hookMenu.addPopupMenuItem(new ExcludeFromWebSocketsMenuItem(this));
 
 			// setup Session Properties
-			sessionExcludePanel =  new SessionExcludeFromWebSocket(this);
+			sessionExcludePanel =  new SessionExcludeFromWebSocket(this, config);
 			getView().getSessionDialog().addParamPanel(new String[]{}, sessionExcludePanel, false);
 			
 			// setup Breakpoints
