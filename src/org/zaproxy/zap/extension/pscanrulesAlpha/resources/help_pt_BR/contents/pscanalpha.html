@@ -102,8 +102,9 @@ Proxy". </p>
 <h2>Open Redirect</h2>
 Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
 
-<h2>Server Header Version Information Leak</h2>
+<h2>HTTP Server Response Header Scanner</h2>
 This checks response headers for the presence of a server header that contains version details.
+At LOW Threshold will raise an alert based on presence of the header field whether or not a version string is detected.
 
 <h2>Source Code Disclosure</h2>
 Application Source Code was disclosed by the web server
@@ -139,6 +140,10 @@ This check looks at user-supplied input in query string parameters and POST data
 <h2>User Controllable Javascript Property (XSS)</h2>
 This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 
+<h2>Username Hash Found</h2>
+If any context contains defined users this scanner checks all responses for the presence of hashed values representing those usernames.
+Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact. 
+
 <h2>X-Powered-By Header Information Leak</h2>
 This checks response headers for the presence of X-Powered-By details.
 
@@ -151,6 +156,14 @@ A large redirect response may indicate that although a redirect has taken place 
 
 <h2>X-ChromeLogger-Data Header Information Leak</h2>
 This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
+
+<h2>X-Debug-Token Information Leak</h2>
+This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
+Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
+
+<h2>X-AspNet-Version/X-AspNetMvc-Version Header Information Leak</h2>
+This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
+
 
 </body>
 </html>
