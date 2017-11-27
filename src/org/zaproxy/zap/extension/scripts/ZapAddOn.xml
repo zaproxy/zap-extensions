@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>22</version>
+	<version>23</version>
 	<status>beta</status>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
+	Invoke script on selected message(s) (Issue 4085).<br>
 	]]>
 	</changes>
 	<extensions>

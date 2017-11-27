@@ -21,22 +21,21 @@ package org.zaproxy.zap.extension.scripts;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
-import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
+import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
-public class InvokeScriptWithNodeMenu extends PopupMenuItemSiteNodeContainer {
+public class InvokeScriptWithHttpMessageMenu extends PopupMenuItemHttpMessageContainer {
 
 	private static final long serialVersionUID = 2282358266003940700L;
-    private static Logger logger = Logger.getLogger(InvokeScriptWithNodeMenu.class);
+    private static Logger logger = Logger.getLogger(InvokeScriptWithHttpMessageMenu.class);
 
 	private ExtensionScriptsUI extension;
 	private ScriptWrapper script;
 	
-	public InvokeScriptWithNodeMenu(ExtensionScriptsUI extension, ScriptWrapper script) {
+	public InvokeScriptWithHttpMessageMenu(ExtensionScriptsUI extension, ScriptWrapper script) {
 		super(script.getName(), true);
 		this.extension = extension;
 		this.script = script;
@@ -53,17 +52,14 @@ public class InvokeScriptWithNodeMenu extends PopupMenuItemSiteNodeContainer {
     }
 
 	@Override
-	public void performAction(SiteNode sn) {
-		if (sn != null && sn.getHistoryReference() != null) {
-			logger.debug("Invoke script with " + sn.getNodeName());
-			try {
-				HttpMessage msg = sn.getHistoryReference().getHttpMessage();
-				extension.invokeTargetedScript(script, msg);
-					
-			} catch (Exception e) {
-				logger.debug("Script " + script.getName() + " failed with error: " + e.toString());
-				extension.showError(e);
-			}
+	public void performAction(HttpMessage msg) {
+		logger.debug("Invoke script with " + msg.getRequestHeader().getURI());
+		try {
+			extension.invokeTargetedScript(script, msg);
+				
+		} catch (Exception e) {
+			logger.debug("Script " + script.getName() + " failed with error: " + e.toString());
+			extension.showError(e);
 		}
 	}
 	

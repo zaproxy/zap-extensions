@@ -99,7 +99,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	private OutputPanelWriter stdOutputPanelWriter = null;
 	private OutputPanelWriter displayedScriptOutputPanelWriter = null;
 
-	private InvokeScriptWithNodePopupMenu popupInvokeScriptWithNodeMenu = null;
+	private InvokeScriptWithHttpMessagePopupMenu popupInvokeScriptWithHttpMessageMenu = null;
 	private PopupEnableDisableScript popupEnableDisableScript = null;
 	private PopupRemoveScript popupRemoveScript = null;
 	private PopupInstantiateTemplate popupInstantiateTemplate = null;
@@ -144,7 +144,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	    	extensionHook.getHookView().addSelectPanel(getScriptsPanel());
 	    	extensionHook.addSessionListener(new ViewSessionChangedListener());
 	        extensionHook.getHookView().addWorkPanel(getConsolePanel());
-			extensionHook.getHookMenu().addPopupMenuItem(getPopupInvokeScriptWithNodeMenu());
+			extensionHook.getHookMenu().addPopupMenuItem(getPopupInvokeScriptWithHttpMessageMenu());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupEnableDisableScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupRemoveScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupInstantiateTemplate());
@@ -298,11 +298,11 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	}
 	
 
-	private InvokeScriptWithNodePopupMenu getPopupInvokeScriptWithNodeMenu() {
-		if (popupInvokeScriptWithNodeMenu == null) {
-			popupInvokeScriptWithNodeMenu = new InvokeScriptWithNodePopupMenu(this);
+	private InvokeScriptWithHttpMessagePopupMenu getPopupInvokeScriptWithHttpMessageMenu() {
+		if (popupInvokeScriptWithHttpMessageMenu == null) {
+			popupInvokeScriptWithHttpMessageMenu = new InvokeScriptWithHttpMessagePopupMenu(this);
 		}
-		return popupInvokeScriptWithNodeMenu;
+		return popupInvokeScriptWithHttpMessageMenu;
 	}
 	
 	private PopupEnableDisableScript getPopupEnableDisableScript() {
