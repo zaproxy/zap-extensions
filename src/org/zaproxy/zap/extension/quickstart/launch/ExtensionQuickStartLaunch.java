@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
@@ -75,10 +76,10 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
     private JLabel exploreLabel;
     private JLabel spacerLabel;
 
-    private static final List<Class<?>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES;
 
     static {
-        List<Class<?>> dependencies = new ArrayList<>(2);
+        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
         dependencies.add(ExtensionQuickStart.class);
         dependencies.add(ExtensionSelenium.class);
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
@@ -225,7 +226,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
     }
 
     @Override
-    public List<Class<?>> getDependencies() {
+    public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
     }
 

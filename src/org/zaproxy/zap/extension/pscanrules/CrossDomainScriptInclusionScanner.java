@@ -145,7 +145,7 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 			if(scriptHost != null && !scriptHost.toLowerCase().equals(host.toLowerCase())){
 				otherDomain = true;
 			}
-			if(otherDomain && ! Plugin.AlertThreshold.LOW.equals(this.getLevel())) {
+			if(otherDomain && ! Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
 				//Get a list of contexts that contain the original URL
 				List<Context> contextList = getModel().getSession().getContextsForUrl(msg.getRequestHeader().getURI().toString());
 				for (Context context : contextList) {

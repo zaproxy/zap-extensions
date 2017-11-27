@@ -54,7 +54,7 @@ public class CacheControlScanner extends PluginPassiveScanner {
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		if (msg.getRequestHeader().isSecure() && msg.getResponseBody().length() > 0) {
 			
-			if (AlertThreshold.LOW.equals(this.getLevel())) {
+			if (AlertThreshold.LOW.equals(this.getAlertThreshold())) {
 				if (msg.getResponseHeader().isImage()) {
 					return;
 				}

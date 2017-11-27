@@ -124,7 +124,7 @@ public class MixedContentScannerUnitTest extends PassiveScannerTest {
             // Given
             String uri = "https://example.com/";
             HttpMessage msg = createHtmlResponse(uri, "<tag " + attribute + "=\"http://example.com/file\" />");
-            rule.setLevel(AlertThreshold.HIGH);
+            rule.setAlertThreshold(AlertThreshold.HIGH);
             // When
             rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
             // Then

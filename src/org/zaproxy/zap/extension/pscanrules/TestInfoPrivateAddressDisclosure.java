@@ -108,7 +108,7 @@ public class TestInfoPrivateAddressDisclosure extends PluginPassiveScanner {
         String firstOne = null;
         
         while (matcher.find()) {
-            if (getLevel() != AlertThreshold.LOW && matcher.group(1).equalsIgnoreCase(host)) {
+            if (getAlertThreshold() != AlertThreshold.LOW && matcher.group(1).equalsIgnoreCase(host)) {
                 continue;
             }
 
