@@ -9,6 +9,7 @@
 	<![CDATA[
 	Code changes for Java 9 (Issue 2602).<br>
 	Updated to use new icon.<br>
+	Updated for the new default browser launch URL.<br>
 	]]>
 	</changes>
 	<extensions>
