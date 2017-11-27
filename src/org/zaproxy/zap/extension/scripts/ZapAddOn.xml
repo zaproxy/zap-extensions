@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>21</version>
+	<version>22</version>
 	<status>beta</status>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Show script types in alphabetical order in dialogues New and Load Script.<br>
-	Fix an exception when installing extender scripts with errors.<br>
-	Correct state of Enabled checkbox when creating a script from templates.<br>
-	Allow to enable code folding in script text area.<br>
+	Updated for 2.7.0.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -28,6 +25,6 @@
 		<file>scripts/templates/extender/Copy as curl command menu.js</file>
 		<file>scripts/templates/extender/Extender default template.js</file>
 	</files>
-	<not-before-version>2.6.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

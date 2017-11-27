@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Import files containing URLs</name>
-	<version>4</version>
+	<version>5</version>
 	<status>beta</status>
 	<description>Adds an option to import a file of URLs. The file must be plain text with one URL per line.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Minor change to help content.</changes>
+	<changes>Updated for 2.7.0.</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.importurls.ExtensionImportUrls</extension>
 	</extensions>
@@ -13,6 +13,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

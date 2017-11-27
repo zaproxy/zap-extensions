@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -91,7 +92,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	private ExtenderScriptHelper helper;
 	private Map<String, ExtenderScript> installedExtenderScripts = new HashMap<String, ExtenderScript>();
 
-	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
+	private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 
 	private ScriptsListPanel scriptsPanel = null;
 	private ConsolePanel consolePanel = null;
@@ -117,7 +118,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	//private static final Logger logger = Logger.getLogger(ExtensionScriptsUI.class);
 
 	static {
-		List<Class<?>> dependencies = new ArrayList<>(1);
+		List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
 		dependencies.add(ExtensionScript.class);
 		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
 	}
@@ -732,7 +733,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	}
 
 	@Override
-	public List<Class<?>> getDependencies() {
+	public List<Class<? extends Extension>> getDependencies() {
 		return EXTENSION_DEPENDENCIES;
 	}
 

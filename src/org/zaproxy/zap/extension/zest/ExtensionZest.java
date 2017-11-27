@@ -118,7 +118,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 	private static final Logger logger = Logger.getLogger(ExtensionZest.class);
 
-	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
+	private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 
 	private ZestParam param = null;
 	private OptionsZestPanel optionsZestPanel = null;
@@ -152,7 +152,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	private ScriptNode recordingNode = null;
 
 	static {
-		List<Class<?>> dependencies = new ArrayList<>(1);
+		List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
 		dependencies.add(ExtensionScript.class);
 		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
 	}
@@ -1745,7 +1745,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 	}
 
 	@Override
-	public List<Class<?>> getDependencies() {
+	public List<Class<? extends Extension>> getDependencies() {
 		return EXTENSION_DEPENDENCIES;
 	}
 

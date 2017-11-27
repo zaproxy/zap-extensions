@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
@@ -51,10 +52,10 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 
 	private static final Logger LOGGER = Logger.getLogger(ExtensionJython.class);
 
-	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
+	private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 
 	static {
-		List<Class<?>> dependencies = new ArrayList<>(1);
+		List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
 		dependencies.add(ExtensionScript.class);
 		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
 
@@ -196,7 +197,7 @@ public class ExtensionJython extends ExtensionAdaptor implements OptionsChangedL
 	}
 
 	@Override
-	public List<Class<?>> getDependencies() {
+	public List<Class<? extends Extension>> getDependencies() {
 		return EXTENSION_DEPENDENCIES;
 	}
 }

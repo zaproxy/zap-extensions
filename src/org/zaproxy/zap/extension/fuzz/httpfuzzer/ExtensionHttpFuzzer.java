@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ViewDelegate;
@@ -60,10 +61,10 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
     private static final ImageIcon HTTP_FUZZER_PROCESSOR_SCRIPT_ICON = new ImageIcon(
             ZAP.class.getResource("/resource/icon/16/script-fuzz.png"));
 
-    private static final List<Class<?>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES;
 
     static {
-        List<Class<?>> dependencies = new ArrayList<>(1);
+        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
         dependencies.add(ExtensionFuzz.class);
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
     }
@@ -84,7 +85,7 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
     }
 
     @Override
-    public List<Class<?>> getDependencies() {
+    public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
     }
 
