@@ -1,17 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>20</version>
+	<version>21</version>
 	<status>release</status>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Fix false positive with Secure Pages Include Mixed Content and JavaScript files (Issue 3581).<br>
-	Fix false positive with Private IP Disclosure when target is a private IP on a non-standard port (Issue 3549).<br>
-	Fix false positive with X-Content-Type-Options Header Missing with certain system locales.<br>
-	Fix X-Content-Type-Options help content (Issue 3986).<br>
-	Remove N/A value from parameter of alert Session ID in URL Rewrite.<br>
+	Update for 2.7.0, Minor code changes to address deprecation.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -35,6 +31,6 @@
 	</pscanrules>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

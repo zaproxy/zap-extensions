@@ -118,7 +118,7 @@ public class TestInfoPrivateAddressDisclosureUnitTest extends PassiveScannerTest
 		String privateIp = "192.168.36.127";
 		String requestUri = "https://" + privateIp + ":8123/";
 		HttpMessage msg = createHttpMessage(requestUri, privateIp);
-		rule.setLevel(AlertThreshold.LOW);
+		rule.setAlertThreshold(AlertThreshold.LOW);
 		// When
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 		// Then

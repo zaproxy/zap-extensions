@@ -185,7 +185,7 @@ public class TestParameterTamperUnitTest extends ActiveScannerTest<TestParameter
             assertThat(serverError, alertsRaised, hasSize(1));
             assertThat(serverError, alertsRaised.get(0).getEvidence(), is(equalTo(serverError)));
             assertThat(serverError, alertsRaised.get(0).getParam(), is(equalTo("p")));
-            assertThat(serverError, alertsRaised.get(0).getAttack(), is(equalTo(null))); // Parameter absent, no attack value.
+            assertThat(serverError, alertsRaised.get(0).getAttack(), is(equalTo(""))); // Parameter empty, no attack value.
             assertThat(serverError, alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
             assertThat(serverError, alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
             assertThat(serverError, alertsRaised.get(0).getOtherInfo(), is(equalTo("")));

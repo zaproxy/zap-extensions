@@ -80,7 +80,7 @@ public class MixedContentScanner extends PluginPassiveScanner {
 			addAttsContainingHttpContent(sourceElement, "icon", list);
 			addAttsContainingHttpContent(sourceElement, "usemap", list);
 			
-			switch (this.getLevel()) {
+			switch (this.getAlertThreshold()) {
 			case LOW:
 			case MEDIUM:
 				// These are a bit more debatable, so dont do them on the HIGH setting

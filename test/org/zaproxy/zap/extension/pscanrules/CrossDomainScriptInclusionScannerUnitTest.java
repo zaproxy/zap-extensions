@@ -223,7 +223,7 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
         when(model.getSession()).thenReturn(session);
         ((CrossDomainScriptInclusionScanner)rule).setModel(model);
         
-        rule.setLevel(AlertThreshold.HIGH);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
         
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -259,7 +259,7 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
         when(model.getSession()).thenReturn(session);
         ((CrossDomainScriptInclusionScanner)rule).setModel(model);
         
-        rule.setLevel(AlertThreshold.MEDIUM);
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
         
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -296,7 +296,7 @@ public class CrossDomainScriptInclusionScannerUnitTest extends PassiveScannerTes
         when(model.getSession()).thenReturn(session);
         ((CrossDomainScriptInclusionScanner)rule).setModel(model);
         
-        rule.setLevel(AlertThreshold.LOW);
+        rule.setAlertThreshold(AlertThreshold.LOW);
         
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
