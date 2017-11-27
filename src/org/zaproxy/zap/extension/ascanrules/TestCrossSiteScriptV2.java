@@ -29,6 +29,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.httputils.HtmlContext;
 import org.zaproxy.zap.httputils.HtmlContextAnalyser;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -135,6 +136,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     	
     @Override
     public void scan(HttpMessage msg, String param, String value) {
+        if (!AlertThreshold.LOW.equals(getAlertThreshold()) && HttpRequestHeader.PUT.equals(msg.getRequestHeader().getMethod())) {
+            return;
+        }
     	
 		try {
 	    	// Inject the 'safe' eyecatcher and see where it appears

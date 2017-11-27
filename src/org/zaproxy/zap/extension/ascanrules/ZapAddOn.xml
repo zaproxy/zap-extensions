@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>28</version>
+	<version>29</version>
 	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
+	Issue 3979: Fix reflected XSS in PUT response.<br>
 	]]>
     </changes>
 	<extensions>
