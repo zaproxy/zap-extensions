@@ -2,7 +2,7 @@
 	<description>Build ZAP extensions</description>
 
 	<property name="src" location="../src" />
-	<property name="src.version" value="1.7" />
+	<property name="src.version" value="1.8" />
 	<property name="test.src" location="../test" />
 	<property name="test.lib" location="../testlib" />
 	<property name="test.build" location="buildtest" />
@@ -72,8 +72,7 @@
 			excludes="org/zaproxy/zap/extension/*/files/**,org/zaproxy/zap/extension/*/resources/**">
 			<compilerarg value="-Xlint:all"/>
 			<compilerarg value="-Xlint:-path"/>
-			<compilerarg value="-Xlint:-options"/> <!-- Otherwise fails with Java 8 -->
-			<!-- Cant enable this while we build with Java 7 and include the ZAPSNITerminator.jar -->
+			<compilerarg value="-Xlint:-options"/>
 			<!--compilerarg value="-Werror"/-->
 			<classpath>
 				<fileset dir="${dist.lib.dir}">
@@ -87,7 +86,7 @@
 		<javac srcdir="${test.src}" destdir="${test.build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="true" encoding="UTF-8">
 			<compilerarg value="-Xlint:all"/>
 			<compilerarg value="-Xlint:-path"/>
-			<compilerarg value="-Xlint:-options"/> <!-- Otherwise fails with Java 8 -->
+			<compilerarg value="-Xlint:-options"/>
 			<compilerarg value="-Werror"/>
 			<classpath>
 				<pathelement location="${build}" />
