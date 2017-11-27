@@ -28,6 +28,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.network.HttpMessage;
@@ -37,9 +38,9 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor {
 
 	public static final String NAME = "ExtensionHttpsInfo";
 	public static final String ICON_PATH = "/org/zaproxy/zap/extension/httpsinfo/resources/icon.png";
-	private static final List<Class<?>> DEPENDENCIES;
+	private static final List<Class<? extends Extension>> DEPENDENCIES;
 	static {
-		List<Class<?>> dep = new ArrayList<>(1);
+		List<Class<? extends Extension>> dep = new ArrayList<>(1);
 		dep.add(ExtensionAlert.class);
 
 		DEPENDENCIES = Collections.unmodifiableList(dep);
@@ -59,7 +60,7 @@ public class ExtensionHttpsInfo extends ExtensionAdaptor {
 	}
 
 	@Override
-	public List<Class<?>> getDependencies() {
+	public List<Class<? extends Extension>> getDependencies() {
 		return DEPENDENCIES;
 	}
 

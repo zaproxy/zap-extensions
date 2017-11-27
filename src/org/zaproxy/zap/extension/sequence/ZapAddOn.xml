@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Sequence</name>
-	<version>4</version>
+	<version>5</version>
 	<status>alpha</status>
 	<description>Gives the possibility of defining a sequence of requests to be scanned.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Correct error message to include the script name.<br>
-	Add help content (Issue 2191).<br>
-	Depend on Zest extension, since it is currently the only script option for Sequence scripts.<br>
+	Updated for 2.7.0.<br>
 	]]>
 	</changes>
 	<dependencies>
@@ -28,6 +26,6 @@
 	<files>
 		<file>scripts/templates/sequence/sequence.zst</file>
 	</files>
-	<not-before-version>2.4.1</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

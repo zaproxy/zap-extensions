@@ -34,6 +34,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Scanner;
 import org.parosproxy.paros.core.scanner.ScannerHook;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ViewDelegate;
@@ -47,7 +48,7 @@ import org.zaproxy.zap.extension.script.SequenceScript;
 
 public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
-	private static final List<Class<?>> DEPENDENCIES;
+	private static final List<Class<? extends Extension>> DEPENDENCIES;
 
 	private ExtensionScript extScript;
 	private ExtensionActiveScan extActiveScan;
@@ -56,7 +57,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 	public static final String TYPE_SEQUENCE = "sequence";
 
 	static {
-		List<Class<?>> dependencies = new ArrayList<>(1);
+		List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
 		dependencies.add(ExtensionScript.class);
 		DEPENDENCIES = Collections.unmodifiableList(dependencies);
 	}
@@ -90,7 +91,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 	}
 
 	@Override
-	public List<Class<?>> getDependencies() {
+	public List<Class<? extends Extension>> getDependencies() {
 		return DEPENDENCIES;
 	}
 	

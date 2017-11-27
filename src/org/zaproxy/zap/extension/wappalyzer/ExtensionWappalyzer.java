@@ -36,15 +36,13 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
@@ -56,6 +54,9 @@ import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChangedListener, SiteMapListener {
 
@@ -84,10 +85,10 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	/**
 	 * The dependencies of the extension.
 	 */
-	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
+	private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 
 	static {
-		List<Class<?>> dependencies = new ArrayList<>(1);
+		List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
 		dependencies.add(ExtensionPassiveScan.class);
 		EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
 	}
@@ -320,7 +321,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 	}
 
 	@Override
-	public List<Class<?>> getDependencies() {
+	public List<Class<? extends Extension>> getDependencies() {
 		return EXTENSION_DEPENDENCIES;
 	}
 
