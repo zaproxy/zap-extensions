@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 
@@ -37,10 +38,10 @@ public class ExtensionCommunityScripts extends ExtensionAdaptor {
 	
 	private File scriptDir = new File(Constant.getZapHome(), "community-scripts");
 
-	private static final List<Class<?>> DEPENDENCIES;
+	private static final List<Class<? extends Extension>> DEPENDENCIES;
 
 	static {
-		List<Class<?>> dependencies = new ArrayList<>(1);
+		List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
 		dependencies.add(ExtensionScript.class);
 
 		DEPENDENCIES = Collections.unmodifiableList(dependencies);
@@ -67,7 +68,7 @@ public class ExtensionCommunityScripts extends ExtensionAdaptor {
 	}
 	
 	@Override
-	public List<Class<?>> getDependencies() {
+	public List<Class<? extends Extension>> getDependencies() {
 		return DEPENDENCIES;
 	}
 

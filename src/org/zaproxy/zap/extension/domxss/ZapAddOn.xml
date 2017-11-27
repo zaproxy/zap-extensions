@@ -1,18 +1,16 @@
 <zapaddon>
 	<name>DOM XSS Active scanner rule</name>
-	<version>4</version>
+	<version>5</version>
 	<status>alpha</status>
 	<description>DOM XSS Active scanner rule</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Allow to use newer versions of Firefox (Issue 3396).<br>
-	Provide the reason why the scanner was skipped.<br>
+	Updated for 2.7.0.<br>
 	]]>
     </changes>
 	<dependencies>
-		<javaversion>1.8</javaversion>
 		<addons>
 			<addon>
 				<id>selenium</id>
@@ -27,6 +25,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.6.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

@@ -40,7 +40,6 @@
 	<classpathentry kind="lib" path="testlib/objenesis-1.2.jar"/>
 	<classpathentry kind="lib" path="testlib/powermock-mockito-1.4.12-full.jar"/>
 	<classpathentry kind="lib" path="testlib/simple-5.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/selenium-release-12.zap"/>
 	<classpathentry kind="lib" path="lib/json-20160212.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.13.jar"/>
 	<classpathentry kind="lib" path="lib/licence.jar"/>
@@ -57,13 +56,14 @@
 	<classpathentry kind="lib" path="lib/swagger-models-1.5.8.jar"/>
 	<classpathentry kind="lib" path="lib/swagger-parser-1.0.19.jar"/>
 	<classpathentry kind="lib" path="testlib/nanohttpd-webserver-2.1.1-jar-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="lib/zap-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/swagger-compat-spec-parser-1.0.19.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-coreutils-1.8.jar"/>
 	<classpathentry kind="lib" path="lib/msg-simple-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/btf-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/json-patch-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/jxbrowser-6.17.jar"/>
+	<classpathentry kind="lib" path="lib/selenium-release-12.zap"/>
+	<classpathentry kind="lib" path="lib/zap-2.7.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/metadata-extractor-2.10.1.jar"/>
 	<classpathentry kind="lib" path="lib/xmpcore-5.1.2.jar"/>

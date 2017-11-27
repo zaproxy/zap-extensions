@@ -38,6 +38,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
@@ -80,7 +81,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
 	// The name is public so that other extensions can access it
 	public static final String NAME = "ExtensionRevisit";
-	private static final List<Class<?>> DEPENDENCIES;
+	private static final List<Class<? extends Extension>> DEPENDENCIES;
 	
 	// The i18n prefix, by default the package name - defined in one place to make it easier
 	// to copy and change this example
@@ -90,7 +91,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 	public static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
 	static {
-		List<Class<?>> dependencies = new ArrayList<>(2);
+		List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
 		dependencies.add(ExtensionHistory.class);
 		dependencies.add(ExtensionAntiCSRF.class);
 		DEPENDENCIES = Collections.unmodifiableList(dependencies);
@@ -136,7 +137,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 	}
 	
 	@Override
-	public List<Class<?>> getDependencies() {
+	public List<Class<? extends Extension>> getDependencies() {
 		return DEPENDENCIES;
 	}
 
