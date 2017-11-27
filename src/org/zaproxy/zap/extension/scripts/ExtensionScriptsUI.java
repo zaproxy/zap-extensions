@@ -74,15 +74,9 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	public static final String SCRIPT_EXT_TYPE = "extender";
 	
 	/**
-	 * The templates that work with java 7 + that should be installed and enabled by default when the add-on is installed
+	 * The templates that should be installed and enabled by default when the add-on is installed
 	 */
-	private static final String[] BUILT_IN_SCRIPTS_JAVA_7 = {
-	};
-	
-	/**
-	 * The templates that work with java 8 + that should be installed and enabled by default when the add-on is installed
-	 */
-	private static final String[] BUILT_IN_SCRIPTS_JAVA_8 = {
+	private static final String[] BUILT_IN_SCRIPTS = {
 			"Copy as curl command menu.js"
 	};
 	
@@ -200,22 +194,10 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     @Override
     public void postInstall() {
         // Install and enable the 'built in' scripts
-        // ZAP 2.6.0 will run on Java 7+ while ZAP 2.7.0+ will require Java 8+
-        String javaVersion = Runtime.class.getPackage().getImplementationVersion();
-        LOGGER.debug("Java version: " + javaVersion);
-        boolean isJava7 = javaVersion.startsWith("1.7");
-        
         for (ScriptWrapper template : this.getExtScript().getTemplates(extScriptType)) {
-            for (String name : BUILT_IN_SCRIPTS_JAVA_7) {
+            for (String name : BUILT_IN_SCRIPTS) {
                 if (template.getName().equals(name)) {
                     installBuiltInExtenderScript(template);
-                }
-            }
-            if (! isJava7) {
-                for (String name : BUILT_IN_SCRIPTS_JAVA_8) {
-                    if (template.getName().equals(name)) {
-                        installBuiltInExtenderScript(template);
-                    }
                 }
             }
         }
