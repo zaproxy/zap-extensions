@@ -10,6 +10,11 @@
 	<p>The Selenium add-on provides WebDrivers, for other add-ons, to invoke and remotely
 		control web browsers. It's also bundled the HtmlUnit web browser, an headless Java based
 		web browser.
+	<p>The add-on also adds a right click option to ZAP panels that list URLs (such at the History and Sites tree)
+	which allows you to open the selected URL in any of the supported browsers.
+
+	<h2>Supported Browsers</h2>
+
 	
 	<p>The following web browsers are supported:
 	<table border="2">
@@ -21,7 +26,8 @@
 		<tr>
 			<td>Chrome</td>
 			<td>chrome</td>
-			<td>Requires ChromeDriver, if not on the system's PATH, it can be set in the
+			<td>The following versions are known to work: 59 and 60 (older versions might work
+				too). Requires ChromeDriver, if not on the system's PATH, it can be set in the
 				options. For more information on ChromeDriver and how to obtain it refer to the <a
 				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
 			</td>
@@ -29,8 +35,8 @@
 		<tr>
 			<td>Firefox</td>
 			<td>firefox</td>
-			<td>The following versions are known to work: 45 (ESR), 46 and 47.0.1 (older
-				version might work too). Some versions are known to not work, for example, 47.0. Newer
+			<td>The following versions are known to work: 45 (ESR), 46, 47.0.1, 54, and 55 (older
+				versions might work too). Some versions are known to not work, for example, 47.0. Newer
 				versions (&ge; 48) require geckodriver, it can be set in the options. For more
 				information on geckodriver and how to obtain it refer to the <a
 				href="https://github.com/mozilla/geckodriver">geckodriver website</a> (see footer note
@@ -45,8 +51,9 @@
 		<tr>
 			<td>Internet Explorer</td>
 			<td>ie</td>
-			<td>Requires IEDriverServer, if not on the system's PATH, it can be set in the
-				options. For more information on IEDriverServer refer to the <a
+			<td>The following version is known to work: 11 (older versions might work too).
+				Requires IEDriverServer, if not on the system's PATH, it can be set in the options.
+				For more information on IEDriverServer refer to the <a
 				href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">IEDriverServer
 					website</a> (see footer note for caveat when using Internet Explorer).
 			</td>
@@ -54,13 +61,14 @@
 		<tr>
 			<td>Opera</td>
 			<td>opera</td>
-			<td>&nbsp;</td>
+			<td>Temporarily not working.</td>
 		</tr>
 		<tr>
 			<td>PhantomJS</td>
 			<td>phantomjs</td>
-			<td>requires PhantomJS binary, if not on the system's PATH, it can be set in the
-				options. For more information on PhantomJS and how to obtain it refer to the <a
+			<td>The following version is known to work: 2.1.1 (older versions might work too).
+				Requires PhantomJS binary, if not on the system's PATH, it can be set in the options.
+				For more information on PhantomJS and how to obtain it refer to the <a
 				href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
 				using PhantomJS).
 			</td>
@@ -78,6 +86,16 @@
 	<p>
 		Some of the requirements (e.g. WebDrivers) of the browsers can be configured in the <a
 			href="options.html">Options Selenium screen</a>.
+
+	<h2>Bundled WebDrivers</h2>
+	ZAP provides add-ons with the WebDrivers, when those add-ons are installed ZAP will
+	attempt to use those bundled WebDrivers by default. Some OSs might not have a WebDriver
+	for some of the browsers, in those cases ZAP will inform, in the options panel, that
+	there's no bundled WebDriver available. The bundled WebDrivers can also be (re)set with
+	the 'Bundled' button (for example, if another WebDriver was manually set). Not all
+	browser versions are supported with the bundled WebDrivers, it's recommended that
+	newer/latest versions of the browsers be used whenever possible.
+
 	<p>
 		<strong>Note:</strong> ZAP add-ons can add additional browsers.
 
@@ -97,6 +115,7 @@
 		of the box, refer to the <a
 			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer
 			website</a> for more details on how to configure them.
+
 	<h2>See also</h2>
 	<table>
 		<tr>
