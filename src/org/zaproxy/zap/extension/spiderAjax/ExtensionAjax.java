@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
@@ -63,10 +64,10 @@ public class ExtensionAjax extends ExtensionAdaptor {
 	public static final int PROXY_LISTENER_ORDER = ProxyListenerLog.PROXY_LISTENER_ORDER + 1;
 	public static final String NAME = "ExtensionSpiderAjax";
 
-	private static final List<Class<?>> DEPENDENCIES;
+	private static final List<Class<? extends Extension>> DEPENDENCIES;
 
 	static {
-		List<Class<?>> dependencies = new ArrayList<>(1);
+		List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
 		dependencies.add(ExtensionSelenium.class);
 
 		DEPENDENCIES = Collections.unmodifiableList(dependencies);
@@ -154,7 +155,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
     }
 
 	@Override
-	public List<Class<?>> getDependencies() {
+	public List<Class<? extends Extension>> getDependencies() {
 		return DEPENDENCIES;
 	}
 

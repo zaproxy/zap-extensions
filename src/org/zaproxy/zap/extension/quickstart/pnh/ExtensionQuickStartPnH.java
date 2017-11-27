@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.ProxyParam;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
@@ -60,10 +61,10 @@ public class ExtensionQuickStartPnH extends ExtensionAdaptor implements
     private JButton confButton;
     private ZapTextField confField;
 
-    private static final List<Class<?>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES;
 
     static {
-        List<Class<?>> dependencies = new ArrayList<>(2);
+        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
         dependencies.add(ExtensionQuickStart.class);
         dependencies.add(ExtensionPlugNHack.class);
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
@@ -96,7 +97,7 @@ public class ExtensionQuickStartPnH extends ExtensionAdaptor implements
     }
 
     @Override
-    public List<Class<?>> getDependencies() {
+    public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
     }
 
