@@ -49,7 +49,7 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		boolean includeErrorRedirectResponses = false;
-		switch (this.getLevel()) {
+		switch (this.getAlertThreshold()) {
 			case LOW: 
 				includeErrorRedirectResponses = true; break;
 			case HIGH:  

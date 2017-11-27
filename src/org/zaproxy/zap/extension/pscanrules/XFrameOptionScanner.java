@@ -56,7 +56,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		boolean includeErrorsAndRedirects = false;
 
-		if (AlertThreshold.LOW.equals(this.getLevel())) {
+		if (AlertThreshold.LOW.equals(this.getAlertThreshold())) {
 			includeErrorsAndRedirects = true; 
 		} else {
 			if (! msg.getResponseHeader().isHtml()) {
@@ -81,7 +81,7 @@ public class XFrameOptionScanner extends PluginPassiveScanner {
 				includedInCsp = true;
 			}
 			
-			if (includedInCsp && ! AlertThreshold.LOW.equals(this.getLevel())) {
+			if (includedInCsp && ! AlertThreshold.LOW.equals(this.getAlertThreshold())) {
 				// No need to check the X-Frame-Options header
 				return;
 			}

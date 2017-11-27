@@ -54,7 +54,7 @@ public class HeaderXssProtectionScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		if (AlertThreshold.LOW.equals(this.getLevel())) {
+		if (AlertThreshold.LOW.equals(this.getAlertThreshold())) {
 			if (!msg.getResponseHeader().isText()) {
 				return;
 			}

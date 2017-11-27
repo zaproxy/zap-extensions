@@ -135,7 +135,7 @@ public class HeaderXssProtectionScannerUnitTest extends PassiveScannerTest {
     @Test
     public void noXssProtectionPlainTextLowNoBody() throws HttpMalformedHeaderException {
         
-        rule.setLevel(AlertThreshold.LOW);
+        rule.setAlertThreshold(AlertThreshold.LOW);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -154,7 +154,7 @@ public class HeaderXssProtectionScannerUnitTest extends PassiveScannerTest {
     @Test
     public void noXssProtectionPlainTextLowWithBody() throws HttpMalformedHeaderException {
         
-        rule.setLevel(AlertThreshold.LOW);
+        rule.setAlertThreshold(AlertThreshold.LOW);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -175,7 +175,7 @@ public class HeaderXssProtectionScannerUnitTest extends PassiveScannerTest {
     @Test
     public void noXssProtectionPlainTextMedium() throws HttpMalformedHeaderException {
         
-        rule.setLevel(AlertThreshold.MEDIUM);
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -194,7 +194,7 @@ public class HeaderXssProtectionScannerUnitTest extends PassiveScannerTest {
     @Test
     public void noXssProtectionPlainTextHigh() throws HttpMalformedHeaderException {
         
-        rule.setLevel(AlertThreshold.HIGH);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -213,7 +213,7 @@ public class HeaderXssProtectionScannerUnitTest extends PassiveScannerTest {
     @Test
     public void noXssProtectionRedirectLow() throws HttpMalformedHeaderException {
         
-        rule.setLevel(AlertThreshold.LOW);
+        rule.setAlertThreshold(AlertThreshold.LOW);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -235,7 +235,7 @@ public class HeaderXssProtectionScannerUnitTest extends PassiveScannerTest {
     @Test
     public void noXssProtectionRedirectMed() throws HttpMalformedHeaderException {
         
-        rule.setLevel(AlertThreshold.MEDIUM);
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -255,7 +255,7 @@ public class HeaderXssProtectionScannerUnitTest extends PassiveScannerTest {
     @Test
     public void noXssProtectionRedirectHigh() throws HttpMalformedHeaderException {
         
-        rule.setLevel(AlertThreshold.HIGH);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");

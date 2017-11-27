@@ -120,7 +120,7 @@ public class XContentTypeOptionScannerUnitTest extends PassiveScannerTest {
     @Test
     public void xContentTypeOptionsAbsentRedirectLow() throws HttpMalformedHeaderException {
         
-        rule.setLevel(AlertThreshold.LOW);
+        rule.setAlertThreshold(AlertThreshold.LOW);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -142,7 +142,7 @@ public class XContentTypeOptionScannerUnitTest extends PassiveScannerTest {
     @Test
     public void xContentTypeOptionsAbsentRedirectMed() throws HttpMalformedHeaderException {
         
-        rule.setLevel(AlertThreshold.MEDIUM);
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -162,7 +162,7 @@ public class XContentTypeOptionScannerUnitTest extends PassiveScannerTest {
     @Test
     public void xContentTypeOptionsAbsentRedirectHigh() throws HttpMalformedHeaderException {
         
-        rule.setLevel(AlertThreshold.HIGH);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");

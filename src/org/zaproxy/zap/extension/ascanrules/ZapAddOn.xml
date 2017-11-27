@@ -1,17 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>27</version>
+	<version>28</version>
 	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 1365: Additional Path Traversal detection.<br>
-	Correct alert's evidence/attack of Parameter Tampering (Issue 3524).<br>
-	Fix Path Traversal false positives when etc is a substring (Issue 3735).<br>
-	Code changes for Java 9 (Issue 2602).<br>
-	TestSQLInjection Modifications to improve handling of injected math expressions and reflected params (Issue 3139).</br>
+	Updated for 2.7.0.<br>
 	]]>
     </changes>
 	<extensions>
@@ -38,6 +34,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.1</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
