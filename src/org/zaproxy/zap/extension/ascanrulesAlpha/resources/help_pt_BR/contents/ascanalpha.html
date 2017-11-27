@@ -16,6 +16,12 @@ different byte ranges. Eleven ranges is one more than is accepted by patched/fix
 <h2>Cookie Slack Detector</h2>
 Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid"
 
+<h2>ELMAH Scanner</h2>
+Tests to see if the Error Logging Modules and Handlers (elmah.axd) HTTP Module is available. Although this module is handy for
+developers and other stakeholders it can also leak a significant amount of information which a security analyst or malicious individual
+may be interested in.<br><br>
+The ELMAH scanner targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
+
 <h2>Example File Active Scanner</h2>
 This implements an example active scan rule that loads strings from a file that the user can edit.<br>
 For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
@@ -26,6 +32,12 @@ For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active
 
 <h2>Expression Language Injection</h2>
 The software constructs all or part of an expression language (EL) statement in a Java Server Page (JSP) using externally-influenced input from an upstream component, but it does not neutralize or incorrectly neutralizes special elements that could modify the intended EL statement before it is executed. In certain versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) in which Expression Language tags would be evaluated twice, which effectively exposed any application to EL injection. However, even for later versions, this weakness is still possible depending on configuration.
+
+<h2>GET for POST Scanner</h2>
+This scanner takes <code>application/x-www-form-urlencoded</code> POST requests, changes the parameters from POST to GET and resubmits the request. 
+If the GET response is the same as the original POST response then an alert is raised. While this does not necessarily
+represent a security weakness unto itself it may indicate that other attacks or weaknesses can be expanded or simplified.
+(Such as a POST based Cross-Site Scripting (XSS) attack being changed to GET.)
 
 <h2>HTTP Only Site</h2>
 This active scanner checks whether an HTTP site is served under HTTPS.
@@ -53,6 +65,12 @@ Uses local file inclusion techniques to scan for files containing source code on
 
 <h2>Source Code Disclosure - Git</h2>
 Uses Git source code repository metadata to scan for files containing source code on the web server.
+
+<h2>Trace.axd Scanner</h2>
+Tests to see if Trace Viewer (trace.axd) is available. Although this component is convenient for developers and 
+other stakeholders it can leak a significant amount of information which a security analyst or malicious individual
+may be interested in.<br><br>
+The trace.axd scanner targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
 
 <h2>User Agent Fuzzer</h2>
 This active scanner checks for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). The scanner compares the response statuscode and the hashcode of the response body with the original response.

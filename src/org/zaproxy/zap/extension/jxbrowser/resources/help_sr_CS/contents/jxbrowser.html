@@ -10,7 +10,7 @@ JxBrowser
 <h1>JxBrowser</h1>
 JxBrowser is an embedded browser based on Chromium. It has no other external dependencies so you can be sure that it will work out of the box.<br>
 You can launch as many instances as you like and they will all be automatically configured to proxy via ZAP.<br>
-However you will need to trust the ZAP root CA certificate in order to access certain sites like www.google.com
+It also now accepts 'invalid' certificates by default, which includes the ZAP root certificate.
 <p>
 You can still use any other browser to proxy via ZAP but you will need to manually configure those browsers
 to proxy via ZAP.
@@ -39,6 +39,11 @@ may call 3rd party services (spell checking, geolocation, etc) in a similar way 
 <p>
 Many thanks to TeamDev for generously granting us a permanent free license to allow us to redistribute JxBrowser with ZAP.
 </p>
+
+<h3>System Requirements</h3>
+
+For details of which systems are supported please see the JxBrowser website: 
+<a href="https://jxbrowser.support.teamdev.com/support/solutions/articles/9000013733-system-requirements">https://jxbrowser.support.teamdev.com/support/solutions/articles/9000013733-system-requirements</a>.
 
 </body>
 </html>
