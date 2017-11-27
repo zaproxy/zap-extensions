@@ -56,7 +56,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
         QuickStartPanelContentProvider {
 
     public static final String NAME = "ExtensionQuickStartLaunch";
-    private static final String DEFAULT_LAUNCH_PAGE_URL = "https://bit.ly/owaspzap-start-2-6";
+    private static final String DEFAULT_LAUNCH_PAGE_URL = "https://bit.ly/owaspzap-start-2-7";
     private static final String PAGE_LOCALE_SEPARATOR = "<!-- - - - - - - - - %< - - - - - - - - -->\n";
     private static final String PAGE_LOCALE_PREFIX = "<!-- Locale = ";
     private static final String PAGE_LOCALE_POSTFIX = " -->";
