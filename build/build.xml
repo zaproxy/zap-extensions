@@ -2,7 +2,7 @@
 	<description>Build ZAP extensions</description>
 
 	<property name="src" location="../src" />
-	<property name="src.version" value="1.7" />
+	<property name="src.version" value="1.8" />
 	<property name="test.src" location="../test" />
 	<property name="test.lib" location="../testlib" />
 	<property name="test.build" location="buildtest" />
@@ -72,6 +72,10 @@
 		<!-- Compile the java code from ${src} into ${build} -->
 		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="true" encoding="UTF-8"
 			excludes="org/zaproxy/zap/extension/*/files/**,org/zaproxy/zap/extension/*/resources/**">
+			<compilerarg value="-Xlint:all"/>
+			<compilerarg value="-Xlint:-path"/>
+			<compilerarg value="-Xlint:-options"/>
+			<!--compilerarg value="-Werror"/-->
 			<classpath>
 				<fileset dir="${dist.lib.dir}">
 					<include name="**/*.jar" />
@@ -82,6 +86,10 @@
 
 		<echo message="Compiling tests..." />
 		<javac srcdir="${test.src}" destdir="${test.build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="true" encoding="UTF-8">
+			<compilerarg value="-Xlint:all"/>
+			<compilerarg value="-Xlint:-path"/>
+			<compilerarg value="-Xlint:-options"/>
+			<!--compilerarg value="-Werror"/-->
 			<classpath>
 				<pathelement location="${build}"/>
 				<fileset dir="${dist.lib.dir}">
@@ -733,6 +741,7 @@
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
 				<include name="fuzz-${status}-*.zap"/>
+				<include name="importurls-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
 				<include name="plugnhack-${status}-*.zap"/>
 				<include name="portscan-${status}-*.zap"/>
@@ -754,6 +763,7 @@
 				<include name="bruteforce-${status}-*.zap"/>
 				<include name="diff-${status}-*.zap"/>
 				<include name="fuzz-${status}-*.zap"/>
+				<include name="importurls-${status}-*.zap"/>
 				<include name="invoke-${status}-*.zap"/>
 				<include name="replacer-${status}-*.zap"/>
 				<include name="scripts-${status}-*.zap"/>
