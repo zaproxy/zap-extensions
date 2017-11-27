@@ -17,7 +17,7 @@
 	<property name="wiki.zapcorehelp.dir" location="../../zap-core-help-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
-	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.6" />
+	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.7" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
@@ -38,6 +38,10 @@
 		<delete dir="${temp}" includeEmptyDirs="true" />
 		<delete dir="${test.build}" includeEmptyDirs="true" />
 		<delete dir="${test.results.dir}" includeEmptyDirs="true" />
+	</target>
+
+	<target name="clean-files"  description="delete files downloaded by download-files">
+		<!-- Currently nothing to do -->
 	</target>
 
 	<target name="init">
