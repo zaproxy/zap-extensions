@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Code changes for Java 9 (Issue 2602).<br>
+	Updated for 2.7.0.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -17,6 +18,6 @@
 	<pscanrules/>
 	<filters/>
 	<files/>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

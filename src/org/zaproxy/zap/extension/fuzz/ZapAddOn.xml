@@ -1,6 +1,6 @@
 <zapaddon>
     <name>AdvFuzzer</name>
-    <version>9</version>
+    <version>10</version>
     <semver>2.0.1</semver>
     <status>beta</status>
     <description>Advanced fuzzer for manual testing</description>
@@ -8,13 +8,7 @@
     <url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts</url>
     <changes>
     <![CDATA[
-    Code changes for Java 9 (Issue 2602).<br>
-    Ignore empty payloads when highlighting or detecting reflections.<br>
-    Contains new number generator payload.<br>
-    Add null/empty payload generator.<br>
-    Issue 3557: Backport export changes.<br>    
-    Set fuzzer script types enabled by default (Issue 2997).<br>
-    Add description to script types.<br>
+    Updated for 2.7.0.<br>
     ]]>
     </changes>
     <extensions>
@@ -29,6 +23,6 @@
         <file>scripts/templates/payloadprocessor/Payload Processor default template.js</file>
         <file>jbrofuzz/fuzzers.jbrf</file>
     </files>
-    <not-before-version>2.6.0</not-before-version>
+    <not-before-version>2.7.0</not-before-version>
     <not-from-version/>
 </zapaddon>

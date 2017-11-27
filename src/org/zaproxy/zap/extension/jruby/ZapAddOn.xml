@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Ruby scripting</name>
-	<version>5</version>
+	<version>6</version>
 	<status>beta</status>
 	<description>Allows Ruby to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Add template for HTTP Sender script.<br>
-	Dynamically unload the add-on.<br>
+	Updated for 2.7.0.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -29,6 +28,6 @@
 		<file>scripts/templates/standalone/Traverse sites tree.rb</file>
 		<file>scripts/templates/targeted/Targeted default template.rb</file>
 	</files>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

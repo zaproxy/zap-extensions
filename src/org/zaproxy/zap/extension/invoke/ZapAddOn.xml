@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Invoke Applications</name>
-	<version>7</version>
+	<version>8</version>
 	<status>beta</status>
 	<description>Invoke external applications passing context related information such as URLs and parameters</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Report/log when the application fails to start (related to Issue 3960).<br>
+	Updated for 2.7.0.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -17,6 +17,6 @@
 	<pscanrules/>
 	<filters/>
 	<files />
-	<not-before-version>2.4.1</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
