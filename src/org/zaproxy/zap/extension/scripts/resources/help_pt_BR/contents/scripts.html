@@ -10,11 +10,11 @@
 O complemento de Script do ZAP permite que você execute scripts que podem ser incorporados dentro do ZAP e podem acessar estruturas internas de dados do ZAP.<br/>
 Ele oferece suporte a qualquer linguagem de script que ofereça suporte a JSR 223 (http://www.jcp.org/en/jsr/detail?id=223), incluindo:
 <ul>
-<li>ECMAScript / Javascript (incluído por padrão)</li>
-<li>Zest https://developer.mozilla.org/en-US/docs/zest (padrão)</li>
-<li>Groovy http://groovy.codehaus.org/</li>
-<li>Python http://www.jython.org</li>
-<li>Ruby - http://jruby.org/</li>
+<li>ECMAScript / Javascript (using <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/">Nashorn engine</a>, included by default)</li>
+<li>Zest <a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a> (included by default)</li>
+<li>Groovy <a href="http://groovy-lang.org/">http://groovy-lang.org/</a></li>
+<li>Python <a href="http://www.jython.org">http://www.jython.org</a></li>
+<li>Ruby - <a href="http://jruby.org/">http://jruby.org/</a></li>
 <li>e muitos mais...</li> 
 </ul>
 
@@ -30,7 +30,8 @@ Diferentes tipos de scripts são suportados:
 <li>HTTP Sender - scripts que são executados contra cada solicitação / resposta enviada / recebida pelo ZAP. Isso inclui as mensagens proxy, as mensagens enviadas durante o scanner ativo, fuzzer, ...</li>
 <li>Regras com Alvos - scripts que quando invocados com um URL de destino e rodam apenas quando são iniciados manualmente</li>
 <li>Autenticação - scripts chamados quando a autenticação é executada para um contexto. Para serem usados, eles precisam ser selecionados ao configurar o Método de autenticação baseado em Script para um contexto. </li> 
-<li>Vetores de entrada de script - scripts para definir exatamente o que o ZAP deve atacar</li> 
+<li>Vetores de entrada de script - scripts para definir exatamente o que o ZAP deve atacar</li>
+<li>Extenders - scripts which can add new functionality, including graphical elements and new API end points</li>
 </ul>
 Todos os scripts que são executados automaticamente são inicialmente 'desabilitados' - você deve habilitá-los através da <a href="tree.html">Aba da Árvore de Scripts</a>
 antes que eles possam rodar.<br/>
@@ -77,12 +78,17 @@ Observe que esses métodos só são utilizáveis com linguagens de script que pr
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td>https://github.com/zaproxy/zaproxy/wiki/InternalDetails</td>
+	<td><a href="https://github.com/zaproxy/zaproxy/wiki/InternalDetails">https://github.com/zaproxy/zaproxy/wiki/InternalDetails</a></td>
 	<td>ZAP objetos internos</td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td>https://github.com/zaproxy/zaproxy/wiki/JavaDocs</td>
+	<td><a href="https://javadoc.io/doc/org.zaproxy/zap">https://javadoc.io/doc/org.zaproxy/zap</a></td>
 	<td>ZAP javadocs</td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide">https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide</a></td>
+	<td>Rhino Migration Guide</td>
 </tr>
 </table>
 
