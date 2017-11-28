@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Minor code changes to comply with deprecations.<br>
+	Added passive PII Scanner (which currently looks for Credit Card # patterns).<br>
 	]]>
 	</changes>
 	<extensions>
@@ -30,6 +31,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureComponentScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormLoadScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormPostScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.PiiScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.RetrievedFromCacheScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ServerHeaderInfoLeakScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.SourceCodeDisclosureScanner</pscanrule>
