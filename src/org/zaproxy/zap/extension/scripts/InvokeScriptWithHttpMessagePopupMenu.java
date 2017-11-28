@@ -25,13 +25,14 @@ import javax.swing.JMenuItem;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
+import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
+import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
-public class InvokeScriptWithNodePopupMenu extends PopupMenuItemSiteNodeContainer {
+public class InvokeScriptWithHttpMessagePopupMenu extends PopupMenuItemHttpMessageContainer {
 
 	private static final long serialVersionUID = 2282358266003940700L;
 
@@ -41,7 +42,7 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuItemSiteNodeContaine
 	 * This method initializes 
 	 * 
 	 */
-	public InvokeScriptWithNodePopupMenu(ExtensionScriptsUI extension) {
+	public InvokeScriptWithHttpMessagePopupMenu(ExtensionScriptsUI extension) {
 		super("ScriptsInvokeX", true);
 		this.extension = extension;
 	}
@@ -60,14 +61,19 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuItemSiteNodeContaine
     public boolean isDummyItem () {
     	return true;
     }
-	    
-	@Override
-	public void performAction(SiteNode sn) {
-		// Do nothing
+
+    @Override
+    protected void performActions(HttpMessageContainer httpMessageContainer) {
+		// Do nothing (avoids calling performAction for each message).
 	}
 
 	@Override
-    public boolean isButtonEnabledForSiteNode (SiteNode sn) {
+	protected void performAction(HttpMessage message) {
+		// Nothing to do.
+	}
+
+	@Override
+	protected boolean isButtonEnabledForSelectedMessages(HttpMessageContainer httpMessageContainer) {
 		reCreateSubMenu();
 		
     	return false;
@@ -84,7 +90,7 @@ public class InvokeScriptWithNodePopupMenu extends PopupMenuItemSiteNodeContaine
 	}
 
     private ExtensionPopupMenuItem createPopupAddToScriptMenu(ScriptWrapper script) {
-    	return new InvokeScriptWithNodeMenu(extension, script);
+    	return new InvokeScriptWithHttpMessageMenu(extension, script);
 	}
 
 	@Override
