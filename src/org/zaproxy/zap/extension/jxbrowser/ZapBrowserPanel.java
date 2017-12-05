@@ -149,7 +149,7 @@ public class ZapBrowserPanel extends BrowserPanel {
     protected JButton getHelpButton() {
         if (helpButton == null) {
             helpButton = new JButton();
-            helpButton.setIcon(ExtensionHelp.HELP_ICON);
+            helpButton.setIcon(ExtensionHelp.getHelpIcon());
             helpButton.setToolTipText(Constant.messages.getString("jxbrowser.browser.button.help"));
             helpButton.addActionListener(new ActionListener() {
 
