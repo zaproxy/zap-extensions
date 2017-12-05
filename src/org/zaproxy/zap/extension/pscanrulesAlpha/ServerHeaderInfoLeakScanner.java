@@ -75,7 +75,7 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 							Constant.messages.getString("pscanalpha.serverheaderinfoleak.general.soln"),
 							Constant.messages.getString("pscanalpha.serverheaderinfoleak.general.refs"),
 							serverDirective, msg, id);
-				} else if (Plugin.AlertThreshold.LOW.equals(this.getLevel())) {
+				} else if (Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
 					raiseAlert(Alert.RISK_INFO, Alert.CONFIDENCE_HIGH,
 							Constant.messages.getString("pscanalpha.serverheaderinfoleak.name"),
 							Constant.messages.getString("pscanalpha.serverheaderinfoleak.desc"),
