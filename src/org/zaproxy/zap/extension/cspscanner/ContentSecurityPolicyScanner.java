@@ -93,7 +93,7 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 
 		long start = System.currentTimeMillis();
 
-		if (!msg.getResponseHeader().isHtml() && !this.getLevel().equals(AlertThreshold.LOW)) {
+		if (!msg.getResponseHeader().isHtml() && !AlertThreshold.LOW.equals(this.getAlertThreshold())) {
 			// Only really applies to HTML responses, but also check everything on Low threshold
 			return;
 		}
