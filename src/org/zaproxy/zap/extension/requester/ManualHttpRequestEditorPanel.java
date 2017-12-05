@@ -171,7 +171,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
 			
 			if (helpKey != null) {
 				JButton helpButton = new JButton();
-				helpButton.setIcon(ExtensionHelp.HELP_ICON);
+				helpButton.setIcon(ExtensionHelp.getHelpIcon());
 				helpButton.setToolTipText(Constant.messages.getString("help.dialog.button.tooltip"));
 				helpButton.addActionListener(new java.awt.event.ActionListener() { 
 					@Override
