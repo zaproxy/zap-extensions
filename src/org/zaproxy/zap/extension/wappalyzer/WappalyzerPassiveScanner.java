@@ -174,13 +174,11 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 		// Does not apply.
 	}
 
-	@Override
-	public AlertThreshold getLevel() {
+	public AlertThreshold getAlertThreshold() {
 		return AlertThreshold.MEDIUM;
 	}
 
-	@Override
-	public void setLevel(AlertThreshold level) {
+	public void setAlertThresholdl(AlertThreshold level) {
 		// Does not apply.
 	}
 
