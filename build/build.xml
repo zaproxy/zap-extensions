@@ -496,7 +496,7 @@
 	</target>
 
 	<target name="generate-wiki-alertFilters" description="Generates the wiki of alert filters">
-		<generate-wiki addon="alertFilters" />
+		<generate-wiki-core addon="alertFilters" />
 	</target>
 
 
@@ -565,7 +565,7 @@
 	</target>
 
 	<target name="generate-wiki-importurls" description="Generates the wiki of importurls">
-		<generate-wiki addon="importurls" />
+		<generate-wiki-core addon="importurls" />
 	</target>
 
 	<target name="deploy-invoke" description="deploy the invoke extension">
@@ -631,7 +631,7 @@
 	</target>
 
 	<target name="generate-wiki-replacer" description="Generates the wiki of replacer">
-		<generate-wiki addon="replacer" />
+		<generate-wiki-core addon="replacer" />
 	</target>
 	
 	<target name="deploy-scripts" description="deploy the scripts extension">
