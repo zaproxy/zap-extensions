@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -28,7 +30,11 @@ import java.net.URLDecoder;
 
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -256,7 +262,6 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 } else {
                     response = getHtml("NoInput.html");
                 }
-                System.out.println(response);
                 return new Response(response);
             }
         });
@@ -625,5 +630,83 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         assertThat(alertsRaised.get(0).getAttack(), equalTo("</p><script>alert(1);</script><p>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+    
+    @Test
+    public void shouldNotTestWhenMethodIsPutAndThresholdMedium() throws HttpMalformedHeaderException {
+        // Given
+        String test = "/shouldReportXssInReflectedUrl";
+
+        NanoServerHandler handler = new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String url = session.getUri();
+                if (session.getQueryParameterString() != null) {
+                    try {
+                        url += "?" + 
+                                URLDecoder.decode(session.getQueryParameterString(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        // At least this might be noticed
+                        e.printStackTrace();
+                    } 
+                }
+                
+                String response = getHtml("ReflectedUrl.html",
+                            new String[][] {{"url", url}});
+                return new Response(response);
+            }
+        };
+
+        this.nano.addHandler(handler);
+
+        HttpMessage msg = this.getHttpMessage(test);
+        msg.getRequestHeader().setMethod(HttpRequestHeader.PUT);
+        
+        rule.setConfig(new ZapXmlConfiguration());
+        this.rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        //Then
+        assertThat(httpMessagesSent, hasSize(equalTo(0)));
+    }
+    
+    @Test
+    public void shouldTestWhenMethodIsPutAndThresholdLow() throws HttpMalformedHeaderException {
+        // Given
+        String test = "/shouldReportXssInReflectedUrl";
+
+        NanoServerHandler handler = new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String url = session.getUri();
+                if (session.getQueryParameterString() != null) {
+                    try {
+                        url += "?" + 
+                                URLDecoder.decode(session.getQueryParameterString(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        // At least this might be noticed
+                        e.printStackTrace();
+                    } 
+                }
+                
+                String response = getHtml("ReflectedUrl.html",
+                            new String[][] {{"url", url}});
+                return new Response(response);
+            }
+        };
+
+        this.nano.addHandler(handler);
+
+        HttpMessage msg = this.getHttpMessage(test);
+        msg.getRequestHeader().setMethod(HttpRequestHeader.PUT);
+        
+        this.rule.setConfig(new ZapXmlConfiguration());
+        this.rule.setAlertThreshold(AlertThreshold.LOW);
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        //Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(0)));
     }
 }
