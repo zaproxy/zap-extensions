@@ -130,7 +130,7 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 				boolean hasBodyCharset = true;
 				boolean hasMetaCharset = true;
 				//Plugin Threshold as defined in by the user via policy/settings
-				AlertThreshold pluginThreshold = this.getLevel(); 
+				AlertThreshold pluginThreshold = this.getAlertThreshold(); 
 				
 				if(bodyContentCharset==null || bodyContentCharset.isEmpty()) {
 					hasBodyCharset = false; //Got http-equiv and content but no charset
@@ -141,7 +141,7 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 				
 				if (hasBodyCharset && hasMetaCharset) {
 					// If Threshold is LOW be picky and check the two body declarations against each other
-					if (pluginThreshold == AlertThreshold.LOW && 
+					if (AlertThreshold.LOW.equals(pluginThreshold) && 
 							!bodyContentCharset.equalsIgnoreCase(metaCharset)) {
 						raiseAlert(msg, id, metaCharset, bodyContentCharset, MismatchType.METACONTENTTYPE_METACHARSET_MISMATCH); // body declarations inconsistent with each other
 					}
@@ -159,7 +159,7 @@ public class CharsetMismatchScanner extends PluginPassiveScanner {
 					} 
 					// If Threshold is LOW be picky and report that 
 					// only a meta charset declaration might be insufficient coverage for older clients
-					if (pluginThreshold == AlertThreshold.LOW &&
+					if (AlertThreshold.LOW.equals(pluginThreshold) &&
 							hasBodyCharset==false){
 						raiseAlert(msg, id, "", "", MismatchType.NO_MISMATCH_METACONTENTTYPE_MISSING);//body declaration does match header but may overlook older clients
 					}
