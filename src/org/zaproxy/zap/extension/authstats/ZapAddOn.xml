@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Authentication Statistics</name>
-	<version>1</version>
+	<version>2</version>
 	<status>alpha</status>
 	<description>Records logged in/out statistics for all contexts in scope.</description>
 	<author>ZAP Core Team</author>
 	<url>https://github.com/zaproxy/zap-extensions/wiki/HelpAddonsAuthstatsAuthStats</url>
 	<changes>
 	<![CDATA[
-	First version<br>
+	Code change for future ZAP versions.<br>
 	]]>
 	</changes>
 	<extensions>
