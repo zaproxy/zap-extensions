@@ -19,7 +19,9 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import org.apache.commons.httpclient.URIException;
 import org.junit.Test;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
@@ -31,6 +33,8 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import java.util.List;
 import java.util.TreeSet;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -162,6 +166,124 @@ public class CsrftokenscanUnitTest extends ActiveScannerTest<Csrftokenscan> {
         // Then the message is processed
         assertThat(httpMessagesSent, hasSize(greaterThanOrEqualTo(1)));
         assertThat(httpMessagesSent.get(0).getCookieParams(), hasSize(2)); // 2 session cookies
+    }
+
+    @Test
+    public void shouldNotProcessAtHighThresholdAndOutOfScope() throws HttpMalformedHeaderException, URIException {
+        // Given
+        HttpMessage msg = createMessage(false);
+        
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        rule.init(msg, parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(equalTo(0)));// No messages sent
+    }
+
+    @Test
+    public void shouldProcessAtHighThresholdAndInScope() throws HttpMalformedHeaderException, URIException {
+        // Given
+        HttpMessage msg = createMessage(true);
+        
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        rule.init(msg, parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(0)));
+    }
+
+    @Test
+    public void shouldProcessAtMediumThresholdAndOutOfScope() throws HttpMalformedHeaderException, URIException {
+        // Given
+        HttpMessage msg = createMessage(false);
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        // Note: This Test leverages the context setup in a previous test
+        rule.init(msg, parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(0)));
+    }
+
+    @Test
+    public void shouldProcessAtMediumThresholdAndInScope() throws HttpMalformedHeaderException, URIException {
+        // Given
+        HttpMessage msg = createMessage(true);
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        // Note: This Test leverages the context setup in a previous test
+        rule.init(msg, parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(0)));
+    }
+
+    @Test
+    public void shouldProcessAtLowThresholdAndOutOfScope() throws HttpMalformedHeaderException, URIException {
+        // Given
+        HttpMessage msg = createMessage(false);
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // Note: This Test leverages the context setup in a previous test
+        rule.init(msg, parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(0)));
+    }
+
+    @Test
+    public void shouldProcessAtLowThresholdAndInScope() throws HttpMalformedHeaderException, URIException {
+        // Given
+        HttpMessage msg = createMessage(true);
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // Note: This Test leverages the context setup in a previous test
+        rule.init(msg, parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(0)));
+    }
+
+    private HttpMessage createMessage(boolean isInScope) throws URIException, HttpMalformedHeaderException {
+        HttpMessage msg = new HttpMessage() {
+
+            @Override
+            public HttpMessage cloneRequest() {
+                HttpMessage newMsg = new HttpMessage() {
+
+                    @Override
+                    public boolean isInScope() {
+                        return isInScope;
+                    }
+                };
+
+                if (!this.getRequestHeader().isEmpty()) {
+                    try {
+                        newMsg.getRequestHeader().setMessage(this.getRequestHeader().toString());
+                    } catch (HttpMalformedHeaderException e) {
+                        throw new RuntimeException(e);
+                    }
+                    newMsg.setRequestBody(this.getRequestBody().getBytes());
+                }
+                return newMsg;
+            }
+        };
+
+        HttpMessage compatMsg = getAntiCSRFCompatibleMessage();
+        msg.setRequestHeader(compatMsg.getRequestHeader());
+        msg.setRequestBody(compatMsg.getRequestBody());
+        msg.setResponseHeader(compatMsg.getResponseHeader());
+        msg.setResponseBody(compatMsg.getResponseBody());
+        
+        return msg;
     }
 
     private void setUpHttpSessionsParam() {
