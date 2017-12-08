@@ -9,10 +9,13 @@ var popupmenuitemtype = Java.type("org.zaproxy.zap.view.popup.PopupMenuItemHisto
 var menuitem = new popupmenuitemtype("Example history reference menu") {
       performAction: function(href) {
         print("Example menu called with " + href.getHttpMessage().getRequestHeader().getURI().toString());
-        helper.getView().showMessageDialog(
+        view.showMessageDialog(
           "Example menu called with " + href.getHttpMessage().getRequestHeader().getURI().toString());
       }
     }
+
+// View to be used in the menu item (initialised when installing the script).
+var view;
 
 /**
  * This function is called when the script is enabled.
@@ -26,6 +29,7 @@ var menuitem = new popupmenuitemtype("Example history reference menu") {
 function install(helper) {
   if (helper.getView()) {
     helper.getView().getPopupMenu().addMenu(menuitem);
+    view = helper.getView();
   }
 }
 
