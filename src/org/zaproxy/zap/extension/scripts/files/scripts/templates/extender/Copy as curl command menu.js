@@ -3,9 +3,6 @@
 // Any functionality added in the install function should be removed in the uninstall method.
 // See the other templates for examples on how to do add different functionality. 
 
-// This script will not work with Rhino
-var usingNashorn = typeof importClass !== "function";
-
 // Script variable to use when uninstalling
 var popupmenuitemtype = Java.type("org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer");
 var curlmenuitem = new popupmenuitemtype("Copy as curl command") {
@@ -25,11 +22,6 @@ var curlmenuitem = new popupmenuitemtype("Copy as curl command") {
  */
 function install(helper) {
 	if (helper.getView()) {
-		if (! usingNashorn) {
-			helper.getView().showWarningDialog(
-				'This script will only work with Java 8+ \nThe next version of ZAP will require a minimum of Java 8\nso you are recommended to upgrade asap.');
-			return;
-		}
 		helper.getView().getPopupMenu().addMenu(curlmenuitem);
 	}
 }

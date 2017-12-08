@@ -5,10 +5,6 @@
 // Any functionality added in the install function should be removed in the uninstall method.
 // See the other templates for examples on how to do add different functionality. 
 
-// The following handles differences in printing between Java 7's Rhino JS engine
-// and Java 8's Nashorn JS engine
-if (typeof println == 'undefined') this.println = print;
-
 // Script variable to use when uninstalling
 var apiimpltype = Java.type("org.zaproxy.zap.extension.api.ApiImplementor");
 var apiimpl = new apiimpltype() {
