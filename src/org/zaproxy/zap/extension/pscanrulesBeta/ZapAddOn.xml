@@ -1,16 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (beta)</name>
-	<version>17</version>
+	<version>18</version>
 	<status>beta</status>
 	<description>The beta quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor changes to InsecureJFSViewStatePassiveScanner (check response contains JSF viewstate or if it's server stored).<br/>
-	Improve the domain matching in CookieLooselyScopedScanner.<br/>
-	Issue 3449: CSRFcountermeasures passive scanner now raises alerts on a per-form basis on pages with multiple forms.<br/> 
-	Issue 3937: Update ServletParameterPollutionScanner reference.<br/>
+	Minor code changes to address deprecation.<br/>
 	]]>
 	</changes>
 	<extensions>
@@ -36,6 +33,6 @@
 		<file>xml/suspicious-comments.txt</file>
 		<file>xml/URL-information-disclosure-messages.txt</file>
 	</files>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>
