@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
+	Correct extender script, Add history record menu.js, to show the info dialogue.<br>
 	Invoke script on selected message(s) (Issue 4085).<br>
 	]]>
 	</changes>
