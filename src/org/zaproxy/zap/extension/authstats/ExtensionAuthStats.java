@@ -123,38 +123,44 @@ public class ExtensionAuthStats extends ExtensionAdaptor implements HttpSenderLi
                             // Record for info 
                             Stats.incCounter(site, prefix + "notsuccess");
                         } else {
-                            AuthenticationMethod auth = context.getAuthenticationMethod();
-                            Pattern loggedInPattern = auth.getLoggedInIndicatorPattern();
-                            Pattern loggedOutPattern = auth.getLoggedOutIndicatorPattern();
-                            
-                            if (loggedInPattern == null && loggedOutPattern == null) {
-                                Stats.incCounter(site, prefix + "noindicator");
-                            } else {
-                                String fullResponse = msg.getResponseHeader().toString() + "\r\n\r\n" +
-                                        msg.getResponseBody().toString();
-                                
-                                boolean loggedIn = loggedInPattern != null && 
-                                        loggedInPattern.matcher(fullResponse).find();
-        
-                                boolean loggedOut = loggedOutPattern != null && 
-                                        loggedOutPattern.matcher(fullResponse).find();
-                                
-                                if (loggedIn && loggedOut) {
-                                    Stats.incCounter(site, prefix + "loggedinandout");
-                                } else if (loggedIn) {
-                                    Stats.incCounter(site, prefix + "loggedin");
-                                } else if (loggedOut) {
-                                    Stats.incCounter(site, prefix + "loggedout");
-                                } else {
-                                    Stats.incCounter(site, prefix + "unknown");
-                                }
-                            }
+                            updateAuthIndicatorStats(msg, site, prefix, context);
                         }
                     }
                 }
             }
         } catch (URIException e) {
             log.error(e.getMessage(), e);
+        }
+    }
+
+    private static void updateAuthIndicatorStats(HttpMessage msg, String site, String prefix, Context context) {
+        AuthenticationMethod auth = context.getAuthenticationMethod();
+        if (auth == null) {
+            Stats.incCounter(site, prefix + "noauth");
+            return;
+        }
+
+        Pattern loggedInPattern = auth.getLoggedInIndicatorPattern();
+        Pattern loggedOutPattern = auth.getLoggedOutIndicatorPattern();
+
+        if (loggedInPattern == null && loggedOutPattern == null) {
+            Stats.incCounter(site, prefix + "noindicator");
+            return;
+        }
+
+        String fullResponse = msg.getResponseHeader().toString() + "\r\n\r\n" + msg.getResponseBody().toString();
+
+        boolean loggedIn = loggedInPattern != null && loggedInPattern.matcher(fullResponse).find();
+        boolean loggedOut = loggedOutPattern != null && loggedOutPattern.matcher(fullResponse).find();
+
+        if (loggedIn && loggedOut) {
+            Stats.incCounter(site, prefix + "loggedinandout");
+        } else if (loggedIn) {
+            Stats.incCounter(site, prefix + "loggedin");
+        } else if (loggedOut) {
+            Stats.incCounter(site, prefix + "loggedout");
+        } else {
+            Stats.incCounter(site, prefix + "unknown");
         }
     }
 }
