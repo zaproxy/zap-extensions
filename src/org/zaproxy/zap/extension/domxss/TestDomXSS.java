@@ -36,7 +36,6 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
@@ -86,8 +85,6 @@ public class TestDomXSS extends AbstractAppPlugin {
     private static ProxyServer proxy = null;
     private static int proxyPort = -1;
 
-    private static ExtensionSelenium extensionSelenium;
-    
     @Override
     public int getId() {
         return 40026;
@@ -190,7 +187,7 @@ public class TestDomXSS extends AbstractAppPlugin {
 		 * 	Chrome doesnt seem to find anything, possibly due to its XSS protection
 		 * 	Phantom JS doesnt find anything as 'alerts' arent yet supported
 		 */
-		WebDriver driver = getExtensionSelenium().getWebDriver(Browser.FIREFOX, "127.0.0.1", proxyPort);
+		WebDriver driver = ExtensionSelenium.getWebDriver(Browser.FIREFOX, "127.0.0.1", proxyPort);
 		
 		driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 		driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
@@ -199,19 +196,6 @@ public class TestDomXSS extends AbstractAppPlugin {
 
 	}
 
-	private static ExtensionSelenium getExtensionSelenium() {
-		if (extensionSelenium == null) {
-			initExtensionSelenium();
-		}
-		return extensionSelenium;
-	}
-
-	private static synchronized void initExtensionSelenium() {
-		if (extensionSelenium == null) {
-			extensionSelenium = Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
-		}
-	}
-	
 	private WebDriverWrapper getFirefoxDriver() {
 		WebDriverWrapper fxDriver;
 		try {
