@@ -15,6 +15,7 @@
 	<property name="status" value="alpha" />
 	<property name="versions.file" location="${dist}/ZapVersions.xml" />
 	<property name="wiki.dir" location="../../zap-extensions-wiki" />
+	<property name="wiki.zapcorehelp.dir" location="../../zap-core-help-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
 	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.7" />
@@ -138,6 +139,25 @@
 	<macrodef name="generate-wiki" description="Generates the wiki of an add-on into zap-extensions wiki dir">
 		<attribute name="addOn"/>
 		<sequential>
+			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.dir}"
+				prefixlinkimages="https://github.com/zaproxy/zap-extensions/wiki/images/" tocpadding="0" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="generate-wiki-core" description="Generates the wiki of an add-on into zap-core-help wiki dir (normally for add-ons included in the main release)">
+		<attribute name="addOn"/>
+		<sequential>
+			<generate-wiki-impl addon="@{addOn}" basedestdir="${wiki.zapcorehelp.dir}"
+				prefixlinkimages="https://github.com/zaproxy/zap-core-help/wiki/images/" tocpadding="0" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="generate-wiki-impl">
+		<attribute name="addOn"/>
+		<attribute name="baseDestDir"/>
+		<attribute name="prefixLinkImages"/>
+		<attribute name="tocpadding"/>
+		<sequential>
 			<local name="addOnCapitalised" />
 			<capitalise name="addOnCapitalised" value="@{addOn}" />
 
@@ -145,12 +165,13 @@
 			<local name="version"/>
 			<property name="version" value="${zapaddon.version}" />
 
-			<generatewiki basesrcdir="${src}/org/zaproxy/zap/extension/@{addOn}/resources" basedestdir="${wiki.dir}"
+			<generatewiki basesrcdir="${src}/org/zaproxy/zap/extension/@{addOn}/resources" basedestdir="@{baseDestDir}"
 				helpcontentsdir="contents/" helpcontentsinclude=".*\.html"
-				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="https://github.com/zaproxy/zap-extensions/wiki/images/"
+				srcimagesdir="contents/images/" destimagesdir="images" prefixlinkimages="@{prefixLinkImages}"
 				outputfilenameprefix="HelpAddons${addOnCapitalised}" includeoutputfiles="HelpAddOns${addOnCapitalised}.*\.md"
 				helpfileextension=".html" wikifileextension=".md"
-				srctocfile="toc.xml" srcmapfile="map.jhm" wikitocfilename="_Sidebar-${addOnCapitalised}">
+				srctocfile="toc.xml" srcmapfile="map.jhm"
+				wikitocfilename="_SiderBar-${addOnCapitalised}" wikitocentryinitpadding="@{tocpadding}">
 
 				<!-- Default language is at root of dest dir -->
 				<helpdir src="help" dest="" />
@@ -635,7 +656,7 @@
 	</target>
 
 	<target name="generate-wiki-jxbrowser" description="Generates the wiki of jxbrowser Add-on">
-		<generate-wiki addon="jxbrowser" />
+		<generate-wiki-core addon="jxbrowser" />
 	</target>
 	
 	<target name="deploy-onlineMenu" description="deploy the online menu">
