@@ -44,7 +44,7 @@ public class FormGenerator {
                 continue;
             }
             String parameterType = parameter.getIn();
-            if (parameterType.equals("formData")) {
+            if ("formData".equals(parameterType)) {
                 String type = ((AbstractSerializableParameter<?>) parameter).getType();
                 FormDataItem item = new FormDataItem();
                 item.setIsFile(type != null && type.equals("file"));
