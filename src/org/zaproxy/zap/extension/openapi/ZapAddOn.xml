@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>OpenAPI Support</name>
-	<version>8</version>
+	<version>9</version>
 	<status>alpha</status>
 	<description>Imports and spiders Open API definitions.</description>
 	<author>ZAP Core Team plus Joanna Bona, Artur Grzesica, Michal Materniak and Marcin Spiewak</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-		Fix NPE in BodyGenerator.<br>
-		Fix NPEs when a parameter is null.<br>
+		Update Swagger/OpenAPI parser (Issue 3479).<br>
 	]]>
 	</changes>
 	<extensions>

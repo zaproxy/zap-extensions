@@ -43,21 +43,19 @@
 	<classpathentry kind="lib" path="lib/json-20160212.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.13.jar"/>
 	<classpathentry kind="lib" path="lib/licence.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-annotations-2.4.5.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-core-2.4.5.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-databind-2.4.5.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-dataformat-yaml-2.4.5.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-datatype-joda-2.4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.8.9.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.8.9.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-coreutils-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.8.9.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-dataformat-yaml-2.8.9.jar"/>
 	<classpathentry kind="lib" path="lib/salvation-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.3.jar"/>
 	<classpathentry kind="lib" path="lib/snakeyaml-1.12.jar"/>
-	<classpathentry kind="lib" path="lib/swagger-annotations-1.5.8.jar"/>
-	<classpathentry kind="lib" path="lib/swagger-core-1.5.8.jar"/>
-	<classpathentry kind="lib" path="lib/swagger-models-1.5.8.jar"/>
-	<classpathentry kind="lib" path="lib/swagger-parser-1.0.19.jar"/>
+	<classpathentry kind="lib" path="lib/swagger-core-1.5.17.jar"/>
+	<classpathentry kind="lib" path="lib/swagger-models-1.5.17.jar"/>
+	<classpathentry kind="lib" path="lib/swagger-parser-1.0.33.jar"/>
 	<classpathentry kind="lib" path="testlib/nanohttpd-webserver-2.1.1-jar-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="lib/swagger-compat-spec-parser-1.0.19.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-coreutils-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/swagger-compat-spec-parser-1.0.33.jar"/>
 	<classpathentry kind="lib" path="lib/msg-simple-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/btf-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/json-patch-1.6.jar"/>
