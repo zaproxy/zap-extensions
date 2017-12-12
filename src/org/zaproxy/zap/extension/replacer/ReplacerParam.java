@@ -50,7 +50,7 @@ public class ReplacerParam extends AbstractParam {
 
     private static ArrayList<ReplacerParamRule> defaultList = new ArrayList<ReplacerParamRule>();
 
-    private List<ReplacerParamRule> rules = null;
+    private List<ReplacerParamRule> rules = new ArrayList<>();
 
     private boolean confirmRemoveToken = true;
 
