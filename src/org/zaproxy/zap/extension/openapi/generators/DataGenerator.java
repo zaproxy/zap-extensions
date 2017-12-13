@@ -65,9 +65,12 @@ public class DataGenerator {
         return generateParam(name, defaultValue, parameter, refs);
     }
 
-    private static String generateDefaultValue(List<String> anEnum, String defaultValue) {
-        if (defaultValue != null && !defaultValue.isEmpty()) {
-            return defaultValue;
+    private static String generateDefaultValue(List<String> anEnum, Object defaultValue) {
+        if (defaultValue != null) {
+            String strValue = defaultValue.toString();
+            if (!strValue.isEmpty()) {
+                return strValue;
+            }
         }
         if (anEnum != null && !anEnum.isEmpty()) {
             return anEnum.get(0);

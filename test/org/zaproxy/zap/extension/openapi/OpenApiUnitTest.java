@@ -19,7 +19,10 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -63,7 +66,10 @@ public class OpenApiUnitTest extends ServerBasedTest {
         
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         HttpMessage defnMsg = this.getHttpMessage(test + "defn.json");
-        Converter converter = new SwaggerConverter(requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+        SwaggerConverter converter = new SwaggerConverter(requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+        // No parsing errors
+        assertThat(converter.getErrorMessages(), is(empty()));
+
         final Map<String, String> accessedUrls = new HashMap<String, String>();
         RequesterListener listener = new RequesterListener(){
             @Override
@@ -99,7 +105,10 @@ public class OpenApiUnitTest extends ServerBasedTest {
         
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         HttpMessage defnMsg = this.getHttpMessage(test + "defn.yaml");
-        Converter converter = new SwaggerConverter(requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+        SwaggerConverter converter = new SwaggerConverter(requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+        // No parsing errors
+        assertThat(converter.getErrorMessages(), is(empty()));
+
         final Map<String, String> accessedUrls = new HashMap<String, String>();
         RequesterListener listener = new RequesterListener(){
             @Override
