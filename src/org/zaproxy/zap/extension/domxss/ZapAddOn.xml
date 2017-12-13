@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>DOM XSS Active scanner rule</name>
-	<version>5</version>
+	<version>6</version>
 	<status>alpha</status>
 	<description>DOM XSS Active scanner rule</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
+	Minor code changes.<br>
 	]]>
     </changes>
 	<dependencies>
