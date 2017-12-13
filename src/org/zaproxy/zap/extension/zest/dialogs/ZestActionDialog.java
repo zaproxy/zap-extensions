@@ -170,7 +170,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 		}
 
 		for (ScriptWrapper script : this.extension.getExtScript().getScripts(ExtensionScript.TYPE_STANDALONE)) {
-			if (filePath.equals(script.getFile().getAbsolutePath())) {
+			if (script.getFile() != null && filePath.equals(script.getFile().getAbsolutePath())) {
 				return script.getName();
 			}
 		}

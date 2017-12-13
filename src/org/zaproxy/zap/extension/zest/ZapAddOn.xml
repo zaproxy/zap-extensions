@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Zest - Graphical Security Scripting Language</name>
-	<version>26</version>
+	<version>27</version>
 	<status>beta</status>
 	<description>A graphical security scripting language, ZAPs macro language on steroids</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
-	Use custom plugin ID for fail actions.<br>
-	Updated for 2.7.0.<br>
+	Fix exception when editing Action - Script with unsaved scripts.<br>
 	]]>
 	</changes>
 	<dependencies>
