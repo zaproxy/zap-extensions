@@ -199,16 +199,17 @@ public class NewScriptDialog extends StandardFieldsDialog {
 
 	private List<String> getTemplates() {
 		ArrayList<String> list = new ArrayList<String>();
+		ScriptEngineWrapper selectedEngine = getSelectedEngine();
 		for (ScriptWrapper template : extension.getExtScript().getTreeModel().getTemplates(
 				this.nameToType(this.getStringValue(FIELD_TYPE)))) {
 			
 			if (template.getEngine() != null
-					&& (getSelectedEngine() == null || template.getEngine().equals(getSelectedEngine()))) {
+					&& (selectedEngine == null || template.getEngine().equals(selectedEngine))) {
 				list.add(template.getName());
 			}
 		}
-		if (list.size() > 1) {
-			// Only give an empty choice if theres more than one
+		if (list.size() > 1 && (selectedEngine == null || selectedEngine.isSupportsMissingTemplates())) {
+			// Only give an empty choice if theres more than one (and the engine does not require template)
 			list.add("");
 		}
 		return list;
