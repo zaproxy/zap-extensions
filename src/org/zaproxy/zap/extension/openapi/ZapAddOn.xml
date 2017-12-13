@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 		Update Swagger/OpenAPI parser (Issue 3479).<br>
+		Fix exception with ref parameters.<br>
 	]]>
 	</changes>
 	<extensions>
