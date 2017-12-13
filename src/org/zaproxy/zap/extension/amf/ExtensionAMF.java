@@ -84,7 +84,10 @@ public class ExtensionAMF extends ExtensionAdaptor {
                     RequestAMFTextView.NAME,
                     RequestSplitComponent.ViewComponent.BODY);
 
-            panelManager.removeRequestDefaultViewSelectorFactoryAndDefaultViewSelectorsAdded(
+            panelManager.removeRequestDefaultViewSelectorFactory(
+                    RequestSplitComponent.NAME,
+                    RequestAMFTextViewDefaultViewSelectorFactory.NAME);
+            panelManager.removeRequestDefaultViewSelectors(
                     RequestSplitComponent.NAME,
                     RequestAMFTextViewDefaultViewSelector.NAME,
                     RequestSplitComponent.ViewComponent.BODY);
