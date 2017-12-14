@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>22</version>
+	<version>23</version>
 	<status>release</status>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Code changes for Java 9 (Issue 2602).<br>
-	Updated to use new icon.<br>
-	Updated for the new default browser launch URL.<br>
+	Update for 2.7.0.<br>
 	]]>
 	</changes>
 	<extensions>

@@ -151,7 +151,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
         }
         
             
-        new Thread() {
+        new Thread("ZAP-LaunchPageFetcher") {
             @Override
             public void run() {
                 // Try to read the default launch page
@@ -282,9 +282,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
                                 if (wd != null) {
                                     if (getQuickStartLaunchParam()
                                             .isZapStartPage()) {
-                                        // Use api instead of API due to a bug in the 2.6.0 core
-                                        // TODO use API once we've release 2.7.0
-                                        wd.get(api.getBaseURL(
+                                        wd.get(API.getInstance().getBaseURL(
                                                         API.Format.OTHER,
                                                         QuickStartLaunchAPI.API_PREFIX,
                                                         API.RequestType.other,
@@ -308,7 +306,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
                                 LOGGER.error(e1.getMessage(), e1);
                             }
                         }
-                    }).start();
+                    }, "ZAP-BrowserLauncher").start();
                 }
             });
         }
