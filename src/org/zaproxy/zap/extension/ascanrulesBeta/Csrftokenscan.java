@@ -166,6 +166,9 @@ public class Csrftokenscan extends AbstractAppPlugin {
 	 */
 	@Override
 	public void scan() {
+		if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !getBaseMsg().isInScope()) {
+			return; // At HIGH threshold return if the msg isn't in scope
+		}
 
 		boolean vuln = false;
 		Map<String, String> tagsMap = new HashMap<>();

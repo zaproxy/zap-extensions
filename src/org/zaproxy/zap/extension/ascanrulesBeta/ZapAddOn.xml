@@ -1,20 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>22</version>
+	<version>23</version>
 	<status>beta</status>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Fix FP in "Source Code Disclosure - /WEB-INF folder" on successful responses (Issue 3048).<br>
-	Fix FP in "Integer Overflow Error" on 500 error responses (Issue 3064).<br>
-	Support security annotations for forms that dont need anti-CSRF tokens.<br>
-	Changed XXE rule to use new callback extension.<br>
-	Notify of messages sent during Heartbleed scanning (Issue 2425).<br>
-	Fix false positive in Code Disclosure - CVE-2012-1823 on image content (Issue 3846).<br>
-	Fix false positive in Backup File Disclosure scanner on 403 responses (Issue 3911).<br>
-	CsrfTokenScan : Keep session cookies instead of deleting all of them<br>
+	At HIGH threshold only perform CSRF checks for inScope messages (Issue 1354).<br>
     ]]>
 	</changes>
 	<extensions>
