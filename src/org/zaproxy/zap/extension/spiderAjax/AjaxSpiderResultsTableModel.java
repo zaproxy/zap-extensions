@@ -251,9 +251,9 @@ public class AjaxSpiderResultsTableModel
                 refreshEntry(Integer.valueOf(event.getParameters().get(AlertEventPublisher.HISTORY_REFERENCE_ID)));
                 break;
             case AlertEventPublisher.ALL_ALERTS_REMOVED_EVENT:
-            default:
                 refreshEntries();
                 break;
+            default:
             }
         }
 
