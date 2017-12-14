@@ -163,7 +163,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
 					//set the threshold percentage based on what threshold was set by the user
 					float probabilityThreshold = 0.0F; //0% probability threshold
-					switch (this.getLevel()) {
+					switch (this.getAlertThreshold()) {
 					//50% probability threshold (ie, "on balance of probability")
 					case HIGH:	probabilityThreshold = 0.50F; break;  
 					//25% probability threshold

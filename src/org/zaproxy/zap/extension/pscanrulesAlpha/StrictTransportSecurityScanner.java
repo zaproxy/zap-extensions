@@ -127,7 +127,7 @@ public class StrictTransportSecurityScanner extends PluginPassiveScanner{
 					raiseAlert(VulnType.HSTS_MALFORMED_MAX_AGE, stsOption.get(0), msg, id);
 				}
 			}
-		} else if (this.getLevel().equals(AlertThreshold.LOW) && stsOption != null && !stsOption.isEmpty()) { 
+		} else if (AlertThreshold.LOW.equals(this.getAlertThreshold()) && stsOption != null && !stsOption.isEmpty()) { 
 			//isSecure is false at this point
 			//HSTS Header found on non-HTTPS response (technically there could be more than one 
 			//but we only care that there is one or more)

@@ -96,7 +96,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
 			this.strings = loadFile(examplePscanFile);
 		}
 		String sBody;
-        if (Plugin.AlertThreshold.HIGH.equals(this.getLevel())) {
+        if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
         	// For a high threshold perform a case exact check
     		sBody = body.toString();
         } else {
@@ -105,7 +105,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
         }
 
 		for (String str : this.strings) {
-	        if (! Plugin.AlertThreshold.HIGH.equals(this.getLevel())) {
+	        if (! Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
 	        	// Use case ignore unless a high threshold has been specified
 	        	str = str.toLowerCase();
 	        }

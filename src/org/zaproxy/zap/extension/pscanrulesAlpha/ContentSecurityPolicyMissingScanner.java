@@ -60,7 +60,7 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 		long start = System.currentTimeMillis();
 		
 		if (! msg.getResponseHeader().isHtml() &&
-				! this.getLevel().equals(AlertThreshold.LOW)) {
+				! AlertThreshold.LOW.equals(this.getAlertThreshold())) {
 			// Only really applies to HTML responses, but also check on Low threshold
 			return;
 		}
@@ -108,7 +108,7 @@ public class ContentSecurityPolicyMissingScanner extends PluginPassiveScanner{
 		//script-src 'unsafe-eval'
 
 		if (!cspHeaderFound ||
-				(this.getLevel().equals(AlertThreshold.LOW) &&
+				(AlertThreshold.LOW.equals(this.getAlertThreshold()) &&
 						(!xCspHeaderFound || !xWebKitHeaderFound))) {
 			// Always report if the latest header isnt found,
 			// but only report if the older ones arent present at Low threshold 
