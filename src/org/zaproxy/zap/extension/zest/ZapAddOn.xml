@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fix exception when editing Action - Script with unsaved scripts.<br>
+	Allow to select more HTTP methods in Zest Request dialogue.<br>
 	]]>
 	</changes>
 	<dependencies>

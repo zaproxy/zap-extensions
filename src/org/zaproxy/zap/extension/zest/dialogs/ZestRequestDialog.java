@@ -65,6 +65,15 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 
 	private static final String BEGIN_TOKEN_DELIMITER = "{{";
 	private static final String END_TOKEN_DELIMITER = "}}";
+	private static final String[] METHODS = new String[] {
+			"GET",
+			"POST",
+			"OPTIONS",
+			"HEAD",
+			"PUT",
+			"DELETE",
+			"TRACE",
+			BEGIN_TOKEN_DELIMITER + ZestVariables.REQUEST_METHOD + END_TOKEN_DELIMITER };
 
 	private ExtensionZest extension = null;
 	private ScriptNode parent = null;
@@ -121,7 +130,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
 			url = "";
 		}
 		this.setFieldValue(FIELD_URL, url);
-		this.addComboField(0, FIELD_METHOD, new String[] {"GET", "POST", BEGIN_TOKEN_DELIMITER + ZestVariables.REQUEST_METHOD + END_TOKEN_DELIMITER}, request.getMethod());
+		this.addComboField(0, FIELD_METHOD, METHODS, request.getMethod());
 		this.addCheckBoxField(0, FIELD_FOLLOW_REDIR, request.isFollowRedirects());
 		this.addMultilineField(0, FIELD_HEADERS, request.getHeaders());
 		this.addMultilineField(0, FIELD_BODY, request.getData());
