@@ -55,6 +55,7 @@ public class ClientConfigDialog extends StandardFieldsDialog {
 		this.addPadding();
 	}
 
+	@Override
 	public void save() {
 		
 		if (page.getHeartbeat() != this.getIntValue(FIELD_HEARTBEAT)) {

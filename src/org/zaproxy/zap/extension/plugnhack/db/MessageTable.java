@@ -20,6 +20,7 @@ package org.zaproxy.zap.extension.plugnhack.db;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -124,7 +125,7 @@ public class MessageTable extends ParosAbstractTable {
 			try {
 				InputStream in = rs.getClob("message").getAsciiStream();
 				StringWriter w = new StringWriter();
-				IOUtils.copy(in, w);
+				IOUtils.copy(in, w, StandardCharsets.UTF_8);
 	    		ClientMessage cmsg = new ClientMessage(
 						rs.getString("client_id"), 
 						(JSONObject)JSONSerializer.toJSON(w.toString()));

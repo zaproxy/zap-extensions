@@ -56,7 +56,6 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiResponse;
-import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -138,7 +137,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
     // TODO Work in progress
 	//private PopupMenuShowResponseInBrowser popupMenuShowResponseInBrowser = null;
 	
-	private BreakpointMessageHandler brkMessageHandler = null;
+	private ClientBreakpointMessageHandler brkMessageHandler = null;
 	private ManualClientMessageSendEditorDialog resendDialog = null;
 	private ClientConfigDialog clientConfigDialog = null;
 	
@@ -200,8 +199,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
                             		Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.NAME);
                         	ctrlInit = true;
                         }
-                        if (extBreak != null && 
-                        		extBreak.getBreakPanel().isBreakRequest() || extBreak.getBreakPanel().isBreakResponse()) {
+                        if (extBreak != null && (extBreak.getBreakpointManagementInterface().isBreakRequest()
+                                || extBreak.getBreakpointManagementInterface().isBreakResponse())) {
                         	// Dont timeout pages while global breakpoints set
                         	// TODO find a solution for custom break points too
                         	continue;
@@ -261,7 +260,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor implements ProxyListene
             ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
             if (extBreak != null) {
                 // setup custom breakpoint handler
-                brkMessageHandler = new ClientBreakpointMessageHandler(extBreak.getBreakPanel()/*, config*/);
+                brkMessageHandler = new ClientBreakpointMessageHandler(extBreak.getBreakpointManagementInterface());
                 brkMessageHandler.setEnabledBreakpoints(extBreak.getBreakpointsEnabledList());
                 this.mpm.setClientBreakpointMessageHandler(brkMessageHandler);
 

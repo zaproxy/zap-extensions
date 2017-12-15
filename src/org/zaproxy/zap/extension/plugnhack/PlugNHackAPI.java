@@ -303,6 +303,7 @@ public class PlugNHackAPI extends ApiImplementor {
         return sb.toString();
     }
 
+	@Override
 	public void addCustomHeaders(String name, RequestType type, HttpMessage msg) {
 		/*
 		 * Ideally this CORS header wouldnt be required, but to remove it will require  
