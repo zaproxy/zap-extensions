@@ -43,7 +43,7 @@ public class CharsetMismatchScannerUnitTest extends PassiveScannerTest {
     
     @Before
     public void before() throws HttpMalformedHeaderException {
-        rule.setLevel(AlertThreshold.LOW);
+        rule.setAlertThreshold(AlertThreshold.LOW);
         
         msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");

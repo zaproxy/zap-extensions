@@ -55,6 +55,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ScannerTestUtils;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.utils.ClassLoaderUtil;
@@ -132,11 +133,9 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
         ConnectionParam connectionParam = new ConnectionParam();
 
         ScannerParam scannerParam = new ScannerParam();
-        // Will need this once we go to the release after 2.5.0
-        // RuleConfigParam ruleConfigParam = new RuleConfigParam();
+        RuleConfigParam ruleConfigParam = new RuleConfigParam();
         Scanner parentScanner =
-                new Scanner(scannerParam, connectionParam, scanPolicy);
-        //, ruleConfigParam);
+                new Scanner(scannerParam, connectionParam, scanPolicy, ruleConfigParam);
 
         int port = 9090;
         nano = new HTTPDTestServer(port);
@@ -149,8 +148,8 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
                 parentScanner, 
                 scannerParam, 
                 connectionParam, 
-                scanPolicy) {
-                //ruleConfigParam) {
+                scanPolicy,
+                ruleConfigParam) {
             @Override
             public void alertFound(Alert arg1) {
                 alertsRaised.add(arg1);
@@ -163,15 +162,15 @@ public abstract class ActiveScannerTest<T extends AbstractPlugin> extends Scanne
                 countMessagesSent++;
             }
 
+            @Override
             public void notifyNewMessage(Plugin plugin) {
-                // TODO for 2.5.0:
-                // super.notifyNewMessage(plugin);
+                super.notifyNewMessage(plugin);
                 countMessagesSent++;
             }
 
+            @Override
             public void notifyNewMessage(Plugin plugin, HttpMessage msg) {
-                // TODO for 2.5.0:
-                // super.notifyNewMessage(plugin, msg);
+                super.notifyNewMessage(plugin, msg);
                 httpMessagesSent.add(msg);
                 countMessagesSent++;
             }
