@@ -22,12 +22,14 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.httputils.HtmlContext;
@@ -397,8 +399,9 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             		} else {
             			// Last chance - is the payload reflected outside of any tags
             			if (context.getMsg().getResponseBody().toString().contains(context.getTarget())) {
+                            String basicXss = "<script>alert(1);</script>";
             	            List<HtmlContext> contexts2 = performAttack (msg, param, 
-            	            		"<script>alert(1);</script>", null, 0);
+            	            		basicXss, null, 0);
                             if (contexts2 == null) {
                                 break;
                             }
@@ -409,10 +412,20 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                         bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, ctx.getTarget(),
                                             "", ctx.getTarget(), contexts2.get(0).getMsg());
                                     } else {
-                                        bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, null, param, ctx.getTarget(),
-                                            Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.nothtml"),
-                                            ctx.getTarget(), contexts2.get(0).getMsg());
-                                        
+                                        HttpMessage ctx2Message = contexts2.get(0).getMsg();
+                                        if (StringUtils.containsIgnoreCase(
+                                            ctx.getMsg().getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE), "json")) {
+                                            bingo(Alert.RISK_LOW, Alert.CONFIDENCE_LOW,
+                                                    Constant.messages.getString(MESSAGE_PREFIX + "json.name"),
+                                                    Constant.messages.getString(MESSAGE_PREFIX + "json.desc"),
+                                                    ctx2Message.getRequestHeader().getURI().toString(), param, basicXss,
+                                                    Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.nothtml"),
+                                                    getSolution(), "", ctx2Message);
+                                        } else {
+                                            bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_LOW, null, param, ctx.getTarget(),
+                                                    Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.nothtml"),
+                                                    ctx.getTarget(), ctx2Message);
+                                        }
                                     }
                                     attackWorked = true;
                                     break;
