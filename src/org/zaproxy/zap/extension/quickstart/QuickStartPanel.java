@@ -74,6 +74,7 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	}
 
 	private void initialize() {
+		this.setShowByDefault(true);
 		this.setIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/147.png")));	// 'lightning' icon
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
@@ -303,15 +304,6 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		default:
 			break;
 		}
-	}
-
-	/**
-	 * This should override (or use) the AbstractPanel class but cant do this until the relevant changes are
-	 * available in the zap-extensions trunk
-	 * @return
-	 */
-	public boolean isShowByDefault() {
-		return true;
 	}
 
 }
