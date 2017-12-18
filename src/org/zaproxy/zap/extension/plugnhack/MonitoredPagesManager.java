@@ -40,7 +40,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.api.ApiResponseSet;
-import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
+import org.zaproxy.zap.extension.plugnhack.brk.ClientBreakpointMessageHandler;
 
 public class MonitoredPagesManager {
 
@@ -60,7 +60,7 @@ public class MonitoredPagesManager {
 	private int counter = 0;
 	
 	private ExtensionPlugNHack extension;
-	private BreakpointMessageHandler brkMessageHandler = null;
+	private ClientBreakpointMessageHandler brkMessageHandler = null;
 	
 	private static final Logger logger = Logger.getLogger(MonitoredPagesManager.class);
 
@@ -390,7 +390,7 @@ public class MonitoredPagesManager {
 		return this.monitoredPages.containsKey(clientId);
 	}
 	
-	private ApiResponseSet msgToResponse(ClientMessage msg, boolean resend) {
+	private ApiResponseSet<Object> msgToResponse(ClientMessage msg, boolean resend) {
 		Map<String, Object> map = msg.toMap();
 		map.put("type", msg.getType());
 		if (resend) {
@@ -400,7 +400,7 @@ public class MonitoredPagesManager {
 			// This is a 'known' message
 			map.put("responseTo", msg.getMessageId());
 		}
-		return new ApiResponseSet("message", map);
+		return new ApiResponseSet<>("message", map);
 	}
 
 	private String getUniqueId () {
@@ -529,8 +529,7 @@ public class MonitoredPagesManager {
 		this.listeners.remove(listener);
 	}
 
-	public void setClientBreakpointMessageHandler(
-			BreakpointMessageHandler brkMessageHandler) {
+	public void setClientBreakpointMessageHandler(ClientBreakpointMessageHandler brkMessageHandler) {
 		this.brkMessageHandler = brkMessageHandler; 
 	}
 	

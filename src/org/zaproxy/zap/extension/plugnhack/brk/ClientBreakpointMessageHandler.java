@@ -17,19 +17,19 @@
  */
 package org.zaproxy.zap.extension.plugnhack.brk;
 
-import org.zaproxy.zap.extension.brk.BreakPanel;
-import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
+import org.zaproxy.zap.extension.brk.BreakpointManagementInterface;
+import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 
 /**
  * Wraps WebSocket specific options to determine if breakpoint should be applied
- * on given {@link WebSocketMessageDTO}.
+ * on given {@link ClientMessage}.
  */
-public class ClientBreakpointMessageHandler extends BreakpointMessageHandler {
+public class ClientBreakpointMessageHandler extends BreakpointMessageHandler2 {
 
-	public ClientBreakpointMessageHandler(BreakPanel aBreakPanel) {
-		super(aBreakPanel);
+	public ClientBreakpointMessageHandler(BreakpointManagementInterface breakMgmt) {
+		super(breakMgmt);
 	}
 
 	/**

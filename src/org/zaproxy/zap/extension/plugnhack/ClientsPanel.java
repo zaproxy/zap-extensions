@@ -56,6 +56,7 @@ import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.zap.view.ZapTable;
 import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ClientsPanel extends AbstractPanel implements MonitoredPageListener {

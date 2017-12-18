@@ -37,10 +37,12 @@ public class PopupMenuOpenAndMonitorUrl extends PopupMenuItemHttpMessageContaine
         this.mpm = mpm;
     }
     
+    @Override
     public String getParentMenuName() {
     	return Constant.messages.getString("plugnhack.menu.monitor");
     }
 
+    @Override
     public boolean isSubMenu() {
     	return true;
     }

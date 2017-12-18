@@ -246,7 +246,7 @@ public abstract class ClientBreakDialog extends AbstractDialog {
 	}
 
 	/**
-	 * @return {@link WebSocketBreakpointMessage} with values set in dialog
+	 * @return {@link ClientBreakpointMessage} with values set in dialog
 	 * @throws PatternSyntaxException
 	 */
     protected ClientBreakpointMessage getClientBreakpointMessage() throws PatternSyntaxException {
