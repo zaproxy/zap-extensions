@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 		Minor code change to address deprecations.<br>
+		Updated to JxBrowser 6.18.<br>
 	]]>
 	</changes>
 	<dependencies/>
