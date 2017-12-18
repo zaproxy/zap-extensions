@@ -74,6 +74,13 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	public static final String SCRIPT_EXT_TYPE = "extender";
 	
 	/**
+	 * Capability used to indicate that while scripts of the associated type can be edited in the
+	 * script console they are actually external to the ZAP scripting infrastructure, and so wont
+	 * be using it.
+	 */
+	public static final String CAPABILITY_EXTERNAL = "external";
+	
+	/**
 	 * The templates that should be installed and enabled by default when the add-on is installed
 	 */
 	private static final String[] BUILT_IN_SCRIPTS = {
@@ -85,6 +92,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	private ScriptType extScriptType = new ScriptType(SCRIPT_EXT_TYPE, "scripts.type.extender", SCRIPT_EXT_ICON, true, true);
 	private ExtenderScriptHelper helper;
 	private Map<String, ExtenderScript> installedExtenderScripts = new HashMap<String, ExtenderScript>();
+	private ScriptEngineWrapper nullEngineWrapper = null;
 
 	private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 
@@ -133,6 +141,9 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	    super.hook(extensionHook);
 	    this.getExtScript().addListener(this);
 	    this.getExtScript().registerScriptType(extScriptType);
+	    
+	    nullEngineWrapper = new NullScriptEngineWrapper(new NullScriptEngine());
+	    this.getExtScript().registerScriptEngineWrapper(nullEngineWrapper);
 
 	    if (getView() != null) {
 	    	extensionHook.getHookView().addSelectPanel(getScriptsPanel());
@@ -244,6 +255,10 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                 }
             }
             extScript.removeScripType(extScriptType);
+        }
+
+        if (nullEngineWrapper != null) {
+            this.getExtScript().removeScriptEngineWrapper(nullEngineWrapper);
         }
         
         super.unload();

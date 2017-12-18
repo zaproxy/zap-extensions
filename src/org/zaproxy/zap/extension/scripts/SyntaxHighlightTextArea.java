@@ -53,6 +53,8 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 	public static final String PYTHON_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.python");
 	public static final String RUBY_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.ruby");
 	public static final String SCALA_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.scala");
+	public static final String HTML_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.html");
+	public static final String CSS_SYNTAX_LABEL = Constant.messages.getString("scripts.syntaxtext.syntax.css");
 
 	private static final String ANTI_ALIASING = "aa";
 	private static final String SHOW_LINE_NUMBERS = "linenumbers";
@@ -91,6 +93,8 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 		addSyntaxStyle(PYTHON_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_PYTHON);
 		addSyntaxStyle(RUBY_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_RUBY);
 		addSyntaxStyle(SCALA_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_SCALA);
+		addSyntaxStyle(HTML_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_HTML);
+		addSyntaxStyle(CSS_SYNTAX_LABEL, SyntaxConstants.SYNTAX_STYLE_CSS);
 		
 		initActions();
 		

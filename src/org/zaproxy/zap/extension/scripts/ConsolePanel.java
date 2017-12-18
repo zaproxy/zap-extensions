@@ -27,6 +27,7 @@ import java.awt.event.KeyListener;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -131,8 +132,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 		return scriptTitle;
 	}
 
-	private String getSyntaxForScript (String engine) {
-		String engineLc = engine.toLowerCase();
+	private static String getSyntaxForScript (String engine) {
+		String engineLc = engine.toLowerCase(Locale.ROOT);
 		if (engineLc.startsWith("clojure")) {
 			return SyntaxConstants.SYNTAX_STYLE_CLOJURE;
 		} else if (engineLc.startsWith("groovy")) {
@@ -147,6 +148,19 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 			return SyntaxConstants.SYNTAX_STYLE_RUBY;
 		} else if (engineLc.startsWith("scala")) {
 			return SyntaxConstants.SYNTAX_STYLE_SCALA;
+		} else {
+			return SyntaxConstants.SYNTAX_STYLE_NONE;
+		}
+	}
+
+	private static String getSyntaxForExtension (String name) {
+		String nameLc = name.toLowerCase(Locale.ROOT);
+		if (nameLc.endsWith(".js")) {
+			return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
+		} else if (nameLc.endsWith(".html")) {
+			return SyntaxConstants.SYNTAX_STYLE_HTML;
+		} else if (nameLc.endsWith(".css")) {
+			return SyntaxConstants.SYNTAX_STYLE_CSS;
 		} else {
 			return SyntaxConstants.SYNTAX_STYLE_NONE;
 		}
@@ -344,7 +358,9 @@ public class ConsolePanel extends AbstractPanel implements Tab {
         getCommandPanel().appendToCommandScript(script.getContents());
         getCommandPanel().setScriptType(script.getTypeName());
         getCommandPanel().setCommandCursorPosition(0);
-        if (script.getEngine().getSyntaxStyle() != null) {
+        if (script.getType().hasCapability(ExtensionScriptsUI.CAPABILITY_EXTERNAL)) {
+            getCommandPanel().setSyntax(getSyntaxForExtension(script.getName()));
+        } else if (script.getEngine().getSyntaxStyle() != null) {
             getCommandPanel().setSyntax(script.getEngine().getSyntaxStyle());
         } else {
             getCommandPanel().setSyntax(getSyntaxForScript(script.getEngine().getEngineName()));
