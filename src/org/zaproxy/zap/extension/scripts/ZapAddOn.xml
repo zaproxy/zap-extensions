@@ -11,6 +11,7 @@
 	Invoke script on selected message(s) (Issue 4085).<br>
 	Update extender scripts to use just Nashorn (Java 8).<br>
 	Do not show empty choice when the script engine requires a template.<br>
+	Confirm overwrite of existing script file.<br>
 	]]>
 	</changes>
 	<extensions>

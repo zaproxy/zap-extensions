@@ -58,6 +58,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptTreeModel;
 import org.zaproxy.zap.extension.script.ScriptType;
@@ -70,6 +71,7 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ScanPanel2;
+import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 public class ScriptsListPanel extends AbstractPanel {
 
@@ -305,8 +307,19 @@ public class ScriptsListPanel extends AbstractPanel {
 	            		Constant.messages.getString("file.save.error") + " " + script.getFile().getAbsolutePath() + ".");
 			}
 		} else {
-		    JFileChooser chooser = new JFileChooser(getDefaultScriptsDir(script.getTypeName()));
-		    // ZAP: set script name as file name proposal
+			JFileChooser chooser = new WritableFileChooser(getDefaultScriptsDir(script.getTypeName())) {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void approveSelection() {
+					File file = getSelectedFile();
+					if (file != null) {
+						setSelectedFile(new File(createScriptFileName(file, script.getEngine())));
+					}
+					super.approveSelection();
+				}
+			};
 			chooser.setSelectedFile(new File(script.getName()));
 		    chooser.setFileFilter(getScriptFilter(script.getEngine().getExtensions().get(0), script.getEngineName()));
 			File file = null;
@@ -316,12 +329,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	    		if (file == null) {
 	    			return;
 	    		}
-	    		String fileName = file.getAbsolutePath();
-	    		String ext = script.getEngine().getExtensions().get(0);
-	    		if (ext != null && !fileName.endsWith(ext)) {
-	    		    fileName += "." + ext;
-	    		}
-    		    file = new File(fileName);
+    		    file = new File(createScriptFileName(file, script.getEngine()));
     		    script.setFile(file);
 	    		
 				try {
@@ -335,6 +343,18 @@ public class ScriptsListPanel extends AbstractPanel {
 				}
 		    }
 		}
+	}
+
+	private static String createScriptFileName(File file, ScriptEngineWrapper scriptEngine) {
+		String fileName = file.getAbsolutePath();
+		String fileExtension = scriptEngine.getExtensions().get(0);
+		if (fileExtension != null) {
+			fileExtension = "." + fileExtension;
+			if (!fileName.endsWith(fileExtension)) {
+				fileName += fileExtension;
+			}
+		}
+		return fileName;
 	}
 
 	private void loadScript() {
