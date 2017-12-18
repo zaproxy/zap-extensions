@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class HttpResponseTagCreatorUnitTest {
@@ -117,7 +119,7 @@ public class HttpResponseTagCreatorUnitTest {
 
         List<String> newTagList = tagCreator.create();
 
-        assertThat(newTagList, containsInAnyOrder());
+        assertThat(newTagList, is(empty()));
     }
 
     @Test
@@ -157,7 +159,7 @@ public class HttpResponseTagCreatorUnitTest {
 
         List<String> newTagList = tagCreator.create();
 
-        assertThat(newTagList, containsInAnyOrder());
+        assertThat(newTagList, is(empty()));
     }
 
     @Test
@@ -167,6 +169,6 @@ public class HttpResponseTagCreatorUnitTest {
 
         List<String> newTagList = tagCreator.create();
 
-        assertThat(newTagList, containsInAnyOrder());
+        assertThat(newTagList, is(empty()));
     }
 }
