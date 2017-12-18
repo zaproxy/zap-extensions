@@ -33,6 +33,7 @@ import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
+import org.zaproxy.zap.extension.scripts.NullScriptEngineWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 public class LoadScriptDialog extends StandardFieldsDialog {
@@ -61,8 +62,7 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 		
 		this.setTitle(Constant.messages.getString("scripts.dialog.script.load.title"));
 		this.addTextField(FIELD_NAME, "");
-		this.addComboField(FIELD_ENGINE, extension.getExtScript().getScriptingEngines(), 
-				Constant.messages.getString("script.type.standalone"));
+		this.addComboField(FIELD_ENGINE, getEngines(), Constant.messages.getString("script.type.standalone"));
 		this.addComboField(FIELD_TYPE, this.getTypes(), "");
 		this.addMultilineField(FIELD_DESC, "");
 		this.addCheckBoxField(FIELD_LOAD, true);
@@ -105,9 +105,22 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 		this.addPadding();
 	}
 	
+	private List<String> getEngines() {
+		ArrayList<String> list = new ArrayList<String>();
+		list.addAll(extension.getExtScript().getScriptingEngines());
+		// Remove the null scripting engine - unfortunately there is no easy way to do this
+		// and ExtensionScript.LANG_ENGINE_SEP (" : ") is private
+		list.remove(" : " + NullScriptEngineWrapper.NAME);
+		return list;
+	}
+	
 	private List<String> getTypes() {
 		ArrayList<String> list = new ArrayList<String>();
 		for (ScriptType type : extension.getExtScript().getScriptTypes()) {
+			if (type.hasCapability(ExtensionScriptsUI.CAPABILITY_EXTERNAL)) {
+				// Ignore
+				continue;
+			}
 			list.add(Constant.messages.getString(type.getI18nKey()));
 		}
 		Collections.sort(list);

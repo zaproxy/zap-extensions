@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -43,6 +44,7 @@ import org.zaproxy.zap.view.OverlayIcon;
 public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 	
 	private static final String RESOURCE_ROOT = "/org/zaproxy/zap/extension/scripts/resources/icons/";
+	private static final String CORE_ROOT = "/resource/icon/16/";
 	
 	private static final ImageIcon CROSS_OVERLAY_ICON = 
 			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "cross-overlay.png"));
@@ -54,6 +56,13 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "exclamation-overlay.png"));
 	private static final ImageIcon MISSING_ENGINE_ICON = 
 			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "script-missing-engine.png"));
+
+	private static final ImageIcon JAVASCRIPT_ICON = 
+			new ImageIcon(DisplayUtils.class.getResource(CORE_ROOT + "javascript.png"));
+	private static final ImageIcon CSS_ICON = 
+			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "document-code.png"));
+	private static final ImageIcon WEB_ICON = 
+			new ImageIcon(ScriptsTreeCellRenderer.class.getResource(RESOURCE_ROOT + "document-globe.png"));
 
 	private ExtensionScriptsUI extension = null;
 	
@@ -116,7 +125,18 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 				}
 				
 				if (engine != null) {
-					if (engine.getIcon() != null) {
+					if (script.getType().hasCapability(ExtensionScriptsUI.CAPABILITY_EXTERNAL)) {
+						String nameLc = script.getName().toLowerCase(Locale.ROOT);
+						if (nameLc.endsWith(".js")) {
+							icon = new OverlayIcon(DisplayUtils.getScaledIcon(JAVASCRIPT_ICON));
+						} else if (nameLc.endsWith(".css")) {
+							icon = new OverlayIcon(DisplayUtils.getScaledIcon(CSS_ICON));
+						} else if (nameLc.endsWith(".html")) {
+							icon = new OverlayIcon(DisplayUtils.getScaledIcon(WEB_ICON));
+						} else {
+							icon = new OverlayIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.ICON));
+						}
+					} else if (engine.getIcon() != null) {
 						icon = new OverlayIcon(DisplayUtils.getScaledIcon(engine.getIcon()));
 					} else {
 						// Default to the blank script
