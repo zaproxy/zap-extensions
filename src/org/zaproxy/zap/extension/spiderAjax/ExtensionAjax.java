@@ -113,8 +113,9 @@ public class ExtensionAjax extends ExtensionAdaptor {
 		API.getInstance().registerApiImplementor(ajaxSpiderApi);
 		extensionHook.addOptionsParamSet(getAjaxSpiderParam());
 
+		extensionHook.addSessionListener(new SpiderSessionChangedListener());
+
 		if (getView() != null) {
-			extensionHook.addSessionListener(new SpiderSessionChangedListener());
 
 			extensionHook.getHookView().addStatusPanel(getSpiderPanel());
 			extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());

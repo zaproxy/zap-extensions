@@ -7,7 +7,7 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsSpiderAjaxConcepts</url>
 	<changes>
 	<![CDATA[
-	Minor code changes.<br>
+	Reset API scan also when in daemon mode (Issue 4163).<br>
 	]]>
 	</changes>
 	<dependencies>
