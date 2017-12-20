@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Update for 2.7.0.<br>
+	Stop the quick scan if the session is changed.<br>
 	]]>
 	</changes>
 	<extensions>
