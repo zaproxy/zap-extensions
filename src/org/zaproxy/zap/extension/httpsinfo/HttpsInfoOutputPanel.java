@@ -17,18 +17,11 @@
  */
 package org.zaproxy.zap.extension.httpsinfo;
 
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -36,7 +29,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.view.AbstractFrame;
+import org.parosproxy.paros.view.OutputPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
@@ -47,8 +40,9 @@ import com.mps.deepviolet.api.IDVEng;
 import com.mps.deepviolet.api.IDVSession;
 import com.mps.deepviolet.api.IDVX509Certificate;
 
-public class HttpsInfoDialog extends AbstractFrame {
-	private static final long serialVersionUID = 6633774164518653658L;
+public class HttpsInfoOutputPanel extends OutputPanel {
+
+	private static final long serialVersionUID = 906303747541635042L;
 
 	private static final String NEWLINE = System.lineSeparator();
 	
@@ -65,56 +59,15 @@ public class HttpsInfoDialog extends AbstractFrame {
 	private HttpMessage baseMessage;
 	private URL target = null;
 
-	private JTextArea general;
-	private JTextArea cipherSuites; 
-
-	public HttpsInfoDialog(HttpMessage msg) {
+	public HttpsInfoOutputPanel(HttpMessage msg) {
 		super();
 		
 		setTarget(msg);
 		setBaseMessage(msg);
-	
-		this.setIconImage(new ImageIcon(ExtensionHttpsInfo.class.getResource(ExtensionHttpsInfo.ICON_PATH)).getImage());
-		this.setTitle(Constant.messages.getString("httpsinfo.name"));
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.centerFrame();
-		init();
-		addComponentsToPane(getContentPane());
-		this.pack();
-		this.setVisible(true);
+		checkProxyChainEnabled();
 		doThreadedTasks();
 	}
-	
-	private JTextArea getGeneralTextArea() {
-		return general;
-	}
-	
-	private JTextArea getCipherSuitesTextArea() {
-		return cipherSuites;
-	}
 
-	public void init() {
-		checkProxyChainEnabled();
-		
-		initGeneral();
-		initCipherSuites();
-	}
-	
-	private void initGeneral() {
-		general = new JTextArea();
-		general.setEditable(false);
-		general.setRows(12);
-		general.setColumns(70);
-		general.setLineWrap(true);
-	}
-	
-	private void initCipherSuites() {
-		cipherSuites = new JTextArea();
-		cipherSuites.setEditable(false);
-		cipherSuites.setRows(15);
-		cipherSuites.setColumns(70);
-	}
-	
 	private void setTarget(HttpMessage msg) {
 		try {
 			this.target = new URL(msg.getRequestHeader().getURI().toString());
@@ -159,7 +112,7 @@ public class HttpsInfoDialog extends AbstractFrame {
 	private IDVEng getDvEng() {
 		return dvEng;
 	}
-	
+
 	private void doThreadedTasks() {
 		Thread httpsInfoThread = new Thread("ZAP-httpsinfo") {
 			@Override
@@ -170,7 +123,7 @@ public class HttpsInfoDialog extends AbstractFrame {
 					String warnMsg = Constant.messages.getString("httpsinfo.init.warning", getTarget().toString(),
 							e.getCause()); 
 					LOGGER.warn(warnMsg);
-					getGeneralTextArea().setText(warnMsg);
+					View.getSingleton().showWarningDialog(warnMsg);
 					return;
 				}
 				setDvEng(getSession());
@@ -195,12 +148,11 @@ public class HttpsInfoDialog extends AbstractFrame {
 			String generalException = Constant.messages.getString("httpsinfo.general.exception",
 					e.getMessage());
 			LOGGER.warn(generalException, e);
-			getGeneralTextArea().setText(generalException);
+			this.append(generalException);
 			return;
 		}
 
-		general.setText(content.toString());
-		general.setCaretPosition(0);
+		this.append(content.toString());
 	}
 	
 	private String getCleanCertStringRepresentation(IDVX509Certificate cert) {
@@ -240,7 +192,7 @@ public class HttpsInfoDialog extends AbstractFrame {
 			String cipherSuitesException = Constant.messages.getString("httpsinfo.ciphersuites.exception",
 					e.getMessage());
 			LOGGER.warn(cipherSuitesException, e);
-			getCipherSuitesTextArea().setText(cipherSuitesException);
+			this.append(cipherSuitesException);
 			return;
 		}
 		HashMap<IDVCipherSuite, IDVCipherSuite> csMap = new HashMap<IDVCipherSuite, IDVCipherSuite>();
@@ -259,28 +211,7 @@ public class HttpsInfoDialog extends AbstractFrame {
 				csMap.put(cipher, cipher);
 			}
 		}
-		cipherSuites.setText(cs.toString());
-		cipherSuites.setCaretPosition(0);
-	}
-
-	public void addComponentsToPane(Container pane) {
-		pane.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.BOTH;
-		c.gridwidth = 1;
-		c.weightx = 1.0;		
-		c.weighty = 0.5;
-		
-		c.gridx = 0;
-		c.gridy = 0;
-		c.anchor = GridBagConstraints.NORTH;
-		pane.add(new JScrollPane(general), c);
-		
-		c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 3;
-		c.anchor = GridBagConstraints.SOUTH;
-		pane.add(new JScrollPane(cipherSuites), c);
+		this.append(cs.toString());
 	}
 
 	/**
