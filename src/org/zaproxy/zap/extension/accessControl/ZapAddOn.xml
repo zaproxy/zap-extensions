@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Access Control Testing</name>
-	<version>4</version>
+	<version>5</version>
 	<status>alpha</status>
 	<description>Adds a set of tools for testing access control in web applications.</description>
 	<author>ZAP Dev Team</author>
 	<url />
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
+	Minor code changes.<br>
 	]]> 
 	</changes>
 	<dependson />
