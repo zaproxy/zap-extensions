@@ -1,5 +1,5 @@
 <zapaddon>
-	<name>Technology detection using Wappalyzer</name>
+	<name>Wappalyzer - Technology Detection</name>
 	<version>11</version>
 	<status>alpha</status>
 	<description>Technology detection using Wappalyzer: wappalyzer.com</description>
@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Minor code changes to address deprecations.<br>
+	Updated for latest contributions from main wappalyzer project.<br>
 	]]>
 	</changes>
 	<extensions>
