@@ -65,7 +65,6 @@ import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInterface;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
-import org.zaproxy.zap.extension.websocket.filter.WebSocketFilter;
 import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -600,7 +599,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 	}
 		
 	/**
-	 * Apply {@link WebSocketFilter} to visible parts of models.
+	 * Apply {@link WebSocketMessagesViewFilter} to visible parts of models.
 	 */
 	private void applyFilter() {
 		messagesModel.fireFilterChanged();
