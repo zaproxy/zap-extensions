@@ -161,21 +161,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel imp
 	}
 
 	protected void displayMessageInHttpPanel(final HttpMessage msg) {
-		if (msg == null) {
-			return;
-		}
-
-		if (msg.getRequestHeader().isEmpty()) {
-			View.getSingleton().getRequestPanel().clearView(true);
-		} else {
-			View.getSingleton().getRequestPanel().setMessage(msg);
-		}
-
-		if (msg.getResponseHeader().isEmpty()) {
-			View.getSingleton().getResponsePanel().clearView(false);
-		} else {
-			View.getSingleton().getResponsePanel().setMessage(msg, true);
-		}
+		View.getSingleton().displayMessage(msg);
 	}
 
 	@Override
