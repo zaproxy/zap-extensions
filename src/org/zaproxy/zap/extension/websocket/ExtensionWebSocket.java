@@ -49,7 +49,6 @@ import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.ViewDelegate;
-import org.parosproxy.paros.extension.filter.ExtensionFilter;
 import org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor;
 import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
 import org.parosproxy.paros.extension.manualrequest.http.impl.ManualHttpRequestEditorDialog;
@@ -78,9 +77,6 @@ import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInte
 import org.zaproxy.zap.extension.websocket.brk.WebSocketProxyListenerBreak;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
-import org.zaproxy.zap.extension.websocket.filter.FilterWebSocketPayload;
-import org.zaproxy.zap.extension.websocket.filter.WebSocketFilter;
-import org.zaproxy.zap.extension.websocket.filter.WebSocketFilterListener;
 import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorDialog;
 import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
 import org.zaproxy.zap.extension.websocket.ui.ExcludeFromWebSocketsMenuItem;
@@ -157,11 +153,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	private WebSocketStorage storage;
 
 	/**
-	 * List of WebSocket related filters.
-	 */
-	private WebSocketFilterListener wsFilterListener;
-
-	/**
 	 * Different options in config.xml can change this extension's behavior.
 	 */
 	private OptionsParamWebSocket config;
@@ -181,11 +172,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Contains raw regex values, as they appear in the sessions dialogue.
 	 */
 	private List<String> ignoredChannelList;
-
-	/**
-	 * This filter allows to change the bytes when passed through ZAP.
-	 */
-	private WebSocketFilter payloadFilter;
 
 	/**
 	 * Flag that controls if the WebSockets tab should be focused when a handshake message is received.
@@ -333,12 +319,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				extBreak.addBreakpointsUiManager(getBrkManager());
 			}
 			
-			// setup replace payload filter
-			wsFilterListener = new WebSocketFilterListener();
-			addAllChannelObserver(wsFilterListener);
-			payloadFilter = new FilterWebSocketPayload(this, wsPanel.getChannelsModel());
-			addWebSocketFilter(payloadFilter);
-			
 			// add exclude/include scope
 			hookMenu.addPopupMenuItem(new PopupIncludeWebSocketContextMenu());
 			hookMenu.addPopupMenuItem(new PopupExcludeWebSocketContextMenu());
@@ -398,8 +378,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		if (extBreak != null) {
 			extBreak.removeBreakpointsUiManager(getBrkManager());
 		}
-		
-		removeWebSocketFilter(payloadFilter);
 		
 		// clear up manualrequest extension
 		ExtensionManualRequestEditor extManReqEdit = (ExtensionManualRequestEditor) extLoader
@@ -493,34 +471,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		allChannelSenderListeners.remove(senderListener);
 		for (WebSocketProxy wsProxy : wsProxies.values()) {
 			wsProxy.removeSenderListener(senderListener);
-		}
-	}
-
-	/**
-	 * Add another WebSocket specific filter instance. Listens also to normal
-	 * HTTP communication.
-	 * 
-	 * @param filter Instance receives payloads and is able to change it.
-	 */
-	public void addWebSocketFilter(WebSocketFilter filter) {
-		ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
-		ExtensionFilter extFilter = (ExtensionFilter) extLoader.getExtension(ExtensionFilter.NAME);
-		if (extFilter != null) {
-			filter.initView(getView());
-			extFilter.addFilter(filter);
-			
-			wsFilterListener.addFilter(filter);
-		} else {
-			logger.warn("Filter '" + filter.getClass().toString() + "' couldn't be added as the filter extension is not available!");
-		}
-	}
-	
-	public void removeWebSocketFilter(WebSocketFilter filter) {
-		ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
-		ExtensionFilter extFilter = (ExtensionFilter) extLoader.getExtension(ExtensionFilter.NAME);
-		if (extFilter != null) {
-			extFilter.removeFilter(filter);
-			wsFilterListener.removeFilter(filter);
 		}
 	}
 
@@ -964,10 +914,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				wsProxy.shutdown();
 			}
 			wsProxies.clear();
-		}
-		
-		if (wsFilterListener != null) {
-			wsFilterListener.reset();
 		}
 	}
 

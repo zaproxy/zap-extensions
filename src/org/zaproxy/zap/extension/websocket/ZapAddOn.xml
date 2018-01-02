@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>14</version>
+	<version>15</version>
 	<status>release</status>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
+	Remove usage of core filter functionality.<br>
 	]]>
 	</changes>
 	<classnames>
