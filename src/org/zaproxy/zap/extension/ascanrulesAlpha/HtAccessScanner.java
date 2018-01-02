@@ -22,20 +22,13 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-/**
- * Active scan rule which checks whether or not trace.axd is exposed.
- * https://github.com/zaproxy/zaproxy/issues/3280
- * 
- * @author kingthorin+owaspzap@gmail.com
- */
-public class TraceAxdScanner extends AbstractAppFilePlugin {
+public class HtAccessScanner extends AbstractAppFilePlugin {
 
-	private static final String MESSAGE_PREFIX = "ascanalpha.traceaxdscanner.";
-	private static final int PLUGIN_ID = 40029;
+	private static final String MESSAGE_PREFIX = "ascanalpha.htaccscanner.";
+	private static final int PLUGIN_ID = 40032;
 	
-	
-	public TraceAxdScanner() {
-		super("trace.axd", MESSAGE_PREFIX);
+	public HtAccessScanner() {
+		super(".htaccess", MESSAGE_PREFIX);
 	}	
 
 	@Override
@@ -45,7 +38,6 @@ public class TraceAxdScanner extends AbstractAppFilePlugin {
 
 	@Override
 	public boolean targets(TechSet technologies) {
-		return technologies.includes(Tech.IIS) || technologies.includes(Tech.Windows) || technologies.includes(Tech.ASP)
-				|| technologies.includes(Tech.MsSQL);
+		return technologies.includes(Tech.Apache);
 	}
 }
