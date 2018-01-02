@@ -37,6 +37,7 @@ Cookies can be scoped by domain or path. This check is only concerned with domai
 <H2>CSRF Countermeasures</H2>
 The CSRFCountermeasures plugin identifies "potential" vulnerabilities with the lack of known CSRF 
 countermeasures in pages with forms.<br>
+At HIGH alert threshold only scans messages which are in scope.<br>
 Post 2.5.0 you can specify a comma separated list of identifiers in the 
 <code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
 Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.

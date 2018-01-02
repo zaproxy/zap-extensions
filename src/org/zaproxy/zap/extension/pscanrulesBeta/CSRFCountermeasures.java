@@ -31,6 +31,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
@@ -105,6 +106,10 @@ public class CSRFCountermeasures extends PluginPassiveScanner {
 	 */
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !msg.isInScope()) {
+			return; // At HIGH threshold return if the msg isn't in scope
+		}
+		
 		//need to do this if we are to be able to get an element's parent. Do it as early as possible in the logic 
 		source.fullSequentialParse();
 		

@@ -30,10 +30,12 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.Before;
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 
@@ -256,4 +258,71 @@ public class CSRFCountermeasuresUnitTest extends PassiveScannerTest {
 		assertEquals(1, alertsRaised.size());
 		assertEquals(Alert.RISK_LOW, alertsRaised.get(0).getRisk());
 	}
+	
+	@Test
+	public void shouldNotRaiseAlertWhenThresholdHighAndMessageOutOfScope() throws URIException {
+		//Given
+		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("ignore");
+		HttpMessage msg = createScopedMessage(false);
+		//When
+		rule.setConfig(new ZapXmlConfiguration());
+		rule.setAlertThreshold(AlertThreshold.HIGH);
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		//Then
+		assertEquals(0, alertsRaised.size());
+	}
+	
+	@Test
+	public void shouldRaiseAlertWhenThresholdHighAndMessageInScope() throws URIException {
+		//Given
+		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("ignore");
+		HttpMessage msg = createScopedMessage(true);
+		//When
+		rule.setConfig(new ZapXmlConfiguration());
+		rule.setAlertThreshold(AlertThreshold.HIGH);
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		//Then
+		assertEquals(1, alertsRaised.size());
+	}
+	
+	@Test
+	public void shouldRaiseAlertWhenThresholdMediumAndMessageOutOfScope() throws URIException {
+		//Given
+		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("ignore");
+		HttpMessage msg = createScopedMessage(false);
+		//When
+		rule.setConfig(new ZapXmlConfiguration());
+		rule.setAlertThreshold(AlertThreshold.MEDIUM);
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		//Then
+		assertEquals(1, alertsRaised.size());
+	}
+	
+	@Test
+	public void shouldRaiseAlertWhenThresholdLowAndMessageOutOfScope() throws URIException {
+		//Given
+		((CSRFCountermeasures)rule).setCSRFIgnoreAttName("ignore");
+		HttpMessage msg = createScopedMessage(false);
+		//When
+		rule.setConfig(new ZapXmlConfiguration());
+		rule.setAlertThreshold(AlertThreshold.LOW);
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+		//Then
+		assertEquals(1, alertsRaised.size());
+	}
+	
+	private HttpMessage createScopedMessage(boolean isInScope) throws URIException {
+		HttpMessage newMsg = new HttpMessage() {
+			@Override
+			public boolean isInScope() {
+				return isInScope;
+			}
+		};
+		newMsg.getRequestHeader().setURI(new URI("http://", "localhost", "/", ""));
+		newMsg.setResponseBody("<html><head></head><body>"
+				+ "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+				+ "</body></html>");
+		return newMsg;
+	}
+	
 }

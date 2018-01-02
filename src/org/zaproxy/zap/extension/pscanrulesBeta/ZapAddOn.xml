@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Minor code changes to address deprecation.<br/>
+	At HIGH threshold only perform CSRF checks for in scope messages (Issue 1354).<br/>
 	]]>
 	</changes>
 	<extensions>
