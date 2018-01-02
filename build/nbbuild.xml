@@ -107,7 +107,6 @@
 		<build-addon name="saml" />
 		<build-addon name="sequence" />
 		<build-addon name="simpleExample" />
-		<build-addon name="sniTerminator" />
 		<build-addon name="soap" />
 		<build-addon name="sse" />
 		<build-addon name="wappalyzer" />

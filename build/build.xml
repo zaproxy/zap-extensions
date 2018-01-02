@@ -427,7 +427,6 @@
 		<build-addon name="saml" />
 		<build-addon name="sequence" />
 		<build-addon name="simpleExample" />
-		<build-addon name="sniTerminator" />
 		<build-addon name="soap" />
 		<build-addon name="sse" />
 		<build-addon name="tlsdebug" />
@@ -762,14 +761,6 @@
 
     <target name="generate-wiki-simpleExample" description="Generates the wiki of simple example extension">
         <generate-wiki addon="simpleExample" />
-    </target>
-    
-    <target name="deploy-sniTerminator" description="deploy the sniTerminator extension">
-        <build-deploy-addon name="sniTerminator" />
-    </target>
-
-    <target name="generate-wiki-sniTerminator" description="Generates the wiki of SNI terminator">
-        <generate-wiki addon="sniTerminator" />
     </target>
     
     <target name="deploy-soap" description="deploy the SOAP scanning extension">
