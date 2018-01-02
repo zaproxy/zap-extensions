@@ -127,8 +127,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 			JSONObject cats = json.getJSONObject("categories");
 			
 			for (Object cat : cats.entrySet()) {
-				Map.Entry<String, String> mCat = (Map.Entry<String, String>) cat;
-				this.categories.put(mCat.getKey(), mCat.getValue());
+				Map.Entry<String, JSONObject> mCat = (Map.Entry<String, JSONObject>) cat;
+				this.categories.put(mCat.getKey(), mCat.getValue().getString("name"));
 			}
 			
 			JSONObject apps = json.getJSONObject("apps");
@@ -199,7 +199,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 				Map.Entry<String, String> entry = (Map.Entry<String, String>) obj;
 				try {
 					Map<String, AppPattern> map = new HashMap<String, AppPattern>();
-					ap = this.strToAppPAttern(entry.getValue());
+					ap = this.strToAppPattern(entry.getValue());
 					map.put(entry.getKey(), ap);
 					list.add(map);
 				} catch (NumberFormatException e) {
@@ -224,14 +224,14 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 					objStr = ((JSONArray)obj).getString(0);
 				}
 				try {
-					list.add(this.strToAppPAttern(objStr));
+					list.add(this.strToAppPattern(objStr));
 				} catch (PatternSyntaxException e) {
 					logger.error("Invalid pattern syntax " + objStr, e);
 				}
 			}
 		} else if (json != null) {
 			try {
-				list.add(this.strToAppPAttern(json.toString()));
+				list.add(this.strToAppPattern(json.toString()));
 			} catch (PatternSyntaxException e) {
 				logger.error("Invalid pattern syntax " + json.toString(), e);
 			}
@@ -239,7 +239,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		return list;
 	}
 	
-	private AppPattern strToAppPAttern(String str) {
+	private AppPattern strToAppPattern(String str) {
 		AppPattern ap = new AppPattern();
 		String[] values = str.split("\\\\;");
 		String pattern = values[0];
@@ -342,6 +342,11 @@ public class ExtensionWappalyzer extends ExtensionAdaptor implements SessionChan
 		} catch (MalformedURLException e) {
 			return null;
 		}
+	}
+	
+	@Override
+	public String getUIName() {
+		return Constant.messages.getString("wappalyzer.name");
 	}
 	
 	private static String getStringResource(String resourceName) throws IOException {
