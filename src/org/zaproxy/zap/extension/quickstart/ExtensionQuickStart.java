@@ -209,6 +209,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	public void stopAttack() {
 		if (attackThread != null) {
 			attackThread.stopAttack();
+			attackThread = null;
 		}
 	}
 
@@ -230,7 +231,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 
 	@Override
 	public void sessionAboutToChange(Session arg0) {
-		// Ignore
+		stopAttack();
 	}
 
 	@Override

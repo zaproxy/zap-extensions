@@ -37,8 +37,10 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.extension.spider.SpiderScan;
 import org.zaproxy.zap.model.Target;
 
 public class AttackThread extends Thread {
@@ -100,14 +102,15 @@ public class AttackThread extends Thread {
 			sleep(1500);
 			
 			try {
+				SpiderScan spiderScan = extSpider.getScan(spiderId);
 				 // Wait for the spider to complete
-				while (! extSpider.getScan(spiderId).isStopped()) { 
+				while (! spiderScan.isStopped()) { 
 					sleep (500);
 					if (this.stopAttack) {
 						extSpider.stopScan(spiderId);
 						break;
 					}
-					extension.notifyProgress(Progress.spider, extSpider.getScan(spiderId).getProgress());
+					extension.notifyProgress(Progress.spider, spiderScan.getProgress());
 				}
 			} catch (InterruptedException e) {
 				// Ignore
@@ -146,13 +149,14 @@ public class AttackThread extends Thread {
 			}
 		
 			try {
+				ActiveScan ascan = extAscan.getScan(scanId);
 				 // Wait for the active scanner to complete
-				while (! extAscan.getScan(scanId).isStopped()) { 
+				while (! ascan.isStopped()) { 
 					sleep (500);
 					if (this.stopAttack) {
 						extAscan.stopScan(scanId);
 					}
-					extension.notifyProgress(Progress.ascan, extAscan.getScan(scanId).getProgress());
+					extension.notifyProgress(Progress.ascan, ascan.getProgress());
 				}
 			} catch (InterruptedException e) {
 				// Ignore
