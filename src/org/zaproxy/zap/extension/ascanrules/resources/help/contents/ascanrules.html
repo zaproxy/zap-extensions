@@ -43,8 +43,10 @@ This rule checks the headers of secure pages and reports an alert if they allow 
 
 This rule starts by submitting a 'safe' value and analyzing all of the locations in which this value occurs in the response (if any). <br>
 It then performs a series of attacks specifically targeted at the location in which each of the instances occurs, 
-including tag attributes, URL attributes, attributes in tags which support src attributes, html comments etc. (This rule only scans 
-HTTP PUT requests at LOW threshold.)
+including tag attributes, URL attributes, attributes in tags which support src attributes, html comments etc. <br>
+Note: <br>
+This rule only scans HTTP PUT requests at LOW threshold.<br>
+If an XSS injection is located in a JSON response a LOW risk and LOW confidence alert is raised.
 
 <H2>Cross Site Scripting (persistent)</H2>
 

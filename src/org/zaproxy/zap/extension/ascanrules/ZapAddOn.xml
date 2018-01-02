@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Issue 3979: Fix reflected XSS in PUT response.<br>
+	Issue 3978: Handle relfected XSS in JSON response.<br>
 	]]>
     </changes>
 	<extensions>

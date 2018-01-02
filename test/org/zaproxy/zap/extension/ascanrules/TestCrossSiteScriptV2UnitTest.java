@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
@@ -708,5 +709,37 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         this.rule.scan();
         //Then
         assertThat(httpMessagesSent, hasSize(greaterThan(0)));
+    }
+
+    @Test
+    public void shouldReportXssWeaknessInJsonResponse() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInJsonReponse/";
+
+        this.nano.addHandler(new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String name = session.getParms().get("name");
+                String response;
+                if (name != null) {
+                    response = getHtml("example.json", new String[][] { { "name", name } });
+                } else {
+                    response = getHtml("example.json");
+                }
+                Response resp = new Response(response);
+                resp.setMimeType("application/json");
+                return resp;
+            }
+        });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getName(), containsString("JSON"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
     }
 }
