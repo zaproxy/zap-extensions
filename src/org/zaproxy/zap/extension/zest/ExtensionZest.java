@@ -1393,26 +1393,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 				return;
 			}
 
-			if (lastSelectedMessage.getRequestHeader() != null) {
-				logger.debug("displayMessage "
-						+ lastSelectedMessage.getRequestHeader().getURI());
-			} else {
-				logger.debug("displayMessage null header");
-			}
-
-			if (lastSelectedMessage.getRequestHeader() == null) {
-				View.getSingleton().getRequestPanel().clearView(true);
-			} else {
-				View.getSingleton().getRequestPanel()
-						.setMessage(lastSelectedMessage);
-			}
-
-			if (lastSelectedMessage.getResponseHeader() == null) {
-				View.getSingleton().getResponsePanel().clearView(false);
-			} else {
-				View.getSingleton().getResponsePanel()
-						.setMessage(lastSelectedMessage, true);
-			}
+			View.getSingleton().displayMessage(lastSelectedMessage);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -1422,9 +1403,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 		if (!View.isInitialised()) {
 			return;
 		}
-		View.getSingleton().getRequestPanel().clearView(true);
-		View.getSingleton().getResponsePanel().clearView(false);
 		lastSelectedMessage = null;
+		View.getSingleton().displayMessage(lastSelectedMessage);
 	}
 
 	public List<ScriptNode> getSelectedZestNodes() {
