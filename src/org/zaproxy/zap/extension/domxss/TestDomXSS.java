@@ -55,6 +55,7 @@ public class TestDomXSS extends AbstractAppPlugin {
 	private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
     private static Logger log = Logger.getLogger(TestDomXSS.class);
 
+    private static final String POLYGLOT_ALERT 			= "#jaVasCript:/*-/*`/*\\`/*'/*\"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert()//>\\x3e";
     private static final String HASH_SCRIPT_ALERT 		= "#<script>alert(1)</script>";
     private static final String HASH_IMG_ALERT 			= "#<img src=\"random.gif\" onerror=alert(1)>";
     private static final String HASH_HASH_ALERT 		= "#abc#<script>alert(1)</script>";
@@ -66,6 +67,7 @@ public class TestDomXSS extends AbstractAppPlugin {
 
     // In order of effectiveness vs benchmark apps
     public static final String [] ATTACK_STRINGS = {
+        POLYGLOT_ALERT,
         HASH_SCRIPT_ALERT,
         HASH_IMG_ALERT,
         HASH_HASH_ALERT,
@@ -466,14 +468,14 @@ public class TestDomXSS extends AbstractAppPlugin {
 		
 		switch (this.getAttackStrength()) {
 		case LOW:
-			numberOfAttackStrings = 2;
+			numberOfAttackStrings = 3;
 			break;
 		case MEDIUM:
 		default:
-			numberOfAttackStrings = 4;
+			numberOfAttackStrings = 5;
 			break;
 		case HIGH:
-			numberOfAttackStrings = 6;
+			numberOfAttackStrings = 7;
 			break;
 		case INSANE:
 			numberOfAttackStrings = ATTACK_STRINGS.length;

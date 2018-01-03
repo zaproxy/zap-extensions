@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Minor code changes.<br>
+	Add XSS Polyglot (Issue 2322).<br>
 	]]>
     </changes>
 	<dependencies>
