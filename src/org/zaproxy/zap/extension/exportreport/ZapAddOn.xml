@@ -1,11 +1,15 @@
 <zapaddon>
 	<name>Export Report</name>
-	<version>4</version>
+	<version>5</version>
 	<status>alpha</status>
 	<description>Report Export module that allows users to customize content and export in a desired format.</description>
 	<author>Goran Sarenkapa - JordanGS</author>
 	<url></url>
-	<changes>Updated the command line help messages.</changes>
+	<changes>
+	<![CDATA[
+	Change where XSL files are deployed to avoid clashes (Issue 4206).<br>
+	]]>
+	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.exportreport.ExtensionExportReport</extension>
 	</extensions>
@@ -13,8 +17,8 @@
 	<pscanrules/>
 	<filters/>
 	<files>
-		<file>xml/merge.xml.xsl</file>
-		<file>xml/report.html.xsl</file>
+		<file>exportreport/merge.xml.xsl</file>
+		<file>exportreport/report.html.xsl</file>
 		<file>licenses/SpringUtilities-license.txt</file>
 	</files>
 	<not-before-version>2.4.0</not-before-version>

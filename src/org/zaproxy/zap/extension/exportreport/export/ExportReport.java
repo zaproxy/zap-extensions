@@ -49,6 +49,11 @@ import org.zaproxy.zap.view.widgets.WritableFileChooser;
  */
 
 public class ExportReport {
+
+    private static final String EXPORTREPORT_DIR = "exportreport";
+    private static final String XML_XSL_FILENAME = "merge.xml.xsl";
+    private static final String HTML_XSL_FILENAME = "report.html.xsl";
+
     private static final Logger logger = Logger.getLogger(ExportReport.class);
 
     private Task task; // Create a task and dump the export into the background, essential for large exports.
@@ -88,9 +93,8 @@ public class ExportReport {
                 return null;
             }
 
-            String extensionPath = Constant.getZapHome() + "xml" + File.separator;
-            String mergeXSL = extensionPath + "merge.xml.xsl";
-            String reportXSL = extensionPath + "report.html.xsl";
+            String mergeXSL = getXmlXslFilePath();
+            String reportXSL = getHtmlXslFilePath();
 
             File f_view = null; // Needs to be initialized for check below;
             boolean show = false;
@@ -154,6 +158,18 @@ public class ExportReport {
         }
     }
 
+    private static String getExportReportHomeDir() {
+        return Constant.getZapHome() + EXPORTREPORT_DIR + File.separator;
+    }
+
+    private static String getXmlXslFilePath() {
+        return getExportReportHomeDir() + XML_XSL_FILENAME;
+    }
+
+    private static String getHtmlXslFilePath() {
+        return getExportReportHomeDir() + HTML_XSL_FILENAME;
+    }
+
     public boolean generateReport(ExtensionExportReport extension, String absolutePath, String ext, ArrayList<String> sourceDetailsList, ArrayList<String> alertSeverityList, ArrayList<String> alertDetailsList) {
 
         File f = new File(absolutePath);
@@ -185,9 +201,8 @@ public class ExportReport {
             return false;
         }
 
-        String extensionPath = Constant.getZapHome() + "xml" + File.separator;
-        String mergeXSL = extensionPath + "merge.xml.xsl";
-        String reportXSL = extensionPath + "report.html.xsl";
+        String mergeXSL = getXmlXslFilePath();
+        String reportXSL = getHtmlXslFilePath();
 
         File f_view = null; // Needs to be initialized for check below;
         boolean show = false;
