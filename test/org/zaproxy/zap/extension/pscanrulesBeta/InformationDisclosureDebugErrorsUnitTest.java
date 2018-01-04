@@ -33,9 +33,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest {
 	private static final String URI = "https://www.example.com/";
@@ -178,6 +180,48 @@ public class InformationDisclosureDebugErrorsUnitTest extends PassiveScannerTest
 		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
 		
 		assertThat(alertsRaised.size(), equalTo(0));
+	}
+	
+	@Test
+	public void shouldNotAlertIfJSResponseContainsErrorStringAtHighThreshold() throws HttpMalformedHeaderException {
+		// Given
+		HttpMessage msg = createHttpMessageWithRespBody(DEFAULT_ERROR_MESSAGE);
+		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "application/javascript");
+		//When
+		rule.setConfig(new ZapXmlConfiguration());
+		rule.setAlertThreshold(AlertThreshold.HIGH);
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+		//Then
+		assertThat(alertsRaised.size(), equalTo(0));
+	}
+	
+	@Test
+	public void shouldNotAlertIfJSResponseContainsErrorStringAtMediumThreshold() throws HttpMalformedHeaderException {
+		// Given
+		HttpMessage msg = createHttpMessageWithRespBody(DEFAULT_ERROR_MESSAGE);
+		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "application/javascript");
+		//When
+		rule.setConfig(new ZapXmlConfiguration());
+		rule.setAlertThreshold(AlertThreshold.MEDIUM);
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+		//Then
+		assertThat(alertsRaised.size(), equalTo(0));
+	}
+	
+	@Test
+	public void shouldAlertIfJSResponseContainsErrorStringAtLowThreshold() throws HttpMalformedHeaderException {
+		// Given
+		HttpMessage msg = createHttpMessageWithRespBody(DEFAULT_ERROR_MESSAGE);
+		msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "application/javascript");
+		//When
+		rule.setConfig(new ZapXmlConfiguration());
+		rule.setAlertThreshold(AlertThreshold.LOW);
+		rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+		// Then
+		assertThat(alertsRaised.size(), equalTo(1));
+		assertThat(alertsRaised.get(0).getCweId(), equalTo(200));
+		assertThat(alertsRaised.get(0).getWascId(), equalTo(13));
+		assertThat(alertsRaised.get(0).getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE));
 	}
 	
 	@Test

@@ -47,7 +47,8 @@ Only use this feature to ignore FORMs that you know are safe, for example search
 <H2>Information Disclosure: Debug Errors</H2>
 This passive scanner checks the content of web responses for known Debug Error message fragments.
 Access to such details may provide a malicious individual with means by which to further abuse the web site.
-They may also leak data not specifically meant for end user consumption.
+They may also leak data not specifically meant for end user consumption.<br>
+Note: Javascript responses are only assessed at LOW thresehold.
 
 <H2>Information Disclosure: In URL</H2>
 Attempts to identify the existence of sensitive details within the visited URIs themselves 

@@ -31,6 +31,7 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -53,6 +54,10 @@ public class InformationDisclosureDebugErrors extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		//At medium or high exclude javascript responses
+		if (!AlertThreshold.LOW.equals(this.getAlertThreshold()) && msg.getResponseHeader().isJavaScript()) {
+			return;
+		}
 		if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
 			String parameter;
 			if ((parameter = doesResponseContainsDebugErrorMessage(msg.getResponseBody())) != null) {
