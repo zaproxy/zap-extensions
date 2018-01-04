@@ -36,7 +36,6 @@ import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.exportreport.export.ExportReport;
 import org.zaproxy.zap.extension.exportreport.filechooser.FileList;
 import org.zaproxy.zap.extension.exportreport.filechooser.Utils;
@@ -136,7 +135,7 @@ public class ExtensionExportReport extends ExtensionAdaptor implements CommandLi
         if (getView() != null) {
             extensionHook.getHookMenu().addReportMenuItem(getMenuExportReport());
         }
-        API.getInstance().registerApiImplementor(exportReportAPI);
+        extensionHook.addApiImplementor(exportReportAPI);
         extensionHook.addCommandLine(getCommandLineArguments());
     }
 
