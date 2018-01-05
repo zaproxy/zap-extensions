@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules</name>
-	<version>21</version>
+	<version>22</version>
 	<status>release</status>
 	<description>The release quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Update for 2.7.0, Minor code changes to address deprecation.<br>
+	Retired the password auto-complete passive scan rule (Issue 4215).<br>
 	]]>
 	</changes>
 	<extensions>
@@ -23,7 +23,6 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.CrossDomainScriptInclusionScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.HeaderXssProtectionScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.MixedContentScanner</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.pscanrules.PasswordAutocompleteScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.TestInfoPrivateAddressDisclosure</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.TestInfoSessionIdURL</pscanrule>         
 		<pscanrule>org.zaproxy.zap.extension.pscanrules.XContentTypeOptionsScanner</pscanrule>
