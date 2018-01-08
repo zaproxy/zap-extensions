@@ -163,6 +163,11 @@ public class FormatString extends AbstractAppParamPlugin  {
 						"\n The target may have replied with a poorly formed redirect due to our input.");
 				return; //Something went wrong, no point continuing
 			}
+			
+			if (HttpStatusCode.INTERNAL_SERVER_ERROR == msg.getResponseHeader().getStatusCode()) {
+				return; // Initial message returned error, subsequent requests are likely to as well
+			}
+			
 			HttpResponseBody initialResponseBody= msg.getResponseBody();
 			int initialResponseLength = initialResponseBody.length();
 		//  The following section of the code attacks GNU and generic C compiler format 
