@@ -3,84 +3,76 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Passive Scan Rules
+Aturan Pindai Pasif
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Passive Scan Rules</h1>
-The following release quality passive scan rules are included in this add-on:
+<h1>Aturan pindai pasif</h1>
+Aturan pemindaian pasif kualitas rilis berikut disertakan dalam add-on ini:
 
-<h2>Application Errors</h2>        
- Check server responses for HTTP 500 - Internal Server Error type responses or those that contain a known error string.
+<h2>Info aplikasi</h2>        
+ Periksa respon server HTTP 500 - Internal Server Error jenis tanggapan yang mendukung tali kesalahan.
  
-<h2>Cache Control</h2>
-Checks "Cache-Control" and "Pragma" response headers against general industry best practice settings for protection of sensitive content.<br>
-At MEDIUM and HIGH thresholds only non-error or non-redirect text responses (excluding JavaScript) are considered.<br>
-At LOW threshold all responses apart from images and CSS are considered including errors and redirects.
+<h2>Cache kontrol</h2>
+Memeriksa ''Cache-Kontrol'' dan ''Pragma'' Header respon terhadap industri umum pengaturan praktek terbaik untuk perlindungan konten sensitif.<br>
+Diambang menengah dan tinggi dianggap hanya bebas-kesalahan atau non-redirect teks tanggapan (tidak termasuk JavaScript).<br>
+Di ambang rendah semua tanggapan dari gambar dan CSS dianggap termasuk dan pengalihan.
 
-<h2>Content Type Missing</h2>
-Raises an alert if the response is lacking a Content-Type header or if the header exists but the value is empty.
+<h2>Jenis konten yang hilang</h2>
+Menimbulkan suatu peringatan jika respon tersebut tidak memiliki jenis konten atau jika headernya ada namun nilainya kosong.
 
 <h2>Cookie HttpOnly</h2>
-Ensures that as cookies are set they are flagged HttpOnly. The HttpOnly flag indicates to browsers that the cookie 
-being set should be acted upon by client side script (such as JavaScript).
+Memastikan bahwa saat cookie ditetapkan, mereka diberi label HttpOnly, Flag HtppOnly menunjukkan ke pencarianbahwa cookie tersebut sedang diatur dan harus segara ditindaklanjuti oleh script sisi klien (seperti JavaScript).
 
-<h2>Cookie Secure Flag</h2>
-Looks for cookies set during HTTPS sessions, raises an alert for those that are set but do not include the secure flag.
-A cookie set with the secure flag will not be sent during a plain HTTP session.
+<h2>Bendera aman cookie</h2>
+Mencaro cookie yang di set selama sesi HTPPS, menimbulkan peringatan bagi mereka yang ditetapkan tetapi tidak menyertakan bendera aman. Cookie ditetapkan dengan bendera yang aman tidak akan dikirim selama sesi HTTP polos.
 
-<h2>Cross Domain Script Inclusion</h2>
-Validates whether or not scripts are included from domains other than the domain hosting the content. 
-By looking at the "src" attributes of "script" tags in the response.<br>
-Allowed Cross-Domain scripts:  
+<h2>Penyisipan Script lintas Domain</h2>
+Memvalidasi apakahscript disertakan dalam domain selain domain yang memhosting konten.
+Dengan melihat ''src'' atribut ''src'' dari tag dalam tanggapan.<br>
+Script memungkinksn Cross-Domain:  
 <ul>
-<li>Any script with a non-empty "integrity" attribute is ignored - the integrity value is not checked as this will be checked by the browser</li>
-<li>At MEDIUM and HIGH thresholds if a script URL falls within a context that also includes the URL of the base message no alerts will be raised.</li>
+<li>Setiap scrip dengan atribut '' integritas'' tidak diabaikan - nilai integritas tidak dicentang karena ini kan diperiksa oleh browser</li>
+<li>Diambang menengah dan tinggi jika URL scrip yang jatuh dalam konteks yang juga mencakup URL dasar pesan peringatan tidak akan dibangkitkan.</li>
 </ul> 
 
-<h2>Header XSS Protection</h2>
-Checks for the existence of and value/setting of the X-XSS-Protection header. 
-This response header can be used to configure a user-agent's built-in reflective XSS protection.<br>
-At MEDIUM and HIGH thresholds only non-error or non-redirect HTML responses are considered.<br>
-At LOW threshold all text responses are considered including errors and redirects.
+<h2>Header XSS perlindungan</h2>
+Cek untuk keberadaan dan nilai/pengaturan header X-XSS-perlindungan. 
+Header respon ini dapat digunkan untuk mengkonfigurasi agen pengguna built-in perlindungan XSS reflektif.<br>
+Pada ambang menengah dan tinggi hanya tanggapan HTML bebas-kesalahan atau non-redirect yang dipertimbangkan.<br>
+Pada ambang batas rendah semua tanggpan teks dipertimbangkantermasuk kesalahan dan pengalihan.
 
-<h2>Mixed Content</h2>
-For content served via HTTPS analyse all the src attributes in the response looking for those sourced
-via plain HTTP.
+<h2>Kontenb Campuran</h2>
+Untuk konten yang ditayangkan melalui HTTPS Nmenganalisis semua src atribut dalam respon mencari orang-orang yang bersumber melalui HTTP polos.
 
-<h2>Password Autocomplete</h2>
-Looks for "password" type input fields and checks for the setting "autocomplete=off".
+<h2>Perlengkapan kata sandi otomatis</h2>
+Mencari ''kata sandi'' tipe ladang input dan memeriksa pengaturan ''aotucomplete=mati''.
 
-<h2>Private Address Disclosure</h2>
-Checks the response content for inclusion of RFC 1918 IPv4 addresses as well as 
-Amazon EC2 private hostnames (for example, ip-10-0-56-78). This information can give an attacker 
-useful information about the IP address scheme of the internal network, and might be helpful for 
-further attacks targeting internal systems.
+<h2>Pengungkapan Alamat Pribadi</h2>
+Cek isi respon untuk dimasukkan alamat IPv4 1918 serta Amazon EC2 pribadi hostname (misalnya, ip-10-0-56-78). Informasi ini dapat memberikan penyerangan informasi yang berguna tentang skema alamat IP dari jaringan internal, dan mungkin bisa membantu untuk lebih lanjut serangan penargetan sitem internal.
 
-<h2>Session Id in URL Rewrite</h2>
-This scanner checks for the existence of session token type parameters being rewritten to the URL. 
-To help reduce false positives the scanner checks the length of the token value,  if the value of the parameter 
-is not greater than 8 characters in length then the parameter is ignored 
-(i.e.: survey?sId=5 would not be flagged as vulnerable).
+<h2>Sidang ID di URl Menulis Kembali</h2>
+Pemindai ini memeriksa adanya parameter jenis token sesi yang ditulis ulang ke URL. 
+Untuk membantui mengurangi keslahan positif pemandaian cek panjang nilai token, jika nilai parameter tidak lebih dari 8 karakter panjangnya maka parameter akan diabaikan ( yaitu: Survei? sld = 5 akan ditandai sebagai rentan).
 
-<h2>X-Content-Type-Options</h2>
-This scanner check for the Anti-MIME-Sniffing header X-Content-Type-Options and ensures it is set to 'nosniff'.<br>
-At MEDIUM and HIGH thresholds this scanner does not alert on client or server error responses or redirects.<br> 
-At LOW threshold it will alert on all responses including errors and redirects.<br>
+<h2>X-Konten-Tipe-Pilihan</h2>
+Pemeriksaan pemindai ini untuk header Anti-MIME-Sniffing header X-Konten-Tipe-Pilihsn dan memastikiannya disetel ke 'nosnif'.<br>
+Di ambang menengah dan tinggi pemindai ini tidak akan waspada pada klien atau server tanggapan kesalahan atau pengalihan.<br> 
+Pada ambang abtas rendah semua tanggapan teks dipertimbangkan dan pengalihan.<br>
  
-<h2>X-Frame-Options Header Scanner</h2>
-This scanner checks for the existence and validity of the X-Frame-Options header.<br> 
-At MEDIUM and HIGH thresholds this only looks at non-error or non-redirect HTML responses.<br>
-At LOW threshold it looks at all text responses including errors and redirects.<br>
-The following conditions may result in an alert:
+<h2>X-Bingkai-Pilihan Header Pemindai</h2>
+Pemindai ini memeriksa keberadaan dan validitas header X-Bingkai-Pilihan.<br> 
+Di amabng menengah dan tinggi ini hanaya terlihat kesalahan di bebas-kesalahan atau non-redirect HTML tanggapan.<br>
+Pada ambang batas rendah semua tanggapan teks dipertimbangkan dan pengalihan.<br>
+Kondisi tersebut dapat mengakibatkan peringatan:
 <ul> 
- <li><b>X-Frame-Options Header Not Set: </b> If the X-Frame-Options header is missing from the response completely.</li>
- <li><b>Multiple X-Frame-Options Header Entries: </b> When more than one X-Frame-Options header is detected on the response.</li>
- <li><b>X-Frame-Options Defined via META (Non-compliant with Spec): </b> A "http-equiv" entry was found in the response that attempts to define X-Frame-Options, which is not supported by the specification.</li>
- <li><b>X-Frame-Options Setting Malformed: </b> The header is present with no value, or the value is not as expected (i.e.: other than "DENY", "SAMEORIGIN", or "ALLOW-FROM").</li>
+ <li><b>X-Bingkaio-Pilihan Header tidak set: </b> jika header X-Bingkai-Pilihan hilang dari respon sepenuhnya.</li>
+ <li><b>Beberapa entri X-Bingkai-Pilihan header: </b> Bila lebih dari satu header X-Bingkai-Pilhan terdeteksi pada respon.</li>
+ <li><b>X-Bingkai-Pilihan Ditetapkan melalui META (Non-compliant dengan Spec): </b> A ''http-equiv'' ditemukan dalam respon yang mencoba mendefenisikan X-Bingkai-Pilihan, yang tidak didukung oleh spesifikasi.</li>
+ <li><b>X-Bingkai-Pilihan pengaturan Malformed: </b> Header hadir dengan nilai tidak ada, atau nilai adalah tidak seperti yang diharapkan (yaitu: 'Tolak''. ''SAMEORIGIN''. atau ''IZINKAN-DARI'').</li>
 </ul>
-By default no alerts will be raised in the response includes a Content-Security-Policy 'frame-ancestors' element as this take precedence over the X-Frame-Options header.
-However at LOW threshold the above issues will still be reported but at a LOW risk. 
+Secara default lansiran tidak akan dibangkitkan dalam respon termasuk kebijakan konten keamanan 'frame-leluhur' elemen seperti ini diutamakan daripada header X-Bingkai_pilihan.
+Namun di ambang rendah berbagai persoalan diatas masih akan dilaporkan tetapi pada rendah resiko. 
 
 </body>
 </html>

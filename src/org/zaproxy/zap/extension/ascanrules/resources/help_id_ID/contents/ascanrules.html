@@ -12,26 +12,26 @@ The following release quality active scan rules are included in this add-on:
 
 <h2>Buffer Overflow</h2>
 
-Looks for indicators of buffer overflows in compiled code.  It does this by putting out large strings of input text and look for code crash
-and abnormal session closure.
+Looks for indicators of buffer overflows in compiled code.  Hal ini dilakukan dengan menempatkan string teks masukan yang besar dan mencari kode yang rusak
+dan penutupan sesi abnormal.
 
 <h2>Code Injection</h2>
 
 This rule submits PHP and ASP attack strings as values for URL parameters in a request and examines the response to 
-see if those values have been evaluated by the server. First, requests are constructed and sent containing injected PHP instructions
-to print a token. In the event of a match between the token and the content of the response body, the scanner raises an alert and returns immediately.
-If there aren't any matches, the scanner will construct requests with several injected ASP strings that instruct the server to write the product
-of two randomly generated integers in the response. If the body of the response matches the product, an alert is raised.
+see if those values have been evaluated by the server. Pertama, permintaan dibuat dan dikirim berisi petunjuk PHP yang disuntikkan
+untuk mencetak token. Jika terjadi benturan antara token dan isi dari respons body, pemindai menimbulkan peringatan dan segera kembali.
+Jika tidak ada pertandingan, pemindaian akan membuat permintaan dengan beberapa string ASP yang disuntikkan yang menginstruksikan server untuk menulis produk
+dari dua bilangan bulat yang dihasilkan secara acak dalam responnya. If the body of the response matches the product, an alert is raised.
 
 <h2>Command Injection</h2>
 
 This rule submits *NIX and Windows OS commands as URL parameter values to determine whether or not the web application is passing unchecked
-user input directly to the underlying OS. The injection strings consist of meta-characters that may be interpreted by the OS
-as join commands along with a payload that should generate output in the response if the application is vulnerable. If the content of a response body
-matches the payload, the scanner raises an alert and returns immediately. In the event that none of the error-based matching attempts
+user input directly to the underlying OS. String injeksi terdiri dari meta-karakter yang bisa diinterpretasikan oleh OS
+sebagai perintah join beserta payload yang seharusnya menghasilkan output dalam respon jika aplikasi tersebut rentan. Jika isi dari response body
+sesuai dengan muatan, pemindai menimbulkan peringatan dan segeralah kembali. In the event that none of the error-based matching attempts
 return output in the response, the scanner will attempt a blind injection attack by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
-and receiving the response against a heuristic time-delay lower limit. If the elapsed time is greater than this limit, an alert is raised with medium confidence
-and the scanner returns immediately.
+and receiving the response against a heuristic time-delay lower limit. Jika waktu berlalu lebih cepat dari batas ini, peringatan akan meningkat dengan kepercayaan diri sedang
+dan pemindai segera kembali.
 <br>
 Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
@@ -53,8 +53,8 @@ target locations in other pages.
 
 <h2>CRLF Injection</h2>
 
-This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. If the response contains an identical Set-Cookie header,
-an alert is raised and the scanner returns immediately.
+This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. Jika tanggapan berisi header Set-Cookie yang identik,
+peringatan akan dinaikkan dan pemindai akan segera kembali.
 
 
 <h2>Directory Browsing</h2>
