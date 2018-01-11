@@ -39,8 +39,7 @@ public class ViewMenu extends ExtensionPopupMenu {
 	private static final String MENU_LABEL = Constant.messages.getString("http.panel.view.syntaxtext.popup.view.label");
 	private static final String ANTI_ALIASING = Constant.messages.getString("http.panel.view.syntaxtext.popup.view.antiAliasing");
 	private static final String SHOW_LINE_NUMBERS = Constant.messages.getString("http.panel.view.syntaxtext.popup.view.showLineNumbers");
-	// TODO Replace with core resource message when available.
-	private static final String CODE_FOLDING = "Code Folding";
+	private static final String CODE_FOLDING = Constant.messages.getString("http.panel.view.syntaxtext.popup.view.codeFolding");
 	private static final String WORD_WRAP = Constant.messages.getString("http.panel.view.syntaxtext.popup.view.wordWrap");
 	private static final String HIGHLIGHT_CURRENT_LINE = Constant.messages.getString("http.panel.view.syntaxtext.popup.view.highlightCurrentLine");
 	private static final String FADE_CURRENT_HIGHLIGHT_LINE = Constant.messages.getString("http.panel.view.syntaxtext.popup.view.fadeCurrentHighlightLine");
