@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.quickstart.launch;
 
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -51,6 +54,7 @@ import org.zaproxy.zap.extension.quickstart.QuickStartPanelContentProvider;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
@@ -65,6 +69,17 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
     private static final Logger LOGGER = Logger
             .getLogger(ExtensionQuickStartLaunch.class);
 
+    public static final String RESOURCES = "/org/zaproxy/zap/extension/quickstart/resources";
+
+    private static final ImageIcon CHROME_ICON = DisplayUtils
+            .getScaledIcon(new ImageIcon(ExtensionQuickStart.class.getResource(RESOURCES + "/chrome.png")));
+    private static final ImageIcon CHROMIUM_ICON = DisplayUtils
+            .getScaledIcon(new ImageIcon(ExtensionQuickStart.class.getResource(RESOURCES + "/chromium.png")));
+    private static final ImageIcon FIREFOX_ICON = DisplayUtils
+            .getScaledIcon(new ImageIcon(ExtensionQuickStart.class.getResource(RESOURCES + "/firefox.png")));
+    private static final ImageIcon SAFARI_ICON = DisplayUtils
+            .getScaledIcon(new ImageIcon(ExtensionQuickStart.class.getResource(RESOURCES + "/safari.png")));
+
     private String defaultLaunchContent;
 
     private QuickStartLaunchAPI api;
@@ -73,6 +88,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
 
     private JButton launchButton;
     private JComboBox<ProvidedBrowserUI> browserComboBox;
+    private JButton launchToolbarButton;
     private JLabel exploreLabel;
     private JLabel spacerLabel;
 
@@ -97,6 +113,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
         extensionHook.addOptionsParamSet(getQuickStartLaunchParam());
 
         if (getView() != null) {
+            extensionHook.getHookView().addMainToolBarComponent(getLaunchToolbarButton());
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
             this.getExtQuickStart().addContentProvider(this);
         }
@@ -141,8 +158,8 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
         if (View.isInitialised()) {
             // Always init in case the user changes to use the default home page
             // later
-            defaultLaunchContent = Constant.messages
-                    .getString("quickstart.launch.html");
+            defaultLaunchContent = Constant.messages.getString("quickstart.launch.html");
+            setToolbarButtonIcon(getQuickStartLaunchParam().getDefaultBrowser());
         }
 
         if (!getQuickStartLaunchParam().isZapStartPage()) {
@@ -225,6 +242,33 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
         return alertParam;
     }
 
+    private JButton getLaunchToolbarButton() {
+        if (launchToolbarButton == null) {
+            launchToolbarButton = new JButton();
+            launchToolbarButton.setToolTipText(Constant.messages.getString("quickstart.toolbar.button.tooltip.launch"));
+            launchToolbarButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    launchBrowser();
+                }
+            });
+        }
+        return launchToolbarButton;
+    }
+
+    private void setToolbarButtonIcon(String browser) {
+        if ("firefox".equalsIgnoreCase(browser)) {
+            launchToolbarButton.setIcon(FIREFOX_ICON);
+        } else if ("chrome".equalsIgnoreCase(browser)) {
+            launchToolbarButton.setIcon(CHROME_ICON);
+        } else if ("safari".equalsIgnoreCase(browser)) {
+            launchToolbarButton.setIcon(SAFARI_ICON);
+        } else {
+            launchToolbarButton.setIcon(CHROMIUM_ICON);
+        }
+    }
+
     @Override
     public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
@@ -270,47 +314,51 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
             launchButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent e) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                WebDriver wd = getExtSelenium()
-                                        .getProxiedBrowserByName(
-                                                getBrowserComboBox()
-                                                        .getSelectedItem()
-                                                        .toString());
-                                if (wd != null) {
-                                    if (getQuickStartLaunchParam()
-                                            .isZapStartPage()) {
-                                        wd.get(API.getInstance().getBaseURL(
-                                                        API.Format.OTHER,
-                                                        QuickStartLaunchAPI.API_PREFIX,
-                                                        API.RequestType.other,
-                                                        QuickStartLaunchAPI.OTHER_START_PAGE,
-                                                        true));
-                                    } else if (!getQuickStartLaunchParam()
-                                            .isBlankStartPage()) {
-                                        wd.get(getQuickStartLaunchParam()
-                                                .getStartPage());
-                                    }
-                                    // Use the same browser next time, as long
-                                    // as it worked
-                                    getQuickStartLaunchParam()
-                                            .setDefaultBrowser(
-                                                    getBrowserComboBox()
-                                                            .getSelectedItem()
-                                                            .toString());
-                                    getQuickStartLaunchParam().getConfig().save();
-                                }
-                            } catch (Exception e1) {
-                                LOGGER.error(e1.getMessage(), e1);
-                            }
-                        }
-                    }, "ZAP-BrowserLauncher").start();
+                    launchBrowser();
                 }
             });
         }
         return launchButton;
+    }
+
+    private void launchBrowser() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    WebDriver wd = getExtSelenium()
+                            .getProxiedBrowserByName(
+                                    getBrowserComboBox()
+                                            .getSelectedItem()
+                                            .toString());
+                    if (wd != null) {
+                        if (getQuickStartLaunchParam()
+                                .isZapStartPage()) {
+                            wd.get(API.getInstance().getBaseURL(
+                                            API.Format.OTHER,
+                                            QuickStartLaunchAPI.API_PREFIX,
+                                            API.RequestType.other,
+                                            QuickStartLaunchAPI.OTHER_START_PAGE,
+                                            true));
+                        } else if (!getQuickStartLaunchParam()
+                                .isBlankStartPage()) {
+                            wd.get(getQuickStartLaunchParam()
+                                    .getStartPage());
+                        }
+                        // Use the same browser next time, as long
+                        // as it worked
+                        getQuickStartLaunchParam()
+                                .setDefaultBrowser(
+                                        getBrowserComboBox()
+                                                .getSelectedItem()
+                                                .toString());
+                        getQuickStartLaunchParam().getConfig().save();
+                    }
+                } catch (Exception e1) {
+                    LOGGER.error(e1.getMessage(), e1);
+                }
+            }
+        }, "ZAP-BrowserLauncher").start();
     }
 
     private JComboBox<ProvidedBrowserUI> getBrowserComboBox() {
@@ -320,6 +368,13 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
             model.setIncludeHeadless(false);
             model.setIncludeUnconfigured(false);
             browserComboBox.setModel(model);
+            browserComboBox.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    setToolbarButtonIcon(browserComboBox.getSelectedItem().toString());
+                }
+            });
         }
         return browserComboBox;
     }
