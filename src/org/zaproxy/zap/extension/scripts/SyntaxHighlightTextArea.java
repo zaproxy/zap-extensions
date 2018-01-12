@@ -28,7 +28,6 @@ import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JViewport;
-import javax.swing.UIManager;
 
 import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
@@ -38,7 +37,6 @@ import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FontUtils;
 
@@ -123,23 +121,15 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 		setCloseMarkupTags(false);
 		setClearWhitespaceLinesEnabled(false);
 		
-		Font font = FontUtils.getFont(Font.PLAIN);
-		// TODO Replace isDefaultFontSet() with FontUtils.isDefaultFontSet() when available.
-		if (!isDefaultFontSet()) {
+		Font font;
+		if (!FontUtils.isDefaultFontSet()) {
 			// Use default RSyntaxTextArea font instead but with correct font size.
 			font = FontUtils.getFont(this.getFont().getFontName());
+		} else {
+			font = FontUtils.getFont(Font.PLAIN);
 		}
 		this.setFont(font);
 
-	}
-
-	private static boolean isDefaultFontSet() {
-		Object defaultFont = UIManager.getLookAndFeelDefaults().get("defaultFont");
-		if (defaultFont == null) {
-			return false;
-		}
-		String fontName = Model.getSingleton().getOptionsParam().getViewParam().getFontName();
-		return fontName != null && !fontName.isEmpty();
 	}
 	
 	@Override
