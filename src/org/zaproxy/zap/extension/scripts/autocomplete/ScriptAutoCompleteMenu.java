@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.scripts.autocomplete;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,10 +92,8 @@ public class ScriptAutoCompleteMenu extends JScrollPopupMenu {
     private static String methodSignature(Method method) {
         StringBuilder sb = new StringBuilder();
         sb.append(method.getName());
-        sb.append("(");
+        sb.append('(');
         boolean first = true;
-        // TODO use this once we move to Java 8
-        /*
         for (Parameter param : method.getParameters()) {
             if (first) {
                 first = false;
@@ -103,17 +102,7 @@ public class ScriptAutoCompleteMenu extends JScrollPopupMenu {
             }
             sb.append(param.getName());
         }
-        */
-        for (int i = 0; i < method.getParameterTypes().length; i++) {
-            if (first) {
-                first = false;
-            } else {
-                sb.append(", ");
-            }
-            sb.append("arg");
-            sb.append(i);
-        }
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
     }
 
