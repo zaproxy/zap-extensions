@@ -416,9 +416,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 								now = Instant.now();
 								sendAndReceive(injectedMsg, false);
 								intervalInjectedMessage = ChronoUnit.MILLIS.between(now, Instant.now());
-								
-								System.out.println("\n\n\n" + param +" base tts "+ intervalBaseMessage+" inj tts: "+intervalInjectedMessage  +"\n\n\n");
-								
+																
 								if(isTimedInjected(intervalBaseMessage,intervalInjectedMessage, SLEEP_TIME_SHORT)) {
 									
 									// try for a longer time to exclude transmission delays  
