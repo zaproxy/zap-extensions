@@ -19,6 +19,8 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -56,50 +58,55 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	private static final String PARVAL_ATTACK = "paramvalue";
 	private static final String VALUE_ATTACK = "value";
 	private static final String CRASH_ATTACK = "crash";
-	private static final String FALSE_POSITIVE = "falsepositive";
-	private static final String TOKEN ="OWASP_ZAP_TOKEN";
+	private static final String TIMED_ATTACK ="timed";
+	private static final String TOKEN ="OWASP_ZAP_TOKEN_INJECTION";
+	private static final int SLEEP_TIME_SHORT=500;
+	private static final int SLEEP_TIME_LONG=2000;
+	private static final int DELTA_TIME=200;
 	
 	private static final int ID = 40033;
 	
 	private static final int CWED_ID = 943;
-	private static final int WASC_ID = 100000; //??
+	private static final int WASC_ID = 19;
 	
 	private String[] dependency = {};
 	public boolean logEnable; 
 
 	
 	private static final String[] MONGO_MATCHING_STRING = 
+			
+			/* TODO check! */
 			new String[] { 
-					"retval", "Unexpected token", "Exception",
-					"Error", "mongoDB", "syntax" 		
-			};
+					"retval", "Unexpected token", "mongoDB", "SyntaxError", "ReferenceError", "Illegal", TOKEN };
 
 	
 	private static final String[][] MONGO_URL_PARAM_VALUE_INJECTION = new String[][] {
 		{ "[$ne]", "0"}, {"[$regex]", ".*"}, {"[$gt]", "0"}};
 		
 	private static final String[] MONGO_URL_ERROR_INJECTION = 	{
-		"/",
 		"\"",
 		"'",
-		")",
 		"//",
 	};
 	
 	private static final String[] MONGO_URL_VALUE_INJECTION = {
-		
-		"Injection\", \"$or\": [ {}, {\"a\":\"a",
 
 		"'; return (true); var notReaded='",
-		"_id); print(",
-		
+		"'); print("+TOKEN+"); print('",
 		"_id);}, function(kv) { return 1; },"	+
 		"{ out: 'x'}); print('Injection'); "	+ 
 		"return 1; db.noSQL_injection.mapReduce(function()" + 
 		"{ emit(1,1",
 		"true, $where: '1 == 1'",		
+		
 	};
 
+	private static final String[][] MONGO_TIMED_VALUE_INJECTION = {
+			
+			{"\"'); sleep("+SLEEP_TIME_SHORT+"); print('\"", "\"'); sleep("+SLEEP_TIME_LONG+"); print('\""},
+			{"'; sleep("+SLEEP_TIME_SHORT+"); var x='", "'; sleep("+SLEEP_TIME_LONG+"); var x='"}
+			
+	};
 	
 	private static final String[][] MONGO_JSON_PARAM_VALUE_INJECTION = { 
 			
@@ -108,7 +115,6 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 		{"$regex", ".*"}
 	};
 
-	
 	private static final String[][] EMPTY_PARAM_VALUE = new String[0][0];
 	private static final String[] EMPTY_VALUE = new String[0];	
 	
@@ -126,7 +132,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 		 */
 		
 		mongoDB_URL(Tech.MongoDB, MONGO_URL_VALUE_INJECTION, MONGO_URL_ERROR_INJECTION, MONGO_URL_PARAM_VALUE_INJECTION, 
-				MONGO_JSON_PARAM_VALUE_INJECTION, MONGO_MATCHING_STRING, MONGO_PREFIX);
+				MONGO_JSON_PARAM_VALUE_INJECTION, MONGO_TIMED_VALUE_INJECTION, MONGO_MATCHING_STRING, MONGO_PREFIX);
 
 		private final String name;
 		private final Tech dbTech;
@@ -134,6 +140,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 		private final String[] urlEncValueInjection;
 		private final String[] urlEncErrorInjection;
 		private final String[][] jsonParamValueInjection;
+		private final String[][] urlEncTimedValueInjection;
 		private final List<Pattern> errorPatterns;
 		private final String prefix;
 
@@ -148,13 +155,16 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 		 * @param ct
 		 * @param p
 		 */
-		private NOSQLDB(Tech t, String[] uv, String[] ue, String[][] upv, String[][] jpv, String[] ep, String p) {
+		private NOSQLDB(Tech t, String[] uv, String[] ue, String[][] upv, String[][] jpv, String[][] tvi, String[] ep, 
+				String p) {
+			
 			name=t.getName();
 			dbTech=t;
 			urlEncValueInjection=uv;
 			urlEncErrorInjection=ue;
 			urlEncParamValueInjection=upv;
 			jsonParamValueInjection=jpv;
+			urlEncTimedValueInjection=tvi;
 			errorPatterns =  new ArrayList<>();
 			for(String regex:ep) {
 				errorPatterns.add(Pattern.compile(regex, AbstractAppParamPlugin.PATTERN_PARAM));
@@ -189,6 +199,10 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 		
 		public String[][] getJsonParamValueInjection() {
 			return jsonParamValueInjection;
+		}
+
+		public String[][] getUrlEncTimedValueInjection() {
+			return urlEncTimedValueInjection;
 		}
 		
 		public String getPrefix() {
@@ -275,10 +289,19 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 
 		String paramInjected, valueInjected, attackType;
 		HttpMessage injectedMsg, baseMsg;
-		
+		long intervalBaseMessage, intervalInjectedMessage; 
+		Instant now;
+		boolean onlyExactMatch;
+
 		try {
 			
-			baseMsg = sendEmptyMessage(param, TOKEN);
+			baseMsg = getNewMsg();
+			setParameter(baseMsg, param, TOKEN);
+
+			now = Instant.now();
+			sendAndReceive(baseMsg);
+			intervalBaseMessage = ChronoUnit.MILLIS.between(now, Instant.now());
+			
 			
 			for(NOSQLDB nosql: NOSQLDB.values()) {
 
@@ -293,6 +316,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 
 						for(String[] pv : nosql.getUrlEncParamValueInjection()) {
 							
+							onlyExactMatch=false;
 							attackType = PARVAL_ATTACK;
 							injectedMsg = getNewMsg();
 							paramInjected = param+pv[0];
@@ -302,8 +326,9 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 		
 							try {
 								sendAndReceive(injectedMsg, false);
-								
-								if(isBingo(baseMsg, injectedMsg, paramInjected, valueInjected, attackType, nosql)) {
+
+								if(isBingo(baseMsg, injectedMsg, paramInjected, valueInjected, attackType, nosql, 
+										onlyExactMatch)) {
 									break;
 								}
 		
@@ -323,6 +348,8 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 						
 						
 						for(String v : nosql.getUrlEncValueInjection()) {
+							
+							onlyExactMatch=false;
 							attackType = VALUE_ATTACK;
 							injectedMsg = getNewMsg();
 							valueInjected = v;
@@ -331,7 +358,8 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 							try {
 								sendAndReceive(injectedMsg, false);
 								
-								if(isBingo(baseMsg, injectedMsg, param, valueInjected, attackType, nosql)) {
+								if(isBingo(baseMsg, injectedMsg, param, valueInjected, attackType, nosql, 
+										onlyExactMatch)) {
 									break;
 								}
 		
@@ -347,17 +375,19 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 							}
 						}
 					
-						for (String e:nosql.getUrlEncErrorInjection()) {
+						for (String ej:nosql.getUrlEncErrorInjection()) {
 
+							onlyExactMatch=true;
 							attackType = CRASH_ATTACK;
 							injectedMsg = getNewMsg();
-							valueInjected = e;
+							valueInjected = ej;
 							setParameter(injectedMsg, param, valueInjected);
 							
 							try {
 								sendAndReceive(injectedMsg, false);
 								
-								if(isBingo(baseMsg, injectedMsg, param, valueInjected, attackType, nosql)) {
+								if(isBingo(baseMsg, injectedMsg, param, valueInjected, attackType, nosql, 
+										onlyExactMatch)) {
 									break;
 								}
 		
@@ -373,11 +403,62 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 							}
 						}
 						
+					
+						for(String[] tvi:nosql.getUrlEncTimedValueInjection()) {
+							attackType = TIMED_ATTACK;
+							injectedMsg = getNewMsg();
+							valueInjected =tvi[0];
+							setParameter(injectedMsg, param, valueInjected);
+							
+							
+							
+							try {
+								now = Instant.now();
+								sendAndReceive(injectedMsg, false);
+								intervalInjectedMessage = ChronoUnit.MILLIS.between(now, Instant.now());
+								
+								System.out.println("\n\n\n" + param +" base tts "+ intervalBaseMessage+" inj tts: "+intervalInjectedMessage  +"\n\n\n");
+								
+								if(isTimedInjected(intervalBaseMessage,intervalInjectedMessage, SLEEP_TIME_SHORT)) {
+									
+									// try for a longer time to exclude transmission delays  
+									
+									injectedMsg = getNewMsg();
+									valueInjected =tvi[1];
+									setParameter(injectedMsg, param, valueInjected);
+									
+									now = Instant.now();
+									sendAndReceive(injectedMsg, false);
+									intervalInjectedMessage = ChronoUnit.MILLIS.between(now, Instant.now());
+									
+									if(isTimedInjected(intervalBaseMessage,intervalInjectedMessage, SLEEP_TIME_LONG)) {
+										
+										String extraInfo = Constant.messages.getString(EXTRAINFO_PREFIX + nosql.prefix 
+												+ attackType);
+										String name = getName() + " - " + nosql.getName();
+										
+										bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, name, getDescription(), null, 
+												param, valueInjected, extraInfo,  getSolution(), injectedMsg);
+										break;
+									}
+								}
+								
+							} catch (SocketException ex) {
+		
+								log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+										" when accessing: " + msg.getRequestHeader().getURI().toString());
+								continue;
+							}
+							finally {
+								if(isStop())
+									return;
+							}						
+						}
+
 					}
 					
-					
 					/**
-					 * TODO check for the json format?
+					 * TODO is content-type json format?
 					 * 
 					 */
 					boolean jsonEnable = false;
@@ -385,6 +466,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 						
 						for(String[] jpv : nosql.getJsonParamValueInjection()) {
 							
+							onlyExactMatch = false;
 							attackType = JSON_ATTACK;
 							injectedMsg = getNewMsg();
 							
@@ -401,7 +483,8 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 								valueInjected = getParamJsonString(param, jpv);
 								setParameter(injectedMsg, param, valueInjected);
 								sendAndReceive(injectedMsg, false);
-								if(isBingo(baseMsg, injectedMsg, param, valueInjected, attackType, nosql)) {
+								if(isBingo(baseMsg, injectedMsg, param, valueInjected, attackType, nosql, 
+										onlyExactMatch)) {
 									break;
 								}
 							}catch(SocketException e) {
@@ -427,24 +510,11 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	}
 
 
-	/**
-	 * 
-	 * @param param
-	 * @param token
-	 * @return
-	 */
-	private HttpMessage sendEmptyMessage(String param, String token) {
-		
-		HttpMessage baseMsg = getNewMsg();
-		setParameter(baseMsg, param, token);
-		try {
-			sendAndReceive(baseMsg);
-		} catch (IOException e) {
-			// TODO log exception
-			e.printStackTrace();
-			return getBaseMsg();
-		}
-		return baseMsg;
+	private boolean isTimedInjected(long intervalBaseMessage, long intervalInjectedMessage, int sleep) {
+		long diff=intervalInjectedMessage-intervalBaseMessage;
+		if(diff>0 && (diff>=sleep-DELTA_TIME))
+			return true;
+		return false;
 	}
 
 
@@ -459,7 +529,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	 * @return true if is discovered a vulnerability, false otherwise.
 	 */
 	private boolean isBingo(HttpMessage originalMsg, HttpMessage injectedMsg, String param, String valueInj, 
-			String attack, NOSQLDB nosql) {
+			String attack, NOSQLDB nosql, boolean onlyExactMatch) {
 		
 		String originalText = originalMsg.getResponseBody().toString();
 		String injectedText = injectedMsg.getResponseBody().toString();
@@ -483,7 +553,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 			
 			if(differingOnlyString(originalText, injectedText, valueInj, TOKEN)) {
 	
-				extraInfo = Constant.messages.getString(EXTRAINFO_PREFIX + nosql.prefix + FALSE_POSITIVE);
+				extraInfo = Constant.messages.getString(EXTRAINFO_PREFIX + nosql.prefix + attack);
 				
 				bingo(Alert.RISK_LOW, Alert.CONFIDENCE_LOW, name, getDescription(), null, param, valueInj, 
 						  extraInfo,  getSolution(), injectedMsg);
@@ -516,11 +586,13 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 			 * Unknown vulnerability.  
 			 * 
 			 */
-			
-			bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, name, getDescription(), null, param, valueInj, 
+			if(!onlyExactMatch) {
+				bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, name, getDescription(), null, param, valueInj, 
 					  extraInfo,  getSolution(), injectedMsg);
 
-			return true;
+				return true;
+			}
+			else return false;
 		}
 	}
 	
@@ -530,18 +602,18 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	 * 
 	 * @param originalMsg
 	 * @param injectedMsg
-	 * @param valueInjected
+	 * @param valueInj
 	 * @return true if the @originalMsg body isn't the same of the @injectedMsg one, false otherwise.
 	 * 
 	 */
-	private boolean differingOnlyString(String originalMsg, String injectedMsg, String token, String valueInjected) {
+	private boolean differingOnlyString(String originalMsg, String injectedMsg, String valueBase, String valueInj) {
 
-		int lengthOriginal = originalMsg.length();
+		int lengthBase = originalMsg.length();
 		int lengthInjected = injectedMsg.length();
-		int lengthValue = valueInjected.length();
-		int lengthToken = token.length();
+		int lengthValueBase = valueBase.length();
+		int lengthValueInj = valueInj.length();
 		
-		if(lengthOriginal-lengthInjected!=lengthValue-lengthToken)
+		if(lengthBase-lengthInjected!=lengthValueBase-lengthValueInj)
 			return false;
 		
 		char cursOriginal, cursInjected;
@@ -551,8 +623,8 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 			cursOriginal = originalMsg.charAt(index);
 			cursInjected = injectedMsg.charAt(index);
 			if(cursInjected!=cursOriginal) {
-				extractString = injectedMsg.substring(index, index+lengthValue);
-				if(extractString.equals(injectedMsg))
+				extractString = injectedMsg.substring(index, index+lengthValueInj);
+				if(extractString.equals(valueInj))
 					return true;
 				else return false;
 			}
