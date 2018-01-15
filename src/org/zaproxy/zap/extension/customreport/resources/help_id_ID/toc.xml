@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Custom Report" target="customreport"/>
+			<tocitem text="Khusus untuk laporan" target="customreport"/>
 		</tocitem>
 	</tocitem>
 </toc>
