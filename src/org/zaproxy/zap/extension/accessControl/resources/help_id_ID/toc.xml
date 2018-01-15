@@ -8,7 +8,7 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Access Control Testing" image="accessControl.icon" target="accessControl.concepts" >
 				<tocitem text="Tab" target="accessControl.tab"/>
-				<tocitem text="Context Options" target="accessControl.contextOptions"/>
+				<tocitem text="Konteks Pilihan" target="accessControl.contextOptions"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
