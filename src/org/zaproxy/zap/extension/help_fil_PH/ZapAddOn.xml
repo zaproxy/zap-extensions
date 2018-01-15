@@ -1,11 +1,11 @@
 <zapaddon>
-	<name>Help - Portuguese, Brazilian</name>
-	<version>9</version>
-	<status>release</status>
-	<description>Portuguese, Brazilian version of the ZAP help file.</description>
+	<name>Help Filipino</name>
+	<version>1</version>
+	<status>alpha</status>
+	<description>Filipino version of the ZAP help file.</description>
 	<author>ZAP Crowdin Team</author>
 	<url>https://crowdin.com/project/owasp-zap-help</url>
-	<changes>Updated with the latest files from crowdin</changes>
+	<changes>First version</changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
