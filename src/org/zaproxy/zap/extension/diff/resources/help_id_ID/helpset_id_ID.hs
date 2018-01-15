@@ -24,7 +24,7 @@
 
   <view>
     <name>Search</name>
-    <label>Telusuri</label>
+    <label>Pencarian</label>
     <type>javax.help.SearchView</type>
     <data engine="com.sun.java.help.search.DefaultSearchEngine">
       JavaHelpSearch
@@ -33,7 +33,7 @@
 
   <view>
     <name>Favorites</name>
-    <label>Favorites</label>
+    <label>Favorit</label>
     <type>javax.help.FavoritesView</type>
   </view>
 </helpset>
