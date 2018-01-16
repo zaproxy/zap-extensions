@@ -12,7 +12,6 @@
 	<property name="temp" location="temp" />
 	<property name="dist" location="zap-exts" />
 	<property name="dist.lib.dir" location="../lib" />
-	<property name="status" value="alpha" />
 	<property name="versions.file" location="${dist}/ZapVersions.xml" />
 	<property name="wiki.dir" location="../../zap-extensions-wiki" />
 	<property name="wiki.zapcorehelp.dir" location="../../zap-core-help-wiki" />
@@ -203,8 +202,10 @@
 		<sequential>
 			<local name="zapaddon.version" />
 			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+			<local name="zapaddon.status" />
+			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
 			<local name="file" />
-			<property name="file" value="@{addonid}-${status}-${zapaddon.version}.zap" />
+			<property name="file" value="@{addonid}-${zapaddon.status}-${zapaddon.version}.zap" />
 
 			<generatejavahelpsearchindexes jhalljar="${build.lib.dir}/jhall.jar"
 				helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
@@ -271,7 +272,7 @@
 			</tstamp>
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-				addonid="@{addonid}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				addonid="@{addonid}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
 				url="${zap.download.url}/${file}" />
 
 		</sequential>
@@ -284,8 +285,10 @@
 				<sequential>
 					<local name="zapaddon.version" />
 					<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+					<local name="zapaddon.status" />
+					<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
 					<local name="file" />
-					<property name="file" value="@{addonid}-${status}-${zapaddon.version}.zap" />
+					<property name="file" value="@{addonid}-${zapaddon.status}-${zapaddon.version}.zap" />
 
 					<local name="addon.libs.zip" />
 					<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
@@ -336,7 +339,7 @@
 					</tstamp>
 
 					<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-						addonid="@{addonid}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+						addonid="@{addonid}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
 						url="${zap.download.url}/${file}" />
 
 				</sequential>
@@ -348,8 +351,10 @@
 		<sequential>
 			<local name="zapaddon.version" />
 			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
+			<local name="zapaddon.status" />
+			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
 			<local name="file" />
-			<property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
+			<property name="file" value="@{name}-${zapaddon.status}-${zapaddon.version}.zap" />
 
 			<local name="addon.libs.zip" />
 			<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
@@ -383,7 +388,7 @@
 			</tstamp>
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
 				url="${zap.download.url}/${file}" />
 
 		</sequential>
@@ -809,13 +814,13 @@
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="accessControl-${status}-*.zap"/>
-				<include name="cspscanner-${status}-*.zap"/>
-				<include name="formhandler-${status}-*.zap"/>
-				<include name="jxbrowser*-${status}-*.zap"/>
-				<include name="openapi-${status}-*.zap"/>
-				<include name="sequence-${status}-*.zap"/>
-				<include name="soap-${status}-*.zap"/>
+				<include name="accessControl-*.zap"/>
+				<include name="cspscanner-*.zap"/>
+				<include name="formhandler-*.zap"/>
+				<include name="jxbrowser*-*.zap"/>
+				<include name="openapi-*.zap"/>
+				<include name="sequence-*.zap"/>
+				<include name="soap-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
@@ -824,7 +829,7 @@
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="jxbrowser*-${status}-*.zap"/>
+				<include name="jxbrowser*-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
