@@ -67,7 +67,7 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
 	@Override
 	public void alertFound(Alert alert) {
 		// Override this as we can put in more info from the script and message
-		sps.raiseAlert(alert.getRisk(), alert.getReliability(), alert.getAlert(), script.getDescription(), 
+		sps.raiseAlert(alert.getRisk(), alert.getConfidence(), alert.getName(), script.getDescription(), 
 				msg.getRequestHeader().getURI().toString(), "", "", "", "", "", -1, -1, msg);
 	}
 

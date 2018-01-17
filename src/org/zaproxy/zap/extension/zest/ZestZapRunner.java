@@ -59,6 +59,8 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
+import org.zaproxy.zap.extension.ruleconfig.ExtensionRuleConfig;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.extension.script.ScriptUI;
 
 public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
@@ -345,9 +347,15 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		this.alerts = new ArrayList<Alert>();
 		
 		ScannerParam scannerParam = new ScannerParam();
+		RuleConfigParam ruleConfigParam = null;
+		ExtensionRuleConfig extRC = Control.getSingleton().getExtensionLoader().getExtension(ExtensionRuleConfig.class);
+		if (extRC != null) {
+			ruleConfigParam = extRC.getRuleConfigParam();
+		}
 		Scanner scanner = new Scanner(scannerParam, 
 							Model.getSingleton().getOptionsParam().getConnectionParam(),
-							getDefaultScanPolicy ());
+							getDefaultScanPolicy (),
+							ruleConfigParam);
 		scanner.setScanChildren(false);
 		scanner.addScannerListener(this);
 		
@@ -371,7 +379,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 		if (alerts.size() > 0) {
 			// Add all to alerts tab, flags in Script results.. 
 			this.lastResult.setPassed(false);
-			this.lastResult.setMessage(alerts.get(0).getAlert());
+			this.lastResult.setMessage(alerts.get(0).getName());
 			extension.notifyChanged(this.lastResult);
 		}
 		
