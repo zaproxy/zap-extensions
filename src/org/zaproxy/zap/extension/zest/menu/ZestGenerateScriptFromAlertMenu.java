@@ -95,7 +95,7 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
 			}
 			String title1 = MessageFormat.format(
 					Constant.messages.getString("zest.alert2script.script.name"),
-					uri.getHost(), pathEnd, this.lastAlert.getAlert());
+					uri.getHost(), pathEnd, this.lastAlert.getName());
 
 			String title2 = title1;
 			int i = 2;
@@ -151,7 +151,7 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
 					case Alert.RISK_MEDIUM:	zaf.setPriority(ZestActionFail.Priority.MEDIUM); break;
 					case Alert.RISK_HIGH:	zaf.setPriority(ZestActionFail.Priority.HIGH); break;
 					}
-					zaf.setMessage(this.lastAlert.getAlert());
+					zaf.setMessage(this.lastAlert.getName());
 					zc.addIf(zaf);
 					sz.add(zc);
 				} else {
@@ -184,9 +184,7 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
                 	// Note - the Alerts tree only supports single selections
         			AlertNode aNode = (AlertNode) alertInvoker.getLastSelectedPathComponent();
             	    if (aNode.getUserObject() != null) {
-            	        if (aNode.getUserObject() instanceof Alert) {
-            	            lastAlert = (Alert) aNode.getUserObject();
-            	        }
+            	        lastAlert = aNode.getUserObject();
             	    }
             	}
                 return true;
