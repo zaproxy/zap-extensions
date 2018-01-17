@@ -35,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -317,7 +318,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 			if(isStop()) {
 				return;
 			}
-			if(isBingo(baseMsg, false, PARVAL_ATTACK, param+pv[0], pv[1], nosql)) {
+			if(isBingo(baseMsg, getNewMsg(), false, PARVAL_ATTACK, param+pv[0], pv[1], nosql)) {
 				break;
 			}
 		}
@@ -326,7 +327,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 			if(isStop()) {
 				return;
 			}
-			if(isBingo(baseMsg, false, VALUE_ATTACK, param, v, nosql)) {
+			if(isBingo(baseMsg, getNewMsg(), false, VALUE_ATTACK, param, v, nosql)) {
 				break;
 			}
 		}
@@ -335,7 +336,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 			if(isStop()) {
 				return;
 			}
-			if(isBingo(baseMsg, true, CRASH_ATTACK, param, ej, nosql)) {
+			if(isBingo(baseMsg, getNewMsg(), true, CRASH_ATTACK, param, ej, nosql)) {
 				break;
 			}
 		}
@@ -377,15 +378,18 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 				return;
 			}
 			String valueInjected = getParamJsonString(param, jpv);
-			if(isBingo(getNewMsg(), false, JSON_ATTACK, param, valueInjected, nosql)) {
+			HttpMessage injectedMsg  = getNewMsg();
+			injectedMsg.getRequestHeader().setHeader(HttpRequestHeader.CONTENT_TYPE, 
+					"application/json");
+			injectedMsg.getRequestHeader().setMethod(HttpRequestHeader.POST);
+			if(isBingo(getNewMsg(), injectedMsg, false, JSON_ATTACK, param, valueInjected, nosql)) {
 				break;
 			}
 		}
 	}
 
-	private boolean isBingo(HttpMessage baseMsg, boolean onlyExactMatch, String attackType, String param, String value, 
-			NOSQLDB nosql) throws IOException {
-		HttpMessage injectedMsg = getNewMsg();
+	private boolean isBingo(HttpMessage baseMsg, HttpMessage injectedMsg, boolean onlyExactMatch, String attackType, 
+			String param, String value, NOSQLDB nosql) throws IOException {
 		setParameter(injectedMsg, param, value);
 		sendAndReceive(injectedMsg, false);
 		return isBingoInner(baseMsg, injectedMsg, param, value, attackType, nosql, onlyExactMatch);
