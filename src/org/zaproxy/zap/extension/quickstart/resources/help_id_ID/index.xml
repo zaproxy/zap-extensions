@@ -7,5 +7,5 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="quick start" target="quickstart" />
 	<indexitem text="quick start command line" target="quickstart.cmdline" />
-	<indexitem text="quick start launch options" target="quickstart.launch.options" />
+	<indexitem text="sebuah Pilihan Peluncuran Ringkas" target="quickstart.launch.options" />
 </index>
