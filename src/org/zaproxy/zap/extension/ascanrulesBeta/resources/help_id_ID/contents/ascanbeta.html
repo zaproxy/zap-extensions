@@ -17,12 +17,11 @@ Scan untuk umum bernama salinan cadangan dari file pada web server, yang dapat m
 Memeriksa apakah web server dikonfigurasi untuk memungkinkan akses Domain Lintas, dari yang berbahaya layanan pihak ketiga, misalnya. Saat ini pemeriksaan untuk wildcard di Adobe crossdomain.xml, dan di
 SilverLight ini clientaccesspolicy.xml. 
 
-<h2>CSRF Token</h2>
-Scans for the existence of Anti-CSRF tokens. <br>
-Alerts on requests which do not appear to contain Anti-CSRF tokens.<br>
-Post 2.5.0 you can specify a comma separated list of identifiers in the 
-<code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
-Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
+<h2>Token CSRF</h2>
+Memindai keberadaan token anti-CSRF. <br>
+Peringatan atas permintaan yang tampaknya tidak mengandung token anti-CSRF. <br>
+Pos 2.5.0 kamu dapat menentukan daftar pengenal yang dipisahkan dengan tanda koma di parameter <code>rules.csrf.ignorelist</code> melalui panel 'konfigurasi aturan' pilihan.
+FORM mana pun dengan nama atau ID yang cocok dengan salah satu pengidentifikasi ini akan diabaikan saat memindai bukti kontra-CSRF yang hilang.
 Hanya gunakan fitur ini untuk mengabaikan FORMs yang anda tahu adalah aman, misalnya bentuk-bentuk pencarian.
 
 <h2>Expression Language Injection</h2>
@@ -30,18 +29,17 @@ Checks if the web application is subject to Expression Language (EL) injection a
 when an application fails to sufficiently neutralize special elements that could modify the intended EL 
 statement before it is executed.
 
-<h2>Heartbleed OpenSSL Vulnerability</h2>
-Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability, by exploiting it.
-For further details refer to CVE-2014-0160.
+<h2>Kerentanan membukaSSL</h2>
+Mendeteksi apakah server web rentan terhadap kerentanan membukaSSL yang terkejut, dengan memanfaatkannya.
+Untuk keterangan lebih lanjut lihat CVE-2014-0160.
 
-<h2>HTTP Parameter Pollution (HPP)</h2>
-Supplying duplicate or numerous HTTP parameters with the same name may cause an application or website
-to interpret values in unintended ways. Dengan memanfaatkan efek ini, berbahaya individu
+<h2>Parameter polusi HTTP (HPP)</h2>
+Menyediakan duplikat atau banyak parameter HTTP dengan nama yang sama dapat menyebabkan aplikasi atau situs web untuk menafsirkan nilai dengan cara yang tidak disengaja. Dengan memanfaatkan efek ini, berbahaya individu
 mungkin bisa bypass validasi input, memicu kesalahan atau memodifikasi internal nilai-nilai variabel. 
 Ada perbedaan perlakuan dari duplikat parameter berdampak baik klien (browser) dan server.
 
-<h2>Insecure HTTP Method</h2>
-Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL.
+<h2>Metode HTTP tidak aman </h2>
+Mendeteksi (dan eksploitasi, tergantung pada pengaturan pindaian) metode HTTP yang dikenal tidak aman yang diaktifkan untuk URL.
 
 <h2>Integer Overflow Error</h2>
 Looks for indicators of integer overflows in compiled code that causes the web server to crash.  Itu tidak 
@@ -66,26 +64,22 @@ The first is a simple reflected attack and the second is a time based attack.<br
 <br>
 Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
-<h2>Source Code Disclosure - CVE-2012-1823</h2>
-Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.<br>
-Only analyzes responses that are text based (HTML, JS, JSON, XML, etc), in order to avoid false positives which may occur with image or other binary content.
+<h2>Pengungkapan sumber kode - CVE-2012-1823</h2>
+Eksploitasi CVE-2012-1823 untuk mengungkapkan kode sumber PHP sisi server pada server web berbasis PHP-CGI.<br> Hanya analisis tanggapan yang berbasis teks (HTML, JS, JSON, XML, dll), untuk menghindari kesalahan positif yang mungkin terjadi pada gambar atau konten biner lainnya.
 
-<h2>Source Code Disclosure - SVN</h2>
-Uses Subversion source code repository metadata to scan for files containing source code on the web server.
+<h2>Pengungkapan sumber kode - SVN</h2>
+Menggunakan metadata repositori kode sumber subversi untuk memindai berkas yang berisi kode sumber pada server web.
 
-<h2>Source Code Disclosure - /WEB-INF</h2>
-Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose Java source code.
+<h2>Pengungkapan sumber kode - /WEB-INF</h2>
+Mengeksploitasi kehadiran folder / WEB-INF yang tidak dilindungi untuk mendownload dan mendekompilasi kelas Java, untuk mengungkapkan kode sumber Java.
 
-<h2>SQL Injection - Hypersonic (Time Based)</h2>
+<h2>SQL injeksi - Hipersonik (berbasis waktu)</h2>
 
-This scanner uses Hypersonic-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a Hypersonic SQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected Hypersonic database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
+Pemindai ini menggunakan sintaks SQL spesifik Hipersonik untuk mencoba menginduksi penundaan waktu dalam pernyataan SQL yang disebut oleh halaman.<br> 
+Jika kueri yang tidak dimodifikasi tidak terpengaruh oleh penundaan waktu, dan penundaan kueri yang dimodifikasi dapat dikendalikan, ini adalah indikasi kerentanan SQL injeksi berbasis waktu dalam database SQL hipersonik. <br>
+Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menemukan SQL yang keras kepala dan tidak jelas
+kerentanan injeksi dalam database hipersonik yang dicurigai. <br>
+Untuk alasan ini, jumlah benang pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh penundaan beban bukan dengan penundaan injeksi SQL. <br>
 The scanner tests only for time-based SQL injection vulnerabilities.<br>
 <br>
 Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
@@ -95,8 +89,7 @@ Post 2.5.0 you can change the length of time used for the attack by changing the
 This scanner uses MySQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
 If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
 it is indicative of a time-based SQL Injection vulnerability in a MySQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected MySQL database. <br>
+Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menemukan SQL yang keras kepala dan tidak jelas kerentanan injeksi dalam database MySQL yang dicurigai. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
 to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
 load delays rather than by SQL injection delays. <br>
@@ -111,12 +104,10 @@ If the unmodified query is not affected by a time delay, and the modified query'
 it is indicative of a time-based SQL Injection vulnerability in a Oracle SQL database. <br>
 This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
 injection vulnerabilities in a suspected Oracle database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Untuk alasan ini, jumlah benang pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh penundaan beban bukan dengan penundaan injeksi SQL. <br>
+Percobaan pemindai hanya untuk injeksi SQL berbasis waktu.<br>
 <br>
-Note that this rule does not currently allow you to change the length of time used for the timing attacks due to the way the delay is caused. 
+Perhatikan bahwa peraturan ini saat ini tidak memungkinkan Anda mengubah jangka waktu yang digunakan untuk serangan waktu karena penundaan. 
 
 <h2>SQL Injection - PostgreSQL (Time Based)</h2>
 
@@ -128,17 +119,16 @@ injection vulnerabilities in a suspected PostgreSQL database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
 to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
 load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Percobaan pemindai hanya untuk injeksi SQL berbasis waktu. <br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+Pos 2.5.0 kamu dapat mengubah jangka waktu yang digunakan untuk menyerang dengan mengubah parameter <code>aturan.umum.tidur</code> melalui panel 'Konfigurasi aturan opsi'.
 
-<h2>Username Enumeration</h2>
-It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. Ini akan sangat meningkatkan kemungkinan keberhasilan password brute-forcing serangan terhadap sistem. Catatan yang positif palsu kadang-kadang dapat diminimalisir dengan meningkatkan 'Attack Strength' Pilihan di ZAP.  Silakan periksa manual 'Other Info' lapangan untuk mengkonfirmasi jika hal ini benar-benar masalah.
+<h2>Penghitungan nama pengguna</h2>
+Ada kemungkinan untuk menghitung nama pengguna, berdasarkan tanggapan HTTP yang berbeda saat nama pengguna yang sah dan tidak sah disediakan. Ini akan sangat meningkatkan kemungkinan keberhasilan password brute-forcing serangan terhadap sistem. Catatan yang positif palsu kadang-kadang dapat diminimalisir dengan meningkatkan 'Attack Strength' Pilihan di ZAP.  Silakan periksa manual 'Other Info' lapangan untuk mengkonfirmasi jika hal ini benar-benar masalah.
 Scanner ini dilewati jika tidak ada konteks yang didefinisikan yang menggunakan Otentikasi berbasis Bentuk, dan hanya berjalan melawan URL diidentifikasi sebagai masuk URL dari konteks.
 
-<h2>XPath Injection</h2>
-As described by OWASP: "XPath Injection attacks occur when a web site uses user-supplied information to 
-construct an XPath query for XML data. Dengan mengirimkan sengaja salah bentuk informasi ke situs web, 
+<h2>Injeksi XPath</h2>
+Seperti yang dijelaskan oleh OWASP: "Serangan injeksi XPath terjadi saat situs web menggunakan informasi yang dipasok pengguna untuk kueri XPath untuk data XML. Dengan mengirimkan sengaja salah bentuk informasi ke situs web, 
 seorang penyerang dapat mengetahui bagaimana data XML terstruktur, atau akses data yang dia dapat biasanya tidak memiliki akses 
 untuk. Dia bahkan mungkin dapat meningkatkan hak-nya di situs web jika data XML yang digunakan untuk 
 otentikasi (seperti XML pengguna berbasis file) atau otorisasi." Scanner ini mencoba untuk mengidentifikasi seperti 
