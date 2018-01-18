@@ -166,44 +166,46 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
         // The Session ID list from option param (panel)
         OptionsParam options = Model.getSingleton().getOptionsParam();
         HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
-        List<String> sessionIds = sessionOptions.getDefaultTokensEnabled();
-        for (HtmlParameter param: urlParams) { //Iterate through the parameters
-        	//If the parameter name is one of those on the Session Token list from the options panel
-        	if (sessionIds.contains(param.getName().toLowerCase(Locale.ROOT))) { 
-        		//If the param value length is greater than MIN_LENGTH (therefore there is a value)
-        		if (param.getValue().length() > SESSION_TOKEN_MIN_LENGTH) {
-	                // Raise an alert according to Passive Scan Rule model
-	                // description, uri, param, attack, otherInfo, 
-	                // solution, reference, evidence, cweId, wascId, msg
-	                Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_HIGH, getName());
-	                alert.setDetail(
-	                        getDescription(),
-	                        uri,
-	                        param.getName(), // param
-	                        "", // attack
-	                        "", // otherinfo
-	                        getSolution(),
-	                        getReference(),
-	                        param.getValue(), // evidence
-	                        getCweId(), // CWE Id
-	                        getWascId(), // WASC Id - Info leakage
-	                        msg);
-	
-	                parent.raiseAlert(id, alert);
-	                
-	        	    // Now try to check if there exists a referer inside the content
-	                // i.e.: There is an external link for which 
-	                // a referer header would be passed including this session token
-	                try {
-	                    checkSessionIDExposure(msg, id);
-	                } catch (URIException e) {
-	                }
-	                // We don't break on this one.
-	                // There shouldn't be more than one per URL but bizarre things do happen.
-	                // Improbable doesn't mean impossible.
-        		}
-        	}
-        }    
+	    if(sessionOptions != null) {
+            List<String> sessionIds = sessionOptions.getDefaultTokensEnabled();
+            for (HtmlParameter param: urlParams) { //Iterate through the parameters
+            	//If the parameter name is one of those on the Session Token list from the options panel
+            	if (sessionIds.contains(param.getName().toLowerCase(Locale.ROOT))) { 
+            		//If the param value length is greater than MIN_LENGTH (therefore there is a value)
+            		if (param.getValue().length() > SESSION_TOKEN_MIN_LENGTH) {
+    	                // Raise an alert according to Passive Scan Rule model
+    	                // description, uri, param, attack, otherInfo, 
+    	                // solution, reference, evidence, cweId, wascId, msg
+    	                Alert alert = new Alert(getPluginId(), getRisk(), Alert.CONFIDENCE_HIGH, getName());
+    	                alert.setDetail(
+    	                        getDescription(),
+    	                        uri,
+    	                        param.getName(), // param
+    	                        "", // attack
+    	                        "", // otherinfo
+    	                        getSolution(),
+    	                        getReference(),
+    	                        param.getValue(), // evidence
+    	                        getCweId(), // CWE Id
+    	                        getWascId(), // WASC Id - Info leakage
+    	                        msg);
+    	
+    	                parent.raiseAlert(id, alert);
+    	                
+    	        	    // Now try to check if there exists a referer inside the content
+    	                // i.e.: There is an external link for which 
+    	                // a referer header would be passed including this session token
+    	                try {
+    	                    checkSessionIDExposure(msg, id);
+    	                } catch (URIException e) {
+    	                }
+    	                // We don't break on this one.
+    	                // There shouldn't be more than one per URL but bizarre things do happen.
+    	                // Improbable doesn't mean impossible.
+            		}
+            	}
+            }
+        }     
     }
     
     // External link Response finder regex
