@@ -2,12 +2,12 @@
 <html>
 <head>
 <title>
-Passive Scan Rules - Alpha
+Aturan Pindai Pasif - alfa
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Passive Scan Rules - Alpha</h1>
-The following alpha quality passive scan rules are included in this add-on:
+<h1>Aturan Pindai Pasif - alfa</h1>
+Aturan pemindaian pasif kualitas rilis berikut disertakan dalam add-on ini:
 
 <h2>ASP.NET ViewState Disclosure</h2>
 An ASP.NET ViewState was disclosed by the application/web server
@@ -16,7 +16,7 @@ An ASP.NET ViewState was disclosed by the application/web server
 The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client
 
 <h2>Base64 Disclosure</h2>
-Base64 encoded data was disclosed by the application/web server
+Sebuah timestamp telah diungkapkan oleh aplikasi/server web
 
 <h2>Missing Content Security Policy Header</h2>
 This checks HTML response headers for the presence of a Content Security Policy header.<br>
@@ -109,15 +109,15 @@ HTTP requests/responses".  In addition, ZAP images cannot be filtered out via
 the settings "Global Exclude URL" or the Session Properties for "Exclude from
 Proxy". </p>
 
-<h2>Open Redirect</h2>
+<h2>Buka pengalihan</h2>
 Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
 
 <h2>HTTP Server Response Header Scanner</h2>
 This checks response headers for the presence of a server header that contains version details.
 At LOW Threshold will raise an alert based on presence of the header field whether or not a version string is detected.
 
-<h2>Source Code Disclosure</h2>
-Application Source Code was disclosed by the web server
+<h2>Pengungkapan Kode Sumber</h2>
+Kode Sumber Aplikasi telah diungkapkan oleh server web
 
 <h2>Strict Transport Security Header Scanner</h2>
 This scanner checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 
@@ -135,16 +135,16 @@ Alerts generated:
  <li><b>Strict-Transport-Security Malformed Content (Non-compliant with Spec): </b> If the response is HTTPS and a HSTS header is present, but there is some unexpected content (such as curly quotes). The expectation is that the content be printable ASCII.</li>
 </ul>
 
-<h2>Timestamp Disclosure</h2>
-A timestamp was disclosed by the application/web server
+<h2>Pengungkapan Timestamp</h2>
+Sebuah timestamp telah diungkapkan oleh aplikasi/server web
 
 <h2>User Controllable HTML Element Attribute (Potential XSS)</h2>
 This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
 
-<h2>User Controllable Charset</h2>
+<h2>Charset Terkendali Pengguna</h2>
 This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
 
-<h2>User Controllable Javascript Event (XSS)</h2>
+<h2>Acara JavaScript Terkendali User (XSS)</h2>
 This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 
 <h2>User Controllable Javascript Property (XSS)</h2>
@@ -160,14 +160,14 @@ This checks response headers for the presence of X-Powered-By details.
 <h2>X-Backend-Server Header Information Leak</h2>
 This checks response headers for the presence of X-Backend-Server details.
 
-<h2>Big Redirect</h2>
+<h2>Pengalihan Masuk</h2>
 This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
 A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
 
 <h2>X-ChromeLogger-Data Header Information Leak</h2>
 This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
 
-<h2>X-Debug-Token Information Leak</h2>
+<h2>Kebocoran informasi X-Debug-Token</h2>
 This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
 Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
 
