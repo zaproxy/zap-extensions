@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Linux WebDrivers</name>
-	<version>4</version>
+	<version>5</version>
 	<status>beta</status>
 	<description>Linux WebDrivers for Firefox and Chrome.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Update geckodriver to v0.19.1<br>
-	Update chromedriver to 2.33<br>
+	Update ChromeDriver to 2.35<br>
 	]]>
 	</changes>
 	<extensions/>
@@ -16,7 +15,6 @@
 	<pscanrules/>
 	<filters/>
 	<files>
-		<file>webdriver/linux/32/chromedriver</file>
 		<file>webdriver/linux/32/geckodriver</file>
 		<file>webdriver/linux/64/chromedriver</file>
 		<file>webdriver/linux/64/geckodriver</file>
