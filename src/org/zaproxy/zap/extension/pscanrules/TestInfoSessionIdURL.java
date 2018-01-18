@@ -166,7 +166,7 @@ public class TestInfoSessionIdURL extends PluginPassiveScanner {
         // The Session ID list from option param (panel)
         OptionsParam options = Model.getSingleton().getOptionsParam();
         HttpSessionsParam sessionOptions = options.getParamSet(HttpSessionsParam.class);
-	    if(sessionOptions != null) {
+	if(sessionOptions != null) {
             List<String> sessionIds = sessionOptions.getDefaultTokensEnabled();
             for (HtmlParameter param: urlParams) { //Iterate through the parameters
             	//If the parameter name is one of those on the Session Token list from the options panel
