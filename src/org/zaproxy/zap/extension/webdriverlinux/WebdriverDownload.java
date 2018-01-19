@@ -72,10 +72,6 @@ public class WebdriverDownload {
 				srcdir, "files/webdriver/linux/64/geckodriver");
 
 		downloadDriver(
-				"https://github.com/" + repo + "/raw/master/files/webdriver/linux/32/chromedriver",
-				srcdir, "files/webdriver/linux/32/chromedriver");
-
-		downloadDriver(
 				"https://github.com/" + repo + "/raw/master/files/webdriver/linux/64/chromedriver",
 				srcdir, "files/webdriver/linux/64/chromedriver");
 		
