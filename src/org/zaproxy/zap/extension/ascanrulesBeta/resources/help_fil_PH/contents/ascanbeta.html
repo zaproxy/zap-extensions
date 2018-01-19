@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Active Scan Rules - Beta
+Aktibong Pag-scan sa Panuntunan - Beta
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -73,88 +73,92 @@ Mag-post ng 2.5.0 maaari mong baguhin ang haba ng oras na ginamit para sa pag-at
 Pinag-aaralan lamang ang mga tugon na batay sa teksto (HTML, JS, JSON, XML, atbp), upang maiwasan ang mga maling positibo na maaaring mangyari sa imahe o iba pang nilalaman ng binary.
 
 <h2>Source Code Disclosure - SVN</h2>
-Uses Subversion source code repository metadata to scan for files containing source code on the web server.
+Gumagamit ng Pagbabagsak ng pinagmulan ng imbakan ng code metadata para i-scan sa mga file na naglalaman ng pinagmulan ng code na nasa web server.
 
 <h2>Source Code Disclosure - /WEB-INF</h2>
-Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose Java source code.
+Isabuhay ang pagkakaroon ng isang walang protektadong / WEB-INF na folder upang i-download at i-decompile ang mga klase sa Java, upang ibunyag ang pinagmulan ng Java code.
 
 <h2>SQL Injection - Hypersonic (Time Based)</h2>
 
-This scanner uses Hypersonic-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a Hypersonic SQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected Hypersonic database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Ang scanner na ito ay gumagamit ng Hypersonic-specific SQL syntax upang subukang hulihin ang mga pagkaantala sa oras sa pahayag ng SQL na tinatawag sa pamamagitan ng pahina.<br>
+Kung ang hindi nabagong tanong ay hindi naapektuhan ng pagka-antala ng oras, at maaaring kontrolin ang pagkaantala ng nabago na tanong,
+ito ay nagpapahiwatig ng isang oras na nakabatay sa SQL Injection kahinaan sa isang Hypersonic SQL database. <br>
+Ang scanner na ito ay sensitibo sa oras, at dapat lamang gamitin sa isang pagtatangka upang makahanap ng pag mama-tigas at di-halatang SQL
+mga kahinaan sa iniksyon sa isang pinaghihinalaang Hypersonic database. <br>
+Para sa kadahilanang ito, ang bilang ng mga aktibong i-scan ang mga thread ay dapat itakda sa pinakamababa kapag ginagamit ang scanner na ito,
+upang mabawasan ang pag-load sa web server, application server, at database, upang maiwasan ang mga maling positibo na sanhi ng
+load pagkaantala sa halip na sa pamamagitan ng SQL pagkaantala pagkaantala. <br>
+Ang mga pagsusulit ng scanner lamang para sa mga oras na nakabatay sa SQL injection na mga kahinaan.
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+<br>
+Mag-post ng 2.5.0 maaari mong baguhin ang haba ng oras na ginamit para sa pag-atake sa pamamagitan ng pagbabago ng parameter na<code>rules.common.sleep</code>sa pamamagitan ng panel ng pagsasaayos ng 'Rule configuration'.
 
 <h2>SQL Injection - MySQL (Time Based)</h2>
 
-This scanner uses MySQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a MySQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected MySQL database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Ang scanner na ito ay gumagamit ng SQL syntax na tukoy sa SQL upang subukang hulihin ang mga pagkaantala ng oras sa pahayag ng SQL na tinatawag sa pamamagitan ng pahina. <br>
+Kung ang hindi nabagong tanong ay hindi naapektuhan ng pagka-antala ng oras, at maaaring kontrolin ang pagkaantala ng nabago na tanong,
+ito ay nagpapahiwatig ng isang oras na nakabatay sa SQL Injection kahinaan sa isang MySQL database. <br>
+Ang scanner na ito ay sensitibo sa oras, at dapat lamang gamitin sa isang pagtatangka upang makahanap ng mapag-matigas at di-halatang SQL
+mga kahinaan sa pag-iniksyon sa isang pinaghihinalaang database ng MySQL. <br>
+Para sa kadahilanang ito, ang bilang ng mga aktibong i-scan ang mga thread ay dapat itakda sa pinakamababa kapag ginagamit ang scanner na ito,
+upang mabawasan ang pag-load sa web server, application server, at database, upang maiwasan ang mga maling positibo na sanhi ng
+load pagkaantala sa halip na sa pamamagitan ng SQL pagkaantala pagkaantala. <br>
+Ang mga pagsusulit ng scanner lamang para sa mga oras na nakabatay sa SQL injection na mga kahinaan.<br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+Mag-post ng 2.5.0 maaari mong baguhin ang haba ng oras na ginamit para sa pag-atake sa pamamagitan ng pagbabago ng parameter na<code>rules.common.sleep</code>sa pamamagitan ng panel ng pagsasaayos ng 'Pagsasaayos ng Panuntunan'.
 
 <h2>SQL Injection - Oracle (Time Based)</h2>
 
-This scanner uses Oracle-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a Oracle SQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected Oracle database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+
+Ang scanner na ito ay gumagamit ng SQL syntax na tukoy sa Orakulo upang subukang hulihin ang mga pagkaantala sa oras sa pahayag ng SQL na tinatawag sa pamamagitan ng pahina. <br>
+Kung ang hindi nabagong tanong ay hindi naapektuhan ng pagka-antala ng oras, at maaaring kontrolin ang pagkaantala ng nabago na tanong,
+ito ay nagpapahiwatig ng isang oras na nakabatay sa SQL Injection kahinaan sa isang database ng Oracle SQL. <br>
+Ang scanner na ito ay sensitibo sa oras, at dapat lamang gamitin sa isang pagtatangka upang makahanap ng pagmamatigas at di-halatang SQL
+mga kahinaan sa pag-iniksyon sa isang pinaghihinalaang database ng Orakulo. <br>
+Para sa kadahilanang ito, ang bilang ng mga aktibong i-scan ang mga thread ay dapat itakda sa pinakamababa kapag ginagamit ang scanner na ito,
+upang mabawasan ang pag-load sa web server, application server, at database, upang maiwasan ang mga maling positibo na sanhi ng
+load pagkaantala sa halip na sa pamamagitan ng SQL pagkaantala pagkaantala. <br>
+Ang mga pagsusulit ng scanner lamang para sa mga oras na nakabatay sa SQL injection na mga kahinaan
 <br>
-Note that this rule does not currently allow you to change the length of time used for the timing attacks due to the way the delay is caused. 
+<br>
+Tandaan na kasalukuyang hindi ka pinapahintulutan ng patakaran na baguhin ang haba ng oras na ginamit para sa pag-atake dahil sa paraan ang pagkaantala ang sanhi. 
 
 <h2>SQL Injection - PostgreSQL (Time Based)</h2>
 
-This scanner uses PostgreSQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a PostgreSQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected PostgreSQL database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Ang scanner na ito ay gumagamit ng PostgreSQL na tukoy sa SQL syntax upang subukang hulihin ang mga pagkaantala sa oras sa pahayag ng SQL na tinatawag sa pamamagitan ng pahina. <br>
+Kung ang hindi nabagong tanong ay hindi naapektuhan ng pagka-antala ng oras, at maaaring kontrolin ang pagkaantala ng nabago na tanong,
+ito ay nagpapahiwatig ng isang oras na nakabatay sa SQL Injection kahinaan sa isang database PostgreSQL. <br>
+Ang scanner na ito ay sensitibo sa oras, at dapat lamang gamitin sa isang pagtatangka upang makahanap ng nagmamatigas at di-halatang SQL
+mga kahinaan sa pag-iniksyon sa isang pinaghihinalaang database ng PostgreSQL. <br>
+Para sa kadahilanang ito, ang bilang ng mga aktibong i-scan ang mga thread ay dapat itakda sa pinakamababa kapag ginagamit ang scanner na ito,
+upang mabawasan ang pag-load sa web server, application server, at database, upang maiwasan ang mga maling positibo na sanhi ng
+load pagkaantala sa halip na sa pamamagitan ng SQL pagkaantala pagkaantala. <br>
+Ang mga pagsusulit ng scanner lamang para sa mga oras na nakabatay sa SQL injection na mga kahinaan.
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+<br>
+Mag-post ng 2.5.0 maaari mong baguhin ang haba ng oras na ginamit para sa pag-atake sa pamamagitan ng pagbabago ng parameter na<code>rules.common.sleep</code>sa pamamagitan ng panel ng pagsasaayos ng 'Rule'.
 
 <h2>Username Enumeration</h2>
-It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
-This scanner is skipped if there are no contexts defined that use Form-based Authentication, and only runs against the URL identified as the login URL of a context.
+Maaaring posible na magbilang ng mga username, batay sa magkakaibang mga tugon ng HTTP kapag ang wasto at hindi wastong mga pangalan ng gumagamit ay ibinigay. Ito ay lubos na mapapalaki ang posibilidad ng tagumpay ng password na pag-atake ng brute laban sa sistema. Tandaan na ang mga maling mga positibo ay maaaring paminsan-minsang mapaliit sa pamamagitan ng pagtaas ng Pagpipilian sa 'Pag-atake ng Lakas' sa ZAP.  Mangyaring manu-manong suriin ang patlang ng 'Iba pang Impormasyon' upang kumpirmahin kung ito talaga ang isyu.
+Ang scanner na ito ay nilaktawan kung walang mga konteksto na tinukoy na paggamit ng Form-based na Pagpapatunay, at nagpapatakbo lamang laban sa URL na kinilala bilang ang login na URL ng isang konteksto.
 
 <h2>XPath Injection</h2>
-As described by OWASP: "XPath Injection attacks occur when a web site uses user-supplied information to 
-construct an XPath query for XML data. By sending intentionally malformed information into the web site, 
-an attacker can find out how the XML data is structured, or access data that he may not normally have access 
-to. He may even be able to elevate his privileges on the web site if the XML data is being used for 
-authentication (such as an XML based user file) or authorization." This scanner attempts to identify such 
-weaknesses.
+Tulad ng inilarawan ng OWASP: "Ang pag-atake ng XPath Injection ay nangyayari kapag ang isang web site ay gumagamit ng impormasyon na ibinigay ng user
+bumuo ng isang XPath query para sa XML data. Sa pamamagitan ng pagpapadala ng sinasadyang maling impormasyon sa web site,
+maaaring tuklasin ng isang magsasalakay kung paano nakaayos ang data ng XML, o ma-access ang data na maaaring hindi niya normal na ma-access
+sa. Maaari pa rin niyang itaas ang kanyang mga pribilehiyo sa web site kung ginagamit ang data ng XML
+authentication (tulad ng isang XML na gumagamit ng user na file) o awtorisasyon. "Sinisikap ng scanner na ito na makilala ang naturang
+mga kahinaan.
 
 <h2>XXE</h2>
-This component attempts to identify applications which are subject to XML eXternal Entity (XXE) attacks.
-Applications which parse XML input may be subject to XXE when weakly or poorly configured parsers 
-handle XML input containing reference to an external entity such as a local file, HTTP requests to 
-internal or tertiary systems, etc.<br>
+Sinisikap ng sangkap na ito na makilala ang mga application na napapailalim sa pag-atake ng XML eXternal Entity (XXE).
+Ang mga application na ma-parse ang input ng XML ay maaaring napapailalim sa XXE kapag mahina o hindi maayos na naka-ayos ang parser
+hawakan ang input ng XML na naglalaman ng sanggunian sa isang panlabas na entidad tulad ng isang lokal na file, mga kahilingan ng HTTP
+panloob o tertiary system, atbp.<br>
 <br>
-It requires the Callback extension, so will not work if this extension is disabled or removed. 
-It is also recommended that you test that the Callback extension is correctly configured for your target site.
-If the target system cannot connect to the Callback Address then some XXE vulnerabilities will not be detected.
+Nangangailangan ito ng extension ng Balik ng tawag, kaya hindi gagana kung ang extension na ito ay hindi pinagana o inalis. 
+Inirerekomenda rin na subukan mo na ang extension ng Callback ay wastong na-configure para sa iyong target na site.
+Kung ang sistema ng target ay hindi maaaring kumonekta sa Addressback Address pagkatapos ang ilang mga XXE na mga kahinaan ay hindi napansin.
 
 </body>
 </html>
