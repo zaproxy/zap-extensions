@@ -257,15 +257,6 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	}
 	
 	@Override
-    public void scan(HttpMessage msg, NameValuePair originalParam) {
-		jsonEnabled = originalParam.getType() == NameValuePair.TYPE_JSON;
-		urlEncodedEnabled = originalParam.getType() == NameValuePair.TYPE_QUERY_STRING;
-		if(jsonEnabled || urlEncodedEnabled) {
-			super.scan(msg, originalParam);
-		}
-	}
-	
-	@Override
 	public void scan(HttpMessage msg, String param, String value) {
 
 		try {			
@@ -301,7 +292,6 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 			}
 		}
 	}
-
 
 	private void startUrlEncodedScan(NOSQLDB nosql, HttpMessage msg, String param, String value) throws IOException {
 		
