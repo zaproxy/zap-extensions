@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Python scripting</name>
-	<version>8</version>
+	<version>9</version>
 	<status>beta</status>
 	<description>Allows Python to be used for ZAP scripting - templates included</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
+	Update Passive Rule template to include new function.<br>
 	]]>
 	</changes>
 	<extensions>
