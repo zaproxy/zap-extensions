@@ -19,12 +19,10 @@ Ang application ay hindi gumagamit ng Code Authentication Code (MAC) upang mapro
 Ang naka-encode na data Base64 ay isiwalat ng application / web server
 
 <h2>Nawawal ang nilalaman sa seguridad ng patakarang header</h2>
-This checks HTML response headers for the presence of a Content Security Policy header.<br>
-By default this rule checks for the presence of the "Content-Security-Policy" header, 
-and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
+Ito ay pagsusuri ng HTML sa tugon ng mga header para sa presensiya ng nilalaman ayon sa siguridad at patakaran ng header.<br>
+Sapamamagitan ng default ay sinosuri ang alituntunin ng "nilalaman-siguridad-patakaran ng header, at sa Mababang threshold ay nag susuri din para sa" x-nilalaman-patakaran-siguridad " at "X-WebKit-CSP" ng mga hrader.
 <p>
-If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
-that is actively being refined or developed, or one which is only partially implemented.
+Kung ang "nilalaman-seguridad-patakaran-report-lamang" ang header ay nakakita ng tugon sa INFO Para itaas ang alerto. Maaring ito ay kumakatawan sa pag sisikap ng nag papatupad sa aktibong pagiging pino o binobuo o ang Isa na kung saan lamang ng bahagya ang ipinatutupad.
 
 <h2>Cookie Poisoning</h2>
 This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.

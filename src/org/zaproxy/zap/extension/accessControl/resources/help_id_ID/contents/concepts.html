@@ -10,9 +10,7 @@
 <h1>Akses Kontrol Pengujian</h1>
 
 <p>
-    This add-on enables users to compare which parts of a web-application are available to some users, do access control
-    testing and identify potential access control issues. It allows configuration of access rules and conducts a full
-    attack aimed to help identify sections of a web application which are accessible by unauthorized clients.
+    Ini add-on memungkinkan pengguna untuk membandingkan bagian-bagian mana dari web-aplikasi yang tersedia untuk beberapa pengguna, melakukan akses kontrol pengujian dan identifikasi potensi akses kontrol masalah. Hal ini memungkinkan konfigurasi aturan akses dan melakukan serangan penuh ditujukan untuk membantu mengidentifikasi bagian-bagian dari aplikasi web yang dapat diakses oleh klien tidak sah.
 </p>
 
 <p>
@@ -40,8 +38,7 @@
 
 <p>
     Dalam rangka untuk menyederhanakan aturan akses definisi proses, ZAP adalah memanfaatkan pohon-berdasarkan struktur URLs.
-    When analyzing the rules, an inference algorithm is used to detect the matching rules for each node based on its
-    parent in the URL if no particular rules are defined. This means that, when configuring the access rules, only 1
+    Ketika menganalisis aturan, sebuah kesimpulan algoritma ini digunakan untuk mendeteksi pencocokan aturan untuk masing-masing node berdasarkan induknya di URL jika tidak ada aturan khusus yang ditetapkan. This means that, when configuring the access rules, only 1
     rule needs to be set explicitly for an entire subtree, while for the other nodes rules are inferred. More details
     about this can be found on the Access Control <a href="contextOptions.html">Context options</a> help page.</td>
 </p>
@@ -51,20 +48,18 @@
 <p> As a whole, in order to fully perform access control testing for a web application, the next steps should be
     followed:</p>
 <ul>
-    <li>the tester defines set of Users and how they authenticate;
+    <li>tester mendefinisikan set Pengguna dan bagaimana mereka melakukan otentikasi;
     </li>
     <li>the tester defines how ZAP can identify un-authorized requests (via the Authorization panel in the Session
         Properties);
     </li>
     <li>the web-application is explored either manually or via the Spider;</li>
-    <li>the tester define the Access Rules for each of the Users associated to the Context, basically letting ZAP know
-        which parts of the web application are supposed to be accessed by which users;
+    <li>tester menentukan Aturan Akses untuk masing-masing Pengguna yang terkait dengan Konteks, pada dasarnya membiarkan ZAP tahu bagian mana dari aplikasi web yang seharusnya dapat diakses oleh pengguna;
     </li>
     <li>an ‘attack’ is performed by ZAP by trying to access every URL of the web-app from the perspective of every
         user;
     </li>
-    <li>in the corresponding Status Tab, the results are displayed, showing which pages were accessed successfully by
-        which users and marking the cases where the access rules where not followed.
+    <li>dalam Status yang bersangkutan Tab, hasil yang ditampilkan, menunjukkan halaman-halaman mana yang diakses berhasil oleh pengguna dan menandai kasus-kasus di mana aturan akses di mana tidak diikuti.
     </li>
 </ul>
 
