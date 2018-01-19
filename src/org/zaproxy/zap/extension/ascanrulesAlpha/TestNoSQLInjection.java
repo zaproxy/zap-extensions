@@ -33,7 +33,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.model.Tech;
@@ -50,11 +49,10 @@ import net.sf.json.JSONObject;
 public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	
 	
-	/**
-	 * Prefix for internationalised messages used by this rule
-	 */
+	
+	// Prefix for internationalised messages used by this rule
+	 
 	private static final String MESSAGE_PREFIX = "ascanalpha.testnosqlinjection.";
-	private static final String MONGO_INDEX = "mongo";
 	private static final String JSON_ATTACK = "json";
 	private static final String PARVAL_ATTACK = "paramvalue";
 	private static final String VALUE_ATTACK = "value";
@@ -69,11 +67,14 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	private static final int CWED_ID = 943;
 	private static final int WASC_ID = 19;
 	
-	private boolean jsonEnabled;
-	private boolean urlEncodedEnabled;
+	private static final String MONGO_INDEX = "mongo";
+	private static final String COUCH_INDEX = "couch";
 	private String indexDbSel = MONGO_INDEX;
 	
-	private static final String[] MONGO_MATCHING_STRING = 
+	
+	
+	//START MongoDB
+	private static final String[] MONGO_ERROR_MATCHING_STRING = 
 
 			new String[] { 
 					"retval", "Unexpected token", "mongoDB", "SyntaxError", "ReferenceError", "Illegal", TOKEN };
@@ -107,16 +108,39 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 		{"$gt", ""},
 		{"$regex", ".*"}
 	};
-
+	// END MongoDB
+	
+	// START CouchDB
+	private static final String[] COUCH_URL_VALUE_INJECTION = {
+			"_all_dbs",
+			"_changes",
+			"_compact",
+			"_design",
+			"temp_view",
+			"_view_cleanup",
+			"_info",
+			"_list",
+			"_rewrite",
+			"_show",
+			",_update",
+			"_view",
+			"_acrive_tasks"
+	};
+	// END CouchDB
+	
+	
 	private static final String[][] EMPTY_PARAM_VALUE = new String[0][0];
 	private static final String[] EMPTY_VALUE = new String[0];	
 	
 	// The set of all NoSQL DB-Drivers technology pairs to test
 	private enum NOSQLDB{
 
-		mongoDB_URL(Tech.MongoDB, MONGO_URL_VALUE_INJECTION, MONGO_URL_ERROR_INJECTION, MONGO_URL_PARAM_VALUE_INJECTION, 
-				MONGO_JSON_PARAM_VALUE_INJECTION, MONGO_TIMED_VALUE_INJECTION, MONGO_MATCHING_STRING, MONGO_INDEX);
-
+		mongoDB(Tech.MongoDB, MONGO_URL_VALUE_INJECTION, MONGO_URL_ERROR_INJECTION, MONGO_URL_PARAM_VALUE_INJECTION,
+				MONGO_JSON_PARAM_VALUE_INJECTION, MONGO_TIMED_VALUE_INJECTION, MONGO_ERROR_MATCHING_STRING, MONGO_INDEX)
+		
+		, couchDB(Tech.CouchDB, COUCH_URL_VALUE_INJECTION, EMPTY_VALUE, EMPTY_PARAM_VALUE, EMPTY_PARAM_VALUE, 
+				EMPTY_PARAM_VALUE, EMPTY_VALUE, COUCH_INDEX);
+		
 		private final String name;
 		private final Tech dbTech;
 		private final String[][] urlEncParamValueInjection;
@@ -265,14 +289,8 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 				indexDbSel = nosql.getIndexDb();
 				
 				if(inScope(nosql.getDbTech())){
-					
-					if(urlEncodedEnabled){
-						startUrlEncodedScan(nosql, msg, param, value);
-					}
-					
-					if(jsonEnabled) {
-						startJsonScan(nosql, msg, param, value);
-					}
+					startUrlEncodedScan(nosql, msg, param, value);
+					startJsonScan(nosql, msg, param, value);
 				}
 			}
 		} catch (SocketException ex) {
