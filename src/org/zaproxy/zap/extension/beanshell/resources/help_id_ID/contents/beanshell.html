@@ -9,67 +9,55 @@ Bean Shell Console
 <body bgcolor="#ffffff">
 <h1>Bean Shell Console</h1>
 <p>
-	The BeanShell is an interactive Java shell that can be used to execute BeanShell scripts. These
-	scripts are a simplified form of Java that use many elements from Java syntax, but in a simpler
-	scripting format. All Java code is also valid BeanShell code.<br/>
+	BeanShell adalah sebuah shell Java interaktif yang bisa digunakan untuk mengeksekusi skrip BeanShell. Skrip ini adalah bentuk Java yang disederhanakan yang menggunakan banyak elemen dari sintaks Java, namun lebih sederhana format scripting. All Java code is also valid BeanShell code.<br/>
 	BeanShell integration in OWASP ZAP enables you to write scripts using the ZAP functions and
-	data set. This can be a very powerful feature for analyzing web applications.
+	data set. Ini bisa menjadi fitur yang sangat kuat untuk menganalisa aplikasi web.
 </p>
 <h2>Konsol BeanShell</h2>
 <p>
-	The console is started from the Tools menu, and contains a split screen where the top half is the
-	interactive BeanShell console and the bottom half is a simple text editor. For complex scripts, you're
-	encouraged to use a Java editor. Scripts can be loaded, saved and evaluated from the editor.
-	When the BeanShell starts a number of objects from ZAP are available for use, namely:
+	Konsol dimulai dari menu alat, dan berisi layar split dimana bagian atas adalah
+konsol BeanShell interaktif dan separuh bawahnya adalah editor teks sederhana. Untuk naskah yang kompleks, kamu didorong untuk menggunakan editor Java. Skrip dapat dimuat, disimpan dan dievaluasi melalui editor.
+	Ketika BeanShell memulai sejumlah objek dari ZAP yang tersedia untuk digunakan, dinamakan:
 	<ul>
 	<li>the <i>Model</i> singleton, through the object named <i>model</i></li>
 	<li>the <i>SiteTree</i> tree of current sites through the <i>sites</i> object</li>
-	<li>an instance of <pre>HttpSender</pre> through the <i>sender</i> object</li>
+	<li>an instance of <pre>HttpSender</pre> through the <i>pengirim</i> objek</li>
 	</ul>
-	Notice that the BeanShell is loosely typed. Therefore, it is not necessary to declare variables before
-	using them – this makes scripts a bit more concise than regular Java. But of course, if you did want
-	to define the type you can.
+	Notice that the BeanShell is loosely typed. Oleh karena itu, tidak perlu mendeklarasikan variabel sebelumnya menggunakannya - ini membuat skrip sedikit lebih ringkas dari pada Java biasa. Namun tentu saja jika anda mau menentukan tipe yang anda bisa.
 </p>
-<h2>Using the Site Map</h2>
+<h2>Menggunakan Peta Situs</h2>
 <p>
-	Let's start with something useful and typical: Iterate through all the site nodes and check for the
-	existence of a file. A script has already been created that accomplishes this, choose Load and select
+	Mari kita mulai dengan sesuatu yang berguna dan khas: iterate melalui semua node situs dan periksa adanya sebuah berkas. A script has already been created that accomplishes this, choose Load and select
 	the example.tree.bsh file. Before clicking Evaluate, first browse to a site through ZAP to populate
 	the tree:
 	<br/><br/>
-	Now click on evaluate to execute the script that's in the editor. If there are no errors, then you can
-	now start using the object defined in the script by issuing these commands:
+	Sekarang klik evaluasi untuk mengeksekusi skrip yang ada pada penyunting. Jika tidak ada kesalahan, maka sekarang anda bisa memulai penggunaan objek yang didefinisikan dalam skrip dengan mengeluarkan perintah sebagai berikut:
 	<pre>
 	t = Tree();
 	</pre>
-	Which constructs a new Tree object and assigns a reference to t.
+	Yang membangun sebuah Pohon baru objek dan memberikan referensi untuk t.
 	<pre>
 	t.find(sites.getRoot(), "index.html");
 	</pre>
-	Call the find method on t, which takes a SiteNode as the first argument and a resource to find as the
-	second. In this case, the method will iterate through all the nodes in the tree, because we started at
+	Panggil metode pencarian pada t, dimana mengambil SiteNode sebagai pendapat pertama dan sumber daya untuk menemukan yang kedua. In this case, the method will iterate through all the nodes in the tree, because we started at
 	the root, and will find index.html files.
 	<br/><br/>
 	Instead of iterating through all the nodes, we could choose to start a specific node by using the
 	findChild method e.g.:
 	<br/><br/>
-	This should give you some idea of the power of the BeanShell in ZAP. But to fully exploit it, you'll
-	need to familiarize yourself with the internal API and the BeanShell's features. The BeanShell has
+	Ini seharusnya memberi anda beberapa ide tentang kekuatan BeanShell di ZAP. Namun untuk memanfaatkannya sepenuhnya, anda harus membiasakan diri anda dengan API internal dan fitur BeanShell. The BeanShell has
 	been setup so as to allow full access to all internal objects and methods – even private ones.
 </p>
-<h2>Simple HTTP Request</h2>
+<h2>Permintaan HTTP Sederhana</h2>
 <p>
-	In the next example, we create and send an HTTP request directly in the interactive console:
-	To fully utilize the power of the BeanShell, you should familiarize yourself with ZAP's internals.
-	The sender object is the same instance as is used by the Manual Request Editor and will therefore
-	automatically use proxy settings set in the ZAP configuration.
+	Pada contoh selanjutnya, kami membuat dan mengirim permintaan HTTP langsung di konsol interaktif: Untuk memanfaatkan kekuatan BeanShell sepenuhnya, anda seharusnya dapat membiasakan diri anda dengan internal ZAP.
+	Objek pengirim adalah contoh yang sama seperti yang digunakan oleh Permintaan Penyunting Manual dan oleh sebab itu akan secara otomatis menggunakan pengaturan proxy yang diatur dalam konfigurasi ZAP.
 	<br/><br/>
 	TODO: POST example
 </p>
 <h2>Tips</h2>
 <p>
-	Use the unset(String) command to unset any declared variables, methods or objects. This is useful if
-	you want to replace a method declaration in the current namespace. Note that the command takes a
+	Use the unset(String) command to unset any declared variables, methods or objects. Hal ini berguna jika anda ingin mengganti metode deklarasi di saat namespace. Note that the command takes a
 	String argument, not an Object, so to unset the t object we used above, it should be: unset(“t”); and
 	not unset(t);
 </p>
