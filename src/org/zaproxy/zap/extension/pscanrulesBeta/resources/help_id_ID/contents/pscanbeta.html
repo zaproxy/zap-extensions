@@ -10,66 +10,61 @@ Aturan Pindai Pasif - beta
 <h1>Aturan Pindai Pasif - beta</h1>
 Aturan pemindaian pasif kualitas rilis berikut disertakan dalam add-on ini:
 
-<h2>Charset Mismatch</h2>
-<p>This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.</p>
-<p>The scanner handles various conditions depending on the Threshold set for the scanner, as follows:</p>
+<h2>Ketidakcocokan Charset</h2>
+<p>Pemeriksaan ini mengidentifikasi respons di mana tajuk Jenis-Konten HTTP menyatakan sebuah charset berbeda dari charset yang ditetapkan di dalam tubuh HTML atau XML. Jika ada ketidakcocokan charset antara tajuk HTTP dan tubuh konten peramban Web dapat dipaksa untuk berada dalam mode mengendus konten yang tidak diinginkan untuk menentukan set karakter konten yang benar.</p>
+<p>Pemindai menangani berbagai kondisi tergantung pada ambang yang ditetapkan untuk pemindai, sebagai berikut:</p>
 <ul>
-  <li>All Thresholds:
+  <li>Semua Ambang:
     <ul>
-      <li>Header Versus Meta Content-Type Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Content-Type tag.</li>
-      <li>Header Versus Meta Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Charset tag.</li>
+      <li>Tajuk Versus Charset Jenis Konten Meta - Pernyataan dalam tajuk Jenis Konten HTTP tidak cocok dengan apa yang dinyatakan dalam tag Jenis Konten META.</li>
+      <li>Tajuk Versus Charset Meta - Pernyataan dalam tajuk Jenis Konten HTTP tidak cocok dengan apa yang dinyatakan dalam charset META.</li>
     </ul>
   </li>
-  <li>Low Threshold:
+  <li>Ambang Rendah:
     <ul>
-      <li>Meta Content-Type Charset Missing - The response doesn't contain a META Content-Type declaration, which may overlook older clients.</li>
-      <li>Meta Charset Versus Meta Content-Type Charset - The response contains both a META Content-Type declaration and a META Charset declaration, and they don't match.</li>
+      <li>Charset Jenis Konten Meta Hilang - Respons tidak berisi pernyataan Jenis Konten META yang mungkin mengabaikan klien yang lebih lama.</li>
+      <li>Charset Meta Versus Charset Jenis Konten Meta - Respons berisi pernyataan Jenis Konten META dan Charset META, dan keduanya tidak cocok.</li>
     </ul>
   </li>
 </ul>
-Further reference:<br>
+Referensi lebih lanjut:<br>
 <a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
 <a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
 
-<h2>Cookie - Loosely Scoped</h2>
-Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.
+<h2>Kuki - Loosely Scoped</h2>
+Kuki dapat ditentukan lingkupnya oleh ranah atau jalur. Pemeriksaan ini hanya berkaitan dengan lingkup ranah. Lingkup ranah yang diterapkan pada sebuah kuki menentukan ranah mana yang bisa mengaksesnya. Sebagai contoh, sebuah kuki dapat ditentukan lingkupnya secara ketat menjadi subranah misalnya www.nottrusted.com, atau loosely scoped pada ranah induk misalnya nottrusted.com. Pada kasus yang terakhir, subranah apapun dari nottrusted.com dapat mengakses kuki. Kuki berjenis loosely scoped sering ditemukan di mega-aplikasi seperti google.com dan live.com.
 
-<h2>CSRF Countermeasures</h2>
-The CSRFCountermeasures plugin identifies "potential" vulnerabilities with the lack of known CSRF 
-countermeasures in pages with forms.<br>
-Post 2.5.0 you can specify a comma separated list of identifiers in the 
-<code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
-Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
+<h2>Penanggulangan CSRF</h2>
+Plugin CSRFCountermeasures mengidentifikasi kerentanan "potensial" dengan kurangnya CSRF countermeasures yang diketahui di halaman-halaman dengan formulir.<br>
+Pos 2.5.0 Anda dapat menentukan daftar pengidentifikasi yang dipisahkan dengan tanda koma di 
+<code>rules.csrf.ignorelist</code> parameter melalui panel Opsi 'Konfigurasi aturan'.
+Formulir apapun dengan nama atau tanda pengenal yang cocok dengan salah satu dari pengidentifikasi ini akan diabaikan saat pemindaian token Anti-CSRF yang hilang.
 Hanya gunakan fitur ini untuk mengabaikan FORMs yang anda tahu adalah aman, misalnya bentuk-bentuk pencarian.
 
 
 <h2>Pengungkapan Informasi - Pesan Kesalahan Debug</h2>
-This passive scanner checks the content of web responses for known Debug Error message fragments.
-Access to such details may provide a malicious individual with means by which to further abuse the web site.
-They may also leak data not specifically meant for end user consumption.
+Pemindai pasif ini memeriksa konten dari respons web terhadap fragmen pesan Kesalahan Awakutu.
+Akses terhadap rincian semacam itu dapat memberi seseorang yang jahat suatu alat yang bisa digunakan untuk menyalahgunakan situs web.
+Mereka juga bisa membocorkan data yang tidak ditujukan untuk konsumsi pengguna akhir.
 
-<h2>Information Disclosure: In URL</h2>
-Attempts to identify the existence of sensitive details within the visited URIs themselves 
-(this may include parameters, document names, directory names, etc.).
+<h2>Pengungkapan Informasi: Di URL</h2>
+Upaya untuk mengidentifikasi keberadaan rincian sensitif di dalam URI yang dikunjungi (ini termasuk parameter, nama dokumen, nama direktori, dsb).
 
 <h2>Pengungkapan Informasi - Pesan Kesalahan Debug</h2>
-Identifies the existence of sensitive details within the the Referrer header field of HTTP requests
-(this may include parameters, document names, directory names, etc.).
+Mengidentifikasi keberadaan rincian sensitif dalam bidang tajuk Perujuk dari permintaan HTTP (ini bisa termasuk parameter, nama dokumen, nama direktori, dsb).
 
 <h2>Keterbukaan Informasi - Komentar Mencurigakan</h2>
-Analyzes web content to identify comments which contain potentially sensitive details. Which may lead to 
-further attack or exposure of unintended data.
+Menganalisa konten web untuk mengidentifikasi komentar yang berisi rincian yang mungkin sensitif. Yang dapat menyebabkan serangan lebih lanjut atau pemaparan data yang tidak diinginkan.
 
 <h2>Tidak memadai otentikasi</h2>
 Otentikasi dasar atau ringkasan HTTP telah digunakan selama koneksi tanpa jaminan. Kredensial dapat dibaca dan kemudian digunakan kembali oleh seseorang yang memiliki akses ke jaringan.
 
-<h2>Insecure JSF ViewState</h2>
+<h2>JSF ViewState Tidak aman</h2>
 Tanggapan pada URL berikut berisi nilai ViewState yang tidak memiliki perlindungan kriptografi.
 
 <h2>Parameter Polusi Http</h2>
-Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
-Java Servlet spec calls for aggregation of query string and post data elements which may result in 
-unintended handling of user controlled data. This may impact other frameworks and technologies as well.
+Mencari konten respons untuk formulir HTML yang gagal menentukan elemen tindakan. Versi 3 dari
+Java Servlet spec memanggil agregasi string kueri dan mengirim elemen data yang bisa menyebabkan penanganan yang tidak diinginkan dari data yang dikendalikan oleh penggguna. Hal ini dapat mempengaruhi kerangka kerja dan teknologi.
 
 <h2>VIEWSTATE</h2>
 Attempts to identify VIEWSTATE parameters and analyze said parameters for various best practices or protective 
