@@ -6,173 +6,167 @@ Aturan Pindai Pasif - alfa
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Aturan Pindai Pasif - alfa</h1>
+<h1>Aturan Pindai Pasif - Alfa</h1>
 Aturan pemindaian pasif kualitas rilis berikut disertakan dalam add-on ini:
 
-<h2>ASP.NET ViewState Disclosure</h2>
-An ASP.NET ViewState was disclosed by the application/web server
+<h2>Konten untuk Terjemahan
+ASP.NET penampilan pembukaan</h2>
+sebuah ASP.NET ViewState ditemukan oleh aplikasi / server web
 
-<h2>ASP.NET ViewState Integrity</h2>
-The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client
+<h2>Integritas ASP.NET viewstate</h2>
+Aplikasi ini tidak bisa menggunakan Message Authentication Code (MAC) untuk melindungi keutuhan ASP.NET ViewState, yang dapat diubah oleh pelanggan yang pendendam
 
-<h2>Base64 Disclosure</h2>
+<h2>Paparan base64</h2>
 Sebuah timestamp telah diungkapkan oleh aplikasi/server web
 
-<h2>Missing Content Security Policy Header</h2>
-This checks HTML response headers for the presence of a Content Security Policy header.<br>
-By default this rule checks for the presence of the "Content-Security-Policy" header, 
-and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
+<h2>Konten yang hilang merupakan kebijakan keamanan header</h2>
+Ini memeriksa HTML reaksi header untuk kehadiran keamanan kebijakan header.<br>
+Secara sederhana tentu saja ini mengatur pemeriksaan kedekatan header "Substance Security-Policy"
+Terlebih lagi, pada batas rendah juga memeriksa header "X-Content-Security-Policy" dan "X-WebKit-CSP".
 <p>
-If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
-that is actively being refined or developed, or one which is only partially implemented.
+Jika header "Substansi Keamanan-Kebijakan-Laporan-Saja" ditemukan pada sebuah reaksi, peringatan INFO akan meningkat. Ini mungkin berbicara tentang wewenang penguasaan
+yang saat ini sedang disempurnakan atau diciptakan, atau yang baru setengah diterapkan.
 
-<h2>Cookie Poisoning</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
+<h2>Keracunan Cookie</h2>
+Pemeriksaan ini mengamati usulan yang diberi oleh pengguna dalam parameter string kueri dan data POST untuk mengidentifikasi parameter cookie yang mungkin dikendalikan. Ini dikenal sebagai serangan yang merugikan, dan bisa saja dimanfaatkan ketika penyerang bisa memanipulasi cookie dengan berbagai cara. Dalam sebagian kasus, ini tak akan dapat dieksploitasi, melainkan memungkinkan parameter URL untuk memutuskan poin cookie lazimnya yang dianggap sebagai bug.
 
-<h2>Cookie Without SameSite Attribute</h2>
-This reports any cookies that do not have the SameSite attribute or that do not have a recognised valid value for that attribute.
+<h2>Cookie Tanpa Atribut Situs yang serupa</h2>
+Ini melaporkan tiap cookie yang mempunyai atribut Situs yang sama atau yang tak{mempunyai poin valid yang dikenali untuk atribut itu.
 
-<h2>Cross Domain Misconfiguration</h2>
-Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
-The current implementation looks at excessively permissive CORS headers.
+<h2>Kesalahan konfigurasi lintas domain</h2>
+secara tidak langsung memindai tanggapan untuk Kesalahan konfigurasi lintas domain, yang melonggarkan Kebijakan awal persamaan pada web browser, umpamanya<br> Implementasi dikala nampak pada header CORS yang terlalu permisif.
 
-<h2>Directory Browsing</h2>
-Passively scan responses for signatures that are indicative that Directory Browsing is possible.
+<h2>Menjelajah Direktori</h2>
+Secara pasif memindai respons untuk tandatangan yang menunjukkan bahwa Menjelajah Direktori bisa dilakukan.
 
-<h2>Example File Passive Scanner</h2>
-This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Contoh pengamatan file Pasif</h2>
+Ini menerapkan contoh aturan pemindaian pasif yang memuat string dari file yang dapat diedit oleh pengguna.<br>
+Untuk lebih lengkapnya kunjungi: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
-<h2>Example Simple Passive Scanner</h2>
-This implements a very simple example passive scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Contoh pengamatan pasif sederhana</h2>
+Ini menerapkan contoh pengamatan pasif yang sederhana.<br>
+Untuk lebih jelasnya lihat: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html.
 
-<h2>Hash Disclosure</h2>
-Passively scan for password hashes disclosed by the web server. <br>
-Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
+<h2>penyingkapan hash</h2>
+Secara pasif memindai segala hash password yang diungkapkan oleh server web. <br>
+mencakup berbagai format, termasuk beberapa format seperti MD4, MD5, dan SHA *, yang terkadang digunakan untuk tujuan selain berisi hash kata sandi. 
 
-<h2>HeartBleed</h2>
-Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
+<h2>kerusakan inti</h2>
+Pemindaian secara pasif terhadap tanggapan header HTTP yang mungkin menunjukkan bahwa server rentan terhadap kerentanan OpenSUSE LDB kritis. 
 
-<h2>HTTP to HTTPS Insecure Transition in Form Post</h2>
-This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
+<h2>HTTP ke HTTPS Transisi tidak aman pada bentuk Post</h2>
+Pemeriksaan ini mencari halaman HTTP yang tidak aman yang menjadi tuan rumah formulir HTTPS. Masalahnya adalah halaman HTTP yang tidak aman dapat dengan mudah dibajak melalui MITM dan formulir HTTPS yang aman dapat diganti atau dipalsukan.
 
-<h2>HTTPS to HTTP Insecure Transition in Form Post</h2>
-This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
+<h2>HTTPS ke HTTP tempat Transisi yang Tidak Aman</h2>. Masalahnya yaitu halaman yang aman sedang bertransisi ke halaman yang tidak aman saat data diunggah melalui formulir. Pengguna mungkin mengira mereka mengirimkan data ke halaman yang aman padahal sebenarnya tidak demikian.
 
-<h2>Insecure Component</h2>
-Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 
-A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable. 
-Currently, the following server side products are supported:<br>
-Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
-Apache web server<br>
-mod_auth_radius Apache module<br>
-mod_fcgid Apache module<br>
-mod_imap Apache module<br>
-mod_jk Apache module<br>
-mod_perl Apache module<br>
-mod_python Apache module<br>
-mod_ssl Apache module<br>
-OpenSSL Apache module<br>
-Perl Apache module<br>
-Python Apache module<br>
-IBM HTTP Server<br>
-JBoss application server<br>
-Jetty web server / application server<br>
-LiteSpeed web server<br>
-Lighttpd web server<br>
-Microsoft IIS web server<br>
-Netscape Enterprise web server<br>
-Nginx web server<br>
+<h2>Komponen yang Tidak Aman</h2>
+Secara pasif memindai tajuk respons peladen dan konten pembuat tubuh untuk versi-versi produk, yang kemudian akan dilakukan referensi silang terhadap daftar versi produk yang dikenal rentan terhadap berbagai macam CVE. 
+Sebuah daftar yang berisi peringkat nilai keparahan CVE dan CVSS merupakan hasil untuk tiap produk yang dianggap rentan. 
+Saat ini, produk sampingan peladen berikut ini didukung:<br>
+Peladen aplikasi Apache Tomcat (fungsionalitas terbatas karena terbatasnya kebocoran informasi oleh Tomcat)<br>
+Peladen web Apache<br>
+modul Apache mod_auth_radius<br>
+modul Apache mod_fcgid<br>
+modul Apache mod_imap<br>
+modul Apache mod_jk<br>
+modul Apache mod_perl<br>
+modul Apache mod_python<br>
+modul Apache mod_ssl<br>
+modul Apache OpenSSL<br>
+modul Apache Perl<br>
+modul Apache Python<br>
+Peladen HTTP IBM<br>
+peladen aplikasi JBoss<br>
+peladen web / aplikasi Jetty<br>
+peladen web LiteSpeed<br>
+peladen web Lighttpd<br>
+peladen web Microsoft IIS<br>
+peladen web Netscape Enterprise<br>
+peladen web Nginx<br>
 OpenCMS<br>
-Oracle Application Server<br>
-Oracle Web Cache<br>
+peladen aplikasi Oracle<br>
+singgahan web Oracle<br>
 PHP<br>
 Phusion_Passenger<br>
-Squid proxy server<br>
-Sun One web server<br>
-Sun Java System Web Server<br>
-TornadoServer web server<br>
+peladen proksi Squid<br>
+peladen web Sun One<br>
+Peladen Web Sun Java System<br>
+peladen web TornadoServer<br>
 WordPress<br>
 
-<h2>Image Location Scanner</h2>
-<p>Passively scans for GPS location exposure in images during normal security
-assessments of websites.  Image Location Scanner assists in situations where
-end users may post profile images and possibly give away their home location,
-e.g. a dating site or children's chatroom.  A whitepaper on this can be found
-at http://veggiespam.com/ils/</p>
+<h2>Pemindai Lokasi Gambar</h2>
+<p>Secara pasif memindai pemajanan lokasi GPS dalam gambar selama penilaian keamanan normal berbagai laman.  Pemindai Lokasi Gambar membantu dalam situasi di mana
+pengguna dapat memasang foto profil dan memberikan lokasi rumah mereka,
+misalnya situs kencan atau ruang chat anak-anak.  Buku Putih tentang hal ini dapat ditemukan
+di http://veggiespam.com/ils/</p>
 
-<p>Note: In order for this plug-in to operate, ZAP must be configured to
-receive and process images.  To do this, go to the ZAP Options panel (Tools
-&rarr; Options), choose Display, and enable the checkbox for "Process images in
-HTTP requests/responses".  In addition, ZAP images cannot be filtered out via
-the settings "Global Exclude URL" or the Session Properties for "Exclude from
-Proxy". </p>
+<p>Catatan: Agar plug-in ini dapat beroperasi, ZAP harus dikonfigurasi untuk menerima dan memproses gambar.  Untuk melakukannya, pergi ke panel Pilihan ZAP (Perkakas
+&rarr; Opsi), pilih Tampilkan, dan aktifkan kontak centang untuk "Proses gambar dalam permintaan/respon HTTP".  Sebagai tambahan, gambar ZAP tidak dapat disaring melalui pengaturan "URL Peniadaan Global" atau Properti Sesi untuk "Tiadakan dari Proksi". </p>
 
 <h2>Buka pengalihan</h2>
-Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
+Pengalihan terbuka adalah salah satu dari Sepuluh Teratas kerentanan OWASP 2010. Pemeriksaan ini mengamati masukan yang diberikan oleh pengguna dalam parameter string kueri dan MENGIRIM data untuk mengidentifikasi di mana pengalihan terbuka mungkin dilakukan. Pengalihan terbuka terjadi ketika suatu aplikasi mengizinkan masukan yang diberikan oleh pengguna (misalnya http://nottrusted.com) untuk mengendalikan pengalihan di luar situs. Biasanya cara ini cukup akurat untuk menemukan di mana pengalihan 301 atau 302 dapat dimanfaatkan oleh pelaku spam atau serangan phishing
 
-<h2>HTTP Server Response Header Scanner</h2>
-This checks response headers for the presence of a server header that contains version details.
-At LOW Threshold will raise an alert based on presence of the header field whether or not a version string is detected.
+<h2>Pemindai Tajuk Respon Peladen HTTP</h2>
+Ini akan memeriksa tajuk respons akan kehadiran tajuk peladen yang berisi rincian versi.
+Ambang batas RENDAH akan meningkatkan kewaspadaan terhadap kehadiran bidang tajuk apakah string versi terdeteksi atau tidak.
 
 <h2>Pengungkapan Kode Sumber</h2>
 Kode Sumber Aplikasi telah diungkapkan oleh server web
 
-<h2>Strict Transport Security Header Scanner</h2>
-This scanner checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 
-alerting if they're found.
+<h2>Pemindai Tajuk Keamanan Transportasi Ketat</h2>
+Pemindai ini memeriksa respons HTTPS akan kehadiran tajuk Keamanan Transportasi Ketat HTTP (HSTS) dan melakukan tes terhadap berbagai masalah implementasi,
+memberikan peringatan jika ditemukan.
 
-Alerts generated:
+Peringatan-peringatan yang diberikan:
 <ul>
- <li><b>Strict-Transport-Security Header Not Set: </b> If the response is HTTPS and the header is completely missing.</li>
- <li><b>Strict-Transport-Security Disabled: </b> If the response is HTTPS and the max-age value is set to zero, thus resetting the browser's HSTS information for the site.</li>
- <li><b>Strict-Transport-Security Multiple Header Entries (Non-compliant with Spec): </b> If the response is HTTPS and there is more than one HSTS header on the response.</li>
- <li><b>Strict-Transport-Security Missing Max-Age (Non-compliant with Spec): </b> If the response is HTTPS, a HSTS header is specified but the max-age value does not contain a number.</li>
- <li><b>Strict-Transport-Security Defined via META (Non-compliant with Spec): </b> If the response body includes a META tag which attempts to define HSTS.</li>
- <li><b>Strict-Transport-Security Header on Plain HTTP Response: </b> If the response is HTTP and the HSTS header is present.</li>
- <li><b>Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec): </b> If the response is HTTPS and the HSTS header is present, but there are quotes preceding the max-age directive (quotes are allowed around the max-age value, but not around the directive itself).</li>
- <li><b>Strict-Transport-Security Malformed Content (Non-compliant with Spec): </b> If the response is HTTPS and a HSTS header is present, but there is some unexpected content (such as curly quotes). The expectation is that the content be printable ASCII.</li>
+ <li><b>Strict-Transport-Security Header Not Set: </b> Jika respons berupa HTTPS dan tajuknya hilang sama sekali.</li>
+ <li><b>Strict-Transport-Security Disabled: </b> Jika respons berupa HTTPS dan nilai maksimal umur diatur ke nol, maka informasi HSTS peramban untuk situs akan ditata ulang.</li>
+ <li><b>Strict-Transport-Security Multiple Header Entries (Non-compliant with Spec): </b> Jika respons berupa HTTPS dan ada lebih dari satu tajuk HSTS pada respons.</li>
+ <li><b>Strict-Transport-Security Missing Max-Age (Non-compliant with Spec): </b> Jika respons berupa HTTPS, sebuah tajuk HTST ditentukan tapi nilai maks-umur tidak mengandung angka.</li>
+ <li><b>Strict-Transport-Security Defined via META (Non-compliant with Spec):</b> Jika tubuh respons termasuk tag META yang berusaha menentukan HSTS.</li>
+ <li><b>Strict-Transport-Security Header on Plain HTTP Response: </b> Jika respons berupa HTTP dan ada tajuk HSTS.</li>
+ <li><b>Strict-Transport-Security Max-Age Malformed (Non-compliant with Spec):</b> Jika respons berupa HTTPS dan ada tajuk HSTS, tapi ada tanda kutip sebelum petunjuk umur maksimal (tanda kutip diperbolehkan di sekitar nilai maksimal, tapi tidak pada petunjuk itu sendiri).</li>
+ <li><b>Strict-Transport-Security Malformed Content (Non-compliant with Spec): </b> Jika respons berupa HTTPS dan ada tajuk HSTS, tapi ada beberapa konten yang tak terduga (seperti tanda kutip kurawal). Harapannya adalah konten berupa ASCII yang bisa dicetak.</li>
 </ul>
 
 <h2>Pengungkapan Timestamp</h2>
 Sebuah timestamp telah diungkapkan oleh aplikasi/server web
 
-<h2>User Controllable HTML Element Attribute (Potential XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
+<h2>Atribut Elemen HTML yang Dapat Dikontrol Klien (Potensi XSS)</h2>
+Pemeriksaan ini memperhatikan usulan yang diberikan oleh pengguna dalam parameter string kueri dan MENGIRIM data untuk mengidentifikasi di mana pengalihan terbuka mungkin dikerjakan. Ini menyediakan hotspot daeteksi XSS (cross-site scripting) yang akan membutuhkan ulasan lebih lanjut oleh seorang analis keamanan untuk menetapkan eksploitasi.
 
 <h2>Charset Terkendali Pengguna</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
+Pemeriksaan ini memperhatikan usulan yang diberi oleh pengguna dalam parameter string kueri dan MENGIRIM data untuk mengidentifikasi di mana pengalihan terbuka mungkin dilaksanakan. Pernyataan charset yang demikian seharusnya selalu dinyatakan oleh aplikasi. Apabila penyerang bisa mengendalikan charset respon, mereka dapat memanipulasi HTML untuk menjalankan XSS atau serangan lainnya.
 
 <h2>Acara JavaScript Terkendali User (XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+Pemeriksaan ini mengamati masukan yang diberikan oleh pengguna dalam parameter string kueri dan MENGIRIM data untuk mengidentifikasi di mana nilai atribut HTML tertentu mungkin dilakukan. Ini menyediakan hotspot daeteksi XSS (cross-site scripting) yang akan memerlukan review lebih lanjut oleh seorang analis keamanan untuk {menentukan memutuskan eksploitasi.            
 
-<h2>User Controllable Javascript Property (XSS)</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
+<h2>Properti javasript yang dapat di kontrol oleh pengguna (XSS)</h2>
+Pemeriksaan ini memandang masukan yang diberikan oleh pengguna dalam parameter string kueri dan MENGIRIM data untuk mengidentifikasi dimana lokasi URL di properti javascript tertentu (misalnya createElement src) yang munkin dikendalikan. Ini menyediakan hotspot daeteksi pada XSS (cross-site scripting) yang mana akana memerlukan ulasan lebih lanjut oleh seorang analis keamanan untuk menetapkan eksploitasi.            
 
-<h2>Username Hash Found</h2>
-If any context contains defined users this scanner checks all responses for the presence of hashed values representing those usernames.
-Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact. 
+<h2>Pengguna nama campuran ditemukan</h2>
+Seandainya ada konteks yang berisi pengguna yang didefinisikan pemindai ini memeriksa seluruh tanggapan atas adanya poin hash yang mewakili nama pengguna tersebut.
+Penemuan segala nilai apapun dapat mewakili kerentanan referensi obyek langsung tidak aman (IDOR). Lansiran cuma diajukan sebagai item informasi sebab dibutuhkan pengujian manual lebih lanjut untuk menentukan dan mengukur imbasnya. 
 
 <h2>X-Powered-By Header Information Leak</h2>
-This checks response headers for the presence of X-Powered-By details.
+Ini berupa memeriksa header respon untuk mengetahui rincian oleh X-Powered-.
 
 <h2>X-Backend-Server Header Information Leak</h2>
 This checks response headers for the presence of X-Backend-Server details.
 
 <h2>Pengalihan Masuk</h2>
-This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
-A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
+Pemerikasaan ini memprediksi ukuran berbagai jenis tanggapan ulang dan menghasilkan peringatan jika responsnya lebih besar dari ukuran yang diprediksi. 
+Sebuah Tanggapan mencoba langsung yang besar mungkin menunjukkan bahwa walaupun mencoba langsung telah terjadi, halaman tersebut benar-benar memuat konten (yang mungkin mengungkapkan informasi sensitif, PII, dll.).
 
-<h2>X-ChromeLogger-Data Header Information Leak</h2>
+<h2>Informasi data kebocoran header X-ChromeLogger-Data</h2>
 This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
 
 <h2>Kebocoran informasi X-Debug-Token</h2>
-This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
-Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
+Ini akan memeriksa header respon dari kehadiran X-Debug-Token dan X-Debug-Token-Link rincian.
+Yang menunjukkan penggunaan/paparan pengguna Symfony. Pengguna symfony menyediakan akses pada sebagian besar informasi yang menarik bagi individu jahat dan Penguji Keamanan.
 
 <h2>X-AspNet-Version/X-AspNetMvc-Version Header Information Leak</h2>
-This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
+Ini memeriksa header respon untuk mengetahui rincian dari X-AspNet-Versi / X-AspNetMvc-Versi.
 
 
 </body>
