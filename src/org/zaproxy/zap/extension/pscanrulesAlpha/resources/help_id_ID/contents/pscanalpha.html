@@ -11,7 +11,7 @@ Aturan pemindaian pasif kualitas rilis berikut disertakan dalam add-on ini:
 
 <h2>Konten untuk Terjemahan
 ASP.NET penampilan pembukaan</h2>
-sebuah ASP.NET ViewState ditemukan oleh aplikasi / server web
+Sebuah ASP.NET viewstate ditemukan oleh aplikasi / server web
 
 <h2>Integritas ASP.NET viewstate</h2>
 Aplikasi ini tidak bisa menggunakan Message Authentication Code (MAC) untuk melindungi keutuhan ASP.NET ViewState, yang dapat diubah oleh pelanggan yang pendendam
@@ -21,14 +21,14 @@ Sebuah timestamp telah diungkapkan oleh aplikasi/server web
 
 <h2>Konten yang hilang merupakan kebijakan keamanan header</h2>
 Ini memeriksa HTML reaksi header untuk kehadiran keamanan kebijakan header.<br>
-Secara sederhana tentu saja ini mengatur pemeriksaan kedekatan header "Substance Security-Policy"
+Secara sederhana tentu saja ini mengatur pemeriksaan kedekatan header "substansi-kebijakan-keamanan".
 Terlebih lagi, pada batas rendah juga memeriksa header "X-Content-Security-Policy" dan "X-WebKit-CSP".
 <p>
-Jika header "Substansi Keamanan-Kebijakan-Laporan-Saja" ditemukan pada sebuah reaksi, peringatan INFO akan meningkat. Ini mungkin berbicara tentang wewenang penguasaan
+Jika header "Substansi Keamanan-Kebijakan-Laporan-Saja" ditemukan pada sebuah reaksi, peringatan sebuah info akan meningkat. Ini mungkin berbicara tentang wewenang penguasaan
 yang saat ini sedang disempurnakan atau diciptakan, atau yang baru setengah diterapkan.
 
 <h2>Keracunan Cookie</h2>
-Pemeriksaan ini mengamati usulan yang diberi oleh pengguna dalam parameter string kueri dan data POST untuk mengidentifikasi parameter cookie yang mungkin dikendalikan. Ini dikenal sebagai serangan yang merugikan, dan bisa saja dimanfaatkan ketika penyerang bisa memanipulasi cookie dengan berbagai cara. Dalam sebagian kasus, ini tak akan dapat dieksploitasi, melainkan memungkinkan parameter URL untuk memutuskan poin cookie lazimnya yang dianggap sebagai bug.
+Pemeriksaan ini mengamati usulan yang diberi oleh pengguna dalam parameter string kueri dan mengirim data untuk mengidentifikasi parameter cookie yang mungkin dikendalikan. Ini dikenal sebagai serangan yang merugikan, dan bisa saja dimanfaatkan ketika penyerang bisa memanipulasi cookie dengan berbagai cara. Dalam sebagian kasus, ini tak akan dapat dieksploitasi, melainkan memungkinkan parameter URL untuk memutuskan poin cookie lazimnya yang dianggap sebagai bug.
 
 <h2>Cookie Tanpa Atribut Situs yang serupa</h2>
 Ini melaporkan tiap cookie yang mempunyai atribut Situs yang sama atau yang tak{mempunyai poin valid yang dikenali untuk atribut itu.
@@ -132,17 +132,17 @@ Peringatan-peringatan yang diberikan:
 <h2>Pengungkapan Timestamp</h2>
 Sebuah timestamp telah diungkapkan oleh aplikasi/server web
 
-<h2>Atribut Elemen HTML yang Dapat Dikontrol Klien (Potensi XSS)</h2>
-Pemeriksaan ini memperhatikan usulan yang diberikan oleh pengguna dalam parameter string kueri dan MENGIRIM data untuk mengidentifikasi di mana pengalihan terbuka mungkin dikerjakan. Ini menyediakan hotspot daeteksi XSS (cross-site scripting) yang akan membutuhkan ulasan lebih lanjut oleh seorang analis keamanan untuk menetapkan eksploitasi.
+<h2>Atribut Elemen HTML yang dapat dikontrol klien (potensi XSS)</h2>
+Pemeriksaan ini memperhatikan usulan yang diberikan oleh pengguna dalam parameter string kueri dan mengirim data untuk mengidentifikasi di mana pengalihan terbuka mungkin dikerjakan. Ini menyediakan hotspot daeteksi XSS (cross-site scripting) yang akan membutuhkan ulasan lebih lanjut oleh seorang analis keamanan untuk menetapkan eksploitasi.
 
 <h2>Charset Terkendali Pengguna</h2>
-Pemeriksaan ini memperhatikan usulan yang diberi oleh pengguna dalam parameter string kueri dan MENGIRIM data untuk mengidentifikasi di mana pengalihan terbuka mungkin dilaksanakan. Pernyataan charset yang demikian seharusnya selalu dinyatakan oleh aplikasi. Apabila penyerang bisa mengendalikan charset respon, mereka dapat memanipulasi HTML untuk menjalankan XSS atau serangan lainnya.
+Pemeriksaan ini memperhatikan usulan yang diberi oleh pengguna dalam parameter string kueri dan mengirim data untuk mengidentifikasi di mana pengalihan terbuka mungkin dilaksanakan. Pernyataan charset yang demikian seharusnya selalu dinyatakan oleh aplikasi. Apabila penyerang bisa mengendalikan charset respon, mereka dapat memanipulasi HTML untuk menjalankan XSS atau serangan lainnya.
 
 <h2>Acara JavaScript Terkendali User (XSS)</h2>
-Pemeriksaan ini mengamati masukan yang diberikan oleh pengguna dalam parameter string kueri dan MENGIRIM data untuk mengidentifikasi di mana nilai atribut HTML tertentu mungkin dilakukan. Ini menyediakan hotspot daeteksi XSS (cross-site scripting) yang akan memerlukan review lebih lanjut oleh seorang analis keamanan untuk {menentukan memutuskan eksploitasi.            
+Pemeriksaan ini mengamati masukan yang diberikan oleh pengguna dalam parameter string kueri dan mengirim data untuk mengidentifikasi di mana nilai atribut HTML tertentu mungkin dilakukan. Ini menyediakan hotspot daeteksi XSS (cross-site scripting) yang akan memerlukan review lebih lanjut oleh seorang analis keamanan untuk {menentukan memutuskan eksploitasi.            
 
 <h2>Properti javasript yang dapat di kontrol oleh pengguna (XSS)</h2>
-Pemeriksaan ini memandang masukan yang diberikan oleh pengguna dalam parameter string kueri dan MENGIRIM data untuk mengidentifikasi dimana lokasi URL di properti javascript tertentu (misalnya createElement src) yang munkin dikendalikan. Ini menyediakan hotspot daeteksi pada XSS (cross-site scripting) yang mana akana memerlukan ulasan lebih lanjut oleh seorang analis keamanan untuk menetapkan eksploitasi.            
+Pemeriksaan ini memandang masukan yang diberikan oleh pengguna dalam parameter string kueri dan mengirim data untuk mengidentifikasi dimana lokasi URL di properti javascript tertentu (misalnya create element src) yang munkin dikendalikan. Ini menyediakan hotspot daeteksi pada XSS (cross-site scripting) yang mana akana memerlukan ulasan lebih lanjut oleh seorang analis keamanan untuk menetapkan eksploitasi.            
 
 <h2>Pengguna nama campuran ditemukan</h2>
 Seandainya ada konteks yang berisi pengguna yang didefinisikan pemindai ini memeriksa seluruh tanggapan atas adanya poin hash yang mewakili nama pengguna tersebut.

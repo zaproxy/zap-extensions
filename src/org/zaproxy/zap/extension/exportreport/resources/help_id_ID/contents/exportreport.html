@@ -3,18 +3,18 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>
-            Export Report
+            Laporan Ekspor
         </title>
     </head>
 
     <body bgcolor="#ffffff">
 
-        <h1><u>Export Report</u></h1>
+        <h1><u>Laporan Ekspor</u></h1>
         Laporan Ekspor modul yang memungkinkan pengguna untuk menyesuaikan konten dan ekspor dalam format yang diinginkan.
         <ul>
             <li>Dibuat oleh <a href="https://github.com/JordanGS">JordanGS</a>.</li>
             <li>Minimum Versi Yang Didukung: mingguan rilis ZAP_D-2016-09-05</li>
-            <li>Project on  <a href="https://github.com/JordanGS/workspace">GitHub</a>. You can also find a .zip of the minimum supported release in the zap-download folder.</li>
+            <li>Proyek di <a href="https://github.com/JordanGS/workspace">GitHub</a>. Anda juga dapat menemukan sebuah .zip dari rilis minimal yang didukung  di folder download-zap.</li>
             <li>Didukung dan dimasukkan kedalam <a href="https://wiki.jenkins-ci.org/display/JENKINS/zap+plugin">resmi OWASP Zed Attack Proxy Jenkins Plugin</a>.</li>
         </ul>
 
@@ -30,12 +30,12 @@
         <a name="zap-ui"></a> 
         <h2><u>ZAP UI</u></h2>
 
-        <h4>Source Info</h4>
+        <h4>Sumber Info</h4>
         Pengguna masuk dan secara otomatis mengambil data yang relevan untuk laporan. Arahkan kursor ke masing-masing bidang dalam ekstensi untuk tool tip.
         <ul>
             <li>Judul - Default untuk Sesi Nama</li>
-            <li>By</li>
-            <li>For</li>
+            <li>Oleh</li>
+            <li>Untuk</li>
             <li>Upload Scan - Pengguna memasukkan tanggal AScan, default untuk saat ini tanggal-waktu</li>
             <li>Tanggal Laporan - Default untuk saat ini tanggal-waktu</li>
             <li>Versi Scan - Placeholder untuk masa depan</li>
@@ -44,111 +44,111 @@
         <h4>UI</h4>
         <ul style="list-style-type:none">
             <li>
-                <img src="images/SourceInfo.png" alt="Source Info">
+                <img src="images/SourceInfo.png" alt="Sumber Info">
             </li>
         </ul>
         <br>
 
-        <h4>Alert Severity</h4>
-        Include/Exclude Alerts by Severity.
-        <h4>Included by Default</h4>
+        <h4>Waspada Kekerasan</h4>
+        Termasuk/Tidak termasuk peringatan oleh Kekerasan.
+        <h4>Termasuk oleh semula</h4>
         <ul>
-            <li>High</li>
-            <li>Medium</li>
-            <li>Low</li>
-            <li>Informational</li>
+            <li>Tinggi</li>
+            <li>Sedang</li>
+            <li>Lemah</li>
+            <li>Informasi</li>
         </ul>
         <h4>UI</h4>
         <ul style="list-style-type:none">
             <li>
-                <img src="images/AlertSeverity.png" alt="Source Info">
+                <img src="images/AlertSeverity.png" alt="Sumber Info">
             </li>
         </ul>
         <br>
 
-        <h4>Alert Details</h4>
-        Include/Exclude Details of each Alert.
-        <h4>Included by Default</h4>
+        <h4>Rincian waspada</h4>
+        Termasuk/Tidak termasuk Rincian dari setiap waspada.
+        <h4>Termasuk oleh semula</h4>
         <ul>
-            <li>CWE ID</li>
-            <li>WASC ID</li>
-            <li>Description</li>
-            <li>Other Info</li>
-            <li>Solution</li>
-            <li>Reference</li>
+            <li>ID CWE</li>
+            <li>ID WASC</li>
+            <li>Deskripsi</li>
+            <li>Info Lainnya</li>
+            <li>Solusi</li>
+            <li>Referensi</li>
         </ul>
 
-        <h4>Excluded by Default</h4>
+        <h4>Terkecuali oleh semula</h4>
         <ul>
-            <li>Request Header</li>
-            <li>Response Header</li>
-            <li>Request Body</li>
-            <li>Response Body</li>
+            <li>Permintaan Atasan</li>
+            <li>Respon Atasan</li>
+            <li>Permintaan Tubuh</li>
+            <li>Respon Tubuh</li>
         </ul>
 
         <h4>UI</h4>
 
         <ul style="list-style-type:none">
             <li>
-                <img src="images/Alert Details.png" alt="Source Info">
+                <img src="images/Alert Details.png" alt="Sumber Info">
             </li>
         </ul>
 
         <hr>
 
-        <h4>File Chooser Dialog</h4>
+        <h4>Pemilih Dialog File</h4>
         Dialog hanya menampilkan folder dan file yang diterima. Yang 'Tipe file daftar drop-down akan filter untuk hanya menampilkan folder dan file-file dengan ekstensi tertentu.
 
-        <h4>Currently Available</h4>
+        <h4>Tersedia saat ini</h4>
         <ul>
-            <li>ASCII 1.0 Strict Compliant XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
-            <li>XML Files (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
-            <li>JSON Files (.json <img src="../../images/json.png" alt="JSON Icon">)</li>
+            <li>ASCII 1.0 Ketat sesuai File XHTML (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
+            <li>File XML (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
+            <li>File JSON (.json <img src="../../images/json.png" alt="JSON Icon">)</li>
         </ul>
 
-        <h4>Future Milestone</h4>
+        <h4>Tonggak Masa depan</h4>
         <ul>
-            <li>Bootstrap HTML Files(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
-            <li>PDF Documents (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
-            <li>Google Documents (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
+            <li>File Bootstrap HTML (.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
+            <li>Dokumen PDF (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
+            <li>Dokumen Google (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
         </ul>            
 
         <h4>UI</h4>
         <ul style="list-style-type:none">
             <li>
-                Show all accepted files
+                Tampilkan semua file yang diterima
             </li>
             <li>
-                <img src="images/FileChooser.png" alt="Source Info">
-            </li>
-            <li><br></li>
-            <li>
-                List of accepted file formats
-            </li>
-            <li>
-                <img src="images/FileChooserChoices.png" alt="Source Info">
+                <img src="images/FileChooser.png" alt="Sumber Info">
             </li>
             <li><br></li>
             <li>
-                Filter by a specific file format
+                Daftar format file yang diterima
             </li>
             <li>
-                <img src="images/FileChooserFilter.png" alt="Source Info">
+                <img src="images/FileChooserChoices.png" alt="Sumber Info">
+            </li>
+            <li><br></li>
+            <li>
+                Penyaring oleh format file tertentu
+            </li>
+            <li>
+                <img src="images/FileChooserFilter.png" alt="Sumber Info">
             </li>
         </ul>
 
         <hr>
 
         <a name="command-line"></a> 
-        <h2><u>Command Line</u></h2>
+        <h2><u>Garis komando</u></h2>
         Ekstensi dapat dijalankan dari baris perintah serta dan membutuhkan argumen berikut yang harus dilalui untuk menghasilkan laporan.
 
-        <h4>OWASP ZAP Command Line Options</h4>
+        <h4>Opsi Baris Perintah OWASP ZAP</h4>
         <ul style="list-style: none;">
-            <li><b>-session</b>: Opens the given session after starting ZAP</li>
-            <li><b>-cmd</b>: Runs ZAP 'inline', ie without starting the UI or a daemon</li>
+            <li><b>-session</b>: Membuka sesi yang diberikan setelah memulai ZAP</li>
+            <li><b>-cmd </b>: Menjalankan 'inline ZAP', yaitu tanpa memulai UI atau daemon</li>
         </ul>
-        See the <a href="https://github.com/zaproxy/zap-core-help/wiki/HelpCmdline">Wiki</a> untuk lebih detail tentang native didukung opsi baris perintah.
+        Lihat <a href="https://github.com/zaproxy/zap-core-help/wiki/HelpCmdline">Wiki</a> untuk lebih detail tentang native didukung opsi baris perintah.
 
         <h4>Ekspor Laporan Ekstensi-Opsi Baris Perintah</h4>
         <ul style="list-style: none;">
@@ -156,25 +156,25 @@
             <li><b>-export_report</b>: 
                 <ul style="list-style: none;">
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Deskripsi:</h4>
                         <ul>
                             <li>Menyimpan ke file yang ditentukan setelah loading yang diberikan sesi.</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Currently Available</h4>
+                        <h4>Tersedia saat ini</h4>
                         <ul>
-                            <li>ASCII 1.0 Strict Compliant XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
-                            <li>XML Files (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
-                            <li>JSON Files (.json <img src="../../images/json.png" alt="JSON Icon">)</li>
+                            <li>ASCII 1.0 Compliant Ketat XHTML File (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
+                            <li>File XML (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
+                            <li>JSON File (.json <img src="../../images/json.png" alt="JSON Icon">)</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Future Milestone</h4>
+                        <h4>Tonggak masa depan</h4>
                         <ul>
-                            <li>Bootstrap HTML Files(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
-                            <li>PDF Documents (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
-                            <li>Google Documents (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
+                            <li>File HTML Bootstrap(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
+                            <li>Dokumen PDF (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
+                            <li>Google Dokumen (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
                         </ul>            
                     </li>
                     <li><br></li>
@@ -185,14 +185,14 @@
             <li><b>-source_info</b>:
                 <ul style="list-style: none;">
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Deskripsi:</h4>
                         <ul>
                             <li>Menentukan berikut rincian laporan:</li>
                             <li style="list-style: none;">
                                 <ol>
                                     <li>Title</li>
                                     <li>By</li>
-                                    <li>For</li>
+                                    <li>Untuk</li>
                                     <li>Scan Date</li>
                                     <li>Report Date</li>
                                     <li>Scan Ver</li>
@@ -205,7 +205,7 @@
                     <li>
                         <h4>Example:</h4>
                         <ul>
-                            <li>-source_info "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, et sed nibh nostrum singulis. Nec causae viderer discere eu."</li>
+                            <li>-source_info "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea usu atomorum tincidunt, ne munere regione memiliki. Ne sea summo tation, et sed nibh nostrum singulis. Nec causae viderer discere eu."</li>
                         </ul>
                     </li>
                     <li>
@@ -236,15 +236,15 @@
                         </ul>
                     </li>
                     <li>
-                        <h4>Input format:</h4>
+                        <h4>Masukkan format:</h4>
                         <ul>
-                            <li>Only accepts a string list with ';' delimiter</li>
+                            <li>Hanya menerima daftar string dengan ';' pembatas</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Input restriction:</h4>
+                        <h4>Masukan pembatasan:</h4>
                         <ul>
-                            <li>Only accepts 't' and 'f' for each item in the list</li>
+                            <li>Hanya menerima 't' dan 'f' untuk setiap item dalam daftar</li>
                         </ul>
                     </li>
                     <li>
@@ -254,13 +254,13 @@
                         </ul>
                     </li>
                     <li>
-                        <h4>Explanation:</h4>
+                        <h4>Penjelasan:</h4>
                         <ul>
                             <li>Dalam contoh di atas, hanya lansiran tinggi, menengah dan Informasi yang akan disertakan dalam laporan yang dihasilkan.</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Validation:</h4>
+                        <h4>Validasi:</h4>
                         <ul>
                             <li>Validasi: konten divalidasi menjadi 't' atau 'f' dan semua 4 barang ada dalam daftar.</li>
                         </ul>
@@ -274,7 +274,7 @@
                 <ul style="list-style: none;">
                 
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Deskripsi:</h4>
                         <ul>
                             <li>Menentukan rincian peringatan mana yang akan disertakan dalam laporan:</li>
                             <li style="list-style: none;">
@@ -282,45 +282,45 @@
                                     <li>CWE ID</li>
                                     <li>WASC ID</li>
                                     <li>Description</li>
-                                    <li>Other Info</li>
-                                    <li>Solution</li>
-                                    <li>Reference</li>
-                                    <li>Request Header</li>
-                                    <li>Response Header</li>
-                                    <li>Request Body</li>
-                                    <li>Response Body</li>
+                                    <li>Info Lainnya</li>
+                                    <li>Solusi</li>
+                                    <li>Referensi</li>
+                                    <li>Permintaan Atasan</li>
+                                    <li>Respon Atasan</li>
+                                    <li>Permintaan Tubuh</li>
+                                    <li>Respon Tubuh</li>
                                 </ol>
                             </li>
                         </ul>
                     <li>
                     <li>
-                        <h4>Input format:</h4>
+                        <h4>Masukkan format:</h4>
                         <ul>
-                            <li>Only accepts a string list with ';' delimiter</li>
+                            <li>Hanya menerima daftar string dengan ';' pembatas</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Input restriction:</h4>
+                        <h4>Masukkan larangan:</h4>
                         <ul>
                             <li>Hanya menerima 't' dan 'f' untuk setiap barang dalam daftar</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Example:</h4>
+                        <h4>Contoh:</h4>
                         <ul>
-                            <li>-alert_details "t;t;t;t;t;t;f;f;f;f"</li>
+                            <li>-rincian_waspada "t;t;t;t;t;t;f;f;f;f"</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Explanation:</h4>
+                        <h4>Penjelasan:</h4>
                         <ul>
                             <li>Dalam contoh di atas, hanya CWE ID, WASC ID, Deskripsi, Info Lainnya, Solusi dan Referensi Rincian Waspada akan dimasukkan dalam laporan yang dihasilkan.</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Validation:</h4>
+                        <h4>Validasi:</h4>
                         <ul>
-                            <li>Content is validated to be either 't' or 'f' and that all 10 items are in the list.</li>
+                            <li>Konten divalidasi menjadi 't' atau 'f' dan semua 10 item ada dalam daftar.</li>
                         </ul>
                     </li>
                     <li><br></li>
@@ -331,11 +331,11 @@
 
         <ul style="list-style: none;">
             <li>
-                <h4>Putting it all together! (Windows)</h4>
+                <h4>Menempatkan semuanya bersama! (Windows)</h4>
                 <ol>
-                    <li>Open a command prompt</li>
+                    <li>Buka perintah cepat</li>
                     <li>Menavigasi ke lokasi di mana zap.bat yang terletak</li>
-                    <li>execute the following:
+                    <li>lakukan hal berikut:
                         <ul style="list-style: none;"><li>zap.bat <b>-export_report</b> "/path/to/save/report.xhtml" <b>-source_info</b> "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, et sed nibh nostrum singulis. Nec causae viderer discere eu." <b>-alert_severity</b> "t;t;f;t" <b>-alert_details</b> "t;t;t;t;t;t;f;f;f;f" <b>-session</b> "/path/to/existing/session" <b>-cmd</b></li></ul>
                     </li>
                 </ol>
@@ -345,7 +345,7 @@
         <hr>
 
         <a name="api-calls"></a> 
-        <h2><u>API Calls</u></h2>
+        <h2><u>Panggilan API</u></h2>
 
         Ekstensi dapat diakses dengan panggilan API dan memerlukan argumen berikut yang harus dilalui untuk menghasilkan laporan.
 
@@ -353,7 +353,7 @@
 
         Pembatasan yang sama untuk Baris Perintah di atas.
 
-        <h4>Usage Example:</h4>
+        <h4>Contoh Pemakaian:</h4>
         <blockquote><pre><code>
 Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
 String API_KEY = "ZAPROXY-PLUGIN"
