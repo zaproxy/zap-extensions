@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Active Scan Rules
+Aturan Pengamatan Aktif
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -15,10 +15,9 @@ The following release quality active scan rules are included in this add-on:
 Looks for indicators of buffer overflows in compiled code.  Hal ini dilakukan dengan menempatkan string teks masukan yang besar dan mencari kode yang rusak
 dan penutupan sesi abnormal.
 
-<h2>Code Injection</h2>
+<h2>Kode injeksi</h2>
 
-This rule submits PHP and ASP attack strings as values for URL parameters in a request and examines the response to 
-see if those values have been evaluated by the server. Pertama, permintaan dibuat dan dikirim berisi petunjuk PHP yang disuntikkan
+Aturan ini diajukan PHP dan ASP menyerang senar sebagai nilai untuk URL parameter dalam sebuah permintaan dan memeriksa respon untuk lihat jika nilai itu telah dievaluasi oleh server. Pertama, permintaan dibuat dan dikirim berisi petunjuk PHP yang disuntikkan
 untuk mencetak token. Jika terjadi benturan antara token dan isi dari respons body, pemindai menimbulkan peringatan dan segera kembali.
 Jika tidak ada pertandingan, pemindaian akan membuat permintaan dengan beberapa string ASP yang disuntikkan yang menginstruksikan server untuk menulis produk
 dari dua bilangan bulat yang dihasilkan secara acak dalam responnya. Jika respon tubuh cocok dengan produk, peringatan akan dinaikan.
@@ -40,8 +39,8 @@ This rule checks the headers of secure pages and reports an alert if they allow 
 <h2>Cross Site Scripting (reflected)</h2>
 
 This rule starts by submitting a 'safe' value and analyzing all of the locations in which this value occurs in the response (if any). <br>
-It then performs a series of attacks specifically targeted at the location in which each of the instances occurs, 
-including tag attributes, URL attributes, attributes in tags which support src attributes, html comments etc. 
+Ini kemudian melakukan seri dari serangan khususnya ditargetkan di lokasi di mana masing-masing kasus terjadi, 
+termasuk menandai atribut, URL atribut, atribut dalam menandai yang mendukung src atribut, html komentar etc. 
 
 <h2>Cross Site Scripting (persistent)</h2>
 
@@ -62,8 +61,8 @@ Aturan ini memeriksa untuk melihat jika permintaan akan menyediakan akses ke daf
 <h2>External Redirect</h2>
 
 This rule submits a variety of URL redirect strings as parameter values in a request, then examines the headers and bodies of responses to determine
-whether or not a redirect occurred and of what type. The cause of redirect is searched for in the "Location" and "Refresh" header fields, as well as by HTML meta tags
-and Javascript in the body of the response. Peringatan dimunculkan termasuk jenis pengalihan dan pemindai mengembalikan segera.
+whether or not a redirect occurred and of what type. Penyebab redirect adalah mencari di "Lokasi" dan "Refresh" header kolom, serta dengan HTML meta tag
+dan Javascript dalam tubuh respon. Peringatan dimunculkan termasuk jenis pengalihan dan pemindai mengembalikan segera.
 
 <h2>Format String Error</h2>
 Looks for indicators of format string handling errors in compiled code.  Hal ini dilakukan dengan meletakkan string input teks berdasarkan karakter yang dikompilasi kode C yang mengantisipasi untuk output produk yang diformat dan mencari kode rusak dan penutup sesi yang tidak normal.
@@ -78,8 +77,8 @@ Kode status kesalahan server, kemudian membandingkan dengan respon HTTP normal u
 <h2>Path Traversal</h2>
 
 This rule attempts to access files and directories outside of the web document root by constructing various combinations of pathname prefixes
-and local file targets for Windows and *NIX systems as well as Java servlets. Jika respon tubuh sesuai dengan pola yang sesuai dengan berkas target saat ini peringatan dimunculkan dan pemindai mengembalikan segera. If none of the common local file targets succeed, path traversal is 
-attempted using the filename in the URL. Selama mengirimkan nama file sewenang-wenang tidak mengembalikan kode status OK tapi nama file yang benar melakukannya, peringatan dimunculkan dan pemindai mengembalikan segera.
+and local file targets for Windows and *NIX systems as well as Java servlets. Jika respon tubuh sesuai dengan pola yang sesuai dengan berkas target saat ini peringatan dimunculkan dan pemindai mengembalikan segera. Jika tidak ada umum setempat berkas target berhasil, jalan traversal adalah 
+percobaan menggunakan nama berkas di URL. Selama mengirimkan nama file sewenang-wenang tidak mengembalikan kode status OK tapi nama file yang benar melakukannya, peringatan dimunculkan dan pemindai mengembalikan segera.
 
 <h2>Remote File Include</h2>
 
@@ -97,8 +96,8 @@ This rule checks to see what OS the server is running on, then sends requests wi
 This scanner scans for SQL Injection vulnerabilities in an RDBMS-independent fashion, 
 by attacking url parameters and form parameters with fragments of valid and invalid SQL syntax, using error based, 
 boolean based, Union based, and stacked query SQL Injection techniques. <br>
-This scanner may be able to fingerprint the RDBMS if the application throws a known RDBMS specific SQL error message. <br>
-This scanner does not exploit any RDBMS specific techniques, and so is the best SQL injection scanner to use as a starting point. 
+Pemindai ini mungkin bisa untuk sidik jari RDBMS jika aplikasi melemparkan yang diketahui RDBMS tertentu kesalahan pesan. <br>
+Pemindai ini tidak memanfaatkan apapun RDBMS cara tertentu, dan begitu juga yang terbaik SQL suntikan pemindai untuk digunakan sebagai titik awal. 
 
 </body>
 </html>
