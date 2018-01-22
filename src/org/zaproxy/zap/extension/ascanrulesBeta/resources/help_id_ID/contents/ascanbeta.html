@@ -24,10 +24,8 @@ Pos 2.5.0 kamu dapat menentukan daftar pengenal yang dipisahkan dengan tanda kom
 FORM mana pun dengan nama atau ID yang cocok dengan salah satu pengidentifikasi ini akan diabaikan saat memindai bukti kontra-CSRF yang hilang.
 Hanya gunakan fitur ini untuk mengabaikan FORMs yang anda tahu adalah aman, misalnya bentuk-bentuk pencarian.
 
-<h2>Expression Language Injection</h2>
-Checks if the web application is subject to Expression Language (EL) injection attacks, which occur
-when an application fails to sufficiently neutralize special elements that could modify the intended EL 
-statement before it is executed.
+<h2>Injeksi Ekspresi Bahasa</h2>
+Periksa jika web aplikasi adalah subjek untuk penyerangan injeksi Ekspresi Bahasa (EL), yang terjadi ketika sebuah aplikasi gagal untuk menetralkan secara cukup elemen-elemen khusus yang dapat memodifikasi pernyataan EL dimaksudkan sebelum di jalankan.
 
 <h2>Kerentanan membukaSSL</h2>
 Mendeteksi apakah server web rentan terhadap kerentanan membukaSSL yang terkejut, dengan memanfaatkannya.
@@ -80,45 +78,46 @@ Jika kueri yang tidak dimodifikasi tidak terpengaruh oleh penundaan waktu, dan p
 Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menemukan SQL yang keras kepala dan tidak jelas
 kerentanan injeksi dalam database hipersonik yang dicurigai. <br>
 Untuk alasan ini, jumlah benang pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh penundaan beban bukan dengan penundaan injeksi SQL. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Tes pemindaian hanya untuk waktu dasar kerentanan injeksi SQL<br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+Pos 2.5.0 Anda dapat mengubah jangka waktu yang digunakan untuk menyerang dengan mengubah
+<code>rules.common.sleep</code> parameter melalui pilihan panel 'konfigurasi pengaturan'.
 
-<h2>SQL Injection - MySQL (Time Based)</h2>
+<h2>SQL Injeksi - MySQL (Berbasis Waktu)</h2>
 
-This scanner uses MySQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a MySQL database. <br>
+Pemindai ini menggunakan MySQL-spesifik SQL syntax untuk mencoba untuk menginduksi penundaan waktu dalam pernyataan SQL yang disebut oleh halaman.<br>
+Jika pertanyaan yang tidak dimodifikasi tidak terpengaruh oleh penundaan waktu, dan penundaan pertanyaan yang dimodifikasi dapat dikendalikan,
+Ini adalah indikasi kerentanan SQL Injeksi berbasis waktu dalam database MySQL. <br>
 Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menemukan SQL yang keras kepala dan tidak jelas kerentanan injeksi dalam database MySQL yang dicurigai. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
+Untuk alasan ini, jumlah rangkaian pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, 
+untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh 
+penundaan beban bukan dengan penundaan injeksi SQL. <br>
 The scanner tests only for time-based SQL injection vulnerabilities.<br>
 <br>
 Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
-<h2>SQL Injection - Oracle (Time Based)</h2>
+<h2>SQL Injeksi - ramalan (Berbasis Waktu)</h2>
 
-This scanner uses Oracle-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a Oracle SQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected Oracle database. <br>
+Pemindai ini menggunakan sintaks SQL ramalan-spesifik untuk menginduksi penundaan waktu dalam pernyataan SQL yang disebut oleh halaman.<br>
+Jika pertanyaan yang tidak dimodifikasi tidak terpengaruh oleh penundaan waktu, dan penundaan pertanyaan yang dimodifikasi dapat dikendalikan,
+Ini adalah indikasi kerentanan SQL Injection berbasis waktu dalam database ramalan SQL. <br>
+Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menemukan SQL yang keras kepala dan tidak jelas 
+kerentanan injeksi dalam ramalan database yang dicurigai. <br>
 Untuk alasan ini, jumlah benang pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh penundaan beban bukan dengan penundaan injeksi SQL. <br>
 Percobaan pemindai hanya untuk injeksi SQL berbasis waktu.<br>
 <br>
 Perhatikan bahwa peraturan ini saat ini tidak memungkinkan Anda mengubah jangka waktu yang digunakan untuk serangan waktu karena penundaan. 
 
-<h2>SQL Injection - PostgreSQL (Time Based)</h2>
+<h2>SQL Injeksi - PostrgreSQL (Berbasis Waktu)</h2>
 
-This scanner uses PostgreSQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a PostgreSQL database. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected PostgreSQL database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
+Pemindai ini menggunakan sintaks SQL spesifik-PostgreSQL untuk menginduksi penundaan waktu dalam pernyataan SQL yang disebut oleh halaman.<br>
+Jika pertanyaan yang tidak dimodifikasi tidak terpengaruh oleh penundaan waktu, dan penundaan pertanyaan yang dimodifikasi dapat dikendalikan,
+Ini adalah indikasi kerentanan SQL Injection berbasis waktu di database PostgreSQL. <br>
+Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menemukan SQL yang keras kepala dan tidak jelas 
+kerentanan injeksi dalam database PostgreSQL dicurigai. <br>
+Untuk alasan ini, jumlah rangkaian pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, 
+untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh 
+penundaan beban bukan dengan penundaan injeksi SQL. <br>
 Percobaan pemindai hanya untuk injeksi SQL berbasis waktu. <br>
 <br>
 Pos 2.5.0 kamu dapat mengubah jangka waktu yang digunakan untuk menyerang dengan mengubah parameter <code>aturan.umum.tidur</code> melalui panel 'Konfigurasi aturan opsi'.
