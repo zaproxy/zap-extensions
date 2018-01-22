@@ -25,17 +25,15 @@ Sapamamagitan ng default ay sinosuri ang alituntunin ng "nilalaman-siguridad-pat
 Kung ang "nilalaman-seguridad-patakaran-report-lamang" ang header ay nakakita ng tugon sa INFO Para itaas ang alerto. Maaring ito ay kumakatawan sa pag sisikap ng nag papatupad sa aktibong pagiging pino o binobuo o ang Isa na kung saan lamang ng bahagya ang ipinatutupad.
 
 <h2>nakaka lason na cookie</h2>
-Tinitignan ng pag susuring ito ang idudulot sa gumagamit ng mga input sa query pisi parametro at ang post sa mga data upang tukuyin kung saan maaaring kuntrolin ang mga parametro ng cookie. Ito ay tinatawag na pag atake ng nakakalason cookie, at ito'y mapagsasamantalahan kung ang umatake ay mamanipulahe ang cookie sa iba't ibang paraan. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
+Tinitignan ng pag susuring ito ang idudulot sa gumagamit ng mga input sa query pisi parametro at ang post sa mga data upang tukuyin kung saan maaaring kuntrolin ang mga parametro ng cookie. Ito ay tinatawag na pag atake ng nakakalason cookie, at ito'y mapagsasamantalahan kung ang umatake ay mamanipulahe ang cookie sa iba't ibang paraan. At sa isang Banda Hindi ito mapag sasamantalahan kung ang URL parameters ay papayag na ang halaga ng cookie ay mailagay bilang isang bug.
 
 <h2>Cookie Without SameSite Attribute</h2>
-This reports any cookies that do not have the SameSite attribute or that do not have a recognised valid value for that attribute.
+Inuulat ang anuma cookie na walang samesite attribute o sala itong kinikilalang anuman halaga para sa attribute na ito.
 
-<h2>Cross Domain Misconfiguration</h2>
-Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
-The current implementation looks at excessively permissive CORS headers.
+<h2>Cross Domain Misconfiguration</h2> passively suriin ang mga tugon ng cross domain misconfiguration, para mapahinga ang parehong pinagmula ng patakaran sa web browser, halimbawa <br> ang kasalukuyang nag papatupad ay labis na tumitingen sa pagpapahintulot ng CORS headers.
 
-<h2>Directory Browsing</h2>
-Passively scan responses for signatures that are indicative that Directory Browsing is possible.
+<h2>Directory Browsing</h2> 
+passively suriin ang mga tugon para sa mga lumagda na nagpapahiwatig na ang directory browsing ay maaari.
 
 <h2>Example File Passive Scanner</h2>
 This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
