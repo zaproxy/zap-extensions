@@ -7,12 +7,12 @@ Aturan Pengamatan Aktif
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Active Scan Rules</h1>
-The following release quality active scan rules are included in this add-on:
+<h1>Aktifkan Aturan Pemindaian</h1>
+Berikut kualitas perilisan aktif aturan-aturan pemindaian termasuk tambahan ini:
 
-<h2>Buffer Overflow</h2>
+<h2>Luapan Penyangga</h2>
 
-Looks for indicators of buffer overflows in compiled code.  Hal ini dilakukan dengan menempatkan string teks masukan yang besar dan mencari kode yang rusak
+untuk melihat indikator-indikator dari luapan dalam kode terkompilasi.  Hal ini dilakukan dengan menempatkan string teks masukan yang besar dan mencari kode yang rusak
 dan penutupan sesi abnormal.
 
 <h2>Kode injeksi</h2>
@@ -22,19 +22,19 @@ untuk mencetak token. Jika terjadi benturan antara token dan isi dari respons bo
 Jika tidak ada pertandingan, pemindaian akan membuat permintaan dengan beberapa string ASP yang disuntikkan yang menginstruksikan server untuk menulis produk
 dari dua bilangan bulat yang dihasilkan secara acak dalam responnya. Jika respon tubuh cocok dengan produk, peringatan akan dinaikan.
 
-<h2>Command Injection</h2>
+<h2>Injeksi Perintah</h2>
 
-This rule submits *NIX and Windows OS commands as URL parameter values to determine whether or not the web application is passing unchecked
-user input directly to the underlying OS. String injeksi terdiri dari meta-karakter yang bisa diinterpretasikan oleh OS
+aturan ini mengajukan *NIX dan Windows OS perintah sebagai nilai parameter URL untuk menentukan apakah atau tidakkah aplikasi web dilewati tidak di periksa
+input pengguna secara langsung untuk OS yang mendasarinya. String injeksi terdiri dari meta-karakter yang bisa diinterpretasikan oleh OS
 sebagai perintah join beserta payload yang seharusnya menghasilkan output dalam respon jika aplikasi tersebut rentan. Jika isi dari response body
 sesuai dengan muatan, pemindai menimbulkan peringatan dan segeralah kembali. Dalam hal ini tidak ada kesalahan berdasar yang sesuai berusaha mengembalikan output dalam respon scanner akan melakukan serangan injeksi buta dengan mengajukan instruksi tidur sebagai muatan dan membandingkan waktu yang berlalu antara mengirimkan permintaan dan menerima respon terhadap batas bawah waktu tunda heuristik. Jika waktu berlalu lebih cepat dari batas ini, peringatan akan meningkat dengan kepercayaan diri sedang
 dan pemindai segera kembali.
 <br>
 Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
-<h2>Client Browser Cache</h2>
+<h2>Cache Browser Klien</h2>
 
-This rule checks the headers of secure pages and reports an alert if they allow a browser to cache the page.
+Aturan ini memeriksa header dari keamanan halaman dan laporan-laporan sebuah peringatan jika mereka mengizinkan sebuah browser untuk halaman cache.
 
 <h2>Cross Site Scripting (reflected)</h2>
 
@@ -42,15 +42,15 @@ This rule starts by submitting a 'safe' value and analyzing all of the locations
 Ini kemudian melakukan seri dari serangan khususnya ditargetkan di lokasi di mana masing-masing kasus terjadi, 
 termasuk menandai atribut, URL atribut, atribut dalam menandai yang mendukung src atribut, html komentar etc. 
 
-<h2>Cross Site Scripting (persistent)</h2>
+<h2>Penaskahan Situs Sebrang (tetap)</h2>
 
-This rule starts by submitting a unique 'safe' value and then spiders the whole application to find all of the locations in which the value occurs.<br>
-It then performs a series of attacks in the same way that the 'reflected' version does but in this case checks all of the 
-target locations in other pages. 
+Aturan ini dimulai oleh sebuah nilai unik yang 'aman' dan kemudian laba-laba keseluruhan aplikasi untuk menemukan semua lokasi di mana nilainya terjadi.<br>
+Kemudian melakukan serangkaian serangan dengan cara yang sama seperti versi 'tercermin' namun dalam kasus ini memeriksa semua 
+target lokasi dalam halaman lain. 
 
-<h2>CRLF Injection</h2>
+<h2>Injeksi CRLF</h2>
 
-This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. Jika tanggapan berisi header Set-Cookie yang identik,
+Aturan ini mengajukan variasi-variasi karakter spesial CRLF sebelum header "Set-Cookie" yang disuntikkan sebagai parameter ke server. Jika tanggapan berisi header Set-Cookie yang identik,
 peringatan akan dinaikkan dan pemindai akan segera kembali.
 
 
@@ -58,44 +58,42 @@ peringatan akan dinaikkan dan pemindai akan segera kembali.
 
 Aturan ini memeriksa untuk melihat jika permintaan akan menyediakan akses ke daftar direktori dengan memeriksa respon badan untuk pola yang digunakan dengan Apache, IIS dan software server web lain.
 
-<h2>External Redirect</h2>
+<h2>Pengalihan Eksternal</h2>
 
-This rule submits a variety of URL redirect strings as parameter values in a request, then examines the headers and bodies of responses to determine
-whether or not a redirect occurred and of what type. Penyebab redirect adalah mencari di "Lokasi" dan "Refresh" header kolom, serta dengan HTML meta tag
+Aturan ini mengajukan sebuah variasi dari URL pengalihan syarat sebagai nilai parameter dalam sebuah permohinan, kemudian gabungkan antara kepala dan tubuh dari respon-respon untuk menentukan
+apakah atau tidakkah sebuah pengalihan terjadi dan dari jenis apa. Penyebab redirect adalah mencari di "Lokasi" dan "Refresh" header kolom, serta dengan HTML meta tag
 dan Javascript dalam tubuh respon. Peringatan dimunculkan termasuk jenis pengalihan dan pemindai mengembalikan segera.
 
-<h2>Format String Error</h2>
-Looks for indicators of format string handling errors in compiled code.  Hal ini dilakukan dengan meletakkan string input teks berdasarkan karakter yang dikompilasi kode C yang mengantisipasi untuk output produk yang diformat dan mencari kode rusak dan penutup sesi yang tidak normal.
+<h2>Kesalahan Format string</h2>
+mencari indikator dari format kesalahan penanganan string dalam kode dikompilasi.  Hal ini dilakukan dengan meletakkan string input teks berdasarkan karakter yang dikompilasi kode C yang mengantisipasi untuk output produk yang diformat dan mencari kode rusak dan penutup sesi yang tidak normal.
 
 
-<h2>Parameter Tampering</h2>
+<h2>Gangguan Parameter</h2>
 
-This rule submits requests with parameter values known to cause errors to be displayed to the user if handled improperly. Respon diperiksa untuk memastikan bahwa mereka mengembalikan
+Aturan ini mengajukan permohonan dengan nilai parameter untuk mengetahui sebab kesalahan untuk ditampilkan untuk pengguna jika pengendalian tidak layak. Respon diperiksa untuk memastikan bahwa mereka mengembalikan
 
 Kode status kesalahan server, kemudian membandingkan dengan respon HTTP normal untuk memastikannya tidak memunculkan peringatan parameter buruk tidak berpengaruh pada output. Akhirnya, konten respon tubuh dibandingkan dengan berbagai pola yang mungkin ditemukan di Java servlet, Microsoft VBScript, OLE, JET, PHP dan kesalahan Tomcat. Jika kecocokan ditemukan, peringatan akan muncul dan pemindai mengembalikan segera.
 
-<h2>Path Traversal</h2>
+<h2>Jalan Traversal</h2>
 
-This rule attempts to access files and directories outside of the web document root by constructing various combinations of pathname prefixes
-and local file targets for Windows and *NIX systems as well as Java servlets. Jika respon tubuh sesuai dengan pola yang sesuai dengan berkas target saat ini peringatan dimunculkan dan pemindai mengembalikan segera. Jika tidak ada umum setempat berkas target berhasil, jalan traversal adalah 
+Aturan ini mencoba mengakses file dan direktori diluar dari akar web dokumen oleh berbagai bangunan kombinasi oleh jalan nama awalan dan target file lokal untuk windows dan *NIX sistem sama seperti Java servlets. Jika respon tubuh sesuai dengan pola yang sesuai dengan berkas target saat ini peringatan dimunculkan dan pemindai mengembalikan segera. Jika tidak ada umum setempat berkas target berhasil, jalan traversal adalah 
 percobaan menggunakan nama berkas di URL. Selama mengirimkan nama file sewenang-wenang tidak mengembalikan kode status OK tapi nama file yang benar melakukannya, peringatan dimunculkan dan pemindai mengembalikan segera.
 
-<h2>Remote File Include</h2>
+<h2>Termasuk File Terpencil</h2>
 
-This rule submits a series of requests with external URLs as parameter values and looks for a match between the the response body and the title of the page
-hosted at those URLs. Jika ada kecocokan antara string yang diharapkan dan respon badan, dan header mengembalikan kode status 200, peringatan dimunculkan dan pemindai
+Aturan ini mengajukan sebuat seri dari permohonan dengan URLs eksternal sebagai nilai parameter dan mencari sebuah kecocokan host pada URLs itu. Jika ada kecocokan antara string yang diharapkan dan respon badan, dan header mengembalikan kode status 200, peringatan dimunculkan dan pemindai
 
 Mengembalikan segera.
 
-<h2>Server Side Include</h2>
+<h2>Termasuk Server Samping</h2>
 
-This rule checks to see what OS the server is running on, then sends requests with a corresponding HTML SSI directive as a parameter value. Jika respon badan sesuai dengan pola yang menunjukkan SISI berhasil, peringatan dimunculkan dan pemindai mengembalikan segera.
+Aturan ini memeriksa untuk melihat apa server OS yang sedang di jalankan, kemudian mengirim permohonan dengan dengan direktif HTML SSI sesuai sebagau nilai parameter. Jika respon badan sesuai dengan pola yang menunjukkan SISI berhasil, peringatan dimunculkan dan pemindai mengembalikan segera.
 
-<h2>SQL Injection</h2>
+<h2>Injeksi SQL</h2>
 
-This scanner scans for SQL Injection vulnerabilities in an RDBMS-independent fashion, 
-by attacking url parameters and form parameters with fragments of valid and invalid SQL syntax, using error based, 
-boolean based, Union based, and stacked query SQL Injection techniques. <br>
+Pemindai ini memindai kerentanan SQL Injection dengan cara RDBMS-independen,
+dengan menyerang parameter url dan formulir parameter dengan fragmen sintaks SQL yang valid dan tidak valid, menggunakan kesalahan dasar,
+dasar boolean, kesatuan dasar, dan di tumpuk teknik-teknik injeksi SQL. <br>
 Pemindai ini mungkin bisa untuk sidik jari RDBMS jika aplikasi melemparkan yang diketahui RDBMS tertentu kesalahan pesan. <br>
 Pemindai ini tidak memanfaatkan apapun RDBMS cara tertentu, dan begitu juga yang terbaik SQL suntikan pemindai untuk digunakan sebagai titik awal. 
 
