@@ -152,14 +152,14 @@ Penemuan segala nilai apapun dapat mewakili kerentanan referensi obyek langsung 
 Ini berupa memeriksa header respon untuk mengetahui rincian oleh X-Powered-.
 
 <h2>X-Backend-Server Header Information Leak</h2>
-This checks response headers for the presence of X-Backend-Server details.
+Ini memeriksa respon header untuk mengetahui rincian Server X-Backend.
 
 <h2>Pengalihan Masuk</h2>
 Pemerikasaan ini memprediksi ukuran berbagai jenis tanggapan ulang dan menghasilkan peringatan jika responsnya lebih besar dari ukuran yang diprediksi. 
 Sebuah Tanggapan mencoba langsung yang besar mungkin menunjukkan bahwa walaupun mencoba langsung telah terjadi, halaman tersebut benar-benar memuat konten (yang mungkin mengungkapkan informasi sensitif, PII, dll.).
 
 <h2>Informasi data kebocoran header X-ChromeLogger-Data</h2>
-This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
+Ini memeriksa respon header untuk mengetahui rincian X-ChromeLogger-Data atau X-ChromePhp-Data.
 
 <h2>Kebocoran informasi X-Debug-Token</h2>
 Ini akan memeriksa header respon dari kehadiran X-Debug-Token dan X-Debug-Token-Link rincian.

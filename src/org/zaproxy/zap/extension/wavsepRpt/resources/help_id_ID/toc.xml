@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Simple Example" image="simple-icon" target="simple"/>
+			<tocitem text="Contoh sederhana" image="simple-icon" target="simple"/>
 		</tocitem>
 	</tocitem>
 </toc>

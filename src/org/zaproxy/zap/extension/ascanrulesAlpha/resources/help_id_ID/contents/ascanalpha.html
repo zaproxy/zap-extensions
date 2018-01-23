@@ -6,12 +6,12 @@ Aturan pindai aktif - alfa
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Active Scan Rules - alpha</h1>
-The following alpha quality active scan rules are included in this add-on:
+<h1>Active Scan Aturan - alpha</h1>
+Berikut alpha kualitas active scan aturan termasuk dalam hal ini add-on:
 
 <h2>Apache Range Header DoS (CVE-2011-3192)</h2>
-Tests to see if the server is vulnerable to the Apache Range Header Denial of Service issue, by requesting eleven (11) 
-different byte ranges. Sebelas rentang adalah salah satu lebih dari diterima oleh server ditambal/tetap.
+Tes untuk melihat apakah server tersebut rentan Apache Range Header Denial of Service masalah, dengan meminta sebelas (11) 
+berbeda byte berkisar. Sebelas rentang adalah salah satu lebih dari diterima oleh server ditambal/tetap.
 
 <h2>Detektor slack cookie</h2>
 Pengujian cookies untuk mendeteksi jika beberapa tidak memiliki efek pada ukuran respons saat dihilangkan, terutama cookie yang berisi nama "sidang" atau "identitas pengguna"
@@ -19,24 +19,24 @@ Pengujian cookies untuk mendeteksi jika beberapa tidak memiliki efek pada ukuran
 <h2>Pemindai ELMAH</h2>
 Pengujian untuk melihat apakah modul log dan modul Pelacakan salah (Elmah.axd) Modul HTTP tersedia. Walaupun modul ini sangat berguna untuk para pengembang dan pemangku kepentingan lainnya ini juga dapat bocor sejumlah besar informasi yang seorang analis keamanan atau individu berbahaya mungkin akan tertarik dalam.<br><br> Pemindai ELMAH berbasis Microsoft Technology: IIS, Windows, ASP, dan MSSQL.
 
-<h2>Example File Active Scanner</h2>
-This implements an example active scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+<h2>Contoh File Yang Aktif Scanner</h2>
+Ini mengimplementasikan contoh active scan aturan yang memuat string dari file yang pengguna dapat mengedit.<br>
+Untuk lebih jelasnya lihat: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
 
-<h2>Example Simple Active Scanner</h2>
-This implements a very simple example active scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+<h2>Contoh Sederhana Aktif Scanner</h2>
+Ini mengimplementasikan sebuah contoh yang sangat sederhana active scan aturan.<br>
+Untuk lebih jelasnya lihat: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
 
-<h2>Expression Language Injection</h2>
-The software constructs all or part of an expression language (EL) statement in a Java Server Page (JSP) using externally-influenced input from an upstream component, but it does not neutralize or incorrectly neutralizes special elements that could modify the intended EL statement before it is executed. Dalam versi tertentu dari Spring 3.0.5 dan sebelumnya, ada kerentanan (CVE-2011-2730) dalam bahasa ekspresi akan dievaluasi dua kali, yang secara efektif terkena aplikasi untuk EL injeksi. Namun, bahkan untuk versi yang lebih baru, kelemahan ini masih mungkin tergantung pada konfigurasi.
+<h2>Ekspresi Bahasa Injeksi</h2>
+Software konstruksi semua atau bagian dari sebuah expression language (EL) pernyataan dalam Java Server Page (JSP) menggunakan eksternal yang dipengaruhi masukan dari hulu komponen, tetapi tidak menetralisir atau salah menetralkan unsur-unsur khusus yang bisa mengubah dimaksudkan EL pernyataan sebelum dieksekusi. Dalam versi tertentu dari Spring 3.0.5 dan sebelumnya, ada kerentanan (CVE-2011-2730) dalam bahasa ekspresi akan dievaluasi dua kali, yang secara efektif terkena aplikasi untuk EL injeksi. Namun, bahkan untuk versi yang lebih baru, kelemahan ini masih mungkin tergantung pada konfigurasi.
 
-<h2>GET for POST Scanner</h2>
-This scanner takes <code>application/x-www-form-urlencoded</code> POST requests, changes the parameters from POST to GET and resubmits the request. 
+<h2>untuk MENDAPATKAN POSTING Scanner</h2>
+Scanner ini membutuhkan waktu <code>application/x-www-form-urlencoded</code> POSTING permintaan, perubahan parameter dari POSTING untuk MENDAPATKAN dan resubmits permintaan. 
 Jika MENDAPATKAN respon yang sama seperti aslinya POSTING respon maka alarm akan berbunyi. Sementara ini tidak selalu mewakili kelemahan keamanan kepada dirinya sendiri mungkin mengindikasikan bahwa serangan atau kelemahan lain dapat diperluas atau disederhanakan.
-(Such as a POST based Cross-Site Scripting (XSS) attack being changed to GET.)
+(Seperti POS berdasarkan Cross-Site Scripting (XSS) serangan yang berubah.)
 
-<h2>HTTP Only Site</h2>
-This active scanner checks whether an HTTP site is served under HTTPS.
+<h2>HTTP Satunya Situs</h2>
+Ini aktif scanner memeriksa apakah sebuah situs HTTP disajikan di bawah HTTPS.
 
 <h2>Httpoxy</h2>
 Pemindai aktif ini memeriksa apakah sebuah situs menggunakan header HTTP Proxy yang ditentukan dalam permintaan.<br>
@@ -54,7 +54,7 @@ Pemindai aktif ini mencoba mengakses konten yang awalnya diakses melalui HTTPS (
 Injeksi LDAP dimungkinkan. Mungkin bagi penyerang untuk memotong kontrol otentikasi, dan untuk melihat dan memodifikasi data sewenang-wenang dalam direktori LDAP.
 
 <h2>SQL Injection - MsSQL</h2>
-This active scanner attempts to inject MsSQL specific sleep commands into parameter values and analyzes the server's response time to see if the sleep is effectively executed on the server (indicating a successful SQL injection attack).
+Ini aktif scanner upaya untuk menyuntikkan MsSQL spesifik tidur perintah ke nilai parameter dan analisis respon server waktu untuk melihat apakah tidur secara efektif dijalankan pada server (yang menunjukkan sukses SQL injection attack).
 
 <h2>Pengungkapan sumber kode - Inklusi Berkas</h2>
 Menggunakan teknik penyisipan berkas lokal untuk memindai berkas yang berisi kode sumber pada server web.
@@ -68,8 +68,8 @@ pemangku kepentingan lainnya dapat membocorkan sejumlah besar informasi yang ana
 mungkin tertarik.<br><br>
 Pemindai jejak.axd menargetkan teknologi berbasis microsoft: IIS, windows, ASP, dan MSSQL.
 
-<h2>User Agent Fuzzer</h2>
-This active scanner checks for differences in response based on fuzzed User Agent (eg. situs ponsel, akses sebagai Mesin Pencari Crawler). Pemindai membandingkan kode status tanggapan dan kode campuran dari tanggapan tubu dengan tanggapan asli.
+<h2>Agen Pengguna Fuzzer</h2>
+Pemindai aktif ini memeriksa perbedaan respons berdasarkan Agen Pengguna yang fuzzed (eg. situs ponsel, akses sebagai Mesin Pencari Crawler). Pemindai membandingkan kode status tanggapan dan kode campuran dari tanggapan tubu dengan tanggapan asli.
 
 </body>
 </html>
