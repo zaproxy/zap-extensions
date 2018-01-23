@@ -8,25 +8,25 @@ Kembali
 <body bgcolor="#ffffff">
 <h1>Kembali</h1>
 <p>
-Have you ever wanted to be able to browse an application you tested with ZAP at a specific time, 
-perhaps when you dont have access to it, or after its been changed in some way?<br>
-If so then this add-on is for you!
+Pernahkah anda menginginkan untuk bisa menelusuri sebuah aplikasi anda tes dengan ZAP pada sebuah waktu tertentu, 
+mungkin ketika anda tidak memiliki akses ke sana, atau setelah dirubah dalam beberapa cara?<br>
+Jika demikian maka add-on ini adalah untuk anda!
 </p>
 <p>
-The add-on allows you to instruct ZAP to return content from the ZAP history between specified
-dates rather than forwarding the requests to the site.<br>
-This allows you to apparently browse and use a website that you no longer have access to.<br>
-It also allows you to see what it looked like at between specific times, which is useful if 
-the application has since changed.<br>
+Add-on mengizinkan anda untuk memberi instruksi ZAP untuk mengembalikan konten dari ZAP antara riwayat tertentu
+tanggal daripada meneruskan permintaan ke situs.<br>
+Hal ini mengizinkan anda untuk melihat browser dan dan menggunakan sebuah situs web anda yang tidak lagi memiliki akses ke.<br>
+Hal ini juga mengizinkan anda untuk melihat apapun yang tampak seperti di antara waktu-waktu tertentu, yang berguna jika 
+aplikasi telah berubah sejak.<br>
 <br>
-When returning pages from the ZAP history floating footers are injected into HTML pages to
-give a visual clue that these pages are generated from ZAP.<br>
-ZAP will return pages that were the result of both GET and POST requests as long as it finds ones that match.<br>
-Pages only match if all URL and POST parameters are the same, ignoring the order and any known CSRF tokens.<br>
-If no matching page can be found in the history then a custom 404 page is returned which will
-include links to the same page if it has been invoked with different parameters or outside of the time period specified.<br>
+Ketika mengembalikan halaman dari ZAP riwayat pengembangan footer yang disuntikkan ke dalam halaman HTML untuk
+memberikan sebuah petunjuk visual yang halaman ini dihasilkan dari ZAP.<br>
+ZAP akan kembali ke halaman-halaman yang merupakan hasil dari investasi GET dan permintaan POST asalkan menemukan sesuatu yang sesuai.<br>
+Halaman ini hanya cocok jika semua URL dan parameter POST yang sama, mengabaikan perintah dan apa saja yang dikenal CSRF token.<br>
+Jika tidak ada halaman yang cocok bisa ditemukan dalam riwayat kemudian kustom 404 halaman yang akan dikembalikan
+memasukkan link ke halaman yang sama jika ia telah dipanggil dengan parameter yang berbeda atau di luar periode waktu yang ditentukan.<br>
 <br>
-This add-on adds right click menus to the Sites tree:
+Add-on ini ditambahkan klik kanan menu untuk Situs pohon:
 </p>
 <h3>Aktifkan kembali</h3>
 Ketika memilih sebuah popup akan muncul yang meminta untuk mulai dan akhir untuk digunakan.<br>
@@ -39,9 +39,9 @@ Jika dialog tombol OK ditekan maka kembali fungsi akan diaktifkan untuk situs ya
 Ketika dipilih maka kembali fungsi akan dinonaktifkan untuk situs yang dipilih.
 
 <h2>API</h2>
-The add on supports the following API endpoints:<br><br>
+Menambahkan pada mendukung API titik akhir berikut:<br><br>
 kembali / melihat / kembali lis maka daftar situs dapat diaktifkan<br>
-revisit / action / revisitSiteOn Turns revisit on for the specified site. Dates must use the format: "yyyy/MM/dd HH:mm:ss"<br> 
+mengunjungi kembali / tindakan / mengunjungikembalisitusOn Berbalik mengunjungi kembali pada untuk situs tertentu. Tanggal harus menggunakan format: "yyyy/MM/dd HH:mm:ss"<br> 
 kembali / tindakan / kunjungi kembali Situs Off Ternyata kembali off untuk situs tertentu
 
 </body>

@@ -21,25 +21,25 @@
 
 <p>
     In order to identify potential access control issues, ZAP needs to know which parts of the web application are
-    supposed to be accessed by which user. In ZAP, the name for these rules is: <i>Access Rules</i> and generally have
-    the meaning: "<i>PageA should/shouldn't be accessed by UserX</i>".
+    supposed to be accessed by which user. Di ZAP, nama untuk aturan ini adalah: <i>Aturan Akses</i> dan umumnya memiliki
+artinya: "<i>PageA harus/seharusnya tidak dapat diakses oleh UserX</i>".
 </p>
 
-<p>The rules are configured for a Context and, for each User of that Context, each Site Node (web page) will be
-    associated to one of the following values:</p>
+<p>Aturan yang dikonfigurasi untuk Konteks dan, untuk masing-masing Pengguna dari Konteks itu, Situs masing-masing Node (halaman web) akan
+terkait dengan salah satu nilai berikut:</p>
 <ul>
-    <li><b>Allowed</b> - the resource <b>can</b> be accessed by the User to which the rule refers</li>
-    <li><b>Denied</b> - the resource <b>should not</b> be accessed by the User to which the rule refers</li>
-    <li><b>Unknown</b> - there is <b>no information</b> regarding whether the resource should or shouldn't be accessible
-        to the User to which the rule refers
+    <li><b>Diperbolehkan</b> sumber <b>dapat</b> dapat diakses oleh Pengguna yang mengacu aturan</li>
+    <li><b>Ditolak</b> sumber <b>tidak</b> dapat diakses oleh Pengguna yang mengacu aturan</li>
+    <li><b>Unknown</b> - <b>tidak ada informasi</b> mengenai apakah sumber daya yang harus atau tidak dapat diakses
+untuk Pengguna yang mengacu aturan
     </li>
 </ul>
 
 <p>
     Dalam rangka untuk menyederhanakan aturan akses definisi proses, ZAP adalah memanfaatkan pohon-berdasarkan struktur URLs.
-    Ketika menganalisis aturan, sebuah kesimpulan algoritma ini digunakan untuk mendeteksi pencocokan aturan untuk masing-masing node berdasarkan induknya di URL jika tidak ada aturan khusus yang ditetapkan. This means that, when configuring the access rules, only 1
-    rule needs to be set explicitly for an entire subtree, while for the other nodes rules are inferred. More details
-    about this can be found on the Access Control <a href="contextOptions.html">Context options</a> help page.</td>
+    Ketika menganalisis aturan, sebuah kesimpulan algoritma ini digunakan untuk mendeteksi pencocokan aturan untuk masing-masing node berdasarkan induknya di URL jika tidak ada aturan khusus yang ditetapkan. Ini berarti bahwa, ketika mengkonfigurasi aturan akses, hanya 1
+aturan harus ditetapkan secara eksplisit untuk seluruh sub, sedangkan untuk node lain aturan disimpulkan. Rincian lebih lanjut
+tentang hal ini dapat ditemukan pada Akses Kontrol <a href="contextOptions.html">Konteks</a> halaman bantuan.</td>
 </p>
 
 <h3>Prosedur pengujian</h3>
@@ -48,20 +48,20 @@
 <ul>
     <li>tester mendefinisikan set Pengguna dan bagaimana mereka melakukan otentikasi;
     </li>
-    <li>the tester defines how ZAP can identify un-authorized requests (via the Authorization panel in the Session
-        Properties);
+    <li>tester mendefinisikan bagaimana ZAP dapat mengidentifikasi un-resmi permintaan (melalui Otorisasi panel dalam Sidang
+Properties);
     </li>
     <li>web-aplikasi yang digali baik secara manual atau melalui laba-Laba;</li>
     <li>tester menentukan Aturan Akses untuk masing-masing Pengguna yang terkait dengan Konteks, pada dasarnya membiarkan ZAP tahu bagian mana dari aplikasi web yang seharusnya dapat diakses oleh pengguna;
     </li>
-    <li>an ‘attack’ is performed by ZAP by trying to access every URL of the web-app from the perspective of every
-        user;
+    <li>sebuah 'serangan' yang dilakukan oleh ZAP dengan mencoba untuk mengakses setiap URL dari web-app dari perspektif setiap
+pengguna;
     </li>
     <li>dalam Status yang bersangkutan Tab, hasil yang ditampilkan, menunjukkan halaman-halaman mana yang diakses berhasil oleh pengguna dan menandai kasus-kasus di mana aturan akses di mana tidak diikuti.
     </li>
 </ul>
 
-<h2>See also</h2>
+<h2>Lihat juga</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
