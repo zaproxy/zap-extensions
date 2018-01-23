@@ -7,18 +7,18 @@
 <body bgcolor="#ffffff">
 <h1>Skrip</h1>
 <p>
-The ZAP Script Add-on allows you to run scripts that can be embedded within ZAP and can access internal ZAP data structures.<br/>
-It supports any scripting language that supports JSR 223 (http://www.jcp.org/en/jsr/detail?id=223) , including:
+ZAP Script Add-on mengizinkan anda untuk menjalankan script yang bisa tertanam di dalam ZAP dan bisa mengakses internal ZAP struktur data.<br/>
+Itu mendukung bahasa scripting apapun yang mendukung JSR 223 (http://www.jcp.org/en/jsr/detail?id=223) , termasuk:
 <ul>
-<li>ECMAScript / Javascript (using <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/">Nashorn engine</a>, included by default)</li>
-<li>Zest <a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a> (included by default)</li>
+<li>ECMAScript / Javascript (menggunakan <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/">Nashorn mesin</a>, dimasukkan secara default)</li>
+<li>Zest <a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a> (dimuat secara bawaan)</li>
 <li>Groovy <a href="http://groovy-lang.org/">http://groovy-lang.org/</a></li>
 <li>Python <a href="http://www.jython.org">http://www.jython.org</a></li>
 <li>Ruby - <a href="http://jruby.org/">http://jruby.org/</a></li>
 <li>dan masih banyak lagi...</li> 
 </ul>
 
-<b>WARNING - scripts run with the same permissions as ZAP, so do not run any scripts that you do not trust!</b>
+<b>PERINGATAN - script dijalankan dengan perizinan yang sama seperti ZAP, sehingga tidak menjalankan script yang anda tidak percaya!</b>
 
 <h2>Jenis skrip</h2>
 Berbagai jenis script yang didukung:
@@ -26,30 +26,27 @@ Berbagai jenis script yang didukung:
 <li>Berdiri Sendiri - script yang mandiri dan hanya berjalan ketika anda mulai mereka secara manual</li>
 <li>Aktif Aturan ini dijalankan sebagai bagian dari aktiv scanner dan dapat diaktifkan secara individual</li>
 <li>Pasif Aturan ini dijalankan sebagai bagian dari Pasif Scanner dan dapat diaktifkan secara individual</li> 
-<li>Proxy Rules - these run 'inline', can change every request and response and can be individually enabled. They can also trigger break points</li> 
-<li>HTTP Sender - scripts that run against every request/response sent/received by ZAP. This includes the proxied messages, messages sent during active scanner, fuzzer, ...</li>
-<li>Targeted Rules - scripts that invoked with a target URL and are only run when your start them manually</li>
-<li>Authentication - scripts that invoked when authentication is performed for a Context. To be used, they need to
-be selected when configuring the Script-Based Authentication Method for a Context. </li> 
-<li>Script Input Vectors  - scripts for defining exactly what ZAP should attack</li>
-<li>Extenders - scripts which can add new functionality, including graphical elements and new API end points</li>
+<li>Aturan Proxy - ini menjalankan 'padagaris', bisa berubah pada setiap permintaan dan respon dan bisa dibolehkan secara individual. Mereka juga bisa memicu titik istirahat</li> 
+<li>HTTP Pengirim - script yang dijalankan terhadap setiap permintaan/respon yang dikirim/diterima oleh ZAP. Ini termasuk proksi pesan, pesan yang dikirim selama aktif scan, fuzzer, ...</li>
+<li>Aturan Sasaran - script yang diminta dengan sebuah target URL dan hanya berjalan ketika anda memulainya secara manual</li>
+<li>Otentikasi - script yang diminta ketika otentikasi yang dilaksanakan untuk sebuah Konteks. Untuk bisa digunakan, yang mereka butuhkan untuk
+bisa dipilih ketika mengkonfigurasi Script-Berdasarkan Metode Otentikasi untuk sebuah Konteks. </li> 
+<li>Script Input Vektor - script untuk mendefinisikan persis apa ZAP harus menyerang</li>
+<li>Extenders - skrip yang bisa menambahkan fungsionalitas baru, termasuk didalamnya elemen grafis dan poin akhir API baru</li>
 </ul>
-All scripts that are run automatically are initially 'disabled' - you must enable them via the <a href="tree.html">The Scripts 'tree' tab</a>
+Semua skrip yang dijalankan secara otomatis pada awalnya 'dinonaktifkan' - anda harus mengaktifkan hal tersebut melalui <a href="tree.html">The Scripts 'tree' tab</a>
 sebelum mereka akan berjalan.<br/>
 Jika terjadi kesalahan ketika mereka berjalan, maka mereka akan dinonaktifkan.<br/>
 Ketika anda memilih scrip kemudian yang terakhir kesalahan akan ditampilkan dalam <a href="console.html">Scrip konsol tab</a>.<br/>
-Targeted scripts can be invoked by right clicking on a record in the Sites or History tabs and selecting the 'Invoke with script...' menu item.
+Skrip yang ditargetkan bisa dipanggil melalui klik kanan pada rekaman di tab Situs atau Riwayat dan memilih item menu 'Invoke with script...'.
 </p>
 <p>
 
-All scripting languages can be used for all script types, but only those languages that have been downloaded from the ZAP Marketplace
-will typically have templates. However you may well be able to adapt a template for another language.<br/>
-If your favourite language is not available on the Marketplace then please raise a new issue via the "Online/Report an issue" menu item.<br/>
-In the meantime you can just place the relevant jars in the 'lib' directory (not the 'plugin' directory) and restart ZAP.<br/>
+Semua bahasa skrip bisa digunakan untuk semua jenis skrip, tetapi hanya bahasa yang telah diunduh dariMarketplace ZAP yang lazimnya akan memiliki template. Namun mungkin anda bisa menyesuaikan sebuah template untuk bahasa lain.<br/> Jika bahasa favorit anda tidak tersedia pada Marketplace maka tolong sampaikan masalah baru melalui "Online / Report an issue" pada item menu.<br/> Sementara itu anda hanya dapat meletakkan stoples yang relevan pada direktori 'lib' (bukan direktori 'plugin') dan mulai ulang ZAP.<br/>
 </p>
 
 <h2>Variabel Global</h2>
-Variables can be shared between all scripts via the class org.zaproxy.zap.extension.script.ScriptVars.<br/>
+Variabel bisa dibagi diantara semua skrip melalui kelas org.zaproxy.zap.extension.script.ScriptVars.<br/>
 Misalnya dalam Javascript anda dapat menggunakan kelas ini sebagai berikut:<br/><br/>
 <code>
 org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/>
@@ -57,14 +54,14 @@ org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
 </code>
 
 <h2>Scrip Variabel</h2>
-Variables can be shared between separate invocations of the same script via the same org.zaproxy.zap.extension.script.ScriptVars class.<br/>
+Variabel bisa dibagikan diantara permohonan terpisah dari script yang sama melalui yang sama org.zaproxy.zap.ekstensi.script.ScriptVars kelas.<br/>
 Misalnya dalam Javascript anda dapat menggunakan kelas ini sebagai berikut:<br/><br/>
 <code>
 org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name","value")<br/>
 org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
 </code>
 <br/>
-Note that these methods are only usable from scripting languages that provide access to the ScriptContext (like Javascript).
+Catatan bahwa metode ini hanya bisa digunakan dari bahasa skrip yang menyediakan akses ke ScriptContext (seperti Javascript).
 
 <h2>Melihat juga</h2>
 <table>

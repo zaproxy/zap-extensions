@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Active Scan Rules - Beta
+Active Scan Aturan - Beta
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -40,7 +40,7 @@ Ada perbedaan perlakuan dari duplikat parameter berdampak baik klien (browser) d
 Mendeteksi (dan eksploitasi, tergantung pada pengaturan pindaian) metode HTTP yang dikenal tidak aman yang diaktifkan untuk URL.
 
 <h2>Integer Overflow Error</h2>
-Looks for indicators of integer overflows in compiled code that causes the web server to crash.  Itu tidak 
+Terlihat untuk indikator integer overflow dalam menyusun kode yang menyebabkan web server crash.  Itu tidak 
 ini dengan menempatkan beberapa string bilangan bulat yang dirancang untuk mencoba dan merangsang buruk tanggapan.
 
 <h2>Padding Oracle</h2>
@@ -49,18 +49,18 @@ menunjukkan kemungkinan padding oracle kerentanan.
 Kerentanan tersebut dapat mempengaruhi setiap aplikasi atau framework yang menggunakan enkripsi tidak benar, seperti 
 beberapa versi ASP.net Java Server Faces, dan Mono.
 
-<h2>Remote Code Execution - CVE-2012-1823</h2>
-Detect CVE-2012-1823 to perform Remote Code Execution on a PHP-CGI based web server.
+<h2>Eksekusi Kode jarak Jauh - CVE-2012-1823</h2>
+Mendeteksi CVE-2012-1823 untuk melakukan Eksekusi Kode jarak Jauh pada PHP-CGI web berbasis server.
 
-<h2>Session Fixation</h2>
-Session Fixation may be possible. Jika masalah ini terjadi dengan masuk URL (di mana pengguna mengotentikasi diri mereka sendiri untuk aplikasi), maka URL yang dapat diberikan oleh seorang penyerang, selain tetap session id, untuk korban, untuk kemudian mengasumsikan identitas korban menggunakan diberikan session id. Jika terjadi masalah dengan non-masuk halaman, URL dan tetap session id hanya dapat digunakan oleh penyerang untuk melacak aplikasi yang tidak berkepentingan tindakan pengguna. Jika terjadi kerentanan pada cookie bidang atau bentuk lapangan (POST parameter) bukan pada URL (GET) parameter, maka beberapa kerentanan juga mungkin diperlukan dalam rangka untuk mengatur cookie lapangan pada browser korban, untuk memungkinkan kerentanan yang dapat dimanfaatkan.
+<h2>Sesi Fiksasi</h2>
+Sesi Fiksasi mungkin menjadi mungkin. Jika masalah ini terjadi dengan masuk URL (di mana pengguna mengotentikasi diri mereka sendiri untuk aplikasi), maka URL yang dapat diberikan oleh seorang penyerang, selain tetap session id, untuk korban, untuk kemudian mengasumsikan identitas korban menggunakan diberikan session id. Jika terjadi masalah dengan non-masuk halaman, URL dan tetap session id hanya dapat digunakan oleh penyerang untuk melacak aplikasi yang tidak berkepentingan tindakan pengguna. Jika terjadi kerentanan pada cookie bidang atau bentuk lapangan (POST parameter) bukan pada URL (GET) parameter, maka beberapa kerentanan juga mungkin diperlukan dalam rangka untuk mengatur cookie lapangan pada browser korban, untuk memungkinkan kerentanan yang dapat dimanfaatkan.
 
 <h2>ShellShock - CVE-2014-6271</h2>
 
-This scanner perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
-The first is a simple reflected attack and the second is a time based attack.<br>
+Scanner ini melakukan 2 serangan untuk mendeteksi server rentan terhadap CVE-2014-6271 alias ShellShock.<br>
+Yang pertama adalah sederhana tercermin serangan dan yang kedua adalah berdasarkan waktu serangan.<br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+Posting 2.5.0 anda dapat mengubah panjang dari waktu yang digunakan untuk serangan dengan mengubah <code>aturan.umum.tidur</code> parameter melalui Pilihan 'Aturan konfigurasi' panel.
 
 <h2>Pengungkapan sumber kode - CVE-2012-1823</h2>
 Eksploitasi CVE-2012-1823 untuk mengungkapkan kode sumber PHP sisi server pada server web berbasis PHP-CGI.<br> Hanya analisis tanggapan yang berbasis teks (HTML, JS, JSON, XML, dll), untuk menghindari kesalahan positif yang mungkin terjadi pada gambar atau konten biner lainnya.
@@ -92,9 +92,9 @@ Pemindai ini sensitif terhadap waktu, dan seharusnya hanya digunakan untuk menem
 Untuk alasan ini, jumlah rangkaian pemindai aktif harus diatur seminimal mungkin saat menggunakan pemindai ini, 
 untuk meminimalkan beban pada server web, server aplikasi, dan database, untuk menghindari kesalahan positif yang disebabkan oleh 
 penundaan beban bukan dengan penundaan injeksi SQL. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Scanner tes hanya untuk waktu-based SQL injection vulnerabilities.<br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+Posting 2.5.0 anda dapat mengubah panjang dari waktu yang digunakan untuk serangan dengan mengubah <code>aturan.umum.tidur</code> parameter melalui Pilihan 'Aturan konfigurasi' panel.
 
 <h2>SQL Injeksi - ramalan (Berbasis Waktu)</h2>
 
@@ -134,12 +134,12 @@ otentikasi (seperti XML pengguna berbasis file) atau otorisasi." Scanner ini men
 kelemahan-kelemahan.
 
 <h2>XXE</h2>
-This component attempts to identify applications which are subject to XML eXternal Entity (XXE) attacks.
-Applications which parse XML input may be subject to XXE when weakly or poorly configured parsers 
-handle XML input containing reference to an external entity such as a local file, HTTP requests to 
-internal or tertiary systems, etc.<br>
+Komponen ini mencoba untuk mengidentifikasi aplikasi yang dapat XML Entitas eksternal (XXE) serangan.
+Aplikasi yang parse XML masukan yang mungkin dapat XXE ketika lemah atau buruk dikonfigurasi parsers 
+menangani masukan XML yang berisi referensi untuk sebuah entitas eksternal seperti file lokal, permintaan HTTP untuk 
+internal atau tersier sistem, dll.<br>
 <br>
-It requires the Callback extension, so will not work if this extension is disabled or removed. 
+Hal ini membutuhkan Callback ekstensi, sehingga tidak akan bekerja jika ekstensi ini dinonaktifkan atau dihapus. 
 Hal ini juga dianjurkan bahwa anda menguji bahwa Callback ekstensi adalah dikonfigurasi dengan benar untuk situs target.
 Jika sistem target tidak dapat terhubung ke Callback Alamat kemudian beberapa XXE kerentanan tidak akan terdeteksi.
 
