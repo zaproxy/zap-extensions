@@ -19,10 +19,10 @@ Jika anda ingin mengabaikan salah satu saluran tertentu, memeriksa WebSocket ter
 
 
 <h3>Break on all</h3>
-In the <i>Break</i> toolbar, there are two buttons:
+Dalam <i>Selaan</i> toolbar, terdapat dua tombol:
 <ul>
-	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all requests</i></li>
-	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all responses</i></li>
+	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Atur selaan pada semua permintaan</i></li>
+	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Atur selaan pada semua respon</i></li>
 </ul>
 Ketika anda mengaktifkan opsi ini, maka semua keluar (masing-masing masuk) WebSocket pesan juga tertangkap oleh tombol kontrol.
 <br><br>
@@ -30,17 +30,17 @@ Secara default opsi ini dinonaktifkan. Dalam hal ini hanya HTTP pesan yang terta
 
 
 <h3>Istirahat di Ping &amp; Pong pesan</h3>
-<i>PING</i> and <i>PONG</i> pesan yang sering digunakan oleh WebSocket server untuk menentukan kesehatan dari koneksi saat ini. Jika anda menangkap masuk <i>PING</i> pesan, browser ini tidak dapat kembali <i>PONG</i> pesan segera, sehingga yang buruk latency nilai.
+<i>PING</i> dan <i>PONG</i> pesan yang sering digunakan oleh WebSocket server untuk menentukan kesehatan dari koneksi saat ini. Jika anda menangkap masuk <i>PING</i> pesan, browser ini tidak dapat kembali <i>PONG</i> pesan segera, sehingga yang buruk latency nilai.
 <br><br>
-Jika opsi ini dinonaktifkan, tidak ada <i>PING</i> or <i>PONG</i> pesan yang tertangkap ketika anda:
+Jika opsi ini dinonaktifkan, tidak ada <i>PING</i> atau <i>PONG</i> pesan yang tertangkap ketika anda:
 <ul>
-	<li>set a breakpoint on <u>all requests</u> or <u>all responses</u>, <i>or</i></li>
+	<li>atur titik-selaan pada <u>semua permintaan</u> or <u>semua respon</u>, <i>atau</i></li>
 	<li>langkah melalui untuk permintaan berikutnya atau respon dan Sebuah <i>PING</i> atau <i>PONG</i> pesan tiba</li>
 </ul>
-Pengaturan ini tidak mempengaruhi breakpoints yang ditetapkan secara eksplisit pada <i>PING</i> or <i>PONG</i> pesan-pesan. Anda dapat melihat eksplisit seperti breakpoints di <i>Breakpoints tab</i>.
+Pengaturan ini tidak mempengaruhi breakpoints yang ditetapkan secara eksplisit pada <i>PING</i> or <i>PONG</i> pesan-pesan. Anda dapat melihat eksplisit seperti breakpoints di <i>Tab titik-selaan</i>.
 
-<h3>Remove <code>Sec-WebSocket-Extensions</code> header</h3>
-Allows to remove the HTTP header <code>Sec-WebSocket-Extensions</code> dari jabat tangan yang pesan, jadi tidak ada transformasi yang dilakukan
+<h3>Hapus header <code>Sec-WebSocket-Extensions</code></h3>
+Mengizinkan untuk menghapus header HTTP <code>Sec-WebSocket-Extensions</code> dari jabat tangan yang pesan, jadi tidak ada transformasi yang dilakukan
 untuk WebSocket pesan yang dikirim/diterima.<br>
 Pilihan ini harus selalu diaktifkan kecuali klien atau server yang diuji membutuhkan mereka. Dengan WebSocket
 pesan mungkin tidak diproses dengan benar oleh ZAP ketika ekstensi yang digunakan.
