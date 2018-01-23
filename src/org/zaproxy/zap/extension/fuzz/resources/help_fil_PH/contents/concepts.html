@@ -7,36 +7,36 @@ Fuzzing
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Fuzzing</h1>
+<h1>Pag-fuzz</h1>
 <p>
-Fuzzing is a technique of submitting lots of invalid or unexpected data to a target.
+Ang pag-fuzz ay isang paraan para sa pagpasa ng maraming inbalido o di inaasahang data para sa isang target.
 </p>
 <p>
-ZAP allows you to fuzz any request still using:
+Ang ZAP ay pinahihintulutan ka para magfuzz sa ano mang kahilingan ng nananatiling gumagamit:
 <ul>
-<li>A build in set of payloads</li>
-<li>Payloads defined by optional add-ons</li>
-<li>Custom scripts</li>
+<li>Isang pagbuo sa itinakdang mga payload</li>
+<li>Ang mga payload ay nakatutukoy sa pamamagitan ng opsyonal na mga add-on</li>
+<li>Pagtangkilik ng mga iskripto</li>
 </ul>
 </p>
-To access the <a href="dialogue.html">Fuzzer dialog</a> you can either:
+Para i-access ang <a href="dialogue.html">Pagfuzz ng dayalog</a> ikaw rin ay maaari:
 <ul>
-<li>Right click a request in one of the ZAP tabs (such as the History or Sites) and select “Attack / Fuzz…”</li>
-<li>Highlight a string in the Request tab, right click it and select “Fuzz…”</li>
-<li>Select the “Tools / Fuzz…” menu item and then select the request you want to fuzz</li>
+<li>I-right click ang isang kahilingan ng isa sa ZAP na mga tab (tulad ng kasaysayan o mga site) at napiling "Attack / Fuzz..."</li>
+<li>I-highlight ang isang hanay na hiniling na tab, I-right click ito at piliin ang "Fuzz..."</li>
+<li>Piliin ang "Mga kasangkapan / Fuzz..." menu ng aytem at piliin ang kahilingan na gusto mo sa Fuzz</li>
 </ul>
 
-<h3>Payload Generators</h3>
-Payload Generators generate the raw attacks that the fuzzer submits to the target application.
+<h3>Mga Generator ng Payload</h3>
+Mga Generator ng payload lumikha ng mga raw attack na ang fuzzer ang magpapasa para sa target na application.
 <br><br>
-They are managed via the <a href="payloads.html">Payloads dialog</a>
+Sila ay namamahala sa pamamagitan ng <a href="payloads.html">Mga payload dayalog</a>
 
-<h3>Payload Processors</h3>
-Payload Processors can be used to change specific payloads before they are submitted.
+<h3>Mga prosesor ng payload</h3>
+Mga prosesor ng payload ay maaaring magamit para mapalitan ang tiyak na mga payload bago sila magpasa.
 <br><br>
-They are managed via the <a href="processors.html">Payload Processors dialog</a>
+Sila'y namamahala sa pamamagitan ng <a href="processors.html">Mga proseso ng payload dayalog</a>
 
-<h3>Fuzz Location Processors</h3>
+<h3>Ang lokasyon ng mga prosesor ng Fuzz</h3>
 Fuzz Location Processors can be used to change all of the payloads before they are submitted.
 <br><br>
 They are managed via the <a href="locations.html">Location Processors dialog</a>

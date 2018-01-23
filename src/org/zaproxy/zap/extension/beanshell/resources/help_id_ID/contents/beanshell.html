@@ -9,8 +9,8 @@ Bean Shell Console
 <body bgcolor="#ffffff">
 <h1>Bean Shell Console</h1>
 <p>
-	BeanShell adalah sebuah shell Java interaktif yang bisa digunakan untuk mengeksekusi skrip BeanShell. Skrip ini adalah bentuk Java yang disederhanakan yang menggunakan banyak elemen dari sintaks Java, namun lebih sederhana format scripting. All Java code is also valid BeanShell code.<br/>
-	BeanShell integration in OWASP ZAP enables you to write scripts using the ZAP functions and
+	BeanShell adalah sebuah shell Java interaktif yang bisa digunakan untuk mengeksekusi skrip BeanShell. Skrip ini adalah bentuk Java yang disederhanakan yang menggunakan banyak elemen dari sintaks Java, namun lebih sederhana format scripting. Semua kode Java juga merupakan kode BeanShell yang valid.<br/>
+	Integrasi BeanShell di dalam OWASP ZAP memungkinkan anda untuk menulis skrip menggunakan fungsi ZAP dan
 	data set. Ini bisa menjadi fitur yang sangat kuat untuk menganalisa aplikasi web.
 </p>
 <h2>Konsol BeanShell</h2>
@@ -19,11 +19,11 @@ Bean Shell Console
 konsol BeanShell interaktif dan separuh bawahnya adalah editor teks sederhana. Untuk naskah yang kompleks, kamu didorong untuk menggunakan editor Java. Skrip dapat dimuat, disimpan dan dievaluasi melalui editor.
 	Ketika BeanShell memulai sejumlah objek dari ZAP yang tersedia untuk digunakan, dinamakan:
 	<ul>
-	<li>the <i>Model</i> singleton, through the object named <i>model</i></li>
-	<li>the <i>SiteTree</i> tree of current sites through the <i>sites</i> object</li>
-	<li>an instance of <pre>HttpSender</pre> through the <i>pengirim</i> objek</li>
+	<li><i>Model</i> tunggal, melalui objek yang bernama <i>model</i></li>
+	<li><i>SiteTree</i> pohon dari situs saat ini melalui objek <i>sites</i></li>
+	<li>suatu instansi dari <pre>HttpSender</pre> melalui <i>pengirim</i> objek</li>
 	</ul>
-	Notice that the BeanShell is loosely typed. Oleh karena itu, tidak perlu mendeklarasikan variabel sebelumnya menggunakannya - ini membuat skrip sedikit lebih ringkas dari pada Java biasa. Namun tentu saja jika anda mau menentukan tipe yang anda bisa.
+	Perhatikan bahwa BeanShell diketik dengan bebas. Oleh karena itu, tidak perlu mendeklarasikan variabel sebelumnya menggunakannya - ini membuat skrip sedikit lebih ringkas dari pada Java biasa. Namun tentu saja jika anda mau menentukan tipe yang anda bisa.
 </p>
 <h2>Menggunakan Peta Situs</h2>
 <p>
@@ -38,30 +38,29 @@ contoh.pohon.bsh file. Sebelum mengklik Mengevaluasi, pertama kali browsing ke s
 	<pre>
 	t.find(sites.getRoot(), "index.html");
 	</pre>
-	Panggil metode pencarian pada t, dimana mengambil SiteNode sebagai pendapat pertama dan sumber daya untuk menemukan yang kedua. In this case, the method will iterate through all the nodes in the tree, because we started at
-	the root, and will find index.html files.
+	Panggil metode pencarian pada t, dimana mengambil SiteNode sebagai pendapat pertama dan sumber daya untuk menemukan yang kedua. Dalam kasus ini, metode tersebut akan mengiterasi melalui semua node di dalam pohon, karena kita memulainya di
+	akar, dan akan mencari berkas index.html.
 	<br/><br/>
-	Instead of iterating through all the nodes, we could choose to start a specific node by using the
-	findChild method e.g.:
+	Daripada mengiterasi melalui semua node, kita dapat memilih untuk memulai sebuah node yang ditentukan dengan menggunakan
+	metode findChild contoh:
 	<br/><br/>
-	Ini seharusnya memberi anda beberapa ide tentang kekuatan BeanShell di ZAP. Namun untuk memanfaatkannya sepenuhnya, anda harus membiasakan diri anda dengan API internal dan fitur BeanShell. The BeanShell has
-	been setup so as to allow full access to all internal objects and methods – even private ones.
+	Ini seharusnya memberi anda beberapa ide tentang kekuatan BeanShell di ZAP. Namun untuk memanfaatkannya sepenuhnya, anda harus membiasakan diri anda dengan API internal dan fitur BeanShell. BeanShell telah ditetapkan sehingga memungkinkan akses penuh ke semua objek dan metode internal - bahkan yang pribadi sekalipun.
 </p>
 <h2>Permintaan HTTP Sederhana</h2>
 <p>
 	Pada contoh selanjutnya, kami membuat dan mengirim permintaan HTTP langsung di konsol interaktif: Untuk memanfaatkan kekuatan BeanShell sepenuhnya, anda seharusnya dapat membiasakan diri anda dengan internal ZAP.
 	Objek pengirim adalah contoh yang sama seperti yang digunakan oleh Permintaan Penyunting Manual dan oleh sebab itu akan secara otomatis menggunakan pengaturan proxy yang diatur dalam konfigurasi ZAP.
 	<br/><br/>
-	TODO: POST example
+	TODO: contoh POST
 </p>
 <h2>Tips</h2>
 <p>
-	Use the unset(String) command to unset any declared variables, methods or objects. Hal ini berguna jika anda ingin mengganti metode deklarasi di saat namespace. Note that the command takes a
-	String argument, not an Object, so to unset the t object we used above, it should be: unset(“t”); and
-	not unset(t);
+	Gunakan perintah unset(String) untuk membatalkan aturan pada variabel yang dideklarasikan, metode atau objek. Hal ini berguna jika anda ingin mengganti metode deklarasi di saat namespace. Catatan bahwa perintah tersebut mengambil sebuah
+	argumen String, bukan sebuah Object, jadi untuk membatalkan aturan objek t yang kita gunakan di atas, seharusnya: unset(“t”); dan
+	bukan unset(t);
 </p>
 <p>
-	Original document by: Stephen de Vries
+	Dokumen asli oleh: Stephen de Vries
 </p>
 
 </body>
