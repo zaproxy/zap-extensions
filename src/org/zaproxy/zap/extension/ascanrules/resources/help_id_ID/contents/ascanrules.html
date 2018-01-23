@@ -30,15 +30,15 @@ sebagai perintah join beserta payload yang seharusnya menghasilkan output dalam 
 sesuai dengan muatan, pemindai menimbulkan peringatan dan segeralah kembali. Dalam hal ini tidak ada kesalahan berdasar yang sesuai berusaha mengembalikan output dalam respon scanner akan melakukan serangan injeksi buta dengan mengajukan instruksi tidur sebagai muatan dan membandingkan waktu yang berlalu antara mengirimkan permintaan dan menerima respon terhadap batas bawah waktu tunda heuristik. Jika waktu berlalu lebih cepat dari batas ini, peringatan akan meningkat dengan kepercayaan diri sedang
 dan pemindai segera kembali.
 <br>
-Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+Post 2.5.0 anda dapat mengubah jangka waktu yang digunakan untuk serangan injeksi buta dengan mengganti parameter <code>rules.common.sleep</code> melalui Opsi panel 'Rule configuration'.
 
 <h2>Cache Browser Klien</h2>
 
 Aturan ini memeriksa header dari keamanan halaman dan laporan-laporan sebuah peringatan jika mereka mengizinkan sebuah browser untuk halaman cache.
 
-<h2>Cross Site Scripting (reflected)</h2>
+<h2>Cross Site Scripting (refleksi)</h2>
 
-This rule starts by submitting a 'safe' value and analyzing all of the locations in which this value occurs in the response (if any). <br>
+Aturan ini dimulai dengan mengirimkan sebuah nilai 'safe' dan menganalisis semua dari lokasi dimana nilai terjadi di dalam respon (jika ada). <br>
 Ini kemudian melakukan seri dari serangan khususnya ditargetkan di lokasi di mana masing-masing kasus terjadi, 
 termasuk menandai atribut, URL atribut, atribut dalam menandai yang mendukung src atribut, html komentar etc. 
 
