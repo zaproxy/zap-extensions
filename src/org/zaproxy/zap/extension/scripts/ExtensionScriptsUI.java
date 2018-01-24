@@ -565,7 +565,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 	@Override
 	public void scriptAdded(ScriptWrapper script, boolean display) {
 		if (View.isInitialised() && display) {
-			this.displayScript(script);
+			executeInEdt(() -> this.displayScript(script));
 		}
         if (script.getType().getName().equals(SCRIPT_EXT_TYPE) && script.isEnabled()) {
             if (! this.installedExtenderScripts.containsKey(script.getName())) {
@@ -576,10 +576,22 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 		
 	}
 
+	private static void executeInEdt(Runnable r) {
+		if (EventQueue.isDispatchThread()) {
+			r.run();
+		} else {
+			try {
+				EventQueue.invokeAndWait(r);
+			} catch (InvocationTargetException | InterruptedException e) {
+				LOGGER.warn("Failed to properly update the UI:", e);
+			}
+		}
+	}
+
 	@Override
 	public void scriptRemoved(ScriptWrapper script) {
 		if (this.isScriptDisplayed(script)) {
-			this.getConsolePanel().clearScript();
+			executeInEdt(() -> this.getConsolePanel().clearScript());
 		}
 		if (script.getType().getName().equals(SCRIPT_EXT_TYPE)) {
 			if (this.installedExtenderScripts.containsKey(script.getName())) {
