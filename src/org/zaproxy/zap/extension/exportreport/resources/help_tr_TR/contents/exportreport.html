@@ -99,7 +99,7 @@
         <h4>File Chooser Dialog</h4>
         The dialog only shows folders and accepted file types. The 'Files of Type' drop down list will filter to show only folders and files of the specified extension.
 
-        <h4>Currently Available</h4>
+        <h4>Şu anda Mevcut</h4>
         <ul>
             <li>ASCII 1.0 Strict Compliant XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
             <li>XML Files (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
@@ -119,28 +119,28 @@
                 Show all accepted files
             </li>
             <li>
-                <img src="images/FileChooser.png" alt="Source Info">
+                <img src="images/FileChooser.png" alt="Kaynak Bilgisi">
             </li>
             <li><br></li>
             <li>
-                List of accepted file formats
+                Kabul edilen dosya biçimlerinin listesi
             </li>
             <li>
-                <img src="images/FileChooserChoices.png" alt="Source Info">
+                <img src="images/FileChooserChoices.png" alt="Kaynak Bilgisi">
             </li>
             <li><br></li>
             <li>
-                Filter by a specific file format
+                Belli bir dosya formatına göre filtrele
             </li>
             <li>
-                <img src="images/FileChooserFilter.png" alt="Source Info">
+                <img src="images/FileChooserFilter.png" alt="Kaynak Bilgisi">
             </li>
         </ul>
 
         <hr>
 
         <a name="command-line"></a> 
-        <h2><u>Command Line</u></h2>
+        <h2><u>Komut Satırı</u></h2>
         The extension can be run from the command line as well and requires the following arguments to be passed in to generate a report.
 
         <h4>OWASP ZAP Command Line Options</h4>
@@ -156,13 +156,13 @@
             <li><b>-export_report</b>: 
                 <ul style="list-style: none;">
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Açıklama:</h4>
                         <ul>
                             <li>Saves to the specified file after loading the given session.</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Currently Available</h4>
+                        <h4>Şu anda Mevcut</h4>
                         <ul>
                             <li>ASCII 1.0 Strict Compliant XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
                             <li>XML Files (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
@@ -185,31 +185,31 @@
             <li><b>-source_info</b>:
                 <ul style="list-style: none;">
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Açıklama:</h4>
                         <ul>
-                            <li>Specifies the following details of the report:</li>
+                            <li>Raporun aşağıdaki ayrıntılarını belirtir:</li>
                             <li style="list-style: none;">
                                 <ol>
-                                    <li>Title</li>
-                                    <li>By</li>
-                                    <li>For</li>
-                                    <li>Scan Date</li>
-                                    <li>Report Date</li>
+                                    <li>Başlık</li>
+                                    <li>Tarafından</li>
+                                    <li>İçin</li>
+                                    <li>Tarama Tarihi</li>
+                                    <li>Rapor Tarihi</li>
                                     <li>Scan Ver</li>
                                     <li>Report Ver</li>
-                                    <li>Description</li>
+                                    <li>Açıklama</li>
                                 </ol>
                             </li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Example:</h4>
+                        <h4>Örnek:</h4>
                         <ul>
                             <li>-source_info "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, et sed nibh nostrum singulis. Nec causae viderer discere eu."</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Validation:</h4>
+                        <h4>Doğrulama:</h4>
                         <ul>
                             <li>Content is unchecked, can enter empty fields if you wish, only condition is that all 8 items are in the list.</li>
                         </ul>
@@ -222,45 +222,45 @@
             <li><b>-alert_severity</b>:
                 <ul style="list-style: none;">
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Açıklama:</h4>
                         <ul>
                             <li>Specifies which alert severities will be included in the report:</li>
                             <li style="list-style: none;">
                                 <ol>
-                                    <li>High</li>
-                                    <li>Medium</li>
-                                    <li>Low</li>
-                                    <li>Informational</li>
+                                    <li>Yüksek</li>
+                                    <li>Orta</li>
+                                    <li>Düşük</li>
+                                    <li>Bilgilendirme</li>
                                 </ol>
                             </li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Input format:</h4>
+                        <h4>Giriş formatı:</h4>
                         <ul>
                             <li>Only accepts a string list with ';' delimiter</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Input restriction:</h4>
+                        <h4>Giriş sınırlaması:</h4>
                         <ul>
                             <li>Only accepts 't' and 'f' for each item in the list</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Example:</h4>
+                        <h4>Örnek:</h4>
                         <ul>
                             <li>-alert_severity "t;t;f;t"</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Explanation:</h4>
+                        <h4>Açıklama:</h4>
                         <ul>
                             <li>In the above example, only High, Medium and Informational Alerts will be included in the generated report.</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Validation:</h4>
+                        <h4>Doğrulama:</h4>
                         <ul>
                             <li>Validation: Content is validated to be either 't' or 'f' and that all 4 items are in the list.</li>
                         </ul>
@@ -274,21 +274,21 @@
                 <ul style="list-style: none;">
                 
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Açıklama:</h4>
                         <ul>
                             <li>Specifies which alert details will be included in the report:</li>
                             <li style="list-style: none;">
                                 <ol>
                                     <li>CWE ID</li>
                                     <li>WASC ID</li>
-                                    <li>Description</li>
-                                    <li>Other Info</li>
-                                    <li>Solution</li>
-                                    <li>Reference</li>
-                                    <li>Request Header</li>
-                                    <li>Response Header</li>
-                                    <li>Request Body</li>
-                                    <li>Response Body</li>
+                                    <li>Açıklama</li>
+                                    <li>Diğer Bilgiler</li>
+                                    <li>Çözüm</li>
+                                    <li>Referans</li>
+                                    <li>İstek Başlığı</li>
+                                    <li>Cevap Başlığı</li>
+                                    <li>İstek Gövdesi</li>
+                                    <li>Cevap Gövdesi</li>
                                 </ol>
                             </li>
                         </ul>
@@ -300,25 +300,25 @@
                         </ul>
                     </li>
                     <li>
-                        <h4>Input restriction:</h4>
+                        <h4>Giriş sınırlaması:</h4>
                         <ul>
                             <li>Only accepts 't' and 'f' for each item in the list</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Example:</h4>
+                        <h4>Örnek:</h4>
                         <ul>
                             <li>-alert_details "t;t;t;t;t;t;f;f;f;f"</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Explanation:</h4>
+                        <h4>Açıklama:</h4>
                         <ul>
                             <li>In the above example, only CWE ID, WASC ID, Description, Other Info, Solution and Reference Alert Details will be included in the generated report.</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Validation:</h4>
+                        <h4>Doğrulama:</h4>
                         <ul>
                             <li>Content is validated to be either 't' or 'f' and that all 10 items are in the list.</li>
                         </ul>
@@ -360,7 +360,7 @@ String API_KEY = "ZAPROXY-PLUGIN"
 String absolutePath = "/path/to/save/report.xhtml";
 String extension = "xhtml";
 String sourceDetails = "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;" +
-    "August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;" + 
+    "Ağustos 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;" + 
     "Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea " + 
     "usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, " +
     "et sed nibh nostrum singulis. Nec causae viderer discere eu.";
