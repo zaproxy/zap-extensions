@@ -29,16 +29,17 @@ Plug-n-Hack Clients tab
 	You can edit and resend any event via a right click menu item as long as the original client is active.<br>
 </p>
 <p>
-	You can also intercept and change postMessages on the fly.<br>
-	Client messages are intercepted if the ‘break on all requests’ button is selected on the top level toolbar.<br> 
-	You can also set custom client breakpoints via a button on the Clients tab.<br>
-	<br>
-	You can fuzz postMessages in the same way as any other message - highlight the string you want to fuzz in the Request tab, right click and select “Fuzz”.<br>
-	This option will only be available if the relevant browser still has that page open,as PnH sends the payloads to the browser.<br>
-	Standard ‘XSS’ payloads can be used to detect DOM XSS vulnerabilities, but you will need to manually monitor the UI to see if any of them are successful.<br>
-	<br>
-	PnH also adds a Custom fuzzing file called “PlugnHack DOM XSS Oracle”.<br>
-	This file is based on the OWASP XSS cheatsheet and invokes an ‘xss’ JavaScript method that is injected into the page. <br>
+	Ayrıca postMessages'i anında engelleyebilir ve değiştirebilirsiniz.<br>
+ Üst düzey araç çubuğunda ‘Tüm istekleri kes’ butonu seçilirse istemci mesajları engellenir.<br>
+ Özel istemci kesme noktalarını İstemciler sekmesindeki bir düğme ile de ayarlayabilirsiniz.<br>
+ <br>
+ postMessages'ı diğerleri gibi herhangi bir mesajla aynı şekilde türetebilirsiniz - fuzz'lamak istediğiniz dizeyi İstek sekmesinde vurgulayın, sağ tıklayın ve “Fuzz”'ı seçin.<br>
+ Bu seçenek yalnızca, tarayıcıya PnH yükleri gönderdiğinden ilgili tarayıcı o sayfayı açmışsa kullanılabilir.<br>
+ Standart ‘XSS’ yükleri, DOM XSS güvenlik açıklarını tespit etmek için kullanılabilir, ancak bunların herhangi birinin başarılı olup olmadığını görmek için kullanıcı arayüzünü manuel olarak izlemeniz 
+ gerekecektir.<br>
+<br>
+PnH ayrıca “PlugnHack DOM XSS Oracle” adlı bir Özel fuzz dosyası ekliyor.<br>
+Bu dosya OWASP XSS cheatsheet'e dayanmaktadır ve sayfaya enjekte edilen bir 'xss' JavaScript yöntemini çağırır. <br>
 	This method invokes the ZAP API which in turn flags the relevant attack in the UI - these are confirmed DOM XSS vulnerabilities, 
 	although (as always) you should check that they can really be exploited in the application you are testing without a tool like ZAP.<br>
 

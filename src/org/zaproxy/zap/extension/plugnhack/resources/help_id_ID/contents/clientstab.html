@@ -9,10 +9,10 @@ Tab Plug-n-Hack Klien
 <body bgcolor="#ffffff">
 <h1>Tab Plug-n-Hack Klien</h1>
 <p>
-	Plug-n-Hack mengizinkan Anda memantau acara klien (browser) untuk membantu menguji aplikasi HTML5.<br>
-Agar bisa mendukung berbagai macam browser modern semaksimal mungkin ini dilakukan dengan cara menyuntikkan javascript
-ke respon kembali ke browser. <br>
-Karena itu berarti mengubah respons fungsi ini harus diaktifkan secara manual. 
+	Plug-n-Hack membolehkan anda untuk memonitori klien (browser) peristiwa di dalam urutan untuk membantu menguji aplikasi HTML5.<br>
+	Di dalam urutan untuk mendukung berbagai lebarnya sebuah jangkauan dari browser modern semoga ini bisa dilakukan dengan cara menyuntikkan javascript
+	ke dalam respon pengembalian kepada browser.<br>
+	Seperti itu sarana untuk merubah respon fungsinya ini harus diaktifkan secara manual. 
 </p>
 <p>
 	Untuk menerima acara klien:
@@ -29,15 +29,16 @@ Dalam kasus ini klien 'aktif' adalah halaman yang saat ini terbuka di tab browse
 Anda dapat mengedit dan mengirim ulang acara apapun melalui item menu klik kanan asalkan klien asli aktif.<br>
 </p>
 <p>
-	Anda juga bisa mencegat dan mengubah postMessages dengan cepat.<br>
-Pesan klien dicegat jika tombol 'istirahat pada semua permintaan' dipilih pada toolbar tingkat atas. <br>
-Anda juga dapat mengatur breakpoints klien kustom melalui sebuah tombol pada tab Clients. <br><br>
-Anda bisa membersihkan postMessages dengan cara yang sama seperti pesan lainnya - sorot string yang ingin Anda ubah di tab Permintaan, klik kanan dan pilih "Fuzz".<br>
-Pilihan ini hanya akan tersedia jika browser yang bersangkutan masih memiliki halaman yang terbuka, seperti PnH mengirimkan payloads ke browser.<br>
-Payloads 'XSS' standar dapat digunakan untuk mendeteksi kerentanan DOM XSS, namun Anda perlu memantau UI secara manual untuk melihat apakah ada yang berhasil.<br>
-<br>
-PnH juga menambahkan file Custom fuzzing yang disebut "PlugnHack DOM XSS Oracle". <br>
-File ini didasarkan pada cheatsheet OWASP XSS dan meminta metode JavaScript 'xss' yang disuntikkan ke dalam halaman. <br>
+	Anda juga bisa mencegat dan merubah posPesan dengan cepat.<br>
+	Pesan klien yang dicegat jika 'pemutusan di semua permintaan' tombol yang dipilih pada tingkat atas toolbar.<br> 
+	Anda juga dapat mengatur kustom klien titik istirahat melalui sebuah tombol pada tab Klien.<br>
+	<br>
+	Anda bisa fuzz posPesan di dalam cara yang sama seperti apapun pesan lainnya - menyorot string yang anda ingin fuzz dalam Permintaan tab, klik kanan dan pilih "Fuzz".<br>
+	Pilihan ini hanya menjadi tersedia apabila pihak browser masih memiliki halaman yang terbuka,sebagai PnH mengirim beban berbayar kepada browser.<br>
+	Standar 'XSS' beban berbayar yang bisa digunakan untuk mendeteksi DOM kerentanan XSS, tetapi anda akan membutuhkan untuk secara manual memantau UI untuk melihat apakah ada dari mereka yang sukses.<br>
+	<br>
+	PnH juga menambahkan sebuah Kustom fuzzing file yang bernama "PlugnHack DOM XSS Oracle".<br>
+	File ini berdasarkan pada OWASP XSS cheatsheet dan memohon sebuah metode 'xss' JavaScript yang diinjeksikan ke dalam halaman. <br>
 Metode ini memanggil API ZAP yang pada gilirannya menandai serangan yang relevan di UI - ini dikonfirmasi kerentanan DOM XSS,
 Meskipun (seperti biasa), Anda harus memeriksa apakah benar-benar dapat dieksploitasi dalam aplikasi yang Anda uji tanpa alat seperti ZAP.<br>
 

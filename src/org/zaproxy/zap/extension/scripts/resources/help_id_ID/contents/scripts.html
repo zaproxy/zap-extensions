@@ -34,7 +34,7 @@ bisa dipilih ketika mengkonfigurasi Script-Berdasarkan Metode Otentikasi untuk s
 <li>Script Input Vektor - script untuk mendefinisikan persis apa ZAP harus menyerang</li>
 <li>Extenders - skrip yang bisa menambahkan fungsionalitas baru, termasuk didalamnya elemen grafis dan poin akhir API baru</li>
 </ul>
-Semua skrip yang dijalankan secara otomatis pada awalnya 'dinonaktifkan' - anda harus mengaktifkan hal tersebut melalui <a href="tree.html">The Scripts 'tree' tab</a>
+Semua skrip yang dijalankan secara otomatis pada awalnya 'dinonaktifkan' - anda harus mengaktifkan hal tersebut melalui <a href="tree.html">Script 'pohon' tab</a>
 sebelum mereka akan berjalan.<br/>
 Jika terjadi kesalahan ketika mereka berjalan, maka mereka akan dinonaktifkan.<br/>
 Ketika anda memilih scrip kemudian yang terakhir kesalahan akan ditampilkan dalam <a href="console.html">Scrip konsol tab</a>.<br/>
@@ -49,16 +49,14 @@ Semua bahasa skrip bisa digunakan untuk semua jenis skrip, tetapi hanya bahasa y
 Variabel bisa dibagi diantara semua skrip melalui kelas org.zaproxy.zap.extension.script.ScriptVars.<br/>
 Misalnya dalam Javascript anda dapat menggunakan kelas ini sebagai berikut:<br/><br/>
 <code>
-org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/>
-org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
+org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/> org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
 </code>
 
 <h2>Scrip Variabel</h2>
 Variabel bisa dibagikan diantara permohonan terpisah dari script yang sama melalui yang sama org.zaproxy.zap.ekstensi.script.ScriptVars kelas.<br/>
 Misalnya dalam Javascript anda dapat menggunakan kelas ini sebagai berikut:<br/><br/>
 <code>
-org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name","value")<br/>
-org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
+org.zaproxy.zap.ekstensi.script.ScriptVars.setScriptVar(ini.konteks, "var.nama","nilai")<br/> org.zaproxy.zap.ekstensi.script.ScriptVars.getScriptVar(ini.konteks, "var.nama")<br/>
 </code>
 <br/>
 Catatan bahwa metode ini hanya bisa digunakan dari bahasa skrip yang menyediakan akses ke ScriptContext (seperti Javascript).
@@ -67,11 +65,11 @@ Catatan bahwa metode ini hanya bisa digunakan dari bahasa skrip yang menyediakan
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="console.html">The Script Console tab</a></td><td></td>
+	<td><a href="console.html">Script Console tab</a></td><td></td>
 </tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="tree.html">The Scripts 'tree' tab</a></td><td></td>
+	<td><a href="tree.html">Script 'pohon' tab</a></td><td></td>
 </tr>
 </table>
 
