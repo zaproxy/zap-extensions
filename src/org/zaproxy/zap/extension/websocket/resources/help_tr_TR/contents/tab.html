@@ -7,27 +7,25 @@ WebSocket tab
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>WebSocket tab</h1>
+<h1>WebSocket sekmesi</h1>
 
 <p>
-The WebSockets tab displays all messages from WebSocket connections.
-While ZAP is active, visit e.g.: <a href="http://browserquest.mozilla.org/">Mozilla's BrowserQuest</a>
-to see WebSockets in action.
+WebSockets sekmesi WebSocket bağlantılarından gelen tüm mesajları görüntüler. 
+ZAP aktif durumdayken, WebSockets'i eylem halinde görmek için, örneğin şurayı ziyaret edin: <a href="http://browserquest.mozilla.org/">Mozilla BrowserQuest</a>.
 </p>
 
-<h2>Filters</h2>
-	<h3>Channel Selector</h3>
-		You can restrict the display of messages to one specific WebSocket
-		channel or all.
+<h2>Filtreler</h2>
+	<h3>Kanal Seçici</h3>
+		Bir belirli Websocket kanalına veya tümüne giden mesajların görüntülenmesini kısıtlayabilirsiniz.
 		<br>
-		If you select a specific channel, then the <i>Show handshake</i> button
+		Eğer özel bir kanalı seçersenız, o zaman <i>El sıkışma göster</i> butonu
 		(<img src="images/handshake.png" align="bottom" width="16" height="16" />)
-		becomes enabled. When you click on it, the corresponding HTTP handshake is
-		shown in the Request/Response tab.
+		aktif hale gelir. Tıkladığınızda, karşılık gelen HTTP el sıkışması
+		İstek/Yanıt sekmesinde gösterilir.
 
 	<h3>Filter Dialog</h3>
 		In the filter dialog (<img src="images/054.png" align="bottom" width="16" height="16" />)
-		you can further control which messages are displayed.
+		hangi mesajların görüntüleneceğini ayrıca kontrol edebilirsiniz.
 
 <br><br>
 <h2>Breakpoints</h2>
@@ -37,17 +35,14 @@ to see WebSockets in action.
 	Alternatively you can use the <i>Right click menu</i>.
 
 <br><br>
-<h2>Right click menu</h2>
-	Right clicking on a WebSocket message will bring up a menu which will
-	allow you to:
+<h2>Sağ tık menüsü</h2>
+	Bir WebSocket menüsüne sağ tıklama şunu yapmanızı sağlayacak bir menü getirecektir:
 
-	<h3>Exclude from WebSocket</h3>
+	<h3>WebSocket'dan hariç tut</h3>
 		WebSocket connections can be excluded from the WebSockets tab by adding
 		an excluded URL to the
-		<i>Session Properties</i>. Clicking on
-		this item, brings up the session properties with the URL pre-filled.
-		Excluding a WebSocket connection will not result in closing the
-		connection, but in forwarding them without further processing.
+		<i>Session Properties</i>. Bu öğeye tıklamak, önceden girilen URL ile oturum özelliklerini getirir.
+		Bir WebSocket bağlantısını hariç tutmak bağlantının kapanmasıyla sonuçlanmayacaktır fakat onları daha fazla işlem yapmadan iletmeyle sonuçlanacaktır.
 
 	<h3>Break...</h3>
 		This will bring up the

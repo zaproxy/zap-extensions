@@ -2,32 +2,28 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Selenium</title>
+<title>Selenyum</title>
 </head>
 <body bgcolor="#ffffff">
-	<h1>Selenium</h1>
+	<h1>Selenyum</h1>
 
-	<p>The Selenium add-on provides WebDrivers, for other add-ons, to invoke and remotely
-		control web browsers. It's also bundled the HtmlUnit web browser, an headless Java based
-		web browser.
-	<p>The add-on also adds a right click option to ZAP panels that list URLs (such at the History and Sites tree)
-	which allows you to open the selected URL in any of the supported browsers.
+	<p>Selenyum eklentisi WebDrivers'ı diğer eklentiler için web tarayıcılarını çağırıp uzaktan kontrol etmeyi sağlar. Aynı zamanda, kafasız bir Java tabanlı web tarayıcısı olan HtmlUnit web tarayıcısı da paketlenmiştir.
+	<p>Eklenti, seçilen URL'yi desteklenen tarayıcılardan herhangi birinde açmanıza izin veren URL'leri (Geçmiş ve Siteler ağacında olduğu gibi) listeleyen ZAP panellerine sağ tıklama seçeneğini de ekliyor.
 
 	<h2>Supported Browsers</h2>
 
 	
-	<p>The following web browsers are supported:
+	<p>Aşağıdaki web tarayıcıları desteklenmektedir:
 	<table border="2">
 		<tr>
-			<th>Name</th>
-			<th>ID</th>
+			<th>İsim</th>
+			<th>Kimlik</th>
 			<th>Requirements/Notes</th>
 		</tr>
 		<tr>
 			<td>Chrome</td>
 			<td>chrome</td>
-			<td>The following versions are known to work: 59 and 60 (older versions might work
-				too). Requires ChromeDriver, if not on the system's PATH, it can be set in the
+			<td>Aşağıdaki sürümlerin çalıştığı bilinmektedir: 59 ve 60 (eski sürümler de işe yarayabilir). Requires ChromeDriver, if not on the system's PATH, it can be set in the
 				options. For more information on ChromeDriver and how to obtain it refer to the <a
 				href="https://sites.google.com/a/chromium.org/chromedriver/">ChromeDriver website</a>.
 			</td>
@@ -79,19 +75,14 @@
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>To use Firefox, Chrome, Internet Explorer, Opera, PhantomJS and Safari, you must
-		have them installed in your system. The ID of the browser can be used to choose the
-		browser when configuring ZAP through the command line or using the ZAP API (for example,
-		to set the AJAX Spider to use one or other browser).
+	<p>Firefox, Chrome, Internet Explorer, Opera, PhantomJS ve Safari'yi kullanmak için, bunları sisteminize yüklemeniz gerekir. Tarayıcının kimliği, ZAP'ı komut satırı aracılığıyla yapılandırırken veya ZAP API'sini kullanırken tarayıcıyı seçmek için kullanılabilir (örneğin, AJAX Spider'ı bir veya başka bir tarayıcı kullanacak şekilde ayarlamak için).
 	<p>
 		Some of the requirements (e.g. WebDrivers) of the browsers can be configured in the <a
 			href="options.html">Options Selenium screen</a>.
 
 	<h2>Bundled WebDrivers</h2>
 	ZAP provides add-ons with the WebDrivers, when those add-ons are installed ZAP will
-	attempt to use those bundled WebDrivers by default. Some OSs might not have a WebDriver
-	for some of the browsers, in those cases ZAP will inform, in the options panel, that
-	there's no bundled WebDriver available. The bundled WebDrivers can also be (re)set with
+	attempt to use those bundled WebDrivers by default. Bazı OS'lerde tarayıcıların bazıları için bir WebDriver'ı olmayabilir, bu durumda ZAP seçenekleri panelinde kullanılabilir bir WebDriver'ın mevcut olmadığını bildirecektir. The bundled WebDrivers can also be (re)set with
 	the 'Bundled' button (for example, if another WebDriver was manually set). Not all
 	browser versions are supported with the bundled WebDrivers, it's recommended that
 	newer/latest versions of the browsers be used whenever possible.
@@ -106,17 +97,14 @@
 	<p>
 		<strong>PhantomJS Note:</strong> There's an issue (<a
 			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
-		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Until a fix is
-		available is advised to not use it in those cases. Some add-ons might choose to show
-		warning message when that happens. As workaround one could define, in the <code>hosts</code>
+		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Bir düzeltme bulunana kadar bu durumlarda kullanmamanız önerilir. Bazı eklentiler bu olduğunda uyarı iletisi göstermeyi seçebilir. As workaround one could define, in the <code>hosts</code>
 		file, a domain name mapping to the local address and use that domain name instead.
 	<p>
-		<strong>Internet Explorer Note:</strong> Not all versions of Internet Explorer work out
-		of the box, refer to the <a
+		<strong>Internet Explorer Note:</strong> Internet Explorer'ın tüm sürümleri kutudan çıkmaz, bkz <a
 			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer
-			website</a> for more details on how to configure them.
+			website</a> bunları yapılandırma hakkında daha fazla bilgi için.
 
-	<h2>See also</h2>
+	<h2>Ayrıca Bakınız</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

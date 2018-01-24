@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Online Menu" image="onlineMenu-icon" target="onlineMenu"/>
+			<tocitem text="Menu Online" image="onlineMenu-icon" target="onlineMenu"/>
 		</tocitem>
 	</tocitem>
 </toc>
