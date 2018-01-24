@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Fix GUI freeze on script addition/removal through the API (Issue 4302).<br>
+	Prompt for a charset when failed to read the script file (Issue 3383).<br>
 	]]>
 	</changes>
 	<extensions>

@@ -30,16 +30,22 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.MalformedInputException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DropMode;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -58,6 +64,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptTreeModel;
@@ -69,6 +76,8 @@ import org.zaproxy.zap.extension.scripts.dialogs.LoadScriptDialog;
 import org.zaproxy.zap.extension.scripts.dialogs.NewScriptDialog;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.ZapLabel;
+import org.zaproxy.zap.view.AbstractFormDialog;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ScanPanel2;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
@@ -366,27 +375,29 @@ public class ScriptsListPanel extends AbstractPanel {
     		if (file == null) {
     			return;
     		}
-    	    try {
-    	    	ScriptWrapper script = new ScriptWrapper();
-    	    	script.setFile(file);
-        		extension.getExtScript().loadScript(script);
-       			// TODO Not ideal, but will require some core changes to do properly
-       			showLoadScriptDialog(script);
-
+            ScriptWrapper script = new ScriptWrapper();
+            script.setFile(file);
+            try {
+                extension.getExtScript().loadScript(script);
             } catch (MalformedInputException e) {
-                // XXX For now show an error message saying that the scripts need to be in UTF-8.
-                // Once core is released with loadScript(script, charset) we can prompt the user
-                // for the correct charset (noting that core already tries with UTF-8 and (JVM)
-                // default charset).
-                View.getSingleton().showWarningDialog(Constant.messages.getString("scripts.script.load.error.charset"));
-                logger.warn(e.getMessage(), e);
+                LoadScriptWithCharsetDialog dialog = new LoadScriptWithCharsetDialog(extension.getExtScript(), script);
+                dialog.setVisible(true);
+                if (!dialog.isScriptLoaded()) {
+                    return;
+                }
             } catch (Exception e) {
-            	logger.error(e.getMessage(), e);
-	            View.getSingleton().showWarningDialog(
-	            		Constant.messages.getString("file.load.error") + " " + file.getAbsolutePath());
+                handleExceptionLoadingScript(e, file);
+                return;
             }
+            // TODO Not ideal, but will require some core changes to do properly
+            showLoadScriptDialog(script);
 	    }
 	}
+
+    private static void handleExceptionLoadingScript(Exception e, File file) {
+        logger.error(e.getMessage(), e);
+        View.getSingleton().showWarningDialog(Constant.messages.getString("file.load.error") + " " + file.getAbsolutePath());
+    }
 
 	private FileFilter getScriptFilter(final String extension, final String description) {
 		return new FileFilter() {
@@ -667,4 +678,119 @@ public class ScriptsListPanel extends AbstractPanel {
 			copyScriptDialog.dispose();
 		}
 	}
+
+    /**
+     * A {@code JDialog} that allows to load the script with one of the character encodings supported by the JVM.
+     * 
+     * @see #isScriptLoaded()
+     */
+    private static class LoadScriptWithCharsetDialog extends AbstractFormDialog {
+
+        private static final long serialVersionUID = 1L;
+
+        private final ExtensionScript extension;
+        private final ScriptWrapper script;
+        private boolean scriptLoaded;
+
+        private JLabel charsetLabel;
+        private JComboBox<Charset> charsetComboBox;
+
+        public LoadScriptWithCharsetDialog(ExtensionScript extension, ScriptWrapper script) {
+            super(View.getSingleton().getMainFrame(), Constant.messages.getString("scripts.script.load.charset.title"), false);
+
+            this.extension = extension;
+            this.script = script;
+
+            initView();
+            setConfirmButtonEnabled(true);
+
+            pack();
+        }
+
+        @Override
+        protected JPanel getFieldsPanel() {
+            JPanel fieldsPanel = new JPanel();
+
+            GroupLayout groupLayout = new GroupLayout(fieldsPanel);
+            fieldsPanel.setLayout(groupLayout);
+            groupLayout.setAutoCreateGaps(true);
+            groupLayout.setAutoCreateContainerGaps(true);
+
+            Charset jvmCharset = Charset.defaultCharset();
+            Charset defaultCharset = ExtensionScript.DEFAULT_CHARSET;
+
+            ZapLabel messageLabel = new ZapLabel(
+                    Constant.messages.getString(
+                            "scripts.script.load.charset.message",
+                            jvmCharset != defaultCharset ? jvmCharset + ", " + defaultCharset : defaultCharset));
+            messageLabel.setLineWrap(true);
+            messageLabel.setWrapStyleWord(true);
+            messageLabel.setColumns(20);
+            messageLabel.setRows(5);
+
+            JScrollPane pane = new JScrollPane(messageLabel);
+            pane.setBorder(BorderFactory.createEmptyBorder());
+
+            groupLayout.setHorizontalGroup(
+                    groupLayout.createParallelGroup().addComponent(pane).addGroup(
+                            groupLayout.createSequentialGroup().addComponent(getCharsetLabel()).addComponent(
+                                    getCharsetComboBox())));
+
+            groupLayout.setVerticalGroup(
+                    groupLayout.createSequentialGroup().addComponent(pane).addGroup(
+                            groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(getCharsetLabel())
+                                    .addComponent(getCharsetComboBox())));
+
+            return fieldsPanel;
+        }
+
+        @Override
+        protected String getConfirmButtonLabel() {
+            return Constant.messages.getString("scripts.script.load.charset.confirmbutton");
+        }
+
+        private JLabel getCharsetLabel() {
+            if (charsetLabel == null) {
+                charsetLabel = new JLabel(Constant.messages.getString("scripts.script.load.charset.label"));
+                charsetLabel.setLabelFor(getCharsetComboBox());
+            }
+            return charsetLabel;
+        }
+
+        private JComboBox<Charset> getCharsetComboBox() {
+            if (charsetComboBox == null) {
+                DefaultComboBoxModel<Charset> charsetsNames = new DefaultComboBoxModel<>();
+                Charset.availableCharsets().values().forEach(charsetsNames::addElement);
+                charsetComboBox = new JComboBox<>(charsetsNames);
+            }
+            return charsetComboBox;
+        }
+
+        @Override
+        public boolean validateFields() {
+            try {
+                extension.loadScript(script, (Charset) getCharsetComboBox().getSelectedItem());
+            } catch (MalformedInputException e) {
+                View.getSingleton()
+                        .showWarningDialog(Constant.messages.getString("scripts.script.load.charset.selected.error"));
+                return false;
+            } catch (Exception e) {
+                handleExceptionLoadingScript(e, script.getFile());
+                return true;
+            }
+            scriptLoaded = true;
+            return true;
+        }
+
+        /**
+         * Tells whether or not the script was loaded.
+         *
+         * @return {@code true} if the script was loaded, {@code false} otherwise.
+         * @see ExtensionScript#loadScript(ScriptWrapper, Charset)
+         */
+        boolean isScriptLoaded() {
+            return scriptLoaded;
+        }
+    }
 }
