@@ -8,11 +8,11 @@ Passive Scan Rules - Beta
 </head>
 <body bgcolor="#ffffff">
 <h1>Passive Scan Rules - Beta</h1>
-The following beta quality passive scan rules are included in this add-on:
+Aşağıdaki ek beta kalite pasif tarama kuralları bu eklentiye dahil edilmiştir:
 
 <h2>Charset Mismatch</h2>
-<p>This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.</p>
-<p>The scanner handles various conditions depending on the Threshold set for the scanner, as follows:</p>
+<p>Bu denetim, HTTP Content-Type başlığının HTML veya XML gövdesi tarafından tanımlanan karakter setinden farklı bir karakter seti bildirdiği durumlarda yanıtları tanımlar. HTTP üstbilgisi ile içerik gövdesi arasında bir karakter seti uyuşmazlığı olduğunda, Web tarayıcıları, içeriğin doğru karakter setini belirlemek için istenmeyen bir içerik süpürme moduna zorlanabilir.</p>
+<p>Tarayıcı, tarayıcı için belirlenen Eşik değerine bağlı olarak aşağıdaki gibi çeşitli koşulları uygular:</p>
 <ul>
   <li>All Thresholds:
     <ul>
@@ -32,25 +32,24 @@ Further reference:<br>
 <a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
 
 <h2>Cookie - Loosely Scoped</h2>
-Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.
+Çerezler, alan veya yolla kapsamlandırılabilir. Bu kontrol yalnızca alan kapsamı ile ilgilidir. Bir tanımlama bilgisine uygulanan alan adı kapsamı hangi alanlara erişebileceğini belirler. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. İkinci durumda, nottrusted.com'un herhangi bir alt alan adı çereze erişebilir. Loosely scoped cookies are common in mega-applications like google.com and live.com.
 
 <h2>CSRF Countermeasures</h2>
 The CSRFCountermeasures plugin identifies "potential" vulnerabilities with the lack of known CSRF 
 countermeasures in pages with forms.<br>
 Post 2.5.0 you can specify a comma separated list of identifiers in the 
 <code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
-Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
-Only use this feature to ignore FORMs that you know are safe, for example search forms.
+Kayıp Anti-CSRF belirteçlerini tararken, bu tanımlayıcılardan biriyle eşleşen bir ada veya kimliğe sahip herhangi bir FORM yoksayılır.
+Güvenli olduğunu bildiğiniz FORM'ları yok saymak için yalnızca bu özelliği kullanın, örneğin arama formları.
 
 
 <h2>Information Disclosure: Debug Errors</h2>
-This passive scanner checks the content of web responses for known Debug Error message fragments.
-Access to such details may provide a malicious individual with means by which to further abuse the web site.
-They may also leak data not specifically meant for end user consumption.
+Bu pasif tarayıcı, bilinen hata ayıklama hata iletisi parçalarının web yanıtlarının içeriğini denetler.
+Bu tür bilgilere erişim kötü niyetli bir şahsın web sitesini daha fazla kötüye kullanabileceği araçlara sahip olmasını sağlayabilir.
+Ayrıca, son kullanıcı tüketimi için özel olarak tasarlanmamış veriler de sızdırılabilir.
 
 <h2>Information Disclosure: In URL</h2>
-Attempts to identify the existence of sensitive details within the visited URIs themselves 
-(this may include parameters, document names, directory names, etc.).
+Ziyaret edilen URL'lerde hassas ayrıntıların varlığını saptamaya çalışır (parametreler, doküman isimleri, dizin isimleri vb. Içerebilir).
 
 <h2>Information Disclosure: Referrer</h2>
 Identifies the existence of sensitive details within the the Referrer header field of HTTP requests
@@ -67,9 +66,9 @@ HTTP basic or digest authentication has been used over an unsecured connection. 
 The response at the following URL contains a ViewState value that has no cryptographic protections.
 
 <h2>Servlet Parameter Pollution</h2>
-Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
+Bir eylem öğesi belirtilemeyen HTML formları için yanıt içeriğini arar. Version 3 of the 
 Java Servlet spec calls for aggregation of query string and post data elements which may result in 
-unintended handling of user controlled data. This may impact other frameworks and technologies as well.
+unintended handling of user controlled data. Bu, diğer çerçeveleri ve teknolojileri de etkiliyor olabilir.
 
 <h2>VIEWSTATE</h2>
 Attempts to identify VIEWSTATE parameters and analyze said parameters for various best practices or protective 

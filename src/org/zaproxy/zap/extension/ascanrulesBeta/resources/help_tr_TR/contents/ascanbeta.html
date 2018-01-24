@@ -61,11 +61,10 @@ Detect CVE-2012-1823 to perform Remote Code Execution on a PHP-CGI based web ser
 Session Fixation may be possible. If this issue occurs with a login URL (where the user authenticates themselves to the application), then the URL may be given by an attacker, along with a fixed session id, to a victim, in order to later assume the identity of the victim using the given session id. If the issue occurs with a non-login page, the URL and fixed session id may only be used by an attacker to track an unauthenticated user's actions. If the vulnerability occurs on a cookie field or a form field (POST parameter) rather than on a URL (GET) parameter, then some other vulnerability may also be required in order to set the cookie field on the victim's browser, to allow the vulnerability to be exploited.
 
 <h2>ShellShock - CVE-2014-6271</h2>
-
-This scanner perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
-The first is a simple reflected attack and the second is a time based attack.<br>
+Bu tarayıcı, CVE-2014-6271 aka ShellShock'a karşı savunmasız sunucuları algılamak için 2 saldırı gerçekleştirir.<br>
+Birincisi basitçe yansıyan bir saldırı, ikincisi zamana dayalı bir saldırı.<br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+2.5.0 sonrası, Seçenekler 'Kural yapılandırması' paneli aracılığıyla <code>rules.common.sleep</code> parametresini değiştirerek saldırı için kullanılan süreyi değiştirebilirsiniz.
 
 <h2>Source Code Disclosure - CVE-2012-1823</h2>
 Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.<br>
@@ -77,11 +76,10 @@ Uses Subversion source code repository metadata to scan for files containing sou
 <h2>Source Code Disclosure - /WEB-INF</h2>
 Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose Java source code.
 
-<h2>SQL Injection - Hypersonic (Time Based)</h2>
-
-This scanner uses Hypersonic-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a Hypersonic SQL database. <br>
+<h2>SQL Enjeksiyonu - Hipersonik (Zaman Tabanlı)</h2>
+Bu tarayıcı, sayfanın çağırdığı SQL deyiminde zaman gecikmelerine neden olmak için Hypersonic'e özel SQL sözdizimini kullanır.<br>
+Değiştirilmemiş sorgu bir zaman gecikmesinden etkilenmezse ve değiştirilen sorgunun gecikmesi kontrol edilebilirse,
+bir Hypersonic SQL veritabanında zamana dayalı bir SQL Enjeksiyon güvenlik açığının bir göstergesidir. <br>
 This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
 injection vulnerabilities in a suspected Hypersonic database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
@@ -91,11 +89,10 @@ The scanner tests only for time-based SQL injection vulnerabilities.<br>
 <br>
 Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
-<h2>SQL Injection - MySQL (Time Based)</h2>
-
-This scanner uses MySQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a MySQL database. <br>
+<h2>SQL Enjeksiyonu - MySQL(Zaman Tabanlı)</h2>
+Bu tarayıcı, sayfanın çağırdığı SQL deyiminde zaman gecikmelerine neden olmak için MySQL'e özel SQL sözdizimini kullanır.<br>
+Değiştirilmemiş sorgu bir zaman gecikmesinden etkilenmezse ve değiştirilen sorgunun gecikmesi kontrol edilebilirse,
+bir MySQL veritabanında zamana dayalı bir SQL Injection güvenlik açığının bir göstergesidir. <br>
 This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
 injection vulnerabilities in a suspected MySQL database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
@@ -105,11 +102,10 @@ The scanner tests only for time-based SQL injection vulnerabilities.<br>
 <br>
 Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
-<h2>SQL Injection - Oracle (Time Based)</h2>
-
-This scanner uses Oracle-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a Oracle SQL database. <br>
+<h2>SQL Enjeksiyonu - Oracle (Zaman Tabanlı)</h2>
+Bu tarayıcı, sayfanın çağırdığı SQL deyiminde zaman gecikmelerine neden olmak için Oracle'a özgü SQL sözdizimini kullanır.<br>
+Değiştirilmemiş sorgu bir gecikmeden etkilenmezse, ve değiştirilen sorgunun gecikmesi kontrol edilebilirse, 
+bir Oracle SQL veritabanında zamana dayalı bir SQL Injection güvenlik açığını işaret etmektedir. <br>
 This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
 injection vulnerabilities in a suspected Oracle database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
@@ -119,11 +115,10 @@ The scanner tests only for time-based SQL injection vulnerabilities.<br>
 <br>
 Note that this rule does not currently allow you to change the length of time used for the timing attacks due to the way the delay is caused. 
 
-<h2>SQL Injection - PostgreSQL (Time Based)</h2>
-
-This scanner uses PostgreSQL-specific SQL syntax to attempt to induce time delays in the SQL statement called by the page.<br> 
-If the unmodified query is not affected by a time delay, and the modified query's delay can be controlled, 
-it is indicative of a time-based SQL Injection vulnerability in a PostgreSQL database. <br>
+<h2>SQLEnjeksiyonu - PostgreSQL(Zamana Dayalı)</h2>
+Bu tarayıcı, sayfanın çağırdığı SQL deyiminde zaman gecikmelerine neden olmak için PostgreSQL'e özgü SQL sözdizimini kullanır.<br>
+Değiştirilmemiş sorgu bir zaman gecikmesinden etkilenmezse ve değiştirilen sorgunun gecikmesi kontrol edilebilirse, 
+bir PostgreSQL veritabanında zamana dayalı bir SQL Injection güvenlik açığı işaret etmektedir. <br>
 This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
 injection vulnerabilities in a suspected PostgreSQL database. <br>
 For this reason, the number of active scan threads should be set to the minimum when using this scanner, 

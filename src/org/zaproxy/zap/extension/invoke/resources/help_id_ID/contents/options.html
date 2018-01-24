@@ -7,9 +7,8 @@
 <body bgcolor="#ffffff">
 	<h1>Pilihan Aplikasi layar</h1>
 	<p>
-		Layar ini memungkinkan anda untuk mengkonfigurasi <a href="concepts.html">aplikasi</a> that
-		can be invoked.<br> By default there are no applications available, you need to add
-		all of the applications that you want to use.
+		Layar ini memungkinkan anda untuk mengkonfigurasi <a href="concepts.html">aplikasi</a> yang dapat dipanggil.<br> Secara default tidak ada aplikasi yang tersedia, Anda perlu menambahkan
+semua aplikasi yang ingin anda gunakan.
 	<h3>Tampilan Nama</h3>
 	Nama yang akan digunakan untuk aplikasi ini didalam ZAP.
 	<br>
@@ -27,39 +26,39 @@ anda harus membuat skrip atau berkas batch dan kemudian panggil ini dari ZAP.
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%url%</td>
-			<td>the full url, e.g. 'http://localhost/test?a=b'</td>
+			<td>url lengkap, misalnya 'http://localhost/test?a=b'</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%site%</td>
-			<td>the site, e.g. 'http://localhost:8080/'</td>
+			<td>situs, misalnya ' http://localhost: 8080 /'</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%host%</td>
-			<td>the hostname, e.g. 'localhost'</td>
+			<td>nama host, misalnya 'localhost'</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%port%</td>
-			<td>the port, e.g. '80'</td>
+			<td>pelabuhan, misalnya '80'</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%cookie%</td>
-			<td>the first cookie field from the request header (if any)</td>
+			<td>field cookie pertama dari header permintaan (jika ada)</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%postdata%</td>
-			<td>the POST data sent, if any, with any newlines replaced with "\n"</td>
+			<td>data POST yang dikirimkan, jika ada, dengan setiap baris diganti dengan "\n"</td>
 		</tr>
 	</table>
-	So if a command accepted a URL using '-u' you would specify the parameters as: '-u %url%'
+	Jadi jika perintah diterima menggunakan URL '-u' Anda akan menentukan parameter sebagai: '-u %url%'
 
-	<h3>Capture Output</h3>
+	<h3>Menangkap Output</h3>
 	Jika dicek lalu perintah berjalan dan setiap output yang dihasilkan akan ditampilkan di
-	<i>Output tab</i>.
+	<i>Tab keluaran</i>.
 	<br> Anda harus selalu menggunakan pilihan ini saat menjalankan skrip atau perintah yang tidak
 memiliki UI.
 	<br> Anda juga bisa menggunakan pilihan ini untuk penyelesaian masalah 
@@ -67,11 +66,11 @@ memiliki UI.
  berjalan seperti yang diharapkan kemudian salin jalankan perintah dan mencobanya dari baris perintah cepat.
 
 	<h3>Keluaran ke Catatan</h3>
-	If checked then any output will be appended to a
+	Jika dicentang kemudian output akan ditambahkan
 	<i>Catatan</i> melekat ke yang relevan
-	<i>History tab</i> rekam.
+	<i>Riwayat tab</i> rekam.
 	<br> Perhatikan bahwa beberapa node dalam
-	<i>Sites tab</i> tidak berhubungan
+	<i>Tab situs</i> tidak berhubungan
 	<i>Tab riwayat</i> catatan - untuk node tersebut pilihan ini tidak akan memiliki efek.
 
 </body>
