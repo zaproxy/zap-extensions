@@ -223,7 +223,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
 		return list;
 	}
 	
-
+	@Override
 	public void save() {
 		ScriptWrapper script = new ScriptWrapper();
 		script.setType(this.nameToType(this.getStringValue(FIELD_TYPE)));

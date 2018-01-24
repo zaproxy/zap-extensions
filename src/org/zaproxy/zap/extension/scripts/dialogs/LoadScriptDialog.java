@@ -136,6 +136,7 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 		return null;
 	}
 	
+	@Override
 	public void save() {
 		script.setName(this.getStringValue(FIELD_NAME));
 		script.setDescription(this.getStringValue(FIELD_DESC));
