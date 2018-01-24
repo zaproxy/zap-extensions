@@ -1,18 +1,13 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>23</version>
+	<version>24</version>
 	<status>beta</status>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Correct extender script, Add history record menu.js, to show the info dialogue.<br>
-	Invoke script on selected message(s) (Issue 4085).<br>
-	Update extender scripts to use just Nashorn (Java 8).<br>
-	Do not show empty choice when the script engine requires a template.<br>
-	Confirm overwrite of existing script file.<br>
-	Support 'external' scripts.<br>
+	Fix GUI freeze on script addition/removal through the API (Issue 4302).<br>
 	]]>
 	</changes>
 	<extensions>
