@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 <helpset version="2.0" xml:lang="id-ID">
-  <title>DOM XSS Active Scan Rule | ZAP Extension</title>
+  <title>DOM XSS Aktif Memindai Aturan | ZAP Ekstensi</title>
 
   <maps>
      <homeID>top</homeID>
@@ -10,21 +10,21 @@
 
   <view>
     <name>TOC</name>
-    <label>Contents</label>
+    <label>Isi</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>
 
   <view>
     <name>Index</name>
-    <label>Index</label>
+    <label>Indeks</label>
     <type>javax.help.IndexView</type>
     <data>index.xml</data>
   </view>
 
   <view>
     <name>Search</name>
-    <label>Search</label>
+    <label>Pencarian</label>
     <type>javax.help.SearchView</type>
     <data engine="com.sun.java.help.search.DefaultSearchEngine">
       JavaHelpSearch

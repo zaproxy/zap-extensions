@@ -7,11 +7,10 @@
     </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Access Control Testing</h1>
+<h1>Erişim Kontrolü Testi</h1>
 
 <p>
-    This add-on enables users to compare which parts of a web-application are available to some users, do access control
-    testing and identify potential access control issues. It allows configuration of access rules and conducts a full
+    Bu eklenti, kullanıcıların bir web uygulamasında hangi bölümleri bazı kullanıcıların kullanabileceğini karşılaştırabilir, erişim denetimi yapabilir.    potansiyel erişim kontrolü sorunlarını belirleme ve tanımlama. It allows configuration of access rules and conducts a full
     attack aimed to help identify sections of a web application which are accessible by unauthorized clients.
 </p>
 
@@ -39,7 +38,7 @@
 </ul>
 
 <p>
-    In order to simplify the access rules definition process, ZAP is making use of the tree-based structure of URLs.
+    Erişim kuralların tanımlatma aşamasını kolaylaştırmak için ZAP, ağaç tabanlı URL'lerin yapısını kullanmaktadır.
     When analyzing the rules, an inference algorithm is used to detect the matching rules for each node based on its
     parent in the URL if no particular rules are defined. This means that, when configuring the access rules, only 1
     rule needs to be set explicitly for an entire subtree, while for the other nodes rules are inferred. More details
@@ -48,15 +47,14 @@
 
 <h3>Testing procedure</h3>
 
-<p> As a whole, in order to fully perform access control testing for a web application, the next steps should be
-    followed:</p>
+<p> Bir bütün olarak, bir web uygulaması için erişim denetimi sınamasını tam olarak gerçekleştirmek için bir sonraki adımlar    takip edin:</p>
 <ul>
-    <li>the tester defines set of Users and how they authenticate;
+    <li>test kullanıcılarını ve kimlik doğrulamayı tanımlar;
     </li>
     <li>the tester defines how ZAP can identify un-authorized requests (via the Authorization panel in the Session
         Properties);
     </li>
-    <li>the web-application is explored either manually or via the Spider;</li>
+    <li>web uygulaması manuel olarak yada örümcek aracılığıyla araştırılır;</li>
     <li>the tester define the Access Rules for each of the Users associated to the Context, basically letting ZAP know
         which parts of the web application are supposed to be accessed by which users;
     </li>

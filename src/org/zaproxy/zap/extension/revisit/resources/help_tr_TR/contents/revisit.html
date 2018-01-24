@@ -13,20 +13,20 @@ perhaps when you dont have access to it, or after its been changed in some way?<
 If so then this add-on is for you!
 </p>
 <p>
-The add-on allows you to instruct ZAP to return content from the ZAP history between specified
-dates rather than forwarding the requests to the site.<br>
-This allows you to apparently browse and use a website that you no longer have access to.<br>
-It also allows you to see what it looked like at between specific times, which is useful if 
-the application has since changed.<br>
+Eklenti, ZAP'ı, ZAP geçmişi içerisindeki içeriği, istekleri siteye iletmek yerine, 
+belirtilen tarihler arasında geri dönmesini sağlamanıza izin verir.<br>
+Bu durum sizin, artık erişime sahip olmadığınız bir web sitesine göz atmanıza ve kullanmanıza olanak tanır.<br>
+Ayrıca, belirli zamanlar arasında nasıl göründüğünü görmenizi sağlar; 
+bu, uygulama değiştiğinden beri kullanışlıdır<br>
 <br>
-When returning pages from the ZAP history floating footers are injected into HTML pages to
-give a visual clue that these pages are generated from ZAP.<br>
-ZAP will return pages that were the result of both GET and POST requests as long as it finds ones that match.<br>
-Pages only match if all URL and POST parameters are the same, ignoring the order and any known CSRF tokens.<br>
-If no matching page can be found in the history then a custom 404 page is returned which will
-include links to the same page if it has been invoked with different parameters or outside of the time period specified.<br>
+ZAP geçmişinden sayfalar döndürülürken, tarih sayfalı altbilgiler HTML sayfalarına, 
+bu sayfaların ZAP'den üretildiğine dair görsel ipucu vermek üzere enjekte edilir.<br>
+ZAP, GET ve POST istekleri eşleşenleri bulduğu sürece sayfaları döndürür.<br>
+Sayfa, yalnızca tüm URL ve POST parametreleri aynı olduğunda, istek ve bilinen CSRF tokenları yoksayılırsa eşleşir.<br>
+Geçmişte eşleşen herhangi bir sayfa bulunamazsa, özel bir 404 sayfası döndürülecektir ve 
+farklı parametrelerle veya belirtilen zaman periyodunun dışında çağrılmışsa, aynı sayfaya bağlantılar içerecektir.<br>
 <br>
-This add-on adds right click menus to the Sites tree:
+Bu eklenti sağ tıklama menülerini sitenin ağacına ekler:
 </p>
 <h3>Enable Revisit</h3>
 When selected a popup will be shown which asks for the start and end times to be used.<br>

@@ -22,16 +22,16 @@ developers and other stakeholders it can also leak a significant amount of infor
 may be interested in.<br><br>
 The ELMAH scanner targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
 
-<h2>Example File Active Scanner</h2>
-This implements an example active scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+<h2>Örnek Aktif Dosya Tarayıcı</h2>
+Bu, kullanıcıların düzenleyebileceği bir dosyadan dizeleri yükleyen örnek bir etkin tarama kuralı uygular.<br>
+Daha fazla detay için: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
 
-<h2>Example Simple Active Scanner</h2>
-This implements a very simple example active scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
+<h2>Örnek basit Aktif tarayıcı</h2>
+Bu, çok basit bir örnek etkin tarama kuralını uygular. <br>
+Daha fazla detay için: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
 
-<h2>Expression Language Injection</h2>
-The software constructs all or part of an expression language (EL) statement in a Java Server Page (JSP) using externally-influenced input from an upstream component, but it does not neutralize or incorrectly neutralizes special elements that could modify the intended EL statement before it is executed. In certain versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) in which Expression Language tags would be evaluated twice, which effectively exposed any application to EL injection. However, even for later versions, this weakness is still possible depending on configuration.
+<h2>İfade Dili Enjeksiyonu</h2>
+Yazılım, bir Java Sunucu Sayfasındaki (JSP) bir ifade dili (EL) ifadesinin tamamını veya bir kısmını, bir externally-influenced harici olarak etkilenmiş girdi kullanarak oluşturur, ancak nötralize etmez veya daha önce belirtilen EL ifadesini yürütülmeden önce değiştirebilecek özel öğeleri hatalı şekilde etkisiz hale getirmez. In certain versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) in which Expression Language tags would be evaluated twice, which effectively exposed any application to EL injection. However, even for later versions, this weakness is still possible depending on configuration.
 
 <h2>GET for POST Scanner</h2>
 This scanner takes <code>application/x-www-form-urlencoded</code> POST requests, changes the parameters from POST to GET and resubmits the request. 
