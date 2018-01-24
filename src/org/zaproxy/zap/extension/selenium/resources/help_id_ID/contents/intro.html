@@ -7,9 +7,7 @@
 <body bgcolor="#ffffff">
 	<h1>Selenium</h1>
 
-	<p>The Selenium add-on provides WebDrivers, for other add-ons, to invoke and remotely
-		control web browsers. It's also bundled the HtmlUnit web browser, an headless Java based
-		web browser.
+	<p>Selenium add-on menyediakan WebDrivers, untuk add-ons lainnya, untuk memohon dan remote kontrol browser web. Hal ini juga dibundel HtmlUnit web browser, aplikasi headless berbasis Java web browser.
 	<p>Add-on juga menambahkan opsi klik kanan ke panel ZAP yang menautkan daftar URL (seperti pada Riwayat dan Situs) yang memungkinkan anda membuka URL terpilih pada salah satu peramban yang didukung.
 
 	<h2>Peramban yang Didukung</h2>
@@ -75,23 +73,17 @@
 		Beberapa persyaratan (misalnya WebDrivers) dari peramban bisa dikonfigurasi pada layar <a
 			href="options.html">Pilihan Layar Selenium</a>.
 
-	<h2>Bundled WebDrivers</h2>
-	ZAP provides add-ons with the WebDrivers, when those add-ons are installed ZAP will
-	attempt to use those bundled WebDrivers by default. Beberapa OS bisa saja tidak memiliki WebDriver untuk beberapa peramban, dalam kasus tersebut ZAP akan memberi tahu, pada panel pilihan tidak ada bundel WebDriver yang tersedia. The bundled WebDrivers can also be (re)set with
-	the 'Bundled' button (for example, if another WebDriver was manually set). Tidak semua versi peramban didukung dengan bundel WebDrivers, sebaiknya versi baru/usang dari peramban bisa digunakan bila memungkinkan.
+	<h2>Dibundel WebDrivers</h2> ZAP menyediakan add-ons dengan WebDrivers, ketika mereka add-ons yang terinstal ZAP akan mencoba untuk menggunakan mereka dibundel WebDrivers secara default. Beberapa OS bisa saja tidak memiliki WebDriver untuk beberapa peramban, dalam kasus tersebut ZAP akan memberi tahu, pada panel pilihan tidak ada bundel WebDriver yang tersedia. Paket WebDrivers juga dapat (kembali)ditetapkan dengan 'Paket' tombol (misalnya, jika lain WebDriver itu diatur secara manual). Tidak semua versi peramban didukung dengan bundel WebDrivers, sebaiknya versi baru/usang dari peramban bisa digunakan bila memungkinkan.
 
 	<p>
 		<strong>Catatan:</strong> add-on ZAP dapat menambahkan peramban tambahan.
 
 	<p>
-		<strong>Firefox/geckodriver Note:</strong> There's an issue (<a
-			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) that
-		prevents HTTPS sites from being used in versions &ge; 48 and &lt; 52.
+		<strong>Firefox/geckodriver Catatan:</strong> Ada masalah (<a
+			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) yang mencegah situs HTTPS dari yang digunakan di versi &ge; 48 dan &lt; 52.
 	<p>
-		<strong>PhantomJS Note:</strong> There's an issue (<a
-			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
-		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Sampai ada perbaikan tersedia, disarankan untuk tidak menggunakannya dalam kasus tersebut. Beberapa add-on lebih memilih untuk menampilkan pesan peringatan ketika itu terjadi. As workaround one could define, in the <code>hosts</code>
-		file, a domain name mapping to the local address and use that domain name instead.
+		<strong>PhantomJS Catatan:</strong> Ada masalah (<a
+			href="https://github.com/ariya/phantomjs/issues/11342">Masalah #11342</a>) yang mencegah situs-situs di localhost, 127.0.0.1 dan ::1 dari yang diproksi melalui ZAP. Sampai ada perbaikan tersedia, disarankan untuk tidak menggunakannya dalam kasus tersebut. Beberapa add-on lebih memilih untuk menampilkan pesan peringatan ketika itu terjadi. Sebagai solusi yang bisa menentukan, dalam <code>host</code> file, pemetaan nama domain ke alamat lokal dan menggunakan nama domain bukan.
 	<p>
 		<strong>Catatan Internet Explorer:</strong> Tidak semua versi Internet Explorer dapat berfungsi, merujuk pada <a
 			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">Situs web IEDriverServer</a> untuk rincian lebih lengkap tentang bagaimana cara mengkonfigurasinya.
