@@ -75,6 +75,11 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
     public ExtensionQuickStart() {
         super(NAME);
 	}
+
+	@Override
+	public boolean supportsDb(String type) {
+		return true;
+	}
 	
 	@Override
 	public void hook(ExtensionHook extensionHook) {

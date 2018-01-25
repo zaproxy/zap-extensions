@@ -106,6 +106,11 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
     }
 
     @Override
+    public boolean supportsDb(String type) {
+        return true;
+    }
+
+    @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         this.api = new QuickStartLaunchAPI(this);

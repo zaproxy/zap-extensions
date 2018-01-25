@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Quick Start</name>
-	<version>23</version>
+	<version>24</version>
 	<status>release</status>
 	<description>Provides a tab which allows you to quickly test a target application</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Update for 2.7.0.<br>
-	Stop the quick scan if the session is changed.<br>
-	Added toolbar button to launch the latest browser chosen.<br>
+	Enable the extensions for all DB types.<br>
 	]]>
 	</changes>
 	<extensions>
