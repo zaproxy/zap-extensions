@@ -5,62 +5,61 @@
 <title>AJAX Spider tab</title>
 </head>
 <body bgcolor="#ffffff">
-	<h1>AJAX Spider tab</h1>
+	<h1>AJAX Örümcek sekmesi</h1>
 	<p>
-		The AJAX Spider tab shows you the set of unique URIs found by <a href="concepts.html">AJAX
-			Spider</a>.
+		AJAX Örümcek sekmesi <a href="concepts.html">AJAX Örümcek</a> tarafından bulunmuş bir dizi eşsiz URL'yi size gösterir.
 	</p>
-	<br /> For each request you can see:
+	<br /> Her istek için görebilecekleriniz:
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The request index - each request is numbered, starting at 1</td>
+			<td>İstek indisi - Her istek 1'den başlayarak numaralandırılır</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The request timestamp</td>
+			<td>İstek zaman damgası</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The HTML method, e.g. GET or POST</td>
+			<td>HTML yöntemi, örn. GET ya da POST</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The URL requested</td>
+			<td>İstenen URL</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The HTTP response status code</td>
+			<td>HTTP yanıtı durum kodu</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>A short summary of what the HTTP response code means</td>
+			<td>HTTP yanıt kodunun ne anlama geldiğinin kısa bir özeti</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The length of time the whole request took</td>
+			<td>Tüm isteğin aldığı süre</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The size of the response header</td>
+			<td>Yanıt başlığının boyutu</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>The size of the response body</td>
+			<td>Yanıt gövdesinin boyutu</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>Any <i>Alerts</i> on the request
+			<td>İstek üzerindeki tüm <i>Uyarılar</i>
 			</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>Any <i>Notes</i> you have added to request
+			<td>İsteğe eklediğiniz tüm <i>Notlar</i>
 			</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>Any <i>Tags</i> you have added to request
+			<td>İsteğe eklediğiniz tüm <i>Etiketler</i>
 			</td>
 		</tr>
 	</table>
@@ -70,19 +69,19 @@
 	<i>Response tab</i> above.
 	<br />
 
-	<h2>Right click menu</h2>
-	Right clicking on a node will bring up a menu which will allow you to:
+	<h2>Sağ tık menüsü</h2>
+	Bir düğüme sağ tıklamak şunları yapmanızı sağlayan bir menü getirir:
 
-	<h3>Attack</h3>
-	The Attack menu has the following submenus:
-	<h4>Active Scan Site</h4>
+	<h3>Saldırı</h3>
+	Saldırı menüsünde aşağıdaki alt menüler vardır:
+	<h4>Aktif Tarama Sitesi</h4>
 	This will initiate an
 	<i>Active Scan</i> of the whole of the site containing the selected node.
 	<br /> The
 	<i>Active Scan tab</i> will be display and will show the progress of the scan.
 	<br />
 
-	<h4>Active Scan Node</h4>
+	<h4>Aktif Tarama Düğümü</h4>
 	This will initiate an
 	<i>Active Scan</i> of just the node selected.
 	<br /> The
@@ -118,27 +117,25 @@
 	<br />
 
 	<h3>Exclude from</h3>
-	This menu has the following submenus:
+	Bu menü aşağıdaki alt menülere sahiptir:
 
 	<h4>Proxy</h4>
-	This will exclude the selected nodes from the proxy. They will still be proxied via ZAP
-	but will not be shown in any of the tabs.
-	<br /> This can be used to ignore URLs that you know are not relevant to the system you
-	are currently testing.
+	Bu, seçilen düğümleri proxy dışında tutacaktır. ZAP ile hala proxylenmiş olacaklar fakat herhangi bir sekmede gösterilmeyecekler.
+	<br /> Bu, şu anda test etmekte olduğunuz sistem ile ilişkili olmadığını bildiğiniz URL'leri yok saymak için kullanılabilir.
 	<br /> The nodes can be included again via the
 	<i>Session Properties</i> dialog
 
-	<h4>Scanner</h4>
-	This will prevent the selected nodes from being actively scanned.
+	<h4>Tarayıcı</h4>
+	Bu seçili düğümlerin aktif olarak taranmasını önler.
 	<br /> The nodes can be included again via the
 	<i>Session Properties</i> dialog
 
-	<h4>Spider</h4>
-	This will prevent the selected nodes from being spidered.
+	<h4>Örümcek</h4>
+	Bu, seçili düğümleri örümceğin taramasını engeller.
 	<br /> The nodes can be included again via the
 	<i>Session Properties</i> dialog
 
-	<h3>Run application</h3>
+	<h3>Uygulamayı çalıştır</h3>
 	This menu allows you to
 	<i>invoke applications</i> that you have configured via the
 	<i>Options Applications screen</i> which is also accessible via the 'Configure
@@ -159,23 +156,23 @@
 	<i>Add Break Point dialog</i> which allows you to set a break point on that URL.
 	<br />
 
-	<h3>Alerts for this node</h3>
+	<h3>Bu düğüm için uyarılar</h3>
 	If the URL selected has
 	<i>alerts</i> associated with it then they will be listed under this menu.
-	<br> Selecting one of the alerts will cause it to be displayed.
+	<br> Uyarılardan birini seçmek, görüntülenmesine sebep olacaktır.
 
 	<h3>Resend...</h3>
 	This will bring up the
 	<i>Resend dialog</i> which allows you to resend the request after making any changes to
 	it that you want to.
 
-	<h3>New Alert...</h3>
+	<h3>Yeni Uyarı...</h3>
 	This will bring up the
 	<i>Add Alert dialog</i> which allows you to manually record a new
 	<i>Alert</i> against this request.
 
-	<h3>Open URL in Browser</h3>
-	This will open the URL of the selected node in your default browser.
+	<h3>Tarayıcıda URL Aç</h3>
+	Bu, seçili düğümün URL'sini varsayılan tarayıcınızda açar.
 
 	<h2>See also</h2>
 	<table>

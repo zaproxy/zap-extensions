@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="gettingStarted" target="gettingStarted" />
+	<indexitem text="الشروع في العمل" target="gettingStarted" />
 </index>
