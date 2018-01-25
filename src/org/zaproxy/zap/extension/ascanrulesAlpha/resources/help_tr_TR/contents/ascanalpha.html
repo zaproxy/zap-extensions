@@ -6,12 +6,11 @@ Active Scan Rules - alpha
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Active Scan Rules - alpha</h1>
-The following alpha quality active scan rules are included in this add-on:
-
-<h2>Apache Range Header DoS (CVE-2011-3192)</h2>
-Tests to see if the server is vulnerable to the Apache Range Header Denial of Service issue, by requesting eleven (11) 
-different byte ranges. Eleven ranges is one more than is accepted by patched/fixed servers.
+<h1>Aktif tarama kurallar - Alfa</h1>
+Aşağıdaki alfa kalitesi etkin tarama kuralları bu eklentiye dahil edilmiştir:
+<h2>Apache Aralığı Üstbilgisi DoS (CVE-2011-3192)</h2>
+Sunucunun, on bir (11) farklı bayt aralığı isteyerek, sunucunun Apache Menzil Başlığı Hizmet Reddi'ne karşı savunmasız 
+olup olmadığını sınar. Eleven ranges is one more than is accepted by patched/fixed servers.
 
 <h2>Cookie Slack Detector</h2>
 Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid"
@@ -31,7 +30,7 @@ Bu, çok basit bir örnek etkin tarama kuralını uygular. <br>
 Daha fazla detay için: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
 
 <h2>İfade Dili Enjeksiyonu</h2>
-Yazılım, bir Java Sunucu Sayfasındaki (JSP) bir ifade dili (EL) ifadesinin tamamını veya bir kısmını, bir externally-influenced harici olarak etkilenmiş girdi kullanarak oluşturur, ancak nötralize etmez veya daha önce belirtilen EL ifadesini yürütülmeden önce değiştirebilecek özel öğeleri hatalı şekilde etkisiz hale getirmez. In certain versions of Spring 3.0.5 and earlier, there was a vulnerability (CVE-2011-2730) in which Expression Language tags would be evaluated twice, which effectively exposed any application to EL injection. However, even for later versions, this weakness is still possible depending on configuration.
+Yazılım, bir Java Sunucu Sayfasındaki (JSP) bir ifade dili (EL) ifadesinin tamamını veya bir kısmını, bir externally-influenced harici olarak etkilenmiş girdi kullanarak oluşturur, ancak nötralize etmez veya daha önce belirtilen EL ifadesini yürütülmeden önce değiştirebilecek özel öğeleri hatalı şekilde etkisiz hale getirmez. Spring 3.0.5 ve önceki sürümlerin bazılarında, İfade Dili etiketlerinin iki kez değerlendirileceği ve herhangi bir uygulamayı etkili bir şekilde EL enjeksiyonuna maruz bırakan bir güvenlik açığı (CVE-2011-2730) mevcuttu. However, even for later versions, this weakness is still possible depending on configuration.
 
 <h2>GET for POST Scanner</h2>
 This scanner takes <code>application/x-www-form-urlencoded</code> POST requests, changes the parameters from POST to GET and resubmits the request. 
@@ -72,8 +71,8 @@ other stakeholders it can leak a significant amount of information which a secur
 may be interested in.<br><br>
 The trace.axd scanner targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
 
-<h2>User Agent Fuzzer</h2>
-This active scanner checks for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). The scanner compares the response statuscode and the hashcode of the response body with the original response.
+<h2>Kullanıcı Aracısı Fuzzer'ı</h2>
+Bu aktif tarayıcı fuzzed Kullanıcı Aracısı'nı baz alarak yanıttaki farklılıkları kontrol eder (örneğin, mobil siteler, Search Engine Crawler olarak eriş). Tarayıcı, yanıt statuscode'u ve yanıt gövdesinin hashcode'unu orijinal yanıt ile karşılaştırır.
 
 </body>
 </html>

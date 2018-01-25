@@ -4,9 +4,9 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Community Scripts" image="script-share" target="communityScripts"/>
+	<tocitem text="ZAP Kullanıcı Kılavuzu" tocid="toplevelitem">
+		<tocitem text="Eklentiler" tocid="addons">
+			<tocitem text="Topluluk Scriptleri" image="script-share" target="communityScripts"/>
 		</tocitem>
 	</tocitem>
 </toc>

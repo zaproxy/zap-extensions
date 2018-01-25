@@ -28,19 +28,18 @@ farklı parametrelerle veya belirtilen zaman periyodunun dışında çağrılmı
 <br>
 Bu eklenti sağ tıklama menülerini sitenin ağacına ekler:
 </p>
-<h3>Enable Revisit</h3>
-When selected a popup will be shown which asks for the start and end times to be used.<br>
-The start time defaults to the time of the first request in the session.<br>
-The end time defaults to the time of the last request in the session.<br>
-If any of the time elements (for example 'day of the month') have not changed then those elements will be disabled.<br>
-If the dialog OK button is pressed then the revisit functionality will be enabled for the selected site,
-and a 'calendar' icon added to the site node in the History tree.
+<h3>Tekrar Ziyareti Etkinleştir</h3>
+Seçildiğinde kullanılacak başlangıç ve bitiş zamanını soran bir açılır pencere gösterilir.<br>
+Başlangıç zamanı oturumdaki ilk isteğin zamanına varsayılan olarak ayarlanır.<br>
+Bitiş zamanı oturumdaki son isteğin zamanına varsayılan olarak ayarlanır.<br>
+Eğer herhangi bir zaman öğesi (örneğin 'ayın günü') değiştirilmemişse, bu öğeler devre dışı bırakılır.<br>
+Eğer penceredeki TAMAM butonuna basılırsa, tekrar ziyaret işlevi seçili site için etkinleştirilir ve bir 'takvim' ikonu Geçmiş ağacındaki site düğümüne eklenir.
 
-<h3>Disable Revisit</h3>
-When selected then the revisit functionality will be disabled for the selected site.
+<h3>Tekrar Ziyareti Devre Dışı Bırak</h3>
+Seçildiğinde tekrar ziyaret işlevi seçili site için devre dışı bırakılır.
 
 <h2>API</h2>
-The add on supports the following API endpoints:<br><br>
+Eklenti aşağıdaki API bitiş noktalarını destekler:<br><br>
 revisit / view / revisitList Returns the list of sites enabled for revisit<br>
 revisit / action / revisitSiteOn Turns revisit on for the specified site. Dates must use the format: "yyyy/MM/dd HH:mm:ss"<br> 
 revisit / action / revisitSiteOff  Turns revisit off for the specified site

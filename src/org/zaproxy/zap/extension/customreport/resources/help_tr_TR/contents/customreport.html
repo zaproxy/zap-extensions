@@ -9,41 +9,40 @@ Custom Report
 <body bgcolor="#ffffff">
 
 <h1>Customizable HTML Report</h1>
-The Customizable HTML Report add-on allows to control the information that goes into the ZAP scanning report.
-It has three tabs to provide details about the report: Scope, Alerts and Alert Details.
+Özelleştirilebilir HTML Rapor eklentisi, ZAP tarama raporuna giren bilgilerin kontrol edilmesini sağlar. Rapora detay kazandırmak için üç sekme bulunur: Kapsam, Uyarılar ve Uyarı Ayrıntıları.
 
-<h2>Scope</h2>
+<h2>Kapsam</h2>
 Can set the report name, report description and select the template of the HTML output.  
 Additionally, can specify whether to include only contents in scope. 
 <br>
 Report templates:
 	<ul>
-		<li><b>Traditional</b>: lists all the alerts and sorts them by the risk level from High to Low.</li>
-		<li><b>Separated Sites</b>: same as Traditional, but also groups by domain names.</li>
-		<li><b>Concise</b>: groups alerts by type (to avoid repetition) and sorts from High to Low.</li>
+		<li><b>Geleneksel</b>: tüm uyarıları listeler ve onları risk düzeyine göre Yüksekten Alçağa sıralar.</li>
+		<li><b>Ayrılmış Siteler</b>: Geleneksel ile aynıdır, fakat alan adlarına göre de gruplar.</li>
+		<li><b>Kısaca</b>: uyarıları türe göre gruplar (tekrarı önlemek için) ve Yüksek'den Düşük seviyeye sıralar.</li>
 	</ul>
 	
-<h2>Alerts</h2>
-Can select which alert types to include into the report. 
-Additionally, alerts can be selected or unselected by risk level (Informational, Low, Medium and High).
+<h2>Uyarılar</h2>
+Rapora hangi uyarı türlerini ekleyeceğini seçebilir.
+Ayrıca, uyarılar risk seviyesine göre (Bilgilendirici, Düşük, Orta ve Yüksek) seçilebilir veya seçilebilir değildir.
 
 <h2>Alert Details</h2>
-Allows to select which alert attributes are included into the Report.
+Rapora hangi uyarı özniteliklerinin ekleneceğini seçmesine izin verir.
 <br>
-These are checked and are included by default:
+Bunlar kontrol edilir ve varsayılan olarak eklenir:
 	<ul>
-		<li>Description</li>
-		<li>Other Info</li>
-		<li>Solution</li>
-		<li>Reference</li>
-		<li>CWE ID</li>
-		<li>WASC ID</li>
+		<li>Açıklama</li>
+		<li>Diğer Bilgiler</li>
+		<li>Çözüm</li>
+		<li>Referans</li>
+		<li>CWE Kimliği</li>
+		<li>WASC Kimliği</li>
 	</ul>
 
-These are unchecked and are excluded by default:
+Bunlar işaretli değild ve varsayılan olarak hariç tutulmuştur:
 	<ul>
-		<li>Request Header</li>
-		<li>Response Header</li>
+		<li>İstek Başlığı</li>
+		<li>Cevap Başlığı</li>
 		<li>Request Body</li>
 		<li>Response Body</li>
 	</ul>
