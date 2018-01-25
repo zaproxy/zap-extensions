@@ -16,79 +16,77 @@
     <br/>
 	<table border ="2">
 		<tr>
-			<th colspan = "3"><br>Configuration Options</th>
+			<th colspan = "3"><br>Yapılandırma Seçenekler</th>
 		</tr>
 		<tr>
-			<th>Field</th>
-			<th>Details</th>
-			<th>Default</th>
+			<th>Alan</th>
+			<th>Ayrıntılar</th>
+			<th>Varsayılan</th>
 		</tr>
 		<tr>
-			<td>Browser</td>
-			<td>AJAX Spider relies on an external browser to crawl the targeted site. You can
-				specify which one you want to use. For more details on supported browsers refer to
-				"Selenium" add-on help pages.</td>
+			<td>Tarayıcı</td>
+			<td>AJAX Örümcek, hedeflenen siteyi taramak için harici bir tarayıcıya güvenir. Hangisini kullanmak istediğinizi belirtebilirsiniz. Desteklenen tarayıcılar hakkında daha fazla bilgi için "Selenium" eklentisi yardım sayfalarına bakınız.</td>
 			<td align="center">Firefox</td>
 		</tr>
 		<tr>
-			<td>Number of browser windows to open</td>
+			<td>Açılacak tarayıcı pencereleri sayısı</td>
 			<td>AJAX Spider tarafından kullanılacak pencere sayısını yapılandırabilirsiniz. Pencere sayısı arttıkça işlem de o kadar hızlı olur.</td>
 			<td align = "center">1</td>
 		</tr>
 		<tr>
-			<td>Maximum crawl depth</td>
+			<td>Maksimum tarama derinliği</td>
 			<td>Tarayıcının erişebileceği maksimum derinlik. Sıfır sınırsız derinlik anlamına gelir.</td>
 			<td align = "center">10</td>
 		</tr>
 		<tr>
 		    <td>Maximum crawl states</td>
 			<td>The maximum number of states that the crawler should crawl. Zero means unlimited crawl states. </td>
-			<td align = "center"> 0 (unlimited)</td>
+			<td align = "center"> 0 (sınırsız)</td>
 		</tr>
 		<tr>
-			<td>Maximum duration</td>
-			<td>The maximum time that the crawler is allowed to run. Zero means unlimited running time.</td>
-			<td align = "center">60 minutes</td>
+			<td>Maksimum süre</td>
+			<td>Tarayıcıya çalışması için izin verilen maksimum süre. Sıfır, sınırsız çalışma süresi anlamına gelir.</td>
+			<td align = "center">60 dakika</td>
 		</tr>
 		<tr>
-			<td>Event wait time</td>
-			<td>The time to wait after a client side event is fired.</td>
+			<td>Olay bekleme süresi</td>
+			<td>Bir istemci tarafındaki olay tetiklendikten sonra beklenilecek süre.</td>
 			<td align = "center">1000 ms</td>
 		</tr>
 		<tr>
-			<td>Reload wait time</td>
-			<td>The time to wait after URL is loaded.</td>
+			<td>Yeniden yükleme bekleme süresi</td>
+			<td>URL yüklendikten sonra beklenilecek süre.</td>
 			<td align = "center">1000 ms</td>
 		</tr>
 		<tr>
-			<td>Click elements once</td>
-			<td>When enabled, the crawler attempts to interact with each element (e.g., by clicking) only once.  If this is not set, the crawler will attempt to click multiple times. Unsetting this option is more rigorous but may take considerably more time.</td>
+			<td>Öğelere bir kez tıklama</td>
+			<td>Etkinleştirildiğinde, tarayıcı her öğe ile yalnızca bir kez iletişime girişir (örneğin, tıklayarak).  Eğer bu ayarlanmamışsa, tarayıcı defalarca tıklamaya çalışacaktır. Bu seçeneğin ayarlanmaması daha sağlamdır fakat epeyce fazla zaman alabilir.</td>
 			<td align = "center">True</td>
 		</tr>
 		<tr>
-			<td>Use random values in form fields</td>
-			<td>When enabled, inserts random values into form fields. Otherwise, it uses empty values.</td>
+			<td>Form alanlarında rastgele değerler kullan</td>
+			<td>Etkinleştirildiğinde form alanlarına rastgele değerler ekler. Aksi takdirde boş değerler kullanır.</td>
+			<td align = "center">Doğru</td>
+		</tr>
+		<tr>
+			<td>Yalnızca varsayılan öğelere tıkla</td>
+			<td>Etkinleştirildiğinde, tarama sırasında yalnızca "a", "buton" ve "girdi" öğeleri tıklanacak. Aksi halde, hangi öğelerin tıklanacağına karar vermek için aşağıdaki tabloyu kullanır.  Derinlik analizinde daha fazlası için, bunu devre dışı bırakın ve tıklanabilir öğeleri tabloda yapılandırın.</td>
 			<td align = "center">True</td>
 		</tr>
 		<tr>
-			<td>Click default elements only</td>
-			<td>When enabled, only elements "a", "button" and "input" will be clicked during crawl. Otherwise, it uses the table below to determine which elements will be clicked.  For more in depth analysis, disable this and configure the clickable elements in the table.</td>
-			<td align = "center">True</td>
-		</tr>
-		<tr>
-			<td>Select elements to click during crawl (table)</td>
-			<td>The list of elements to crawl.  This table only applies when "click default elements only" is not enabled.  Use "enable all" for a more in depth analysis, though it may take somewhat longer.</td>
-			<td align = "center">All enabled</td>
+			<td>Tarama sırasında tıklanacak öğeleri seç (tablo)</td>
+			<td>Taranacak öğelerin listesi. Bu tablo yalnızca "yalnızca varsayılan öğelere tıkla" etkinleştirilmediğinde uygulanır. Biraz daha fazla zaman alsa da, derinlik analizinde daha  fazlası için "tümünü etkinleştir" kullanın.</td>
+			<td align = "center">Tümü etkin</td>
 		</tr>
 		
 	</table>
 	
-	<h2>See also</h2>
+	<h2>Ayrıca bakınız</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="concepts.html">AJAX Spider</a></td>
-			<td>for an overview of the AJAX Spider</td>
+			<td><a href="concepts.html">AJAX Örümcek</a></td>
+			<td>AJAX Örümceüe genel bir bakış için</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

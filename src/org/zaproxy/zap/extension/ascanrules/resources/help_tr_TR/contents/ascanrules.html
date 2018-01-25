@@ -3,34 +3,30 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Active Scan Rules
+Aktif Tarama Kuralları
 </title>
 </head>
 <body bgcolor="#ffffff">
 <h1>Active Scan Rules</h1>
-The following release quality active scan rules are included in this add-on:
+Bu eklentide bulunan aktif tarama kuralları şunlardır:
 
 <h2>Buffer Overflow</h2>
 
-Looks for indicators of buffer overflows in compiled code.  It does this by putting out large strings of input text and look for code crash
-and abnormal session closure.
+Derlenmiş kodda buffer overflow'ların göstergelerini arar.  Bunu büyük bir yazı girdisi salarak ve kod çakışmalarına ve anormal oturum kapanışlarına bakarak yapar.
 
-<h2>Code Injection</h2>
-
-This rule submits PHP and ASP attack strings as values for URL parameters in a request and examines the response to 
-see if those values have been evaluated by the server. First, requests are constructed and sent containing injected PHP instructions
-to print a token. In the event of a match between the token and the content of the response body, the scanner raises an alert and returns immediately.
-If there aren't any matches, the scanner will construct requests with several injected ASP strings that instruct the server to write the product
-of two randomly generated integers in the response. If the body of the response matches the product, an alert is raised.
+<h2>Kod Enjeksiyonu</h2>
+Bu kural PHP ve ASP saldırı string'lerini URL parametreleri için değerler olarak bir talepte bildirir ve o değerlerin sunucu tarafından değerlendirilip değerlendirilmediğini görmek için yanıtı inceler. İlk olarak, bir token yazdırmak için enjekte edilmiş PHP talimatları içeren talepler oluşturulur ve gönderilir. Token ve yanıt gövdesinin içeriği arasında bir eşleşme durumunda, tarayıcı uyarıyı yükseltir ve hemen geri döner.
+Herhangi bir eşleşme yoksa, tarayıcı, sunucuya ürünü yazmasını söyleyen birçok ASP dizesiyle istekler oluşturur.
+iki adet rastgele oluşturulmuş tamsayı. Yanıt gövdesi ürüne uyuyorsa, bir uyarı oluşturulur.
 
 <h2>Command Injection</h2>
 
 This rule submits *NIX and Windows OS commands as URL parameter values to determine whether or not the web application is passing unchecked
 user input directly to the underlying OS. The injection strings consist of meta-characters that may be interpreted by the OS
 as join commands along with a payload that should generate output in the response if the application is vulnerable. If the content of a response body
-matches the payload, the scanner raises an alert and returns immediately. In the event that none of the error-based matching attempts
-return output in the response, the scanner will attempt a blind injection attack by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
-and receiving the response against a heuristic time-delay lower limit. If the elapsed time is greater than this limit, an alert is raised with medium confidence
+matches the payload, the scanner raises an alert and returns immediately. Hata tabanlı eşleme denemelerinin hiçbirinin yapılmaması durumunda
+yanıtta çıktıyı döndür tarayıcı uyku talimatlarını yük olarak göndererek ve isteği gönderme arasındaki geçen süreyi karşılaştırarak kör bir enjeksiyon saldırısı yapmaya çalışır
+ve sezgisel gecikme alt sınırına karşı cevap alır. If the elapsed time is greater than this limit, an alert is raised with medium confidence
 and the scanner returns immediately.
 <br>
 Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
@@ -39,28 +35,24 @@ Post 2.5.0 you can change the length of time used for the blind injection attack
 
 This rule checks the headers of secure pages and reports an alert if they allow a browser to cache the page.
 
-<h2>Cross Site Scripting (reflected)</h2>
+<h2>Siteler Arası Komut Dosyası Çalışması (yansıtılan)</h2>
+ Bu kural, bir 'güvenli' değer göndererek ve tüm bu değer (varsa) yanıtta oluştuğu konumları analiz başlar. <br>
+Daha sonra, özellikle her bir örnekten birinin bulunduğu yerde hedeflenmiş bir dizi saldırıyı gerçekleştirir., 
+etiket niteliklerini, url niteliklerini, src niteliklerini, html yorumlarını destekleyen etiket niteliklerini içerir. 
 
-This rule starts by submitting a 'safe' value and analyzing all of the locations in which this value occurs in the response (if any). <br>
-It then performs a series of attacks specifically targeted at the location in which each of the instances occurs, 
-including tag attributes, URL attributes, attributes in tags which support src attributes, html comments etc. 
+<h2>Siteler Arası Senaryo (kalıcı)</h2>
+Bu kural benzersiz bir 'güvenli' değer göndererek başlar ve daha sonra örümcek, tüm uygulamada değerilerin bulunduğu tüm konumları bulmak için arar<br>
+Daha sonra 'yansıtılan' sürümün yaptığı gibi bir dizi saldırı gerçekleştirir ancak bu durumda diğer sayfalardaki 
+hedef konumların hepsini kontrol eder. 
 
-<h2>Cross Site Scripting (persistent)</h2>
+<h2>CRLF Enjeksiyon</h2>
 
-This rule starts by submitting a unique 'safe' value and then spiders the whole application to find all of the locations in which the value occurs.<br>
-It then performs a series of attacks in the same way that the 'reflected' version does but in this case checks all of the 
-target locations in other pages. 
-
-<h2>CRLF Injection</h2>
-
-This rule submits various CRLF special characters preceding an injected "Set-Cookie" header as a parameter to the server. If the response contains an identical Set-Cookie header,
-an alert is raised and the scanner returns immediately.
+Bu kural, sunucuya bir parametre olarak bir "set Cookie" üstbilgisi önceki çeşitli CRLF özel karakterler gönderir. Eğer yanıt aynı set-cookie Başlığı içeriyorsa,
+bir uyarı oluşur ve tarayıcı hemen geri döner.
 
 
-<h2>Directory Browsing</h2>
-
-This rule checks to see if a request will provide access to a directory listing by examining the response body for patterns used with Apache, IIS
-and other web server software.
+Bu kural, Apache, IIS ile kullanılan desenler için yanıt gövdesini inceleyerek bir isteğin dizin listesine erişim sağlayıp sağlamadığını kontrol eder.
+ve diğer web sunucusu yazılımları.
 
 <h2>External Redirect</h2>
 
@@ -69,8 +61,7 @@ whether or not a redirect occurred and of what type. The cause of redirect is se
 and Javascript in the body of the response. An alert is raised including the redirection type and the scanner returns immediately.
 
 <h2>Format String Error</h2>
-Looks for indicators of format string handling errors in compiled code.  It does this by putting out strings of input text based upon characters
-compiled C code anticipates to produce formatted output and look for code crash and abnormal session closures.
+Looks for indicators of format string handling errors in compiled code.  Bu, düzenlenmiş karakterlere dayanan girdi metni dizelerini yerleştirerek yapar C kodunun biçimlendirilmiş çıktı üretmesini, kod çökmesini ve anormal oturum kapatmalarını öngörür.
 
 
 <h2>Parameter Tampering</h2>
@@ -88,22 +79,19 @@ current target file an alert is raised and the scanner returns immediately. If n
 attempted using the filename in the URL. As long as submitting an arbitrary filename does not return an OK status code but the real filename does, an alert is raised
 and the scanner returns immediately.
 
-<h2>Remote File Include</h2>
+<h2>Uzak Dosya Dahil Et</h2>
 
-This rule submits a series of requests with external URLs as parameter values and looks for a match between the the response body and the title of the page
-hosted at those URLs. If there is a match between the expected string and the response body, and the header returned a status code of 200, an alert is raised and the scanner
+Bu kural, parametre değerleri olarak harici URL'ler içeren bir dizi istek gönderir ve yanıt gövdesi ile sayfanın başlığı arasında bir eşleşme arar.
+Bu URL'lerde barındırılan. If there is a match between the expected string and the response body, and the header returned a status code of 200, an alert is raised and the scanner
 returns immediately.
 
-<h2>Server Side Include</h2>
+<h2>Sunucu Tarafı Dahil Et</h2>
 
-This rule checks to see what OS the server is running on, then sends requests with a corresponding HTML SSI directive as a parameter value. If the response body matches
-a pattern indicating the SSI was successful, an alert is raised and the scanner returns immediately.
+Bu kural sunucunun hangi işletim sistemi üzerinde çalıştığını kontrol eder, daha sonra karşılık gelen HTML SSI yönergesini parametre değeri olarak istekleri gönderir. Eğer yanıt gövdesi eşleşirse
+SSI başarılı olduğunu gösteren bir desen, bir uyarı oluşturulur ve tarayıcı hemen döner.
 
-<h2>SQL Injection</h2>
-
-This scanner scans for SQL Injection vulnerabilities in an RDBMS-independent fashion, 
-by attacking url parameters and form parameters with fragments of valid and invalid SQL syntax, using error based, 
-boolean based, Union based, and stacked query SQL Injection techniques. <br>
+<h2>SQL Enjeksiyon</h2>
+Bu tarayıcı, hata tabanlı, boolean tabanlı, Union tabanlı ve yığılmış sorgu SQL Enjeksiyon teknikleri kullanılarak, url parametrelerine ve URL'lerin geçerli ve geçersiz SQL sözdizimi parçaları ile saldırıya uğramasına bağlı olarak RDBMS'den bağımsız, SQL Enjeksiyon güvenlik açıklarını tarar. <br>
 This scanner may be able to fingerprint the RDBMS if the application throws a known RDBMS specific SQL error message. <br>
 This scanner does not exploit any RDBMS specific techniques, and so is the best SQL injection scanner to use as a starting point. 
 
