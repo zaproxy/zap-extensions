@@ -95,6 +95,11 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
     }
 
     @Override
+    public boolean supportsDb(String type) {
+        return true;
+    }
+
+    @Override
     public void init() {
         httpFuzzerHandler = new HttpFuzzerHandler();
 
