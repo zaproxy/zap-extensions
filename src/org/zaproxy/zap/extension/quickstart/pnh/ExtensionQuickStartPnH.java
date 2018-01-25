@@ -75,6 +75,11 @@ public class ExtensionQuickStartPnH extends ExtensionAdaptor implements
     }
 
     @Override
+    public boolean supportsDb(String type) {
+        return true;
+    }
+
+    @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
