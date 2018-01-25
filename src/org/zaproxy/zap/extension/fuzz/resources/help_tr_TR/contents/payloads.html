@@ -12,9 +12,9 @@ This allows you to select the payload generators to use when <a href="concepts.h
 <br><br>
 Payload generators generate the raw attacks that the fuzzer submits to the target application.
 <br><br>
-The following types of generators are provided by default:
+Aşağıdaki üretici tipleri varsayılan olarak sağlanır:
 <ul>
-<li>Empty/Null - generates the selected payload multiple times, leaving the message without changes. This payload generator is useful to send multiple messages that are later processed, for example, with a <a href="httpmessageprocessors.html">Fuzzer HTTP Processor (Script)</a>.</li>
+<li>Empty/Null - generates the selected payload multiple times, leaving the message without changes. Bu yük üreticisi sonradan işlenen çoklu mesaj gönderimi için kullanışlıdır, örneğin, bir <a href="httpmessageprocessors.html">Fuzzer HTTP İşlemci (Script)</a> ile.</li>
 <li>File - select any local file for one off attacks</li>
 <li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, eg via add-ons like fuzzdb</li>
 <li>Numberzz - allows to easily generate a sequence of numbers, with custom increment</li>
@@ -22,9 +22,9 @@ The following types of generators are provided by default:
 <li>Strings - raw strings, which can be entered manually or pasted in</li>
 <li>Script - custom scripts that can generate any payloads required</li>
 </ul>
-You can write custom payload generator scripts - these can supply any payloads that you need.
+Özel yük üretici scriptleri yazabilirsiniz - bunlar ihtiyacınız olan her yükü sağlayabilir.
 <br><br>
-Add-ons can also define additional payload generators.
+Eklentiler ek yük üreticileri olarak da tanımlanır.
 <br><br>
 The 'Processors...' button launches the <a href="processors.html">Payload Processors dialog</a> which allows you to
 configure payload processors that just apply to the palyload generator you have selected.

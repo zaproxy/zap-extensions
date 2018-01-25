@@ -3,78 +3,59 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Bean Shell Console
+Ang Bean Shell na Console
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Bean Shell Console</h1>
+<h1>Ang Bean Shell Console</h1>
 <p>
-	The BeanShell is an interactive Java shell that can be used to execute BeanShell scripts. These
-	scripts are a simplified form of Java that use many elements from Java syntax, but in a simpler
-	scripting format. All Java code is also valid BeanShell code.<br/>
-	BeanShell integration in OWASP ZAP enables you to write scripts using the ZAP functions and
-	data set. This can be a very powerful feature for analyzing web applications.
+	Ang isang BeanShell ay isang Interactive na Java shell na maaring gamitin para patakbuhin ang Beanshell na mga script. Ang mga script na ito ay pinasimpleng porma ng Java na gumagamit ng maraming elemento mula sa Java syntax, ngunit na sa mas simpleng scripting na format. Ang lahat ng Java Code ay balido rin sa BeanShell code.<br/>
+	Ang BeanShell integration sa OWASP ZAP ay magagamit mo sa pagsulat ng mga script gamit ang ZAP na mga function at data set. Ito ay maaring maging isang napakalakas na tampok para sa pagsusuri ng mga web aplikasyon.
 </p>
-<h2>BeanShell Console</h2>
+<h2>Ang BeanShell Console</h2>
 <p>
-	The console is started from the Tools menu, and contains a split screen where the top half is the
-	interactive BeanShell console and the bottom half is a simple text editor. For complex scripts, you're
-	encouraged to use a Java editor. Scripts can be loaded, saved and evaluated from the editor.
-	When the BeanShell starts a number of objects from ZAP are available for use, namely:
+	Ang console ay nag-uumpisa mula sa Tool menu, at naglalaman ng isang split screen na kung saan ang itaas na bahagi ay ang interactive BeanShell console at ang ibabang bahagi ay isang simpleng text editor. Para sa mga complex na mga script, ikaw ay
+	hinimuk na gamitin ang Java editor. Ang mga script ay pwedeng ma-load, naligtas at nasuri mula sa editor.
+	Kapag ang BeanShell ay nagsimula sa isang numero ng mga bagay mula sa ZAP ay magagamit para sa paggamit, namely:
 	<ul>
-	<li>the <i>Model</i> singleton, through the object named <i>model</i></li>
-	<li>the <i>SiteTree</i> tree of current sites through the <i>sites</i> object</li>
-	<li>an instance of <pre>HttpSender</pre> through the <i>sender</i> object</li>
+	<li>ang <i>Modelo</i> singleton, sa pamamagitan ng object na nakapangalan<i>modelo</i></li>
+	<li>ang <i>SiteTree</i> tree sa kasalukuyang mga site sa pamamagitan ng <i>mga site</i> na object</li>
+	<li>isang instance sa <pre>Ang HttpSender</pre> sa pamamagitan ng <i>ang nagpadala</i> object</li>
 	</ul>
-	Notice that the BeanShell is loosely typed. Therefore, it is not necessary to declare variables before
-	using them – this makes scripts a bit more concise than regular Java. But of course, if you did want
-	to define the type you can.
+	Pansinin na ang BeanShell ay maluwag na uri. Samakatuwid, ito ay hindi kinakailangan upang ipahayag ang mga variable bago
+	gamitin ang mga ito - dahil ito ang mga script na medyo maikli kaysa regulat na Java. At siyempre, kung hindi mo gusto
+	itukoy ang uri ay pwede.
 </p>
-<h2>Using the Site Map</h2>
+<h2>Ang paggamit sa Mapa sa site</h2>
 <p>
-	Let's start with something useful and typical: Iterate through all the site nodes and check for the
-	existence of a file. A script has already been created that accomplishes this, choose Load and select
-	the example.tree.bsh file. Before clicking Evaluate, first browse to a site through ZAP to populate
-	the tree:
+	Tayo ay mag-umpisa ng anumang magagamit at tipikal: Ulitin sa pamamagitan ng lahat ng mga site node at suriin sa mga meron na sa file. Ang script ay nalikha na at natapos na ito, piliin ang Load at pumili sa example.tree.bsh na file. Bago ang pag-click sa Evaluate, ang unang browse sa isang site sa pamamagitan ng ZAP para ma-populate:
 	<br/><br/>
-	Now click on evaluate to execute the script that's in the editor. If there are no errors, then you can
-	now start using the object defined in the script by issuing these commands:
+	Ngayon i-click ang evaluate para magsagawa ng script na nasa editor. Kung walang mga mali, saka ikaw ay pwedeng mag-umpisa gamit ang object defined na nasa script sa pamamagitan ng issuing sa mga command na ito:
 	<pre>
 	t = Tree();
 	</pre>
-	Which constructs a new Tree object and assigns a reference to t.
+	Alin ang gumagawa ng bagong Tree object at nagtakda sa isang kaukulan nito.
 	<pre>
 	t.find(sites.getRoot(), "index.html");
 	</pre>
-	Call the find method on t, which takes a SiteNode as the first argument and a resource to find as the
-	second. In this case, the method will iterate through all the nodes in the tree, because we started at
-	the root, and will find index.html files.
+	Tawagin ang paghahanap na pamamaraan nito, para sa isang SiteNode gaya ng unang argumento at isang resource para hanapin gaya ng segundo. Sa ganitong case, ang merhod ay ulitin sa pamamagitan ng lahat ng mga node sa tree, dahil tayo ay makapagsimula sa root, at maghanap ng index.html na mga file.
 	<br/><br/>
-	Instead of iterating through all the nodes, we could choose to start a specific node by using the
-	findChild method e.g.:
+	Sa halip na ulitin sa pamamgitan ng lahat ng mga node, tayo ay pwedeng pumili sa pag-start ng isang tiyak na node sa pamamagitan ng paggamit sa findChild na pammaaraan e.g.:
 	<br/><br/>
-	This should give you some idea of the power of the BeanShell in ZAP. But to fully exploit it, you'll
-	need to familiarize yourself with the internal API and the BeanShell's features. The BeanShell has
-	been setup so as to allow full access to all internal objects and methods – even private ones.
+	Ito ay dapat magbigay sayo ng ilang ideya ng kapangyarihan ng BeanShell sa ZAP. Ngunit lubos na kasakapanin ito, kailangan mong pag-aralang mabuti ang mga panloob na API at mga BeanShell na mga tampok. Ang Beanshell ang naging setup para mabigyan na ganap na access sa lahat ng mga panloob na mga bagay ay mga pamamaraan - maging pribadong isa.
 </p>
-<h2>Simple HTTP Request</h2>
+<h2>Ang Simpleng HTTP na hiling</h2>
 <p>
-	In the next example, we create and send an HTTP request directly in the interactive console:
-	To fully utilize the power of the BeanShell, you should familiarize yourself with ZAP's internals.
-	The sender object is the same instance as is used by the Manual Request Editor and will therefore
-	automatically use proxy settings set in the ZAP configuration.
-	<br/><br/>
-	TODO: POST example
+	Sa susunod na halimbawa, tayo ay maglikha at magpadala ng HTTP na tugon nang direkta sa interactive console: Upang lubos na magamit ang kapangyarihan ng BeanShell, ikaw ay dapat pag-aralan ang ZAP na mga panloob.
+	Ang nagpadala na object ay parehong instance sa paggamit ng Manual Request Editor at nga awtomatiko na gumamit ng proxy na mga setting na nagtakda sa ZAP na configurasyon.
+	<br/><br/> TODO: POST na halimbawa
 </p>
-<h2>Tips</h2>
+<h2>Mga tip</h2>
 <p>
-	Use the unset(String) command to unset any declared variables, methods or objects. This is useful if
-	you want to replace a method declaration in the current namespace. Note that the command takes a
-	String argument, not an Object, so to unset the t object we used above, it should be: unset(“t”); and
-	not unset(t);
+	Gamitin ang unset(String) command para ma-unset ang anumang idineklarang mga variable, mga pamamaraan o mga bagay. Ito ay kapaki-pakinabang kung gusto mong palitan ang isang paraan na pagpapahayag sa kasalukuyang namespace. Tandaan na ang utos ay tumatagal ng isang String argumento, hindi isang bagay, kaya sa pag-unset sa bagay na ginagamit natin sa itaas, ito ay dapat: unset(“t”); at hindi unset(t);
 </p>
 <p>
-	Original document by: Stephen de Vries
+	Ang orihinal na dokumento sa: Stephen de Vries
 </p>
 
 </body>

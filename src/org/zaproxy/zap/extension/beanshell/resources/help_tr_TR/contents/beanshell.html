@@ -3,36 +3,28 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Bean Shell Console
+BeanShell Konsolu
 </title>
 </head>
 <body bgcolor="#ffffff">
 <h1>Bean Shell Console</h1>
 <p>
-	BeanShell, BeanShell komut dosyalarını yürütmek için kullanılabilen interaktif bir Java kabuğu. Bunlar komut dosyaları, Java sözdiziminden birçok öğe kullanan basitleştirilmiş bir Java formudur, ancak daha basit bir betik biçimidir. All Java code is also valid BeanShell code.<br/>
-	BeanShell integration in OWASP ZAP enables you to write scripts using the ZAP functions and
-	data set. This can be a very powerful feature for analyzing web applications.
+	BeanShell, BeanShell komut dosyalarını yürütmek için kullanılabilen interaktif bir Java kabuğu. Bunlar komut dosyaları, Java sözdiziminden birçok öğe kullanan basitleştirilmiş bir Java formudur, ancak daha basit bir betik biçimidir. Tüm Java kodları da geçerli BeanShell kodudur.<br/> BeanShell entegrasyonu OWASP ZAP işlevleri ve veri kümesi kullanarak komut dosyası yazmanızı sağlar. Bu, web uygulamalarını analiz etmek için çok güçlü bir özellik olabilir.
 </p>
 <h2>BeanShell Konsolu</h2>
 <p>
-	Konsol Araçlar menüsünden başlatılır ve üst yarısı etkileşimli BeanShell konsolu ve alt yarısı basit bir metin düzenleyicisi olan bölünmüş bir ekran içerir. For complex scripts, you're
-	encouraged to use a Java editor. Komut dosyaları yüklenebilir, kaydedilebilir ve editörden değerlendirilebilir.
-	When the BeanShell starts a number of objects from ZAP are available for use, namely:
+	Konsol Araçlar menüsünden başlatılır ve üst yarısı etkileşimli BeanShell konsolu ve alt yarısı basit bir metin düzenleyicisi olan bölünmüş bir ekran içerir. Karmaşık komut dosyaları için Java editörü kullanmanızı tavsiye ediyoruz. Komut dosyaları yüklenebilir, kaydedilebilir ve editörden değerlendirilebilir.
+	BeanShell başladığında ZAP'tan birkaç obje kullanabilirsiniz, şöyle ki:
 	<ul>
 	<li>the <i>Model</i> singleton, through the object named <i>model</i></li>
 	<li>the <i>SiteTree</i> tree of current sites through the <i>sites</i> object</li>
-	<li>an instance of <pre>HttpSender</pre> through the <i>sender</i> object</li>
+	<li>an instance of <pre>HttpSender</pre> through the <i>gönderen</i> nesne</li>
 	</ul>
-	Notice that the BeanShell is loosely typed. Therefore, it is not necessary to declare variables before
-	using them – this makes scripts a bit more concise than regular Java. But of course, if you did want
-	to define the type you can.
+	BeanShell'in esnek bir şekilde yazılmış olduğuna dikkat edin. Bu sebeple, değişkenleri kullanmadan önce bildirim yapmak gerekli değildir - bu komut dosyaları normal Java'ya göre biraz daha özlü yapar. Elbette ki, türünü tanımlamak istiyorsanız yapabilirsiniz.
 </p>
-<h2>Using the Site Map</h2>
+<h2>Site Haritası Kullanımı</h2>
 <p>
-	Let's start with something useful and typical: Iterate through all the site nodes and check for the
-	existence of a file. A script has already been created that accomplishes this, choose Load and select
-	the example.tree.bsh file. Before clicking Evaluate, first browse to a site through ZAP to populate
-	the tree:
+	Yararlı ve tipik bir şeyle başlayalım: Tüm site düğümlerinin tekrarını yapın ve dosyanın olup olmadığını kontrol edin. Bunu gerçekleştiren bir komut dosyası oluşturulmuştur,yükleyi seçin ve example.tree.bsh dosyasını seçiniz. Değerlendir'e tıklamadan önce, ilk olarak ağacı doldurmak için ZAP yardımı ile bir siteye göz atın:
 	<br/><br/>
 	Now click on evaluate to execute the script that's in the editor. If there are no errors, then you can
 	now start using the object defined in the script by issuing these commands:
@@ -43,35 +35,28 @@ Bean Shell Console
 	<pre>
 	t.find(sites.getRoot(), "index.html");
 	</pre>
-	Call the find method on t, which takes a SiteNode as the first argument and a resource to find as the
-	second. In this case, the method will iterate through all the nodes in the tree, because we started at
-	the root, and will find index.html files.
+	T üstünde bulunan arama yöntemini çağırın, bu SiteNode'u ilk olarak argüman ve ikinci olarak bir kaynak olarak alır. Bu koşulda,yöntem ağacın tüm düğümleri boyunca tekrarlanacaktır,çünkü kökten başladık ve index.html dosyalarını bulacağız.
 	<br/><br/>
 	Instead of iterating through all the nodes, we could choose to start a specific node by using the
 	findChild method e.g.:
 	<br/><br/>
-	This should give you some idea of the power of the BeanShell in ZAP. But to fully exploit it, you'll
-	need to familiarize yourself with the internal API and the BeanShell's features. The BeanShell has
-	been setup so as to allow full access to all internal objects and methods – even private ones.
+	Bu, ZAP içindeki BeanShell'in gücü konusunda bizlere fikir verecektir. Fakat tam olarak faydalanmak için dahili API ve BeanShell'in özelliklerini kullanmayı öğrenmemiz gerekecektir. BeanShell, bütün iç obje ve yöntemlere-hatta özel olanlara bile- tam erişime izin verecek şekilde kurulmuştur.
 </p>
 <h2>Simple HTTP Request</h2>
 <p>
-	In the next example, we create and send an HTTP request directly in the interactive console:
-	To fully utilize the power of the BeanShell, you should familiarize yourself with ZAP's internals.
-	The sender object is the same instance as is used by the Manual Request Editor and will therefore
-	automatically use proxy settings set in the ZAP configuration.
+	Bir sonraki örnekte, etkileşimli konsolda doğrudan doğruya bir HTTP isteği oluşturup gönderiyoruz: BeanShell'in gücünü tamamıyla kullanmak için, ZAP içeriklerine hakim olmalısınız.
+	Gönderen nesne Manuel İstek Editörü tarafından kullanılanla aynıdır. Bu sebeble ZAP yapılandırılmasında ki belirlenmiş proxy ayarlarını otomatik olarak alır.
 	<br/><br/>
 	TODO: POST example
 </p>
-<h2>Tips</h2>
+<h2>İpuçları</h2>
 <p>
-	Use the unset(String) command to unset any declared variables, methods or objects. This is useful if
-	you want to replace a method declaration in the current namespace. Note that the command takes a
+	Use the unset(String) command to unset any declared variables, methods or objects. Bu geçerli isim alanında yöntem bildirimi değişikliği yapmak istiyorsanız kullanışlıdır. Note that the command takes a
 	String argument, not an Object, so to unset the t object we used above, it should be: unset(“t”); and
 	not unset(t);
 </p>
 <p>
-	Original document by: Stephen de Vries
+	Orijinal belge: Stephen de Veries
 </p>
 
 </body>
