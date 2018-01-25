@@ -65,6 +65,7 @@ public class EditScriptDialog extends StandardFieldsDialog {
 		this.addPadding();
 	}
 	
+	@Override
 	public void save() {
 		script.setName(this.getStringValue(FIELD_NAME));
 		script.setDescription(this.getStringValue(FIELD_DESC));

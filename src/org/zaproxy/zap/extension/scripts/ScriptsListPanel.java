@@ -424,7 +424,7 @@ public class ScriptsListPanel extends AbstractPanel {
 	    	if (node.getUserObject() instanceof ScriptWrapper) {
 	    		return node;
 	    	}
-	    	node = (ScriptNode) node.getParent();
+	    	node = node.getParent();
 	    }
 	    return null;
 	}

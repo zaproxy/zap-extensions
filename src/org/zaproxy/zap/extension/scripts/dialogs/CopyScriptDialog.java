@@ -56,6 +56,7 @@ public class CopyScriptDialog extends StandardFieldsDialog {
 		this.addPadding();
 	}
 	
+	@Override
 	public void save() {
 		ScriptWrapper script = new ScriptWrapper();
 		script.setType(origScript.getType());

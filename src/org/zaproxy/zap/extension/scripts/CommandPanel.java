@@ -90,8 +90,9 @@ public class CommandPanel extends AbstractPanel {
 		return this.syntaxTxtArea;
 	}
 	
+	@Override
 	public void addKeyListener(KeyListener l) {
-		
+		// Don't do anything, the (only) listener is specified through the constructor.
 	}
 	
 	public void setSyntax (String syntax) {

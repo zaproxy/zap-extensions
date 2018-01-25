@@ -180,6 +180,7 @@ public class ScriptTreeTransferHandler extends TransferHandler {
             this.nodes = nodes;
          }
  
+        @Override
         public Object getTransferData(DataFlavor flavor)
                                  throws UnsupportedFlavorException {
             if(!isDataFlavorSupported(flavor))
@@ -187,10 +188,12 @@ public class ScriptTreeTransferHandler extends TransferHandler {
             return nodes;
         }
  
+        @Override
         public DataFlavor[] getTransferDataFlavors() {
             return flavors;
         }
  
+        @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
             return nodesFlavor.equals(flavor);
         }
