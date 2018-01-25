@@ -18,10 +18,10 @@
             <li>Supported and incorporated in the <a href="https://wiki.jenkins-ci.org/display/JENKINS/zap+plugin">Official OWASP Zed Attack Proxy Jenkins Plugin</a>.</li>
         </ul>
 
-        <h2><u>Table of Contents</u></h2>
+        <h2><u>İçindekiler Tablosu</u></h2>
         <ul>
             <li>ZAP UI</li>
-            <li>Command Line</li>
+            <li>Komut Satırı</li>
             <li>API Calls</li>
         </ul>
 
@@ -53,9 +53,9 @@
         Include/Exclude Alerts by Severity.
         <h4>Included by Default</h4>
         <ul>
-            <li>High</li>
-            <li>Medium</li>
-            <li>Low</li>
+            <li>Yüksek</li>
+            <li>Orta</li>
+            <li>Düşük</li>
             <li>Informational</li>
         </ul>
         <h4>UI</h4>
@@ -66,7 +66,7 @@
         </ul>
         <br>
 
-        <h4>Alert Details</h4>
+        <h4>Uyarı Detayları</h4>
         Include/Exclude Details of each Alert.
         <h4>Included by Default</h4>
         <ul>
@@ -96,27 +96,27 @@
 
         <hr>
 
-        <h4>File Chooser Dialog</h4>
+        <h4>Dosya Seçici Diyaloğu</h4>
         The dialog only shows folders and accepted file types. The 'Files of Type' drop down list will filter to show only folders and files of the specified extension.
 
         <h4>Şu anda Mevcut</h4>
         <ul>
             <li>ASCII 1.0 Strict Compliant XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
-            <li>XML Files (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
-            <li>JSON Files (.json <img src="../../images/json.png" alt="JSON Icon">)</li>
+            <li>XML Dosyaları (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
+            <li>JSON Dosyaları (.json <img src="../../images/json.png" alt="JSON Icon">)</li>
         </ul>
 
         <h4>Future Milestone</h4>
         <ul>
-            <li>Bootstrap HTML Files(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
-            <li>PDF Documents (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
-            <li>Google Documents (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
+            <li>Bootstrap HTML Dosyaları(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
+            <li>PDF Belgeleri (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
+            <li>Google Belgeleri (.pdf <img src="../../images/doc.png" alt="DOC Icon">)</li>
         </ul>            
 
         <h4>UI</h4>
         <ul style="list-style-type:none">
             <li>
-                Show all accepted files
+                Kabul edilen tüm dosyaları göster
             </li>
             <li>
                 <img src="images/FileChooser.png" alt="Kaynak Bilgisi">
@@ -143,7 +143,7 @@
         <h2><u>Komut Satırı</u></h2>
         The extension can be run from the command line as well and requires the following arguments to be passed in to generate a report.
 
-        <h4>OWASP ZAP Command Line Options</h4>
+        <h4>OWASP ZAP Komut Satırı Seçenekleri</h4>
         <ul style="list-style: none;">
             <li><b>-session</b>: Opens the given session after starting ZAP</li>
             <li><b>-cmd</b>: Runs ZAP 'inline', ie without starting the UI or a daemon</li>
@@ -165,16 +165,16 @@
                         <h4>Şu anda Mevcut</h4>
                         <ul>
                             <li>ASCII 1.0 Strict Compliant XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
-                            <li>XML Files (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
-                            <li>JSON Files (.json <img src="../../images/json.png" alt="JSON Icon">)</li>
+                            <li>XML Dosyaları (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
+                            <li>JSON Dosyaları (.json <img src="../../images/json.png" alt="JSON Icon">)</li>
                         </ul>
                     </li>
                     <li>
                         <h4>Future Milestone</h4>
                         <ul>
-                            <li>Bootstrap HTML Files(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
-                            <li>PDF Documents (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
-                            <li>Google Documents (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
+                            <li>Bootstrap HTML Dosyaları(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
+                            <li>PDF Belgeleri (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
+                            <li>Google Belgeleri (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
                         </ul>            
                     </li>
                     <li><br></li>
@@ -369,19 +369,19 @@ String alertDetails = "t;t;t;t;t;t;f;f;f;f";
 
 map.put("apikey", API_KEY);
 
-// String representing the absolute path to save destination for the report
+// Raporda hedef kaydetmek için mutlak yolu temsil eden dize.
 map.put("absolutePath", absolutePath)
 
-// String representing the extension of the report
+// Raporun uzantısını temsil eden dize
 map.put("fileExtension", extension);
 
-// String separated by ; for each entry
+// Her girdi için ayrılmış dize
 map.put("sourceDetails", sourceDetails);
 
-// String separated by ; for each entry
+// Her girdi için ayrılmış dize
 map.put("alertSeverity", alertSeverity);
 
-//String separated by ; for each entry
+//Her girdi için ayrılmış dize
 map.put("alertDetails", alertDetails);
 </code></pre></blockquote>
 <blockquote><code>ApiResponseElement val = (ApiResponseElement) clientApi.callApi("exportreport", "action", "generate", map);</code></blockquote>
