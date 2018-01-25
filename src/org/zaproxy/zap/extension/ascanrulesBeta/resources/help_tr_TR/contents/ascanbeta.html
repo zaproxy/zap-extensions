@@ -3,62 +3,52 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Active Scan Rules - Beta
+Aktif Tarama Kurallar - Beta
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Active Scan Rules - Beta</h1>
-The following beta quality active scan rules are included in this add-on:
+<h1>Aktif Tarama Kuralları - Beta</h1>
+Bu eklentide bulunan beta kalitesinde aktif tarama kuralları:
 
-<h2>Backup File Disclosure</h2>
-Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information.
+<h2>Yedek Dosya İfşası</h2>
+Dosyaların web sunucusu üzerindeki yaygınca-isimlendirilmiş yedek kopyalarını tarar, hassas bilgileri ortaya çıkarabilir.
 
-<h2>Cross-Domain Misconfiguration</h2>
-Checks if the web server is configured to allow Cross Domain access, from a malicious
-third party service, for instance. Currently checks for wildcards in Adobe's crossdomain.xml, and in
-SilverLight's clientaccesspolicy.xml. 
+<h2>Yanlış Çapraz-Domain Yapılandırması</h2>
+Web sunucusunun örneğin bir zararlı üçüncü parti servisinden Çapraz Domain erişimine izin vermeye yapılandırılıp yapılandırılmadığını kontrol eder. An itibariyle Adobe's crossdomain.xml ve SilverLight's clientaccesspolicy.xml'de beklenmedik durumların olup olmadığını kontrol eder. 
 
 <h2>CSRF Token</h2>
-Scans for the existence of Anti-CSRF tokens. <br>
-Alerts on requests which do not appear to contain Anti-CSRF tokens.<br>
-Post 2.5.0 you can specify a comma separated list of identifiers in the 
-<code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
-Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
-Only use this feature to ignore FORMs that you know are safe, for example search forms.
+Anti-CSRF token'larının varlığı için tarar. <br>
+Anti-CSRF token'ı içermeyen taleplerde uyarı verir.<br>
+2.5.0 sonrasında, Seçenekler 'Kural Yapılandırma' paneli aracılığıyla <code>rules.csrf.ignorelist</code> parametresinde virgülle ayrılmış bir tanımlayıcı listesi belirtebilirsiniz.
+Anti-CSRF token eksiklikleri için tarama yapılırken, bu tanımlayıcılarla eşleşen bir isim ya da ID'ye sahip her form göz ardı edilecektir.
+Bu özelliği sadece güvenli olduğunu bildiğiniz arama form'ları gibi FORM'ları göz ardı etmek için kullanın.
 
-<h2>Expression Language Injection</h2>
-Checks if the web application is subject to Expression Language (EL) injection attacks, which occur
-when an application fails to sufficiently neutralize special elements that could modify the intended EL 
-statement before it is executed.
+<h2>İfade Dili Enjeksiyonu</h2>
+Web uygulamasının İfade Dili (EL) enjeksiyon saldırılarına maruz kalıp kalmadığını kontrol eder, bu bir uygulama istenilen EL ifadesini çalıştırılmadan önce değiştirebilecek özel elemanları yeterli bir şekilde nötralize etmekte başarısız olduğunda meydana gelir.
 
-<h2>Heartbleed OpenSSL Vulnerability</h2>
-Detects if the web server is vulnerable to the Heartbleed OpenSSL Vulnerability, by exploiting it.
-For further details refer to CVE-2014-0160.
+<h2>Heartbleed OpenSSL Açığı</h2>
+Web sunucusunun Heartbleed OpenSSL Açığı'na sahip olup olmadığını, bunu kullanmaya çalışarak saptar.
+Ayrıntılı bilgi için CVE-2014-0160'e başvurun.
 
-<h2>HTTP Parameter Pollution (HPP)</h2>
-Supplying duplicate or numerous HTTP parameters with the same name may cause an application or website
-to interpret values in unintended ways. By leveraging these effects, a malicious individual
-may be able to bypass input validation, trigger errors or modify internal variable values. 
-There are difference in treatment of duplicate parameters impacting both clients (browsers) and servers.
+<h2>HTTP Parametre Kirliliği (HPP)</h2>
+Aynı isimle çift kopya ve ya birden fazla HTTP parametresi vermek bir uygulama ya da sitenin değerleri istenmedik şekilde yorumlamasına sebep olabilir. Kötü niyetli bir birey, bu efektleri lehine kullanarak bir girdi doğrulamasını atlayabilir, hataları tetikleyebilir ya da dahili değişken değerlerini değiştirebilir. 
+Hem istemcileri (browser'ları) hem sunucuları etkileyen çift kopya parametrelerinin tedavisinde farklar vardır.
 
-<h2>Insecure HTTP Method</h2>
-Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL.
+<h2>Güvenilir Olmayan HTTP Methodu</h2>
+URL için etkinleştirilen bilinen güvenilir olmayan HTTP methodlarını tespit eder (ve arama ayarlarına bağlı olarak istismar eder).
 
-<h2>Integer Overflow Error</h2>
-Looks for indicators of integer overflows in compiled code that causes the web server to crash.  It does 
-this by putting out multiple strings of integers designed to try and stimulate bad responses.
+<h2>Tam Sayı Overflow Hatası</h2>
+Derlenmiş kodda web sunucularının çökmesine neden olan tam sayı overflow göstergelerini arar.  Bunu kötü yanıt elde etmeyi denemek için tasarlanmış birkaç tam sayı string'i salarak yapar.
 
-<h2>Padding Oracle</h2>
-This scanner attempts to manipulate the padding of encrypted strings to trigger an error response 
-indicating a likely padding oracle vulnerability. 
-Such a vulnerability can affect any application or framework that uses encryption improperly, such as 
-some versions of ASP.net, Java Server Faces, and Mono.
+<h2>Dolgu Oracle'ı</h2>
+Bu tarayıcı, muhtemel bir dolgu oracle'ı açığını gösteren bir hata yanıtı tetiklemek için şifrelenmiş string'lerin dolgusunu manipüle etmeyi dener. 
+Böyle bir açık ASP.net'in bazı versiyonları, Java Server Faces ve Mono gibi şifrelemeyi düzgün bir biçimde kullanmayan herhangi bir uygulama veya framework'ü etkileyebilir.
 
-<h2>Remote Code Execution - CVE-2012-1823</h2>
-Detect CVE-2012-1823 to perform Remote Code Execution on a PHP-CGI based web server.
+<h2>Uzaktan Kod Yürütme- CVE-2012-1823</h2>
+Bir PHP-CGI temelli web sunucusunda Uzaktan Kod Yürütme'yi çalıştırmak için CVE-2012-182'i algıla.
 
-<h2>Session Fixation</h2>
-Session Fixation may be possible. If this issue occurs with a login URL (where the user authenticates themselves to the application), then the URL may be given by an attacker, along with a fixed session id, to a victim, in order to later assume the identity of the victim using the given session id. If the issue occurs with a non-login page, the URL and fixed session id may only be used by an attacker to track an unauthenticated user's actions. If the vulnerability occurs on a cookie field or a form field (POST parameter) rather than on a URL (GET) parameter, then some other vulnerability may also be required in order to set the cookie field on the victim's browser, to allow the vulnerability to be exploited.
+<h2>Oturum Sabitleme</h2>
+Oturum Sabitleme mümkün olabilir. Eğer bu sorun bir oturum açma URL'si (kullanıcının kendini uygulamaya tanıttığı zaman) ile meydana geliyorsa, o zaman bu URL sabitlenmiş bir oturum ID'si ile beraber sonradan kurbanın kimliğini verilen oturum ID'si ile ele geçirmek üzere bir saldırgan tarafından kurbana verilmiş olabilir. Eğer bu sorun oturum açma sayfasıyla alakasız biçimde oluyorsa, URL ve sabitlenmiş oturum ID'si kimliği belirsiz bir kullanıcının eylemlerini takip etmek için bir saldırgan tarafından kullanılabilir. Eğer açık, bir URL (GET) parametresi yerine, bir cookie alanı veya form alanı (POST parametresi) üzerinde meydana geliyorsa, cookie alanını kurbanın browser'ına kurarak bu açığın istismar edilebilmesini sağlamak için başka bir açık daha gerekebilir.
 
 <h2>ShellShock - CVE-2014-6271</h2>
 Bu tarayıcı, CVE-2014-6271 aka ShellShock'a karşı savunmasız sunucuları algılamak için 2 saldırı gerçekleştirir.<br>
@@ -66,87 +56,70 @@ Birincisi basitçe yansıyan bir saldırı, ikincisi zamana dayalı bir saldır�
 <br>
 2.5.0 sonrası, Seçenekler 'Kural yapılandırması' paneli aracılığıyla <code>rules.common.sleep</code> parametresini değiştirerek saldırı için kullanılan süreyi değiştirebilirsiniz.
 
-<h2>Source Code Disclosure - CVE-2012-1823</h2>
-Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.<br>
-Only analyzes responses that are text based (HTML, JS, JSON, XML, etc), in order to avoid false positives which may occur with image or other binary content.
+<h2>Kaynak Kodu İfşası - CVE-2012-1823</h2>
+PHP-CGI tabanlı bir web sunucusunda sunucu tarafındaki PHP kaynak kodunu ifşa etmek için CVE-2012-1823'ü istismar et.<br>
+Görüntü ya da diğer ikili içeriklerle meydana gelebilecek yalancı pozitifleri önlemek için sadece metin tabanlı yanıtları (HTML, JS, JSON, XML vb.) analiz eder.
 
-<h2>Source Code Disclosure - SVN</h2>
-Uses Subversion source code repository metadata to scan for files containing source code on the web server.
+<h2>Kaynak Kodu İfşası - SVN</h2>
+Web sunucusu üzerinde kaynak kodu içeren dosyalar için taramak için Subversion kaynak kodu havuz metadata'sını kullanır.
 
-<h2>Source Code Disclosure - /WEB-INF</h2>
-Exploit the presence of an unprotected /WEB-INF folder to download and decompile Java classes, to disclose Java source code.
+<h2>Kaynak Kodu İfşası - /WEB-INF</h2>
+Java sınıflarını indirmek ve ters-derlemek için, Java kaynak kodunu ifşa etmek için korumasız bir /WEB-INF klasörünün varlığını istismar et.
 
 <h2>SQL Enjeksiyonu - Hipersonik (Zaman Tabanlı)</h2>
 Bu tarayıcı, sayfanın çağırdığı SQL deyiminde zaman gecikmelerine neden olmak için Hypersonic'e özel SQL sözdizimini kullanır.<br>
 Değiştirilmemiş sorgu bir zaman gecikmesinden etkilenmezse ve değiştirilen sorgunun gecikmesi kontrol edilebilirse,
 bir Hypersonic SQL veritabanında zamana dayalı bir SQL Enjeksiyon güvenlik açığının bir göstergesidir. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected Hypersonic database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Bu tarayıcı zaman duyarlıdır ve sadece şüpheli bir Hypersonic veritabanında inatçı ve belirsiz SQL enjeksiyon açıklarını bulmaya çalışırken kullanılmalıdır. <br>
+Bu sebeple, web sunucusu, uygulama sunucusu ve veritabanı üzerindeki yükü en aza indirgeyerek, SQL enjeksiyon gecikmeleri yerine yüklenme gecikmeleri sebebiyle çıkan yalancı pozitifleri önlemek için bu tarayıcıyı kullanırken aktif tarama parçacığı sayısı minimum olarak belirlenmelidir. <br>
+Bu tarayıcı sadece zamana bağlı SQL enjeksiyon açıkları için test eder.<br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+2.5.0 sonrası, Seçenekler 'Kural yapılandırması' paneli aracılığıyla <code>rules.common.sleep</code> parametresini değiştirerek saldırı için ayrılan zaman uzunluğunu değiştirebilirsiniz.
 
 <h2>SQL Enjeksiyonu - MySQL(Zaman Tabanlı)</h2>
 Bu tarayıcı, sayfanın çağırdığı SQL deyiminde zaman gecikmelerine neden olmak için MySQL'e özel SQL sözdizimini kullanır.<br>
 Değiştirilmemiş sorgu bir zaman gecikmesinden etkilenmezse ve değiştirilen sorgunun gecikmesi kontrol edilebilirse,
 bir MySQL veritabanında zamana dayalı bir SQL Injection güvenlik açığının bir göstergesidir. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected MySQL database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Bu tarayıcı zaman duyarlıdır ve sadece şüpheli bir MySQL veritabanında inatçı ve belirsiz SQL enjeksiyon açıklarını bulmaya çalışırken kullanılmalıdır. <br>
+Bu sebeple, web sunucusu, uygulama sunucusu ve veritabanı üzerindeki yükü en aza indirgeyerek, SQL enjeksiyon gecikmeleri yerine yüklenme gecikmeleri sebebiyle çıkan yalancı pozitifleri önlemek için bu tarayıcıyı kullanırken aktif tarama parçacığı sayısı minimum olarak belirlenmelidir. <br>
+Bu tarayıcı sadece zamana bağlı SQL enjeksiyon açıkları için test eder.<br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+2.5.0 sonrası, Seçenekler 'Kural yapılandırması' paneli aracılığıyla <code>rules.common.sleep</code> parametresini değiştirerek saldırı için ayrılan zaman uzunluğunu değiştirebilirsiniz.
 
 <h2>SQL Enjeksiyonu - Oracle (Zaman Tabanlı)</h2>
 Bu tarayıcı, sayfanın çağırdığı SQL deyiminde zaman gecikmelerine neden olmak için Oracle'a özgü SQL sözdizimini kullanır.<br>
 Değiştirilmemiş sorgu bir gecikmeden etkilenmezse, ve değiştirilen sorgunun gecikmesi kontrol edilebilirse, 
 bir Oracle SQL veritabanında zamana dayalı bir SQL Injection güvenlik açığını işaret etmektedir. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected Oracle database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Bu tarayıcı zaman duyarlıdır ve sadece şüpheli bir Oracle veritabanında inatçı ve belirsiz SQL enjeksiyon açıklarını bulmaya çalışırken kullanılmalıdır. <br>
+Bu sebeple, web sunucusu, uygulama sunucusu ve veritabanı üzerindeki yükü en aza indirgeyerek, SQL enjeksiyon gecikmeleri yerine yüklenme gecikmeleri sebebiyle çıkan yalancı pozitifleri önlemek için bu tarayıcıyı kullanırken aktif tarama parçacığı sayısı minimum olarak belirlenmelidir. <br>
+Bu tarayıcı sadece zamana bağlı SQL enjeksiyon açıkları için test eder.<br>
 <br>
-Note that this rule does not currently allow you to change the length of time used for the timing attacks due to the way the delay is caused. 
+Gecikmenin oluşma yolundan dolayı bu kuralın an itibariyle zamanlı saldırılar için kullanılan zamanın uzunluğunu değiştirmenizi sağlamadığını unutmayın. 
 
 <h2>SQLEnjeksiyonu - PostgreSQL(Zamana Dayalı)</h2>
 Bu tarayıcı, sayfanın çağırdığı SQL deyiminde zaman gecikmelerine neden olmak için PostgreSQL'e özgü SQL sözdizimini kullanır.<br>
 Değiştirilmemiş sorgu bir zaman gecikmesinden etkilenmezse ve değiştirilen sorgunun gecikmesi kontrol edilebilirse, 
 bir PostgreSQL veritabanında zamana dayalı bir SQL Injection güvenlik açığı işaret etmektedir. <br>
-This scanner is time sensitive, and should only be used in an attempt to find stubborn and un-obvious SQL 
-injection vulnerabilities in a suspected PostgreSQL database. <br>
-For this reason, the number of active scan threads should be set to the minimum when using this scanner, 
-to minimise load on the web server, application server, and database, in order to avoid false positives caused by 
-load delays rather than by SQL injection delays. <br>
-The scanner tests only for time-based SQL injection vulnerabilities.<br>
+Bu tarayıcı zaman duyarlıdır ve sadece şüpheli bir PostgreSQL veritabanında inatçı ve belirsiz SQL enjeksiyon açıklarını bulmaya çalışırken kullanılmalıdır. <br>
+Bu sebeple, web sunucusu, uygulama sunucusu ve veritabanı üzerindeki yükü en aza indirgeyerek, SQL enjeksiyon gecikmeleri yerine yüklenme gecikmeleri sebebiyle çıkan yalancı pozitifleri önlemek için bu tarayıcıyı kullanırken aktif tarama parçacığı sayısı minimum olarak belirlenmelidir. <br>
+Bu tarayıcı sadece zamana bağlı SQL enjeksiyon açıkları için test eder.<br>
 <br>
-Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
+2.5.0 sonrası, Seçenekler 'Kural yapılandırması' paneli aracılığıyla <code>rules.common.sleep</code> parametresini değiştirerek saldırı için ayrılan zaman uzunluğunu değiştirebilirsiniz.
 
-<h2>Username Enumeration</h2>
-It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
-This scanner is skipped if there are no contexts defined that use Form-based Authentication, and only runs against the URL identified as the login URL of a context.
+<h2>Kullanıcı İsmi Numaralandırması</h2>
+Geçerli ve geçersiz kullanıcı isimleri sağlandığında değişen HTTP yanıtlarına bağlı olarak kullanıcı isimlerini numaralandırmak mümkün olabilir. Bu, sisteme karşı olan parola kaba kuvvet saldırılarının başarılı olma ihtimalini büyük ölçüde arttırır. ZAP'taki 'Saldırı Gücü' Seçeneğini arttırarak yalancı pozitiflerin bazen minimize edilebildiğini unutmayın.  Bunun gerçekten bir sorun olduğunu onaylamak için lütfen manuel olarak 'Diğer Bilgiler' alanını kontrol ediniz.
+Bu tarayıcı Form-temelli Doğrulamayı kullanan tanımlı bir içerik yoksa atlanır ve sadece bir içeriğin oturum açma URL'si olarak tanımlanmış URL'ye karşı çalışır.
 
-<h2>XPath Injection</h2>
-As described by OWASP: "XPath Injection attacks occur when a web site uses user-supplied information to 
-construct an XPath query for XML data. By sending intentionally malformed information into the web site, 
-an attacker can find out how the XML data is structured, or access data that he may not normally have access 
-to. He may even be able to elevate his privileges on the web site if the XML data is being used for 
-authentication (such as an XML based user file) or authorization." This scanner attempts to identify such 
-weaknesses.
+<h2>XPath Enjeksiyonu</h2>
+OWASP tarafından açıklandığı gibi: "XPath Enjeksiyonu saldırıları bir web sitesinin kullanıcı tarafından sağlanan bilgileri kullanarak XML verisi için bir XPath sorgusu oluşturduğu zaman meydana gelir. Bir saldırgan web sitesine bilerek hatalı bilgi göndererek, XML verisinin nasıl yapılandırıldığını öğrenebilir veya normalde erişimi olmayan verilere erişebilir. Hatta saldırgan, eğer XML verisi doğrulama veya yetkilendirme için kullanılıyorsa (bir XML temelli kullanıcı dosyası gibi) site üzerindeki kendi ayrıcalıklarını bile arttırabilir." Bu tarayıcı, bunun gibi zayıflıkları bulmaya çalışır.
 
 <h2>XXE</h2>
 This component attempts to identify applications which are subject to XML eXternal Entity (XXE) attacks.
-Applications which parse XML input may be subject to XXE when weakly or poorly configured parsers 
-handle XML input containing reference to an external entity such as a local file, HTTP requests to 
-internal or tertiary systems, etc.<br>
+XML girdisini ayrıştıran uygulamalar, zayıf veya kötü yapılandırılmış ayrıştırıcılar yerel bir dosya 
+ HTTP iç veya üçüncül sistemlere olan istekleri gibi harici bir varlığa referans içeren XML 
+ girdisini işlediğinde XXE'e tabi olabilir.<br>
 <br>
-It requires the Callback extension, so will not work if this extension is disabled or removed. 
+bu durum geri arama uzantısı gerektirir, bu nedenle bu uzantı devre dışı bırakılır veya kaldırılmazsa çalışmaz. 
 It is also recommended that you test that the Callback extension is correctly configured for your target site.
 If the target system cannot connect to the Callback Address then some XXE vulnerabilities will not be detected.
 
