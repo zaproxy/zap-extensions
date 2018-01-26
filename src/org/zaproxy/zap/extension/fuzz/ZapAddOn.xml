@@ -1,6 +1,6 @@
 <zapaddon>
     <name>AdvFuzzer</name>
-    <version>10</version>
+    <version>11</version>
     <semver>2.0.1</semver>
     <status>beta</status>
     <description>Advanced fuzzer for manual testing</description>
@@ -8,7 +8,7 @@
     <url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsFuzzConcepts</url>
     <changes>
     <![CDATA[
-    Updated for 2.7.0.<br>
+    Enable the extensions for all DB types.<br>
     ]]>
     </changes>
     <extensions>

@@ -152,6 +152,11 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     }
 
     @Override
+    public boolean supportsDb(String type) {
+        return true;
+    }
+
+    @Override
     public void init() {
         super.init();
 
