@@ -5,6 +5,6 @@
 
 <index version="2.0">
 	<indexitem text="Port Scan" target="addon.portscan.concepts" />
-	<indexitem text="Port Scan Options" target="addon.portscan.options" />
+	<indexitem text="Pilihan Port scan" target="addon.portscan.options" />
 	<indexitem text="Port Scan Tab" target="addon.portscan.tab" />
 </index>

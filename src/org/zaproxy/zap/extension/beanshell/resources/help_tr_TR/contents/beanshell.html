@@ -7,7 +7,7 @@ BeanShell Konsolu
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Bean Shell Console</h1>
+<h1>Bean Shell Konsolu</h1>
 <p>
 	BeanShell, BeanShell komut dosyalarını yürütmek için kullanılabilen interaktif bir Java kabuğu. Bunlar komut dosyaları, Java sözdiziminden birçok öğe kullanan basitleştirilmiş bir Java formudur, ancak daha basit bir betik biçimidir. Tüm Java kodları da geçerli BeanShell kodudur.<br/> BeanShell entegrasyonu OWASP ZAP işlevleri ve veri kümesi kullanarak komut dosyası yazmanızı sağlar. Bu, web uygulamalarını analiz etmek için çok güçlü bir özellik olabilir.
 </p>
@@ -18,7 +18,7 @@ BeanShell Konsolu
 	<ul>
 	<li>the <i>Model</i> singleton, through the object named <i>model</i></li>
 	<li>the <i>SiteTree</i> tree of current sites through the <i>sites</i> object</li>
-	<li>an instance of <pre>HttpSender</pre> through the <i>gönderen</i> nesne</li>
+	<li>şunun bir örneği <pre>Http Göndericisi</pre> aracılığıyla <i>gönderen</i> nesne</li>
 	</ul>
 	BeanShell'in esnek bir şekilde yazılmış olduğuna dikkat edin. Bu sebeple, değişkenleri kullanmadan önce bildirim yapmak gerekli değildir - bu komut dosyaları normal Java'ya göre biraz daha özlü yapar. Elbette ki, türünü tanımlamak istiyorsanız yapabilirsiniz.
 </p>
@@ -26,23 +26,22 @@ BeanShell Konsolu
 <p>
 	Yararlı ve tipik bir şeyle başlayalım: Tüm site düğümlerinin tekrarını yapın ve dosyanın olup olmadığını kontrol edin. Bunu gerçekleştiren bir komut dosyası oluşturulmuştur,yükleyi seçin ve example.tree.bsh dosyasını seçiniz. Değerlendir'e tıklamadan önce, ilk olarak ağacı doldurmak için ZAP yardımı ile bir siteye göz atın:
 	<br/><br/>
-	Now click on evaluate to execute the script that's in the editor. If there are no errors, then you can
-	now start using the object defined in the script by issuing these commands:
+	Şimdi, düzenleyicideki betiği yürütmek için değerlendirmeye tıklayın. Herhangi bir hata yoksa, 
+hemen şu komutları kullanarak komut dosyasında tanımlanmış nesneyi kullanmaya başlayabilirsiniz:
 	<pre>
 	t = Tree();
 	</pre>
-	Which constructs a new Tree object and assigns a reference to t.
+	Yeni bir Ağaç nesnesi ortaya çıkartır ve oluşturduğu t'ye referans olarak atar.
 	<pre>
 	t.find(sites.getRoot(), "index.html");
 	</pre>
 	T üstünde bulunan arama yöntemini çağırın, bu SiteNode'u ilk olarak argüman ve ikinci olarak bir kaynak olarak alır. Bu koşulda,yöntem ağacın tüm düğümleri boyunca tekrarlanacaktır,çünkü kökten başladık ve index.html dosyalarını bulacağız.
 	<br/><br/>
-	Instead of iterating through all the nodes, we could choose to start a specific node by using the
-	findChild method e.g.:
+	Tüm düğümlerde bunu tekrarlamak yerine, findChild yöntemi sayesinde belirli bir düğüm başlatmayı seçebiliriz, örn:
 	<br/><br/>
 	Bu, ZAP içindeki BeanShell'in gücü konusunda bizlere fikir verecektir. Fakat tam olarak faydalanmak için dahili API ve BeanShell'in özelliklerini kullanmayı öğrenmemiz gerekecektir. BeanShell, bütün iç obje ve yöntemlere-hatta özel olanlara bile- tam erişime izin verecek şekilde kurulmuştur.
 </p>
-<h2>Simple HTTP Request</h2>
+<h2>Basit HTTP İsteği</h2>
 <p>
 	Bir sonraki örnekte, etkileşimli konsolda doğrudan doğruya bir HTTP isteği oluşturup gönderiyoruz: BeanShell'in gücünü tamamıyla kullanmak için, ZAP içeriklerine hakim olmalısınız.
 	Gönderen nesne Manuel İstek Editörü tarafından kullanılanla aynıdır. Bu sebeble ZAP yapılandırılmasında ki belirlenmiş proxy ayarlarını otomatik olarak alır.
@@ -51,9 +50,7 @@ BeanShell Konsolu
 </p>
 <h2>İpuçları</h2>
 <p>
-	Use the unset(String) command to unset any declared variables, methods or objects. Bu geçerli isim alanında yöntem bildirimi değişikliği yapmak istiyorsanız kullanışlıdır. Note that the command takes a
-	String argument, not an Object, so to unset the t object we used above, it should be: unset(“t”); and
-	not unset(t);
+	Belirtilen değişkenleri, yöntemleri veya nesneleri ayırmak için unset (String) komutunu kullanın. Bu geçerli isim alanında yöntem bildirimi değişikliği yapmak istiyorsanız kullanışlıdır. Komutun bir nesne değil seri argümanı aldığına dikkat edin, yani yukarıda kullandığımız t nesnesinin ayarını kaldırmak için, unset(“t”);not ve unset(t); olmalıdır
 </p>
 <p>
 	Orijinal belge: Stephen de Veries

@@ -2,10 +2,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Options Applications screen</title>
+<title>Uygulamalar ekranı seçenekleri</title>
 </head>
 <body bgcolor="#ffffff">
-	<h1>Options Applications screen</h1>
+	<h1>Uygulamalar ekranı seçenekleri</h1>
 	<p>
 		Bu ekran sizin <a href="concepts.html">çağırılabilir uygulamaları</a> ayarlamanızı sağlar.<br> Varsayılan olarak hiç uygulama bulunmuyor, Kullanmak istediğiniz bütün uygulamaları eklemeniz gerek.
 	<h3>Ekran Adı</h3>
@@ -18,17 +18,17 @@
 
 	<h3>Parametreler</h3>
 	ZAP'ın komuta geçmesi gereken parametreler.
-	<br> The following tags may be used to pass parameters:
+	<br> Aşağıda bulunan etiketler parametreleri iletmek amacıyla kullanılabilir:
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%url%</td>
-			<td>the full url, e.g. 'http://localhost/test?a=b'</td>
+			<td>tam url, 'http://localhost/test?a=b'</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%site%</td>
-			<td>the site, e.g. 'http://localhost:8080/'</td>
+			<td>site, 'http://localhost:8080/' </td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -42,32 +42,30 @@
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td>%cookie%</td>
-			<td>the first cookie field from the request header (if any)</td>
+			<td>%çerez%</td>
+			<td>(eğer varsa) istek başlığında bulunan ilk çerez alanı</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>%postdata%</td>
-			<td>the POST data sent, if any, with any newlines replaced with "\n"</td>
+			<td>Gönderilen POST verileri, eğer varsa, yeni satırlarla birlikte "\n" ile değiştirilir</td>
 		</tr>
 	</table>
-	So if a command accepted a URL using '-u' you would specify the parameters as: '-u %url%'
+	Yani bir komut bir URL'yi '-u' kullanarak kabul ettiyse, parametreleri şu şekilde belirtirsiniz: '-u %url%'
 
-	<h3>Capture Output</h3>
-	If checked then the command run and any output it generates will be displayed on the
-	<i>Output tab</i>.
-	<br> You should always use this option when running scripts or commands that do not
-	have a UI.
-	<br> You can also use this option for troubleshooting - if an application does not
-	run as expected then copy the command run and try it from a command line prompt.
+	<h3>Çıkış Yakalama</h3>
+	Eğer seçili ise o halde komutu çalıştırır ve onun ürettiği çıktılar gösterilir
+	<i>Çıkış sekmesi</i>.
+	<br> Eğer çalışan script veya komutun kullanıcı arayüzü yoksa her zaman bu seçeneği kullanmalısınız.
+	<br> Bu seçeneği sorun gidermek içinde kullanabilirsiniz- eğer bir uygulama beklenildiği gibi çalışmıyorsa çalışan komutu kopyalayıp bir komut isteminde deneyin.
 
 	<h3>Output to Note</h3>
 	If checked then any output will be appended to a
-	<i>Note</i> attached to the relevant
-	<i>History tab</i> record.
+	<i>Not</i> ilgiliye bağlı
+	<i>Geçmiş sekmesi</i> kaydet.
 	<br> Note that some nodes in the
-	<i>Sites tab</i> do not have associated
-	<i>History tab</i> records - for those nodes this option will have no effect.
+	<i>Siteler sekmesi</i> do not have associated
+	<i>Geçmiş sekmesi</i> kayıtlar - bu düğümler için bu seçenek bir etkiye sahip olmayacaktır.
 
 </body>
 </html>

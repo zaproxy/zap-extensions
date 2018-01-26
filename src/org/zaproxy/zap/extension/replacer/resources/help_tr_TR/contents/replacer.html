@@ -3,11 +3,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Replacer
+Yerine geçen
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Replacer</h1>
+<h1>Yerine geçen</h1>
 The replacer is an easy way to replace strings in requests and responses.
 <p>
 Seçeneklerden ve varsayılan olarak '&lt;ctrl&gt; R' kısayolu ile hızlıca erişilebilir.
@@ -36,17 +36,17 @@ Gövde talebinde varsa, yerini yedek metinle değiştirir.
 
 <h4>Yanıt Başlığı (eğer mevcut değilse eklenir)</h4>
 Bu durumda 'Eşleşme Dizisi' bir başlık adı olarak ele alınır. 
-If the header is present then its value will be replaced by the replacement text. 
-If the replacement text is empty then the header will be removed (if present).
-If the header is not present and the replacement text is not empty then the header will be added.
+Eğer başlık var ise, değer, yedek metin ile değiştirilecek. 
+Eğer yedek metin boş ise, başlık kaldırılır(eğer var ise).
+Başlık yok ise ve yedek metin boş değilse, başlık eklenecektir.
 
 <h4>Response Header String</h4>
 In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the response header then it will be replaced by the replacement text.
+Eğer yanıt başlığında var ise yedek metin ile değiştirilir.
 
 <h4>Response Body String</h4>
 In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the response body then it will be replaced by the replacement text.
+Eğer yanıt gövdesinde var ise yedek metin ile değiştirelecektir.
 
 <h3>Match String</h3>
 The string that will be used to identify what should be replaced - see Match Type for details.
@@ -61,14 +61,13 @@ The new string that will replace the specified selection.
 <h3>Etkinleştir</h3>
 Belirlenmezse, kural geçerli olmayacaktır.
 
-<h3>Advanced</h3>
-If set then an additional tab will be show which allows you to specify which 'initiators' the rule should apply to.
-Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
-control over exactly when the rule should apply.
+<h3>İleri</h3>
+Eğer belirlenirse kuralın hangi 'başlatıcılar' için uygulanmasını belirlemenize izin veren ek bir sekme gösterilir.
+Mesaj gönderebilen ve alabilen her ZAP bileşeni ayrı bir başlatıcıdır, bu nedenle kuralın tam olarak ne zaman uygulanacağı konusunda çok ince bir tane kontrolü sağlar.
 
 <p>
-If you need even more control over when and how text should be replaced then you can use the ZAP Script Console which
-gives you complete control over the ZAP messages.
+Eğer metin ne zaman ve nasıl değiştireleceği ile ilgili daha fazla kontrole ihtiyacınız var ise, Zam Komut Dosyası Konsolu'nu kullanabilirsiniz.
+ZAP mesajlar konusunda size tam kontrol verir.
 
 </body>
 </html>

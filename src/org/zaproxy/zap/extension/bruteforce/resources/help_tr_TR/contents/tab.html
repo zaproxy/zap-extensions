@@ -7,70 +7,67 @@
 <body bgcolor="#ffffff">
 	<h1>Forced Browse tab</h1>
 
-	The Forced Browse tab allows you to perform a
-	<a href="concepts.html">Forced Browse</a> scan on any of the sites that have been
-	accessed.
+	Forced Browse sekmesi, size, erişilen tüm siteler üzerinden Forced Browse taraması
+	<a href="concepts.html">Yapmanızı</a> sağlar.
 	<br>
 	<br> Siteler araç çubuğu veya
 	<i>Siteler sekmesinden seçilebilir</i>.
-	<br> Any sites that have have been are are currently being scanned are marked in
-	bold in the toolbar Sites pulldown control.
+	<br> Taranmakta olan siteler
+araç çubuğunda kalın olarak gösterilir.
 	<br> Araç çubuğu taramayı başlatmaya, durdurmaya, duraklatmaya ve devam ettirmeye yarayan bir kaç buton sağlar.
 	<br> Bir ilerleme çubuğu seçili sitenin tarama işleminin ne kadar ilerlediğini gösterir.
-	<br> The 'Current scans' value shows how many scans are currently active - hovering
-	over this value will show a list of the sites being scanned in a popup.
+	<br> 'Geçerli taramalar' değeri şu anda kaç tane taramanın aktif durumda olduğunu ifade eder -
+	bu değerin üzerine gelindiği zaman, açılır pencerede taranmış olan sitelerin bir listesi gösterilir.
 
 	<h2>Sağ tuş menüsü</h2>
-	Right clicking on one or more rows will bring up a menu which will allow you to:
+	Bir veya daha fazla satırı sağ tık yapmak, aşağıdakileri yapmanızı sağlayan bir menü getirir:
 
-	<h3>Exclude from</h3>
+	<h3>Şunun dışında bırak</h3>
 	Bu menü aşağadaki alt menülere sahip:
 
-	<h4>Proxy</h4>
+	<h4>Vekil sunucu</h4>
 	Bu, seçilen düğümleri proxy'den hariç tutar. ZAP üzerinden yine de vekillendirilecekler.
 ancak herhangi bir sekmede gösterilmeyecektir.
-	<br /> This can be used to ignore URLs that you know are not relevant to the system you
-	are currently testing.
+	<br /> Bu, şu anda test etmekte olduğunuz sistem ile ilişkili olmadığını bildiğiniz URL'leri yok
+	saymak için kullanılabilir.
 	<br /> The nodes can be included again via the
-	<i>Session Properties</i> dialog
+	<i>Oturum Özellikleri</i> diyalog
 
-	<h4>Scanner</h4>
+	<h4>Tarayıcı</h4>
 	Bu, seçilen notların etkin şekilde taranmasını önleyecektir.
 	<br /> The nodes can be included again via the
-	<i>Session Properties</i> dialog
+	<i>Oturum Özellikleri</i> diyalog
 
-	<h4>Spider</h4>
-	This will prevent the selected nodes from being spidered.
+	<h4>Ağ</h4>
+	Bu, seçilen düğümleri örümcek olmaktan koruyacaktır.
 	<br /> The nodes can be included again via the
-	<i>Session Properties</i> dialog
+	<i>Oturum Özellikleri</i> diyalog
 
-	<h3>Copy</h3>
+	<h3>Kopyala</h3>
 	Bu seçili URL'leri panoya kopyalar.
 
 	<h3>Tekrar gönder...</h3>
-	This will bring up the
-	<i>Resend dialog</i> which allows you to resend the request after making any changes to
-	it that you want to.
+	Bu, Resend dialogu getirir, buda
+	<i>Değişiklik yaptıktan sonra</i> isteği tekrar göndermenizi sağlar.
 
 	<h3>Yeni Uyarı...</h3>
-	This will bring up the
-	<i>Add Alert dialog</i> which allows you to manually record a new
-	<i>alert</i> against this request.
+	Bu, Yeni alarm dialogunu getirir
+	<i>Buda</i> elle, istek üzerine yeni alarm kaydı oluşturulmasını sağlar
+	<i>uyarı</i> bu kullanıcıya karşı.
 
 	<h3>URL'yi Tarayıcıda Aç</h3>
-	This will open the URL of the selected node in your default browser.
+	Varsayılan tarayıcınızda seçili olan düğümlerin URL'sini açar.
 
-	<h3>Generate anti CSRF test form</h3>
-	This will open a URL which will give you a generated form for testing for CSRF issues.
-	<br> It will only be enabled for POST requests, if the API is enabled and if Java
-	supports the opening of URLs in a browser on your platform.
+	<h3>Antı CSRF test formu oluştur</h3>
+	Bu, bir URL açar ve bu URL testing CSRF sorunlarıyla ilgili bir form oluşturulmasını sağlar.
+	<br> Bu sadece isteklerden SONRA olur, eğer API aktifse ve Java URL'yi platformunuzda destekliyorsa.
 
-	<h2>Ayrıca bakın</h2>
+	<h2>Ayrıca şurayı inceleyebilirsiniz</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="options.html">Options Forced Browse screen</a></td>
-			<td>for details of the forced browse configuration</td>
+			<td>buradan forced browse yapılandırması hakkında detaylı bilgi alabilirsiniz</td>
 		</tr>
 	</table>
 

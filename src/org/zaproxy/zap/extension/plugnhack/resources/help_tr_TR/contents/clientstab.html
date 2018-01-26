@@ -17,10 +17,10 @@ Plug-n-Hack Clients tab
 <p>
 	To receive client events:
 	<ul>
-	<li>Access the pages you want to monitor while proxying through ZAP</li>
-	<li>Right click in the relevant node(s) in the Sites tree and select 'Monitor clients -> Include subtree'</li>
-	<li>Force your browser to reload those pages</li>
-	<li>Client events (such as postMessage, click, mouseover etc) will then be listed in this tab - select them to see the full details.</li>
+	<li>ZAP aracılığıyla proxy işlemi yaparken izlemek istediğiniz sayfalara ulaşın</li>
+	<li>Siteler ağacındaki ilgili düğüm(ler) sağ tıklayın ve 'Monitör istemcileri -> Alt ağacı ekle'yi seçin</li>
+	<li>Bu sayfaları tekrar yüklemesi için tarayıcınızı zorlayın</li>
+	<li>Müşteri olayları (postMessage, tıklama, fare üzerine basma vb gibi.) bu sekmede listelenecektir - bütün ayrıntıları görebilmek için bunları seçin.</li>
 	</ul>
 </p>
 <p>
@@ -40,8 +40,7 @@ Orijinal istemci etkin olduğu sürece herhangi bir etkinliği sağ tıklama men
 <br>
 PnH ayrıca “PlugnHack DOM XSS Oracle” adlı bir Özel fuzz dosyası ekliyor.<br>
 Bu dosya OWASP XSS cheatsheet'e dayanmaktadır ve sayfaya enjekte edilen bir 'xss' JavaScript yöntemini çağırır. <br>
-	This method invokes the ZAP API which in turn flags the relevant attack in the UI - these are confirmed DOM XSS vulnerabilities, 
-	although (as always) you should check that they can really be exploited in the application you are testing without a tool like ZAP.<br>
+Bu yöntem, kullanıcı arabirimindeki ilgili saldırıyı işaretleyen ZAP API'sini çağırır; bunlar (her zaman olduğu gibi), ZAP gibi bir araç olmadan test etmekte olduğunuz uygulamada gerçekten de kullanılabileceğini kontrol etmeniz gerekirken, DOM XSS'e ait güvenlik açıklarını doğrular.<br>
 
 </p>
 

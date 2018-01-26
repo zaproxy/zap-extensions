@@ -9,53 +9,53 @@ Fuzzing
 <body bgcolor="#ffffff">
 <h1>Fuzzing</h1>
 <p>
-Fuzzing is a technique of submitting lots of invalid or unexpected data to a target.
+Fuzzing es una técnica de enviar muchos datos no válidos o inesperados a un objetivo.
 </p>
 <p>
-ZAP allows you to fuzz any request still using:
+ZAP permite filtrar cualquier solicitud que todavía se esté usando:
 <ul>
-<li>A build in set of payloads</li>
-<li>Payloads defined by optional add-ons</li>
-<li>Custom scripts</li>
+<li>Una compilación en conjunto de cargas útiles</li>
+<li>Carga útil definida por complementos opcionales</li>
+<li>Guiones personalizados</li>
 </ul>
 </p>
-To access the <a href="dialogue.html">Fuzzer dialog</a> you can either:
+Para acceder al <a href="dialogue.html">Diálogo Fuzzer</a> tu también puedes:
 <ul>
-<li>Right click a request in one of the ZAP tabs (such as the History or Sites) and select “Attack / Fuzz…”</li>
-<li>Highlight a string in the Request tab, right click it and select “Fuzz…”</li>
-<li>Select the “Tools / Fuzz…” menu item and then select the request you want to fuzz</li>
+<li>Haga clic con el botón derecho en una de las pestañas de ZAP (como Historial o Sitios) y seleccione "Ataque / Fuzz"</li>
+<li>Resalta una cadena en la pestaña Solicitud, haz clic con el botón derecho y selecciona "Fuz"</li>
+<li>Seleccione el elemento de menú "Herramientas / Fuzz..." y luego seleccione la solicitud que desea difuminar</li>
 </ul>
 
-<h3>Payload Generators</h3>
-Payload Generators generate the raw attacks that the fuzzer submits to the target application.
+<h3>Generadores de carga útil</h3>
+Los generadores de carga útil generan los ataques crudos que el fuzzer envía a la aplicación de destino.
 <br><br>
-They are managed via the <a href="payloads.html">Payloads dialog</a>
+Se administran a través de <a href="payloads.html">Diálogo de cargas útiles</a>
 
-<h3>Payload Processors</h3>
-Payload Processors can be used to change specific payloads before they are submitted.
+<h3>Procesadores de carga útil</h3>
+Los procesadores de carga útil se pueden usar para cambiar cargas útiles específicas antes de que se envíen.
 <br><br>
-They are managed via the <a href="processors.html">Payload Processors dialog</a>
+Se administran a través de <a href="processors.html">Diálogo de procesadores de carga útil</a>
 
-<h3>Fuzz Location Processors</h3>
-Fuzz Location Processors can be used to change all of the payloads before they are submitted.
+<h3>Procesadores de ubicación Fuzz</h3>
+Los procesadores de ubicación Fuzz se pueden usar para cambiar todas las cargas antes de enviarlas.
 <br><br>
-They are managed via the <a href="locations.html">Location Processors dialog</a>
+Se administran a través de <a href="locations.html">Diálogo de procesadores de carga útil</a>
 
-<h3>Message Processors</h3>
-Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.
+<h3>Procesadores de mensajes</h3>
+Los procesadores de mensajes pueden acceder y cambiar los mensajes que se están difuminando, controlar el proceso de fuzzing e interactuar con la interfaz de usuario de ZAP.
 <br><br>
-They are managed via the <a href="dialogue.html">Fuzzer dialog</a> 'Message Processors' tab.
+Se administran a través de <a href="dialogue.html">Diálogo Fuzzer</a> Pestaña de Procesadores de mensajes.
 
 <p>
-This functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
-Note that some fuzzdb files have been left out as they cause common anti virus scanners to flag them as containing viruses.<br/>
-You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
+Esta funcionalidad se basa en el código del proyecto OWASP JBroFuzz e incluye archivos del proyecto fuzzdb. <0 />
+Tenga en cuenta que algunos archivos se han omitido ya que causan que los antivirus comunes de los escáneres los señalen como virus. <0 />
+Puede reemplazarlos (y actualizar fuzzdb) descargando la última versión de fuzzdb y expandiéndola en la biblioteca 'fuzzers'.
 </p>
 
 
-<h2>See also</h2>
+<h2>Vease también</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Fuzzer options screen</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Pantalla de opciones Fuzzer</a></td></tr>
 </table>
 
 

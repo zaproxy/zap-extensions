@@ -113,15 +113,14 @@ Bu tarayıcı Form-temelli Doğrulamayı kullanan tanımlı bir içerik yoksa at
 <h2>XPath Enjeksiyonu</h2>
 OWASP tarafından açıklandığı gibi: "XPath Enjeksiyonu saldırıları bir web sitesinin kullanıcı tarafından sağlanan bilgileri kullanarak XML verisi için bir XPath sorgusu oluşturduğu zaman meydana gelir. Bir saldırgan web sitesine bilerek hatalı bilgi göndererek, XML verisinin nasıl yapılandırıldığını öğrenebilir veya normalde erişimi olmayan verilere erişebilir. Hatta saldırgan, eğer XML verisi doğrulama veya yetkilendirme için kullanılıyorsa (bir XML temelli kullanıcı dosyası gibi) site üzerindeki kendi ayrıcalıklarını bile arttırabilir." Bu tarayıcı, bunun gibi zayıflıkları bulmaya çalışır.
 
-<h2>XXE</h2>
-This component attempts to identify applications which are subject to XML eXternal Entity (XXE) attacks.
+<h2>XXE</h2> Bu bileşen, XML Geçici Varlık (XXE) saldırılarına hedef olan uygulamaları tanımlamaya çalışır.
 XML girdisini ayrıştıran uygulamalar, zayıf veya kötü yapılandırılmış ayrıştırıcılar yerel bir dosya 
  HTTP iç veya üçüncül sistemlere olan istekleri gibi harici bir varlığa referans içeren XML 
  girdisini işlediğinde XXE'e tabi olabilir.<br>
 <br>
 bu durum geri arama uzantısı gerektirir, bu nedenle bu uzantı devre dışı bırakılır veya kaldırılmazsa çalışmaz. 
-It is also recommended that you test that the Callback extension is correctly configured for your target site.
-If the target system cannot connect to the Callback Address then some XXE vulnerabilities will not be detected.
+Ayrıca, geri arama uzantısının hedef siteniz için uygun şekilde yapılandırılıp yapılandırılmadığını da test etmeniz de önerilmektedir.
+Eğer hedef sistem Geri Arama Adresine bağlanmakta sorun yaşarsa, bazı XXE güvenlik açıkları saptanamayacaktır.
 
 </body>
 </html>
