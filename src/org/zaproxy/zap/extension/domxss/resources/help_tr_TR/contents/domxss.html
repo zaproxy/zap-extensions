@@ -10,9 +10,9 @@ DOX XSS Aktif Tarama Kuralı
 <p>
 DOM XSS açıklarının tespiti için bir Aktif Tarama kuralı.
 <p>
-It launches browser windows and sends attack payloads to all of the relevant DOM elements.<br>
-As it launches browser windows it is not suitable for headless environments,
-and will take significantly longer than other (non browser based) rules. 
+Tarayıcı pencerelerini başlatır ve saldırı yüklerini ilgili tüm DOM öğelerine gönderir.<br>
+Tarayıcı, pencerelerini başlattığında başlıksız ortamlar için uygun değildir 
+ve diğer (tarayıcı tabanlı olmayan) kurallardan çok daha uzun sürecektir. 
 </p>
 <p>
 Bu sürüm sadece Firefox'u destekler.<br>
@@ -21,15 +21,14 @@ Gelecek sürümler diğer tarayıcıları destekleyebilir.
 <p>
 The following Attack Strengths are supported, and related directly to the number of attack payloads used:
 <ul>
-<li>LOW: 2 attack payloads 
-<li>MEDIUM: 4 attack payloads 
-<li>HIGH: 6 attack payloads 
+<li>DÜŞÜK: 2 Saldırı yükü 
+<li>ORTA: 4 saldırı yükü 
+<li>YÜKSEK: 6 saldırı yükü 
 <li>INSANE: 8 attack payloads 
 </ul>
 </p>
 <p>
-The rule will only report one DOM XSS vulnerability per node, unless the LOW Alert threshold
-is used, in which case it will keep trying all of the specified payloads. 
+Kural, yalnızca LOW Uyarı eşiği kullanılmadığı sürece, düğüm başına bir DOM XSS güvenlik açığını bildirir; bu durumda belirtilen yüklerin tümünü denemeye devam eder. 
 </p>
 
 </body>

@@ -7,31 +7,29 @@
     </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Access Control Context Options</h1>
+<h1>Erişim Kontrolü İçerik Seçenekleri</h1>
 
 <p>
-    The Access Control Context options are present as a panel for each Context when opening the Session Properties
-    dialog. Bu panel, ZAP kullanıcılarının her Bağlamın her Kullanıcısı için Erişim Kurallarını tanımlamalarına izin verir.
+    Erişim Kontrolü Durum seçenekleri Oturum Özellikleri'ni açarken her Durum için bir panel olarak bulunur
+  diyalogu. Bu panel, ZAP kullanıcılarının her Bağlamın her Kullanıcısı için Erişim Kurallarını tanımlamalarına izin verir.
 </p>
 
 <p>
-    As mentioned on the <a href="concepts.html">concepts</a> page, ZAP is making use of the tree-based
-    structure of URLs. So, when configuring the access rules, only 1 rule needs to be set explicitly for an entire
-    subtree, while for the other nodes rules are inferred. Three possible values can be set for any node in Context for
-    each User:
+    <a href="concepts.html">Konsepler</a> sayfasında belirtildiği gibi ZAP, URL'lerin ağaç temelli yapısından faydalanıyor. Böylece, erişim kurallarını yapılandırırken, diğer düğümler için sadece 1 kural çıkarsa da sadece bir alt ağacı açıkça ayarlamanız gerekir. Durumdaki herhangi bir düğüm için üç olası değer ayarlanabiliyor:
+     her Kullanıcıda:
 </p>
 <ul>
-    <li><b>Allowed</b> - The rule for the node is <i>explicitly</i> set as Allowed</li>
-    <li><b>Denied</b> - The rule for the node is <i>explicitly</i> set as Denied</li>
-    <li><b>Inherited</b> - The rule for the node is inferred based on the closest parent with an explicitly set rule
+    <li><b>İzin Verilen</b> - Düğüm kuralı için <i>açıkça</i> izin verilebilir olduğunu ayarla</li>
+    <li><b>Reddedilen</b> - Düğüm kuralı için <i>açıkça</i> reddedilebilir olduğunu ayarla</li>
+    <li><b>Miras</b> - Düğüm kuralı için <1>açıkça</1>belirlenmiş bir kuralla en yakın ebeveynine temel alarak ayarlanır
     </li>
 </ul>
 
-<p>By default, the rules for any node has an <i>Inherited</i> value and the root node has a value of <i>Unknown</i>.
-    Thus, for any node without a parent with an explicitly configured rule, the inferred rule will default to
-    <i>Unknown</i>.</p>
+<p>Varsayılan olarak, herhangi bir düğüm kuralları için <i>Reddedilen</i> değerde ve kök ise <i>Bilinmeyen</i> değerdedir.
+    Böylece, açıkça yapılandırılmış kurala sahip bir ebeveyni olmayan herhangi bir düğüm için çıkarım kuralının varsayılanı
+     <i> Bilinmeyen</i>.</p>
 
-<h2>See also</h2>
+<h2>Ayrıca bakınız</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

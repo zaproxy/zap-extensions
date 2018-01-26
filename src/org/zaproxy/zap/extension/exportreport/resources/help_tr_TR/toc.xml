@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP Kullanıcı Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
-			<tocitem text="Export Report" target="exportreport"/>
+			<tocitem text="Raporu Dışa Aktar" target="exportreport"/>
 		</tocitem>
 	</tocitem>
 </toc>

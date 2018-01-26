@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Active Scan Rules - alpha
+Aktif Tarama Kuralları - alfa
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -10,16 +10,14 @@ Active Scan Rules - alpha
 Aşağıdaki alfa kalitesi etkin tarama kuralları bu eklentiye dahil edilmiştir:
 <h2>Apache Aralığı Üstbilgisi DoS (CVE-2011-3192)</h2>
 Sunucunun, on bir (11) farklı bayt aralığı isteyerek, sunucunun Apache Menzil Başlığı Hizmet Reddi'ne karşı savunmasız 
-olup olmadığını sınar. Eleven ranges is one more than is accepted by patched/fixed servers.
+olup olmadığını sınar. Eleven mesafeleri yamalı / sabit sunucular tarafından kabul edilenden daha fazladır.
 
 <h2>Cookie Slack Detector</h2>
 Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid"
 
 <h2>ELMAH Scanner</h2>
-Tests to see if the Error Logging Modules and Handlers (elmah.axd) HTTP Module is available. Although this module is handy for
-developers and other stakeholders it can also leak a significant amount of information which a security analyst or malicious individual
-may be interested in.<br><br>
-The ELMAH scanner targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
+Tests to see if the Error Logging Modules and Handlers (elmah.axd) HTTP Module is available. Bu modül, geliştiriciler ve diğer menfaat sahipleri için kullanışlı olmasına rağmen, bir güvenlik analistinin veya kötü amaçlı bir şahsın ilgisini çekebilecek önemli miktarda bilgiyi de sızdırıyor. <br> <br>
+ELMAH tarayıcı, Microsoft tabanlı teknolojileri hedefler: IIS, Windows, ASP ve MSSQL.
 
 <h2>Örnek Aktif Dosya Tarayıcı</h2>
 Bu, kullanıcıların düzenleyebileceği bir dosyadan dizeleri yükleyen örnek bir etkin tarama kuralı uygular.<br>
@@ -30,34 +28,32 @@ Bu, çok basit bir örnek etkin tarama kuralını uygular. <br>
 Daha fazla detay için: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-4-active-scan-rules.html
 
 <h2>İfade Dili Enjeksiyonu</h2>
-Yazılım, bir Java Sunucu Sayfasındaki (JSP) bir ifade dili (EL) ifadesinin tamamını veya bir kısmını, bir externally-influenced harici olarak etkilenmiş girdi kullanarak oluşturur, ancak nötralize etmez veya daha önce belirtilen EL ifadesini yürütülmeden önce değiştirebilecek özel öğeleri hatalı şekilde etkisiz hale getirmez. Spring 3.0.5 ve önceki sürümlerin bazılarında, İfade Dili etiketlerinin iki kez değerlendirileceği ve herhangi bir uygulamayı etkili bir şekilde EL enjeksiyonuna maruz bırakan bir güvenlik açığı (CVE-2011-2730) mevcuttu. However, even for later versions, this weakness is still possible depending on configuration.
+Yazılım, bir Java Sunucu Sayfasındaki (JSP) bir ifade dili (EL) ifadesinin tamamını veya bir kısmını, bir externally-influenced harici olarak etkilenmiş girdi kullanarak oluşturur, ancak nötralize etmez veya daha önce belirtilen EL ifadesini yürütülmeden önce değiştirebilecek özel öğeleri hatalı şekilde etkisiz hale getirmez. Spring 3.0.5 ve önceki sürümlerin bazılarında, İfade Dili etiketlerinin iki kez değerlendirileceği ve herhangi bir uygulamayı etkili bir şekilde EL enjeksiyonuna maruz bırakan bir güvenlik açığı (CVE-2011-2730) mevcuttu. Ancak daha sonraki sürümler için bile, bu zayıflık konfigürasyona bağlı olarak hala mümkündür.
 
-<h2>GET for POST Scanner</h2>
-This scanner takes <code>application/x-www-form-urlencoded</code> POST requests, changes the parameters from POST to GET and resubmits the request. 
-If the GET response is the same as the original POST response then an alert is raised. While this does not necessarily
-represent a security weakness unto itself it may indicate that other attacks or weaknesses can be expanded or simplified.
+<h2> POST Tarayıcı için GET </>
+Bu tarayıcı <code> application / x-www-form-urlencoded </> POST isteklerini alır, parametreleri POST'dan GET olarak değiştirir ve isteği yeniden gönderir. 
+GET yanıtı orijinal POST yanıtıyla aynı ise, o zaman bir uyarı ortaya çıkar. Bu, kendine özgü bir güvenlik zayıflığını temsil etmese de, diğer saldırı veya zayıflıkların genişletilebileceğini veya basitleştirilebileceğini gösterebilir.
 (Such as a POST based Cross-Site Scripting (XSS) attack being changed to GET.)
 
 <h2>HTTP Only Site</h2>
 This active scanner checks whether an HTTP site is served under HTTPS.
 
 <h2>Httpoxy</h2>
-This active scanner checks whether a site is using the HTTP Proxy header specified in the request.<br>
-It sets up an HTTP proxy which listens to all interfaces on a randomly assigned free port.
-It then sends a series of requests to the target server with the HTTP Proxy header set to each of the available
-IP addresses and the port that it is listening on.
-If a request is received on the new port then the server is very likely to be vulnerable.<br>
-<b>IMPORTANT</b> - the computer that ZAP is running on must accept incoming requests on arbitrary ports -
-if a firewall prevents incoming connections then this rule will not work. 
+Bu aktif tarayıcı, sitenin istekte belirtildiği üzere bir HTTP Proxy üstbilgisi taşıyıp taşımadığını kontrol eder.<br>
+Bu, tüm arayüzleri rastgele atanmış serbest bir porttan dinleyen bir HTTP proxy kurar.
+Ardından, HTTP Sunucusu üstbilgisi, kullanılabilir IP adreslerinin ve dinlediği bağlantı noktasının her birine ayarlanmış olarak, hedef sunucuya bir dizi istek gönderir.
+Yeni bağlantı noktasından bir istek gelirse, sunucu çok savunmasızdır. <br>
+<b> ÖNEMLİ </> - ZAP'ın çalıştığı bilgisayar, gelen istekleri rasgele bağlantı noktalarından kabul etmelidir -
+eğer bir güvenlik duvarı gelen bağlantıları engelliyorsa o zaman bu kural çalışmaz. 
 
-<h2>HTTPS As HTTP Scanner</h2>
-This active scanner attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
+<h2>HTTP Tarayıcı olarak HTTPS</h2>
+Bu aktif tarayıcı, asıl olarak HTTP ile erişilmiş içeriğe HTTPS (SSL/TLS) ile erişmeyi dener.
 
-<h2>LDAP Injection</h2>
-LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
+<h2>LDAP Enjeksiyonu</h2>
+LDAP enjeksiyonu olabilir. Bir saldırganın kimlik doğrulama denetimlerini atlayıp LDAP dizinindeki rasgele verileri görüntülemek ve değiştirmek mümkün olabilir.
 
-<h2>SQL Injection - MsSQL</h2>
-This active scanner attempts to inject MsSQL specific sleep commands into parameter values and analyzes the server's response time to see if the sleep is effectively executed on the server (indicating a successful SQL injection attack).
+<h2> SQL Enjeksiyonu - MsSQL </>
+Bu aktif tarayıcı, MsSQL'ye özgü uyku komutlarını parametre değerlerine enjekte etmeye çalışır ve sunucudaki uyku etkin bir şekilde yürütülüp yürütülmediğini görmek için sunucunun yanıt süresini analiz eder (başarılı bir SQL enjeksiyon saldırısı olduğunu gösterir).
 
 <h2>Source Code Disclosure - File Inclusion</h2>
 Uses local file inclusion techniques to scan for files containing source code on the web server.
@@ -66,10 +62,7 @@ Uses local file inclusion techniques to scan for files containing source code on
 Uses Git source code repository metadata to scan for files containing source code on the web server.
 
 <h2>Trace.axd Scanner</h2>
-Tests to see if Trace Viewer (trace.axd) is available. Although this component is convenient for developers and 
-other stakeholders it can leak a significant amount of information which a security analyst or malicious individual
-may be interested in.<br><br>
-The trace.axd scanner targets Microsoft based technologies: IIS, Windows, ASP, and MSSQL.
+Tests to see if Trace Viewer (trace.axd) is available. Bu bileşen, geliştiriciler ve diğer hissedarlar için uygun olduğu halde, bir güvenlik analistinin veya kötü amaçlı bir kişinin ilgisini çekebilecek önemli miktarda bilginin sızdırılması da olasıdır.<br><br> Trace.axd tarayıcısı, IIS, Windows, ASP ve MSSQL gibi Microsoft tabanlı teknolojileri hedef alır.
 
 <h2>Kullanıcı Aracısı Fuzzer'ı</h2>
 Bu aktif tarayıcı fuzzed Kullanıcı Aracısı'nı baz alarak yanıttaki farklılıkları kontrol eder (örneğin, mobil siteler, Search Engine Crawler olarak eriş). Tarayıcı, yanıt statuscode'u ve yanıt gövdesinin hashcode'unu orijinal yanıt ile karşılaştırır.
