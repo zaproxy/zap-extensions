@@ -2,10 +2,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Scripts</title>
+<title>Komut Dizileri</title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Scripts</h1>
+<h1>Komut Dizileri</h1>
 <p>
 ZAP Komut Eklentisi, ZAP'a gömülebilen ve iç ZAP veri yapılarına erişebilen komut dosyalarını çalıştırmanıza izin verir.<br/>
 It supports any scripting language that supports JSR 223 (http://www.jcp.org/en/jsr/detail?id=223) , including:
@@ -15,29 +15,29 @@ It supports any scripting language that supports JSR 223 (http://www.jcp.org/en/
 <li>Groovy <a href="http://groovy-lang.org/">http://groovy-lang.org/</a></li>
 <li>Python <a href="http://www.jython.org">http://www.jython.org</a></li>
 <li>Ruby - <a href="http://jruby.org/">http://jruby.org/</a></li>
-<li>and many more...</li> 
+<li>ve daha fazlası...</li> 
 </ul>
 
 <b>UYARI - komut dosyaları ZAP ile aynı izinlerle çalışır, bu nedenle güvenmediğiniz komut dosyalarını çalıştırmayın!</b>
 
-<h2>Script types</h2>
+<h2>Komut satırı türleri</h2>
 Farklı türde komut dosyaları desteklenir:
 <ul>
 <li>Yalnız Kalın - kendiliğinden bulunan ve yalnızca manuel olarak başlatıldığında çalıştırılan komut dosyaları</li>
 <li>Aktif Kurallar - bunlar Aktif Tarayıcının bir parçası olarak çalışır ve ayrı olarak etkinleştirilebilir</li>
-<li>Passive Rules - these run as part of the Passive Scanner and can be individually enabled</li> 
-<li>Proxy Rules - these run 'inline', can change every request and response and can be individually enabled. They can also trigger break points</li> 
-<li>HTTP Sender - scripts that run against every request/response sent/received by ZAP. This includes the proxied messages, messages sent during active scanner, fuzzer, ...</li>
+<li>Pasif Kurallar - bunlar Pasif Tarayıcının bir parçası olarak çalışır ve ayrı olarak etkinleştirilebilir</li> 
+<li>Proxy Kuralları - Bunlar 'satır içinde' çalışır, her isteği ve yanıtı değiştirebilir ve ayrı olarak etkinleştirilebilir. Ayrıca durma noktalarını da tetikleyebilir</li> 
+<li>HTTP Gönderici - ZAP tarafından gönderilen/alınan her isteğe/yanıta karşı çalışan komut dosyaları. Bu, proxy yapılmış mesajları, aktif tarayıcı sırasında gönderilen mesajları, fuzzerı, vb içerir.</li>
 <li>Hedeflenen Kurallar - Hedef URL ile çağrılan ve yalnızca manuel olarak başlatıldığında çalıştırılan komut dosyaları</li>
 <li>Kimlik doğrulama - bir Bağlam için kimlik doğrulama yapıldığında çağrılan komut dosyaları. Kullanılabilmesi için bir Bağlam için Komut Dosyası Tabanlı Kimlik Doğrulama Yöntemini yapılandırırken seçilmesi gerekir. </li> 
-<li>Script Input Vectors  - scripts for defining exactly what ZAP should attack</li>
-<li>Extenders - scripts which can add new functionality, including graphical elements and new API end points</li>
+<li>Komut Dizisi Veri Vektörleri - ZAP' ın tam olarak neye saldırmasını tanımlayan komut dizileri için</li>
+<li>Genişleticiler - grafiksel öğeler ve yeni API uç noktaları dahil, yeni işlevsellik ekleyebilen komut dosyaları</li>
 </ul>
-All scripts that are run automatically are initially 'disabled' - you must enable them via the <a href="tree.html">The Scripts 'tree' tab</a>
-before they will run.<br/>
-If an error occurs when they run then they will be disabled.<br/>
-When you select the script then the last error will be shown in the <a href="console.html">Script Console tab</a>.<br/>
-Targeted scripts can be invoked by right clicking on a record in the Sites or History tabs and selecting the 'Invoke with script...' menu item.
+Otomatik olarak çalışan tüm komuz dizileri başlangıçta 'devredışıdır' - onları şunun üzerinden etkinleştirmelisiniz  <a href="tree.html">Komut dizisi 'ağacı' sekmesi</a>
+çalışmadan önce.<br/>
+Eğer çalıştıklarında bir hata meydana gelirse, devre dışı bırakılacaklardır.<br/>
+Script'i seçtikten sonra en son hata gösterilecek <a href="console.html">Komut Dizisi Konsolu sekmesi</a>.<br/>
+Hedeflenen komut dosyaları, Siteler ve Geçmiş sekmesindeki bir kayda sağ tıklayarak ve 'Komut dosyası ile çağır...' menü öğesini seçerek uyandırılabilirler.
 </p>
 <p>
 
@@ -46,7 +46,7 @@ Favori diliniz Mağazada mevcut değilse, lütfen "Çevrimiçi/Sorun bildir" men
 Bu arada ilgili kavanozları 'lib' dizinine ('eklenti' dizini değil) yerleştirip, ZAP'ı yeniden başlatabilirsiniz.<br/>
 </p>
 
-<h2>Global Variables</h2>
+<h2>Global Değişkenler</h2>
 Değişkenler org.zaproxy.zap.extension.script.ScriptVars sınıfı aracılığıyla tüm komut dosyaları arasında paylaşılabilir.<br/>
 Örneğin, Javascript'te aşağıdaki sınıfları kullanabilirsiniz:<br/><br/>
 <code>
@@ -54,9 +54,9 @@ org.zaproxy.zap.extension.script.ScriptVars.setGlobalVar("var.name","value")<br/
 org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
 </code>
 
-<h2>Script Variables</h2>
+<h2>Script Değişkenleri</h2>
 Variables can be shared between separate invocations of the same script via the same org.zaproxy.zap.extension.script.ScriptVars class.<br/>
-For example in Javascript you can use this class as follows:<br/><br/>
+Örneğin, Javascript'te bu sınıfı aşağıdaki gibi kullanabilirsiniz:<br/><br/>
 <code>
 org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name","value")<br/>
 org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
@@ -64,7 +64,7 @@ org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name
 <br/>
 Note that these methods are only usable from scripting languages that provide access to the ScriptContext (like Javascript).
 
-<h2>See also</h2>
+<h2>Ayrıca bakınız</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -72,20 +72,20 @@ Note that these methods are only usable from scripting languages that provide ac
 </tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="tree.html">The Scripts 'tree' tab</a></td><td></td>
+	<td><a href="tree.html">Komut dizisi 'ağacı' sekmesi</a></td><td></td>
 </tr>
 </table>
 
-<h2>External links</h2>
+<h2>Harici linkler</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/zaproxy/zaproxy/wiki/InternalDetails">https://github.com/zaproxy/zaproxy/wiki/InternalDetails</a></td>
-	<td>ZAP internal objects</td></tr>
+	<td>ZAP iç nesneleri</td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://javadoc.io/doc/org.zaproxy/zap">https://javadoc.io/doc/org.zaproxy/zap</a></td>
-	<td>ZAP javadocs</td>
+	<td>ZAP java dosyaları</td>
 </tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

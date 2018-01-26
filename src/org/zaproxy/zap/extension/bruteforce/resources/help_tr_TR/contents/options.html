@@ -5,23 +5,18 @@
 <title>Zorunlu Göz Atma Seçenekleri Ekranı</title>
 </head>
 <body bgcolor="#ffffff">
-	<h1>Options Forced Browse screen</h1>
+	<h1>Zorla Göz At ayarlar ekranı</h1>
 	<p>
-		This screen allows you to configure the <a href="concepts.html">Forced Browse</a>
-		options:
-	<h3>Concurrent scanning threads per host</h3>
-	The number of threads the scanner will use per host.
+		Bu ekran, <a href="concepts.html">Forced Browse</a> seçeneklerini yapılandırmanızı sağlar. Tarayıcı, ana bilgisayar başına kullanacakları iş parçacığı sayısı olarak nitelendirilen <h3>Eşzamanlı olarak ev sahibi başına tarama iş parçacığı</h3> yapılandırmasına izin verir.
 	<br>Konu sayısı arttırıldığında tarama hız kazancaktır, fakat ZAP'ın çlaıştığı bilgisayarda ve hedef bilgisayar üzerine fazladan yük binebilir.
 
-	<h3>Recursive</h3>
-	If checked then the scanner will recurse through all of the sub-directories found.
-	<br> This may take a long time.
+	Eğer tarayıcı, <h3>Recursive</h3> olarak işaretlenirse, içerdiği bütün alt dizinleri tekrarlayacaktır.
+	<br>Bu uzun zaman alabilir.
 
 	<h3>Varsayılan dosya</h3>
 ZAP başladığında seçilen varsayılan dosya.
 
-	<h3>Add custom Forced Browse file</h3>
-	Allows you to add your own files to be used when brute forcing files and directories.
+	<h3>Add custom Forced Browse file</h3> Dosya ve dizinleri güç uyguladığınız zaman kullanılacak kendi dosyalarınızı eklemenize olanak sağlar.
 	<br>Bunlar her satırda bir dosya veya dizin adı olan metin dosyaları olmaldır.
 	<br> Dosyalar, ZAP girişinin altındaki 'dirbuster' dizinine dahil edilir.
 
