@@ -19,21 +19,18 @@ Bu kural PHP ve ASP saldırı string'lerini URL parametreleri için değerler ol
 Herhangi bir eşleşme yoksa, tarayıcı, sunucuya ürünü yazmasını söyleyen birçok ASP dizesiyle istekler oluşturur.
 iki adet rastgele oluşturulmuş tamsayı. Yanıt gövdesi ürüne uyuyorsa, bir uyarı oluşturulur.
 
-<h2>Command Injection</h2>
-
-This rule submits *NIX and Windows OS commands as URL parameter values to determine whether or not the web application is passing unchecked
-user input directly to the underlying OS. The injection strings consist of meta-characters that may be interpreted by the OS
-as join commands along with a payload that should generate output in the response if the application is vulnerable. If the content of a response body
-matches the payload, the scanner raises an alert and returns immediately. Hata tabanlı eşleme denemelerinin hiçbirinin yapılmaması durumunda
+<h2>Komut Enjeksiyonu</h2>
+Bu kural *NIX ve Windows OS komutlarında web uygulamasının kontrol edilmeden ele geçip geçmediğini belirlemek için URL parametresi değerlerinde olarak gönderir
+kullanıcı girdisini doğrudan İşletim Sistemine. Enjeksiyon dizileri OS tarafından yorumlanabilecek meta karakterlerden meydana gelmektedir
+uygulama savunmasızsa yanıt verirken çıktısı üretmesi gereken bir yükle birlikte birleştirme komutları olarak kullanılabilir. Yanıt gövdesi içeriği yük ile uyuşursa, tarayıcı bir uyarı verir ve derhal geri döner. Hata tabanlı eşleme denemelerinin hiçbirinin yapılmaması durumunda
 yanıtta çıktıyı döndür tarayıcı uyku talimatlarını yük olarak göndererek ve isteği gönderme arasındaki geçen süreyi karşılaştırarak kör bir enjeksiyon saldırısı yapmaya çalışır
-ve sezgisel gecikme alt sınırına karşı cevap alır. If the elapsed time is greater than this limit, an alert is raised with medium confidence
-and the scanner returns immediately.
+ve sezgisel gecikme alt sınırına karşı cevap alır. Geçen süre bu sınırın üzerindeyse, orta bir güvenle bir uyarı artırılır ve tarayıcı derhal geri döner.
 <br>
 Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 
-<h2>Client Browser Cache</h2>
+<h2>Müşteri Tarayıcı Önbelleği</h2>
 
-This rule checks the headers of secure pages and reports an alert if they allow a browser to cache the page.
+Bu kural güvenli sayfaların üstbilgisini kontrol eder ve tarayıcı sayfayı önbelleğe almasına izin veriyorsa bir uyarı rapor eder.
 
 <h2>Siteler Arası Komut Dosyası Çalışması (yansıtılan)</h2>
  Bu kural, bir 'güvenli' değer göndererek ve tüm bu değer (varsa) yanıtta oluştuğu konumları analiz başlar. <br>
@@ -54,36 +51,27 @@ bir uyarı oluşur ve tarayıcı hemen geri döner.
 Bu kural, Apache, IIS ile kullanılan desenler için yanıt gövdesini inceleyerek bir isteğin dizin listesine erişim sağlayıp sağlamadığını kontrol eder.
 ve diğer web sunucusu yazılımları.
 
-<h2>External Redirect</h2>
+<h2>Harici Yönlendirme</h2>
+Bu kural bir çeşitli URL yönlendirme parametre değerleri olarak dizilerin isteklerini gönderir; ardından yönlendirmelerin gerçekleşip gerçekleşmediğini ve hangi türde olup olmadığını belirlemek için yanıtların başlıklarını ve gövdelerini saptar. Yönlendirmenin neden "Konum" ve "Yenile" başlık alanlarında olduğu için HTML meta etiketleri tarafından da aranır. Yeniden yönlendirme türü dahil olmak üzere bir uyarı yükseliyor ve tarayıcı hemen geri dönüyor.
 
-This rule submits a variety of URL redirect strings as parameter values in a request, then examines the headers and bodies of responses to determine
-whether or not a redirect occurred and of what type. The cause of redirect is searched for in the "Location" and "Refresh" header fields, as well as by HTML meta tags
-and Javascript in the body of the response. An alert is raised including the redirection type and the scanner returns immediately.
-
-<h2>Format String Error</h2>
-Looks for indicators of format string handling errors in compiled code.  Bu, düzenlenmiş karakterlere dayanan girdi metni dizelerini yerleştirerek yapar C kodunun biçimlendirilmiş çıktı üretmesini, kod çökmesini ve anormal oturum kapatmalarını öngörür.
+<h2>Biçim Dizi Hatası</h2>
+Derlenmiş kodun biçim dizisi kullanma hatalarının göstergelerine bakar.  Bu, düzenlenmiş karakterlere dayanan girdi metni dizelerini yerleştirerek yapar C kodunun biçimlendirilmiş çıktı üretmesini, kod çökmesini ve anormal oturum kapatmalarını öngörür.
 
 
-<h2>Parameter Tampering</h2>
+<h2>Parameter Kurcalanması</h2>
+Bu kural yanlış ele alındığında kullanıcılara görünmesi gereken hatalara neden olduğu bilinen parametre değerleriyle istek gönderilir. Yanıtlar, bir sunucu hata durumu kodu döndürdükten sonra kötü bir parametrenin çıktı üzerinde bir etkisi olmazsa, bir uyarı oluşturmadığından emin olmak için normal bir HTTP yanıtıyla karşılaştırılarak kontrol edilir. Son olarak, yanıt gövdesinin içeriği, Java servlet, Microsoft VBScript, OLE DB, JET, PHP ve Tomcat hatalarında bulunabilen çeşitli modellerle karşılaştırılır. Eğer bir eşleşme bulunursa, bir uyarı oluşturulur ve tarayıcı anında döner.
 
-This rule submits requests with parameter values known to cause errors to be displayed to the user if handled improperly. Responses are checked to make sure that they return
-a server error status code, then compared with a normal HTTP response to make sure it does not raise an alert if the bad parameter has no effect on output. Finally, the content
-of the reponse body is compared against various patterns that may be found in Java servlet, Microsoft VBScript, OLE DB, JET, PHP and Tomcat errors. If a match is found, an alert is raised and
-the scanner returns immediately.
-
-<h2>Path Traversal</h2>
-
-This rule attempts to access files and directories outside of the web document root by constructing various combinations of pathname prefixes
-and local file targets for Windows and *NIX systems as well as Java servlets. If the body of the response matches a pattern corresponding to the
-current target file an alert is raised and the scanner returns immediately. If none of the common local file targets succeed, path traversal is 
-attempted using the filename in the URL. As long as submitting an arbitrary filename does not return an OK status code but the real filename does, an alert is raised
-and the scanner returns immediately.
+<h2>Yol Geçişi</h2>
+Bu kural yol adı öneklerinin çeşitli kombinasyonlarını çizerek web belgesi temeli dışında dosya ve dizinlere erişmeye çalışır
+ve yerel dosya hedefleri Windows ve *NIX sistemleri için Java servletleridir. Eğer yanıtın gövdesiyle eşleşen bir desene uyuyorsa
+geçerli hedef dosyada bir uyarı yükselir ve tarayıcı hemen dönüş yapar. Eğer sıradan yerel dosya hedefleri başarılıyorsa, yol geçişleri
+URL içinde dosya adını kullanmaya kalkışır. İsteğe bağlı bir dosya adı göndermenin bir OK durum koduna dönmediğinde, ancak gerçek dosya adının yaptığı sürece bir uyarı yükselir 
+ve tarayıcı hemen döner.
 
 <h2>Uzak Dosya Dahil Et</h2>
 
 Bu kural, parametre değerleri olarak harici URL'ler içeren bir dizi istek gönderir ve yanıt gövdesi ile sayfanın başlığı arasında bir eşleşme arar.
-Bu URL'lerde barındırılan. If there is a match between the expected string and the response body, and the header returned a status code of 200, an alert is raised and the scanner
-returns immediately.
+Bu URL'lerde barındırılan. Eğer beklenen diziler ve gövde yanıtı bir eşleşme arasındaysa, ve başlıklar durum kodu 200'e dönüyorsa, bir uyarı oluşur ve tarayıcı hemen dönüş yapar.
 
 <h2>Sunucu Tarafı Dahil Et</h2>
 
@@ -92,8 +80,8 @@ SSI başarılı olduğunu gösteren bir desen, bir uyarı oluşturulur ve taray�
 
 <h2>SQL Enjeksiyon</h2>
 Bu tarayıcı, hata tabanlı, boolean tabanlı, Union tabanlı ve yığılmış sorgu SQL Enjeksiyon teknikleri kullanılarak, url parametrelerine ve URL'lerin geçerli ve geçersiz SQL sözdizimi parçaları ile saldırıya uğramasına bağlı olarak RDBMS'den bağımsız, SQL Enjeksiyon güvenlik açıklarını tarar. <br>
-This scanner may be able to fingerprint the RDBMS if the application throws a known RDBMS specific SQL error message. <br>
-This scanner does not exploit any RDBMS specific techniques, and so is the best SQL injection scanner to use as a starting point. 
+Bu tarayıcıda uygulama bilinen bir RDBMS özel SQL hata mesajı verirse RDBMS'de parmak izi verebilir. <br>
+Bu tarayıcı herhangi bir RDBMS özel tekniklerini kullanmaz, ve başlangıç noktası için kullanılabilecek en iyi SQL enjeksiyon tarayıcıdır. 
 
 </body>
 </html>
