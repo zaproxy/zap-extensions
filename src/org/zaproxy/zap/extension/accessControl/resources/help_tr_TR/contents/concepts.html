@@ -3,15 +3,14 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Access Control Testing
+        Erişim Kontrolu Testi
     </title>
 </head>
 <body bgcolor="#ffffff">
 <h1>Erişim Kontrolü Testi</h1>
 
 <p>
-    Bu eklenti, kullanıcıların bir web uygulamasında hangi bölümleri bazı kullanıcıların kullanabileceğini karşılaştırabilir, erişim denetimi yapabilir.    potansiyel erişim kontrolü sorunlarını belirleme ve tanımlama. It allows configuration of access rules and conducts a full
-    attack aimed to help identify sections of a web application which are accessible by unauthorized clients.
+    Bu eklenti, kullanıcıların bir web uygulamasında hangi bölümleri bazı kullanıcıların kullanabileceğini karşılaştırabilir, erişim denetimi yapabilir.    potansiyel erişim kontrolü sorunlarını belirleme ve tanımlama. Bu, erişim kurallarının yapılandırılmasına izin verir ve yetkisiz müşteriler tarafından erişilebilen bir web uygulamasının bölümlerini tanımlamaya yardımcı olmak için tam bir saldırı gerçekleştirir.
 </p>
 
 <p>
@@ -29,7 +28,7 @@
 <p>The rules are configured for a Context and, for each User of that Context, each Site Node (web page) will be
     associated to one of the following values:</p>
 <ul>
-    <li><b>Allowed</b> - the resource <b>can</b> be accessed by the User to which the rule refers</li>
+    <li><b>İzin verilen</b> - Kuralla ilgili olan Kullanıcı tarafından kaynak erişilebilirdir</li>
     <li><b>Denied</b> - the resource <b>should not</b> be accessed by the User to which the rule refers</li>
     <li><b>Unknown</b> - there is <b>no information</b> regarding whether the resource should or shouldn't be accessible
         to the User to which the rule refers
@@ -38,10 +37,8 @@
 
 <p>
     Erişim kuralların tanımlatma aşamasını kolaylaştırmak için ZAP, ağaç tabanlı URL'lerin yapısını kullanmaktadır.
-    When analyzing the rules, an inference algorithm is used to detect the matching rules for each node based on its
-    parent in the URL if no particular rules are defined. This means that, when configuring the access rules, only 1
-    rule needs to be set explicitly for an entire subtree, while for the other nodes rules are inferred. More details
-    about this can be found on the Access Control <a href="contextOptions.html">Context options</a> help page.</td>
+    Kurallar analiz edilirken, eğer tanımlanmış belirli bir kural yoksa her düğüm ve URL'deki ana düğümüne bağlı eşleşen kuralları bulmak için çağrışım algoritmasi kullanıldı. Bu, erişim kurallarını yapılandırırken, diğer düğümler için kurallar çıkarsa da yalnızca bir alt ağacın tamamı için yalnızca 1 kuralın ayarlanması gerektiği anlamına gelir. Bunu hakkında
+    daha fazla detay Erişim Kontrolu <a href="contextOptions.html">Bağlam seçenekleri</a> yardım sayfasında bulunabilir.</td>
 </p>
 
 <h3>Test etme prosedürü</h3>
@@ -50,12 +47,11 @@
 <ul>
     <li>test kullanıcılarını ve kimlik doğrulamayı tanımlar;
     </li>
-    <li>the tester defines how ZAP can identify un-authorized requests (via the Authorization panel in the Session
-        Properties);
+    <li>test edici ZAP'in dığrulanmamış istekleri nasıl belirleyebileceğini tanımlar (Oturum Özelliklerinde
+        Doğrulama paneli üzerinden);
     </li>
     <li>web uygulaması manuel olarak yada örümcek aracılığıyla araştırılır;</li>
-    <li>the tester define the Access Rules for each of the Users associated to the Context, basically letting ZAP know
-        which parts of the web application are supposed to be accessed by which users;
+    <li>test eden kiş, Durum ile ilişkili Kullanıcıların her biri için Erişim Kurallarını tanımlar ve temelde ZAP'e web uygulamasının hangi bölümlerine hangi kullanıcıların erişebileceğini bildirir;
     </li>
     <li>an ‘attack’ is performed by ZAP by trying to access every URL of the web-app from the perspective of every
         user;
@@ -65,19 +61,19 @@
     </li>
 </ul>
 
-<h2>See also</h2>
+<h2>Ayrıca bakınız</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
             <a href="tab.html">Erişim Kontrolü Test Sekmesi</a></td>
-        <td>for a description of the status tab used by the add-on</td>
+        <td>eklenti tarafından kullanılan durum sekmesinin bir açıklaması için</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="contextOptions.html">Access Control Context options</a></td>
-        <td>to learn about the related context options</td>
+            <a href="contextOptions.html">Erişim Kontrolu Bağlam seçenekleri</a></td>
+        <td>ilişkili bağlam seçenekleri konusunda öğrenmek için</td>
     </tr>
 </table>
 

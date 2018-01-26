@@ -10,14 +10,14 @@
 
   <view>
     <name>TOC</name>
-    <label>Contents</label>
+    <label>İçerikler</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>
 
   <view>
     <name>Index</name>
-    <label>Index</label>
+    <label>Dizin</label>
     <type>javax.help.IndexView</type>
     <data>index.xml</data>
   </view>

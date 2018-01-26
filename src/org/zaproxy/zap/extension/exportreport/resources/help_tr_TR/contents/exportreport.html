@@ -3,24 +3,24 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>
-            Export Report
+            Raporu Dışa Aktar
         </title>
     </head>
 
     <body bgcolor="#ffffff">
 
-        <h1><u>Export Report</u></h1>
-        Report Export module that allows users to customize content and export in a desired format.
+        <h1><u>Raporu Dışa Aktar</u></h1>
+        Rapor İhracat modülü kullanıcıların içeriği özelleştirmelerine ve istenen biçimde dışa aktarmasına olanak sağlar.
         <ul>
-            <li>Created by <a href="https://github.com/JordanGS">JordanGS</a>.</li>
+            <li>JordanGS tarafından yaratıldı.</li>
             <li>Minimum Supported Version: Weekly Release ZAP_D-2016-09-05</li>
-            <li>Project on  <a href="https://github.com/JordanGS/workspace">GitHub</a>. You can also find a .zip of the minimum supported release in the zap-download folder.</li>
+            <li><a href="https://github.com/JordanGS/workspace">GitHub</a>üzerinde proje. En az desteklenen sürümün bir zip dosyasını zap-download klasöründe de bulabilirsiniz.</li>
             <li>Supported and incorporated in the <a href="https://wiki.jenkins-ci.org/display/JENKINS/zap+plugin">Official OWASP Zed Attack Proxy Jenkins Plugin</a>.</li>
         </ul>
 
         <h2><u>İçindekiler Tablosu</u></h2>
         <ul>
-            <li>ZAP UI</li>
+            <li>ZAP Kullanıcı Arayüzü</li>
             <li>Komut Satırı</li>
             <li>API Calls</li>
         </ul>
@@ -28,59 +28,59 @@
         <hr>
 
         <a name="zap-ui"></a> 
-        <h2><u>ZAP UI</u></h2>
+        <h2><u>ZAP Kullanıcı Arayüzü</u></h2>
 
-        <h4>Source Info</h4>
-        User entered and automatically retrieve data relevant to the report. Hover over each field in the extension for tool tip.
+        <h4>Kaynak Bilgisi</h4>
+        Kullanıcı girdi ve raporla ilgili otomatik olarak alır. Her alan için araç ipucu uzantısı üzerine gelin.
         <ul>
-            <li>Title - Defaults to Session Name</li>
-            <li>By</li>
-            <li>For</li>
-            <li>Scan Date - User entered date of AScan, defaults to current date-time</li>
-            <li>Report Date - Defaults to current date-time</li>
-            <li>Scan Version - Placeholder for future</li>
-            <li>Report Version - Defaults to current version of ZAP tool</li>
+            <li>Başlık-Oturum Adı Varsayılan</li>
+            <li>Tarafından</li>
+            <li>İçin</li>
+            <li>Tarama Tarihi-Kullanıcı tarafından AScan'a girilen tarih, varsayılan olarak geçerli tarih-saat'e ayarlıdır</li>
+            <li>Rapor Tarihi - Varsayılan mevcut tarih ve saat</li>
+            <li>Tarama Sürümü - Gelecek için yer tutucu</li>
+            <li>Rapor Sürümü - Varsayılan ZAP aracının mevcut sürümü</li>
         </ul>
-        <h4>UI</h4>
+        <h4>Kullanıcı Arayüzü</h4>
         <ul style="list-style-type:none">
             <li>
-                <img src="images/SourceInfo.png" alt="Source Info">
+                <img src="images/SourceInfo.png" alt="Kaynak Bilgisi">
             </li>
         </ul>
         <br>
 
-        <h4>Alert Severity</h4>
+        <h4>Uyarının Önem Derecesi</h4>
         Include/Exclude Alerts by Severity.
-        <h4>Included by Default</h4>
+        <h4>Varsayılan tarafından dahil edildi</h4>
         <ul>
             <li>Yüksek</li>
             <li>Orta</li>
             <li>Düşük</li>
-            <li>Informational</li>
+            <li>Bilgilendirici</li>
         </ul>
-        <h4>UI</h4>
+        <h4>Kullanıcı Arayüzü</h4>
         <ul style="list-style-type:none">
             <li>
-                <img src="images/AlertSeverity.png" alt="Source Info">
+                <img src="images/AlertSeverity.png" alt="Kaynak Bilgisi">
             </li>
         </ul>
         <br>
 
         <h4>Uyarı Detayları</h4>
-        Include/Exclude Details of each Alert.
-        <h4>Included by Default</h4>
+        Her uyarının ekle / dışla detayları.
+        <h4>Varsayılan tarafından dahil edildi</h4>
         <ul>
-            <li>CWE ID</li>
-            <li>WASC ID</li>
-            <li>Description</li>
-            <li>Other Info</li>
-            <li>Solution</li>
-            <li>Reference</li>
+            <li>CWE Kimliği</li>
+            <li>WASC Kimliği</li>
+            <li>Açıklama</li>
+            <li>Diğer Bilgiler</li>
+            <li>Çözüm</li>
+            <li>Referans</li>
         </ul>
 
-        <h4>Excluded by Default</h4>
+        <h4>Varsayılan tarafından dışlandı</h4>
         <ul>
-            <li>Request Header</li>
+            <li>İstek Üstbilgisi</li>
             <li>Response Header</li>
             <li>Request Body</li>
             <li>Response Body</li>
@@ -90,14 +90,14 @@
 
         <ul style="list-style-type:none">
             <li>
-                <img src="images/Alert Details.png" alt="Source Info">
+                <img src="images/Alert Details.png" alt="Kaynak Bilgisi">
             </li>
         </ul>
 
         <hr>
 
         <h4>Dosya Seçici Diyaloğu</h4>
-        The dialog only shows folders and accepted file types. The 'Files of Type' drop down list will filter to show only folders and files of the specified extension.
+        Iletişim kutusu yalnızca klasörleri ve kabul edilen dosya türlerini gösterir. 'Dosya Türü' açılır listede, yalnızca belirtilen uzantıların klasörlerini ve dosyalarını gösterecek şekilde filtrelenir.
 
         <h4>Şu anda Mevcut</h4>
         <ul>
@@ -294,7 +294,7 @@
                         </ul>
                     <li>
                     <li>
-                        <h4>Input format:</h4>
+                        <h4>Giriş formatı:</h4>
                         <ul>
                             <li>Only accepts a string list with ';' delimiter</li>
                         </ul>
@@ -353,7 +353,7 @@
 
         The restrictions are the same as those for Command Line above.
 
-        <h4>Usage Example:</h4>
+        <h4>Kullanım örneği:</h4>
         <blockquote><pre><code>
 Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
 String API_KEY = "ZAPROXY-PLUGIN"
