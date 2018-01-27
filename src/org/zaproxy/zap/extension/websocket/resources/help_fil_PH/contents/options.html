@@ -7,37 +7,37 @@ WebSocket specific options
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>WebSocket specific options</h1>
+<h1>WebSocket na tumutukoy ng mga opsyon</h1>
 <p>
-This screen allows you to configure the WebSocket options:
+Ang screen ay pinapayagan ka na i-configure sa WebSocket na mga opsyon:
 
-<h3>Forward all</h3>
-If you're not interested in WebSockets communication, but you want to allow its messages being sent back &amp; forth through ZAP, then you should enable this option.
-As a result no message will be stored in the session database. Moreover no message will appear in the WebSockets tab. This setting can be useful if you have to deal with performance critical WebSocket connections and you're not interested what is being sent.
+<h3>Pasulong sa lahat</h3>
+Kung ikaw ay hindi interesado sa mga WebSocket na komunikasyon, ngunit ikaw ay gusto nagpapahintulot sa mga mensahe na pinapadala uli &amp; sa pamamagitan ng ZAP, kung kayo ay nagpagana sa opsyon na ito.
+Gaya ng resulta na walang mensahe ay ma-imbak sa sesyon na database. Bukod sa walang mensahe na lilitaw sa mga WebSocket na tab. Ang setting na ito ay maaaring maging kapaki-pakinabang kung ikaw ay may pakikitungo sa pagganap kritikal WebSocket na mga koneksyon at hindi ka interesado kung ano ang ipinadala.
 <br><br>
-If you want to ignore just one specific channel, check out the WebSocket specific <i>Session Properties</i>.
+Kung gusto mong iwasan ang isang tinutukoy na channel, tingnan ang WebSocket na tinutukoy <i>Mga katangian ng Sesyon</i>.
 
 
-<h3>Break on all</h3>
-In the <i>Break</i> toolbar, there are two buttons:
+<h3>Masira sa lahat</h3>
+At ang <i>Break</i> kasangkapan, mayroong dalang mga pindutan:
 <ul>
-	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all requests</i></li>
-	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all responses</i></li>
+	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>I-Set break sa lahat ng mga kahilingan</i></li>
+	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>I-Set break ang lahat ng mga tugon</i></li>
 </ul>
-When you enable this option, then all outgoing (respectively incoming) WebSocket messages are also caught by these control buttons.
+Kapag pinagana mo ang opsyon na ito, pagkatapos ay lahat ng lumalabas (ayon sa pagkakabanggit na pagpasok) na WebSocket na mga mensahe ay nahuli din sa pamamagitan ng mga control button.
 <br><br>
-By default this option is disabled. In this case only HTTP messages are caught, but you can add explicit breakpoints on WebSocket communication in the <a href="tab.html">WebSocket tab</a>. 
+Ayon sa default ang opsyon ay hindi pinagana. Sa kasong ito lamang ang HTTP na mga mensahe ay nahuli, ngunit maari kang magdagdag ng tahasang mga breakpoint sa WebSocket komunikasyon sa mga <a href="tab.html">Ang WebSocket tab</a>. 
 
 
-<h3>Break on Ping &amp; Pong messages</h3>
-<i>PING</i> and <i>PONG</i> messages are often used by WebSocket servers to determine the health of the current connection. If you catch an incoming <i>PING</i> message, the browser is not able to return a <i>PONG</i> message immediately, resulting in a bad latency value.
+<h3>Magsira sa Ping &amp; Pong na mga mensahe</h3>
+<i>PING</i> at <i>PONG</i> mga mensahe ay madalas ginagamit sa pamamagitan ng WebSocket na mga server para matukoy ang kalusugan ng kasalukuyang koneksyon. Kung ikaw ay makakuha ng padating <i>PING</i> ang mensahe, ang browser ay hindi maka balik sa <i>PONG</i> ang mensahe kaagad, nagreresulta sa isang masamang latency na halaga.
 <br><br>
-If this option is disabled no <i>PING</i> or <i>PONG</i> message is caught when you:
+Kung ang opsyon na ito ay hindi pinagana <i>PING</i> o <i>PONG</i> ang mensahe ay nakuha kung ikaw:
 <ul>
-	<li>set a breakpoint on <u>all requests</u> or <u>all responses</u>, <i>or</i></li>
-	<li>step through to the next request or response and a <i>PING</i> or <i>PONG</i> message arrives</li>
+	<li>i-set ang breakpoint sa <u>lahat ng mga kahilingan</u> or <u>lahat ng mga tugon</u>, <i>or</i></li>
+	<li>hakbang sa pamamagitan ng sunod na kahilingan o tugon at isang <i>PING</i> or <i>PONG</i> na mensaheng darating</li>
 </ul>
-This setting does not affect breakpoints that are set explicitly on <i>PING</i> or <i>PONG</i> messages. You can view such explicit breakpoints in the <i>Breakpoints tab</i>.
+Ang setting na ito ay hindi apektado sa mga breakpoint na mga naka-set explicitly sa <i>PING</i> o <i>PONG</i> messages. You can view such explicit breakpoints in the <i>Breakpoints tab</i>.
 
 <h3>Remove <code>Sec-WebSocket-Extensions</code> header</h3>
 Allows to remove the HTTP header <code>Sec-WebSocket-Extensions</code> from handshake messages, so no transformations are done

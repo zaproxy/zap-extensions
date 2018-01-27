@@ -30,7 +30,7 @@ Varsayılanlar tarafından bu ayar kapatıldı. Bu durumda yalnızca HTTP iletil
 
 
 <h3>Break on Ping &amp; Pong messages</h3>
-<i>PING</i> ve <i>PONG</i> mesajları, WebSocket sunucuları tarafından geçerli bağlantının sağlığını saptamak için sık sık kullanılır. Eğer gelen bir yakalarsanız <i>PING</i> iletisi, tarayıcı geri döndürememektedir bir <i>PONG</i> message immediately, resulting in a bad latency value.
+<i>PING</i> ve <i>PONG</i> mesajları, WebSocket sunucuları tarafından geçerli bağlantının sağlığını saptamak için sık sık kullanılır. Eğer gelen bir yakalarsanız <i>PING</i> iletisi, tarayıcı geri döndürememektedir bir <i>PONG</i> mesajı hemen göndererek hatalı gecikme değeri oluşturur.
 <br><br>
 Eğer seçenekteki hayır devre dışı bırakılırsa <i>PING</i> veya <i>PONG</i> iletisi yakaladığın zaman:
 <ul>
@@ -40,8 +40,7 @@ Eğer seçenekteki hayır devre dışı bırakılırsa <i>PING</i> veya <i>PONG<
 Bu ayar açıkça belirlenen kesme noktalarını etkilemez <i>PING</i> veya <i>PONG</i> mesajları. Bu tür açık kesme noktalarını görüntüleyebilirsiniz <i>Breakpoints sekmesinde</i>.
 
 <h3>Sec-WebSocket-Uzantıları üstbilgisini kaldırın</h3>
-HTTP bağlantısını kaldırmaya izin verir <code>Sec-WebSocket-Uzantıları</code> from handshake messages, so no transformations are done
-to the WebSocket messages sent/received.<br>
+HTTP bağlantısını kaldırmaya izin verir <code>Sec-WebSocket-Uzantıları</code> el sıkışma mesajlarından, bu nedenle gönderilen/alınan WebSocket mesajlarına dönüştürme yapılmaz.<br>
 Bu seçenek, istemci veya test edilen sunucu gerektirmediği sürece daima etkinleştirilmelidir. Uzantılar kullanılırken WebSocket iletileri ZAP tarafından doğru şekilde işlenemeyebilir.
 
 </body>
