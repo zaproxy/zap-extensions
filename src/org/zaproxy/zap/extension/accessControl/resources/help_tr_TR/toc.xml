@@ -5,10 +5,10 @@
 
 <toc version="2.0">
 	<tocitem text="ZAP Kullanıcı Kılavuzu" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+		<tocitem text="Eklentiler" tocid="addons">
 			<tocitem text="Erişim Kontrol Denemesi" image="accessControl.icon" target="accessControl.concepts" >
 				<tocitem text="Sekme" target="accessControl.tab"/>
-				<tocitem text="Context Options" target="accessControl.contextOptions"/>
+				<tocitem text="Bağlam Seçenekleri" target="accessControl.contextOptions"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

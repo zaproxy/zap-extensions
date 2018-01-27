@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 <helpset version="2.0" xml:lang="tr-TR">
-  <title>SOAP Scanner | ZAP Extension</title>
+  <title>SOAP Tarayıcısı | ZAP Uzantısı</title>
 
   <maps>
      <homeID>top</homeID>
@@ -24,7 +24,7 @@
 
   <view>
     <name>Search</name>
-    <label>Search</label>
+    <label>Arama</label>
     <type>javax.help.SearchView</type>
     <data engine="com.sun.java.help.search.DefaultSearchEngine">
       JavaHelpSearch
@@ -33,7 +33,7 @@
 
   <view>
     <name>Favorites</name>
-    <label>Favorites</label>
+    <label>Favoriler</label>
     <type>javax.help.FavoritesView</type>
   </view>
 </helpset>
