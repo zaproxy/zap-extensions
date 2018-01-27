@@ -3,82 +3,75 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Passive Scan Rules - Beta
+Pasibong Patakaran ng pagsusuri - Beta
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Passive Scan Rules - Beta</h1>
-The following beta quality passive scan rules are included in this add-on:
+<h1>Mga Patakaran ng Pasibong Pagsusuri-Beta</h1>
+Ang sumusunod na mga patakaran ng kalidad ng pasibong pagsusuri ng beta ay kasama sa add-on:
 
-<h2>Charset Mismatch</h2>
-<p>This check identifies responses where the HTTP Content-Type header declares a charset different from the charset defined by the body of the HTML or XML. When there's a charset mismatch between the HTTP header and content body Web browsers can be forced into an undesirable content-sniffing mode to determine the content's correct character set.</p>
-<p>The scanner handles various conditions depending on the Threshold set for the scanner, as follows:</p>
+<h2>Hindi tugmang Charset</h2>
+<p>Ang pagsiyasat ng mga tinukoy sa mga pagtugon kung saan ang nilalaman ng HTTP-Tipo ng header ng mga idiniklara ay ang pagkakaiba ng charset mula sa tinukoy na charset sa pamamagitan ng HTML o XML. Kung mayroong isang hindi tugmang charset sa pagitan ng HTTP header at katawan ng nilalaman ng mga Web Browser ay maaaring ipilit sa isang hindi kanais-nais na nilalaman-sniffing mode upang matukoy ang nilalaman ng tama ang karakter na itinakda.</p>
+<p>Ang nagsusuri ay mga naghahawak ng mga sari-saring mga kondisyon depende sa itinakda ng Threshold para sa nagsusuri, tulad ng mga sumusunod:</p>
 <ul>
-  <li>All Thresholds:
+  <li>Lahat ng mga Threshold:
     <ul>
-      <li>Header Versus Meta Content-Type Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Content-Type tag.</li>
-      <li>Header Versus Meta Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Charset tag.</li>
+      <li>Header Laban sa Nilalaman ng Meta-Tipo ng Charset - Ang deklarasyon ng Nilalaman ng HTTP-Tipo ng header ay hindi tugma kung ano ang idineklara sa isang Nilalaman ng Meta-Tipo ng tag.</li>
+      <li>Header Laban ng Meta Charset - Ang deklarasyon ng Nilalaman ng HTTP-Tipo ng header ay hindi tugma sa kung ano ang idineklara sa isang Meta Charset ng tag.</li>
     </ul>
   </li>
-  <li>Low Threshold:
+  <li>Mababang Threshold:
     <ul>
-      <li>Meta Content-Type Charset Missing - The response doesn't contain a META Content-Type declaration, which may overlook older clients.</li>
-      <li>Meta Charset Versus Meta Content-Type Charset - The response contains both a META Content-Type declaration and a META Charset declaration, and they don't match.</li>
+      <li>Nilalaman ng Meta-Tipo ng Nawawalang Charset - Ang pag-tugon ay hindi naglalaman ng isang nilalaman ng META-Tipo ng deklarasyon, na maaaring makita ng lumang mga kliyente.</li>
+      <li>Meta Charset Laban sa Nilalaman ng Meta-Tipo ng Charset - Ang mga nilalaman ng parehong pagtugon ng deklarasyon na Nilalaman ng Meta-Tipo at ang deklarasyon ng Meta Charset, at sila'y hindi magkatugma.</li>
     </ul>
   </li>
 </ul>
-Further reference:<br>
+Ang mga karagdagang saggunian:<br>
 <a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
 <a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
 
-<h2>Cookie - Loosely Scoped</h2>
-Cookies can be scoped by domain or path. This check is only concerned with domain scope.The domain scope applied to a cookie determines which domains can access it. For example, a cookie can be scoped strictly to a subdomain e.g. www.nottrusted.com, or loosely scoped to a parent domain e.g. nottrusted.com. In the latter case, any subdomain of nottrusted.com can access the cookie. Loosely scoped cookies are common in mega-applications like google.com and live.com.
+<h2>Cookie - Maluwag na saklaw</h2>
+Ang mga Cookie ay maaaring i-saklaw ng dominyon o daan. Itong pagsisiyasat ay nag-aalala lamang kasama sa saklaw ng dominyon. Ang saklaw ng dominyon ay inilapat sa isang cookie na mga tumutukoy kung aling mga dominyon ang maa-access ito. Halimbawa, ang isang cookie ay maaaring strikto sa pagsaklaw sa isang subdomain hal. www.nottrusted.com, o luwagan ang sinaklawan na parent dominyon hal. nottrusted.com. Sa huling kaso, anuman ang subdomain ay nottrusted.com ay maaaring i-access ang cookie. Luwagan ang saklaw ng mga cookie na karaniwan sa mga mega-aplikasyon tulad ng google.com at live.com.
 
-<h2>CSRF Countermeasures</h2>
-The CSRFCountermeasures plugin identifies "potential" vulnerabilities with the lack of known CSRF 
-countermeasures in pages with forms.<br>
-Post 2.5.0 you can specify a comma separated list of identifiers in the 
-<code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.
-Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
-Only use this feature to ignore FORMs that you know are safe, for example search forms.
+<h2>CSRF Mga Countermeasure</h2>
+Ang mga CSRFCountemeasure na plugin ay kinikilala ang "potensyal" na mga kahinaan kasama ang kakulangan ng kilalang mga CSRF countermeasure ng mga pahina kasama ang mga form.<br>
+I-post ang 2.5.0 na maaaring matukoy ng isang kuwit na paghiwalayin ang listahan ng mga pagkakakilanlan sa mga 
+<code>rules.csrf.ignorelist</code> parametro sa pamamagitan ng mga pagpipilian 'Kumpigura ng patakaran' ng panel.
+Ang anumang mga FORM kasama ng isang pangalan o ID ng mga tumutugma sa isa sa mga tumutukoy ay maaaring hindi pansinin habang sinusuri para sa nawawalang mga Anti-CSRF.
+Gumamit lamang ng mga tampok na hindi pinapansin ang mga FORM na alam mong ito ay ligtas, halimbawa hanapin ang mga form.
 
 
-<h2>Information Disclosure: Debug Errors</h2>
-This passive scanner checks the content of web responses for known Debug Error message fragments.
-Access to such details may provide a malicious individual with means by which to further abuse the web site.
-They may also leak data not specifically meant for end user consumption.
+<h2>Paglalantad ng Impormasyon: Mga mali sa pag-debug</h2>
+Itong Pasibong pagsusuri na mga nagsisiyasat sa nilalaman ng mga pagtugon ng web para sa kilalang kamalian ng Debug sa mensahe sa mga fragments.
+Ang pag-access sa mga naturang mga detalye ay maaaring magbigay ng isang malisosyong indibidwal kasama na nangangahulugan na kung saan ay naglalayon na abusuhin ang web site.
+Maaari din mag-leak ang datos nila ng partikular na hindi sinasadya para sa pagkonsumo ng pagtatapos ng gumagamit.
 
-<h2>Information Disclosure: In URL</h2>
-Attempts to identify the existence of sensitive details within the visited URIs themselves 
-(this may include parameters, document names, directory names, etc.).
+<h2>Paglalantad ng Impormasyon: Sa URL</h2>
+Ang mga pagtatangka na tukuyin ang pag-iral ng mga detalyeng sensitibo sa loob ng pagbisita sa mga URl ng mga ito. (maaari nitong isama sa mga parametro, mga pangalan ng dokumento, mga pangalan ng taga-pangasiwa, at iba pa).
 
-<h2>Information Disclosure: Referrer</h2>
-Identifies the existence of sensitive details within the the Referrer header field of HTTP requests
-(this may include parameters, document names, directory names, etc.).
+<h2>Paglalantad ng Impormasyon: Ang Tumutukoy</h2>
+Kinikilala nito ang pag-iral ng mga detalyeng sensitibo sa loob ng header ng taga-tukoy sa field ng mga kahilingan ng HTTP (maaari nitong isama ang mga parametro, mga pangalan ng dokumento, mga pangalan ng taga-pangasiwa at iba pa).
 
-<h2>Information Disclosure: Suspicious Comments</h2>
-Analyzes web content to identify comments which contain potentially sensitive details. Which may lead to 
-further attack or exposure of unintended data.
+<h2>Paglalantad ng Impormation: Mga Komentong Kahina-hinala</h2>
+Sinusuri nito ang nilalaman ng web upang tukuyin ang mga komento kung saan naglalaman ng may potensyal na sensitibong mga detalye. Na kung saan ay naglalayong umatake o malantad ang hindi intensyon na datos.
 
-<h2>Insecure Authentication</h2>
-HTTP basic or digest authentication has been used over an unsecured connection. The credentials can be read and then reused by someone with access to the network.
+<h2>Hindi ligtas na nagpapatunay</h2>
+Ang HTTP basic o ang pagpapatunay ng digest ay ginamit sa isang hindi ligtas na koneksyon. Ang kredensyal ay maaaring basahin at pagkatapos gamitin muli ng isang taong may access sa network.
 
-<h2>Insecure JSF ViewState</h2>
-The response at the following URL contains a ViewState value that has no cryptographic protections.
+<h2>Hindi ligtas ang JSF ViewState</h2>
+Ang pag tugon sa mga sumusunod na URL ay naglalaman ng isang mahalaga ng ViewState na walang mga proteksyon.
 
-<h2>Servlet Parameter Pollution</h2>
-Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
-Java Servlet spec calls for aggregation of query string and post data elements which may result in 
-unintended handling of user controlled data. This may impact other frameworks and technologies as well.
+<h2>Servlet ng Parametrong Polusyon</h2>
+Sa paghahanap ng pagtugon para sa mga form ng HTML kung saan ay bigo na matukoy ang isang aksyon ng elemento. Beryon na 3 ng Java Servlet spec ang tawag para sa pagsasama-sama ng mga katanungan ng string at ang datos ng post na mga elemento kung saan ay maaaring may resulta na hindi sinasadyang paghawak ng gumagamit para makontrol ang datos. Ito ay maaaring maging epekto sa ibang mga framework at mga teknolohiya din.
 
 <h2>VIEWSTATE</h2>
-Attempts to identify VIEWSTATE parameters and analyze said parameters for various best practices or protective 
-measures such as: 
+Pagtatangka sa pagtukoy ng mga parametro ng VIEWSTATE at analisahin ang nasabing mga parametro para sa iba't ibang mga pinakamahuhusay na pagsasanay o proteksyon ng mga sukat tulad ng: 
 <ul>
-	<li>Those based on ASP.NET 1.0 and 1.1.</li>
-	<li>VIEWSTATE Lacking signature.</li>
-	<li>Split VIEWSTATE.</li>
-	<li>VIEWSTATE containing email or IP patterns.</li>
+	<li>Ang pagbatay sa ASP.NET 1.0 at 1.1.</li>
+	<li>Ang kakulangan ng lagda ng VIEWSTATE.</li>
+	<li>Paghatiin ang VIEWSTATE.</li>
+	<li>Naglalaman ng email at mga IP pattern ang VIEWSTATE.</li>
 </ul>
 
 </body>

@@ -5,7 +5,7 @@
 
 <toc version="2.0">
 	<tocitem text="ZAP Kullanım Kılavuzu" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+		<tocitem text="Eklentiler" tocid="addons">
 			<tocitem text="Bağlantı Noktası Tarama" image="addon.portscan.icon" target="addon.portscan.concepts">
 				<tocitem text="Seçenekler" target="addon.portscan.options" />
 				<tocitem text="Sekme" target="addon.portscan.tab" />

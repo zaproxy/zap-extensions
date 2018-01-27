@@ -17,7 +17,7 @@
 
   <view>
     <name>Index</name>
-    <label>Index</label>
+    <label>Indeks</label>
     <type>javax.help.IndexView</type>
     <data>index.xml</data>
   </view>
@@ -33,7 +33,7 @@
 
   <view>
     <name>Favorites</name>
-    <label>Favorites</label>
+    <label>Favorit</label>
     <type>javax.help.FavoritesView</type>
   </view>
 </helpset>

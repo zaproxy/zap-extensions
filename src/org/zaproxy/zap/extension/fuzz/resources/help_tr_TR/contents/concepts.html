@@ -12,7 +12,7 @@ Fuzzing
 Fuzzing is a technique of submitting lots of invalid or unexpected data to a target.
 </p>
 <p>
-ZAP allows you to fuzz any request still using:
+ZAP size hala kullanılan herhangi bir sorguyu belirsizleştirmenize izin verir:
 <ul>
 <li>A build in set of payloads</li>
 <li>Payloads defined by optional add-ons</li>
@@ -22,29 +22,29 @@ ZAP allows you to fuzz any request still using:
 Şuna erişim için <a href="dialogue.html">Fuzzer dialog</a> birini yapabilirsiniz:
 <ul>
 <li>Right click a request in one of the ZAP tabs (such as the History or Sites) and select “Attack / Fuzz…”</li>
-<li>Highlight a string in the Request tab, right click it and select “Fuzz…”</li>
+<li>İstek sekmesinde bir dizi belirleyin, ona sağ tıklayın ve "Fuzz…" u seçin</li>
 <li>Select the “Tools / Fuzz…” menu item and then select the request you want to fuzz</li>
 </ul>
 
 <h3>Payload Generators</h3>
-Payload Generators generate the raw attacks that the fuzzer submits to the target application.
+Yük Taşıma Jeneratörleri, fuzzer'in hedef uygulamaya gönderdiği zayıf saldırıları üretir.
 <br><br>
-They are managed via the <a href="payloads.html">Payloads dialog</a>
+Onlar aracılığıyla yönetilirler <a href="payloads.html">Yük taşıma diyaloğu</a>
 
-<h3>Payload Processors</h3>
-Payload Processors can be used to change specific payloads before they are submitted.
+<h3>Yükleme İşlemcileri</h3>
+Yük Yükü İşlemcileri, belirli yükleri gönderilmeden önce değiştirmek için kullanılabilir.
 <br><br>
-They are managed via the <a href="processors.html">Payload Processors dialog</a>
+Onlar aracılığıyla yönetilirler <a href="processors.html">Payload İşlemcileri iletişim kutusu</a>
 
-<h3>Fuzz Location Processors</h3>
-Fuzz Location Processors can be used to change all of the payloads before they are submitted.
+<h3>Fuzz Konum İşlemcileri</h3>
+Fuzz Location Processors, gönderilen tüm yükleri değiştirmeden önce kullanılabilir.
 <br><br>
-They are managed via the <a href="locations.html">Location Processors dialog</a>
+Onlar aracılığıyla yönetilirler <a href="locations.html">Konum İşlemcileri iletişim kutusu</a>
 
 <h3>Mesaj İşlemcileri</h3>
-Message Processors can access and change the messages being fuzzed, control the fuzzing process and interact with the ZAP UI.
+Mesaj İşlemcileri, bulanık olan mesajları erişebilir ve değiştirebilir, bulanıklaşma sürecini kontrol edebilir ve ZAP UI ile etkileşimde bulunabilir.
 <br><br>
-They are managed via the <a href="dialogue.html">Fuzzer dialog</a> 'Message Processors' tab.
+Onlar aracılığıyla yönetilirler <a href="dialogue.html">Fuzzer diyaloğu</a> 'Mesaj İşlemcileri' sekmesi.
 
 <p>
 Bu işlevsellik OWASP JBroFuzz projesinin kodunu temel alır ve fuzzdb projesinin dosyalarını içerir.<br/>
@@ -53,9 +53,9 @@ Bunları değiştirebilir ve fuzzdb'nin en son sürümünü indirip 'fuzzers' ki
 </p>
 
 
-<h2>See also</h2>
+<h2>Ayrıca bakınız</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Fuzzer options screen</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Fuzzer seçenekleri ekranı</a></td></tr>
 </table>
 
 

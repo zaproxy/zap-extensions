@@ -3,41 +3,41 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Payloads dialog
+Diálogo de cargas útiles
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Payloads dialog</h1>
-This allows you to select the payload generators to use when <a href="concepts.html">fuzzing</a> a request.
+<h1>Diálogo de cargas útiles</h1>
+Esto le permite seleccionar los generadores de carga útil para usarse cuando <a href="concepts.html">fuzzing</a> lo solicite.
 <br><br>
-Payload generators generate the raw attacks that the fuzzer submits to the target application.
+Los generadores de carga útil generan los ataques sin procesar que el fuzzer envía a la aplicación de destino.
 <br><br>
-The following types of generators are provided by default:
+Los siguientes tipos de generadores se proporcionan por defecto:
 <ul>
-<li>Empty/Null - generates the selected payload multiple times, leaving the message without changes. This payload generator is useful to send multiple messages that are later processed, for example, with a <a href="httpmessageprocessors.html">Fuzzer HTTP Processor (Script)</a>.</li>
-<li>File - select any local file for one off attacks</li>
-<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, eg via add-ons like fuzzdb</li>
-<li>Numberzz - allows to easily generate a sequence of numbers, with custom increment</li>
-<li>Regex - generate attacks based on regex patterns</li>
-<li>Strings - raw strings, which can be entered manually or pasted in</li>
-<li>Script - custom scripts that can generate any payloads required</li>
+<li>Vacío / nulo: genera la carga seleccionada varias veces, dejando el mensaje sin cambios. Este generador de carga útil es útil para enviar mensajes múltiples que luego se procesan, por ejemplo, con un <a href="httpmessageprocessors.html"> Procesador HTTP Fuzzer (Script) </>.</li>
+<li>Archivo: seleccione cualquier archivo local para realizar ataques únicos</li>
+<li>Archivos Fuzzers: seleccione cualquier combinación de los archivos fuzzing registrados en ZAP, por ejemplo, Mediante add-ons como fuzzdb</li>
+<li>Numberzz - permite generar fácilmente una secuencia de números, con incrementos personalizados</li>
+<li>Regex: genera ataques basados en patrones de expresiones regulares</li>
+<li>Cadenas: cadenas sin formato, que pueden ingresarse manualmente o pegarse en</li>
+<li>Script: scripts personalizados que pueden generar cualquier carga útil requerida</li>
 </ul>
-You can write custom payload generator scripts - these can supply any payloads that you need.
+Puede escribir scripts de generador de carga útil personalizados; estos pueden suministrar cualquier carga útil que necesite.
 <br><br>
-Add-ons can also define additional payload generators.
+Los complementos también pueden definir generadores de carga adicionales.
 <br><br>
-The 'Processors...' button launches the <a href="processors.html">Payload Processors dialog</a> which allows you to
-configure payload processors that just apply to the palyload generator you have selected.
+El botón 'Procesadores...' inicia el <a href="processors.html">Diálogo de procesadores de carga útil</a> que te permite
+configurar los procesadores de carga útil que solo se aplican al generador de carga de trabajo que ha seleccionado.
 <br>
 
-<h2>Accessed via</h2>
+<h2>Acceso a través de</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> 'Add...' button</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html"> Diálogo Fuzzer </> botón 'Agregar...'</td></tr>
 </table>
 
-<h2>See also</h2>
+<h2>Véase también</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Conceptos Fuzzer</a></td></tr>
 </table>
 
 </body>

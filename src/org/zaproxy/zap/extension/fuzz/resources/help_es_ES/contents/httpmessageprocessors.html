@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-HTTP Message Processors
+Procesadores de mensajes
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -17,45 +17,45 @@ Permite actualizar los tokens anti-CSRF contenidos en la solicitud. Los tokens a
 Para obtener más información, consulte la página de ayuda "Cómo empezar"> "Funciones"> "Fichas antis de CSRF".<br>
 <strong>Nota:</strong> Este procesador se añade automáticamente a la lista de procesadores, si se detectaron tokens anti-CSRF.
 
-<h3>Fuzzer HTTP Processor (Script)</h3>
-Allows to select the enabled Fuzzer HTTP Processor scripts. The scripts allow you to:
+<h3>Procesador (Script) Fuzzer HTTP</h3>
+Permite seleccionar las secuencias de comandos del procesador Fuzzer HTTP habilitadas. Los scripts le permiten:
 <ul>
-<li>Obtain the list of payloads</li>
-<li>Stop fuzzing</li>
-<li>Increase the error count</li>
-<li>Send new messages</li>
-<li>Add messages to the Results tab</li>
-<li>Set custom ‘state’ messages in the <a href="tab.html">Fuzzer tab</a></li>
-<li>Raise alerts</li>
+<li>Obtener la lista de cargas útiles</li>
+<li>Detener el fuzzing</li>
+<li>Aumenta el recuento de errores</li>
+<li>Enviando mensajes nuevos</li>
+<li>Agregar mensajes a la pestaña de resultados</li>
+<li>Establezca mensajes de estado personalizados en la pestaña <a href="tab.html"> Fuzzer </ 0></li>
+<li>Levantar alertas</li>
 </ul>
 
-<h3>Payload Reflection Detector</h3>
-Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
-<strong>Note:</strong> This processor is automatically added to the list of processors.
+<h3>Detector de reflexión de carga útil</h3>
+Indica en la columna Estado de la tabla de resultados si una de las cargas útiles de inyección encontró en la respuesta, utilizando "<img src="images/reflected_icon.png"> Reflejado".<br>
+<strong>Nota:</strong> Este procesador se añade automáticamente a la lista de procesadores.
 
-<h3>Request Content-Length Updater</h3>
-Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
-for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
-<strong>Note:</strong> This processor is automatically added to the list of processors.
+<h3>Solicitud de actualización de longitud de contenido</h3>
+Actualizaciones (o añadir, si no está presente) el <code>Largo del contenido</code> encabezado de solicitud con la longitud del cuerpo de la solicitud
+para todos los métodos de solicitud. No se realiza ningún cambio si el tamaño del cuerpo de la solicitud es cero y el encabezado aún no está presente.<br>
+<strong>Nota:</strong> Este procesador se añade automáticamente a la lista de procesadores.
 
-<h3>Tag Creator</h3>
-Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table
+<h3>Creador de etiqueta</h3>
+Permite agregar 'etiquetas' personalizadas, basadas en el contenido de la respuesta, a la columna Estado de la tabla de resultados
 
-<h3>User Message Processor</h3>
-Allows to fuzz as a user, using one of the users defined in the contexts that include the HTTP message being fuzzed. Users must
-exist to be able to select and add this processor.
+<h3>Procesador de mensajes del usuario</h3>
+Permite buscar fuzz como usuario, utilizando uno de los usuarios definidos en los contextos que incluyen el mensaje HTTP que se difumina. Los usuarios deben
+existen para poder seleccionar y agregar este procesador.
 
 <p>
-Other add-ons can define additional HTTP Message Processors.
+Otros complementos pueden definir procesadores de mensajes HTTP adicionales.
 
-<h2>Accessed via</h2>
+<h2>Acceso a través de</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> under Message Processors tab</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html"> Diálogo Fuzzer </ 0> en la pestaña Procesadores de mensajes</td></tr>
 </table>
 
-<h2>See also</h2>
+<h2>Véase también</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Conceptos Fuzzer</a></td></tr>
 </table>
 
 </body>
