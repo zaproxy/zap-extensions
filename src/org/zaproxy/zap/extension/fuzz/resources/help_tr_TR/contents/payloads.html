@@ -3,41 +3,40 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Payloads dialog
+Payloads diyaloğu
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Payloads dialog</h1>
-This allows you to select the payload generators to use when <a href="concepts.html">fuzzing</a> bir sorgu.
+<h1>Payload'lar diyaloğu</h1>
+Bu size ekstra güç üreticisini kullanmanıza izin verir <a href="concepts.html">belirsizleştirmek</a> bir sorgu.
 <br><br>
-Payload generators generate the raw attacks that the fuzzer submits to the target application.
+Ekstra güç üreticiler belirsizleştiricinin gönderdiği hedef uygulamalara hafif saldırı üretir.
 <br><br>
 Aşağıdaki üretici tipleri varsayılan olarak sağlanır:
 <ul>
-<li>Empty/Null - generates the selected payload multiple times, leaving the message without changes. Bu yük üreticisi sonradan işlenen çoklu mesaj gönderimi için kullanışlıdır, örneğin, bir <a href="httpmessageprocessors.html">Fuzzer HTTP İşlemci (Script)</a> ile.</li>
-<li>File - select any local file for one off attacks</li>
-<li>File Fuzzers - select any combination of the fuzzing files registered with ZAP, eg via add-ons like fuzzdb</li>
-<li>Numberzz - allows to easily generate a sequence of numbers, with custom increment</li>
-<li>Regex - generate attacks based on regex patterns</li>
-<li>Strings - raw strings, which can be entered manually or pasted in</li>
-<li>Script - custom scripts that can generate any payloads required</li>
+<li>Boş/Sıfır - seçili ek gücü birçok kez mesaji değiştirmeden üretir. Bu yük üreticisi sonradan işlenen çoklu mesaj gönderimi için kullanışlıdır, örneğin, bir <a href="httpmessageprocessors.html">Fuzzer HTTP İşlemci (Script)</a> ile.</li>
+<li>Dosya - yerel dosyalarınızdan birini bir defaya mahsus bir saldırı için seçiniz</li>
+<li>File Fuzzers - ZAP ile kayıtlı fuzzing dosyalarının herhangi bir kombinasyonunu seçin, örneğin fuzzdb gibi eklentiler yoluyla</li>
+<li>Numberzz - özel artışla bir dizi sayı üretmesine olanak tanır</li>
+<li>Regex - regex desenlerine dayalı saldırılar üretir</li>
+<li>Dizeler - el ile girilebilen veya yapıştırılan işlenmemiş dizeler</li>
+<li>Komut dosyası - gerekli yük üretebilen özel komut dosyaları</li>
 </ul>
 Özel yük üretici scriptleri yazabilirsiniz - bunlar ihtiyacınız olan her yükü sağlayabilir.
 <br><br>
 Eklentiler ek yük üreticileri olarak da tanımlanır.
 <br><br>
-The 'Processors...' button launches the <a href="processors.html">Payload Processors dialog</a> which allows you to
-configure payload processors that just apply to the palyload generator you have selected.
+'İşlemciler...' düğmesi <a href="processors.html">Payload İşlemciler iletişim kutusu</a> seçtiğiniz palyload jeneratörüne uygulanan yük taşıma işlemcilerini yapılandırmanıza olanak tanır.
 <br>
 
-<h2>Accessed via</h2>
+<h2>Via ya erişildi</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> 'Add...' button</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html"> Fuzzer iletişim kutusu </> 'Ekle...' düğmesi</td></tr>
 </table>
 
-<h2>See also</h2>
+<h2>Ayrıca bakınız</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer kavramları</a></td></tr>
 </table>
 
 </body>

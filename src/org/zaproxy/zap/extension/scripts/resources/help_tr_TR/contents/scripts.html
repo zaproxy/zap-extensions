@@ -8,7 +8,7 @@
 <h1>Komut Dizileri</h1>
 <p>
 ZAP Komut Eklentisi, ZAP'a gömülebilen ve iç ZAP veri yapılarına erişebilen komut dosyalarını çalıştırmanıza izin verir.<br/>
-It supports any scripting language that supports JSR 223 (http://www.jcp.org/en/jsr/detail?id=223) , including:
+Aşağıdakiler de dahil olmak üzere JSR 223'ü (http://www.jcp.org/en/jsr/detail?id=223) destekleyen herhangi bir komut dosyası dili desteklemektedir:
 <ul>
 <li>ECMAScript / Javascript (using <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/scripting/nashorn/">Nashorn engine</a>, included by default)</li>
 <li>Zest <a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a> (included by default)</li>
@@ -55,14 +55,14 @@ org.zaproxy.zap.extension.script.ScriptVars.getGlobalVar("var.name")<br/>
 </code>
 
 <h2>Script Değişkenleri</h2>
-Variables can be shared between separate invocations of the same script via the same org.zaproxy.zap.extension.script.ScriptVars class.<br/>
+Değişkenler aynı scriptin ayrı invokasyonlarınca aynı org.zaproxy.zap.extension.script.ScriptVars sınıfı sayesinde paylaşılabilir.<br/>
 Örneğin, Javascript'te bu sınıfı aşağıdaki gibi kullanabilirsiniz:<br/><br/>
 <code>
 org.zaproxy.zap.extension.script.ScriptVars.setScriptVar(this.context, "var.name","value")<br/>
 org.zaproxy.zap.extension.script.ScriptVars.getScriptVar(this.context, "var.name")<br/>
 </code>
 <br/>
-Note that these methods are only usable from scripting languages that provide access to the ScriptContext (like Javascript).
+Not olarak bu methodlar sadece ScriptContext'e erişme yetkisini gösteren script dillerince kullanılabilir (Javascript gibi).
 
 <h2>Ayrıca bakınız</h2>
 <table>
@@ -90,7 +90,7 @@ Note that these methods are only usable from scripting languages that provide ac
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide">https://wiki.openjdk.java.net/display/Nashorn/Rhino+Migration+Guide</a></td>
-	<td>Rhino Migration Guide</td>
+	<td>Rhino Göçmenlik Rehberi</td>
 </tr>
 </table>
 

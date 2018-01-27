@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="Zap Kullanım Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
-			<tocitem text="Token Generator" image="tokengen-icon" target="tokengen"/>
+			<tocitem text="Token Üretici" image="tokengen-icon" target="tokengen"/>
 		</tocitem>
 	</tocitem>
 </toc>

@@ -5,7 +5,7 @@
 
 <toc version="2.0">
 	<tocitem text="ZAP Kullanım Kılavuzu" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+		<tocitem text="Eklentiler" tocid="addons">
 			<tocitem text="Aktif Tarama Kuralları - beta" image="ascanbeta-icon" target="ascanbeta"/>
 		</tocitem>
 	</tocitem>
