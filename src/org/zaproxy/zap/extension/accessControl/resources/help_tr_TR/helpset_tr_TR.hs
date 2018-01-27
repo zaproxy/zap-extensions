@@ -17,14 +17,14 @@
 
   <view>
     <name>Index</name>
-    <label>Index</label>
+    <label>İndeks</label>
     <type>javax.help.IndexView</type>
     <data>index.xml</data>
   </view>
 
   <view>
     <name>Favorites</name>
-    <label>Favorites</label>
+    <label>Favoriler</label>
     <type>javax.help.FavoritesView</type>
   </view>
 </helpset>

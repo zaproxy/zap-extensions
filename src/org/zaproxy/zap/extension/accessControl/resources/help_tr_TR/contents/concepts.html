@@ -21,17 +21,14 @@
 <h3>Erişim Kuralları</h3>
 
 <p>
-    Erişim denetimiyle ilgili olası sorunları belirlemek için, ZAP web uygulamasının hangi bölümlerine hangi kullanıcı tarafından erişilmesi gerektiğini bilmelidir. In ZAP, the name for these rules is: <i>Access Rules</i> and generally have
-    the meaning: "<i>PageA should/shouldn't be accessed by UserX</i>".
+    Erişim denetimiyle ilgili olası sorunları belirlemek için, ZAP web uygulamasının hangi bölümlerine hangi kullanıcı tarafından erişilmesi gerektiğini bilmelidir. ZAP'te bu kuralların adı: <i>Erişim kuralları</i> ve genellike şu anlamı vardır: "<i>SayfaA KullanıcıX tarafından erişilmeli/erişilmemelidir.</i>".
 </p>
 
-<p>The rules are configured for a Context and, for each User of that Context, each Site Node (web page) will be
-    associated to one of the following values:</p>
+<p>Kurallar bir İçerik ve o İçeriğin her Kullanıcısı için yapılandırılmıştır, her Site Düğümü (web sayfası) aşağıdaki değerlerden biri ile ilişkilendirilecektir:</p>
 <ul>
     <li><b>İzin verilen</b> - Kuralla ilgili olan Kullanıcı tarafından kaynak erişilebilirdir</li>
-    <li><b>Denied</b> - the resource <b>should not</b> be accessed by the User to which the rule refers</li>
-    <li><b>Unknown</b> - there is <b>no information</b> regarding whether the resource should or shouldn't be accessible
-        to the User to which the rule refers
+    <li><b>Reddedildi</b> - kaynak, kuralın değindiği Kullanıcı tarafından <b>erişilmemelidir</b></li>
+    <li><b>Bilinmiyor</b> - kaynağın, kuralın bahsettiği Kullanıcı tarafından erişilip erişilmemesi hakkında <b>bir bilgi yok</b>
     </li>
 </ul>
 
@@ -53,11 +50,9 @@
     <li>web uygulaması manuel olarak yada örümcek aracılığıyla araştırılır;</li>
     <li>test eden kiş, Durum ile ilişkili Kullanıcıların her biri için Erişim Kurallarını tanımlar ve temelde ZAP'e web uygulamasının hangi bölümlerine hangi kullanıcıların erişebileceğini bildirir;
     </li>
-    <li>an ‘attack’ is performed by ZAP by trying to access every URL of the web-app from the perspective of every
-        user;
+    <li>web uygulamasının her URL'sine her kullanıcı açısından erişmeyi deneyerek ZAP tarafından bir 'saldırı' yapılır;
     </li>
-    <li>in the corresponding Status Tab, the results are displayed, showing which pages were accessed successfully by
-        which users and marking the cases where the access rules where not followed.
+    <li>karşılık gelen Durum Sekmesinde, hangi sayfaların hangi kullanıcılar tarafından başarıyla erişildiğini ve erişim kurallarının takip edilmediği durumları gösteren sonuçlar görüntülenir.
     </li>
 </ul>
 
