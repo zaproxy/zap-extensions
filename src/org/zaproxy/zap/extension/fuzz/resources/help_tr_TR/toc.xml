@@ -11,7 +11,7 @@
 				<tocitem text="Diyalog" target="addon.fuzzer.dialogue" />
 				<tocitem text="HTTP Mesaj İşlemcileri" target="addon.fuzzer.httpmessageprocessors"/>
 			    <tocitem text="Konum İşlemcileri Diyaloğu" target="addon.fuzzer.locations"/>
-    			<tocitem text="Payloads Dialog" target="addon.fuzzer.payloads"/>
+    			<tocitem text="Yük Penceresi" target="addon.fuzzer.payloads"/>
     			<tocitem text="Payload Processors Dialog" target="addon.fuzzer.processors"/>
 				<tocitem text="Sekme" target="addon.fuzzer.tab" />
 			</tocitem>

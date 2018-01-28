@@ -16,8 +16,8 @@ Aşağıdaki ek beta kalite pasif tarama kuralları bu eklentiye dahil edilmişt
 <ul>
   <li>Tüm Eşikler:
     <ul>
-      <li>Header Versus Meta Content-Type Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Content-Type tag.</li>
-      <li>Header Versus Meta Charset - The declaration in the HTTP Content-Type header doesn't match what is declared in a META Charset tag.</li>
+      <li>Üstbilgi Meta Content-Type Karakter Kümesine karşı - HTTP Content-Type üstbilgisindeki ifade, bir META Content-Type etiketinde ifadesiyle eşleşmiyor.</li>
+      <li>Üstbilgi Meta Karakter Kümesine Karşı - HTTP Content-Type üstbilgisindeki ifade, bir META Karakter Kümesi etiketindeki ifadeyle eşleşmiyor.</li>
     </ul>
   </li>
   <li>Düşük Eşik:
@@ -34,9 +34,9 @@ Daha fazla başvuru:<br>
 <h2>Çerez - Gevşek Kapsamlı</h2>
 Çerezler, alan veya yolla kapsamlandırılabilir. Bu kontrol yalnızca alan kapsamı ile ilgilidir. Bir tanımlama bilgisine uygulanan alan adı kapsamı hangi alanlara erişebileceğini belirler. Örneğin bir çerez www.nottrusted.com gibi bir subdomain sıkı kapsamında olabilir veya nottrusted.com gibi ana domainin gevşek kapsamında olabilir. İkinci durumda, nottrusted.com'un herhangi bir alt alan adı çereze erişebilir. Gevşek kapsamlı çerezler google.com ve live.com gibi mega-uygulamalarda yaygındır.
 
-<h2>CSRF Countermeasures</h2>
+<h2>CSRF Karşı Önlemler</h2>
 CSRFCountermeasures eklentisi, formlarla sayfalarda, bilinen CSRF karşı önlemlerinin eksikliği ile "potansiyel" güvenlik açıklıklarını tanımlar.<br>
-Post 2.5.0 you can specify a comma separated list of identifiers in the 
+Post 2.5.0 virgülle ayrılmış tanımlayıcıların listesini maddeler halinde sıralayabilirsiniz 
 <code>rules.csrf.ignorelist</code> 'Yapılandırma kuralı' paneli seçenekleri yoluyla parametre.
 Kayıp Anti-CSRF belirteçlerini tararken, bu tanımlayıcılardan biriyle eşleşen bir ada veya kimliğe sahip herhangi bir FORM yoksayılır.
 Güvenli olduğunu bildiğiniz FORM'ları yok saymak için yalnızca bu özelliği kullanın, örneğin arama formları.
@@ -71,7 +71,7 @@ VIEWSTATE parametrelerini belirlemeye ve çeşitli en iyi uygulamalar veya aşa�
 <ul>
 	<li>Bunlar ASP.NET 1.0 ve 1.1e dayanır.</li>
 	<li>VIEWSTATE İmza eksikliği.</li>
-	<li>Split VIEWSTATE.</li>
+	<li>Görünüm Durumunu ayır.</li>
 	<li>E-posta veya IP kalıpları içeren VIEWSTATE.</li>
 </ul>
 
