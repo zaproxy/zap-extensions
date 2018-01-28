@@ -4,12 +4,12 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-    <indexitem text="Fuzzer Concepts" target="addon.fuzzer.concepts" />
-    <indexitem text="Fuzzer Dialogue" target="addon.fuzzer.dialogue"/>
-    <indexitem text="Fuzzer Location Processors Dialog" target="addon.fuzzer.locations"/>
-    <indexitem text="Fuzzer HTTP Message Processors" target="addon.fuzzer.httpmessageprocessors"/>
-    <indexitem text="Fuzzer Payloads Dialog" target="addon.fuzzer.payloads"/>
-    <indexitem text="Fuzzer Payload Processors Dialog" target="addon.fuzzer.processors"/>
+    <indexitem text="Fuzzer Kavramları" target="addon.fuzzer.concepts" />
+    <indexitem text="Fuzzer Penceresi" target="addon.fuzzer.dialogue"/>
+    <indexitem text="Fuzzer Konum İşlemcileri Penceresi" target="addon.fuzzer.locations"/>
+    <indexitem text="Fuzzer HTTP Mesaj İşlemcileri" target="addon.fuzzer.httpmessageprocessors"/>
+    <indexitem text="Fuzzer Yük Penceresi" target="addon.fuzzer.payloads"/>
+    <indexitem text="Fuzzer Yük İşlemcileri Penceresi" target="addon.fuzzer.processors"/>
     <indexitem text="Fuzzer Seçenekleri" target="addon.fuzzer.options"/>
     <indexitem text="Fuzzer Sekmesi" target="addon.fuzzer.tab"/>
 </index>
