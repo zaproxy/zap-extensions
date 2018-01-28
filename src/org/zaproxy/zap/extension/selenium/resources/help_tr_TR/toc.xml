@@ -6,7 +6,7 @@
 <toc version="2.0">
     <tocitem text="ZAP Kullanıcı Kılavuzu" tocid="toplevelitem">
         <tocitem text="Eklentiler" tocid="addons">
-            <tocitem text="Selenyum" image="addon.selenium.icon" target="addon.selenium.intro">
+            <tocitem text="Selenium" image="addon.selenium.icon" target="addon.selenium.intro">
                 <tocitem text="Seçenekler" target="addon.selenium.options" />
                 <tocitem text="API" target="addon.selenium.api" />
             </tocitem>
