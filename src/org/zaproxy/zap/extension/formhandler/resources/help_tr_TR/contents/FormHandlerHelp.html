@@ -37,8 +37,7 @@
 				<ul>
 					<li>Bir alan adı sağlanmalı.</li>
 					<li>Alan adı zaten tabloda yok yada bir uyarı hatası oluşacak.</li>
-					<li>The field name supplied to the Form Handler must match the field ID on the form that you wish 
-						to define.</li>
+					<li>Form İşleyicisine verilen alan adı, tanımlamak istediğiniz formdaki alan kimliği ile eşleşmelidir.</li>
 					<li>Alan adı büyük/küçük harflere duyarlı değil.</li>
 					<li>Bir değerin sağlanması gerekmez. Bu boş bir satırın kullanılmasına neden olur.</li>
 					<li>Değer alanı büyük ve küçük harfe duyarlıdır, ve POST'a gözükecektir.</li>
@@ -58,14 +57,12 @@
  
 		<h3>Alanları Kaldırmak</h3>
 			<p>
-				Kullanıcı her zaman alanları kaldırabilir. Bunu yapmak için sadece kaldırmak istediğiniz alanı seçin ve <b>Kaldır</b> butonuna basın. <i> Please note that you will be prompted to confirm removal before 
-				proceeding unless the <b>Remove without Confirmation</b> box is checked.</i> 
+				Kullanıcı her zaman alanları kaldırabilir. Bunu yapmak için sadece kaldırmak istediğiniz alanı seçin ve <b>Kaldır</b> butonuna basın. <i> <b>Onay Olmadan Kaldır</b> kutusu işaretlenmedikçe, devam etmeden önce kaldırma işlemini onaylamanız istenir.</i> 
 			</p>
 
 		<h2>Tanımlı Olmayan Form Alanları</h2>
 			<p>
-				A user may find that they do not want to define every field in a form, but rather define a select few within 
-				the form.
+				Bir kullanıcı, bir formdaki her alanı tanımlamak istemediğini ancak formda bir kaç seçimi tanımlamak istediği kararına varabilir.
 			</p>
 			<p>
 				Form işleyicisi eklentisinde tanımlanmamış herhangi bir alan, her bir alan türüne uyacak şekilde oluşturulmuş bir ZAP varsayılan değerini kullanır(Örnek: Bir metin belgesi ''ZAP'' değerine sahip olacaktır)
