@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Script Console</name>
-	<version>24</version>
+	<version>25</version>
 	<status>beta</status>
 	<description>Supports all JSR 223 scripting languages</description>
 	<author>ZAP Dev Team</author>
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
-	Fix GUI freeze on script addition/removal through the API (Issue 4302).<br>
-	Prompt for a charset when failed to read the script file (Issue 3383).<br>
+	Execute Targeted scripts in other thread than GUI thread.<br>
 	]]>
 	</changes>
 	<extensions>

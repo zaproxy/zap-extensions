@@ -537,9 +537,11 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     public void invokeTargetedScript(ScriptWrapper script, HttpMessage msg) {
     	if (View.isInitialised()) {
-    		this.displayScript(script);
-			this.getConsolePanel().getOutputPanel().preScriptInvoke();
-			this.getConsolePanel().setTabFocus();
+			executeInEdt(() -> {
+				this.displayScript(script);
+				this.getConsolePanel().getOutputPanel().preScriptInvoke();
+				this.getConsolePanel().setTabFocus();
+			});
     	}
    		this.getExtScript().invokeTargetedScript(script, msg);
     }
