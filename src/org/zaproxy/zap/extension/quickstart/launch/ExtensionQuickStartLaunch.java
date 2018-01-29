@@ -62,10 +62,10 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor implements
 
     public static final String NAME = "ExtensionQuickStartLaunch";
     private static final String DEFAULT_LAUNCH_PAGE_URL = "https://bit.ly/owaspzap-start-2-7";
-    private static final String PAGE_LOCALE_SEPARATOR = "<!-- - - - - - - - - %< - - - - - - - - -->\n";
-    private static final String PAGE_LOCALE_PREFIX = "<!-- Locale = ";
-    private static final String PAGE_LOCALE_POSTFIX = " -->";
-    private static final String PAGE_LOCALE_DEFAULT = "Default";
+    protected static final String PAGE_LOCALE_SEPARATOR = "<!-- - - - - - - - - %< - - - - - - - - -->\n";
+    protected static final String PAGE_LOCALE_PREFIX = "<!-- Locale = ";
+    protected static final String PAGE_LOCALE_POSTFIX = " -->";
+    protected static final String PAGE_LOCALE_DEFAULT = "Default";
     private static final Logger LOGGER = Logger
             .getLogger(ExtensionQuickStartLaunch.class);
 
