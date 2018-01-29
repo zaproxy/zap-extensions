@@ -25,6 +25,7 @@ import java.awt.event.KeyListener;
 
 import javax.swing.JScrollPane;
 
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.extension.scripts.autocomplete.ScriptAutoCompleteKeyListener;
@@ -103,6 +104,7 @@ public class CommandPanel extends AbstractPanel {
 	public void clear() {
 	    getTxtOutput().setText("");
 	    getTxtOutput().discardAllEdits();
+	    setSyntax(SyntaxConstants.SYNTAX_STYLE_NONE);
 	}
 
 	public String getCommandScript() {
