@@ -10,7 +10,7 @@
 
   <view>
     <name>TOC</name>
-    <label>Contents</label>
+    <label>Konten</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>

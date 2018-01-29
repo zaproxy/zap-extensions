@@ -2,34 +2,34 @@
 <html>
 <head>
 <title>
-DOM XSS Active Scan Rule
+DOM XSS Analyse Active de la Règle
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>DOM XSS Active Scan Rule</h1>
+<h1>DOM XSS Analyse Active de la Règle</h1>
 <p>
-An Active Scan rule for detecting DOM XSS vulnerabilities.
+Une Analyse Active de la règle pour détecter les DOM failles XSS.
 <p>
-It launches browser windows and sends attack payloads to all of the relevant DOM elements.<br>
-As it launches browser windows it is not suitable for headless environments,
-and will take significantly longer than other (non browser based) rules. 
+Il lance le navigateur windows et envoie une attaque charges de l'ensemble des éléments du DOM.<br>
+Comme les lancements de fenêtres de navigateur, il n'est pas adapté pour les headless environnements,
+et va prendre beaucoup plus de temps que les autres (non basé sur un navigateur) des règles. 
 </p>
 <p>
-This version only supports Firefox.<br>
-Future versions may support other browsers.
+Cette version ne supporte Firefox.<br>
+Les futures versions peuvent soutenir d'autres navigateurs.
 </p>
 <p>
-The following Attack Strengths are supported, and related directly to the number of attack payloads used:
+Les Attaques suivantes points Forts sont pris en charge, et directement lié au nombre d'attaque charges utilisées:
 <ul>
-<li>LOW: 2 attack payloads 
-<li>MEDIUM: 4 attack payloads 
-<li>HIGH: 6 attack payloads 
-<li>INSANE: 8 attack payloads 
+<li>FAIBLE: 2 attaque des charges 
+<li>MOYEN: 4 attaque des charges 
+<li>HAUT: 6 attaque des charges 
+<li>FOU: 8 attaque des charges 
 </ul>
 </p>
 <p>
-The rule will only report one DOM XSS vulnerability per node, unless the LOW Alert threshold
-is used, in which case it will keep trying all of the specified payloads. 
+La règle d'un seul DOM vulnérabilité XSS par nœud, à moins que le FAIBLE seuil d'Alerte
+est utilisé, auquel cas, il faudra continuer d'essayer tous les de la des charges. 
 </p>
 
 </body>

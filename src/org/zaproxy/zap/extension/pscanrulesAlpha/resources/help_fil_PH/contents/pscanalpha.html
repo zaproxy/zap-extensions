@@ -35,26 +35,25 @@ Inuulat ang anuma cookie na walang samesite attribute o sala itong kinikilalang 
 <h2>Directory Browsing</h2> 
 passively suriin ang mga tugon para sa mga lumagda na nagpapahiwatig na ang directory browsing ay maaari.
 
-<h2>Example File Passive Scanner</h2>
-This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Halimbawa ng Dokumento sa Passive Eskaner</h2>
+Ipinatupad ito na isang halimbawa ng passive eskan rule na naglo-load ng mga string mula sa isang dokumento na maaaring ayusin ng isang gumagamit.<br>
+Para sa iba pang detalye na makikita: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
-<h2>Example Simple Passive Scanner</h2>
-This implements a very simple example passive scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+
+<h2>Halimbawa ng Simpleng passive Eskaner</h2>
+Ipinatupad ito ng isang halimbawa ng passive eskan rule.<br>
+Para sa iba pang detalye na makikita: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
 <h2>Hash Disclosure</h2>
-Passively scan for password hashes disclosed by the web server. <br>
-Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
+Passively eskan para sa password na mga sumira ng nagsabi sa pamamagitan ng web server. <br>
+Kabilang ang iba't ibang ayos, ay kabilang ang ilang porma tulad ng MD4, MD5, and SHA*, kung saan minsan gamit ito para sa mga layunin maliban sa naglalaman ng mga hashes ng password. 
 
 <h2>HeartBleed</h2>
-Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
+Passively eskan para sa HTTP header ng mga tugon na maaaring mag pahiwatig na ang server ay mahina sa mga kritikal na HeartBleed OpenSSL ng kahinaan. 
 
-<h2>HTTP to HTTPS Insecure Transition in Form Post</h2>
-This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
+<h2>HTTP sa HTTPS Walang kasiguraduhan ang pagliligtas sa form ng post</h2> itong pagsusuri ay tumitinhen sa walang kasiguraduhan ng HTTP sa pahina ng mga form host HTTPS. Ang isyu ay ang isang hindi secure na pahina ng HTTP na pweding madaling ma hijack gamit ang MITM at ang secure na HTTPS form ay pweding mapalitan o ma spoofed.
 
-<h2>HTTPS to HTTP Insecure Transition in Form Post</h2>
-This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
+<h2>HTTPS sa HTTP hindi secure na pagbabago sa form ng post</h2> ang pagsusuring ito ay nakikilala ng secure na pahina sa HTTPS ang host ay walang secure sa mga form ng HTTP. Ang isyung ito ay para sa isang secure na pahina paglipat sa isang hindi secure na pahina kung ang data ay ililipat sa isang form. Iniisip ng gumagamit na sila ay nag sasabmit ng datos sa seguridad na pahina ngunit ang katunayan ay hindi sila.
 
 <h2>Insecure Component</h2>
 Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 

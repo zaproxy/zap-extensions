@@ -8,16 +8,16 @@ JxBrowser
 </head>
 <body bgcolor="#ffffff">
 <h1>JxBrowser</h1>
-JxBrowser is an embedded browser based on Chromium. It has no other external dependencies so you can be sure that it will work out of the box.<br>
-You can launch as many instances as you like and they will all be automatically configured to proxy via ZAP.<br>
-It also now accepts 'invalid' certificates by default, which includes the ZAP root certificate.
+Ang JxBrowser ay isang naka-embed na browser na binase sa Chromium. Ito ay maryoon walang ibang external na mga dependency kaya ikaw ay makakasigurado na ito ay gagana palabas ng kahon.<br>
+Maari kang maglunsad ng kahit ano karaming mga pagkakataon na gusto mo at silang lahat ay awtomatikong makokompigyura sa proxy gamit ang ZAP.<br>
+Ito rin ay tumatanggap ng 'hindi balidong' mga sertipiko bilang default, na magpapasali ng ugat na sertipiko ng ZAP.
 <p>
-You can still use any other browser to proxy via ZAP but you will need to manually configure those browsers
-to proxy via ZAP.
+Maari ka pa ring gumamit ng ibang browser upang maka-proxy gamit ang ZAP pero kailangan mong manuwal na ikompigyura ang mga browser na iyon
+upang maka-proxy gamit ang ZAP.
 </p>
-<h3>Using JxBrowser for Automation</h3>
-The lack of external dependencies makes JxBrowser particularly useful for automated testing. The JxBrowser can be selected, for
-use with other functionalities (e.g. AJAX Spider), through the command line or the ZAP API using the ID <code>jxbrowser</code>.
+<h3>Gamit ang JxBrowser para sa Awtomasyon</h3>
+Ang pagkukulang ng external na mga dependency ay makakagawa ng JxBrowser na partikular na magagamit para sa pang-awtomate na pagtest. Ang JxBrowser ay maaring mapili, para
+sa kagamitan ng ibang mga pangsyonality (e.g. AJAX na Ispayder), gamit ang komand layn o ang ZAP na API gamit ang ID <code>jxbrowser</code>.
 <p>
 It is not a headless browser but it can be run headless using technologies such as virtual frame buffers.
 The ZAP docker images contain a script that starts ZAP with xvfb. 
