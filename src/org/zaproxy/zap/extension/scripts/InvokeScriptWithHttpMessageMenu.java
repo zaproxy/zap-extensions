@@ -54,13 +54,8 @@ public class InvokeScriptWithHttpMessageMenu extends PopupMenuItemHttpMessageCon
 	@Override
 	public void performAction(HttpMessage msg) {
 		logger.debug("Invoke script with " + msg.getRequestHeader().getURI());
-		try {
-			extension.invokeTargetedScript(script, msg);
-				
-		} catch (Exception e) {
-			logger.debug("Script " + script.getName() + " failed with error: " + e.toString());
-			extension.showError(e);
-		}
+		// Execute in another thread to not occupy the EDT.
+		new ScriptExecutorThread(extension, script, msg).start();
 	}
 	
     @Override
@@ -71,5 +66,34 @@ public class InvokeScriptWithHttpMessageMenu extends PopupMenuItemHttpMessageCon
 	@Override
 	public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
 		View.getSingleton().getPopupList().remove(this);
+	}
+
+	private static class ScriptExecutorThread extends Thread {
+
+		private static final String BASE_NAME_SCRIPT_EXECUTOR_THREAD = "ZAP-ScriptExecutor-";
+
+		private final ExtensionScriptsUI extension;
+		private final ScriptWrapper script;
+		private final HttpMessage message;
+
+		public ScriptExecutorThread(ExtensionScriptsUI extension, ScriptWrapper script, HttpMessage message) {
+			super();
+
+			this.script = script;
+			this.extension = extension;
+			this.message = message;
+
+			String name = script.getName();
+			if (name.length() > 25) {
+				name = name.substring(0, 25);
+			}
+
+			setName(BASE_NAME_SCRIPT_EXECUTOR_THREAD + name);
+		}
+
+		@Override
+		public void run() {
+			extension.invokeTargetedScript(script, message);
+		}
 	}
 }
