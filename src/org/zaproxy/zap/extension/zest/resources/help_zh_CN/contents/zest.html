@@ -7,88 +7,87 @@
 <body bgcolor="#ffffff">
 <h1>Zest</h1>
 <p>
-Zest is an experimental specialized scripting language (also known as a domain-specific language) 
-developed by the Mozilla security team and is intended to be used in web oriented security tools.
+Zest是一个由Mozilla安全团队开发的实验性专用脚本语言（也称为领域特定语言） ，旨在用于面向网络的安全工具。
 <p>
-It is included by default with ZAP.<br>
+默认情况下，它包含ZAP.<br>
 
-<h2>Creating Zest scripts</h2>
+<h2>创建Zest脚本</h2>
 
-There are a variety of ways to create Zest scripts:
+创建Zest脚本有多种方法：
 
 <h3>Record a new Zest script Button</h3>
 <ul>
 <li>Press the 'Record a new Zest script' button on the main toolbar</li>
-<li>Type in a suitable name for your script in the 'Add a Zest Script' dialog</li>
-<li>Select the prefix you want to record requests for, or leave blank to record all requests</li>
-<li>Press the 'Save' button</li>
+<li>在"添加Zest脚本"对话框中键入适合您的脚本名称</li>
+<li>选择您想要记录请求的前缀，或者留空白以记录所有请求</li>
+<li>按"保存"按钮</li>
 <li>The 'Record a new Zest script' button will stay pressed, change to 'Recording a new Zest script' and show a red icon.</li>
 </ul>
-The new Zest script will be shown in the Scripts tab with a red 'recording' icon.<br>
-Any requests that you make underneath the specified prefix will be added to the script.<br>
+新的带有红色"录制"图标的Zest脚本将显示在脚本选项卡中。<br>
+您在指定前缀下所做的任何请求都将添加到脚本中。<br>
 Press the 'Recording a new Zest script' again to stop recording the requests.<br>
-Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
+注意，您只能用此方式记录"独立"的Zest脚本。如果您想创建其他类型的Zest脚本，您必须使用另一个机制。
 <br><br>
-You can also right click any Stand Alone Zest script and use the 'Start recording' and 'Stop recording' buttons. 
+您也可以右键单击任何独立Zest脚本，并使用"开始录制"和"停止录制"按钮。 
 
-<h3>New Script Button</h3>
+<h3>新建脚本按钮</h3>
 <ul>
-<li>Navigate to the Scripts tree tab</li>
-<li>Press the 'New Script...' button</li>
-<li>Type in a suitable name for your script in the 'New Script' dialog</li>
-<li>Select the script type (see the Scripts add-on help page for more details)</li>
-<li>Select the Zest script engine</li>
-<li>Select one of the templates (if relevant)</li>
-<li>Press the 'Save' button</li>
+<li>导航到脚本树选项卡</li>
+<li>按"新建脚本..."按钮</li>
+<li>在"新建脚本"对话框中键入适合您的脚本名称</li>
+<li>选择脚本类型(有关详情，请参阅脚本附件的帮助页面)</li>
+<li>选择Zest脚本引擎</li>
+<li>选择其中一个模版(如果相关)</li>
+<li>按"保存"按钮</li>
 </ul>
 Any type of Zest script can be created this way.
 
 <h3>Right clicking a Zest template</h3>
 <ul>
 <li>Navigate to the Scripts tree tab</li>
-<li>Expand the 'Templates' node and find a template you want to use</li>
-<li>Right click on the template and select 'New Script...'</li>
-<li>Press the 'Save' button</li>
+<li>展开"模版"节点并查找您想使用的模版</li>
+<li>右键单击该模版并且选择"新建脚本..."</li>
+<li>按"保存"按钮</li>
 </ul>
 Any type of Zest script can be created this way.
 
-<h3>Right clicking requests</h3>
+<h3>右键单击请求</h3>
 <ul>
-<li>Navigate to any tab that shows requests, such as the History tab</li>
-<li>Select one or more requests</li>
-<li>Right click on them</li>
-<li>Select the 'Add to Zest Script' menu which allows you to select an existing Stand Alone script or create a new one</li>
+<li>导航到显示请求的任何选项卡，例如历史记录选项卡</li>
+<li>选择一个或多个请求</li>
+<li>右键点击它们</li>
+<li>选择"添加到Zest脚本"菜单，它允许您选择一个现存的独立脚本或者创建一个新脚本</li>
 </ul>
-Note that you can only add request to 'Stand Alone' Zest scripts.
+注意，您只能添加请求到"独立"Zest脚本。
 
 <h3>Plug-n-Hack</h3>
-If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
+如果您现在正在使用的是Firefox的最新版本，那么您可以在您的浏览器中创建Zest脚本。<br>
 <ul>
 <li>Press the 'Plug-n-Hack' button on the ZAP 'Quick Start' tab</li>
 <li>Install the Plug-n-Hack Firefox Add-on and accept all of the dialogs</li>
-<li>Press 'Shift F2' in Firefox to access the Developer Toolbar</li>
+<li>在Firefox中按"Shift F2"访问Developer Toolbar（开发工具栏）</li>
 <li>Type 'zap record on global' to start recording a new Zest script</li>
-<li>Any requests you make through ZAP will be added to the script</li>
+<li>您通过ZAP发出的任何请求都将添加到脚本中</li>
 <li>Type 'zap record off global' to stop recording the script</li>
 </ul>
-Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
+注意，您只能以此方式记录"独立"Zest脚本。如果您想创建其他类型的Zest脚本，您必须使用另一个机制。
 
-<h2>Editing Zest scripts</h2>
-Zest scripts are edited graphically in the Scripts tree tab.<br>
+<h2>编辑Zest脚本</h2>
+Zest脚本在"脚本树"选项卡中以图像的方式进行编辑。<br>
 Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
-You can add, move and remove statements via right clicking the Zest nodes.<br>
-You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
-There are also some right click options available when you select text in the Request or Response tabs.<br>
+通过右击Zest节点，您可以添加，移动，删除语句。<br>
+您还可以通过右键单击任何其他选项卡中的请求，将请求添加到"独立"Zest脚本。<br>
+在请求或响应选项卡中选择文本时，还有一些可用的右击选项。<br>
 <br>
-Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
-A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
+Zest包括一组"内置"变量，以及允许您声明自己的变量。<br>
+在编辑对话框中提供了一个右击菜单(如果相关)，以允许您粘贴任何可用的变量名称。<br>
 
-<h2>External links</h2>
+<h2>外部链接</h2>
 <table>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a></td>
-	<td>Zest overview</td></tr>
+	<td>Zest概述</td></tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/mozilla/zest">https://github.com/mozilla/zest</a></td>
