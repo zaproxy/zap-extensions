@@ -9,6 +9,7 @@
 	<![CDATA[
 	Fix typo in help page.<br>
 	Execute Targeted scripts in other thread than GUI thread.<br>
+	Clear highlighting syntax when a non-script node is selected.<br>
 	]]>
 	</changes>
 	<extensions>
