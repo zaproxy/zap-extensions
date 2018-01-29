@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zaproxy/wiki/ScriptConsole</url>
 	<changes>
 	<![CDATA[
+	Fix typo in help page.<br>
 	Execute Targeted scripts in other thread than GUI thread.<br>
 	]]>
 	</changes>
