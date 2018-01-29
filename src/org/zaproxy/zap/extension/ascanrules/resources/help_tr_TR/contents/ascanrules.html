@@ -20,8 +20,7 @@ Herhangi bir eşleşme yoksa, tarayıcı, sunucuya ürünü yazmasını söyleye
 iki adet rastgele oluşturulmuş tamsayı. Yanıt gövdesi ürüne uyuyorsa, bir uyarı oluşturulur.
 
 <h2>Komut Enjeksiyonu</h2>
-Bu kural *NIX ve Windows OS komutlarında web uygulamasının kontrol edilmeden ele geçip geçmediğini belirlemek için URL parametresi değerlerinde olarak gönderir
-kullanıcı girdisini doğrudan İşletim Sistemine. Enjeksiyon dizileri OS tarafından yorumlanabilecek meta karakterlerden meydana gelmektedir
+Bu kural *NIX ve Windows OS komutlarını web uygulamasının kontrolsüz kullanıcı girdisini doğrudan altta yatan işletim sistemine giriş yaptığını belirlemek için URL parametresi değerleri gönderir. Enjeksiyon dizileri OS tarafından yorumlanabilecek meta karakterlerden meydana gelmektedir
 uygulama savunmasızsa yanıt verirken çıktısı üretmesi gereken bir yükle birlikte birleştirme komutları olarak kullanılabilir. Yanıt gövdesi içeriği yük ile uyuşursa, tarayıcı bir uyarı verir ve derhal geri döner. Hata tabanlı eşleme denemelerinin hiçbirinin yapılmaması durumunda
 yanıtta çıktıyı döndür tarayıcı uyku talimatlarını yük olarak göndererek ve isteği gönderme arasındaki geçen süreyi karşılaştırarak kör bir enjeksiyon saldırısı yapmaya çalışır
 ve sezgisel gecikme alt sınırına karşı cevap alır. Geçen süre bu sınırın üzerindeyse, orta bir güvenle bir uyarı artırılır ve tarayıcı derhal geri döner.
