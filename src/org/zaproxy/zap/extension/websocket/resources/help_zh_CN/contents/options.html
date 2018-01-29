@@ -3,47 +3,45 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-WebSocket specific options
+WebSocket特定的选项
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>WebSocket specific options</h1>
+<h1>WebSocket特定选项</h1>
 <p>
-This screen allows you to configure the WebSocket options:
+此屏幕允许您配置WebSocket选项：
 
-<h3>Forward all</h3>
-If you're not interested in WebSockets communication, but you want to allow its messages being sent back &amp; forth through ZAP, then you should enable this option.
-As a result no message will be stored in the session database. Moreover no message will appear in the WebSockets tab. This setting can be useful if you have to deal with performance critical WebSocket connections and you're not interested what is being sent.
+<h3>转发所有</h3>
+如果您对WebSockets通信不感兴趣，但您希望允许其消息被发送回来&amp; 通过ZAP，那么您应该启用这个选项。
+因此信息不会存储在会话数据库中。 此外，WebSockets选项卡中不会出现任何消息。 如果您必须处理性能至关重要的WebSocket连接，并且您对发送的内容不感兴趣，则此设置可能非常有用。
 <br><br>
-If you want to ignore just one specific channel, check out the WebSocket specific <i>Session Properties</i>.
+如果您想要忽略一个特定通道，请查看WebSocket特定的 <i>会话属性</i>.
 
 
-<h3>Break on all</h3>
-In the <i>中断</i> toolbar, there are two buttons:
+<h3>全部中断</h3>
+在 <i>中断</i> 工具栏，有两个按钮：
 <ul>
-	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all requests</i></li>
-	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>Set break on all responses</i></li>
+	<li><img src="images/105.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>在所有请求中设置断点</i></li>
+	<li><img src="images/106.png" align="bottom" width="16" height="16" />&nbsp;&nbsp;<i>在所有响应中设置断点</i></li>
 </ul>
-When you enable this option, then all outgoing (respectively incoming) WebSocket messages are also caught by these control buttons.
+当您启用此选项时，所有传出（分别传入）的WebSockets消息也被这些控制按钮捕获。
 <br><br>
-By default this option is disabled. In this case only HTTP messages are caught, but you can add explicit breakpoints on WebSocket communication in the <a href="tab.html">WebSocket tab</a>. 
+默认情况下，此选项被禁用。在这种情况下，只有HTTP消息被捕获，但您可以在WebSockets通信中添加明确的断点 <a href="tab.html">WebSocket选项卡</a>. 
 
 
 <h3>Break on Ping &amp; Pong messages</h3>
-<i>PING</i> and <i>PONG</i> messages are often used by WebSocket servers to determine the health of the current connection. If you catch an incoming <i>PING</i> message, the browser is not able to return a <i>PONG</i> message immediately, resulting in a bad latency value.
+<i>PING</i> 和 <i>PONG</i> 消息通常被WebSocket服务器用来确定当前连接的运行状况。如果你捕获传入 <i>PING</i> 消息，浏览器无法立即返回 <i>PONG</i> 消息，从而导致滞后时间值错误。
 <br><br>
-If this option is disabled no <i>PING</i> or <i>PONG</i> message is caught when you:
+如果禁用此选项 <i>PING</i> 或者 <i>PONG</i> message is caught when you:
 <ul>
-	<li>set a breakpoint on <u>all requests</u> or <u>all responses</u>, <i>or</i></li>
+	<li>在<u>所有请求</u>或<u>所有响应</u>、<i>或</i>上设置断点</li>
 	<li>step through to the next request or response and a <i>PING</i> or <i>PONG</i> message arrives</li>
 </ul>
-This setting does not affect breakpoints that are set explicitly on <i>PING</i> or <i>PONG</i> messages. You can view such explicit breakpoints in the <i>Breakpoints tab</i>.
+此设置不影响显式设置的断点 <i>PING</i> 或者 <i>PONG</i> 消息，您可以查看这样的显式断点在 <i>断点选项卡</i>.
 
-<h3>Remove <code>Sec-WebSocket-Extensions</code> header</h3>
-Allows to remove the HTTP header <code>Sec-WebSocket-Extensions</code> from handshake messages, so no transformations are done
-to the WebSocket messages sent/received.<br>
-This option should always be enabled unless the client or the server under test requires them. The WebSocket
-messages might not be correctly processed by ZAP when extensions are used.
+<h3>删除<code>Sec-WebSocket-Extension</code>标题</h3>
+允许删除HTTP标题 <code>Sec-WebSocket-Extensions</code> 从握手消息，因此不会对发送/接受的WebSocket消息进行转换。<br>
+应始终启动此选项，除非正在测试的客户端或者服务器需要它们。当使用扩展时，WebSocket消息可能无法通过ZAP正确处理。
 
 </body>
 </html>

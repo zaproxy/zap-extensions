@@ -74,8 +74,7 @@
 			href="options.html">Seçenekler Selenium ekranında</a> yapılandırılabilir.
 
 	<h2>Birlikte verilen WebDriverlar</h2>
-ZAP WebDriverlar ile eklentiler sağlar, o eklentiler yüklendiğinde ZAP varsayılan olarak birlikte verilen WebDriverları kullanmayı deneyecektir. Bazı OS'lerde tarayıcıların bazıları için bir WebDriver'ı olmayabilir, bu durumda ZAP seçenekleri panelinde kullanılabilir bir WebDriver'ın mevcut olmadığını bildirecektir. The bundled WebDrivers can also be (re)set with
-	the 'Bundled' button (for example, if another WebDriver was manually set). Tüm tarayıcı sürümleri donanımla gelen WebDrivers ile desteklenmez, mümkün olduğunda tarayıcıların daha yeni/en son sürümlerinin kullanılması önerilir.
+ZAP WebDriverlar ile eklentiler sağlar, o eklentiler yüklendiğinde ZAP varsayılan olarak birlikte verilen WebDriverları kullanmayı deneyecektir. Bazı OS'lerde tarayıcıların bazıları için bir WebDriver'ı olmayabilir, bu durumda ZAP seçenekleri panelinde kullanılabilir bir WebDriver'ın mevcut olmadığını bildirecektir. Donanımla birlikte gelen WebDrivers 'Bundled' düğmesi ile (tekrar) ayarlanabilir (örneğin başka bir WebDriver elle ayarlanmışsa). Tüm tarayıcı sürümleri donanımla gelen WebDrivers ile desteklenmez, mümkün olduğunda tarayıcıların daha yeni/en son sürümlerinin kullanılması önerilir.
 
 	<p>
 		<strong>Not:</strong> ZAP eklentileri ek tarayıcılar ekleyebilir.
@@ -87,8 +86,7 @@ HTTPS sitelerinin sürümlerde kullanılmasını önler &ge; 48 and &lt; 52.
 	<p>
 		<strong>PhantomJS Note:</strong> There's an issue (<a
 			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
-		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Bir düzeltme bulunana kadar bu durumlarda kullanmamanız önerilir. Bazı eklentiler bu olduğunda uyarı iletisi göstermeyi seçebilir. As workaround one could define, in the <code>hosts</code>
-		file, a domain name mapping to the local address and use that domain name instead.
+		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Bir düzeltme bulunana kadar bu durumlarda kullanmamanız önerilir. Bazı eklentiler bu olduğunda uyarı iletisi göstermeyi seçebilir. Geçici çözüm olarak, bir <code>ana makine</code> dosyasında, yerel adresle eşleşen bir domain adı tanımlayabilir ve bunun yerine bu domain adını kullanabilir.
 	<p>
 		<strong>İnternet Explorer Notu:</strong> Internet Explorer'ın tüm sürümleri kutudan çıkmaz, bkz <a
 			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer Web sitesi</a> bunları yapılandırma hakkında daha fazla bilgi için.
