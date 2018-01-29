@@ -21,6 +21,7 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,7 +73,11 @@ public class LDAPInjection extends AbstractAppParamPlugin {
 	private static final char[] RANDOM_PARAMETER_CHARS = "abcdefghijklmnopqrstuvwyxz0123456789".toCharArray();
     
     static {
-        String ldapImplementationsFlat = Constant.messages.getString(I18N_PREFIX + "ldapinjection.knownimplementations");
+        ResourceBundle resourceBundle = ResourceBundle.getBundle(
+                LDAPInjection.class.getPackage().getName() + ".resources.LdapErrors",
+                Constant.getLocale(),
+                ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES));
+        String ldapImplementationsFlat = resourceBundle.getString(I18N_PREFIX + "ldapinjection.knownimplementations");
         String[] ldapImplementations = ldapImplementationsFlat.split(":");
         String errorMessageFlat;
         String[] errorMessages;
@@ -80,7 +85,7 @@ public class LDAPInjection extends AbstractAppParamPlugin {
 
         for (String ldapImplementation : ldapImplementations) {  //for each LDAP implementation
             //for each known LDAP implementation
-            errorMessageFlat = Constant.messages.getString(I18N_PREFIX + "ldapinjection." + ldapImplementation + ".errormessages");
+            errorMessageFlat = resourceBundle.getString(I18N_PREFIX + "ldapinjection." + ldapImplementation + ".errormessages");
             errorMessages = errorMessageFlat.split(":");
 
             for (String errorMessage : errorMessages) {  //for each error message for the given LDAP implemention
