@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-WebSocket specific options
+Ang WebSocket na tumutukoy ng mga opsyon
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -37,13 +37,11 @@ Kung ang opsyon na ito ay hindi pinagana <i>PING</i> o <i>PONG</i> ang mensahe a
 	<li>i-set ang breakpoint sa <u>lahat ng mga kahilingan</u> or <u>lahat ng mga tugon</u>, <i>or</i></li>
 	<li>hakbang sa pamamagitan ng sunod na kahilingan o tugon at isang <i>PING</i> or <i>PONG</i> na mensaheng darating</li>
 </ul>
-Ang setting na ito ay hindi apektado sa mga breakpoint na mga naka-set explicitly sa <i>PING</i> o <i>PONG</i> messages. You can view such explicit breakpoints in the <i>Breakpoints tab</i>.
+Ang setting na ito ay hindi apektado sa mga breakpoint na mga naka-set explicitly sa <i>PING</i> o <i>PONG</i> mga mensahe. Ikaw ay maaaring makakita ng ganyan na malinaw na mga breakpoint sa <i>Tab ng mga breakpoint</i>.
 
-<h3>Remove <code>Sec-WebSocket-Extensions</code> header</h3>
-Allows to remove the HTTP header <code>Sec-WebSocket-Extensions</code> from handshake messages, so no transformations are done
-to the WebSocket messages sent/received.<br>
-This option should always be enabled unless the client or the server under test requires them. The WebSocket
-messages might not be correctly processed by ZAP when extensions are used.
+<h3>Alisin <code>Sec-WebSocket-Mga extension</code> header</h3>
+Nagbibigay-daan upang alisin ang HTTP header <code>Sec-WebSocket-Mga extension</code> mula sa pakikipagkamay na mga mensahe, kaya walang mga pagbabago ang nagawa sa WebSocket na mga mensahe na pinadala/natanggap.<br>
+Ang opsyon na ito ay dapat laging pinagana maliban kung ang kliyente o ang server sa ilalim ng pagsubok ay nangangailangan sila. Ang WebSocket na mga mensahe ay baka hindi tama ang pagproproseso gamit ang ZAP kapag ang mga extension ay ginamit.
 
 </body>
 </html>
