@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="online menu " target="onlineMenu" />
+	<indexitem text="menu online " target="onlineMenu" />
 </index>

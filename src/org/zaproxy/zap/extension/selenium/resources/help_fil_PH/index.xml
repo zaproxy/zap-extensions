@@ -4,7 +4,7 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-    <indexitem text="Selenium" target="addon.selenium.intro" />
-    <indexitem text="Selenium Options" target="addon.selenium.options" />
-    <indexitem text="Selenium API" target="addon.selenium.api" />
+    <indexitem text="Ang Selenium" target="addon.selenium.intro" />
+    <indexitem text="Mga opsyon ng Selenium" target="addon.selenium.options" />
+    <indexitem text="Ang API ng Selenium" target="addon.selenium.api" />
 </index>
