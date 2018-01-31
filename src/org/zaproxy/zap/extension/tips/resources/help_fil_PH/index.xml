@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="tips and tricks" target="tips" />
+	<indexitem text="mga tip at mga trick" target="tips" />
 </index>

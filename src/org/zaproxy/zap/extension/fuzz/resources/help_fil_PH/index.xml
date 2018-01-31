@@ -4,12 +4,12 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-    <indexitem text="Fuzzer Concepts" target="addon.fuzzer.concepts" />
-    <indexitem text="Fuzzer Dialogue" target="addon.fuzzer.dialogue"/>
-    <indexitem text="Fuzzer Location Processors Dialog" target="addon.fuzzer.locations"/>
-    <indexitem text="Fuzzer HTTP Message Processors" target="addon.fuzzer.httpmessageprocessors"/>
-    <indexitem text="Fuzzer Payloads Dialog" target="addon.fuzzer.payloads"/>
-    <indexitem text="Fuzzer Payload Processors Dialog" target="addon.fuzzer.processors"/>
-    <indexitem text="Fuzzer Options" target="addon.fuzzer.options"/>
-    <indexitem text="Fuzzer Tab" target="addon.fuzzer.tab"/>
+    <indexitem text="Mga konsepto ng Fuzzer" target="addon.fuzzer.concepts" />
+    <indexitem text="Mga Dayalogo ng Fuzzer" target="addon.fuzzer.dialogue"/>
+    <indexitem text="Mga diyalogo ng lokasyon ng mga Processor ng Fuzzer" target="addon.fuzzer.locations"/>
+    <indexitem text="Mga Processor ng Mensahe ng HTTP ng Fuzzer" target="addon.fuzzer.httpmessageprocessors"/>
+    <indexitem text="Diyalogo ng Kargamento ng Fuzzer" target="addon.fuzzer.payloads"/>
+    <indexitem text="Diyalogo ng mga Processor ng Kargamento ng Fuzzer" target="addon.fuzzer.processors"/>
+    <indexitem text="Mga Opsyon ng Fuzzer" target="addon.fuzzer.options"/>
+    <indexitem text="Tab ng Fuzzer" target="addon.fuzzer.tab"/>
 </index>
