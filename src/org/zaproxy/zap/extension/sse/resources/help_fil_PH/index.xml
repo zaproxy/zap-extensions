@@ -5,6 +5,6 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="server-sent events" target="sse.introduction" />
-	<indexitem text="server-sent events tab" target="sse.tab" />
+	<indexitem text="server-napadala na mga pangyayari" target="sse.introduction" />
+	<indexitem text="server-nadapala na mga pangyayari na tab" target="sse.tab" />
 </index>

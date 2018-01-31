@@ -2,34 +2,30 @@
 <html>
 <head>
 <title>
-DOM XSS Active Scan Rule
+Mga Patakaran sa Aktibong Pag-scan ng DOM XSS
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>DOM XSS Active Scan Rule</h1>
+<h1>Mga Patakaran sa Aktibong Pag-scan ng DOM XSS</h1>
 <p>
-An Active Scan rule for detecting DOM XSS vulnerabilities.
+Ang patakaran ng aktibong pag-scan para sa pagtuklas ng mga kahinaan ng DOM XSS.
 <p>
-It launches browser windows and sends attack payloads to all of the relevant DOM elements.<br>
-As it launches browser windows it is not suitable for headless environments,
-and will take significantly longer than other (non browser based) rules. 
+Ito ay naglulunsad ng mga window ng browser at nagpapadala ng mga atake sa kargamento sa lahat ng mga nauugnay na mga elemento ng DOM.<br>Habang ito ay naglulunsad ng mga window ng browser, hindi ito angkop para sa headless environments, at aabot ng mas matagal kaysa sa iba (hindi batay sa browser) mga patakaran. 
 </p>
 <p>
-This version only supports Firefox.<br>
-Future versions may support other browsers.
+Ang bersyong ito ay sumusuporta lamang ng Firefox.<br>Ang mga bersyon sa hinaharap ay maaaring sumuporta ng ibang mga browser.
 </p>
 <p>
-The following Attack Strengths are supported, and related directly to the number of attack payloads used:
+Ang mga sumusundo ng mga Kalakasan ng Atake ay suportado, at tuwirang may kinalaman sa bilang ng mga kargamento ng atake na ginamit:
 <ul>
-<li>LOW: 2 attack payloads 
-<li>MEDIUM: 4 attack payloads 
-<li>HIGH: 6 attack payloads 
-<li>INSANE: 8 attack payloads 
+<li>LOW: 2 mga kargamento ng atake 
+<li>MEDIUM: 4 mga kargamento ng atake 
+<li>HIGHT: 6 mga kargamento ng atake 
+<li>INSANE: 8 mga kargamento ng atake 
 </ul>
 </p>
 <p>
-The rule will only report one DOM XSS vulnerability per node, unless the LOW Alert threshold
-is used, in which case it will keep trying all of the specified payloads. 
+Ang patakaran ay magtatala lamang ng isang kahinaan ng DOM XSS kada noda, maliban kung ang LOW Alert threshold ay ginamit, kung saan susubukan nito ang lahat ng tinukoy na mga kargamento. 
 </p>
 
 </body>

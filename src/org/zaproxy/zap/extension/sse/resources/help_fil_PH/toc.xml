@@ -4,10 +4,10 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Server-Sent Events" image="html5connectivity" >
-		    	<tocitem text="Introduction" target="sse.introduction"/>
+	<tocitem text="Gabay sa Tagagamit ng ZAP" tocid="toplevelitem">
+		<tocitem text="Mga Add On" tocid="addons">
+			<tocitem text="Ang Server-Napadala na mga pangyayari" image="html5connectivity" >
+		    	<tocitem text="Panimula" target="sse.introduction"/>
 				<tocitem text="Tab" target="sse.tab"/>
 			</tocitem>
 		</tocitem>
