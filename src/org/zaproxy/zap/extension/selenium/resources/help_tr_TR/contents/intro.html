@@ -84,9 +84,8 @@ ZAP WebDriverlar ile eklentiler sağlar, o eklentiler yüklendiğinde ZAP varsay
 			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>)
 HTTPS sitelerinin sürümlerde kullanılmasını önler &ge; 48 and &lt; 52.
 	<p>
-		<strong>PhantomJS Note:</strong> There's an issue (<a
-			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
-		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Bir düzeltme bulunana kadar bu durumlarda kullanmamanız önerilir. Bazı eklentiler bu olduğunda uyarı iletisi göstermeyi seçebilir. Geçici çözüm olarak, bir <code>ana makine</code> dosyasında, yerel adresle eşleşen bir domain adı tanımlayabilir ve bunun yerine bu domain adını kullanabilir.
+		<strong>PhantomJS Notu:</strong>Bir sorun var (<a
+			href="https://github.com/ariya/phantomjs/issues/11342">Sorun #11342</a>) ZAP ile vekillendirilmekle, 127.0.0.1::1 localhost'ta sitelere engel oluyor. Bir düzeltme bulunana kadar bu durumlarda kullanmamanız önerilir. Bazı eklentiler bu olduğunda uyarı iletisi göstermeyi seçebilir. Geçici çözüm olarak, bir <code>ana makine</code> dosyasında, yerel adresle eşleşen bir domain adı tanımlayabilir ve bunun yerine bu domain adını kullanabilir.
 	<p>
 		<strong>İnternet Explorer Notu:</strong> Internet Explorer'ın tüm sürümleri kutudan çıkmaz, bkz <a
 			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer Web sitesi</a> bunları yapılandırma hakkında daha fazla bilgi için.
