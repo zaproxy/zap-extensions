@@ -8,14 +8,14 @@ Payloads dialog
 </head>
 <body bgcolor="#ffffff">
 <h1>Payloads dialog</h1>
-Hal ini memungkinkan anda untuk memilih payload generator untuk gunakan ketika <a href="concepts.html">fuzzing</a> a request.
+Hal ini memungkinkan anda untuk memilih payload generator untuk gunakan ketika <a href="concepts.html">fuzzing</a> sebuah permintaan.
 <br><br>
 Muatan generator menghasilkan baku serangan yang telah mengirimkan hasil pengeditan. mengajukan untuk aplikasi target.
 <br><br>
 Jenis generator berikut disediakan oleh default:
 <ul>
 <li>Kosong/tidak ada - Menghasilkan muatan yang terpilih Beberapa kali, meninggalkan pesan tanpa perubahan. Muatan generator ini berguna untuk mengirim beberapa pesan yang kemudian diproses, misalnya, dengan <a href="httpmessageprocessors.html"> Fuzzer HTTP Prosesor (Script)</a>.</li>
-<li>File - select any local file for one off attacks</li>
+<li>File - pilih setiap file lokal untuk satu kali serangan</li>
 <li>Berkas fuzzer - Pilih salah satu Kombinasi berkas fuzzer terdaftar dengan ZAP, contoh via add-on seperti fuzzdb</li>
 <li>Numberzz- memungkinkan dengan mudah menghasilkan urutan angka, dengan kenaikan kostum</li>
 <li>Regex - menghasilkan beberapa serangan pada pola regex</li>
@@ -24,7 +24,7 @@ Jenis generator berikut disediakan oleh default:
 </ul>
 Anda dapat menulis kustom muatan generator script - ini dapat menyediakan semua muatan yang anda butuhkan.
 <br><br>
-Add-ons can also define additional payload generators.
+Add-ons bisa juga mendefinisikan generator beban muatan tambahan.
 <br><br>
 The 'Processors...' button launches the <a href="processors.html">Payload Processors dialog</a> yang memungkinkan anda untuk mengkonfigurasi muatan prosesor yang hanya berlaku untuk palyload generator yang telah anda pilih.
 <br>
