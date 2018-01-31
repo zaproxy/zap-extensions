@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Minor tweak in extender template.<br>
+	Add default template for Script Input Vector.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -29,6 +30,7 @@
 		<file>scripts/templates/standalone/Standalone default template.py</file>
 		<file>scripts/templates/standalone/Traverse sites tree.py</file>
 		<file>scripts/templates/targeted/Targeted default template.py</file>
+		<file>scripts/templates/variant/Input Vector default template.py</file>
 	</files>
 	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
