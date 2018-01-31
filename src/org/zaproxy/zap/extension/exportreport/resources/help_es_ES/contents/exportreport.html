@@ -3,26 +3,26 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>
-            Export Report
+            Iulat ang Ulat
         </title>
     </head>
 
     <body bgcolor="#ffffff">
 
-        <h1><u>Export Report</u></h1>
-        Report Export module that allows users to customize content and export in a desired format.
+        <h1><u>Informe de exportacion</u></h1>
+        Modulo de exportacion de informe permite a los usuarios personalizar el contenido y exportar en un formato deseado.
         <ul>
-            <li>Created by <a href="https://github.com/JordanGS">JordanGS</a>.</li>
-            <li>Minimum Supported Version: Weekly Release ZAP_D-2016-09-05</li>
-            <li>Project on  <a href="https://github.com/JordanGS/workspace">GitHub</a>. You can also find a .zip of the minimum supported release in the zap-download folder.</li>
-            <li>Supported and incorporated in the <a href="https://wiki.jenkins-ci.org/display/JENKINS/zap+plugin">Official OWASP Zed Attack Proxy Jenkins Plugin</a>.</li>
+            <li>Creado por <a href="https://github.com/JordanGS">jordanGS</a>.</li>
+            <li>Minimo compatible version: Semanal version ZAP_D-2016-09-05</li>
+            <li>Proyecto en <a href="https://github.com/JordanGS/workspace">GitHub</a>. Tambien puede encontrar  un zip de la version compatible minimo en la carpeta de descarge de descarga de zap.</li>
+            <li>Apoyo y en el <a href="https://wiki.jenkins-ci.org/display/JENKINS/zap+plugin">Oficial OWASP Zed ataque Proxy Jenkins Plugin</a>.</li>
         </ul>
 
-        <h2><u>Table of Contents</u></h2>
+        <h2><u>Tabla de Contenidos</u></h2>
         <ul>
             <li>ZAP UI</li>
             <li>Command Line</li>
-            <li>API Calls</li>
+            <li>API tawag</li>
         </ul>
 
         <hr>
@@ -30,110 +30,110 @@
         <a name="zap-ui"></a> 
         <h2><u>ZAP UI</u></h2>
 
-        <h4>Source Info</h4>
-        User entered and automatically retrieve data relevant to the report. Hover over each field in the extension for tool tip.
+        <h4>Impormasyon sa Pinagmulan</h4>
+        Ang gumagamit ay pumasok at awtomatikong makuha ang data na may kaugnayan sa ulat. Mag-hover sa bawat field sa extension para sa tip ng tool.
         <ul>
-            <li>Title - Defaults to Session Name</li>
-            <li>By</li>
-            <li>For</li>
-            <li>Scan Date - User entered date of AScan, defaults to current date-time</li>
-            <li>Report Date - Defaults to current date-time</li>
-            <li>Scan Version - Placeholder for future</li>
-            <li>Report Version - Defaults to current version of ZAP tool</li>
+            <li>Pamagat - Mga Default sa Pangalan ng Session</li>
+            <li>Por</li>
+            <li>Para</li>
+            <li>Petsa ng Pag-scan - Petsa ng ipinasok ng user ng AScan, mga default sa kasalukuyang petsa ng oras</li>
+            <li>Petsa ng Ulat - Mga Default sa kasalukuyang petsa ng oras</li>
+            <li>I-scan ang Bersyon - Placeholder para sa hinaharap</li>
+            <li>Ulat ng Bersyon - Mga Default sa kasalukuyang bersyon ng ZAP tool</li>
         </ul>
         <h4>UI</h4>
         <ul style="list-style-type:none">
             <li>
-                <img src="images/SourceInfo.png" alt="Source Info">
+                <img src="images/SourceInfo.png" alt="Impormasyon sa Pinagmulan">
             </li>
         </ul>
         <br>
 
-        <h4>Alert Severity</h4>
-        Include/Exclude Alerts by Severity.
-        <h4>Included by Default</h4>
+        <h4>Alert Leverage</h4>
+        Isama / Ibukod ang Mga Alerto sa pamamagitan ng Kalubhaan.
+        <h4>Kasama ng Default</h4>
         <ul>
-            <li>High</li>
-            <li>Medium</li>
-            <li>Low</li>
-            <li>Informational</li>
+            <li>Alto</li>
+            <li>Medio</li>
+            <li>Bajo</li>
+            <li>Informativo</li>
         </ul>
         <h4>UI</h4>
         <ul style="list-style-type:none">
             <li>
-                <img src="images/AlertSeverity.png" alt="Source Info">
+                <img src="images/AlertSeverity.png" alt="Impormasyon sa Pinagmulan">
             </li>
         </ul>
         <br>
 
-        <h4>Alert Details</h4>
-        Include/Exclude Details of each Alert.
-        <h4>Included by Default</h4>
+        <h4>Detalles de alerta</h4>
+        Isama / Ibukod ang Mga Detalye ng bawat Alerto.
+        <h4>Kasama ng Default</h4>
         <ul>
             <li>CWE ID</li>
             <li>WASC ID</li>
-            <li>Description</li>
-            <li>Other Info</li>
-            <li>Solution</li>
-            <li>Reference</li>
+            <li>Descripcion</li>
+            <li>Otra informacion</li>
+            <li>Recomendacion</li>
+            <li>Referencia</li>
         </ul>
 
-        <h4>Excluded by Default</h4>
+        <h4>Ibinukod ng Default</h4>
         <ul>
-            <li>Request Header</li>
-            <li>Response Header</li>
-            <li>Request Body</li>
-            <li>Response Body</li>
+            <li>Humiling ng Header</li>
+            <li>Cabecera de la respuesta</li>
+            <li>Humiling ng Katawan</li>
+            <li>Tugon ng Katawan</li>
         </ul>
 
         <h4>UI</h4>
 
         <ul style="list-style-type:none">
             <li>
-                <img src="images/Alert Details.png" alt="Source Info">
+                <img src="images/Alert Details.png" alt="Impormasyon sa Pinagmulan">
             </li>
         </ul>
 
         <hr>
 
-        <h4>File Chooser Dialog</h4>
-        The dialog only shows folders and accepted file types. The 'Files of Type' drop down list will filter to show only folders and files of the specified extension.
+        <h4>Dialog ng Tagapili ng File</h4>
+        Ang diyalogo nagpapakita ng mga folder at tinanggap na mga uri ng file. Ang listahan ng drop down na 'Mga File ng Uri' ay i-filter upang ipakita lamang ang mga folder at mga file ng tinukoy na extension.
 
-        <h4>Currently Available</h4>
+        <h4>Magagamit na Kasalukuyang</h4>
         <ul>
-            <li>ASCII 1.0 Strict Compliant XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
+            <li>ASCII 1.0 Mahigpit na Sumusunod XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
             <li>XML Files (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
             <li>JSON Files (.json <img src="../../images/json.png" alt="JSON Icon">)</li>
         </ul>
 
-        <h4>Future Milestone</h4>
+        <h4>Hinaharap Milestone</h4>
         <ul>
-            <li>Bootstrap HTML Files(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
-            <li>PDF Documents (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
-            <li>Google Documents (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
+            <li>Bootstrap HTML Files (.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
+            <li>PDF Dokumento (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
+            <li>Google Dokumento (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
         </ul>            
 
         <h4>UI</h4>
         <ul style="list-style-type:none">
             <li>
-                Show all accepted files
+                Ipakita ang lahat ng tinatanggap na mga file
             </li>
             <li>
-                <img src="images/FileChooser.png" alt="Source Info">
-            </li>
-            <li><br></li>
-            <li>
-                List of accepted file formats
-            </li>
-            <li>
-                <img src="images/FileChooserChoices.png" alt="Source Info">
+                <img src="images/FileChooser.png" alt="Impormasyon sa Pinagmulan">
             </li>
             <li><br></li>
             <li>
-                Filter by a specific file format
+                Listahan ng mga tinatanggap na format ng file
             </li>
             <li>
-                <img src="images/FileChooserFilter.png" alt="Source Info">
+                <img src="images/FileChooserChoices.png" alt="Impormasyon sa Pinagmulan">
+            </li>
+            <li><br></li>
+            <li>
+                Salain ng isang tukoy na format ng file
+            </li>
+            <li>
+                <img src="images/FileChooserFilter.png" alt="Impormasyon sa Pinagmulan">
             </li>
         </ul>
 
@@ -141,40 +141,40 @@
 
         <a name="command-line"></a> 
         <h2><u>Command Line</u></h2>
-        The extension can be run from the command line as well and requires the following arguments to be passed in to generate a report.
+        Ang extension ay maaaring tumakbo mula sa command line pati na rin at nangangailangan ng mga sumusunod na mga argumento na ipasa sa upang bumuo ng isang ulat.
 
-        <h4>OWASP ZAP Command Line Options</h4>
+        <h4>OWASP ZAP Command Line Option</h4>
         <ul style="list-style: none;">
-            <li><b>-session</b>: Opens the given session after starting ZAP</li>
-            <li><b>-cmd</b>: Runs ZAP 'inline', ie without starting the UI or a daemon</li>
+            <li><b> -session </ 0>: Binubuksan ang ibinigay na sesyon pagkatapos simulan ang ZAP</li>
+            <li><b> -cmd </ 0>: Nagpapatakbo ng inline na ZAP, ibig sabihin, nang hindi nagsisimula ng UI o isang demonyo</li>
         </ul>
-        See the <a href="https://github.com/zaproxy/zap-core-help/wiki/HelpCmdline">Wiki</a> for more details on the natively supported command line options.
+        Tingnan ang <a href="https://github.com/zaproxy/zap-core-help/wiki/HelpCmdline">Wiki</a> para sa higit pang mga detalye sa natively suportadong mga pagpipilian sa command line.
 
-        <h4>Export Report Extension Command Line Options</h4>
+        <h4>I-export ang Ulat sa Mga Pagpipilian sa Linya ng Command ng Extension</h4>
         <ul style="list-style: none;">
             <li><hr></li>
             <li><b>-export_report</b>: 
                 <ul style="list-style: none;">
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Descripcion:</h4>
                         <ul>
-                            <li>Saves to the specified file after loading the given session.</li>
+                            <li>Makakatipid sa tinukoy na file pagkatapos na mai-load ang ibinigay na sesyon.</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Currently Available</h4>
+                        <h4>Magagamit na kasalukuyang</h4>
                         <ul>
-                            <li>ASCII 1.0 Strict Compliant XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
+                            <li>ASCII 1.0 Mahigpit na Sumusunod XHTML Files (.xhtml <img src="../../images/html.png" alt="XHTML Icon">)</li>
                             <li>XML Files (.xml <img src="../../images/xml.png" alt="XML Icon">)</li>
                             <li>JSON Files (.json <img src="../../images/json.png" alt="JSON Icon">)</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Future Milestone</h4>
+                        <h4>Hinaharap Milestone</h4>
                         <ul>
                             <li>Bootstrap HTML Files(.bootstrap.html <img src="../../images/bootstrap.png" alt="BOOTSTRAP Icon">)</li>
-                            <li>PDF Documents (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
-                            <li>Google Documents (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
+                            <li>PDF Documento (.pdf <img src="../../images/pdf.png" alt="PDF Icon">)</li>
+                            <li>Google Documento (.doc <img src="../../images/doc.png" alt="DOC Icon">)</li>
                         </ul>            
                     </li>
                     <li><br></li>
@@ -185,33 +185,33 @@
             <li><b>-source_info</b>:
                 <ul style="list-style: none;">
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Descripcion:</h4>
                         <ul>
-                            <li>Specifies the following details of the report:</li>
+                            <li>Tinutukoy ang mga sumusunod na detalye ng ulat:</li>
                             <li style="list-style: none;">
                                 <ol>
-                                    <li>Title</li>
-                                    <li>By</li>
-                                    <li>For</li>
-                                    <li>Scan Date</li>
-                                    <li>Report Date</li>
-                                    <li>Scan Ver</li>
-                                    <li>Report Ver</li>
-                                    <li>Description</li>
+                                    <li>Titulo</li>
+                                    <li>Por</li>
+                                    <li>Para</li>
+                                    <li>Scan ng petsa</li>
+                                    <li>Petsa ng ulat</li>
+                                    <li>I-scan ang Ver</li>
+                                    <li>Iulat ang Ver</li>
+                                    <li>Descripcion</li>
                                 </ol>
                             </li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Example:</h4>
+                        <h4>Halimbawa:</h4>
                         <ul>
-                            <li>-source_info "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, et sed nibh nostrum singulis. Nec causae viderer discere eu."</li>
+                            <li>-source_info "Ulat ng kahinaan ng MyApp.com; JordanGS; Nawala ang mga Kaluluwa; Agosto 15, 2016; Agosto 18, 2016; ZAP_D-2016-08-15; ZAP_D-2016-08-15; Lorem ipsum dolor sit amet, pri corpora ancillae adolescens sa. Ang mga ito ay may isang atomicum, may isang rehiyon na may. Ang dagat ng dagat, at ang mga numeral na lugar. Nec causae viderer discere eu."</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Validation:</h4>
+                        <h4>Validacion:</h4>
                         <ul>
-                            <li>Content is unchecked, can enter empty fields if you wish, only condition is that all 8 items are in the list.</li>
+                            <li>Ang nilalaman ay walang check, maaaring pumasok sa walang laman na mga patlang kung gusto mo, tanging kondisyon ay lahat ng 8 item ay nasa listahan.</li>
                         </ul>
                     </li>
                     <li><br></li>
@@ -222,47 +222,47 @@
             <li><b>-alert_severity</b>:
                 <ul style="list-style: none;">
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Descripcion:</h4>
                         <ul>
-                            <li>Specifies which alert severities will be included in the report:</li>
+                            <li>Tinutukoy kung aling mga severities alerto ang isasama sa ulat:</li>
                             <li style="list-style: none;">
                                 <ol>
-                                    <li>High</li>
-                                    <li>Medium</li>
-                                    <li>Low</li>
-                                    <li>Informational</li>
+                                    <li>Alto</li>
+                                    <li>Medio</li>
+                                    <li>Bajo</li>
+                                    <li>Informacion</li>
                                 </ol>
                             </li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Input format:</h4>
+                        <h4>Format ng input:</h4>
                         <ul>
-                            <li>Only accepts a string list with ';' delimiter</li>
+                            <li>Tinatanggap lamang ang isang listahan ng string na may ';' delimiter</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Input restriction:</h4>
+                        <h4>Paghihigpit sa pag-input:</h4>
                         <ul>
-                            <li>Only accepts 't' and 'f' for each item in the list</li>
+                            <li>Tinutukoy kung aling mga severities alerto ang isasama sa ulat</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Example:</h4>
+                        <h4>Halimbawa:</h4>
                         <ul>
-                            <li>-alert_severity "t;t;f;t"</li>
+                            <li>-alert_severity "t; t; f; t"</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Explanation:</h4>
+                        <h4>Paliwanag:</h4>
                         <ul>
-                            <li>In the above example, only High, Medium and Informational Alerts will be included in the generated report.</li>
+                            <li>Sa halimbawa sa itaas, ang Mga Alerto sa Mataas, Katamtaman at Kaalaman lamang ang isasama sa nabuong ulat.</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Validation:</h4>
+                        <h4>Pagpapatunay:</h4>
                         <ul>
-                            <li>Validation: Content is validated to be either 't' or 'f' and that all 4 items are in the list.</li>
+                            <li>Pagpapatunay: Ang nilalaman ay napatunayan na alinman sa 't' o 'f' at lahat ng 4 na item ay nasa listahan.</li>
                         </ul>
                     </li>
                     <li><br></li>
@@ -274,53 +274,53 @@
                 <ul style="list-style: none;">
                 
                     <li>
-                        <h4>Description:</h4>
+                        <h4>Descriptcion:</h4>
                         <ul>
-                            <li>Specifies which alert details will be included in the report:</li>
+                            <li>Tinutukoy kung aling mga detalye ng alerto ang isasama sa ulat:</li>
                             <li style="list-style: none;">
                                 <ol>
                                     <li>CWE ID</li>
                                     <li>WASC ID</li>
-                                    <li>Description</li>
-                                    <li>Other Info</li>
-                                    <li>Solution</li>
-                                    <li>Reference</li>
-                                    <li>Request Header</li>
+                                    <li>Descripcion</li>
+                                    <li>Iba pang impormasyon</li>
+                                    <li>Solusyon</li>
+                                    <li>Referencia</li>
+                                    <li>Humiling ng Header</li>
                                     <li>Response Header</li>
-                                    <li>Request Body</li>
-                                    <li>Response Body</li>
+                                    <li>Humiling ng Katawan</li>
+                                    <li>Tugon ng katawan</li>
                                 </ol>
                             </li>
                         </ul>
                     <li>
                     <li>
-                        <h4>Input format:</h4>
+                        <h4>Format ng input:</h4>
                         <ul>
-                            <li>Only accepts a string list with ';' delimiter</li>
+                            <li>Tinatanggap lamang ang isang listahan ng string na may ';' delimiter</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Input restriction:</h4>
+                        <h4>Paghihigpit sa pag-input:</h4>
                         <ul>
-                            <li>Only accepts 't' and 'f' for each item in the list</li>
+                            <li>Tanging tumatanggap ng 't' at 'f' para sa bawat item sa listahan</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Example:</h4>
+                        <h4>Halimbawa:</h4>
                         <ul>
-                            <li>-alert_details "t;t;t;t;t;t;f;f;f;f"</li>
+                            <li>-alert_details "t; t; t; t; f; f; f; f"</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Explanation:</h4>
+                        <h4>Paliwanag:</h4>
                         <ul>
-                            <li>In the above example, only CWE ID, WASC ID, Description, Other Info, Solution and Reference Alert Details will be included in the generated report.</li>
+                            <li>Sa halimbawa sa itaas, tanging ang CWE ID, WASC ID, Paglalarawan, Iba pang Impormasyon, Solusyon at Mga Detalye ng Alerto ng Reference ay isasama sa nabuong ulat.</li>
                         </ul>
                     </li>
                     <li>
-                        <h4>Validation:</h4>
+                        <h4>Pagpapatunay:</h4>
                         <ul>
-                            <li>Content is validated to be either 't' or 'f' and that all 10 items are in the list.</li>
+                            <li>Ang nilalaman ay napatunayan na alinman sa 't' o 'f' at lahat ng 10 item ay nasa listahan.</li>
                         </ul>
                     </li>
                     <li><br></li>
@@ -331,12 +331,12 @@
 
         <ul style="list-style: none;">
             <li>
-                <h4>Putting it all together! (Windows)</h4>
+                <h4>Paglalagay ng lahat ng sama-sama! (Windows)</h4>
                 <ol>
-                    <li>Open a command prompt</li>
-                    <li>Navigate to location where the zap.bat file is located</li>
-                    <li>execute the following:
-                        <ul style="list-style: none;"><li>zap.bat <b>-export_report</b> "/path/to/save/report.xhtml" <b>-source_info</b> "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, et sed nibh nostrum singulis. Nec causae viderer discere eu." <b>-alert_severity</b> "t;t;f;t" <b>-alert_details</b> "t;t;t;t;t;t;f;f;f;f" <b>-session</b> "/path/to/existing/session" <b>-cmd</b></li></ul>
+                    <li>Buksan ang command prompt</li>
+                    <li>Mag-navigate sa lokasyon kung saan matatagpuan ang zap.bat file</li>
+                    <li>execute ang mga sumusunod:
+                        <ul style="list-style: none;"><li>zap.bat <b> -export_report </b> "/path/to/save/report.xhtml" <b> -source_info </b> "Report kahinaan ng MyApp.com; JordanGS; Nawala ang mga Kaluluwa; Agosto 15, 2016 Agosto 18, 2016; ZAP_D-2016-08-15; ZAP_D-2016-08-15; Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ang mga ito ay may isang atomicum, may isang rehiyon na may. Ang dagat ng dagat, at ang mga numeral na lugar. Nec causae viderer discere eu. "<b> -alert_severity </b>" t; t; f; t "<b> -alert_details </b>" t; t; t; t;; f "<b> -session </b>" / path / to / existing / session "<b> -cmd </b></li></ul>
                     </li>
                 </ol>
             </li>
@@ -345,45 +345,45 @@
         <hr>
 
         <a name="api-calls"></a> 
-        <h2><u>API Calls</u></h2>
+        <h2><u>API tawag</u></h2>
 
-        The extension can be accessed with API calls and requires the following arguments to be passed in to generate a report.
+        Maaaring ma-access ang extension gamit ang mga tawag sa API at nangangailangan ng mga sumusunod na mga argumento na ipasa sa upang bumuo ng isang ulat.
 
         <br><br>
 
-        The restrictions are the same as those for Command Line above.
+        Ang mga paghihigpit ay kapareho ng mga para sa Command Line sa itaas.
 
-        <h4>Usage Example:</h4>
+        <h4>Halimbawa ng Paggamit:</h4>
         <blockquote><pre><code>
-Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
+Map <String, String> map = new HashMap <String, String> ();
 String API_KEY = "ZAPROXY-PLUGIN"
 String absolutePath = "/path/to/save/report.xhtml";
-String extension = "xhtml";
-String sourceDetails = "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;" +
-    "August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;" + 
-    "Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea " + 
-    "usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, " +
-    "et sed nibh nostrum singulis. Nec causae viderer discere eu.";
-String alertSeverity = "t;t;f;t";
-String alertDetails = "t;t;t;t;t;t;f;f;f;f";
+Extension ng string = "xhtml";
+String sourceDetails = "Ulat ng kahinaan ng MyApp.com; JordanGS; Lost Souls;" +
+    "Agosto 15, 2016, Agosto 18, 2016; ZAP_D-2016-08-15; ZAP_D-2016-08-15;" +
+    "Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea" +
+    "usu atomorum tincidunt, ne munere regione has. Ne sea summo tation," +
+    "et sed nibh nostrum singulis. Nec causae viderer discere eu.";
+String alertSeverity = "t; t; f; t";
+String alertDetails = "t; t; t; t; f; f; f; f";
 
-map.put("apikey", API_KEY);
+map.put ("mabutingey", API_KEY);
 
-// String representing the absolute path to save destination for the report
-map.put("absolutePath", absolutePath)
+// String na kumakatawan sa ganap na landas upang i-save ang patutunguhan para sa ulat
+map.put ("absolutePath", absolutePath)
 
-// String representing the extension of the report
-map.put("fileExtension", extension);
+// String na kumakatawan sa extension ng ulat
+map.put ("fileExtension", extension);
 
-// String separated by ; for each entry
-map.put("sourceDetails", sourceDetails);
+// String na pinaghihiwalay ng; para sa bawat entry
+map.put ("sourceDetails", sourceDetails);
 
-// String separated by ; for each entry
-map.put("alertSeverity", alertSeverity);
+// String na pinaghihiwalay ng; para sa bawat entry
+map.put ("alertSeverity", alertSeverity);
 
-//String separated by ; for each entry
-map.put("alertDetails", alertDetails);
+// String na pinaghihiwalay ng; para sa bawat entry
+map.put ("alertDetails", alertDetails);
 </code></pre></blockquote>
-<blockquote><code>ApiResponseElement val = (ApiResponseElement) clientApi.callApi("exportreport", "action", "generate", map);</code></blockquote>
+<blockquote><code>ApiResponseElement val = (ApiResponseElement) clientApi.callApi ("exportreport", "action", "generate", mapa);</code></blockquote>
     </body>
 </html>
