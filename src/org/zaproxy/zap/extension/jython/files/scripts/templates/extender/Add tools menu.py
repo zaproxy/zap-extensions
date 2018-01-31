@@ -6,15 +6,6 @@ Any functionality added in the install function should be removed in the uninsta
 See the other templates for examples on how to do add different functionality. 
 """
 
-"""
-This function is called when the script is enabled.
-
-helper - a helper class which provides the methods:
-getView() this returns a View object which provides an easy way to add graphical elements.
-    It will be null is ZAP is running in daemon mode.
-getApi() this returns an API object which provides an easy way to add new API calls.
-Links to any functionality added should be held in script variables so that they can be removed in uninstall.
-"""
 
 from javax.swing import JMenuItem
 from java.awt.event import ActionListener
@@ -29,7 +20,17 @@ class MenuListener(ActionListener):
   def setHelper(self,helper):
     self.helper = helper
 
+
 def install(helper):
+  """
+  This function is called when the script is enabled.
+  
+  helper - a helper class which provides the methods:
+  getView() this returns a View object which provides an easy way to add graphical elements.
+      It will be null is ZAP is running in daemon mode.
+  getApi() this returns an API object which provides an easy way to add new API calls.
+  Links to any functionality added should be held in script variables so that they can be removed in uninstall.
+  """
   print('install called')
   if helper.getView():
     menulistener = MenuListener()
