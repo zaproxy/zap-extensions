@@ -19,22 +19,25 @@
  */
 package org.zaproxy.zap.extension.zest;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
-import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
 public class ZestResultsPanel extends AbstractPanel {
@@ -46,6 +49,7 @@ public class ZestResultsPanel extends AbstractPanel {
 	@SuppressWarnings("unused")
 	private ExtensionZest extension = null;
 
+	private JToolBar toolBar;
 	private javax.swing.JPanel zestPanel = null;
 	private JScrollPane jScrollPane = null;
 	private HistoryReferencesTable resultsTable = null;
@@ -69,14 +73,29 @@ public class ZestResultsPanel extends AbstractPanel {
 			
 	}
 
+	private JToolBar getToolBar() {
+		if (toolBar == null) {
+			toolBar = new JToolBar();
+			toolBar.setFloatable(false);
+			toolBar.setRollover(true);
+
+			JButton clearButton = new JButton(
+					Constant.messages.getString("zest.results.panel.button.clear"),
+					DisplayUtils.getScaledIcon(
+							new ImageIcon(ZestResultsPanel.class.getResource("/resource/icon/fugue/broom.png"))));
+			clearButton.addActionListener(e -> model.clear());
+
+			toolBar.add(clearButton);
+		}
+		return toolBar;
+	}
+
 	private javax.swing.JPanel getZestPanel() {
 		if (zestPanel == null) {
-
-			zestPanel = new javax.swing.JPanel();
-			zestPanel.setLayout(new java.awt.GridBagLayout());
+			zestPanel = new JPanel(new BorderLayout());
 			zestPanel.setName("ZestResultsPanel");
-			zestPanel.add(getJScrollPane(), 
-					LayoutHelper.getGBC(0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, new Insets(2,2,2,2)));
+			zestPanel.add(getToolBar(), BorderLayout.PAGE_START);
+			zestPanel.add(getJScrollPane(), BorderLayout.CENTER);
 
 		}
 		return zestPanel;
