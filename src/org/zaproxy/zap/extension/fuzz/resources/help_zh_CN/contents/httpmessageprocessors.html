@@ -3,60 +3,59 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-HTTP Message Processors
+HTTP 消息处理器
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>HTTP Message Processors</h1>
-The HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process and interact with the ZAP UI.
+<h1>HTTP消息处理器</h1>
+HTTP消息处理器可以访问和更改被模糊的HTTP信息，控制模糊处理并与ZAP UI进行交互。
 <p>
-Built-in HTTP Message Processors include:
+内置HTTP消息处理器包括:
 
 <h3>Anti-CSRF Token Refresher</h3>
-Allows to refresh anti-CSRF tokens contained in the request. The anti-CSRF tokens must be properly detected by ZAP to be able to
-use this processor.<br>
-For more information consult the help page "Getting Started" > "Features" > "Anti CSRF Tokens".<br>
-<strong>Note:</strong> This processor is automatically added to the list of processors, if anti-CSRF tokens were detected.
+允许刷新请求中包含的反CDRF令牌。必须通过ZAP正确检测到反CSRF令牌才能使用此处理器。<br>
+有关详情，请参阅帮助页面"入门">"功能">"反CSRF令牌"。<br>
+<strong>注意:</strong> 如果检测到反CSRF令牌，此处理器将自动添加到处理器列表中。
 
-<h3>Fuzzer HTTP Processor (Script)</h3>
-Allows to select the enabled Fuzzer HTTP Processor scripts. The scripts allow you to:
+<h3>Fuzzer HTTP处理器(脚本)</h3>
+允许选择启动的Fuzzer HTTP 处理器脚本。脚本允许您:
 <ul>
-<li>Obtain the list of payloads</li>
-<li>Stop fuzzing</li>
-<li>Increase the error count</li>
-<li>Send new messages</li>
-<li>Add messages to the Results tab</li>
-<li>Set custom ‘state’ messages in the <a href="tab.html">Fuzzer tab</a></li>
-<li>Raise alerts</li>
+<li>获取有效负载列表</li>
+<li>停止模糊</li>
+<li>增加错误计数</li>
+<li>发送新消息</li>
+<li>将消息添加到结果选项卡</li>
+<li>在<a href="tab.html">Fuzzer选项卡</a>中设置自定义"状态"消息</li>
+<li>引发警报</li>
 </ul>
 
-<h3>Payload Reflection Detector</h3>
-Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
-<strong>Note:</strong> This processor is automatically added to the list of processors.
+<h3>有效负载反射探测器</h3>
+Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> 反映"。<br>
+<strong>注意:</strong> 此处理器自动添加到处理器列表中。
 
-<h3>Request Content-Length Updater</h3>
-Updates (or adds, if not already present) the <code>Content-Length</code> request header with the length of the request body,
+<h3>请求内容长度更新器</h3>
+更新(或添加，如果尚未出现) <code>内容长度</code> request header with the length of the request body,
 for all request methods. No change is done if the size of the request body is zero and the header is not already present.<br>
-<strong>Note:</strong> This processor is automatically added to the list of processors.
+<strong>注意:</strong> 此处理器自动添加到处理器列表中。
 
 <h3>Tag Creator</h3>
-Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table
+允许将基于响应的内容将自定义"标记"添加到结果表的状态列
 
-<h3>User Message Processor</h3>
+<h3>用户消息处理器</h3>
 Allows to fuzz as a user, using one of the users defined in the contexts that include the HTTP message being fuzzed. Users must
 exist to be able to select and add this processor.
 
 <p>
-Other add-ons can define additional HTTP Message Processors.
+其他附件可以定义另外的HTTP消息处理器。
 
-<h2>Accessed via</h2>
+<h2>通过访问</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="dialogue.html">Fuzzer dialog</a> under Message Processors tab</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>消息处理器选项卡下的<a href="dialogue.html">Fuzzer对话框</a></td></tr>
 </table>
 
-<h2>See also</h2>
+<h2>另请参阅</h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer概念</a></td></tr>
 </table>
 
 </body>
