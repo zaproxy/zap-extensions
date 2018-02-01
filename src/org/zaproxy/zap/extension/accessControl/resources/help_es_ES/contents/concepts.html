@@ -3,67 +3,53 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Access Control Testing
+        Pruebas de Control de acceso
     </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Access Control Testing</h1>
+<h1>Prueba de control de acceso</h1>
 
 <p>
-    Este complemento permite a los usuarios comparar qué partes de una aplicación web se encuentran disponibles a algunos usuarios, realizar pruebas de control de acceso     e identificar problemas potenciales de control de acceso. It allows configuration of access rules and conducts a full
-    attack aimed to help identify sections of a web application which are accessible by unauthorized clients.
+    Este complemento permite a los usuarios comparar qué partes de una aplicación web se encuentran disponibles a algunos usuarios, realizar pruebas de control de acceso     e identificar problemas potenciales de control de acceso. Permite la configuracion de las reglas de acceso y realiza un ataque completo con el objetivo de ayudar a identificar las secciones de una aplicación web que son accesibles por los clientes no autorizados.
 </p>
 
 <p>
-    There are two main concepts related to this add-on that should be explained: the <b>Access Rules</b> and the <b>testing
-    procedure</b>.
+    Hay dos conceptos principales relacionados con este complemento que debe ser explicado: las <b>Reglas de acceso</b> y el <b>procedimiento de prueba</b>.
 </p>
 
-<h3>Access Rules</h3>
+<h3>Reglas de Acceso</h3>
 
 <p>
-    In order to identify potential access control issues, ZAP needs to know which parts of the web application are
-    supposed to be accessed by which user. In ZAP, the name for these rules is: <i>Access Rules</i> and generally have
-    the meaning: "<i>PageA should/shouldn't be accessed by UserX</i>".
+    Para identificar posibles problemas de control de acceso, ZAP necesita saber cuáles partes de la aplicación web son supuestamente accedidas por el usuario. En ZAP, el nombre para estas reglas es: <i>Reglas de Acceso</i> y generalmente tiene el significado: "<i>La página A debe/no debe ser accedida por Usuario X</i>".
 </p>
 
-<p>The rules are configured for a Context and, for each User of that Context, each Site Node (web page) will be
-    associated to one of the following values:</p>
+<p>Las reglas se configuran para un contexto y por cada usuario de ese contexto, cada nodo del sitio (página web) se asociará a uno de los siguientes valores:</p>
 <ul>
-    <li><b>Allowed</b> - the resource <b>can</b> be accessed by the User to which the rule refers</li>
-    <li><b>Denied</b> - the resource <b>should not</b> be accessed by the User to which the rule refers</li>
-    <li><b>Unknown</b> - there is <b>no information</b> regarding whether the resource should or shouldn't be accessible
-        to the User to which the rule refers
+    <li><b>Allowed</b> - el recurso <b>puede</b> puede ser accedido por el usuario al cual se refiere la regla</li>
+    <li><b>Denied</b> - el recurso <b>no debe</b> ser accedido por el usuario al cual se refiere la regla</li>
+    <li><b>Unknown</b> - no hay <b>información</b> con respecto a si el recurso debe o no debe ser accesible al usuario al cual se refiere la regla
     </li>
 </ul>
 
 <p>
-    In order to simplify the access rules definition process, ZAP is making use of the tree-based structure of URLs.
-    When analyzing the rules, an inference algorithm is used to detect the matching rules for each node based on its
-    parent in the URL if no particular rules are defined. This means that, when configuring the access rules, only 1
-    rule needs to be set explicitly for an entire subtree, while for the other nodes rules are inferred. More details
-    about this can be found on the Access Control <a href="contextOptions.html">Context options</a> help page.</td>
+    Para simplificar el proceso de definición de las reglas de acceso, ZAP hace uso de una estructura de URLs en forma de árbol.
+    Cuando se analizan las reglas, un algoritmo de inferencia se utiliza para detectar las reglas correspondientes a cada nodo basado en el nodo principal en el URL si no hay reglas particulares definidas. Esto significa que, cuando se configura las reglas de acceso, solo 1 regla necesita estar configurada explícitamente para todo un sub-árbol, mientras que para los otros nodos las reglas son inferidas. Sobre esto hay más detalles en la página de ayuda de Control de Acceso <a href="contextOptions.html">Context options</a>.</td>
 </p>
 
-<h3>Testing procedure</h3>
+<h3>Procedimiento de prueba</h3>
 
-<p> As a whole, in order to fully perform access control testing for a web application, the next steps should be
-    followed:</p>
+<p> Como un todo, con el fin de realizar por completo la prueba de control de acceso para una aplicación web, se debe seguir los siguientes pasos:</p>
 <ul>
-    <li>the tester defines set of Users and how they authenticate;
+    <li>el evaluador define el conjunto de usuarios y cómo son autenticados;
     </li>
-    <li>the tester defines how ZAP can identify un-authorized requests (via the Authorization panel in the Session
-        Properties);
+    <li>el evaluador define cómo ZAP puede identificar solicitudes no autorizadas (a través del panel de Autorizacion en las Propiedades de Sesión);
     </li>
-    <li>the web-application is explored either manually or via the Spider;</li>
-    <li>the tester define the Access Rules for each of the Users associated to the Context, basically letting ZAP know
-        which parts of the web application are supposed to be accessed by which users;
+    <li>la aplicación web es explorada ya sea manualmente o mediante el Spider;</li>
+    <li>el evaluador define las Reglas de Acceso para cada usuario asociado al contexto, básicamente dejando que ZAP sepa cuáles partes de la aplicación web serán supuestamente accedidas por cuál usuario;
     </li>
-    <li>an ‘attack’ is performed by ZAP by trying to access every URL of the web-app from the perspective of every
-        user;
+    <li>un "ataque" es realizado por ZAP al tratar de acceder cada URL de la aplicación web desde la perspectiva de cada usuario;
     </li>
-    <li>in the corresponding Status Tab, the results are displayed, showing which pages were accessed successfully by
-        which users and marking the cases where the access rules where not followed.
+    <li>en la pestaña de Status correspondiente, se muestran los resultados que demuestran cuáles páginas fueron accedidas con éxito por cuál usuario y marca los casos donde no se siguieron las reglas de acceso.
     </li>
 </ul>
 
@@ -73,13 +59,13 @@
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
             <a href="tab.html">Access Control Testing Tab</a></td>
-        <td>for a description of the status tab used by the add-on</td>
+        <td>para una descripción de la pestaña de estado por el complemento</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
             <a href="contextOptions.html">Access Control Context options</a></td>
-        <td>to learn about the related context options</td>
+        <td>para conocer sobre las opciones relacionadas al contexto</td>
     </tr>
 </table>
 

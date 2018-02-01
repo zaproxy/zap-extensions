@@ -150,14 +150,14 @@ Ang pagsusuring ito ay tugon ng header para sa presensiya ng X-Backend-Server sa
 
 <h2>Malaking Redirect</h2>
 Ang pagsusuring ito ay para mahulaan ang size ng variuos redirect uri ng mga tugon at bumubuo ng alerto kung ang tugon ay masmataas pa kesa sa nahulaan size. 
-A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
+Ang malaking tugon ng redirect ay maaaring mag pahiwatig na bagama't ang isang redirect ay naganap ang pahina ay talagang nag lalaman ng nilalaman(na kung saan maaaring mabunyag ang sinsitibong impormasyon, PII, atbp).
 
-<h2>X-ChromeLogger-Data Header Information Leak</h2>
-This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
+<h2>X-ChromeLogger-Data Header impormasyon Leak</h2>
+Ito ay nagsusuri sa mga tugon ng header para sa presensiya ng X-Chromelogger-Data o X-ChromePhp-Data detalye.
 
-<h2>X-Debug-Token Information Leak</h2>
-This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
-Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
+<h2>X-Debug-Token impormasyon Leak</h2>
+Ito ay nagsusuri sa tugon ng mga header para sa presensiya ng X-Debug-Token at sa detalye ng X-Debug-Token-Link.
+Na nagpapahiwatig ng paggamit/pagkakalantad sa propayl ng Synfony. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
 
 <h2>X-AspNet-Version/X-AspNetMvc-Version Header Information Leak</h2>
 This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
