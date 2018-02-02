@@ -6,49 +6,40 @@ Passive Scan Rules - Alpha
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Passive Scan Rules - Alpha</h1>
-The following alpha quality passive scan rules are included in this add-on:
+<h1>Reglas de Escaneo pasivo - Alpha</h1>
+En este complemento se incluyen las siguientes reglas de escaneo pasivo de calidad alpha:
 
-<h2>ASP.NET ViewState Disclosure</h2>
-An ASP.NET ViewState was disclosed by the application/web server
+<h2>Revelación ViewState ASP.NET</h2>
+Un ViewState ASP.NET fue revelado por el servidor de la aplicación o el servidor web
 
-<h2>ASP.NET ViewState Integrity</h2>
-The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client
+<h2>Integridad ViewState ASP.NET</h2>
+La aplicación no usa un Código de Autenticación de Mensajes (MAC) para proteger la integridad del ViewState ASP.NET, que puede ser manipulado por un cliente malintencionado
 
 <h2>Base64 Disclosure</h2>
-Base64 encoded data was disclosed by the application/web server
+Los datos codificados en Base64 fueron revelador por el servidor de la aplicación o el servidor web
 
-<h2>Missing Content Security Policy Header</h2>
-This checks HTML response headers for the presence of a Content Security Policy header.<br>
-By default this rule checks for the presence of the "Content-Security-Policy" header, 
-and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
+<h2>Encabezado Content Security Policy faltante</h2>
+Esto comprueba los encabezados de respuesta HTML para la presencia de un encabezado Content Security Policy.<br>
+Por defecto esta regla comprueba la presencia del encabezado "Content-Security-Policy" header", y también comprueba en el umbral bajo los encabezados "X-Content-Security-Policy" y "X-WebKit-CSP".
 <p>
-If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
-that is actively being refined or developed, or one which is only partially implemented.
+Si se encuentra un encabezado "Content-Security-Policy-Report-Only" en una respuesta, aparece una alerta INFO. Esto puede representar un esfuerzo de ejecución que esta siendo activamente refinado o desarrollado, o alguno que sea solo parcialmente implementado.
 
-<h2>Cookie Poisoning</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
+<h2>Envenenamiento de cookie</h2> Esta comprobación observa la entrada suministrada por el usuario en los parámetros de cadena de consulta y datos POST para identificar donde se pueden controlar los parámetros de cookie. Esto se llama ataque de envenenamiento de cookie, y se vuelve vulnerable cuando un atacante puede manipular la cookie de varias maneras. En algunos casos esto no será vulnerable, sin embargo, permitir que los parámetros URL configuren valores de cookie se considera generalmente un error.
 
-<h2>Cookie Without SameSite Attribute</h2>
-This reports any cookies that do not have the SameSite attribute or that do not have a recognised valid value for that attribute.
+<h2>Cookie sin atributo SameSite</h2> Esto informa cualquier cookie que no tenga el atributo SameSite y que no tenga un valor válido reconocido para ese atributo.
 
-<h2>Cross Domain Misconfiguration</h2>
-Passively scan responses for Cross Domain MisConfigurations, which relax the Same Origin Policy in the web browser, for instance.<br>
-The current implementation looks at excessively permissive CORS headers.
+<h2>Cross Domain Misconfiguration</h2> Escanea pasivamente las respuestas de Cross Domain MisConfigurations, lo cual le quita presión a Same Origin Policy en el navegador web.<br>
+La implementación actual observa los encabezados CORS excesivamente permisivos.
 
-<h2>Directory Browsing</h2>
-Passively scan responses for signatures that are indicative that Directory Browsing is possible.
+<h2>Navegación de Directorio</h2>
+Escanea pasivamente las respuestas de firmas que indican que la navegación por el escritorio es posible.
 
-<h2>Example File Passive Scanner</h2>
-This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
-
-<h2>Example Simple Passive Scanner</h2>
-This implements a very simple example passive scan rule.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
-
-<h2>Hash Disclosure</h2>
-Passively scan for password hashes disclosed by the web server. <br>
+<h2>Ejemplo de un escáner pasivo de archivos</h2>
+Esto implementa un ejemplo de la regla de escaneo pasivo que carga cadenas de un archivo que puede ser editado por el usuario.<br> Para mas detalles, visite: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Ejemplo de un escáner pasivo simple</h2>
+Esto implementa un ejemplo muy simple de la regla de escaneo pasivo.<br> Para mas detalles, visite: For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
+<h2>Revelación de Hash</h2>
+Escanea pasivamente hashes de contraseñas reveladas por el servidor web. <br>
 Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
 
 <h2>HeartBleed</h2>
