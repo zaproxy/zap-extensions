@@ -24,6 +24,7 @@
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
 // ZAP: 2015/07/27 Issue 1618: Target Technology Not Honored
 // ZAP: 2016/02/02 Add isStop() checks and refactor the code to reduce code duplication
+// ZAP: 2018/02/01 Issue 1366: Change match pattern slightly, and implement pre-check
 
 package org.zaproxy.zap.extension.ascanrules;
 
@@ -55,8 +56,9 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
     private static final String SSI_WIN2 = "\">" +SSI_WIN + "<";
 
 	
-	private static Pattern patternSSIUnix = Pattern.compile("\\broot\\b.*\\busr\\b", PATTERN_PARAM);
-	private static Pattern patternSSIWin = Pattern.compile("\\bprogram files\\b.*\\b(WINDOWS|WINNT)\\b", PATTERN_PARAM);
+	private static Pattern patternSSIUnix = Pattern.compile("\\broot\\b.*\\busr\\b", PATTERN_PARAM|Pattern.DOTALL);
+	private static Pattern patternSSIWin = Pattern.compile("\\bprogram files\\b.*\\b(WINDOWS|WINNT)\\b",
+			PATTERN_PARAM | Pattern.DOTALL);
 
     @Override
     public int getId() {
@@ -108,12 +110,17 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     }
     
-
+	// Pre-check the original response for the detection pattern (to avoid false positives)
+	private boolean isEvidencePresent(Pattern pattern) {
+		return matchBodyPattern(getBaseMsg(), pattern, null);
+	}
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
         
-		if (this.inScope(Tech.Linux) || this.inScope(Tech.MacOS)) {
+		if ((this.inScope(Tech.Linux) || this.inScope(Tech.MacOS))
+				&& !isEvidencePresent(patternSSIUnix)) {
+
 			if (testServerSideInclude(param, SSI_UNIX, patternSSIUnix)) {
 				return;
 			}
@@ -123,7 +130,8 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 			}
 		}
 
-		if (this.inScope(Tech.Windows)) {
+		if (this.inScope(Tech.Windows) && !isEvidencePresent(patternSSIWin)) {
+			
 			if (testServerSideInclude(param, SSI_WIN, patternSSIWin)) {
 				return;
 			}
@@ -156,7 +164,7 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
             StringBuilder evidence = new StringBuilder();
             if (matchBodyPattern(message, testEvidence, evidence)) {
-                bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, parameter, evidence.toString(), value, message);
+                bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, parameter, value, null, evidence.toString(), message);
                 return true;
             }
         } catch (IOException e) {

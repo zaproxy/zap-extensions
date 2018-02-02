@@ -1,15 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules</name>
-	<version>29</version>
+	<version>30</version>
 	<status>release</status>
 	<description>The release quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 3979: Fix reflected XSS in PUT response.<br>
-	Issue 3978: Handle relfected XSS in JSON response.<br>
-	Issue 4211: Fix false positive in FormatString scanner.<br>
+	Issue 1366: Allow SSI detection patterns to include new lines, and pre-check the original response for detection patterns to reduce false positives.<br/>
 	]]>
     </changes>
 	<extensions>
