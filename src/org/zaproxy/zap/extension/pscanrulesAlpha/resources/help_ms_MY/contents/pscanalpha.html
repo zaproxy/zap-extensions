@@ -7,27 +7,26 @@ Passive Scan Rules - Alpha
 </head>
 <body bgcolor="#ffffff">
 <h1>Passive Scan Rules - Alpha</h1>
-The following alpha quality passive scan rules are included in this add-on:
+Peraturan pemindaian alpha pasif berikut dimasukkan dalam tambahan ini:
 
 <h2>ASP.NET ViewState Disclosure</h2>
 An ASP.NET ViewState was disclosed by the application/web server
 
 <h2>ASP.NET ViewState Integrity</h2>
-The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client
+Aplikasi ini tidak menggunakan Kod Pengesahan Mesej (MAC) untuk melindungi integriti dari ViewState ASP.NET, yang boleh rosak oleh klien yang berniat jahat
 
 <h2>Base64 Disclosure</h2>
-Base64 encoded data was disclosed by the application/web server
+Data yang dikodkan oleh Base64 telah didedahkan oleh aplikasi/pelayan web
 
-<h2>Missing Content Security Policy Header</h2>
-This checks HTML response headers for the presence of a Content Security Policy header.<br>
+<h2>Pengepala Dasar Keselamatan Kandungan hilang</h2>
+Ia menyemak pengepala tindak balas HTML untuk kehadiran tajuk Dasar Keselamatan Kandungan.<br>
 By default this rule checks for the presence of the "Content-Security-Policy" header, 
 and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
 <p>
-If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
-that is actively being refined or developed, or one which is only partially implemented.
+If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. Ini mungkin usaha penguatkuasaan undang-undang yang secara aktif dipertingkatkan atau dibangunkan, atau hanya boleh dilaksanakan secara separuh.
 
 <h2>Cookie Poisoning</h2>
-This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. This is called a cookie poisoning attack, and becomes exploitable when an attacker can manipulate the cookie in various ways. In some cases this will not be exploitable, however, allowing URL parameters to set cookie values is generally considered a bug.
+This check looks at user-supplied input in query string parameters and POST data to identify where cookie parameters might be controlled. Ini dipanggil serangan keracunan kuki, dan boleh dieksploitasi apabila penyerang mungkin memanipulasi cookies dalam pelbagai cara. Dalam sesetengah kes, ini tidak akan dapat dieksploitasi, tetapi ia membenarkan parameter URL untuk menetapkan nilai kuki umum yang dianggap sebagai pepijat.
 
 <h2>Cookie Without SameSite Attribute</h2>
 This reports any cookies that do not have the SameSite attribute or that do not have a recognised valid value for that attribute.
@@ -55,14 +54,14 @@ Various formats are including, including some formats such as MD4, MD5, and SHA*
 Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
 
 <h2>HTTP to HTTPS Insecure Transition in Form Post</h2>
-This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
+This check looks for insecure HTTP pages that host HTTPS forms. Masalahnya ialah laman HTTP yang tidak selamat dengan mudah boleh dirampas melalui MITM dan selamat borang HTTPS boleh digantikan atau dipalsukan.
 
 <h2>HTTPS to HTTP Insecure Transition in Form Post</h2>
-This check identifies secure HTTPS pages that host insecure HTTP forms. The issue is that a secure page is transitioning to an insecure page when data is uploaded through a form. The user may think they're submitting data to a secure page when in fact they are not.
+This check identifies secure HTTPS pages that host insecure HTTP forms. Masalahnya adalah bahawa laman selamat sedang beralih ke halaman yang tidak selamat apabila data dimuat naik melalui borang. Pengguna mungkin berfikir mereka akan menghantar data ke halaman yang selamat apabila tidak.
 
 <h2>Insecure Component</h2>
 Passively scans the server response headers and body generator content for product versions, which are then cross-referenced against a list of product versions known to be vulnerable to various CVEs. 
-A list of ranked CVEs and CVSS severity scores is output for each product noted to be vulnerable. 
+Senarai skor CVE dan skor CVSS teratas adalah output bagi setiap produk yang direkodkan terdedah. 
 Currently, the following server side products are supported:<br>
 Apache Tomcat application server (limited functionality due to limited information leakage by Tomcat)<br>
 Apache web server<br>
@@ -96,28 +95,22 @@ TornadoServer web server<br>
 WordPress<br>
 
 <h2>Image Location Scanner</h2>
-<p>Passively scans for GPS location exposure in images during normal security
-assessments of websites.  Image Location Scanner assists in situations where
-end users may post profile images and possibly give away their home location,
-e.g. a dating site or children's chatroom.  A whitepaper on this can be found
+<p>Pemindaian pasif untuk pendedahan lokasi GPS ke imej semasa penilaian keselamatan tapak web biasa.  Pengimbas Lokasi Imej membantu dalam situasi di mana pengguna akhir boleh menghantar gambar profil dan boleh memberikan lokasi rumah mereka, contohnya. dating laman web atau bilik sembang kanak.  A whitepaper on this can be found
 at http://veggiespam.com/ils/</p>
 
-<p>Note: In order for this plug-in to operate, ZAP must be configured to
-receive and process images.  To do this, go to the ZAP Options panel (Tools
+<p>Nota: Agar plug-in ini berfungsi, ZAP mesti dikonfigurasikan untuk menerima dan memproses imej.  To do this, go to the ZAP Options panel (Tools
 &rarr; Options), choose Display, and enable the checkbox for "Process images in
-HTTP requests/responses".  In addition, ZAP images cannot be filtered out via
-the settings "Global Exclude URL" or the Session Properties for "Exclude from
-Proxy". </p>
+HTTP requests/responses".  Di samping itu, imej ZAP tidak boleh ditapis melalui tetapan "Pengecualian Global" atau Sesi Properties untuk "Kecualikan dari Proksi". </p>
 
 <h2>Open Redirect</h2>
-Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
+Terbuka semula adalah salah satu daripada sepuluh kelemahan OWASP 2010. Pemeriksaan ini melihat input yang disediakan oleh pengguna dalam parameter rentetan pertanyaan dan data POST untuk mengenal pasti pengalihan terbuka yang mungkin. Pengalihan terbuka berlaku apabila aplikasi membolehkan maklum balas yang disediakan oleh pengguna (cth. http://nottrusted.com) untuk mengawal pengalihan keluar pejabat. Ini biasanya merupakan cara yang cukup tepat untuk mencari di mana 301 atau 302 pengalihan boleh dieksploitasi oleh spammer atau serangan pancingan data
 
 <h2>HTTP Server Response Header Scanner</h2>
-This checks response headers for the presence of a server header that contains version details.
-At LOW Threshold will raise an alert based on presence of the header field whether or not a version string is detected.
+Ia menyemak tajuk tindak balas untuk mengetahui tajuk pelayan mana yang mungkin mengandungi butiran versi.
+Pada Ambang LOW akan menimbulkan peringatan berdasarkan kewujudan bidang pengepala sama ada rentetan versi dikesan atau tidak.
 
 <h2>Source Code Disclosure</h2>
-Application Source Code was disclosed by the web server
+Kod Sumber Aplikasi telah didedahkan oleh pelayan web
 
 <h2>Strict Transport Security Header Scanner</h2>
 This scanner checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 
