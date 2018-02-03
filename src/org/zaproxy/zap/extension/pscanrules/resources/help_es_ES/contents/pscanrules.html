@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Passive Scan Rules
+Reglas de escaneo pasivo
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -67,13 +67,13 @@ En los umbrales MEDIO y ALTO esto sólo busca respuestas HTML que no sean de err
 Con el umbral BAJO buscará todas las respuestas de texto incluyendo errores y redirecciones.<br>
 Una alerta pueden ocasionar las siguientes condiciones:
 <ul> 
- <li><b>X-Frame-Options Header Not Set: </b> If the X-Frame-Options header is missing from the response completely.</li>
- <li><b>Multiple X-Frame-Options Header Entries: </b> When more than one X-Frame-Options header is detected on the response.</li>
- <li><b>X-Frame-Options Defined via META (Non-compliant with Spec): </b> A "http-equiv" entry was found in the response that attempts to define X-Frame-Options, which is not supported by the specification.</li>
- <li><b>X-Frame-Options Setting Malformed: </b> The header is present with no value, or the value is not as expected (i.e.: other than "DENY", "SAMEORIGIN", or "ALLOW-FROM").</li>
+ <li><b>Encabezado X-Frame-Options no establecido:</b> si el encabezado X-Frame-Options no aparece en la respuesta.</li>
+ <li><b>Múltiples entradas de encabezado X-Frame-Options:</b> Cuando se detecta más de un encabezado X-Frame-Options en la respuesta.</li>
+ <li><b>X-Frame-Options definido a través de META(No compatible con las especificaciones):</b> Se encontró una entrada "http-equiv" en la entrada que intenta definir X-Frame-Options, lo que no es soportado por las especificaciones.</li>
+ <li><b>Ajuste de X-Frame-Options deforme: </b> El encabezado está, pero sin valor asignado, o el valor no es el que se espera (ejemplo: un valor distinto a "DENY", "SAMEORIGIN", o "ALLOW-FROM").</li>
 </ul>
-By default no alerts will be raised in the response includes a Content-Security-Policy 'frame-ancestors' element as this take precedence over the X-Frame-Options header.
-However at LOW threshold the above issues will still be reported but at a LOW risk. 
+Por defecto no se activará alertas en la respuesta que incluyan un elemento de "frame-ancestors" de Content-Security-Policy (CSP) ya que este tiene prioridad sobre el encabezado X-Frame-Options.
+Sin embargo, en un umbral bajo, los problemas mencionados anteriormente serán reportados igualmente pero a un bajo riesgo. 
 
 </body>
 </html>
