@@ -5,35 +5,35 @@
 <title>Command Line</title>
 </head>
 <body bgcolor="#ffffff">
-	<h1>Command Line</h1>
-	Quick Start add-on supports the following command line options:
+	<h1>Línea de comando</h1>
+	El complemento Quick Start admite las siguientes opciones de línea de comando:
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-quickurl</td>
-			<td>Specifies the URL of the target application that will be attacked.</td>
+			<td>Especifica la URL de la aplicación  destino que será atacada.</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-quickout</td>
-			<td>Specifies the file to write the XML report to. If not set in 'inline' and
-				daemon modes the report is written to default output stream.</td>
+			<td>Especifica el archivo para escribir el reporte XML. Si no está configurado en 'en línea', 
+				los modos daemon y el informe se escriben en la secuencia de salida predeterminada.</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-quickprogress</td>
-			<td>Show ascii progress bars, if started with the -cmd flag.</td>
+			<td>Mostrar barras de progreso ascii, si se inició con el indicador -cmd.</td>
 		</tr>
 	</table>
 
 	<br>
-	<p>Examples:
+	<p>Ejemplos:
 	<ul>
-		<li>Start ZAP in 'inline' mode with ascii progress bars, attack the target application http://example.com/
-			and write the report to default output stream: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		<li>Inicie ZAP en modo 'en línea' con barras de progreso ascii, ataque la aplicación de destinohttp://example.com/
+			y escribir el informe en la secuencia de salida predeterminada: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
 		</li>
-		<li>Start ZAP with UI, attack the target application http://example.com/ and save
-			the report to a file: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
+		<li>Comience ZAP con UI, ataque la aplicación de destino http://example.com/y guarda
+el informe a un archivo: <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
 		</li>
 	</ul>
 
