@@ -421,9 +421,12 @@ public class CommandInjectionPlugin extends AbstractAppParamPlugin {
         // the response content
         // -----------------------------------------------
         for(int i = 0; it.hasNext() && (i < targetCount); i++) {
-
-            HttpMessage msg = getNewMsg();
             payload = it.next();
+            if (osPayloads.get(payload).matcher(getBaseMsg().getResponseBody().toString()).find()) {
+                continue; // The original matches the detection so continue to next
+            }
+            
+            HttpMessage msg = getNewMsg();
             paramValue = value + payload;
             setParameter(msg, paramName, paramValue);
 
