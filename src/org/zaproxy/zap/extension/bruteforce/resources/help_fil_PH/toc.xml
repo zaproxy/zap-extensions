@@ -4,10 +4,10 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Sapilitang pagbasa" image="addon.bruteforce.icon" target="addon.bruteforce.concepts">
-				<tocitem text="Options" target="addon.bruteforce.options" />
+	<tocitem text="Gabay sa Tagagamit ng ZAP" tocid="toplevelitem">
+		<tocitem text="Mga Add On" tocid="addons">
+			<tocitem text="Puwersang Pag-browse" image="addon.bruteforce.icon" target="addon.bruteforce.concepts">
+				<tocitem text="Mga Pagpipilian" target="addon.bruteforce.options" />
 				<tocitem text="Tab" target="addon.bruteforce.tab" />
 			</tocitem>
 		</tocitem>

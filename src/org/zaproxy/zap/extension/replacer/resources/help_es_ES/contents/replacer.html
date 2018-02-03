@@ -7,68 +7,55 @@ Replacer
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Replacer</h1>
-The replacer is an easy way to replace strings in requests and responses.
+<h1>Reemplazador</h1>
+El reemplazador es una manera fácil de reemplazar cadenas en las solicitudes y respuestas.
 <p>
-It is accessible via the Options and by default it can be quickly accessed via the '&lt;ctrl&gt; R' hotkey.
+Es accesible a través de las Opciones y por defecto puede ser accedida a través de la tecla de acceso rápido"&lt;ctrl&gt;R".
 <p>
-The Replacer Options panel allows you to define as many replacement rules as you need.<br>
-Each rule is defined by the following fields:
-<h3>Description</h3>
-A description that allows you to identify the rule.
+El panel de Opciones del Reemplazador permite definir tantas reglas reemplazadas como sean necesarios. <br>Cada regla se define por los siguientes campos:
+<h3>Descripción</h3>
+Una descripción que permite identificar la regla.
 
-<h3>Match Type</h3>
-May be one of:
+<h3>Tipo de coincidencia</h3> Puede ser uno de: <h4>Encabezado de solicitud (se agrega si no está presente)</h4> En este caso la "Cadena de coincidencia" será tratada como un nombre de encabezado. 
+Si el encabezado está presente su valor será reemplazado por el texto de reemplazo. 
+Si el texto de reemplazo está en blanco el encabezado se eliminará (si está presente).
+Si el encabezado no está presente y el texto reemplazado no está en blanco entonces se agregará el encabezado.
 
-<h4>Request Header (will add if not present)</h4>
-In this case the 'Match String' will be treated as a header name. 
-If the header is present then its value will be replaced by the replacement text. 
-If the replacement text is empty then the header will be removed (if present).
-If the header is not present and the replacement text is not empty then the header will be added.
+<h4>Cadena de encabezado de solicitud</h4> En este caso la "Cadena de coincidencia" se tratará como una cadena o una expresión regex.
+Si está presente en el encabezado de solicitud, será reemplazado por el texto de reemplazo.
 
-<h4>Request Header String</h4>
-In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the request header then it will be replaced by the replacement text.
+<h4>Cadena de cuerpo de solicitud</h4>
+En este caso la "Cadena de coincidencia" se tratara como una cadena o una expresión regex.
+Si está presente en el cuerpo de solicitud será reemplazada por el texto de reemplazo.
 
-<h4>Request Body String</h4>
-In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the request body then it will be replaced by the replacement text.
+<h4>Encabezado de respuesta (se agrega si no está presente)</h4> En este caso la "Cadena de coincidencia" se considerará como un nombre de encabezado. 
+Si el encabezado está presente su valor será reemplazado por el texto de reemplazo. 
+Si el texto de reemplazo está en blanco el encabezado se eliminará (si está presente).
+Si el encabezado no está presente y el texto reemplazado no está en blanco entonces se agregará el encabezado.
 
-<h4>Response Header (will add if not present)</h4>
-In this case the 'Match String' will be treated as a header name. 
-If the header is present then its value will be replaced by the replacement text. 
-If the replacement text is empty then the header will be removed (if present).
-If the header is not present and the replacement text is not empty then the header will be added.
+<h4>Cadena de encabezado de respuesta</h4> En este caso la "Cadena de coincidencia" se tratará como una cadena o una expresión regex.
+Si está presente en el encabezado de respuesta, será reemplazado por el texto de reemplazo.
 
-<h4>Response Header String</h4>
-In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the response header then it will be replaced by the replacement text.
+<h4>Cadena de cuerpo de respuesta</h4> En este caso la "Cadena de coincidencia" se tratará como una cadena o una expresión regex.
+Si está presente en el cuerpo de respuesta, será reemplazado por el texto de reemplazo.
 
-<h4>Response Body String</h4>
-In this case the 'Match String' will be treated as a string or regex expression.
-If it is present in the response body then it will be replaced by the replacement text.
+<h3>Cadena de coincidencia</h3>
+La cadena que se utilizará para identificar lo que debe ser reemplazado. Para más detalles vea Tipo de coincidencia.
 
-<h3>Match String</h3>
-The string that will be used to identify what should be replaced - see Match Type for details.
+<h3>Coincidencia Regex</h3>
+Si se configura entonces la cadena de coincidencia se tratará como una expresión regex.
+Esta opción está deshabilitada al coincidir con encabezados reales.
 
-<h3>Match Regex</h3>
-If set then the Match String will be treated as a regex expression.
-This option is disabled when matching actual headers.
+<h3>Cadena de reemplazo</h3> La nueva cadena que reemplazará la selección especificada.
 
-<h3>Replacement String</h3>
-The new string that will replace the specified selection.
+<h3>Habilitar</h3>
+Si no está establecido, entonces la regla no aplicará.
 
-<h3>Enable</h3>
-If not set then the rule will not apply.
-
-<h3>Advanced</h3>
-If set then an additional tab will be show which allows you to specify which 'initiators' the rule should apply to.
-Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
-control over exactly when the rule should apply.
+<h3>Avanzado</h3> Si se configura aparecerá una pestaña adicional que permite especificar a cuales "iniciadores" se debe aplicar la regla.
+Cada componente ZAP que puede enviar y recibir mensajes en un iniciador separado, esto da un control detallado sobre cuando exactamente debe aplicarse la regla.
 
 <p>
-If you need even more control over when and how text should be replaced then you can use the ZAP Script Console which
-gives you complete control over the ZAP messages.
+Si se necesita aún mas control sobre cuándo y cómo el texto debe ser reemplazado, se puede utilizar la consola de script ZAP que ofrece un control completo sobre los mensajes ZAP.
 
 </body>
 </html>
