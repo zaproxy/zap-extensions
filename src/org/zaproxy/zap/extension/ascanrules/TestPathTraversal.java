@@ -517,6 +517,10 @@ public class TestPathTraversal extends AbstractAppParamPlugin {
      * @throws IOException
      */
     private boolean sendAndCheckPayload(String param, String newValue, ContentsMatcher contentsMatcher) throws IOException {
+        if (contentsMatcher.match(getContentsToMatch(getBaseMsg())) != null) {
+            // Evidence already present, no point sending the payload/attack.
+            return false;
+        }
 
         // get a new copy of the original message (request only)
         // and set the specific pattern

@@ -177,6 +177,25 @@ public class TestPathTraversalUnitTest extends ActiveScannerTest<TestPathTravers
         assertThat(alertsRaised, hasSize(0));
     }
 
+    @Test
+    public void shouldNotAlertIfOriginalResponseAlreadyContainsTheEvidence() throws Exception {
+        // Given
+        String filePath = "/static-file";
+        String fileContent = ListWinDirsOnAttack.DIRS_LISTING;
+        nano.addHandler(new NanoServerHandler(filePath) {
+
+            @Override
+            Response serve(IHTTPSession session) {
+                return new Response(Response.Status.OK, NanoHTTPD.MIME_HTML, fileContent);
+            }
+        });
+        rule.init(getHttpMessage("GET", filePath, fileContent), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     private static abstract class ListDirsOnAttack extends NanoServerHandler {
 
         private final String param;
