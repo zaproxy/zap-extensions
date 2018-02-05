@@ -8,6 +8,7 @@
 	<changes>
 	<![CDATA[
 	Issue 1366: Allow SSI detection patterns to include new lines, and pre-check the original response for detection patterns to reduce false positives.<br/>
+	Issue 4230: Pre-check the original response for detection patterns.<br/>
 	]]>
     </changes>
 	<extensions>
