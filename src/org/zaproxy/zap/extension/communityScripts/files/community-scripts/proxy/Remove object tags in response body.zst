@@ -1,0 +1,64 @@
+{
+  "about": "This is a Zest script lazily crafted by Anthony Cozamanis, kurobeats@yahoo.co.jp. For more details about Zest visit https://developer.mozilla.org/en-US/docs/Zest",
+  "zestVersion": "0.3",
+  "title": "Remove object tags in response body.zst",
+  "description": "Remove object tags in response body",
+  "prefix": "",
+  "type": "Targeted",
+  "parameters": {
+    "tokenStart": "{{",
+    "tokenEnd": "}}",
+    "tokens": {},
+    "elementType": "ZestVariables"
+  },
+  "statements": [
+    {
+      "comment": "Change the \u0027assign\u0027 statement to match your required \u0027original\u0027 and \u0027replacement\u0027 strings.",
+      "index": 1,
+      "enabled": true,
+      "elementType": "ZestComment"
+    },
+    {
+      "rootExpression": {
+        "length": 0,
+        "approx": 0,
+        "variableName": "response.url",
+        "not": false,
+        "elementType": "ZestExpressionLength"
+      },
+      "ifStatements": [
+        {
+          "comment": "Called for the request - do nothing.",
+          "index": 3,
+          "enabled": true,
+          "elementType": "ZestComment"
+        }
+      ],
+      "elseStatements": [
+        {
+          "comment": "Called for the response - perform the replacement",
+          "index": 4,
+          "enabled": true,
+          "elementType": "ZestComment"
+        },
+        {
+          "replace": "\u003cobject(.*?)object\u003e",
+          "replacement": "",
+          "regex": true,
+          "caseExact": false,
+          "variableName": "response.body",
+          "index": 5,
+          "enabled": true,
+          "elementType": "ZestAssignReplace"
+        }
+      ],
+      "index": 2,
+      "enabled": true,
+      "elementType": "ZestConditional"
+    }
+  ],
+  "authentication": [],
+  "index": 0,
+  "enabled": true,
+  "elementType": "ZestScript"
+}

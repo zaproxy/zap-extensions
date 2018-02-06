@@ -2,7 +2,7 @@
 //and add the result to the state column!
 //To remove all other states from the state column set the variable `removeOtherStatesFromStateColumn` to `true`.
 //This might be useful if you want to order the column.
-//Script works only with Java 8 and needs Diff add-on
+//Script needs Diff add-on
  
 var DiffTool = Java.type("org.zaproxy.zap.extension.diff.diff_match_patch");
 var key = "script.showDifferences.js";

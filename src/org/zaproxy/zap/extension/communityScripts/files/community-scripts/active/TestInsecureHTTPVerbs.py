@@ -44,6 +44,7 @@ def PrepareHttpRequest(msg, insecureverb):
 	msg.mutateHttpMethod(insecureverb)
 	if insecureverb == "POST" or insecureverb == "PUT":
 		msg.setRequestBody("bodytext")
+		msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 	if printdebugmessages:
 		print('After mutating resulting HTTP VERB: -- \t' + msg.getRequestHeader().getMethod() + '\n')
 

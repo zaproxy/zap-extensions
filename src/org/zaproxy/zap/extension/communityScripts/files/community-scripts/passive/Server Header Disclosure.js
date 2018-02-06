@@ -13,14 +13,11 @@ function scan(ps, msg, src)
     wascId = 13
 
     url = msg.getRequestHeader().getURI().toString();
-    if (msg) 
-	{
-		headers = msg.getResponseHeader().getHeaders("Server")
-		
-	  if (headers != null)
-		{
-       	 ps.raiseAlert(alertRisk, alertReliability, alertTitle, alertDesc, url, '', '', '', alertSolution,headers, cweId, wascId, msg);
-		}  
-	 }
+    headers = msg.getResponseHeader().getHeaders("Server")
+    
+    if (headers != null)
+    {
+        ps.raiseAlert(alertRisk, alertReliability, alertTitle, alertDesc, url, '', '', '', alertSolution,headers, cweId, wascId, msg);
+    }
     
 }

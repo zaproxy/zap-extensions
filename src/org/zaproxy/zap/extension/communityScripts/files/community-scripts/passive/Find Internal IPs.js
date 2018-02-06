@@ -1,9 +1,5 @@
 // RFC1918 internal IP Finder by freakyclown@gmail.com
 
-// The following handles differences in printing between Java 7's Rhino JS engine
-// and Java 8's Nashorn JS engine
-if (typeof println == 'undefined') this.println = print;
-
 function scan(ps, msg, src) {
     url = msg.getRequestHeader().getURI().toString();
     alertRisk = 2
@@ -19,7 +15,7 @@ function scan(ps, msg, src) {
 
 
     // you can tell the user in the console we are doing stuff by uncommenting the line below
-    //println('Finding IPs Under: ' + url);
+    //print('Finding IPs Under: ' + url);
 
     // lets check its not one of the files types that are never likely to contain stuff, like pngs and jpegs
     contenttype = msg.getResponseHeader().getHeader("Content-Type")

@@ -1,16 +1,10 @@
 // This script allow you to return 'fake' responses for any requests you like.
-// Note that it requires the change https://code.google.com/p/zaproxy/source/detail?r=5872
-// which is in the trunk, the 2.4 branch and the latest weekly release
-
-// The following handles differences in printing between Java 7's Rhino JS engine
-// and Java 8's Nashorn JS engine
-if (typeof println == 'undefined') this.println = print;
 
 function proxyRequest(msg) {
 	// Change this test to match whatever requests you want to fake
 	if (msg.getRequestHeader().getURI().toString().equals("http://localhost:8080/bodgeit/about.jsp")) {
 
-		println('Faking response for url ' + msg.getRequestHeader().getURI().toString())
+		print('Faking response for url ' + msg.getRequestHeader().getURI().toString())
 
 		msg.setResponseBody("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2//EN\">\n" +
 			"<html><head></head><body><h1>Hack</h1>\n" +
