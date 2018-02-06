@@ -4,8 +4,6 @@
 // (c) 2017 Harrison Neal
 // http://www.apache.org/licenses/LICENSE-2.0
 
-if (typeof println == 'undefined') this.println = print;
-
 function scan(ps, msg, src) {
 	alertRisk = org.parosproxy.paros.core.scanner.Alert.RISK_HIGH;
 	alertTitle = "Telerik UI for ASP.NET AJAX CVE-2017-9248 Cryptographic Weakness";

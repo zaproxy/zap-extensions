@@ -5,10 +5,6 @@
 // Note that new active scripts will initially be disabled
 // Right click the script in the Scripts tree and select "enable"  
 
-// The following handles differences in printing between Java 7's Rhino JS engine
-// and Java 8's Nashorn JS engine
-if (typeof println == 'undefined') this.println = print;
-
 // Replace or extend these with your own attacks
 // put the attacks you most want to run higher, unless you disable the attack strength check
 var attacks = [
@@ -132,8 +128,8 @@ function scanNode(as, msg) {
  * @param {string} value - the original parameter value.
  */
 function scan(as, msg, param, value) {
-	// Debugging can be done using println like this
-	//println('scan called for url=' + msg.getRequestHeader().getURI().toString() + 
+	// Debugging can be done using print like this
+	//print('scan called for url=' + msg.getRequestHeader().getURI().toString() + 
 	//	' param=' + param + ' value=' + value);
 	
 	var max_attacks = attacks.length	// No limit for the "INSANE" level ;)

@@ -8,8 +8,7 @@
 // released under the Apache v2.0 licence.
 // You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 // Author : @haseebeqx (GitHub, Twitter)
-// tested on: ZAP 2.4.1
-// note : due to a bug in mozilla Rhino  bdy.charAt(j) had to be replaced with String.fromCharCode(bdy.charAt(j)). so in future (or in Nashorn) you may have to change it back
+// tested on: ZAP 2.7.0
 // rule1: pure JSON , no CODE
 // rule2: correct body (make edits only after conversion)
 
@@ -18,7 +17,7 @@ function invokeWith(msg) {
 	reqb = msg.getRequestBody().toString(); 
 	reqh = msg.getRequestHeader().getURI().toString();
 	if(isJson(reqb)){
-		body += jsonToXML(reqb);
+		body += jsonToXML(JSON.parse(reqb));
 	}
 	else if(ismultipart(msg.getRequestHeader())){
 		js = multiToJson(msg);
@@ -29,9 +28,10 @@ function invokeWith(msg) {
 		body += jsonToXML(js);
 	}
 	msg.setRequestBody(body);
+	msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 	header = msg.getRequestHeader();
-	header.setHeader(org.parosproxy.paros.network.HttpRequestHeader.CONTENT_TYPE,"application/xml");
-	header.setHeader(org.parosproxy.paros.network.HttpRequestHeader.CONTENT_LENGTH,body.length);
+	header.setHeader(org.parosproxy.paros.network.HttpHeader.CONTENT_TYPE,"application/xml");
+	header.setHeader(org.parosproxy.paros.network.HttpHeader.CONTENT_LENGTH,body.length);
 	msg.setRequestHeader(header);
 	ext = new org.parosproxy.paros.extension.history.ExtensionHistory;
 	man = ext.getResendDialog();
@@ -50,7 +50,7 @@ function isJson(str){
 }
 
 function ismultipart(header){
-	type = header.getHeader(org.parosproxy.paros.network.HttpRequestHeader.CONTENT_TYPE);
+	type = header.getHeader(org.parosproxy.paros.network.HttpHeader.CONTENT_TYPE);
 	if(type == null )
 		return false;
 	if(type.contains("multipart/form-data"))
@@ -74,26 +74,26 @@ function bodyToJson(body){
 				if(first){
 					out += '{ "'
 					af = '' ;			
-					while(String.fromCharCode(bdy.charAt(j)) != '[' && String.fromCharCode(bdy.charAt(j)) != '=' ){
+					while(bdy.charAt(j) != '[' && bdy.charAt(j) != '=' ){
 						if(j == len)
 							break;
-						out += String.fromCharCode(bdy.charAt(j))
+						out += bdy.charAt(j)
 						j++;
 					}
 					out += '" :';
 					af += '} ';
 					first = false;
 				}
-				if(String.fromCharCode(bdy.charAt(j)) == '=' && !opend){
+				if(bdy.charAt(j) == '=' && !opend){
 					j++;
 					out += '"'+bdy.substring(j,len)+'"';
 					break;
 					continue;
 				}	
-				else if(String.fromCharCode(bdy.charAt(j)) == '[' && !opend){
+				else if(bdy.charAt(j) == '[' && !opend){
 					opend = true;
 					out += '{ "';
-					if(String.fromCharCode(bdy.charAt(j+1)) == ']' && String.fromCharCode(bdy.charAt(j+2)) == '='){
+					if(bdy.charAt(j+1) == ']' && bdy.charAt(j+2) == '='){
 						j += 2;
 						out += '"'+bdy.substring(j,len)+'"';
 						af += '} '
@@ -101,14 +101,14 @@ function bodyToJson(body){
 					}
 					continue;
 				}
-				else if(String.fromCharCode(bdy.charAt(j)) == ']'){
+				else if(bdy.charAt(j) == ']'){
 					out += '" :';
 					af += " }"
 					opend = false;
 					continue;
 				}
 				else if(opend){
-					out += String.fromCharCode(bdy.charAt(j))
+					out += bdy.charAt(j)
 					continue;
 				}
 				else {
@@ -123,10 +123,10 @@ function bodyToJson(body){
 	}
 	else{
 		pairs = body.split('&');
-		pairs.forEach(function(i, pair){
+		for each(pair in pairs){
 			pair = pair.split('=');
 			result[pair[0]] = decodeURIComponent(pair[1]||'');
-			});	
+		}
 	}
 return result;	
 }
@@ -158,7 +158,7 @@ function toXml(key,value,att){ //pretify
 		}
 }
 function multiToJson(msg){
-		type =  msg.getRequestHeader().getHeader(org.parosproxy.paros.network.HttpRequestHeader.CONTENT_TYPE);
+		type =  msg.getRequestHeader().getHeader(org.parosproxy.paros.network.HttpHeader.CONTENT_TYPE);
 		delim =  type.substring(type.search("=")+1,type.length());
 		h = msg.getRequestBody().toString().split("--"+delim);
 		k=0;
@@ -195,26 +195,26 @@ function multiToJson(msg){
 				first = true;
 				for(ii=0;ii<len;ii++){
 					if(first){
-						while(String.fromCharCode(bdy.charAt(ii)) != '[' && ii < len){
-							out += String.fromCharCode(bdy.charAt(ii));
+						while(bdy.charAt(ii) != '[' && ii < len){
+							out += bdy.charAt(ii);
 							ii++;	
 						}
 					first = false;
 					out += '" '
 					}
-					if(String.fromCharCode(bdy.charAt(ii)) == '[' && !opened ){
+					if(bdy.charAt(ii) == '[' && !opened ){
 						out += ' :{ "' ;
 						opened = true;
 						continue;
 					} 
-					if(String.fromCharCode(bdy.charAt(ii)) == ']' && opened){
+					if(bdy.charAt(ii) == ']' && opened){
 						out += '"';
 						af += '}';
 						opened = false;
 						continue;
 					}
 					if(opened){
-						out += String.fromCharCode(bdy.charAt(ii));
+						out += bdy.charAt(ii);
 					}
 				}
 				out += ':"'+values[i]+'"'+af;

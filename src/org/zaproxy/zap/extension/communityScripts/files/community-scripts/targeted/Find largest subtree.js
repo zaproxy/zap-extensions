@@ -2,16 +2,12 @@
 // Also reports the total number of sub nodes.
 // Targeted scripts can only be invoked by you, the user, eg via a right-click option on the Sites or History tabs
 
-// The following handles differences in printing between Java 7's Rhino JS engine
-// and Java 8's Nashorn JS engine
-if (typeof println == 'undefined') this.println = print;
-
 tot = 0
 maxparent = ""
 maxsub = 0
 
 function recurseDown(node) {
-	//println('recurseDown node: ' + node.getHierarchicNodeName() + " " + node.getChildCount())
+	//print('recurseDown node: ' + node.getHierarchicNodeName() + " " + node.getChildCount())
 	tot++
 	if (node.getChildCount() > maxsub) {
 		maxsub = node.getChildCount();
@@ -25,24 +21,24 @@ function recurseDown(node) {
 
 
 function invokeWith(msg) {
-	// Debugging can be done using println like this
-	//println('invokeWith called for url=' + msg.getRequestHeader().getURI().toString())
+	// Debugging can be done using print like this
+	//print('invokeWith called for url=' + msg.getRequestHeader().getURI().toString())
 
 	sitestree = org.parosproxy.paros.model.Model.getSingleton().getSession().getSiteTree()
 	node = sitestree.findNode(msg, true)
 
 	if (node != null) {
-		//println('found node: ' + node.getHierarchicNodeName())
+		//print('found node: ' + node.getHierarchicNodeName())
 		recurseDown(node)
 		tot -- // to remove the top node
 
-		println('Largest subtree under ' + node.getHierarchicNodeName() + ' is')
-		println('\t' + maxparent)
-		println('With ' + maxsub + ' immediate sub nodes')
-		println('Total number of sub nodes = ' + tot)
+		print('Largest subtree under ' + node.getHierarchicNodeName() + ' is')
+		print('\t' + maxparent)
+		print('With ' + maxsub + ' immediate sub nodes')
+		print('Total number of sub nodes = ' + tot)
 
 	} else {
-		println('Failed to find node:( ')
+		print('Failed to find node:( ')
 	}
 
 }

@@ -12,6 +12,8 @@ Author:
 dominique.righetto@gmail.com
 */
 
+var Locale = Java.type("java.util.Locale");
+
 function scan(ps, msg, src) {
 	//Docs on alert raising function:
 	// raiseAlert(risk, int confidence, String name, String description, String uri, 
@@ -42,7 +44,7 @@ function scan(ps, msg, src) {
 				//by simply searching "samesite=" on the whole cookie header value...
 				for(var k = 0 ; k < cookieAttributes.length ; k++){
 					var parts = cookieAttributes[k].split("=");
-					if(parts[0].trim().toLowerCase() == cookieSameSiteAttributeNameLower){
+					if(parts[0].trim().toLowerCase(Locale.ROOT) == cookieSameSiteAttributeNameLower){
 						//Raise info alert
 						var sameSiteAttrValue = parts[1].trim();
 						var cookieName = cookieAttributes[0].split("=")[0].trim();

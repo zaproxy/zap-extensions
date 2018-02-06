@@ -32,16 +32,16 @@ They are invoked for proxied requests and requests that originate from ZAP, for 
 // New requests can be made like this:
 // msg2 = msg.cloneAll() // msg2 can then be safely changed as required without affecting msg
 // helper.getHttpSender().sendAndReceive(msg2, false);
-// println('msg2 response=' + msg2.getResponseHeader().getStatusCode())
+// print('msg2 response=' + msg2.getResponseHeader().getStatusCode())
 
 function sendingRequest(msg, initiator, helper) {
-	// Debugging can be done using println like this
-	println('sendingRequest called for url=' + msg.getRequestHeader().getURI().toString())
+	// Debugging can be done using print like this
+	print('sendingRequest called for url=' + msg.getRequestHeader().getURI().toString())
 }
 
 function responseReceived(msg, initiator, helper) {
-	// Debugging can be done using println like this
-	println('responseReceived called for url=' + msg.getRequestHeader().getURI().toString())
+	// Debugging can be done using print like this
+	print('responseReceived called for url=' + msg.getRequestHeader().getURI().toString())
 }
 ```
 ## Variables

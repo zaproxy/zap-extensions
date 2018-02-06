@@ -1,0 +1,64 @@
+{
+  "about": "This is a Zest script lazily crafted by Anthony Cozamanis, kurobeats@yahoo.co.jp. For more details about Zest visit https://developer.mozilla.org/en-US/docs/Zest",
+  "zestVersion": "0.3",
+  "title": "Require non-cached response.zst",
+  "description": "Require non-cached response",
+  "prefix": "",
+  "type": "Targeted",
+  "parameters": {
+    "tokenStart": "{{",
+    "tokenEnd": "}}",
+    "tokens": {},
+    "elementType": "ZestVariables"
+  },
+  "statements": [
+    {
+      "comment": "Change the \u0027assign\u0027 statement to match your required \u0027original\u0027 and \u0027replacement\u0027 strings.",
+      "index": 1,
+      "enabled": true,
+      "elementType": "ZestComment"
+    },
+    {
+      "rootExpression": {
+        "length": 0,
+        "approx": 0,
+        "variableName": "response.url",
+        "not": false,
+        "elementType": "ZestExpressionLength"
+      },
+      "ifStatements": [
+        {
+          "comment": "Called for the request - perform the replacement.",
+          "index": 3,
+          "enabled": true,
+          "elementType": "ZestComment"
+        },
+        {
+          "replace": "^(If-None-Match|If-Modified-Since).*$",
+          "replacement": "",
+          "regex": true,
+          "caseExact": false,
+          "variableName": "request.header",
+          "index": 4,
+          "enabled": true,
+          "elementType": "ZestAssignReplace"
+        }
+      ],
+      "elseStatements": [
+        {
+          "comment": "Called for the response - do nothing.",
+          "index": 5,
+          "enabled": true,
+          "elementType": "ZestComment"
+        }
+      ],
+      "index": 2,
+      "enabled": true,
+      "elementType": "ZestConditional"
+    }
+  ],
+  "authentication": [],
+  "index": 0,
+  "enabled": true,
+  "elementType": "ZestScript"
+}

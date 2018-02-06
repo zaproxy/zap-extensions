@@ -17,6 +17,8 @@ Author:
 dominique.righetto@gmail.com
 */
 
+var Locale = Java.type("java.util.Locale");
+
 function extractUrl(cspPolicies, cspReportInstruction){
 	//Extract the URL to which any CSP violations are reported
 	//In CSP specification, policies are separated by ';'
@@ -60,12 +62,12 @@ function scan(ps, msg, src) {
 			//Check if the header values (policies) contains the CSP reporting instruction
 			var headerValues = responseHeaders.getHeaders(headerName).toArray();
 			for(var j = 0 ; j < headerValues.length ; j++){
-				var cspPolicies = headerValues[j].toLowerCase();
+				var cspPolicies = headerValues[j].toLowerCase(Locale.ROOT);
 				//Extract the URL to which any CSP violations are reported if specified
 				var reportUrl = extractUrl(cspPolicies, cspReportInstruction);
 				if(reportUrl != null){
 					//Raise info alert
-					var cspWorkingMode = (headerName.toLowerCase().indexOf("-report-only") == -1) ? "BLOCKING" : "REPORTING";
+					var cspWorkingMode = (headerName.toLowerCase(Locale.ROOT).indexOf("-report-only") == -1) ? "BLOCKING" : "REPORTING";
 					var description = "The current site CSP policies defined by HTTP response header '" + headerName + "' (behaving in " + cspWorkingMode + " mode) report violation to '" + reportUrl + "'.";
 					var infoLinkRef = "https://developer.mozilla.org/en-US/docs/Web/Security/CSP/Using_CSP_violation_reports";
 					var solution = "Site owner will be notified at each policies violations, so, start by analyzing if a real monitoring of the notifications is in place before to use fuzzing or to be more aggressive.";
