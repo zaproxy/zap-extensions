@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Simple Example</name>
-	<version>1</version>
+	<version>2</version>
 	<status>alpha</status>
 	<description>A simple extension example.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>First version</changes>
+	<changes>Updated to include example 'about' page.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.simpleExample.ExtensionSimpleExample</extension>
 	</extensions>
