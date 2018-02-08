@@ -5,7 +5,7 @@
 	<description>Chinese Simplified version of the ZAP help file.</description>
 	<author>ZAP Crowdin Team</author>
 	<url>https://crowdin.com/project/owasp-zap-help</url>
-	<changes>First version</changes>
+	<changes>Updated with the latest files from crowdin</changes>
 	<extensions/>
 	<ascanrules/>
 	<pscanrules/>
