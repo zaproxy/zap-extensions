@@ -3,13 +3,12 @@
 	<name>Core Language Files</name>
 	<description>Translations of the core language files</description>
 	<author>ZAP Dev Team</author>
-	<version>13</version>
+	<version>14</version>
 	<status>release</status>
 	<url>https://crowdin.com/project/owasp-zap</url>
 	<changes>
 	<![CDATA[
-	Added help file with credits.<br>
-	Updated the languages files from Crowdin
+	Added more people to the credits.<br>
 	]]>
 	</changes>
 	<extensions>
