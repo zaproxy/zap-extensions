@@ -395,6 +395,17 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
            								"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
         						attackWorked = true;
             	            }
+        	            } else {
+                            // Try an img tag
+                            List<HtmlContext> contextsA = performAttack (msg, param, 
+                                    "<img src=x onerror=alert(1);>", 
+                                    context, HtmlContext.IGNORE_IN_SCRIPT);
+                            if (contextsA != null && contextsA.size() > 0) {
+           						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contextsA.get(0).getTarget(), 
+           								"", contextsA.get(0).getTarget(), contextsA.get(0).getMsg());
+        						attackWorked = true;
+        						break;
+            	            }
         	            }
             		} else {
             			// Last chance - is the payload reflected outside of any tags

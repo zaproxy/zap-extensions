@@ -742,4 +742,41 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
     }
+    
+    @Test
+    public void shouldReportXssInsideDivWithFilteredScript() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInBodyWithFilteredScript/";
+        
+        this.nano.addHandler(new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String name = session.getParms().get("name");
+                String response;
+                if (name != null) {
+                    // Strip out 'script' ignoring the case
+                    name = name.replaceAll("(?i)script", "");
+                    response = getHtml("InputInsideDiv.html",
+                            new String[][] {{"name", name}});
+                } else {
+                    response = getHtml("NoInput.html");
+                }
+                return new Response(response);
+            }
+        });
+        
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(httpMessagesSent, hasSize(equalTo(3)));
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), 
+                equalTo("<img src=x onerror=alert(1);>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("<img src=x onerror=alert(1);>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
 }
