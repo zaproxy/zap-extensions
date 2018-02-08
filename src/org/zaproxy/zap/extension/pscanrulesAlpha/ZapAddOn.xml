@@ -9,6 +9,7 @@
 	<![CDATA[
 	Minor code changes to comply with deprecations.<br>
 	Added passive PII Scanner (which currently looks for Credit Card # patterns).<br>
+	Change Image Location and Privacy Scanner to scan hidden images.<br>
 	]]>
 	</changes>
 	<extensions>
