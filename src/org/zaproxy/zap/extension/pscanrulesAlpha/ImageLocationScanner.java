@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -167,5 +168,14 @@ public class ImageLocationScanner extends PluginPassiveScanner {
     
     public String getAuthor() {
         return ILS.pluginAuthor;
+    }
+
+    @Override
+    public boolean appliesToHistoryType(int historyType) {
+        if (historyType == HistoryReference.TYPE_HIDDEN) {
+            // Scan hidden images, if the scanner is enabled it should scan.
+            return true;
+        }
+        return super.appliesToHistoryType(historyType);
     }
 }
