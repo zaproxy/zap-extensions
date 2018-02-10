@@ -87,8 +87,8 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
 		assertEquals(alertsRaised.size(), 1);
-		System.out.println("Data: " + alertsRaised.get(0).getEvidence());
-		assertThat(alertsRaised.get(0).getEvidence(), containsString("Serial Number"));
+		// System.out.println("Data: " + alertsRaised.get(0).getEvidence());
+		assertThat(alertsRaised.get(0).getEvidence(), containsString("Owner Name"));
 	}
 
 	

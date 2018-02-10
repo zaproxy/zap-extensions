@@ -9,6 +9,6 @@ Some images are from the taken from the sample library of Drew Noakes' MetaData 
 Images:
 
 * no_alerts_01.jpg - Source: https://OksanaBall.com - ©2018 Oksana Ball - used with permission, Creative Commons Attribution-NoDerivs;   CC BY-ND
-* exif_gps_01.jpg
+* exif_gps_01.jpg - Source: https://LouAnnGrover.com - ©2017 Lou Ann Grover - used with permission, Creative Commons Attribution-NoDerivs;   CC BY-ND
 * privacy_exposure_01.jpg - Exposure: Canon camera owner name.   MDE-licensing; source: https://github.com/drewnoakes/metadata-extractor-images/blob/master/jpg/Canon%20PowerShot%20S40%20(1).jpg
 
