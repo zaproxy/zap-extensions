@@ -118,6 +118,10 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 		table = webSocketTable;
 		fullMessagesCache = new LRUMap(10);
 	}
+
+	protected TableWebSocket getTable() {
+	    return table;
+	}
 	
 	public void setActiveChannel(Integer channelId) {
 		activeChannelId = channelId;

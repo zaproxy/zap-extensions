@@ -59,6 +59,13 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 	}
 
 	/**
+	 * @see WebSocketProxy#WebSocketProxy(Socket, Socket, String, int)
+	 */
+	public WebSocketProxyV13(Socket localSocket, Socket remoteSocket, String targetHost, int targetPort) throws WebSocketException {
+		super(localSocket, remoteSocket, targetHost, targetPort);
+	}
+
+	/**
 	 * @see WebSocketProxy#createWebSocketMessage(InputStream, byte)
 	 */
 	@Override
@@ -406,9 +413,9 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 			}
 			
 			if (isText(opcode)) {
-				logger.info("got text frame payload");
+				logger.debug("got text frame payload");
 			} else if (isBinary(opcode)) {
-				logger.info("got binary frame payload");				
+				logger.debug("got binary frame payload");				
 			} else {
 				if (opcode == OPCODE_CLOSE) {
 					if (payload.length > 1) {
@@ -698,6 +705,9 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 				isValidUtf8Payload = true;
 				return Utf8Util.encodePayloadToUtf8(payload.array(), 0, payload.limit());
 			} catch (InvalidUtf8Exception e) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Unable to decode as UTF-8: " + payload.toString() + " " + Arrays.toString(payload.array()), e);
+				}
 				isValidUtf8Payload  = false;
 				return "<invalid UTF-8>";
 			}

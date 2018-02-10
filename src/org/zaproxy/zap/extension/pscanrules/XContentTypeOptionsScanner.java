@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Locale;
 import java.util.Vector;
 
 import net.htmlparser.jericho.Source;
@@ -47,19 +48,21 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-		boolean includeErrorResponses=true;
-		switch (this.getLevel()) {
-			case HIGH:	includeErrorResponses=false; break;  
+		boolean includeErrorRedirectResponses = false;
+		switch (this.getAlertThreshold()) {
+			case LOW: 
+				includeErrorRedirectResponses = true; break;
+			case HIGH:  
 			case MEDIUM: 					
 			case DEFAULT: 
-			case LOW: 		
 			case OFF: } 
 		if (msg.getResponseBody().length() > 0) {
 			int responseStatus = msg.getResponseHeader().getStatusCode();
 			// If it's an error and we're not including error responses then just return without alerting
-			if (!includeErrorResponses && 
+			if (!includeErrorRedirectResponses && 
 					(HttpStatusCode.isServerError(responseStatus) ||
-					HttpStatusCode.isClientError(responseStatus))) {
+					HttpStatusCode.isClientError(responseStatus) ||
+					HttpStatusCode.isRedirection(responseStatus))) {
 				return;
 			} 
 			Vector<String> xContentTypeOptions = msg.getResponseHeader().getHeaders(HttpHeader.X_CONTENT_TYPE_OPTIONS);
@@ -68,7 +71,7 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 			} else {
 				for (String xContentTypeOptionsDirective : xContentTypeOptions) {
 					//'nosniff' is currently the only defined value for this header, so this logic is ok
-					if (xContentTypeOptionsDirective.toLowerCase().indexOf("nosniff") < 0) {
+					if (xContentTypeOptionsDirective.toLowerCase(Locale.ROOT).indexOf("nosniff") < 0) {
 						this.raiseAlert(msg, id, xContentTypeOptionsDirective);
 					}
 				}
@@ -82,14 +85,14 @@ public class XContentTypeOptionsScanner extends PluginPassiveScanner {
 		    	alert.setDetail(
 		    		getDescription(), // Desc
 		    	    msg.getRequestHeader().getURI().toString(), // URL
-		    	    xContentTypeOption,
+		    	    HttpHeader.X_CONTENT_TYPE_OPTIONS, // Parameter
 		    	    "", // Attack
 		    	    getOtherInfo(), // OtherInfo
 		    	    getSolution(), // Soln 
 		            getReference(), // Refs
-		            "", // Evidence
-		            0,	// TODO CWE Id
-		            15,	
+		            xContentTypeOption, // Evidence
+		            16,	// CWE-16: Configuration
+		            15,	// WASC15: Application Misconfiguration
 		            msg);
 	
     	parent.raiseAlert(id, alert);

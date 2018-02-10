@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Aktif Tarama Kuralları
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Active Scan Rules</h1>
+Bu eklentide bulunan aktif tarama kuralları şunlardır:
+
+<h2>Buffer Overflow</h2>
+
+Derlenmiş kodda buffer overflow'ların göstergelerini arar.  Bunu büyük bir yazı girdisi salarak ve kod çakışmalarına ve anormal oturum kapanışlarına bakarak yapar.
+
+<h2>Kod Enjeksiyonu</h2>
+Bu kural PHP ve ASP saldırı string'lerini URL parametreleri için değerler olarak bir talepte bildirir ve o değerlerin sunucu tarafından değerlendirilip değerlendirilmediğini görmek için yanıtı inceler. İlk olarak, bir token yazdırmak için enjekte edilmiş PHP talimatları içeren talepler oluşturulur ve gönderilir. Token ve yanıt gövdesinin içeriği arasında bir eşleşme durumunda, tarayıcı uyarıyı yükseltir ve hemen geri döner.
+Herhangi bir eşleşme yoksa, tarayıcı, sunucuya ürünü yazmasını söyleyen birçok ASP dizesiyle istekler oluşturur.
+iki adet rastgele oluşturulmuş tamsayı. Yanıt gövdesi ürüne uyuyorsa, bir uyarı oluşturulur.
+
+<h2>Komut Enjeksiyonu</h2>
+Bu kural *NIX ve Windows OS komutlarını web uygulamasının kontrolsüz kullanıcı girdisini doğrudan altta yatan işletim sistemine giriş yaptığını belirlemek için URL parametresi değerleri gönderir. Enjeksiyon dizileri OS tarafından yorumlanabilecek meta karakterlerden meydana gelmektedir
+uygulama savunmasızsa yanıt verirken çıktısı üretmesi gereken bir yükle birlikte birleştirme komutları olarak kullanılabilir. Yanıt gövdesi içeriği yük ile uyuşursa, tarayıcı bir uyarı verir ve derhal geri döner. Hata tabanlı eşleme denemelerinin hiçbirinin yapılmaması durumunda
+yanıtta çıktıyı döndür tarayıcı uyku talimatlarını yük olarak göndererek ve isteği gönderme arasındaki geçen süreyi karşılaştırarak kör bir enjeksiyon saldırısı yapmaya çalışır
+ve sezgisel gecikme alt sınırına karşı cevap alır. Geçen süre bu sınırın üzerindeyse, orta bir güvenle bir uyarı artırılır ve tarayıcı derhal geri döner.
+<br>
+2.5.0 sonrasında, Seçenekler 'Kural Yapılandırması' panelinden <code>rules.common.sleep</code> parametresini değiştirerek kör enjeksiyon için kullanılan sürenin uzunluğunu değiştirebilirsiniz.
+
+<h2>Müşteri Tarayıcı Önbelleği</h2>
+
+Bu kural güvenli sayfaların üstbilgisini kontrol eder ve tarayıcı sayfayı önbelleğe almasına izin veriyorsa bir uyarı rapor eder.
+
+<h2>Siteler Arası Komut Dosyası Çalışması (yansıtılan)</h2>
+ Bu kural, bir 'güvenli' değer göndererek ve tüm bu değer (varsa) yanıtta oluştuğu konumları analiz başlar. <br>
+Daha sonra, özellikle her bir örnekten birinin bulunduğu yerde hedeflenmiş bir dizi saldırıyı gerçekleştirir., 
+etiket niteliklerini, url niteliklerini, src niteliklerini, html yorumlarını destekleyen etiket niteliklerini içerir. 
+
+<h2>Siteler Arası Senaryo (kalıcı)</h2>
+Bu kural benzersiz bir 'güvenli' değer göndererek başlar ve daha sonra örümcek, tüm uygulamada değerilerin bulunduğu tüm konumları bulmak için arar<br>
+Daha sonra 'yansıtılan' sürümün yaptığı gibi bir dizi saldırı gerçekleştirir ancak bu durumda diğer sayfalardaki 
+hedef konumların hepsini kontrol eder. 
+
+<h2>CRLF Enjeksiyon</h2>
+
+Bu kural, sunucuya bir parametre olarak bir "set Cookie" üstbilgisi önceki çeşitli CRLF özel karakterler gönderir. Eğer yanıt aynı set-cookie Başlığı içeriyorsa,
+bir uyarı oluşur ve tarayıcı hemen geri döner.
+
+
+Bu kural, Apache, IIS ile kullanılan desenler için yanıt gövdesini inceleyerek bir isteğin dizin listesine erişim sağlayıp sağlamadığını kontrol eder.
+ve diğer web sunucusu yazılımları.
+
+<h2>Harici Yönlendirme</h2>
+Bu kural bir çeşitli URL yönlendirme parametre değerleri olarak dizilerin isteklerini gönderir; ardından yönlendirmelerin gerçekleşip gerçekleşmediğini ve hangi türde olup olmadığını belirlemek için yanıtların başlıklarını ve gövdelerini saptar. Yönlendirmenin neden "Konum" ve "Yenile" başlık alanlarında olduğu için HTML meta etiketleri tarafından da aranır. Yeniden yönlendirme türü dahil olmak üzere bir uyarı yükseliyor ve tarayıcı hemen geri dönüyor.
+
+<h2>Biçim Dizi Hatası</h2>
+Derlenmiş kodun biçim dizisi kullanma hatalarının göstergelerine bakar.  Bu, düzenlenmiş karakterlere dayanan girdi metni dizelerini yerleştirerek yapar C kodunun biçimlendirilmiş çıktı üretmesini, kod çökmesini ve anormal oturum kapatmalarını öngörür.
+
+
+<h2>Parameter Kurcalanması</h2>
+Bu kural yanlış ele alındığında kullanıcılara görünmesi gereken hatalara neden olduğu bilinen parametre değerleriyle istek gönderilir. Yanıtlar, bir sunucu hata durumu kodu döndürdükten sonra kötü bir parametrenin çıktı üzerinde bir etkisi olmazsa, bir uyarı oluşturmadığından emin olmak için normal bir HTTP yanıtıyla karşılaştırılarak kontrol edilir. Son olarak, yanıt gövdesinin içeriği, Java servlet, Microsoft VBScript, OLE DB, JET, PHP ve Tomcat hatalarında bulunabilen çeşitli modellerle karşılaştırılır. Eğer bir eşleşme bulunursa, bir uyarı oluşturulur ve tarayıcı anında döner.
+
+<h2>Yol Geçişi</h2>
+Bu kural yol adı öneklerinin çeşitli kombinasyonlarını çizerek web belgesi temeli dışında dosya ve dizinlere erişmeye çalışır
+ve yerel dosya hedefleri Windows ve *NIX sistemleri için Java servletleridir. Eğer yanıtın gövdesiyle eşleşen bir desene uyuyorsa
+geçerli hedef dosyada bir uyarı yükselir ve tarayıcı hemen dönüş yapar. Eğer sıradan yerel dosya hedefleri başarılıyorsa, yol geçişleri
+URL içinde dosya adını kullanmaya kalkışır. İsteğe bağlı bir dosya adı göndermenin bir OK durum koduna dönmediğinde, ancak gerçek dosya adının yaptığı sürece bir uyarı yükselir 
+ve tarayıcı hemen döner.
+
+<h2>Uzak Dosya Dahil Et</h2>
+
+Bu kural, parametre değerleri olarak harici URL'ler içeren bir dizi istek gönderir ve yanıt gövdesi ile sayfanın başlığı arasında bir eşleşme arar.
+Bu URL'lerde barındırılan. Eğer beklenen diziler ve gövde yanıtı bir eşleşme arasındaysa, ve başlıklar durum kodu 200'e dönüyorsa, bir uyarı oluşur ve tarayıcı hemen dönüş yapar.
+
+<h2>Sunucu Tarafı Dahil Et</h2>
+
+Bu kural sunucunun hangi işletim sistemi üzerinde çalıştığını kontrol eder, daha sonra karşılık gelen HTML SSI yönergesini parametre değeri olarak istekleri gönderir. Eğer yanıt gövdesi eşleşirse
+SSI başarılı olduğunu gösteren bir desen, bir uyarı oluşturulur ve tarayıcı hemen döner.
+
+<h2>SQL Enjeksiyon</h2>
+Bu tarayıcı, hata tabanlı, boolean tabanlı, Union tabanlı ve yığılmış sorgu SQL Enjeksiyon teknikleri kullanılarak, url parametrelerine ve URL'lerin geçerli ve geçersiz SQL sözdizimi parçaları ile saldırıya uğramasına bağlı olarak RDBMS'den bağımsız, SQL Enjeksiyon güvenlik açıklarını tarar. <br>
+Bu tarayıcıda uygulama bilinen bir RDBMS özel SQL hata mesajı verirse RDBMS'de parmak izi verebilir. <br>
+Bu tarayıcı herhangi bir RDBMS özel tekniklerini kullanmaz, ve başlangıç noktası için kullanılabilecek en iyi SQL enjeksiyon tarayıcıdır. 
+
+</body>
+</html>

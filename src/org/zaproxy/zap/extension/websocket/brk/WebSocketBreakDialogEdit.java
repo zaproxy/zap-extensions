@@ -57,7 +57,7 @@ public class WebSocketBreakDialogEdit extends WebSocketBreakDialog {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     breakpoint = null;
-                    breakPointsManager.hideEditDialog();
+                    dispose();
                 }
 			};
 		}
@@ -74,7 +74,7 @@ public class WebSocketBreakDialogEdit extends WebSocketBreakDialog {
 					try {
 						breakPointsManager.editBreakpoint(breakpoint, getWebSocketBreakpointMessage());
 	                    breakpoint = null;
-	                    breakPointsManager.hideEditDialog();
+	                    dispose();
 					} catch (PatternSyntaxException e) {
 						// show popup
 						View.getSingleton().showWarningDialog(Constant.messages.getString("filter.replacedialog.invalidpattern"));

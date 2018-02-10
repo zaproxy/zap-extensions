@@ -28,7 +28,7 @@ import java.util.Comparator;
  */
 public class FuzzdbFiles {
 	
-	public static final String ROOT = "src/org/zaproxy/zap/extension/fuzzdb/files/fuzzers/fuzzdb-1.09"; 
+	public static final String ROOT = "src/org/zaproxy/zap/extension/fuzzdb/files/fuzzers/fuzzdb"; 
 	
 	public static void listDir(File dir) {
 		if (! dir.exists()) {
@@ -45,7 +45,7 @@ public class FuzzdbFiles {
 			if (f.isDirectory()) {
 				listDir(f);
 			} else if ( ! f.getName().startsWith(".")) {
-				System.out.print("\t\t<file>fuzzers/fuzzdb-1.09/");
+				System.out.print("\t\t<file>fuzzers/fuzzdb");
 				String fullname = f.getAbsolutePath();
 				int relNameOffset = fullname.indexOf(ROOT) + ROOT.length();
 				System.out.print(fullname.substring(relNameOffset));

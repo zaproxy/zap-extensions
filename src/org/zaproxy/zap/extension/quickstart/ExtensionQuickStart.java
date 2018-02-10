@@ -29,9 +29,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -56,30 +59,26 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	private QuickStartPanel quickStartPanel = null;
 	private AttackThread attackThread = null;
 	
-	private CommandLineArgument[] arguments = new CommandLineArgument[2];
+	private CommandLineArgument[] arguments = new CommandLineArgument[3];
     private static final int ARG_QUICK_URL_IDX = 0;
     private static final int ARG_QUICK_OUT_IDX = 1;
+    private static final int ARG_QUICK_PROGRESS_IDX = 2;
+    private static final String SPIN_CHRS = "|/-\\|/-\\"; 
     
     private boolean runningFromCmdLine = false;
-
+    private boolean showProgress = false;
+    private int spinner = 0;
+    
+    private List<QuickStartPanelContentProvider> contentProviders = 
+            new ArrayList<QuickStartPanelContentProvider>();
+    
     public ExtensionQuickStart() {
-        super();
- 		initialize();
-    }
+        super(NAME);
+	}
 
-    /**
-     * @param name
-     */
-    public ExtensionQuickStart(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 */
-	private void initialize() {
-        this.setName(NAME);
-        //this.setOrder(0);
+	@Override
+	public boolean supportsDb(String type) {
+		return true;
 	}
 	
 	@Override
@@ -90,6 +89,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	        extensionHook.getHookView().addWorkPanel(getQuickStartPanel());
 	        
 	        ExtensionHelp.enableHelpKey(getQuickStartPanel(), "quickstart");
+	        
 	    }
         extensionHook.addSessionListener(this);
 
@@ -100,6 +100,25 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 	public boolean canUnload() {
     	return true;
     }
+
+	
+	public void addContentProvider(QuickStartPanelContentProvider provider) {
+	    this.contentProviders.add(provider);
+        if (quickStartPanel != null) {
+            quickStartPanel.addContent(provider);
+        }
+	}
+
+	public void removeContentProvider(QuickStartPanelContentProvider provider) {
+        this.contentProviders.remove(provider);
+        if (quickStartPanel != null) {
+            quickStartPanel.removeContent(provider);
+        }
+	}
+	
+	protected List<QuickStartPanelContentProvider> getContentProviders() {
+	    return this.contentProviders;
+	}
 
 	private QuickStartPanel getQuickStartPanel() {
 		if (quickStartPanel == null) {
@@ -140,10 +159,20 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 		attackThread.start();
 
 	}
-	
+
 	public void notifyProgress(AttackThread.Progress progress) {
+		this.notifyProgress(progress, (String)null);
+	}
+
+	public void notifyProgress(AttackThread.Progress progress, String msg) {
 		if (View.isInitialised()) {
-			this.getQuickStartPanel().notifyProgress(progress);
+			this.getQuickStartPanel().notifyProgress(progress, msg);
+		} else if (this.runningFromCmdLine && this.showProgress) {
+			if (msg != null) {
+				System.out.println(msg);
+			} else {
+				System.out.println(Constant.messages.getString("quickstart.cmdline.progress." + progress.name()));
+			}
 		}
     	switch (progress) {
     	case notstarted:
@@ -158,10 +187,34 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
     		break;
     	}
 	}
+	
+	public void notifyProgress(AttackThread.Progress progress, int percent) {
+		if (this.runningFromCmdLine && this.showProgress) {
+			int scale = 5;	// 20 chrs seems about right..
+			System.out.print("[");
+			for (int i=0; i < 100/scale; i++) {
+				if (i+1 <= percent/scale) {
+					System.out.print("=");
+				} else {
+					System.out.print(" ");
+				}
+			}
+			System.out.print("] " + percent + "% ");
+			if (percent < 100) {
+				// Print out a v simple spinner so its obvious something is still happening
+				System.out.print(SPIN_CHRS.charAt(this.spinner % SPIN_CHRS.length()) + "\r");
+				this.spinner++;
+			} else {
+				System.out.print("\n");
+				this.spinner = 0;
+			}
+		}
+	}
 
 	public void stopAttack() {
 		if (attackThread != null) {
 			attackThread.stopAttack();
+			attackThread = null;
 		}
 	}
 
@@ -183,7 +236,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 
 	@Override
 	public void sessionAboutToChange(Session arg0) {
-		// Ignore
+		stopAttack();
 	}
 
 	@Override
@@ -218,6 +271,10 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 				}
 
 	    		this.runningFromCmdLine = true;
+
+			    if (arguments[ARG_QUICK_PROGRESS_IDX].isEnabled()) {
+			    	this.showProgress = true;
+			    }
 
 				while (this.runningFromCmdLine) {
 					// Loop until the attack thread completes
@@ -256,6 +313,8 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
         		"-quickurl [target url]: " + Constant.messages.getString("quickstart.cmdline.url.help"));
         arguments[ARG_QUICK_OUT_IDX] = new CommandLineArgument("-quickout", 1, null, "", 
         		"-quickout [output filename]: " + Constant.messages.getString("quickstart.cmdline.out.help"));
+        arguments[ARG_QUICK_PROGRESS_IDX] = new CommandLineArgument("-quickprogress", 0, null, "", 
+        		"-quickprogress: " + Constant.messages.getString("quickstart.cmdline.progress.help"));
         return arguments;
     }
 
@@ -347,7 +406,9 @@ public class ExtensionQuickStart extends ExtensionAdaptor implements SessionChan
 			URL targetURL;
 			try {
 				targetURL = new URL(url);
-			} catch (MalformedURLException e) {
+				// Validate the actual request-uri of the HTTP message accessed.
+				new URI(url, true);
+			} catch (MalformedURLException | URIException e) {
 				reportError(Constant.messages.getString("quickstart.cmdline.quickurl.error.invalidUrl"));
 				e.printStackTrace();
 				return false;

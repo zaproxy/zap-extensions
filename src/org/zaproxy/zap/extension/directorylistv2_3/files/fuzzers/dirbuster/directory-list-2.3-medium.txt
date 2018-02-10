@@ -33,6 +33,10 @@ blog
 new
 10
 cgi-bin
+.git
+.svn
+.hg
+.bzr
 faq
 rss
 home

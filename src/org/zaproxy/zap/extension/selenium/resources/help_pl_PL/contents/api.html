@@ -13,16 +13,28 @@
 	<h2>API actions/views</h2>
 	<table border="2">
 		<tr>
-			<th>Name</th>
-			<th>Type</th>
-			<th>Parameters</th>
-			<th>Description</th>
+			<th>Nazwa</th>
+			<th>Typ</th>
+			<th>Parametry</th>
+			<th>Opis</th>
 		</tr>
 		<tr>
 			<td>optionChromeDriverPath</td>
 			<td>view</td>
 			<td></td>
 			<td>Returns the current path to ChromeDriver</td>
+		</tr>
+		<tr>
+			<td>optionFirefoxBinaryPath</td>
+			<td>view</td>
+			<td></td>
+			<td>Returns the current path to Firefox binary</td>
+		</tr>
+		<tr>
+			<td>optionFirefoxDriverPath</td>
+			<td>view</td>
+			<td></td>
+			<td>Returns the current path to Firefox driver (geckodriver)</td>
 		</tr>
 		<tr>
 			<td>optionIeDriverPath</td>
@@ -43,6 +55,18 @@
 			<td>Sets the current path to ChromeDriver</td>
 		</tr>
 		<tr>
+			<td>setOptionFirefoxBinaryPath</td>
+			<td>action</td>
+			<td>String*</td>
+			<td>Sets the current path to Firefox binary</td>
+		</tr>
+		<tr>
+			<td>setOptionFirefoxDriverPath</td>
+			<td>action</td>
+			<td>String*</td>
+			<td>Sets the current path to Firefox driver (geckodriver)</td>
+		</tr>
+		<tr>
 			<td>setOptionIeDriverPath</td>
 			<td>action</td>
 			<td>String*</td>
@@ -56,7 +80,7 @@
 		</tr>
 	</table>
 	Starred parameters are mandatory
-	<h2>See also</h2>
+	<h2>Zobacz również</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

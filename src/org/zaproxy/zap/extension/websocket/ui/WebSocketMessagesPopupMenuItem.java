@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JTable;
-import javax.xml.ws.WebServiceException;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -77,9 +76,8 @@ public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuI
 
     /**
      * What happens if choosen?
-     * @throws Exception 
      */
-	protected abstract void performAction() throws WebServiceException;
+	protected abstract void performAction();
 
 	/**
 	 * Which panel is allowed to show this popup item?

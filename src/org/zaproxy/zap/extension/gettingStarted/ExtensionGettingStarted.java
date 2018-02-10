@@ -40,15 +40,7 @@ public class ExtensionGettingStarted extends ExtensionAdaptor {
     private ZapMenuItem menuGettingStarted = null;
 
     public ExtensionGettingStarted() {
-        this("ExtensionGettingStarted");
-    }
-
-    public ExtensionGettingStarted(String name) {
-        super(name);
-        initialize();
-    }
-
-    private void initialize() {
+        super("ExtensionGettingStarted");
     }
 
     @Override

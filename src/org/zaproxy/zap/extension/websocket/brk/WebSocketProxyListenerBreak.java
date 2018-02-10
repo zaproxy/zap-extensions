@@ -18,9 +18,10 @@
 package org.zaproxy.zap.extension.websocket.brk;
 
 import org.apache.log4j.Logger;
-import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
+import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
+import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
@@ -36,13 +37,13 @@ public class WebSocketProxyListenerBreak implements WebSocketObserver {
 
 	private static final Logger logger = Logger.getLogger(WebSocketProxyListenerBreak.class);
 
-	private BreakpointMessageHandler wsBrkMessageHandler;
+	private BreakpointMessageHandler2 wsBrkMessageHandler;
 
 	private ExtensionWebSocket extension;
 	
 	public static final int WEBSOCKET_OBSERVING_ORDER = WebSocketStorage.WEBSOCKET_OBSERVING_ORDER - 5;
 
-	public WebSocketProxyListenerBreak(ExtensionWebSocket extension, BreakpointMessageHandler messageHandler) {
+	public WebSocketProxyListenerBreak(ExtensionWebSocket extension, BreakpointMessageHandler2 messageHandler) {
 	    this.extension = extension;
 	    this.wsBrkMessageHandler = messageHandler;
 	}
@@ -66,13 +67,11 @@ public class WebSocketProxyListenerBreak implements WebSocketObserver {
 		
 		// message is safe => no need to set onlyIfInScope parameter to true
         
-		/* TODO re-implement support for fuzzing
         if (message instanceof WebSocketFuzzMessageDTO) {
         	// as this message was sent by some fuzzer, do not catch it
         	continueNotifying = true;
         	return continueNotifying;
         }
-        */
     	
         if (!wsMessage.isFinished()) {
         	boolean isRequest = (wsMessage.getDirection().equals(Direction.OUTGOING));

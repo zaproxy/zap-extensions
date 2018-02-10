@@ -110,7 +110,6 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private static final boolean DEFAULT_RANDOM_INPUTS = true;
 
     private int numberOfBrowsers;
-    private int numberOfThreads;
     private int maxCrawlDepth;
     private int maxCrawlStates;
     private int maxDuration;
@@ -258,6 +257,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         }
     }
 
+    @SuppressWarnings({"fallthrough"})
     @Override
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
@@ -290,10 +290,6 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         getConfig().setProperty(NUMBER_OF_BROWSERS_KEY, Integer.valueOf(numberOfBrowsers));
     }
     
-    public int getNumberOfThreads() {
-        return numberOfThreads;
-    }
-        
     public int getMaxCrawlDepth() {
     	return maxCrawlDepth; 
     }

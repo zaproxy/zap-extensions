@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Pasif Tarama Kuralları
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Pasif Tarama Kuralları</h1>
+Aşağıda bulunan ek kalitesi pasif tarama kuralları bu eklentiye dahildir:
+
+<h2>Uygulama Hataları</h2>        
+ HTTP 500 için sunucu yanıtlarını kontrol et - Dahili Sunucu Hatası tipi yanıtlar ya da bilinen bir hata string'i içerenler.
+ 
+<h2>Önbellek kontrol</h2>
+Hassas içeriğin korunması amacıyla genel sektördeki en iyi uygulama ayarlarını "önbellek-kontrol" ve "pragma" denetler.<br>
+ORTA ve YÜKSEK eşiklerde(JavaScript hariç) yalnızca hata bulunmayan ve yönlendirme yapılmamış metin yanıtları kabul edilir.<br>
+DÜŞÜK eşikte resimler ve CSS haricinde yönlendirmede dahil olmak üzere yanıtlar hatalar değerlendirilir.
+
+<h2>İçerik Tipi Eksik</h2>
+Yanıt olarak, bir Content-Type üstbilgisi yok ise yada üstbilgi var fakat değer boşsa, bir uyarıyı yükseltir.
+
+<h2>Çerez HttpOnly</h2>
+Çerezler belirlenirken HttpOnly olarak işaretlendiklerinden emin olur. HttpOnly işareti, istemci tarafı script'inin (Java Script gibi) belirlenen çereze göre davranması gerektiğini gösterir.
+
+<h2>Çerezi Güvenli İşareti</h2>
+HTTPS oturumları sırasında belirlenen çerezleri arar, belirlenen ama güvenli işaretini bulundurmayanlar için bir uyarı oluşturur.
+Güvenli işaretiyle belirlenmiş bir çerez, düz bir HTTP oturumu sırasında gönderilmeyecektir.
+
+<h2>Çapraz Domain Script İnklüzyonu</h2>
+Komut dizelerinin içeriğininin barındığı alan dışındaki alanlardan dahil edilmiş mi doğrular. 
+Gelen yanıttaki "script" etiketlerinin "src" özniteliklerine bakarak.<br>
+İzin Verilen Çapraz-Domain script'leri:  
+<ul>
+<li>Boş şekilde "bütünlük" özelliğine sahip bir betik göz ardı edilir- bu tarayıcı tarafında kontrol edildiği için bütünlük kontrol edilmemiştir</li>
+<li>ORTA ve YÜKSEK eşiklerin altında herhangi bir komut dosyası URL'si de barındıran bir bağlamın içine girerse herhangi bir uyarı yapılmaz.</li>
+</ul> 
+
+<h2>Header XSS Koruması</h2>
+X-XSS-Protection başlığının varlığını ve değerini/ayarını kontrol eder. 
+Bu tepki başlığı, bir kullanıcı aracısının yerleşik yansıtıcı XSS korumasını yapılandırmak için kullanılabilir.<br>
+ORTA ve YÜKSEK eşiklerde sadece hata bulundurmayan veya yönlendirilmemiş HTML yanıtları göz önünde bulundurulur.<br>
+DÜŞÜK eşikte, bütün metin yanıtları hatalar ve yönlendirmelerde dahil olarak üzere tümü değerlendirilir.
+
+<h2>Karışık İçerik</h2>
+HTTPS aracılığı ile sunulan içerik için, düz HTTP ile kaynaklananları arayan tüm src özniteliklerini inceleyin.
+
+<h2>Parola Oto-tamamlama</h2>
+"parola" tipi girdi alanlarını arar ve "autocomplete=off" ayarını kontrol eder.
+
+<h2>Özel Adres İfşası</h2>
+Amazon EC2 özel hostname'leri'nin (örneğin, ip-10-0-56-78) yanısıra, RFC 1918 IPv4 adreslerinin inklüzyonu için yanıt içeriğini kontrol eder. Bu bilgi saldırgana dahili ağın IP adresi şeması hakkında kullanışlı bilgi verebilir ve dahili sistemleri hedef alan ilerki saldırılar için yardımcı olabilir.
+
+<h2>URL Yeniden Yazmadaki Oturum ID'si</h2>
+Bu tarayıcı, URL'ye yeniden yazılmakta olan oturum token tipi parametrelerinin varlığını kontrol eder. 
+Yalancı pozitifleri azaltmak için tarayıcı token değerinin uzunluğunu kontrol eder, eğer parametrenin değeri uzunlu olarak 8 karakterden çok değilse, parametre göz ardı edilir (örneğin: survey?sId=5 savunmasız olarak işaretlenmezdi).
+
+<h2>X-İçerik-Tipi-Seçenekler</h2>
+Bu tarayıcı Anti-MIME-Sniffing header X-İçerik-Tipi-Seçenekler için kontrol eder ve bunun 'nosniff' olarak belirlendiğinden emin olur.<br>
+MEDIUM ve HIGH eşiklerindeki bu tarayıcı, istemci veya sunucu hatalarının yanıtlarında veya ilgili yönlendirmelerde uyarı vermez.<br> 
+DÜŞÜK eşiğinde ise, hata ve yönlendirme de dahil olmak üzere bütün cevaplar uyarılacaktır.<br>
+ 
+<h2>X-Çerçeve-Seçenekleri Üstbilgi Tarayıcısı</h2>
+Bu tarayıcı X-Frame-Options'un üst bilgisinin varlığını ve geçerliliğini test eder.<br> 
+ORTA ve YÜKSEK düzeylerde yalnızca hatasız veya yönlendirilmemiş HTML yanıtlarına bakar.<br>
+DÜŞÜK eşiğinde hata ve yönlendirme de dahil olmak üzere tüm metin cevaplarına bakılır.<br>
+Aşağıdaki koşullar bir uyarı ile sonuçlanabilir:
+<ul> 
+ <li>Eğer yanıtta X-Frame-Options başlığı eksikse; <b>X-Frame-Options Header Not Set: </b></li>
+ <li>Yanıtta birden çok sayıda X-Frame-Options başlığı algılandığı zaman: <b>Multiple X-Frame-Options Header Entries: </b></li>
+ <li>Tanımlama tarafından desteklenmeyen X-Frame-Options'ı tanımlamaya çalışan yanıtta bir "http-equiv" girişi bulunursa; <b>X-Frame-Options Defined via META (Non-compliant with Spec): </b></li>
+ <li>Başlık hiçbir değerden oluşmuyor veya değer beklenilen şekilde değil (ör. "DENY", "SAMEORIGIN" veya "ALLOW-FROM" haricinde) <b>X-Frame-Options Setting Malformed: </b></li>
+</ul>
+Varsayılan olarak, yanıtta bir İçerik-Güvenliği-İlkesi olan 'frame-ancestors' öğesi yer alıyorsa, X-Frame-Options başlığına göre öncelikli olarak hiçbir uyarı yapılmayacaktır.
+Bununla birlikte, LOW eşiğinde yukarıdaki konular düşük bir risk altında olsalar da hala rapor edileceklerdir. 
+
+</body>
+</html>

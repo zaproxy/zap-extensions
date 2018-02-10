@@ -26,24 +26,26 @@ import java.util.regex.Pattern;
 import javax.swing.JTable;
 
 import org.apache.log4j.Logger;
+import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.ContextExcludePanel;
-import org.zaproxy.zap.view.popup.PopupMenuItemExcludeFromContext;
 
-public class PopupExcludeWebSocketFromContextMenu extends PopupMenuItemExcludeFromContext {
+public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = -2345060529128495874L;
 
     private static final Logger logger = Logger.getLogger(PopupExcludeWebSocketFromContextMenu.class);
 
 	private WebSocketPopupHelper wsPopupHelper;
+	private Context context;
 
 	public PopupExcludeWebSocketFromContextMenu(Context context) {
-		super(context);
+		super(context.getName());
+		this.context = context;
 		
 		initialize();
 	}
@@ -51,6 +53,16 @@ public class PopupExcludeWebSocketFromContextMenu extends PopupMenuItemExcludeFr
     @Override
     public String getParentMenuName() {
     	return PopupExcludeWebSocketContextMenu.MENU_NAME;
+    }
+
+    @Override
+    public boolean isSubMenu() {
+        return true;
+    }
+
+    @Override
+    public boolean isSafe() {
+        return true;
     }
     
     private void initialize() {
@@ -72,10 +84,13 @@ public class PopupExcludeWebSocketFromContextMenu extends PopupMenuItemExcludeFr
 			String url = Pattern.quote(message.channel.getContextUrl());
         	
         	Session session = Model.getSingleton().getSession();
-            context.addExcludeFromContextRegex(url);
-            session.saveContext(context);
 
-            View.getSingleton().showSessionDialog(session, ContextExcludePanel.getPanelName(context.getIndex()));
+            View.getSingleton().getSessionDialog().recreateUISharedContexts(session);
+
+            Context uiSharedContext = View.getSingleton().getSessionDialog().getUISharedContext(context.getIndex());
+            uiSharedContext.addExcludeFromContextRegex(url);
+
+            View.getSingleton().showSessionDialog(session, ContextExcludePanel.getPanelName(context.getIndex()), false);
 		}
 	}
 	

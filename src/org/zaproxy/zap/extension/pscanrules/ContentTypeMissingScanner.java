@@ -34,13 +34,13 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.contenttypemissingscanner.";
+	private static final int PLUGIN_ID=10019;
 	
 	private PassiveScanThread parent = null;
 	
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
-		
-		
+		//ignore
 	}
 
 	@Override
@@ -60,24 +60,24 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
 	}
 		
 	private void raiseAlert(HttpMessage msg, int id, String contentType, boolean isContentTypeMissing) {
-		String issue = "Content-Type header empty";
+		String issue = Constant.messages.getString(MESSAGE_PREFIX + "name.empty");
 		if (isContentTypeMissing){
-			issue = "Content-Type header missing";
+			issue = getName();
 		}
 		
 		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
-		    	getName());
+		    	issue);
 		    	alert.setDetail(
-		    		issue,
+		    		getDescription(),
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    contentType,
 		    	    "", 
 		    	    "", 
-		    	    "Ensure each page is setting the specific and appropriate content-type value for the content being delivered", 
-		            "http://msdn.microsoft.com/en-us/library/ie/gg622941%28v=vs.85%29.aspx", 
+		    	    getSolution(), 
+		            getReference(), 
 		            "", // No evidence
-		            0,	// TODO CWE Id
-		            0,	// TODO WASC Id
+		            345,	// CWE Id 345 - Insufficient Verification of Data Authenticity
+		            12,	// WASC Id 12 - Content Spoofing
 		            msg);
 	
     	parent.raiseAlert(id, alert);
@@ -94,9 +94,21 @@ public class ContentTypeMissingScanner extends PluginPassiveScanner {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
+	
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
+	
+	private String getReference() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+	}
+	
 	@Override
 	public int getPluginId() {
-		return 10019;
+		return PLUGIN_ID;
 	}
 
 }

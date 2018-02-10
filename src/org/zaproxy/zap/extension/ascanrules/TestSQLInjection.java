@@ -1,4 +1,4 @@
-/**
+/*
  * Zed Attack Proxy (ZAP) and its related class files.
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
@@ -17,13 +17,15 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
+import java.net.SocketException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,11 +55,6 @@ import difflib.Patch;
  * result. Use the following variables: doStackedBased, doStackedMaxRequests,
  * countStackedBasedRequests 
  * TODO: change the Alert Titles. 
- * TODO: if the argument is reflected back in the HTML output, the
- * boolean based logic will not detect an alert (because the HTML results of
- * argument values "id=1" will not be the same as for "id=1 and 1=1") 
- * TODO: add"<param>*2/2" check to the Logic based ones (for integer parameter 
- * values).. if the result is the same, it might be a SQL Injection 
  * TODO: implement mode checks (Mode.standard, Mode.safe, Mode.protected) for 
  * 2.* using "implements SessionChangedListener"
  *
@@ -74,7 +71,15 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "ascanrules.testsqlinjection.";
-	
+
+	/**
+	* Did SQLInjection get found yet?
+	*/
+	private boolean sqlInjectionFoundForUrl = false;
+	private String sqlInjectionAttack = null;
+	private HttpMessage refreshedmessage = null;
+	private String mResBodyNormalUnstripped = null;
+	private String mResBodyNormalStripped = null;
 	//what do we do at each attack strength?
 	//(some SQL Injection vulns would be picked up by multiple types of checks, and we skip out after the first alert for a URL)
 	private boolean doSpecificErrorBased = false;
@@ -91,6 +96,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	private int doExpressionMaxRequests = 0;
 	private int doOrderByMaxRequests = 0;
 	//private int doStackedMaxRequests = 0;	//TODO: use in the stacked based implementation
+	//how many requests have we fired up?
+	private int countErrorBasedRequests = 0;
+	private int countExpressionBasedRequests = 0;
+	private int countBooleanBasedRequests = 0;
+	private	int countUnionBasedRequests = 0;
+	private	int countOrderByBasedRequests = 0;
+	//private int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
 	/**
 	 * generic one-line comment. Various RDBMS Documentation suggests that this
 	 * syntax works with almost every single RDBMS considered here
@@ -103,117 +115,217 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	 * others might still get past
 	 */
 	private static final String[] SQL_CHECK_ERR = {"'", "\"", ";", ")", "(", "NULL", "'\""};
-	/**
-	 * create a map of SQL related error message fragments, and map them back to
-	 * the RDBMS that they are associated with keep the ordering the same as the
-	 * order in which the values are inserted, to allow the more (subjectively
-	 * judged) common cases to be tested first Note: these should represent
-	 * actual (driver level) error messages for things like syntax error,
-	 * otherwise we are simply guessing that the string should/might occur.
-	 */
-	private static final Map<Pattern, String> SQL_ERROR_TO_SPECIFIC_DBMS = new LinkedHashMap<>();
-	private static final Map<Pattern, String> SQL_ERROR_TO_GENERIC_DBMS = new LinkedHashMap<>();
 
-	static {
+	/**
+	 * A collection of RDBMS with its error message fragments and {@code Tech}.
+	 * <p>
+	 * The error messages are in order they should be checked to allow the more (subjectively judged) common cases to be tested
+	 * first.
+	 * <p>
+	 * <strong>Note:</strong> the messages should represent actual (driver level) error messages for things like syntax error,
+	 * otherwise we are simply guessing that the string should/might occur.
+	 * 
+	 * @see Tech
+	 */
+	private enum RDBMS {
+		// TODO: add other specific UNION based error messages for Union here: PostgreSQL, Sybase, DB2, Informix, etc
+
 		//DONE: we have implemented a MySQL specific scanner. See SQLInjectionMySQL
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.mysql.jdbc.exceptions\\E", PATTERN_PARAM), "MySQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.gjt.mm.mysql\\E", PATTERN_PARAM), "MySQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QThe used SELECT statements have a different number of columns\\E", PATTERN_PARAM), "MySQL");
+		MySQL("MySQL",
+			  Tech.MySQL,
+			  Arrays.asList(
+					  new String[] {
+							  "\\Qcom.mysql.jdbc.exceptions\\E",
+							  "\\Qorg.gjt.mm.mysql\\E",
+							  "\\QThe used SELECT statements have a different number of columns\\E" }),
+			  Arrays.asList(new String[] { "\\QThe used SELECT statements have a different number of columns\\E" })),
 
 		//TODO: implement a plugin that uses Microsoft SQL specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.microsoft.sqlserver.jdbc\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.microsoft.jdbc\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.inet.tds\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.microsoft.sqlserver.jdbc\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.ashna.jturbo\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qweblogic.jdbc.mssqlserver\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q[Microsoft]\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q[SQLServer]\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q[SQLServer 2000 Driver for JDBC]\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qnet.sourceforge.jtds.jdbc\\E", PATTERN_PARAM), "Microsoft SQL Server"); 		//see also be Sybase. could be either!
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q80040e14\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q800a0bcd\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Q80040e57\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QAll queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QAll queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists\\E", PATTERN_PARAM), "Microsoft SQL Server");
+		MsSQL("Microsoft SQL Server",
+			  Tech.MsSQL,
+			  Arrays.asList(
+					  new String[] {
+							  "\\Qcom.microsoft.sqlserver.jdbc\\E",
+							  "\\Qcom.microsoft.jdbc\\E",
+							  "\\Qcom.inet.tds\\E",
+							  "\\Qcom.microsoft.sqlserver.jdbc\\E",
+							  "\\Qcom.ashna.jturbo\\E",
+							  "\\Qweblogic.jdbc.mssqlserver\\E",
+							  "\\Q[Microsoft]\\E",
+							  "\\Q[SQLServer]\\E",
+							  "\\Q[SQLServer 2000 Driver for JDBC]\\E",
+							  "\\Qnet.sourceforge.jtds.jdbc\\E", // see also be Sybase. could be either!
+							  "\\Q80040e14\\E",
+							  "\\Q800a0bcd\\E",
+							  "\\Q80040e57\\E",
+							  "\\QAll queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists\\E",
+							  "\\QAll queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists\\E" }),
+			  Arrays.asList(
+					  new String[] {
+							  "\\QAll queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists\\E",
+							  "\\QAll queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists\\E" })),
 
 		//DONE: we have implemented an Oracle specific scanner. See SQLInjectionOracle
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qoracle.jdbc\\E", PATTERN_PARAM), "Oracle");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QSQLSTATE[HY\\E", PATTERN_PARAM), "Oracle");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-00933\\E", PATTERN_PARAM), "Oracle");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-06512\\E", PATTERN_PARAM), "Oracle");  //indicates the line number of an error
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QSQL command not properly ended\\E", PATTERN_PARAM), "Oracle");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-00942\\E", PATTERN_PARAM), "Oracle");  //table or view does not exist
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-29257\\E", PATTERN_PARAM), "Oracle");  //host unknown
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-00932\\E", PATTERN_PARAM), "Oracle");  //inconsistent datatypes
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qquery block has incorrect number of result columns\\E", PATTERN_PARAM), "Oracle");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QORA-01789\\E", PATTERN_PARAM), "Oracle");
+		Oracle("Oracle",
+			   Tech.Oracle,
+			   Arrays.asList(new String[] {
+					   "\\Qoracle.jdbc\\E",
+					   "\\QSQLSTATE[HY\\E",
+					   "\\QORA-00933\\E",
+					   "\\QORA-06512\\E", // indicates the line number of an error
+					   "\\QSQL command not properly ended\\E",
+					   "\\QORA-00942\\E", // table or view does not exist
+					   "\\QORA-29257\\E", // host unknown
+					   "\\QORA-00932\\E", // inconsistent datatypes
+					   "\\Qquery block has incorrect number of result columns\\E",
+					   "\\QORA-01789\\E" }),
+			   Arrays.asList(new String[] { "\\Qquery block has incorrect number of result columns\\E", "\\QORA-01789\\E" })),
 
 		//TODO: implement a plugin that uses DB2 specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.ibm.db2.jcc\\E", PATTERN_PARAM), "IBM DB2");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QCOM.ibm.db2.jdbc\\E", PATTERN_PARAM), "IBM DB2");
+		DB2("IBM DB2", Tech.Db2, "\\Qcom.ibm.db2.jcc\\E", "\\QCOM.ibm.db2.jdbc\\E"),
 
 		//DONE: we have implemented a PostgreSQL specific scanner. See SQLInjectionPostgresql
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.postgresql.util.PSQLException\\E", PATTERN_PARAM), "PostgreSQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.postgresql\\E", PATTERN_PARAM), "PostgreSQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qeach UNION query must have the same number of columns\\E", PATTERN_PARAM), "PostgreSQL");
+		PostgreSQL("PostgreSQL",
+				   Tech.PostgreSQL,
+				   Arrays.asList(
+						   new String[] {
+								   "\\Qorg.postgresql.util.PSQLException\\E",
+								   "\\Qorg.postgresql\\E",
+								   "\\Qeach UNION query must have the same number of columns\\E" }),
+				   Arrays.asList(new String[] { "\\Qeach UNION query must have the same number of columns\\E" })),
 
 		//TODO: implement a plugin that uses Sybase specific functionality to detect SQL Injection vulnerabilities
 		//Note: this plugin would also detect Microsoft SQL Server vulnerabilities, due to common syntax. 
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.sybase.jdbc\\E", PATTERN_PARAM), "Sybase");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.sybase.jdbc2.jdbc\\E", PATTERN_PARAM), "Sybase");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.sybase.jdbc3.jdbc\\E", PATTERN_PARAM), "Sybase");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qnet.sourceforge.jtds.jdbc\\E", PATTERN_PARAM), "Sybase");  //see also Microsoft SQL Server. could be either!
+		Sybase("Sybase",
+			   Tech.Sybase,
+			   "\\Qcom.sybase.jdbc\\E",
+			   "\\Qcom.sybase.jdbc2.jdbc\\E",
+			   "\\Qcom.sybase.jdbc3.jdbc\\E",
+			   "\\Qnet.sourceforge.jtds.jdbc\\E" // see also Microsoft SQL Server. could be either!
+		),
 
 		//TODO: implement a plugin that uses Informix specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.informix.jdbc\\E", PATTERN_PARAM), "Informix");
+		Informix("Informix", Tech.Db, "\\Qcom.informix.jdbc\\E"),
 
 		//TODO: implement a plugin that uses Firebird specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.firebirdsql.jdbc\\E", PATTERN_PARAM), "Firebird");
+		Firebird("Firebird", Tech.Firebird, "\\Qorg.firebirdsql.jdbc\\E"),
 
 		//TODO: implement a plugin that uses IDS Server specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qids.sql\\E", PATTERN_PARAM), "IDS Server");
+		IdsServer("IDS Server", Tech.Db, "\\Qids.sql\\E"),
 
 		//TODO: implement a plugin that uses InstantDB specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.enhydra.instantdb.jdbc\\E", PATTERN_PARAM), "InstantDB");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qjdbc.idb\\E", PATTERN_PARAM), "InstantDB");
+		InstantDB("InstantDB", Tech.Db, "\\Qorg.enhydra.instantdb.jdbc\\E", "\\Qjdbc.idb\\E"),
 
 		//TODO: implement a plugin that uses Interbase specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qinterbase.interclient\\E", PATTERN_PARAM), "Interbase");
+		Interbase("Interbase", Tech.Db, "\\Qinterbase.interclient\\E"),
 
 		//DONE: we have implemented a Hypersonic specific scanner. See SQLInjectionHypersonic
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qorg.hsql\\E", PATTERN_PARAM), "Hypersonic SQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QhSql.\\E", PATTERN_PARAM), "Hypersonic SQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QUnexpected token , requires FROM in statement\\E", PATTERN_PARAM), "Hypersonic SQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QUnexpected end of command in statement\\E", PATTERN_PARAM), "Hypersonic SQL");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QColumn count does not match in statement\\E", PATTERN_PARAM), "Hypersonic SQL");  //TODO: too generic to leave in???
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QTable not found in statement\\E", PATTERN_PARAM), "Hypersonic SQL"); //TODO: too generic to leave in???
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QUnexpected token:\\E", PATTERN_PARAM), "Hypersonic SQL"); //TODO: too generic to leave in??? Works very nicely in Hypersonic cases, however	
+		HypersonicSQL("Hypersonic SQL",
+					  Tech.HypersonicSQL,
+					  Arrays.asList(
+							  new String[] {
+									  "\\Qorg.hsql\\E",
+									  "\\QhSql.\\E",
+									  "\\QUnexpected token , requires FROM in statement\\E",
+									  "\\QUnexpected end of command in statement\\E",
+									  "\\QColumn count does not match in statement\\E", // TODO: too generic to leave in???
+									  "\\QTable not found in statement\\E", // TODO: too generic to leave in???
+									  "\\QUnexpected token:\\E" // TODO: too generic to leave in??? Works very nicely in
+																// Hypersonic cases, however
+		}), Arrays.asList(new String[] {
+				"\\QUnexpected end of command in statement\\E", // needs a table name in a UNION query. Like Oracle?
+				"\\QColumn count does not match in statement\\E" })),
 
 		//TODO: implement a plugin that uses Sybase SQL Anywhere specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qsybase.jdbc.sqlanywhere\\E", PATTERN_PARAM), "Sybase SQL Anywhere");
+		SybaseSQL("Sybase SQL Anywhere", Tech.Sybase, "\\Qsybase.jdbc.sqlanywhere\\E"),
 
 		//TODO: implement a plugin that uses PointBase specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.pointbase.jdbc\\E", PATTERN_PARAM), "Pointbase");
+		Pointbase("Pointbase", Tech.Db, "\\Qcom.pointbase.jdbc\\E"),
 
 		//TODO: implement a plugin that uses Cloudbase specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qdb2j.\\E", PATTERN_PARAM), "Cloudscape");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QCOM.cloudscape\\E", PATTERN_PARAM), "Cloudscape");
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QRmiJdbc.RJDriver\\E", PATTERN_PARAM), "Cloudscape");
+		Cloudscape("Cloudscape", Tech.Db, "\\Qdb2j.\\E", "\\QCOM.cloudscape\\E", "\\QRmiJdbc.RJDriver\\E"),
 
 		//TODO: implement a plugin that uses Ingres specific functionality to detect SQL Injection vulnerabilities
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\Qcom.ingres.jdbc\\E", PATTERN_PARAM), "Ingres");
-		
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("near \".+\": syntax error", PATTERN_PARAM), "SQLite");   //uses a regular expression..
-		SQL_ERROR_TO_SPECIFIC_DBMS.put(Pattern.compile("\\QSELECTs to the left and right of UNION do not have the same number of result columns\\E", PATTERN_PARAM), "SQLite");
+		Ingres("Ingres", Tech.Db, "\\Qcom.ingres.jdbc\\E"),
+
+		SQLite("SQLite",
+			   Tech.SQLite,
+			   Arrays.asList(new String[] {
+					   "near \".+\": syntax error", // uses a regular expression..
+					   "\\QSELECTs to the left and right of UNION do not have the same number of result columns\\E" }),
+			   Arrays.asList(
+					   new String[] {
+							   "\\QSELECTs to the left and right of UNION do not have the same number of result columns\\E" })),
 
 		//generic error message fragments that do not fingerprint the RDBMS, but that may indicate SQL Injection, nonetheless
-		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\Qcom.ibatis.common.jdbc\\E", PATTERN_PARAM), "Generic SQL RDBMS");
-		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\Qorg.hibernate\\E", PATTERN_PARAM), "Generic SQL RDBMS");
-		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\Qsun.jdbc.odbc\\E", PATTERN_PARAM), "Generic SQL RDBMS");
-		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\Q[ODBC Driver Manager]\\E", PATTERN_PARAM), "Generic SQL RDBMS");
-		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\QSystem.Data.OleDb\\E", PATTERN_PARAM), "Generic SQL RDBMS");   //System.Data.OleDb.OleDbException
-		SQL_ERROR_TO_GENERIC_DBMS.put(Pattern.compile("\\Qjava.sql.SQLException\\E", PATTERN_PARAM), "Generic SQL RDBMS");  //in case more specific messages were not detected!
+		GenericRDBMS("Generic SQL RDBMS",
+					 Tech.Db,
+					 "\\Qcom.ibatis.common.jdbc\\E",
+					 "\\Qorg.hibernate\\E",
+					 "\\Qsun.jdbc.odbc\\E",
+					 "\\Q[ODBC Driver Manager]\\E",
+					 "\\QSystem.Data.OleDb\\E", // System.Data.OleDb.OleDbException
+					 "\\Qjava.sql.SQLException\\E" // in case more specific messages were not detected!
+		);
+
+		private final String name;
+		private final Tech tech;
+		private final List<Pattern> errorPatterns;
+		private final List<Pattern> unionErrorPatterns;
+
+		private RDBMS(String name, Tech tech, String... errorRegexes) {
+			this(name, tech, asList(errorRegexes), Collections.<String> emptyList());
+		}
+
+		private RDBMS(String name, Tech tech, List<String> errorRegexes, List<String> unionErrorRegexes) {
+			this.name = name;
+			this.tech = tech;
+
+			if (errorRegexes.isEmpty()) {
+				errorPatterns = Collections.emptyList();
+			} else {
+				errorPatterns = new ArrayList<>(errorRegexes.size());
+				for (String regex : errorRegexes) {
+					errorPatterns.add(Pattern.compile(regex, AbstractAppParamPlugin.PATTERN_PARAM));
+				}
+			}
+
+			if (unionErrorRegexes.isEmpty()) {
+				unionErrorPatterns = Collections.emptyList();
+			} else {
+				unionErrorPatterns = new ArrayList<>(unionErrorRegexes.size());
+				for (String regex : unionErrorRegexes) {
+					unionErrorPatterns.add(Pattern.compile(regex, AbstractAppParamPlugin.PATTERN_PARAM));
+				}
+			}
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public Tech getTech() {
+			return tech;
+		}
+
+		public boolean isGeneric() {
+			return this == GenericRDBMS;
+		}
+
+		public List<Pattern> getErrorPatterns() {
+			return errorPatterns;
+		}
+
+		public List<Pattern> getUnionErrorPatterns() {
+			return unionErrorPatterns;
+		}
+
+		private static List<String> asList(String... strings) {
+			if (strings == null || strings.length == 0) {
+				return Collections.emptyList();
+			}
+			return Arrays.asList(strings);
+		}
 	}
 	/**
 	 * always true statement for comparison in boolean based SQL injection check
@@ -275,23 +387,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		") UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
 		"') UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
 		"\") UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,};
-	/*
-     SQL UNION error messages for various RDBMSs. The more, the merrier.
-	 */
-	private static final Map<Pattern, String> SQL_UNION_ERROR_TO_DBMS = new LinkedHashMap<>();
 
-	static {
-		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QThe used SELECT statements have a different number of columns\\E", PATTERN_PARAM), "MySQL");
-		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\Qeach UNION query must have the same number of columns\\E", PATTERN_PARAM), "PostgreSQL");
-		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QAll queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QAll queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists\\E", PATTERN_PARAM), "Microsoft SQL Server");
-		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\Qquery block has incorrect number of result columns\\E", PATTERN_PARAM), "Oracle");
-		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QORA-01789\\E", PATTERN_PARAM), "Oracle");
-		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QUnexpected end of command in statement\\E", PATTERN_PARAM), "Hypersonic SQL");  //needs a table name in a UNION query. Like Oracle?
-		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QColumn count does not match in statement\\E", PATTERN_PARAM), "Hypersonic SQL");
-		SQL_UNION_ERROR_TO_DBMS.put(Pattern.compile("\\QSELECTs to the left and right of UNION do not have the same number of result columns\\E", PATTERN_PARAM), "SQLite");
-		//TODO: add other specific UNION based error messages for Union here: PostgreSQL, Sybase, DB2, Informix, etc
-	}
 	/**
 	 * plugin dependencies
 	 */
@@ -324,6 +420,12 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	public boolean targets(TechSet technologies) {
 		if (technologies.includes(Tech.Db)) {
 			return true;
+		}
+
+		for (Tech tech : technologies.getIncludeTech()) {
+			if (tech.getParent() == Tech.Db) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -435,6 +537,9 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			doErrorMaxRequests = 0;
 		}
 
+		// Only check for generic errors if not targeting a specific DB
+		doGenericErrorBased &= getTechSet().includes(Tech.Db);
+
 		if (this.debugEnabled) {
 			log.debug("Doing RDBMS specific error based? "+ doSpecificErrorBased);
 			log.debug("Doing generic RDBMS error based? "+ doGenericErrorBased);
@@ -458,20 +563,20 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		//Note: the "value" we are passed here is escaped. we need to unescape it before handling it.
 		//as soon as we find a single SQL injection on the url, skip out. Do not look for SQL injection on a subsequent parameter on the same URL
 		//for performance reasons.
-		boolean sqlInjectionFoundForUrl = false;
-		String sqlInjectionAttack = null;
-		HttpMessage refreshedmessage = null;
-		String mResBodyNormalUnstripped = null;
-		String mResBodyNormalStripped = null;
+		//reinitialise each parameter.
+		sqlInjectionFoundForUrl = false;
+		sqlInjectionAttack = null;
+		refreshedmessage = null;
+		mResBodyNormalUnstripped = null;
+		mResBodyNormalStripped = null;
 
 		try {
 			//reinitialise the count for each type of request, for each parameter.  We will be sticking to limits defined in the attach strength logic
-			int countErrorBasedRequests = 0;
-			int countExpressionBasedRequests = 0;
-			int countBooleanBasedRequests = 0;
-			int countUnionBasedRequests = 0;
-			int countOrderByBasedRequests = 0;
-			//int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries implementation
+			countErrorBasedRequests = 0;
+			countExpressionBasedRequests = 0;
+			countBooleanBasedRequests = 0;
+			countUnionBasedRequests = 0;
+			countOrderByBasedRequests = 0;
 
 			//Check 1: Check for Error Based SQL Injection (actual error messages).
 			//for each SQL metacharacter combination to try
@@ -498,35 +603,23 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					//System.out.println("Attacking [" + msg + "], parameter [" + param + "] with value ["+ sqlErrValue + "]");
 
 					//send the message with the modified parameters
-					sendAndReceive(msg1, false); //do not follow redirects
+					try {
+						sendAndReceive(msg1, false); //do not follow redirects
+					} catch (SocketException ex) {
+						if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+								" when accessing: " + msg1.getRequestHeader().getURI().toString());
+						continue; //Something went wrong, continue to the next prefixString in the loop
+					}
 					countErrorBasedRequests++;
 
 					//now check the results against each pattern in turn, to try to identify a database, or even better: a specific database.
 					//Note: do NOT check the HTTP error code just yet, as the result could come back with one of various codes.
-					Iterator<Pattern> errorPatternIterator = SQL_ERROR_TO_SPECIFIC_DBMS.keySet().iterator();
-
-					while (errorPatternIterator.hasNext() && !sqlInjectionFoundForUrl) {
-						Pattern errorPattern = errorPatternIterator.next();
-						String errorPatternRDBMS = SQL_ERROR_TO_SPECIFIC_DBMS.get(errorPattern);
-
-						//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
-						//then we may may have a SQL Injection vulnerability
-						StringBuilder sb = new StringBuilder();
-						if (!matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
-							//Likely a SQL Injection. Raise it
-							String extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.errorbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
-							//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
-							sqlInjectionAttack = sqlErrValue;
-							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - " + errorPatternRDBMS, getDescription(),
-									null,
-									param, sqlInjectionAttack,
-									extraInfo, getSolution(), sb.toString(), msg1);
-
-							//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
-							getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/" + errorPatternRDBMS, Boolean.TRUE);
-
+					for (RDBMS rdbms : RDBMS.values()) {
+						if (getTechSet().includes(rdbms.getTech()) && checkSpecificErrors(rdbms, msg1, param, sqlErrValue)) {
 							sqlInjectionFoundForUrl = true;
-							continue;
+							// Save the attack string for the "Authentication Bypass" alert, if necessary
+							sqlInjectionAttack = sqlErrValue;
+							break;
 						}
 						//bale out if we were asked nicely
 						if (isStop()) { 
@@ -536,11 +629,11 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					} //end of the loop to check for RDBMS specific error messages
 					
 					if (this.doGenericErrorBased && !sqlInjectionFoundForUrl) {
-						errorPatternIterator = SQL_ERROR_TO_GENERIC_DBMS.keySet().iterator();
+					    Iterator<Pattern> errorPatternIterator = RDBMS.GenericRDBMS.getErrorPatterns().iterator();
 
 						while (errorPatternIterator.hasNext() && !sqlInjectionFoundForUrl) {
 							Pattern errorPattern = errorPatternIterator.next();
-							String errorPatternRDBMS = SQL_ERROR_TO_GENERIC_DBMS.get(errorPattern);
+							String errorPatternRDBMS = RDBMS.GenericRDBMS.getName();
 
 							//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
 							//then we may may have a SQL Injection vulnerability
@@ -586,101 +679,68 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//so to work around this, simply re-run the query again now at this point.
 			//Note that we are not counting this request in our max number of requests to be issued
 			refreshedmessage = getNewMsg();
-			sendAndReceive(refreshedmessage, false); //do not follow redirects
+			try {
+				sendAndReceive(refreshedmessage, false); //do not follow redirects
+			} catch (SocketException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + refreshedmessage.getRequestHeader().getURI().toString());
+				return; //Something went wrong, no point continuing
+			}
 
 			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
 			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
 			mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
-
+			
 			if (!sqlInjectionFoundForUrl && doExpressionBased && countExpressionBasedRequests < doExpressionMaxRequests) {
 
 				//first figure out the type of the parameter.. 				
 				try {
 					//is it an integer type?
 					//ZAP: removed URLDecoding because on Variants
-					//int paramAsInt = new Integer (TestSQLInjection.getURLDecode(origParamValue));
-					int paramAsInt = new Integer(origParamValue);
+					//int paramAsInt = Integer.parseInt(TestSQLInjection.getURLDecode(origParamValue));
+					int paramAsInt = Integer.parseInt(origParamValue);
 
 					if (this.debugEnabled) {
 						log.debug("The parameter value [" + origParamValue + "] is of type Integer");
 					}
-
-					//get a value 2 sizes bigger
-					int paramPlusTwo = paramAsInt + 2;
-					String modifiedParamValue = String.valueOf(paramPlusTwo) + "-2";
-
-					//and prepare a request to set the parameter value to a string value like "3-2", if the original parameter value was "1"
-					//those of you still paying attention will note that if handled as expressions (such as by a database), these represent the same value.
-					HttpMessage msg4 = getNewMsg();
-					setParameter(msg4, param, modifiedParamValue);
-
-					sendAndReceive(msg4, false); //do not follow redirects
-					countExpressionBasedRequests++;
-
-					String modifiedExpressionOutputUnstripped = msg4.getResponseBody().toString();
-					String modifiedExpressionOutputStripped = this.stripOff(modifiedExpressionOutputUnstripped, modifiedParamValue);
-
-					//set up two little arrays to ease the work of checking the unstripped output, and then the stripped output
-					String normalBodyOutput[] = {mResBodyNormalUnstripped, mResBodyNormalStripped};
-					String expressionBodyOutput[] = {modifiedExpressionOutputUnstripped, modifiedExpressionOutputStripped};
-					boolean strippedOutput[] = {false, true};
-
-					 for (int booleanStrippedUnstrippedIndex = 0; booleanStrippedUnstrippedIndex < 2 && !sqlInjectionFoundForUrl; booleanStrippedUnstrippedIndex++) {
-						//if the results of the modified request match the original query, we may be onto something. 
-						if (expressionBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) == 0) {
-							if (this.debugEnabled) {
-								log.debug("Check 4, " + (strippedOutput[booleanStrippedUnstrippedIndex] ? "STRIPPED" : "UNSTRIPPED") + " html output for modified expression parameter [" + modifiedParamValue + "] matched (refreshed) original results for " + refreshedmessage.getRequestHeader().getURI());
-							}
-							//confirm that a different parameter value generates different output, to minimise false positives
-
-							//get a value 3 sizes bigger this time
-							int paramPlusFour = paramAsInt + 3;
-							String modifiedParamValueConfirm = String.valueOf(paramPlusFour) + "-2";
-
-							//and prepare a request to set the parameter value to a string value like "4-2", if the original parameter value was "1"
-							//Note that the two values are NOT equivalent, and the param value is different to the original
-							HttpMessage msg4Confirm = getNewMsg();
-							setParameter(msg4Confirm, param, modifiedParamValueConfirm);
-
-							sendAndReceive(msg4Confirm, false); //do not follow redirects
-							countExpressionBasedRequests++;
-
-							String confirmExpressionOutputUnstripped = msg4Confirm.getResponseBody().toString();
-							String confirmExpressionOutputStripped = this.stripOff(confirmExpressionOutputUnstripped, modifiedParamValueConfirm);
-
-							//set up two little arrays to ease the work of checking the unstripped output or the stripped output
-							String confirmExpressionBodyOutput[] = {confirmExpressionOutputUnstripped, confirmExpressionOutputStripped};
-
-							if (confirmExpressionBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex]) != 0) {
-								//the confirm query did not return the same results.  This means that arbitrary queries are not all producing the same page output.
-								//this means the fact we earier reproduced the original page output with a modified parameter was not a coincidence
-
-								//Likely a SQL Injection. Raise it
-								String extraInfo = null;
-								if (strippedOutput[booleanStrippedUnstrippedIndex]) {
-									extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "");
-								} else {
-									extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "NOT ");
-								}
-
-								//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
-								sqlInjectionAttack = modifiedParamValue;
-								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(),
-										null, //url
-										param, sqlInjectionAttack,
-										extraInfo, getSolution(), "", msg4);
-
-								sqlInjectionFoundForUrl = true;
-							}
-						}
+					// This check is implemented using two variant PLUS(+) and MULT(*)
+					try{
+						// PLUS variant check the param value "3-2" gives same result as original request and param value "4-2" gives different result if original param value is 1
+						//set the parameter value to a string value like "3-2", if the original parameter value was "1"
+						int paramPlusTwo = addWithOverflowCheck(paramAsInt, 2);
+						String modifiedParamValueForAdd = String.valueOf(paramPlusTwo) + "-2";
+						//set the parameter value to a string value like "4-2", if the original parameter value was "1"
+						int paramPlusThree = addWithOverflowCheck(paramAsInt, 3);
+						String modifiedParamValueConfirmForAdd = String.valueOf(paramPlusThree) + "-2";
+						//Do the attack for ADD variant
+						expressionBasedAttack(param, origParamValue, modifiedParamValueForAdd, modifiedParamValueConfirmForAdd);
 						//bale out if we were asked nicely
-						if (isStop()) { 
+						if (isStop()) {
 							log.debug("Stopping the scan due to a user request");
 							return;
 						}
+						// MULT variant check the param value "2/2" gives same result as original request and param value "4/2" gives different result if original param value is 1
+						if (!sqlInjectionFoundForUrl && countExpressionBasedRequests < doExpressionMaxRequests){
+							//set the parameter value to a string value like "2/2", if the original parameter value was "1"
+							int paramMultTwo = multiplyWithOverflowCheck(paramAsInt, 2);
+							String modifiedParamValueForMult = String.valueOf(paramMultTwo) + "/2";
+							//set the parameter value to a string value like "4/2", if the original parameter value was "1"
+							int paramMultFour = multiplyWithOverflowCheck(paramAsInt, 4);
+							String modifiedParamValueConfirmForMult = String.valueOf(paramMultFour) + "/2";
+							//Do the attack for MULT variant
+							expressionBasedAttack(param, origParamValue, modifiedParamValueForMult, modifiedParamValueConfirmForMult);
+							//bale out if we were asked nicely
+							if (isStop()) {
+								log.debug("Stopping the scan due to a user request");
+								return;
+							}
+						}
+					} catch (ArithmeticException ex){
+						if (this.debugEnabled) {
+							log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + "When performing integer math with the parameter value [" + origParamValue + "]");
+						}
 					}
 				} catch (Exception e) {
-
 					if (this.debugEnabled) {
 						log.debug("The parameter value [" + origParamValue + "] is NOT of type Integer");
 					}
@@ -725,7 +785,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//so to work around this, simply re-run the query again now at this point.
 			//Note that we are not counting this request in our max number of requests to be issued
 			refreshedmessage = getNewMsg();
-			sendAndReceive(refreshedmessage, false); //do not follow redirects
+			try {
+				sendAndReceive(refreshedmessage, false); //do not follow redirects
+			} catch (SocketException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + refreshedmessage.getRequestHeader().getURI().toString());
+				return; //Something went wrong, no point continuing
+			}
 
 			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
 			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
@@ -748,12 +814,18 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				setParameter(msg2, param, sqlBooleanAndTrueValue);
 
 				//send the AND with an additional TRUE statement tacked onto the end. Hopefully it will return the same results as the original (to find a vulnerability)
-				sendAndReceive(msg2, false); //do not follow redirects
+				try {
+					sendAndReceive(msg2, false); //do not follow redirects
+				} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg2.getRequestHeader().getURI().toString());
+					continue; //Something went wrong, continue to the next item in the loop
+				}
 				countBooleanBasedRequests++;
 
 				//String resBodyAND = msg2.getResponseBody().toString();
 				String resBodyANDTrueUnstripped = msg2.getResponseBody().toString();
-				String resBodyANDTrueStripped = this.stripOff(resBodyANDTrueUnstripped, sqlBooleanAndTrueValue);
+				String resBodyANDTrueStripped = stripOffOriginalAndAttackParam(resBodyANDTrueUnstripped, origParamValue, sqlBooleanAndTrueValue);
 
 				//set up two little arrays to ease the work of checking the unstripped output, and then the stripped output
 				String normalBodyOutput[] = {mResBodyNormalUnstripped, mResBodyNormalStripped};
@@ -771,13 +843,19 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 						setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
 
-						sendAndReceive(msg2_and_false, false); //do not follow redirects
+						try {
+							sendAndReceive(msg2_and_false, false); //do not follow redirects
+						} catch (SocketException ex) {
+							if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+									" when accessing: " + msg2_and_false.getRequestHeader().getURI().toString());
+							continue; //Something went wrong, continue on to the next item in the loop
+						}
 						countBooleanBasedRequests++;
 
 						//String resBodyANDFalse = stripOff(msg2_and_false.getResponseBody().toString(), SQL_LOGIC_AND_FALSE[i]);
 						//String resBodyANDFalse = msg2_and_false.getResponseBody().toString();
 						String resBodyANDFalseUnstripped = msg2_and_false.getResponseBody().toString();
-						String resBodyANDFalseStripped = this.stripOff(resBodyANDFalseUnstripped, sqlBooleanAndFalseValue);
+						String resBodyANDFalseStripped = stripOffOriginalAndAttackParam(resBodyANDFalseUnstripped, origParamValue, sqlBooleanAndFalseValue);
 
 						String andFalseBodyOutput[] = {resBodyANDFalseUnstripped, resBodyANDFalseStripped};
 
@@ -809,7 +887,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 
 							sqlInjectionFoundForUrl = true;
 
-							continue; //to the next entry in SQL_AND
+							break; // No further need to loop through SQL_AND
 
 						} else {
 							//the results of the always false condition are the same as for the original unmodified parameter
@@ -826,13 +904,19 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							}
 							HttpMessage msg2_or_true = getNewMsg();
 							setParameter(msg2_or_true, param, orValue);
-							sendAndReceive(msg2_or_true, false); //do not follow redirects
+							try {
+								sendAndReceive(msg2_or_true, false); //do not follow redirects
+							} catch (SocketException ex) {
+								if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+										" when accessing: " + msg2_or_true.getRequestHeader().getURI().toString());
+								continue; //Something went wrong, continue on to the next item in the loop
+							}
 							countBooleanBasedRequests++;
 
 							//String resBodyORTrue = stripOff(msg2_or_true.getResponseBody().toString(), orValue);
 							//String resBodyORTrue = msg2_or_true.getResponseBody().toString();
 							String resBodyORTrueUnstripped = msg2_or_true.getResponseBody().toString();
-							String resBodyORTrueStripped = this.stripOff(resBodyORTrueUnstripped, orValue);
+							String resBodyORTrueStripped = stripOffOriginalAndAttackParam(resBodyORTrueUnstripped, origParamValue, orValue);
 
 							String orTrueBodyOutput[] = {resBodyORTrueUnstripped, resBodyORTrueStripped};
 
@@ -863,7 +947,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 								sqlInjectionFoundForUrl = true;
 								//booleanBasedSqlInjectionFoundForParam = true;  //causes us to skip past the other entries in SQL_AND.  Only one will expose a vuln for a given param, since the database column is of only 1 type
 
-								continue;
+								break; // No further need to loop
 							}
 						}
 					} //if the results of the "AND 1=1" match the original query, we may be onto something.
@@ -922,7 +1006,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				String sqlBooleanAndFalseValue = origParamValue + SQL_LOGIC_AND_FALSE[i];
 
 				setParameter(msg2, param, sqlBooleanOrTrueValue);				
-				sendAndReceive(msg2, false); //do not follow redirects
+				try {
+					sendAndReceive(msg2, false); //do not follow redirects
+				} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg2.getRequestHeader().getURI().toString());
+					continue; //Something went wrong, continue on to the next item in the loop
+				}
 				countBooleanBasedRequests++;
 
 				String resBodyORTrueUnstripped = msg2.getResponseBody().toString();
@@ -936,11 +1026,17 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					//if we can also restrict it back to the original results by appending a " and 1=2", then "Winner Winner, Chicken Dinner". 
 					HttpMessage msg2_and_false = getNewMsg();
 					setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
-					sendAndReceive(msg2_and_false, false); //do not follow redirects
+					try {
+						sendAndReceive(msg2_and_false, false); //do not follow redirects
+					} catch (SocketException ex) {
+						if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+								" when accessing: " + msg2_and_false.getRequestHeader().getURI().toString());
+						continue; //Something went wrong, continue on to the next item in the loop
+					}
 					countBooleanBasedRequests++;
 
 					String resBodyANDFalseUnstripped = msg2_and_false.getResponseBody().toString();
-					String resBodyANDFalseStripped = this.stripOff(resBodyANDFalseUnstripped, sqlBooleanAndFalseValue);
+					String resBodyANDFalseStripped = stripOffOriginalAndAttackParam(resBodyANDFalseUnstripped, origParamValue, sqlBooleanAndFalseValue);
 					
 					//does the "AND 1=2" version produce the same as the original (for stripped/unstripped versions)
 					boolean verificationUsingUnstripped = resBodyANDFalseUnstripped.compareTo(mResBodyNormalUnstripped) == 0;
@@ -967,7 +1063,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	
 						sqlInjectionFoundForUrl = true;
 	
-						continue; //to the next entry
+						break; // No further need to loop
 						}
 					}
 				}	
@@ -985,45 +1081,31 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				String sqlUnionValue = origParamValue + SQL_UNION_APPENDAGES[sqlUnionStringIndex];
 				setParameter(msg3, param, sqlUnionValue);
 				//send the message with the modified parameters
-				sendAndReceive(msg3, false); //do not follow redirects
+				try {
+					sendAndReceive(msg3, false); //do not follow redirects
+				} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg3.getRequestHeader().getURI().toString());
+					continue; //Something went wrong, continue on to the next item in the loop
+				}
 				countUnionBasedRequests++;
 
 				//now check the results.. look first for UNION specific error messages in the output that were not there in the original output
 				//and failing that, look for generic RDBMS specific error messages
 				//TODO: maybe also try looking at a differentiation based approach?? Prone to false positives though.
-				Iterator<Pattern> errorPatternUnionIterator = SQL_UNION_ERROR_TO_DBMS.keySet().iterator();
-
-				while (errorPatternUnionIterator.hasNext() && !sqlInjectionFoundForUrl) {
-					Pattern errorPattern = errorPatternUnionIterator.next();
-					String errorPatternRDBMS = SQL_UNION_ERROR_TO_DBMS.get(errorPattern);
-
-					//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
-					//then we may may have a SQL Injection vulnerability
-					String sqlUnionBodyUnstripped = msg3.getResponseBody().toString();
-					String sqlUnionBodyStripped = this.stripOff(sqlUnionBodyUnstripped, sqlUnionValue);
-
-					Matcher matcherOrig = errorPattern.matcher(mResBodyNormalStripped);
-					Matcher matcherSQLUnion = errorPattern.matcher(sqlUnionBodyStripped);
-					boolean patternInOrig = matcherOrig.find();
-					boolean patternInSQLUnion = matcherSQLUnion.find();
-
-					//if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg3, errorPattern, sb)) {				
-					if (!patternInOrig && patternInSQLUnion) {
-						//Likely a UNION Based SQL Injection (by error message). Raise it
-						String extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.unionbased.extrainfo", errorPatternRDBMS, errorPattern.toString());
-
-						//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
-						sqlInjectionAttack = sqlUnionValue;
-						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - " + errorPatternRDBMS, getDescription(),
-								refreshedmessage.getRequestHeader().getURI().getURI(), //url
-								param, sqlInjectionAttack,
-								extraInfo, getSolution(), matcherSQLUnion.group(), msg3);
-
-						//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
-						getKb().add(refreshedmessage.getRequestHeader().getURI(), "sql/" + errorPatternRDBMS, Boolean.TRUE);
-
+				for (RDBMS rdbms : RDBMS.values()) {
+					if (getTechSet().includes(rdbms.getTech()) && checkUnionErrors(
+							rdbms,
+							msg3,
+							mResBodyNormalStripped,
+							refreshedmessage.getRequestHeader().getURI(),
+							param,
+							origParamValue,
+							sqlUnionValue)) {
 						sqlInjectionFoundForUrl = true;
-						continue;
+						// Save the attack string for the "Authentication Bypass" alert, if necessary
+						sqlInjectionAttack = sqlUnionValue;
+						break;
 					}
 				//bale out if we were asked nicely
 				if (isStop()) { 
@@ -1054,7 +1136,13 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 			//so to work around this, simply re-run the query again now at this point.
 			//Note that we are not counting this request in our max number of requests to be issued
 			refreshedmessage = getNewMsg();
-			sendAndReceive(refreshedmessage, false); //do not follow redirects
+			try {
+				sendAndReceive(refreshedmessage, false); //do not follow redirects
+			} catch (SocketException ex) {
+				if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+						" when accessing: " + refreshedmessage.getRequestHeader().getURI().toString());
+				return; //Something went wrong, no point continuing
+			}
 
 			//String mResBodyNormal = getBaseMsg().getResponseBody().toString();
 			mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
@@ -1068,11 +1156,17 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 				HttpMessage msg5 = getNewMsg();
 				setParameter(msg5, param, modifiedParamValue);
 
-				sendAndReceive(msg5, false); //do not follow redirects
+				try {
+					sendAndReceive(msg5, false); //do not follow redirects
+				} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+							" when accessing: " + msg5.getRequestHeader().getURI().toString());
+					return; //Something went wrong, no point continuing
+				}
 				countOrderByBasedRequests++;
 
 				String modifiedAscendingOutputUnstripped = msg5.getResponseBody().toString();
-				String modifiedAscendingOutputStripped = this.stripOff(modifiedAscendingOutputUnstripped, modifiedParamValue);
+				String modifiedAscendingOutputStripped = stripOffOriginalAndAttackParam(modifiedAscendingOutputUnstripped, origParamValue, modifiedParamValue);
 
 				//set up two little arrays to ease the work of checking the unstripped output, and then the stripped output
 				String normalBodyOutput[] = {mResBodyNormalUnstripped, mResBodyNormalStripped};
@@ -1094,11 +1188,17 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 						HttpMessage msg5Confirm = getNewMsg();
 						setParameter(msg5Confirm, param, modifiedParamValueConfirm);
 
-						sendAndReceive(msg5Confirm, false); //do not follow redirects
+						try {
+							sendAndReceive(msg5Confirm, false); //do not follow redirects
+						} catch (SocketException ex) {
+							if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+									" when accessing: " + msg5Confirm.getRequestHeader().getURI().toString());
+							continue; //Something went wrong, continue on to the next item in the loop
+						}
 						countOrderByBasedRequests++;
 
 						String confirmOrderByOutputUnstripped = msg5Confirm.getResponseBody().toString();
-						String confirmOrderByOutputStripped = this.stripOff(confirmOrderByOutputUnstripped, modifiedParamValueConfirm);
+						String confirmOrderByOutputStripped = stripOffOriginalAndAttackParam(confirmOrderByOutputUnstripped, origParamValue, modifiedParamValueConfirm);
 
 						//set up two little arrays to ease the work of checking the unstripped output or the stripped output
 						String confirmOrderByBodyOutput[] = {confirmOrderByOutputUnstripped, confirmOrderByOutputStripped};
@@ -1123,6 +1223,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 									extraInfo, getSolution(), "", msg5);
 
 							sqlInjectionFoundForUrl = true;
+							break;  // No further need to loop 
 						}
 					}
 				//bale out if we were asked nicely
@@ -1196,6 +1297,138 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		}
 	}
 
+	private boolean checkSpecificErrors(RDBMS rdbms, HttpMessage msg1, String parameter, String attack) {
+		if (rdbms.isGeneric()) {
+			return false;
+		}
+
+		for (Pattern errorPattern : rdbms.getErrorPatterns()) {
+			if (isStop()) {
+				return false;
+			}
+
+			//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
+			//then we may may have a SQL Injection vulnerability
+			StringBuilder sb = new StringBuilder();
+			if (!matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg1, errorPattern, sb)) {
+				//Likely a SQL Injection. Raise it
+				String extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.errorbased.extrainfo", rdbms.getName(), errorPattern.toString());
+				bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - " + rdbms.getName(), getDescription(),
+						null,
+						parameter, attack,
+						extraInfo, getSolution(), sb.toString(), msg1);
+
+				//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
+				getKb().add(getBaseMsg().getRequestHeader().getURI(), "sql/" + rdbms.getName(), Boolean.TRUE);
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean checkUnionErrors(RDBMS rdbms, HttpMessage msg, String response, URI uri, String parameter, String originalParam, String attack) {
+		for (Pattern errorPattern : rdbms.getUnionErrorPatterns()) {
+			if (isStop()) {
+				return false;
+			}
+
+			//if the "error message" occurs in the result of sending the modified query, but did NOT occur in the original result of the original query
+			//then we may may have a SQL Injection vulnerability
+			String sqlUnionBodyUnstripped = msg.getResponseBody().toString();
+			String sqlUnionBodyStripped = stripOffOriginalAndAttackParam(sqlUnionBodyUnstripped, originalParam, attack);
+
+			Matcher matcherOrig = errorPattern.matcher(response);
+			Matcher matcherSQLUnion = errorPattern.matcher(sqlUnionBodyStripped);
+			boolean patternInOrig = matcherOrig.find();
+			boolean patternInSQLUnion = matcherSQLUnion.find();
+
+			//if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg, errorPattern, sb)) {
+			if (!patternInOrig && patternInSQLUnion) {
+				//Likely a UNION Based SQL Injection (by error message). Raise it
+				String extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.unionbased.extrainfo", rdbms.getName(), errorPattern.toString());
+				bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName() + " - " + rdbms.getName(), getDescription(),
+						uri.getEscapedURI(),
+						parameter, attack,
+						extraInfo, getSolution(), matcherSQLUnion.group(), msg);
+
+				//log it, as the RDBMS may be useful to know later (in subsequent checks, when we need to determine RDBMS specific behaviour, for instance)
+				getKb().add(uri, "sql/" + rdbms.getName(), Boolean.TRUE);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private void expressionBasedAttack(String param, String originalParam, String modifiedParamValue, String modifiedParamValueConfirm) throws IOException {
+		//those of you still paying attention will note that if handled as expressions (such as by a database), these represent the same value.
+		HttpMessage msg = getNewMsg();
+		setParameter(msg, param, modifiedParamValue);
+
+		try {
+			sendAndReceive(msg, false); //do not follow redirects
+		} catch (SocketException ex) {
+			if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
+					" when accessing: " + msg.getRequestHeader().getURI().toString());
+			return; //Something went wrong, no point continuing
+		}
+		countExpressionBasedRequests++;
+
+		String modifiedExpressionOutputUnstripped = msg.getResponseBody().toString();
+		String modifiedExpressionOutputStripped = stripOffOriginalAndAttackParam(modifiedExpressionOutputUnstripped, originalParam, modifiedParamValue);
+		String normalBodyOutput = mResBodyNormalStripped;
+
+		if (!sqlInjectionFoundForUrl && countExpressionBasedRequests < doExpressionMaxRequests) {
+			//if the results of the modified request match the original query, we may be onto something.
+			if (modifiedExpressionOutputStripped.compareTo(normalBodyOutput) == 0) {
+				if (this.debugEnabled) {
+					log.debug("Check 4, STRIPPED html output for modified expression parameter [" + modifiedParamValue + "] matched (refreshed) original results for " + refreshedmessage.getRequestHeader().getURI().toString());
+				}
+				//confirm that a different parameter value generates different output, to minimise false positives
+				//this time param value will be different to original value and mismatch is expected in responses of original and this value
+				//Note that the two values are NOT equivalent, and the param value is different to the original
+				HttpMessage msgConfirm = getNewMsg();
+				setParameter(msgConfirm, param, modifiedParamValueConfirm);
+
+				try {
+					sendAndReceive(msgConfirm, false); //do not follow redirects
+				} catch (SocketException ex) {
+					if (log.isDebugEnabled()) log.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
+							" when accessing: " + msgConfirm.getRequestHeader().getURI().toString());
+					return; //Something went wrong
+				}
+				countExpressionBasedRequests++;
+
+				String confirmExpressionOutputUnstripped = msgConfirm.getResponseBody().toString();
+				String confirmExpressionOutputStripped = stripOffOriginalAndAttackParam(confirmExpressionOutputUnstripped, originalParam, modifiedParamValueConfirm);
+
+				if (confirmExpressionOutputStripped.compareTo(normalBodyOutput) != 0) {
+					//the confirm query did not return the same results.  This means that arbitrary queries are not all producing the same page output.
+					//this means the fact we earier reproduced the original page output with a modified parameter was not a coincidence
+
+					//Likely a SQL Injection. Raise it
+					String extraInfo = Constant.messages.getString(MESSAGE_PREFIX + "alert.expressionbased.extrainfo", modifiedParamValue, "");
+					
+					//raise the alert, and save the attack string for the "Authentication Bypass" alert, if necessary
+					sqlInjectionAttack = modifiedParamValue;
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(),
+							null, //url
+							param, sqlInjectionAttack,
+							extraInfo, getSolution(), "", msg);
+					// SQL Injection has been found
+					sqlInjectionFoundForUrl = true;
+					return;
+				}
+			}
+			//bale out if we were asked nicely
+			if (isStop()) {
+				return;
+			}
+		}
+	}
+
 	@Override
 	public int getRisk() {
 		return Alert.RISK_HIGH;
@@ -1228,6 +1461,18 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	}
 
 	/**
+	 * Replace body by stripping off pattern strings.
+	 */
+	protected String stripOffOriginalAndAttackParam(String body, String originalPattern, String attackPattern) {
+		String result = this.stripOff(
+							this.stripOff(
+								body,
+								attackPattern),
+							originalPattern);
+		return result;
+	}
+
+	/**
 	 * decode method that is aware of %, and will decode it as simply %, if it
 	 * occurs
 	 *
@@ -1246,6 +1491,40 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 		return result;
 	}
 
+	//TODO:replace addWithOverflowCheck method with Math.addExact when targeting JAVA 8
+	/**
+	* add two numbers with Arithmetic Overflow check
+	* @param firstNumber
+	* @param secondNumber
+	* @return
+	*/
+	private static int addWithOverflowCheck(int firstNumber, int secondNumber) {
+	    long result = ((long) firstNumber) + ((long) secondNumber);
+	    if (result > Integer.MAX_VALUE) {
+	         throw new ArithmeticException("Overflow occurred");
+	    } else if (result < Integer.MIN_VALUE) {
+	         throw new ArithmeticException("Underflow occurred");
+	    }
+	    return (int) result;
+	}
+
+	//TODO:replace multiplyWithOverflowCheck method with Math.multiplyExact when targeting JAVA 8
+	/**
+	* multiply two numbers with Arithmetic Overflow check
+	* @param firstNumber
+	* @param secondNumber
+	* @return
+	*/
+	private static int multiplyWithOverflowCheck(int firstNumber, int secondNumber) {
+	    long result = ((long) firstNumber) * ((long) secondNumber);
+	    if (result > Integer.MAX_VALUE) {
+	         throw new ArithmeticException("Overflow occurred");
+	    } else if (result < Integer.MIN_VALUE) {
+	         throw new ArithmeticException("Underflow occurred");
+	    }
+	    return (int) result;
+	}
+
 	@Override
 	public int getCweId() {
 		return 89;
@@ -1254,5 +1533,14 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 	@Override
 	public int getWascId() {
 		return 19;
+	}
+
+	@Override
+	public TechSet getTechSet() {
+		TechSet techSet = super.getTechSet();
+		if (techSet != null) {
+			return techSet;
+		}
+		return TechSet.AllTech;
 	}
 }

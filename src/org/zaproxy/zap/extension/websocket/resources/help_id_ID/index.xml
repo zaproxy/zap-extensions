@@ -5,8 +5,8 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-    <indexitem text="websocket" target="websocket.introduction" />
-    <indexitem text="websocket tab" target="websocket.tab" />
-    <indexitem text="websocket options" target="websocket.options" />
-    <indexitem text="websocket session properties" target="websocket.sessionProperties" />
+    <indexitem text="jaringanstopkontak" target="websocket.introduction" />
+    <indexitem text="rekening jaringanstopkontak" target="websocket.tab" />
+    <indexitem text="pilihan jaringanstopkontak" target="websocket.options" />
+    <indexitem text="jaringanstopkontak sesi kepemilikan" target="websocket.sessionProperties" />
 </index>

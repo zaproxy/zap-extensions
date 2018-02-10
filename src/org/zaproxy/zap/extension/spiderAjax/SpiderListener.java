@@ -24,9 +24,17 @@ import org.parosproxy.paros.network.HttpMessage;
 
 interface SpiderListener {
 
+	enum ResourceState {
+		PROCESSED,
+		OUT_OF_SCOPE,
+		OUT_OF_CONTEXT,
+		EXCLUDED,
+		IO_ERROR
+	}
+
 	void spiderStarted();
 
-	void foundMessage(HistoryReference historyReference, HttpMessage httpMessage);
+	void foundMessage(HistoryReference historyReference, HttpMessage httpMessage, ResourceState state);
 
 	void spiderStopped();
 }

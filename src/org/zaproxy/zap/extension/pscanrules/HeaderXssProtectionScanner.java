@@ -23,8 +23,10 @@ import net.htmlparser.jericho.Source;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 
@@ -52,9 +54,23 @@ public class HeaderXssProtectionScanner extends PluginPassiveScanner {
 
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+		if (AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+			if (!msg.getResponseHeader().isText()) {
+				return;
+			}
+		} else {
+			if (!msg.getResponseHeader().isHtml()) {
+				return;
+			}
+			if (HttpStatusCode.isRedirection(
+					msg.getResponseHeader().getStatusCode())) {
+				return;
+			}
+
+		}
 		boolean headerPresent = false;
 		Vector<String> xssHeaderProtection = msg.getResponseHeader().getHeaders(HttpHeader.X_XSS_PROTECTION);
-		boolean possibleXSSCarrier = msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText();
+		boolean possibleXSSCarrier = msg.getResponseBody().length() > 0;
 		if (xssHeaderProtection != null) {
 			headerPresent = true;
 			if (possibleXSSCarrier){
@@ -77,7 +93,7 @@ public class HeaderXssProtectionScanner extends PluginPassiveScanner {
 		alert.setDetail(
 					Constant.messages.getString(MESSAGE_PREFIX + "desc"), 
 		    	    msg.getRequestHeader().getURI().toString(),
-		    	    "",  					//parameter
+		    	    HttpHeader.X_XSS_PROTECTION, //parameter
 		    	    "", 					//attack
 		    	    Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"),		//other info
 		    	    Constant.messages.getString(MESSAGE_PREFIX + "soln"),			//solution 

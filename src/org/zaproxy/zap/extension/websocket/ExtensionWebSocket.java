@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,7 +48,7 @@ import org.parosproxy.paros.extension.ExtensionHookMenu;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.extension.filter.ExtensionFilter;
+import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor;
 import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
 import org.parosproxy.paros.extension.manualrequest.http.impl.ManualHttpRequestEditorDialog;
@@ -56,11 +57,13 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
-import org.zaproxy.zap.extension.brk.BreakpointMessageHandler;
+import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -74,9 +77,6 @@ import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInte
 import org.zaproxy.zap.extension.websocket.brk.WebSocketProxyListenerBreak;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
-import org.zaproxy.zap.extension.websocket.filter.FilterWebSocketPayload;
-import org.zaproxy.zap.extension.websocket.filter.WebSocketFilter;
-import org.zaproxy.zap.extension.websocket.filter.WebSocketFilterListener;
 import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorDialog;
 import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
 import org.zaproxy.zap.extension.websocket.ui.ExcludeFromWebSocketsMenuItem;
@@ -94,6 +94,7 @@ import org.zaproxy.zap.extension.websocket.ui.httppanel.views.WebSocketSyntaxHig
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargePayloadUtil;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargePayloadView;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargetPayloadViewModel;
+import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelComponentFactory;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelDefaultViewSelectorFactory;
@@ -128,7 +129,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * List of observers where each element is informed on all channel's
 	 * messages.
 	 */
-	private Vector<WebSocketObserver> allChannelObservers;
+	private List<WebSocketObserver> allChannelObservers;
+	
+	/**
+	 * List of sender listeners where each element is informed on all channel's
+	 * messages.
+	 */
+	private List<WebSocketSenderListener> allChannelSenderListeners;
 
 	/**
 	 * Contains all proxies with their corresponding handshake message.
@@ -136,14 +143,14 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	private Map<Integer, WebSocketProxy> wsProxies;
 
 	/**
+	 * Database table.
+	 */
+	private TableWebSocket table;
+
+	/**
 	 * Interface to database.
 	 */
 	private WebSocketStorage storage;
-
-	/**
-	 * List of WebSocket related filters.
-	 */
-	private WebSocketFilterListener wsFilterListener;
 
 	/**
 	 * Different options in config.xml can change this extension's behavior.
@@ -154,12 +161,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Current mode of ZAP. Determines if "unsafe" actions are allowed.
 	 */
 	private Mode mode;
-
-	/**
-	 * Link to {@link ExtensionFuzz}.
-	 */
-	// TODO re-implement support for fuzzing
-	//private WebSocketFuzzerHandler fuzzHandler;
 
 	/**
 	 * Messages for some {@link WebSocketProxy} on this list are just
@@ -173,10 +174,17 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	private List<String> ignoredChannelList;
 
 	/**
-	 * This filter allows to change the bytes when passed through ZAP.
+	 * Flag that controls if the WebSockets tab should be focused when a handshake message is received.
+	 * <p>
+	 * Current behaviour is to focus just once.
+	 * 
+	 * @see #initView(ViewDelegate)
+	 * @see #onHandshakeResponse(HttpMessage, Socket, ZapGetMethod)
 	 */
-	private WebSocketFilter payloadFilter;
+	private boolean focusWebSocketsTabOnHandshake;
 	
+	private HttpSenderListenerImpl httpSenderListener;
+
 	public ExtensionWebSocket() {
 		super(NAME);
 		
@@ -189,8 +197,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	public void init() {
 		super.init();
 		
-		allChannelObservers = new Vector<>();
+		allChannelObservers = new ArrayList<>();
+		allChannelSenderListeners = new ArrayList<>();
 		wsProxies = new HashMap<>();
+		httpSenderListener = new HttpSenderListenerImpl();
 		config = new OptionsParamWebSocket();
 		
 		preparedIgnoredChannels = new ArrayList<>();
@@ -199,9 +209,16 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		mode = Control.getSingleton().getMode();
 	}
 	
+	@Override
+	public void initView(ViewDelegate view) {
+		super.initView(view);
+
+		focusWebSocketsTabOnHandshake = true;
+	}
+
     @Override
     public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
-		TableWebSocket table = new TableWebSocket();
+		table = new TableWebSocket();
 		db.addDatabaseListener(table);
 		try {
 			table.databaseOpen(db.getDatabaseServer());
@@ -252,6 +269,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 
 		// setup configuration
 		extensionHook.addOptionsParamSet(config);
+
+		HttpSender.addListener(httpSenderListener);
 		
 		try {
 			setChannelIgnoreList(Model.getSingleton().getSession().getExcludeFromProxyRegexs());
@@ -279,17 +298,17 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			hookView.addOptionPanel(getOptionsPanel());
 			
 			// add 'Exclude from WebSockets' menu item to WebSocket tab context menu
-			hookMenu.addPopupMenuItem(new ExcludeFromWebSocketsMenuItem(this, storage.getTable()));
+			hookMenu.addPopupMenuItem(new ExcludeFromWebSocketsMenuItem(this));
 
 			// setup Session Properties
-			sessionExcludePanel =  new SessionExcludeFromWebSocket(this);
+			sessionExcludePanel =  new SessionExcludeFromWebSocket(this, config);
 			getView().getSessionDialog().addParamPanel(new String[]{}, sessionExcludePanel, false);
 			
 			// setup Breakpoints
 			ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
 			if (extBreak != null) {
 				// setup custom breakpoint handler
-				BreakpointMessageHandler wsBrkMessageHandler = new WebSocketBreakpointMessageHandler(extBreak.getBreakPanel(), config);
+				BreakpointMessageHandler2 wsBrkMessageHandler = new WebSocketBreakpointMessageHandler(extBreak.getBreakpointManagementInterface(), config);
 				wsBrkMessageHandler.setEnabledBreakpoints(extBreak.getBreakpointsEnabledList());
 				
 				// listen on new messages such that breakpoints can apply
@@ -299,24 +318,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				hookMenu.addPopupMenuItem(new PopupMenuAddBreakWebSocket(extBreak));
 				extBreak.addBreakpointsUiManager(getBrkManager());
 			}
-			
-			// setup replace payload filter
-			wsFilterListener = new WebSocketFilterListener();
-			addAllChannelObserver(wsFilterListener);
-			payloadFilter = new FilterWebSocketPayload(this, wsPanel.getChannelsModel());
-			addWebSocketFilter(payloadFilter);
-			
-			// setup fuzzable extension
-			/* TODO re-implement support for fuzzing
-			ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
-			if (extFuzz != null) {
-				hookMenu.addPopupMenuItem(new ShowFuzzMessageInWebSocketsTabMenuItem(getWebSocketPanel()));
-				
-				fuzzHandler = new WebSocketFuzzerHandler(storage.getTable());
-				extFuzz.addFuzzerHandler(WebSocketMessageDTO.class, fuzzHandler);
-				addAllChannelObserver(fuzzHandler);
-			}
-			*/
 			
 			// add exclude/include scope
 			hookMenu.addPopupMenuItem(new PopupIncludeWebSocketContextMenu());
@@ -336,8 +337,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				extManReqEdit.addManualSendEditor(sendDialog);
 				hookMenu.addToolsMenuItem(sendDialog.getMenuItem());
 				
+				resenderDialog = createReSendDialog(sender);
+
 				// add 'Resend Message' menu item to WebSocket tab context menu
-				hookMenu.addPopupMenuItem(new ResendWebSocketMessageMenuItem(createReSendDialog(sender)));
+				hookMenu.addPopupMenuItem(new ResendWebSocketMessageMenuItem(resenderDialog));
 				
 				
 				// setup persistent connection listener for http manual send editor
@@ -359,6 +362,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	public void unload() {
 		super.unload();
 		
+		HttpSender.removeListener(httpSenderListener);
+
 		// close all existing connections
 		for (Entry<Integer, WebSocketProxy> wsEntry : wsProxies.entrySet()) {
 			WebSocketProxy wsProxy = wsEntry.getValue();
@@ -368,24 +373,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		Control control = Control.getSingleton();
 		ExtensionLoader extLoader = control.getExtensionLoader();
 		
-		// clear up Session Properties
-		getView().getSessionDialog().removeParamPanel(sessionExcludePanel);
-		
 		// clear up Breakpoints
 		ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
 		if (extBreak != null) {
 			extBreak.removeBreakpointsUiManager(getBrkManager());
 		}
-		
-		// clear up fuzzable extension
-		/* TODO re-implement support for fuzzing
-		ExtensionFuzz extFuzz = (ExtensionFuzz) extLoader.getExtension(ExtensionFuzz.NAME);
-		if (extFuzz != null) {
-			extFuzz.removeFuzzerHandler(WebSocketMessageDTO.class);
-		}
-		*/
-		
-		removeWebSocketFilter(payloadFilter);
 		
 		// clear up manualrequest extension
 		ExtensionManualRequestEditor extManReqEdit = (ExtensionManualRequestEditor) extLoader
@@ -401,8 +393,24 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			}
 		}
 		
+		if (table != null) {
+			getModel().getDb().removeDatabaseListener(table);
+		}
+
 		if (getView() != null) {
+			getWebSocketPanel().unload();
+
+			getView().getSessionDialog().removeParamPanel(sessionExcludePanel);
+
 			clearupWebSocketsForWorkPanel();
+
+			if (sendDialog != null) {
+				sendDialog.unload();
+			}
+
+			if (resenderDialog != null) {
+				resenderDialog.unload();
+			}
 		}
 	}
 
@@ -426,30 +434,43 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	}
 
 	/**
-	 * Add another WebSocket specific filter instance. Listens also to normal
-	 * HTTP communication.
+	 * Removes the given {@code observer}, that was attached to every channel connected.
 	 * 
-	 * @param filter Instance receives payloads and is able to change it.
+	 * @param observer the observer to be removed
+	 * @throws IllegalArgumentException if the given {@code observer} is {@code null}.
 	 */
-	public void addWebSocketFilter(WebSocketFilter filter) {
-		ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
-		ExtensionFilter extFilter = (ExtensionFilter) extLoader.getExtension(ExtensionFilter.NAME);
-		if (extFilter != null) {
-			filter.initView(getView());
-			extFilter.addFilter(filter);
-			
-			wsFilterListener.addFilter(filter);
-		} else {
-			logger.warn("Filter '" + filter.getClass().toString() + "' couldn't be added as the filter extension is not available!");
+	public void removeAllChannelObserver(WebSocketObserver observer) {
+		if (observer == null) {
+			throw new IllegalArgumentException("The parameter observer must not be null.");
+		}
+		allChannelObservers.remove(observer);
+		for (WebSocketProxy wsProxy : wsProxies.values()) {
+			wsProxy.removeObserver(observer);
 		}
 	}
 	
-	public void removeWebSocketFilter(WebSocketFilter filter) {
-		ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
-		ExtensionFilter extFilter = (ExtensionFilter) extLoader.getExtension(ExtensionFilter.NAME);
-		if (extFilter != null) {
-			extFilter.removeFilter(filter);
-			wsFilterListener.removeFilter(filter);
+	/**
+	 * Add an sender listener that is attached to every channel connected in future.
+	 * 
+	 * @param senderListener
+	 */
+	public void addAllChannelSenderListener(WebSocketSenderListener senderListener){
+		allChannelSenderListeners.add(senderListener);
+	}
+	
+	/**
+	 * Removes the given {@code senderListener}, that was attached to every channel connected.
+	 * 
+	 * @param senderListener the sender listener to be removed
+	 * @throws IllegalArgumentException if the given {@code senderListener} is {@code null}.
+	 */
+	public void removeAllChannelSenderListener(WebSocketSenderListener senderListener){
+		if (senderListener == null) {
+			throw new IllegalArgumentException("The parameter senderListener must not be null.");
+		}
+		allChannelSenderListeners.remove(senderListener);
+		for (WebSocketProxy wsProxy : wsProxies.values()) {
+			wsProxy.removeSenderListener(senderListener);
 		}
 	}
 
@@ -464,9 +485,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		
 		if (httpMessage.isWebSocketUpgrade()) {
 			logger.debug("Got WebSockets upgrade request. Handle socket connection over to WebSockets extension.");
-			if (View.isInitialised()) {
+			if (focusWebSocketsTabOnHandshake) {
 				// Show the tab in case its been closed
 				this.getWebSocketPanel().setTabFocus();
+				// Don't constantly request focus on the tab, once is enough.
+				focusWebSocketsTabOnHandshake = false;
 			}
 			
 			if (method != null) {
@@ -495,11 +518,21 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 */
 	public void addWebSocketsChannel(HttpMessage handshakeMessage, Socket localSocket, Socket remoteSocket, InputStream remoteReader) {
 		try {			
+			HttpRequestHeader requestHeader = handshakeMessage.getRequestHeader();
+			String targetHost = requestHeader.getHostName();
+			int targetPort = requestHeader.getHostPort();
 			if (logger.isDebugEnabled()) {
-				String source = (localSocket != null) ? localSocket.getInetAddress().toString() + ":" + localSocket.getPort() : "ZAP";
-				String destination = remoteSocket.getInetAddress() + ":" + remoteSocket.getPort();
+				StringBuilder logMessage = new StringBuilder(200);
+				logMessage.append("Got WebSockets channel from ");
+				if (localSocket != null) {
+					logMessage.append(localSocket.getInetAddress()).append(':').append(localSocket.getPort());
+				} else {
+					logMessage.append("ZAP");
+				}
+				logMessage.append(" to ");
+				logMessage.append(targetHost).append(':').append(targetPort);
 				
-				logger.debug("Got WebSockets channel from " + source + " to " + destination);
+				logger.debug(logMessage.toString());
 			}
 			
 			// parse HTTP handshake
@@ -508,11 +541,16 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			String wsVersion = parseWebSocketVersion(handshakeMessage);
 	
 			WebSocketProxy wsProxy = null;
-			wsProxy = WebSocketProxy.create(wsVersion, localSocket, remoteSocket, wsProtocol, wsExtensions);
+			wsProxy = WebSocketProxy.create(wsVersion, localSocket, remoteSocket, targetHost, targetPort, wsProtocol, wsExtensions);
 			
 			// set other observers and handshake reference, before starting listeners
 			for (WebSocketObserver observer : allChannelObservers) {
 				wsProxy.addObserver(observer);
+			}
+			
+			// set other sender listeners and handshake reference, before starting listeners
+			for (WebSocketSenderListener senderListener : allChannelSenderListeners) {
+				wsProxy.addSenderListener(senderListener);
 			}
 			
 			// wait until HistoryReference is saved to database
@@ -786,6 +824,20 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	}
 
 	/**
+	 * Gets the channels that match the given {@code criteria}.
+	 *
+	 * @param criteria the criteria
+	 * @return a {@code List} containing the channels that match the given {@code criteria}.
+	 * @throws DatabaseException if an error occurred while obtain the channel.
+	 */
+	public List<WebSocketChannelDTO> getChannels(WebSocketChannelDTO criteria) throws DatabaseException {
+		if (storage != null) {
+			return storage.getTable().getChannels(criteria);
+		}
+		return Collections.emptyList();
+	}
+
+	/**
 	 * If given channel is blacklisted, then nothing should be stored. Moreover
 	 * it should not appear in user interface, but messages should be forwarded.
 	 * 
@@ -827,12 +879,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			logger.error("Unable to retrieve current channelId value!", e);
 		}
 		*/
-		
-		/* TODO re-implement support for fuzzing
-		if (fuzzHandler != null) {
-			fuzzHandler.resume();
-		}
-		*/
 
 		List<String> ignoredList = new ArrayList<>();
 		try {
@@ -869,16 +915,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			}
 			wsProxies.clear();
 		}
-		
-		if (wsFilterListener != null) {
-			wsFilterListener.reset();
-		}
-		
-		/* TODO re-implement support for fuzzing
-		if (fuzzHandler != null) {
-			fuzzHandler.pause();
-		}
-		*/
 	}
 
 	@Override
@@ -910,6 +946,35 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 	}
 	
+	public WebSocketStorage getStorage() {
+		return storage;
+	}
+
+	/**
+	 * The {@link HttpSenderListener} responsible to apply the option {@link OptionsParamWebSocket#isRemoveExtensionsHeader()}.
+	 */
+	private class HttpSenderListenerImpl implements HttpSenderListener {
+
+		private static final String SEC_WEBSOCKET_EXTENSIONS = "Sec-WebSocket-Extensions";
+
+		@Override
+		public int getListenerOrder() {
+			return Integer.MAX_VALUE;
+		}
+
+		@Override
+		public void onHttpRequestSend(HttpMessage msg, int initiator, HttpSender sender) {
+			if (config.isRemoveExtensionsHeader()) {
+				msg.getRequestHeader().setHeader(SEC_WEBSOCKET_EXTENSIONS, null);
+			}
+		}
+
+		@Override
+		public void onHttpResponseReceive(HttpMessage msg, int initiator, HttpSender sender) {
+			// Nothing to do.
+		}
+	}
+
 	/*
 	 * ************************************************************************
 	 * GUI specific code follows here now. It is accessed only by methods hook()
@@ -943,6 +1008,11 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Send custom WebSocket messages.
 	 */
 	private ManualWebSocketSendEditorDialog sendDialog;
+
+	/**
+	 * Resends custom WebSocket messages.
+	 */
+	private ManualWebSocketSendEditorDialog resenderDialog;
 
 	private WebSocketPanel getWebSocketPanel() {
 		if (panel == null) {

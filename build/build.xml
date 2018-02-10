@@ -2,24 +2,22 @@
 	<description>Build ZAP extensions</description>
 
 	<property name="src" location="../src" />
-	<property name="src.version" value="1.7" />
+	<property name="src.version" value="1.8" />
 	<property name="test.src" location="../test" />
 	<property name="test.lib" location="../testlib" />
+	<property name="test.build" location="buildtest" />
 	<property name="test.results.dir" value="results" />
 	<property name="build" location="build" />
 	<property name="build.lib.dir" location="lib" />
 	<property name="temp" location="temp" />
 	<property name="dist" location="zap-exts" />
 	<property name="dist.lib.dir" location="../lib" />
-	<property name="status" value="release" />
-	<property name="versions.file" location="${dist}/ZapVersions-${status}.xml" />
+	<property name="versions.file" location="${dist}/ZapVersions.xml" />
 	<property name="wiki.dir" location="../../zap-extensions-wiki" />
 	<property name="wiki.zapcorehelp.dir" location="../../zap-core-help-wiki" />
 	<!-- This assumes you also have the zaproxy project -->
 	<property name="zap.plugin.dir" location="../../zaproxy/src/plugin" />
-	<!-- This assumes you also have the zaproxy_2.4 project (used for the weekly release -->
-	<property name="zap-2.4.plugin.dir" location="../../zaproxy_2.4/src/plugin" />
-	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.4" />
+	<property name="zap.download.url" value="https://github.com/zaproxy/zap-extensions/releases/download/2.7" />
 
 	<path id="build.classpath">
 		   <fileset dir="${build.lib.dir}" includes="*.jar"/>
@@ -38,7 +36,12 @@
 		<delete dir="${dist}" includeEmptyDirs="true" />
 		<delete dir="${build}" includeEmptyDirs="true" />
 		<delete dir="${temp}" includeEmptyDirs="true" />
+		<delete dir="${test.build}" includeEmptyDirs="true" />
 		<delete dir="${test.results.dir}" includeEmptyDirs="true" />
+	</target>
+
+	<target name="clean-files"  description="delete files downloaded by download-files">
+		<!-- Currently nothing to do -->
 	</target>
 
 	<target name="init">
@@ -46,20 +49,20 @@
 		<mkdir dir="${dist}" />
 		<mkdir dir="${build}" />
 		<mkdir dir="${temp}" />
+		<mkdir dir="${test.build}" />
 		<mkdir dir="${test.results.dir}"/>
 	</target>
 
 	<target name="compile" depends="init" description="compile the source">
 		<echo message="Compiling the source..." />
 		
-		<!-- Compile with debug information if the property "javac.debug" is set to true -->
-		<local name="debug" />
-		<condition property="debug" value="true" else="false">
-			<istrue value="${javac.debug}" />
-		</condition>
-		
 		<!-- Compile the java code from ${src} into ${build} -->
-		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
+		<javac srcdir="${src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="true" encoding="UTF-8"
+			excludes="org/zaproxy/zap/extension/*/files/**,org/zaproxy/zap/extension/*/resources/**">
+			<compilerarg value="-Xlint:all"/>
+			<compilerarg value="-Xlint:-path"/>
+			<compilerarg value="-Xlint:-options"/>
+			<compilerarg value="-Werror"/>
 			<classpath>
 				<fileset dir="${dist.lib.dir}">
 					<include name="**/*.jar" />
@@ -69,8 +72,13 @@
 		</javac>
 
 		<echo message="Compiling tests..." />
-		<javac srcdir="${test.src}" destdir="${build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="${debug}" encoding="UTF-8">
+		<javac srcdir="${test.src}" destdir="${test.build}" source="${src.version}" target="${src.version}" includeantruntime="false" debug="true" encoding="UTF-8">
+			<compilerarg value="-Xlint:all"/>
+			<compilerarg value="-Xlint:-path"/>
+			<compilerarg value="-Xlint:-options"/>
+			<compilerarg value="-Werror"/>
 			<classpath>
+				<pathelement location="${build}"/>
 				<fileset dir="${dist.lib.dir}">
 					<include name="**/*.jar" />
 				</fileset>
@@ -83,20 +91,31 @@
 	</target>
 
 	<target name="test" depends="clean, compile">
+		<echo message="Copying add-on resources..." />
+		<copy todir="${test.build}">
+			<fileset dir="${src}">
+				<include name="org/zaproxy/zap/extension/*/resources/**" />
+				<!-- Probably not needed but include (just) the main help files and Messages.properties -->
+				<exclude name="org/zaproxy/zap/extension/*/resources/help_*/**" />
+				<exclude name="org/zaproxy/zap/extension/*/resources/Messages_*.properties" />
+			</fileset>
+		</copy>
+		<echo message="Running tests..." />
 		<junit printsummary="yes" haltonerror="true" failureproperty="TestsFailed">
 			<classpath>
+				<pathelement location="${test.build}"/>
+				<pathelement location="${build}"/>
 				<fileset dir="${dist.lib.dir}">
 					<include name="*.jar" />
 				</fileset>
 				<fileset dir="${test.lib}">
 					<include name="*.jar" />
 				</fileset>
-				<pathelement location="${build}"/>
 			</classpath>
 			<formatter type="plain"/>
 			<formatter type="xml"/>
 			<batchtest fork="yes" todir="${test.results.dir}">
-				<fileset dir="${build}">
+				<fileset dir="${test.build}">
 					<include name="**/*UnitTest.class"/>
 					<exclude name="**/Abstract*Test.class"/>
 				</fileset>
@@ -166,10 +185,12 @@
 		<sequential>
 			<local name="zapaddon.version" />
 			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+			<local name="zapaddon.status" />
+			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
 			<local name="file" />
-			<property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
+			<property name="file" value="@{name}-${zapaddon.status}-${zapaddon.version}.zap" />
 
-			<generatejavahelpsearchindexes jhalljar="${dist.lib.dir}/jhall.jar"
+			<generatejavahelpsearchindexes jhalljar="${build.lib.dir}/jhall.jar"
 				helpcontentsdirname="contents" helpsetfilename="helpset*.hs">
 				<dirset dir="${src}/org/zaproxy/zap/extension/@{name}/resources/">
 					<include name="help" />
@@ -234,20 +255,88 @@
 			</tstamp>
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
 				url="${zap.download.url}/${file}" />
 
 		</sequential>
 	</macrodef>
 
+	<macrodef name="build-addon-without-help-indexes" description="build the specified addon">
+			<attribute name="name"/>
+			<element name="extra-actions" implicit="true" optional="true" />
+			<sequential>
+				<local name="zapaddon.version" />
+				<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+				<local name="zapaddon.status" />
+				<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml"/>
+				<local name="file" />
+				<property name="file" value="@{name}-${zapaddon.status}-${zapaddon.version}.zap" />
+
+				<local name="addon.libs.zip" />
+				<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
+
+				<delete file="${addon.libs.zip}" failonerror="true" />
+				<zip destfile="${addon.libs.zip}" whenempty="create">
+					<zipgroupfileset dir="${src}/org/zaproxy/zap/extension/@{name}/lib/" includes="*.jar" erroronmissingdir="false" />
+				</zip>
+
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="org/zaproxy/zap/extension/@{name}/**"/>
+					</zipfileset>
+					<zipfileset dir="${src}" prefix="">
+						<include name="org/zaproxy/zap/extension/@{name}/Messages*"/>
+					</zipfileset>
+					<zipfileset dir="${src}" prefix="">
+						<include name="org/zaproxy/zap/extension/@{name}/resources/**"/>
+					</zipfileset>
+					<zipfileset src="${addon.libs.zip}">
+						<exclude name="META-INF/*.DSA" />
+						<exclude name="META-INF/*.SF" />
+					</zipfileset>
+					<zipfileset dir="${src}" includes="org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" fullpath="ZapAddOn.xml"/>
+				</jar>
+				<delete file="${addon.libs.zip}" />
+
+				<!-- Include add-on files -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${src}/org/zaproxy/zap/extension/@{name}/files/" prefix="" erroronmissingdir="false" />
+				</jar>
+
+				<!-- allow callers to do extra actions before generating the hash and determine the size of the file -->
+				<extra-actions />
+
+				<local name="length" />
+				<length file="${dist}/${file}" property="length" />
+
+				<local name="sha1hash" />
+				<checksum file="${dist}/${file}"  algorithm="SHA-1"  property="sha1hash"/>
+
+				<local name="hash" />
+				<property name="hash"  value="SHA1:${sha1hash}"/>
+
+				<local name="yyyymmdd" />
+				<tstamp>
+					<format property="yyyymmdd" pattern="yyyy-MM-dd"/>
+				</tstamp>
+
+				<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
+					addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+					url="${zap.download.url}/${file}" />
+
+			</sequential>
+		</macrodef>
+	
 	<macrodef name="build-help-addon" description="build the specified addon">
 		<attribute name="name"/>
 		<element name="extra-actions" implicit="true" optional="true" />
 		<sequential>
 			<local name="zapaddon.version" />
 			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
+			<local name="zapaddon.status" />
+			<xmlproperty file="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" />
 			<local name="file" />
-			<property name="file" value="@{name}-${status}-${zapaddon.version}.zap" />
+			<property name="file" value="@{name}-${zapaddon.status}-${zapaddon.version}.zap" />
 
 			<local name="addon.libs.zip" />
 			<property name="addon.libs.zip" value="${temp}/libs-@{name}.zip" />
@@ -281,7 +370,7 @@
 			</tstamp>
 
 			<appendzapaddonfile from="${src}/org/zaproxy/zap/extension/@{name}/ZapAddOn.xml" to="${versions.file}"
-				addonid="@{name}" filename="${file}" status="${status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
+				addonid="@{name}" filename="${file}" status="${zapaddon.status}" size="${length}" hash="${hash}" date="${yyyymmdd}"
 				url="${zap.download.url}/${file}" />
 
 		</sequential>
@@ -306,8 +395,8 @@
 		<build-addon name="quickstart" />
 		<build-addon name="reveal" />
 		<build-addon name="saverawmessage" />
-		<build-addon name="selenium" />
-		<build-addon name="spiderAjax" />
+		<build-selenium-addon />
+		<build-spiderajax-addon />
 		<build-addon name="websocket" />
 
 	</target>
@@ -334,6 +423,17 @@
 		</sequential>
 	</macrodef>
 
+	<macrodef name="build-deploy-addon-without-help-indexes" description="build and deploy the specified addon">
+		<attribute name="name"/>
+		<sequential>
+			<antcall target="clean" />
+			<antcall target="compile" />
+
+			<build-addon-without-help-indexes name="@{name}" />
+			<deploy-addon name="@{name}" />
+		</sequential>
+	</macrodef>
+	
 	<macrodef name="build-deploy-help-addon" description="build and deploy the specified help addon">
 		<attribute name="name"/>
 		<sequential>
@@ -348,12 +448,20 @@
 		<build-deploy-addon name="ascanrules" />
 	</target>
 
+	<target name="deploy-ascanrules-without-help-indexes" description="deploy the active scan rules">
+		<build-deploy-addon-without-help-indexes name="ascanrules" />
+	</target>
+	
 	<target name="generate-wiki-ascanrules" description="Generates the wiki of active scan rules">
 		<generate-wiki-core addon="ascanrules" />
 	</target>
 
 	<target name="deploy-coreLang" description="deploy the  add-on">
 		<build-deploy-addon name="coreLang" />
+	</target>
+
+	<target name="deploy-todo" description="Provides a tab which allows you to view the list of test cases">
+		<build-deploy-addon name="todo" />
 	</target>
 
 	<target name="deploy-directorylistv1" description="deploys Directory List v1.0 add-on">
@@ -368,12 +476,8 @@
 		<build-deploy-addon name="directorylistv2_3_lc" />
 	</target>
 
-	<target name="deploy-exampleRightClickMsg" description="deploy the exampleRightClickMsg extension">
-		<build-deploy-addon name="exampleRightClickMsg" />
-	</target>
-
-	<target name="deploy-exampleTopMenu" description="deploy the exampleTopMenu extension">
-		<build-deploy-addon name="exampleTopMenu" />
+	<target name="deploy-fuzzdb" description="Deploys the FuzzDB add-on">
+		<build-deploy-addon name="fuzzdb" />
 	</target>
 
 	<target name="deploy-gettingStarted" description="deploy the gettingStarted extension">
@@ -408,6 +512,10 @@
 		<build-deploy-addon name="pscanrules" />
 	</target>
 
+	<target name="deploy-pscanrules-without-help-indexes" description="deploy the passive scan rules">
+		<build-deploy-addon-without-help-indexes name="pscanrules" />
+	</target>
+	
 	<target name="generate-wiki-pscanrules" description="Generates the wiki of passive scan rules">
 		<generate-wiki-core addon="pscanrules" />
 	</target>
@@ -432,16 +540,46 @@
 		<build-deploy-addon name="saverawmessage" />
 	</target>
 
+	<macrodef name="build-selenium-addon" description="Builds Selenium add-on">
+		<sequential>
+			<build-addon name="selenium">
+				<!-- Add the extra classes required -->
+				<!-- No extra classes needed for now.
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="org/openqa/selenium/**"/>
+					</zipfileset>
+				</jar>
+				-->
+			</build-addon>
+		</sequential>
+	</macrodef>
+	
 	<target name="deploy-selenium" depends="clean, compile" description="Deploys Selenium add-on">
-		<build-deploy-addon name="selenium" />
+		<build-selenium-addon />
+		<deploy-addon name="selenium" />
 	</target>
 
 	<target name="generate-wiki-selenium" description="Generates the wiki of selenium">
 		<generate-wiki-core addon="selenium" />
 	</target>
 
-	<target name="deploy-spiderAjax" description="deploy the spiderAjax extension">
-		<build-deploy-addon name="spiderAjax" />
+	<macrodef name="build-spiderajax-addon" description="Builds AJAX Spider add-on">
+		<sequential>
+			<build-addon name="spiderAjax">
+				<!-- Add the extra classes required -->
+				<jar jarfile="${dist}/${file}" update="true" compress="true">
+					<zipfileset dir="${build}" prefix="">
+						<include name="com/crawljax/core/**"/>
+					</zipfileset>
+				</jar>
+			</build-addon>
+		</sequential>
+	</macrodef>
+
+	<target name="deploy-spiderAjax" depends="clean, compile" description="deploy the spiderAjax extension">
+		<build-spiderajax-addon />
+		<deploy-addon name="spiderAjax" />
 	</target>
 
 	<target name="generate-wiki-spiderAjax" description="Generates the wiki of spiderAjax">
@@ -465,65 +603,44 @@
 	</target>
 
 	<target name="deploy-weekly" description="deploy all of the extension to be included in a weekly release">
-		<!-- Set to compile with debug information -->
-		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="ascanrules-${status}-*.zap"/>
-				<include name="coreLang-${status}-*.zap"/>
-				<include name="directorylistv1-${status}-*.zap"/>
-				<include name="gettingStarted-${status}-*.zap"/>
-				<include name="help-${status}-*.zap"/>
-				<include name="onlineMenu-${status}-*.zap"/>
-				<include name="pscanrules-${status}-*.zap"/>
-				<include name="quickstart-${status}-*.zap"/>
-				<include name="reveal-${status}-*.zap"/>
-				<include name="saverawmessage-${status}-*.zap"/>
-				<include name="selenium-${status}-*.zap"/>
-				<include name="spiderAjax-${status}-*.zap"/>
-				<include name="websocket-${status}-*.zap"/>
-			</fileset>
-		</copy>
-		<copy todir="${zap-2.4.plugin.dir}">
-			<fileset dir="${dist}">
-				<include name="ascanrules-${status}-*.zap"/>
-				<include name="coreLang-${status}-*.zap"/>
-				<include name="directorylistv1-${status}-*.zap"/>
-				<include name="gettingStarted-${status}-*.zap"/>
-				<include name="help-${status}-*.zap"/>
-				<include name="onlineMenu-${status}-*.zap"/>
-				<include name="pscanrules-${status}-*.zap"/>
-				<include name="quickstart-${status}-*.zap"/>
-				<include name="reveal-${status}-*.zap"/>
-				<include name="saverawmessage-${status}-*.zap"/>
-				<include name="selenium-${status}-*.zap"/>
-				<include name="spiderAjax-${status}-*.zap"/>
-				<include name="websocket-${status}-*.zap"/>
+				<include name="ascanrules-*.zap"/>
+				<include name="coreLang-*.zap"/>
+				<include name="directorylistv1-*.zap"/>
+				<include name="gettingStarted-*.zap"/>
+				<include name="help-*.zap"/>
+				<include name="onlineMenu-*.zap"/>
+				<include name="pscanrules-*.zap"/>
+				<include name="quickstart-*.zap"/>
+				<include name="reveal-*.zap"/>
+				<include name="saverawmessage-*.zap"/>
+				<include name="selenium-*.zap"/>
+				<include name="spiderAjax-*.zap"/>
+				<include name="websocket-*.zap"/>
 			</fileset>
 		</copy>
 	</target>
 
 
 	<target name="deploy-release" description="deploy all of the extension to be included in a full release">
-		<!-- Set to compile with debug information -->
-		<property name="javac.debug" value="true" />
 		<antcall target="build-all" />
 		<copy todir="${zap.plugin.dir}">
 			<fileset dir="${dist}">
-				<include name="ascanrules-${status}-*.zap"/>
-				<include name="coreLang-${status}-*.zap"/>
-				<include name="directorylistv1-${status}-*.zap"/>
-				<include name="gettingStarted-${status}-*.zap"/>
-				<include name="help-${status}-*.zap"/>
-				<include name="onlineMenu-${status}-*.zap"/>
-				<include name="pscanrules-${status}-*.zap"/>
-				<include name="quickstart-${status}-*.zap"/>
-				<include name="reveal-${status}-*.zap"/>
-				<include name="saverawmessage-${status}-*.zap"/>
-				<include name="selenium-${status}-*.zap"/>
-				<include name="spiderAjax-${status}-*.zap"/>
-				<include name="websocket-${status}-*.zap"/>
+				<include name="ascanrules-*.zap"/>
+				<include name="coreLang-*.zap"/>
+				<include name="directorylistv1-*.zap"/>
+				<include name="gettingStarted-*.zap"/>
+				<include name="help-*.zap"/>
+				<include name="onlineMenu-*.zap"/>
+				<include name="pscanrules-*.zap"/>
+				<include name="quickstart-*.zap"/>
+				<include name="reveal-*.zap"/>
+				<include name="saverawmessage-*.zap"/>
+				<include name="selenium-*.zap"/>
+				<include name="spiderAjax-*.zap"/>
+				<include name="websocket-*.zap"/>
 			</fileset>
 		</copy>
 	</target>

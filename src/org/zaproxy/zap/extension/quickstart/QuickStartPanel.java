@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -47,11 +46,9 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.brk.BreakPanel;
 import org.zaproxy.zap.extension.search.SearchPanel;
 import org.zaproxy.zap.extension.tab.Tab;
-import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
@@ -64,10 +61,11 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	private ExtensionQuickStart extension;
 	private JButton attackButton = null;
 	private JButton stopButton = null;
-	private JButton confButton = null;
 	private ZapTextField urlField = null;
-	private ZapTextField confField = null;
 	private JLabel progressLabel = null;
+	private JPanel panelContent = null;
+	private JLabel lowerPadding = new JLabel("");
+	private int panelY = 0;
 
 	public QuickStartPanel(ExtensionQuickStart extension) {
 		super();
@@ -76,12 +74,13 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	}
 
 	private void initialize() {
+		this.setShowByDefault(true);
 		this.setIcon(new ImageIcon(BreakPanel.class.getResource("/resource/icon/16/147.png")));	// 'lightning' icon
-		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
+		this.setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("quickstart.panel.mnemonic"));
 		this.setLayout(new BorderLayout());
 
-		JPanel panelContent = new JPanel(new GridBagLayout());
+		panelContent = new JPanel(new GridBagLayout());
 		JScrollPane jScrollPane = new JScrollPane();
 		jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
 		jScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -107,18 +106,18 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		 */
 
 		panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.topmsg")), 
-				LayoutHelper.getGBC(0, 0, 4, 1.0D, new Insets(5,5,5,5)));
+				LayoutHelper.getGBC(0, panelY, 4, 1.0D, new Insets(5,5,5,5)));
 		if (Constant.isDevBuild()) {
 			panelContent.add(new JLabel(new ImageIcon(QuickStartPanel.class.getResource(
 					"/org/zaproxy/zap/extension/quickstart/resources/zap128x128dark.png"))),
-					LayoutHelper.getGBC(4, 0, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
+					LayoutHelper.getGBC(4, panelY, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
 		} else {
 			panelContent.add(new JLabel(DisplayUtils.getScaledIcon(new ImageIcon(SearchPanel.class.getResource("/resource/zap128x128.png")))),
-				LayoutHelper.getGBC(4, 0, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
+				LayoutHelper.getGBC(4, panelY, 1, 0.0D, 0.0D, GridBagConstraints.NORTH));
 		}
 	
 		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.url")), 
-				LayoutHelper.getGBC(0, 1, 1, 0.0D, new Insets(5,5,5,5)));
+				LayoutHelper.getGBC(0, ++panelY, 1, 0.0D, new Insets(5,5,5,5)));
 
 		JPanel urlSelectPanel = new JPanel(new GridBagLayout());
 		JButton selectButton = new JButton(Constant.messages.getString("all.button.select"));
@@ -146,46 +145,48 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		
 		urlSelectPanel.add(this.getUrlField(), LayoutHelper.getGBC(0, 0, 1, 1.0D));
 		urlSelectPanel.add(selectButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
-		panelContent.add(urlSelectPanel, LayoutHelper.getGBC(1, 1, 3, 0.25D));
+		panelContent.add(urlSelectPanel, LayoutHelper.getGBC(1, panelY, 3, 0.25D));
 		
-		panelContent.add(this.getAttackButton(), LayoutHelper.getGBC(1, 2, 1, 0.0D));
-		panelContent.add(this.getStopButton(), LayoutHelper.getGBC(2, 2, 1, 0.0D));
-		panelContent.add(new JLabel(""), LayoutHelper.getGBC(3, 2, 1, 0.75D, 0.0D));	// Padding to right of buttons
+		panelContent.add(this.getAttackButton(), LayoutHelper.getGBC(1, ++panelY, 1, 0.0D));
+		panelContent.add(this.getStopButton(), LayoutHelper.getGBC(2, panelY, 1, 0.0D));
+		panelContent.add(new JLabel(""), LayoutHelper.getGBC(3, panelY, 1, 0.75D, 0.0D));	// Padding to right of buttons
 		
 		progressLabel = new JLabel(Constant.messages.getString("quickstart.progress." + AttackThread.Progress.notstarted.name()));
 		panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.progress")), 
-				LayoutHelper.getGBC(0, 3, 1, 0.0D, new Insets(5,5,5,5)));
-		panelContent.add(this.progressLabel, LayoutHelper.getGBC(1, 3, 3, 0.0D));
+				LayoutHelper.getGBC(0, ++panelY, 1, 0.0D, new Insets(5,5,5,5)));
+		panelContent.add(this.progressLabel, LayoutHelper.getGBC(1, panelY, 3, 0.0D));
 
 		panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.proxymsg")), 
-				LayoutHelper.getGBC(0, 4, 5, 1.0D, new Insets(5,5,5,5)));
+				LayoutHelper.getGBC(0, ++panelY, 5, 1.0D, new Insets(5,5,5,5)));
 
-		if (Control.getSingleton().getExtensionLoader().getExtension("ExtensionPlugNHack") != null) {
-			// Plug-n-Hack extension has been installed - this makes configuration much easier :)
-			if (DesktopUtils.canOpenUrlInBrowser()) {
-				panelContent.add(new JLabel(Constant.messages.getString("quickstart.label.mitm")), 
-						LayoutHelper.getGBC(0, 6, 1, 0.0D, new Insets(5,5,5,5)));
-				panelContent.add(this.getConfButton(), LayoutHelper.getGBC(1, 6, 1, 0.0D));
-
-				panelContent.add(new JLabel(
-						Constant.messages.getString("quickstart.label.mitmalt")),
-						LayoutHelper.getGBC(0, 7, 1, 0.0D, new Insets(5,5,5,5)));
-			} else {
-				panelContent.add(new JLabel(
-						Constant.messages.getString("quickstart.label.mitmurl")),
-						LayoutHelper.getGBC(0, 7, 1, 0.0D, new Insets(5,5,5,5)));
-			}
-			panelContent.add(this.getConfField(), LayoutHelper.getGBC(1, 7, 3, 0.25D));
-			
-		} else {
-			panelContent.add(new JLabel(Constant.messages.getString("quickstart.panel.helpmsg")), 
-					LayoutHelper.getGBC(0, 5, 5, 1.0D, new Insets(5,5,5,5)));
-			
+		for (QuickStartPanelContentProvider provider : extension.getContentProviders()) {
+		    this.addContent(provider);
 		}
-		
-		panelContent.add(new JLabel(""), LayoutHelper.getGBC(0, 10, 4, 1.D, 1.0D));	// Padding at bottom
+		replacePadding();
 		
 		this.setMode(Control.getSingleton().getMode());
+	}
+	
+	private void replacePadding() {
+	    if (panelContent != null) {
+	        // this may or may not be present
+	        panelContent.remove(this.lowerPadding);
+	        panelContent.add(this.lowerPadding, LayoutHelper.getGBC(0, ++panelY, 4, 1.D, 1.0D));    // Padding at bottom
+	    }
+	}
+	
+	protected void addContent(QuickStartPanelContentProvider provider) {
+        if (panelContent != null) {
+            panelY = provider.addToPanel(panelContent, panelY);
+            replacePadding();
+        }
+	}
+	
+    protected void removeContent(QuickStartPanelContentProvider provider) {
+        if (panelContent != null) {
+            provider.removeFromPanel(panelContent);
+        }
+	    
 	}
 	
 	protected void setMode(Mode mode) {
@@ -246,47 +247,14 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		return stopButton;
 	}
 	
-	private String getPlugNHackUrl() {
-		String apiKey = API.getInstance().getApiKey();
-		String keyStr = "";
-		if (apiKey != null && apiKey.length() > 0) {
-			keyStr = "?" + API.API_KEY_PARAM + "=" + apiKey;
-		}
-		return "http://" + Model.getSingleton().getOptionsParam().getProxyParam().getProxyIp() + ":" + 
-				Model.getSingleton().getOptionsParam().getProxyParam().getProxyPort() + "/pnh/" + keyStr;
-	}
-
-	private ZapTextField getConfField () {
-		if (confField == null) {
-			confField = new ZapTextField();
-			confField.setText(getPlugNHackUrl());
-			confField.setEditable(false);
-		}
-		return confField;
-	}
 	
-	private JButton getConfButton() {
-		if (confButton == null) {
-			confButton = new JButton();
-			confButton.setText(Constant.messages.getString("quickstart.button.label.mitm"));
-			confButton.setToolTipText(Constant.messages.getString("quickstart.button.tooltip.mitm"));
-			confButton.setIcon(DisplayUtils.getScaledIcon(new ImageIcon(
-					QuickStartPanel.class.getResource("/org/zaproxy/zap/extension/quickstart/resources/plug.png"))));
-
-			confButton.addActionListener(new java.awt.event.ActionListener() { 
-				@Override
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-					DesktopUtils.openUrlInBrowser(getPlugNHackUrl());
-				}
-			});
-		}
-		return confButton;
-	}
 
 	boolean attackUrl () {
 		URL url;
 		try {
 			url = new URL(this.getUrlField().getText());
+			// Validate the actual request-uri of the HTTP message accessed.
+			new URI(this.getUrlField().getText(), true);
 		} catch (Exception e) {
 			extension.getView().showWarningDialog(Constant.messages.getString("quickstart.url.warning.invalid"));
 			this.getUrlField().requestFocusInWindow();
@@ -310,7 +278,15 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 	}
 
 	protected void notifyProgress(AttackThread.Progress progress) {
-		progressLabel.setText(Constant.messages.getString("quickstart.progress." + progress.name()));
+		this.notifyProgress(progress, null);
+	}
+
+	protected void notifyProgress(AttackThread.Progress progress, String msg) {
+		if (msg == null) {
+			progressLabel.setText(Constant.messages.getString("quickstart.progress." + progress.name()));
+		} else {
+			progressLabel.setText(msg);
+		}
 		switch (progress) {
 		case complete:
 			getAttackButton().setEnabled(true);
@@ -328,15 +304,6 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
 		default:
 			break;
 		}
-	}
-
-	/**
-	 * This should override (or use) the AbstractPanel class but cant do this until the relevant changes are
-	 * available in the zap-extensions trunk
-	 * @return
-	 */
-	public boolean isShowByDefault() {
-		return true;
 	}
 
 }

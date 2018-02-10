@@ -22,17 +22,17 @@
  */
 package org.zaproxy.zap.extension.websocket.utility;
 
-import java.nio.charset.Charset;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Encode or decode from byte[] to Utf8 and vice versa.
  */
-public abstract class Utf8Util {
+public final class Utf8Util {
 	
-	/**
-	 * Used for en- & decoding from bytes to String and vice versa.
-	 */
-	protected static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
+	private Utf8Util() {
+	}
 
 	/**
 	 * Helper method to encode payload into UTF-8 string.
@@ -56,21 +56,9 @@ public abstract class Utf8Util {
 	 */
 	public static String encodePayloadToUtf8(byte[] utf8bytes, int offset, int length) throws InvalidUtf8Exception {
 		try {
-			Utf8StringBuilder builder = new Utf8StringBuilder(length);
-			builder.append(utf8bytes, offset, length);
-
-			return builder.toString();
-		} catch (IllegalArgumentException e) {
-			if (e.getMessage().equals("!utf8")) {
-				throw new InvalidUtf8Exception("Given bytes are no valid UTF-8!");
-			}
-			throw e;
-			
-		} catch (IllegalStateException e) {
-			if (e.getMessage().equals("!utf8")) {
-				throw new InvalidUtf8Exception("Given bytes are no valid UTF-8!");
-			}
-			throw e;
+			return StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(utf8bytes, offset, length)).toString();
+		} catch (CharacterCodingException e) {
+			throw new InvalidUtf8Exception("Unable to decode given bytes as UTF-8!", e);
 		}
 	}
 	
@@ -82,6 +70,6 @@ public abstract class Utf8Util {
 	 * @return byte representation
 	 */
 	public static byte[] decodePayloadFromUtf8(String utf8string) {
-		return utf8string.getBytes(UTF8_CHARSET);
+		return utf8string.getBytes(StandardCharsets.UTF_8);
 	}
 }

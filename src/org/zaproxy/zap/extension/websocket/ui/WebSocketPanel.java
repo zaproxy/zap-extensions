@@ -19,7 +19,6 @@ package org.zaproxy.zap.extension.websocket.ui;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -66,7 +65,6 @@ import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInterface;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
-import org.zaproxy.zap.extension.websocket.filter.WebSocketFilter;
 import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -173,7 +171,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 	 */
 	private void initializePanel() {
 		setName(Constant.messages.getString("websocket.panel.title"));
-		setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.SHIFT_MASK, false));
+		setDefaultAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.SHIFT_DOWN_MASK, false));
 		setMnemonic(Constant.messages.getChar("websocket.panel.mnemonic"));
 
 		
@@ -601,7 +599,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 	}
 		
 	/**
-	 * Apply {@link WebSocketFilter} to visible parts of models.
+	 * Apply {@link WebSocketMessagesViewFilter} to visible parts of models.
 	 */
 	private void applyFilter() {
 		messagesModel.fireFilterChanged();
@@ -795,5 +793,12 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 	public void setTable(TableWebSocket table) {
 		this.table = table;
 		this.messagesModel.setTable(table);
+	}
+
+	public void unload() {
+		if (filterDialog != null) {
+			filterDialog.dispose();
+			filterDialog = null;
+		}
 	}
 }

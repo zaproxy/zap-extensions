@@ -2,71 +2,84 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>AJAX Spider dialog</title>
+<title>Ang AJAX Spider na diyalogo</title>
 </head>
 <body bgcolor="#ffffff">
-<h1>AJAX Spider dialog</h1>
+<h1>Ang AJAX Spider na diyalogo</h1>
 
-This dialog launches the AJAX Spider. 
+Ang diyalogo ay naglulunsad ng AJAX Spider. 
 
-<h2>Scope</h2>
-The first tab allows you to change key features like:
+<h2>Ang Saklaw</h2>
+Ang unang tab na ito ay nagbibigay-daan sa iyo upang baguhin ang mga key na mga tampok tulad ng:
 
-<h3>Starting point</h3>
+<h3>Panimulang punto</h3>
 
-The URL which the AJAX spider will start crawling from.
-<h3>Just in scope</h3>
+Ang URL na kung saan ang AJAX spider ay magsisimula na gumapang mula, o ang isang konteksto (sa kung saan ang caso ay ginagamit ang isa sa URL na nasa konteksto bilang panimulang punto).
 
-If set then any URLs which are out of scope will be ignored.
+<h3>Konteksto</h3>
+Nagbibigay daan upang piliin ang konteksto upang maging spidered.
 
-<h3>Browser</h3>
+<h3>Gumagamit</h3>
+Nagbibigay-daan upang pumili ng isa sa mga gumagamit na bakante mula sa napiling konteksto, para magsagawa sa spider scan bilang gumagamit (Ang ZAP ay nagpapatunay bilang isang gumagamit kung kinakailangan).
 
-The type of browser to use.<br>
-Browsers will only be shown if ZAP has sufficient configuration to run them.<br>
-They may still fail to run if the browsers cannot be found or if the configuration information is incorrect.
+<h3>Lamang sa saklaw</h3>
 
-<h3>Show advanced options</h3>
+Kung itakda pagkatapos ang anumang URL na kung saan ay nasa labas na ng saklaw ay hindi papansinin.
+<p>
+<strong>Paalala:</strong> Ang opsyon <code>Lamang sa saklaw</code> ay pare-pareho eksklusibo sa <code>Konteksto</code> opsyon, kung isa ay nagamit ang iba ay hindi papansinin.
 
-If selected then the Options tab will be shown.
+<h3>Ang Spider Subtree lamang</h3>
+Kung itakda at pagkatapos ang spider ay papasok lamang sa mapagkunan na nasa ilalim ng panimulang punto (URI).
+Kapag sinusuri kung ang mapagkunan ay matagpuan sa loob ng tinukoy na subtree, ang spider ay itinuturing lamang ang pamamaraan, host, port, at path na mga bahagi sa URI.
 
-<h2>Options</h2>
-This tab allows you to change options including:
+<h3>Ang Browser</h3>
 
-<h3>Number of browser windows to open</h3>
-You can configure the number of windows to be used by AJAX Spider.<br>
-The more windows, the faster the process will be.
+Ang uri ng browser upang gamitin.<br>
+Ang mga browser lang ang ipapakita kung ang ZAP ay sapat sa pagsasaayos na tumakbo sa kanila.<br>
+Maaari ito ay babagsak sa pagtakbo kung ang mga browser ay hindi matagpuan o kung ang kumpigurasyon ng impormasyon ay hindi tama.
 
-<h3>Maximum crawl depth</h3>
-The maximum depth that the crawler can reach. Zero means unlimited depth.
+<h3>Ipakita ang advance na mga opsyon</h3>
 
-<h3>Maximum crawl states</h3>
-The maximum number of states that the crawler should crawl. Zero means unlimited crawl states. 
+Kung napili pagkatapos ang mga Opsyon tab ay ipapakita.
 
-<h3>Maximum duration</h3>
-The maximum time that the crawler is allowed to run. Zero means unlimited running time.
+<h2>Mga opsyon</h2>
+Ang tab na ito ay nagbibigay-daan sa iyo na baguhin ang mga opsyon na naglalakip:
 
-<h3>Event wait time</h3>
-The time to wait after a client side event is fired.
+<h3>Ang bilang sa browser na mga window na buksan</h3>
+Ikaw ay pwedeng maka-configure sa numero ng mga window na gagamitin sa pamamagitan ng AJAX Spider.<br>
+Ang maraming mga window, magiging mas mabilis na proseso.
 
-<h3>Reload wait time</h3>
-The time to wait after URL is loaded.
+<h3>Ang pinakamataas paggapang sa ilalim</h3>
+Ang pinakamataas na lalim na ang gumagapang ay maabot. Zero ibig sabihin ay walang hanggan na lalim.
+
+<h3>Ang pinakamataas na gapang ng mga estado</h3>
+Ang pinakamataas na numero ng mga estado na ang paggapang ay dapat gapang. Zero ibig sabihin ay walang katapusan na paggapang na estado. 
+
+<h3>Pinakamataas na durasyon</h3>
+Ang pinakamataas ng oras na ang gumagapang ay pinahihintulotan na tumakbo. Zero ibig sabihin ay walang hanggan na pagtakbo ng oras.
+
+<h3>Ang kaganapan sa hinintay na oras</h3>
+Ang oras na maghintay pagkatapos ang isang kliyente na kaganapan ay inalis.
+
+<h3>Ang reload ngpaghintay sa oras</h3>
+Ang oras na maghintay pagkatapos ang URL ay naloadan na.
 	
-	<h2>See also</h2>
+	<h2>Tingnan din</h2>
 	<table>
 		<tr>
 			&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="concepts.html">AJAX Spider</a></td>
-			<td>for an overview of the AJAX Spider</td>
+			<td><a href="concepts.html">Ang AJAX Spider</a></td>
+			<td>para sa isang pangkalahatan sa AJAX Spider</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="tab.html">AJAX Spider tab</a></td>
-			<td>for an overview of the AJAX Spider Tab</td>
+			<td><a href="tab.html">Ang tab ng AJAX Spider</a></td>
+			<td>para sa kabuoan ng AJAX Spider Tab</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">Options AJAX Spider screen</a></td>
-			<td>for an overview of the AJAX Spider Options</td>
+			<td><a href="options.html">Mga opsyon sa AJAX Spider na screen</a></td>
+			<td>para sa isang pangkalahatan sa AJAX Spider na mga Opsyon</td>
 		</tr>
 	</table>
 

@@ -23,11 +23,15 @@
 // ZAP: 2012/08/01 Removed the "(non-Javadoc)" comments.
 // ZAP: 2012/12/28 Issue 447: Include the evidence in the attack field
 // ZAP: 2015/07/27 Issue 1618: Target Technology Not Honored
+// ZAP: 2016/02/02 Add isStop() checks and refactor the code to reduce code duplication
+// ZAP: 2018/02/01 Issue 1366: Change match pattern slightly, and implement pre-check
 
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -38,6 +42,8 @@ import org.zaproxy.zap.model.TechSet;
 
 
 public class TestServerSideInclude extends AbstractAppParamPlugin {
+
+    private static final Logger LOGGER = Logger.getLogger(TestServerSideInclude.class);
 
 	/**
 	 * Prefix for internationalised messages used by this rule
@@ -50,8 +56,9 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
     private static final String SSI_WIN2 = "\">" +SSI_WIN + "<";
 
 	
-	private static Pattern patternSSIUnix = Pattern.compile("\\broot\\b.*\\busr\\b", PATTERN_PARAM);
-	private static Pattern patternSSIWin = Pattern.compile("\\bprogram files\\b.*\\b(WINDOWS|WINNT)\\b", PATTERN_PARAM);
+	private static Pattern patternSSIUnix = Pattern.compile("\\broot\\b.*\\busr\\b", PATTERN_PARAM|Pattern.DOTALL);
+	private static Pattern patternSSIWin = Pattern.compile("\\bprogram files\\b.*\\b(WINDOWS|WINNT)\\b",
+			PATTERN_PARAM | Pattern.DOTALL);
 
     @Override
     public int getId() {
@@ -71,8 +78,8 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     @Override
     public boolean targets(TechSet technologies) {
-        if (technologies.includes(Tech.OS.Linux) || technologies.includes(Tech.OS.MacOS)
-                || technologies.includes(Tech.OS.Windows)) {
+        if (technologies.includes(Tech.Linux) || technologies.includes(Tech.MacOS)
+                || technologies.includes(Tech.Windows)) {
             return true;
         }
         return false;
@@ -103,69 +110,71 @@ public class TestServerSideInclude extends AbstractAppParamPlugin {
 
     }
     
-
+	// Pre-check the original response for the detection pattern (to avoid false positives)
+	private boolean isEvidencePresent(Pattern pattern) {
+		return matchBodyPattern(getBaseMsg(), pattern, null);
+	}
 
     @Override
     public void scan(HttpMessage msg, String param, String value) {
         
-		StringBuilder evidence = new StringBuilder();
+		if ((this.inScope(Tech.Linux) || this.inScope(Tech.MacOS))
+				&& !isEvidencePresent(patternSSIUnix)) {
 
-		if (this.inScope(Tech.Linux) || this.inScope(Tech.MacOS)) {
-			try {
-				setParameter(msg, param, SSI_UNIX);
-	            sendAndReceive(msg);
-	    		//result = msg.getResponseBody().toString();
-	    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {
-	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_UNIX, msg);
-	    			return;
-	    		}
-	
-	        } catch (Exception e) {
-	        }
+			if (testServerSideInclude(param, SSI_UNIX, patternSSIUnix)) {
+				return;
+			}
 
-			try {
-			    msg = getNewMsg();
-				setParameter(msg, param, SSI_UNIX2);
-	            sendAndReceive(msg);
-	    		//result = msg.getResponseBody().toString();
-	    		if (matchBodyPattern(msg, patternSSIUnix, evidence)) {    		    
-	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_UNIX2, msg);
-	    			return;
-	    		}
-	
-	        } catch (Exception e) {
-	        }	
+			if (testServerSideInclude(param, SSI_UNIX2, patternSSIUnix)) {
+				return;
+			}
 		}
 
-		if (this.inScope(Tech.Windows)) {
-			try {
-			    msg = getNewMsg();
-				setParameter(msg, param, SSI_WIN);
-	            sendAndReceive(msg);
-	    		//result = msg.getResponseBody().toString();
-	    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
-	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_WIN, msg);
-	    			return;
-	    		}
-	
-	        } catch (Exception e) {
-	        }	
-	
-			try {
-			    msg = getNewMsg();
-				setParameter(msg, param, SSI_WIN2);
-	            sendAndReceive(msg);
-	    		//result = msg.getResponseBody().toString();
-	    		if (matchBodyPattern(msg, patternSSIWin, evidence)) {    		    
-	    			bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, evidence.toString(), SSI_WIN2, msg);
-	    			return;
-	    		}
-	
-	        } catch (Exception e) {
-	        }	
+		if (this.inScope(Tech.Windows) && !isEvidencePresent(patternSSIWin)) {
+			
+			if (testServerSideInclude(param, SSI_WIN, patternSSIWin)) {
+				return;
+			}
+
+			if (testServerSideInclude(param, SSI_WIN2, patternSSIWin)) {
+				return;
+			}
 		}
 
 	}
+
+    /**
+     * Tests for SSI vulnerability in the give {@code parameter} with the given {@code value}.
+     *
+     * @param parameter the name of the parameter that will be used for testing SSI
+     * @param value the value of the parameter that will be used for testing SSI
+     * @param testEvidence the pattern used to assert that the test worked
+     * @return {@code true} if the test should stop, either because a vulnerability was found or the scanner was stopped,
+     *         {@code false} otherwise.
+     */
+    private boolean testServerSideInclude(String parameter, String value, Pattern testEvidence) {
+        if (isStop()) {
+            return true;
+        }
+
+        HttpMessage message = getNewMsg();
+        try {
+            setParameter(message, parameter, value);
+            sendAndReceive(message);
+
+            StringBuilder evidence = new StringBuilder();
+            if (matchBodyPattern(message, testEvidence, evidence)) {
+                bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, parameter, value, null, evidence.toString(), message);
+                return true;
+            }
+        } catch (IOException e) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("IO exception while sending a message [URI=" + getBaseMsg().getRequestHeader().getURI()
+                              + ", parameter=" + parameter + ", value=" + value + "]:", e);
+            }
+        }
+        return false;
+    }
 
 	@Override
 	public int getRisk() {

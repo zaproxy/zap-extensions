@@ -28,9 +28,12 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.model.Context;
 
 
 public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
@@ -39,9 +42,11 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "pscanrules.crossdomainscriptinclusionscanner.";
+	private static final int PLUGIN_ID = 10017;
 	
 	private PassiveScanThread parent = null;
 	private static final Logger logger = Logger.getLogger(CrossDomainScriptInclusionScanner.class);
+	private Model model = null;
 	
 	@Override
 	public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -55,28 +60,37 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 			if (sourceElements != null) {
 				for (Element sourceElement : sourceElements) {
 					String src = sourceElement.getAttributeValue("src");
-						if (src != null && isScriptFromOtherDomain(msg.getRequestHeader().getHostName(), src)) {
-							this.raiseAlert(msg, id, src);
-						}	
+					if (src != null && isScriptFromOtherDomain(msg.getRequestHeader().getHostName(), src, msg)) {
+						String integrity = sourceElement.getAttributeValue("integrity");
+						if (integrity == null || integrity.trim().length() == 0) {
+							/*
+							 * If it has an integrity value assume its fine
+							 * We dont check the integrity value is valid because
+							 * 1. pscan rules cant make new requests and
+							 * 2. the browser will check it anyway
+							 */
+							this.raiseAlert(msg, id, src, sourceElement.toString());
+						}
+					}	
 				}	
 			}
 		}
 	}
 
-	private void raiseAlert(HttpMessage msg, int id, String crossDomainScript) {
+	private void raiseAlert(HttpMessage msg, int id, String crossDomainScript, String evidence) {
 		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
-		    			"The page at the following URL includes one or more script files from a third-party domain", 
+		    		getDescription(), 
 		    	    msg.getRequestHeader().getURI().toString(),
 		    	    crossDomainScript,
 		    	    "", 
 		    	    "",
-		    	    "Ensure JavaScript source files are loaded from only trusted sources, and the sources can't be controlled by end users of the application", 
+		    	    getSolution(), 
 		            "", 
-		            crossDomainScript, // evidence
-		            0,	// TODO CWE Id
-		            0,	// TODO WASC Id
+		            evidence,
+		            829,	// CWE Id 829 - Inclusion of Functionality from Untrusted Control Sphere
+		            15,	// WASC Id 15 - Application Misconfiguration
 		            msg);
 	
     	parent.raiseAlert(id, alert);
@@ -89,28 +103,62 @@ public class CrossDomainScriptInclusionScanner extends PluginPassiveScanner {
 	
 	@Override
 	public int getPluginId() {
-		return 10017;
+		return PLUGIN_ID;
 	}
 
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
+	
+	private String getDescription() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+	}
 
-	private boolean isScriptFromOtherDomain (String host, String scriptURL){
+	private String getSolution() {
+		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+	}
+	
+	private Model getModel() {
+		if (this.model == null) {
+			this.model = Model.getSingleton();
+		}
+		return this.model;
+	}
+	
+	/*
+	 * Just for use in the unit tests
+	 */
+	protected void setModel(Model model) {
+		this.model = model;
+	}
+	
+	private boolean isScriptFromOtherDomain (String host, String scriptURL, HttpMessage msg){
 		if (!scriptURL.startsWith("//") && (scriptURL.startsWith("/") || scriptURL.startsWith("./") || scriptURL.startsWith("../"))) {
 			return false;
 		}
-		boolean result = false;
+		boolean otherDomain = false;
 		try {
 			URI scriptURI = new URI(scriptURL, true);
+			String scriptURIStr = scriptURI.toString();
 			String scriptHost = scriptURI.getHost();
 			if(scriptHost != null && !scriptHost.toLowerCase().equals(host.toLowerCase())){
-				result = true;
-			} 
+				otherDomain = true;
+			}
+			if(otherDomain && ! Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+				//Get a list of contexts that contain the original URL
+				List<Context> contextList = getModel().getSession().getContextsForUrl(msg.getRequestHeader().getURI().toString());
+				for (Context context : contextList) {
+					if(context.isInContext(scriptURIStr)) {
+						//The scriptURI is in a context that the original URI is in
+						//At MEDIUM and HIGH Threshold consider this an OK cross domain inclusion
+						return false; //No need to loop further
+					}
+				}
+			}
 		}catch (URIException e) {
 			logger.debug("Error: " + e.getMessage());
 		}
-		return result;
+		return otherDomain;
 	}
 }

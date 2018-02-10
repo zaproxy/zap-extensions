@@ -4,10 +4,11 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+	<tocitem text="ZAP Gabay ng Gumagamit" tocid="toplevelitem">
+		<tocitem text="Mga Add On" tocid="addons">
 			<tocitem text="Mabilis na umpisa" image="icon147" target="quickstart">
 				<tocitem text="Command Line"  target="quickstart.cmdline" />
+				<tocitem text="Ilunsad ang mga opsyon"  target="quickstart.launch.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

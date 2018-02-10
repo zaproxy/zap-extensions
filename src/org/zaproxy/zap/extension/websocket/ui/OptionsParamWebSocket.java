@@ -26,10 +26,24 @@ public class OptionsParamWebSocket extends AbstractParam {
 	public static final String FORWARD_ALL = "websocket.forwardAll";
 	public static final String BREAK_ON_PING_PONG = "websocket.breakOnPingPong";
 	public static final String BREAK_ON_ALL = "websocket.breakOnAll";
+	private static final String CONFIRM_REMOVE_PROXY_EXCLUDE_REGEX_KEY = "websocket.confirmRemoveProxyExcludeRegex";
+	private static final String REMOVE_EXTENSIONS_HEADER_KEY = "websocket.removeExtensionsHeader";
 
 	private boolean isForwardAll;
 	private boolean isBreakOnPingPong;
 	private boolean isBreakOnAll;
+	private boolean confirmRemoveProxyExcludeRegex;
+
+	/**
+	 * Flag that controls whether or not the header {@code Sec-WebSocket-Extensions} should be removed from the handshake
+	 * messages.
+	 * <p>
+	 * Default is {@code true}.
+	 * 
+	 * @see #REMOVE_EXTENSIONS_HEADER_KEY
+	 * @see #setRemoveExtensionsHeader(boolean)
+	 */
+	private boolean removeExtensionsHeader = true;
 
     @Override
     protected void parse() {
@@ -37,6 +51,8 @@ public class OptionsParamWebSocket extends AbstractParam {
     	isForwardAll = cfg.getBoolean(FORWARD_ALL, false);
     	isBreakOnPingPong = cfg.getBoolean(BREAK_ON_PING_PONG, false);
     	isBreakOnAll = cfg.getBoolean(BREAK_ON_ALL, false);
+    	confirmRemoveProxyExcludeRegex = cfg.getBoolean(CONFIRM_REMOVE_PROXY_EXCLUDE_REGEX_KEY, false);
+    	removeExtensionsHeader = cfg.getBoolean(REMOVE_EXTENSIONS_HEADER_KEY, true);
     }
 
     /**
@@ -101,5 +117,40 @@ public class OptionsParamWebSocket extends AbstractParam {
 	public void setBreakOnAll(boolean isBreakOnAll) {
 		this.isBreakOnAll = isBreakOnAll;
 		getConfig().setProperty(BREAK_ON_ALL, isBreakOnAll);
+	}
+
+	public boolean isConfirmRemoveProxyExcludeRegex() {
+		return this.confirmRemoveProxyExcludeRegex;
+	}
+
+	public void setConfirmRemoveProxyExcludeRegex(boolean confirmRemove) {
+		this.confirmRemoveProxyExcludeRegex = confirmRemove;
+		getConfig().setProperty(CONFIRM_REMOVE_PROXY_EXCLUDE_REGEX_KEY, Boolean.valueOf(confirmRemove));
+	}
+
+	/**
+	 * Sets whether or not the header {@code Sec-WebSocket-Extensions} should be removed from the handshake messages.
+	 *
+	 * @param remove {@code true} if the header should be removed, {@code false} otherwise
+	 * @see #isRemoveExtensionsHeader()
+	 */
+	public void setRemoveExtensionsHeader(boolean remove) {
+		if (removeExtensionsHeader != remove) {
+			this.removeExtensionsHeader = remove;
+			getConfig().setProperty(REMOVE_EXTENSIONS_HEADER_KEY, Boolean.valueOf(removeExtensionsHeader));
+		}
+	}
+
+	/**
+	 * Tells whether or not the header {@code Sec-WebSocket-Extensions} should be removed from the handshake messages.
+	 * <p>
+	 * When enabled it allows ZAP to properly process the WebSocket messages, as no further (and unsupported) transformation is
+	 * done to them (for example, compression).
+	 *
+	 * @return {@code true} if the header should be removed, {@code false} otherwise
+	 * @see #setRemoveExtensionsHeader(boolean)
+	 */
+	public boolean isRemoveExtensionsHeader() {
+		return removeExtensionsHeader;
 	}
 }
