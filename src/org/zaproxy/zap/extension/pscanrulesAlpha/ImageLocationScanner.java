@@ -1,9 +1,11 @@
 /*
- * The ZAP plug-in wrapper for Veggiespam's Image
- * Location Scanner class. Passively scans a data stream containing 
- * a jpeg and report if the data contains embedded Exif GPS location.
+ * The ZAP plug-in wrapper for Veggiespam's Image Location and Privacy Scanner
+ * class. Passively scans an image data stream (jpg/png/etc) and reports if the
+ * image contains embedded location or privacy information, such as Exif GPS,
+ * IPTC codes, and some proprietary camera codes which may contain things like
+ * serial numbers.
  * 
- * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / http://www.veggiespam.com/ils/
+ * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / https://www.veggiespam.com/ils/
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -35,14 +37,16 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import com.veggiespam.imagelocationscanner.ILS;
 
 /**
- * The ZAP plug-in wrapper for Veggiespam's Image
- * Location Scanner class. Passively scans a data stream containing 
- * a jpeg and reports if the data contains embedded Exif GPS location. 
+ * The ZAP plug-in wrapper for Veggiespam's Image Location and Privacy Scanner
+ * class. Passively scans an image data stream (jpg/png/etc) and reports if the
+ * image contains embedded location or privacy information, such as Exif GPS, 
+ * IPTC codes, and some proprietary camera codes which may contain things like 
+ * serial numbers.
  * 
  * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / www.veggiespam.com
  * @license Apache License 2.0
- * @version 0.4
- * @see http://www.veggiespam.com/ils/
+ * @version 1.0
+ * @see https://www.veggiespam.com/ils/
  */
 public class ImageLocationScanner extends PluginPassiveScanner {
 	private PassiveScanThread parent = null;
