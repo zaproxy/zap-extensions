@@ -20,7 +20,10 @@
 
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.htmlparser.jericho.Source;
 
@@ -33,12 +36,13 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
  * X-Powered-By Information Leak passive scan rule 
- * https://code.google.com/p/zaproxy/issues/detail?id=1169
+ * https://github.com/zaproxy/zaproxy/issues/1169
  * @author kingthorin+owaspzap@gmail.com
  */
 public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 
 	private static final String MESSAGE_PREFIX = "pscanalpha.xpoweredbyheaderinfoleak.";
+	private static final String HEADER_NAME = "X-Powered-By";
 	private static final int PLUGIN_ID = 10037;
 	
 	private PassiveScanThread parent = null;
@@ -57,30 +61,78 @@ public class XPoweredByHeaderInfoLeakScanner extends PluginPassiveScanner{
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = System.currentTimeMillis();
-	
-		Vector<String> xpbOptions = msg.getResponseHeader().getHeaders("X-Powered-By");
-		if (xpbOptions != null) { //Header Found
-			for (String xpbDirective : xpbOptions) {
-				Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
-					getName()); 
-		    		alert.setDetail(
-		    				getDescription(), //Description
-		    				msg.getRequestHeader().getURI().toString(), //URI
-		    				"",	// Param
-		    				"", // Attack
-		    				"", // Other info
-		    				getSolution(), //Solution
-		    				getReference(), //References
-		    				xpbDirective,	// Evidence - Return the X-Powered-By Header info
-		    				200, // CWE Id
-		    				13,	// WASC Id
-		    				msg); //HttpMessage
-		    	parent.raiseAlert(id, alert);
-				}
+
+		if (isXPoweredByHeaderExist(msg)) {
+			List<String> xpbHeaders = getXPoweredByHeaders(msg);
+			raiseAlert(msg, id, xpbHeaders);
+			if (logger.isDebugEnabled()) {
+				logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
 			}
-		    if (logger.isDebugEnabled()) {
-		    	logger.debug("\tScan of record " + id + " took " + (System.currentTimeMillis() - start) + " ms");
-	    }
+		}
+	}
+
+	/**
+	 * Checks if there is any X-Powered-By header
+	 * @param msg Response Http message
+	 * @return boolean status of existence
+	 */
+	private boolean isXPoweredByHeaderExist(HttpMessage msg) {
+		return null != msg.getResponseHeader().getHeaders(HEADER_NAME);
+	}
+
+	/**
+	 * Extracts the list of "X-Powered-By" headers, and returns them without changing
+	 * their cases.
+	 * @param msg Response Http message
+	 * @return list of the matched headers
+	 */
+	private List<String> getXPoweredByHeaders(HttpMessage msg) {
+		List<String> matchedHeaders = new ArrayList<>();
+		String headers = msg.getResponseHeader().toString();
+		String[] headerElements = headers.split("\\r\\n");
+		Pattern pattern = Pattern.compile("^X-Powered-By.*", Pattern.CASE_INSENSITIVE);
+		for (String header : headerElements) {
+			Matcher matcher = pattern.matcher(header);
+			if (matcher.find()) {
+				String match = matcher.group();
+				matchedHeaders.add(match);
+			}
+		}
+		return matchedHeaders;
+	}
+
+	/**
+	 * Raises an alert with the "Evidence" or "Other" field filled-in depending on the header repetition.
+	 * @param msg The Http message containing the response headers
+	 * @param id The ID of the message being scanned.
+	 */
+	private void raiseAlert(HttpMessage msg, int id, List<String> xpbHeaders) {
+		String alertEvidence = xpbHeaders.get(0);
+		String alertOtherInfo = "";
+		if (xpbHeaders.size() > 1) { // we have multiple X-Powered-By headers
+			StringBuilder sb = new StringBuilder();
+			sb.append(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.msg"));
+			for (int i = 1; i < xpbHeaders.size(); i++) {
+				sb.append(xpbHeaders.get(i));
+				sb.append("\r\n");
+			}
+			alertOtherInfo = sb.toString();
+		}
+		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
+				getName());
+			alert.setDetail(
+					getDescription(), //Description
+					msg.getRequestHeader().getURI().toString(), //URI
+					"",	// Param
+					"", // Attack
+					alertOtherInfo, // Other info
+					getSolution(), //Solution
+					getReference(), //References
+					alertEvidence, // Evidence
+					200, // CWE Id
+					13,	// WASC Id
+					msg); //HttpMessage
+		parent.raiseAlert(id, alert);
 	}
 
 	@Override

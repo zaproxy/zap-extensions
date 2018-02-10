@@ -1,0 +1,31 @@
+<zapaddon>
+	<name>DOM XSS Active scanner rule</name>
+	<version>6</version>
+	<status>alpha</status>
+	<description>DOM XSS Active scanner rule</description>
+	<author>ZAP Dev Team</author>
+	<url/>
+	<changes>
+	<![CDATA[
+	Minor code changes.<br>
+	Add XSS Polyglot (Issue 2322).<br>
+	]]>
+    </changes>
+	<dependencies>
+		<addons>
+			<addon>
+				<id>selenium</id>
+				<semver>2.*</semver>
+			</addon>
+		</addons>
+	</dependencies>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.domxss.ExtensionDomXSS</extension>
+	</extensions>
+	<ascanrules />
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.7.0</not-before-version>
+	<not-from-version/>
+</zapaddon>

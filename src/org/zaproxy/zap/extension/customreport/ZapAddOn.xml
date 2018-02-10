@@ -1,0 +1,28 @@
+<zapaddon>
+        <name>CustomReport</name>
+        <version>3</version>
+        <status>alpha</status>
+        <description>New HTML report module allows users to customize report content.</description>
+        <author>Chienli Ma</author>
+        <url></url>
+        <changes>
+        <![CDATA[
+        Minor code changes.<br>
+        ]]>
+        </changes>
+        <dependson/>
+        <extensions>
+                <extension>org.zaproxy.zap.extension.customreport.ExtensionCustomReport</extension>
+        </extensions>
+        <ascanrules/>
+        <pscanrules/>
+        <filters/>
+        <files>
+                <file>xml/mergeAlertitems.xml.xsl</file>
+                <file>xml/report.concise.html.xsl</file>
+                <file>xml/report.separated.html.xsl</file>
+                <file>xml/report.traditional.html.xsl</file>
+        </files>
+        <not-before-version>2.4.0</not-before-version>
+        <not-from-version></not-from-version>
+</zapaddon> 

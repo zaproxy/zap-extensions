@@ -68,7 +68,7 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String evidence) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
 	    			this.getDescription(), 
@@ -93,10 +93,6 @@ public class WSDLFilePassiveScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		/*
-		 * This should be unique across all active and passive rules.
-		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
-		 */
 		return 90030;
 	}
 	

@@ -3,7 +3,7 @@
  * Location Scanner class. Passively scans a data stream containing 
  * a jpeg and report if the data contains embedded Exif GPS location.
  * 
- * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / www.veggiespam.com
+ * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / http://www.veggiespam.com/ils/
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -19,9 +19,6 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.net.URL;
-import java.util.Random;
-
 import net.htmlparser.jericho.Source;
 
 import org.apache.commons.httpclient.URI;
@@ -30,12 +27,10 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 import com.veggiespam.imagelocationscanner.ILS;
 
@@ -46,26 +41,14 @@ import com.veggiespam.imagelocationscanner.ILS;
  * 
  * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / www.veggiespam.com
  * @license Apache License 2.0
- * @version 0.1
+ * @version 0.4
  * @see http://www.veggiespam.com/ils/
  */
 public class ImageLocationScanner extends PluginPassiveScanner {
 	private PassiveScanThread parent = null;
 	private static final Logger logger = Logger.getLogger(ImageLocationScanner.class);
-	
-	/** A bunch of static strings that are used by both ZAP and Burp plug-ins.  These
-	 * are the default names of the items.  At some point in the future, these will
-	 * need to be localized in the ZAP manner, but these will be the embedded defaults. */
-    private static final String pluginName = ILS.pluginName;
-    private static final String alertTitle = ILS.alertTitle;
-    private static final String issueDetailPrefix = ILS.alertDetailPrefix;
-    private static final String issueBackground  = ILS.alertBackground;
-    private static final String remediationBackground = ILS.remediationBackground;
-    //private static final String remediationDetail = ILS.remediationDetail;
-    private static final String referenceURL = ILS.referenceURL; 
-    private static final String pluginAuthor = ILS.pluginAuthor; 
-
-
+	private static final String MESSAGE_PREFIX = "pscanalpha.imagelocationscanner.";
+	private static final int PLUGIN_ID = 10103;
 	
 	
 	@Override
@@ -80,11 +63,7 @@ public class ImageLocationScanner extends PluginPassiveScanner {
 
 	@Override
 	public int getPluginId() {
-		/*
-		 * This should be unique across all active and passive rules.
-		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
-		 */
-		return 333292; // FIXME TEMP XXX TODO - get a real ID.
+		return PLUGIN_ID;
 	}
 
 	@Override
@@ -93,43 +72,60 @@ public class ImageLocationScanner extends PluginPassiveScanner {
 		if (logger.isDebugEnabled()) {
 			start = System.currentTimeMillis();
 		}
-				
+		
+        // Mnemonic: CT ==> Content-Type
         String CT = msg.getResponseHeader().getHeader("Content-Type");
+        if (null == CT) {
+            CT = "";
+        } else {
+            CT.toLowerCase();
+        }
+
         URI uri = msg.getRequestHeader().getURI();
         String url = uri.toString();
         String fileName;
 		try {
 			fileName = uri.getName();
+			if (fileName == null) {
+				fileName = "";
+			}
 		} catch (URIException e) {
 			// e.printStackTrace();
+			// If we cannot decode the URL, then just set filename to empty.
 			fileName = "";
 		}
         String extension = "";
         int i = fileName.lastIndexOf('.');
         if (i > 0) {
-            extension = fileName.substring(i+1);
+            extension = fileName.substring(i+1).toLowerCase();
         }
 
-		logger.debug("\tCT: " + CT + " url: " + url + " fileName: " + fileName + " ext: " + extension);
-
-		if (CT.equalsIgnoreCase("image/jpeg") || CT.equalsIgnoreCase("image/jpg") 
-				|| extension.equalsIgnoreCase("jpeg")  || extension.equalsIgnoreCase("jpg")  ) {
+        if (logger.isDebugEnabled()) {
+		    logger.debug("\tCT: " + CT + " url: " + url + " fileName: " + fileName + " ext: " + extension);
+        }
+        
+        // everything is already lowercase
+        if (CT.startsWith("image/jpeg") || CT.startsWith("image/jpg") 
+                || extension.equals("jpeg") || extension.equals("jpg")  
+                || CT.startsWith("image/png")   || extension.equals("png")  
+                || CT.startsWith("image/tiff")  || extension.equals("tiff") || extension.equals("tif")
+                ) {
 		
-			String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes());
+			String hasGPS = ILS.scanForLocationInImage(msg.getResponseBody().getBytes(), false);
 			
 			if (! hasGPS.isEmpty()) {
-				Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, alertTitle);
+				Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getAlertTitle());
 				alert.setDetail(
 			    		getDescription(), 
 			    		url,
 			    		"",	// Param
-			    		"None, information disclosure warning.", // Attack
+			    		"", // Attack
 			    		"", // Other info
 			    		getSolution(), 
 			            getReference(), 
-			            issueDetailPrefix + hasGPS,	// Evidence
-			            0,	// CWE Id
-			            0,	// WASC Id
+                        getAlertDetailPrefix()  + " " + hasGPS,	// Evidence
+			            200, // CWE-200: Information Exposure
+			            13,	// WASC-13: Information Leakage
 			            msg);
 				
 		    	parent.raiseAlert(id, alert);
@@ -143,12 +139,19 @@ public class ImageLocationScanner extends PluginPassiveScanner {
 
 	@Override
 	public String getName() {
-		return pluginName;
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
     public String getDescription() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    }
 
-    	return issueBackground;
+    public String getAlertTitle() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "alerttitle");
+    }
+
+    public String getAlertDetailPrefix() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "alertDetailPrefix");
     }
 
     public int getCategory() {
@@ -156,16 +159,23 @@ public class ImageLocationScanner extends PluginPassiveScanner {
     }
 
     public String getSolution() {
-    	return remediationBackground;
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     public String getReference() {
-    	return referenceURL;
+        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
     
     public String getAuthor() {
-    	return pluginAuthor;
+        return ILS.pluginAuthor;
     }
 
-
+    @Override
+    public boolean appliesToHistoryType(int historyType) {
+        if (historyType == HistoryReference.TYPE_HIDDEN) {
+            // Scan hidden images, if the scanner is enabled it should scan.
+            return true;
+        }
+        return super.appliesToHistoryType(historyType);
+    }
 }

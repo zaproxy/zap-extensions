@@ -25,22 +25,18 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
-/*
- * An example ZAP extension which adds a right click menu item to all of the main
- * tabs which list messages. 
+/**
+ * A pop up menu item shown in components that contain HTTP messages, it shows an internationalised message with the request-uri
+ * of the HTTP message.
  * 
- * This class is defines the popup menu item.
+ * @see HttpMessageContainer
  */
 public class RightClickMsgMenu extends PopupMenuItemHttpMessageContainer {
 
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
-	private ExtensionSimpleExample extension = null;
+	private ExtensionSimpleExample extension;
 
-    /**
-     * @param ext 
-     * @param label
-     */
     public RightClickMsgMenu(ExtensionSimpleExample ext, String label) {
         super(label);
         /*
@@ -62,10 +58,16 @@ public class RightClickMsgMenu extends PopupMenuItemHttpMessageContainer {
 
 	@Override
 	public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
-		// This is enabled for all tabs which list messages
-		// You can examine the invoker is you wish to restrict this to specific tabs
+		// This pop up menu item is enabled for all tabs/components that have just one
+		// message (selected, if it shows more than one and allows to selected them)
+		// You can examine the invoker if you wish to restrict this to specific tabs
 		return true;
 	}
 
+	@Override
+	public boolean isSafe() {
+		// The action of menu item does not do any (potentially) unsafe operation, like starting a scan against a target.
+		return true;
+	}
 	
 }

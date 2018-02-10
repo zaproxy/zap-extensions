@@ -1,0 +1,24 @@
+<zapaddon>
+	<name>JxBrowser (core)</name>
+	<version>8</version>
+	<status>alpha</status>
+	<description>An embedded browser based on Chromium, you must also install the relevant platform specific add-on</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>
+	<![CDATA[
+		Minor code change to address deprecations.<br>
+		Updated to JxBrowser 6.18.<br>
+	]]>
+	</changes>
+	<dependencies/>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.jxbrowser.ExtensionJxBrowser</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.7.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>

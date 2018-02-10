@@ -20,7 +20,6 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiOther;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
-import org.zaproxy.zap.extension.api.ApiView;
 
 ///This class extends the ImportLog functionality to the ZAP REST API 
 public class ImportLogAPI extends ApiImplementor {
@@ -142,30 +141,11 @@ public class ImportLogAPI extends ApiImplementor {
 
     // Methods to show in the http API view
     public ImportLogAPI(ExtensionImportLogFiles extensionImportLogFiles) {
-        this.addApiView(new ApiView(Import_Zap_Log_From_File, new String[] { PARAM_FILE }));
-        this.addApiView(new ApiView(Import_ModSec_Log_From_File, new String[] { PARAM_FILE }));
-        this.addApiView(new ApiView(Import_Zap_HttpRequestResponsePair, new String[] { PARAM_REQUEST, PARAM_RESPONSE }));
+        this.addApiAction(new ApiAction(Import_Zap_Log_From_File, new String[] { PARAM_FILE }));
+        this.addApiAction(new ApiAction(Import_ModSec_Log_From_File, new String[] { PARAM_FILE }));
+        this.addApiAction(new ApiAction(Import_Zap_HttpRequestResponsePair, new String[] { PARAM_REQUEST, PARAM_RESPONSE }));
         this.addApiAction(new ApiAction(POST_ModSec_AuditEvent, null, new String[] { PARAM_AuditEventString }));
         this.addApiOthers(new ApiOther(OtherPOST_ModSec_AuditEvent, new String[] { PARAM_AuditEventString }));
-    }
-
-    // TODO - Need to add functionality to handle the POSTBody processing at some level of the implementation.
-    @Override
-    public ApiResponse handleApiOptionAction(String name, JSONObject params) throws ApiException {
-        ExtensionImportLogFiles importer = new ExtensionImportLogFiles();
-        if (POST_ModSec_AuditEvent.equals(name)) {
-            // TODO - figure out how best to add the post and where the params should be set!!!
-            String trimmed = params.getString("POSTBODY").replaceFirst("zapapiformat=JSON&AuditEventString=", "");
-            String filename = "\\" + java.util.UUID.randomUUID().toString() + ".txt";
-            try {
-                // TODO - this doesn't work as the source needs to be a local file
-                return processLogs(filename, importer, ExtensionImportLogFiles.logType[1], trimmed);
-            } catch (Exception ex) {
-                String errMessage = "Failed - " + ex.getMessage();
-                return new ApiResponseElement("Parsing audit event log to ZAPs site tree", errMessage);
-            }
-        }
-        return null;
     }
 
     @Override
@@ -186,7 +166,7 @@ public class ImportLogAPI extends ApiImplementor {
     }
 
     @Override
-    public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
+    public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         ExtensionImportLogFiles importer = new ExtensionImportLogFiles();
         if (Import_Zap_Log_From_File.equals(name))
             return processLogsFromFile(params.getString(PARAM_FILE), importer, ExtensionImportLogFiles.logType[0]);
@@ -201,6 +181,19 @@ public class ImportLogAPI extends ApiImplementor {
             } catch (HttpMalformedHeaderException e) {
                 String errMessage = "Failed - " + e.getMessage();
                 return new ApiResponseElement("Parsing logs files to ZAPs site tree", errMessage);
+            }
+        }
+        // TODO - Need to add functionality to handle the POSTBody processing at some level of the implementation.
+        if (POST_ModSec_AuditEvent.equals(name)) {
+            // TODO - figure out how best to add the post and where the params should be set!!!
+            String trimmed = params.getString("POSTBODY").replaceFirst("zapapiformat=JSON&AuditEventString=", "");
+            String filename = "\\" + java.util.UUID.randomUUID().toString() + ".txt";
+            try {
+                // TODO - this doesn't work as the source needs to be a local file
+                return processLogs(filename, importer, ExtensionImportLogFiles.logType[1], trimmed);
+            } catch (Exception ex) {
+                String errMessage = "Failed - " + ex.getMessage();
+                return new ApiResponseElement("Parsing audit event log to ZAPs site tree", errMessage);
             }
         }
         return new ApiResponseElement("Requested Method", "Failed - Method Not Found");

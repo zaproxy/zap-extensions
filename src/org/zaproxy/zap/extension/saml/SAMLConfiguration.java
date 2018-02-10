@@ -1,7 +1,7 @@
 package org.zaproxy.zap.extension.saml;
 
 import org.apache.log4j.Logger;
-import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.Constant;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -9,11 +9,13 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Set;
 
 public class SAMLConfiguration implements AttributeListener {
 
     private static final String SAML_CONF_FILE = "zap_saml_conf.xml";
+    private static final String SAML_CONF_FILE_PATH = Paths.get(Constant.getZapHome(), SAML_CONF_FILE).toString();
     private static SAMLConfiguration configuration = new SAMLConfiguration();
 
     private SAMLConfigData configData;
@@ -34,9 +36,7 @@ public class SAMLConfiguration implements AttributeListener {
      * @throws SAMLException
      */
     public void initialize() throws SAMLException {
-        String confPath = Model.getSingleton().getOptionsParam().getUserDirectory().getAbsolutePath() + "/" +
-                SAML_CONF_FILE;
-        initialize(confPath);
+        initialize(SAML_CONF_FILE_PATH);
     }
 
     /**
@@ -167,9 +167,7 @@ public class SAMLConfiguration implements AttributeListener {
             JAXBContext context = JAXBContext.newInstance(SAMLConfigData.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            String confPath = Model.getSingleton().getOptionsParam().getUserDirectory().getAbsolutePath() + "/" +
-                    SAML_CONF_FILE;
-            marshaller.marshal(configData, new File(confPath));
+            marshaller.marshal(configData, new File(SAML_CONF_FILE_PATH));
             return true;
         } catch (JAXBException e) {
             log.error("Saving configuration failed");
@@ -185,7 +183,7 @@ public class SAMLConfiguration implements AttributeListener {
      * @return unmarshalled object
      * @throws SAMLException
      */
-    private Object loadXMLObject(Class clazz, File file) throws SAMLException {
+    private Object loadXMLObject(Class<?> clazz, File file) throws SAMLException {
         try {
             JAXBContext context = JAXBContext.newInstance(clazz);
             Unmarshaller unmarshaller = context.createUnmarshaller();

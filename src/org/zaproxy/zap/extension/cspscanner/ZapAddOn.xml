@@ -1,0 +1,24 @@
+<zapaddon>
+	<name>Content Security Policy Scanner</name>
+	<version>5</version>
+	<status>alpha</status>
+	<description>Content Security Policy (CSP) Scanner</description>
+	<author>ZAP Dev Team</author>
+	<url/>
+	<changes>
+	<![CDATA[
+		Minor code changes to address deprecations.<br>
+	]]>
+	</changes>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.cspscanner.ExtensionContentSecurityPolicyScanner</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.cspscanner.ContentSecurityPolicyScanner</pscanrule>
+	</pscanrules>
+	<filters/>
+	<files/>
+	<not-before-version>2.7.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>

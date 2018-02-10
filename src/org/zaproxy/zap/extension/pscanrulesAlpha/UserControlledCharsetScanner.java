@@ -111,6 +111,9 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 			}
 			
 			String bodyContentCharset = getBodyContentCharset(bodyContentType);
+			if (bodyContentCharset == null) {
+				continue;
+			}
 	        for (HtmlParameter param: params) {        	        	
 	            if (bodyContentCharset.equalsIgnoreCase(param.getValue())) {
 	            	raiseAlert(msg, id, "META", "Content-Type", param, bodyContentCharset);
@@ -196,7 +199,7 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 	
 	private void raiseAlert(HttpMessage msg, int id, String tag, String attr, 
 			HtmlParameter param, String charset) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM,
 				getName());				    
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
@@ -204,8 +207,8 @@ public class UserControlledCharsetScanner extends PluginPassiveScanner {
 				getExtraInfoMessage(msg, tag, attr, param, charset),
 				getSolutionMessage(), getReferenceMessage(),  
 				"",	// No evidence
-				0,	// TODO CWE Id
-				0,	// TODO WASC Id
+				20,	// CWE-20: Improper Input Validation
+				20,	// WASC-20: Improper Input Handling
 				msg);  
 
 		parent.raiseAlert(id, alert);

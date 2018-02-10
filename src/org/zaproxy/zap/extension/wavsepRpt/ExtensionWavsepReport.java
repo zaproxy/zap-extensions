@@ -181,23 +181,7 @@ public class ExtensionWavsepReport extends ExtensionAdaptor {
      * 
      */
     public ExtensionWavsepReport() {
-        super();
- 		initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public ExtensionWavsepReport(String name) {
-        super(name);
-    }
-
-	/**
-	 * This method initializes this
-	 * 
-	 */
-	private void initialize() {
-        this.setName(NAME);
+        super(NAME);
 	}
 	
 	@Override
@@ -318,14 +302,14 @@ public class ExtensionWavsepReport extends ExtensionAdaptor {
 			for (Alert alert : node.getAlerts()) {
 				String shortForm = null;
 				for (String[] sf : SHORT_FORMS) {
-					if (alert.getAlert().equalsIgnoreCase(sf[0])) {
+					if (alert.getName().equalsIgnoreCase(sf[0])) {
 						shortForm = sf[1];
 						break;
 					}
 				}
 				if (shortForm == null) {
 					// Wont be a rule for it
-					missingShortForms.add(alert.getAlert());
+					missingShortForms.add(alert.getName());
 					continue;
 				}
 				boolean foundRule = false;
@@ -468,7 +452,7 @@ public class ExtensionWavsepReport extends ExtensionAdaptor {
 			PrintWriter pw = new PrintWriter(htmlFile);
 			
 			pw.println("<html><head><title>ZAP Wavsep Report</title></head><body>");
-			pw.println("<h1><img src=\"http://zaproxy.googlecode.com/svn/trunk/src/resource/zap64x64.png\" align=\"middle\">OWASP ZAP wavsep results</h1>");
+			pw.println("<h1><img src=\"https://raw.githubusercontent.com/zaproxy/zaproxy/develop/src/resource/zap64x64.png\" align=\"middle\">OWASP ZAP wavsep results</h1>");
 			pw.println("Generated TBA");
 			pw.println("<h3>Total Score " + passRate + "%</h3>");
 			pw.println("<br/>");

@@ -139,7 +139,7 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 		
 		//get the request contents as an array of Strings, so we can match against them
 		String requestheader = msg.getRequestHeader().getHeadersAsString();
-		String requestbody = new String (msg.getRequestBody().getBytes());
+		String requestbody = msg.getRequestBody().toString();
 		String [] requestparts = {requestheader, requestbody};
 		
 		checkForHashes (msg, id, requestparts);
@@ -158,7 +158,7 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 		
 		//get the response contents as an array of Strings, so we can match against them
 		String responseheader = msg.getResponseHeader().getHeadersAsString();
-		String responsebody = new String (msg.getResponseBody().getBytes());
+		String responsebody = msg.getResponseBody().toString();
 		String [] responseparts = {responseheader, responsebody};
 		
 		checkForHashes (msg, id, responseparts);
@@ -193,7 +193,7 @@ public class HashDisclosureScanner extends PluginPassiveScanner {
 								getDescription() + " - "+ hashType, 
 								msg.getRequestHeader().getURI().toString(), 
 								"", //param
-								evidence, //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+								"",  // attack 
 								getExtraInfo(msg, evidence),  //other info
 								getSolution(), 
 								getReference(), 

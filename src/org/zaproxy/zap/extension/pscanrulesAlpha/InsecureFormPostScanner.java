@@ -101,7 +101,7 @@ public class InsecureFormPostScanner extends PluginPassiveScanner {
 	}
 	
 	private void raiseAlert(HttpMessage msg, int id, Element formElement) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.WARNING,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM,
 				getName());		
 		     
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
@@ -109,8 +109,8 @@ public class InsecureFormPostScanner extends PluginPassiveScanner {
 				getExtraInfoMessage(msg, formElement),
 				getSolutionMessage(), getReferenceMessage(),  
 				"",	// No evidence
-				0,	// TODO CWE Id
-				0,	// TODO WASC Id
+				16,	// CWE-16: Configuration
+				15,	// WASC-15: Application Misconfiguration
 				msg);  
 
 		parent.raiseAlert(id, alert);

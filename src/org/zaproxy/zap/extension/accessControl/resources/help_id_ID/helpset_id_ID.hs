@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE helpset PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version 2.0//EN" "http://java.sun.com/products/javahelp/helpset_2_0.dtd">
 <helpset version="2.0" xml:lang="id-ID">
-  <title>Access Control Testing | ZAP Extension</title>
+  <title>Akses Kontrol Pengujian | ZAP Ekstensi</title>
 
   <maps>
      <homeID>top</homeID>
@@ -10,21 +10,21 @@
 
   <view>
     <name>TOC</name>
-    <label>Contents</label>
+    <label>Isi</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>
 
   <view>
     <name>Index</name>
-    <label>Index</label>
+    <label>Indeks</label>
     <type>javax.help.IndexView</type>
     <data>index.xml</data>
   </view>
 
   <view>
     <name>Favorites</name>
-    <label>Favorites</label>
+    <label>Favorit</label>
     <type>javax.help.FavoritesView</type>
   </view>
 </helpset>

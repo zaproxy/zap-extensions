@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.db.RecordContext;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
@@ -82,10 +83,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	public static final String NAME = "ExtensionAccessControl";
 
 	/** The list of extensions this depends on. */
-	private static final List<Class<?>> EXTENSION_DEPENDENCIES;
+	private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
 	static {
 		// Prepare a list of Extensions on which this extension depends
-		List<Class<?>> dependencies = new ArrayList<>(1);
+		List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
 		dependencies.add(ExtensionUserManagement.class);
 		dependencies.add(ExtensionAuthentication.class);
 		dependencies.add(ExtensionAuthorization.class);
@@ -131,7 +132,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 
 	@Override
 	public boolean canUnload() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -154,7 +155,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 	}
 
 	@Override
-	public List<Class<?>> getDependencies() {
+	public List<Class<? extends Extension>> getDependencies() {
 		return EXTENSION_DEPENDENCIES;
 	}
 
@@ -234,7 +235,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor implements SessionC
 		}
 		// If the session has changed, make sure we reload any ContextTrees for the existing context
 		// managers
-		// NOTE: if https://code.google.com/p/zaproxy/issues/detail?id=1316 is fixed, this could
+		// NOTE: if https://github.com/zaproxy/zaproxy/issues/1316 is fixed, this could
 		// move to the "loadContextData()" method
 		if (session != null) {
 			for (Context c : session.getContexts()) {

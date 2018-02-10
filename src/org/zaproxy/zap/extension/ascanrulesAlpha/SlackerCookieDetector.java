@@ -3,6 +3,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -20,15 +21,15 @@ import org.zaproxy.zap.model.Vulnerability;
  * Goal: automate discovery of areas of a website where authentication via
  * session cookies, or content controlled by preference cookies, is not actually
  * enforced.
- * 
+ * <p>
  * Method: checks one by one if cookies really used for rendering a page at
  * given URI, based on length in bytes of response compared to baseline request.
- * 
+ * <p>
  * For example if 5 cookies exist, 5 new GET requests executed, each time
  * dropping a different cookie and noting any change in the response length. A
  * site with only tracking cookies will get an INFO alert but may be working as
  * designed.
- * 
+ * <p>
  * With thanks to Kaiser Permanente CyberSecurity comrades for using and
  * feedback.
  */
@@ -146,10 +147,12 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 			sendAndReceive(msg, false);
 			int responseLength = msg.getResponseBody().length();
 
-			log.debug("trying to exclude cookie " + oneCookie.getName() + ", request header=>"
-					+ msg.getRequestHeader().getHeadersAsString());
-			log.debug("response length was:" + responseLength + ", while baseResponseLength was: "
-					+ baseResponseLength);
+			if (log.isDebugEnabled()) {
+				log.debug("trying to exclude cookie " + oneCookie.getName() + ", request header=>"
+						+ msg.getRequestHeader().getHeadersAsString());
+				log.debug("response length was:" + responseLength + ", while baseResponseLength was: "
+						+ baseResponseLength);
+			}
 
 			if (responseLength != baseResponseLength) {
 				doesThisCookieMatter = true;
@@ -164,7 +167,7 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 	private void raiseAlert(HttpMessage msg, Set<HtmlParameter> cookies,
 			Set<String> cookiesThatMakeADifference, Set<String> cookiesThatDoNOTMakeADifference) {
 
-		StringBuffer otherInfoBuff = createOtherInfoText(cookiesThatMakeADifference,
+		StringBuilder otherInfoBuff = createOtherInfoText(cookiesThatMakeADifference,
 				cookiesThatDoNOTMakeADifference);
 
 		int riskLevel = calculateRisk(cookiesThatDoNOTMakeADifference, otherInfoBuff);
@@ -182,10 +185,10 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 				null, msg);
 	}
 
-	private StringBuffer createOtherInfoText(Set<String> cookiesThatMakeADifference,
+	private StringBuilder createOtherInfoText(Set<String> cookiesThatMakeADifference,
 			Set<String> cookiesThatDoNOTMakeADifference) {
 
-		StringBuffer otherInfoBuff = new StringBuffer(
+		StringBuilder otherInfoBuff = new StringBuilder(
 				Constant.messages.getString("ascanalpha.cookieslack.otherinfo.intro"));
 
 		otherInfoBuff.append(getAffectResponseYes());
@@ -197,7 +200,7 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 		return otherInfoBuff;
 	}
 
-	private void listCookies(Set<String> cookieSet, StringBuffer otherInfoBuff) {
+	private void listCookies(Set<String> cookieSet, StringBuilder otherInfoBuff) {
 		Iterator<String> itYes = cookieSet.iterator();
 		while (itYes.hasNext()) {
 			formatCookiesList(otherInfoBuff, itYes);
@@ -205,11 +208,11 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 		otherInfoBuff.append(getEOL());
 	}
 
-	private int calculateRisk(Set<String> cookiesThatDoNOTMakeADifference, StringBuffer otherInfoBuff) {
+	private int calculateRisk(Set<String> cookiesThatDoNOTMakeADifference, StringBuilder otherInfoBuff) {
 		int riskLevel = Alert.RISK_INFO;
 		for (String cookie : cookiesThatDoNOTMakeADifference) {
 			for (String risky_cookie : HIGH_RISK_COOKIE_NAMES) {
-				if (cookie.toLowerCase().indexOf(risky_cookie) > -1) {
+				if (cookie.toLowerCase(Locale.ROOT).indexOf(risky_cookie) > -1) {
 					// time to worry: we dropped a likely session cookie, but no
 					// change in response
 					riskLevel = Alert.RISK_LOW;
@@ -240,7 +243,7 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 		return Constant.messages.getString("ascanalpha.cookieslack.endline");
 	}
 
-	private void formatCookiesList(StringBuffer otherInfoBuff, Iterator<String> cookieIterator) {
+	private void formatCookiesList(StringBuilder otherInfoBuff, Iterator<String> cookieIterator) {
 
 		otherInfoBuff.append(cookieIterator.next());
 		if (cookieIterator.hasNext()) {
@@ -252,11 +255,6 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 		return Constant.messages.getString("ascanalpha.cookieslack.session.warning", cookie);
 	}
 
-	/**
-	 * This should be unique across all active and passive rules. The master
-	 * list:
-	 * http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
-	 */
 	@Override
 	public int getId() {
 		return 90027;
@@ -284,7 +282,7 @@ public class SlackerCookieDetector extends AbstractAppPlugin {
 
 	@Override
 	public String getSolution() {
-		return Constant.messages.getString("ascanalpha.cookieslack.solution");
+		return "";
 	}
 
 	@Override

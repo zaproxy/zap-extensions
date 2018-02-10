@@ -26,35 +26,12 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 
-
 public class PopupMenuEvidenceSearch extends ExtensionPopupMenuItem {
 
 	private static final long serialVersionUID = 1L;
 
-    private ExtensionWappalyzer extension;
-    private Pattern pattern = null;
-    private ExtensionSearch.Type type = null;
-
-    /**
-     * @param label
-     */
-    public PopupMenuEvidenceSearch(String label, Pattern pattern, ExtensionSearch.Type type) {
+    public PopupMenuEvidenceSearch(String label, final ExtensionWappalyzer extension, final Pattern pattern, final ExtensionSearch.Type type) {
         super(label);
-        this.pattern = pattern;
-        this.type = type;
- 		initialize();
-    }
-
-	public void setExtension(ExtensionWappalyzer extension) {
-		this.extension = extension;
-	}
-
-    /**
-	 * This method initialises this
-	 */
-	private void initialize() {
-		// TODO add prefix for pattern type?
-        this.setText(pattern.pattern());
         this.addActionListener(new java.awt.event.ActionListener() { 
 
         	@Override
@@ -83,7 +60,6 @@ public class PopupMenuEvidenceSearch extends ExtensionPopupMenuItem {
         return false;
     }
     
-
     @Override
     public boolean isSafe() {
     	return true;

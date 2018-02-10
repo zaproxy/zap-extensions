@@ -1,0 +1,23 @@
+<zapaddon>
+	<name>Code Dx Extension</name>
+	<version>5</version>
+	<status>alpha</status>
+	<description>Includes request and response data in XML reports and provides the ability to upload reports directly to a Code Dx server</description>
+	<author>Code Dx, Inc.</author>
+	<url></url>
+	<changes>
+	<![CDATA[
+	Add an upload to Code Dx option.<br>
+	]]>
+	</changes>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.codedx.CodeDxExtension</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
+	</files>
+	<not-before-version>2.4.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>

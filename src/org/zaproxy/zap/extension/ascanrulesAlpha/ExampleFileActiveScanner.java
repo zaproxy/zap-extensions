@@ -32,6 +32,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 /**
  * An example active scan rule, for more details see 
@@ -53,7 +55,7 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
 	public int getId() {
 		/*
 		 * This should be unique across all active and passive rules.
-		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
+		 * The master list is https://github.com/zaproxy/zaproxy/blob/develop/src/doc/scanners.md
 		 */
 		return 60101;
 	}
@@ -63,6 +65,14 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
 	}
 	
+	@Override
+	public boolean targets(TechSet technologies) { // This method allows the programmer or user to restrict when a 
+		//scanner is run based on the technologies selected.  For example, to restrict the scanner to run just when 
+		//C language is selected 
+		return technologies.includes(Tech.C); 
+	}
+		
+	@Override
 	public String getDescription() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
 	}
@@ -71,10 +81,12 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
 		return Constant.messages.getString(MESSAGE_PREFIX + "other");
 	}
 
+	@Override
 	public String getSolution() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
 	}
 
+	@Override
 	public String getReference() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
@@ -142,13 +154,13 @@ public class ExampleFileActiveScanner extends AbstractAppParamPlugin {
 				String evidence;
 				if ((evidence = doesResponseContainString(msg.getResponseBody(), attack)) != null) {
 					// Raise an alert
-			   		bingo(Alert.RISK_HIGH, Alert.WARNING, null, param, attack, getOtherInfo(),
+			   		bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, attack, getOtherInfo(),
 			   	            evidence, msg);
 					return;
 				}
 			}
 			
-		} catch (Exception e) {
+		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}	
 	}

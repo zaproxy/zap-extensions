@@ -33,13 +33,13 @@ public class SiteTreeNodeCellRenderer extends DefaultTreeCellRenderer {
 	private static final long serialVersionUID = -6714631438207624613L;
 
 	protected static final ImageIcon ROOT_ICON = new ImageIcon(
-			DefaultTreeCellRenderer.class.getResource("/resource/icon/16/094.png"));
+			SiteTreeNodeCellRenderer.class.getResource("/resource/icon/16/094.png"));
 	protected static final ImageIcon LEAF_ICON = new ImageIcon(
-			DefaultTreeCellRenderer.class.getResource("/resource/icon/fugue/document.png"));
+			SiteTreeNodeCellRenderer.class.getResource("/resource/icon/fugue/document.png"));
 	protected static final ImageIcon FOLDER_OPEN_ICON = new ImageIcon(
-			DefaultTreeCellRenderer.class.getResource("/resource/icon/fugue/folder-horizontal-open.png"));
+			SiteTreeNodeCellRenderer.class.getResource("/resource/icon/fugue/folder-horizontal-open.png"));
 	protected static final ImageIcon FOLDER_CLOSED_ICON = new ImageIcon(
-			DefaultTreeCellRenderer.class.getResource("/resource/icon/fugue/folder-horizontal.png"));
+			SiteTreeNodeCellRenderer.class.getResource("/resource/icon/fugue/folder-horizontal.png"));
 
 	/**
 	 * Sets custom tree node icons.

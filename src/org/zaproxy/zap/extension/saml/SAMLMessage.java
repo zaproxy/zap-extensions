@@ -8,6 +8,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.zaproxy.zap.utils.XmlUtils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -96,7 +97,7 @@ public class SAMLMessage {
      */
     private void buildXMLDocument() throws SAMLException {
         try {
-            DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory docBuilderFactory = XmlUtils.newXxeDisabledDocumentBuilderFactory();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             xmlDocument = docBuilder.parse(new InputSource(new StringReader(samlMessageString)));
             xmlDocument.getDocumentElement().normalize();

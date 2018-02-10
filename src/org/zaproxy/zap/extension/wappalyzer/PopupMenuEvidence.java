@@ -30,7 +30,7 @@ import javax.swing.JMenuItem;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
-
+import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
 public class PopupMenuEvidence extends ExtensionPopupMenuItem {
 
@@ -40,32 +40,13 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
     
     private List<PopupMenuEvidenceSearch> subMenus = new ArrayList<PopupMenuEvidenceSearch>();
 
-	/**
-     * 
-     */
-    public PopupMenuEvidence() {
-        super();
-    }
-
-    /**
-     * @param label
-     */
-    public PopupMenuEvidence(String label) {
-        super(label);
-    }
-
-	public void setExtension(ExtensionWappalyzer extension) {
+    public PopupMenuEvidence(ExtensionWappalyzer extension) {
 		this.extension = extension;
 	}
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
-    	final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-    	// Remove any old submenus
-    	for (PopupMenuEvidenceSearch menu : this.subMenus) {
-			mainPopupMenuItems.remove(menu);
-    	}
-    	this.subMenus.clear();
+        clearSubMenus();
     	
         if (invoker.getName() != null && invoker.getName().equals(TechPanel.PANEL_NAME)) {
             Application app = extension.getSelectedApp();
@@ -82,6 +63,12 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
             	for (AppPattern p : app.getHtml()) {
             		this.addSubMenu("HTML", p.getPattern(), ExtensionSearch.Type.Response);
             	}
+            	for (Map<String,AppPattern> mp : app.getMetas()) {
+					for (Map.Entry<String, AppPattern> entry : mp.entrySet()) {
+						Pattern p = Pattern.compile(entry.getKey() + ".*" + entry.getValue().getPattern().pattern());
+						this.addSubMenu("META", p, ExtensionSearch.Type.Response);
+						}
+	            	}
             	for (AppPattern p : app.getScript()) {
             		this.addSubMenu("SCRIPT", p.getPattern(), ExtensionSearch.Type.Response);
             	}
@@ -89,14 +76,27 @@ public class PopupMenuEvidence extends ExtensionPopupMenuItem {
         }
         return false;
     }
+
+    private void clearSubMenus() {
+        final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
+        // Remove any old submenus
+        for (PopupMenuEvidenceSearch menu : this.subMenus) {
+            mainPopupMenuItems.remove(menu);
+        }
+        this.subMenus.clear();
+    }
     
     private void addSubMenu(String label, Pattern p, ExtensionSearch.Type type) {
-    	// TODO add prefix for pattern types?
-		PopupMenuEvidenceSearch menu = new PopupMenuEvidenceSearch(label, p, type);
-		menu.setExtension(extension);
+    	// TODO add label as prefix for pattern types?
+		PopupMenuEvidenceSearch menu = new PopupMenuEvidenceSearch(p.pattern(), extension, p, type);
 		menu.setMenuIndex(this.getMenuIndex());
 		View.getSingleton().getPopupList().add(menu);
 		this.subMenus.add(menu);
+    }
+
+    @Override
+    public void dismissed(ExtensionPopupMenuComponent selectedMenuComponent) {
+        clearSubMenus();
     }
 
     @Override

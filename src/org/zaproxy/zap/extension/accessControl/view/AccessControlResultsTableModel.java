@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.accessControl.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlNodeResult;
@@ -46,7 +44,7 @@ public class AccessControlResultsTableModel extends
 	private static final short COLUMN_INDEX_USER = 4;
 	private static final short COLUMN_INDEX_AUTHORIZED = 5;
 	private static final short COLUMN_INDEX_ACCESS_RULE = 6;
-	private static final short COLUMN_INDEX_RESULT = 7;
+	static final short COLUMN_INDEX_RESULT = 7;
 
 	private static final String UNAUTHENTICATED_USER_NAME = Constant.messages
 			.getString("accessControl.scanOptions.unauthenticatedUser");
@@ -58,19 +56,6 @@ public class AccessControlResultsTableModel extends
 			.getString("accessControl.results.table.header.rule");
 	private static final String COLUMN_NAME_RESULT = Constant.messages
 			.getString("accessControl.results.table.header.result");
-
-	private static final ImageIcon resultUnknownIcon;
-	private static final ImageIcon resultValidIcon;
-	private static final ImageIcon resultIllegalIcon;
-
-	static {
-		resultUnknownIcon = new ImageIcon(
-				AccessControlResultsTableModel.class.getResource("/resource/icon/20/info.png"));
-		resultValidIcon = new ImageIcon(
-				AccessControlResultsTableModel.class.getResource("/resource/icon/20/valid.png"));
-		resultIllegalIcon = new ImageIcon(
-				AccessControlResultsTableModel.class.getResource("/resource/icon/20/error.png"));
-	}
 
 	private List<AccessControlResultsTableEntry> entries;
 
@@ -158,14 +143,7 @@ public class AccessControlResultsTableModel extends
 		case COLUMN_INDEX_ACCESS_RULE:
 			return entry.getAccessRule().toString();
 		case COLUMN_INDEX_RESULT:
-			switch (entry.getResult()) {
-			case ILLEGAL:
-				return resultIllegalIcon;
-			case VALID:
-				return resultValidIcon;
-			case UNKNOWN:
-				return resultUnknownIcon;
-			}
+			return entry.getResult();
 		default:
 			return null;
 		}
@@ -193,7 +171,7 @@ public class AccessControlResultsTableModel extends
 		case COLUMN_INDEX_AUTHORIZED:
 			return Boolean.class;
 		case COLUMN_INDEX_RESULT:
-			return ImageIcon.class;
+			return AccessControlNodeResult.class;
 		default:
 			return String.class;
 		}
@@ -208,7 +186,7 @@ public class AccessControlResultsTableModel extends
 		case COLUMN_INDEX_AUTHORIZED:
 			return false;
 		case COLUMN_INDEX_RESULT:
-			return "ERROR";
+			return AccessControlNodeResult.UNKNOWN;
 		case COLUMN_INDEX_ACCESS_RULE:
 			return "ALLOW";
 		default:

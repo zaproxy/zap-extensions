@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>
+DOM XSS Analyse Active de la Règle
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>DOM XSS Analyse Active de la Règle</h1>
+<p>
+Une Analyse Active de la règle pour détecter les DOM failles XSS.
+<p>
+Il lance le navigateur windows et envoie une attaque charges de l'ensemble des éléments du DOM.<br>
+Comme les lancements de fenêtres de navigateur, il n'est pas adapté pour les headless environnements,
+et va prendre beaucoup plus de temps que les autres (non basé sur un navigateur) des règles. 
+</p>
+<p>
+Cette version ne supporte Firefox.<br>
+Les futures versions peuvent soutenir d'autres navigateurs.
+</p>
+<p>
+Les Attaques suivantes points Forts sont pris en charge, et directement lié au nombre d'attaque charges utilisées:
+<ul>
+<li>FAIBLE: 2 attaque des charges 
+<li>MOYEN: 4 attaque des charges 
+<li>HAUT: 6 attaque des charges 
+<li>FOU: 8 attaque des charges 
+</ul>
+</p>
+<p>
+La règle d'un seul DOM vulnérabilité XSS par nœud, à moins que le FAIBLE seuil d'Alerte
+est utilisé, auquel cas, il faudra continuer d'essayer tous les de la des charges. 
+</p>
+
+</body>
+</html>

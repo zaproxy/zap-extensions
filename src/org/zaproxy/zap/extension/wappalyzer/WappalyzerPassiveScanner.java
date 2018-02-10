@@ -23,27 +23,28 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
+import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class WappalyzerPassiveScanner extends PluginPassiveScanner {
+public class WappalyzerPassiveScanner implements PassiveScanner {
 
 	private ExtensionWappalyzer extension = null;
 	private List<Application> applications = null;
 
-	private static final Logger logger = Logger.getLogger(WappalyzerPassiveScanner.class);
+	private static final Logger LOGGER = Logger.getLogger(WappalyzerPassiveScanner.class);
 
-	/**
-	 * Prefix for internationalized messages used by this rule
-	 */
 	public WappalyzerPassiveScanner() {
 		super();
 	}
@@ -74,7 +75,7 @@ public class WappalyzerPassiveScanner extends PluginPassiveScanner {
 					String url = msg.getRequestHeader().getURI().toString();
 					for (AppPattern p : app.getUrl()) {
 						if (p.getPattern().matcher(url).find()) {
-							logger.debug("WAPP URL matched " + app.getName());
+							LOGGER.debug("WAPP URL matched " + app.getName());
 							found = true;
 							break;
 						}
@@ -85,7 +86,7 @@ public class WappalyzerPassiveScanner extends PluginPassiveScanner {
 								String header = msg.getResponseHeader().getHeader(entry.getKey());
 								if (header != null) {
 									if (entry.getValue().getPattern().matcher(header).find()) {
-										logger.debug("WAPP header matched " + app.getName());
+										LOGGER.debug("WAPP header matched " + app.getName());
 										found = true;
 										break;
 									}
@@ -97,9 +98,28 @@ public class WappalyzerPassiveScanner extends PluginPassiveScanner {
 						String body = msg.getResponseBody().toString();
 						for (AppPattern p : app.getHtml()) {
 							if (p.getPattern().matcher(body).find()) {
-								logger.debug("WAPP body matched " + app.getName());
+								LOGGER.debug("WAPP body matched " + app.getName());
 								found = true;
 								break;
+							}
+						}
+					}
+					if (! found) {
+						List<Element> metaElements = source.getAllElements(HTMLElementName.META);
+						for (Element metaElement : metaElements) {
+							for (Map<String, AppPattern> sp : app.getMetas()) {
+								for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
+									String name = metaElement.getAttributeValue("name");
+									String content = metaElement.getAttributeValue("content");
+									if (name != null && content != null) {
+										if (name.equals(entry.getKey())
+												&& entry.getValue().getPattern().matcher(content).find()) {
+											LOGGER.debug("WAPP meta matched " + app.getName());
+											found = true;
+											break;
+										}
+									}
+								}
 							}
 						}
 					}
@@ -107,7 +127,7 @@ public class WappalyzerPassiveScanner extends PluginPassiveScanner {
 						String body = msg.getResponseBody().toString();
 						for (AppPattern p : app.getScript()) {
 							if (p.getPattern().matcher(body).find()) {
-								logger.debug("WAPP script matched " + app.getName());
+								LOGGER.debug("WAPP script matched " + app.getName());
 								found = true;
 								break;
 							}
@@ -116,11 +136,11 @@ public class WappalyzerPassiveScanner extends PluginPassiveScanner {
 					}
 					if (found) {
 						String site = msg.getRequestHeader().getHostName() + ":" + msg.getRequestHeader().getHostPort();
-						logger.debug("WAPP adding " + app.getName() + " to " + site);
+						LOGGER.debug("WAPP adding " + app.getName() + " to " + site);
 						this.extension.addApplicationsToSite(site, app);
 					}
 				}
-				logger.debug("WAPP took " + (new Date().getTime() - start.getTime()));
+					LOGGER.debug("WAPP took " + (new Date().getTime() - start.getTime()));
 			}
 		}
 	}
@@ -141,6 +161,30 @@ public class WappalyzerPassiveScanner extends PluginPassiveScanner {
 	
 	@Override
 	public void setParent(PassiveScanThread parent) {
+		// Does not apply.
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		// Does not apply.
+	}
+
+	public AlertThreshold getAlertThreshold() {
+		return AlertThreshold.MEDIUM;
+	}
+
+	public void setAlertThresholdl(AlertThreshold level) {
+		// Does not apply.
+	}
+
+	@Override
+	public boolean appliesToHistoryType(int historyType) {
+		return PluginPassiveScanner.getDefaultHistoryTypes().contains(historyType);
 	}
 
 }

@@ -131,7 +131,7 @@ public class ReportLastScan {
                 alert = new Alert(recordAlert);
 
                 // ZAP: Ignore false positives
-                if (alert.getReliability() == Alert.CONFIDENCE_FALSE_POSITIVE) {
+                if (alert.getConfidence() == Alert.CONFIDENCE_FALSE_POSITIVE) {
                     continue;
                 }
 
@@ -451,7 +451,7 @@ public class ReportLastScan {
              			reportRunnable.getDesignHandle().setProperty("title", title);
              			
              			//Scripted source related code 
-             			HashMap contextMap = new HashMap();  
+             			HashMap<String, List<Alert>> contextMap = new HashMap<String, List<Alert>>();  
              			//List<Alert> sortedList = report.sortAndGroupAlerts(this.totalCount);
              			// Unsorted list - to make the code work with existing release 
              			List<Alert> sortedList = report.alerts;

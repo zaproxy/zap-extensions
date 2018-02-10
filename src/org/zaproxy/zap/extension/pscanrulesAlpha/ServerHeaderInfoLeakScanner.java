@@ -28,18 +28,18 @@ import net.htmlparser.jericho.Source;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
  * Server Header Version Information Leak passive scan rule 
- * https://code.google.com/p/zaproxy/issues/detail?id=1169
+ * https://github.com/zaproxy/zaproxy/issues/1169
  * @author kingthorin+owaspzap@gmail.com
  */
 public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 
-	private static final String MESSAGE_PREFIX = "pscanalpha.serverheaderversioninfoleak.";
 	private static final int PLUGIN_ID = 10036;
 	
 	private PassiveScanThread parent = null;
@@ -69,21 +69,19 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 				if (matched) { //See if there's any version info.
 					//While an alpha string might be the server type (Apache, Netscape, IIS, etc) 
 					//that's much less of a head-start than actual version details.
-					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
-						getName()); 
-		    			alert.setDetail(
-		    					getDescription(), //Description
-		    					msg.getRequestHeader().getURI().toString(), //URI
-		    					"",	// Param
-		    					"", // Attack
-		    					"", // Other info
-		    					getSolution(), //Solution
-		    					getReference(), //References
-		    					serverDirective,	// Evidence - Return the Server Header info
-		    					200, // CWE Id 
-		    					13,	// WASC Id 
-		    					msg); //HttpMessage
-		    		parent.raiseAlert(id, alert);
+					raiseAlert(Alert.RISK_LOW, Alert.CONFIDENCE_HIGH,
+							Constant.messages.getString("pscanalpha.serverheaderversioninfoleak.name"),
+							Constant.messages.getString("pscanalpha.serverheaderversioninfoleak.desc"),
+							Constant.messages.getString("pscanalpha.serverheaderinfoleak.general.soln"),
+							Constant.messages.getString("pscanalpha.serverheaderinfoleak.general.refs"),
+							serverDirective, msg, id);
+				} else if (Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+					raiseAlert(Alert.RISK_INFO, Alert.CONFIDENCE_HIGH,
+							Constant.messages.getString("pscanalpha.serverheaderinfoleak.name"),
+							Constant.messages.getString("pscanalpha.serverheaderinfoleak.desc"),
+							Constant.messages.getString("pscanalpha.serverheaderinfoleak.general.soln"),
+							Constant.messages.getString("pscanalpha.serverheaderinfoleak.general.refs"),
+							serverDirective, msg, id);
 				}
 			}
 		}
@@ -99,19 +97,24 @@ public class ServerHeaderInfoLeakScanner extends PluginPassiveScanner{
 	
 	@Override
 	public String getName(){
-		return Constant.messages.getString(MESSAGE_PREFIX + "name");
+		return Constant.messages.getString("pscanalpha.serverheader.scanner.name");
 	}
 	
-	private String getDescription() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-	}
-
-	private String getSolution() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-	}
-
-	private String getReference() {
-		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
+	private void raiseAlert(int risk, int confidence, String name, String desc, String soln, String refs, String evidence, HttpMessage msg, int id) {
+		Alert alert = new Alert(getPluginId(), risk, confidence, // PluginID, Risk, Reliability
+				name);
+		alert.setDetail(desc, // Description
+				msg.getRequestHeader().getURI().toString(), // URI
+				"", // Param
+				"", // Attack
+				"", // Other info
+				soln, // Solution
+				refs, // References
+				evidence, // Evidence - Return the Server Header info
+				200, // CWE Id
+				13, // WASC Id
+				msg); // HttpMessage
+		parent.raiseAlert(id, alert);
 	}
 
 }

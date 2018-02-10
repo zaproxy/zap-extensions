@@ -366,7 +366,7 @@ public class InsecureComponentScanner extends PluginPassiveScanner {
 								Constant.messages.getString(MESSAGE_PREFIX + "refs", refs), 
 								evidence,		//evidence	
 								829,	//CWE 829: Inclusion of Functionality from Untrusted Control Sphere
-								0,		//There is no CWE for "Components with Known Vulnerabilities!"
+								42,		//WASC-42: Abuse of Functionality
 								msg);  
 						parent.raiseAlert(id, alert);
 					}

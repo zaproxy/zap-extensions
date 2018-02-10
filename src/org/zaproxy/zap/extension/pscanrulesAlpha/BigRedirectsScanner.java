@@ -35,7 +35,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
  * Big Redirects passive scan rule 
- * https://code.google.com/p/zaproxy/issues/detail?id=1257
+ * https://github.com/zaproxy/zaproxy/issues/1257
  * @author kingthorin+owaspzap@gmail.com
  */
 public class BigRedirectsScanner extends PluginPassiveScanner{
@@ -79,7 +79,7 @@ public class BigRedirectsScanner extends PluginPassiveScanner{
 				//Check if response is bigger than predicted
 				if(responseBodyLength > predictedResponseSize) {
 					//Response is larger than predicted so raise an alert
-					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, //PluginID, Risk, Reliability
+					Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, //PluginID, Risk, Reliability
 						getName()); 
 			    		alert.setDetail(
 			    				getDescription(), //Description

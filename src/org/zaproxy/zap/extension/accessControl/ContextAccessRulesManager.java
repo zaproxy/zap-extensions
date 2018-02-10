@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.tree.TreeNode;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -325,7 +327,7 @@ public class ContextAccessRulesManager {
 
 		// We make a traversal of the context site tree and remove all nodes from the map
 		@SuppressWarnings("unchecked")
-		Enumeration<SiteTreeNode> en = contextSiteTree.getRoot().depthFirstEnumeration();
+		Enumeration<TreeNode> en = contextSiteTree.getRoot().depthFirstEnumeration();
 		while (en.hasMoreElements()) {
 			// Unfortunately the enumeration isn't genericized so we need to downcast when calling
 			// nextElement():

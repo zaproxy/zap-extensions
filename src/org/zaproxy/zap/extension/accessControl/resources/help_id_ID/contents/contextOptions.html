@@ -3,41 +3,37 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Access Control Context Options
+        Akses Kontrol Konteks Pilihan
     </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Access Control Context Options</h1>
+<h1>Akses Kontrol Konteks Pilihan</h1>
 
 <p>
-    The Access Control Context options are present as a panel for each Context when opening the Session Properties
-    dialog. This panel allows ZAP users to define the Access Rules for each User of each Context.
+    Akses Kontrol Konteks pilihan hadir sebagai panel untuk masing-masing Konteks ketika membuka Sesi dialog Properties. Panel ini memungkinkan pengguna ZAP untuk menentukan Aturan Akses untuk setiap Pengguna masing-masing Konteks.
 </p>
 
 <p>
-    As mentioned on the <a href="concepts.html">concepts</a> page, ZAP is making use of the tree-based
-    structure of URLs. So, when configuring the access rules, only 1 rule needs to be set explicitly for an entire
-    subtree, while for the other nodes rules are inferred. Three possible values can be set for any node in Context for
-    each User:
+    Seperti yang disebutkan pada halaman <a href="concepts.html">konsep</a>, ZAP sedang menyusun penggunaan dari pohon-berdasarkan
+    struktur dari URL. Jadi, ketika mengkonfigurasi aturan akses, hanya 1 aturan yang harus ditetapkan secara eksplisit untuk seluruh sub pohon, sedangkan untuk node lain aturannya disimpulkan. Tiga nilai yang mungkin dapat diatur untuk setiap node dalam Konteks untuk setiap Pengguna:
 </p>
 <ul>
-    <li><b>Allowed</b> - The rule for the node is <i>explicitly</i> set as Allowed</li>
-    <li><b>Denied</b> - The rule for the node is <i>explicitly</i> set as Denied</li>
-    <li><b>Inherited</b> - The rule for the node is inferred based on the closest parent with an explicitly set rule
+    <li><b>Diizinkan</b> - Peraturan untuk node itu <i>secara eksplisit</i> diatur sebagai Diizinkan</li>
+    <li><b>Ditolak</b> - Peraturan untuk node itu<i>secara eksplisit</i> diatur sebagai Ditolak</li>
+    <li><b> Warisan </> - Aturan untuk simpul disimpulkan berdasarkan induk terdekat dengan aturan yang ditetapkan secara eksplisit.
     </li>
 </ul>
 
-<p>By default, the rules for any node has an <i>Inherited</i> value and the root node has a value of <i>Unknown</i>.
-    Thus, for any node without a parent with an explicitly configured rule, the inferred rule will default to
-    <i>Unknown</i>.</p>
+<p>Secara default, aturan untuk setiap node memiliki nilai <i> Warisan </> dan simpul akar memiliki nilai <i> Tidak diketahui </> .
+    Dengan demikian, untuk setiap node tanpa orang tua dengan aturan yang secara eksplisit dikonfigurasi,  aturan yang disimpulkan akan menjadi default <i>Tidak diketahui</i>.</p>
 
 <h2>See also</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="concepts.html">Access Control Testing concepts</a></td>
-        <td>for a short introduction to Access Control Testing</td>
+            <a href="concepts.html">Akses Kontrol Pengujian konsep</a></td>
+        <td>untuk pengenalan singkat untuk Akses Kontrol Pengujian</td>
     </tr>
 </table>
 

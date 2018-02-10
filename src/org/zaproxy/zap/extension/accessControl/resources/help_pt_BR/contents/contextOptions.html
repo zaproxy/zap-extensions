@@ -3,41 +3,36 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>
-        Access Control Context Options
+        Opções de contexto de controle de acesso
     </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Access Control Context Options</h1>
+<h1>Opções de contexto de controle de acesso</h1>
 
 <p>
-    The Access Control Context options are present as a panel for each Context when opening the Session Properties
-    dialog. This panel allows ZAP users to define the Access Rules for each User of each Context.
+    As opções de contexto de controle de acesso estão presentes como um painel para cada contexto, ao se abrir a caixa de diálogo Propriedades da sessão. Este painel permite aos usuários do ZAP definirem as regras de acesso para cada usuário de cada contexto.
 </p>
 
 <p>
-    As mentioned on the <a href="concepts.html">concepts</a> page, ZAP is making use of the tree-based
-    structure of URLs. So, when configuring the access rules, only 1 rule needs to be set explicitly for an entire
-    subtree, while for the other nodes rules are inferred. Three possible values can be set for any node in Context for
-    each User:
+    Como mencionado na página de <a href="concepts.html">conceitos</a>, o ZAP está fazendo uso da estrutura baseada em árvore de URLs. Então, ao configurar as regras de acesso, apenas uma regra precisa ser definida explicitamente para uma subárvore inteira, enquanto para os outros nós regras são inferidas. Três valores possíveis podem ser definidos para qualquer nó de contexto para cada usuário:
 </p>
 <ul>
-    <li><b>Allowed</b> - The rule for the node is <i>explicitly</i> set as Allowed</li>
-    <li><b>Denied</b> - The rule for the node is <i>explicitly</i> set as Denied</li>
-    <li><b>Inherited</b> - The rule for the node is inferred based on the closest parent with an explicitly set rule
+    <li><b>Permitido</b> - a regra para o nó é <i>explicitamente</i> definida como Permitido</li>
+    <li><b>Negado</b> - a regra para o nó é <i>explicitamente</i> definida como negado</li>
+    <li><b>Herdada</b> - a regra para o nó é inferida com base no pai mais próximo com uma regra definida explicitamente
     </li>
 </ul>
 
-<p>By default, the rules for any node has an <i>Inherited</i> value and the root node has a value of <i>Unknown</i>.
-    Thus, for any node without a parent with an explicitly configured rule, the inferred rule will default to
-    <i>Unknown</i>.</p>
+<p>Por padrão, as regras para qualquer nó possuem um valor <i>herdado</i> e o nó de raiz tem um valor <i>desconhecido</i>.
+    Assim, para qualquer nó sem um pai com uma regra explicitamente configurada, a regra inferida padrão será <i>desconhecido</i>.</p>
 
-<h2>See also</h2>
+<h2>Leia também</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
-            <a href="concepts.html">Access Control Testing concepts</a></td>
-        <td>for a short introduction to Access Control Testing</td>
+            <a href="concepts.html">Conceitos de testes de controle de acesso</a></td>
+        <td>para uma breve introdução a testes de controle de acesso</td>
     </tr>
 </table>
 

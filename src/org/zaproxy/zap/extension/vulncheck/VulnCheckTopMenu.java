@@ -20,16 +20,13 @@ public class VulnCheckTopMenu extends ExtensionAdaptor {
 	}
 	
 	public VulnCheckTopMenu() {
-        super();
-                initialize();
-    }
-	private void initialize() {
-        this.setName("VulnCheckTopMenu");
+        super("VulnCheckTopMenu");
         // Load extension specific language files - these are held in the extension jar
         messages = ResourceBundle.getBundle(
                         this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());
         }
         
+        @SuppressWarnings("deprecation")
         @Override
         public void hook(ExtensionHook extensionHook) {
             super.hook(extensionHook);

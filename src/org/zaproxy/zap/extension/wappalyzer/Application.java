@@ -15,7 +15,7 @@ public class Application {
 	private List<Map<String, AppPattern>> headers;
 	private List<AppPattern> url = new ArrayList<AppPattern>();
 	private List<AppPattern> html = new ArrayList<AppPattern>();
-	// TODO handle meta structures 
+	private List<Map<String, AppPattern>> metas;
 	private List<AppPattern> script = new ArrayList<AppPattern>();
 
 	private List<String> implies = new ArrayList<String>();
@@ -56,6 +56,10 @@ public class Application {
 		this.html = html;
 	}
 
+	public void setMetas(List<Map<String, AppPattern>> metas) {
+		this.metas = metas;
+	}
+	
 	public void setScript(List<AppPattern> script) {
 		this.script = script;
 	}
@@ -92,6 +96,14 @@ public class Application {
 		this.html.add(h);
 	}
 
+	public List<Map<String, AppPattern>> getMetas() {
+		return metas;
+	}
+
+	public void addMetas(Map<String, AppPattern> meta) {
+		this.metas.add(meta);
+	}
+	
 	public List<AppPattern> getScript() {
 		return script;
 	}
@@ -115,11 +127,5 @@ public class Application {
 	public void setIcon(ImageIcon icon) {
 		this.icon = icon;
 	}
-
-	// TODO global js variables - cant use?
-	//private Pattern env;
-	
-	
-	
 
 }

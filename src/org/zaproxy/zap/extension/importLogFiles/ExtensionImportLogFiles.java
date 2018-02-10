@@ -51,18 +51,10 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
     private ImportLogAPI importLogAPI;
     
     public ExtensionImportLogFiles() {
-        super();
-        initialize();
+        super("ExtensionImportLogFiles");
     }
 
-    public ExtensionImportLogFiles(String name) {
-        super(name);
-    }
-
-    private void initialize() {
-        this.setName("ExtensionImportLogFiles");
-    }
-
+    @SuppressWarnings("deprecation")
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
@@ -259,7 +251,6 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
                 parsed.add(sc.next());
             }
             sc.close();
-            reader.close();
             return parsed;
         } catch (IOException x) {
             log.error(x.getMessage(), x);
@@ -380,7 +371,7 @@ public class ExtensionImportLogFiles extends ExtensionAdaptor {
     @Override
     public URL getURL() {
         try {
-            return new URL("http://code.google.com/p/zaproxy/wiki/MozillaMentorship_ImportingModSecurityLogs");
+            return new URL("https://github.com/zaproxy/zaproxy/wiki/MozillaMentorship_ImportingModSecurityLogs");
         } catch (MalformedURLException e) {
             return null;
         }

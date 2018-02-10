@@ -1,0 +1,47 @@
+<zapaddon>
+	<name>JxBrowser (Linux 64)</name>
+	<version>6</version>
+	<status>alpha</status>
+	<description>An embedded browser based on Chromium, Linux 64 specific </description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>
+	<![CDATA[
+		Updated to JxBrowser 6.18.<br>
+	]]>
+	</changes>
+	<dependencies>
+		<addons>
+			<addon>
+				<id>jxbrowser</id>
+			</addon>
+			<addon>
+				<id>webdriverlinux</id>
+			</addon>
+		</addons>
+	</dependencies>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.jxbrowserlinux64.ExtensionJxBrowserLinux64</extension>
+		<extension v="1">
+			<classname>org.zaproxy.zap.extension.jxbrowserlinux64.selenium.ExtSelJxBrowserLinux64</classname>
+			<dependencies>
+				<addons>
+					<addon>
+						<id>selenium</id>
+						<semver><![CDATA[ >=2.0.0 & <3.0.0 ]]></semver>
+					</addon>
+					<addon>
+						<id>webdriverlinux</id>
+					</addon>
+				</addons>
+			</dependencies>
+		</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files/>
+	<not-before-version>2.7.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>
+

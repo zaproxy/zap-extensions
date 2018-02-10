@@ -28,8 +28,10 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
+import org.zaproxy.zap.utils.HirshbergMatcher;
 
 /**
  * a scanner that looks for application source code disclosure using path traversal techniques
@@ -91,7 +93,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 	 * Hirshberg class for longest common substring calculation.  
 	 * Damn you John McKenna and your dynamic programming techniques!
 	 */
-	Hirshberg hirshberg = new Hirshberg ();
+	HirshbergMatcher hirshberg = new HirshbergMatcher ();
 
 	/**
 	 * the threshold for whether 2 responses match. depends on the alert threshold set in the GUI. not final or static.
@@ -188,6 +190,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 	/**
 	 * scan everything except URL path parameters, if these were enabled
 	 */
+	@Override
 	public void scan(HttpMessage msg, NameValuePair originalParam) {
 		/*
 		 * Scan everything _except_ URL path parameters, if these were enabled.
@@ -204,6 +207,13 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 	@Override
 	public void scan(HttpMessage originalmsg, String paramname, String paramvalue) {		
 		try {
+			URI uri = originalmsg.getRequestHeader().getURI();
+			String path = uri.getPath();
+			if (path == null || "/".equals(path)) {
+				// No path or empty path, no point continuing.
+				return;
+			}
+
 			if (log.isDebugEnabled()) {
 				log.debug("Attacking at Attack Strength: " + this.getAttackStrength());
 				log.debug("Checking [" + getBaseMsg().getRequestHeader().getMethod() + "] ["
@@ -234,7 +244,6 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 
 			//at this point, there was a sufficient difference between the random filename and the original parameter
 			//so lets try the various path names that might point at the source code for this URL
-			URI uri = originalmsg.getRequestHeader().getURI();
 			String pathMinusLeadingSlash = uri.getPath().substring(1);
 			String pathMinusApplicationContext = uri.getPath().substring( uri.getPath().indexOf("/", 1) + 1);
 
@@ -281,7 +290,9 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 					} else {
 						//if we verified the response
 						if (dataMatchesExtension (sourceattackmsg.getResponseBody().getBytes(), fileExtension)) {
-							log.info("Source code disclosure!  The output for the source code filename ["+ prefixedUrlfilename + "] differs sufficiently from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
+							if (log.isDebugEnabled()) {
+								log.debug("Source code disclosure!  The output for the source code filename ["+ prefixedUrlfilename + "] differs sufficiently from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
+							}
 
 							//if we get to here, is is very likely that we have source file inclusion attack. alert it.
 							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
@@ -308,6 +319,10 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 						return;
 					}
 				}            
+			}
+
+			if (!inScope(Tech.Tomcat)) {
+				return;
 			}
 
 			//if the above fails, get the entire WAR/EAR
@@ -348,13 +363,15 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 						//compared to the original
 						int randomversussourcefilenamematchpercentage = calcLengthMatchPercentage(sourceattackmsg.getResponseBody().length(), randomfileattackmsg.getResponseBody().length());
 						if ( randomversussourcefilenamematchpercentage < this.thresholdPercentage ) {
-							log.info("Source code disclosure!  The output for the WAR/EAR filename ["+ prefixedUrlfilename + "] differs sufficiently (in length) from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
+							if (log.isDebugEnabled()) {
+								log.debug("Source code disclosure!  The output for the WAR/EAR filename ["+ prefixedUrlfilename + "] differs sufficiently (in length) from that of the random parameter, at "+ randomversussourcefilenamematchpercentage  + "%, compared to a threshold of "+ this.thresholdPercentage + "%");
+							}
 
 							//Note: no verification of the file contents in this case.
 
 							//if we get to here, is is very likely that we have source file inclusion attack. alert it.
 							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
-									Constant.messages.getString("ascanalpha.sourcecodedisclosure.name"),
+									Constant.messages.getString("ascanalpha.sourcecodedisclosure.lfibased.name"),
 									Constant.messages.getString("ascanalpha.sourcecodedisclosure.desc"), 
 									getBaseMsg().getRequestHeader().getURI().getURI(),
 									paramname, 
@@ -456,7 +473,7 @@ public class SourceCodeDisclosureFileInclusion extends AbstractAppParamPlugin {
 			return 100;
 		if ( a.length() == 0 || b.length() == 0)
 			return 0;
-		String lcs = hirshberg.lcs(a, b);
+		String lcs = hirshberg.getLCS(a, b);
 		if (log.isDebugEnabled()) {
 			log.debug("Got LCS: "+ lcs);
 		}

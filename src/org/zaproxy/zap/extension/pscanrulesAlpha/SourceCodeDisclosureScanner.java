@@ -318,7 +318,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		//get the body contents as a String, so we can match against it
-		String responsebody = new String (msg.getResponseBody().getBytes());
+		String responsebody = msg.getResponseBody().toString();
 		
 		//try each of the patterns in turn against the response.
 		//we deliberately do not assume that only status 200 responses will contain source code.
@@ -351,7 +351,7 @@ public class SourceCodeDisclosureScanner extends PluginPassiveScanner {
 					getReference(), 
 					evidence,	
 					540,	//Information Exposure Through Source Code
-					34,		//Predictable Resource Location (TODO: is this really the case here?)
+					13,		//WASC-13: Information Leakage
 					msg);  
 			parent.raiseAlert(id, alert);
 		}

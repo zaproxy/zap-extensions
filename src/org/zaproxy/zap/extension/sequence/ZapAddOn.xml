@@ -1,10 +1,22 @@
 <zapaddon>
 	<name>Sequence</name>
-	<version>1</version>
+	<version>5</version>
+	<status>alpha</status>
 	<description>Gives the possibility of defining a sequence of requests to be scanned.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes></changes>
+	<changes>
+	<![CDATA[
+	Updated for 2.7.0.<br>
+	]]>
+	</changes>
+	<dependencies>
+		<addons>
+			<addon>
+				<id>zest</id>
+			</addon>
+		</addons>
+	</dependencies>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.sequence.ExtensionSequence</extension>
 	</extensions>
@@ -14,6 +26,6 @@
 	<files>
 		<file>scripts/templates/sequence/sequence.zst</file>
 	</files>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version/>
 </zapaddon>

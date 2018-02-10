@@ -1,4 +1,4 @@
-/**
+/*
  * Zed Attack Proxy (ZAP) and its related class files.
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
@@ -17,9 +17,12 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import java.net.UnknownHostException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.InvalidRedirectLocationException;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -27,6 +30,8 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 
 /**
@@ -210,6 +215,11 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 	}
 
 	@Override
+	public boolean targets(TechSet technologies) {
+		return technologies.includes(Tech.SQLite);
+	}
+
+	@Override
 	public String getDescription() {
 		return Constant.messages.getString("ascanalpha.sqlinjection.desc");
 	}
@@ -353,7 +363,7 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 					
 					HttpMessage msgDelay = getNewMsg();
 					String newTimeBasedInjectionValue = SQL_SQLITE_TIME_REPLACEMENTS[timeBasedSQLindex].replace ("<<<<ORIGINALVALUE>>>>", originalParamValue);
-					newTimeBasedInjectionValue = newTimeBasedInjectionValue.replace ("<<<<NUMBLOBBYTES>>>>", new Long(numBlobsToCreate).toString());
+					newTimeBasedInjectionValue = newTimeBasedInjectionValue.replace ("<<<<NUMBLOBBYTES>>>>", Long.toString(numBlobsToCreate));
 					setParameter(msgDelay, paramName, newTimeBasedInjectionValue);
 					
 					if ( this.debugEnabled ) log.debug("\nTrying '"+newTimeBasedInjectionValue + "'. The number of Sequential Increases already is "+ numberOfSequentialIncreases); 
@@ -578,6 +588,10 @@ public class SQLInjectionSQLite extends AbstractAppParamPlugin {
 			}	//end of doUnionBased
 			
 
+		} catch (InvalidRedirectLocationException | UnknownHostException | URIException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to send HTTP message, cause: " + e.getMessage());
+			}
 		} catch (Exception e) {
 			//Do not try to internationalise this.. we need an error message in any event.. 
 			//if it's in English, it's still better than not having it at all. 

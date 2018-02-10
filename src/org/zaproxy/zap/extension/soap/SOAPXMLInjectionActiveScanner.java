@@ -47,10 +47,6 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 	
 	@Override
 	public int getId() {
-		/*
-		 * This should be unique across all active and passive rules.
-		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
-		 */
 		return 90029;
 	}
 
@@ -121,10 +117,10 @@ public class SOAPXMLInjectionActiveScanner extends AbstractAppParamPlugin {
 				if (this.isStop()) return;
 				if(!isSoapMessage(response,resCharset)){
 					/* Response has no SOAP format. It is still notified since it is an unexpected result. */
-					bingo(Alert.RISK_LOW, Alert.WARNING, null, null, finalValue,Constant.messages.getString(MESSAGE_PREFIX + "warn1"), attackMsg);
+					bingo(Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, null, null, finalValue,Constant.messages.getString(MESSAGE_PREFIX + "warn1"), attackMsg);
 				}else if(responsesAreEqual(modifiedMsg, attackMsg) && !(responsesAreEqual(originalMsg, modifiedMsg))){
 					/* The attack message has achieved the same result as the modified message, so XML injection attack worked. */
-					bingo(Alert.RISK_HIGH, Alert.WARNING, null, null, finalValue,Constant.messages.getString(MESSAGE_PREFIX + "warn2") , attackMsg);
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, null, finalValue,Constant.messages.getString(MESSAGE_PREFIX + "warn2") , attackMsg);
 				}
 			}
 		} catch (Exception e) {

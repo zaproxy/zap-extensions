@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+Kimlik Doğrulama İstatistikleri
+</title>
+</head>
+<body bgcolor="#ffffff">
+<h1>Kimlik Doğrulama İstatistikleri</h1>
+Bu eklenti kapsamdaki tüm bağlamlar için kimlik doğrulama ile ilgili istatistikleri kaydeder.<br>
+İstatistikler, site bazında kaydedilir ve aşağıdakileri kapsar:
+<table>
+<tr><td>stats.auth.<i>component</i>.state.nothtml</td><td>HTML olmayan yanıtlar(oturum açma/kapama göstergelerine sahip olması olası olmayan)</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.notsuccess</td><td>Başarısız HTML yanıtları (giriş / çıkış göstergeleri olması pek olası değildir)</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.noindicator</td><td>Giriş / çıkış göstergesi tanımlanmamış</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedinandout</td><td>Oturum açma ve kapama göstergelerinin ikisi de mevcut</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedin</td><td>Sadece oturum-açtı göstergesi mevcut</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.loggedout</td><td>Sadece oturum kapandı göstergesi mevcut</td></tr>
+<tr><td>stats.auth.<i>component</i>.state.unknown</td><td>Oturum açtı ve oturum kapandı göstergelerinin ikisi de mevcut değil</td></tr>
+</table>
+Bileşen şu olabilir:
+<table>
+<tr><td>aktiftarama</td><td>Aktif Tarayıcı</td></tr>
+<tr><td>yetkili</td><td>Kimlik Doğrulama</td></tr>
+<tr><td>fuzz</td><td>Fuzzer</td></tr>
+<tr><td>manuel</td><td>Elle yazılan sorgular</td></tr>
+<tr><td>proxy</td><td>Proxy lenmiş istekler</td></tr>
+<tr><td>ağ</td><td>Ağ</td></tr>
+<tr><td><i>kimlik</i></td><td>Yukarıda listelenmeyen başka bir bileşenin tam sayı tanımlayıcısı</td></tr>
+</table>
+<p>
+bu istatisliklere ZAP API yoluyla erişilebilir.
+</p>
+<p>
+
+Bu eklenti için ikonlar, bunlardan 
+<a href="https://github.com/yusukekamiyamane/fugue-icons">Fugue icons</a> 
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/chart.png">chart.png</a> and
+<a href="https://github.com/yusukekamiyamane/fugue-icons/blob/master/icons/lock-small.png">locl-small.png</a>
+türetilmiştir
+
+</body>
+</html>

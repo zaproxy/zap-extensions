@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN"
+         "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+
+<toc version="2.0">
+	<tocitem text="ZAP - Guia do Usuário" tocid="toplevelitem">
+		<tocitem text="Complementos" tocid="addons">
+			<tocitem text="Scripts da comunidade" image="script-share" target="communityScripts"/>
+		</tocitem>
+	</tocitem>
+</toc>

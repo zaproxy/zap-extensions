@@ -87,10 +87,7 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
 
 	@Override
 	public String getDescription() {
-		if (vuln != null) {
-			return vuln.getDescription();
-		}
-		return "Failed to load vulnerability description from file";
+		return Constant.messages.getString("ascanalpha.sourcecodedisclosure.desc");
 	}
 
 	@Override
@@ -100,10 +97,7 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
 
 	@Override
 	public String getSolution() {
-		if (vuln != null) {
-			return vuln.getSolution();
-		}
-		return "Failed to load vulnerability solution from file";
+		return Constant.messages.getString("ascanalpha.sourcecodedisclosure.gitbased.soln");
 	}
 
 	@Override
@@ -121,6 +115,10 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
 		return "Failed to load vulnerability reference from file";
 	}
 
+	private String getEvidence(String filename, String gitURIs) {
+		return Constant.messages.getString("ascanalpha.sourcecodedisclosure.gitbased.evidence", filename, gitURIs);
+	}
+	
 	@Override
 	public void init() {
 	}
@@ -334,7 +332,9 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
 				//check the contents of the output to some degree, if we have a file extension.
 				//if not, just try it (could be a false positive, but hey)    			
 				if (dataMatchesExtension (disclosedData, fileExtension)) {
-					log.info("Source code disclosure, using Git metadata leakage!");
+					if (log.isDebugEnabled()) {
+						log.debug("Source code disclosure, using Git metadata leakage!");
+					}
 
 					//source file inclusion attack. alert it.
 					//Note that, unlike with SVN, the Git data is extracted not from one file, but by parsing a series of files.
@@ -342,14 +342,14 @@ public class SourceCodeDisclosureGit extends AbstractAppPlugin {
 					//it's the least worst way of doing it, IMHO.
 					bingo(	Alert.RISK_HIGH, 
 							Alert.CONFIDENCE_MEDIUM,
-							Constant.messages.getString("ascanalpha.sourcecodedisclosure.gitbased.name"),
-							Constant.messages.getString("ascanalpha.sourcecodedisclosure.desc"), 
+							getName(),
+							getDescription(), 
 							getBaseMsg().getRequestHeader().getURI().getURI(),
 							null, //parameter being attacked: none.
 							null,  //attack
 							new String (disclosedData), 	//Constant.messages.getString("ascanalpha.sourcecodedisclosure.gitbased.extrainfo", filename, StringUtils.join(gitURIs,", ")),  	//extraInfo
-							Constant.messages.getString("ascanalpha.sourcecodedisclosure.gitbased.soln"),
-							Constant.messages.getString("ascanalpha.sourcecodedisclosure.gitbased.evidence", filename, gitURIs),
+							getSolution(),
+							getEvidence(filename, gitURIs),
 							originalMessage
 							);					
 					return true;

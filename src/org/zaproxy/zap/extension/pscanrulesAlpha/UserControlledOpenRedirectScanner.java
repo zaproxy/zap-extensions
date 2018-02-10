@@ -126,7 +126,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 	
 	private void raiseAlert(HttpMessage msg, int id, String paramName, String paramValue, 
 			String responseLocation) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.WARNING,
+		Alert alert = new Alert(getPluginId(), Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM,
 				getName());		
 
 		alert.setDetail(getDescriptionMessage(), msg.getRequestHeader()
@@ -134,7 +134,7 @@ public class UserControlledOpenRedirectScanner extends PluginPassiveScanner {
 				getExtraInfoMessage(msg, paramName, paramValue, responseLocation),
 				getSolutionMessage(), getReferenceMessage(),  
 				"",	// No evidence
-				0,	// TODO CWE Id
+				601, // CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
 				38,	// WASC Id
 				msg);  
 

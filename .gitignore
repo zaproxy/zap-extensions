@@ -1,0 +1,8 @@
+bin/
+build/build/
+build/buildtest/
+build/results/
+build/temp/
+build/zap-exts/
+.idea/
+*.iml

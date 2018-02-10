@@ -119,7 +119,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
 		//get the body contents as a String, so we can match against it
 		String responseheader = msg.getResponseHeader().getHeadersAsString();
-		String responsebody = new String (msg.getResponseBody().getBytes());
+		String responsebody = msg.getResponseBody().toString();
 		String [] responseparts = {responseheader, responsebody};
 
 		//for each pattern..
@@ -163,7 +163,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
 					//set the threshold percentage based on what threshold was set by the user
 					float probabilityThreshold = 0.0F; //0% probability threshold
-					switch (this.getLevel()) {
+					switch (this.getAlertThreshold()) {
 					//50% probability threshold (ie, "on balance of probability")
 					case HIGH:	probabilityThreshold = 0.50F; break;  
 					//25% probability threshold
@@ -236,7 +236,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.desc"), 
 								msg.getRequestHeader().getURI().toString(), 
 								"", //param
-								viewstatexml.substring(0, Math.min(32000, viewstatexml.length())), //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+								"", // attack 
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.extrainfo", viewstatexml), //other info
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.soln"), 
 								Constant.messages.getString("pscanalpha.base64disclosure.viewstate.refs"), 
@@ -254,7 +254,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.desc"), 
 									msg.getRequestHeader().getURI().toString(), 
 									"", //param
-									viewstatexml.substring(0, Math.min(32000, viewstatexml.length())), //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+									"", // attack 
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.extrainfo", viewstatexml), //other info
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.soln"), 
 									Constant.messages.getString("pscanalpha.base64disclosure.viewstatewithoutmac.refs"), 
@@ -272,13 +272,13 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
 						//the Base64 decoded data is not a valid ViewState (even though it may have a valid ViewStatet pre-amble) 
 						//so treat it as normal Base64 data, and raise an informational alert.
-						if ( base64evidence!=null && base64evidence.length() > 0) {
+						if ( base64evidence.length() > 0) {
 							Alert alert = new Alert(getPluginId(), Alert.RISK_INFO, Alert.CONFIDENCE_MEDIUM, getName() );
 							alert.setDetail(
 									getDescription(), 
 									msg.getRequestHeader().getURI().toString(), 
 									"", //param
-									viewstatexml.substring(0, Math.min(32000, viewstatexml.length())), //TODO: this should be the the attack (NULL).  Set this field to NULL, once Zap allows mutiple alerts on the same URL, with just different evidence 
+									null,
 									getExtraInfo(msg, base64evidence, decodeddata),  //other info
 									getSolution(), 
 									getReference(), 

@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.wappalyzer;
 
 import java.awt.CardLayout;
-import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -55,41 +54,32 @@ public class TechPanel extends AbstractPanel {
 	private String currentSite = null;
 	private JComboBox<String> siteSelect = null;
 	private SortedComboBoxModel<String> siteModel = new SortedComboBoxModel<>();
-	//private JButton optionsButton = null;
 
 	private JXTable techTable = null;
 	private TechTableModel techModel = new TechTableModel();
-	
-    //private static Log log = LogFactory.getLog(ParamsPanel.class);
-    
-    /**
-     * 
-     */
+   
     public TechPanel(ExtensionWappalyzer extension) {
         super();
         this.extension = extension;
  		initialize();
     }
 
-	/**
-	 * This method initializes this
-	 */
 	private  void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
         this.setName(Constant.messages.getString("wappalyzer.panel.title"));
 		this.setIcon(ExtensionWappalyzer.WAPPALYZER_ICON);
 		this.setDefaultAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | Event.ALT_MASK | Event.SHIFT_MASK, false));
+				KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("wappalyzer.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
 	}
+	
 	/**
 	 * This method initializes panelCommand	
 	 * 	
 	 * @return javax.swing.JPanel	
-	 */    
-	/**/
+	 */
 	private javax.swing.JPanel getPanelCommand() {
 		if (panelCommand == null) {
 
@@ -120,7 +110,6 @@ public class TechPanel extends AbstractPanel {
 		}
 		return panelCommand;
 	}
-	/**/
 
 	private javax.swing.JToolBar getPanelToolbar() {
 		if (panelToolbar == null) {
@@ -163,8 +152,6 @@ public class TechPanel extends AbstractPanel {
 			gridBagConstraintsx.fill = java.awt.GridBagConstraints.HORIZONTAL;
 
 			JLabel t1 = new JLabel();
-
-			//panelToolbar.add(getOptionsButton(), gridBagConstraints0);
 
 			panelToolbar.add(new JLabel(Constant.messages.getString("wappalyzer.toolbar.site.label")), gridBagConstraints1);
 			panelToolbar.add(getSiteSelect(), gridBagConstraints2);

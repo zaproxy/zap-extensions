@@ -73,7 +73,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
 	}
 
 	private void raiseAlert(HttpMessage msg, int id, String evidence) {
-		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.WARNING, 
+		Alert alert = new Alert(getPluginId(), Alert.RISK_LOW, Alert.CONFIDENCE_MEDIUM, 
 		    	getName());
 		    	alert.setDetail(
 	    			this.getDescription(), 
@@ -96,7 +96,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
 			this.strings = loadFile(examplePscanFile);
 		}
 		String sBody;
-        if (Plugin.AlertThreshold.HIGH.equals(this.getLevel())) {
+        if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
         	// For a high threshold perform a case exact check
     		sBody = body.toString();
         } else {
@@ -105,7 +105,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
         }
 
 		for (String str : this.strings) {
-	        if (! Plugin.AlertThreshold.HIGH.equals(this.getLevel())) {
+	        if (! Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
 	        	// Use case ignore unless a high threshold has been specified
 	        	str = str.toLowerCase();
 	        }
@@ -160,7 +160,7 @@ public class ExampleFilePassiveScanner extends PluginPassiveScanner {
 	public int getPluginId() {
 		/*
 		 * This should be unique across all active and passive rules.
-		 * The master list is http://code.google.com/p/zaproxy/source/browse/trunk/src/doc/alerts.xml
+		 * The master list is https://github.com/zaproxy/zaproxy/blob/develop/src/doc/scanners.md
 		 */
 		return 60001;
 	}

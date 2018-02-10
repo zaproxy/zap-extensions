@@ -1,4 +1,4 @@
-/**
+/*
  * Zed Attack Proxy (ZAP) and its related class files.
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
@@ -191,6 +191,7 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
 	 * scans for Proxy Disclosure issues, using the TRACE and OPTIONS method with 'Max-Forwards', and the TRACK method.
 	 * The code attempts to enumerate and identify all proxies identified between the Zap instance and the origin web server.
 	 */
+	@Override
 	public void scan() {
 		try {
 			//where's what we're going to do (roughly):
@@ -461,7 +462,7 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
 			//	- to bypass caching (if it's a random filename, if won't have been seen before, and won't be cached)
 			//	  yes, I know TRACK requests should *not* be cached, but not all servers are compliant.
 			String randompiece = RandomStringUtils.random(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
-			trackRequestHeader.setURI(new URI(trackURI.getScheme() + "://" + trackURI.getAuthority()+ trackURI.getPath() + randompiece,true));
+			trackRequestHeader.setURI(new URI(trackURI.getScheme() + "://" + trackURI.getAuthority()+ getPath(trackURI) + randompiece,true));
 
 			trackRequestHeader.setVersion (HttpRequestHeader.HTTP11);	// 
 			trackRequestHeader.setSecure(trackRequestHeader.isSecure());
@@ -592,6 +593,14 @@ public class ProxyDisclosureScanner extends AbstractAppPlugin {
 			//if it's in English, it's still better than not having it at all. 
 			log.error("An error occurred checking for proxy disclosure", e);
 		}
+	}
+
+	private String getPath(URI uri) {
+		String path = uri.getEscapedPath();
+		if (path != null) {
+			return path;
+		}
+		return "/";
 	}
 
 	private String getAttack() {

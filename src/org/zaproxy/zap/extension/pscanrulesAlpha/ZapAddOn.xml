@@ -1,25 +1,15 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>5</version>
+	<version>19</version>
+	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
-	<![CDATA[	
-	Tweaked "Source Code Disclosure" scanner to reduce false positives<br> 
-	Added "Insecure Component" scanner<br>
-	Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')<br>
-	Add Big Redirect scanner (Issue 1257)<br>
-	Fixed an issue in detecting SHA-512 Crypt hashes, and other hashes beginning with "$"<br>
-	Detect Node.js source code<br>
-	Report Apache vulnerabilities on Red Hat and CentOS as False Positives<br>
-	Detect Directory Browsing / Listings on Microsoft IIS<br>
-	Added Cacheable Content scanner<br>
-	Added Retrieved From Cache scanner<br>
-	Updated Insecure Component scanner to support Squid<br>
-	Added Image Location Scanner passive scanner<br>
-	Updated Insecure Component scanner vulnerability database for all products<br>
-	Updated for ZAP 2.4<br>
+	<![CDATA[
+	Minor code changes to comply with deprecations.<br>
+	Added passive PII Scanner (which currently looks for Credit Card # patterns).<br>
+	Change Image Location and Privacy Scanner to scan hidden images.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -30,6 +20,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.Base64Disclosure</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.BigRedirectsScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CacheableScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CookieSameSiteScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ContentSecurityPolicyMissingScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CrossDomainMisconfiguration</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.DirectoryBrowsingScanner</pscanrule>
@@ -41,6 +32,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureComponentScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormLoadScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormPostScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.PiiScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.RetrievedFromCacheScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ServerHeaderInfoLeakScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.SourceCodeDisclosureScanner</pscanrule>
@@ -51,14 +43,20 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledHTMLAttributesScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledJavascriptEventScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UserControlledOpenRedirectScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.UsernameIdorScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XBackendServerInformationLeak</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XChromeLoggerDataInfoLeakScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XDebugTokenScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XPoweredByHeaderInfoLeakScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.XAspNetVersionScanner</pscanrule>
 	</pscanrules>
 	<filters/>
 	<files>
 		<file>xml/example-pscan-file.txt</file>
 		<file>vulnerabilities.db</file>
+		<file>licenses/metadata-extractor-license.txt</file>
+		<file>licenses/xmpcore-license.txt</file>
 	</files>
-	<not-before-version>2.4.0</not-before-version>
+	<not-before-version>2.7.0</not-before-version>
 	<not-from-version></not-from-version>
 </zapaddon>

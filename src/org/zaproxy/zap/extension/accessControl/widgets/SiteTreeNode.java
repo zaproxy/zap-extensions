@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.accessControl.widgets;
 import java.util.Enumeration;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import org.apache.commons.httpclient.URI;
 
@@ -51,10 +52,10 @@ public class SiteTreeNode extends DefaultMutableTreeNode {
 			return null;
 
 		@SuppressWarnings("unchecked")
-		Enumeration<SiteTreeNode> children = this.children();
+		Enumeration<TreeNode> children = this.children();
 
 		while (children.hasMoreElements()) {
-			SiteTreeNode child = children.nextElement();
+			SiteTreeNode child = (SiteTreeNode) children.nextElement();
 			if (child.getNodeName().equals(nodeName)) {
 				return child;
 			}

@@ -592,7 +592,7 @@ public class GitMetadata {
 					throw new Exception ("The number of entry size bytes read exceeds 4. Either data corruption, or a parsing error has occurred");
 				}
 				nextsizebyte = entryBuffer.get();
-				entrySizeWhenInflated = ( (((int)(nextsizebyte & 0x7F))<<(4+(7*(sizebytescounted-1)))) | entrySizeWhenInflated);
+				entrySizeWhenInflated = ( (((nextsizebyte & 0x7F))<<(4+(7*(sizebytescounted-1)))) | entrySizeWhenInflated);
 				sizebytescounted++;
 			}
 			
@@ -847,11 +847,11 @@ public class GitMetadata {
 			//if ( log.isDebugEnabled() ) log.debug ("Entry "+ entryIndex + " has flags " + indexEntryFlags);
 
 			//mask off all but the least significant 12 bits of the index entry flags to get the length of the name in bytes 
-			int indexEntryNameByteLength = indexEntryFlags & (int)4095;						
+			int indexEntryNameByteLength = indexEntryFlags & 4095;						
 			//if ( log.isDebugEnabled() ) log.debug ("Entry "+ entryIndex + " has a name of length " + indexEntryNameByteLength);
 
 			//mask off all but the second most significant 12 bit of the index entry flags to get the extended flag for the entry 
-			int indexEntryExtendedFlag = ((indexEntryFlags & (int)(1<<14) )>>14);
+			int indexEntryExtendedFlag = ((indexEntryFlags & (1<<14) )>>14);
 			//if ( log.isDebugEnabled() ) log.debug ("Entry "+ entryIndex + " has an extended flag of " + indexEntryExtendedFlag);
 
 			//check that we parsed out the index entry extended flag correctly.

@@ -43,28 +43,13 @@ public class logoTopMenu extends ExtensionAdaptor {
      *
      */
     public logoTopMenu() {
-        super();
-                initialize();
-    }
-
-    /**
-     * @param name
-     */
-    public logoTopMenu(String name) {
-        super(name);
-    }
-
-        /**
-         * This method initializes this
-         *
-         */
-        private void initialize() {
-        this.setName("logoTopMenu");
+        super("logoTopMenu");
         // Load extension specific language files - these are held in the extension jar
         messages = ResourceBundle.getBundle(
                         this.getClass().getPackage().getName() + ".resources.Messages", Constant.getLocale());
         }
        
+        @SuppressWarnings("deprecation")
         @Override
         public void hook(ExtensionHook extensionHook) {
             super.hook(extensionHook);

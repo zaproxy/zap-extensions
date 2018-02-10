@@ -140,7 +140,7 @@ public class ViewStateDecoder {
 			int intsize = readLittleEndianBase128Number (bb);
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append ("<uint32>");
-			representation.append (new Integer(intsize));
+			representation.append (intsize);
 			representation.append ("</uint32>\n");
 			return representation;
 		case 0x03:
@@ -155,6 +155,7 @@ public class ViewStateDecoder {
 			this.indentationlevel--;
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append ("</booleanarray>\n");
+			return representation;
 		case 0x05:
 		case 0x1E:
 			//String
@@ -264,7 +265,7 @@ public class ViewStateDecoder {
 			int stringref = readLittleEndianBase128Number (bb);
 			representation.append(getIndentation(this.indentationlevel));
 			representation.append ("<stringreference>");			
-			representation.append (new Integer(stringref));
+			representation.append (stringref);
 			representation.append ("</stringreference>\n");
 			return representation;
 		case 0x18:
