@@ -671,6 +671,7 @@ public class WebSocketProxyV13 extends WebSocketProxy {
 			payload.rewind();
 			byte[] bytes = new byte[payload.limit()];
 			payload.get(bytes);
+			payload.rewind();
 			return bytes;
 		}
 
