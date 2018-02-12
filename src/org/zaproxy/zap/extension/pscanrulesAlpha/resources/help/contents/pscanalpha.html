@@ -18,6 +18,10 @@ The application does not use a Message Authentication Code (MAC) to protect the 
 <H2>Base64 Disclosure</H2>
 Base64 encoded data was disclosed by the application/web server
 
+<H2>Link uses _blank target</H2>
+This checks to see if any links use a target of "_blank" without using either keyword "noopener" or "noreferrer", as this will allow target pages to take over the page that opens them.<br>
+By default this rule will ignore all links that are in the same context as the page. At the LOW threshold it will only ignore links that are on the same host.
+
 <H2>Missing Content Security Policy Header</H2>
 This checks HTML response headers for the presence of a Content Security Policy header.<br>
 By default this rule checks for the presence of the "Content-Security-Policy" header, 
