@@ -22,25 +22,24 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.pscanrulesAlpha.ImageLocationScanner;
 
 public class ImageLocationScannerUnitTest extends PassiveScannerTest {
-	private static final int PLUGIN_ID = 10103;
+	private static final int PLUGIN_ID = ImageLocationScanner.PLUGIN_ID;
 	private static final String URI = "https://www.example.com/";
-	private static final String images_dir = "/Users/evilkitten/proj/ZAP/zap-extensions/test/resources/org/zaproxy/zap/extension/imagelocationscanner";
+	private static final String IMAGES_DIR = "test/resources/org/zaproxy/zap/extension/imagelocationscanner";
 
 	@Override
 	protected PluginPassiveScanner createScanner() {
@@ -49,15 +48,18 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 
 	@Test
 	public void passesIfExifLocationDetected() throws HttpMalformedHeaderException, IOException {
+		HttpMessage msg;
+		String fname;
 		// future: add more files, put in a loop.
-		String fname= "exif_gps_01.jpg";
-		HttpMessage msg = createHttpMessageFromFilename(fname);
+
+		// Given - text file with GPS Exif data
+		fname= "exif_gps_01.jpg";
+
+		// When
+		msg = createHttpMessageFromFilename(fname);
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
-		/*
-		System.out.println("Body: " + String.format("%x", msg.getResponseBody().getBytes()[1]));
-		System.out.println("plug: " + rule.getName());
-		System.out.println("Data: " + alertsRaised.get(0).getEvidence());
-		*/
+
+		// Then
 		assertEquals(alertsRaised.size(), 1);
 		validateAlert(URI,alertsRaised.get(0));
 		assertThat(alertsRaised.get(0).getEvidence(), containsString("Exif_GPS"));
@@ -65,29 +67,47 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 
 	@Test
 	public void passesIfNoIssuesDetected() throws HttpMalformedHeaderException, IOException {
+		HttpMessage msg;
+		String fname;
 		// future: add more files, put in a loop.
-		String fname= "no_alerts_01.jpg";
-		HttpMessage msg = createHttpMessageFromFilename(fname);
-		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
-		assertEquals(alertsRaised.size(), 0);
-		
-		fname= "README.md";
+		// Given - text file with no Exif data
+		fname= "no_alerts_01.jpg";
+
+		// When
 		msg = createHttpMessageFromFilename(fname);
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
+		// Then
+		assertEquals(alertsRaised.size(), 0);
+		
+		// Given
+		// a non-image file, like a text file
+		fname= "README.md";
+
+		// When
+		msg = createHttpMessageFromFilename(fname);
+		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+
+		// Then
 		assertEquals(alertsRaised.size(), 0);
 	}
 
 	@Test
 	public void passesIfPrivacyExposureDetected() throws HttpMalformedHeaderException, IOException {
+		HttpMessage msg;
+		String fname;
 		// future: add more files, put in a loop.
-		String fname= "privacy_exposure_01.jpg";
-		HttpMessage msg = createHttpMessageFromFilename(fname);
+
+		// Given - image with privacy-exposure (embedded camera ownership)
+		fname= "privacy_exposure_01.jpg";
+
+		// When
+		msg = createHttpMessageFromFilename(fname);
 		rule.scanHttpResponseReceive(msg, -1, createSource(msg));
 
+		// Then
 		assertEquals(alertsRaised.size(), 1);
-		// System.out.println("Data: " + alertsRaised.get(0).getEvidence());
 		assertThat(alertsRaised.get(0).getEvidence(), containsString("Owner Name"));
 	}
 
@@ -111,38 +131,10 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 		assertThat(alert.getUri(), equalTo(requestUri));
 	}
 
-	private HttpMessage createHttpMessage(String body) throws HttpMalformedHeaderException {
-		return createHttpMessage(URI, body);
-	}
-	
 	private HttpMessage createHttpMessageFromFilename(String filename) throws HttpMalformedHeaderException, IOException {
-		
-		String fullpath = images_dir + "/" + filename;
-		// System.out.println("Reading file: " + fullpath);
-		
-		File file = new File(fullpath);
-		FileInputStream fis = new FileInputStream(file);
-		byte[] data = new byte[(int) file.length()];
-		fis.read(data);
-		fis.close();
-		// System.out.println("Read Size: " + data.length);
-		
-		return createHttpMessage(URI, data);
-	}
-
-	// TODO : have one createHttpMessage call the other...
-	
-	private HttpMessage createHttpMessage(String requestUri, String body) throws HttpMalformedHeaderException {
 		HttpMessage msg = new HttpMessage();
-		requestUri = requestUri.startsWith("http") ? requestUri : "http://" + requestUri;
-		msg.setRequestHeader("GET " + requestUri + " HTTP/1.1");
-		msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
-		msg.setResponseBody(body);
-		return msg;
-	}
+		String requestUri = URI;
 
-	private HttpMessage createHttpMessage(String requestUri, byte[] data) throws HttpMalformedHeaderException {
-		HttpMessage msg = new HttpMessage();
 		requestUri = requestUri.startsWith("http") ? requestUri : "http://" + requestUri;
 		msg.setRequestHeader("GET " + requestUri + " HTTP/1.1");
 		
@@ -152,11 +144,10 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 		msg.setResponseHeader(	"HTTP/1.1 200 OK\r\n"
 								+ "Content-Type: image/jpg\r\n"
 							);
-		msg.setResponseBody(data);
+		msg.setResponseBody(Files.readAllBytes(Paths.get(IMAGES_DIR + "/" + filename )));
 
 		return msg;
 	}
-
 }
 
 // vim: autoindent noexpandtab tabstop=4 shiftwidth=4
