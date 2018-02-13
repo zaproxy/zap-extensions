@@ -4,8 +4,8 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-    <indexitem text="Fuzzer Concepts" target="addon.fuzzer.concepts" />
-    <indexitem text="Fuzzer Dialogue" target="addon.fuzzer.dialogue"/>
+    <indexitem text="Konsep Fuzzer" target="addon.fuzzer.concepts" />
+    <indexitem text="Dialog Fuzzer" target="addon.fuzzer.dialogue"/>
     <indexitem text="Fuzzer Location Processors Dialog" target="addon.fuzzer.locations"/>
     <indexitem text="Fuzzer HTTP Message Processors" target="addon.fuzzer.httpmessageprocessors"/>
     <indexitem text="Fuzzer Payloads Dialog" target="addon.fuzzer.payloads"/>
