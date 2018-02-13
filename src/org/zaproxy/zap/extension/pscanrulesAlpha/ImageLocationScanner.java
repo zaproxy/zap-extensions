@@ -52,7 +52,7 @@ public class ImageLocationScanner extends PluginPassiveScanner {
 	private PassiveScanThread parent = null;
 	private static final Logger logger = Logger.getLogger(ImageLocationScanner.class);
 	private static final String MESSAGE_PREFIX = "pscanalpha.imagelocationscanner.";
-	private static final int PLUGIN_ID = 10103;
+	public static final int PLUGIN_ID = 10103;
 	
 	
 	@Override
