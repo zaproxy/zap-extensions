@@ -17,6 +17,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.util.Arrays;
 import java.util.List;
 import java.net.UnknownHostException;
 
@@ -28,6 +29,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -43,9 +45,11 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 	 * Prefix for internationalised messages used by this rule
 	 */
 	private static final String MESSAGE_PREFIX = "ascanrules.testscrosssitescriptv2.";
-	
+	private static final String GENERIC_SCRIPT_ALERT = "<script>alert(1);</script>";
+	private static final List<Integer> GET_POST_TYPES = Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
     private static Logger log = Logger.getLogger(TestCrossSiteScriptV2.class);
+    private int currentParamType;
 
     @Override
     public int getId() {
@@ -102,8 +106,19 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
     public void init() {
     }
     
+    @Override
+    public void scan(HttpMessage msg, NameValuePair originalParam) {
+        currentParamType = originalParam.getType();
+        super.scan(msg, originalParam);
+    }
+    
     private List<HtmlContext> performAttack (HttpMessage msg, String param, String attack,
-    		HtmlContext targetContext, int ignoreFlags) {
+            HtmlContext targetContext, int ignoreFlags) {
+        return performAttack(msg, param, attack, targetContext, ignoreFlags, false);
+    }
+    
+    private List<HtmlContext> performAttack (HttpMessage msg, String param, String attack,
+    		HtmlContext targetContext, int ignoreFlags, boolean findDecoded) {
         if (isStop()) {
             return null;
         }
@@ -131,9 +146,10 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
         if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
         	// High level, so check all results are in the expected context
-        	return hca.getHtmlContexts(attack, targetContext, ignoreFlags);
+        	return hca.getHtmlContexts(findDecoded ? getURLDecode(attack) : attack, targetContext, ignoreFlags);
         }
-        return hca.getHtmlContexts(attack);
+        
+        return hca.getHtmlContexts(findDecoded ? getURLDecode(attack) : attack);
     }
     	
     @Override
@@ -194,7 +210,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             if (contexts.size() == 0) {
             	// No luck - lets just try a direct attack
 	            List<HtmlContext> contexts2 = performAttack (msg, param, 
-	            		"'\"<script>alert(1);</script>", null, 0);
+	            		"'\"" + GENERIC_SCRIPT_ALERT, null, 0);
                 if (contexts2 == null) {
                     return;
                 }
@@ -278,7 +294,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         			if (! attackWorked) {
         				// Try a simple alert attack
         	            List<HtmlContext> contexts2 = performAttack (msg, param, 
-        	            		context.getSurroundingQuote() + "><script>alert(1);</script>", context, HtmlContext.IGNORE_TAG);
+        	            		context.getSurroundingQuote() + ">" + GENERIC_SCRIPT_ALERT, context, HtmlContext.IGNORE_TAG);
                         if (contexts2 == null) {
                             break;
                         }
@@ -313,7 +329,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             	} else if (context.isHtmlComment()) {
             		// Try breaking out of the comment
     	            List<HtmlContext> contexts2 = performAttack (msg, param, 
-    	            		"--><script>alert(1);</script><!--", context, HtmlContext.IGNORE_HTML_COMMENT);
+    	            		"-->" + GENERIC_SCRIPT_ALERT + "<!--", context, HtmlContext.IGNORE_HTML_COMMENT);
                     if (contexts2 == null) {
                         break;
                     }
@@ -342,7 +358,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             			// Immediately under a body tag
         				// Try a simple alert attack
         	            List<HtmlContext> contexts2 = performAttack (msg, param, 
-        	            		"<script>alert(1);</script>", null, HtmlContext.IGNORE_PARENT);
+        	            		GENERIC_SCRIPT_ALERT, null, HtmlContext.IGNORE_PARENT);
                         if (contexts2 == null) {
                             break;
                         }
@@ -355,24 +371,38 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
         	            	// Maybe they're blocking script tags
             	            contexts2 = performAttack (msg, param, 
     			            		"<b onMouseOver=alert(1);>test</b>", context, HtmlContext.IGNORE_PARENT);
-                            if (contexts2 == null) {
-                                break;
-                            }
-    			            for (HtmlContext context2 : contexts2) {
-    			            	if ("body".equalsIgnoreCase(context2.getParentTag()) ||
-    			            			"b".equalsIgnoreCase(context2.getParentTag())) {
-    			            		// Yep, its vulnerable
-    								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
-    										"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
-    								attackWorked = true;
-    								break;
-    			            	}
+            	            if (contexts2 != null) {
+	    			            for (HtmlContext context2 : contexts2) {
+	    			            	if ("body".equalsIgnoreCase(context2.getParentTag()) ||
+	    			            			"b".equalsIgnoreCase(context2.getParentTag())) {
+	    			            		// Yep, its vulnerable
+	    								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(), 
+	    										"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
+	    								attackWorked = true;
+	    								break;
+	    			            	}
+	    			            }
     			            }
+            	            if (!attackWorked) {
+            	                if (GET_POST_TYPES.contains(currentParamType)) {
+	                                // Try double encoded
+	                                List<HtmlContext> contexts3 = performAttack (msg, param, 
+	                                        getURLEncode(GENERIC_SCRIPT_ALERT), 
+	                                        null, 0, true);
+	                                if (contexts3 != null && contexts3.size() > 0) {
+	            						attackWorked = true;
+	               						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, 
+	               								getURLEncode(getURLEncode(contexts3.get(0).getTarget())), 
+	               								"", GENERIC_SCRIPT_ALERT, contexts3.get(0).getMsg());
+	                                }
+	                                break;
+            	                }
+            	            }
         	            }
             		} else if (context.getParentTag() != null){
             			// Its not immediately under a body tag, try to close the tag
         	            List<HtmlContext> contexts2 = performAttack (msg, param, 
-        	            		"</" + context.getParentTag() + "><script>alert(1);</script><" + context.getParentTag() + ">", 
+        	            		"</" + context.getParentTag() + ">" + GENERIC_SCRIPT_ALERT + "<" + context.getParentTag() + ">", 
         	            		context, HtmlContext.IGNORE_IN_SCRIPT);
                         if (contexts2 == null) {
                             break;
@@ -410,9 +440,8 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
             		} else {
             			// Last chance - is the payload reflected outside of any tags
             			if (context.getMsg().getResponseBody().toString().contains(context.getTarget())) {
-                            String basicXss = "<script>alert(1);</script>";
             	            List<HtmlContext> contexts2 = performAttack (msg, param, 
-            	            		basicXss, null, 0);
+            	            		GENERIC_SCRIPT_ALERT, null, 0);
                             if (contexts2 == null) {
                                 break;
                             }
@@ -429,7 +458,7 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
                                             bingo(Alert.RISK_LOW, Alert.CONFIDENCE_LOW,
                                                     Constant.messages.getString(MESSAGE_PREFIX + "json.name"),
                                                     Constant.messages.getString(MESSAGE_PREFIX + "json.desc"),
-                                                    ctx2Message.getRequestHeader().getURI().toString(), param, basicXss,
+                                                    ctx2Message.getRequestHeader().getURI().toString(), param, GENERIC_SCRIPT_ALERT,
                                                     Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.nothtml"),
                                                     getSolution(), "", ctx2Message);
                                         } else {

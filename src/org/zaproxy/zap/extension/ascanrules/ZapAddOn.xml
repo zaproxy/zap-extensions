@@ -7,7 +7,8 @@
 	<url/>
 	<changes>
 	<![CDATA[
-	Issue 1852: Fix Reflected XSS false negative with poor quality HTML filtering.<br/>
+	Issue 1852: Fix reflected XSS false negative with poor quality HTML filtering.<br/>
+	Issue 1640: Fix reflected XSS false negative with double decoded output.<br/>
 	]]>
     </changes>
 	<extensions>
