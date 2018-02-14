@@ -25,6 +25,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.SwingWorker;
 
@@ -66,6 +68,12 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
 		String site = "";	// e.g. http://localhost:8080/
 		String postdata = "";	// only present in POST ops
 		String cookie = "";		// from the request header
+		HistoryReference historyRef = msg.getHistoryRef();
+		int msgid = -1;
+
+		if (historyRef != null) {
+			msgid = historyRef.getHistoryId();
+		}
 
 		URI uri = msg.getRequestHeader().getURI();
 		url = uri.toString();
@@ -101,7 +109,19 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
 						.replace("%port%", port)
 						.replace("%site%", site)
 						.replace("%cookie%", cookie)
-						.replace("%postdata%", postdata);
+						.replace("%postdata%", postdata)
+						.replace("%msgid%", String.valueOf(msgid));
+
+				// Replace header tags
+				Matcher headers = Pattern.compile("%header-([A-z0-9_-]+)%").matcher(finalParameter);
+				while (headers.find()) {
+					String headerValue = msg.getRequestHeader().getHeader(headers.group(1));
+					if (headerValue == null) {
+						headerValue = "";
+					}
+					finalParameter = finalParameter.replace(headers.group(0), headerValue);
+				}
+
 				cmd.add(finalParameter);
 			}
 		}
