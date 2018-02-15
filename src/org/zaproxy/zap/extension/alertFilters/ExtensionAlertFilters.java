@@ -45,6 +45,7 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.model.Session.OnContextsChangedListener;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.control.CoreFunctionality;
 import org.zaproxy.zap.control.ExtensionFactory;
@@ -100,6 +101,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	private static ExtensionActiveScan extAscan;
 	
     private Logger log = Logger.getLogger(this.getClass());
+
+    private OnContextsChangedListenerImpl contextsChangedListener;
 
     public ExtensionAlertFilters() {
         super(NAME);
@@ -167,6 +170,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	    super.hook(extensionHook);
 	    
 	    extensionHook.addSessionListener(this);
+	    contextsChangedListener = new OnContextsChangedListenerImpl();
+	    Model.getSingleton().getSession().addOnContextsChangedListener(contextsChangedListener);
 	    
 		// Register this as a context data factory
 		extensionHook.addContextDataFactory(this);
@@ -190,6 +195,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	public void unload() {
 		super.unload();
 
+		Model.getSingleton().getSession().removeOnContextsChangedListener(contextsChangedListener);
 		ZAP.getEventBus().unregisterConsumer(this, AlertEventPublisher.getPublisher().getPublisherName());
 	}
 
@@ -494,5 +500,23 @@ public class ExtensionAlertFilters extends ExtensionAdaptor implements ContextPa
 	@Override
 	public void sessionModeChanged(Mode mode) {
 		// Ignore
+	}
+
+	private class OnContextsChangedListenerImpl implements OnContextsChangedListener {
+
+		@Override
+		public void contextAdded(Context context) {
+			// Nothing to do.
+		}
+
+		@Override
+		public void contextDeleted(Context context) {
+			discardContext(context);
+		}
+
+		@Override
+		public void contextsChanged() {
+			// Nothing to do.
+		}
 	}
 }
