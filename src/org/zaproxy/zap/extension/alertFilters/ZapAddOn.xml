@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Context Alert Filters</name>
-	<version>6</version>
+	<version>7</version>
 	<status>beta</status>
 	<description>Allows you to automate the changing of alert risk levels.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
+	Fix an exception when running ZAP in daemon mode (Issue 4405).<br>
 	]]>
     </changes>
 	<extensions>
