@@ -63,7 +63,7 @@
 	<classpathentry kind="lib" path="lib/jxbrowser-6.18.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/metadata-extractor-2.10.1.jar"/>
-	<classpathentry kind="lib" path="lib/xmpcore-5.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/xmpcore-5.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/github-api-1.75.jar"/>
 	<classpathentry kind="lib" path="lib/j2bugzilla-2.2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
