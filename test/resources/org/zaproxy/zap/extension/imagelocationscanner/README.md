@@ -4,7 +4,7 @@ Permission was obtained from the copyright holders of each of the images for inc
 
 Some images are licensed under Creative Commons, see https://creativecommons.org/share-your-work/licensing-types-examples/licensing-examples/ for information.
 
-Some images are from the taken from the sample library of Drew Noakes' MetaData Extractor.  These images are Apache 2.0 licensed; see https://github.com/drewnoakes/metadata-extractor-images .
+Some images are taken from the sample library of Drew Noakes' MetaData Extractor.  These images are Apache 2.0 licensed; see https://github.com/drewnoakes/metadata-extractor-images .
 
 Images:
 
