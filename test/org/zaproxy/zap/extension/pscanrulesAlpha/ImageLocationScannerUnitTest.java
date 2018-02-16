@@ -51,7 +51,7 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 		HttpMessage msg;
 		String fname;
 
-		// Given - text file with GPS Exif data
+		// Given - test file with GPS Exif data
 		fname= "exif_gps_01.jpg";
 
 		// When
