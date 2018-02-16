@@ -3,7 +3,7 @@
  * 
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  * 
- * Copyright 2016 The ZAP Development Team
+ * Copyright 2018 The ZAP Development Team
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,6 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 	public void passesIfExifLocationDetected() throws HttpMalformedHeaderException, IOException {
 		HttpMessage msg;
 		String fname;
-		// future: add more files, put in a loop.
 
 		// Given - text file with GPS Exif data
 		fname= "exif_gps_01.jpg";
@@ -69,7 +68,6 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 	public void passesIfNoIssuesDetected() throws HttpMalformedHeaderException, IOException {
 		HttpMessage msg;
 		String fname;
-		// future: add more files, put in a loop.
 
 		// Given - text file with no Exif data
 		fname= "no_alerts_01.jpg";
@@ -97,7 +95,6 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 	public void passesIfPrivacyExposureDetected() throws HttpMalformedHeaderException, IOException {
 		HttpMessage msg;
 		String fname;
-		// future: add more files, put in a loop.
 
 		// Given - image with privacy-exposure (embedded camera ownership)
 		fname= "privacy_exposure_01.jpg";
@@ -137,9 +134,6 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 
 		requestUri = requestUri.startsWith("http") ? requestUri : "http://" + requestUri;
 		msg.setRequestHeader("GET " + requestUri + " HTTP/1.1");
-		
-		// Future testing might add checks for content type or file extensions, but for now, the 
-		// important part is getting the image scanning correct.
 		
 		msg.setResponseHeader(	"HTTP/1.1 200 OK\r\n"
 								+ "Content-Type: image/jpg\r\n"
