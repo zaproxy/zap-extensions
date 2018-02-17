@@ -129,7 +129,6 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 		HttpMessage msg = new HttpMessage();
 		String requestUri = URI;
 
-		requestUri = requestUri.startsWith("http") ? requestUri : "http://" + requestUri;
 		msg.setRequestHeader("GET " + requestUri + " HTTP/1.1");
 		
 		msg.setResponseHeader(	"HTTP/1.1 200 OK\r\n"
