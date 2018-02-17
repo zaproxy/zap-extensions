@@ -60,7 +60,7 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 
 		// Then
 		assertEquals(alertsRaised.size(), 1);
-		validateAlert(URI,alertsRaised.get(0));
+		validateAlert(alertsRaised.get(0));
 		assertThat(alertsRaised.get(0).getEvidence(), containsString("Exif_GPS"));
 	}
 
@@ -105,6 +105,7 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 
 		// Then
 		assertEquals(alertsRaised.size(), 1);
+		validateAlert(alertsRaised.get(0));
 		assertThat(alertsRaised.get(0).getEvidence(), containsString("Owner Name"));
 	}
 
@@ -118,14 +119,10 @@ public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 
 
 	private static void validateAlert(Alert alert) {
-		validateAlert(URI, alert);
-	}
-
-	private static void validateAlert(String requestUri, Alert alert) {
 		assertThat(alert.getPluginId(), equalTo(PLUGIN_ID));
 		assertThat(alert.getRisk(), equalTo(Alert.RISK_INFO));
 		assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-		assertThat(alert.getUri(), equalTo(requestUri));
+		assertThat(alert.getUri(), equalTo(URI));
 	}
 
 	private HttpMessage createHttpMessageFromFilename(String filename) throws HttpMalformedHeaderException, IOException {
