@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Getting Started with ZAP Guide</name>
-	<version>9</version>
+	<version>10</version>
 	<status>release</status>
 	<description>A short Getting Started with ZAP Guide</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Added the Spanish, Filipino and Indonesian translations</changes>
+	<changes>Update Indonesian translation</changes>
 	<extensions>
 	    <extension>org.zaproxy.zap.extension.gettingStarted.ExtensionGettingStarted</extension>
 	</extensions>
