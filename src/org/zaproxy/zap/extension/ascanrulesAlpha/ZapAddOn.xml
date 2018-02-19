@@ -9,7 +9,7 @@
 	<![CDATA[
 	Add .htaccess scanner (Issue 3972).<br>
 	Modified trace.axd scanner to leverage new AbstractAppFilePlugin component.<br>
-	]]><![CDATA[Add NoSQL scan rule(s) (Issue 3480).]]>
+	Add NoSQL scan rule(s) for MongoDB and Solr NoSQL databases (Issue 3480). <br>]]>
 	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.ascanrulesAlpha.ExtensionAscanRulesAlpha</extension>
@@ -34,9 +34,9 @@
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestUserAgent</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TraceAxdScanner</ascanrule>
 		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.HtAccessScanner</ascanrule>
-		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestNoSQLInjection</ascanrule>
+		<ascanrule>org.zaproxy.zap.extension.ascanrulesAlpha.TestNoSQLDbInjection</ascanrule>
 	</ascanrules>
-	<pscanrules/>
+	<pscanrules></pscanrules>
 	<filters/>
 	<files>
 		<file>xml/example-ascan-file.txt</file>
