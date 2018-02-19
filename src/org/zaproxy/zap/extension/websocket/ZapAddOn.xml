@@ -11,6 +11,7 @@
 	Do not set messages when switching views if text view shows an error message (Issue 4108)<br>
 	Add rewind to fix issue #4149 <br>
 	Added Websocket Sender script interface <br>
+	Added API support <br>
 	]]>
 	</changes>
 	<classnames>

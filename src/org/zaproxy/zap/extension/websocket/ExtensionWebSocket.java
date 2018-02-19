@@ -198,6 +198,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * @see #onHandshakeResponse(HttpMessage, Socket, ZapGetMethod)
 	 */
 	private boolean focusWebSocketsTabOnHandshake;
+	
+	private WebSocketAPI api = new WebSocketAPI(this);
 
 	/**
 	 * A {@link HttpSenderListener} implementation for removing Websocket extensions, such as compression.
@@ -289,6 +291,8 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	@Override
 	public void hook(ExtensionHook extensionHook) {
 		super.hook(extensionHook);
+		
+		extensionHook.addApiImplementor(api);
 		
 		extensionHook.addPersistentConnectionListener(this);
 		
@@ -590,7 +594,18 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			String wsVersion = parseWebSocketVersion(handshakeMessage);
 	
 			WebSocketProxy wsProxy = null;
+			
+			if (localSocket == remoteSocket) {
+				// Its a callback
+				remoteSocket = null;
+			}
+			
 			wsProxy = WebSocketProxy.create(wsVersion, localSocket, remoteSocket, targetHost, targetPort, wsProtocol, wsExtensions);
+			
+			if (wsProxy.isServerMode() && this.api.getCallbackUrl(false).equals(requestHeader.getURI().toString())) {
+				wsProxy.setAllowAPI(true);
+				wsProxy.addObserver(api.getWebSocketObserver());
+			}
 			
 			// set other observers and handshake reference, before starting listeners
 			for (WebSocketObserver observer : allChannelObservers) {
@@ -603,11 +618,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 			}
 			
 			// wait until HistoryReference is saved to database
-			while (handshakeMessage.getHistoryRef() == null) {
-				try {
-					Thread.sleep(5);
-				} catch (InterruptedException e) {
-					logger.warn(e.getMessage(), e);
+			if (! wsProxy.isServerMode()) {
+				while (handshakeMessage.getHistoryRef() == null) {
+					try {
+						Thread.sleep(5);
+					} catch (InterruptedException e) {
+						logger.warn(e.getMessage(), e);
+					}
 				}
 			}
 			wsProxy.setHandshakeReference(handshakeMessage.getHistoryRef());
@@ -785,7 +802,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		synchronized (wsProxies) {
 			for (Entry<Integer, WebSocketProxy> entry : wsProxies.entrySet()) {
 				WebSocketProxy proxy = entry.getValue();
-				if (historyId == proxy.getHandshakeReference().getHistoryId()) {
+				if (proxy.getHandshakeReference() != null && historyId == proxy.getHandshakeReference().getHistoryId()) {
 					return proxy.isConnected();
 				}
 			}
@@ -910,6 +927,36 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 		}
 		
 		return doNotStore;
+	}
+
+	/**
+	 * Returns the specific websocket message
+	 * @param messageId the message id
+	 * @param channelId the channel id
+	 * @return the websocket message
+	 * @throws DatabaseException
+	 */
+	public WebSocketMessageDTO getWebsocketMessage(int messageId, int channelId) throws DatabaseException {
+		return this.table.getMessage(messageId, channelId);
+	}
+
+	/**
+	 * Returns the specified messages
+	 * @param criteria the criteria to use for the messages to include
+	 * @param opcodes the opcodes to return, use null for any
+	 * @param inScopeChannelIds the channel ids for which messages should be included, use null for all
+	 * @param offset the offset of the first message
+	 * @param limit the number of messages to return
+	 * @param payloadPreviewLength the maximum size of the payload to include (for a preview)
+	 * @return the specified messages
+	 * @throws DatabaseException
+	 */
+	public List<WebSocketMessageDTO> getWebsocketMessages(WebSocketMessageDTO criteria, List<Integer> opcodes, List<Integer> inScopeChannelIds, int offset, int limit, int payloadPreviewLength) throws DatabaseException {
+		return this.table.getMessages(criteria, opcodes, inScopeChannelIds, offset, limit, payloadPreviewLength);
+	}
+
+	public void recordMessage(WebSocketMessageDTO message) throws DatabaseException {
+		this.table.insertMessage(message);
 	}
 
 	@Override
@@ -1423,5 +1470,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 				component.setIcon(WebSocketPanel.disconnectIcon);
 			}
 		}
+	}
+	
+	public String getCallbackUrl() {
+		return this.api.getCallbackUrl(true);
+	}
+	
+	protected WebSocketProxy getWebSocketProxy(int channelId) {
+		return this.wsProxies.get(channelId);
 	}
 }

@@ -63,10 +63,10 @@ public abstract class WebSocketProxy {
 	}
 	
 	/**
-	 * WebSocket frame initiator
+	 * WebSocket frame initiator - to be kept in step with the ZAP HttpSender class.
 	 */
 	public enum Initiator {
-		PROXY(1), FUZZER(4), MANUAL_REQUEST(6);
+		PROXY(1), FUZZER(4), MANUAL_REQUEST(6), WEB_SOCKET(13);
 		
 		/**
 		 * compatible value to HttpSender.XXX_INITIATOR
@@ -81,6 +81,17 @@ public abstract class WebSocketProxy {
 			return this.intValue;
 		}
 	}
+	
+	/**
+	 * In PROXY mode there is a connections:  Browser <-> ZAP and ZAP <-> Server.
+	 * In client mode there is no connection Browser <-> ZAP, but only ZAP <-> Server.
+	 * In server mode there is no connection ZAP <-> Server, but only Browser <-> ZAP.
+	 */
+	public enum Mode {
+		PROXY, CLIENT, SERVER
+	}
+	
+	private Mode mode;
 	
 	/**
 	 * To ease identification of different WebSocket connections.
@@ -182,9 +193,9 @@ public abstract class WebSocketProxy {
 	private boolean isForwardOnly;
 	
 	/**
-	 * In client mode there is no connection Browser <-> ZAP, but only ZAP <-> Server.
+	 * When true allow the API to be accessed over this channel
 	 */
-	private boolean isClientMode;
+	private boolean allowAPI = false;
 	
 	/**
 	 * After loading another session, the channelCount should be initialized.
@@ -287,10 +298,12 @@ public abstract class WebSocketProxy {
 	 * @see #WebSocketProxy(Socket, Socket)
 	 */
 	public WebSocketProxy(Socket localSocket, Socket remoteSocket, String targetHost, int targetPort) {
-		if (localSocket == null) {
-			isClientMode = true;
+		if (remoteSocket == null) {
+			mode = Mode.SERVER;
+		} else if (localSocket == null) {
+			mode = Mode.CLIENT;
 		} else {
-			isClientMode = false;
+			mode = Mode.PROXY;
 		}
 		
 		this.localSocket = localSocket;
@@ -354,7 +367,7 @@ public abstract class WebSocketProxy {
 			throw new WebSocketException("local socket is closed or not connected");
 		}
 		
-		if (remoteSocket.isClosed() || !remoteSocket.isConnected()) {
+		if (remoteSocket != null && (remoteSocket.isClosed() || !remoteSocket.isConnected())) {
 			throw new WebSocketException("remote socket is closed or not connected");
 		}
 		
@@ -366,9 +379,11 @@ public abstract class WebSocketProxy {
 				localSocket.setKeepAlive(true);
 			}
 			
-			remoteSocket.setSoTimeout(0);
-			remoteSocket.setTcpNoDelay(true);
-			remoteSocket.setKeepAlive(true);
+			if (remoteSocket != null) {
+				remoteSocket.setSoTimeout(0);
+				remoteSocket.setTcpNoDelay(true);
+				remoteSocket.setKeepAlive(true);
+			}
 		} catch (SocketException e) {
 			throw new WebSocketException(e);
 		}
@@ -450,7 +465,7 @@ public abstract class WebSocketProxy {
 	 * Stop listening & close all resources, i.e.: threads, streams & sockets
 	 */
 	public void shutdown() {
-		if (isClientMode && localListener.isFinished() && !remoteListener.isFinished()) {
+		if (Mode.CLIENT.equals(mode) && localListener.isFinished() && !remoteListener.isFinished()) {
 			// in client mode closing shutdown should be prevented
 			return;
 		}
@@ -486,7 +501,9 @@ public abstract class WebSocketProxy {
 			}
 			
 			try {
-				remoteSocket.close();
+				if (remoteSocket != null) {
+					remoteSocket.close();
+				}
 			} catch (IOException e) {
 				logger.warn(e.getMessage(), e);
 			}
@@ -941,6 +958,23 @@ public abstract class WebSocketProxy {
 	}
 
 	public boolean isClientMode() {
-		return isClientMode;
+		return Mode.CLIENT.equals(mode);
+	}
+	
+	public boolean isServerMode() {
+		return Mode.SERVER.equals(mode);
+	}
+	
+	public Mode getMode() {
+		return this.mode;
+	}
+	
+	public boolean isAllowAPI() {
+		return allowAPI;
+	}
+
+	
+	public void setAllowAPI(boolean allowAPI) {
+		this.allowAPI = allowAPI;
 	}
 }
