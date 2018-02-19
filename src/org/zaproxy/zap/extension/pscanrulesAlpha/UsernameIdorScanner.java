@@ -178,7 +178,7 @@ public class UsernameIdorScanner extends PluginPassiveScanner {
 
 	protected ExtensionUserManagement getExtensionUserManagement() {
 		if (extUserMgmt == null) {
-			return Control.getSingleton().getExtensionLoader().getExtension(ExtensionUserManagement.class);
+			extUserMgmt = Control.getSingleton().getExtensionLoader().getExtension(ExtensionUserManagement.class);
 		}
 		return extUserMgmt;
 	}
