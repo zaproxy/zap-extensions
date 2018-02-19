@@ -79,7 +79,7 @@ public class BlankLinkTargetScanner extends PluginPassiveScanner {
     }
 
     private boolean isLinkFromOtherDomain (String host, String link, List<Context> contextList){
-        if (!link.startsWith("//") && (link.startsWith("/") || link.startsWith("./") || link.startsWith("../"))) {
+        if (link == null || !link.startsWith("//") && (link.startsWith("/") || link.startsWith("./") || link.startsWith("../"))) {
             return false;
         }
         boolean otherDomain = false;

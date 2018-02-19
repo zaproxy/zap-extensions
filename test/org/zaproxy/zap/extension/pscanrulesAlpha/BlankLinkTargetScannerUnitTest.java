@@ -406,4 +406,26 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("<a href=\"http://www.example3.com/\" target=\"_blank\">link</a>"));
     }
+
+    @Test
+    public void shouldNotFailIfLinkOrAreaDoesNotHaveHref() throws Exception {
+        // Mock the model and session
+        Model model = Mockito.mock(Model.class);
+        Session session = Mockito.mock(Session.class);
+        Context context = Mockito.mock(Context.class);
+        when(context.isInContext(Matchers.anyString())).thenReturn(true);
+        ArrayList<Context> contexts = new ArrayList<>();
+        contexts.add(context);
+        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
+        when(model.getSession()).thenReturn(session);
+        ((BlankLinkTargetScanner) rule).setModel(model);
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
+        msg.setResponseBody("<html><a>link</a><area>area</area></html>");
+        // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then = no exception.
+    }
 }

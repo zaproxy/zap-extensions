@@ -10,6 +10,7 @@
 	Change Image Location and Privacy Scanner to escape HTML inside of embedded image comments.<br>
 	Bump jar version of Image Location and Privacy Scanner dependancy xmpcore.<br>
 	Update Image Location and Privacy Scanner to version 1.0.<br>
+	Fix exception in blank link target scanner.<br>
 	]]>
 	</changes>
 	<extensions>
