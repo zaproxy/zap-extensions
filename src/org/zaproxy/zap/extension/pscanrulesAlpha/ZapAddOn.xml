@@ -1,16 +1,15 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>19</version>
+	<version>20</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Minor code changes to comply with deprecations.<br>
-	Added passive PII Scanner (which currently looks for Credit Card # patterns).<br>
-	Change Image Location and Privacy Scanner to scan hidden images.<br>
-	Added blank link target scanner.<br>
+	Change Image Location and Privacy Scanner to escape HTML inside of embedded image comments.<br>
+	Bump jar version of Image Location and Privacy Scanner dependancy xmpcore.<br>
+	Update Image Location and Privacy Scanner to version 1.0.<br>
 	]]>
 	</changes>
 	<extensions>

@@ -48,33 +48,31 @@ import com.drew.metadata.exif.makernotes.FujifilmMakernoteDescriptor;
  * 
  * @author  Jay Ball / github: veggiespam / twitter: @veggiespam / www.veggiespam.com
  * @license Apache License 2.0
- * @version 0.4
+ * @version 1.0
  * @see https://www.veggiespam.com/ils/
  */
 public class ILS {
 
 	/** A bunch of static strings that are used by both ZAP and Burp plug-ins. */
-    public static final String pluginName = "Image Location and Privary Scanner";
-    public static final String pluginVersion = "0.4";
-    public static final String alertTitle = "Image Exposes Location or Privacy Data";
-    public static final String alertDetailPrefix = "This image embeds a location or leaks privacy-related data: ";
-    public static final String alertBackground 
-    	= "The image was found to contain embedded location information, such as GPS coordinates, or "
+	public static final String pluginName = "Image Location and Privacy Scanner";
+	public static final String pluginVersion = "1.0";
+	public static final String alertTitle = "Image Exposes Location or Privacy Data";
+	public static final String alertDetailPrefix = "This image embeds a location or leaks privacy-related data: ";
+	public static final String alertBackground 
+		= "The image was found to contain embedded location information, such as GPS coordinates, or "
 		+ "another privacy exposure, such as camera serial number.  "
-    	+ "Depending on the context of the image in the website, "
-    	+ "this information may expose private details of the users of a site.  For example, a site that allows "
-    	+ "users to upload profile pictures taken in the home may expose the home's address.  ";
-    public static final String remediationBackground 
-    	= "Before allowing images to be stored on the server and/or transmitted to the browser, strip out the "
-    	+ "embedded location information from image.  This could mean removing all Exif data or just the GPS "
-    	+ "component.  Other data, like serial numbers, should also be removed.";
-    public static final String remediationDetail = null;
-    public static final String referenceURL = "https://www.veggiespam.com/ils/"; 
-    public static final String pluginAuthor = "Jay Ball (veggiespam)"; 
+		+ "Depending on the context of the image in the website, "
+		+ "this information may expose private details of the users of a site.  For example, a site that allows "
+		+ "users to upload profile pictures taken in the home may expose the home's address.  ";
+	public static final String remediationBackground 
+		= "Before allowing images to be stored on the server and/or transmitted to the browser, strip out the "
+		+ "embedded location information from image.  This could mean removing all Exif data or just the GPS "
+		+ "component.  Other data, like serial numbers, should also be removed.";
+	public static final String remediationDetail = null;
+	public static final String referenceURL = "https://www.veggiespam.com/ils/"; 
+	public static final String pluginAuthor = "Jay Ball (veggiespam)"; 
 
 	private static final String EmptyString = "";
-	private static final String Space = " ";
-	private static final String Seperator = " ||  ";  // one space at start, two at end
 	private static final String TextSubtypeEnd = ": "; // colon space for plain text results
 
 	private static final String HTML_subtype_begin = "<li>";
@@ -88,8 +86,11 @@ public class ILS {
 		// blank constructor
 		super();
 	}
-	
-    
+
+	public String getAuthor() {
+		return pluginAuthor;
+	}
+
 	/** Tests a data blob for Location or GPS information and returns the image location
 	 * information as a string.  If no location is present or there is an error,
 	 * the function will return an empty string of "".
@@ -97,29 +98,29 @@ public class ILS {
 	 * @param data is a byte array that is an image file to test, such as entire jpeg file.
 	 * @return String containing the Location data or an empty String indicating no GPS data found.
 	 */
-    public static String[] scanForLocationInImageBoth(byte[] data)   {
+	public static String[] scanForLocationInImageBoth(byte[] data)   {
 		String[] results = { EmptyString, EmptyString };
-    	
-    	/*  // Extreme debugging code for making sure data from Burp/ZAP/newproxy gets into 
+		
+		/*  // Extreme debugging code for making sure data from Burp/ZAP/newproxy gets into 
 			// ILS.  This code is very slow and not to be compiled in, even with if(debug)
 			// types of contrusts.  This code this will save the image file to disk for binary
 			// import debugging.  
 		String t[] = new String[2];
-    	try{
-       		FileOutputStream o = new FileOutputStream(new File("/tmp/output.jpg"));
+		try{
+	   		FileOutputStream o = new FileOutputStream(new File("/tmp/output.jpg"));
 			o.write(data);
 			o.close();
-    	} catch (IOException e) {
+		} catch (IOException e) {
 			t[0] = "IOException Exception " + e.toString();
 			t[1] = t[0];
-    		return t;
-    	}
+			return t;
+		}
 		t[0] = "Scanning " + data.length + "\n\n";
 		t[1] = t[0];
-    	// return t;   /*   --- if you use this line, remember to comment out rest of function.
+		// return t;   /*   --- if you use this line, remember to comment out rest of function.
 		*/	
- 
-    	try {
+
+		try {
 			BufferedInputStream is = new BufferedInputStream(new ByteArrayInputStream(data, 0, data.length));
 			Metadata md = ImageMetadataReader.readMetadata(is);
 
@@ -139,15 +140,15 @@ public class ILS {
 			}
 
 
-    	} catch (ImageProcessingException e) {
-    		// bad image, just ignore processing exceptions
-    		// DEBUG: return new String("ImageProcessingException " + e.toString());
-    	} catch (IOException e) {
-    		// bad file or something, just ignore 
-    		// DEBUG: return new String("IOException " + e.toString());
-    	}
+		} catch (ImageProcessingException e) {
+			// bad image, just ignore processing exceptions
+			// DEBUG: return new String("ImageProcessingException " + e.toString());
+		} catch (IOException e) {
+			// bad file or something, just ignore 
+			// DEBUG: return new String("IOException " + e.toString());
+		}
 
-    	return results; 
+		return results; 
 	}
 
 
@@ -155,7 +156,7 @@ public class ILS {
 	 * 
 	 * @see scanForLocationInImageBoth
 	 */
-    public static String scanForLocationInImageHTML(byte[] data)   {
+	public static String scanForLocationInImageHTML(byte[] data)   {
 		return scanForLocationInImageBoth(data)[1];
 	}
 
@@ -163,7 +164,7 @@ public class ILS {
 	 * 
 	 * @see scanForLocationInImageBoth
 	 */
-    public static String scanForLocationInImageText(byte[] data)   {
+	public static String scanForLocationInImageText(byte[] data)   {
 		return scanForLocationInImageBoth(data)[0];
 	}
 
@@ -171,7 +172,7 @@ public class ILS {
 	/** 
 	 * @deprecated Use the HTML / Text calls directly or use boolean construct.
 	 */
-    public static String scanForLocationInImage(byte[] data)   {
+	public static String scanForLocationInImage(byte[] data)   {
 		return scanForLocationInImageHTML(data);
 	}
 
@@ -182,7 +183,7 @@ public class ILS {
 	 * @return String containing the Location data or an empty String indicating no GPS data found.
 	 * @see scanForLocationInImageBoth
 	 */
-    public static String scanForLocationInImage(byte[] data, boolean usehtml)   {
+	public static String scanForLocationInImage(byte[] data, boolean usehtml)   {
 		if (usehtml) {
 			return scanForLocationInImageHTML(data);
 		} else {
@@ -198,7 +199,7 @@ public class ILS {
 	 *  @param expsure a list of of strings that describe the exposure; each string is considered a single point of exposure in that one file.
 	 *  @return Two strings as an array, first string is formattied text, second is HTML.
 	 */
-    private static String[] appendResults(String current[], String bigtype, String subtype, ArrayList<String> exposure)   {
+	private static String[] appendResults(String current[], String bigtype, String subtype, ArrayList<String> exposure)   {
 		String[] tmp = formatResults(bigtype, subtype, exposure);
 
 		if (tmp[0].length() > 0) {
@@ -208,13 +209,23 @@ public class ILS {
 		return current;
 	}
 
+	/** Tiny chance of XSS inside of Burp/ZAP, return properly escaped HTML. */
+	private static String escapeHTML(String s) {
+		return s.replace("&","&amp;").replace("<","&gt;");
+	}
+
+	/** Do this for completeness, even if a no-op for now. */
+	private static String escapeTEXT(String s) {
+		return s;  // might want to do more here someday, like binary data as hex codes, etc...
+	}
+
 	/** Formats the findings in both text and HTML.  
 	 *  @param bigtype the major category of exposure type, be it "Privacy" or "Location"
 	 *  @param subtype place where exposure lives in the file, such as Exif, IPTC, or proprietary camera Makernote, like "Panasonic".
 	 *  @param expsure a list of of strings that describe the exposure; each string is considered a single point of exposure in that one file.
 	 *  @return Two strings as an array, first string is formattied text, second is HTML.
 	 */
-    private static String[] formatResults(String bigtype, String subtype, ArrayList<String> exposure)   {
+	private static String[] formatResults(String bigtype, String subtype, ArrayList<String> exposure)   {
 		StringBuffer ret = new StringBuffer(200);
 		StringBuffer retHTML = new StringBuffer(200);
 		String[] retarr = { EmptyString, EmptyString };
@@ -222,8 +233,8 @@ public class ILS {
 		if (exposure.size() > 0) {
 			retHTML.append(HTML_subtype_begin).append(bigtype).append(" / ").append(subtype).append(HTML_subtype_title_end);
 			for (String finding : exposure) {
-				ret.append(subtype).append(TextSubtypeEnd).append(finding).append("\n");
-				retHTML.append(HTML_finding_begin).append(finding).append(HTML_finding_end);
+				ret.append(subtype).append(TextSubtypeEnd).append(escapeTEXT(finding)).append("\n");
+				retHTML.append(HTML_finding_begin).append(escapeHTML(finding)).append(HTML_finding_end);
 			}
 			retHTML.append(HTML_subtype_end);
 		}
@@ -237,12 +248,8 @@ public class ILS {
 
 
 
-    public static String[] scanForLocation(Metadata md)   {
-    	//ArrayList<String> retHTML = new ArrayList<String>();
+	public static String[] scanForLocation(Metadata md)   {
 		ArrayList<String> exposure = new ArrayList<String>();
-
-		StringBuffer ret = new StringBuffer(200);
-		StringBuffer retHTML = new StringBuffer(200);
 
 		String[] results = { EmptyString, EmptyString };
 
@@ -334,9 +341,9 @@ public class ILS {
 		}
 
 		return results;
-    }
+	}
 
-    public static String[] scanForPrivacy(Metadata md)   {
+	public static String[] scanForPrivacy(Metadata md)   {
 		String bigtype = "Privacy";  // Overall category type.
 		String subtype = EmptyString;
 		ArrayList<String> exposure = new ArrayList<String>();
@@ -668,21 +675,19 @@ public class ILS {
 			results[0] = bigtype + ":: " + results[0];
 		}
 		return results;
-    }
+	}
 
-
-    
-    public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		boolean html = false;
-    	if (args.length == 0){
-    		System.out.println("Java Image Location Scanner");
-    		System.out.println("Usage: java ILS.class [-h|-t] file1.jpg file2.png file3.txt [...]");
-    		System.out.println("\t-h : optional specifer to output results in HTML format");
+		if (args.length == 0){
+			System.out.println("Java Image Location & Privacy Scanner");
+			System.out.println("Usage: java ILS.class [-h|-t] file1.jpg file2.png file3.txt [...]");
+			System.out.println("\t-h : optional specifer to output results in HTML format");
 			System.out.println("\t-t : optional specifer to output results in plain text format (default)");
-    		return;
-    	}
+			return;
+		}
 
-    	for (String s: args) {
+		for (String s: args) {
 			if (s.equals("-h")) {
 				html=true;
 				continue;
@@ -692,7 +697,7 @@ public class ILS {
 				continue;
 			}
 
-            try {
+			try {
 				System.out.print("Processing " + s + " : ");
 
 				File f = new File(s);
@@ -707,11 +712,13 @@ public class ILS {
 					res = "None";
 				}
 				System.out.println(res);
-        	} catch (IOException e) {
-        		System.out.println(e.getMessage());
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-    	}
-    }
+		}
+	}
 }
+
+// vim: autoindent noexpandtab tabstop=4 shiftwidth=4
