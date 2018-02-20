@@ -643,7 +643,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 					logger.warn(e.getMessage(), e1);
 				}
 			}
-			logger.error("Adding WebSockets channel failed due to: '" + e.getClass() + "' " + e.getMessage());
+			logger.error("Adding WebSockets channel failed due to: '" + e.getClass() + "' " + e.getMessage(), e);
 			return;
 		}
 	}
