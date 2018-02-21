@@ -21,15 +21,14 @@
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-quickprogress</td>
-			<td>Show ascii progress bars, if started with the -cmd flag.</td>
+			<td>-cmd で開始されている場合、ascii進捗バーを表示します。</td>
 		</tr>
 	</table>
 
 	<br>
 	<p>例:
 	<ul>
-		<li>Start ZAP in 'inline' mode with ascii progress bars, attack the target application http://example.com/
-			and write the report to default output stream: <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
+		<li>「インライン」モードのZAPとascii進捗バーを起動し、ターゲットアプリケーション[http://example.com/]を攻撃後、レポートをデフォルトの出力ストリームに書き込みます： <pre>-cmd -quickurl http://example.com/ -quickprogress</pre>
 		</li>
 		<li>ZAPをUIにて開始、対象アプリケーション「http://example.com/」を攻撃、ファイルにレポートを書き込む。 <pre>-quickurl http://example.com/ -quickout /path/to/report.xml</pre>
 		</li>

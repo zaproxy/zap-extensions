@@ -10,4 +10,6 @@
     <mapID target="websocket.tab" url="contents/tab.html" />
  	<mapID target="websocket.options" url="contents/options.html" />
  	<mapID target="websocket.sessionProperties" url="contents/sessionProperties.html" />
+ 	<mapID target="websocket.api" url="contents/api.html" />
+ 	<mapID target="websocket.about" url="contents/about.html" />
 </map>
