@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.imagelocationscanner;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -33,8 +33,9 @@ import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.imagelocationscanner.ImageLocationScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.extension.pscanrulesAlpha.ImageLocationScanner;
+import org.zaproxy.zap.extension.pscanrulesAlpha.PassiveScannerTest;
 
 public class ImageLocationScannerUnitTest extends PassiveScannerTest {
 	private static final int PLUGIN_ID = ImageLocationScanner.PLUGIN_ID;
