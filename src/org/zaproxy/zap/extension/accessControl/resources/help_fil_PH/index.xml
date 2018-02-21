@@ -5,7 +5,7 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="access control" target="accessControl.concepts" />
-	<indexitem text="access control tab" target="accessControl.tab" />
-	<indexitem text="access control context options" target="accessControl.contextOptions" />
+	<indexitem text="kontrol ng pag-access" target="accessControl.concepts" />
+	<indexitem text="tab sa kontrol ng pag-access" target="accessControl.tab" />
+	<indexitem text="mga opsyon ng konteksto sa kontrol ng pag-access" target="accessControl.contextOptions" />
 </index>
