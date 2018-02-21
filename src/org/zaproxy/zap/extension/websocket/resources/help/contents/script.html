@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+WebSocket Scripts
+</TITLE>
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<H1>WebSocket Scripts</H1>
+
+<h2>WebSocket Sender</h2>
+
+WebSocket Sender scripts are called before forwarding the WebSocket message frame to the server or client and can access and change any WebSocket message that is proxied via ZAP.<br>
+They are initially disabled, to enable them right click the relevant script in the Scripts tree and select "enable".<br>
+A template script is provided which gives details of the methods and parameters supported. 
+
+<h2>Fuzzer WebSocket Processor</h2>
+
+Fuzzer WebSocket Processor scripts are called before forwarding a fuzzed WebSocket message to the client/server. The payloads will have already been injected at this point.<br>
+A template script is provided which gives details of the methods and parameters supported. 
+
+</BODY>
+</HTML>
