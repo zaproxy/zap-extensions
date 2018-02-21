@@ -64,7 +64,6 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
-import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
@@ -134,7 +133,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor implements
 	 * Icon to be shown in script tab for sender scripts
 	 */
 	private static final ImageIcon WEBSOCKET_SENDER_SCRIPT_ICON = new ImageIcon(
-			ZAP.class.getResource("/resource/icon/16/script-httpsender.png"));
+			ExtensionWebSocket.class.getResource("/org/zaproxy/zap/extension/websocket/resources/script-plug.png"));
 
 	/**
 	 * Used to shorten the time, a listener is started on a WebSocket channel.
