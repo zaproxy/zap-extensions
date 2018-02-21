@@ -1,17 +1,13 @@
 <zapaddon>
 	<name>WebSockets</name>
-	<version>15</version>
+	<version>16</version>
 	<status>release</status>
 	<description>Allows you to inspect WebSocket communication.</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
 	<changes>
 	<![CDATA[
-	Remove usage of core filter functionality.<br>
-	Do not set messages when switching views if text view shows an error message (Issue 4108)<br>
-	Add rewind to fix issue #4149 <br>
-	Added Websocket Sender script interface <br>
-	Added API support <br>
+	Tweak About help page.<br>
 	]]>
 	</changes>
 	<classnames>
