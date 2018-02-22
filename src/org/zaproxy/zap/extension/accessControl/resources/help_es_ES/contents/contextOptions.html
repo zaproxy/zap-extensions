@@ -17,15 +17,14 @@
     Como se mencionó en la página de <a href="concepts.html">concepts</a>, ZAP está haciendo uso de la estructura basada en el árbol de direcciones URL. Por lo tanto, al configurar las reglas de acceso, sólo 1 regla debe establecerse explícitamente para un subtree entero, mientras que para los otros nodos se infieren las reglas. Tres valores posibles pueden ajustarse para cualquier nodo en contexto para cada usuario:
 </p>
 <ul>
-    <li><b>Allowed</b> - The rule for the node is <i>explicitly</i> set as Allowed</li>
-    <li><b>Denied</b> - The rule for the node is <i>explicitly</i> set as Denied</li>
-    <li><b>Inherited</b> - The rule for the node is inferred based on the closest parent with an explicitly set rule
+    <li><b>Permitido</b> - La regla para el nodo es <i>explícitamente</i> configurado como Permitido</li>
+    <li><b>Rechazado</b> - La regla para el nodo es <i>explícitamente</i> configurado como Rechazado</li>
+    <li><b>Heredado</b> - La regla para el nodo es inferida basada en el padre mas cercano con una regla explícitamente configurada
     </li>
 </ul>
 
-<p>By default, the rules for any node has an <i>Inherited</i> value and the root node has a value of <i>Unknown</i>.
-    Thus, for any node without a parent with an explicitly configured rule, the inferred rule will default to
-    <i>Unknown</i>.</p>
+<p>Por defecto, las reglas para cada nodo tienen un valor <i>heredado</i> y el nodo raíz tiene el valor de <i>Desconocido</i>.
+    Así, para cualquier nodo sin un padre con reglas configuradas explícitamente, la regla inferida será por defecto     <i>Desconocida</i>.</p>
 
 <h2>Vease también</h2>
 <table>
@@ -33,7 +32,7 @@
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
             <a href="concepts.html">Access Control Testing concepts</a></td>
-        <td>for a short introduction to Access Control Testing</td>
+        <td>para una introducción corta del Access Control Testing</td>
     </tr>
 </table>
 
