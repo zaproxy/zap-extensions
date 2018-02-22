@@ -112,21 +112,21 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 
 		/**
 		 * @param t the Technology
-		 * @param uv url-encoded payload values 
-		 * @param ue breaking-db payload values
+		 * @param uv arrays of url-encoded payload values 
+		 * @param ue arrays of url-encoded payload values to catch not managed errors
 		 * @param upv arrays of url-encoded parameter-value pair
 		 * @param jpv arrays of json payload values
 		 * @param tvi arrays of url-encoded payload values 
 		 * @param ep arrays of error-checkinig strings
 		 * @param p prefix of the @dbTech name
 		 */
-		private NOSQLDB(Tech t, String[] uv, String[] ej, String[][] upv, String[][] jpv, String[][] tvi, String[] ep, 
+		private NOSQLDB(Tech t, String[] uv, String[] ue, String[][] upv, String[][] jpv, String[][] tvi, String[] ep, 
 				String is) {
 			
 			name=t.getName();
 			dbTech=t;
 			urlEncValueInjection=uv;
-			urlEncErrorInjection =ej;
+			urlEncErrorInjection =ue;
 			urlEncParamValueInjection=upv;
 			jsonParamValueInjection=jpv;
 			urlEncTimedValueInjection=tvi;
@@ -186,7 +186,6 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 		if (technologies.includes(Tech.Db)) {
 			return true;
 		}
-
 		for (Tech tech : technologies.getIncludeTech()) {
 			if (tech.getParent() == Tech.Db) {
 				return true;
@@ -242,9 +241,9 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	@Override
 	public void scan(HttpMessage msg, NameValuePair originalParam) {
 
-		isJsonPayload = originalParam.getType() != NameValuePair.TYPE_POST_DATA &
-					originalParam.getType() != NameValuePair.TYPE_JSON;
-		
+		isJsonPayload = originalParam.getType() != NameValuePair.TYPE_POST_DATA; 
+				//TODO add TYPE_JSON constant in NameValuePair class
+				//& originalParam.getType() != NameValuePair.TYPE_JSON;
 		super.scan(msg, originalParam);
 	}
 	
@@ -291,15 +290,6 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 		sendAndReceive(msg);
 		intervalBaseMessage = ChronoUnit.MILLIS.between(start, Instant.now());
 		
-		for(String[] pv : nosql.getUrlEncParamValueInjection()) {
-			if(isStop()) {
-				return;
-			}
-			if(isBingo(msg, getNewMsg(), false, PARVAL_ATTACK, param+pv[0], pv[1], nosql)) {
-				break;
-			}
-		}
-
 		for(String v : nosql.getUrlEncValueInjection()) {
 			if(isStop()) {
 				return;
@@ -314,6 +304,14 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 				return;
 			}
 			if(isBingo(msg, getNewMsg(), true, CRASH_ATTACK, param, ej, nosql)) {
+				break;
+			}
+		}
+		for(String[] pv : nosql.getUrlEncParamValueInjection()) {
+			if(isStop()) {
+				return;
+			}
+			if(isBingo(msg, getNewMsg(), false, PARVAL_ATTACK, param+pv[0], pv[1], nosql)) {
 				break;
 			}
 		}
@@ -380,21 +378,18 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 			return false;
 		}
 		else {
-			
 			/*
 			 * The difference between the base response body and the after injecting one is for the only value passed 
 			 * as input. So it could be a (uncommon) false positive result. For example the server could be response: 
 			 * " @valueInj (or @TOKEN) doesn't exist, make sure you ... ". 
 			 * 
 			 */
-			if(differingOnlyString(originalText, injectedText, valueInj, TOKEN)) {
+			if(differOnlyForInput(originalText, injectedText, valueInj, TOKEN)) {
 				bingo(Alert.RISK_LOW, Alert.CONFIDENCE_LOW, getName(), getDescription(), null, param, valueInj, 
 						getExtraInfo(attack), getSolution(), injectedMsg);
 				return true;
 			}
-
 			StringBuilder sb = new StringBuilder();
-			
 			/*
 			 * If the response message contains one of the note patterns then it is probable that the application has 
 			 * a well-noted vulnerability. 
@@ -428,36 +423,42 @@ public class TestNoSQLInjection extends AbstractAppParamPlugin {
 	}
 
 	/**
-	 * Checks if the @originalMsg and @injectedMsg bodies differ only for the value passed as input.
+	 * Checks if the originalMsg and injectedMsg strings differ only for the value passed as input.
 	 * 
-	 * @param originalMsg
-	 * @param injectedMsg
-	 * @param valueInj
+	 * @param originalMsg the first argument of the comparison
+	 * @param injectedMsg the second argument of the comparison
+	 * @param valueBase the value to search in originalMsg
+	 * @param valueInj the value to search in injectedMsg
+	 * 
 	 * @return true if the @originalMsg body isn't the same of the {@injectedMsg} one, false otherwise.
 	 * 
 	 */
-	private static boolean differingOnlyString(String originalMsg, String injectedMsg, String valueBase,
+	private static boolean differOnlyForInput(String originalMsg, String injectedMsg, String valueBase,
 			String valueInj) {
 
 		int lengthBase = originalMsg.length();
 		int lengthInjected = injectedMsg.length();
 		int lengthValueBase = valueBase.length();
 		int lengthValueInj = valueInj.length();
+		char cursOriginal, cursInjected;
+		String extractString1, extractString2;	
 		
 		if(lengthBase-lengthInjected!=lengthValueBase-lengthValueInj) {
 			return false;
 		}
-		char cursOriginal, cursInjected;
-		String extractString;	
 		
 		for(int index=0; index<lengthInjected; index++) {
 			cursOriginal = originalMsg.charAt(index);
 			cursInjected = injectedMsg.charAt(index);
 			if(cursInjected!=cursOriginal) {
-				extractString = injectedMsg.substring(index, index+lengthValueInj);
-				if(extractString.equals(valueInj))
+				extractString1 = injectedMsg.substring(index, index+lengthValueInj);
+				extractString2 = injectedMsg.substring(index, index+lengthValueBase);
+				if(extractString1.equals(valueInj) && extractString2.equals(valueBase)) {
 					return true;
-				else return false;
+				}
+				else { 
+					return false;
+				}
 			}
 		}
 		return false;

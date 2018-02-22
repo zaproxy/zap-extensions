@@ -29,7 +29,7 @@ import org.zaproxy.zap.model.TechSet;
 
 
 /**
- * Unit test for {@link MongoDbInjection}.
+ * Unit test for {@link TestNoSQLInjection}.
  */
 public class TestNoSQLInjectionUnitTest extends ActiveScannerTest<TestNoSQLInjection> {
 
@@ -47,21 +47,5 @@ public class TestNoSQLInjectionUnitTest extends ActiveScannerTest<TestNoSQLInjec
         // Then
         assertThat(targets, is(equalTo(true)));
     }
-    
-   /* Tech.MongoDB not jet present in the loaded zaproxy 
-    @Test
-    public void shouldTargetMongoDBTech() {
-        // Given
-        TechSet techSet = techSet(Tech.MongoDB);
-        // When
-        boolean targets = rule.targets(techSet);
-        // Then
-        assertThat(targets, is(equalTo(true)));
-    }
-    */
-    
-    // TODO insert CouchDB (or all the eventually db that are added in the NoSQL scan). 
-    
-    
-    
+
 }
