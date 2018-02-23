@@ -28,10 +28,13 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.TreeSet;
 
 import org.junit.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.core.scanner.ScannerParam;
+import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -776,6 +779,129 @@ public class TestCrossSiteScriptV2UnitTest extends ActiveScannerTest<TestCrossSi
                 equalTo("<img src=x onerror=alert(1);>"));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
         assertThat(alertsRaised.get(0).getAttack(), equalTo("<img src=x onerror=alert(1);>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    public void shouldReportXssInBodyWithDoubleDecodedFilteredInjectionPointViaUrlParam() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInBodyWithFilteredScript/";
+        
+        this.nano.addHandler(new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String name = session.getParms().get("name");
+                String response;
+                if (name != null) {
+                    // Strip out 'script' ignoring the case
+                    try {
+                        // Only need to decode once more, server returns value decoded
+                        name = URLDecoder.decode(name.replaceAll("(?i)(<|</)[0-9a-z ();=]+>", ""), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        // Ignore
+                    }
+                    response = getHtml("InputInBody.html",
+                            new String[][] {{"name", name}});
+                } else {
+                    response = getHtml("NoInput.html");
+                }
+                return new Response(response);
+            }
+        });
+        
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        
+        this.scannerParam.setTargetParamsInjectable(ScannerParam.TARGET_QUERYSTRING);
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), 
+                equalTo("<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("%253Cscript%253Ealert%25281%2529%253B%253C%252Fscript%253E"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    public void shouldNotAlertXssInBodyWithDoubleDecodedFilteredInjectionPointViaHeaderParam() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInBodyWithFilteredScript/";
+        
+        this.nano.addHandler(new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+                String name = session.getParms().get("name");
+                String response;
+                if (name != null) {
+                    // Strip out 'script' ignoring the case
+                    try {
+                        // Only need to decode once more, server returns value decoded
+                        name = URLDecoder.decode(name.replaceAll("(?i)(<|</)[0-9a-z ();=]+>", ""), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        // Ignore
+                    }
+                    response = getHtml("InputInBody.html",
+                            new String[][] {{"name", name}});
+                } else {
+                    response = getHtml("NoInput.html");
+                }
+                return new Response(response);
+            }
+        });
+        
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        
+        this.scannerParam.setTargetParamsInjectable(ScannerParam.TARGET_HTTPHEADERS);
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void shouldReportXssInBodyWithDoubleDecodedFilteredInjectionPointViaPostParam() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInBodyWithFilteredScript/";
+        
+        this.nano.addHandler(new NanoServerHandler(test) {
+            @Override
+            Response serve(IHTTPSession session) {
+            	String sess = getBody(session);
+                String name = sess.split("=")[1];
+                String response;
+                if (name != null) {
+                    // Strip out 'script' ignoring the case
+                    try {
+                        name = URLDecoder.decode(URLDecoder.decode(name, "UTF-8").replaceAll("(?i)(<|</)[0-9a-z ();=]+>", ""), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        // Ignore
+                    }
+                    response = getHtml("InputInBody.html",
+                            new String[][] {{"name", name}});
+                } else {
+                    response = getHtml("NoInput.html");
+                }
+                return new Response(response);
+            }
+        });
+        
+        HttpMessage msg = this.getHttpMessage(HttpRequestHeader.POST, test, "<html>/<html>");
+        HtmlParameter param = new HtmlParameter(HtmlParameter.Type.form,"name", "test");
+        TreeSet<HtmlParameter> paramSet = new TreeSet<HtmlParameter>();
+        paramSet.add(param);
+        msg.setFormParams(paramSet);
+        msg.getRequestHeader().addHeader(HttpRequestHeader.CONTENT_TYPE, HttpRequestHeader.FORM_URLENCODED_CONTENT_TYPE);
+        msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
+
+        this.scannerParam.setTargetParamsInjectable(ScannerParam.TARGET_POSTDATA);
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), 
+                equalTo("<script>alert(1);</script>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("%253Cscript%253Ealert%25281%2529%253B%253C%252Fscript%253E"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
