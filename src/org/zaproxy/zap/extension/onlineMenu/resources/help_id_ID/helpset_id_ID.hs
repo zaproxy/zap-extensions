@@ -10,14 +10,14 @@
 
   <view>
     <name>TOC</name>
-    <label>Contents</label>
+    <label>Kandungan</label>
     <type>org.zaproxy.zap.extension.help.ZapTocView</type>
     <data>toc.xml</data>
   </view>
 
   <view>
     <name>Index</name>
-    <label>Index</label>
+    <label>Penunjuk</label>
     <type>javax.help.IndexView</type>
     <data>index.xml</data>
   </view>
@@ -33,7 +33,7 @@
 
   <view>
     <name>Favorites</name>
-    <label>Favorites</label>
+    <label>Kesukaan</label>
     <type>javax.help.FavoritesView</type>
   </view>
 </helpset>
