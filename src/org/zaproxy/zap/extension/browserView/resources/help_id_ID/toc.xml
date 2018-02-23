@@ -5,7 +5,7 @@
 
 <toc version="2.0">
 	<tocitem text="Panduan Pengguna ZAP" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+		<tocitem text="Tambahkan Ons" tocid="addons">
 			<tocitem text="Tampilan Peramban" target="browserView"/>
 		</tocitem>
 	</tocitem>

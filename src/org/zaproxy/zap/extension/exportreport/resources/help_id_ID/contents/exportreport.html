@@ -205,7 +205,7 @@
                     <li>
                         <h4>Contoh:</h4>
                         <ul>
-                            <li>-source_info "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea usu atomorum tincidunt, ne munere regione memiliki. Tidak merusak bagian atas latihan, tapi pelacakan kami, setiap. Tidak ada alasan harus belajar komputer."</li>
+                            <li>-source_info "kerentanan LAPORAN MyApp.com; JordanGS: Lost Souls: 15 Agustus 2016; 18 Agustus 2016; ZAP_D-2016/08/15, 2016/08/15 ZAP_D-: lorem ipsum wortel, badan-badan swasta budak di masa muda. Ea usu atomorum tincidunt, ne munere regione memiliki. Tidak merusak bagian atas latihan, tapi pelacakan kami, setiap. Tidak ada alasan harus belajar komputer."</li>
                         </ul>
                     </li>
                     <li>
@@ -336,7 +336,7 @@
                     <li>Buka perintah cepat</li>
                     <li>Menavigasi ke lokasi di mana zap.bat yang terletak</li>
                     <li>lakukan hal berikut:
-                        <ul style="list-style: none;"><li>zap.bat <b>-export_report</b> "/path/to/save/report.xhtml" <b>-source_info</b> "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, et sed nibh nostrum singulis. Nec causae viderer discere eu." <b>-alert_severity</b> "t;t;f;t" <b>-alert_details</b> "t;t;t;t;t;t;f;f;f;f" <b>-session</b> "/path/to/existing/session" <b>-cmd</b></li></ul>
+                        <ul style="list-style: none;"><li>zap.bat <b>-export_report</b> "/path/to/save/report.xhtml" <b>-source_info</b> "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Bagi atom, penggunaan keyboard, sehingga fungsi dari wilayah dua. Tidak merusak bagian atas latihan, tapi pelacakan kami, setiap. Tidak ada alasan harus belajar komputer." <b>-alert_severity</b> "t;t;f;t" <b>-alert_details</b> "t;t;t;t;t;t;f;f;f;f" <b>-session</b> "/path/ke/ada/sesi" <b>-cmd</b></li></ul>
                     </li>
                 </ol>
             </li>
@@ -355,34 +355,31 @@
 
         <h4>Contoh Pemakaian:</h4>
         <blockquote><pre><code>
-Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
+Peta&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
 String API_KEY = "ZAPROXY-PLUGIN"
-String absolutePath = "/path/to/save/report.xhtml";
-String extension = "xhtml";
-String sourceDetails = "Vulnerability Report of MyApp.com;JordanGS;Lost Souls;" +
-    "August 15, 2016;August 18, 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;" + 
-    "Lorem ipsum dolor sit amet, pri corpora ancillae adolescens in. Ea " + 
-    "usu atomorum tincidunt, ne munere regione has. Ne sea summo tation, " +
-    "et sed nibh nostrum singulis. Nec causae viderer discere eu.";
+String absolutePath = "/path/ke/menyimpan/laporan.xhtml";
+String ekstensi = "xhtml";
+String sourceDetails = "Kerentanan Laporan MyApp.com;JordanGS;jiwa-Jiwa yang Hilang;" +
+"15 agustus 2016;18 agustus 2016;ZAP_D-2016-08-15;ZAP_D-2016-08-15;" + 
+"Desain Website, pri tubuh tapi aku pemuda di. Ini " + 
+"penggunaan atom keyboard, bukan peran negara. Ne sea summo tation, " +
+    "et sed nibh nostrum singulis. Nec causae viderer discere uni eropa.";
 String alertSeverity = "t;t;f;t";
 String alertDetails = "t;t;t;t;t;t;f;f;f;f";
 
-map.put("apikey", API_KEY);
+peta.put("apikey", API_KEY);
 
-// String representing the absolute path to save destination for the report
-map.put("absolutePath", absolutePath)
+// String yang mewakili path absolut untuk menyimpan tujuan untuk laporan
+peta.put("absolutePath", absolutePath)
 
-// String representing the extension of the report
-map.put("fileExtension", extension);
+// String yang mewakili perpanjangan laporan
+peta.put("fileExtension", perpanjangan);
 
-// String separated by ; for each entry
-map.put("sourceDetails", sourceDetails);
+// String yang dipisahkan oleh ; untuk setiap entri
+peta.put("sourceDetails", sourceDetails);
 
-// String separated by ; for each entry
-map.put("alertSeverity", alertSeverity);
-
-//String separated by ; for each entry
-map.put("alertDetails", alertDetails);
+// String yang dipisahkan oleh ; untuk setiap entri
+peta.put("alertSeverity", alertSeverity);
 </code></pre></blockquote>
 <blockquote><code>ApiResponseElement val = (ApiResponseElement) clientApi.callApi("exportreport", "aksi", "menghasilkan", peta);</code></blockquote>
     </body>
