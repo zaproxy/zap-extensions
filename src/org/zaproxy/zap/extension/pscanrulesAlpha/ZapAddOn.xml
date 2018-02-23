@@ -1,17 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>20</version>
+	<version>21</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Change Image Location and Privacy Scanner to escape HTML inside of embedded image comments.<br>
-	Bump jar version of Image Location and Privacy Scanner dependancy xmpcore.<br>
-	Update Image Location and Privacy Scanner to version 1.0.<br>
-	Fix exception in blank link target scanner.<br>
-	Fix exception in Username Hash Found scanner.<br>
+	Renamed blank link target to reverse tabnabbing scanner and fixed implementation.<br>
 	]]>
 	</changes>
 	<extensions>
@@ -21,7 +17,6 @@
 	<pscanrules>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.Base64Disclosure</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.BigRedirectsScanner</pscanrule>
-		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.BlankLinkTargetScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CacheableScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.CookieSameSiteScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ContentSecurityPolicyMissingScanner</pscanrule>
@@ -35,6 +30,7 @@
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureComponentScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormLoadScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.InsecureFormPostScanner</pscanrule>
+		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.LinkTargetScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.PiiScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.RetrievedFromCacheScanner</pscanrule>
 		<pscanrule>org.zaproxy.zap.extension.pscanrulesAlpha.ServerHeaderInfoLeakScanner</pscanrule>

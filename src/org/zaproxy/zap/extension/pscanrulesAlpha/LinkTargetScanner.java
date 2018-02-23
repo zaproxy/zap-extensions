@@ -19,14 +19,17 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -37,9 +40,10 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 
-public class BlankLinkTargetScanner extends PluginPassiveScanner {
+public class LinkTargetScanner extends PluginPassiveScanner {
 
-    private static final String MESSAGE_PREFIX = "pscanalpha.blanktarget.";
+    public static final String TRUSTED_DOMAINS_PROPERTY = "rules.domains.trusted";
+    private static final String MESSAGE_PREFIX = "pscanalpha.linktarget.";
 
     private static final String REL_ATTRIBUTE = "rel";
     private static final String TARGET_ATTRIBUTE = "target";
@@ -47,8 +51,13 @@ public class BlankLinkTargetScanner extends PluginPassiveScanner {
     private static final String NOOPENER = "noopener";
     private static final String NOREFERRER = "noreferrer";
 
+    private String trustedConfig = "";
+    private List <String> trustedDomainRegexes = new ArrayList<String>();
+
     private PassiveScanThread parent = null;
     private Model model = null;
+    
+    private static final Logger LOG = Logger.getLogger(PluginPassiveScanner.class);
 
     @Override
     public void setParent(PassiveScanThread parent) {
@@ -102,18 +111,51 @@ public class BlankLinkTargetScanner extends PluginPassiveScanner {
         } catch (URIException e) {
             // Ignore
         }
+        if (otherDomain) {
+            // check the trusted domains
+            for (String regex : this.trustedDomainRegexes) {
+                try {
+                    if (link.matches(regex)) {
+                        return false;
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Invalid regex in rule " + TRUSTED_DOMAINS_PROPERTY + ": " + regex, e);
+                }
+            }
+        }
         return otherDomain;
     }
 
+    private void checkIgnoreList() {
+        String trustedConf = getConfig().getString(TRUSTED_DOMAINS_PROPERTY, "");
+        if (! trustedConf.equals(this.trustedConfig)) {
+            // Its changed
+            trustedDomainRegexes.clear();
+            this.trustedConfig = trustedConf;
+            for (String regex : trustedConf.split(",")) {
+                String regexTrim = regex.trim();
+                if (regexTrim.length() > 0) {
+                    trustedDomainRegexes.add(regexTrim);
+                }
+            }
+        }
+    }
+    
     
     private boolean checkElement(Element link, HttpMessage msg, int id) {
         // get target, check if its _blank
-        if (_BLANK.equalsIgnoreCase(link.getAttributeValue(TARGET_ATTRIBUTE))) {
+        String target = link.getAttributeValue(TARGET_ATTRIBUTE);
+        if (target != null) {
+            if (AlertThreshold.HIGH.equals(this.getAlertThreshold()) && 
+                    ! _BLANK.equalsIgnoreCase(target)) {
+                // Only report _blank link targets at a high threshold
+                return false;
+            }
             // Not looking good,
             String relAtt = link.getAttributeValue(REL_ATTRIBUTE);
             if (relAtt != null) {
                 relAtt = relAtt.toLowerCase();
-                if (relAtt.contains(NOOPENER) || relAtt.contains(NOREFERRER)) {
+                if (relAtt.contains(NOOPENER) && relAtt.contains(NOREFERRER)) {
                     // Its ok
                     return false;
                 }
@@ -145,6 +187,8 @@ public class BlankLinkTargetScanner extends PluginPassiveScanner {
             // No point attempting to parse non-HTML content, it will not be correctly interpreted.
             return;
         }
+        // Check to see if the configs have changed
+        checkIgnoreList();
 
         String host = msg.getRequestHeader().getHostName();
         List<Context> contextList = getModel().getSession().getContextsForUrl(msg.getRequestHeader().getURI().toString());

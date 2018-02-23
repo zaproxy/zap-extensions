@@ -18,10 +18,6 @@ The application does not use a Message Authentication Code (MAC) to protect the 
 <H2>Base64 Disclosure</H2>
 Base64 encoded data was disclosed by the application/web server
 
-<H2>Link uses _blank target</H2>
-This checks to see if any links use a target of "_blank" without using either keyword "noopener" or "noreferrer", as this will allow target pages to take over the page that opens them.<br>
-By default this rule will ignore all links that are in the same context as the page. At the LOW threshold it will only ignore links that are on the same host.
-
 <H2>Missing Content Security Policy Header</H2>
 This checks HTML response headers for the presence of a Content Security Policy header.<br>
 By default this rule checks for the presence of the "Content-Security-Policy" header, 
@@ -119,6 +115,13 @@ PII is information like credit card number, SSN etc. This check currently report
 <H2>HTTP Server Response Header Scanner</H2>
 This checks response headers for the presence of a server header that contains version details.
 At LOW Threshold will raise an alert based on presence of the header field whether or not a version string is detected.
+
+<H2>Reverse Tabnabbing</H2>
+This checks to see if any links use a target attribute without using both of the "noopener" and "noreferrer" keywords in the "rel" attribute, as this will allow target pages to take over the page that opens them.<br>
+By default this rule will ignore all links that are in the same context as the page. At the LOW threshold it will only ignore links that are on the same host.<br>
+At HIGH threshold it will only report links that use the "_blank" target.<br>
+You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
+Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
 
 <H2>Source Code Disclosure</H2>
 Application Source Code was disclosed by the web server

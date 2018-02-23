@@ -24,25 +24,30 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
+public class LinkTargetScannerUnitTest extends PassiveScannerTest {
     
     private static final String HTML_CONTENT_TYPE = "text/html;charset=ISO-8859-1";
     private static final String TEXT_CONTENT_TYPE = "text/plain; charset=us-ascii";
 
     @Override
     protected PluginPassiveScanner createScanner() {
-        return new BlankLinkTargetScanner();
+        PluginPassiveScanner scanner =  new LinkTargetScanner();
+        scanner.setConfig(new ZapXmlConfiguration());
+        return scanner;
     }
     
     private String getHeader(String contentType, int bodyLength) {
@@ -58,7 +63,7 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -77,7 +82,7 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -94,18 +99,62 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         // Mock the model and session
         Model model = Mockito.mock(Model.class);
         Session session = Mockito.mock(Session.class);
-        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
+        Context context1 = new Context(session, 0);
+        context1.addIncludeInContextRegex("https://www.example.com.*");
+        context1.addIncludeInContextRegex("https://www.example2.com.*");
+        List<Context> contextList = new ArrayList<Context>();
+        contextList.add(context1);
+        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contextList);
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
-        msg.setResponseBody("<html><a href=\"http://www.example.com\" target=\"_blank\">link</a></html>");
+        msg.setResponseBody("<html><a href=\"https://www.example2.com/\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void dontRaiseIssueWhenOneLinkWithBlankTargetTrustedDomain() throws HttpMalformedHeaderException {
+        // Mock the model and session
+        Model model = Mockito.mock(Model.class);
+        Session session = Mockito.mock(Session.class);
+        when(model.getSession()).thenReturn(session);
+        ((LinkTargetScanner)rule).setModel(model);
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        rule.getConfig().setProperty(LinkTargetScanner.TRUSTED_DOMAINS_PROPERTY, "https://www.example2.com/.*");
+        // When
+        msg.setResponseBody("<html><a href=\"https://www.example2.com/page1\" target=\"_blank\">link</a></html>");
+        msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    public void raiseIssueWhenOneLinkWithBlankTargetUntrustedDomain() throws HttpMalformedHeaderException {
+        // Mock the model and session
+        Model model = Mockito.mock(Model.class);
+        Session session = Mockito.mock(Session.class);
+        when(model.getSession()).thenReturn(session);
+        ((LinkTargetScanner)rule).setModel(model);
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        rule.getConfig().setProperty(LinkTargetScanner.TRUSTED_DOMAINS_PROPERTY, "https://www.example2.com/.*");
+        // When
+        msg.setResponseBody("<html><a href=\"https://www.example3.com/page1\" target=\"_blank\">link</a></html>");
+        msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<a href=\"https://www.example3.com/page1\" target=\"_blank\">link</a>"));
     }
 
     @Test
@@ -115,7 +164,7 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -129,18 +178,39 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkWithOtherTarget() throws HttpMalformedHeaderException {
+    public void raiseIssueWhenOneLinkWithOtherTarget() throws HttpMalformedHeaderException {
         // Mock the model and session
         Model model = Mockito.mock(Model.class);
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
-        msg.setResponseBody("<html><a href=\"http://www.example.com\" target=\"other\">link</a></html>");
+        msg.setResponseBody("<html><a href=\"http://www.example2.com\" target=\"other\">link</a></html>");
+        msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("<a href=\"http://www.example2.com\" target=\"other\">link</a>"));
+    }
+
+    @Test
+    public void dontRaiseIssueWhenOneLinkWithOtherTargetHighThreshold() throws HttpMalformedHeaderException {
+        // Mock the model and session
+        Model model = Mockito.mock(Model.class);
+        Session session = Mockito.mock(Session.class);
+        when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
+        when(model.getSession()).thenReturn(session);
+        ((LinkTargetScanner)rule).setModel(model);
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        ((LinkTargetScanner)rule).setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        msg.setResponseBody("<html><a href=\"http://www.example2.com\" target=\"other\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
@@ -154,7 +224,7 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -181,7 +251,7 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -206,7 +276,7 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -231,7 +301,7 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -251,18 +321,18 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkWithBlankTargetNoopener() throws HttpMalformedHeaderException {
+    public void dontRaiseIssueWhenOneLinkWithBlankTargetNoopenerNoReferrer() throws HttpMalformedHeaderException {
         // Mock the model and session
         Model model = Mockito.mock(Model.class);
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
-        msg.setResponseBody("<html><a href=\"http://www.example.com\" target=\"_blank\" rel=\"noopener\">link</a></html>");
+        msg.setResponseBody("<html><a href=\"http://www.example2.com\" target=\"_blank\" rel=\"noopener noreferrer\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
@@ -270,18 +340,18 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
     }
 
     @Test
-    public void dontRaiseIssueWhenOneLinkWithBlankTargetNoreferrer() throws HttpMalformedHeaderException {
+    public void dontRaiseIssueWhenOneLinkWithBlankTargetNoreferrerNoopener() throws HttpMalformedHeaderException {
         // Mock the model and session
         Model model = Mockito.mock(Model.class);
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
-        msg.setResponseBody("<html><a href=\"http://www.example.com\" target=\"_blank\" rel=\"noreferrer\">link</a></html>");
+        msg.setResponseBody("<html><a href=\"http://www.example2.com\" target=\"_blank\" rel=\"noreferrer noopener\">link</a></html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
@@ -295,7 +365,7 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -319,16 +389,16 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
         msg.setResponseBody(
                 "<html>" + "<a href=\"http://www.example2.com/1\">link</a>" + "<a href=\"http://www.example.com/2\">link</a>"
-                        + "<a href=\"http://www.example2.com/3\" target=\"other\">link</a>"
-                        + "<a href=\"http://www.example2.com/4\" target=\"_blank\" rel=\"noopener\">link</a>"
-                        + "<a href=\"http://www.example2.com/5\" target=\"_blank\" rel=\"noopener\">link</a>"
+                        + "<a href=\"http://www.example2.com/3\">link</a>"
+                        + "<a href=\"http://www.example2.com/4\" target=\"_blank\" rel=\"noopener noreferrer\">link</a>"
+                        + "<a href=\"http://www.example2.com/5\" target=\"_blank\" rel=\"noreferrer noopener\">link</a>"
                         + "<a href=\"http://www.example2.com/6\" target=\"_blank\">link</a>" + "</html>");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
@@ -346,12 +416,12 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         Session session = Mockito.mock(Session.class);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(new ArrayList<Context>());
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         // When
-        msg.setResponseBody("<html><a href=\"http://www.example.com\" target=\"_blank\">link</a></html>");
+        msg.setResponseBody("<html><a href=\"http://www.example2.com\" target=\"_blank\">link</a></html>");
         msg.setResponseHeader(getHeader(TEXT_CONTENT_TYPE, msg.getResponseBody().length()));
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then
@@ -370,7 +440,7 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         contexts.add(context);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -394,7 +464,7 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         contexts.add(context);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner)rule).setModel(model);
+        ((LinkTargetScanner)rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -418,13 +488,31 @@ public class BlankLinkTargetScannerUnitTest extends PassiveScannerTest {
         contexts.add(context);
         when(session.getContextsForUrl(Matchers.anyString())).thenReturn(contexts);
         when(model.getSession()).thenReturn(session);
-        ((BlankLinkTargetScanner) rule).setModel(model);
+        ((LinkTargetScanner) rule).setModel(model);
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         msg.setResponseBody("<html><a>link</a><area>area</area></html>");
         // When
+        rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
+        // Then = no exception.
+    }
+
+    @Test
+    public void shouldNotFailIfInvalidRegex() throws Exception {
+        // Mock the model and session
+        Model model = Mockito.mock(Model.class);
+        Session session = Mockito.mock(Session.class);
+        when(model.getSession()).thenReturn(session);
+        ((LinkTargetScanner)rule).setModel(model);
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        rule.getConfig().setProperty(LinkTargetScanner.TRUSTED_DOMAINS_PROPERTY, "[");
+        // When
+        msg.setResponseBody("<html><a href=\"https://www.example2.com/page1\" target=\"_blank\">link</a></html>");
+        msg.setResponseHeader(getHeader(HTML_CONTENT_TYPE, msg.getResponseBody().length()));
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
         // Then = no exception.
     }
