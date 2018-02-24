@@ -5,7 +5,7 @@
 
 <toc version="2.0">
 	<tocitem text="Panduan Pengguna ZAP" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
+		<tocitem text="Tambahkan ons" tocid="addons">
 			<tocitem text="Diff" image="edit-diff" target="diff"/>
 		</tocitem>
 	</tocitem>
