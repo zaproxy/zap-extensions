@@ -29,13 +29,13 @@ import org.zaproxy.zap.model.TechSet;
 
 
 /**
- * Unit test for {@link TestNoSQLInjection}.
+ * Unit test for {@link MongoDbInjection}.
  */
-public class TestNoSQLInjectionUnitTest extends ActiveScannerTest<TestNoSQLInjection> {
+public class MongoDbInjectionUnitTest extends ActiveScannerTest<MongoDbInjection> {
 
     @Override
-    protected TestNoSQLInjection createScanner() {
-        return new TestNoSQLInjection();
+    protected MongoDbInjection createScanner() {
+        return new MongoDbInjection();
     }
 
     @Test
