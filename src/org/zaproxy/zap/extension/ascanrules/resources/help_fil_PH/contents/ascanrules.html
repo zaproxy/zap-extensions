@@ -7,19 +7,17 @@ Mga Panuntunan sa Aktibong I-scan
 </title>
 </head>
 <body bgcolor="#ffffff">
-<h1>Mga Panuntunan sa Aktibong I-scan</h1>
-Kasama sa mga idagdag-sa ang sumusunod na mga aktibong pag-scan sa mga sumusunod na kalidad ng release:
+<h1>Mga Panuntunan sa Aktibong Pag I-scan</h1>
+Ang mga sumusunod na pagpapakawala ng kalidad ng active scan rules ay kabilang sa mga add-on na ito:
 
-<h2>Buffer Pagapaw</h2>
+<h2>Buffer Overflow</h2>
 
-Ang hitsura para sa mga tagapagpahiwatig ng buffer pagapaw sa naipon na code.  Ginagawa nito ito sa pamamagitan ng paglagay ng mga malalaking string ng input texto at hanapin ang pag-bagsak ng code
-at abnormal sesyon pagsasara.
+Ang tingin para sa mga indikador ng buffer umapaw sa naipon na code.  Ginagawa ito sa pamamagitan ng paglagay ng mga malalaking mga string ng input na teksto at hanapin ang pag-bagsak ng code
+at hindi pangkaraniwang pagsasara ng sesyon.
 
 <h2>Code Injection</h2>
-
-Ang panuntunang ito ay nagsusumite ng mga strings ng pag-atake ng PHP at ASP bilang mga halaga para sa mga parameter ng URL sa isang kahilingan at sinusuri ang tugon para
-tingnan kung sinusuri ang mga halaga na iyon ng server. Una, ang mga kahilingan ay itinayo at ipinadala na naglalaman ng mga tagubilin sa PHP na inyeksyon
-upang mag-print ng isang token. Sa kaganapan ng isang tugma sa pagitan ng token at ang nilalaman ng katawan ng tugon, ang scanner ay nagpapataas ng alerto at agad na nagbabalik.
+Ang panuntunang ito ay nagbibigay ng PHP at ASP attack strings bilang values para sa mga parameter ng URL sa kahilingan at pagsusuri ng katugunan dito 
+tingnan kung ang values na ito ay nasuri na sa pamamagitan ng server. Una, ang mga kahilingan ay itinayo at ipinadala na naglalaman ng injected PHP na mga instruksiyon upang mag-print ng token. Sa kaganapan ng pagtutugma sa pagitan ng token at ang nilalaman ng tugon ng katawan, ang scanner ay nagpapataas ng alerto at agad na nagbabalik kaagad.
 Kung walang anumang mga tugma, ang scanner ay magtatayo ng mga kahilingan na may ilang mga string ASP string na nagtuturo sa server na isulat ang produkto
 ng dalawang random na nabuong integer sa tugon. Kung ang katawan ng tugon ay tumutugma sa produkto, isang alerto ay nakataas.
 
