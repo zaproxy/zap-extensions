@@ -58,8 +58,9 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 	private HttpMessage injectedMsg;
 	private final List<Pattern> errorPatterns = initPattern(BINGO_MATCHING);
 
-	private static final String[] ALL_DATA_PARAM_INJECTION = new String[] {"[$ne]", "[$regex]", "[$gt]"};
-	private static final String[] ALL_DATA_VALUE_INJECTION = new String[]  {"0", ".*", "0"};
+	//TODO add the string do try the login auth.
+	private static final String[] ALL_DATA_PARAM_INJECTION = new String[] {"[$ne]", "[$regex]", "[$gt]",/*" [$ne]"*/};
+	private static final String[] ALL_DATA_VALUE_INJECTION = new String[]  {"0", ".*", "0", /* "0 */};
 		
 	
 	private static String[] CRASH_INJECTION = new String[] {"\"", "'", "//", "});",");"};
@@ -145,9 +146,9 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 
 	@Override
 	public void scan(HttpMessage msg, NameValuePair originalParam) {
-		isJsonPayload = originalParam.getType() != NameValuePair.TYPE_POST_DATA;
+		isJsonPayload = originalParam.getType() == NameValuePair.TYPE_POST_DATA;
 			//TODO add TYPE_JSON control as soon as available
-			//& originalParam.getType() != NameValuePair.TYPE_JSON;
+			//& originalParam.getType() == NameValuePair.TYPE_JSON;
 		if(inScope(getTech())){
 			super.scan(msg, originalParam);
 		}
@@ -240,6 +241,9 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 				if(isBingo(msg, injectedMsg, JSON_ATTACK, param, value, false)) {
 					break;
 				}
+			} catch (JSONException ex) {
+				printLogException(ex, jsonExecption);
+				continue;
 			} catch (IOException ex) {
 				printLogException(ex, ioException);
 				continue;
@@ -278,7 +282,8 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 			if(differOnlyForInput(originalText, injectedText, valueInj, TOKEN)) {
 				bingo(Alert.RISK_LOW, Alert.CONFIDENCE_LOW, getName(), getDescription(), null, param, valueInj, 
 						getExtraInfo(attack), getSolution(), injectedMsg);
-				return true;
+				// continue to scan
+				return false;
 			}
 			StringBuilder sb = new StringBuilder();
 			/*

@@ -23,7 +23,7 @@ public class SolrInjection extends AbstractAppParamPlugin {
 	private static final String INJECTED_COLLECTION = "collectioninjected";
 	private static final String DEFAULT_COLLECTION = "gettingstarted";
 	private static final String INJECTED_LISTENER = "injectedlistener";
-	private static final String TOKEN_UNKOWN_HOST = "http://_z<>a<>p<>";
+	private static final String TOKEN_UNKOWN_HOST = "http://_z<>a<>p<>.com	";
 
 	private static final String[] ALL_DATA_INJECTION = { "*", "[* TO *]", "(1 OR *)"};
 
@@ -111,63 +111,67 @@ public class SolrInjection extends AbstractAppParamPlugin {
 
 		@Override
 		public void scan(HttpMessage msg, String param, String value) {
-			String[] empty = {};
-			try {
-				if(inScope(SOLR_TECH)){
-					allDataInjectionScan(msg, param, value);
-					xxeInjectionScan(msg, param, value);
-					//codeExecutitonInjectionScan(msg, param, value);
-					}
-				
-			} catch (SocketException ex) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-							" when accessing: " + msg.getRequestHeader().getURI().toString());
-				}
-			} catch(JSONException ex) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-							" when try to convert the payload in the json format");
-				}
-			} catch(IOException ex) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-							" when try to convert the payload in the json format");
-				}
+			if(inScope(SOLR_TECH)){
+				allDataInjectionScan(msg, param, value);
+				xxeInjectionScan(msg, param, value);
+				//codeExecutitonInjectionScan(msg, param, value);
 			}
 		}
 		
-		private void allDataInjectionScan(HttpMessage msg, String param, String value) throws IOException{
+		private void allDataInjectionScan(HttpMessage msg, String param, String value){
 			HttpMessage injectedMsg;
 			for(String injectedValue : ALL_DATA_INJECTION) {
 				if(isStop()) {
 					return;
 				}
-				injectedMsg = sendInjectedMsg(param, injectedValue);
-				if(isBaseBingo(msg, param, value, injectedValue, injectedMsg, msg.getResponseBody().toString(),
-						injectedMsg.getResponseBody().toString(), ALL_DATA_ATTACK)) {
+				try {
+					injectedMsg = sendInjectedMsg(param, injectedValue);
+	
+					if(!msg.getResponseBody().toString().equals(injectedMsg.getResponseBody().toString())) {
+						bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param, 
+								injectedValue, getExtraInfo(ALL_DATA_ATTACK), getSolution(), injectedMsg);
 					return;
+					}
+				} catch (IOException ex) {
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+								" when try to send an http message");
+					}
 				}
 			}
 		}
 
-		private void xxeInjectionScan(HttpMessage msg, String param, String value) throws IOException{
+		private void xxeInjectionScan(HttpMessage msg, String param, String value) {
 			HttpMessage injectedMsg;
 			for(String injectedValue : XXE_INJECTION) {
 				if(isStop()) {
 					return;
 				}
-				injectedMsg = sendInjectedMsg(param, injectedValue);
-				
-				if(isSpecificBingo(msg, param, injectedValue, injectedMsg, XXE_ERROR_STRING,  
-						injectedMsg.getResponseBody().toString(), XXE_ATTACK)) {
-					return;
+				try {
+					injectedMsg = sendInjectedMsg(param, injectedValue);
+					String textInjected = injectedMsg.getResponseBody().toString();
+					if(!msg.getResponseBody().toString().equals(textInjected)) {
+						for(String m:XXE_ERROR_STRING) {
+							if(textInjected.contains(m)) {
+								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
+										injectedValue, getExtraInfo(XXE_ATTACK), getSolution(), injectedMsg);
+								return;
+							}
+						}
+						// Unknown vulnerability
+						bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param, 
+								injectedValue, getExtraInfo(XXE_ATTACK), getSolution(), injectedMsg);
+					}
+				} catch (IOException ex) {
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+								" when try to send an http message");
+					}
 				}
-				isBaseBingo(msg, param, value, injectedValue, injectedMsg, msg.getResponseBody().toString(),
-						injectedMsg.getResponseBody().toString(), ALL_DATA_ATTACK);
 			}
 		}
-		/*
+		
+		/* TODO 
 		private void codeExecutitonInjectionScan(HttpMessage msg, String param, String value) throws IOException{
 			HttpMessage injectedMsg;
 		
@@ -181,35 +185,6 @@ public class SolrInjection extends AbstractAppParamPlugin {
 					injectedMsg.getResponseBody().toString(), CODE_EXECUTION_ATTACK);
 		}
 		*/
-		private boolean isBaseBingo(HttpMessage msg, String param, String value, String injectedValue, 
-				HttpMessage injectedMsg, String textBase, String textInjected, String attackType) {
-			if(!textBase.equals(textInjected)) {
-
-				if(differingOnlyPassedValue(textBase, textInjected, value, injectedValue)) {
-					bingo(Alert.RISK_LOW, Alert.CONFIDENCE_LOW, getName(), getDescription(), null, param, 
-							injectedValue, "", getSolution(), injectedMsg);
-				}
-				else {											
-					bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param, 
-							injectedValue, getExtraInfo(ALL_DATA_ATTACK), getSolution(), injectedMsg);
-				}
-				return true;
-			}
-			return false;
-		}
-		
-		private boolean isSpecificBingo(HttpMessage msg, String param, String injectedValue, 
-				HttpMessage injectedMsg, String[] specificMatching, String textInjected, String attackType) {
-			
-			for(String m:specificMatching) {
-				if(textInjected.contains(m)) {
-					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
-							injectedValue, "", getSolution(), injectedMsg);
-					return true;
-				}
-			}
-			return false;
-		}
 		
 		private HttpMessage sendInjectedMsg(String param, String value) throws IOException {
 			HttpMessage newMsg = getNewMsg();
@@ -217,40 +192,4 @@ public class SolrInjection extends AbstractAppParamPlugin {
 			sendAndReceive(newMsg);
 			return newMsg;
 		}		
-		
-		/**
-		 * Checks if the @originalMsg and @injectedMsg bodies differ only for the value passed as input.
-		 * 
-		 * @param originalMsg
-		 * @param injectedMsg
-		 * @param valueInj
-		 * @return true if the @originalMsg body isn't the same of the {@injectedMsg} one, false otherwise.
-		 * 
-		 */
-		private static boolean differingOnlyPassedValue(String originalMsg, String injectedMsg, String valueBase,
-				String valueInj) {
-
-			int lengthBase = originalMsg.length();
-			int lengthInjected = injectedMsg.length();
-			int lengthValueBase = valueBase.length();
-			int lengthValueInj = valueInj.length();
-			
-			if(lengthBase-lengthInjected!=lengthValueBase-lengthValueInj) {
-				return false;
-			}
-			char cursOriginal, cursInjected;
-			String extractString;	
-			
-			for(int index=0; index<lengthInjected; index++) {
-				cursOriginal = originalMsg.charAt(index);
-				cursInjected = injectedMsg.charAt(index);
-				if(cursInjected!=cursOriginal) {
-					extractString = injectedMsg.substring(index, index+lengthValueInj);
-					if(extractString.equals(valueInj))
-						return true;
-					else return false;
-				}
-			}
-			return false;
-		}
 }
