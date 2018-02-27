@@ -1,0 +1,27 @@
+<zapaddon>
+	<name>Image Location and Privacy Scanner</name>
+	<version>1</version>
+	<status>beta</status>
+	<description>Image Location and Privacy Passive Scanner</description>
+	<author>Veggiespam and the ZAP Dev Team</author>
+	<url/>
+	<changes>
+	<![CDATA[
+		Promoted to beta and separated from the passive scan alpha add-on.<br>
+	]]>
+	</changes>
+	<extensions>
+		<extension>org.zaproxy.zap.extension.imagelocationscanner.ExtensionImageLocationScanner</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules>
+		<pscanrule>org.zaproxy.zap.extension.imagelocationscanner.ImageLocationScanner</pscanrule>
+	</pscanrules>
+	<filters/>
+	<files>
+		<file>licenses/metadata-extractor-license.txt</file>
+		<file>licenses/xmpcore-license.txt</file>
+	</files>
+	<not-before-version>2.7.0</not-before-version>
+	<not-from-version></not-from-version>
+</zapaddon>

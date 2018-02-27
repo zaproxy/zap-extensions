@@ -19,7 +19,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.imagelocationscanner;
 
 import net.htmlparser.jericho.Source;
 
@@ -51,7 +51,7 @@ import com.veggiespam.imagelocationscanner.ILS;
 public class ImageLocationScanner extends PluginPassiveScanner {
 	private PassiveScanThread parent = null;
 	private static final Logger logger = Logger.getLogger(ImageLocationScanner.class);
-	private static final String MESSAGE_PREFIX = "pscanalpha.imagelocationscanner.";
+	private static final String MESSAGE_PREFIX = "imagelocationscanner.";
 	public static final int PLUGIN_ID = 10103;
 	
 	
