@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP Panduan Pengguna" tocid="toplevelitem">
 		<tocitem text="Menambahkan Ons" tocid="addons">
-			<tocitem text="Telah mengirimkan hasil pengeditan" image="addon.fuzzer.icon" target="addon.fuzzer.concepts">
+			<tocitem text="Fuzzer" image="addon.fuzzer.icon" target="addon.fuzzer.concepts">
 				<tocitem text="Pilihan" target="addon.fuzzer.options" />
 				<tocitem text="Dialog" target="addon.fuzzer.dialogue" />
 				<tocitem text="Prosesor Pesan HTTP" target="addon.fuzzer.httpmessageprocessors"/>
