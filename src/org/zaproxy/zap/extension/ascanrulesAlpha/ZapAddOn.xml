@@ -9,6 +9,7 @@
 	<![CDATA[
 	Add .htaccess scanner (Issue 3972).<br>
 	Modified trace.axd scanner to leverage new AbstractAppFilePlugin component.<br>
+	Remove unnecessary help entry.<br>
 	]]>
 	</changes>
 	<extensions>
