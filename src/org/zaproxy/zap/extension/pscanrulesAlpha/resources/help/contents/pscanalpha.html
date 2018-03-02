@@ -9,16 +9,32 @@ Passive Scan Rules - Alpha
 <H1>Passive Scan Rules - Alpha</H1>
 The following alpha quality passive scan rules are included in this add-on:
 
-<H2>ASP.NET ViewState Disclosure</H2>
-An ASP.NET ViewState was disclosed by the application/web server
-
-<H2>ASP.NET ViewState Integrity</H2>
-The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client
+<H2>An example passive scan rule which loads data from a file</H2>
+This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
+For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
 <H2>Base64 Disclosure</H2>
-Base64 encoded data was disclosed by the application/web server
+<ul>
+ <li><b>ASP.NET ViewState Disclosure: </b>An ASP.NET ViewState was disclosed by the application/web server</li>
+ <li><b>ASP.NET ViewState Integrity: </b>The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client</li>
+ <li><b>Base64 Disclosure: </b>Base64 encoded data was disclosed by the application/web server</li>
+</ul>
 
-<H2>Missing Content Security Policy Header</H2>
+<H2>Big Redirect Detected (Potential Sensitive Information Leak)</H2>
+This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
+A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
+
+<H2>Content Cacheability</H2>
+This scanner analyzes the cache control and pragma headers in HTTP traffic and resports on the cacheability of the requests from a RFC7234 point of view.
+<p>
+Alerts generated:
+<ul>
+ <li><b>Non-Storable Content</b></li>
+ <li><b>Storable but Non-Cacheable Content</b></li>
+ <li><b>Storable and Cacheable Content</b></li>
+</ul>
+
+<H2>Content Security Policy (CSP) Header Not Set</H2>
 This checks HTML response headers for the presence of a Content Security Policy header.<br>
 By default this rule checks for the presence of the "Content-Security-Policy" header, 
 and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.
@@ -39,11 +55,7 @@ The current implementation looks at excessively permissive CORS headers.
 <H2>Directory Browsing</H2>
 Passively scan responses for signatures that are indicative that Directory Browsing is possible.
 
-<H2>Example File Passive Scanner</H2>
-This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
-For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
-
-<H2>Example Simple Passive Scanner</H2>
+<H2>Example Passive Scanner: Denial of Service</H2>
 This implements a very simple example passive scan rule.<br>
 For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passive-scan-rules.html
 
@@ -51,8 +63,12 @@ For more details see: http://zaproxy.blogspot.co.uk/2014/04/hacking-zap-3-passiv
 Passively scan for password hashes disclosed by the web server. <br>
 Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes. 
 
-<H2>HeartBleed</H2>
+<H2>Heartbleed OpenSSL Vulnerability (Indicative)</H2>
 Passively scans for HTTP header responses that may indicate that the server is vulnerable to the critical HeartBleed OpenSSL vulnerability. 
+
+<H2>HTTP Server Response Header Scanner</H2>
+This checks response headers for the presence of a server header that contains version details.
+At LOW Threshold will raise an alert based on presence of the header field whether or not a version string is detected.
 
 <H2>HTTP to HTTPS Insecure Transition in Form Post</H2>
 This check looks for insecure HTTP pages that host HTTPS forms. The issue is that an insecure HTTP page can easily be hijacked through MITM and the secure HTTPS form can be replaced or spoofed.
@@ -96,14 +112,13 @@ TornadoServer web server<br>
 WordPress<br>
 
 <H2>Open Redirect</H2>
-Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks
+Open redirects are one of the OWASP 2010 Top Ten vulnerabilities. This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks.
 
 <H2>PII Disclosure scanner</H2>
 PII is information like credit card number, SSN etc. This check currently reports only numbers which match credit card numbers and pass Luhn checksum, which gives high confidence, that this is a credit card number.
 
-<H2>HTTP Server Response Header Scanner</H2>
-This checks response headers for the presence of a server header that contains version details.
-At LOW Threshold will raise an alert based on presence of the header field whether or not a version string is detected.
+<H2>Retrieved from Cache</H2>
+This scanner detect content that has been served from a shared cache.
 
 <H2>Reverse Tabnabbing</H2>
 This checks to see if any links use a target attribute without using both of the "noopener" and "noreferrer" keywords in the "rel" attribute, as this will allow target pages to take over the page that opens them.<br>
@@ -111,6 +126,9 @@ By default this rule will ignore all links that are in the same context as the p
 At HIGH threshold it will only report links that use the "_blank" target.<br>
 You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
 Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
+
+<H2>Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)</H2>
+This checks response headers for the presence of X-Powered-By details.
 
 <H2>Source Code Disclosure</H2>
 Application Source Code was disclosed by the web server
@@ -134,31 +152,24 @@ Alerts generated:
 <H2>Timestamp Disclosure</H2>
 A timestamp was disclosed by the application/web server
 
-<H2>User Controllable HTML Element Attribute (Potential XSS)</H2>
-This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
-
 <H2>User Controllable Charset</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where Content-Type or meta tag charset declarations might be user-controlled. Such charset declarations should always be declared by the application. If an attacker can control the response charset, they could manipulate the HTML to perform XSS or other attacks.
 
+<H2>User Controllable HTML Element Attribute (Potential XSS)</H2>
+This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.
+
 <H2>User Controllable Javascript Event (XSS)</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where certain HTML attribute values might be controlled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
-
-<H2>User Controllable Javascript Property (XSS)</H2>
-This check looks at user-supplied input in query string parameters and POST data to identify where URL's in certain javascript properties (e.g. createElement src) might becontrolled. This provides hot-spot detection for XSS (cross-site scripting) that will require further review by a security analyst to determine exploitability.            
 
 <H2>Username Hash Found</H2>
 If any context contains defined users this scanner checks all responses for the presence of hashed values representing those usernames.
 Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact. 
 
-<H2>X-Powered-By Header Information Leak</H2>
-This checks response headers for the presence of X-Powered-By details.
+<H2>X-AspNet-Version Response Header Scanner</H2>
+This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
 
 <H2>X-Backend-Server Header Information Leak</H2>
 This checks response headers for the presence of X-Backend-Server details.
-
-<H2>Big Redirect</H2>
-This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
-A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc).
 
 <H2>X-ChromeLogger-Data Header Information Leak</H2>
 This checks response headers for the presence of X-ChromeLogger-Data or X-ChromePhp-Data details.
@@ -166,9 +177,6 @@ This checks response headers for the presence of X-ChromeLogger-Data or X-Chrome
 <H2>X-Debug-Token Information Leak</H2>
 This checks response headers for the presence of X-Debug-Token and X-Debug-Token-Link details.
 Which indicates the use/exposure of Symfony's Profiler. Symfony's Profiler provides access to a significant amount of information of interest to malicious individuals and Security Testers.
-
-<H2>X-AspNet-Version/X-AspNetMvc-Version Header Information Leak</H2>
-This checks response headers for the presence of X-AspNet-Version/X-AspNetMvc-Version details.
 
 
 </BODY>
