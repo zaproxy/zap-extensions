@@ -137,6 +137,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					  new String[] {
 							  "\\Qcom.mysql.jdbc.exceptions\\E",
 							  "\\Qorg.gjt.mm.mysql\\E",
+							  "\\QODBC driver does not support\\E",
 							  "\\QThe used SELECT statements have a different number of columns\\E" }),
 			  Arrays.asList(new String[] { "\\QThe used SELECT statements have a different number of columns\\E" })),
 
@@ -158,6 +159,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 							  "\\Q80040e14\\E",
 							  "\\Q800a0bcd\\E",
 							  "\\Q80040e57\\E",
+							  "\\QODBC driver does not support\\E",
 							  "\\QAll queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists\\E",
 							  "\\QAll queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists\\E" }),
 			  Arrays.asList(
@@ -264,6 +266,7 @@ public class TestSQLInjection extends AbstractAppParamPlugin {
 					 "\\Qorg.hibernate\\E",
 					 "\\Qsun.jdbc.odbc\\E",
 					 "\\Q[ODBC Driver Manager]\\E",
+					 "\\QODBC driver does not support\\E",
 					 "\\QSystem.Data.OleDb\\E", // System.Data.OleDb.OleDbException
 					 "\\Qjava.sql.SQLException\\E" // in case more specific messages were not detected!
 		);
