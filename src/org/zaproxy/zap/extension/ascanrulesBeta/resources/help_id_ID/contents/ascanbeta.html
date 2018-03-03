@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Active Scan Aturan - Beta
+Aturan Pemindai Aktif - Beta
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -123,15 +123,11 @@ Percobaan pemindai hanya untuk injeksi SQL berbasis waktu. <br>
 Pos 2.5.0 kamu dapat mengubah jangka waktu yang digunakan untuk menyerang dengan mengubah parameter <code>aturan.umum.tidur</code> melalui panel 'Konfigurasi aturan opsi'.
 
 <h2>Penghitungan nama pengguna</h2>
-Ada kemungkinan untuk menghitung nama pengguna, berdasarkan tanggapan HTTP yang berbeda saat nama pengguna yang sah dan tidak sah disediakan. Ini akan sangat meningkatkan kemungkinan keberhasilan password brute-forcing serangan terhadap sistem. Catatan yang positif palsu kadang-kadang dapat diminimalisir dengan meningkatkan 'Attack Strength' Pilihan di ZAP.  Silakan periksa manual 'Other Info' lapangan untuk mengkonfirmasi jika hal ini benar-benar masalah.
+Ada kemungkinan untuk menghitung nama pengguna, berdasarkan tanggapan HTTP yang berbeda saat nama pengguna yang sah dan tidak sah disediakan. Ini akan sangat meningkatkan kemungkinan keberhasilan password brute-forcing serangan terhadap sistem. Catatan yang positif palsu kadang-kadang dapat diminimalisir dengan meningkatkan 'Attack Strength' Pilihan di ZAP.  Silahkan periksa bidang 'Info Lainnya' secara manual untuk mengkonfirmasi jika ini sebenarnya sebuah masalah.
 Scanner ini dilewati jika tidak ada konteks yang didefinisikan yang menggunakan Otentikasi berbasis Bentuk, dan hanya berjalan melawan URL diidentifikasi sebagai masuk URL dari konteks.
 
 <h2>Injeksi XPath</h2>
-Seperti yang dijelaskan oleh OWASP: "Serangan injeksi XPath terjadi saat situs web menggunakan informasi yang dipasok pengguna untuk kueri XPath untuk data XML. Dengan mengirimkan sengaja salah bentuk informasi ke situs web, 
-seorang penyerang dapat mengetahui bagaimana data XML terstruktur, atau akses data yang dia dapat biasanya tidak memiliki akses 
-untuk. Dia bahkan mungkin dapat meningkatkan hak-nya di situs web jika data XML yang digunakan untuk 
-otentikasi (seperti XML pengguna berbasis file) atau otorisasi." Scanner ini mencoba untuk mengidentifikasi seperti 
-kelemahan-kelemahan.
+Seperti yang dijelaskan oleh OWASP: "Serangan injeksi XPath terjadi saat situs web menggunakan informasi yang dipasok pengguna untuk kueri XPath untuk data XML. Dengan mengirimkan informasi yang salah secara sengaja ke dalam situs web, penyerang bisa mengetahui bagaimana data XML disusun, atau mengakses data yang biasanya tidak bisa diakses. Malahan dia bisa meningkatkan keunggulannya pada situs web jika data XML digunakan untuk otentikasi (seperti berkas pengguna berbasis XML) atau otorisasi." Pemindai ini berusaha untuk mengidentifikasi kelemahan tersebut.
 
 <h2>XXE</h2>
 Komponen ini mencoba untuk mengidentifikasi aplikasi yang dapat XML Entitas eksternal (XXE) serangan.
