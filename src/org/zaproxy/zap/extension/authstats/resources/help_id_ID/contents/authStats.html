@@ -12,25 +12,25 @@ Pengaya ini merekam otentikasi terkait statistik untuk semua konteks yang berada
 Statistik direkam pada setiap basis situs dan menutupi:
 <table>
 <tr><td>stats.auth.<i>komponen</i>.state.nothtml</td><td>Respons Non HTML (yang tidak mungkin memiliki indikator masuk/keluar)</td></tr>
-<tr><td>stats.auth.<i>komponen</i>.state.notsuccess</td><td>Respons HTML yang tidak berhasil (yang sepertinya tidak memiliki indikator masuk / keluar)</td></tr>
-<tr><td>stats.auth.<i>komponen</i>.state.noindicator</td><td>Tidak ada masuk/keluar indikator yang telah ditetapkan</td></tr>
+<tr><td>stats.auth.<i>komponen</i>.state.notsuccess</td><td>Respons HTML tidak berhasil (yang tidak mungkin memiliki indikator masuk/keluar)</td></tr>
+<tr><td>stats.auth.<i>komponen</i>.state.noindicator</td><td>Tidak ada indikator masuk/keluar yang telah ditetapkan</td></tr>
 <tr><td>stats.auth.<i>komponen</i>.state.loggedinandout</td><td>Kedua masuk dan keluar indikator hadir</td></tr>
 <tr><td>stats.auth.<i>komponen</i>.state.loggedin</td><td>Hanya indikator masuk yang tersedia</td></tr>
 <tr><td>stats.auth.<i>komponen</i>.state.loggedout</td><td>Hanya indikator keluar yang tersedia</td></tr>
-<tr><td>stats.auth.<i>komponen</i>.state.unknown</td><td>Baik masuk atau keluar indikator hadir</td></tr>
+<tr><td>stats.auth.<i>komponen</i>.state.unknown</td><td>Tidak ada indikator masuk atau keluar yang diajukan</td></tr>
 </table>
 Komeponen bisa:
 <table>
 <tr><td>ascan</td><td>Pemindai Aktif</td></tr>
 <tr><td>auth</td><td>Otentikasi</td></tr>
-<tr><td>bulu halus</td><td>Fuzzer</td></tr>
+<tr><td>fuzz</td><td>Fuzzer</td></tr>
 <tr><td>manual</td><td>Permintaan manual</td></tr>
 <tr><td>Proxy</td><td>Permintaan proxy</td></tr>
 <tr><td>laba-laba</td><td>Laba-laba</td></tr>
 <tr><td><i>id</i></td><td>Integer pengenal dari komponen lain yang tidak tercantum di atas</td></tr>
 </table>
 <p>
-statistik dapat diakses melalui ZAP API.
+statistik bisa diakses melalui API ZAP.
 </p>
 <p>
 
