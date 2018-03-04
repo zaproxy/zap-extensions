@@ -61,10 +61,10 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 	private static final int SLEEP_TIME_SHORT=500;
 	private static final int SLEEP_TIME_LONG=2000;
 	private static final int DELTA_TIME=200;
-	private boolean isJsonPayload;
-	private HttpMessage injectedMsg;
-	private final List<Pattern> errorPatterns = initPattern(BINGO_MATCHING);
-	//TODO add the string do try the login auth.
+	private final List<Pattern> errorPatterns = initPattern(BINGO_MATCHING);	
+	private final static String[] USER_LOGIN = {"user", "mail", "name"};
+	private final static String[] PASS_LOGIN = {"pas", "key"};
+	private String doubleParam = "";
 	private static final String[] ALL_DATA_PARAM_INJECTION = new String[] {"[$ne]", "[$regex]", "[$gt]"};
 	// Alternatively could be fine only the paramter injection
 	private static final String[] ALL_DATA_VALUE_INJECTION = new String[]  {"0", ".*", "0"}; 
@@ -84,11 +84,15 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 	private static final String[] BINGO_MATCHING =  {"mongoDB", "MongoDB", "exception: SyntaxError: Unexpected", 
 			"exception 'MongoResultException'", TOKEN, "Unexpected string at $group reduce setup"};
 	
-	private static final String JSON_EX_LOG = "try to convert the payload in the json format";
+	private static final String JSON_EX_LOG = "try to convert the payload in json format";
 	private static final String IO_EX_LOG = "try to send an http message";
 	private static final String URI_EX_LOG = "try to get the message's Uri";
 	
 	private static final Logger LOG = Logger.getLogger(MongoDbInjection.class);
+	// State variables of the scan
+	private boolean isJsonPayload, isBingoAuthBP;
+	private HttpMessage injectedMsg = null, msgAuthByPass = null;
+	private boolean userField = false, passField = false;
 		   
 	@Override
 	public int getCweId() {
@@ -151,48 +155,61 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 
 	@Override
 	public void scan(HttpMessage msg, NameValuePair originalParam) {
+		if(!inScope(getTech())){
+			return;
+		}
+		initStateVariables(msg, originalParam);
+		super.scan(msg, originalParam);
+	}
+	
+	public void initStateVariables(HttpMessage msg, NameValuePair originalParam) {
+		String param = originalParam.getName();
+		String value = originalParam.getValue();
+		isBingoAuthBP = false;
 		isJsonPayload = originalParam.getType() == NameValuePair.TYPE_POST_DATA;
 			//TODO add TYPE_JSON control as soon as available
 			//& originalParam.getType() == NameValuePair.TYPE_JSON;
-		//for()
-		if(inScope(getTech())){
-			super.scan(msg, originalParam);
+
+		if(isParamLike(param, USER_LOGIN)) {
+			saveParamValue(param, value, userField);
+		}
+		else if(isParamLike(param, PASS_LOGIN)) {
+			saveParamValue(param, value, passField);
 		}
 	}
 	
 	@Override
 	public void scan(HttpMessage msg, String param, String value) {
-		if(urlScan(msg, param, value, ALL_DATA_PARAM_INJECTION, ALL_DATA_VALUE_INJECTION, ALL_DATA_ATTACK, false)) {
-			checkAuthBypass(msg, param, value);
-		}
+		// TODO: print attack [$ne] not 0 (the value)
+		urlScan(msg, param, value, ALL_DATA_PARAM_INJECTION, ALL_DATA_VALUE_INJECTION, ALL_DATA_ATTACK, false);
 		urlScan(msg, param, value, null, CRASH_INJECTION, CRASH_ATTACK, true);
 		urlScan(msg, param, value, null, JS_INJECTION, JS_ATTACK, false);
 		timedScan(msg, param, value, TIMED_INJECTION, TIMED_ATTACK);
-		if(isJsonPayload) {
-			jsonScan(msg, param, value, JSON_INJECTION, ALL_DATA_ATTACK);
-		}
+		
+		if(userField && passField) { authByPassUrlScan(msg); }
+		if(isJsonPayload) { jsonScan(msg, param, value, JSON_INJECTION, ALL_DATA_ATTACK); }
+		if(isBingoAuthBP) { checkAuthBypass(msg, param, value);	}
 	}
 
-	private boolean urlScan(HttpMessage msg, String param, String value, String[] paramInjection, String[] valueInjection, 
+	// TODO comment
+	private void urlScan(HttpMessage msg, String param, String value, String[] paramInjection, String[] valueInj, 
 			String typeAttack, boolean onlyExactError) {
 		int index = 0;
-		for(String vi : valueInjection) {
+		for(String vi : valueInj) {
 			try {
 				if(paramInjection!=null) {
 					param += paramInjection[index++];
 				}
 				injectedMsg = sendNewMsg(param, vi);
-				if(isBingo(getBaseMsg(), injectedMsg, param, vi, typeAttack, onlyExactError)) {
-					return true;
-				}
+				isBingo(msg, injectedMsg, param, vi, typeAttack, onlyExactError);
 			}catch(IOException ex) {
 				printLogException(ex, IO_EX_LOG);
 				continue;
 			}
 		}
-		return false;
 	}
-
+	
+	// TODO comment
 	private void timedScan(HttpMessage msg, String param, String value, String[][] timedInjection, String timedAttack) {
 		long intervalBaseMessage, intervalInjectedMessage; 
 		Instant start;		
@@ -233,12 +250,13 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		}
 	}
 	
-	private boolean jsonScan(HttpMessage msg, String param, String value, String[][] allDataInjection,
+	// TODO comment
+	private void jsonScan(HttpMessage msg, String param, String value, String[][] allDataInjection,
 			String allDataAttack) {	
 		for(String[] jpv : allDataInjection) {
 			try {
 				if(isStop()) {
-					return false;
+					return;
 				}
 				value = getParamJsonString(param, jpv);
 				injectedMsg  = getNewMsg();
@@ -247,9 +265,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 				injectedMsg.getRequestHeader().setMethod(HttpRequestHeader.POST);
 				setParameter(injectedMsg, param, value);
 				sendAndReceive(injectedMsg, false);
-				if(isBingo(getBaseMsg(), injectedMsg, JSON_ATTACK, param, value, false)) {
-					return true;
-				}
+				isBingo(msg, injectedMsg, JSON_ATTACK, param, value, false);
 			} catch (JSONException ex) {
 				printLogException(ex, JSON_EX_LOG);
 				continue;
@@ -258,20 +274,21 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 				continue;
 			}
 		}
-		return false;
 	}
 	
-	private HttpMessage sendNewMsg(String param, String value) throws IOException {
-		HttpMessage newMsg = getNewMsg();
-		setParameter(newMsg, param, value);
-		sendAndReceive(newMsg, false);
-		return newMsg;
-	}
-	
-	private void printLogException(Exception ex, String info) {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-					" when "+info);
+	// TODO comment
+	private boolean authByPassUrlScan(HttpMessage msg) {
+		try {
+			sendAndReceive(msgAuthByPass);
+			return isBingo(msg, msgAuthByPass, doubleParam, ALL_DATA_PARAM_INJECTION[0], ALL_DATA_ATTACK, false);
+		} catch (IOException ex) {
+			printLogException(ex, IO_EX_LOG);
+			return false;
+		}
+		finally {
+			userField = false; 
+			passField = false;
+			msgAuthByPass = null;
 		}
 	}
 
@@ -284,6 +301,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 			return false;
 		}
 		else {
+			isBingoAuthBP = true;
 			/*
 			 * The difference between the base response body and the after injecting one is for the only value passed 
 			 * as input. So it could be a (uncommon) false positive result. For example the server could be response: 
@@ -319,14 +337,6 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		}
 	}
 	
-	private boolean isTimedInjected(long intervalBaseMessage, long intervalInjectedMessage, int sleep) {
-		long diff=intervalInjectedMessage-intervalBaseMessage;
-		if(diff>=sleep-DELTA_TIME) {
-			return true;
-		}
-		return false;
-	}
-
 	/**
 	 * Checks if the originalMsg and injectedMsg strings differ only for the value passed as input.
 	 * 
@@ -355,6 +365,42 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		return false;
 	}
 	
+	public void checkAuthBypass(HttpMessage msg, String param, String valueInj) {
+		ExtensionAuthentication extAuth = (ExtensionAuthentication) Control.getSingleton()
+				.getExtensionLoader().getExtension(ExtensionAuthentication.NAME);
+		if (extAuth != null) {
+			URI requestUri = getBaseMsg().getRequestHeader().getURI();
+			try {
+				List<Context> contextList = extAuth.getModel().getSession().getContextsForUrl(requestUri.getURI());		
+				for (Context context : contextList) {
+					URI loginUri = extAuth.getLoginRequestURIForContext(context);
+					if (loginUri != null) {
+						if (requestUri.getScheme().equals(loginUri.getScheme())
+								&& requestUri.getHost().equals(loginUri.getHost())
+								&& requestUri.getPort() == loginUri.getPort()
+								&& requestUri.getPath().equals(loginUri.getPath())) {
+	
+							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, AUTH_BYPASS_ATTACK, getName(), 
+									getDescription(), null, param, getExtraInfo(AUTH_BYPASS_ATTACK), getSolution(), 
+									injectedMsg);
+							break;
+						}
+					}
+				}
+			} catch(URIException ex) {
+				printLogException(ex, URI_EX_LOG);
+			}
+		}
+	}
+	
+	private boolean isTimedInjected(long intervalBaseMessage, long intervalInjectedMessage, int sleep) {
+		long diff=intervalInjectedMessage-intervalBaseMessage;
+		if(diff>=sleep-DELTA_TIME) {
+			return true;
+		}
+		return false;
+	}
+	
 	private static List<Pattern> initPattern(String[] eb) {
 		List<Pattern> list =  new ArrayList<>();
 		for(String regex: eb) {
@@ -371,32 +417,45 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		return external.toString();
 	}
 	
-	public void checkAuthBypass(HttpMessage msg, String param, String valueInj) {
-		ExtensionAuthentication extAuth = (ExtensionAuthentication) Control.getSingleton()
-				.getExtensionLoader().getExtension(ExtensionAuthentication.NAME);
-		if (extAuth != null) {
-			URI requestUri = getBaseMsg().getRequestHeader().getURI();
-			try {
-				List<Context> contextList = extAuth.getModel().getSession().getContextsForUrl(requestUri.getURI());		
-				for (Context context : contextList) {
-					URI loginUri = extAuth.getLoginRequestURIForContext(context);
-					if (loginUri != null) {
-						if (requestUri.getScheme().equals(loginUri.getScheme())
-								&& requestUri.getHost().equals(loginUri.getHost())
-								&& requestUri.getPort() == loginUri.getPort()
-								&& requestUri.getPath().equals(loginUri.getPath())) {
+	private HttpMessage sendNewMsg(String param, String value) throws IOException {
+		HttpMessage newMsg = getNewMsg();
+		setParameter(newMsg, param, value);
+		sendAndReceive(newMsg, false);
+		return newMsg;
+	}
 	
-							//raise the alert, using the attack string stored earlier for this purpose					
-							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, AUTH_BYPASS_ATTACK, getName(), 
-									getDescription(), null, param, getExtraInfo(AUTH_BYPASS_ATTACK), getSolution(), 
-									injectedMsg);
-							break;
-						}
-					}
-				}
-			} catch(URIException ex) {
-				printLogException(ex, URI_EX_LOG);
+	private void printLogException(Exception ex, String info) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
+					" when "+info);
+		}
+	}
+	
+	//TODO Chanhe in array objects and use structure to memorize msg (only if we have the same MongoDB class for all the
+	// page scanned and not one init for page), param and value
+	// checks if when variant change the baseMsg is re-initialized.
+	private void saveParamValue(String param, String value, boolean field) {
+		//TODO is this checks necessary. That is: the add-on when restart? on context switch or never?
+		if(msgAuthByPass == null || !getBaseMsg().getRequestHeader().getURI().equals(msgAuthByPass.	getRequestHeader().
+				getURI())) {
+			userField = false;
+			passField = false;
+			msgAuthByPass = getNewMsg();
+		}
+		
+		param += ALL_DATA_PARAM_INJECTION[0];
+		value = ALL_DATA_VALUE_INJECTION[0];
+		setParameter(msgAuthByPass, param, value);
+		field =true;
+		doubleParam += param +" ";
+	}
+	
+	private boolean isParamLike(String param, String[] toCompare) {
+		for(String s:toCompare) {
+			if(param.contains(s)) {
+				return true;
 			}
 		}
+		return false;
 	}
 }
