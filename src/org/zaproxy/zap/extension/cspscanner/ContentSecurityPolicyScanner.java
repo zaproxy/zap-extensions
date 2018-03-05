@@ -271,6 +271,9 @@ public class ContentSecurityPolicyScanner extends PluginPassiveScanner {
 		if (pol.allowsWorkerFromSource(PARSED_WILDCARD_URI)) {
 			allowedSources.add("worker-src");
 		}
+		if (pol.allowsPrefetchFromSource(PARSED_WILDCARD_URI)) {
+			allowedSources.add("prefetch-src");
+		}
 		return allowedSources;
 	}
 	
