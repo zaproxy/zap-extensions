@@ -41,7 +41,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.api.API;
@@ -189,7 +188,7 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 
 	private void revealFields(HttpMessage msg) {
 		boolean changed = false;
-		String response = msg.getResponseHeader().toString() + msg.getResponseBody().toString();
+		String response = msg.getResponseBody().toString();
 		Source src = new Source(response);
 		OutputDocument outputDocument = new OutputDocument(src);
 		
@@ -227,10 +226,7 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 			}
 		}
 		if (changed) {
-			response = outputDocument.toString();
-			
-			int i = response.indexOf(HttpHeader.CRLF + HttpHeader.CRLF);
-			msg.setResponseBody(response.substring(i + (HttpHeader.CRLF + HttpHeader.CRLF).length()));
+			msg.setResponseBody(outputDocument.toString());
 		}
 	}
 

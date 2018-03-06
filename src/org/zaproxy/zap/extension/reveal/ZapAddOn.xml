@@ -1,11 +1,11 @@
 <zapaddon>
 	<name>Reveal</name>
-	<version>2</version>
+	<version>3</version>
 	<status>release</status>
 	<description>Show hidden fields and enable disabled fields</description>
 	<author>ZAP Dev Team</author>
 	<url></url>
-	<changes>Code changes and API documentation.</changes>
+	<changes>Maintenance changes.</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.reveal.ExtensionReveal</extension>
 	</extensions>
