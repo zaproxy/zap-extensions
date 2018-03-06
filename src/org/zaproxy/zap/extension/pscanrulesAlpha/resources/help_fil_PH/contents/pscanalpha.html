@@ -13,22 +13,22 @@ Ang mga sumosonod na alituntonin ay kalidad ng alpha passive iskan ay kasama sa 
 Ang isang ASP.NET ViewState ay isiwalat ng aplikasyon / web server
 
 <h2>ASP.NET ViewState integridad</h2>
-Ang aplikasyon ay hindi gumagamit ng Code Authentication Code (MAC) upang maprotektahan ang integridad ng ASP.NET ViewState, na maaaring tampered ng isang malisyosong client
+Ang aplikasyon ay hindi gumagamit ng Code Authentication Code (MAC) upang maprotektahan ang integridad ng ASP.NET ViewState, na maaaring binago ng isang malisyosong client
 
 <h2>Ang Pagsisiwalat ng Base64</h2>
-Ang naka-encode na data Base64 ay isiwalat ng aplikasyon / web server
+Ang naka-encode na data sa Base64 ay isiwalat ng aplikasyon / web server
 
-<h2>Nawawala ang nilalaman ng seguridad sa patakarang header</h2>
+<h2>Nawawala ang nilalaman ng seguridad sa patakarang ng header</h2>
 Ito ay pagsusuri ng HTML sa tugon ng mga header para sa presensiya ng nilalaman ayon sa siguridad at patakaran ng header.<br>
 Sapamamagitan ng default ay sinosuri ang alituntunin ng "nilalaman-siguridad-patakaran ng header, at sa Mababang threshold ay nag susuri din para sa" x-nilalaman-patakaran-siguridad " at "X-WebKit-CSP" ng mga header.
 <p>
-Kung ang "nilalaman-seguridad-patakaran-report-lamang" ang header ay nakakita ng tugon sa INFO Para itaas ang alerto. Maaring ito ay kumakatawan sa pag sisikap ng nag papatupad sa aktibong pagiging pino o binobuo o na kung saan isa lamang ang bahagyang ipinatutupad.
+Kung ang "Content-Security-Policy-Report-Only" ang header ay matatagpun sa tugon ng isang INFO Para itaas ang alerto. Maaring ito ay kumakatawan sa pag sisikap ng nag papatupad sa aktibong pagiging pino o binobuo o na kung saan isa lamang ang bahagyang ipinatutupad.
 
 <h2>nakaka lason na cookie</h2>
-Tinitignan ng pag susuring ito ang idudulot sa gumagamit ng mga input sa query pisi parametro at ang post sa mga data upang tukuyin kung saan maaaring kuntrolin ang mga parametro ng cookie. Ito ay tinatawag na pag atake ng nakakalason cookie, at ito'y mapagsasamantalahan kung ang umatake ay mamanipulahe ang cookie sa iba't ibang paraan. At sa isang Banda Hindi ito mapag sasamantalahan kung ang URL parameters ay papayag na ang halaga ng cookie ay mailagay bilang isang bug.
+Tinitignan ng pag susuring ito ang idudulot sa gumagamit ng mga input sa query string parametro at ang post sa data upang tukuyin kung saan maaaring kuntrolin ang mga parametro cookie. Ito ay tinatawag na pag atake ng nakakalason cookie, at ito'y mapagsasamantalahan kung ang umatake ay mamanipulahe ang cookie sa iba't ibang paraan. At sa isang Banda Hindi ito mapag sasamantalahan kung ang URL parameters ay papayag na ang halaga ng cookie ay mailagay bilang isang bug.
 
 <h2>Cookie Without SameSite Attribute</h2>
-Inuulat ang anuma cookie na walang samesite attribute o sala itong kinikilalang anuman halaga para sa attribute na ito.
+Inuulat ang anuma cookie na walang samesite attribute o wala itong kinikilalang anuman halaga para sa attribute na ito.
 
 <h2>Cross Domain Misconfiguration</h2> passively suriin ang mga tugon ng cross domain misconfiguration, para mapahinga ang parehong pinagmula ng patakaran sa web browser, halimbawa <br> ang kasalukuyang nag papatupad ay labis na tumitingen sa pagpapahintulot ng CORS headers.
 
@@ -46,19 +46,19 @@ Para sa iba pang detalye tignan ang: http://zaproxy.blogspot.co.uk/2014/04/hacki
 
 <h2>Hash Disclosure</h2>
 Passively iskan para sa password na mga sumira ng nagsabi sa pamamagitan ng web server. <br>
-Kabilang ang iba't ibang ayos, ay kabilang ang ilang porma tulad ng MD4, MD5, and SHA*, kung saan minsan gamit ito para sa mga layunin maliban sa naglalaman ng mga hashes ng password. 
+Kabilang ang iba't ibang ayos, kabilang ang ilang mga porma tulad ng MD4, MD5, and SHA*, kung saan minsan gamit ito para sa mga layunin maliban sa naglalaman ng mga hashes ng password. 
 
 <h2>HeartBleed</h2>
 Passively iskan para sa HTTP header ng mga tugon na maaaring mag pahiwatig na ang server ay mahina sa mga kritikal na HeartBleed OpenSSL ng kahinaan. 
 
-<h2>HTTP sa HTTPS Walang kasiguraduhan ang pagliligtas sa form ng post</h2> itong pagsusuri ay tumitinhen sa walang kasiguraduhan ng HTTP sa pahina ng mga form host HTTPS. Ang isyu ay ang isang hindi secure na pahina ng HTTP na pweding madaling ma hijack gamit ang MITM at ang secure na HTTPS form ay pweding mapalitan o ma spoofed.
+<h2>HTTP sa HTTPS Walang kasiguraduhan ang pagliligtas sa form ng post</h2> itong pagsusuri ay tumitingen sa walang kasiguraduhan ng HTTP sa pahina ng mga form host HTTPS. Ang isyu ay ang isang hindi secure na pahina ng HTTP na pweding madaling ma hijack gamit ang MITM at ang secure na HTTPS form ay pweding mapalitan o ma spoofed.
 
-<h2>HTTPS sa HTTP hindi secure na pagbabago sa form ng post</h2> ang pagsusuring ito ay nakikilala ng secure na pahina sa HTTPS ang host ay walang secure sa mga form ng HTTP. Ang isyung ito ay para sa isang secure na pahina paglipat sa isang hindi secure na pahina kung ang data ay ililipat sa isang form. Iniisip ng gumagamit na sila ay nag sasabmit ng datos sa seguridad na pahina ngunit ang katunayan ay hindi sila.
+<h2>HTTPS sa HTTP hindi secure na pagbabago sa form ng post</h2> ang pagsusuring ito ay nakikilala ng secure na pahina sa HTTPS ang host ay walang secure sa mga form ng HTTP. Ang isyung ito ay para sa isang secure na pahina paglipat sa isang hindi secure na pahina kung ang data ay ililipat sa isang form. Iniisip ng gumagamit na sila ay nag sasabmit ng datos sa seguridad na pahina ngunit ang katunayan ay hindi.
 
 <h2>hindi secure na Component</h2>
-Passively mga eskan ng server tugon ng mga header at ng body generator content para sa producto ng mga bersyon, na kung saan ang krus-referenced ay laban sa listahan ng mga bersyon produto nalalaman na ito ay mahina sa various CVEs. 
-Ang listahan ng mga niraranguhan ng CVEs at CVSS bagsik ng iskor sa output ng bawat isang producto na nabangit na mahina. 
-Sa katunayan, ang mga sumosunod na producto ay nasa panig ng server na sunosuporta:<br>Apache Tomcat aplikasyon server (limitadong functionality dahil sapagtagas ng limitadong inpormasyon sa tomcat)<br> Apache web server<br> mod_auth_radius Apache modue<br>
+Passively ma iskan ang tugon ng server sa mga header at ng body generator content para sa producto ng mga bersyon, na kung saan ang krus-referenced ay laban sa listahan ng mga bersyon produto nalalaman na ito ay mahina sa various CVEs. 
+Ang listahan ng mga niraranguhan sa CVEs at CVSS matindi ang iskor sa output ng bawat isang producto na nabangit na mahina. 
+Sa katunayan, ang mga sumosunod na producto ay nasa panig ng server na sumosuporta:<br> Apache Tomcat aplikasyon server (limitadong functionality dahil sapagtagas ng limitadong inpormasyon sa tomcat)<br> Apache web server<br> mod_auth_radius Apache modue<br>
  mod_fcgid Apache module<br>
  mod_imap Apache module<br>
 mod_jk Apache module<br>
@@ -86,18 +86,17 @@ Squid proxy server<br>
 Sun One web server<br>
 Sun Java System Web Server<br>
 TornadoServer web server<br>
-WordPress<0>
+WordPress
 
 <h2>Image lokasyon eskaner</h2>
-<p>Mga passively eskan para sa GPS lokasyon pag lantad ng image sa panahon ng normal ang seguridad ng
+<p>Mga passively eskan para sa lokaayon ng GPS pag lantad ng image sa panahon ng normal ang seguridad ng
 mga assessment sa mga website.  Image lokasyon eskaner tumotulong sa sitwasyon kung saan maaaring magpaskil ng mga larawan sa propayl ang end user at posibleng ipamigay ang kanilang lokasyon sa bahay
 e.g. a dating site or children's chatroom.  Ang isang whitepaper na ito ay matatagpuan sa http://veggiespam.com/ils/</p>
 
-<p>Tandaan: ang pagkakasunod sunod ng plug-in na ito para magamit sa, ZAP kaylangan isaayos para makatangap at maproseso ang mga image.  Upang gawin ito, pumunta sa opsiyon ng ZAP panel (Tools
-&rarr; Opsiyon), pumili ng display, at paganahin ang checkbox para sa "pagpaprases ng mga image sa HTTP requests/responses".  Para sa pagdadagdag, ang mga image ng ZAP ay hindi masasala sa pamamagitan ng mga setting "Global Exclude URL" o ang sesiyon prapertis para sa "Exclude from
+<p>Tandaan: ang pagkakasunod sunod ng plug-in na ito para magamit sa, ZAP kaylangan isaayos para makatangap at maproseso ang mga image.  Upang gawin ito, pumunta sa opsiyon ng ZAP panel (Tools &rarr; Opsiyon), pumili ng display, at paganahin ang checkbox para sa "pagpaprases ng mga image sa HTTP requests/responses".  Para sa pagdadagdag, ng mga image sa ZAP ay hindi masasala sa pamamagitan ng mga setting "Global Exclude URL" o ang sesiyon prapertis para sa "Exclude from
 Proxy". </p>
 
-<h2>Buksan ang Redirect</h2>
+<h2>Buksan na Redirect</h2>
 Ang mga bukas na redirect ay isa mga top ten vulnerabilities ng OWASP 2010. Itong pagsusuri ay tumitingen sa user-supplied input ng mga query string parameter at post data para matukoy kung saan posibleng bukas ang mga redirect. Ang mga bukas na redirect ay mangyayari kapag ang isang aplikasyon ay pinahintulotan ang user-supplied input (e.g. http://nottrusted.com) na makuntrol ang isang offsite redirect. Ito ay pangkaraniwan isang tumpak na paraan para mahanap ang 301 o 302 mga redirect na maaaring pagsamantalahan ng mga spammer o ng pag-atake sa phishing
 
 <h2>HTTP server ay tumugon sa header eskaner</h2>
