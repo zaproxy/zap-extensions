@@ -7,6 +7,7 @@
 	<url>https://github.com/zaproxy/zap-core-help/wiki/HelpAddonsZestZest</url>
 	<changes>
 	<![CDATA[
+	Added input for Variable Name in Client Element Assign dialog.<br>
 	Allow to clear the Zest panel.<br>
 	]]>
 	</changes>

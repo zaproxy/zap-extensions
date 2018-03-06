@@ -497,7 +497,7 @@ public class ZestDialogManager extends AbstractPanel {
 			ZestStatement req, ZestClientElementAssign client, boolean add) {
 		if (clientElementAssignDialog == null) {
 			clientElementAssignDialog = new ZestClientElementAssignDialog(extension, View
-					.getSingleton().getMainFrame(), new Dimension(300, 200));
+					.getSingleton().getMainFrame(), new Dimension(300, 240));
 		} else if (clientElementAssignDialog.isVisible()) {
 			// Already being displayed, bring to the front but dont overwrite anything
 			bringToFront(clientElementAssignDialog);
