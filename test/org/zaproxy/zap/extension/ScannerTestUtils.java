@@ -133,7 +133,7 @@ public abstract class ScannerTestUtils {
                 description.appendText("alert name ").appendValue(Constant.messages.getString(key));
             }
 
-            @Override
+            //@Override
             public void describeMismatch(Object item, Description description) {
                 description.appendText("was ").appendValue(((Alert) item).getName());
             }
@@ -160,7 +160,7 @@ public abstract class ScannerTestUtils {
                 description.appendText("alert name contains ").appendValue(Constant.messages.getString(key));
             }
 
-            @Override
+            //@Override
             public void describeMismatch(Object item, Description description) {
                 description.appendText("was ").appendValue(((Alert) item).getName());
             }
