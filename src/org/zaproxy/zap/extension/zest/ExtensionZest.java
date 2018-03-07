@@ -716,8 +716,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener,
 
 				if (getExtACSRF() != null) {
 					// Create assignments for any ACSRF tokens
-					Source src = new Source(msg.getResponseHeader().toString()
-							+ msg.getResponseBody().toString());
+					Source src = new Source(msg.getResponseBody().toString());
 					List<AntiCsrfToken> acsrfTokens = getExtACSRF()
 							.getTokensFromResponse(msg, src);
 					for (AntiCsrfToken acsrf : acsrfTokens) {

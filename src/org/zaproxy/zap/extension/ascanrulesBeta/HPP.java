@@ -18,7 +18,6 @@
 
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import java.io.StringReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -145,7 +144,7 @@ public class HPP extends AbstractAppPlugin {
 			List<String> vulnLinks = new ArrayList<String>();
 
 			// We parse the HTML of the response and get all its parameters
-			Source s = new Source(new StringReader(getBaseMsg().getResponseBody().toString()));
+			Source s = new Source(getBaseMsg().getResponseBody().toString());
 			List<Element> inputTags = s.getAllElements(HTMLElementName.INPUT);
 			TreeSet<HtmlParameter> tags = this.getParams(s, inputTags);
 			
@@ -167,7 +166,7 @@ public class HPP extends AbstractAppPlugin {
 					}
 					
 					// We check all the links of the response to find our payload
-					s = new Source(new StringReader(newMsg.getResponseBody().toString()));
+					s = new Source(newMsg.getResponseBody().toString());
 					List<Element> links = s.getAllElements(HTMLElementName.A);
 					if (!links.isEmpty()) {
 						vulnLinks = this.findPayload(s, inputTags, vulnLinks);
