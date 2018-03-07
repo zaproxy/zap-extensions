@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>
-Mga Passive Iskan Rule - Alpha
+Mga Passive na Iskan Rule - Alpha
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -97,55 +97,55 @@ e.g. a dating site or children's chatroom.  Ang isang whitepaper na ito ay matat
 Proxy". </p>
 
 <h2>Buksan na Redirect</h2>
-Ang mga bukas na redirect ay isa mga top ten vulnerabilities ng OWASP 2010. Itong pagsusuri ay tumitingen sa user-supplied input ng mga query string parameter at post data para matukoy kung saan posibleng bukas ang mga redirect. Ang mga bukas na redirect ay mangyayari kapag ang isang aplikasyon ay pinahintulotan ang user-supplied input (e.g. http://nottrusted.com) na makuntrol ang isang offsite redirect. Ito ay pangkaraniwan isang tumpak na paraan para mahanap ang 301 o 302 mga redirect na maaaring pagsamantalahan ng mga spammer o ng pag-atake sa phishing
+Ang mga bukas na redirect ay isa mga top ten vulnerabilities ng OWASP 2010. Ang pagsusuring ito ay tumitingen sa user-supplied input ng mga query string parameter at post data para matukoy kung saan posibleng bukas ang mga redirect. Ang mga bukas na redirect ay mangyayari kapag ang isang aplikasyon ay pinahintulotan ang user-supplied input (e.g. http://nottrusted.com) na makuntrol ang isang offsite redirect. Ito ay pangkaraniwan isang tumpak na paraan para mahanap ang 301 o 302 mga redirect na maaaring pagsamantalahan ng mga spammer o ng pag-atake sa phishing
 
 <h2>HTTP server ay tumugon sa header eskaner</h2>
-Ang pagsusuring ito ay tumutugon sa mga header para sa presensiya ng isang server header na naglalaman ng mga bersiyo na detalye.
+Ang pagsusuring ito ay tumutugon sa mga header para sa presensiya ng isang server header na naglalaman ng mga detalye ng bersiyon.
 Sa mahinang Threshold ay mataas ang alerto batay sa presensiya ng header field kung nakita o hindi ang bersyon ng string.
 
 <h2>Pagsiwalat sa Source Code</h2>
 Ang aplikasyon Source Code ay siniwalat ng web server
 
-<h2>Stiktong Siguridad ng transport sa header eskaner</h2>
+<h2>Istiktong Siguridad ng transport sa header eskaner</h2>
 Itong eskaner ay sinusuri ang mga tugon ng HTTPS para sa presensiya ng Striktong Seguridad ng Transport HTTP (HSTS) header at pagsubok sa iba't ibang suliranin,
 Maging alerto kung natagpuan na ito.
 Mga alertong generated:
 <ul>
- <li><b>Strct-Trabsport-Security Header Not Set:
+ <li><b>Strict-Transport-Security Header Not Set:
 </b> kung ang tugon ay HTTPS at ang header ay ganap na nawawala.</li>
  <li><b>Strikto-Transport-Seguridad Disabled: </b> kung ang tugon ay HTTPS at ang halaga ng max-age ay naka-set sa zero, gayon pagnireset ang mga browser ang impormasiyon ng HSTS para sa site.</li>
  <li><b>Strikto-Transport-Security maraming entre ang header (Hindi sumusunod sa Spec):</b> kung ang tugon ay HTTPS at meron higit sa isang HSTS header sa mga tumugon.</li>
- <li><b>Stricto-Transport-Seguridad Nawawalang Max-Age (hindi-sumusunod sa Spec): </b> kung ang tugon ay HTTPS, isang HSTS headet ay tiyak pero ang max-age value ay hindi naglalaman ng numero.</li>
+ <li><b>Stricto-Transport-Seguridad Nawawalang Max-Age (hindi-sumusunod sa Spec): </b> kung ang tugon ay HTTPS, isang HSTS header ay tiyak pero ang max-age value ay hindi naglalaman ng numero.</li>
  <li><b>Strikto-Transport-Segutidad ay tinukoy sa pamamagitan ng META (Hindi sumosunod sa Spec): </b> kung ang response body ay kabilang sa META tag sino ang susubok tukuyin ang HSTS.</li>
- <li><b>Strikto-TransportSeguridad Header on plain sa tugon ng HTTP: </b> Kung ang tugon ay HTTP at ang HSTS header ay kasalukuyan.</li>
+ <li><b>Strikto-Transport-Seguridad ang Header ay nasa plain sa tugon ng HTTP: </b> Kung ang tugon ay HTTP at ang HSTS header ay kasalukuyan.</li>
  <li><b>Strikto-Transport-Seguridad Max-Age malformed (Hindi sumusunod sa Spec) </b> kung ang tugon ay HTTPS at ang HSTS header ay kasalukuyan, ngunit meron mga quote na nauuna ang max-age directiba(ang mga quote ay pinapayagan sa paligid ng max-age value, ngunit hindi sa paligid ng directibang ito).</li>
- <li><b>Stikto-Transport-Seguridad Malformed Nilalaman(hindi sumusunod sa Spec): </b>kung ang tugon ay HTTPS at ang HSTS header ay kasalukuyan, ngunit meron mga hindi inaasahang nilalaman(such as curly quotes). Ang inaasahan ay maipi-print ang nilalaman ng ASCII.</li>
+ <li><b>Stikto-Transport-Seguridad Malformed Nilalaman(hindi sumusunod sa Spec): </b>kung ang tugon ay HTTPS at ang HSTS header ay kasalukuyan, ngunit meron mga hindi inaasahang nilalaman(tulad ng mga buhol buhol na quote). Ang inaasahan ay maipi-print ang nilalaman ng ASCII.</li>
 </ul>
 
 <h2>Pagsisiwalat ng Timestamp</h2>
 Ang timestamp ay isiniwalat sa pamamagitan ng aplikasyon/web server
 
-<h2>Gumagamit ng nakukuntrol na HTML Elemento attribute (potensyal XSS)</h2>
-Ang pagsusuring ito ay tumitingen sa user-supplied input sa query string parameters at post data para matukoy kung saan tiyak ang halaga ng HTML attribute na maaaring kontrolado. Ito ay nagbibigay ng pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagang pagsusuri ng isang analyst sa seguridad upang matukoy ang pagsasamantala.
+<h2>Ang gumagamit ay nakukuntrol ang katangian ng elemento sa HTML (potensyal XSS)</h2>
+Ang pagsusuring ito ay tumitingen sa supplied ng gumagamit na nakapasok sa query string parameters at post data para matukoy kung saan tiyak ang halaga ng HTML attribute na maaaring kontrolado. Ito ay nagbibigay ng pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagang pagsusuri ng isang analyst sa seguridad upang matukoy ang pagsasamantala.
 
-<h2>User Controllable Charset</h2>
-Ang tamang itsura ng user-suplied input sa mga query string parameter at POST data upang makilala kung saan ang uri ng nilalaman o meta tag charser ang mga deklarasyon ay maaaring kontrolado ng gumagamit. Ang naturang mga deklarasyon ng charset ay dapat palaging ideklara ng aplikasyon. Kung ang umatake ay kayang kontrolin ang tugon ng charset maaari niyang manipulahin ang HTML para mag perporm sa XSS o iba pang mga pag atake.
+<h2>Ang Gumagamit ay Nakukuntrol ang Charset</h2>
+Ang pagsusuring ito ay tumitingen sa user-suplied input sa mga query string parameter at POST data upang makilala kung saan ang uri ng nilalaman o meta tag charser ang mga deklarasyon ay maaaring kontrolado ng gumagamit. Ang naturang mga deklarasyon ng charset ay dapat palaging ideklara ng aplikasyon. Kung ang umatake ay kayang kontrolin ang tugon ng charset maaari niyang manipulahin ang HTML para mag perporm sa XSS o iba pang mga pag atake.
 
 <h2>User Kontrolable Javascript Event (XSS)</h2>
 Ang pag susuring ito ay tumitingen sa user-supplied input ng query string parameters at post data para matukoy kung saan tiyak ang halaga ng HTML attribute na maaaring kontrolin. Ito ay nagbibigay ng pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagang pagsusuri ng isang analyst sa seguridad upang matukoy ang pagsasamantala.            
 
-<h2>User Kontrolable Javasript Property (XSS)</h2>
-Itong pagsusuri ay tumitingen sa user-supplied input ng query string parameters at post data para makilala kung saan ang URL's ay tiyak ang mga katangian ng javascript (e.g.createElement src) maaaring becontrolled. Ito ay nagbibigay pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagan pagsusuri ng isang manunuri sa siguridad upang matukoy ang pagsasamantala.            
+<h2>Ang gumagamit ay nakukuntrol ang pag aari ng Javasript (XSS)</h2>
+Ang pagsusuring ito ay tumitingen sa user-supplied input ng query string parameters at post data para makilala kung saan ang URL's ay tiyak ang mga katangian ng javascript (e.g.createElement src) maaaring becontrolled. Ito ay nagbibigay pangtukoy sa hot-spot para sa XSS (cross-site scripting) na kakailanganin ng karagdagan pagsusuri ng isang manunuri sa siguridad upang matukoy ang pagsasamantala.            
 
-<h2>Natagpuan ang Username ng Hash</h2>
-Kung anuman ang nilalaman ng kongteksto ay tinutukoy ng mga gumagamit itong iskaner ay sinusuri ang lahat ng mga tugon para sa presensiya ng hashed values na kumakatawan sa mga username.
+<h2>Ang Username ng Hash ay natagpuan</h2>
+Kung anuman ang nilalaman ng kongteksto na tinutukoy ng mga gumagamit itong iskaner ay sinusuri ang lahat ng mga tugon para sa presensiya ng hashed values na kumakatawan sa mga username.
 Pagkatuklas ng anumang naturang halaga ay maaaring kumakatawan sa isang Insecure Direct Object Reference (IDOR) na kahinaan. Ang alerto ay itataas lamang bilang inpormasyon aytem bilang further ang manu-manong pagsusuri ay kinakaylangan upang makompirma at masuri ang impact. 
 
 <h2>X-Powered-By Header impormasyon Leak</h2>
 Ang pagsusuring ito ay tumutugon sa mga header para sa presensiya ng X-Powed-By detalye.
 
 <h2>X-Backend-Server Header impormasyon Leak</h2>
-Ang pagsusuring ito ay tugon ng header para sa presensiya ng X-Backend-Server sa mga detalye.
+Ang pagsusuring ito ay tugon ng mga header para sa presensiya ng X-Backend-Server sa mga detalye.
 
 <h2>Malaking Redirect</h2>
 Ang pagsusuring ito ay para mahulaan ang size ng variuos redirect uri ng mga tugon at bumubuo ng alerto kung ang tugon ay masmataas pa kesa sa nahulaan size. 
