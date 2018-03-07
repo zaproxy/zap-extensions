@@ -64,7 +64,7 @@ public abstract class PassiveScannerTest extends ScannerTestUtils {
 	protected abstract PluginPassiveScanner createScanner();
 
 	protected Source createSource(HttpMessage msg) {
-		return new Source(msg.getResponseHeader().toString() + msg.getResponseBody().toString());
+		return new Source(msg.getResponseBody().toString());
 	}
 
 }
