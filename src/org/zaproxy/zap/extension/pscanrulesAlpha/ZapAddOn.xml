@@ -1,14 +1,13 @@
 <zapaddon>
 	<name>Passive scanner rules (alpha)</name>
-	<version>21</version>
+	<version>22</version>
 	<status>alpha</status>
 	<description>The alpha quality Passive Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Renamed blank link target to reverse tabnabbing scanner and fixed implementation.<br>
-	Remove Image Location Scanner, it's been separated into it's own addon and promoted to beta.<br>
+	Help documentation improvements and cleanup.<br>
 	]]>
 	</changes>
 	<extensions>
