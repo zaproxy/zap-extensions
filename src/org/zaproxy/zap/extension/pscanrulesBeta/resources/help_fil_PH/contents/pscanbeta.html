@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Pasibong Patakaran ng pagsusuri - Beta
+Mga Patakaran ng Passive iskan - Beta
 </title>
 </head>
 <body bgcolor="#ffffff">
@@ -37,41 +37,41 @@ Ang mga Cookie ay maaaring i-saklaw ng dominyon o daan. Ang pagsusuring ito ay n
 <h2>CSRF Mga Countermeasure</h2>
 Ang mga CSRFCountemeasure na plugin ay kinikilala ang "potensyal" na mga kahinaan na kasama ang kakulangan ng kilalang mga CSRF countermeasure ng mga pahina kasama ang mga form.<br>
 I-post ang 2.5.0 na maaaring matukoy ng isang kuwit na paghiwalayin ang listahan ng mga pagkakakilanlan sa mga 
-<code>rules.csrf.ignorelist</code> parametro sa pamamagitan ng mga pagpipilian 'Kumpigura ng patakaran' ng panel.
-Ang anumang mga FORM kasama ng isang pangalan o ID ng mga tumutugma sa isa sa mga tumutukoy ay maaaring hindi pansinin habang sinusuri para sa nawawalang mga Anti-CSRF.
-Gumamit lamang ng mga tampok na hindi pinapansin ang mga FORM na alam mong ito ay ligtas, halimbawa hanapin ang mga form.
+<code>rules.csrf.ignorelist</code> ang parametro sa pamamagitan ng mga pagpipilian 'Ang patakaran ng konpigurasyon' panel.
+Ang anumang mga FORM na may pangalan o ID ang mga tumutugma ay isa sa mga tumutukoy ay maaaring hindi pansinin habang sinusuri para sa nawawalang mga Anti-CSRF.
+Ginagamit lamang itong tanda para hindi mapansin ang mga FORM na alam mong ligtas, halimbawa hanapin ang mga form.
 
 
-<h2>Paglalantad ng Impormasyon: Mga mali sa pag-debug</h2>
-Itong Pasibong pagsusuri na mga nagsisiyasat sa nilalaman ng mga pagtugon ng web para sa kilalang kamalian ng Debug sa mensahe sa mga fragments.
-Ang pag-access sa mga naturang mga detalye ay maaaring magbigay ng isang malisosyong indibidwal kasama na nangangahulugan na kung saan ay naglalayon na abusuhin ang web site.
-Maaari din mag-leak ang datos nila ng partikular na hindi sinasadya para sa pagkonsumo ng pagtatapos ng gumagamit.
+<h2>Paglalantad ng Impormasyon: Mga mali Debug</h2>
+Itong passive scanner Ang mga nagsusuri sa nilalaman ng mga pagtugon ng web para sa kilalang kamalian ng Debug sa mensahe ng mga fragment.
+Ang pag-access para sa ganitong mga detalye ay maaaring magbigay ng isang malisosyong indibidwal kasama ang kahulugan na kung saan ay naglalayon na abusuhin ang web site.
+Maaari din mag-leak ang data ng hindi partikular na sinasadya para sa natapos na konsumo ng gumagamit.
 
 <h2>Paglalantad ng Impormasyon: Sa URL</h2>
 Ang mga pagtatangka na tukuyin ang pag-iral ng mga detalyeng sensitibo sa loob ng pagbisita sa mga URl ng mga ito. (maaari nitong isama sa mga parametro, mga pangalan ng dokumento, mga pangalan ng taga-pangasiwa, at iba pa).
 
-<h2>Paglalantad ng Impormasyon: Ang Tumutukoy</h2>
-Kinikilala nito ang pag-iral ng mga detalyeng sensitibo sa loob ng header ng taga-tukoy sa field ng mga kahilingan ng HTTP (maaari nitong isama ang mga parametro, mga pangalan ng dokumento, mga pangalan ng taga-pangasiwa at iba pa).
+<h2>Paglalantad ng Impormasyon: Referrer</h2>
+Kinikilala nito ang pag-iral ng mga sensitibong detalye sa loob ng Referrer header field sa kahilingan ng HTTP (maaari nitong isama ang mga parametro, mga pangalan ng dokumento, mga pangalan ng taga-pangasiwa at iba pa).
 
 <h2>Paglalantad ng Impormation: Mga Komentong Kahina-hinala</h2>
 Sinusuri nito ang nilalaman ng web upang tukuyin ang mga komento kung saan naglalaman ng may potensyal na sensitibong mga detalye. Na kung saan ay naglalayong umatake o malantad ang hindi intensyon na datos.
 
-<h2>Hindi ligtas na nagpapatunay</h2>
+<h2>Hindi ligtas na pagpapatunay</h2>
 Ang HTTP basic o ang pagpapatunay ng digest ay ginamit sa isang hindi ligtas na koneksyon. Ang kredensyal ay maaaring basahin at pagkatapos gamitin muli ng isang taong may access sa network.
 
 <h2>Hindi ligtas ang JSF ViewState</h2>
 Ang pag tugon sa mga sumusunod na URL ay naglalaman ng isang mahalaga ng ViewState na walang mga proteksyon.
 
 <h2>Servlet ng Parametrong Polusyon</h2>
-Sa paghahanap ng pagtugon para sa mga form ng HTML kung saan ay bigo na matukoy ang isang aksyon ng elemento. Beryon na 3 ng Java Servlet spec ang tawag para sa pagsasama-sama ng mga katanungan ng string at ang datos ng post na mga elemento kung saan ay maaaring may resulta na hindi sinasadyang paghawak ng gumagamit para makontrol ang datos. Ito ay maaaring maging epekto sa ibang mga framework at mga teknolohiya din.
+Sa paghahanap ng pagtugon para sa mga form ng HTML kung saan ay bigo na matukoy ang isang aksyon ng elemento. 3 Bersyon ng Java Servlet spec ang tawag para sa pagsasama-sama ng mga katanungan ng string at ang datos ng post na mga elemento kung saan ay maaaring may resulta na hindi sinasadyang paghawak ng gumagamit para makontrol ang datos. Ito ay maaaring maging epekto sa ibang mga framework at mga teknolohiya din.
 
 <h2>VIEWSTATE</h2>
 Pagtatangka sa pagtukoy ng mga parametro ng VIEWSTATE at analisahin ang nasabing mga parametro para sa iba't ibang mga pinakamahuhusay na pagsasanay o proteksyon ng mga sukat tulad ng: 
 <ul>
-	<li>Ang pagbatay sa ASP.NET 1.0 at 1.1.</li>
-	<li>Ang kakulangan ng lagda ng VIEWSTATE.</li>
-	<li>Paghatiin ang VIEWSTATE.</li>
-	<li>Naglalaman ng email at mga IP pattern ang VIEWSTATE.</li>
+	<li>Yaong basihan sa ASP.NET 1.0 at 1.1.</li>
+	<li>Ang kakulangan ng lagda sa VIEWSTATE.</li>
+	<li>Hatiin ang VIEWSTATE.</li>
+	<li>Naglalaman ng email o mga IP pattern ang VIEWSTATE.</li>
 </ul>
 
 </body>
