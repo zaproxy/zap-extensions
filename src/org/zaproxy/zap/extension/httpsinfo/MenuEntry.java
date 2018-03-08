@@ -46,6 +46,6 @@ public class MenuEntry extends PopupMenuItemHttpMessageContainer {
 
 	@Override
 	protected void performAction(HttpMessage msg) {
-		extension.showSslTlsInfo(msg.getRequestHeader().getHostName(), msg);
+		extension.addTab(msg);
 	}
 }

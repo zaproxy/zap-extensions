@@ -1,6 +1,6 @@
 <zapaddon>
 	<name>HttpsInfo</name>
-	<version>11</version>
+	<version>12</version>
 	<status>alpha</status>
 	<description>Displays HTTPS configuration information.</description>
 	<author>ZAP Dev Team</author>
@@ -8,7 +8,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Updated for 2.7.0.<br>
+	New tabbed UI.<br>
 	]]>
 	</changes>
 	<extensions>
