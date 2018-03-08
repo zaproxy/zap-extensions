@@ -24,7 +24,9 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -33,11 +35,14 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
+import org.apache.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -56,7 +61,8 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	private static final String BASE_NAME_SCRIPT_EXECUTOR_THREAD = "ZAP-ScriptExecutor-";
 	private static final ImageIcon AUTO_COMPLETE_ICON = new ImageIcon(OutputPanel.class.getResource(
 			"/org/zaproxy/zap/extension/scripts/resources/icons/ui-text-field-suggestion.png"));
-
+	private static final String THREAD_NAME = "ZAP-ScriptChangeOnDiskThread";
+	
 	private ExtensionScriptsUI extension;
 	private JPanel panelContent = null;
 	private JToolBar panelToolbar = null;
@@ -73,7 +79,18 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 
 	private Map<ScriptWrapper, WeakReference<ScriptExecutorThread>> runnableScriptsToThreadMap;
 
-	//private static final Logger logger = Logger.getLogger(ConsolePanel.class);
+	// TODO remove once a later version of ZAP has been published
+	private Boolean after2_7_0 = null;
+	private Method scriptHasChangedOnDiskMethod = null;
+	private Method scriptReloadMethod = null;
+	private Runnable dialogRunnable = null;
+	private Thread changesPollingThread = null;
+	private boolean pollForChanges;
+	private static final Object [] SCRIPT_CHANGED_BUTTONS = new Object[] {
+			Constant.messages.getString("scripts.changed.keep"),
+			Constant.messages.getString("scripts.changed.replace")};
+
+	private static final Logger LOG = Logger.getLogger(ConsolePanel.class);
 
 	public ConsolePanel(ExtensionScriptsUI extension) {
 		super();
@@ -87,6 +104,10 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 				KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() | KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
 		this.setMnemonic(Constant.messages.getChar("scripts.panel.mnemonic"));
 		this.setLayout(new BorderLayout());
+		if (isAfter2_7_0()) {
+			// Scripts changed on disk will now be detected by the core
+			startPollingForChanges();
+		}
 
 		runnableScriptsToThreadMap = Collections.synchronizedMap(new HashMap<ScriptWrapper, WeakReference<ScriptExecutorThread>>());
 
@@ -102,6 +123,124 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 
 		panelContent.add(this.getPanelToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0D, 0.0D));
 		panelContent.add(splitPane, LayoutHelper.getGBC(0, 1, 1, 1.0D, 1.0D));
+	}
+	
+	
+	private Method getScriptHasChangedOnDiskMethod() {
+		if (after2_7_0 == null) {
+			// not tried yet
+			try {
+				scriptHasChangedOnDiskMethod = ScriptWrapper.class.getMethod("hasChangedOnDisk");
+				after2_7_0 = Boolean.TRUE;
+			} catch (Exception e) {
+				after2_7_0 = Boolean.FALSE;
+			}
+		}
+		return scriptHasChangedOnDiskMethod;
+	}
+	
+	
+	private boolean isAfter2_7_0 () {
+		if (after2_7_0 == null) {
+			// Sets after2_7_0 as a side effect
+			getScriptHasChangedOnDiskMethod();
+		}
+		return after2_7_0;
+	}
+	
+	private boolean isScriptUpdatedOnDisk() {
+		if (script != null) {
+			// Check to see if its also changed on disk
+			try {
+				Object result = getScriptHasChangedOnDiskMethod().invoke(script);
+				if (result instanceof Boolean) {
+					return (Boolean)result;
+				} else {
+					LOG.error("ScriptWrapper.isChanged() unexpected return " + result + " " + result.getClass().getCanonicalName());
+				}
+			} catch (Exception e) {
+				LOG.error(e.getMessage(), e);
+			}
+		}
+	return false;
+	}
+
+	private void startPollingForChanges() {
+		changesPollingThread = new Thread() {
+			@Override
+			public void run() {
+				this.setName(THREAD_NAME);
+				pollForChanges = true;
+				while (pollForChanges) {
+					if (dialogRunnable == null && isScriptUpdatedOnDisk() ) {
+
+						dialogRunnable = new Runnable() {
+							@Override
+							public void run() {
+								String message;
+								if (script.isChanged()) {
+									message = Constant.messages.getString("scripts.console.changedOnDiskAndConsole");
+								} else {
+									message = Constant.messages.getString("scripts.console.changedOnDisk");
+								}
+								
+								if (JOptionPane.showOptionDialog(
+										ConsolePanel.this,
+										message,
+										Constant.PROGRAM_NAME,
+										JOptionPane.YES_NO_OPTION, 
+										JOptionPane.WARNING_MESSAGE, 
+										null, 
+										SCRIPT_CHANGED_BUTTONS,
+										null) == JOptionPane.YES_OPTION) {
+									try {
+										extension.getExtScript().saveScript(script);
+									} catch (IOException e) {
+										LOG.error(e.getMessage(), e);
+									}
+								} else {
+									reloadScript();
+								}
+								dialogRunnable = null;
+							}
+						};
+						try {
+							SwingUtilities.invokeAndWait(dialogRunnable);
+						} catch (Exception e) {
+							LOG.error(e.getMessage(), e);
+						}
+					}
+					try {
+						sleep(5000);
+					} catch (InterruptedException e) {
+						// Ignore
+					}
+				}
+				changesPollingThread = null;
+			}
+		};
+		changesPollingThread.setDaemon(true);
+		changesPollingThread.start();
+		
+		if (dialogRunnable != null) {
+			return;
+		}
+	}
+	
+	private void reloadScript() {
+		if (this.scriptReloadMethod == null) {
+			try {
+				scriptReloadMethod = ScriptWrapper.class.getMethod("reloadScript");
+			} catch (Exception e) {
+				LOG.error(e.getMessage(), e);
+			}
+		}
+		try {
+			this.scriptReloadMethod.invoke(this.script);
+			this.updateCommandPanelState(this.script);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
 	}
 	
 	private javax.swing.JToolBar getPanelToolbar() {
@@ -304,6 +443,7 @@ public class ConsolePanel extends AbstractPanel implements Tab {
 	
 	void unload() {
 		getCommandPanel().unload();
+		this.pollForChanges = false;
 	}
 
 	public ScriptWrapper getScript() {

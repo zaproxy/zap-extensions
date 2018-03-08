@@ -10,6 +10,7 @@
 	Fix typo in help page.<br>
 	Execute Targeted scripts in other thread than GUI thread.<br>
 	Clear highlighting syntax when a non-script node is selected.<br>
+	Warn of script changed by another program (post 2.7.0).<br>
 	]]>
 	</changes>
 	<extensions>
