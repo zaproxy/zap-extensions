@@ -13,9 +13,12 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.parosproxy.paros.network.HttpMessage;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WSDLCustomParserTestCase {
 
 	private String wsdlContent;
@@ -42,7 +45,7 @@ public class WSDLCustomParserTestCase {
 	}
 	
 	@Test
-	public void parseWSDLContentTest() {	
+	public void a_parseWSDLContentTest() {
 		try{
 			/* Positive case. Checks the method's return value. */
 			Method method = parser.getClass().getDeclaredMethod("parseWSDLContent", String.class, boolean.class);
@@ -62,7 +65,7 @@ public class WSDLCustomParserTestCase {
 	}	
 	
 	@Test
-	public void canBeWSDLparsedTest() {
+	public void b_canBeWSDLparsedTest() {
 		/* Positive case. */
 		boolean result = parser.canBeWSDLparsed(wsdlContent);
 		assertTrue(result);
@@ -74,7 +77,7 @@ public class WSDLCustomParserTestCase {
 	}
 	
 	@Test
-	public void createSoapRequestTest(){	
+	public void c_createSoapRequestTest(){
 		if(WSDLCustomParser.getLastConfig() == null){
 			fail ("parseWSDLContentTest has not been able to save a proper configuration object to perform this test.");
 			return;
