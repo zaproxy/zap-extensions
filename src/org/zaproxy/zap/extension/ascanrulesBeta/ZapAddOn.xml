@@ -1,13 +1,13 @@
 <zapaddon>
 	<name>Active scanner rules (beta)</name>
-	<version>23</version>
+	<version>24</version>
 	<status>beta</status>
 	<description>The beta quality Active Scanner rules</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	At HIGH threshold only perform CSRF checks for inScope messages (Issue 1354).<br>
+	Maintenance changes.<br>
     ]]>
 	</changes>
 	<extensions>

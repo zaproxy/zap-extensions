@@ -128,8 +128,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
 	// TODO This method is also in ExtensionAntiCSRF - put into a helper class?
 	public String getTokenValue(HttpMessage tokenMsg, String tokenName) {
-		String response = tokenMsg.getResponseHeader().toString() + tokenMsg.getResponseBody().toString();
-		Source source = new Source(response);
+		Source source = new Source(tokenMsg.getResponseBody().toString());
 		List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
 		
 		if (formElements != null && formElements.size() > 0) {
@@ -157,8 +156,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 	}
 
 	public Vector<String> getFormInputFields(HttpMessage tokenMsg) {
-		String response = tokenMsg.getResponseHeader().toString() + tokenMsg.getResponseBody().toString();
-		Source source = new Source(response);
+		Source source = new Source(tokenMsg.getResponseBody().toString());
 		List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
 		Vector<String> fifs = new Vector<>();
 		

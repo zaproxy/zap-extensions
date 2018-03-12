@@ -1,21 +1,13 @@
 <zapaddon>
 	<name>Token generation and analysis</name>
-	<version>11</version>
+	<version>12</version>
 	<status>beta</status>
 	<description>Allows you to generate and analyze pseudo random tokens, such as those used for session handling or CSRF protection</description>
 	<author>ZAP Dev Team</author>
 	<url/>
 	<changes>
 	<![CDATA[
-	Use custom HTTP Sender initiator ID.<br>
-	Show same cookies once in Generate Tokens dialogue (Issue 2116).<br>
-	Fix exception when no tokens are found (Issue 2116).<br>
-	Added help file.<br>
-	Issue 2338: Allow dynamic timeout adjustment to combat read timeout issues.<br>
-	Ensure initial dialog is properly sized.<br>
-	Issue 2000: Title caps adjustments.<br>
-	Code changes for Java 9 (Issue 2602).<br>
-	Ensure Analyse Token dialogue is shown in front of main window.<br>
+	Maintenance changes.<br>
 	]]>
 	</changes>
 	<extensions>

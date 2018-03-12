@@ -18,7 +18,6 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -175,7 +174,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 		Source s1;
 		try {		
 			// We parse the HTML of the response
-			s1 = new Source(new StringReader(getBaseMsg().getResponseBody().toString()));
+			s1 = new Source(getBaseMsg().getResponseBody().toString());
 
 			List<Element> formElements = s1.getAllElements(HTMLElementName.FORM);
 			
@@ -234,7 +233,7 @@ public class Csrftokenscan extends AbstractAppPlugin {
 				sendAndReceive(newMsg);
 	
 				// We parse the HTML of the response
-				Source s2 = new Source(new StringReader(newMsg.getResponseBody().toString()));
+				Source s2 = new Source(newMsg.getResponseBody().toString());
 				List<Element> form2Elements = s2.getAllElements(HTMLElementName.FORM);
 				if (form2Elements.size() > formIdx) {
 					
