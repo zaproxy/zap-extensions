@@ -44,7 +44,7 @@ public class CodeDxExtension extends ExtensionAdaptor {
 
     private static final Logger LOGGER = Logger.getLogger(CodeDxExtension.class);
 
-    private static final int TIMEOUT = 5000;
+    private static final int TIMEOUT = 120000;
     
     // The name is public so that other extensions can access it
     public static final String NAME = "CodeDxExtension";
