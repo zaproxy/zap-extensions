@@ -324,6 +324,8 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 								+ " onMouseOver=" + context.getSurroundingQuote() + "alert(1);", context,
 								HtmlContext.IGNORE_TAG);
 						if (contexts2 == null) {
+							log.debug("Failed to find vuln in with simple onmounseover "
+									+ msg.getRequestHeader().getURI());
 							break;
 						}
 						if (contexts2.size() > 0) {
@@ -331,10 +333,6 @@ public class TestCrossSiteScriptV2 extends AbstractAppParamPlugin {
 							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, null, param, contexts2.get(0).getTarget(),
 									"", contexts2.get(0).getTarget(), contexts2.get(0).getMsg());
 							attackWorked = true;
-						}
-						if (!attackWorked) {
-							log.debug("Failed to find vuln in with simple onmounseover "
-									+ msg.getRequestHeader().getURI());
 						}
 					}
 				} else if (context.isHtmlComment()) {
