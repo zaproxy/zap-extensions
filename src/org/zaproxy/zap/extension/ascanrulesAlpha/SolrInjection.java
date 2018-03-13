@@ -111,68 +111,73 @@ public class SolrInjection extends AbstractAppParamPlugin {
 
 	@Override
 	public void scan(HttpMessage msg, String param, String value) {
-		if(inScope(SOLR_TECH)){
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("Scannning URL ["+msg.getRequestHeader().getMethod()+"] ["+msg.getRequestHeader().getURI()+
-						"] on param: ["+param+"] with value: ["+value+"] for Solr Injection");
-			}
-			innerScan(msg, param, value, ALL_DATA_INJECTION, false, ALL_DATA_ATTACK);
-			innerScan(msg, param, value, XXE_INJECTION, true, XXE_ATTACK);
-		}
-	}
-	
-	private void innerScan(HttpMessage msg, String param, String value, String[] injectedValues, boolean errorCheck,
-			String typeAttack) {
 		
-		for(String injectedValue : injectedValues) {
-			if(isStop()) {
-				return;
-			}
-			try {
+		if(!inScope(SOLR_TECH)) {
+			return;
+		}
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Scannning URL ["+msg.getRequestHeader().getMethod()+"] ["+msg.getRequestHeader().getURI()+
+					"] on param: ["+param+"] with value: ["+value+"] for Solr Injection");
+		}
+		try {
+			// Test if it is permitted to get all (or an arbitrary number) of data
+			for(String injectedValue : ALL_DATA_INJECTION) {
+				if(isStop()) {
+					if (LOG.isDebugEnabled()) { LOG.debug("Stopping the scan due to a user request"); }
+					return;
+				}
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("\nTrying with the value: "+injectedValue+" to test the Solr "+typeAttack+" attack");
+					LOG.debug("\nTrying with the value: "+injectedValue+" to test the Solr"+ALL_DATA_ATTACK+" attack");
 				}
 				msg = getNewMsg();
 				setParameter(msg, param, injectedValue);
 				sendAndReceive(msg);		
 				if(!getBaseMsg().getResponseBody().toString().equals(msg.getResponseBody().toString())) {
-					
-					if(errorCheck) {
-						/*for(String m:SOLR_ERROR_MATCHING) {
-							if(bodyMsgInjected.contains(m)) {
-								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
-										injectedValue, getExtraInfo(typeAttack), getSolution(), msg);
-								return;
-							}
-						}
+					//make sure that isn't a false positive
+					HttpMessage verificationMsg = getNewMsg();
+					setParameter(verificationMsg, param, CASUAL_TOKEN);
+					sendAndReceive(verificationMsg);
+					if(!msg.getResponseBody().toString().equals(verificationMsg.getResponseBody().toString())){
+						bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param, 
+								injectedValue, getExtraInfo(ALL_DATA_ATTACK), getSolution(), msg);
+						return;
 					}
-					*/
-						StringBuilder sb = new StringBuilder();
-						for(Pattern p : errorPatterns) {
-							if(matchBodyPattern(msg, p, sb)) {
-								bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
-										injectedValue, getExtraInfo(typeAttack), getSolution(), msg);
-								return;
-							}
+				}
+			}
+			//
+			for(String injectedValue : XXE_INJECTION) {
+				if(isStop()) {
+					if (LOG.isDebugEnabled()) { LOG.debug("Stopping the scan due to a user request"); }
+					return;
+				}
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("\nTrying with the value: "+injectedValue+" to test the Solr "+XXE_ATTACK+" attack");
+				}
+				msg = getNewMsg();
+				setParameter(msg, param, injectedValue);
+				sendAndReceive(msg);		
+				if(!getBaseMsg().getResponseBody().toString().equals(msg.getResponseBody().toString())) {
+					StringBuilder sb = new StringBuilder();
+					/*for(String m:SOLR_ERROR_MATCHING) {
+						if(bodyMsgInjected.contains(m)) {
+							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
+								injectedValue, getExtraInfo(typeAttack), getSolution(), msg);
+							break;
 						}
-					}
-					else {
-						//make sure that isn't a false positive
-						HttpMessage verificationMsg = getNewMsg();
-						setParameter(verificationMsg, param, CASUAL_TOKEN);
-						sendAndReceive(verificationMsg);
-						if(!msg.getResponseBody().toString().equals(verificationMsg.getResponseBody().toString())){
-							bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param, 
-									injectedValue, getExtraInfo(ALL_DATA_ATTACK), getSolution(), msg);
+					}*/
+					for(Pattern p : errorPatterns) {
+						if(matchBodyPattern(msg, p, sb)) {
+							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
+									injectedValue, getExtraInfo(XXE_ATTACK), getSolution(), msg);
 							break;
 						}
 					}
 				}
-			} catch (IOException ex) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
-							" when try to send an http message");
-				}
+			}
+		} catch (IOException ex) {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
+						" when try to send an http message");
 			}
 		}
 	}
