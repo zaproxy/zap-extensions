@@ -1,8 +1,6 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
@@ -20,17 +18,20 @@ import org.zaproxy.zap.model.Tech;
  */
 public class SolrInjection extends AbstractAppParamPlugin {
 
+	// Prefix for internationalised messages used by this rule
 	private static final Tech SOLR_TECH = Tech.Db /* TODO Tech.Solr */;
+
+	// Constants
 	private static final String MESSAGE_PREFIX = "ascanalpha.solr.";
 	private static final String ALL_DATA_ATTACK = "alldata";
 	private static final String XXE_ATTACK = "xxe";
 	private static final String INJECTED_COLLECTION = "collectioninjected";
 	private static final String DEFAULT_COLLECTION = "gettingstarted";
 	private static final String INJECTED_LISTENER = "injectedlistener";
-	private static final String UNKOWN_HOST_TOKEN = "http://_z<>a<>p<>.com	";
+	private static final String UNKOWN_HOST_TOKEN = "hxxp://zapproxy";
 	private static final String CASUAL_TOKEN = "{987987987zapPenentrationTest123123123 *";
 	
-	// Packets of attack rules 
+	// Packages of attack rules
 	private static final String[] ALL_DATA_INJECTION = {"{! rows=10} *", "*", "[* TO *]", "(1 OR *)"};
 	private static final String[] XXE_INJECTION = { 
 		"{!xmlparser v=\'<!DOCTYPE a SYSTEM \""+UNKOWN_HOST_TOKEN+"\"><a></a>\'}",
@@ -38,8 +39,8 @@ public class SolrInjection extends AbstractAppParamPlugin {
 		"{!xmlparser v='<!DOCTYPE a SYSTEM \"http://localhost:8983/solr/admin/collections?action=CREATE&name="+
 		INJECTED_COLLECTION+"&numShards=2\"><a></a>'}",
 		"{!xmlparser v='<!DOCTYPE a SYSTEM \"http://localhost:8983/solr/"+DEFAULT_COLLECTION+"/update?stream.body="
-		+ "[{\"id\":\"AAA\"}]&commit=true&overwrite=true\"><a></a>'}"		
-	};
+		+ "[{\"id\":\"AAA\"}]&commit=true&overwrite=true\"><a></a>'}"};
+	
 	//TODO: implement the penetration test for these rules
 	private static final String[] CODE_EXECUTION_INJECTION = {
 		"{!xmlparser v='<!DOCTYPE a SYSTEM \"http://localhost:8983/solr/"+INJECTED_COLLECTION+"/select?q=xxx&qt=/solr/"
@@ -48,14 +49,14 @@ public class SolrInjection extends AbstractAppParamPlugin {
 		"{!xmlparser v='<!DOCTYPE a SYSTEM \"http://localhost:8983/solr/"+DEFAULT_COLLECTION+"/select?q=xxx&qt=/solr/"
 		+DEFAULT_COLLECTION+"/config?stream.body={\"add-listener\":{\"event\":\"postCommit\",\"name\":\""
 		+INJECTED_LISTENER+"\",\"class\":\"solr.RunExecutableListener\",\"exe\":\"\"}}&shards=localhost:8983/\"><a>"
-		+ "</a>'}"
-	};
-
+		+ "</a>'}"};
+	// Error messages that addressing to a well-known vulnerability
 	private  final Pattern[] errorPatterns = {
 			Pattern.compile("document type declaration must be well-formed", Pattern.CASE_INSENSITIVE),
-			Pattern.compile("Error parsing XML stream:java.net.UnknownHostException", Pattern.CASE_INSENSITIVE),
-			Pattern.compile("ConnectException: Connection refused", Pattern.CASE_INSENSITIVE) };
-	
+			Pattern.compile("stream:java.net.UnknownHostException", Pattern.CASE_INSENSITIVE),
+			Pattern.compile("ConnectException: Connection refused", Pattern.CASE_INSENSITIVE),
+			Pattern.compile("stream:org.xml.sax.SAXParseException", Pattern.CASE_INSENSITIVE) };
+
 	private static final Logger LOG = Logger.getLogger(SolrInjection.class);
 
 	@Override
@@ -109,7 +110,6 @@ public class SolrInjection extends AbstractAppParamPlugin {
 
 	@Override
 	public void scan(HttpMessage msg, String param, String value) {
-		
 		if(!inScope(SOLR_TECH)) {
 			return;
 		}
@@ -138,7 +138,7 @@ public class SolrInjection extends AbstractAppParamPlugin {
 					if(!msg.getResponseBody().toString().equals(verificationMsg.getResponseBody().toString())){
 						bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param, 
 								injectedValue, getExtraInfo(ALL_DATA_ATTACK), getSolution(), msg);
-						return;
+						break;
 					}
 				}
 			}
@@ -154,15 +154,8 @@ public class SolrInjection extends AbstractAppParamPlugin {
 				setParameter(msg, param, injectedValue);
 				sendAndReceive(msg);		
 				if(!getBaseMsg().getResponseBody().toString().equals(msg.getResponseBody().toString())) {
-					/*for(String m:SOLR_ERROR_MATCHING) {
-						if(bodyMsgInjected.contains(m)) {
-							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
-								injectedValue, getExtraInfo(typeAttack), getSolution(), msg);
-							break;
-						}
-					}*/
 					for(Pattern pattern : errorPatterns) {
-						Matcher matcher =  pattern.matcher(msg.getResponseBody().toString());
+						Matcher matcher =  pattern.matcher(msg.getRequestBody().toString());
 						if(matcher.find()) {
 							bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param, 
 									injectedValue, getExtraInfo(XXE_ATTACK), getSolution(), msg);

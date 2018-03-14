@@ -15,7 +15,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS, 
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
  * See the License for the specific language governing permissions and 
- * limitations under the License. 
+ * limitations under the License.
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -53,7 +53,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 
 	// Prefix for internationalised messages used by this rule
 	private static final String MESSAGE_PREFIX = "ascanalpha.mongodb.";
-	
+
 	// Constants
 	private static final String ALL_DATA_ATTACK = "alldata";
 	private static final String JS_ATTACK = "js";
@@ -62,7 +62,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 	private static final String JSON_ATTACK = "json";
 	private static final String AUTH_BYPASS_ATTACK = "authbypass";
 	private static final String MONGO_TOKEN ="OWASP_ZAP_TOKEN_INJECTION";
-	
+
 	// Variables
 	private boolean isJsonPayload;
 	private boolean doUnknownAlert, doAllDataScan, doCrashScan, doJsScan, doTimedScan, doJsonScan, doCounterProof,
@@ -70,9 +70,8 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 	private static int SLEEP_TIME_SHORT;
 	private static int SLEEP_TIME_LONG;
 	private static final int DELTA_TIME=100;
-	private final List<Pattern> errorPatterns = initPattern();
 
-	// Packets of attack rules
+	// Packages of attack rules
 	private static final String[] ALL_DATA_PARAM_INJECTION = new String[] {"[$ne]", "[$regex]", "[$gt]"};
 	private static final String[] ALL_DATA_VALUE_INJECTION = new String[]  {"", ".*", "0"};
 	private static String[] CRASH_INJECTION = new String[] {"\"", "'", "//", "});",");"};
@@ -80,13 +79,20 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 			"'); print("+MONGO_TOKEN+"); print('",
 			"_id);}, function(kv) { return 1; }, { out: 'x'}); print('Injection'); "+
 			"return 1; db.noSQL_injection.mapReduce(function() { emit(1,1", "true, $where: '1 == 1'"};
-	
+
 	private static final String[][] TIMED_INJECTION = {{"\"'); sleep("+SLEEP_TIME_SHORT+"); print('\"",
 		"\"'); sleep("+SLEEP_TIME_LONG+"); print('\""}, {"'; sleep("+SLEEP_TIME_SHORT+"); var x='",
 			"'; sleep("+SLEEP_TIME_LONG+"); var x='"}};
-	
+
 	private static final String[][] JSON_INJECTION = {{"$ne", "0"}, {"$gt", ""}, {"$regex", ".*"}};
-	
+
+	// Error messages that addressing to a well-known vulnerability
+	private  final Pattern[] errorPatterns = {
+			Pattern.compile("mongo", Pattern.CASE_INSENSITIVE), 
+			Pattern.compile("exception: SyntaxError: Unexpected", Pattern.CASE_INSENSITIVE),
+			Pattern.compile("exception 'MongoResultException'", Pattern.CASE_INSENSITIVE), 
+			Pattern.compile(MONGO_TOKEN, Pattern.CASE_INSENSITIVE),
+			Pattern.compile("Unexpected string at $group reduce setup", Pattern.CASE_INSENSITIVE)};
 	// Log prints
 	private static final String JSON_EX_LOG = "try to convert the payload in json format";
 	private static final String IO_EX_LOG = "try to send an http message";
@@ -167,7 +173,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 			doTimedScan = true;
 			doJsonScan = true;
 			doCounterProof = false;
-			doAuthBypass = false;
+			doAuthBypass = true;
 		}
 		else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
 			SLEEP_TIME_SHORT = 400;
@@ -178,7 +184,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 			doAllDataScan = true;
 			doTimedScan = true;
 			doJsonScan = true;
-			doCounterProof = false;
+			doCounterProof = true;
 			doAuthBypass = true;
 		}
 		else if (this.getAttackStrength() == AttackStrength.INSANE) {
@@ -204,6 +210,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 
 	@Override
 	public void scan(HttpMessage msg, String param, String value) {
+		System.out.println("param: "+param+" value: "+value);
 		if(!inScope(getTech())){
 			return;
 		}
@@ -214,39 +221,39 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		if(doAllDataScan) {
 			urlScan(msg, param, value, ALL_DATA_PARAM_INJECTION, ALL_DATA_VALUE_INJECTION, ALL_DATA_ATTACK);
 		}
-		if(isStop()) { return; } // stop log already printed
+		if(isStop()) { return; } // any log has already printed
 		if(doCrashScan) { urlScan(getNewMsg(), param, value, null, CRASH_INJECTION, CRASH_ATTACK); }
 		if(isStop()) { return; }
 		if(doJsScan) { urlScan(getNewMsg(), param, value, null, JS_INJECTION, JS_ATTACK); }
 		if(isStop()) { return; }
-		if(doTimedScan) { timedScan(getNewMsg(), param, value, TIMED_INJECTION, SLEEP_ATTACK); }
+		if(doTimedScan) { sleepScan(getNewMsg(), param, value, TIMED_INJECTION, SLEEP_ATTACK); }
 		if(isStop()) { return; }
 		doJsonScan &= isJsonPayload;
 		if(doJsonScan) { jsonScan(getNewMsg(), param, value, JSON_INJECTION, JSON_ATTACK); }
 	}
 
-	private void urlScan(HttpMessage msg, String param, String value, String[] paramInjection, String[] valueInj,
+	private void urlScan(HttpMessage msg, String param, String value, String[] vectParams, String[] vectValues,
 			String typeAttack) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("\nStarting with the \""+typeAttack+"\" package of attack rules:");
+		}
 		int index = 0;
-		for(String vi : valueInj) {
+		for(String vi : vectValues) {
 			if(isStop()) {
 				if (LOG.isDebugEnabled()) { LOG.debug("Stopping the scan due to a user request"); }
 				return;
 			}
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("\nTrying the MongoDBInjection's \""+typeAttack+"\" attack with the value: "+vi);
+				LOG.debug("\nTrying with the value: "+vi);
 			}
 			try {
-				if(paramInjection!=null) {
-					param += paramInjection[index++];
+				if(vectParams!=null) {
+					param += vectParams[index++];
 				}
 				msg = sendNewMsg(param, vi);
 				if(isBingo(getBaseMsg(), msg, param, vi, typeAttack)) {
-					// The onlyExactError flag is true when you insert strings to break the database, the result of this
-					// penetration test difficulty will be an authentication bypassing, so it was excluded from the
-					// checkAuthBypass(...) test.
 					if(doAuthBypass) {
-						String attack = paramInjection!=null ? paramInjection[index-1] + vi : vi;
+						String attack = vectParams!=null ? vectParams[index-1] + vi : vi;
 						checkAuthBypass(getBaseMsg(), msg, param, attack);
 					}
 					break;
@@ -258,10 +265,13 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		}
 	}
 
-	private void timedScan(HttpMessage msg, String param, String value, String[][] sleepInjection, String sleepAttack) {
+	private void sleepScan(HttpMessage msg, String param, String value, String[][] vectSleep, String typeAttack) {
 		if(isStop()) {
 			if (LOG.isDebugEnabled()) { LOG.debug("Stopping the scan due to a user request"); }
 			return;
+		}
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("\nStarting with the \""+typeAttack+"\" package of attack rules:");
 		}
 		long intervalBaseMessage, intervalInjectedMessage;
 		Instant start;
@@ -274,18 +284,17 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		}
 		intervalBaseMessage = ChronoUnit.MILLIS.between(start, Instant.now());
 		int index = 0;
-		while(index<sleepInjection.length) {
+		while(index<vectSleep.length) {
 			if(isStop()) {
 				if (LOG.isDebugEnabled()) { LOG.debug("Stopping the scan due to a user request"); }
 				return;
 			}
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("\nTrying the MongoDBInjection's \""+sleepAttack+"\" attack with the value: "+
-						sleepInjection[index][0]);
+				LOG.debug("\nTrying  with the value: "+vectSleep[index][0]);
 			}
 			try {
 				start = Instant.now();
-				sendNewMsg(param, sleepInjection[index][0]);
+				sendNewMsg(param, vectSleep[index][0]);
 				intervalInjectedMessage = ChronoUnit.MILLIS.between(start, Instant.now());
 				if(isTimedInjected(intervalBaseMessage,intervalInjectedMessage, SLEEP_TIME_SHORT)) {
 					// try for a longer time to exclude transmission delays
@@ -293,17 +302,20 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 						if (LOG.isDebugEnabled()) { LOG.debug("Stopping the scan due to a user request"); }
 						return;
 					}
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("\nTrying for a longer time with the value: "+vectSleep[index][1]);
+					}
 					start = Instant.now();
-					msg = sendNewMsg(param, sleepInjection[index][1]);
+					msg = sendNewMsg(param, vectSleep[index][1]);
 					intervalInjectedMessage = ChronoUnit.MILLIS.between(start, Instant.now());
-
+					
 					if(isTimedInjected(intervalBaseMessage,intervalInjectedMessage, SLEEP_TIME_LONG)) {
 						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null,
-								param, sleepInjection[index][1], getExtraInfo(sleepAttack), getSolution(), msg);
+								param, vectSleep[index][1], getExtraInfo(typeAttack), getSolution(), msg);
 						break;
 					}
 				}
-				//only in case of no SocketTimeoutException exception
+				//only in case of no SocketTimeoutException exception, otherwise retry with the lowest interval
 				index++;
 			} catch (SocketTimeoutException ex) {
 				printLogException(ex, IO_EX_LOG+", trying with the lowest interval (600 ms)");
@@ -316,16 +328,18 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		}
 	}
 
-	private void jsonScan(HttpMessage msg, String param, String value, String[][] allDataInjection,
-			String typeAttack) {
-		for(String[] jpv : allDataInjection) {
+	private void jsonScan(HttpMessage msg, String param, String value, String[][] vectParamValue, String typeAttack) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("\nStarting with the \""+typeAttack+"\" package of attack rules:");
+		}
+		for(String[] jpv : vectParamValue) {
 			try {
 				if(isStop()) {
 					if (LOG.isDebugEnabled()) { LOG.debug("Stopping the scan due to a user request"); }
 					return;
 				}
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("\nTrying the MongoDBInjection's \""+typeAttack+"\" attack with the value: "+jpv);
+					LOG.debug("\nTrying with the value: "+jpv);
 				}
 				value = getParamJsonString(param, jpv);
 				msg.getRequestHeader().setHeader(HttpRequestHeader.CONTENT_TYPE, "application/json");
@@ -348,30 +362,20 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		}
 	}
 
-	private boolean isBingo(HttpMessage originalMsg, HttpMessage injectedMsg, String param, String valueInj,
-			String typeAttack) {
-		String originalText = originalMsg.getResponseBody().toString();
-		String injectedText = injectedMsg.getResponseBody().toString();
-		if(originalText.equals(injectedText)) {
+	private boolean isBingo(HttpMessage baseMsg, HttpMessage injMsg, String param, String injValue, String typeAttack) {
+		String baseBody = baseMsg.getResponseBody().toString();
+		String injBody = injMsg.getResponseBody().toString();
+		if(baseBody.equals(injBody)) {
 			return false;
 		}
 		else {
-			// The difference between the base response body and the after injecting one is for the only value passed
-			// as input. So it could be a (uncommon) false positive result. For example the server could be response:
-			// " @valueInj (or @TOKEN) doesn't exist, make sure you ... ".
-			if(differOnlyForInput(originalText, injectedText, valueInj, MONGO_TOKEN)) {
-				bingo(Alert.RISK_LOW, Alert.CONFIDENCE_LOW, getName(), getDescription(), null, param, valueInj,
-						getExtraInfo(typeAttack), getSolution(), injectedMsg);
-				// continue to scan
-				return false;
-			}
-			StringBuilder sb = new StringBuilder();
 			// If the response message contains one of the note patterns then it is probable that the application has
 			// a well-noted vulnerability.
-			for(Pattern p : errorPatterns) {
-				if(matchBodyPattern(injectedMsg, p, sb)) {
-					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param, valueInj,
-							getExtraInfo(typeAttack), getSolution(), injectedMsg);
+			for(Pattern pattern : errorPatterns) {
+				Matcher matcher =  pattern.matcher(injMsg.getResponseBody().toString());
+				if(matcher.find()) {
+					bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param, injValue,
+							getExtraInfo(typeAttack), getSolution(), injMsg);
 					return true;
 				}
 			}
@@ -381,10 +385,10 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 				// the vulnerability already found (the bingo at the end)
 				if(doCounterProof && !isStop()) {
 					try {
-						HttpMessage counterProof = sendNewMsg(param, MONGO_TOKEN);
-						if(!injectedText.equals(counterProof.getRequestBody().toString())){
+						HttpMessage counterP = sendNewMsg(param, MONGO_TOKEN);
+						if(!areDifferentForValue(counterP.getRequestBody().toString(), injBody, MONGO_TOKEN, injValue)) { 
 							bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param,
-									valueInj, getExtraInfo(typeAttack), getSolution(), injectedMsg);
+									injValue, getExtraInfo(typeAttack), getSolution(), injMsg);
 							return true;
 						}
 						else {
@@ -395,29 +399,11 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 					}
 				}
 				bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_MEDIUM, getName(), getDescription(), null, param,
-						valueInj, getExtraInfo(typeAttack), getSolution(), injectedMsg);
+						injValue, getExtraInfo(typeAttack), getSolution(), injMsg);
 				return true;
 			}
 			return false;
 		}
-	}
-
-	private boolean isDataReturnAttack(String typeAttack) {
-		return typeAttack == ALL_DATA_ATTACK || typeAttack == JS_ATTACK || typeAttack == JSON_ATTACK;
-	}
-
-	static boolean differOnlyForInput(String originalMsg, String injectedMsg, String valueBase,
-			String valueInj) {
-		String extractString1, extractString2;
-		int index = originalMsg.lastIndexOf(injectedMsg);
-		if(index> -1) {
-			extractString1 = injectedMsg.substring(index, index+valueInj.length());
-			extractString2 = injectedMsg.substring(index, index+ valueBase.length());
-			if(extractString1.equals(valueInj) && extractString2.equals(valueBase)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public void checkAuthBypass(HttpMessage msg, HttpMessage injectedMsg, String param, String valueInj) {
@@ -454,19 +440,21 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		}
 	}
 
+	private boolean isDataReturnAttack(String typeAttack) {
+		return typeAttack == ALL_DATA_ATTACK || typeAttack == JS_ATTACK || typeAttack == JSON_ATTACK;
+	}
+
+	static boolean areDifferentForValue(String msg1, String msg2, String value1,String value2) {
+		int index = msg2.indexOf(value2);
+			return  index>-1 && msg1.length()-value1.length() == msg2.length()-value2.length() &&
+					msg1.substring(index, index+value1.length()).equals(value1) && 
+					msg2.substring(index+value2.length(), msg2.length()).equals(
+					msg1.substring(index+value1.length(), msg1.length()));
+	}
+
 	private boolean isTimedInjected(long intervalBaseMessage, long intervalInjectedMessage, int sleep) {
 		long diff=intervalInjectedMessage-intervalBaseMessage;
 		return diff>=sleep-DELTA_TIME;
-	}
-
-	private static List<Pattern> initPattern() {
-		List<Pattern> list =  new ArrayList<>();
-		String[] bingo_matching =  {"mongo", "MongoDB", "exception: SyntaxError: Unexpected",
-				"exception 'MongoResultException'", MONGO_TOKEN, "Unexpected string at $group reduce setup"};
-		for(String regex: bingo_matching) {
-			list.add(Pattern.compile(regex, AbstractAppParamPlugin.PATTERN_PARAM));
-		}
-		return list;
 	}
 
 	private String getParamJsonString(String param, String[] params) throws JSONException {
