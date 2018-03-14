@@ -1,0 +1,28 @@
+<zapaddon>
+	<name>Groovy scripting</name>
+	<version>1</version>
+	<status>alpha</status>
+	<description>Allows Groovy to be used for ZAP scripting - templates included</description>
+	<author>ZAP Dev Team</author>
+	<url></url>
+	<changes>
+	<![CDATA[
+	Initial Release
+	]]>
+	</changes>
+	<extensions>
+	    <extension>org.zaproxy.zap.extension.groovy.ExtensionGroovy</extension>
+	</extensions>
+	<ascanrules/>
+	<pscanrules/>
+	<filters/>
+	<files>
+		<file>scripts/templates/standalone/LoopThroughHistoryTable.groovy</file>
+		<file>scripts/templates/standalone/StandaloneDefaultTemplate.groovy</file>
+		<file>scripts/templates/standalone/StandaloneDebugWrapper.groovy</file>
+		<file>scripts/templates/targeted/TargetedDefaultTemplate.groovy</file>
+		<file>scripts/templates/targeted/TargetedDebugWrapper.groovy</file>
+	</files>
+	<not-before-version>2.7.0</not-before-version>
+	<not-from-version/>
+</zapaddon>
