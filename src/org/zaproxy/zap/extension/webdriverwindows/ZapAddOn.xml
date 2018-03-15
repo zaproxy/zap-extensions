@@ -7,7 +7,7 @@
 	<url></url>
 	<changes>
 	<![CDATA[
-	Update ChromeDriver to 2.35<br>
+	Update ChromeDriver to 2.36<br>
 	Update geckodriver to v0.20.0<br>
 	]]>
 	</changes>
