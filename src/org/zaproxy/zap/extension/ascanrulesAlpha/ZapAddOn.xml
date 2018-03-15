@@ -10,7 +10,8 @@
 	Add .htaccess scanner (Issue 3972).<br>
 	Modified trace.axd scanner to leverage new AbstractAppFilePlugin component.<br>
 	Remove unnecessary help entry.<br>
-	Add scan rule(s) for MongoDB(Issue 3480). <br>]]>
+	Add scan rule(s) for MongoDB(Issue 3480).<br>
+	]]>
 	</changes>
 	<extensions>
 		<extension>org.zaproxy.zap.extension.ascanrulesAlpha.ExtensionAscanRulesAlpha</extension>

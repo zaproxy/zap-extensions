@@ -79,18 +79,16 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 			"'); print("+MONGO_TOKEN+"); print('",
 			"_id);}, function(kv) { return 1; }, { out: 'x'}); print('Injection'); "+
 			"return 1; db.noSQL_injection.mapReduce(function() { emit(1,1", "true, $where: '1 == 1'"};
-
-	private static final String[][] TIMED_INJECTION = {{"\"'); sleep("+SLEEP_TIME_SHORT+"); print('\"",
+	private static final String[][] SLEEP_INJECTION = {{"\"'); sleep("+SLEEP_TIME_SHORT+"); print('\"",
 		"\"'); sleep("+SLEEP_TIME_LONG+"); print('\""}, {"'; sleep("+SLEEP_TIME_SHORT+"); var x='",
 			"'; sleep("+SLEEP_TIME_LONG+"); var x='"}};
-
 	private static final String[][] JSON_INJECTION = {{"$ne", "0"}, {"$gt", ""}, {"$regex", ".*"}};
 
 	// Error messages that addressing to a well-known vulnerability
 	private  final Pattern[] errorPatterns = {
-			Pattern.compile("mongo", Pattern.CASE_INSENSITIVE), 
+			Pattern.compile("mongo", Pattern.CASE_INSENSITIVE),
 			Pattern.compile("exception: SyntaxError: Unexpected", Pattern.CASE_INSENSITIVE),
-			Pattern.compile("exception 'MongoResultException'", Pattern.CASE_INSENSITIVE), 
+			Pattern.compile("exception 'MongoResultException'", Pattern.CASE_INSENSITIVE),
 			Pattern.compile(MONGO_TOKEN, Pattern.CASE_INSENSITIVE),
 			Pattern.compile("Unexpected string at $group reduce setup", Pattern.CASE_INSENSITIVE)};
 	// Log prints
@@ -210,7 +208,6 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 
 	@Override
 	public void scan(HttpMessage msg, String param, String value) {
-		System.out.println("param: "+param+" value: "+value);
 		if(!inScope(getTech())){
 			return;
 		}
@@ -226,7 +223,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 		if(isStop()) { return; }
 		if(doJsScan) { urlScan(getNewMsg(), param, value, null, JS_INJECTION, JS_ATTACK); }
 		if(isStop()) { return; }
-		if(doTimedScan) { sleepScan(getNewMsg(), param, value, TIMED_INJECTION, SLEEP_ATTACK); }
+		if(doTimedScan) { sleepScan(getNewMsg(), param, value, SLEEP_INJECTION, SLEEP_ATTACK); }
 		if(isStop()) { return; }
 		doJsonScan &= isJsonPayload;
 		if(doJsonScan) { jsonScan(getNewMsg(), param, value, JSON_INJECTION, JSON_ATTACK); }
@@ -260,7 +257,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 				}
 			}catch(IOException ex) {
 				printLogException(ex, IO_EX_LOG);
-				continue;
+				return;
 			}
 		}
 	}
@@ -308,7 +305,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 					start = Instant.now();
 					msg = sendNewMsg(param, vectSleep[index][1]);
 					intervalInjectedMessage = ChronoUnit.MILLIS.between(start, Instant.now());
-					
+
 					if(isTimedInjected(intervalBaseMessage,intervalInjectedMessage, SLEEP_TIME_LONG)) {
 						bingo(Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null,
 								param, vectSleep[index][1], getExtraInfo(typeAttack), getSolution(), msg);
@@ -318,7 +315,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 				//only in case of no SocketTimeoutException exception, otherwise retry with the lowest interval
 				index++;
 			} catch (SocketTimeoutException ex) {
-				printLogException(ex, IO_EX_LOG+", trying with the lowest interval (600 ms)");
+				printLogException(ex, IO_EX_LOG+"due to a socket timeout, trying with the lowest interval (600 ms)");
 				SLEEP_TIME_SHORT = 300;
 				SLEEP_TIME_LONG = 600;
 			} catch (IOException ex) {
@@ -354,10 +351,10 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 				}
 			} catch (JSONException ex) {
 				printLogException(ex, JSON_EX_LOG);
-				continue;
+				return;
 			} catch (IOException ex) {
 				printLogException(ex, IO_EX_LOG);
-				continue;
+				return;
 			}
 		}
 	}
@@ -369,8 +366,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 			return false;
 		}
 		else {
-			// If the response message contains one of the note patterns then it is probable that the application has
-			// a well-noted vulnerability.
+			// check if the application has a well-noted MongoDB vulnerability.
 			for(Pattern pattern : errorPatterns) {
 				Matcher matcher =  pattern.matcher(injMsg.getResponseBody().toString());
 				if(matcher.find()) {
@@ -379,19 +375,26 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 					return true;
 				}
 			}
-			// Unknown vulnerability or obtained potentially sensitive data
-			if(doUnknownAlert || isDataReturnAttack(typeAttack)) {
-				// Get more confidence - if user has stopped, the event is handled in the calling method after alerting
-				// the vulnerability already found (the bingo at the end)
-				if(doCounterProof && !isStop()) {
+			// Obtained potentially sensitive data
+			if(isDataReturnAttack(typeAttack)) {
+				// If user has stopped, the event is handled in the calling method
+				if(isStop()) { return false; }
+				// Get more confidence
+				if(doCounterProof) {
 					try {
 						HttpMessage counterP = sendNewMsg(param, MONGO_TOKEN);
-						if(!areDifferentForValue(counterP.getRequestBody().toString(), injBody, MONGO_TOKEN, injValue)) { 
+						if(!areDifferentForValue(counterP.getRequestBody().toString(), injBody, MONGO_TOKEN, injValue)) {
 							bingo(Alert.RISK_MEDIUM, Alert.CONFIDENCE_HIGH, getName(), getDescription(), null, param,
 									injValue, getExtraInfo(typeAttack), getSolution(), injMsg);
 							return true;
 						}
 						else {
+							if(doUnknownAlert) {
+								bingo(Alert.RISK_LOW, Alert.CONFIDENCE_LOW, getName(), getDescription(), null, param,
+										injValue, "Unknown vulnerability, it may be a false positive.", getSolution(),
+										injMsg);
+							}
+							// continue with the next rule of the same packet
 							return false; 
 						}
 					} catch(IOException ex) {
@@ -474,8 +477,7 @@ public class MongoDbInjection extends AbstractAppParamPlugin {
 
 	private void printLogException(Exception ex, String info) {
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +
-					" when "+info);
+			LOG.debug("Caught " + ex.getClass().getName() + " " + ex.getMessage() +" when "+info);
 		}
 	}
 }
